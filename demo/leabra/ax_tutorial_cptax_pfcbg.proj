@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7193
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7208
 LeabraProject .projects["ax_tutorial_cptax_pfcbg"] { 
  Doc_Group @.docs = [8] {
   taDoc @["ProjectDocs"] { };
@@ -2723,12 +2723,12 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20140401T185136Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2185,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2197,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":
 0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"4b6febae4f2cdc3939af4fc30d7f8e72+\\\\\",\"patrolToken\":\"4f7a8256efca10260f4d087441578b87+\\\\\",\"watchToken\":\"36c0c95ddc3fd565840b66905652ca89+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:06f2c7e4999a94d6c47db7a3e14e395b */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"6c7a183644c6269e29d0aaea13e76f81+\\\\\",\"patrolToken\":\"f586dc4a6a18c0a1639c272afbc136da+\\\\\",\"watchToken\":\"f3dc3a7157ddeb0fad9ddcf15f536489+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:03b8fd470d90f62d87c92cd14c7adfc2 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
@@ -2822,7 +2822,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 <!-- 
 NewPP limit report
 CPU time usage: 0.040 seconds
-Real time usage: 0.047 seconds
+Real time usage: 0.045 seconds
 Preprocessor visited node count: 32/1000000
 Preprocessor generated node count: 58/1000000
 Post?expand include size: 48/2097152 bytes
@@ -2831,7 +2831,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!*!0!!en!*!* and timestamp 20140518065432
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:232-0!*!0!!en!*!* and timestamp 20140519072844
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"http://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=10614\">http://grey.colorado.edu/emergent/index.php?title=AX_Tutorial&amp;oldid=10614</a>\"				</div>
@@ -2871,7 +2871,7 @@ Expensive parser function count: 0/100
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\">Read</a></span></li>
 					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
 					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=f7dfe58c294cb56089bd06820a967404%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=6009a8243cf47348274b40ceaa6df255%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -2939,7 +2939,7 @@ Expensive parser function count: 0/100
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 16 May 2014, at 02:19.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 17,357 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 17,392 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2962,7 +2962,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 <script>if(window.mw){
 mw.loader.state({\"user.groups\":\"ready\"});
 }</script>
-<!-- Served in 0.453 secs. -->
+<!-- Served in 0.418 secs. -->
 	
 
 </body></html>";
@@ -7337,16 +7337,16 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [100] "A_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"B_N";"Z_N_rew_targ";"B_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";
-"C_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"Y_N_rew_targ";
-"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";"A_N";"Y_N_rew_targ";"A_N";"Y_N_rew_targ";"C_N";"X_N_rew_targ";
-"A_N";"Y_N_rew_targ";"B_N";"Z_N_rew_targ";"B_N";"X_N_rew_targ";"B_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";
-"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"Y_N_rew_targ";"B_N";"Y_N_rew_targ";
-"A_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"B_N";"Y_N_rew_targ";"B_N";"X_N_rew_targ";
-"A_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";
-"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"C_N";"X_N_rew_targ";"C_N";"X_N_rew_targ";"A_N";"Y_N_rew_targ";
-"A_N";"X_T_rew_targ";"A_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";
-"B_N";"Y_N_rew_targ";"B_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";
+      [100] "A_N";"X_T_rew_targ";"C_N";"X_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";
+"A_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";"A_N";"Y_N_rew_targ";
+"A_N";"X_T_rew_targ";"A_N";"Z_N_rew_targ";"C_N";"X_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";
+"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";
+"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";
+"A_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"B_N";"X_N_rew_targ";
+"C_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"B_N";"Y_N_rew_targ";"A_N";"X_T_rew_targ";"C_N";"Z_N_rew_targ";
+"B_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"B_N";"X_N_rew_targ";"A_N";"X_T_rew_targ";"B_N";"Z_N_rew_targ";
+"A_N";"X_T_rew_targ";"A_N";"Z_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";
+"C_N";"Y_N_rew_targ";"B_N";"X_N_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";"A_N";"X_T_rew_targ";
       };
      };
      float_Data @["Input"] {
@@ -7373,66 +7373,66 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [3 2 100] 1;0;0;0;0;0;0;0;0;0;
+      [3 2 100] 1;0;0;0;0;0;0;0;0;1;
+0;0;0;0;1;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;0;1;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;0;0;1;0;
+0;0;0;0;0;0;0;1;1;0;
+0;0;0;0;0;0;0;0;1;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+1;0;0;0;0;0;0;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;0;0;0;
+1;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;0;
+1;0;0;0;0;0;0;0;0;1;
+0;1;0;0;0;0;0;0;0;0;
 0;1;1;0;0;0;0;0;0;0;
 0;1;0;0;0;1;0;0;0;0;
-0;0;0;0;0;1;0;1;0;0;
-0;0;0;0;0;0;0;1;1;0;
-0;0;0;0;0;0;0;1;0;0;
-0;0;1;0;0;0;0;0;0;0;
-0;1;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;1;0;
-0;0;0;0;0;0;0;0;1;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;0;0;1;0;0;0;0;0;
-0;0;0;1;1;0;0;0;0;0;
-0;0;0;0;1;0;1;0;0;0;
-0;0;0;0;0;0;1;0;0;0;
-1;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;0;
-1;0;0;1;0;0;0;0;0;0;
-0;0;0;1;0;1;0;0;0;0;
-0;0;0;1;0;0;0;1;0;0;
-0;0;0;0;0;0;1;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;0;1;0;0;1;
-0;0;0;0;0;0;0;0;1;0;
-1;0;0;0;0;0;0;0;0;0;
-1;0;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;0;1;0;0;
-0;0;0;0;0;0;1;0;0;1;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;0;
-1;0;1;0;0;0;0;0;0;0;
-0;1;0;0;0;0;1;0;0;0;
-0;0;0;0;0;1;1;0;0;0;
-0;0;0;0;0;1;0;0;0;0;
-1;0;0;0;0;0;0;0;0;1;
-1;0;0;0;0;0;0;0;0;1;
-0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;0;0;1;0;0;0;
-0;0;0;1;0;0;0;0;1;0;
-0;0;0;0;0;1;0;0;1;0;
-0;0;0;0;0;0;0;0;1;0;
+0;0;0;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;0;0;1;
 1;0;0;0;0;0;0;0;0;1;
 0;0;1;0;0;0;0;0;0;0;
 0;0;0;1;1;0;0;0;0;0;
-0;0;0;1;0;0;0;0;1;0;
-0;0;0;0;0;0;1;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-0;1;0;0;0;0;0;0;0;0;
-1;0;0;1;0;0;0;0;0;0;
-0;0;1;0;1;0;0;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;0;0;
-1;0;0;0;0;0;0;0;0;1;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;0;0;0;
+1;0;0;1;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;1;0;0;
       };
      };
      float_Data @["Output"] {
@@ -7459,26 +7459,26 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [2 1 100] 1;0;1;0;1;0;0;1;1;0;
-1;0;1;0;1;0;1;0;0;1;
+      [2 1 100] 1;0;0;1;1;0;1;0;1;0;
+0;1;1;0;1;0;1;0;0;1;
+1;0;1;0;1;0;0;1;1;0;
+0;1;1;0;1;0;1;0;1;0;
+1;0;0;1;1;0;1;0;1;0;
+1;0;1;0;0;1;1;0;0;1;
+1;0;0;1;1;0;0;1;1;0;
+0;1;1;0;0;1;1;0;0;1;
+1;0;0;1;1;0;0;1;1;0;
+0;1;1;0;0;1;1;0;0;1;
 1;0;1;0;1;0;0;1;1;0;
 0;1;1;0;0;1;1;0;1;0;
-1;0;0;1;1;0;1;0;1;0;
-1;0;1;0;1;0;1;0;1;0;
-1;0;1;0;1;0;1;0;1;0;
-1;0;1;0;1;0;1;0;0;1;
-1;0;0;1;1;0;0;1;1;0;
-0;1;1;0;1;0;1;0;1;0;
-1;0;1;0;1;0;0;1;1;0;
-0;1;1;0;1;0;1;0;1;0;
 1;0;1;0;1;0;0;1;1;0;
 1;0;1;0;0;1;1;0;1;0;
-1;0;0;1;1;0;0;1;1;0;
-1;0;1;0;1;0;1;0;1;0;
+1;0;1;0;1;0;0;1;1;0;
+1;0;1;0;0;1;1;0;1;0;
 1;0;0;1;1;0;1;0;1;0;
-0;1;1;0;1;0;1;0;0;1;
+0;1;1;0;0;1;1;0;0;1;
 1;0;1;0;1;0;1;0;1;0;
-0;1;1;0;0;1;1;0;1;0;
+0;1;1;0;0;1;1;0;0;1;
       };
      };
      float_Data @["RewTarg"] {
@@ -7687,11 +7687,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -7718,11 +7718,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -7749,11 +7749,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -7775,11 +7775,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -7801,11 +7801,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["phase_no"] {
@@ -7832,11 +7832,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["minus_cycles"] {
@@ -7858,11 +7858,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -7884,11 +7884,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["ext_rew"] {
@@ -7910,11 +7910,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Input_act_m"] {
@@ -7936,11 +7936,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [3 2 0]       };
      };
      float_Data @["Hidden_act_m"] {
@@ -7962,11 +7962,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [5 5 0]       };
      };
      float_Data @["Output_act_m"] {
@@ -7988,11 +7988,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [2 1 0]       };
      };
      float_Data @["RewTarg_act_m"] {
@@ -8014,11 +8014,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [1 1 0]       };
      };
      float_Data @["PVe_act_m"] {
@@ -8040,11 +8040,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [4 1 0]       };
      };
      float_Data @["PVr_act_m"] {
@@ -8066,11 +8066,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [4 1 0]       };
      };
      float_Data @["PVi_act_m"] {
@@ -8092,11 +8092,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [4 1 0]       };
      };
      float_Data @["LVe_act_m"] {
@@ -8118,11 +8118,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [4 1 0]       };
      };
      float_Data @["NV_act_m"] {
@@ -8144,11 +8144,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [4 1 0]       };
      };
      float_Data @["VTA_act_m"] {
@@ -8170,11 +8170,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [1 1 0]       };
      };
      float_Data @["SNrThal_act_m"] {
@@ -8196,11 +8196,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [4] ;;;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [1 1 2 1 0]       };
      };
      float_Data @["Matrix_G_act_m"] {
@@ -8222,11 +8222,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [4] ;;;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [7 4 2 1 0]       };
      };
      float_Data @["Matrix_N_act_m"] {
@@ -8248,11 +8248,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [4] ;;;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [7 4 2 1 0]       };
      };
      float_Data @["PFC_mnt_act_m"] {
@@ -8274,11 +8274,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [4] ;;;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [7 7 2 1 0]       };
      };
      float_Data @["PFCd_mnt_act_m"] {
@@ -8300,11 +8300,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [4] ;;;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [7 7 2 1 0]       };
      };
     };
@@ -8347,11 +8347,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -8378,11 +8378,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
@@ -8404,11 +8404,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
@@ -8430,11 +8430,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_ext_rew"] {
@@ -8456,11 +8456,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_cycles"] {
@@ -8482,11 +8482,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
@@ -8508,11 +8508,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
@@ -8534,11 +8534,11 @@ mw.loader.state({\"user.groups\":\"ready\"});
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -10970,7 +10970,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=46;
+      int_val=59;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -14860,7 +14860,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="batch";
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["batch"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -14904,7 +14904,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="group_name";
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["group_name"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=16;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -14915,7 +14915,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="phase_no";
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["phase_no"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -14926,7 +14926,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="minus_cycles";
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["minus_cycles"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -14948,7 +14948,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="ext_rew";
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["ext_rew"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -14993,7 +14993,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["RewTarg_act_m"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=1;
+	    text_width=2;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -15059,7 +15059,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["VTA_act_m"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=1;
+	    text_width=2;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -15070,7 +15070,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    m_data=.projects["ax_tutorial_cptax_pfcbg"].data.gp["OutputData"]["TrialOutputData"].data["SNrThal_act_m"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=1;
+	    text_width=2;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -15136,8 +15136,8 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=5;
-	  col_range {min=7: max=11: };
+	  col_n=6;
+	  col_range {min=1: max=6: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;

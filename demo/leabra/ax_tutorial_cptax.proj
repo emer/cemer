@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7193
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7208
 LeabraProject .projects["ax_tutorial_cptax"] { 
  Doc_Group @.docs = [8] {
   taDoc @["ProjectDocs"] { };
@@ -2019,12 +2019,12 @@ LeabraProject .projects["ax_tutorial_cptax"] {
 
 <script src=\"http://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20140401T185136Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2193,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"AX_Tutorial\",\"wgTitle\":\"AX Tutorial\",\"wgCurRevisionId\":10614,\"wgRevisionId\":10614,\"wgArticleId\":232,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":\"Oreilly\",\"wgUserGroups\":[\"bureaucrat\",\"svnadmins\",\"sysop\",\"*\",\"user\",\"autoconfirmed\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"AX_Tutorial\",\"wgUserId\":3,\"wgUserEditCount\":2197,\"wgUserRegistration\":1178051527000,\"wgUserNewMsgRevisionId\":null,\"wgIsProbablyEditable\":true,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":\"1\",\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":\"1\",\"editsectiononrightclick\":0,\"enotifminoredits\":\"1\",\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":\"1\",\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":\"0\",\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":\"\",\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":\"1\",\"rows\":\"35\",\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":\"0\",\"underline\":\"0\",\"uselivepreview\":0,\"usenewrc\":\"1\",\"vector-simplesearch\":1,\"watchcreations\":\"1\",\"watchdefault\":\"1\",\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":
 0,\"watchlisthidebots\":0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":\"1\",\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":
-false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"4e155363c95a362d8d68c31f60204a8f+\\\\\",\"patrolToken\":\"93786a35cce12a322179d0447dc7787c+\\\\\",\"watchToken\":\"947cb27e42e0ce48c25680be9f36362d+\\\\\"});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:8b9d168c7b4d9642b51f9005be74deb3 */
+false,\"searchNs107\":false,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"nickname\":\"\",\"timecorrection\":\"ZoneInfo|-360|America/Denver\",\"watchlisttoken\":\"14fd6c804d78e99930123181974c128b983adb9e\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"6c7a183644c6269e29d0aaea13e76f81+\\\\\",\"patrolToken\":\"f586dc4a6a18c0a1639c272afbc136da+\\\\\",\"watchToken\":\"f3dc3a7157ddeb0fad9ddcf15f536489+\\\\\"});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:03b8fd470d90f62d87c92cd14c7adfc2 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
@@ -2167,7 +2167,7 @@ Expensive parser function count: 0/100
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/AX_Tutorial\">Read</a></span></li>
 					<li id=\"ca-edit\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=edit\" title=\"You can edit this page. Please use the preview button before saving [e]\" accesskey=\"e\">Edit</a></span></li>
 					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
-					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=38629adacbc437344bced3f52fdf88bb%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
+					<li id=\"ca-unwatch\" class=\"icon\"><span><a href=\"/emergent/index.php?title=AX_Tutorial&amp;action=unwatch&amp;token=6009a8243cf47348274b40ceaa6df255%2B%5C\" title=\"Remove this page from your watchlist [w]\" accesskey=\"w\">Unwatch</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
@@ -2235,7 +2235,7 @@ Expensive parser function count: 0/100
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 16 May 2014, at 02:19.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 17,360 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 17,394 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2258,7 +2258,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 <script>if(window.mw){
 mw.loader.state({\"user.groups\":\"ready\"});
 }</script>
-<!-- Served in 0.376 secs. -->
+<!-- Served in 0.421 secs. -->
 	
 
 </body></html>";
@@ -6166,16 +6166,16 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [100] "B_N";"Z_N";"C_N";"X_N";"C_N";"Z_N";"A_N";"X_T";"B_N";"X_N";
-"A_N";"X_T";"A_N";"X_T";"C_N";"X_N";"A_N";"X_T";"A_N";"X_T";
-"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"Y_N";"A_N";"X_T";
-"B_N";"Z_N";"A_N";"X_T";"A_N";"X_T";"A_N";"Z_N";"A_N";"X_T";
-"A_N";"X_T";"A_N";"X_T";"C_N";"Z_N";"A_N";"X_T";"A_N";"X_T";
+      [100] "A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"C_N";"Y_N";"B_N";"Y_N";
+"B_N";"Z_N";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"B_N";"Y_N";
+"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"B_N";"X_N";
+"C_N";"X_N";"B_N";"Y_N";"B_N";"X_N";"A_N";"X_T";"A_N";"Y_N";
+"A_N";"X_T";"B_N";"Z_N";"A_N";"X_T";"A_N";"Y_N";"C_N";"X_N";
+"C_N";"X_N";"A_N";"X_T";"C_N";"X_N";"A_N";"Z_N";"A_N";"X_T";
 "A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";
-"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"C_N";"X_N";"A_N";"X_T";
-"A_N";"Z_N";"B_N";"Z_N";"A_N";"X_T";"C_N";"Y_N";"A_N";"X_T";
-"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";
-"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";
+"A_N";"X_T";"A_N";"Y_N";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";
+"A_N";"X_T";"B_N";"Z_N";"A_N";"X_T";"A_N";"X_T";"A_N";"X_T";
+"A_N";"X_T";"A_N";"X_T";"B_N";"Y_N";"C_N";"Z_N";"A_N";"Y_N";
       };
      };
      float_Data @["Input"] {
@@ -6192,66 +6192,66 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [3 2 100] 0;1;0;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
-0;1;0;0;0;0;1;0;0;0;
-0;0;0;0;0;1;1;0;0;0;
-0;0;0;0;0;1;0;0;0;1;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;0;0;1;0;0;0;
-0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;1;
+      [3 2 100] 1;0;0;0;0;0;0;0;0;1;
 0;0;1;0;0;0;0;0;0;0;
 0;1;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;0;1;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
+0;0;0;1;0;0;0;0;1;0;
+0;0;0;0;0;0;1;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
 0;1;0;0;0;0;0;0;0;0;
 0;1;1;0;0;0;0;0;0;0;
 0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;0;1;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;0;1;
+0;0;0;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;0;0;0;
+0;0;1;0;0;1;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;1;0;0;1;0;
+0;0;0;0;0;0;0;0;1;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;0;0;0;
+0;0;0;1;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
+0;0;0;0;0;0;1;0;0;0;
+1;0;0;0;0;0;0;1;0;0;
+0;0;1;0;0;0;0;0;0;1;
+0;0;1;0;0;0;0;0;0;0;
+0;1;0;0;0;0;1;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
 0;0;0;0;0;0;0;1;1;0;
 0;0;0;0;0;0;0;1;0;0;
 1;0;0;0;0;0;0;0;0;1;
 0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;0;0;1;0;0;0;
-0;0;0;0;0;1;1;0;0;0;
-0;0;0;0;0;1;0;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;1;0;0;0;0;0;0;0;
 0;1;0;0;1;0;0;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
 0;0;0;0;0;1;0;0;1;0;
 0;0;0;0;0;0;0;1;0;0;
 1;0;0;0;0;0;0;0;0;1;
 0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;0;0;1;0;
+0;0;1;0;1;0;0;0;0;0;
+0;0;0;1;0;0;1;0;0;0;
 0;0;0;0;0;1;0;0;1;0;
 0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;0;
-0;1;0;1;0;0;0;0;0;0;
+1;0;0;0;0;0;0;0;0;1;
+0;0;0;1;0;0;0;0;0;0;
 0;0;0;1;1;0;0;0;0;0;
-0;0;0;1;0;0;0;0;1;0;
-0;0;0;0;0;0;1;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
-1;0;0;0;0;0;0;0;0;1;
-0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
 0;0;0;1;0;0;1;0;0;0;
 0;0;0;0;0;1;0;0;1;0;
 0;0;0;0;0;0;0;1;0;0;
 1;0;0;0;0;0;0;0;0;1;
 0;0;1;0;0;0;0;0;0;0;
-0;1;0;0;1;0;0;0;0;0;
-0;0;0;1;0;0;1;0;0;0;
-0;0;0;0;0;1;0;0;1;0;
-0;0;0;0;0;0;0;1;0;0;
+0;1;0;0;0;1;0;0;0;0;
+0;0;0;0;1;0;0;0;1;0;
+0;0;0;0;0;0;0;1;1;0;
+0;0;0;0;0;0;0;0;1;0;
       };
      };
      float_Data @["Output"] {
@@ -6268,26 +6268,26 @@ mw.loader.state({\"user.groups\":\"ready\"});
       width=0;
       ar {
        name="ar";
-      [2 1 100] 1;0;1;0;1;0;1;0;1;0;
-1;0;1;0;0;1;1;0;1;0;
-1;0;0;1;1;0;0;1;1;0;
-1;0;1;0;0;1;1;0;0;1;
-1;0;0;1;1;0;0;1;1;0;
-0;1;1;0;1;0;1;0;0;1;
+      [2 1 100] 1;0;0;1;1;0;0;1;1;0;
+0;1;1;0;1;0;1;0;1;0;
 1;0;1;0;1;0;0;1;1;0;
-0;1;1;0;1;0;1;0;0;1;
+0;1;1;0;0;1;1;0;1;0;
 1;0;0;1;1;0;0;1;1;0;
-1;0;1;0;0;1;1;0;0;1;
-1;0;0;1;1;0;0;1;1;0;
-0;1;1;0;0;1;1;0;0;1;
-1;0;0;1;1;0;0;1;1;0;
-0;1;1;0;1;0;1;0;0;1;
+0;1;1;0;0;1;1;0;1;0;
 1;0;1;0;1;0;1;0;1;0;
-0;1;1;0;1;0;1;0;0;1;
+1;0;1;0;0;1;1;0;1;0;
+1;0;0;1;1;0;1;0;1;0;
+0;1;1;0;1;0;1;0;1;0;
+1;0;1;0;1;0;0;1;1;0;
+1;0;1;0;1;0;1;0;0;1;
 1;0;0;1;1;0;0;1;1;0;
 0;1;1;0;0;1;1;0;0;1;
-1;0;0;1;1;0;0;1;1;0;
+1;0;0;1;1;0;1;0;1;0;
 0;1;1;0;0;1;1;0;0;1;
+1;0;0;1;1;0;1;0;1;0;
+0;1;1;0;0;1;1;0;0;1;
+1;0;0;1;1;0;0;1;1;0;
+1;0;1;0;1;0;1;0;1;0;
       };
      };
     };
@@ -9361,7 +9361,7 @@ mw.loader.state({\"user.groups\":\"ready\"});
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=52;
+      int_val=9;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -13240,7 +13240,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="batch";
 	    m_data=.projects["ax_tutorial_cptax"].data.gp["OutputData"]["TrialOutputData"].data["batch"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -13284,7 +13284,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="group_name";
 	    m_data=.projects["ax_tutorial_cptax"].data.gp["OutputData"]["TrialOutputData"].data["group_name"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=16;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -13295,7 +13295,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="phase_no";
 	    m_data=.projects["ax_tutorial_cptax"].data.gp["OutputData"]["TrialOutputData"].data["phase_no"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -13306,7 +13306,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="minus_cycles";
 	    m_data=.projects["ax_tutorial_cptax"].data.gp["OutputData"]["TrialOutputData"].data["minus_cycles"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -13328,7 +13328,7 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	    name="ext_rew";
 	    m_data=.projects["ax_tutorial_cptax"].data.gp["OutputData"]["TrialOutputData"].data["ext_rew"]$$;
 	    m_transform=NULL;
-	    visible=1;
+	    visible=0;
 	    text_width=8;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
@@ -13384,8 +13384,8 @@ taTransform @*(.m_transform) {scale={x=0.6807672: y=0.6807672: z=0.6807672: }: r
 	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=5;
-	  col_range {min=7: max=11: };
+	  col_n=6;
+	  col_range {min=1: max=6: };
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -13564,7 +13564,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=6;
-	  view_range {min=0: max=5: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  col_n=5;
@@ -13792,7 +13792,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=$.projects["ax_tutorial_cptax"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=5: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -13800,7 +13800,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=$.projects["ax_tutorial_cptax"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.273206: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -13923,7 +13923,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17129,7 +17129,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    sequence_init=DO_NOTHING;
    phase_max=2;
    time_inc=1;
-   cycle_max=20;
+   cycle_max=50;
    mid_minus_cycle=-1;
    min_cycles=15;
    min_cycles_phase2=35;

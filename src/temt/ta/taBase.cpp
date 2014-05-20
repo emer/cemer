@@ -2139,7 +2139,7 @@ void taBase::CheckError_msg(const char* a, const char* b, const char* c,
                             const char* d, const char* e, const char* f,
                             const char* g, const char* h) const {
   String objinfo = "Config Error in: " + GetTypeDef()->name + " "
-    + GetDisplayName() + " (path: " + GetPathNames() + ")\n";
+    + GetDisplayName() + "\npath: " + GetPathNames() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
 }
 

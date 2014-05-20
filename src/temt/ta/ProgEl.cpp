@@ -242,7 +242,7 @@ void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
   Program* prg = GET_MY_OWNER(Program);
   if(prg) prognm = prg->name;
   String objinfo = "Config Error in Program " + prognm + ": " + GetTypeDef()->name
-    + " " + GetDisplayName() + " (path: " + GetPath(NULL, prg) + ")\n";
+    + " " + GetDisplayName() + "\npath: " + GetPathNames() + "\n";
   taMisc::CheckError(objinfo, a, b, c, d, e, f, g, h);
 }
 
