@@ -1060,7 +1060,6 @@ void TemtClient::ParseCommandNATIVE(const String& cmd_string) {
   if (pos_params.size > 0) {
     cmd = pos_params.FastEl(0);
     pos_params.RemoveIdx(0);
-    name_params.SetVal("command", cmd);
   }
   
   // pull guys w/ = as name=value, and they must all be after starting =
@@ -1212,8 +1211,14 @@ void TemtClient::RunCommand(const String& cmd) {
   }
   else
   {
-    String err_msg = "Unknown command: " + cmd;
-    SendErrorJSON(err_msg, TemtClient::UNKNOWN_COMMAND);
+    String err_msg = "Unknown command: " + cmd + "-- remember everything is case sensitive";
+    if (msgFormat == TemtClient::NATIVE) {
+      SendError(err_msg);
+      
+    }
+    else {
+      SendErrorJSON(err_msg, TemtClient::UNKNOWN_COMMAND);
+    }
   }
   
   //TODO: we can (should!) look up and dispatch via name!
