@@ -69,8 +69,8 @@ void LayerWriter::AutoConfig(bool remove_unused) {
   bool made_new;
   FOREACH_ELEM_IN_GROUP(Layer, lay, network->layers) {
     if(lay->layer_type == Layer::HIDDEN) continue;
-    int chan_idx = data->GetSourceChannelByName(lay->name, false);
-    if(TestWarning(chan_idx < 0, "AutoConfig",
+    int col_idx = data->FindColNameIdx(lay->name, false);
+    if(TestWarning(col_idx < 0, "AutoConfig",
                    "did not find data column for layer named:", lay->name, "of type:", TA_Layer.GetEnumString("LayerType", lay->layer_type))) {
       continue; // not found
     }
@@ -79,16 +79,16 @@ void LayerWriter::AutoConfig(bool remove_unused) {
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
-  int nm_idx = data->GetSourceChannelByName("Name", false);
+  int nm_idx = data->FindColNameIdx("Name", false);
   if(nm_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Name", made_new);
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeColName("Name", made_new);
     lrw->net_target = LayerDataEl::TRIAL_NAME;
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used
   }
-  int gp_idx = data->GetSourceChannelByName("Group", false);
+  int gp_idx = data->FindColNameIdx("Group", false);
   if(gp_idx >= 0) {
-    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeChanName("Group", made_new);
+    LayerWriterEl* lrw = (LayerWriterEl*)layer_data.FindMakeColName("Group", made_new);
     lrw->net_target = LayerDataEl::GROUP_NAME;
     lrw->SigEmitUpdated();
     lrw->SetBaseFlag(BF_MISC1); // mark as used

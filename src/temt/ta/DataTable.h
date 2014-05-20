@@ -20,7 +20,7 @@
 // #warning "datatable included"
 
 // parent includes:
-#include <DataBlock_Idx>
+#include <taFBase>
 
 // smartptr, ref includes
 #include <DataTableRef>
@@ -34,7 +34,7 @@
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
 class taFiler; // 
-class ChannelSpec; // 
+class DataColSpec; // 
 class FixedWidthSpec; // 
 class DataCol; // 
 class MatrixGeom; // 
@@ -73,9 +73,9 @@ class JSONNode; //
 
 taTypeDef_Of(DataTable);
 
-class TA_API DataTable : public DataBlock_Idx {
-  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER table of data containing columns of a fixed data type and geometry, with data added row-by-row
-  INHERITED(DataBlock_Idx)
+class TA_API DataTable : public taFBase {
+  // ##TOKENS ##CAT_Data ##FILETYPE_DataTable ##EXT_dtbl ##DEF_CHILD_data ##DEF_CHILDNAME_Columns ##DUMP_LOAD_POST ##UNDO_BARRIER ##CAT_Data table of data containing columns of a fixed data type and geometry, with data added row-by-row
+  INHERITED(taFBase)
   friend class DataTableCols;
   friend class iDataTableModel;
   friend class DataCol;
@@ -100,6 +100,11 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW The number of rows of data (that are visible - after filtering/removing)
   int                   rows_total;
   // #READ_ONLY #NO_SAVE #HIDDEN The number of rows of actual data (visible or hidden)
+  int                   read_idx;
+  // #READ_ONLY #NO_SAVE #SHOW current table-specific index for reading data -- use ReadItem or ReadNext to update: -3=ReadItem error, -2=EOF, -1=BOF, >=0 is valid item
+  int                   write_idx;
+  // #READ_ONLY #NO_SAVE #SHOW current table-specific index for writing data -- use WriteItem or WriteNext to update: -3=WriteItem error, -2=EOF, -1=BOF, >=0 is valid item
+
   DataTableCols         data;
   // all the columns and actual data
   DataFlags             data_flags;
@@ -115,7 +120,7 @@ public:
   cssProgSpace*         calc_script;
   // #IGNORE script object for performing column calculations
   taFiler*              log_file;
-  // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  a new line is written when WriteClose() (DataSink interface) is called.
+  // #NO_SAVE #HIDDEN file for logging data incrementally as it is written -- only for output.  A new line is written when WriteClose() is called.
 
   int                   base_diff_row;
   // #HIDDEN #NO_SAVE When comparing cell values this is the row to compare against
@@ -443,22 +448,23 @@ public:
   { DataCol* da = GetColData(col); if (da) return da->AR(); else return NULL; }
   // #CAT_Columns get matrix for given column -- WARNING: this is NOT row-number safe
 
-  virtual bool          ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs);
+  virtual DataCol*      FindMakeColFmSpec(DataColSpec* cs);
+  // #CAT_Columns either find or make a column that matches the spec -- sets the col_num of the spec to be that of the data col
+  virtual DataCol*      NewColFmSpec(DataColSpec* cs);
+  // #CAT_Columns create new column based on spec -- sets the col_num of spec to be index of column
+  virtual DataCol*      FindColFmSpec(DataColSpec* cs) const;
+  // #CAT_Columns find column that matches the given spec
+  static bool           ColMatchesSpec(const DataCol* da, const DataColSpec* cs);
   // #CAT_Columns returns 'true' if the col has the same name and a compatible data type
-  virtual DataCol*      NewColFromChannelSpec(ChannelSpec* cs)
-  // #MENU_1N #CAT_Columns create new matrix column of data based on name/type in the data item (default is Variant)
-  { if (cs) return NewColFromChannelSpec_impl(cs); else return NULL; }
 
-  virtual DataCol*      GetColForChannelSpec(ChannelSpec* cs)
-  // #MENU_1N #CAT_Columns find existing or create new matrix column of data based on name/type in the data item
-  {if (cs) return GetColForChannelSpec_impl(cs); else return NULL;}
-
-  void                  MoveCol(int old_index, int new_index);
+  virtual void          MoveCol(int old_index, int new_index);
   // #CAT_Columns move the column from position old to position new
   virtual void          RemoveCol(const Variant& col);
   // #CAT_Columns removes indicated column
-  void                  RemoveAllCols() { Reset(); }
+  inline void           RemoveAllCols() { Reset(); }
   // #CAT_Columns #MENU #MENU_ON_Columns #CONFIRM remove all columns (and data)
+  virtual void 	        DuplicateCol(const Variant& col);
+  // #CAT_Columns duplicates indicated column
   virtual void          Reset();
   // #CAT_Columns remove all columns (and data) -- this cannot be undone!
 
@@ -466,11 +472,56 @@ public:
   // #CAT_Columns mark all cols before updating, for orphan deleting
   virtual void          RemoveOrphanCols();
   // #CAT_Columns removes all non-pinned marked cols
-  virtual void 			DuplicateCol(const Variant& col);
-  // #CAT_Columns duplicates indicated column
 
   /////////////////////////////////////////////////////////
   // rows
+
+  virtual void ResetData();
+  // #CAT_Rows deletes all the data (rows), but keeps the column structure -- this cannot be undone!
+
+  inline int   ReadIndex() const { return read_idx; }
+  // #CAT_Rows index of current row to read from by GetData routines (which use read_idx for their row number)
+  inline bool  ReadAvailable() const 
+  { return ((read_idx >= 0) && (read_idx < rows)); }
+  // #CAT_Rows true when a valid item is available for reading by GetData routines (which use read_idx for their row number)
+
+  inline bool   ReadFirst() { read_idx = 0; return ReadAvailable(); }
+  // #CAT_Rows (re-)initializes sequential read iteration, reads first item so that it is now available for GetData routines (false if no items available)
+  inline bool   ReadNext()
+  { if (read_idx < -1) return false;  ++read_idx;
+    if (read_idx >= rows) { read_idx = -2; return false; }
+    return true; }
+  // #CAT_Rows read next item of data (sequential access) so that it is now available for GetData routines (which use read_idx for their row number) -- returns true if item available
+  inline bool   ReadItem(int idx)
+  { if(idx < 0) idx = rows-idx; if((idx < 0) || (idx >= rows)) return false;
+    read_idx = idx;  return true;}
+  // #CAT_Rows goes directly (random access) to row idx (- = count back from last row available, otherwise must be in range 0 <= idx < rows) so that it is now available for GetData routines (which use read_idx for their row number), returns true if row exists and was read
+
+  inline int    WriteIndex() const { return write_idx; }
+  // #CAT_Rows index of current row to write to SetData routines (which use write_idx for their row number)
+
+  inline bool   WriteAvailable() const 
+  { return ((write_idx >= 0) && (write_idx < rows)); }
+  // #CAT_Rows true when a valid item is available for writing by SetData routines (which use write_idx for their row number)
+
+  inline bool   WriteFirst() { write_idx = 0; return WriteAvailable(); }
+  // #CAT_Rows (re-)initializes sequential write iteration, makes first item of data available for writing with SetData routines (false if no items available)
+
+  inline bool   WriteNext()
+  { if (write_idx < -1) return false;  ++write_idx;
+    if (write_idx == rows) { AddRows(1); }
+    if (write_idx >= rows) { write_idx = -2; return false; }
+    return true; }
+  // #CAT_Rows goes to next item of data (sequential acccess) for writing by SetData routines, creating a new one if at end; true if item available
+
+  inline bool   WriteItem(int idx) 
+  { if (idx == rows) { AddRows(1); }
+    if(idx < 0) idx = rows-idx; if ((idx < 0) || (idx >= rows)) return false;
+    write_idx = idx;  return true; }
+  // #CAT_Rows goes directly (random access) to item idx (in range 0 <= idx < rows) for SetData writing routines (which use write_idx for their row number), if 1+end, adds a new item; true if item available
+
+  virtual void          WriteClose();
+  // #CAT_Rows closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc
 
   virtual void          ResetRowIndexes();
   // #CAT_Rows reset the row indexes to be 0..rows-1 to reflect the full extent of the natural underlying data in the table
@@ -520,8 +571,44 @@ public:
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);
   // #CAT_Config sets user data into the column  (col can be an index or a name) -- use this e.g., to configure various parameters that are used by the grid and graph views, such as IMAGE, MIN, MAX, TOP_ZERO
 
+
   /////////////////////////////////////////////////////////
   // Main data value access/modify (Get/Set) routines: for Programs and very general use
+
+  /////////////////////////
+  // Data versions: use read_index and write_index
+
+  inline const Variant GetData(const Variant& col)
+  { if(!ReadAvailable()) return _nilVariant;
+    return GetVal(col, read_idx); }
+  // #CAT_Access get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
+
+  inline bool SetData(const Variant& data, const Variant& col)
+  { if(!WriteAvailable()) return false;
+    return SetVal(data, col, write_idx); }
+  // #CAT_Modify set data from given column number or name at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index
+
+  inline taMatrix* GetMatrixData(const Variant& col)
+  { if(!ReadAvailable()) return NULL;
+    return GetValAsMatrix(col, read_idx); }
+  // #CAT_Access get data from Matrix column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
+  inline const Variant GetMatrixCellData(const Variant& col, int cell)
+  { if(!ReadAvailable()) return _nilVariant;
+    return GetMatrixFlatVal(col, read_idx, cell); }
+  // #CAT_Access get data from Matrix cell (flat index into matrix values) at column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
+
+  inline bool SetMatrixData(const taMatrix* data, const Variant& col)
+  { if(!WriteAvailable()) return false;
+    return SetValAsMatrix(data, col, write_idx); }
+  // #CAT_Modify set the data for given Matrix column at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
+  inline bool SetMatrixCellData(const Variant& data, const Variant& col, int cell)
+  { if(!WriteAvailable()) return false;
+    return SetMatrixFlatVal(data, col, write_idx, cell); }
+  // #CAT_Modify set the data for given Matrix channel cell (flat index into matrix values) at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index -- returns true if successful
+
+
+  /////////////////////////
+  // Col and row versions
 
   const Variant         GetVal(const Variant& col, int row) const;
   // #CAT_Access get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name
@@ -999,59 +1086,6 @@ protected:
   // returns true if valid new col spec; posts modal err dialog if in gui call; geom NULL if scalar col
   int                   LoadDataFixed_impl(std::istream& strm, FixedWidthSpec* fws);
 
-public:
-  /////////////////////////////////////////////////////////
-  // DataBlock interface and common routines: see ta_data.h for details
-
-  DBOptions    dbOptions() const override
-  { return (DBOptions)(DB_IND_SEQ_SRC_SNK | DB_SINK_DYNAMIC); }
-  int          ItemCount() const override { return rows; }
-
-protected:
-  /////////////////////////////////////////////////////////
-  // DataBlock implementation
-  inline int            ChannelCount() const {return data.size; }
-  inline const String   ChannelName(int chan) const
-  { DataCol* da = data.SafeEl(chan);
-    if (da) return da->name; else return _nilString; }
-
-public:
-  /////////////////////////////////////////////////////////
-  // DataSource interface
-
-  int          SourceChannelCount() const override { return ChannelCount(); }
-  const String SourceChannelName(int chan) const override { return ChannelName(chan); }
-  void         ResetData() override;
-  // #CAT_Rows deletes all the data (rows), but keeps the column structure -- this cannot be undone!
-
-protected:
-  /////////////////////////////////////////////////////////
-  // DataSource implementation
-  const Variant GetData_impl(int chan) override 
-  { return GetValAsVar(chan, rd_itr);}
-  taMatrix*    GetMatrixData_impl(int chan) override;
-
-public:
-  /////////////////////////////////////////////////////////
-  // DataSink interface
-  int          SinkChannelCount() const override {return ChannelCount();}
-  const String SinkChannelName(int chan) const override {return ChannelName(chan);}
-  bool         AddSinkChannel(ChannelSpec* cs) override;
-  bool         AssertSinkChannel(ChannelSpec* cs) override;
-
-protected:
-  /////////////////////////////////////////////////////////
-  // DataSink implementation
-  bool         AddItem_impl(int n) override {return AddRows(n);}
-  void         DeleteSinkChannel_impl(int chan) override {RemoveCol(chan);}
-  taMatrix*    GetSinkMatrix_impl(int chan) override
-  { return GetValAsMatrix(chan, wr_itr);} //note: DS refs it
-  bool         SetData_impl(const Variant& data, int chan) override
-  { return SetValAsVar(data, chan, wr_itr);}
-  bool         SetMatrixData_impl(const taMatrix* data, int chan) override
-  { return SetValAsMatrix(data, chan, wr_itr);}
-  void         WriteClose_impl() override;
-
 protected:
   DataCol*      change_col;
   int           change_col_type; // used for delayed callback function
@@ -1061,13 +1095,41 @@ protected:
   // low-level create routine, shared by scalar and matrix creation, must be wrapped in StructUpdate
   DataCol*      NewColToken_impl(DataCol::ValType val_type, const String& col_nm);
   // just creates a new column token, but does not add it to data
-  DataCol*      GetColForChannelSpec_impl(ChannelSpec* cs);
-  DataCol*      NewColFromChannelSpec_impl(ChannelSpec* cs);
+  DataCol*      GetColForDataColSpec_impl(DataColSpec* cs);
+  DataCol*      NewColFromDataColSpec_impl(DataColSpec* cs);
 
 private:
   void  Copy_(const DataTable& cp);
   void  Initialize();
   void  Destroy();
+};
+
+// todo: at some point these can be removed (obsolete starting with 7.0.0, 5/2014)
+
+taTypeDef_Of(DataBlock);
+
+class DataBlock : public DataTable {
+  // #OBSOLETE obsolete -- do not use -- this was previously a base class of DataTable
+  INHERITED(DataTable)
+public:
+
+  TA_BASEFUNS_NOCOPY(DataBlock);
+private:
+  void Initialize() { };
+  void Destroy() { };
+};
+
+taTypeDef_Of(DataBlock_Idx);
+
+class DataBlock_Idx : public DataBlock {
+  // #OBSOLETE obsolete -- do not use -- this was previously a base class of DataTable
+  INHERITED(DataBlock)
+public:
+
+  TA_BASEFUNS_NOCOPY(DataBlock_Idx);
+private:
+  void Initialize() { };
+  void Destroy() { };
 };
 
 #endif // DataTable_h

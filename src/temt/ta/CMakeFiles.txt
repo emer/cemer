@@ -370,11 +370,8 @@ set(ta_HEADS_MAKETA_NOMOC
 
   cssMath.h
 
-  DataBlock.h
-  ChannelSpec.h
-  MatrixChannelSpec.h
-  ChannelSpec_List.h
-  DataBlock_Idx.h
+  DataColSpec.h
+  DataColSpec_List.h
   ColCalcExpr.h
   DataCol.h
   DataColT.h
@@ -391,9 +388,7 @@ set(ta_HEADS_MAKETA_NOMOC
   float_Data.h
   int_Data.h
   byte_Data.h
-  DirectoryCatalog.h
-  ImageReader.h
-
+    
   DataTableEditorOptions.h
   DataOpEl.h
   DataOpList.h
@@ -1480,11 +1475,8 @@ set(ta_SRCS_MAKETA
 
   cssMath.cpp
 
-  DataBlock.cpp
-  ChannelSpec.cpp
-  MatrixChannelSpec.cpp
-  ChannelSpec_List.cpp
-  DataBlock_Idx.cpp
+  DataColSpec.cpp
+  DataColSpec_List.cpp
   ColCalcExpr.cpp
   DataCol.cpp
   DataColT.cpp
@@ -1501,9 +1493,7 @@ set(ta_SRCS_MAKETA
   float_Data.cpp
   int_Data.cpp
   byte_Data.cpp
-  DirectoryCatalog.cpp
-  ImageReader.cpp
-
+    
   DataTableEditorOptions.cpp
   DataOpEl.cpp
   DataOpList.cpp

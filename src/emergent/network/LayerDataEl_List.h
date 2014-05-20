@@ -35,10 +35,10 @@ public:
   virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
-  virtual LayerDataEl* FindChanName(const String& chn_name);
-  // #CAT_LayerData find (first) layer data that applies to given data channel name
-  virtual LayerDataEl* FindMakeChanName(const String& chn_name, bool& made_new);
-  // #CAT_LayerData find (first) layer data that applies to given data channel name -- make it if it doesn't exist
+  virtual LayerDataEl* FindColName(const String& chn_name);
+  // #CAT_LayerData find (first) layer data that applies to given data column name
+  virtual LayerDataEl* FindMakeColName(const String& chn_name, bool& made_new);
+  // #CAT_LayerData find (first) layer data that applies to given data column name -- make it if it doesn't exist
 
   virtual LayerDataEl* FindLayerName(const String& lay_name);
   // #CAT_LayerData find (first) layer data that applies to given layer name
@@ -46,10 +46,10 @@ public:
   // #CAT_LayerData find (first) layer data that applies to given layer name -- make it if it doesn't exist 
 
   virtual LayerDataEl* FindLayerData(const String& chn_name, const String& lay_name);
-  // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name
+  // #CAT_LayerData find (first) layer data that applies to given data column name and layer name
   virtual LayerDataEl* FindMakeLayerData(const String& chn_name, const String& lay_name,
 					 bool& made_new);
-  // #CAT_LayerData find (first) layer data that applies to given data channel name and layer name -- make it if it doesn't exist
+  // #CAT_LayerData find (first) layer data that applies to given data column name and layer name -- make it if it doesn't exist
 
   TA_BASEFUNS_NOCOPY(LayerDataEl_List);
 private:

@@ -63,14 +63,14 @@ public:
   };
 
   DataTableRef		data;
-  // #READ_ONLY #HIDDEN #NO_SAVE source or sink of the data to apply to layer, or store layer output (as appropriate) -- managed by owner
+  // #READ_ONLY #HIDDEN #NO_SAVE the datatable to write to
   DataTableCols*	data_cols;
   // #READ_ONLY #HIDDEN #NO_SAVE data table columns -- gets set dynamically if data is a datatable, just for choosing column..
 
   DataCol*		col_lookup;
-  // #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER column/channel in data table use -- just to lookup the chan_name, which is what is actually used -- this is reset to NULL after column is selected
-  String		chan_name;
-  // name of the channel/column in the data to use 
+  // #NO_SAVE #FROM_GROUP_data_cols #NO_EDIT #NO_UPDATE_POINTER column in data table use -- just to lookup the col_name, which is what is actually used -- this is reset to NULL after column is selected
+  String		col_name;
+  // #AKA_chan_name of the column in the data to use 
 
   NetTarget		net_target;
   // what to read/write from on the network
@@ -90,10 +90,10 @@ public:
   virtual void 	SetDataNetwork(DataTable* db, Network* net);
   // #CAT_LayerData set the data table and network pointers enable looking up columns/layer names
 
-  virtual int	GetChanIdx(DataTable* db) { return -1; }
-  // #CAT_LayerData get channel index from data block: depends on source or sink (override in subclass)
+  virtual int	GetColIdx(DataTable* db);
+  // #CAT_LayerData get column index from datatable
 
-  String	GetName() const			{ return chan_name; }
+  String	GetName() const			{ return col_name; }
   String	GetDisplayName() const override;
 
   TA_SIMPLE_BASEFUNS(LayerDataEl);

@@ -24,20 +24,20 @@ void LayerDataEl_List::SetDataNetwork(DataTable* db, Network* net) {
   }
 }
 
-LayerDataEl* LayerDataEl_List::FindChanName(const String& cnm) {
+LayerDataEl* LayerDataEl_List::FindColName(const String& cnm) {
   for(int i = 0; i < size; ++i) {
     LayerDataEl* it = FastEl(i);
-    if(it->chan_name == cnm) return it;
+    if(it->col_name == cnm) return it;
   }
   return NULL;
 }
 
-LayerDataEl* LayerDataEl_List::FindMakeChanName(const String& cnm, bool& made_new) {
+LayerDataEl* LayerDataEl_List::FindMakeColName(const String& cnm, bool& made_new) {
   made_new = false;
-  LayerDataEl* ld = FindChanName(cnm);
+  LayerDataEl* ld = FindColName(cnm);
   if(ld) return ld;
   ld = (LayerDataEl*)New(1);
-  ld->chan_name = cnm;
+  ld->col_name = cnm;
   made_new = true;
   return ld;
 }
@@ -63,7 +63,7 @@ LayerDataEl* LayerDataEl_List::FindMakeLayerName(const String& lnm, bool& made_n
 LayerDataEl* LayerDataEl_List::FindLayerData(const String& cnm, const String& lnm) {
   for(int i = 0; i < size; ++i) {
     LayerDataEl* it = FastEl(i);
-    if((it->layer_name == lnm) && (it->chan_name == cnm)) return it;
+    if((it->layer_name == lnm) && (it->col_name == cnm)) return it;
   }
   return NULL;
 }
@@ -74,7 +74,7 @@ LayerDataEl* LayerDataEl_List::FindMakeLayerData(const String& cnm, const String
   LayerDataEl* ld = FindLayerData(cnm, lnm);
   if(ld) return ld;
   ld = (LayerDataEl*)New(1);
-  ld->chan_name = cnm;
+  ld->col_name = cnm;
   ld->layer_name = lnm;
   made_new = true;
   return ld;

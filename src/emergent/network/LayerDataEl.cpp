@@ -34,7 +34,7 @@ void LayerDataEl::Destroy() {
 void LayerDataEl::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(col_lookup) {
-    chan_name = col_lookup->name;
+    col_name = col_lookup->name;
     taBase::SetPointer((taBase**)&col_lookup, NULL); // reset as soon as used -- just a temp guy!
   }
   if(!data) {
@@ -56,16 +56,16 @@ void LayerDataEl::UpdateAfterEdit_impl() {
   if(!network) {
     taBase::SetPointer((taBase**)&layer_group, NULL);
   }
-  if(!chan_name.empty() && layer_name.empty()) {
-    layer_name = chan_name;
+  if(!col_name.empty() && layer_name.empty()) {
+    layer_name = col_name;
   }
-  if(chan_name.empty() && !layer_name.empty()) {
-    chan_name = layer_name;
+  if(col_name.empty() && !layer_name.empty()) {
+    col_name = layer_name;
   }
 }
 
 String LayerDataEl::GetDisplayName() const {
-  String rval = "data chan: " + chan_name;
+  String rval = "data chan: " + col_name;
   rval += " net: " + GetTypeDef()->GetEnumString("NetTarget", net_target);
   if(net_target == LAYER) {
     rval += " " + layer_name;
@@ -77,10 +77,10 @@ void LayerDataEl::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   // these data/network things are set by parent prior to this being called (hopefully)
   if(!data || ! network) return;
-  CheckError(chan_name.empty(), quiet, rval,
-             "chan_name is empty");
-  CheckError(GetChanIdx(data) < 0, quiet, rval,
-             "channel/column named",chan_name, "not found in data:", data->name);
+  CheckError(col_name.empty(), quiet, rval,
+             "col_name is empty");
+  CheckError(GetColIdx(data) < 0, quiet, rval,
+             "column named",col_name, "not found in data:", data->name);
   if(net_target == LAYER) {
     Layer* lay = (Layer*)network->layers.FindLeafName(layer_name);
     if(CheckError(!lay, quiet, rval,
@@ -103,3 +103,8 @@ void LayerDataEl::SetDataNetwork(DataTable* db, Network* net) {
   else
     taBase::SetPointer((taBase**)&layer_group, NULL);
 }
+
+int LayerDataEl::GetColIdx(DataTable* db) {
+  return db->FindColNameIdx(col_name, true);
+}
+

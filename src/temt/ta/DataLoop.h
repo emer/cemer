@@ -24,7 +24,7 @@
 #include <int_Array>
 
 // declare all other types mentioned but not required to include:
-class DataBlock; // 
+class DataTable; // 
 
 
 taTypeDef_Of(DataLoop);
@@ -45,7 +45,7 @@ public:
   Order       order;		// #READ_ONLY #SHOW order to process data items (rows) in -- set from order_var
   int_Array   item_idx_list;	// #READ_ONLY #NO_SAVE list of item indicies (permuted if permuted, otherwise in sequential order)
 
-  virtual DataBlock* GetData();
+  virtual DataTable* GetData();
   // get actual data table pointer from variable
   virtual void	GetOrderVal();
   // get order value from order_var variable

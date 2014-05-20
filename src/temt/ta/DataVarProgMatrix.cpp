@@ -41,10 +41,10 @@ bool DataVarProgMatrix::GenCss_OneVar(Program* prog, ProgVar* var, const String&
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
-      prog->AddLine(this, idnm + ".SetMatrixCellDataByName(" + string_cvt + var->name
+      prog->AddLine(this, idnm + ".SetMatrixCellData(" + string_cvt + var->name
                     + ", \"" + col_nm +"\", " + String(var_no) + ");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixCellDataByName(\"" + col_nm
+      prog->AddLine(this, var->name + " = " + idnm + ".GetMatrixCellData(\"" + col_nm
                     + "\", " + String(var_no) + ");");
   }
   else if(row_spec == ROW_NUM) {

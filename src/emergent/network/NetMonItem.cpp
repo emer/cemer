@@ -16,13 +16,13 @@
 #include "NetMonItem.h"
 #include <Network>
 #include <MemberDef>
-#include <MatrixChannelSpec>
 #include <UserDataItemBase>
 #include <taMath_float>
 #include <taMath_double>
 #include <DataSelectSpec>
 #include <taDataProc>
 #include <DataTable>
+#include <NetMonitor>
 
 #include <taMisc>
 
@@ -265,7 +265,7 @@ String NetMonItem::GetObjName(taBase* obj) {
   return nm;
 }
 
-String NetMonItem::GetChanName(taBase* obj, int col_idx) {
+String NetMonItem::GetColName(taBase* obj, int col_idx) {
   String rval;
   if(name_style == MY_NAME) {
     if(col_idx == 0)
@@ -273,7 +273,7 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
     else
       rval = name + "_" + String(col_idx);
     rval = taMisc::StringCVar(rval); // keep it clean for css var names
-    TestWarning(val_specs.FindNameIdx(rval) >= 0, "NetMonItem::GetChanName",
+    TestWarning(val_specs.FindNameIdx(rval) >= 0, "NetMonItem::GetColName",
                    "Monitor item with custom name:", name,
                 "conflicts with another monitor item of the same name -- please rename one of them!");
   }
@@ -288,7 +288,7 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
           break;                // safe!
         }
       }
-      TestWarning(max_name_len >= 50, "NetMonItem::GetChanName",
+      TestWarning(max_name_len >= 50, "NetMonItem::GetColName",
                   "Monitor item:",name,"with auto-name of:",rval,
                   "is conflicting with another item of the same name, despite an attempt to increase the max_name_len up to 50 -- either manually incease further or fix underlying naming conflict");
     }
@@ -296,46 +296,40 @@ String NetMonItem::GetChanName(taBase* obj, int col_idx) {
   return rval;
 }
 
-MatrixChannelSpec* NetMonItem::AddMatrixChan(const String& valname, ValType vt,
-                                             const MatrixGeom* geom)
+DataColSpec* NetMonItem::AddMatrixCol(const String& valname, ValType vt,
+                                      const MatrixGeom* geom)
 {
   cell_num = 0;
-  MatrixChannelSpec* cs;
+  DataColSpec* cs;
   if(!computed && (agg.op != Aggregate::NONE)) {
-    AddScalarChan(valname, vt);
-    cs = (MatrixChannelSpec*)agg_specs.New(1, &TA_MatrixChannelSpec); // add to agg_specs!
+    AddScalarCol(valname, vt);
+    cs = (DataColSpec*)agg_specs.New(1, &TA_DataColSpec); // add to agg_specs!
   }
   else {
     // usual..
-    cs = (MatrixChannelSpec*)val_specs.New(1, &TA_MatrixChannelSpec);
+    cs = (DataColSpec*)val_specs.New(1, &TA_DataColSpec);
   }
   cs->SetName(valname);
   cs->val_type = vt;
-  cs->uses_cell_names = false;  // not!
   if (geom) {
-    cs->cell_geom = *geom;
-  } else {
-    cs->cell_names.SetGeom(1, 0); //dynamic -- note: not used!
+    cs->SetCellGeomN(*geom);
   }
-  cs->UpdateAfterEdit();
   return cs;
 }
 
-ChannelSpec* NetMonItem::AddScalarChan(const String& valname, ValType vt) {
+DataColSpec* NetMonItem::AddScalarCol(const String& valname, ValType vt) {
   cell_num = 0;//maybe should be 1!
-  ChannelSpec* cs = (ChannelSpec*)val_specs.New(1, &TA_ChannelSpec);
+  DataColSpec* cs = (DataColSpec*)val_specs.New(1, &TA_DataColSpec);
   cs->SetName(valname);
   cs->val_type = vt;
-  cs->UpdateAfterEdit();
   return cs;
 }
 
-ChannelSpec* NetMonItem::AddScalarChan_Agg(const String& valname, ValType vt) {
+DataColSpec* NetMonItem::AddScalarCol_Agg(const String& valname, ValType vt) {
   cell_num = 0;//maybe should be 1!
-  ChannelSpec* cs = (ChannelSpec*)agg_specs.New(1, &TA_ChannelSpec);
+  DataColSpec* cs = (DataColSpec*)agg_specs.New(1, &TA_DataColSpec);
   cs->SetName(valname);
   cs->val_type = vt;
-  cs->UpdateAfterEdit();
   return cs;
 }
 
@@ -362,9 +356,9 @@ void NetMonItem::ScanObject() {
   ResetMonVals();
   if(computed) {
     if(matrix)
-      AddMatrixChan(name, val_type, &matrix_geom);
+      AddMatrixCol(name, val_type, &matrix_geom);
     else
-      AddScalarChan(name, val_type);
+      AddScalarCol(name, val_type);
     return;
   }
 
@@ -417,23 +411,23 @@ bool NetMonItem::ScanObject_InUserData(taBase* obj, String var,
       "unexpected: member 'value' supposed to exist"))
       return true; //no mon, but we did handle it
     if (name_obj) {
-      String valname = GetChanName(name_obj, val_specs.size);
+      String valname = GetColName(name_obj, val_specs.size);
       if(udi->valueAsVariant().type() == Variant::T_Int) {
-	AddScalarChan(valname, VT_INT);
+	AddScalarCol(valname, VT_INT);
 	if(agg.op != Aggregate::NONE) {
-	  AddScalarChan_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
+	  AddScalarCol_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
 	}
       }
       else if(udi->valueAsVariant().isNumeric()) { // use float for all other numeric
-	AddScalarChan(valname, VT_FLOAT);
+	AddScalarCol(valname, VT_FLOAT);
 	if(agg.op != Aggregate::NONE) {
-	  AddScalarChan_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
+	  AddScalarCol_Agg(valname, VT_FLOAT); // add the agg guy just to keep it consistent
 	}
       }
       else {
-	AddScalarChan(valname, VT_VARIANT);
+	AddScalarCol(valname, VT_VARIANT);
 	if(agg.op != Aggregate::NONE) {
-	  AddScalarChan_Agg(valname, VT_VARIANT); // add the agg guy just to keep it consistent
+	  AddScalarCol_Agg(valname, VT_VARIANT); // add the agg guy just to keep it consistent
 	}
       }
     }
@@ -498,11 +492,11 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     md = obj->FindMember(var);
     if (md) {
       if(name_obj) {
-        String valname = GetChanName(name_obj, val_specs.size);
+        String valname = GetColName(name_obj, val_specs.size);
         ValType vt = ValTypeForType(md->type);
-        AddScalarChan(valname, vt);
+        AddScalarCol(valname, vt);
         if(agg.op != Aggregate::NONE) {
-          AddScalarChan_Agg(valname, vt); // add the agg guy just to keep it consistent
+          AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
         }
       }
       // if not adding a column, it is part of a pre-allocated matrix; just add vars
@@ -557,8 +551,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     else
       geom.SetGeom(2, lay->un_geom.x, lay->un_geom.y);
   }
-  String valname = GetChanName(lay, val_specs.size);
-  AddMatrixChan(valname, VT_FLOAT, &geom);
+  String valname = GetColName(lay, val_specs.size);
+  AddMatrixCol(valname, VT_FLOAT, &geom);
   if (geom.dims() == 1) {
     for (int i = 0; i < lay->units.leaves; ++i) {
       ScanObject_InObject(lay->units.Leaf(i), var, NULL); // don't make a col
@@ -601,7 +595,7 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
   }
   if(rmdr.startsWith('.')) rmdr = rmdr.after('.');
 
-  String valname = GetChanName(lay, val_specs.size);
+  String valname = GetColName(lay, val_specs.size);
   MatrixGeom geom;
 
   if(range2.nonempty()) { // group case
@@ -613,7 +607,7 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
         int unidx1 = (int)range2.before('-');
         int unidx2 = (int)range2.after('-');
         geom.SetGeom(2, 1+unidx2-unidx1, 1+gpidx2-gpidx1);
-        AddMatrixChan(valname, VT_FLOAT, &geom);
+        AddMatrixCol(valname, VT_FLOAT, &geom);
         for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
           Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
           if(!gp) break;
@@ -625,7 +619,7 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
       else {
         int idx = (int)range2;
         geom.SetGeom(1, 1+gpidx2-gpidx1);
-        AddMatrixChan(valname, VT_FLOAT, &geom);
+        AddMatrixCol(valname, VT_FLOAT, &geom);
         for (int gi = gpidx1; gi <= lay->units.gp.size && gi <= gpidx2; ++gi) {
           Unit_Group* gp = (Unit_Group*)lay->units.gp.SafeEl(gi);
           if(!gp) break;
@@ -641,14 +635,14 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
         int unidx1 = (int)range2.before('-');
         int unidx2 = (int)range2.after('-');
         geom.SetGeom(1, 1+unidx2-unidx1);
-        AddMatrixChan(valname, VT_FLOAT, &geom);
+        AddMatrixCol(valname, VT_FLOAT, &geom);
         for (int i = unidx1; i < gp->size && i <= unidx2; ++i) {
           ScanObject_InObject(gp->SafeEl(i), rmdr, NULL); // don't make a col
         }
       }
       else {
         int idx = (int)range2;
-        AddScalarChan(valname, VT_FLOAT);
+        AddScalarCol(valname, VT_FLOAT);
         ScanObject_InObject(gp->SafeEl(idx), rmdr, NULL); // don't make a col
       }
     }
@@ -658,15 +652,15 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
       int idx1 = (int)range1.before('-');
       int idx2 = (int)range1.after('-');
       geom.SetGeom(1, 1+idx2-idx1);
-      AddMatrixChan(valname, VT_FLOAT, &geom);
+      AddMatrixCol(valname, VT_FLOAT, &geom);
       for (int i = idx1; i < lay->units.leaves && i <= idx2; ++i) {
         ScanObject_InObject(lay->units.Leaf(i), rmdr, NULL); // don't make a col
       }
     }
     else {
       int idx = (int)range1;
-      String valname = GetChanName(lay, val_specs.size);
-      AddScalarChan(valname, VT_FLOAT);
+      String valname = GetColName(lay, val_specs.size);
+      AddScalarCol(valname, VT_FLOAT);
       ScanObject_InObject(lay->units.Leaf(idx), rmdr, NULL); // don't make a col
     }
   }
@@ -755,8 +749,8 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(4, con_geom.x, con_geom.y, lay_geom.x, lay_geom.y);
-  String valname = GetChanName(prjn, val_specs.size);
-  AddMatrixChan(valname, VT_FLOAT, &geom);
+  String valname = GetColName(prjn, val_specs.size);
+  AddMatrixCol(valname, VT_FLOAT, &geom);
 
   // now get all the vals
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
@@ -842,8 +836,8 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
   else
     geom.SetGeom(2, ug->own_lay->un_geom.x, ug->own_lay->un_geom.y);
 
-  String valname = GetChanName(ug, val_specs.size);
-  AddMatrixChan(valname, VT_FLOAT, &geom);
+  String valname = GetColName(ug, val_specs.size);
+  AddMatrixCol(valname, VT_FLOAT, &geom);
   if(geom.dims() == 1) {
     for(int i = 0; i < ug->size; i++) {
       ScanObject_InObject(ug->FastEl(i), var, NULL); // don't make a col
@@ -902,8 +896,8 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  String valname = GetChanName(cg, val_specs.size);
-  AddMatrixChan(valname, VT_FLOAT, &geom);
+  String valname = GetColName(cg, val_specs.size);
+  AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
@@ -942,8 +936,8 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  String valname = GetChanName(cg, val_specs.size);
-  AddMatrixChan(valname, VT_FLOAT, &geom);
+  String valname = GetColName(cg, val_specs.size);
+  AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
     ptrs.Add(NULL); members.Link(con_md);
@@ -964,11 +958,11 @@ void NetMonItem::ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj) 
   if(!con_md) return;           // can't find that var!
 
   if(name_obj) {
-    String valname = GetChanName(name_obj, val_specs.size);
+    String valname = GetColName(name_obj, val_specs.size);
     ValType vt = ValTypeForType(con_md->type);
-    AddScalarChan(valname, vt);
+    AddScalarCol(valname, vt);
     if(agg.op != Aggregate::NONE) {
-      AddScalarChan_Agg(valname, vt); // add the agg guy just to keep it consistent
+      AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
     }
   }
   ptrs.Add(&(cg->OwnCn(0, con_md->idx)));
@@ -998,6 +992,16 @@ void NetMonItem::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
  // ScanObject();
 }
 
+void NetMonItem::CollectAllSpecs(NetMonitor* mon) {
+  if(off) return;
+  int st_idx = mon->all_specs.size;
+  for(int i=0; i<val_specs.size; i++) {
+    DataColSpec* ds = val_specs.FastEl(i);
+    mon->all_specs.Link(ds);
+    ds->col_num = st_idx + i;
+  }
+}
+
 bool NetMonItem::GetMonVal(int i, Variant& rval) {
   void* obj = NULL;
   MemberDef* md = NULL;
@@ -1019,19 +1023,6 @@ bool NetMonItem::GetMonVal(int i, Variant& rval) {
   return true;
 }
 
-void NetMonItem::UpdateDataCols(DataTable* db) {
-  if ((!db) || variable.empty() || off)  return;
-  val_specs.UpdateDataBlockSchema(db);
-  for (int ch = 0; ch < val_specs.size; ++ch) {
-    ChannelSpec* cs = val_specs.FastEl(ch);
-    DataCol* dc = db->data.SafeEl(cs->chan_num);
-    if (dc) {
-      // taMisc::DebugInfo("marked col:", dc->name);
-      dc->SetColFlag(DataCol::PIN);
-    }
-  }
-}
-
 void NetMonItem::GetMonVals(DataTable* db) {
   if ((!db) || variable.empty())  return;
   if(computed) {
@@ -1051,21 +1042,20 @@ void NetMonItem::GetMonVals(DataTable* db) {
   // but in case of mismatch, the GetMonVal will return Invalid,
   Variant mbval;
   for (int ch = 0; ch < val_specs.size; ++ch) {
-    ChannelSpec* cs = val_specs.FastEl(ch);
-    if (cs->isMatrix()) {
-      int vals = cs->cellGeom().Product();
-      taMatrix* mat = db->GetSinkMatrix(cs->chan_num); // pre-ref'ed
+    DataColSpec* cs = val_specs.FastEl(ch);
+    if (cs->is_matrix) {
+      int vals = cs->cell_geom.Product();
+      taMatrixPtr mat(db->GetMatrixData(cs->col_num));
       if (mat) {
         for (int j = 0; j < vals; ++j) {
           GetMonVal(mon++, mbval); // note: we don't care if not set, ie invalid
           mat->SetFmVar_Flat(mbval, j);
         }
-        taBase::UnRef(mat);
       }
     }
     else { // scalar
       GetMonVal(mon++, mbval);
-      db->SetData(mbval, cs->chan_num);
+      db->SetData(mbval, cs->col_num);
     }
   }
 }
@@ -1082,20 +1072,20 @@ void NetMonItem::GetMonVals_Agg(DataTable* db) {
   // but in case of mismatch, the GetMonVal will return Invalid,
   Variant mbval;
   for (int ch = 0; ch < val_specs.size; ++ch) {
-    ChannelSpec* vcs = val_specs.FastEl(ch);
-    ChannelSpec* acs = agg_specs.FastEl(ch);
-    if (acs->isMatrix()) {
-      int vals = acs->cellGeom().Product();
+    DataColSpec* vcs = val_specs.FastEl(ch);
+    DataColSpec* acs = agg_specs.FastEl(ch);
+    if (acs->is_matrix) {
+      int vals = acs->cell_geom.Product();
       agg_tmp_calc.SetGeom(1,vals);
       for (int j = 0; j < vals; ++j) {
         GetMonVal(mon++, mbval); // note: we don't care if not set, ie invalid
         agg_tmp_calc.SetFmVar_Flat(mbval, j);
       }
       mbval = taMath_float::vec_aggregate(&agg_tmp_calc, agg);
-      db->SetData(mbval, vcs->chan_num);
+      db->SetData(mbval, vcs->col_num);
     } else { // scalar
       GetMonVal(mon++, mbval);
-      db->SetData(mbval, vcs->chan_num);
+      db->SetData(mbval, vcs->col_num);
     }
   }
 }
@@ -1119,7 +1109,7 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
       use_sel_out = false;
   }
 
-  ChannelSpec* vcs = val_specs.FastEl(0);
+  DataColSpec* vcs = val_specs.FastEl(0);
   DataCol* dc;
   if(use_sel_out)
     dc = sel_out.FindColName(agg_col.col_name);
@@ -1129,7 +1119,7 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
   if(!dc->isNumeric() || (dc->valType() == taBase::VT_BYTE)) return;
 
   Variant mbval;
-  if(!matrix || !vcs->isMatrix() || !dc->isMatrix()) { // no matrix
+  if(!matrix || !vcs->is_matrix || !dc->is_matrix) { // no matrix
     if(dc->valType() == taBase::VT_DOUBLE) {
       mbval = taMath_double::vec_aggregate((double_Matrix*)dc->AR(), agg);
     }
@@ -1141,12 +1131,12 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
       taMath_float::vec_fm_ints(&agg_tmp_calc, mat);
       mbval = taMath_float::vec_aggregate(&agg_tmp_calc, agg);
     }
-    db->SetData(mbval, vcs->chan_num);
+    db->SetData(mbval, vcs->col_num);
   }
   else {                        // both src and dest are matrix
-    int vals = vcs->cellGeom().Product();
+    int vals = vcs->cell_geom.Product();
     vals = MIN(vals, dc->cell_size());
-    taMatrix* dmat = db->GetSinkMatrix(vcs->chan_num); // pre-ref'ed
+    taMatrixPtr dmat(db->GetMatrixData(vcs->col_num));
     if(!dmat) return;                                  // bail
     if(dc->valType() == taBase::VT_DOUBLE) {
       taMath_double::mat_frame_aggregate(&agg_tmp_calc_d, (double_Matrix*)dc->AR(), agg);

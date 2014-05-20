@@ -17,7 +17,7 @@
 #include <iDataTableModel>
 #include <Program>
 #include <taFiler>
-#include <ChannelSpec>
+#include <DataColSpec>
 #include <CellRange>
 #include <MatrixIndex>
 #include <FixedWidthSpec>
@@ -67,12 +67,17 @@ taTypeDef_Of(Variant_Data);
 #include "../json/JSONDefs.h"
 
 TA_BASEFUNS_CTORS_DEFN(DataTable);
+// todo: following are obsolete
+TA_BASEFUNS_CTORS_DEFN(DataBlock);
+TA_BASEFUNS_CTORS_DEFN(DataBlock_Idx);
 
 using namespace std;
 
 void DataTable::Initialize() {
   rows = 0;
   rows_total = 0;
+  read_idx = -2;
+  write_idx = -2;
   data_flags = (DataFlags)(SAVE_ROWS | AUTO_CALC);
   auto_load = NO_AUTO_LOAD;
   keygen.setType(Variant::T_Int64);
@@ -234,12 +239,6 @@ bool DataTable::AddRows(int n) {
   return true;
 }
 
-bool DataTable::AddSinkChannel(ChannelSpec* cs) {
-  if (TestError(!cs, "AddSinkChannel", "channel spec is null")) return false;
-  DataCol* da = NewColFromChannelSpec_impl(cs);
-  return (da);
-}
-
 void DataTable::AllocRows(int n) {
   for(int i=0;i<data.size;i++) {
     DataCol* ar = data.FastEl(i);
@@ -250,10 +249,16 @@ void DataTable::AllocRows(int n) {
 int DataTable::AddBlankRow() {
   if(AddRows(1)) {
     ScrollEditorsToBottom();
-    rd_itr = wr_itr = rows - 1;
-    return wr_itr;
+    read_idx = write_idx = rows - 1;
+    return write_idx;
   }
   else return -1;
+}
+
+void DataTable::WriteClose() {
+  CalcLastRow();
+  UpdateAllViews();
+  WriteDataLogRow();
 }
 
 void DataTable::EnforceRows(int nr) {
@@ -265,22 +270,53 @@ void DataTable::EnforceRows(int nr) {
   }
 }
 
-bool DataTable::AssertSinkChannel(ChannelSpec* cs) {
-  if (TestError(!cs, "AssertSinkChannel", "channel spec is null")) return false;
-  DataCol* da = GetColForChannelSpec_impl(cs);
-  return (da);
+DataCol* DataTable::FindMakeColFmSpec(DataColSpec* cs) {
+  if (TestError(!cs, "FindMakeColFmSpec", "column spec is null")) return NULL;
+  DataCol* da = FindColFmSpec(cs);
+  if(!da) {
+    da = NewColFmSpec(cs);
+  }
+  if(da) {
+    cs->col_num = da->col_idx;
+  }
+  return da;
 }
 
-bool DataTable::ColMatchesChannelSpec(const DataCol* da, const ChannelSpec* cs) {
-  if(TestError(!da || !cs, "ColMatchesChannelSpec", "col or spec are null")) return false;
-  //NOTE: make sure the algorithm in this routine matches NewColFromChannelSpec_impl
-  // match matrix-ness
-  if (da->is_matrix != cs->isMatrix()) return false;
+DataCol* DataTable::FindColFmSpec(DataColSpec* cs) const {
+  if (TestError(!cs, "FindColFmSpec", "column spec is null")) return NULL;
+  for(int i=data.size-1;i>=0;i--) {
+    DataCol* da = data.FastEl(i);
+    if (da->name != cs->name) continue;
+    if(ColMatchesSpec(da, cs)) {
+      return da;
+    }
+  }
+  return NULL;
+}
+
+DataCol* DataTable::NewColFmSpec(DataColSpec* cs) {
+  if (TestError(!cs, "NewColFmSpec", "column spec is null")) return NULL;
+  DataCol* rval = NULL;
+  int idx;
+  if (cs->is_matrix) {
+    rval = NewColMatrixN(cs->val_type, cs->name, cs->cell_geom, idx);
+  }
+  else {
+    rval = NewCol(cs->val_type, cs->name);
+  }
+  if (rval)
+    cs->col_num = rval->col_idx;
+  return rval;
+}
+
+bool DataTable::ColMatchesSpec(const DataCol* da, const DataColSpec* cs) {
+  if(!da || !cs) return false;
+  if (da->is_matrix != cs->is_matrix) return false;
   if (da->valType() != cs->val_type) return false;
 
-  if (cs->isMatrix()) {
+  if (cs->is_matrix) {
     // geoms the same is only remaining criteria
-    return da->cell_geom.Equal(cs->cellGeom());
+    return da->cell_geom.Equal(cs->cell_geom);
   }
   return true;
 }
@@ -376,24 +412,6 @@ taBase* DataTable::ChildDuplicate(const taBase* child) {
   return newChild;
 }
 
-DataCol* DataTable::GetColForChannelSpec_impl(ChannelSpec* cs) {
-  for(int i=data.size-1;i>=0;i--) {
-    DataCol* da = data.FastEl(i);
-    if (da->name != cs->name) continue;
-    // if name matches, but not contents, we need to remake it...
-    if (ColMatchesChannelSpec(da, cs)) {
-      da->ClearColFlag(DataCol::MARK); // reset mark for orphan tracking
-      cs->chan_num = i;
-      return da;
-    }
-    else {
-      da->Close();
-    }
-  }
-  DataCol* rval = NewColFromChannelSpec_impl(cs);
-  return rval;
-}
-
 const Variant DataTable::GetColUserData(const String& name, const Variant& col) const {
   DataCol* da = GetColData(col);
   if (da) return da->GetUserData(name);
@@ -403,17 +421,6 @@ const Variant DataTable::GetColUserData(const String& name, const Variant& col) 
 void DataTable::SetColUserData(const String& name, const Variant& value, const Variant& col) {
   DataCol* da = GetColData(col);
   if (da) da->SetUserData(name, value);
-}
-
-
-taMatrix* DataTable::GetMatrixData_impl(int chan) {
-  DataCol* da = GetColData(chan);
-  if(!da) return NULL;          // err msg already given
-  int i;
-  if(TestError(!da->is_matrix, "GetMatrixData_impl", "column is not a matrix")) return NULL;
-  if(TestError(!idx(rd_itr, i), "GetMatrixData_impl",
-      "read index is out of range -- need to set with ReadItem or ReadFirst/Next")) return NULL;
-  return da->AR()->GetFrameSlice_(i);
 }
 
 ///////////////////////////////////////////
@@ -1426,19 +1433,6 @@ double_Data* DataTable::NewColDouble(const String& col_nm) {
   return (double_Data*)NewCol(VT_DOUBLE, col_nm);
 }
 
-DataCol* DataTable::NewColFromChannelSpec_impl(ChannelSpec* cs) {
-  DataCol* rval = NULL;
-  int idx;
-  if (cs->isMatrix()) {
-    rval = NewColMatrixN(cs->val_type, cs->name, cs->cellGeom(), idx);
-  }
-  else {
-    rval = NewCol(cs->val_type, cs->name);
-  }
-  if (rval) cs->chan_num = cols() - 1;
-  return rval;
-}
-
 int_Data* DataTable::NewColInt(const String& col_nm) {
   return (int_Data*)NewCol(VT_INT, col_nm);
 }
@@ -2022,8 +2016,8 @@ void DataTable::ResetData() {  // this permanently deletes all row data!
   keygen.setInt64(0);
   StructUpdate(false);
   // also update itrs in case using simple itr mode
-  ReadItrInit();
-  WriteItrInit();
+  read_idx = -1;
+  write_idx = -1;
 }
 
 void DataTable::RowsAdding(int n, bool begin) {
@@ -3608,12 +3602,6 @@ void DataTable::LoadDataFixed(const String& fname, FixedWidthSpec* fws,
   }
   flr->Close();
   taRefN::unRefDone(flr);
-}
-
-void DataTable::WriteClose_impl() {
-  CalcLastRow();
-  UpdateAllViews();
-  WriteDataLogRow();
 }
 
 //////////////////////////////////////////////////////////////////////////////

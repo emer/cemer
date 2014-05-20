@@ -13,39 +13,39 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ChannelSpec_h
-#define ChannelSpec_h 1
+#ifndef DataColSpec_h
+#define DataColSpec_h 1
 
 // parent includes:
 #include <taNBase>
 
 // member includes:
+#include <MatrixGeom>
 
 // declare all other types mentioned but not required to include:
-class MatrixGeom; // 
-class String_Matrix; // 
 
 
-taTypeDef_Of(ChannelSpec);
+taTypeDef_Of(DataColSpec);
 
-class TA_API ChannelSpec: public taNBase {
-  // ##CAT_Data describes a channel of data in a DataBlock (e.g., a column of a datatable)
+class TA_API DataColSpec: public taNBase {
+  // ##CAT_Data describes a column of data in a DataTable
 INHERITED(taNBase)
 public:
-  int                   chan_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
+  int                   col_num; // #SHOW #READ_ONLY #NO_SAVE the column number (-1=at end)
   ValType               val_type; // the type of data the channel uses
-  //String              disp_opts;      // viewer display options
+  bool                  is_matrix; // is this a matrix cell
+  MatrixGeom            cell_geom; // #CONDSHOW_ON_is_matrix the geometry of a matrix cell
 
-  virtual bool          isMatrix() const {return false;}
-  virtual const MatrixGeom& cellGeom() const; // #IGNORE
-  virtual bool          usesCellNames() const {return false;}
-  virtual const String_Matrix& cellNames() const; // #IGNORE
+  virtual void          SetCellGeom(int dims,
+                                    int d0, int d1=0, int d2=0, int d3=0, int d4=0);
+  // set matrix geom -- also sets is_matrix = true
+  virtual void          SetCellGeomN(const MatrixGeom& geom);
+  // set matrix geom -- also sets is_matrix = true
 
-  TA_BASEFUNS(ChannelSpec);
+  TA_SIMPLE_BASEFUNS(DataColSpec);
 private:
-  void  Copy_(const ChannelSpec& cp);
-  void          Initialize();
-  void          Destroy() {}
+  void  Initialize();
+  void  Destroy() {}
 };
 
-#endif // ChannelSpec_h
+#endif // DataColSpec_h

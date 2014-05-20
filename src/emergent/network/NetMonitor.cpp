@@ -145,10 +145,6 @@ void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
   UpdateNetworkPtrs();
-  // we shouldn't be doing anything with data table in here!!
-  // ResetDataTableCols();         // this calls updatedatatable(false) too -- always make a 
-  //  clean update
-//   UpdateDataTable(false);    // re-cache pointers after network setting
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
@@ -174,33 +170,26 @@ void NetMonitor::UpdateDataTable(bool reset_first) {
   data->StructUpdate(true);
   if(reset_first)
     data->ResetData();
-  if (rmv_orphan_cols)
-    data->MarkCols();
+  ScanAllObjects();
+  CollectAllSpecs();
+  all_specs.UpdateDataTableCols(data, rmv_orphan_cols);
+  data->StructUpdate(false);
+}
+
+void NetMonitor::ScanAllObjects() {
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
     if (!nmi->off)
       nmi->ScanObject();
   }
-  UpdateDataCols();
-  if (rmv_orphan_cols)
-    data->RemoveOrphanCols(); // note: will remove 'off' items
-  data->StructUpdate(false);
 }
 
-void NetMonitor::UpdateDataCols() {
-  if (!data) return;
+void NetMonitor::CollectAllSpecs() {
+  all_specs.Reset();
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    nmi->UpdateDataCols(data);
+    nmi->CollectAllSpecs(this);
   }
-}
-
-void NetMonitor::ResetDataTableCols() {
-  if (!data) return;
-  data->StructUpdate(true);
-  data->RemoveAllCols();
-  UpdateDataTable(false);
-  data->StructUpdate(false);
 }
 
 void NetMonitor::GetMonVals() {

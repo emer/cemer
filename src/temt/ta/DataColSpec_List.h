@@ -13,36 +13,38 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef ChannelSpec_List_h
-#define ChannelSpec_List_h 1
+#ifndef DataColSpec_List_h
+#define DataColSpec_List_h 1
 
 // parent includes:
-#include <ChannelSpec>
+#include <DataColSpec>
 #include <taList>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class DataBlock; // 
+class DataTable; // 
 
 
-taTypeDef_Of(ChannelSpec_List);
+taTypeDef_Of(DataColSpec_List);
 
-class TA_API ChannelSpec_List: public taList<ChannelSpec> {
+class TA_API DataColSpec_List: public taList<DataColSpec> {
   // ##CAT_Data a list of channel specifications
-INHERITED(taList<ChannelSpec>)
+INHERITED(taList<DataColSpec>)
 public:
-  void          UpdateDataBlockSchema(DataBlock* db);
 
-  int          NumListCols() const override {return 6;}
+  virtual bool UpdateDataTableCols(DataTable* dt, bool remove_orphans = true);
+  // update data table columns to match the specs in this list, exactly, including the ordering of the columns -- if remove_orphans is true, then any existing columns that don't match are removed (otherwise they are just left at the end)
+
+  int          NumListCols() const override {return 5;}
   const        KeyString GetListColKey(int col) const override;
   String       GetColHeading(const KeyString& key) const override;
-  String GetColHeadingIdx(int col) const;
+  String       GetColHeadingIdx(int col) const;
 
-  TA_BASEFUNS_NOCOPY(ChannelSpec_List);
+  TA_BASEFUNS_NOCOPY(DataColSpec_List);
 private:
-  void          Initialize() {SetBaseType(&TA_ChannelSpec);}
+  void          Initialize() {SetBaseType(&TA_DataColSpec);}
   void          Destroy() {}
 };
 
-#endif // ChannelSpec_List_h
+#endif // DataColSpec_List_h

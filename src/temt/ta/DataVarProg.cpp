@@ -127,9 +127,9 @@ bool DataVarProg::GenCss_OneVar(Program* prog, ProgVar* var, const String& idnm,
   }
   if(row_spec == CUR_ROW) {
     if(set_data)
-      prog->AddLine(this, idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + var->name +"\");");
+      prog->AddLine(this, idnm + ".SetData(" + string_cvt + var->name + ", \"" + var->name +"\");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetDataByName(\"" + var->name + "\");");
+      prog->AddLine(this, var->name + " = " + idnm + ".GetData(\"" + var->name + "\");");
   }
   else if(row_spec == ROW_NUM) {
     if(set_data)

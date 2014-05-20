@@ -56,9 +56,9 @@ bool DataVarSimple::GenCss_OneVar(Program* prog, ProgVar* var, const String& idn
   }
   if(row_spec == CUR_ROW) {
     if(writeToDataTable)
-      prog->AddLine(this, idnm + ".SetDataByName(" + string_cvt + var->name + ", \"" + column_name +"\");");
+      prog->AddLine(this, idnm + ".SetData(" + string_cvt + var->name + ", \"" + column_name +"\");");
     else
-      prog->AddLine(this, var->name + " = " + idnm + ".GetDataByName(\"" + column_name + "\");");
+      prog->AddLine(this, var->name + " = " + idnm + ".GetData(\"" + column_name + "\");");
   }
   else if(row_spec == ROW_NUM) {
     if(writeToDataTable)

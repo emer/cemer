@@ -27,7 +27,7 @@
 #include <DataOpEl>
 #include <AggregateSpec>
 #include <DataSelectEl>
-#include <ChannelSpec_List>
+#include <DataColSpec_List>
 #include <MemberSpace>
 #include <voidptr_Array>
 #include <SimpleMathSpec>
@@ -35,7 +35,7 @@
 #include <double_Matrix>
 
 // declare all other types mentioned but not required to include:
-class MatrixChannelSpec; //
+class NetMonitor; //
 class Network; //
 class Layer; //
 class Projection; //
@@ -62,8 +62,8 @@ public:
   taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
   String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
-  String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/channels generated from this data (if empty, variable is used)
-  NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/channels generated from this data?
+  String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
+  NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
   int			max_name_len;	 // #DEF_6 maximum length for any name segment
 
   ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
@@ -79,8 +79,8 @@ public:
   bool			select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
   DataSelectEl		select_spec;	// #CONDSHOW_ON_select_rows #NO_AUTO_NAME optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that
 
-  ChannelSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
-  ChannelSpec_List	agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
+  DataColSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
+  DataColSpec_List	agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
   MemberSpace   	members;	// #IGNORE memberdefs
   voidptr_Array		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
 
@@ -92,8 +92,8 @@ public:
   // get auto-name value based on current values
   String  	GetObjName(taBase* obj); 
   // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
-  String	GetChanName(taBase* obj, int chan_idx);
-  // get name for given column/channel of data, taking into account namestyle preferences; chan_idx is index within the channelspec_list for this guy
+  String	GetColName(taBase* obj, int col_idx);
+  // get name for given column of data, taking into account namestyle preferences; col_idx is index within the columnspec_list for this guy
 
   void		SetMonVals(taBase* obj, const String& var); 
   // #CAT_Monitor set object and variable, and update appropriately
@@ -110,9 +110,8 @@ public:
   static const KeyString key_obj_var; // #IGNORE
   String GetColText(const KeyString& key, int itm_idx = -1) const;
 
-
-  void           UpdateDataCols(DataTable* db);
-  // #IGNORE update the channel numbers and mark all the data columns as used based on current channel specs from scanning
+  void           CollectAllSpecs(NetMonitor* mon);
+  // #IGNORE collect all the specs to parent monitor
 
   int		GetEnabled() const {return (off) ? 0 : 1;}
   void		SetEnabled(bool value) {off = !value;}
@@ -126,18 +125,18 @@ protected:
   float_Matrix		agg_tmp_calc_2; // temp calc matrix for agg data
   double_Matrix		agg_tmp_calc_d; // temp calc matrix for agg data
 
-  void	UpdateAfterEdit_impl();
-  int			cell_num; // current cell number, when adding mon vals
+  void	        UpdateAfterEdit_impl();
+  int		cell_num; // current cell number, when adding mon vals
   void		CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   void		SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-					     int sls, void* op1_, void* op2_) override;
+                                 int sls, void* op1_, void* op2_) override;
 
-  ChannelSpec* 		AddScalarChan(const String& valname, ValType vt);
-  ChannelSpec* 		AddScalarChan_Agg(const String& valname, ValType vt);
+  DataColSpec* 		AddScalarCol(const String& valname, ValType vt);
+  DataColSpec* 		AddScalarCol_Agg(const String& valname, ValType vt);
   // add to the agg_specs just to keep it consistent
-  MatrixChannelSpec* 	AddMatrixChan(const String& valname, ValType vt,
-				      const MatrixGeom* geom = NULL);
+  DataColSpec* 	        AddMatrixCol(const String& valname, ValType vt,
+                                     const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
   bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
   void 			GetMonVals_Agg(DataTable* db);

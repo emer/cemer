@@ -108,7 +108,7 @@ void NetDataLoop::GetGroupList() {
   DataTable* dt = (DataTable*)data_var->object_val.ptr();
   group_idx_list.Reset();
   String prv_gp_nm;
-  for(int i=0;i<dt->ItemCount();i++) {
+  for(int i=0;i<dt->rows;i++) {
     String gp_nm = dt->GetValAsString(group_col, i);
     if(gp_nm != prv_gp_nm) {
       group_idx_list.Add(i);
@@ -121,7 +121,7 @@ void NetDataLoop::GetItemList(int group_idx) {
   DataTable* dt = (DataTable*)data_var->object_val.ptr();
   item_idx_list.Reset();
   String prv_gp_nm = dt->GetValAsString(group_col, group_idx);
-  for(int i=group_idx;i<dt->ItemCount();i++) {
+  for(int i=group_idx;i<dt->rows;i++) {
     String gp_nm = dt->GetValAsString(group_col, i);
     if(gp_nm != prv_gp_nm)
       break;
@@ -143,7 +143,7 @@ void NetDataLoop::GenCssPre_impl(Program* prog) {
     prog->AddLine(this, "NetDataLoop* data_loop = this" + GetPath(NULL,program()) + ";");
     prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
     prog->AddLine(this, "data_loop->DMem_Initialize(network); // note: this assumes network variable exists!");
-    prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->ItemCount());");
+    prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->rows);");
     prog->AddLine(this, "data_loop->item_idx_list.FillSeq();");
     prog->AddLine(this, "if(data_loop->order == NetDataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
     prog->AddLine(this, "int st_idx = data_loop->dmem_this_proc; // start with different items in dmem (0 if not)");

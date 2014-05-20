@@ -44,20 +44,11 @@ void LayerWriterEl::CheckThisConfig_impl(bool qt, bool& rval) {
   }
 }
 
-String LayerWriterEl::GetDisplayName() const {
-  String rval = inherited::GetDisplayName();
-  return rval;
-}
-
-int LayerWriterEl::GetChanIdx(DataTable* db) {
-  return db->GetSourceChannelByName(chan_name);
-}
-
 // note: we always do the lookup by name every time -- it just doesn't cost
 // that much and it makes everything so much simpler!
 bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   if(!db || !net) return false;
-  int chan_idx = db->GetSourceChannelByName(chan_name);
+  int chan_idx = GetColIdx(db);
   if(chan_idx < 0) return false;
   if(net_target == TRIAL_NAME) {
     net->trial_name = db->GetData(chan_idx);
@@ -72,8 +63,8 @@ bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   if(!lay) return false;
   taMatrixPtr mat(db->GetMatrixData(chan_idx)); //note: refs mat
   if(TestWarning(!mat, "ApplyInputData",
-                 "could not get matrix data from channel:",
-                 chan_name, "in data:",db->name)) {
+                 "could not get matrix data from column:",
+                 col_name, "in data:",db->name)) {
     return false;
   }
   if(use_layer_type) {
