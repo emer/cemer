@@ -1317,20 +1317,22 @@ void iMainWindowViewer::fileOpenFile(const Variant& fname_) {
   taProject* proj = NULL;
   // canonicalize name, for comparison to open projects
   QFileInfo fi(fname);
-  fname = fi.canonicalFilePath();
-  for (int i = 0; i < tabMisc::root->projects.size; ++i) {
-    proj = tabMisc::root->projects.FastEl(i);
-    if (proj->file_name == fname) {
-      taMisc::DebugInfo("fileOpenFile", proj->file_name, fname);
-      int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
-          "Ok", "Cancel");
-      switch (chs) {
-      case 0: break; // break out of switch -- we'll also break out of the loop
-      case 1: return;
+  bool exists = fi.exists();
+  fname = fi.canonicalFilePath(); // why is this needed if exists is false?
+  if (exists) {
+    for (int i = 0; i < tabMisc::root->projects.size; ++i) {
+      proj = tabMisc::root->projects.FastEl(i);
+      if (proj && proj->file_name == fname) {
+        int chs = taMisc::Choice("That project is already open -- it will be viewed instead",
+                                 "Ok", "Cancel");
+        switch (chs) {
+          case 0: break; // break out of switch -- we'll also break out of the loop
+          case 1: return;
+        }
+        break; // break out of loop
       }
-      break; // break out of loop
+      proj = NULL; // in case we fall out of loop
     }
-    proj = NULL; // in case we fall out of loop
   }
   // if proj has a value, then we should view the existing, else open it
   bool clear_dirty = true; // only for new loads, or old views when not dirty already
