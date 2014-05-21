@@ -404,7 +404,7 @@ public:
   void          ChangeColMatToScalar();
   // #CAT_ObjectMgmt change from a matrix column to a scalar column
   void          ChangeColMatToScalar_gui();
-  // #CAT_ObjectMgmt #MENU #DYN1 #CONFIRM change from a mat col to a scalar col
+  // #CAT_ObjectMgmt #MENU #DYN1 #CONFIRM #LABEL_ChangeColMatToScalar change from a mat col to a scalar col
 
   String       GetTypeDecoKey() const override { return "DataTable"; }
 
