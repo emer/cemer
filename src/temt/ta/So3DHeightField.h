@@ -26,9 +26,9 @@ class SoSeparator; //
 
 // member includes:
 #include <taString>
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
-class taMatrix; //
 class ColorScale; //
 class MinMaxRange; //
 class SoFont; //
@@ -52,8 +52,8 @@ typedef SoSeparator inherited;
 public:
   static void		initClass();
 
-  taMatrix*	matrix;		// the 3d matrix data to display (required -- can be 0's to just display vec_matrix)
-  taMatrix*	vec_matrix;	// an additional vector field (optional)
+  taMatrixRef	matrix;		// the 3d matrix data to display (required -- can be 0's to just display vec_matrix)
+  taMatrixRef	vec_matrix;	// an additional vector field (optional)
   ColorScale*	scale; 		// The color scale for this display (required!)
   MinMaxRange*	vec_range;	// range for vector data (abs max for value of separate components)
   float		plane_vht;	// #DEF_0.5 vertical height to use for height field (as proportion of layer vert height)

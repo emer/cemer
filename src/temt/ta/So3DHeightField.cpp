@@ -14,7 +14,6 @@
 //   Lesser General Public License for more details.
 
 #include "So3DHeightField.h"
-#include <taMatrix>
 #include <taVector3i>
 #include <taVector3f>
 #include <MinMaxRange>
@@ -70,13 +69,11 @@ So3DHeightField::So3DHeightField(taMatrix* mat, taMatrix* vec_mat_, ColorScale* 
 
   vec_norms = vec_nrm_;
   matrix = mat;
-  taBase::Ref(matrix);
   vec_matrix = NULL;
   vec_range = NULL;
   if(vec_mat_ && vec_r) {
     vec_matrix = vec_mat_;
     vec_range = vec_r;
-    taBase::Ref(vec_matrix);
     setup_vec();
   }
   else if(vec_norms) {
@@ -100,11 +97,8 @@ So3DHeightField::So3DHeightField(taMatrix* mat, taMatrix* vec_mat_, ColorScale* 
 }
 
 So3DHeightField::~So3DHeightField() {
-  taBase::UnRef(matrix);
-  if(vec_matrix)
-    taBase::UnRef(vec_matrix);
-  matrix = NULL;
-  vec_matrix = NULL;
+  matrix.CutLinks();
+  vec_matrix.CutLinks();
 }
 
 
@@ -132,22 +126,15 @@ void So3DHeightField::setup_vec() {
 }
 
 void So3DHeightField::setMatrix(taMatrix* mat) { 
-  taBase::UnRef(matrix);
   matrix = mat; 
-  taBase::Ref(matrix);
   render();
 }
 
 void So3DHeightField::setVecMatrix(taMatrix* mat, MinMaxRange* vec_r) { 
-  if(vec_matrix)
-    taBase::UnRef(matrix);
-  else {
-    setup_vec();
-  }
   vec_matrix = mat; 
+  if(vec_matrix && !vec_sep_)
+    setup_vec();
   vec_range = vec_r;
-  if(vec_matrix)
-    taBase::Ref(vec_matrix);
   render();
 }
 

@@ -27,9 +27,9 @@ class SoSeparator; //
 // member includes:
 #include <taString>
 #include <taVector3f>
+#include <taMatrix>
 
 // declare all other types mentioned but not required to include:
-class taMatrix;
 class ColorScale;
 class SoVertexProperty;
 class SoFont;
@@ -54,7 +54,7 @@ public:
   static void		initClass();
 
   MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
-  taMatrix*	matrix;	    	// the matrix to render (required!)
+  taMatrixRef	matrix;	    	// the matrix to render (required!)
   bool		odd_y;		// how to deal with odd-dimensional matricies: put extra odd dimension in the y axis (else x)
   ColorScale*	scale; 		// The color scale for this display (required!)
   bool		val_text;	// display text representation of values?
