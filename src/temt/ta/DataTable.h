@@ -493,7 +493,7 @@ public:
     return true; }
   // #CAT_Rows read next item of data (sequential access) so that it is now available for GetData routines (which use read_idx for their row number) -- returns true if item available
   inline bool   ReadItem(int idx)
-  { if(idx < 0) idx = rows-idx; if((idx < 0) || (idx >= rows)) return false;
+  { if(idx < 0) idx = rows+idx; if((idx < 0) || (idx >= rows)) return false;
     read_idx = idx;  return true;}
   // #CAT_Rows goes directly (random access) to row idx (- = count back from last row available, otherwise must be in range 0 <= idx < rows) so that it is now available for GetData routines (which use read_idx for their row number), returns true if row exists and was read
 
@@ -516,7 +516,7 @@ public:
 
   inline bool   WriteItem(int idx) 
   { if (idx == rows) { AddRows(1); }
-    if(idx < 0) idx = rows-idx; if ((idx < 0) || (idx >= rows)) return false;
+    if(idx < 0) idx = rows+idx; if ((idx < 0) || (idx >= rows)) return false;
     write_idx = idx;  return true; }
   // #CAT_Rows goes directly (random access) to item idx (in range 0 <= idx < rows) for SetData writing routines (which use write_idx for their row number), if 1+end, adds a new item; true if item available
 
