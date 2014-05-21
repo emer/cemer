@@ -112,10 +112,10 @@ void DataLoop::GenCssPre_impl(Program* prog) {
   prog->IncIndent();
   prog->AddLine(this, String("DataLoop* data_loop = this") + GetPath(NULL,program()) + ";");
   prog->AddLine(this, "data_loop->GetOrderVal(); // order_var variable controls order -- make sure we have current value");
-  prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->ItemCount());");
+  prog->AddLine(this, String("data_loop->item_idx_list.SetSize(") + data_nm + "->rows);");
   prog->AddLine(this, "data_loop->item_idx_list.FillSeq();");
   prog->AddLine(this, "if(data_loop->order == DataLoop::PERMUTED) data_loop->item_idx_list.Permute();");
-  prog->AddLine(this, String("for(") + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->ItemCount(); "
+  prog->AddLine(this, String("for(") + idx_nm + " = 0; " + idx_nm + " < " + data_nm + "->rows; "
                 + idx_nm + "++) {");
   prog->IncIndent();
   prog->AddLine(this, "int data_row_idx;");
