@@ -200,10 +200,10 @@ bool ForLoop::CvtFmCode(const String& code) {
       cd = cd.before(')', -1);
   }
   if(cd.endsWith(';')) cd = cd.before(';',-1);
-  init.SetExpr(cd.before(';'));
+  init.SetExpr(trim(cd.before(';')));
   String rest = cd.after(';');
-  test.SetExpr(rest.before(';'));
-  iter.SetExpr(rest.after(';'));
+  test.SetExpr(trim(rest.before(';')));
+  iter.SetExpr(trim(rest.after(';')));
   UpdateAfterEdit_impl();       // make local var
   return true;
 }
