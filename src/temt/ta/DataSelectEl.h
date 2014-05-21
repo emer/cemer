@@ -47,6 +47,8 @@ public:
   String        GetName() const override;
   bool          SetName(const String& nm) override;
   void          UpdateName() override;
+  int           GetEnabled() const override { return on; }
+  void          SetEnabled(bool value) override { on = value; }
 
   void  Initialize();
   void 	Destroy()		{ };
