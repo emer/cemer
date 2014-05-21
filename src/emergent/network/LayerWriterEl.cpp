@@ -15,6 +15,9 @@
 
 #include "LayerWriterEl.h"
 #include <DataTable>
+#include <LayerWriter>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LayerWriterEl);
 
@@ -31,6 +34,22 @@ void LayerWriterEl::Initialize() {
 
 void LayerWriterEl::Destroy() {
   CutLinks();
+}
+
+void LayerWriterEl::InitLinks() {
+  inherited::InitLinks();
+  InitLinks_taAuto(&TA_LayerWriterEl);
+  if(owner && !taMisc::is_loading) {
+    LayerWriter* own = GET_MY_OWNER(LayerWriter);
+    if(own) {
+      SetDataNetwork(own->data, own->network);
+    }
+  }
+}
+
+void LayerWriterEl::CutLinks() {
+  CutLinks_taAuto(&TA_LayerWriterEl);
+  inherited::CutLinks();
 }
 
 void LayerWriterEl::CheckThisConfig_impl(bool qt, bool& rval) {

@@ -39,7 +39,10 @@ public:
   virtual bool	ApplyInputData(DataTable* db, Network* net);
   // #CAT_LayerWriter apply data to the layer on network, using the network's current context settings (TEST,TRAIN,etc) -- returns success
 
-  TA_SIMPLE_BASEFUNS(LayerWriterEl);
+  void  InitLinks() override;
+  void  CutLinks() override;
+  SIMPLE_COPY(LayerWriterEl);
+  TA_BASEFUNS(LayerWriterEl);
 protected:
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
 
