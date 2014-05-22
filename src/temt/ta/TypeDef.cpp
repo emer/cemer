@@ -1249,12 +1249,12 @@ EnumDef* TypeDef::FindEnum(const String& nm) const {
     }
   }
 
-  // try to look for an aka now..
+  // try to look for an aka or a Label version now..
   for (int i = 0; i < enum_vals.size; i++) {
     EnumDef* ed = enum_vals.FastEl(i);
     String aka = ed->OptionAfter("AKA_");
-    if (aka.empty()) continue;
     if (aka == nm) return ed;
+    if(ed->GetLabel() == nm) return ed;
   }
 
   return NULL;

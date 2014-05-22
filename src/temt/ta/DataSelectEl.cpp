@@ -15,6 +15,7 @@
 
 #include "DataSelectEl.h"
 #include <MemberDef>
+#include <ProgEl>
 #include <taMisc>
 
 
@@ -31,7 +32,7 @@ void DataSelectEl::Initialize() {
 
 void DataSelectEl::UpdateName() {
   name = col_name + " " +
-    GetTypeDef()->GetEnumString("Relations", rel)+ " ";
+    TA_Relation.GetEnumLabel("Relations", rel)+ " ";
   if(use_var && (bool)var)
     name += var->name;
   else
@@ -49,11 +50,25 @@ bool DataSelectEl::SetName(const String& nm) {
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));
     String opnm = trim(tnm.after(" "));
-    if(opnm.contains(" "))      // todo: do further parsing!
+    String valstr;
+    if(opnm.contains(" ")) {
+      valstr = trim(opnm.after(" "));
       opnm = opnm.before(" ");
+    }
     MemberDef* opmd = GetTypeDef()->members.FindName("rel");
     if(opmd) {
       opmd->SetValStr(opnm, (void*)this);
+    }
+    if(valstr.nonempty()) {
+      if(use_var) {
+        ProgEl* pel = GET_MY_OWNER(ProgEl);
+        if(pel) {
+          var = pel->FindVarNameInScope(valstr, true);
+        }
+      }
+      else {
+        cmp.updateFromString(valstr);
+      }
     }
   }
   else {
