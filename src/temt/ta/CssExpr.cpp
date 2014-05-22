@@ -54,7 +54,13 @@ String CssExpr::GetDisplayName() const {
 }
 
 bool CssExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.endsWith(';')) return true; // only criterion -- if you include the ;
+  if(code.endsWith(';')) return true;
+  if(code.contains("=")) {
+    String lhs = code.before("=");
+    if(lhs.contains('[') && lhs.contains(']')) {
+      return true;              // we have a matrix expr on lhs..
+    }
+  }
   return false;
 }
 

@@ -47,11 +47,10 @@ void ProgCode::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 				const String& code_str) {
-  if(td == &TA_CssExpr) return; // we already did this guy -- want it first
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
     if(obj->CanCvtFmCode(code_str, this)) {
-      candidates.Link(obj);
+      candidates.LinkUnique(obj);
     }
   }
   for(int i = 0; i < td->children.size; ++i) {
