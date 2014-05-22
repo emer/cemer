@@ -26,17 +26,28 @@ void DataGroupEl::Initialize() {
 }
 
 void DataGroupEl::UpdateName() {
-  name = col_name + " " + agg.GetAggName();
-}
-
-String DataGroupEl::GetName() const {
-  return name;                  // need to use cached name for loading..
+  String nname = col_name + "_" + agg.GetAggName();
+  nname += GetListIdxSuffix();
+  SetName(nname);
 }
 
 bool DataGroupEl::SetName(const String& nm) {
-  if(nm.empty()) return false;
-  String tnm = trim(nm);
-  name = tnm;
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (name == new_name) return true;
+  name = new_name;
+  if (!taMisc::is_changing_type)
+    MakeNameUnique();
+  return true;
+}
+
+String DataGroupEl::GetDisplayName() const {
+  return col_name + " " + agg.GetAggName();
+}
+
+bool DataGroupEl::BrowserEditSet(const String& new_val_str, int move_after) {
+  if(new_val_str.empty()) return false;
+  String tnm = trim(new_val_str);
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));
     String opnm = trim(tnm.after(" "));
@@ -47,10 +58,11 @@ bool DataGroupEl::SetName(const String& nm) {
   }
   else {
     // Ensure name is a legal C-language identifier.
-    String new_name = taMisc::StringCVar(nm);
+    String new_name = taMisc::StringCVar(new_val_str);
     if (col_name == new_name) return true;
     col_name = new_name;
   }
+  UpdateAfterEdit();
   return true;
 }
 

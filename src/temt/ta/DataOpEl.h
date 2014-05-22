@@ -30,7 +30,7 @@ class DataCol; //
 taTypeDef_Of(DataOpEl);
 
 class TA_API DataOpEl : public taOBase {
-  // #STEM_BASE ##NO_TOKENS ##NO_UPDATE_AFTER ##INLINE ##CAT_Data base class for data operations spec element
+  // #STEM_BASE ##NO_TOKENS ##INLINE ##CAT_Data base class for data operations spec element
   INHERITED(taOBase)
 public:
   DataTableRef		data_table;
@@ -55,13 +55,15 @@ public:
   bool          HasName() const override { return true; }
   String        GetName() const override;
   bool          SetName(const String& nm) override;
+  void          MakeNameUnique() override;
   virtual void  UpdateName() { };
   // #IGNORE define this for any subclasses that do more with name than just col_name, called in SetColName and UAE
+  virtual String GetListIdxSuffix();
+  // get owner index based suffix to append to name -- make them always unique in case of overlap
   String        GetDisplayName() const override;
   String        GetTypeDecoKey() const override { return "ProgArg"; }
 
   bool          BrowserEditEnable() override { return true; }
-  String        BrowserEditString() override { return GetDisplayName(); }
   bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   TA_SIMPLE_BASEFUNS(DataOpEl);

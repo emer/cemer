@@ -44,9 +44,12 @@ public:
 
   virtual void 	UpdateEnabled(); // update the act_enabled flag based on flag and variable
 
-  String        GetName() const override;
+  String        GetName() const override  { return name; }
   bool          SetName(const String& nm) override;
   void          UpdateName() override;
+  String        GetDisplayName() const override;
+  bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
+
   int           GetEnabled() const override { return on; }
   void          SetEnabled(bool value) override { on = value; }
 

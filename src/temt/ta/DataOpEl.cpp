@@ -39,6 +39,19 @@ void DataOpEl::UpdateAfterEdit_impl() {
   UpdateName();
 }
 
+void DataOpEl::MakeNameUnique() {
+  if(owner && owner->InheritsFrom(&TA_taList_impl)) {
+    ((taList_impl*)owner)->MakeElNameUnique(this); // just this guy
+  }
+}
+
+String DataOpEl::GetListIdxSuffix() {
+  if(owner && owner->InheritsFrom(&TA_taList_impl)) {
+    return String("_") + (String)((taList_impl*)owner)->FindEl_(this);
+  }
+  return _nilString;
+}
+
 void DataOpEl::SetColName(const String& nm) {
   col_name = nm;
   UpdateName();

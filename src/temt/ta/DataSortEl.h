@@ -38,9 +38,11 @@ public:
   String        name;           // #HIDDEN #READ_ONLY cached name value
   SortOrder	order;		// order to sort this in
 
-  String        GetName() const override;
+  String        GetName() const override { return name; }
   bool          SetName(const String& nm) override;
   void          UpdateName() override;
+  String        GetDisplayName() const override;
+  bool          BrowserEditSet(const String& new_val_str, int move_after = 0) override;
 
   void  Initialize();
   void 	Destroy()		{ };

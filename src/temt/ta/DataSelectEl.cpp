@@ -31,22 +31,39 @@ void DataSelectEl::Initialize() {
 }
 
 void DataSelectEl::UpdateName() {
-  name = col_name + " " +
-    TA_Relation.GetEnumLabel("Relations", rel)+ " ";
+  String nname = col_name + "_" +
+    TA_Relation.GetEnumString("Relations", rel) + "_";
   if(use_var && (bool)var)
-    name += var->name;
+    nname += var->name;
   else
-    name += cmp.toString();
-}
-
-String DataSelectEl::GetName() const {
-  return name;                  // need to use cached name for loading..
+    nname += taMisc::StringCVar(cmp.toString());
+  nname += GetListIdxSuffix();
+  SetName(nname);
 }
 
 bool DataSelectEl::SetName(const String& nm) {
-  if(nm.empty()) return false;
-  String tnm = trim(nm);
-  name = tnm;
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (name == new_name) return true;
+  name = new_name;
+  if (!taMisc::is_changing_type)
+    MakeNameUnique();
+  return true;
+}
+
+String DataSelectEl::GetDisplayName() const {
+  String rval = col_name + " " +
+    TA_Relation.GetEnumLabel("Relations", rel)+ " ";
+  if(use_var && (bool)var)
+    rval += var->name;
+  else
+    rval += cmp.toString();
+  return rval;
+}
+
+bool DataSelectEl::BrowserEditSet(const String& new_val_str, int move_after) {
+  if(new_val_str.empty()) return false;
+  String tnm = trim(new_val_str);
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));
     String opnm = trim(tnm.after(" "));
@@ -73,10 +90,11 @@ bool DataSelectEl::SetName(const String& nm) {
   }
   else {
     // Ensure name is a legal C-language identifier.
-    String new_name = taMisc::StringCVar(nm);
+    String new_name = taMisc::StringCVar(new_val_str);
     if (col_name == new_name) return true;
     col_name = new_name;
   }
+  UpdateAfterEdit();
   return true;
 }
 

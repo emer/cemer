@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7182
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7218
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -1696,8 +1696,8 @@ LeabraProject .projects["program_examples"] {
       };
       DataSelectRowsProg @[3] { 
        DataOpList @.select_spec.ops = [2] {
-	DataSelectEl @["Categ  Fruit"] { };
-	DataSelectEl @["Value  min_value"] { };
+	DataSelectEl @["Categ_EQUAL_Fruit_0"] { };
+	DataSelectEl @["Value_GREATERTHANOREQUAL_min_value_1"] { };
        };
       };
      };
@@ -1771,9 +1771,9 @@ LeabraProject .projects["program_examples"] {
       Comment @[3] { };
       DataGroupProg @[4] { 
        DataOpList @.group_spec.ops = [3] {
-	DataGroupEl @["Category GROUP"] { };
-	DataGroupEl @["Value_MEAN"] { };
-	DataGroupEl @["Value MEDIAN"] { };
+	DataGroupEl @["Category_GROUP_0"] { };
+	DataGroupEl @["Value_MEAN_1"] { };
+	DataGroupEl @["Value_MEDIAN_2"] { };
        };
       };
      };
@@ -1847,7 +1847,7 @@ LeabraProject .projects["program_examples"] {
       Comment @[3] { };
       DataSortProg @[4] { 
        DataOpList @.sort_spec.ops = [1] {
-	DataSortEl @["Name up"] { };
+	DataSortEl @["Name_up_0"] { };
        };
       };
      };
@@ -8471,7 +8471,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    orig_prog_code="InputData.WriteClose()";
 	    result_var=NULL;
 	    obj=$.projects["program_examples"].programs.gp["Variables"]["DynEnum"].vars["InputData"]$;
-	    method=DataBlock::WriteClose;
+	    method=DataTable::WriteClose;
 	    meth_args {
 	     name="ProgArg_List_0";
 	     el_typ=ProgArg;
@@ -12537,12 +12537,12 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	el_def=0;
 	String_Data @["Categ"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_103";
+	  name="UserDataItem_List_123";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.217980295419693;
+	   value 6 0=0.1919739693403244;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -12554,21 +12554,21 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name="dim_names";
+	  name=;
 	 [0] 	 };
-	 width=221;
+	 width=177;
 	 ar {
-	  name="ar";
+	  name=;
 	 [8] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";	 };
 	};
 	String_Data @["Name"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_104";
+	  name="UserDataItem_List_124";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.217980295419693;
+	   value 6 0=0.1919739693403244;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -12580,21 +12580,21 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name="dim_names";
+	  name=;
 	 [0] 	 };
-	 width=221;
+	 width=177;
 	 ar {
-	  name="ar";
+	  name=;
 	 [8] "Jam";"Huckleberry";"Grapes";"Fruit";"Dragon Fruit";"Cherry";"Banana";"Apple";	 };
 	};
 	float_Data @["Value"] {
 	 UserDataItem_List @*(.user_data_) {
-	  name="UserDataItem_List_105";
+	  name="UserDataItem_List_125";
 	  el_typ=UserDataItem;
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.217980295419693;
+	   value 6 0=0.1919739693403244;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -12606,11 +12606,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name="dim_names";
+	  name=;
 	 [0] 	 };
-	 width=221;
+	 width=177;
 	 ar {
-	  name="ar";
+	  name=;
 	 [8] 44;60;45;25;55;15;30;20;	 };
 	};
        };
@@ -12716,9 +12716,9 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 name="ops";
 	 el_typ=DataSelectEl;
 	 el_def=0;
-	 DataSelectEl @["Categ  Fruit"] {
+	 DataSelectEl @["Categ_EQUAL_Fruit_0"] {
 	  col_name="Categ";
-	  name="Categ  Fruit";
+	  name="Categ_EQUAL_Fruit_0";
 	  on=1;
 	  rel=EQUAL;
 	  use_var=0;
@@ -12726,9 +12726,9 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  var=NULL;
 	  enable_var=NULL;
 	 };
-	 DataSelectEl @["Value  min_value"] {
+	 DataSelectEl @["Value_GREATERTHANOREQUAL_min_value_1"] {
 	  col_name="Value";
-	  name="Value  min_value";
+	  name="Value_GREATERTHANOREQUAL_min_value_1";
 	  on=1;
 	  rel=GREATERTHANOREQUAL;
 	  use_var=1;
@@ -13039,19 +13039,19 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 name="ops";
 	 el_typ=DataGroupEl;
 	 el_def=0;
-	 DataGroupEl @["Category GROUP"] {
+	 DataGroupEl @["Category_GROUP_0"] {
 	  col_name="Category";
-	  name="Category GROUP";
+	  name="Category_GROUP_0";
 	  agg {name="AggregateSpec_3": op=GROUP: rel={name="Relation_5": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	 };
-	 DataGroupEl @["Value_MEAN"] {
+	 DataGroupEl @["Value_MEAN_1"] {
 	  col_name="Value";
-	  name="Value_MEAN";
+	  name="Value_MEAN_1";
 	  agg {name="AggregateSpec_5": op=MEAN: rel={name="Relation_7": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	 };
-	 DataGroupEl @["Value MEDIAN"] {
+	 DataGroupEl @["Value_MEDIAN_2"] {
 	  col_name="Value";
-	  name="Value MEDIAN";
+	  name="Value_MEDIAN_2";
 	  agg {name="AggregateSpec_5": op=MEDIAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	 };
 	};
@@ -13365,9 +13365,9 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 name="ops";
 	 el_typ=DataSortEl;
 	 el_def=0;
-	 DataSortEl @["Name up"] {
+	 DataSortEl @["Name_up_0"] {
 	  col_name="Name";
-	  name="Name up";
+	  name="Name_up_0";
 	  order=ASCENDING;
 	 };
 	};
@@ -13384,7 +13384,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      desc="Joining data - combine two different data tables according to a common key value";
      flags=NO_STOP_STEP;
      objs {
-      name=;
+      name="objs";
       el_typ=taNBase;
       el_def=0;
       DataTable @["DemoData"] {
@@ -13413,11 +13413,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";
 "Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -13441,11 +13441,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 "Zuccini";"Lettuce";"Broccoli";"Cabbage";"Cauliflower";"Peppers";"Eggplant";"Green Beans";"Peas";"Carrots";
 	 };
@@ -13469,11 +13469,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;15;55;5;25;45;60;7;44;
 22;7;17;3;1;25;22;15;10;5;
 	 };
@@ -13484,7 +13484,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
@@ -13617,11 +13617,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fruit";"Fruit";"Veggie";"Veggie";"Veggie";"Veggie";"Fruit";"Fruit";"Veggie";"Fruit";
 "Fruit";"Fruit";"Veggie";"Fruit";"Fruit";"Fruit";"Veggie";"Veggie";"Veggie";"Veggie";
 	 };
@@ -13645,11 +13645,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Apple";"Banana";"Broccoli";"Cabbage";"Carrots";"Cauliflower";"Cherry";"Dragon Fruit";"Eggplant";"Elderberry";
 "Fruit";"Grapes";"Green Beans";"Huckleberry";"Imo";"Jam";"Lettuce";"Peas";"Peppers";"Zuccini";
 	 };
@@ -13673,11 +13673,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 20;30;17;3;5;1;15;55;22;5;
 25;45;15;60;7;44;7;10;25;22;
 	 };
@@ -13701,11 +13701,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] "Fall";"All";"Summer";"Summer";"Summer";"Summer";"Spring";"Tropical";"Summer";"Summer";
 "Huh";"Fall";"Fall";"Summer";"Summer";"All";"All";"Fall";"Summer";"Summer";
 	 };
@@ -13729,11 +13729,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [20] 50;20;75;75;35;75;2;40;50;5;
 25;2;3;2;50;25;1;1;20;22;
 	 };
@@ -13744,24 +13744,24 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        auto_load_file=;
        keygen 4 0=0;
        row_indexes {
-	name=;
+	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
       };
      };
      types {
-      name=;
+      name="types";
       el_typ=DynEnumType;
       el_def=0;
      };
      args {
-      name=;
+      name="args";
       el_typ=ProgVar;
       el_def=0;
      };
      vars {
-      name=;
+      name="vars";
       el_typ=ProgVar;
       el_def=0;
       ProgVar @["DemoData"] {
@@ -13799,17 +13799,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       };
      };
      functions {
-      name=;
+      name="functions";
       el_typ=Function;
       el_def=0;
      };
      init_code {
-      name=;
+      name="init_code";
       el_typ=ProgCode;
       el_def=0;
      };
      prog_code {
-      name=;
+      name="prog_code";
       el_typ=ProgCode;
       el_def=0;
       LocalVars @[0] {
@@ -15510,7 +15510,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    name="Browser2";
    m_data=.projects["program_examples"]$$;
    visible=1;
-   win_name=".projects[\"program_examples\"] - program_examples.proj [*]";
+   win_name=".projects[\"program_examples\"] - program_examples.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;

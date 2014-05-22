@@ -25,21 +25,37 @@ void DataSortEl::Initialize() {
 }
 
 void DataSortEl::UpdateName() {
-  name = col_name + " ";
+  String nname = col_name + "_";
   if(order == ASCENDING)
-    name += "up";
+    nname += "up";
   else
-    name += "dn";
-}
-
-String DataSortEl::GetName() const {
-  return name;                  // need to use cached name for loading..
+    nname += "dn";
+  nname += GetListIdxSuffix();
+  SetName(nname);
 }
 
 bool DataSortEl::SetName(const String& nm) {
-  if(nm.empty()) return false;
-  String tnm = trim(nm);
-  name = tnm;
+  // Ensure name is a legal C-language identifier.
+  String new_name = taMisc::StringCVar(nm);
+  if (name == new_name) return true;
+  name = new_name;
+  if (!taMisc::is_changing_type)
+    MakeNameUnique();
+  return true;
+}
+
+String DataSortEl::GetDisplayName() const {
+  String rval = col_name + " ";
+  if(order == ASCENDING)
+    rval += "up";
+  else
+    rval += "dn";
+  return rval;
+}
+
+bool DataSortEl::BrowserEditSet(const String& new_val_str, int move_after) {
+  if(new_val_str.empty()) return false;
+  String tnm = trim(new_val_str);
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));
     String opnm = trim(tnm.after(" "));
@@ -53,10 +69,11 @@ bool DataSortEl::SetName(const String& nm) {
   }
   else {
     // Ensure name is a legal C-language identifier.
-    String new_name = taMisc::StringCVar(nm);
+    String new_name = taMisc::StringCVar(new_val_str);
     if (col_name == new_name) return true;
     col_name = new_name;
   }
+  UpdateAfterEdit();
   return true;
 }
 

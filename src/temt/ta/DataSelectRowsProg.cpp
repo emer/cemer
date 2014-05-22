@@ -16,6 +16,8 @@
 #include "DataSelectRowsProg.h"
 #include <Program>
 #include <NameVar_PArray>
+#include <MemberDef>
+
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DataSelectRowsProg);
@@ -46,6 +48,8 @@ String DataSelectRowsProg::GetDisplayName() const {
     rval +=  " dest table = " + dest_data_var->name + " ";
   else
     rval += " dest table = ? ";
+
+  rval += " comb_op = " + TA_Relation.GetEnumLabel("CombOp", select_spec.comb_op);
   return rval;
 }
 
@@ -77,6 +81,12 @@ bool DataSelectRowsProg::CvtFmCode(const String& code) {
     }
     else if (name.startsWith("dest tab") || name.startsWith("dest_tab")) {
       dest_data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("comb")) {
+      MemberDef* opmd = TA_DataSelectSpec.members.FindName("comp_op");
+      if(opmd) {
+        opmd->SetValStr(value, (void*)&select_spec);
+      }
     }
   }
   
