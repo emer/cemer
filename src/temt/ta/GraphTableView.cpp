@@ -82,7 +82,7 @@ GraphTableView* DataTable::FindMakeGraphView(T3Panel* fr) {
     GraphTableView* el;
     FOR_DLC_EL_OF_TYPE(GraphTableView, el, dl, itr) {
       // update from user stuff
-      el->InitFromUserData();
+      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
       fr = el->GetFrame();
@@ -346,6 +346,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
   x_axis.on = true;             // try to keep it on
   x_axis.UpdateOnFlag();
   x_axis.UpdateFmDataCol();
+
+  // taMisc::DebugInfo("UAE x_axis is now:", x_axis.col_name, "on:", String(x_axis.on));
+
   z_axis.UpdateOnFlag();
   z_axis.UpdateFmDataCol();
   for(int i=0;i<plots.size;i++) {
@@ -353,6 +356,9 @@ void GraphTableView::UpdateAfterEdit_impl(){
     pl->name = name + "_plot_" + String(i+1);
     pl->UpdateOnFlag();
     pl->UpdateFmDataCol();
+    if(i == 0) {
+      // taMisc::DebugInfo("UAE plot_1 is now:", pl->col_name, "on:", String(pl->on));
+    }
     GraphPlotView* epl = errbars[i];
     epl->name = name + "_err_" + String(i+1);
     epl->UpdateOnFlag();
@@ -839,7 +845,9 @@ void GraphTableView::FindDefaultXZAxes() {
       x_axis.col_name = cvs->name;
       x_axis.InitFromUserData();
       x_axis.row_num = false;
+      x_axis.on = true;
       set_x = true;
+      // taMisc::DebugInfo("set X to:", x_axis.col_name);
     }
     if(da->HasUserData("Z_AXIS")) {
       z_axis.col_name = cvs->name;
@@ -881,7 +889,7 @@ void GraphTableView::FindDefaultXZAxes() {
 }
 
 void GraphTableView::FindDefaultPlot1() {
-  bool got_1 = false;
+  bool got_1 = plots[0]->on;
   for(int i=children.size-1;i>=0;i--) {
     GraphColView* cvs = (GraphColView*)colView(i);
     DataCol* da = cvs->dataCol();
@@ -889,6 +897,7 @@ void GraphTableView::FindDefaultPlot1() {
       plots[0]->col_name = cvs->name;
       plots[0]->on = true;
       plots[0]->InitFromUserData();
+      // taMisc::DebugInfo("set plot 1 to:", plots[0]->col_name);
       got_1 = true;
     }
   }
@@ -921,6 +930,7 @@ void GraphTableView::InitFromUserData() {
       if(da->HasUserData(pltst)) {
         plots[i]->col_name = cvs->name;  plots[i]->on = true;
         plots[i]->InitFromUserData(); 
+        // taMisc::DebugInfo("init fm set:", pltst, "to:", plots[i]->col_name);
       }
     }
     for(int i=0; i<errbars.size; i++) {
@@ -993,7 +1003,6 @@ void GraphTableView::InitFromUserData() {
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {
   inherited::UpdateFromDataTable_this(first);
-  FindDefaultXZAxes();
   UpdateAfterEdit_impl();
   if(!first) return;
   InitFromUserData();

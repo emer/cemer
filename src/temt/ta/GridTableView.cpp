@@ -73,7 +73,7 @@ GridTableView* DataTable::FindMakeGridView(T3Panel* fr) {
     GridTableView* el;
     FOR_DLC_EL_OF_TYPE(GridTableView, el, dl, itr) {
       // update from user stuff
-      el->InitFromUserData();
+      el->UpdateFromDataTable(true); // pretend its the first time -- initfromuserdata
       el->InitDisplay();
       el->UpdateDisplay();
       fr = el->GetFrame();

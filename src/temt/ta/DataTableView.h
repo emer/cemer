@@ -90,6 +90,8 @@ public:
   void         SigDestroying() override;
   void         BuildAll() override;
 
+  virtual void          UpdateFromDataTable(bool first_time = false);
+  // called if data set to table, or needs to be updated; calls _child then _this
   virtual void          UpdateName();  // update name from data table
 
   void  Initialize();
@@ -129,8 +131,6 @@ protected:
   void         SigRecvUpdateAfterEdit_impl() override;
   void         DoActionChildren_impl(DataViewAction acts) override;
 
-  void                  UpdateFromDataTable(bool first_time = false);
-  // called if data set to table, or needs to be updated; calls _child then _this
   virtual void          UpdateFromDataTable_child(bool first);
   // does kids, usually not overridden
   virtual void          UpdateFromDataTable_this(bool first);
