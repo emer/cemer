@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7218
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7227
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -463,28 +463,29 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [5] {
-     LocalVars @[0] { 
+    ProgEl_List @.prog_code = [6] {
+     Comment @[0] { };
+     LocalVars @[1] { 
       ProgVar_List @.local_vars = [0] {
       };
      };
-     RandomCall @[1] { 
+     RandomCall @[2] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     If @[2] { 
+     If @[3] { 
       ProgEl_List @.true_code = [1] {
        PrintExpr @[0] { };
       };
      };
-     ElseIf @[3] { 
+     ElseIf @[4] { 
       ProgEl_List @.true_code = [1] {
        PrintExpr @[0] { };
       };
      };
-     Else @[4] { 
+     Else @[5] { 
       ProgEl_List @.else_code = [1] {
        PrintExpr @[0] { };
       };
@@ -513,7 +514,7 @@ LeabraProject .projects["program_examples"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [36] {
+    ProgEl_List @.prog_code = [37] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [3] {
        ProgVar @["mypi"] { };
@@ -523,65 +524,66 @@ LeabraProject .projects["program_examples"] {
      };
      AssignExpr @[1] { };
      PrintVar @[2] { };
-     Comment @[3] { };
-     PrintExpr @[4] { };
+     StopStepPoint @[3] { };
+     Comment @[4] { };
      PrintExpr @[5] { };
      PrintExpr @[6] { };
      PrintExpr @[7] { };
      PrintExpr @[8] { };
-     Comment @[9] { };
-     PrintExpr @[10] { };
+     PrintExpr @[9] { };
+     Comment @[10] { };
      PrintExpr @[11] { };
      PrintExpr @[12] { };
-     Comment @[13] { };
-     MethodCall @[14] { 
+     PrintExpr @[13] { };
+     Comment @[14] { };
+     MethodCall @[15] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[15] { };
-     MethodCall @[16] { 
+     PrintExpr @[16] { };
+     MethodCall @[17] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[17] { };
-     MethodCall @[18] { 
+     PrintExpr @[18] { };
+     MethodCall @[19] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[19] { };
-     MethodCall @[20] { 
+     PrintExpr @[20] { };
+     MethodCall @[21] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     PrintExpr @[21] { };
-     Comment @[22] { };
-     ForeachLoop @[23] { 
+     PrintExpr @[22] { };
+     Comment @[23] { };
+     ForeachLoop @[24] { 
       ProgEl_List @.loop_code = [1] {
        PrintVar @[0] { };
       };
      };
-     MethodCall @[24] { 
+     MethodCall @[25] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     PrintVar @[25] { };
-     MethodCall @[26] { 
+     PrintVar @[26] { };
+     MethodCall @[27] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     PrintVar @[27] { };
-     Comment @[28] { };
-     AssignExpr @[29] { };
-     PrintExpr @[30] { };
+     PrintVar @[28] { };
+     Comment @[29] { };
+     AssignExpr @[30] { };
      PrintExpr @[31] { };
-     CssExpr @[32] { };
+     PrintExpr @[32] { };
      CssExpr @[33] { };
-     PrintExpr @[34] { };
-     Comment @[35] { };
+     CssExpr @[34] { };
+     PrintExpr @[35] { };
+     Comment @[36] { };
     };
    };
    Program @["DynEnum"] { 
@@ -909,21 +911,21 @@ LeabraProject .projects["program_examples"] {
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [1] {
+    ProgEl_List @.init_code = [2] {
      AssignExpr @[0] { };
+     PrintExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [6] {
+    ProgEl_List @.prog_code = [5] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
        ProgVar @["aLocalVar"] { };
       };
      };
-     PrintExpr @[1] { };
-     PrintVar @[2] { };
+     PrintVar @[1] { };
+     AssignExpr @[2] { };
      AssignExpr @[3] { };
-     AssignExpr @[4] { };
-     PrintVar @[5] { };
+     PrintVar @[4] { };
     };
    };
   };
@@ -6750,7 +6752,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      ProgVar @["sw_int_var"] {
       name="sw_int_var";
       var_type=T_Int;
-      int_val=0;
+      int_val=4;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6783,7 +6785,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
      };
      RandomCall @[1] {
-      desc=;
+      desc="IntZeroN randomly selects a number from 0 to N-1 (includes 0, excludes N)";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="sw_int_var = Random::IntZeroN(5)";
       result_var=.projects["program_examples"].programs.gp["Control"]["Switch"].vars["sw_int_var"]$$;
@@ -6977,7 +6979,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      ProgVar @["value"] {
       name="value";
       var_type=T_Int;
-      int_val=3;
+      int_val=4;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6999,7 +7001,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     LocalVars @[0] {
+     Comment @[0] {
+      desc="tip - To clear the console window press control + .";
+      flags=0;
+      orig_prog_code=;
+     };
+     LocalVars @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -7009,7 +7016,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
       };
      };
-     RandomCall @[1] {
+     RandomCall @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="Random::IntMinMax(0,9";
@@ -7042,7 +7049,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     If @[2] {
+     If @[3] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -7065,7 +7072,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     ElseIf @[3] {
+     ElseIf @[4] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -7088,7 +7095,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     Else @[4] {
+     Else @[5] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -7147,7 +7154,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      ProgVar @["str"] {
       name="str";
       var_type=T_String;
-      string_val="true";
+      string_val="abcdefg";
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7233,12 +7240,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[3] {
+     StopStepPoint @[3] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+     };
+     Comment @[4] {
       desc="accessing substrings";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// accessing substrings";
      };
-     PrintExpr @[4] {
+     PrintExpr @[5] {
       desc="access elements using standard array-like index operator";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str[1]: \" str[1]";
@@ -7248,7 +7260,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[5] {
+     PrintExpr @[6] {
       desc="very easy to extract substrings using after, from, through..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.after('c'): \" << str.after(\"c\") << endl;";
@@ -7258,7 +7270,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[6] {
+     PrintExpr @[7] {
       desc="before..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
@@ -7268,7 +7280,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[7] {
+     PrintExpr @[8] {
       desc="can specifiy optional starting position, -1 means start from back";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"abba.before('b',-1): \" << \"abba\".before('b',-1)";
@@ -7278,7 +7290,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[8] {
+     PrintExpr @[9] {
       desc="between..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
@@ -7288,12 +7300,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[9] {
+     Comment @[10] {
       desc="finding strings";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// finding strings";
      };
-     PrintExpr @[10] {
+     PrintExpr @[11] {
       desc="test what the string starts with";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
@@ -7303,7 +7315,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[11] {
+     PrintExpr @[12] {
       desc="and what it ends with";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
@@ -7313,7 +7325,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[12] {
+     PrintExpr @[13] {
       desc="what does it contain?";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.before('f'): \" << str.before(\"f\") << endl";
@@ -7323,12 +7335,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[13] {
+     Comment @[14] {
       desc="modifying the string";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// modifying the string";
      };
-     MethodCall @[14] {
+     MethodCall @[15] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str.upcase()";
@@ -7341,7 +7353,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
       };
      };
-     PrintExpr @[15] {
+     PrintExpr @[16] {
       desc="this string is upcase'd";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.upcase(): \" << str";
@@ -7351,7 +7363,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     MethodCall @[16] {
+     MethodCall @[17] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str.upcase()";
@@ -7364,7 +7376,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
       };
      };
-     PrintExpr @[17] {
+     PrintExpr @[18] {
       desc="this string is back downcase'd";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.upcase(): \" << str";
@@ -7374,7 +7386,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     MethodCall @[18] {
+     MethodCall @[19] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str.capitalize()";
@@ -7387,7 +7399,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_def=0;
       };
      };
-     PrintExpr @[19] {
+     PrintExpr @[20] {
       desc="this string is capitalize'd";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.upcase(): \" << str";
@@ -7397,7 +7409,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     MethodCall @[20] {
+     MethodCall @[21] {
       desc="search-and-replace";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str.capitalize()";
@@ -7430,7 +7442,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     PrintExpr @[21] {
+     PrintExpr @[22] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.upcase(): \" << str";
@@ -7440,12 +7452,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[22] {
+     Comment @[23] {
       desc="looping, splitting, joining";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// looping over strings using foreach";
      };
-     ForeachLoop @[23] {
+     ForeachLoop @[24] {
       desc="foreach is the most efficient way to iterate over the string elements";
       flags=0;
       orig_prog_code="foreach(chr in str)";
@@ -7473,7 +7485,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="str";
       };
      };
-     MethodCall @[24] {
+     MethodCall @[25] {
       desc="split breaks the string into an array of strings - esp handy for delimited strings";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="sary = str.split()";
@@ -7496,7 +7508,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     PrintVar @[25] {
+     PrintVar @[26] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print sary";
@@ -7510,7 +7522,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     MethodCall @[26] {
+     MethodCall @[27] {
       desc="join it back, with spaces now..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str = sary.join()";
@@ -7533,7 +7545,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     PrintVar @[27] {
+     PrintVar @[28] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print str";
@@ -7547,12 +7559,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[28] {
+     Comment @[29] {
       desc="converting strings to other things";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// converting strings to other things";
      };
-     AssignExpr @[29] {
+     AssignExpr @[30] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str = 3.14159";
@@ -7561,7 +7573,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="3.14159";
       };
      };
-     PrintExpr @[30] {
+     PrintExpr @[31] {
       desc="str ate some pi..";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str = 3.14159\" << str";
@@ -7571,7 +7583,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     PrintExpr @[31] {
+     PrintExpr @[32] {
       desc="and spit it back out again";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"str.toFloat(): \" << str.toFloat()";
@@ -7581,7 +7593,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     CssExpr @[32] {
+     CssExpr @[33] {
       desc="the conversion is implied automatically as well";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="mypi = str;";
@@ -7589,7 +7601,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="mypi = str;";
       };
      };
-     CssExpr @[33] {
+     CssExpr @[34] {
       desc="bools are represented as 'true' and 'false' in string form";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="str = true;";
@@ -7597,7 +7609,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr="str = true;";
       };
      };
-     PrintExpr @[34] {
+     PrintExpr @[35] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="print \"(bool)str: \" << (bool)str";
@@ -7607,13 +7619,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       my_mask=NULL;
       debug_level=NULL;
      };
-     Comment @[35] {
+     Comment @[36] {
       desc="see DynEnum program examples for how to convert between strings and enumerated types";
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="// see DynEnum program examples for how to convert between strings and enumerated types";
      };
     };
-    step_prog=NULL;
+    step_prog=.projects["program_examples"].programs.gp["Variables"]["Strings"]$$;
     step_n=1;
    };
    Program @["DynEnum"] {
@@ -7657,7 +7669,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	width=0;
 	ar {
 	 name="ar";
-	[5] "IGNORE";"STORE";"IGNORE";"RECALL";"RECALL";	};
+	[5] "RECALL";"RECALL";"STORE";"STORE";"IGNORE";	};
        };
        float_Data @["Input"] {
 	UserDataItem_List @*(.user_data_) {
@@ -7683,9 +7695,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	width=0;
 	ar {
 	 name="ar";
-	[5 1 5] 0;1;0;0;0;1;0;0;0;0;
-0;1;0;0;0;0;0;1;0;0;
-0;0;1;0;0;	};
+	[5 1 5] 0;0;1;0;0;0;0;1;0;0;
+1;0;0;0;0;1;0;0;0;0;
+0;1;0;0;0;	};
        };
       };
       data_flags=SAVE_ROWS|AUTO_CALC;
@@ -7962,7 +7974,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       var_type=T_DynEnum;
       dyn_enum_val {
        enum_type=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].types["ProgCmd"]$$;
-       value=2;
+       value=1;
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -9236,7 +9248,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      ProgVar @["aGlobalVar"] {
       name="aGlobalVar";
       var_type=T_Real;
-      real_val=3;
+      real_val=6;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9261,6 +9273,16 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="0";
       };
+     };
+     PrintExpr @[1] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      expr {
+       expr="\"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
+      };
+      my_mask=NULL;
+      debug_level=NULL;
      };
     };
     prog_code {
@@ -9287,17 +9309,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        };
       };
      };
-     PrintExpr @[1] {
-      desc=;
-      flags=0;
-      orig_prog_code=;
-      expr {
-       expr="\"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
-      };
-      my_mask=NULL;
-      debug_level=NULL;
-     };
-     PrintVar @[2] {
+     PrintVar @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -9311,7 +9323,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       my_mask=NULL;
       debug_level=NULL;
      };
-     AssignExpr @[3] {
+     AssignExpr @[2] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="aLocalVar = 7";
@@ -9320,7 +9332,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr="aLocalVar + 1";
       };
      };
-     AssignExpr @[4] {
+     AssignExpr @[3] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="aLocalVar = 7";
@@ -9329,17 +9341,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr="aGlobalVar + 1";
       };
      };
-     PrintVar @[5] {
+     PrintVar @[4] {
       desc=;
       flags=0;
       orig_prog_code=;
-      message="ater setting the vars";
+      message="after setting the vars";
       print_var=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$;
       print_var2=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].prog_code[0].local_vars["aLocalVar"]$;
       print_var3=NULL;
       print_var4=NULL;
-      print_var5=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].vars["aGlobalVar"]$;
-      print_var6=$.projects["program_examples"].programs.gp["Variables"]["Global_vs_Local"].prog_code[0].local_vars["aLocalVar"]$;
+      print_var5=NULL;
+      print_var6=NULL;
       my_mask=NULL;
       debug_level=NULL;
      };
@@ -10576,6 +10588,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 var_2=NULL;
 	 var_3=NULL;
 	 var_4=NULL;
+	 match_vars {
+	 };
 	};
 	PrintVar @[3] {
 	 desc=;
@@ -10952,6 +10966,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 var_2=NULL;
 	 var_3=NULL;
 	 var_4=NULL;
+	 match_vars {
+	 };
 	};
 	PrintVar @[1] {
 	 desc=;
@@ -12554,11 +12570,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] "Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";"Fruit";	 };
 	};
 	String_Data @["Name"] {
@@ -12580,11 +12596,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] "Jam";"Huckleberry";"Grapes";"Fruit";"Dragon Fruit";"Cherry";"Banana";"Apple";	 };
 	};
 	float_Data @["Value"] {
@@ -12606,11 +12622,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=177;
 	 ar {
-	  name=;
+	  name="ar";
 	 [8] 44;60;45;25;55;15;30;20;	 };
 	};
        };
@@ -15478,22 +15494,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002663825172930956;
+     value 6 0=0.002347417874261737;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02631578966975212;
+     value 6 0=0.02609308809041977;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9920085072517395;
+     value 6 0=0.9917840361595154;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7979626655578613;
+     value 6 0=0.7976022362709045;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16678,17 +16694,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 6 0=0.007757404819130898;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.03208137676119804;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7342954277992249;
+       value 6 0=0.7447108626365662;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
