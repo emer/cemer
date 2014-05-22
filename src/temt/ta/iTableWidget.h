@@ -32,6 +32,7 @@ class TA_API iTableWidget: public QTableWidget {
 INHERITED(QTableWidget)
   Q_OBJECT
 public:
+  int           edit_start_pos;  // position to start when editing
 
   iTableWidget(QWidget* parent = NULL);
 
@@ -45,7 +46,7 @@ class TA_API iTableWidgetDefaultDelegate: public QStyledItemDelegate {
 INHERITED(QStyledItemDelegate)
 Q_OBJECT
 public:
-  iTableWidget*   own_tree_widg;
+  iTableWidget*   own_table_widg;
  
   iTableWidgetDefaultDelegate(iTableWidget* own_tw);
 

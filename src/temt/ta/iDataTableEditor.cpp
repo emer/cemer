@@ -255,6 +255,13 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
       }
       return true;
     }
+    else if(e->key() == Qt::Key_A || e->key() == Qt::Key_E) {
+      if(m_cell && obj->inherits("iDataTableView")) {
+        tvCell->tv->setFocus();
+        tvCell->tv->selectCurCell();
+        return true;
+      }
+    }
   }
   return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
 }

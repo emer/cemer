@@ -24,6 +24,7 @@
 iTableWidget::iTableWidget(QWidget* parent)
 :inherited(parent)
 {
+  edit_start_pos = 0;
   iTableWidgetDefaultDelegate* del = new iTableWidgetDefaultDelegate(this);
   setItemDelegate(del);
 }
@@ -58,6 +59,16 @@ void iTableWidget::keyPressEvent(QKeyEvent* e) {
     case Qt::Key_B:
       newCurrent = moveCursor(MoveLeft, e->modifiers());
       break;
+    case Qt::Key_A:
+      edit_start_pos = 0;
+      edit(currentIndex());
+      e->accept();
+      break;
+    case Qt::Key_E:
+      edit_start_pos = -1;
+      edit(currentIndex());
+      e->accept();
+      break;
     }
     // from qabstractitemview.cpp
     QPersistentModelIndex oldCurrent = currentIndex();
@@ -84,7 +95,7 @@ void iTableWidget::keyPressEvent(QKeyEvent* e) {
 iTableWidgetDefaultDelegate::iTableWidgetDefaultDelegate(iTableWidget* own_tw) :
   inherited(own_tw)
 {
-  own_tree_widg = own_tw;
+  own_table_widg = own_tw;
 }
 
 QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
@@ -94,9 +105,10 @@ QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
   QLineEdit* le = dynamic_cast<QLineEdit*>(widg);
   if(le) {
     iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
-    // if(own_tree_widg) {
+    il->init_start_pos = own_table_widg->edit_start_pos;
+    // if(own_table_widg) {
     //   QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
-    //                    own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
+    //                    own_table_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
     // }
     return il;
   }
@@ -106,7 +118,7 @@ QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
 void iTableWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   inherited::setModelData(editor, model, index);
-  // if(own_tree_widg)
-  //   own_tree_widg->itemWasEdited(index);
+  // if(own_table_widg)
+  //   own_table_widg->itemWasEdited(index);
 }
 

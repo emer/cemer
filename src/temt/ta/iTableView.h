@@ -46,6 +46,7 @@ public:
     CA_HDR_MASK = 0x0C
   };
 
+  int           edit_start_pos;  // position to start when editing
 #ifndef __MAKETA__
   QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif
@@ -137,7 +138,7 @@ class TA_API iTableViewDefaultDelegate: public QStyledItemDelegate {
 INHERITED(QStyledItemDelegate)
 Q_OBJECT
 public:
-  iTableView*   own_tree_widg;
+  iTableView*   own_table_widg;
  
   iTableViewDefaultDelegate(iTableView* own_tw);
 
