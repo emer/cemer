@@ -83,7 +83,7 @@ bool DataSelectRowsProg::CvtFmCode(const String& code) {
       dest_data_var = FindVarNameInScope(value, false); // don't make
     }
     else if (name.startsWith("comb")) {
-      MemberDef* opmd = TA_DataSelectSpec.members.FindName("comp_op");
+      MemberDef* opmd = TA_DataSelectSpec.members.FindName("comb_op");
       if(opmd) {
         opmd->SetValStr(value, (void*)&select_spec);
       }
