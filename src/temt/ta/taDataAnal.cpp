@@ -705,8 +705,8 @@ bool taDataAnal::DistMatrix(float_Matrix* dist_mat, DataTable* src_data,
 			    const String& data_col_nm,
 			    taMath::DistMetric metric, bool norm, float tol,
 			    bool incl_scalars) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::DistMatrix -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrix -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   if(!dist_mat) {
@@ -779,8 +779,8 @@ bool taDataAnal::DistMatrixTable(DataTable* dist_mat, bool view, DataTable* src_
 				 const String& data_col_nm, const String& name_col_nm,
 				 taMath::DistMetric metric, bool norm, float tol,
 				 bool incl_scalars, bool name_labels, bool gp_names) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::DistMatrixTable -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::DistMatrixTable -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   if(src_data->rows == 0) {
@@ -931,8 +931,8 @@ bool taDataAnal::CrossDistMatrix(float_Matrix* dist_mat,
 				 DataTable* src_data_b, const String& data_col_nm_b,
 				 taMath::DistMetric metric, bool norm, float tol,
 				 bool incl_scalars) {
-  if(!src_data_a || !src_data_b) {
-    taMisc::Error("taDataAnal::CrossDistMatrix -- src_data is NULL -- must pass in this data");
+  if(!src_data_a || !src_data_b || src_data_a->rows == 0 || src_data_b->rows == 0) {
+    taMisc::Error("taDataAnal::CrossDistMatrix -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   if(!dist_mat) {
@@ -1017,8 +1017,8 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 				      const String& name_col_nm_b,
 				      taMath::DistMetric metric, bool norm, float tol,
 				      bool incl_scalars) {
-  if(!src_data_a || !src_data_b) {
-    taMisc::Error("taDataAnal::CrossDistMatrixTable -- src_data is NULL -- must pass in this data");
+  if(!src_data_a || !src_data_b || src_data_a->rows == 0 || src_data_b->rows == 0) {
+    taMisc::Error("taDataAnal::CrossDistMatrixTable -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   float_Matrix dmat(false);
@@ -1072,8 +1072,8 @@ bool taDataAnal::CrossDistMatrixTable(DataTable* dist_mat, bool view,
 
 bool taDataAnal::CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
 			      const String& data_col_nm) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::CorrelMatrix -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::CorrelMatrix -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   if(!correl_mat) {
@@ -1097,8 +1097,8 @@ bool taDataAnal::CorrelMatrix(float_Matrix* correl_mat, DataTable* src_data,
 
 bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* src_data,
 				   const String& data_col_nm) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::CorrelMatrixTable -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::CorrelMatrixTable -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   float_Matrix dmat(false);
@@ -1125,8 +1125,8 @@ bool taDataAnal::CorrelMatrixTable(DataTable* correl_mat, bool view, DataTable* 
 bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 			 const String& data_col_nm, const String& name_col_nm,
 			 taMath::DistMetric metric, bool norm, float tol) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::Cluster -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::Cluster -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
@@ -1161,8 +1161,8 @@ bool taDataAnal::Cluster(DataTable* clust_data, bool view, DataTable* src_data,
 
 bool taDataAnal::PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
 			   DataTable* src_data, const String& data_col_nm) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::PCAEigens -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::PCAEigens -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   if(!eigen_vals) {
@@ -1181,8 +1181,8 @@ bool taDataAnal::PCAEigens(float_Matrix* eigen_vals, float_Matrix* eigen_vecs,
 
 bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_data,
 			       const String& data_col_nm) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::PCAEigenTable -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::PCAEigenTable -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   float_Matrix eigen_vals(false);
@@ -1217,8 +1217,8 @@ bool taDataAnal::PCAEigenTable(DataTable* pca_data, bool view, DataTable* src_da
 bool taDataAnal::PCA2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			   const String& data_col_nm, const String& name_col_nm, 
 			   int x_axis_c, int y_axis_c) {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::PCA2dPrjn -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::PCA2dPrjn -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
@@ -1296,8 +1296,8 @@ bool taDataAnal::MDS2dPrjn(DataTable* prjn_data, bool view, DataTable* src_data,
 			   int x_axis_c, int y_axis_c,
 			   taMath::DistMetric metric, bool norm, float tol)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::MDS2dPrjn -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::MDS2dPrjn -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
@@ -1351,8 +1351,8 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
 			     int x_row, int y_row,
 			     taMath::DistMetric metric, bool norm, float tol)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::RowPat2dPrjn -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::RowPat2dPrjn -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
   DataCol* da = GetMatrixDataCol(src_data, data_col_nm);
@@ -1413,8 +1413,8 @@ bool taDataAnal::RowPat2dPrjn(DataTable* prjn_data, bool view, DataTable* src_da
 bool taDataAnal::TimeAvg(DataTable* avg_data, bool view, DataTable* src_data,
 			 float avg_dt, bool float_only)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::TimeAvg -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::TimeAvg -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
@@ -1524,8 +1524,8 @@ bool taDataAnal::SmoothUniform(DataTable* smooth_data, bool view, DataTable* src
 			       int kern_half_wd, bool neg_tail, bool pos_tail,
 			       bool keep_edges, bool float_only)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::SmoothUniform -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::SmoothUniform -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
@@ -1544,8 +1544,8 @@ bool taDataAnal::SmoothGauss(DataTable* smooth_data, bool view, DataTable* src_d
 			     int kern_half_wd, float kern_sigma, bool neg_tail, bool pos_tail,
 			     bool keep_edges, bool float_only)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::SmoothGauss -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::SmoothGauss -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
@@ -1564,8 +1564,8 @@ bool taDataAnal::SmoothExp(DataTable* smooth_data, bool view, DataTable* src_dat
 			   int kern_half_wd, float kern_exp, bool neg_tail,
 			   bool pos_tail, bool keep_edges, bool float_only)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::SmoothExp -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::SmoothExp -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
@@ -1584,8 +1584,8 @@ bool taDataAnal::SmoothPow(DataTable* smooth_data, bool view, DataTable* src_dat
 			   int kern_half_wd, float kern_exp, bool neg_tail,
 			   bool pos_tail, bool keep_edges, bool float_only)
 {
-  if(!src_data) {
-    taMisc::Error("taDataAnal::SmoothPow -- src_data is NULL -- must pass in this data");
+  if(!src_data || src_data->rows == 0) {
+    taMisc::Error("taDataAnal::SmoothPow -- src_data is NULL or has no data -- must pass in this data");
     return false;
   }
 
