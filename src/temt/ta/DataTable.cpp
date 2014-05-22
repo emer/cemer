@@ -67,9 +67,6 @@ taTypeDef_Of(Variant_Data);
 #include "../json/JSONDefs.h"
 
 TA_BASEFUNS_CTORS_DEFN(DataTable);
-// todo: following are obsolete
-TA_BASEFUNS_CTORS_DEFN(DataBlock);
-TA_BASEFUNS_CTORS_DEFN(DataBlock_Idx);
 
 using namespace std;
 

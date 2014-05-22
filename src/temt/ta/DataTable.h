@@ -1105,7 +1105,7 @@ private:
 };
 
 // todo: at some point these can be removed (obsolete starting with 7.0.0, 5/2014)
-
+#if 0 // DataBlock old class
 taTypeDef_Of(DataBlock);
 
 class DataBlock : public DataTable {
@@ -1131,5 +1131,6 @@ private:
   void Initialize() { };
   void Destroy() { };
 };
+#endif // DataBlock old class
 
 #endif // DataTable_h
