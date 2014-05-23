@@ -1388,7 +1388,8 @@ class SubversionPoller(object):
 
         # datetime.strptime is only in 2.5
         # datetime.strptime(start_time, time_format)
-        stdt = datetime(*(time.strptime(start_time, time_format)[0:6]))
+        try: stdt = datetime(*(time.strptime(start_time, time_format)[0:6]))
+        except: stdt = datetime.now()
         runtime = datetime.now() - stdt
         
         if force_updt or runtime.seconds < job_update_window * 60:
@@ -1425,7 +1426,8 @@ class SubversionPoller(object):
         if pb_batches > 1 and status == "DONE" and submit_job == "0":
             return   # don't overwrite consolidated batch guy
 
-        eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
+        try: eddt = datetime(*(time.strptime(end_time, time_format)[0:6]))
+        except: eddt = datetime.now()
         deadtime = datetime.now() - eddt
         
         if force_updt or deadtime.seconds < job_update_window * 60:
