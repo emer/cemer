@@ -40,10 +40,13 @@ void taOBase::CutLinks() {
 
 void taOBase::Copy_(const taOBase& cp) {
   if (user_data_) {
-    user_data_->Reset(); // note: we just leave an empty list if no cp.userdata
-    if (cp.user_data_)
+    user_data_->Reset();
+    if (cp.user_data_ && cp.user_data_->size > 0)
       user_data_->Copy(*cp.user_data_);
-  } else if (cp.user_data_ && (cp.user_data_->size > 0)) {
+    else
+      delete user_data_;
+  }
+  else if (cp.user_data_ && (cp.user_data_->size > 0)) {
     GetUserDataList(true)->Copy(*cp.user_data_);
   }
 }
@@ -59,3 +62,9 @@ UserDataItem_List* taOBase::GetUserDataList(bool force) const {
   return user_data_;
 }
 
+void taOBase::RemoveAllUserData() {
+  if (user_data_) {
+    delete user_data_;
+    user_data_ = NULL;
+  }
+}

@@ -16,6 +16,8 @@
 #include "DataColSpec_List.h"
 #include <DataTable>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(DataColSpec_List);
 
 const KeyString DataColSpec_List::GetListColKey(int col) const 
@@ -46,28 +48,41 @@ String DataColSpec_List::GetColHeadingIdx(int col) const {
 
 bool DataColSpec_List::UpdateDataTableCols(DataTable* dt, bool remove_orphans) {
   if (!dt) return false;
-
+  dt->StructUpdate(true);
   bool any_changes = false;
   DataCol* dc;
   DataColSpec* ds;
   dt->MarkCols(); // mark all
   for(int si = 0; si < size; ++si) {
     ds = FastEl(si);
-    dc = dt->FindColFmSpec(ds);
+    if(TestError(ds->name.empty(), "UpdateDataTableCols",
+                 "empty name in DataColSpec at index:", String(si))) {
+      continue;
+    }
+    dc = dt->FindColName(ds->name);
     if(!dc) {
       any_changes = true;
       dc = dt->NewColFmSpec(ds);
-      if(dc->col_idx != si) {
-        dt->MoveCol(dc->col_idx, si); // move into place
-        ds->col_num = si;
-      }
     }
     else {
-      if(dc->col_idx != si) {
+      if(!DataTable::ColMatchesSpec(dc, ds)) {
+        DataCol* oc = dc;
+        oc->name = "";          // new col will check on name, so blank that!
         any_changes = true;
-        dt->MoveCol(dc->col_idx, si); // move into place
-        ds->col_num = si;
+        dc = dt->NewColFmSpec(ds);
+        if(dc) {
+          dc->CopyExtras(*oc);  // get anything that other guy had
+        }
       }
+    }
+    if(!dc) {                   // shouldn't happen..
+      taMisc::Error("unable to make column according to spec:", ds->name);
+      continue;
+    }
+    if(dc->col_idx != si) {
+      any_changes = true;
+      dt->MoveCol(dc->col_idx, si); // move into place
+      ds->col_num = si;
     }
     dc->SetColFlag(DataCol::PIN); // indicates that it was used
   }
@@ -78,5 +93,7 @@ bool DataColSpec_List::UpdateDataTableCols(DataTable* dt, bool remove_orphans) {
     if(sz != dt->cols())
       any_changes = true;
   }
+  dt->StructUpdate(false);
+
   return any_changes;
 }

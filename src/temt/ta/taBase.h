@@ -1413,6 +1413,10 @@ public:
   bool                  HasUserDataList() const
     {return (GetUserDataList(false) != NULL);}
   // #CAT_UserData #EXPERT returns true if UserData exists at all
+  virtual void          CopyUserData(const taBase& cp);
+  // #CAT_UserData copy our user data from the user data on another object (replaces any of our existing user data with the copy)
+  virtual void          RemoveAllUserData() { };
+  // #CAT_UserData get rid of our user data list entirely -- this is done automatically when saving something that has no user data items, but you can also force it with this method -- deletes the whole list
   bool                  HasUserData(const String& key) const;
   // #CAT_UserData returns true if UserData exists for this key (case sens)
   const Variant         GetUserData(const String& key) const;

@@ -179,6 +179,15 @@ void DataCol::CopyFromRow_Robust(int dest_row, const DataCol& src, int src_row) 
   }
 }
 
+void DataCol::CopyExtras(const DataCol& cp) {
+  desc = cp.desc;
+  col_flags = cp.col_flags;
+  calc_expr = cp.calc_expr;
+  dim_names = cp.dim_names;
+  width = cp.width;
+  CopyUserData(cp);
+}
+
 void DataCol::Init() {
   taMatrix* ar = AR(); //cache
   int rows = 0; // rows, based on table (not our frames, which may have changed)

@@ -2652,6 +2652,24 @@ const String taBase::ValTypeToStr(ValType vt) {
 ///////////////////////////////////////////////////////////////////////////
 //      User Data: optional configuration settings for objects
 
+void taBase::CopyUserData(const taBase& cp) {
+  UserDataItem_List* our_udl = GetUserDataList(false);
+  if(our_udl) {
+    our_udl->Reset();
+  }
+  UserDataItem_List* cp_udl = cp.GetUserDataList(false);
+  if(!cp_udl || cp_udl->size == 0) {
+    RemoveAllUserData();
+    return;
+  }
+  if(!our_udl) {
+    our_udl = GetUserDataList(true);
+  }
+  if(our_udl) {
+    our_udl->Copy(*cp_udl);
+  }
+}
+
 bool taBase::HasUserData(const String& key) const {
   UserDataItem_List* ud = GetUserDataList();
   if (ud)

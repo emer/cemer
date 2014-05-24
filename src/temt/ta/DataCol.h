@@ -388,6 +388,8 @@ public:
   // #CAT_Copy copy one row from source to given row in this object, assumes that the two have the same type and, if matrix, cell_size
   virtual void  CopyFromRow_Robust(int dest_row, const DataCol& cp, int src_row);
   // #CAT_Copy copy one row from source to given row in this object, robust to differences in type and format of the cells
+  virtual void  CopyExtras(const DataCol& cp);
+  // #CAT_Copy copy all the extra non-data bits about a column: desc, flags, calc, dim_names, user data, etc
 
   //IMPORTANT: DO NOT CHANGE THE FOLLOWING METHODS TO VIRTUAL
   void          ChangeColType(ValType new_type);

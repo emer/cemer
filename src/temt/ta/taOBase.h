@@ -41,17 +41,18 @@ protected:
 
 // Methods:
 public:
-  taSigLink**          addr_sig_link() {return &m_sig_link;} // #IGNORE
-  taSigLink*  sig_link() override {return m_sig_link;}       // #IGNORE
-  taBase*               GetOwner() const        { return owner; }
+  taSigLink**          addr_sig_link() { return &m_sig_link; }
+  taSigLink*  sig_link() override { return m_sig_link; }
+  taBase*               GetOwner() const override { return owner; }
   using inherited::GetOwner;
-  taBase*               SetOwner(taBase* ta)    { owner = ta; return ta; }
-  UserDataItem_List*    GetUserDataList(bool force = false) const;
-  void                  CutLinks();
+  taBase*               SetOwner(taBase* ta) override { owner = ta; return ta; }
+  UserDataItem_List*    GetUserDataList(bool force = false) const override;
+  void                  RemoveAllUserData() override;
+  void                  CutLinks() override;
   TA_BASEFUNS(taOBase); //
 
 protected:
-  void         CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override {
+  void CanCopy_impl(const taBase* cp_fm, bool quiet, bool& ok, bool virt) const override {
     if (virt)
       inherited::CanCopy_impl(cp_fm, quiet, ok, virt);
   }
