@@ -92,7 +92,7 @@ ProgVar* If::FindVarName(const String& var_nm) const {
 }
 
 String If::GetDisplayName() const {
-  return "if (" + cond.expr + ")";
+  return "if (" + cond.GetFullExpr() + ")";
 }
 
 bool If::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

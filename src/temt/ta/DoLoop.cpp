@@ -39,7 +39,7 @@ void DoLoop::GenCssPost_impl(Program* prog) {
 }
 
 String DoLoop::GetDisplayName() const {
-  return "do ... while (" + test.expr + ")";
+  return "do ... while (" + test.GetFullExpr() + ")";
 }
 
 bool DoLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

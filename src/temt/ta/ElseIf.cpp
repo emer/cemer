@@ -98,7 +98,7 @@ ProgVar* ElseIf::FindVarName(const String& var_nm) const {
 }
 
 String ElseIf::GetDisplayName() const {
-  return "else if (" + cond.expr + ")";
+  return "else if (" + cond.GetFullExpr() + ")";
 }
 
 bool ElseIf::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

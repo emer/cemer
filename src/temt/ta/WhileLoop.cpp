@@ -39,7 +39,7 @@ void WhileLoop::GenCssPost_impl(Program* prog) {
 }
 
 String WhileLoop::GetDisplayName() const {
-  return "while (" + test.expr + ")";
+  return "while (" + test.GetFullExpr() + ")";
 }
 
 bool WhileLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

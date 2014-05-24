@@ -51,7 +51,7 @@ String IfReturn::GetDisplayName() const {
   if(cond.expr.empty())
     return "return;";
   else
-    return "if(" + cond.expr + ") return;";
+    return "if(" + cond.GetFullExpr() + ") return;";
 }
 
 bool IfReturn::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

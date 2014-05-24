@@ -51,7 +51,7 @@ String IfContinue::GetDisplayName() const {
   if(cond.expr.empty())
     return "continue;";
   else
-    return "if(" + cond.expr + ") continue;";
+    return "if(" + cond.GetFullExpr() + ") continue;";
 }
 
 bool IfContinue::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {

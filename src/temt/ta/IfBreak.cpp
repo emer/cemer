@@ -51,7 +51,7 @@ String IfBreak::GetDisplayName() const {
   if(cond.expr.empty())
     return "break;";
   else
-    return "if(" + cond.expr + ") break;";
+    return "if(" + cond.GetFullExpr() + ") break;";
 }
 
 bool IfBreak::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
