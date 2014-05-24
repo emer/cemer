@@ -72,6 +72,7 @@ bool DataColSpec_List::UpdateDataTableCols(DataTable* dt, bool remove_orphans) {
         dc = dt->NewColFmSpec(ds);
         if(dc) {
           dc->CopyExtras(*oc);  // get anything that other guy had
+          oc->Close();
         }
       }
     }
@@ -79,12 +80,12 @@ bool DataColSpec_List::UpdateDataTableCols(DataTable* dt, bool remove_orphans) {
       taMisc::Error("unable to make column according to spec:", ds->name);
       continue;
     }
+    dc->SetColFlag(DataCol::PIN); // indicates that it was used
     if(dc->col_idx != si) {
       any_changes = true;
       dt->MoveCol(dc->col_idx, si); // move into place
-      ds->col_num = si;
     }
-    dc->SetColFlag(DataCol::PIN); // indicates that it was used
+    ds->col_num = si;             // always must be true when using this function
   }
 
   if(remove_orphans) {
