@@ -16,6 +16,8 @@
 #include "NetMonitor.h"
 #include <DataTable>
 #include <Network>
+#include <Layer>
+#include <Projection>
 
 #include <taMisc>
 
@@ -152,9 +154,24 @@ void NetMonitor::UpdateNetworkPtrs() {
     items.UpdatePointers_NewParType(&TA_Network, network);
     for (int i = 0; i < items.size; ++i) {
       NetMonItem* nmi = items.FastEl(i);
-      if(nmi->object_type && nmi->object_type->InheritsFrom(&TA_Network)
-         && nmi->object.ptr() != network) {
-        nmi->object = network;
+      if (nmi->object_type) {
+        if(nmi->object_type->InheritsFrom(&TA_Network) && nmi->object.ptr() != network) {
+          nmi->object = network;
+        }
+        else if (nmi->object_type->InheritsFrom(&TA_Layer)) {
+          String name = nmi->GetObjName(nmi->object);
+          Layer* lay = network->FindLayer(name);
+          if (lay) {
+            nmi->object = lay;
+          }
+          else {
+            TestWarning(true, "UpdateNetworkPtrs", "Layer ", name, "not found in ", network->name);
+          }
+        }
+//        else if (nmi->object_type->InheritsFrom(&TA_Projection)) {
+//          Projection* prjn = dynamic_cast<Projection*>(nmi->object.ptr());
+//          Layer* lay = prjn->layer;
+//        }
       }
     }
   }
