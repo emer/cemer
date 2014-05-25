@@ -146,7 +146,7 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
-  UpdateNetworkPtrs();
+  UpdateNetworkPtrs_NewPar(network, net);
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
@@ -158,21 +158,16 @@ void NetMonitor::UpdateNetworkPtrs() {
         if(nmi->object_type->InheritsFrom(&TA_Network) && nmi->object.ptr() != network) {
           nmi->object = network;
         }
-        else if (nmi->object_type->InheritsFrom(&TA_Layer)) {
-          String name = nmi->GetObjName(nmi->object);
-          Layer* lay = network->FindLayer(name);
-          if (lay) {
-            nmi->object = lay;
-          }
-          else {
-            TestWarning(true, "UpdateNetworkPtrs", "Layer ", name, "not found in ", network->name);
-          }
-        }
-//        else if (nmi->object_type->InheritsFrom(&TA_Projection)) {
-//          Projection* prjn = dynamic_cast<Projection*>(nmi->object.ptr());
-//          Layer* lay = prjn->layer;
-//        }
       }
+    }
+  }
+}
+
+void NetMonitor::UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net) {
+  for (int i = 0; i < items.size; ++i) {
+    NetMonItem* nmi = items.FastEl(i);
+    if (nmi->object_type) {
+      UpdatePointers_NewPar_FindNew(nmi->object.ptr(), old_net, new_net);
     }
   }
 }

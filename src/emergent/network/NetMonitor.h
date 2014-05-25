@@ -85,6 +85,8 @@ public:
   // #IGNORE called by the network to remove the objs from lists
   void		UpdateNetworkPtrs();
   // #IGNORE update pointers to objects within current network
+  void    UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net);
+  // #IGNORE update pointers to objects in new network
 
   taList_impl*	children_() override {return &items;}
   String	GetDisplayName() const override;
