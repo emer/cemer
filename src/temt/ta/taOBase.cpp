@@ -43,8 +43,10 @@ void taOBase::Copy_(const taOBase& cp) {
     user_data_->Reset();
     if (cp.user_data_ && cp.user_data_->size > 0)
       user_data_->Copy(*cp.user_data_);
-    else
+    else {
       delete user_data_;
+      user_data_ = NULL;
+    }
   }
   else if (cp.user_data_ && (cp.user_data_->size > 0)) {
     GetUserDataList(true)->Copy(*cp.user_data_);
