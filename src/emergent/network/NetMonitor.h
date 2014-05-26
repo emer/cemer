@@ -97,6 +97,8 @@ public:
   TA_BASEFUNS(NetMonitor);
   
 protected:
+  NetworkRef	 prev_network;  // previous network that was set
+
   void	UpdateAfterEdit_impl();
   void	CheckThisConfig_impl(bool quiet, bool& rval) override;
   void	CheckChildConfig_impl(bool quiet, bool& rval) override;

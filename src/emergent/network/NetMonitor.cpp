@@ -61,8 +61,11 @@ void NetMonitor::CheckChildConfig_impl(bool quiet, bool& rval) {
 
 void NetMonitor::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (taMisc::is_loading || taMisc::is_duplicating) return;
-  UpdateNetworkPtrs();
+  if (taMisc::is_loading || taMisc::is_duplicating) {
+    prev_network = network;
+    return;
+  }
+  UpdateNetworkPtrs();          // updates prev_network..
   UpdateDataTable();
 }
 
@@ -146,28 +149,36 @@ void NetMonitor::SetDataTable(DataTable* dt) {
 void NetMonitor::SetNetwork(Network* net) {
 //   if(network.ptr() == net) return;
   network = net;
-  UpdateNetworkPtrs_NewPar(network, net);
+  UpdateNetworkPtrs();
 }
 
 void NetMonitor::UpdateNetworkPtrs() {
-  if(network) {
-    items.UpdatePointers_NewParType(&TA_Network, network);
-    for (int i = 0; i < items.size; ++i) {
-      NetMonItem* nmi = items.FastEl(i);
-      if (nmi->object_type) {
-        if(nmi->object_type->InheritsFrom(&TA_Network) && nmi->object.ptr() != network) {
-          nmi->object = network;
-        }
+  if(network == prev_network) return; // already done
+  if(!network) return;
+  items.UpdatePointers_NewParType(&TA_Network, network);
+  // this should now be redundant, right?
+  for (int i = 0; i < items.size; ++i) {
+    NetMonItem* nmi = items.FastEl(i);
+    if (nmi->object_type) {
+      if(nmi->object_type->InheritsFrom(&TA_Network) && nmi->object.ptr() != network) {
+        nmi->object = network;
       }
     }
   }
+  if(prev_network) {
+    UpdateNetworkPtrs_NewPar(prev_network, network);
+  }
+  prev_network = network;       // update now that we've changed everything
 }
 
 void NetMonitor::UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net) {
   for (int i = 0; i < items.size; ++i) {
     NetMonItem* nmi = items.FastEl(i);
-    if (nmi->object_type) {
-      UpdatePointers_NewPar_FindNew(nmi->object.ptr(), old_net, new_net);
+    if (nmi->object_type && nmi->object.ptr()) {
+      taBase* new_guy = UpdatePointers_NewPar_FindNew(nmi->object.ptr(), old_net, new_net);
+      if(new_guy && new_guy->InheritsFrom(nmi->object_type)) {
+        nmi->object = new_guy;
+      }
     }
   }
 }
