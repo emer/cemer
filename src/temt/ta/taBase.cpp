@@ -2457,6 +2457,10 @@ bool taBase::SearchTestStr_impl(const String& srch, String tst,
   return false;
 }
 
+
+// todo: turn this on to get useful debug info about what is matching in a search function
+// #define SEARCH_DEBUG 1
+
 bool taBase::SearchTestItem_impl(const String_Array& srch,
                                  bool contains, bool case_sensitive,
                                  bool obj_name, bool obj_type,
@@ -2465,58 +2469,93 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
                                  MemberDef* md) {
   if(srch.size == 0) return false;
 
+#ifdef SEARCH_DEBUG
+  String srch_match;
+#endif
+
   bool all_matched = true;    // reset on fail
   for(int s=0; s<srch.size; s++) {
     String sstr = srch[s];
     bool cur_matched = false;
     if(md && mbr_name) {
       cur_matched = SearchTestStr_impl(sstr, md->name, contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+      if(cur_matched) srch_match = "md: " + md->name;
+#endif
       if(!cur_matched && type_desc) {
         cur_matched = SearchTestStr_impl(sstr, md->desc, contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+        if(cur_matched) srch_match = "md desc: " + md->desc;
+#endif
       }
     }
     if(!cur_matched && obj_name) {
       cur_matched = SearchTestStr_impl(sstr, GetName(), contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+      if(cur_matched) srch_match = "name: " + GetName();
+#endif
     }
     if(!cur_matched && obj_type) {
       cur_matched = SearchTestStr_impl(sstr, GetTypeDef()->name, contains,
                                        case_sensitive);
+#ifdef SEARCH_DEBUG
+      if(cur_matched) srch_match = "type name: " + GetTypeDef()->name;
+#endif
     }
     if(!cur_matched && type_desc) {
       cur_matched = SearchTestStr_impl(sstr, GetTypeDef()->desc, contains,
                                        case_sensitive);
+#ifdef SEARCH_DEBUG
+      if(cur_matched) srch_match = "type desc: " + GetTypeDef()->desc;
+#endif
     }
     if(!cur_matched && obj_desc) {
       cur_matched = SearchTestStr_impl(sstr, GetDesc(), contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+      if(cur_matched) srch_match = "desc: " + GetDesc();
+#endif
     }
     if(!cur_matched && obj_val) {
       if(InheritsFrom(&TA_taMatrix)) {
         taMatrix* mat = (taMatrix*)this;
         if(mat->size < 1000) {  // prevent long delays from ginormous tables
           String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
-                                                  TypeDef::SC_DEFAULT, true);
+                                                  TypeDef::SC_DISPLAY, true);
           // true = force_inline
           cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+          if(cur_matched) srch_match = "matrix val";
+#endif
         }
       }
       else {
+        // important to use display to avoid path names and just use names of objs
         String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
-                                                TypeDef::SC_DEFAULT, true);
+                                                TypeDef::SC_DISPLAY, true);
         // true = force_inline
         cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+        if(cur_matched) srch_match = "val str: " + strval;
+#endif
       }
     }
     if(!cur_matched && mbr_name) {
       TypeDef* td = GetTypeDef();
       for(int m=0;m<td->members.size;m++) {
-        MemberDef* md = td->members[m];
-        if(SearchTestStr_impl(sstr, md->name, contains, case_sensitive)) {
+        MemberDef* tmd = td->members[m];
+        if(SearchTestStr_impl(sstr, tmd->name, contains, case_sensitive)) {
           cur_matched = true;
+#ifdef SEARCH_DEBUG
+          if(cur_matched) srch_match = "type md name: " + tmd->name;
+#endif
           break;
         }
         if(type_desc) {
-          if(SearchTestStr_impl(sstr, md->desc, contains, case_sensitive)) {
+          if(SearchTestStr_impl(sstr, tmd->desc, contains, case_sensitive)) {
             cur_matched = true;
+#ifdef SEARCH_DEBUG
+            if(cur_matched) srch_match = "type md desc: " + tmd->desc;
+#endif
             break;
           }
         }
@@ -2528,6 +2567,14 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
       break;
     }
   }
+
+#ifdef SEARCH_DEBUG
+  if(all_matched) {
+    taMisc::DebugInfo("search hit in:", GetPathNames(), "md:",
+                      (md ? md->name : "NULL"),
+                      "from:", srch_match);
+  }
+#endif
 
   return all_matched;
 }
@@ -2551,6 +2598,7 @@ void taBase::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
     if(!obj) continue;
     if(obj->SearchTestItem_impl(srch, contains, case_sensitive, obj_name, obj_type,
                                 obj_desc, obj_val, mbr_name, type_desc, md)) {
+      taMisc::DebugInfo("memb search hit in:", GetPathNames(), "md:", md->name);
       items.Link(obj);
     }
   }

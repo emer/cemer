@@ -28,6 +28,7 @@
 #include <QContextMenuEvent>
 #include <iLineEdit>
 #include <QTextEdit>
+#include <QCoreApplication>
 
 #include <iostream>
 using namespace std;
@@ -69,6 +70,7 @@ iTreeWidget::~iTreeWidget()
 void  iTreeWidget::init() {
   move_after_edit = 0;
   edit_start_pos = 0;
+  edit_start_kill = false;
   ext_select_on = false;
   m_sibling_sel = true;
   m_highlightRows = false;
@@ -484,6 +486,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       case Qt::Key_A:
         if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
           edit_start_pos = 0;
+          edit_start_kill = false;
           editItem(cur_item);     // todo: get column
         }
         e->accept();
@@ -491,6 +494,15 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       case Qt::Key_E:
         if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
           edit_start_pos = -1;
+          edit_start_kill = false;
+          editItem(cur_item);     // todo: get column
+        }
+        e->accept();
+        break;
+      case Qt::Key_K:
+        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+          edit_start_pos = 0;
+          edit_start_kill = true;
           editItem(cur_item);     // todo: get column
         }
         e->accept();
@@ -608,6 +620,7 @@ void iTreeWidget::dragScroll() {
 
 void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
   ((iTreeWidget*)this)->edit_start_pos = 0;
+  ((iTreeWidget*)this)->edit_start_kill = false;
   emit itemEdited(index, move_after_edit);
 }
 
@@ -636,6 +649,7 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
       QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
                        own_tree_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
       il->init_start_pos = own_tree_widg->edit_start_pos;
+      il->init_start_kill = own_tree_widg->edit_start_kill;
     }
     return il;
   }

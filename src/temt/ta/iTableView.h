@@ -47,6 +47,7 @@ public:
   };
 
   int           edit_start_pos;  // position to start when editing
+  bool          edit_start_kill; // start editing with kill
 #ifndef __MAKETA__
   QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif

@@ -33,6 +33,7 @@ INHERITED(QTreeWidget)
 public:
   int           move_after_edit; // direction to move after edit
   int           edit_start_pos;  // position to start when editing
+  bool          edit_start_kill; // kill to end of line at edit start?
 
   bool		hasHighlightColor(int idx) const;
   void		setHighlightColor(int idx, const QColor& base);

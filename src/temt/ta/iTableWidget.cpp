@@ -25,6 +25,7 @@ iTableWidget::iTableWidget(QWidget* parent)
 :inherited(parent)
 {
   edit_start_pos = 0;
+  edit_start_kill = false;
   iTableWidgetDefaultDelegate* del = new iTableWidgetDefaultDelegate(this);
   setItemDelegate(del);
 }
@@ -61,11 +62,19 @@ void iTableWidget::keyPressEvent(QKeyEvent* e) {
       break;
     case Qt::Key_A:
       edit_start_pos = 0;
+      edit_start_kill = false;
       edit(currentIndex());
       e->accept();
       break;
     case Qt::Key_E:
       edit_start_pos = -1;
+      edit_start_kill = false;
+      edit(currentIndex());
+      e->accept();
+      break;
+    case Qt::Key_K:
+      edit_start_pos = 0;
+      edit_start_kill = true;
       edit(currentIndex());
       e->accept();
       break;
@@ -106,6 +115,8 @@ QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
   if(le) {
     iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
     il->init_start_pos = own_table_widg->edit_start_pos;
+    il->init_start_kill = own_table_widg->edit_start_kill;
+    
     // if(own_table_widg) {
     //   QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
     //                    own_table_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
@@ -118,6 +129,8 @@ QWidget* iTableWidgetDefaultDelegate::createEditor(QWidget *parent,
 void iTableWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   inherited::setModelData(editor, model, index);
+  own_table_widg->edit_start_pos = 0;
+  own_table_widg->edit_start_kill = false;
   // if(own_table_widg)
   //   own_table_widg->itemWasEdited(index);
 }

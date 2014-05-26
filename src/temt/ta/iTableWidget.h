@@ -33,6 +33,7 @@ INHERITED(QTableWidget)
   Q_OBJECT
 public:
   int           edit_start_pos;  // position to start when editing
+  bool          edit_start_kill; // kill to end of line at edit start?
 
   iTableWidget(QWidget* parent = NULL);
 

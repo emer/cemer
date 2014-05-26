@@ -33,6 +33,7 @@ iTableView::iTableView(QWidget* parent)
 :inherited(parent)
 {
   edit_start_pos = 0;
+  edit_start_kill = false;
   ext_select_on = false;
   m_saved_scroll_pos = 0;
 
@@ -72,6 +73,9 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space, Qt::MetaModifier));
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
     return true;
+  }
+  else if(ctrl_pressed && e->key() == Qt::Key_K) {
+    // don't let this go to edit filter -- we want it
   }
   else {
     if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
@@ -148,11 +152,19 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       break;
     case Qt::Key_A:
       edit_start_pos = 0;
+      edit_start_kill = false;
       edit(currentIndex());
       e->accept();
       break;
     case Qt::Key_E:
       edit_start_pos = -1;
+      edit_start_kill = false;
+      edit(currentIndex());
+      e->accept();
+      break;
+    case Qt::Key_K:
+      edit_start_pos = 0;
+      edit_start_kill = true;
       edit(currentIndex());
       e->accept();
       break;
@@ -432,6 +444,7 @@ QWidget* iTableViewDefaultDelegate::createEditor(QWidget *parent,
   if(le) {
     iLineEdit* il = new iLineEdit(le->text().toLatin1(), parent);
     il->init_start_pos = own_table_widg->edit_start_pos;
+    il->init_start_kill = own_table_widg->edit_start_kill;
     // if(own_table_widg) {
     //   QObject::connect(il, SIGNAL(lookupKeyPressed(iLineEdit*)),
     //                    own_table_widg, SLOT(lookupKeyPressed(iLineEdit*)) );
@@ -444,6 +457,8 @@ QWidget* iTableViewDefaultDelegate::createEditor(QWidget *parent,
 void iTableViewDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   inherited::setModelData(editor, model, index);
+  own_table_widg->edit_start_pos = 0;
+  own_table_widg->edit_start_kill = false;
   // if(own_table_widg)
   //   own_table_widg->itemWasEdited(index);
 }

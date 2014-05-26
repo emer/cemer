@@ -44,6 +44,7 @@ void iLineEdit::init() {
   setAttribute(Qt::WA_AcceptTouchEvents, false);
 #endif
   init_start_pos = 0;
+  init_start_kill = false;
   mmin_char_width = 0;
   mchar_width = 0;
   ext_select_on = false;
@@ -82,6 +83,11 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
     else {
       setCursorPosition(0);
     }
+  }
+  if(init_start_kill) {
+    end(true);                // mark
+    cut();
+    clearExtSelection();
   }
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;

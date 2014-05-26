@@ -3,160 +3,20 @@ Program .projects[0].programs.gp[1][2] {
  ProgObjList @.objs = [5] {
   Relation @[0] { };
   DataTable @[1] { 
-   DataTableCols @.data = [53] {
+   DataTableCols @.data = [37] {
     int_Data @[0] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
     int_Data @[1] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
+      UserDataItem @[1] { };
      };
     };
-    String_Data @[2] { };
-    float_Data @[3] { };
-    float_Data @[4] { };
-    float_Data @[5] { };
-    float_Data @[6] { };
-    float_Data @[7] { };
-    float_Data @[8] { };
-    float_Data @[9] { };
-    float_Data @[10] { };
-    float_Data @[11] { };
-    float_Data @[12] { };
-    float_Data @[13] { };
-    float_Data @[14] { };
-    float_Data @[15] { };
-    float_Data @[16] { };
-    float_Data @[17] { };
-    float_Data @[18] { };
-    float_Data @[19] { };
-    float_Data @[20] { };
-    float_Data @[21] { };
-    float_Data @[22] { };
-    float_Data @[23] { };
-    float_Data @[24] { };
-    float_Data @[25] { };
-    float_Data @[26] { };
-    float_Data @[27] { };
-    float_Data @[28] { };
-    float_Data @[29] { };
-    float_Data @[30] { };
-    float_Data @[31] { };
-    float_Data @[32] { };
-    float_Data @[33] { };
-    float_Data @[34] { };
-    float_Data @[35] { };
-    float_Data @[36] { };
-    float_Data @[37] { };
-    float_Data @[38] { };
-    float_Data @[39] { };
-    float_Data @[40] { };
-    float_Data @[41] { };
-    String_Data @[42] { };
-    String_Data @[43] { };
-    String_Data @[44] { };
-    String_Data @[45] { };
-    String_Data @[46] { };
-    float_Data @[47] { };
-    float_Data @[48] { };
-    float_Data @[49] { };
-    float_Data @[50] { };
-    float_Data @[51] { };
-    int_Data @[52] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-   };
-  };
-  DataTable @[2] { 
-   DataTableCols @.data = [51] {
-    int_Data @[0] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    int_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    String_Data @[2] { };
-    float_Data @[3] { };
-    float_Data @[4] { };
-    float_Data @[5] { };
-    float_Data @[6] { };
-    float_Data @[7] { };
-    float_Data @[8] { };
-    float_Data @[9] { };
-    float_Data @[10] { };
-    float_Data @[11] { };
-    float_Data @[12] { };
-    float_Data @[13] { };
-    float_Data @[14] { };
-    float_Data @[15] { };
-    float_Data @[16] { };
-    float_Data @[17] { };
-    float_Data @[18] { };
-    float_Data @[19] { };
-    float_Data @[20] { };
-    float_Data @[21] { };
-    float_Data @[22] { };
-    float_Data @[23] { };
-    float_Data @[24] { };
-    float_Data @[25] { };
-    float_Data @[26] { };
-    float_Data @[27] { };
-    float_Data @[28] { };
-    float_Data @[29] { };
-    float_Data @[30] { };
-    float_Data @[31] { };
-    float_Data @[32] { };
-    float_Data @[33] { };
-    float_Data @[34] { };
-    float_Data @[35] { };
-    float_Data @[36] { };
-    float_Data @[37] { };
-    float_Data @[38] { };
-    float_Data @[39] { };
-    float_Data @[40] { };
-    float_Data @[41] { };
-    String_Data @[42] { };
-    String_Data @[43] { };
-    String_Data @[44] { };
-    String_Data @[45] { };
-    String_Data @[46] { };
-    float_Data @[47] { };
-    float_Data @[48] { };
-    float_Data @[49] { };
-    float_Data @[50] { };
-   };
-  };
-  DataTable @[3] { 
-   DataTableCols @.data = [6] {
-    String_Data @[0] { };
-    int_Data @[1] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[2] { 
-     UserDataItem_List @*(.user_data_) {
-      UserDataItem @[0] { };
-     };
-    };
-    float_Data @[3] { };
-    float_Data @[4] { };
-    String_Data @[5] { };
-   };
-  };
-  DataTable @[4] { 
-   DataTableCols @.data = [17] {
-    String_Data @[0] { };
-    String_Data @[1] { };
-    float_Data @[2] { 
+    String_Data @[2] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @[0] { };
      };
@@ -186,15 +46,337 @@ Program .projects[0].programs.gp[1][2] {
       UserDataItem @[0] { };
      };
     };
-    float_Data @[8] { };
-    float_Data @[9] { };
-    float_Data @[10] { };
+    int_Data @[8] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    double_Data @[9] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    double_Data @[10] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[11] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[12] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[13] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[14] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[15] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[16] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[17] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[18] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[19] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[20] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[21] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[22] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[23] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[24] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[25] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[26] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[27] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[28] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[29] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[30] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[31] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[32] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[33] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[34] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[35] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[36] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+   };
+  };
+  DataTable @[2] { 
+   DataTableCols @.data = [37] {
+    int_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[2] { };
+    float_Data @[3] { };
+    float_Data @[4] { };
+    float_Data @[5] { };
+    float_Data @[6] { };
+    float_Data @[7] { };
+    int_Data @[8] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    double_Data @[9] { };
+    double_Data @[10] { };
     float_Data @[11] { };
     float_Data @[12] { };
     float_Data @[13] { };
     float_Data @[14] { };
     float_Data @[15] { };
     float_Data @[16] { };
+    float_Data @[17] { };
+    float_Data @[18] { };
+    float_Data @[19] { };
+    float_Data @[20] { };
+    float_Data @[21] { };
+    float_Data @[22] { };
+    float_Data @[23] { };
+    float_Data @[24] { };
+    float_Data @[25] { };
+    String_Data @[26] { };
+    String_Data @[27] { };
+    String_Data @[28] { };
+    String_Data @[29] { };
+    String_Data @[30] { };
+    float_Data @[31] { };
+    float_Data @[32] { };
+    float_Data @[33] { };
+    float_Data @[34] { };
+    float_Data @[35] { };
+    float_Data @[36] { };
+   };
+  };
+  DataTable @[3] { 
+   DataTableCols @.data = [6] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    int_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[5] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+  };
+  DataTable @[4] { 
+   DataTableCols @.data = [17] {
+    String_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    String_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[2] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[3] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[4] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[5] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[6] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[7] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+      UserDataItem @[1] { };
+     };
+    };
+    float_Data @[8] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[9] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[10] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[11] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[12] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[13] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[14] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[15] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[16] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
    };
   };
  };
@@ -248,18 +430,19 @@ Program .projects[0].programs.gp[1][2] {
   };
   AssignExpr @[3] { };
   ForeachLoop @[4] { 
-   ProgEl_List @.loop_code = [7] {
-    If @[0] { 
+   ProgEl_List @.loop_code = [8] {
+    IfContinue @[0] { };
+    If @[1] { 
      ProgEl_List @.true_code = [1] {
       IfContinue @[0] { };
      };
     };
-    Else @[1] { 
+    Else @[2] { 
      ProgEl_List @.else_code = [1] {
       IfContinue @[0] { };
      };
     };
-    If @[2] { 
+    If @[3] { 
      ProgEl_List @.true_code = [1] {
       DataAnalCall @[0] { 
        ProgArg_List @.meth_args = [9] {
@@ -276,7 +459,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    Else @[3] { 
+    Else @[4] { 
      ProgEl_List @.else_code = [1] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
@@ -285,7 +468,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    If @[4] { 
+    If @[5] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
@@ -299,7 +482,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    Else @[5] { 
+    Else @[6] { 
      ProgEl_List @.else_code = [3] {
       AssignExpr @[0] { };
       DataProcCall @[1] { 
@@ -315,7 +498,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    VarIncr @[6] { };
+    VarIncr @[7] { };
    };
   };
   MethodCall @[5] { 
@@ -403,6 +586,11 @@ Program .projects[0].programs.gp[1][2] {
        value 1 0=1;
        val_type_fixed=0;
       };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
      name="batch";
      col_flags=SAVE_ROWS|SAVE_DATA;
@@ -426,6 +614,11 @@ Program .projects[0].programs.gp[1][2] {
        value 1 0=1;
        val_type_fixed=0;
       };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
      name="epoch";
      col_flags=SAVE_ROWS|SAVE_DATA;
@@ -440,6 +633,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     String_Data @[2] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_573";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="train_mode";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -453,71 +656,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[3] {
-     name="cur_lrate";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_574";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[4] {
-     name="category_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[5] {
-     name="ident_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[6] {
-     name="category_dist";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[7] {
-     name="epoch_trials";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[8] {
      name="avg_sse";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -530,7 +678,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[9] {
+    float_Data @[4] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_575";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -543,7 +701,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[10] {
+    float_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_576";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="avg_norm_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -556,33 +724,137 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
+    float_Data @[6] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_577";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="avg_ext_rew";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[7] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_578";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="avg_cycles";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    int_Data @[8] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="n_unk_bb_trials";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    double_Data @[9] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_579";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="unk_bb_err_i1";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    double_Data @[10] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_580";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="unk_bb_err_i2";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
     float_Data @[11] {
-     name="avg_Semant_sse";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_581";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[12] {
-     name="avg_Semant_norm_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[13] {
      name="epoch_time_tot";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -595,7 +867,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[14] {
+    float_Data @[12] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_582";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="epoch_time_usr";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -608,8 +890,64 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
+    float_Data @[13] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_583";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="BlicketProbability_Fm_Hidden_netrel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[14] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_584";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Effect_Fm_Hidden_netrel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
     float_Data @[15] {
-     name="wt_sync_time_tot";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_585";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_Fm_Input_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -622,7 +960,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[16] {
-     name="wt_sync_time_usr";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_586";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_Fm_Context_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -635,7 +983,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[17] {
-     name="apply_inputs_time_tot";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_587";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_Fm_Time_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -648,7 +1006,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[18] {
-     name="IT_over";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_588";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_Fm_Effect_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -661,7 +1029,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[19] {
-     name="FFA_over";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_589";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_Ctxt_Fm_Hidden_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -674,7 +1052,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[20] {
-     name="V4h_over";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_590";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Input_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -687,7 +1075,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[21] {
-     name="V4m_over";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_591";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Context_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -700,7 +1098,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[22] {
-     name="IT_dead";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_592";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="BlicketPr_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -713,7 +1121,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[23] {
-     name="FFA_dead";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_593";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Time_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -726,7 +1144,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[24] {
-     name="V4h_dead";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_594";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Effect_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -739,7 +1167,17 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[25] {
-     name="V4m_dead";
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_595";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="Hidden_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -751,215 +1189,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[26] {
-     name="V1_high_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
+    String_Data @[26] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_596";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[27] {
-     name="V1_med_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[28] {
-     name="V4_high_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[29] {
-     name="V4_med_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[30] {
-     name="IT_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[31] {
-     name="Output_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[32] {
-     name="Target_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[33] {
-     name="V4_high_Fm_V1_high_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[34] {
-     name="V4_high_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[35] {
-     name="V4_med_Fm_V1_med_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[36] {
-     name="V4_med_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[37] {
-     name="IT_Fm_V4_high_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[38] {
-     name="IT_Fm_V4_med_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[39] {
-     name="IT_Fm_Output_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[40] {
-     name="Output_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[41] {
-     name="Output_Fm_Target_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    String_Data @[42] {
      name="tag";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -972,7 +1212,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[43] {
+    String_Data @[27] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_597";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="tag_svn";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -985,7 +1235,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[44] {
+    String_Data @[28] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_598";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="tag_job";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -998,7 +1258,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[45] {
+    String_Data @[29] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_599";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="params";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1011,7 +1281,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[46] {
+    String_Data @[30] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_600";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
      name="notes";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1024,8 +1304,18 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[47] {
-     name="out_it_rel";
+    float_Data @[31] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_601";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="LeabraConSpec_0_lrate";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1037,8 +1327,18 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[48] {
-     name="it_v4h_rel";
+    float_Data @[32] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_602";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="thr_l_mix";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1050,20 +1350,17 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[49] {
-     name="it_v4m_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
+    float_Data @[33] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_603";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
      };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[50] {
      name="stable_pct";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1076,8 +1373,18 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[51] {
-     name="V4ITCons_lrate";
+    float_Data @[34] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_604";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="fm_output_rel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1089,14 +1396,42 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    int_Data @[52] {
+    float_Data @[35] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_357";
+      name="UserDataItem_List_605";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
+       val_type_fixed=0;
+      };
+     };
+     name="ti_ctxt_rel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    int_Data @[36] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_557";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.170940175652504;
        val_type_fixed=0;
       };
      };
@@ -1188,71 +1523,6 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[3] {
-     name="cur_lrate";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[4] {
-     name="category_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[5] {
-     name="ident_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[6] {
-     name="category_dist";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[7] {
-     name="epoch_trials";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[8] {
      name="avg_sse";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1265,7 +1535,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[9] {
+    float_Data @[4] {
      name="cnt_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1278,7 +1548,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[10] {
+    float_Data @[5] {
      name="avg_norm_err";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1291,33 +1561,82 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
+    float_Data @[6] {
+     name="avg_ext_rew";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[7] {
+     name="avg_cycles";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    int_Data @[8] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="NARROW";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="n_unk_bb_trials";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    double_Data @[9] {
+     name="unk_bb_err_i1";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    double_Data @[10] {
+     name="unk_bb_err_i2";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
     float_Data @[11] {
-     name="avg_Semant_sse";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[12] {
-     name="avg_Semant_norm_err";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[13] {
      name="epoch_time_tot";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1330,7 +1649,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[14] {
+    float_Data @[12] {
      name="epoch_time_usr";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1343,8 +1662,34 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
+    float_Data @[13] {
+     name="BlicketProbability_Fm_Hidden_netrel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[14] {
+     name="Effect_Fm_Hidden_netrel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
     float_Data @[15] {
-     name="wt_sync_time_tot";
+     name="Hidden_Fm_Input_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1357,7 +1702,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[16] {
-     name="wt_sync_time_usr";
+     name="Hidden_Fm_Context_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1370,7 +1715,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[17] {
-     name="apply_inputs_time_tot";
+     name="Hidden_Fm_Time_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1383,7 +1728,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[18] {
-     name="IT_over";
+     name="Hidden_Fm_Effect_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1396,7 +1741,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[19] {
-     name="FFA_over";
+     name="Hidden_Ctxt_Fm_Hidden_netrel";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1409,7 +1754,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[20] {
-     name="V4h_over";
+     name="Input_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1422,7 +1767,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[21] {
-     name="V4m_over";
+     name="Context_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1435,7 +1780,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[22] {
-     name="IT_dead";
+     name="BlicketPr_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1448,7 +1793,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[23] {
-     name="FFA_dead";
+     name="Time_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1461,7 +1806,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[24] {
-     name="V4h_dead";
+     name="Effect_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1474,7 +1819,7 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[25] {
-     name="V4m_dead";
+     name="Hidden_netmax";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1486,215 +1831,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[26] {
-     name="V1_high_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[27] {
-     name="V1_med_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[28] {
-     name="V4_high_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[29] {
-     name="V4_med_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[30] {
-     name="IT_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[31] {
-     name="Output_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[32] {
-     name="Target_netmax";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[33] {
-     name="V4_high_Fm_V1_high_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[34] {
-     name="V4_high_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[35] {
-     name="V4_med_Fm_V1_med_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[36] {
-     name="V4_med_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[37] {
-     name="IT_Fm_V4_high_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[38] {
-     name="IT_Fm_V4_med_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[39] {
-     name="IT_Fm_Output_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[40] {
-     name="Output_Fm_IT_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[41] {
-     name="Output_Fm_Target_netrel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    String_Data @[42] {
+    String_Data @[26] {
      name="tag";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1707,7 +1844,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[43] {
+    String_Data @[27] {
      name="tag_svn";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1720,7 +1857,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[44] {
+    String_Data @[28] {
      name="tag_job";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1733,7 +1870,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[45] {
+    String_Data @[29] {
      name="params";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1746,7 +1883,7 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    String_Data @[46] {
+    String_Data @[30] {
      name="notes";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1759,8 +1896,8 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[47] {
-     name="out_it_rel";
+    float_Data @[31] {
+     name="LeabraConSpec_0_lrate";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1772,8 +1909,8 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[48] {
-     name="it_v4h_rel";
+    float_Data @[32] {
+     name="thr_l_mix";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1785,21 +1922,47 @@ Program .projects[0].programs.gp[1][2] {
      [0]      };
      width=0;
     };
-    float_Data @[49] {
-     name="it_v4m_rel";
-     col_flags=SAVE_ROWS|SAVE_DATA;
-     is_matrix=0;
-     cell_geom{ 1;     };
-     calc_expr {
-      expr=;
-     };
-     dim_names {
-      name="dim_names";
-     [0]      };
-     width=0;
-    };
-    float_Data @[50] {
+    float_Data @[33] {
      name="stable_pct";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[34] {
+     name="fm_output_rel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[35] {
+     name="ti_ctxt_rel";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{ 1;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=0;
+    };
+    float_Data @[36] {
+     name="hidden_gi";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
      cell_geom{ 1;     };
@@ -1828,6 +1991,16 @@ Program .projects[0].programs.gp[1][2] {
     el_typ=int_Data;
     el_def=0;
     String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_558";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="tag_svn_group";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1842,12 +2015,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     int_Data @[1] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_356";
+      name="UserDataItem_List_556";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -1865,12 +2043,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_358";
+      name="UserDataItem_List_558";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -1887,6 +2070,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[3] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_559";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1900,6 +2093,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[4] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_560";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_min";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1913,6 +2116,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     String_Data @[5] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_561";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="params_last";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1942,6 +2155,16 @@ Program .projects[0].programs.gp[1][2] {
     el_typ=int_Data;
     el_def=0;
     String_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_562";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="tag_svn_group_group";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1955,6 +2178,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     String_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_563";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="params_last_last";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -1969,12 +2202,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[2] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_352";
+      name="UserDataItem_List_552";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -1992,12 +2230,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[3] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_353";
+      name="UserDataItem_List_553";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -2015,12 +2258,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[4] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_354";
+      name="UserDataItem_List_554";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -2038,12 +2286,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[5] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_355";
+      name="UserDataItem_List_555";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -2061,12 +2314,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[6] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_356";
+      name="UserDataItem_List_556";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -2084,12 +2342,17 @@ Program .projects[0].programs.gp[1][2] {
     };
     float_Data @[7] {
      UserDataItem_List @*(.user_data_) {
-      name="UserDataItem_List_357";
+      name="UserDataItem_List_557";
       el_typ=UserDataItem;
       el_def=0;
       UserDataItem @[0] {
        name="NARROW";
        value 1 0=1;
+       val_type_fixed=0;
+      };
+      UserDataItem @[1] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
        val_type_fixed=0;
       };
      };
@@ -2106,6 +2369,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[8] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_564";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first_min";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2119,6 +2392,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[9] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_565";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first_max";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2132,6 +2415,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[10] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_566";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first_n_at_max";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2145,6 +2438,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[11] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_567";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first_mean";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2158,6 +2461,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[12] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_568";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_find_first_sem";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2171,6 +2484,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[13] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_569";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_min_min";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2184,6 +2507,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[14] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_570";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_min_max";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2197,6 +2530,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[15] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_571";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_min_mean";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2210,6 +2553,16 @@ Program .projects[0].programs.gp[1][2] {
      width=0;
     };
     float_Data @[16] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_572";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1579778790473938;
+       val_type_fixed=0;
+      };
+     };
      name="cnt_err_min_sem";
      col_flags=SAVE_ROWS|SAVE_DATA;
      is_matrix=0;
@@ -2511,7 +2864,15 @@ Program .projects[0].programs.gp[1][2] {
     name=;
     el_typ=ProgCode;
     el_def=0;
-    If @[0] {
+    IfContinue @[0] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="if(!dt.name.contains(\"_epc\")) continue";
+     cond {
+      expr="!dt.name.contains(\"_epc\")";
+     };
+    };
+    If @[1] {
      desc=;
      flags=0;
      orig_prog_code="if(test_data)";
@@ -2532,7 +2893,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    Else @[1] {
+    Else @[2] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -2550,7 +2911,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    If @[2] {
+    If @[3] {
      desc=;
      flags=0;
      orig_prog_code="if(smooth)";
@@ -2666,7 +3027,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    Else @[3] {
+    Else @[4] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -2699,7 +3060,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    If @[4] {
+    If @[5] {
      desc=;
      flags=0;
      orig_prog_code="if(AllData.rows == 0)";
@@ -2758,7 +3119,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    Else @[5] {
+    Else @[6] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -2837,7 +3198,7 @@ Program .projects[0].programs.gp[1][2] {
       };
      };
     };
-    VarIncr @[6] {
+    VarIncr @[7] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="run_no += 1";
