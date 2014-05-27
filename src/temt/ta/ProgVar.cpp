@@ -204,8 +204,12 @@ void ProgVar::UpdateAfterEdit_impl() {
     m_prev_sig = m_this_sig;
     m_this_sig = tfs;
     if (m_prev_sig != m_this_sig) {
+      // taMisc::DebugInfo("var:", name, "schema changed in UAE");
       setStale();
     }
+    // else {
+    //   taMisc::DebugInfo("var:", name, "schema NOT changed in UAE");
+    // }
   }
   SetFlagsByOwnership();
   UpdateUsedFlag();
@@ -909,7 +913,7 @@ bool ProgVar::BrowserEditSet(const String& code, int move_after) {
       }
     }
   }
-  SigEmitUpdated();
+  UpdateAfterEdit();            // this is essential for setting update schema bit
   return true;
 }
 

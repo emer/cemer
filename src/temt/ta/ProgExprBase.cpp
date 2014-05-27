@@ -33,6 +33,7 @@
 #include <taiWidgetEnumStaticChooser>
 #include <taiWidgetTokenChooser>
 #include <MemberProgEl>
+#include <SigLinkSignal>
 
 TA_BASEFUNS_CTORS_DEFN(ProgExprBase);
 
@@ -119,14 +120,16 @@ void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
     if(prg && pel && bad_vars.size > 0) {
       rval = false;
       if(!quiet)
-        taMisc::CheckError("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:", bad_vars[0],
-                           (bad_vars.size > 1 ? bad_vars[1] : _nilString),
-                           (bad_vars.size > 2 ? bad_vars[2] : _nilString),
-                           (bad_vars.size > 3 ? bad_vars[3] : _nilString)
-                           // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
-                           // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
-                           // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
-                           );
+        taMisc::CheckError
+          ("ProgExpr in program element:", pel->GetDisplayName(),"\n in program:", prg->name," Errors in expression -- the following variable names could not be found:",
+           bad_vars[0],
+           (bad_vars.size > 1 ? bad_vars[1] : _nilString),
+           (bad_vars.size > 2 ? bad_vars[2] : _nilString),
+           (bad_vars.size > 3 ? bad_vars[3] : _nilString)
+           // (bad_vars.size > 4 ? bad_vars[4] : _nilString),
+           // (bad_vars.size > 5 ? bad_vars[5] : _nilString),
+           // (bad_vars.size > 6 ? bad_vars[6] : _nilString)
+           );
     }
   }
 }
@@ -156,18 +159,24 @@ void ProgExprBase::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
 void ProgExprBase::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                     int sls, void* op1_, void* op2_)
 {
-  // we only update ourself if the schema of a var changed
-  if (obj && obj->InheritsFrom(&TA_ProgVar)) {
-    ProgVar* pv = (ProgVar*)obj;
-    if (!pv->schemaChanged())
-      return;
+  if(sls != SLS_ITEM_UPDATED || !obj || !obj->InheritsFrom(&TA_ProgVar)) {
+    return;
   }
+  ProgVar* pv = (ProgVar*)obj;
+  if (!pv->schemaChanged()) {
+    // taMisc::DebugInfo("updating expr:", expr, "b/c of ProgVar:", pv->name,
+    //                   "schema NOT changed!, sig:", String(sls));
+    return;
+  }
+  // taMisc::DebugInfo("updating expr:", expr, "b/c of ProgVar:", pv->name,
+  //                   "sig:", String(sls));
 
   expr = GetFullExpr();         // update our expr to reflect any changes in variables.
-  if(owner)                     // usu we are inside something else
-    owner->UpdateAfterEdit();
-  else
-    UpdateAfterEdit();
+  SigEmitUpdated();             // update any specific display reference to us
+  ProgEl* pel = GET_MY_OWNER(ProgEl);
+  if(pel) {
+    pel->SigEmitUpdated();      // update display is usually sufficient
+  }
 }
 
 bool ProgExprBase::SetExpr(const String& ex) {

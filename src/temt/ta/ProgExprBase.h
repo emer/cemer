@@ -126,7 +126,7 @@ protected:
   void CheckThisConfig_impl(bool quiet, bool& rval) override;
   void SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
   void SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                             int sls, void* op1_, void* op2_) override;
+                        int sls, void* op1_, void* op2_) override;
 
 private:
   void  Copy_(const ProgExprBase& cp);

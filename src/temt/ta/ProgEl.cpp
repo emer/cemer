@@ -29,6 +29,8 @@
 #include <taRootBase>
 #include <ProgCode>
 #include <ProgElChoiceDlg>
+#include <SigLinkSignal>
+
 #include <taMisc>
 
 #include <css_machine.h>
@@ -398,9 +400,19 @@ void ProgEl::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void ProgEl::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                    int sls, void* op1_, void* op2_) {
-//NO!!!!! Does a UAE if content of ref changes; otherwise, don't need this
-//  UpdateAfterEdit();          // just do this for all guys -- keeps display updated
+                              int sls, void* op1_, void* op2_) {
+  if(sls != SLS_ITEM_UPDATED || !obj || !obj->InheritsFrom(&TA_ProgVar)) {
+    return;
+  }
+  ProgVar* pv = (ProgVar*)obj;
+  if (!pv->schemaChanged()) {
+    // taMisc::DebugInfo("updating progel:", GetDisplayName(), "b/c of ProgVar:", pv->name,
+    //                   "schema NOT changed!, sig:", String(sls));
+    return;
+  }
+  // taMisc::DebugInfo("updating progel:", GetDisplayName(), "b/c of ProgVar:", pv->name,
+  //                   "sig:", String(sls));
+  SigEmitUpdated();             // update our display
 }
 
 void ProgEl::GenCss(Program* prog) {
@@ -723,7 +735,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   String cd = CodeGetDesc(code);
   if(CanCvtFmCode(cd, NULL)) {
     bool rval = CvtFmCode(cd);
-    SigEmitUpdated();
+    UpdateAfterEdit();
     return rval;
   }
   orig_prog_code = cd;

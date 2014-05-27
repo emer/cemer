@@ -51,9 +51,15 @@ void DataLoop::GetOrderVar() {
       order_var->SigEmitUpdated();
     }
   }
+  bool needs_updt = false;
+  if(order_var->var_type != ProgVar::T_HardEnum)
+    needs_updt = true;
   order_var->var_type = ProgVar::T_HardEnum;
   order_var->hard_enum_type = TA_DataLoop.sub_types.FindName("Order");
   order = (Order)order_var->int_val;
+  if(needs_updt) {
+    order_var->SigEmitUpdated();
+  }
 }
 
 void DataLoop::GetIndexVar() {
@@ -207,8 +213,3 @@ DataLoop::Order DataLoop::StringToOrderType(const String& order_type) {
     return DataLoop::SEQUENTIAL;
 }
 
-void DataLoop::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-                                int sls, void* op1_, void* op2_) {
-  GetOrderVal();
-  UpdateAfterEdit();
-}

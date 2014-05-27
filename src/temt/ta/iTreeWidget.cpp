@@ -621,6 +621,7 @@ void iTreeWidget::dragScroll() {
 void iTreeWidget::itemWasEdited(const QModelIndex& index) const {
   ((iTreeWidget*)this)->edit_start_pos = 0;
   ((iTreeWidget*)this)->edit_start_kill = false;
+  ((iTreeWidget*)this)->clearExtSelection(); // getting some extended sel on edits..
   emit itemEdited(index, move_after_edit);
 }
 

@@ -66,8 +66,6 @@ protected:
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssBody_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
-  void    SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
-				     int sls, void* op1_, void* op2_) override;
 
 private:
   void	Initialize();
