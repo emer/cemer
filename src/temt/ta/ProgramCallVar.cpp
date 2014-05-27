@@ -81,6 +81,7 @@ Program* ProgramCallVar::GetTarget_Compile() {
 }
 
 void ProgramCallVar::PreGenMe_impl(int item_id) {
+  if(HasProgFlag(OFF)) return;  // this should already have been caught earlier
   // register as a subproc
   Program* prog = program();
   if (!prog) return; // shouldn't normally happen
