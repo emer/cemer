@@ -1,3 +1,4 @@
+
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -428,12 +429,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         // select this guy
         selectionModel()->setCurrentIndex(currentIndex(),
                                           QItemSelectionModel::ClearAndSelect);
-        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        // editItem(cur_item);     // todo: get column
-        // }
-        // else {
-        ext_select_on = true;
-        // }
         e->accept();
         return;			// don't continue
       case Qt::Key_G:
