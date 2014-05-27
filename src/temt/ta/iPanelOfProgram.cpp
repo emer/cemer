@@ -137,22 +137,22 @@ bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
       if(pel->edit_move_after > 0) {
         QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
                                                        Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
-                                                       Qt::ControlModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
         pel->edit_move_after = 0;
       }
       else if(pel->edit_move_after < 0) {
         QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
                                                        Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
-                                                       Qt::ControlModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
         pel->edit_move_after = 0;
       }
       else {
         if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
           // auto edit prog code
-          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
-                                                         Qt::ControlModifier));
+          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                         Qt::MetaModifier));
         }
       }
     }
