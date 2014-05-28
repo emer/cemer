@@ -68,9 +68,6 @@ taTypeDef_Of(Variant_Data);
 
 TA_BASEFUNS_CTORS_DEFN(DataTable);
 
-TA_BASEFUNS_CTORS_DEFN(DataBlock);
-TA_BASEFUNS_CTORS_DEFN(DataBlock_Idx);
-
 using namespace std;
 
 void DataTable::Initialize() {

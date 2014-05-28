@@ -375,6 +375,7 @@ set(ta_HEADS_MAKETA_NOMOC
   DataTableRef.h
   DataTable.h
   DataTable_Group.h
+  DataBlock.h
   FixedWidthColSpec.h
   FixedWidthColSpec_List.h
   FixedWidthSpec.h
@@ -1499,6 +1500,7 @@ set(ta_SRCS_MAKETA
   DataTableRef.cpp
   DataTable.cpp
   DataTable_Group.cpp
+  DataBlock.cpp
   FixedWidthColSpec.cpp
   FixedWidthColSpec_List.cpp
   FixedWidthSpec.cpp

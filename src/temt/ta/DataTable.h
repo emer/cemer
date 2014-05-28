@@ -1104,32 +1104,5 @@ private:
   void  Destroy();
 };
 
-// todo: at some point these can be removed (obsolete starting with 7.0.0, 5/2014)
-
-taTypeDef_Of(DataBlock);
-
-class DataBlock : public DataTable {
-  // #OBSOLETE obsolete -- do not use -- this was previously a base class of DataTable
-  INHERITED(DataTable)
-public:
-
-  TA_BASEFUNS_NOCOPY(DataBlock);
-private:
-  void Initialize() { };
-  void Destroy() { };
-};
-
-taTypeDef_Of(DataBlock_Idx);
-
-class DataBlock_Idx : public DataBlock {
-  // #OBSOLETE obsolete -- do not use -- this was previously a base class of DataTable
-  INHERITED(DataBlock)
-public:
-
-  TA_BASEFUNS_NOCOPY(DataBlock_Idx);
-private:
-  void Initialize() { };
-  void Destroy() { };
-};
 
 #endif // DataTable_h
