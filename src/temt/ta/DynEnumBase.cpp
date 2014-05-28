@@ -162,7 +162,9 @@ String DynEnumBase::NumberToName(int val) const {
   return rval;
 }
 
-int    DynEnumBase::NameToNumber(const String& nm) const {
+static String dyn_enum_last_err_val;
+
+int DynEnumBase::NameToNumber(const String& nm) const {
   int rval = 0;
   if(bits) {
     String strval = nm;
@@ -176,15 +178,25 @@ int    DynEnumBase::NameToNumber(const String& nm) const {
         strval = _nilString;
       }
       DynEnumItem* it = enums.FindName(curstr);
-      if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
-        rval |= it->value;
+      if(!it) {
+        if(dyn_enum_last_err_val != curstr) {
+          if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
+            rval |= it->value;
+          }
+          dyn_enum_last_err_val = curstr;
+        }
       }
     }
   }
   else {
     DynEnumItem* it = enums.FindName(nm);
-    if(!TestError(!it, "SetNameVal", "value label:", nm, "not found!")) {
-      rval = it->value;
+    if(!it) {
+      if(dyn_enum_last_err_val != nm) {
+        if(!TestError(!it, "SetNameVal", "value label:", nm, "not found!")) {
+          rval = it->value;
+        }
+        dyn_enum_last_err_val = nm;
+      }
     }
   }
   return rval;
@@ -200,6 +212,7 @@ void  DynEnumBase::NumberToName_Array(String_Array& names, const int_Array& vals
 }
 
 void  DynEnumBase::NameToNumber_Array(int_Array& vals, const String_Array& names) const {
+  dyn_enum_last_err_val = "";
   if(vals.size < names.size) {
     vals.SetSize(names.size);
   }
@@ -218,6 +231,7 @@ void  DynEnumBase::NumberToName_Matrix(String_Matrix& names, const int_Matrix& v
 }
 
 void  DynEnumBase::NameToNumber_Matrix(int_Matrix& vals, const String_Matrix& names) const {
+  dyn_enum_last_err_val = "";
   if(vals.size < names.size) {
     vals.SetGeom(1,names.size);
   }

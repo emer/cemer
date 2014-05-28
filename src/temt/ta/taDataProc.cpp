@@ -1298,6 +1298,10 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
   }
   dest->StructUpdate(true);
   spec->GetColumns(src_a, src_b);       // cache column pointers & indicies from names
+  if((spec->col_a.col_idx < 0) || (spec->col_b.col_idx < 0)) {
+    taMisc::Error("taDataProc::Join: col_a or col_b is not set to a valid column"); 
+    return false;
+  }
   dest->Reset();
   for(int i=0; i < src_a->data.size; i++) {
     //    if(i == spec->col_a.col_idx) continue; // include first guy..

@@ -831,11 +831,13 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   
   // john - 4/29/14 - commenting out as it doesn't provide useful info that I see at this point and
   // in some cases just adds 'emergent' to the string - I guess I don't understand its purpose
-//#if !defined(NO_TA_BASE) 
-//  if(cssMisc::cur_top && !taMisc::is_loading) {
-//    taMisc::last_err_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
-//  }
-//#endif
+  // ROR: the point of this is to provide info on the program that is running when
+  // the error occurs -- it is key info!
+#if !defined(NO_TA_BASE) 
+  if(cssMisc::cur_top && !taMisc::is_loading) {
+    fmsg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
+  }
+#endif
   taMisc::ConsoleOutput(fmsg, true, false);
 #if !defined(NO_TA_BASE) 
   if(cssMisc::cur_top && !taMisc::is_loading) {
