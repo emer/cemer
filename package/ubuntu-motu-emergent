@@ -78,7 +78,10 @@ Emergent
 # is to have a single package for emergent, vs. having an emergnet.deb and
 # a separate emergent-dev.deb for people who want to compile plugins.  Also
 # include subversion so users can download and compile the latest emergent.
-EMERGENT_BLD_DEPS="cmake, subversion, g++, libqt4-dev, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
+EMERGENT_BLD_DEPS="cmake, subversion, g++, libcoin80-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
+if [ "$QTVER" == "qt5" ]; then
+  QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev"
+fi
 
 cat > debian/control <<Emergent
 Source: emergent
@@ -86,7 +89,7 @@ Section: science
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), ${EMERGENT_BLD_DEPS}
+Build-Depends: debhelper (>= 7.0.17), ${EMERGENT_BLD_DEPS}, ${QT_BLD_DEPS}
 Standards-Version: 3.9.1
 Homepage: http://grey.colorado.edu/emergent
 

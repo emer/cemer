@@ -53,14 +53,14 @@ fi
 if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
 QTVER="qt4"
-read -p "Use QT5? [y/N]:" QTVER
-if [ "$QTVER" == "Y" ]; then 
+read -p "Use QT5? [y/N]:"
+if [ "$REPLY" == "Y" ]; then 
   QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed? " QTDIR; fi
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)? " QTDIR; fi
 fi
-if [ "$QTVER" == "y" ]; then 
+if [ "$REPLY" == "y" ]; then 
   QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed? " QTDIR; fi
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)? " QTDIR; fi
 fi
 
 # Check if the Quarter library should be rebuilt.  Defaults to Yes, unless
@@ -124,7 +124,9 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * only need checkinstall here to make the Quarter package.
 #    * (that was the old way of packaging)
 #  * don't need libquarter here since we will be building it ourselves.
-EMERGENT_PKGS="checkinstall subversion cmake g++ libqt4-dev libcoin60-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev libsvn-dev"
+# Changed libCoin60 to libCoin80, and removed libqt4-dev, for packaging. (Legacy versions can build against the older one 
+# but we don't care here in the packaging script.) tmankad 20140522
+EMERGENT_PKGS="checkinstall subversion cmake g++ libcoin80-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev libsvn-dev"
 
 # Packages needed to build Quarter.  It also requires some of the
 # ones already listed in EMERGENT_PKGS, but this one is specifically

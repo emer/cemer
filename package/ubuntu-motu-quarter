@@ -3,7 +3,31 @@ set -e
 
 #sudo apt-get install build-essential gnupg lintian fakeroot debhelper dh-make subversion-tools devscripts mercurial
 
-echo "Building Quarter from Mercurial source"
+# Repository changed from Mercurial to grey, and Qt5 build paths provided as option. Probably this will become default 
+# by September 2014 and we can remove the conditionals. 20140522 tmankad
+
+echo "Building Quarter from source repository (grey.colorado.edu)"
+
+QTVER="qt5"
+CONFFLAGS=""
+read -p "Use QT5? [Y/n]:" QTVER
+if [ "$QTVER" == "Y" ]; then 
+  QTVER="qt5"
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
+fi
+if [ "$QTVER" == "y" ]; then 
+  QTVER="qt5"
+  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
+fi
+
+if [ "$QTVER" == "qt5" ]; then
+  if [ -z $QTDIR ]; then
+    CPPFLAGS="-I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui -L/usr/lib/x86_64-linux-gnu/ -fPIC"
+  else
+    CPPFLAGS="-I$QTDIR/include/QtCore -I$QTDIR/include/QtWidgets -I$QTDIR/include/QtOpenGL -I$QTDIR/include/QtGui -fPIC"
+    CONFFLAGS="--with-qt=${QTDIR}"
+  fi
+fi
 
 QUARTER_VERSION=1.0
 DEBEMAIL='brian.mingus@colorado.edu'
@@ -13,12 +37,12 @@ REPONAME=`lsb_release -cs` # e.g., "maverick"
 QUARTER_BLD_DIR=libquarter0-${QUARTER_VERSION}
 QUARTER_BLD_PATH=/tmp/${QUARTER_BLD_DIR}
 rm -fr ${QUARTER_BLD_PATH}
-hg clone https://bitbucket.org/Coin3D/quarter/default ${QUARTER_BLD_PATH}
-# r460 is the last rev of Quarter to compile with libcoin60-dev (3.1.x)
-cd ${QUARTER_BLD_PATH}
-hg update -r 460
+# Quarter in the grey repository builds against (at least) libcoin80
+svn co --username anonymous --password emergent https://grey.colorado.edu/svn/coin3d/quarter/trunk ${QUARTER_BLD_PATH}
+# Create tarball (?)
 cd /tmp
 tar -czf libquarter0_${QUARTER_VERSION}.orig.tar.gz ${QUARTER_BLD_DIR}
+# Create debian packaging directory
 cd ${QUARTER_BLD_DIR}
 mkdir -p debian
 
@@ -42,7 +66,7 @@ Section: graphics
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), libqt4-dev, libqt4-opengl-dev, libqt4-designer, libcoin60-dev, pkg-config
+Build-Depends: debhelper (>= 7.0.17), qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev, libcoin80-dev, pkg-config
 Standards-Version: 3.9.1
 
 Homepage: http://www.coin3d.org/lib/quarter
@@ -118,6 +142,9 @@ build: build-stamp
 build-stamp:
 	dh build
 	touch build-stamp
+
+override_dh_auto_configure:
+	dh_auto_configure -- --disable-pkgconfig ${CONFFLAGS}
 
 clean:
 	dh clean
