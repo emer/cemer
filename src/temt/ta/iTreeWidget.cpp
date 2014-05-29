@@ -519,8 +519,14 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         QModelIndexList sels = selectionModel()->selectedIndexes();
         if(m_sibling_sel && sels.count() > 0) {
           QModelIndex firstpar = sels[0].parent();
-          if(newCurrent.parent() == firstpar) // only select at same level!
+          if(newCurrent.parent() == firstpar) {     // only select at same level!
             command = QItemSelectionModel::Select;
+            QTreeWidgetItem* new_item = itemFromIndex(newCurrent);
+            if (new_item->isSelected()) {
+              QTreeWidgetItem* old_item = itemFromIndex(oldCurrent);
+              old_item->setSelected(false);
+            }
+          }
           else
             command = QItemSelectionModel::Current;
         }
