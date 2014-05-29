@@ -1196,6 +1196,40 @@ String taList_impl::GetPath(taBase* ta, taBase* par_stop) const {
   return rval;
 }
 
+String taList_impl::GetGroupPath(taBase* ta, taBase* par_stop) const {
+  if ((((taBase*) this) == par_stop) && (ta == NULL))
+    return ".";
+  String rval;
+  
+  taBase* par = GetOwner();
+  if (par == NULL) {
+    if (ta == NULL) rval = "root";
+  }
+  else if (((taBase*) this) != par_stop) {
+    rval = par->GetPath((taBase*)this, par_stop);
+    // getting a top group so strip off all the sub groups
+    int pos = GetNextPathDelimPos(rval, 1);
+    rval = rval.before(pos);
+}
+    
+  if (ta != NULL) {
+    if (MemberDef *md = FindMember(ta)) {
+      rval += "." + md->name;
+    }
+    else if (MemberDef *md = FindMemberPtr(ta)) {
+      rval = String("*(") + rval + "." + md->name + ")";
+    }
+    else {
+      int gidx = FindEl_(ta);
+      if (gidx >= 0)
+        rval += "[" + String(gidx) + "]";
+      else
+        rval += "[?]";
+    }
+  }
+  return rval;
+}
+
 String taList_impl::GetPathNames(taBase* ta, taBase* par_stop) const {
   if(taMisc::is_undo_saving) return GetPath(ta, par_stop); // use indexes for undo
 
