@@ -85,7 +85,7 @@ public:
 
   String       GetPath_Long(taBase* ta=NULL, taBase* par_stop = NULL) const override;
   String       GetPath(taBase* ta=NULL, taBase* par_stop = NULL) const override;
-  String       GetGroupPath(taBase* ta=NULL, taBase* par_stop = NULL) const override;
+  virtual String GetGroupPath(taBase* ta=NULL, taBase* par_stop = NULL) const;
   // call on groups to get the root group path without the subgroups
   String       GetPathNames(taBase* ta=NULL, taBase* par_stop=NULL) const override;
 

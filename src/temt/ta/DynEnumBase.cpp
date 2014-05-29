@@ -180,11 +180,12 @@ int DynEnumBase::NameToNumber(const String& nm) const {
       DynEnumItem* it = enums.FindName(curstr);
       if(!it) {
         if(dyn_enum_last_err_val != curstr) {
-          if(!TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!")) {
-            rval |= it->value;
-          }
+          TestWarning(!it, "SetNameVal", "value label:", curstr, "not found!");
           dyn_enum_last_err_val = curstr;
         }
+      }
+      else {
+        rval |= it->value;
       }
     }
   }
@@ -192,11 +193,12 @@ int DynEnumBase::NameToNumber(const String& nm) const {
     DynEnumItem* it = enums.FindName(nm);
     if(!it) {
       if(dyn_enum_last_err_val != nm) {
-        if(!TestError(!it, "SetNameVal", "value label:", nm, "not found!")) {
-          rval = it->value;
-        }
+        TestError(!it, "SetNameVal", "value label:", nm, "not found!");
         dyn_enum_last_err_val = nm;
       }
+    }
+    else {
+      rval = it->value;
     }
   }
   return rval;

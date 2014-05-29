@@ -1210,7 +1210,7 @@ String taList_impl::GetGroupPath(taBase* ta, taBase* par_stop) const {
     // getting a top group so strip off all the sub groups
     int pos = GetNextPathDelimPos(rval, 1);
     rval = rval.before(pos);
-}
+  }
     
   if (ta != NULL) {
     if (MemberDef *md = FindMember(ta)) {
