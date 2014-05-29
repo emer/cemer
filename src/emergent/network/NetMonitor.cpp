@@ -169,20 +169,6 @@ void NetMonitor::UpdateNetworkPtrs() {
   if(prev_network) {
     UpdateNetworkPtrs_NewPar(prev_network, network);
   }
-  
-  // now update monitor items that are monitoriing layers to point to the correct layer
-  for (int i = 0; i < items.size; ++i) {
-    NetMonItem* nmi = items.FastEl(i);
-    if (nmi->object_type) {
-      if (nmi->object_type->InheritsFrom(&TA_Layer)) {
-        String name = nmi->GetObjName(nmi->object);
-        Layer* lay = network->FindLayer(name);
-        if (lay) {
-          nmi->object = lay;
-        }
-      }
-    }
-  }
   prev_network = network;       // update now that we've changed everything
 }
 
@@ -197,26 +183,6 @@ void NetMonitor::UpdateNetworkPtrs_NewPar(taBase* old_net, taBase* new_net) {
     }
   }
 }
-
-
-/*
- if (nmi->object_type->InheritsFrom(&TA_Layer)) {
-          String name = nmi->GetObjName(nmi->object);
-          Layer* lay = network->FindLayer(name);
-          if (lay) {
-              nmi->object = lay;
-            }
-          else {
-              TestWarning(true, "UpdateNetworkPtrs", "Layer ", name, "not found in ", network->name);
-            }
-        }
-        else if (nmi->object_type->InheritsFrom(&TA_Projection)) {
-          Projection* prjn = dynamic_cast<Projection*>(nmi->object.ptr());
-          Layer* lay = prjn->layer;
-        }
-}
-*/
-
 
 void NetMonitor::SetDataNetwork(DataTable* dt, Network* net) {
   SetNetwork(net);
