@@ -52,8 +52,10 @@ public:
   float         max;             // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
   float         norm_dra_dt;     // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
   float         pid_dra_dt;      // #CONDSHOW_ON_owner.ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
-  taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location
-  float         loc_mag;         // #READ_ONLY #SHOW #EXPERT total distance away from target location
+  taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (delayed by delays.vis)
+  taVector3f    loc_actual;      // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (not delayed)
+  float         loc_mag;         // #READ_ONLY #SHOW #EXPERT total distance away from target location (delayed by delays.vis)
+  float         loc_mag_actual;  // #READ_ONLY #SHOW #EXPERT total distance away from target location (not delayed)
   float_Matrix  len;             // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
   float         len_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
   float_Matrix  len_norm;        // #READ_ONLY #SHOW #EXPERT normalized muscle errors

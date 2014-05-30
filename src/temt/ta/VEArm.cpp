@@ -46,6 +46,7 @@ void VEArmErrors::Initialize() {
   norm_dra_dt = 0.3f;
   pid_dra_dt = 1.0f;
   loc_mag = 0.0f;
+  loc_mag_actual = 0.0f;
   len_mag = 0.0f;
   itg_mag = 0.0f;
   drv_dra_mag = 0.0f;
@@ -1820,11 +1821,17 @@ void VEArm::LogArmData(DataTable& dt) {
   dc = dt.FindMakeCol("hand_z", VT_FLOAT);
   dc->SetVal(hand_loc_actual.z, -1);
 
+  dc = dt.FindMakeCol("hand_vel_mag", VT_FLOAT);
+  dc->SetVal(hand_vel_mag, -1);
+
   dc = dt.FindMakeCol("hand_vra", VT_FLOAT);
   dc->SetVal(hand_vra, -1);
 
   dc = dt.FindMakeCol("loc_err_mag", VT_FLOAT);
-  dc->SetVal(errors.loc_mag, -1);
+  dc->SetVal(errors.loc_mag_actual, -1);
+
+  dc = dt.FindMakeCol("rot_err", VT_FLOAT);
+  dc->SetVal(0.0f, -1);
 
   dc = dt.FindMakeCol("lens_mag", VT_FLOAT);
   dc->SetVal(lens_mag, -1);
@@ -2095,7 +2102,9 @@ bool VEArm::GetNormVals() {
   }
 
   errors.loc = targ_loc_rel - hand_loc_rel;
+  errors.loc_actual = targ_loc_rel - hand_loc_actual;
   errors.loc_mag = errors.loc.Mag();
+  errors.loc_mag_actual = errors.loc_actual.Mag();
 
   hand_vel = hand_loc_rel - hand_loc_prv;
   hand_vel_mag = hand_vel.Mag();
