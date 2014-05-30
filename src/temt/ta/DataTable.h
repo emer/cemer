@@ -582,11 +582,17 @@ public:
   { if(!ReadAvailable()) return _nilVariant;
     return GetVal(col, read_idx); }
   // #CAT_Access get data from given column number or name at current read_idx row number -- see ReadItem, ReadNext for updating the read_idx index
+  inline const Variant GetDataByName(const String& ch_nm)
+  { return GetData(ch_nm); }
+  // OBSOLETE - only here to get old projects to run
 
   inline bool SetData(const Variant& data, const Variant& col)
-  { if(!WriteAvailable()) return false;
-    return SetVal(data, col, write_idx); }
+    { if(!WriteAvailable()) return false;
+      return SetVal(data, col, write_idx); }
   // #CAT_Modify set data from given column number or name at current write_idx row number -- see WriteItem, WriteNext for updating the write_idx index
+  inline bool SetDataByName(const Variant& data, const String& ch_nm)
+    { return SetData(data, ch_nm); }
+  // OBSOLETE - only here to get old projects to run
 
   inline taMatrix* GetMatrixData(const Variant& col)
   { if(!ReadAvailable()) return NULL;
