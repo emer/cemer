@@ -6,33 +6,25 @@ set -e
 # Make sure we're on the right kind of Linux.
 # (could use /usr/bin/lsb_release to get this info)
 NEED_BACKPORT="n"
-ISSUE="Ubuntu 13.10"
+ISSUE="Ubuntu 14.10"
 if ! grep -q "$ISSUE" /etc/issue; then
-	ISSUE="Ubuntu 13.04"
-	if ! grep -q "$ISSUE" /etc/issue; then
-		ISSUE="Ubuntu 12.10"
-		if ! grep -q "$ISSUE" /etc/issue; then
-		  ISSUE="Ubuntu 12.04"
-		  if ! grep -q "$ISSUE" /etc/issue; then
-		    ISSUE="Ubuntu 11.10"
-		    if ! grep -q "$ISSUE" /etc/issue; then
-		      ISSUE="Ubuntu 11.04"
-		      if ! grep -q "$ISSUE" /etc/issue; then
-		        # Older releases need the backports repo for cmake.
-		        NEED_BACKPORT="y"
-		        ISSUE="Ubuntu 10.10"
-		        if ! grep -q "$ISSUE" /etc/issue; then
-		          ISSUE="Ubuntu 10.04"
-		          if ! grep -q "$ISSUE" /etc/issue; then
-		            echo "ERROR: This script should be run on ${ISSUE} or higher"
-		            exit
-		          fi
-		        fi
-		      fi
-		    fi
-		  fi	
-		fi
-	fi
+  ISSUE="Ubuntu 14.04"
+  if ! grep -q "$ISSUE" /etc/issue; then
+    ISSUE="Ubuntu 13.10"
+    if ! grep -q "$ISSUE" /etc/issue; then
+      ISSUE="Ubuntu 13.04"
+      if ! grep -q "$ISSUE" /etc/issue; then
+        ISSUE="Ubuntu 12.10"
+        if ! grep -q "$ISSUE" /etc/issue; then
+          ISSUE="Ubuntu 12.04"
+          if ! grep -q "$ISSUE" /etc/issue; then
+            echo "ERROR: This script should be run on ${ISSUE} or higher"
+            exit
+          fi
+        fi
+      fi
+    fi
+  fi	
 fi
 REPONAME=`lsb_release -cs`
 
