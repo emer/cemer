@@ -969,8 +969,8 @@ void iTreeView::this_currentItemChanged(QTreeWidgetItem* curr, QTreeWidgetItem* 
 void iTreeView::this_itemSelectionChanged() {
   if (selectionChanging()) return; // ignore
   SelectionChanging(true, false); // not forced, because gui-driven
-    sel_items.Reset();
-    GetSelectedItems(sel_items);
+  sel_items.Reset();
+  GetSelectedItems(sel_items);
   SelectionChanging(false, false);
 }
 

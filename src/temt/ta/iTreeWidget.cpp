@@ -399,23 +399,18 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   }
   
   if (e->modifiers() & Qt::ShiftModifier) {
-    QTreeWidgetItem* prev_or_next_item = NULL;
+    if (ext_select_on == false) {
+      QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
+                                                      Qt::MetaModifier));
+    }
     if (e->key() == Qt::Key_Up) {
-      prev_or_next_item = getPrevItem(currentItem(), 1);
-      
+      QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_P,
+                                                      Qt::MetaModifier));
     }
     else if (e->key() == Qt::Key_Down) {
-      prev_or_next_item = getNextItem(currentItem(), 1);
+      QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_N,
+                                                      Qt::MetaModifier));
     }
-    if (prev_or_next_item) {
-      if (prev_or_next_item->isSelected() == false) {
-        prev_or_next_item->setSelected(true);
-        setCurrentItem(prev_or_next_item);
-      }
-      else {
-        setCurrentItem(prev_or_next_item);            }
-    }
-    
     e->accept();
     return;
   }
@@ -541,23 +536,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  // else {
-  //   switch (e->key()) {
-  //   case Qt::Key_Right:
-  //     if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-  //       editItem(cur_item);     // todo: get column
-  //       e->accept();
-  //       return;
-  //     }
-  //     break;
-  //   }
-  // }
-  
-  // esc interferes with dialog cancel and other such things
-  //   if(event->key() == Qt::Key_Escape) {
-  //     clearExtSelection();
-  //     return;
-  //   }
   inherited::keyPressEvent( e );
 }
 
@@ -566,7 +544,7 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
     inherited::setSelection(rect, command); // do it
     return;
   }
-
+  
   // get selection state before new selections added..
   QModelIndex firstpar;
   {
@@ -585,7 +563,7 @@ void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::Selection
     while(idx >= 0 && sels.count() > idx) {
       QModelIndex itm = sels[idx--];
       if(itm.parent() != firstpar) {
-	selectionModel()->select(itm, QItemSelectionModel::Toggle); // turn off
+        selectionModel()->select(itm, QItemSelectionModel::Toggle); // turn off
       }
     }
   }
@@ -600,7 +578,6 @@ void iTreeWidget::scrollTo(QTreeWidgetItem* item, ScrollHint hint) {
   ext_select_on = false;
   scrollTo(indexFromItem(item), hint);
 }
-
 
 void iTreeWidget::timerEvent(QTimerEvent* e) {
 #if (QT_VERSION >= 0x050000)
