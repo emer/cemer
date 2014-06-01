@@ -223,7 +223,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
-
+  quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
+  // otherwise we can crash..
 }
 
 T3Panel* T3ExaminerViewer::GetPanel() {

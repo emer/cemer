@@ -24,6 +24,10 @@
 
 #include <iPanelOfProgramScript>
 #include <iNumberedTextView>
+#include <iPanelOfProgram>
+#include <iProgramEditor>
+#include <iTreeView>
+#include <iTreeViewItem>
 
 taTypeDef_Of(LocalVars);
 taTypeDef_Of(ProgCode);
@@ -41,6 +45,8 @@ taTypeDef_Of(DynEnumType);
 
 #include <QFileInfo>
 #include <QDir>
+#include <QCoreApplication>
+#include <QKeyEvent>
 
 TA_BASEFUNS_CTORS_DEFN(Program);
 
@@ -72,6 +78,7 @@ void Program::Initialize() {
   m_checked = false;
   step_n = 1;
   last_init_timestamp = 1;	// not same as global init..
+  last_subprog_timestamp = 1;
   if(!prog_lib)
     prog_lib = &Program_Group::prog_lib;
 }
@@ -248,6 +255,11 @@ void Program::CheckChildConfig_impl(bool quiet, bool& rval) {
 }
 
 int Program::Call(Program* caller) {
+  if(TestError(!(run_state == DONE || run_state == STOP), "Call",
+               "Attempt to call a program that is already running or has not been initialized")) {
+    ret_val = RV_RUNTIME_ERR;
+    return ret_val;
+  }
   run_state = RUN;              // just a local update
   int rval = Cont_impl();
   if(stop_req) {
@@ -270,6 +282,8 @@ int Program::Call(Program* caller) {
 int Program::CallInit(Program* caller) {
   if(last_init_timestamp == global_init_timestamp)
     return ret_val;		// already done it!
+  if(run_state == INIT)
+    return ret_val;             // in a loop -- just break from it and return quietly..
   last_init_timestamp = global_init_timestamp;
   SetAllBreakpoints();          // reinstate all active breakpoints -- always do this b/c the explicit compile made by parent will have erased them..
   return CallInit_impl(caller);
@@ -1179,9 +1193,13 @@ bool Program::ScriptLinesEl(taBase* pel, int& start_ln, int& end_ln) {
 }
 
 void Program::GetSubProgsAll(int depth) {
+  if(last_subprog_timestamp == global_init_timestamp) // already did it..
+    return;
+  // the following should not happen anymore, with the subprog timestamp logic
   if(TestError((depth >= 100), "GetSubProgsAll",
                "Probable recursion in programs detected -- maximum depth of 100 reached -- aborting"))
     return;
+  last_subprog_timestamp = global_init_timestamp;
   sub_progs_updtd = true;
   sub_progs_all.Reset();
   for(int i=0;i<sub_prog_calls.size; i++) {
@@ -1631,7 +1649,6 @@ String Program::RenderLocalTrace(bool html) {
   return rval;
 }
 
-#ifdef TA_GUI
 void Program::ViewScript() {
   ViewScript_impl();
 }
@@ -1676,13 +1693,10 @@ void Program::EditProgram() {
   this->FindMyProgramPanel();
 }
 
-#endif  // TA_GUI
-
 void Program::SaveListing(ostream& strm) {
   strm << ProgramListing();
 }
 
-#ifdef TA_GUI
 void Program::ViewListing() {
   taiEditorOfString* host_ = NULL;
   view_listing = ProgramListing();
@@ -1705,8 +1719,6 @@ void Program::ViewListing_Editor() {
   
   taMisc::EditFile(fnm);
 }
-
-#endif  // TA_GUI
 
 void Program::InitForbiddenNames() {
   if(forbidden_names.size > 0) return;
@@ -1804,25 +1816,9 @@ bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& 
   return rval;
 }
 
-#ifndef TA_GUI
-// see iPanelOfProgram.cpp
-iPanelOfProgram* Program::FindMyProgramPanel() {
-  return NULL;
-}
-bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
-  return false;
-}
-bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
-  return false;
-}
-bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
-  return false;
-}
-#endif
 
 ///////////////////////////////////////////////////////////////////////
 //      Program specific browser guys!
-
 
 iPanelSet* Program::FindMyPanelSet() {
   if(!taMisc::gui_active) return NULL;
@@ -1900,3 +1896,141 @@ bool Program::EditProgramEl(taBase* pel) {
   return this->BrowserSelectMe_ProgItem(dynamic_cast<taOBase*>(pel));
 }
 
+
+iPanelOfProgram* Program::FindMyProgramPanel() {
+  if(!taMisc::gui_active) return NULL;
+
+  BrowserSelectMe();        // select my program
+
+  taSigLink* link = sig_link();
+  if(!link) return NULL;
+  taSigLinkItr itr;
+  iPanelOfProgram* el;
+  FOR_DLC_EL_OF_TYPE(iPanelOfProgram, el, link, itr) {
+    if (el->prog() == this) {
+      iPanelSet* dps = el->data_panel_set();
+      if(dps) {
+        dps->setCurrentPanelId(1); // this is the editor
+      }
+      return el;
+    }
+  }
+  return NULL;
+}
+
+bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+
+  BrowserSelectMe();        // select my program
+
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return false;
+
+  iPanelOfProgram* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->setFocus();
+    itv->clearExtSelection();
+    // clear the selection first: makes sure that the select of actual item is 
+    // novel and triggers whatever we want it to trigger!
+    itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
+    itv->scrollTo(iti);
+    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
+    // make sure our operations are finished
+    taiMiscCore::ProcessEvents();
+    // edit ProgCode but not other ProgEls, and tab into all other items
+    if(itm->InheritsFrom(&TA_ProgEl)) {
+      ProgEl* pel = (ProgEl*)itm;
+      if(pel->edit_move_after > 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
+        pel->edit_move_after = 0;
+      }
+      else if(pel->edit_move_after < 0) {
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
+                                                       Qt::NoModifier));
+        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                       Qt::MetaModifier));
+        pel->edit_move_after = 0;
+      }
+      else {
+        if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
+          // auto edit prog code
+          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
+                                                         Qt::MetaModifier));
+        }
+      }
+    }
+
+    scroll_to_itm = itm;
+    tabMisc::DelayedFunCall_gui(this, "BrowserScrollToMe_ProgItem");
+
+    // else {
+    //   // auto edit in editor non prog-els -- though this might be dangerous
+    //   QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
+    //                                                  Qt::NoModifier));
+    // }
+  }
+  return (bool)iti;
+}
+
+void Program::BrowserScrollToMe_ProgItem() {
+  if(!taMisc::gui_active) return;
+
+  if(!scroll_to_itm) return;
+  taOBase* itm = (taOBase*)scroll_to_itm.ptr();
+  scroll_to_itm = NULL;         // reset
+
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return;
+
+  iPanelOfProgram* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return;
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->scrollTo(iti);
+  }
+}
+
+bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return false;
+
+  iPanelOfProgram* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->ExpandAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}
+
+bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
+  if(!taMisc::gui_active) return false;
+  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
+  if(!link) return false;
+
+  iPanelOfProgram* mwv = FindMyProgramPanel();
+  if(!mwv || !mwv->pe) return itm->taBase::BrowserCollapseAll();
+
+  iTreeView* itv = mwv->pe->items;
+  iTreeViewItem* iti = itv->AssertItem(link);
+  if(iti) {
+    itv->CollapseAllUnder(iti);
+  }
+  // make sure our operations are finished
+  taiMiscCore::ProcessEvents();
+  return (bool)iti;
+}

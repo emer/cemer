@@ -1692,6 +1692,21 @@ bool Network::LoadFmWeights(Weights* wts, bool quiet) {
   return LoadWeights_strm(iss, quiet);
 }
 
+void Network::SaveToFirstWeights() {
+  if(weights.size == 0)
+    weights.New(1);
+  Weights* wts = weights[0];
+  SaveToWeights(wts);
+}
+
+bool Network::LoadFmFirstWeights(bool quiet) {
+  if(TestError(weights.size == 0, "LoadFmWeights", "There is not an existing first Weights object -- nothing to load from -- must call SaveToFirstWeights first")) {
+    return false;
+  }
+  Weights* wts = weights[0];
+  return LoadFmWeights(wts);
+}
+
 void Weights::WeightsFmNet() {
   Network* net = GET_MY_OWNER(Network);
   if(!net) return;

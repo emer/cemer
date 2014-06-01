@@ -17,19 +17,12 @@
 #include <Program>
 #include <ProgCode>
 
-#include <iProgramEditor>
-#include <iTreeView>
-#include <iTreeViewItem>
 #include <iMainWindowViewer>
 #include <ProgramToolBar>
 #include <taSigLinkItr>
 #include <iPanelSet>
-
-#include <taMisc>
-
-#include <QApplication>
-#include <QKeyEvent>
-
+#include <iProgramEditor>
+#include <iTreeViewItem>
 
 iPanelOfProgram::iPanelOfProgram(taiSigLink* dl_)
 :inherited(dl_)
@@ -84,119 +77,3 @@ void iPanelOfProgram::OnWindowBind_impl(iPanelViewer* itv) {
 }
 
 
-///////////////////////////////////////////////////////////////////////
-//      Program specific browser guys!
-
-iPanelOfProgram* Program::FindMyProgramPanel() {
-  if(!taMisc::gui_active) return NULL;
-
-  BrowserSelectMe();        // select my program
-
-  taSigLink* link = sig_link();
-  if(!link) return NULL;
-  taSigLinkItr itr;
-  iPanelOfProgram* el;
-  FOR_DLC_EL_OF_TYPE(iPanelOfProgram, el, link, itr) {
-    if (el->prog() == this) {
-      iPanelSet* dps = el->data_panel_set();
-      if(dps) {
-        dps->setCurrentPanelId(1); // this is the editor
-      }
-      return el;
-    }
-  }
-  return NULL;
-}
-
-bool Program::BrowserSelectMe_ProgItem(taOBase* itm) {
-  if(!taMisc::gui_active) return false;
-
-  BrowserSelectMe();        // select my program
-
-  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
-  if(!link) return false;
-
-  iPanelOfProgram* mwv = FindMyProgramPanel();
-  if(!mwv || !mwv->pe) return itm->taBase::BrowserSelectMe();
-
-  iTreeView* itv = mwv->pe->items;
-  iTreeViewItem* iti = itv->AssertItem(link);
-  if(iti) {
-    itv->setFocus();
-    itv->clearExtSelection();
-    // clear the selection first: makes sure that the select of actual item is 
-    // novel and triggers whatever we want it to trigger!
-    itv->setCurrentItem(NULL, 0, QItemSelectionModel::Clear);
-    itv->scrollTo(iti);
-    itv->setCurrentItem(iti, 0, QItemSelectionModel::ClearAndSelect);
-    // make sure our operations are finished
-    taiMiscCore::ProcessEvents();
-    // edit ProgCode but not other ProgEls, and tab into all other items
-    if(itm->InheritsFrom(&TA_ProgEl)) {
-      ProgEl* pel = (ProgEl*)itm;
-      if(pel->edit_move_after > 0) {
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down,
-                                                       Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                       Qt::MetaModifier));
-        pel->edit_move_after = 0;
-      }
-      else if(pel->edit_move_after < 0) {
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up,
-                                                       Qt::NoModifier));
-        QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                       Qt::MetaModifier));
-        pel->edit_move_after = 0;
-      }
-      else {
-        if(pel->InheritsFrom(&TA_ProgCode) && mwv->pe->miniEditVisible()) {
-          // auto edit prog code
-          QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_A,
-                                                         Qt::MetaModifier));
-        }
-      }
-    }
-    // else {
-    //   // auto edit in editor non prog-els -- though this might be dangerous
-    //   QCoreApplication::postEvent(itv, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab,
-    //                                                  Qt::NoModifier));
-    // }
-  }
-  return (bool)iti;
-}
-
-bool Program::BrowserExpandAll_ProgItem(taOBase* itm) {
-  if(!taMisc::gui_active) return false;
-  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
-  if(!link) return false;
-
-  iPanelOfProgram* mwv = FindMyProgramPanel();
-  if(!mwv || !mwv->pe) return itm->taBase::BrowserExpandAll();
-
-  iTreeView* itv = mwv->pe->items;
-  iTreeViewItem* iti = itv->AssertItem(link);
-  if(iti) {
-    itv->ExpandAllUnder(iti);
-  }
-  // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
-  return (bool)iti;
-}
-
-bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
-  if(!taMisc::gui_active) return false;
-  taiSigLink* link = (taiSigLink*)itm->GetSigLink();
-  if(!link) return false;
-
-  iPanelOfProgram* mwv = FindMyProgramPanel();
-  if(!mwv || !mwv->pe) return itm->taBase::BrowserCollapseAll();
-
-  iTreeView* itv = mwv->pe->items;
-  iTreeViewItem* iti = itv->AssertItem(link);
-  if(iti) {
-    itv->CollapseAllUnder(iti);
-  }
-  // make sure our operations are finished
-  taiMiscCore::ProcessEvents();
-  return (bool)iti;
-}

@@ -133,14 +133,17 @@ public:
   // Flags
 
   inline void           SetDataFlag(DataFlags flg)   { data_flags = (DataFlags)(data_flags | flg); }
-  // #CAT_ObjectMgmt set data column flag state on
+  // #CAT_ObjectMgmt set data table flag state on
   inline void           ClearDataFlag(DataFlags flg) { data_flags = (DataFlags)(data_flags & ~flg); }
-  // #CAT_ObjectMgmt clear data column flag state (set off)
+  // #CAT_ObjectMgmt clear data table flag state (set off)
   inline bool           HasDataFlag(DataFlags flg) const { return (data_flags & flg); }
-  // #CAT_ObjectMgmt check if data column flag is set
+  // #CAT_ObjectMgmt check if data table flag is set
   inline void           SetDataFlagState(DataFlags flg, bool on)
   { if(on) SetDataFlag(flg); else ClearDataFlag(flg); }
-  // #CAT_ObjectMgmt set data column flag state according to on bool (if true, set flag, if false, clear it)
+  // #CAT_ObjectMgmt set data table flag state according to on bool (if true, set flag, if false, clear it)
+  inline void           ToggleDataFlag(DataFlags flg)
+  { SetDataFlagState(flg, !HasDataFlag(flg)); }
+  // #CAT_ObjectMgmt toggle data table flag relative to its current setting
 
   /////////////////////////////////////////////////////////
   // saving/loading (file)
@@ -570,6 +573,10 @@ public:
   // #CAT_Config gets user data from the column (col can be an index or a name)
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);
   // #CAT_Config sets user data into the column  (col can be an index or a name) -- use this e.g., to configure various parameters that are used by the grid and graph views, such as IMAGE, MIN, MAX, TOP_ZERO
+
+  void                  ToggleSaveRows();
+  // #CAT_Rows #MENU #DYN1 toggle the SAVE_ROWS flag to opposite of current state: flag indicates whether data rows should be saved or not within the project (often useful to save room by not saving temp data)
+
 
 
   /////////////////////////////////////////////////////////

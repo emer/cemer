@@ -349,13 +349,11 @@ public:
   virtual String        GetProgCodeInfo(int line_no, const String& code_str);
   // #CAT_Code attempt to get program code information (e.g., current variable value) for given code string element on given line number -- code_str may contain other surrounding text which is parsed to extract a variable name or other interpretable value
 
-#ifdef TA_GUI
 public: // XxxGui versions provide feedback to the user
   virtual void          ViewListing();
   // #MENU #MENU_CONTEXT #NO_BUSY #CAT_Code view the listing of the program
   virtual void          ViewListing_Editor();
   // #MENU #MENU_CONTEXT #CAT_Code open listing of the program in editor defined by taMisc::edit_cmd -- saves to a file based on name of object first
-#endif
 
   virtual void          ClearAllBreakpoints();
   // #MENU #MENU_SEP_BEFORE #MENU_ON_Script #DYN1 #CAT_Code clear all breakpoints that might have been set in the program elements
@@ -380,6 +378,9 @@ public: // XxxGui versions provide feedback to the user
   // #IGNORE perform BrowserExpandAll function for program sub-item (prog el, etc)
   virtual bool          BrowserCollapseAll_ProgItem(taOBase* itm);
   // #IGNORE perform BrowserCollapseAll function for program sub-item (prog el, etc)
+
+  virtual void          BrowserScrollToMe_ProgItem();
+  // #EXPERT scroll to given program item
 
   virtual bool          ViewCtrlPanel();
   // #CAT_Display select the edit/middle panel view of this object to be for the control panel
@@ -453,7 +454,9 @@ protected:
   int                   cur_indent;
   // current indent level -- used in adding code
   int64_t               last_init_timestamp;
+  int64_t               last_subprog_timestamp;
   String                last_name; // last-used program name -- detect changes and update short_nm accordingly
+  taBaseRef             scroll_to_itm; // item to scroll to in a callback
 
   void         UpdateAfterEdit_impl() override;
   bool         CheckConfig_impl(bool quiet) override;
@@ -464,12 +467,10 @@ protected:
   virtual void          Stop_impl();
   virtual int           Run_impl();
   virtual int           Cont_impl();
-  void         ScriptCompiled() override; // #IGNORE
+  void                  ScriptCompiled() override; // #IGNORE
   virtual void          UpdateProgVars(); // put global vars in script, set values
   void                  ShowRunError(); // factored error msg code
-#ifdef TA_GUI
   virtual void          ViewScript_impl(int sel_ln_st = -1, int sel_ln_ed = -1);
-#endif
   virtual void          GetSubProgsAll(int depth=0);
   // populate the sub_progs_all lists of all sub programs
   virtual void          GetSubProgsStep();

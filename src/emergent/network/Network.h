@@ -283,6 +283,11 @@ public:
   virtual bool  LoadFmWeights(Weights* wts, bool quiet = false);
   // #MENU #FROM_GROUP_weights load weight values from given weights object
 
+  virtual void  SaveToFirstWeights();
+  // write weight values out to the first Weights object in the weights list -- if it does not yet exist, then create it -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
+  virtual bool  LoadFmFirstWeights(bool quiet = false);
+  // load weight values from first Weights object -- if it does not yet exist, emit an error message -- useful for basic save and load of one cached set of weights, as compared to a situation where you need to manage multiple different weight sets
+
 //NOTE: if any of the Build or Connect are to be extended, the code must be rewritten by
 //  calling an inner extensible virtual _impl
 

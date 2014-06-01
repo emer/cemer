@@ -2024,6 +2024,12 @@ void DataTable::RowsAdding(int n, bool begin) {
   }
 }
 
+void DataTable::ToggleSaveRows() {
+  ToggleDataFlag(SAVE_ROWS);
+  SigEmitUpdated();
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 ///     Saving / Loading from Emergent or Plain Text Files
 
