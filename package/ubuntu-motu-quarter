@@ -60,13 +60,17 @@ Quarter
 #################################################
 # Create debian/control
 #################################################
+if [ "$QTVER" == "qt5" ] && [ -z $QTDIR ]; then
+  QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev"
+fi
+
 cat > debian/control <<Quarter
 Source: libquarter0
 Section: graphics
 Priority: extra
 Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
-Build-Depends: debhelper (>= 7.0.17), qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev, libcoin80-dev, pkg-config
+Build-Depends: debhelper (>= 7.0.17), libcoin80-dev, pkg-config, ${QT_BLD_DEPS}
 Standards-Version: 3.9.1
 
 Homepage: http://www.coin3d.org/lib/quarter
