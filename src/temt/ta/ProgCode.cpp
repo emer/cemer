@@ -62,7 +62,7 @@ void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 bool ProgCode::CvtCodeToVar(String& code) {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
-
+  
   if(!code.contains(" ")) return false;
   String vtype = code.before(' ');
   TypeDef* td = ProgVar::GetTypeDefFromString(vtype);
@@ -88,12 +88,20 @@ bool ProgCode::CvtCodeToVar(String& code) {
     var_nm += c;
     if(code.length() > pos)
       c = code[++pos];
-    else 
+    else
       break;
   }
+  
   ProgVar::VarType var_type = ProgVar::T_UnDef;
   if (td) {
     var_type = ProgVar::GetTypeFromTypeDef(td);
+  }
+  
+  // if var exists don't ask where to create!
+  ProgVar* var = prg->FindVarName(var_nm);
+  if (var) {
+    var->var_type = var_type;
+    return true;
   }
   
   ProgElChoiceDlg dlg;
@@ -106,7 +114,7 @@ bool ProgCode::CvtCodeToVar(String& code) {
   }
   else {
     result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type,
-                             ProgElChoiceDlg::LOCALGLOBAL, true);
+                                      ProgElChoiceDlg::LOCALGLOBAL, true);
   }
   // true = "make new.." instructions
   ProgVar* rval = NULL;
