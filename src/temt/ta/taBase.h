@@ -1251,8 +1251,6 @@ public:
 
   bool                  DuplicateMe();
   // #CONFIRM #CAT_ObjectMgmt Make another copy of myself (done through owner)
-  virtual bool          ChangeMyType(TypeDef* new_type);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
   virtual void          UnSafeCopy(const taBase*) {} // #IGNORE custom version made for each class: if cp->Inherits(me) Copy(cp); else if me->Inherits(cp) cp.CastCopyTo(me) else CopyOther_impl(cp)
   virtual void          CastCopyTo(taBase*) const {}; // #IGNORE custom version made for every class, casts
   void                  CopyToCustom(taBase* src) const; // #IGNORE DO NOT CALL -- this is only a public, static wrapper for the _impl
@@ -1373,10 +1371,13 @@ public:
   // #CAT_Display print the value of the object to a string
 
   /////////////////////////////////////////////////////////////////////
-  //            Select For Edit
+  //            Control Panel
 public:
   virtual bool          DiffCompare(taBase* cmp_obj);
-  // #MENU #MENU_ON_Object #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt #TYPE_ON_0_this #NO_SCOPE #NO_BUSY compare this object with selected comparison object using a structured hierarchical diff operation -- pulls up a diff editor display to allow the user to view and merge the differences between objects
+  virtual bool          ChangeMyType(TypeDef* new_type);
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #TYPE_this #CAT_ObjectMgmt #ARG_VAL_FM_FUN Change me into a different type of object, copying current info (done through owner)
+
   virtual bool          DoDiffEdits(taObjDiff_List& diffs);
   // #CAT_ObjectMgmt actually perform edit actions (copy, add, delete) selected on given list of diffs
 

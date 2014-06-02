@@ -194,8 +194,8 @@ public:
   float_Matrix  targ_lens;       // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
   float         targ_lens_mag;   // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
   float_Matrix  R;               // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
-  float         alpha;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
-  float         beta;            // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
+  float         alpha;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle along Z axis
+  float         beta;            // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle along X axis
   float         gamma;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
   float         delta;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
 
