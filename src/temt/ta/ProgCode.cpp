@@ -66,7 +66,20 @@ bool ProgCode::CvtCodeToVar(String& code) {
   if(!code.contains(" ")) return false;
   String vtype = code.before(' ');
   TypeDef* td = ProgVar::GetTypeDefFromString(vtype);
-  if(!td) return false;
+  if (!td) {
+    String lhs = code;
+    lhs = trim(lhs.before('='));
+    if (!lhs.contains(' '))
+      return false;
+    
+    if (lhs.freq(' ') == 2) {  // might be something like "Func int someVar"
+      lhs = lhs.after(' ');
+      vtype = lhs.before(' ');
+      td = ProgVar::GetTypeDefFromString(vtype);
+      code = code.after(' ');
+    }
+  }
+  
   code = trim(code.after(' '));
   String var_nm;
   int pos = 0;
@@ -78,7 +91,11 @@ bool ProgCode::CvtCodeToVar(String& code) {
     else 
       break;
   }
-  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
+  ProgVar::VarType var_type = ProgVar::T_UnDef;
+  if (td) {
+    var_type = ProgVar::GetTypeFromTypeDef(td);
+  }
+  
   ProgElChoiceDlg dlg;
   taBase::Ref(dlg);
   int choice = 2;
@@ -106,7 +123,7 @@ bool ProgCode::CvtCodeToVar(String& code) {
       //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
     if(rval) {
-      rval->SetTypeFromTypeDef(td);
+      rval->var_type = var_type;
       rval->UpdateAfterEdit();
     }
   }
