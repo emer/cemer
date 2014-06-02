@@ -733,7 +733,17 @@ bool ProgEl::CvtFmSavedCode() {
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  if(CanCvtFmCode(cd, NULL)) {
+  
+  bool has_type = false;  // if the code looks to have a type declaration we will want to parse from scratch
+  if(code.freq('=') == 1) {
+    String lhs = code;
+    lhs = trim(lhs.before('='));
+    if (lhs.contains(' ')) {  // may be setting new type - start from scratch
+      has_type = true;
+    }
+  }
+  
+  if(!has_type && CanCvtFmCode(cd, NULL)) {
     bool rval = CvtFmCode(cd);
     UpdateAfterEdit();
     return rval;
