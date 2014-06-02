@@ -78,6 +78,9 @@ bool ProgCode::CvtCodeToVar(String& code) {
       td = ProgVar::GetTypeDefFromString(vtype);
       code = code.after(' ');
     }
+    else {
+      return false;
+    }
   }
   
   code = trim(code.after(' '));
