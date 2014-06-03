@@ -151,7 +151,7 @@ public:
     ERR_VEL,                     // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
 
-  bool          mtt_init_bodies; // actually initialize body positions and rotations in move-to-target? -- just for debugging
+  bool          mtt_alt_init; // use alternative initialization compared to standard for move to target (debugging test)
   VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
   DataTableRef  arm_state;       // this points to the data table that contains a record of all the arm state information over time, used to implement delays
   ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
