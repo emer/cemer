@@ -28,25 +28,59 @@
 // declare all other types mentioned but not required to include:
 // class DataTable;
 
+taTypeDef_Of(VEArmLengths);
+
+class TA_API VEArmLengths : public taOBase {
+  // #INLINE #INLINE_DUMP lengths of arm parameters
+INHERITED(taOBase)
+public:
+  float         humerus;        // #DEF_0.3 length of humerus bone (upper arm)
+  float         humerus_radius; // #DEF_0.02 radius (half width) of humerus
+  float         ulna;           // #DEF_0.24 length of ulna bone (lower arm)
+  float         ulna_radius;    // #DEF_0.02 radius (half width) of ulna
+  float         hand;           // #DEF_0.08 length of hand
+  float         hand_radius;    // #DEF_0.03 radius of hand
+  float         elbow_gap;      // #DEF_0.03 gap between humerus and ulna
+  float         wrist_gap;      // #DEF_0.03 gap between ulna and hand
+
+  float         humerus_mid;    // #READ_ONLY humerus / 2
+  float         ulna_mid;       // #READ_ONLY ulna / 2
+  float         hand_mid;       // #READ_ONLY hand / 2
+  float         elbow_gap_mid;  // #READ_ONLY /2
+  float         wrist_gap_mid;  // #READ_ONLY /2
+  float 	La;             // #READ_ONLY the length of the humerus including the elbow gap
+  float 	Lf;             // #READ_ONLY length of the forearm (ulna,hand radius,gaps)
+  float         Ltot;           // #READ_ONLY total length of the arm
+
+  TA_SIMPLE_BASEFUNS(VEArmLengths);
+protected:
+  void  UpdateAfterEdit_impl();
+
+private:  
+  void  Initialize();
+  void  Destroy() { };
+};
+
 taTypeDef_Of(VEArmDelays);
 
 class TA_API VEArmDelays : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a number of time steps (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
+  // #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a number of time steps (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
 INHERITED(taOBase)
 public:
   int           pro;             // proprioceptive delay period for muscle length inputs -- constrained to be less than delays.vis [Default: 7]
   int           vis;             // visual delay period for hand coordinate inputs -- constrained to be greater than delays.pro [Default: 30]
   int           eff;             // effector delay period for motor command outputs -- this should correspond to total reaction time [Default: 62]
   
+  TA_SIMPLE_BASEFUNS(VEArmDelays);
+private:
   void  Initialize();
   void  Destroy() { };
-  TA_SIMPLE_BASEFUNS(VEArmDelays);
 };
 
 taTypeDef_Of(VEArmErrors);
 
 class TA_API VEArmErrors : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
+  // #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
 INHERITED(taOBase)
 public:
   float         max;             // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
@@ -72,16 +106,17 @@ public:
   float         io_mag;          // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors
   float         io_thr;          // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
 
-  
+ 
+  TA_SIMPLE_BASEFUNS(VEArmErrors);
+private:
   void  Initialize();
   void  Destroy() { };
-  TA_SIMPLE_BASEFUNS(VEArmErrors);
 };
 
 taTypeDef_Of(VEArmGains);
 
 class TA_API VEArmGains : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
+  // #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
 INHERITED(taOBase)
 public:
   float         stim;            // gain factor in translating control signals into stimuli -- just an overall gain multiplier so that the other gains don't have to be quite so big
@@ -93,23 +128,25 @@ public:
   float_Matrix  musc;            // #READ_ONLY #SHOW #EXPERT muscle-specific gain factors -- these operate in addition to the overall gain, and multiply the target - actual length to modulate the effective force applied on a given muscle -- these are what the cerebellum operates on -- default value should be 1.0
   float         musc_mag;        // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of gains.musc
 
+  TA_SIMPLE_BASEFUNS(VEArmGains);
+private:
   void  Initialize();
   void  Destroy() { };
-  TA_SIMPLE_BASEFUNS(VEArmGains);
 };
 
 taTypeDef_Of(VEArmDamping);
 
 class TA_API VEArmDamping : public taOBase {
-  // #STEM_BASE #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
+  // #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
 INHERITED(taOBase)
 public:
   float         fac;             // angular damping factor
   float         thr;             // angular damping threshold
 
+  TA_SIMPLE_BASEFUNS(VEArmDamping);
+private:
   void  Initialize();
   void  Destroy() { };
-  TA_SIMPLE_BASEFUNS(VEArmDamping);
 };
 
 taTypeDef_Of(VEArm);
@@ -165,14 +202,11 @@ public:
   VEArmErrors   errors;          // Error Parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
   VEArmGains    gains;           // Gain Parameters -- used to scale forces applied to the muscle insertion points in the arm
   VEArmDamping  damping;         // Damping Parameters -- used to reduce oscillations in arm movements
+  VEArmLengths  alens;            // arm length parameters provided by last config arm call
 
+  float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float         hand_vra_dt;     // hand velocity running average time constant
 
-  float 	      La;              // #READ_ONLY #SHOW the length of the humerus
-  float 	      Lf;              // #READ_ONLY #SHOW length of the forearm (ulna,hand radius,gaps)
-  float		      elbow_gap;       // #READ_ONLY #SHOW the distance between ulna and humerus
-  float 	      wrist_gap;       // #READ_ONLY #SHOW the distance between hand and ulna
-  float 	      world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float_Matrix  ShouldIP;        // #EXPERT shoulder insertion points at rest
   float_Matrix  ArmIP;           // #EXPERT humerus insertion points at rest
   float_Matrix  FarmIP;          // #EXPERT ulna insertion points at rest
@@ -239,7 +273,7 @@ public:
                           float humerus_length = 0.3, float humerus_radius = 0.02,
                           float ulna_length = 0.24, float ulna_radius = 0.02,
                           float hand_length = 0.08, float hand_radius = 0.03,
-                          float elbowGap = 0.03,   float wristGap = 0.03,
+                          float elbow_gap = 0.03,   float wrist_gap = 0.03,
                           float sh_offX = 0, float sh_offY = 0, float sh_offZ = 0);
   // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
 
