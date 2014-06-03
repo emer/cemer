@@ -72,14 +72,14 @@ bool ProgCode::CvtCodeToVar(String& code) {
     if (!lhs.contains(' '))
       return false;
     
+    if (lhs.contains('('))  // loops, conditionals, ...
+      return false;
+    
     if (lhs.freq(' ') == 2) {  // might be something like "Func int someVar"
       lhs = lhs.after(' ');
       vtype = lhs.before(' ');
       td = ProgVar::GetTypeDefFromString(vtype);
       code = code.after(' ');
-    }
-    else {
-      return false;
     }
   }
   
