@@ -71,6 +71,9 @@ void VEArmDamping::Initialize() {
 
 void VEArm::Initialize() {
   // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here
+
+  mtt_init_bodies = false;
+
   arm_side = RIGHT_ARM;
   up_axis = Y;
   musc_geo = NEW_GEO;
@@ -965,14 +968,11 @@ void VEArm::SetTarget(float trg_x, float trg_y, float trg_z,
     }
   }
   else { // up_axis == Y
-    //    delta = taMath_float::pi - acos((La*La + Lf*Lf - dsq) / (lalf2));
-    delta = acos((La*La + Lf*Lf - dsq) / (lalf2)) - taMath_float::pi;
+    delta = taMath_float::pi - acos((La*La + Lf*Lf - dsq) / (lalf2));
     gamma = 0;
-    beta = -acos(-targ_loc_rel.y/targ_rel_d) + acos((dsq + La*La - Lf*Lf)/(dla2));
-    alpha = 0.5f * asin(targ_loc_rel.x/sqrt(targ_loc_rel.x*targ_loc_rel.x +
-                                            targ_loc_rel.y*targ_loc_rel.y));
-    // todo: changed to y instead of z
-    //                                     targ_loc_rel.z*targ_loc_rel.z));
+    beta = acos(-targ_loc_rel.y/targ_rel_d) - acos((dsq + La*La - Lf*Lf)/(dla2));
+    alpha = asin(targ_loc_rel.x/sqrt(targ_loc_rel.x*targ_loc_rel.x +
+                                     targ_loc_rel.z*targ_loc_rel.z));
     if(targ_loc_rel.z < 0) { // if the target is behind
       alpha = taMath_float::pi - alpha;
     }
@@ -1004,7 +1004,6 @@ void VEArm::ComputeRMatrix(float alp, float bet, float gam) {
     float_Matrix cR = float_Matrix(2,3,3);
     taMath_float::mat_mult(&cR, &R, &ct);
     taMath_float::mat_mult(&R, &ct, &cR);
-    // ROR: todo: this does not seem to be correct -- not rotating humerous the right way
   }
 }
 
@@ -1041,7 +1040,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
     float_Matrix RotHumCM(2,1,3);
     taMath_float::mat_mult(&RotHumCM, &R, &HumCM);  // rotating geometrical center
-    humerus->Translate(-RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
+    humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
                        RotHumCM.FastEl1d(2)+(humerus->length/2),false);
     taMath_float::mat_mult(&elbow_loc, &R, &elbow_loc);
     //humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
@@ -1082,7 +1081,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     //taMath_float::mat_mult(&Rot2Wrist, &R, &Rot1Wrist);
 
     ulna->RotateEuler(beta+delta,gamma,alpha,false);
-    ulna->Translate(-Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
+    ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
                     Rot2UlnaCM.FastEl1d(2)+humerus->length+
                     (ulna->length/2)+elbow_gap,false);
     hand->RotateEuler(beta+delta,gamma,alpha,false);
@@ -1110,15 +1109,21 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     elbow->pos = delta;
     // I set in ODE here directly to avoid confusion
     dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
-    dJointSetHingeAnchor(elbow_jid, should_loc.x-elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));
+    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));
   } // up_axis == Z
 
   // up_axis == Y
   else {
-    //    humerus->RotateEuler(beta,gamma,taMath_float::pi + alpha,false);
-	//  humerus->RotateEuler(taMath_float::pi + alpha,beta,gamma,false);
+
+    taMisc::DebugInfo("x = beta:", String(beta), " y = gamma:", String(gamma), 
+                      "z = alpha:", String(alpha), "pi + alpha:",
+                      String(taMath_float::pi + alpha));
+    if(mtt_init_bodies) {
+      humerus->RotateEuler(beta,gamma,taMath_float::pi + alpha,false);
+    }
+    // 
     //    humerus->RotateEuler(beta,gamma,alpha,false);
-    humerus->RotateEuler(beta,gamma,alpha,false);
+    //  humerus->RotateEuler(taMath_float::pi + alpha,beta,gamma,false);
 
     float HumCM_f[] = {0.0f,0.5f * (-La+(0.5f * elbow_gap)), 0.0f};
     // humerus' geometrical center at rest
@@ -1133,10 +1138,12 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     float_Matrix RotHumCM(2,1,3);
     taMath_float::mat_mult(&RotHumCM, &R, &HumCM);  // rotating geometrical center
 
-    humerus->Translate(-RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(humerus->length/2),
-                       -RotHumCM.FastEl1d(2),false);
-    //humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(humerus->length/2),
-    //                       RotHumCM.FastEl1d(2),false);
+    if(mtt_init_bodies) {
+      humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(humerus->length/2),
+                         RotHumCM.FastEl1d(2),false);
+      //humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(humerus->length/2),
+      //                       RotHumCM.FastEl1d(2),false);
+    }
     taMath_float::mat_mult(&elbow_loc, &R, &elbow_loc);
  
     float UlnaCM_f[] = {0,-(ulna->length/2 + elbow_gap/2),0};  // Ulna 'CM' with origin at elbow
@@ -1168,15 +1175,16 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     float_Matrix Rot2UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
 
-    //    ulna->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
-    ulna->RotateEuler(beta+delta,gamma,alpha,false);
+    if(mtt_init_bodies) {
+      ulna->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
+      // ulna->RotateEuler(beta+delta,gamma,alpha,false);
+      ulna->Translate(Rot2UlnaCM.FastEl1d(0),
+                      Rot2UlnaCM.FastEl1d(1)+humerus->length+(ulna->length/2)+
+                      elbow_gap,Rot2UlnaCM.FastEl1d(2),false);
+    }
 
-    ulna->Translate(-Rot2UlnaCM.FastEl1d(0),
-                    Rot2UlnaCM.FastEl1d(1)+humerus->length+(ulna->length/2)+
-                    elbow_gap,-Rot2UlnaCM.FastEl1d(2),false);
 
-    //    hand->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
-    hand->RotateEuler(beta+delta,gamma,alpha,false);
+    hand->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
     //hand->Translate(trg_x,
     //                trg_y+(humerus->length+ulna->length+elbow_gap+
     //                       wrist_gap+(hand->length/2)),trg_z,false);
@@ -1192,13 +1200,15 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
     //-------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    elbow->axis.x = -cos(alpha);
-    elbow->axis.z = sin(alpha);
-    elbow->axis.y = 0.0f;
+    if(mtt_init_bodies) {
+      elbow->axis.x = cos(alpha);
+      elbow->axis.z = sin(alpha);
+      elbow->axis.y = 0.0f;
 
-    elbow->axis2.x = sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
-    elbow->axis2.z = cos(alpha)*sin(beta+delta);
-    elbow->axis2.y = -cos(beta+delta);
+      elbow->axis2.x = sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
+      elbow->axis2.z = cos(alpha)*sin(beta+delta);
+      elbow->axis2.y = -cos(beta+delta);
+    }
 
     // todo: DEBUG: these are what are in the init config
 #if 0
@@ -1211,12 +1221,12 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     elbow->axis2.y = -1.0f;
 #endif
 
-    elbow->pos = delta;
+    //    elbow->pos = delta;
     // I set in ODE here directly to avoid confusion
     dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
-    dJointSetHingeAnchor(elbow_jid, should_loc.x-elbow_loc.FastEl1d(0),
-                         should_loc.y+elbow_loc.FastEl1d(1),   
-                         should_loc.z-elbow_loc.FastEl1d(2));
+    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0),
+                         should_loc.y+elbow_loc.FastEl1d(1),
+                         should_loc.z+elbow_loc.FastEl1d(2));
   } // up_axis == Y
 
   //------ setting the current values as init and sending to ODE -------
