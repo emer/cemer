@@ -161,6 +161,10 @@ public:
   bool                  BrowserEditSet(const String& code, int move_after = 0) override;
   virtual  String       CodeGetDesc(const String& code);
   // #IGNORE get description (comment) from the code string -- returns code without the comment
+  virtual bool          BrowserEditTest();
+  // #EXPERT test the parsing functions of this program element -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
+  virtual bool          BrowserEditTest_impl();
+  // #IGNORE basic compare of just this element -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
 
   virtual  bool         IsCtrlProgEl()  { return false; }
   // #IGNORE set this to true for any program element that is a basic control element, such as loops (for, while), if, switch, etc -- these have special parsing status

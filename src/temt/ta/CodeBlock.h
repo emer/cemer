@@ -49,6 +49,8 @@ public:
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "block"; }
 
+  bool          BrowserEditTest() override;
+
   PROGEL_SIMPLE_BASEFUNS(CodeBlock);
 protected:
   void		CheckChildConfig_impl(bool quiet, bool& rval) override;

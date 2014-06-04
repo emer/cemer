@@ -48,6 +48,9 @@ public:
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;
 
+  virtual bool BrowserEditTest();
+  // #EXPERT test the parsing functions of all program elements in list -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
+
   bool         RemoveIdx(int idx) override;   // override to delete brk_pt before ProgEl is removed
 
   void         ReplaceLater(ProgEl* el, int idx, const String& fun_on_repl = "");

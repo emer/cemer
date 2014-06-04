@@ -53,6 +53,7 @@ public:
   String	GetDisplayName() const override;
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   String	GetToolbarName() const override { return "switch"; }
+  bool          BrowserEditTest() override;
 
   PROGEL_SIMPLE_BASEFUNS(Switch);
 protected:

@@ -70,6 +70,9 @@ public:
   virtual void  BrowserSelectFirstEl();
   // #EXPERT callback to select first element in the group
 
+  virtual bool  BrowserEditTest();
+  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE test the parsing functions of all program elements in all programs within this group -- just compares output of BrowserEditString before and after running BrowserEditSet on BrowserEditString -- does the thing parse its own output string?
+
   void          SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
   String       GetTypeDecoKey() const override { return "Program"; }

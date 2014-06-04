@@ -112,6 +112,17 @@ bool ProgEl_List::BrowserCollapseAll() {
   return prog->BrowserCollapseAll_ProgItem(this);
 }
 
+bool ProgEl_List::BrowserEditTest() {
+  bool any_err = false;
+  for (int i = 0; i < size; ++i) {
+    ProgEl* el = FastEl(i);
+    bool err = el->BrowserEditTest();
+    if(err) 
+      any_err = true;
+  }
+  return any_err;
+}
+
 bool ProgEl_List::RemoveIdx(int idx) {
   ProgEl* pel = FastEl(idx);
   if(pel->owner == this) {

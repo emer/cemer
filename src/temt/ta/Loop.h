@@ -45,6 +45,7 @@ public:
 
   ProgVar*     FindVarName(const String& var_nm) const override;
   String       GetTypeDecoKey() const override { return "ProgCtrl"; }
+  bool         BrowserEditTest() override;
 
   SIMPLE_COPY(Loop);
   SIMPLE_LINKS(Loop);

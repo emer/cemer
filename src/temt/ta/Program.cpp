@@ -2034,3 +2034,9 @@ bool Program::BrowserCollapseAll_ProgItem(taOBase* itm) {
   taiMiscCore::ProcessEvents();
   return (bool)iti;
 }
+
+bool Program::BrowserEditTest() {
+  bool rval = init_code.BrowserEditTest();
+  bool rv2 = prog_code.BrowserEditTest();
+  return rval | rv2;
+}

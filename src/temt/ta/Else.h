@@ -50,6 +50,8 @@ public:
   String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
   ProgVar*	FindVarName(const String& var_nm) const override;
   String	GetToolbarName() const override { return "else"; }
+
+  bool          BrowserEditTest() override;
   
   PROGEL_SIMPLE_BASEFUNS(Else);
 protected:

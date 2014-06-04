@@ -173,3 +173,9 @@ bool Switch::CvtFmCode(const String& code) {
   switch_var = FindVarNameInScope(cd, true); // prompt to make if not found
   return true;
 }
+
+bool Switch::BrowserEditTest() {
+  bool rval = inherited::BrowserEditTest();
+  bool rv2 = cases.BrowserEditTest();
+  return rval | rv2;
+}

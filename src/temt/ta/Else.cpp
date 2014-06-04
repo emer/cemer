@@ -114,3 +114,9 @@ bool Else::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
 bool Else::CvtFmCode(const String& code) {
   return true;
 }
+
+bool Else::BrowserEditTest() {
+  bool rval = inherited::BrowserEditTest();
+  bool rv2 = else_code.BrowserEditTest();
+  return rval | rv2;
+}

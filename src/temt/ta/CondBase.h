@@ -40,7 +40,9 @@ public:
   bool		IsCtrlProgEl() 	override { return true; }
   taList_impl*	children_() override { return &true_code; }
 
-PROGEL_SIMPLE_BASEFUNS(CondBase);
+  bool          BrowserEditTest() override;
+
+  PROGEL_SIMPLE_BASEFUNS(CondBase);
 protected:
 
 private:

@@ -128,3 +128,14 @@ void Program_Group::BrowserSelectFirstEl() {
   Program* first_guy = Leaf(0);
   tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
 }
+
+bool Program_Group::BrowserEditTest() {
+  bool any_errs = false;
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
+    bool err = prog->BrowserEditTest();
+    if(err) {
+      any_errs = true;
+    }
+  }
+  return any_errs;
+}

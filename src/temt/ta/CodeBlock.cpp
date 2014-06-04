@@ -69,3 +69,9 @@ bool CodeBlock::CvtFmCode(const String& code) {
   // just open bracket is all there is!
   return true;
 }
+
+bool CodeBlock::BrowserEditTest() {
+  bool rval = inherited::BrowserEditTest();
+  bool rv2 = prog_code.BrowserEditTest();
+  return rval | rv2;
+}

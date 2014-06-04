@@ -40,3 +40,8 @@ ProgVar* Loop::FindVarName(const String& var_nm) const {
   return loop_code.FindVarName(var_nm);
 }
 
+bool Loop::BrowserEditTest() {
+  bool rval = inherited::BrowserEditTest();
+  bool rv2 = loop_code.BrowserEditTest();
+  return rval | rv2;
+}

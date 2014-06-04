@@ -754,6 +754,21 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   return true;
 }
 
+bool ProgEl::BrowserEditTest() {
+  return BrowserEditTest_impl();
+}
+
+bool ProgEl::BrowserEditTest_impl() {
+  String pre_str = BrowserEditString();
+  BrowserEditSet(pre_str);
+  String post_str = BrowserEditString();
+  if(TestWarning(pre_str != post_str, "BrowserEditTest", "MISMATCH!\npre_str:",
+                 pre_str, "\npst_str:", post_str)) {
+    return false;
+  }
+  return true;
+}
+
 String ProgEl::CodeGetDesc(const String& code) {
   if(code.contains("//")) {
     desc = trim(code.after("//"));

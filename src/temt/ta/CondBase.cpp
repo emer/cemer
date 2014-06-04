@@ -17,3 +17,8 @@
 
 TA_BASEFUNS_CTORS_DEFN(CondBase);
 
+bool CondBase::BrowserEditTest() {
+  bool rval = inherited::BrowserEditTest();
+  bool rv2 = true_code.BrowserEditTest();
+  return rval | rv2;
+}
