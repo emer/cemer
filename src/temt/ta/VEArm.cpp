@@ -1117,9 +1117,9 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   if(!CheckArm()) return false;
   
   if(shoulder) { // coordinates are wrt a reference frame with origin at the shoulder
-	  trg_x = trg_x + should_loc.x;
-	  trg_y = trg_y + should_loc.y;
-	  trg_z = trg_z + should_loc.z;
+    trg_x = trg_x + should_loc.x;
+    trg_y = trg_y + should_loc.y;
+    trg_z = trg_z + should_loc.z;
   }
   
   SetTarget(trg_x, trg_y, trg_z); // this updates the 4 arm angles and the R matrix
@@ -1166,8 +1166,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     float UlnaCM_f[] = {0,0,-(alens.ulna_mid + alens.elbow_gap_mid)};  // Ulna 'CM' with origin at elbow
     //float Wrist_f[] = {0,0,-(alens.ulna + alens.elbow_gap_mid + alens.wrist_gap_mid)};  // wrist coords with origin at elbow
     float elbow_rot_f[] = {1 , 0, 0,
-                  0, cosf(delta), -sinf(delta),
-                  0, sinf(delta), cosf(delta)};
+                           0, cosf(delta), -sinf(delta),
+                           0, sinf(delta), cosf(delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
     //float_Matrix Wrist(2,1,3);
@@ -1329,15 +1329,23 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
     //-------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    elbow->axis.x = rot_elb_axis.FastEl1d(0);
-    elbow->axis.y = rot_elb_axis.FastEl1d(1);
-    elbow->axis.z = rot_elb_axis.FastEl1d(2);
-
     elbow->pos = delta;
 
-    elbow->anchor.x = should_loc.x+rot_elb_loc.FastEl1d(0) - elbow->body1->init_pos.x; 
-    elbow->anchor.y = should_loc.y+rot_elb_loc.FastEl1d(1) - elbow->body1->init_pos.y;
-    elbow->anchor.z = should_loc.z+rot_elb_loc.FastEl1d(2) - elbow->body1->init_pos.z;
+    if(mtt_alt_init) {
+      // this is the previous code, which seems to work fine..
+      elbow->axis.x = -cos(alpha);
+      elbow->axis.z = sin(alpha);
+      elbow->axis.y = 0.0f;
+    }
+    else {
+      elbow->axis.x = rot_elb_axis.FastEl1d(0);
+      elbow->axis.y = rot_elb_axis.FastEl1d(1);
+      elbow->axis.z = rot_elb_axis.FastEl1d(2);
+
+      elbow->anchor.x = should_loc.x+rot_elb_loc.FastEl1d(0) - elbow->body1->init_pos.x; 
+      elbow->anchor.y = should_loc.y+rot_elb_loc.FastEl1d(1) - elbow->body1->init_pos.y;
+      elbow->anchor.z = should_loc.z+rot_elb_loc.FastEl1d(2) - elbow->body1->init_pos.z;
+    }
 
 #if 0
     // I set in ODE here directly to avoid confusion
