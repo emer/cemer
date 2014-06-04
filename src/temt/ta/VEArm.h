@@ -24,6 +24,7 @@
 #include <float_Matrix>
 #include <VEMuscle_List>
 #include <DataTable>
+#include <ColorScale>
 
 // declare all other types mentioned but not required to include:
 // class DataTable;
@@ -189,6 +190,7 @@ public:
   };
 
   bool          mtt_alt_init; // use alternative initialization compared to standard for move to target (debugging test)
+  bool          show_ips;     // show the muscle insertion points on the arms
   VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
   DataTableRef  arm_state;       // this points to the data table that contains a record of all the arm state information over time, used to implement delays
   ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
@@ -206,6 +208,8 @@ public:
 
   float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float         hand_vra_dt;     // hand velocity running average time constant
+
+  ColorScalePtr	color_scale;    // #NO_SAVE for coloring insertion points -- not saved..
 
   float_Matrix  ShouldIP;        // #EXPERT shoulder insertion points at rest
   float_Matrix  ArmIP;           // #EXPERT humerus insertion points at rest
@@ -306,6 +310,8 @@ public:
 
   virtual bool UpdateIPs();
   // #BUTTON Set the muscle IPs to the values in the rotated xxxIP matrices, and update norm_lengths
+  virtual void ShowIP(int ipno, int prox_dist, taVector3f& ip_loc);
+  // #IGNORE show the given muscle insertion point
   virtual bool GetNormVals();
   // get all the normalized values -- norm_lens, vels, etc -- based on current state -- called automatically during processing (in UpdateIPs)
 

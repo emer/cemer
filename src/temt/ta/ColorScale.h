@@ -89,6 +89,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(TA_API, ColorScale); // ColorScaleRef
+TA_SMART_PTRS(TA_API, ColorScale); // ColorScaleRef
 
 #endif // ColorScale_h

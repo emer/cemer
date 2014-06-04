@@ -110,6 +110,7 @@ void VEArm::Initialize() {
   // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here
 
   mtt_alt_init = false;
+  show_ips = false;
 
   arm_side = RIGHT_ARM;
   up_axis = Y;
@@ -328,6 +329,9 @@ bool VEArm::UpdateIPs() {
       muscles[i]->IPdist.y = RotArmIP.FastElAsFloat(1,i);
       muscles[i]->IPdist.z = RotArmIP.FastElAsFloat(2,i);
 
+      ShowIP(i, 0, muscles[i]->IPprox);
+      ShowIP(i, 1, muscles[i]->IPdist);
+
       humerIP = muscles[i]->IPdist;
       shoulderIP = muscles[i]->IPprox;
       pv1.x = p1.FastElAsFloat(0,i); pv2.x = p2.FastElAsFloat(0,i);
@@ -349,6 +353,12 @@ bool VEArm::UpdateIPs() {
     muscles[9]->IPdist.x = RotFarmIP.FastElAsFloat(0,0);
     muscles[9]->IPdist.y = RotFarmIP.FastElAsFloat(1,0);
     muscles[9]->IPdist.z = RotFarmIP.FastElAsFloat(2,0);
+
+    ShowIP(9, 0, muscles[9]->IPprox);
+    ShowIP(9, 1, muscles[9]->IPdist);
+
+    taMisc::DebugInfo("biceps ipdist:", muscles[9]->IPdist.GetStr());
+
     muscles[9]->bend = false;
     // the triceps and the brachialis connect from humerus to ulna
     for(int i=1; i<=2; i++) {
@@ -359,13 +369,65 @@ bool VEArm::UpdateIPs() {
       muscles[9+i]->IPdist.y = RotFarmIP.FastElAsFloat(1,i);
       muscles[9+i]->IPdist.z = RotFarmIP.FastElAsFloat(2,i);
       muscles[9+i]->bend = false;
+
+      ShowIP(9+i, 0, muscles[9+i]->IPprox);
+      ShowIP(9+i, 1, muscles[9+i]->IPdist);
     }
+
   }
   //-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_-_
+
 
   GetNormVals();
 
   return true;
+}
+
+void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
+  if(!show_ips) {
+    if(bodies.size > N_ARM_BODIES) {
+      bodies.SetSize(N_ARM_BODIES);
+    }
+    return;
+  }
+
+  int tot_ips = 12;
+  if(musc_geo == OLD_GEO)
+    tot_ips = 11;
+  int tot_bods = N_ARM_BODIES + 2 * tot_ips;
+
+  if(bodies.size < tot_bods) {
+    bodies.SetSize(tot_bods);
+    // then initialize all the bodies -- use colorscale scheme etc.
+
+    if(!color_scale) {
+      color_scale = new ColorScale;
+      taBase::Own(color_scale, this);
+    }
+    color_scale->SetMinMax(0, (float)tot_ips);
+    float sc_val;
+
+    for(int i=0;i<tot_ips;i++) {
+      iColor ic = color_scale->GetColor((float)i, sc_val);
+      VEBody* ipbodp = bodies[N_ARM_BODIES + 2*i];
+      ipbodp->name = String("ip_") + String(i) + "_p";
+      ipbodp->color.setColor(ic);
+      ipbodp->shape = VEBody::SPHERE;
+      ipbodp->radius = 0.01f;
+      ipbodp->SetBodyFlag(VEBody::NO_COLLIDE);
+
+      VEBody* ipbodd = bodies[N_ARM_BODIES + 2*i+1];
+      ipbodd->name = String("ip_") + String(i) + "_d";
+      ipbodd->color.setColor(ic);
+      ipbodd->shape = VEBody::SPHERE;
+      ipbodd->radius = 0.01f;
+      ipbodd->SetBodyFlag(VEBody::NO_COLLIDE);
+    }
+  }
+
+  VEBody* ipbod = bodies[N_ARM_BODIES + ipno*2 + prox_dist];
+  ipbod->init_pos = ip_loc;
+  ipbod->Init();
 }
 
 void VEArm::Destroy() {
