@@ -77,6 +77,25 @@ public:
   }
   // #CAT_Quaternion set quaternion from three Euler angles in vector form
 
+  inline void	FromEulerZXZ(float alpha, float beta, float gamma) {
+    float ca2 = cosf(0.5*alpha);
+    float cb2 = cosf(0.5*beta);
+    float cg2 = cosf(0.5*gamma);
+    float sa2 = sinf(0.5*alpha);
+    float sb2 = sinf(0.5*beta);
+    float sg2 = sinf(0.5*gamma);
+	  
+    s = ca2*cb2*cg2 - sa2*cb2*sg2;
+    x = sa2*sb2*sg2 + ca2*sb2*cg2;
+    y = sa2*sb2*cg2 - ca2*sb2*sg2;
+    z = sa2*cb2*cg2 + ca2*cb2*sg2;
+  }
+  // #CAT_Quaternion set quaternion from three Euler ZXZ angles
+  inline void	FromEulerVecZXZ(const taVector3f& euler) {
+    FromEulerZXZ(euler.x, euler.y, euler.z);
+  }
+  // #CAT_Quaternion set quaternion from three Euler ZXZ angles in vector form
+  
   inline void	FromVector(float d_x, float d_y, float d_z) {
     float theta_x = atan2f(d_y, d_z);
     float theta_y = atan2f(d_x * cosf(theta_x), d_z);
@@ -111,6 +130,17 @@ public:
   }
   // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
 
+  inline void	ToEulerZXZ(float& alpha, float& beta, float& gamma) const {
+    alpha = atan2f(x*z + s*y, s*x - y*z);
+    beta = acosf(1.0f - 2.0f*(x*x + y*y));
+    gamma = atan2f(x*z - s*y, y*z + s*x);
+  }
+  // #CAT_Quaternion return three Euler ZXZ angles from quaternion
+  inline void	ToEulerVecZXZ(taVector3f& euler) const {
+    ToEulerZXZ(euler.x, euler.y, euler.z);
+  }
+  // #CAT_Quaternion return three Euler angles from quaternion into a 3D vector
+  
   void	FromAxisAngle(const taAxisAngle& axa);
   // #CAT_Quaternion set quaternion from taAxisAngle (axis + angle) value
 
@@ -138,6 +168,13 @@ public:
     *this *= q;
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given rotation parameters
+  
+  void	RotateEulerZXZ(float alpha, float beta, float gamma) {
+    taQuaternion q; q.FromEulerZXZ(alpha, beta, gamma);
+    q.Normalize();
+    *this *= q;
+  }
+  // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler ZXZ rotation angles
 
   void	RotateXYZ(float& x, float& y, float& z) {
     taQuaternion vecq(0, x, y, z); // convert vec to quat

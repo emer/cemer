@@ -367,6 +367,9 @@ public:
   virtual void LogArmData(DataTable& dt);
   // log current state information to given data table (should be formatted by FormatLogData)
 
+  virtual void PrintElbowFmODE();
+  // debugging..
+
   // these functions (step_pre and CurFromODE) are called by VEWorld Step -- they
   // automatically update the muscle forces using VEP_Reach, and update the IPs etc
   void Step_pre() override;

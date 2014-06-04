@@ -242,7 +242,9 @@ public:
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation around given axis to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- IMPORTANT: axis values cannot all be 0 -- it will automatically normalize though -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
   virtual void  RotateEuler(float euler_x, float euler_y, float euler_z, bool init, bool abs_rot = false);
   // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
-
+  virtual void  RotateEulerZXZ(float alpha, float beta, float gamma, bool init, bool abs_rot = false);
+    // #CAT_ODE #BUTTON #DYN1 apply (multiply) rotation in Euler ZXZ angles to current rotation values -- if init is true, then apply to init_rot, else to cur_rot -- if abs_rot then set directly to coordinates instead of adding them to current values (in radians: 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854)
+  
   virtual void  AddForce(float fx, float fy, float fz, bool torque=false, bool rel=false);
   // #BUTTON #CAT_ODE add given force vector to object at its center of mass -- if torque then it is a torque (angular force), otherwise linear -- if rel then force is relative to the objects own frame of reference (orientation) -- otherwise it is in the global reference frame
   virtual void  AddForceAtPos(float fx, float fy, float fz, float px, float py, float pz,

@@ -1122,7 +1122,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 	  trg_z = trg_z + should_loc.z;
   }
   
-  SetTarget(trg_x, trg_y, trg_z);
+  SetTarget(trg_x, trg_y, trg_z); // this updates the 4 arm angles and the R matrix
   
   VEBody* humerus = bodies[HUMERUS];
   VEBody* ulna = bodies[ULNA];
@@ -1131,24 +1131,37 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   VEJoint* wrist = joints[WRIST];
   dJointID elbow_jid = (dJointID)elbow->joint_id;
   dJointID wrist_jid = (dJointID)wrist->joint_id;
+  VEWorld* ArmWorld = GetWorld();
 
   //------ Rotating humerus -------
 
   if(up_axis == Z) {
-    humerus->RotateEuler(beta,gamma,alpha,false);  
-	//  humerus->RotateEuler(alpha,beta,gamma,false);
+    humerus->RotateEulerZXZ(alpha,beta,gamma,false,true); // an absolute rotation that only sets current values
+    // humerus->RotateEuler(beta,gamma,alpha,false);  
+    //  humerus->RotateEuler(alpha,beta,gamma,false);
     float HumCM_f[] = {0.0f,0.0f,(-alens.La+(alens.elbow_gap_mid))/2.0f};  // humerus' geometrical center at rest
-    float elbow_loc_f[] = {0.0f,0.0f,(-alens.La+(alens.elbow_gap))};  // elbow joint's anchor at rest
+    float elbow_loc_f[] = {0.0f,0.0f,-alens.La};  // elbow joint's anchor at rest
+    //    float elbow_loc_f[] = {0.0f,0.0f,(-alens.La+(alens.elbow_gap))};  // elbow joint's anchor at rest
+    float init_elb_axis[] = {-1.0f,0.0f,0.0f};  // elbow joint's axis at rest
     float_Matrix HumCM(2,1,3);
-    float_Matrix elbow_loc(2,1,3);
+    float_Matrix elbow_loc(2,1,3); 
+    float_Matrix elb_axis(2,1,3);
     HumCM.InitFromFloats(HumCM_f);
     elbow_loc.InitFromFloats(elbow_loc_f);
+    elb_axis.InitFromFloats(init_elb_axis);
+    String elblock1, elblock2, elblock3;
+    elbow_loc.Print(elblock1);
+    taMisc::Info("initial elbow_loc:", elblock1, "\n");
 
     float_Matrix RotHumCM(2,1,3);
+    float_Matrix rot_elb_loc(2,1,3);
+    float_Matrix rot_elb_axis(2,1,3);
     taMath_float::mat_mult(&RotHumCM, &R, &HumCM);  // rotating geometrical center
+    taMath_float::mat_mult(&rot_elb_loc, &R, &elbow_loc);
+    taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);
+    
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
                        RotHumCM.FastEl1d(2)+(alens.humerus_mid),false);
-    taMath_float::mat_mult(&elbow_loc, &R, &elbow_loc);
   
     float UlnaCM_f[] = {0,0,-(alens.ulna_mid + alens.elbow_gap_mid)};  // Ulna 'CM' with origin at elbow
     //float Wrist_f[] = {0,0,-(alens.ulna + alens.elbow_gap_mid + alens.wrist_gap_mid)};  // wrist coords with origin at elbow
@@ -1184,38 +1197,43 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     //float_Matrix Rot2Wrist(2,1,3);
     //taMath_float::mat_mult(&Rot2Wrist, &R, &Rot1Wrist);
 
-    ulna->RotateEuler(beta+delta,gamma,alpha,false);
+    ulna->RotateEulerZXZ(alpha,beta+delta,gamma,false,true);  // beta+delta?????
+    //ulna->RotateEuler(beta+delta,gamma,alpha,false);
     ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
                     Rot2UlnaCM.FastEl1d(2)+alens.humerus+
-                    (alens.ulna_mid)+alens.elbow_gap,false);
-    hand->RotateEuler(beta+delta,gamma,alpha,false);
-    //hand->Translate(trg_x,trg_y,
-    //                trg_z+(alens.humerus+alens.ulna+alens.elbow_gap+
-    //                       alens.wrist_gap+(hand->length_mid)),false);
+                    alens.ulna_mid+alens.elbow_gap,false);
+    hand->RotateEulerZXZ(alpha,beta+delta,gamma,false,true);
+    //hand->RotateEuler(beta+delta,gamma,alpha,false);
     hand->Translate(trg_x,trg_y,trg_z,false,true);
-    /*ulna->RotateEuler(alpha,beta+delta,gamma,false);
-        ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
-                        Rot2UlnaCM.FastEl1d(2)+alens.humerus+
-                        (alens.ulna_mid)+alens.elbow_gap,false);
-        hand->RotateEuler(alpha,beta+delta,gamma,false);
-        hand->Translate(trg_x,trg_y,
-                        trg_z+(alens.humerus+alens.ulna+alens.elbow_gap+
-                               alens.wrist_gap+(hand->length_mid)),false);*/
-
+    
     //------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    elbow->axis.x = -cos(alpha);
-    elbow->axis.y = -sin(alpha);
-    elbow->axis.z = 0.0f;
-    elbow->axis2.x = -sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
-    elbow->axis2.y = cos(alpha)*sin(beta+delta);
-    elbow->axis2.z = -cos(beta+delta);
+    elbow->axis.x = rot_elb_axis.FastEl1d(0);
+    elbow->axis.y = rot_elb_axis.FastEl1d(1);
+    elbow->axis.z = rot_elb_axis.FastEl1d(2);
+
+    elbow->anchor.x = should_loc.x+rot_elb_loc.FastEl1d(0) - elbow->body1->init_pos.x; 
+    elbow->anchor.y = should_loc.y+rot_elb_loc.FastEl1d(1) - elbow->body1->init_pos.y;
+    elbow->anchor.z = should_loc.z+rot_elb_loc.FastEl1d(2) - elbow->body1->init_pos.z;
+
     elbow->pos = delta;
+
+#if 0
     // I set in ODE here directly to avoid confusion
-    dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
-    dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0), should_loc.y+elbow_loc.FastEl1d(1), should_loc.z+elbow_loc.FastEl1d(2));
+    ArmWorld->SetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
+    //ArmWorld->SetHingeAxis(elbow_jid, -1.0f, 0.0f, 0.0f);
+    ArmWorld->SetHingeAnchor(elbow_jid, should_loc.x+rot_elb_loc.FastEl1d(0),
+                             should_loc.y+rot_elb_loc.FastEl1d(1),
+                             should_loc.z+rot_elb_loc.FastEl1d(2));
+    taVector3f hanch;
+    ArmWorld->GetHingeAnchor(elbow_jid, hanch);
+    taMisc::Info("elbow anchor before CurToODE = ", hanch.GetStr(), "\n");
+    rot_elb_loc.Print(elblock3);
+    taMisc::Info("used elbow_loc:", elblock3, "\n");
+#endif
   } // up_axis == Z
 
+  /////////////////////////////////////////////////////////////////////////////
   // up_axis == Y
   else {
 
@@ -1227,21 +1245,34 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
       humerus->RotateEuler(-beta,gamma,alpha,false);
     }
     else {
-      humerus->RotateEuler(beta,gamma,taMath_float::pi + alpha,false);
+      humerus->RotateEulerZXZ(taMath_float::pi + alpha,beta,gamma,false,true);
+      //      humerus->RotateEuler(beta,gamma,taMath_float::pi + alpha,false);
     }
 
     float HumCM_f[] = {0.0f,0.5f * (-alens.La+alens.elbow_gap_mid), 0.0f};
     // humerus' geometrical center at rest
-    float elbow_loc_f[] = {0.0f,-alens.La+alens.elbow_gap_mid, 0.0f};
+    float elbow_loc_f[] = {0.0f,-alens.La, 0.0f};
+    //    float elbow_loc_f[] = {0.0f,-alens.La+alens.elbow_gap_mid, 0.0f};
     // elbow joint's anchor at rest
+    float init_elb_axis[] = {-1.0f,0.0f,0.0f};  // elbow joint's axis at rest
     
     float_Matrix HumCM(2,1,3);
-    HumCM.InitFromFloats(HumCM_f);
     float_Matrix elbow_loc(2,1,3);
+    float_Matrix elb_axis(2,1,3);
+    HumCM.InitFromFloats(HumCM_f);
     elbow_loc.InitFromFloats(elbow_loc_f);
-
+    elb_axis.InitFromFloats(init_elb_axis);
+    
+    String elblock1, elblock2, elblock3;
+    elbow_loc.Print(elblock1);
+    taMisc::Info("initial elbow_loc:", elblock1, "\n");
+    
     float_Matrix RotHumCM(2,1,3);
+    float_Matrix rot_elb_loc(2,1,3);
+    float_Matrix rot_elb_axis(2,1,3);
     taMath_float::mat_mult(&RotHumCM, &R, &HumCM);  // rotating geometrical center
+    taMath_float::mat_mult(&rot_elb_loc, &R, &elbow_loc);
+    taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);    
 
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(alens.humerus_mid),
                        RotHumCM.FastEl1d(2),false);
@@ -1281,49 +1312,52 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
       ulna->RotateEuler(-(beta+delta),gamma,alpha,false);
     }
     else {
-      ulna->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
+      ulna->RotateEulerZXZ(taMath_float::pi+alpha,beta+delta,gamma,false,true);
+      // ulna->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
     }
 
     ulna->Translate(Rot2UlnaCM.FastEl1d(0),
                     Rot2UlnaCM.FastEl1d(1)+alens.humerus+(alens.ulna_mid)+
                     alens.elbow_gap,Rot2UlnaCM.FastEl1d(2),false);
 
-    hand->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
+    hand->RotateEulerZXZ(taMath_float::pi+alpha,beta+delta,gamma,false,true);
+    //    hand->RotateEuler(beta+delta,gamma,taMath_float::pi+alpha,false);
     //hand->Translate(trg_x,
     //                trg_y+(alens.humerus+alens.ulna+alens.elbow_gap+
     //                       alens.wrist_gap+(hand->length_mid)),trg_z,false);
     hand->Translate(trg_x,trg_y,trg_z,false,true);
-    /*ulna->RotateEuler(taMath_float::pi+alpha,beta+delta,gamma,false);
-        ulna->Translate(Rot2UlnaCM.FastEl1d(0),
-                        Rot2UlnaCM.FastEl1d(1)+alens.humerus+(alens.ulna_mid)+
-                        alens.elbow_gap,Rot2UlnaCM.FastEl1d(2),false);
-        hand->RotateEuler(taMath_float::pi+alpha,beta+delta,gamma,false);
-        hand->Translate(trg_x,
-                        trg_y+(alens.humerus+alens.ulna+alens.elbow_gap+
-                               alens.wrist_gap+(hand->length_mid)),trg_z,false);*/
 
     //-------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
-    elbow->axis.x = cos(alpha);
-    elbow->axis.z = sin(alpha);
-    elbow->axis.y = 0.0f;
-
-    elbow->axis2.x = 0.0f;    // is axis 2 used at all??
-    elbow->axis2.z = 0.0f;
-    elbow->axis2.y = -1.0f;
-
-    // elbow->axis2.x = sin(alpha)*sin(beta+delta); // sin(beta+delta) normalizes the norm of axis2
-    // elbow->axis2.z = cos(alpha)*sin(beta+delta);
-    // elbow->axis2.y = -cos(beta+delta);
+    elbow->axis.x = rot_elb_axis.FastEl1d(0);
+    elbow->axis.y = rot_elb_axis.FastEl1d(1);
+    elbow->axis.z = rot_elb_axis.FastEl1d(2);
 
     elbow->pos = delta;
+
+    elbow->anchor.x = should_loc.x+rot_elb_loc.FastEl1d(0) - elbow->body1->init_pos.x; 
+    elbow->anchor.y = should_loc.y+rot_elb_loc.FastEl1d(1) - elbow->body1->init_pos.y;
+    elbow->anchor.z = should_loc.z+rot_elb_loc.FastEl1d(2) - elbow->body1->init_pos.z;
+
+#if 0
     // I set in ODE here directly to avoid confusion
-    if(false) {
-      dJointSetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
-      dJointSetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0),
-                           should_loc.y+elbow_loc.FastEl1d(1),
-                           should_loc.z+elbow_loc.FastEl1d(2));
-    }
+    ArmWorld->SetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
+    //ArmWorld->SetHingeAxis(elbow_jid, -1.0f, 0.0f, 0.0f);
+    ArmWorld->SetHingeAnchor(elbow_jid, should_loc.x+rot_elb_loc.FastEl1d(0),
+                             should_loc.y+rot_elb_loc.FastEl1d(1),
+                             should_loc.z+rot_elb_loc.FastEl1d(2));
+    taVector3f hanch;
+    ArmWorld->GetHingeAnchor(elbow_jid, hanch);
+    taMisc::Info("elbow anchor before CurToODE = ", hanch.GetStr(), "\n");
+    rot_elb_loc.Print(elblock3);
+    taMisc::Info("used elbow_loc:", elblock3, "\n");
+    // I set in ODE here directly to avoid confusion
+    ArmWorld->SetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
+    //ArmWorld->SetHingeAxis(elbow_jid, 1.0f, 0.0f, 0.0f);
+    ArmWorld->SetHingeAnchor(elbow_jid, should_loc.x+elbow_loc.FastEl1d(0),
+                             should_loc.y+elbow_loc.FastEl1d(1),
+                             should_loc.z+elbow_loc.FastEl1d(2));
+#endif
   } // up_axis == Y
 
   // start off with no initial motion
@@ -1338,21 +1372,31 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   
 
   //------ setting the current values as init and sending to ODE -------
-  // no!!!
   humerus->CurToInit();
   ulna->CurToInit();
   hand->CurToInit();
   //wrist->Init_Anchor();
   //elbow->Init_Anchor();
   CurToODE();
+
+#if 0
+  taVector3f haxis, hanchor;
+  ArmWorld->GetHingeAxis(elbow_jid, haxis);
+  taMisc::Info("elbow axis = ", haxis.GetStr(), "\n");
+  ArmWorld->GetHingeAnchor(elbow_jid, hanchor);
+  taMisc::Info("elbow anchor = ", hanchor.GetStr(), "\n");
+#endif
   
   //------- updating the muscle insertion points and lengths ---------
   UpdateIPs();
   for(int i=0; i<n_musc; i++) {
     muscles[i]->InitBuffs(); //initializing the buffers which store past values of len and dlen
-  }
+    }
+  Lengths(lens,false);  // updating muscle lengths. false = don't normalize. Probably unnecessary
+  Speeds(vels,false);  // updating muscle speeds
   InitDynamicState();  // Initialize all dynamic variables 
   SigEmitUpdated(); // this will in theory update the display
+  reach_start = true; // this flag indicates that a new reach is to begin
 
   return true;
 }
@@ -2340,4 +2384,18 @@ void VEArm::Init() {
   VEWorld* Worldly = GetWorld();
   world_step = Worldly->stepsize;
   inherited::Init();
+}
+
+void VEArm::PrintElbowFmODE() {
+  VEJoint* elbow = joints[ELBOW];
+  void* elbow_jid = elbow->joint_id;
+  VEWorld* ArmWorld = GetWorld();
+  taVector3f haxis, hanchor;
+
+#if 0	
+  ArmWorld->GetHingeAxis(elbow_jid, haxis);
+  taMisc::Info("elbow axis = ", haxis.GetStr(), "\n");
+  ArmWorld->GetHingeAnchor(elbow_jid, hanchor);
+  taMisc::Info("elbow anchor = ", hanchor.GetStr(), "\n");
+#endif
 }
