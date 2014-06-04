@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7227
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7280
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -288,29 +288,6 @@ LeabraProject .projects["program_examples"] {
       };
      };
     };
-   };
-  };
- };
-
- taBase_Group @.data_proc = [4] {
-  taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
    };
   };
  };
@@ -6448,63 +6425,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    };
   };
  };
- data_proc {
-  name="data_proc";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_2";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_3";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_4";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name="UserDataItem_List_5";
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
-  };
- };
  programs {
   name="programs";
   el_typ=Program;
@@ -10588,8 +10508,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 var_2=NULL;
 	 var_3=NULL;
 	 var_4=NULL;
-	 match_vars {
-	 };
 	};
 	PrintVar @[3] {
 	 desc=;
@@ -10966,8 +10884,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 var_2=NULL;
 	 var_3=NULL;
 	 var_4=NULL;
-	 match_vars {
-	 };
 	};
 	PrintVar @[1] {
 	 desc=;
@@ -14206,7 +14122,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       orig_prog_code="print \"ZeroOne(): \" rnd_val";
       message="ZeroOne():";
       print_var=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
-      print_var2=$.projects["program_examples"].programs.gp["Math"]["RandomFloats"].prog_code[0].local_vars["rnd_val"]$;
+      print_var2=NULL;
       print_var3=NULL;
       print_var4=NULL;
       print_var5=NULL;
@@ -15494,22 +15410,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002347417874261737;
+     value 6 0=0.001879699295386672;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02609308809041977;
+     value 6 0=0.02546689286828041;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9917840361595154;
+     value 6 0=0.9912280440330505;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7976022362709045;
+     value 6 0=0.7971137762069702;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16694,17 +16610,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007757404819130898;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03208137676119804;
+       value 6 0=0.05137844756245613;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7447108626365662;
+       value 6 0=0.7334465384483337;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
