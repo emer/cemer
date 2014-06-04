@@ -335,3 +335,23 @@ float VEWorld::SnapVal(float val, float grid_size) {
 
 // in ta_virtenv_qtso.cpp:  QImage VEWorld::GetCameraImage(int cam_no)
 
+void VEWorld::GetHingeAxis(void *jid, taVector3f &haxis) {
+	dVector3 result;
+	dJointGetHingeAxis((dJointID)jid, result);
+	haxis.SetXYZ(result[0],result[1],result[2]);
+}
+
+void VEWorld::GetHingeAnchor(void *jid, taVector3f &hanchor) {
+	dVector3 result;
+	dJointGetHingeAnchor((dJointID)jid, result);
+	hanchor.SetXYZ(result[0],result[1],result[2]);
+}
+
+void VEWorld::SetHingeAxis(void *jid, float x, float y, float z) {
+	dJointSetHingeAxis ((dJointID)jid, (dReal)x, (dReal)y, (dReal)z);
+}
+
+void VEWorld::SetHingeAnchor(void *jid, float x, float y, float z) {
+	dJointSetHingeAnchor ((dJointID)jid, (dReal)x, (dReal)y, (dReal)z);
+}
+

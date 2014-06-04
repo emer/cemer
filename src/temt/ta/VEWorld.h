@@ -166,6 +166,15 @@ public:
 
   static float SnapVal(float val, float grid_size);
   // snap value to grid increment
+  
+  virtual void GetHingeAxis(void *jid, taVector3f &haxis) ;
+  // #HIDDEN #CAT_ODE A wrapper to the dJointGetHingeAxis function from ODE
+  virtual void GetHingeAnchor(void *jid, taVector3f &hanchor) ;
+    // #HIDDEN #CAT_ODE A wrapper to the dJointGetHingeAnchor function from ODE
+  virtual void SetHingeAxis(void *jid, float x, float y, float z);
+  // HIDDEN #CAT_ODE A wrapper to the dJointSetHingeAxis function from ODE
+  virtual void SetHingeAnchor(void *jid, float x, float y, float z);
+    // HIDDEN #CAT_ODE A wrapper to the dJointSetHingeAnchor function from ODE
 
   //////////////////////////////////////
   //    IMPL functions

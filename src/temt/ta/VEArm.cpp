@@ -1218,7 +1218,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
     elbow->pos = delta;
 
-#if 0
+#if 1
     // I set in ODE here directly to avoid confusion
     ArmWorld->SetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
     //ArmWorld->SetHingeAxis(elbow_jid, -1.0f, 0.0f, 0.0f);
@@ -1347,7 +1347,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
       elbow->anchor.z = should_loc.z+rot_elb_loc.FastEl1d(2) - elbow->body1->init_pos.z;
     }
 
-#if 0
+#if 1
     // I set in ODE here directly to avoid confusion
     ArmWorld->SetHingeAxis(elbow_jid, elbow->axis.x, elbow->axis.y, elbow->axis.z);
     //ArmWorld->SetHingeAxis(elbow_jid, -1.0f, 0.0f, 0.0f);
@@ -1387,7 +1387,7 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   //elbow->Init_Anchor();
   CurToODE();
 
-#if 0
+#if 1
   taVector3f haxis, hanchor;
   ArmWorld->GetHingeAxis(elbow_jid, haxis);
   taMisc::Info("elbow axis = ", haxis.GetStr(), "\n");
@@ -2400,7 +2400,7 @@ void VEArm::PrintElbowFmODE() {
   VEWorld* ArmWorld = GetWorld();
   taVector3f haxis, hanchor;
 
-#if 0	
+#if 1
   ArmWorld->GetHingeAxis(elbow_jid, haxis);
   taMisc::Info("elbow axis = ", haxis.GetStr(), "\n");
   ArmWorld->GetHingeAnchor(elbow_jid, hanchor);
