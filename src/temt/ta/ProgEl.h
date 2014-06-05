@@ -157,6 +157,8 @@ public:
   // #IGNORE go ahead and convert the code (ProgCode) text string into this program element type  -- code has had whitespace trimmed at start
   virtual  bool         CvtFmSavedCode();
   // call CvtFmCode on orig_prog_code string -- for a callback
+  virtual  bool         CvtCodeToVar(String& code_str);
+  // attempt to convert the code to a new variable declaration -- prompts for var location -- if true, then it was interpreted as a var decl, and var decl is removed from code -- e.g., if input is "int i = 20" then remaining code will be "i = 20" -- if nothing but a decl (e.g., "int i"), then code is empty, and nothing left to do
   bool                  BrowserEditEnable() override { return true; }
   bool                  BrowserEditSet(const String& code, int move_after = 0) override;
   virtual  String       CodeGetDesc(const String& code);

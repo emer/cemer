@@ -733,26 +733,13 @@ bool ProgEl::CvtFmSavedCode() {
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
-  
-  bool has_type = false;  // if the code looks to have a type declaration we will want to parse from scratch
-  if(code.freq('=') == 1) {
-    String lhs = code;
-    lhs = trim(lhs.before('='));
-    if (lhs.contains(' ')) {  // may be setting new type - start from scratch
-      has_type = true;
-    }
-  }
-
-  if(!has_type && CanCvtFmCode(cd, NULL)) {
-    bool rval = CvtFmCode(cd);
+  if(CanCvtFmCode(cd, NULL)) {
+    bool rval;
+    rval = CvtCodeToVar(cd);
+    rval = CvtFmCode(cd);
     UpdateAfterEdit();
     return rval;
   }
-
-  if(move_after == -11) {       // special test code
-    return false;               // we've failed!!
-  }
-  
   orig_prog_code = cd;
   edit_move_after = move_after;
   tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
@@ -826,3 +813,67 @@ String ProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
                                      this, own_prg, own_fun);
 }
 
+bool ProgEl::CvtCodeToVar(String& code) {
+  Program* prg = GET_MY_OWNER(Program);
+  if(!prg) return false;
+  
+  if(!code.contains(" ")) return false;
+  
+  String vtype;
+  TypeDef* td;
+  String_Array tokens;
+  tokens.Split(code, " ");
+  for (int i=0; i<tokens.size; i++) {
+    vtype = tokens[i].chars();
+    td = ProgVar::GetTypeDefFromString(vtype);
+    if (td)
+      break;
+  }
+  if(!td)
+    return false;
+  
+  code = trim(code.after(vtype));
+  String var_nm;
+  int pos = 0;
+  char c = code[pos];
+  while(isalnum(c) || c == '_') {
+    var_nm += c;
+    if(code.length() > pos)
+      c = code[++pos];
+    else
+      break;
+  }
+  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
+  ProgElChoiceDlg dlg;
+  taBase::Ref(dlg);
+  int choice = 2;
+  int result = 0;
+  if(var_type == ProgVar::T_HardEnum) {
+    result = 1;
+    choice = 1;                 // can only be in globals
+  }
+  else {
+    result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type,
+                                      ProgElChoiceDlg::LOCALGLOBAL, true);
+  }
+  // true = "make new.." instructions
+  ProgVar* rval = NULL;
+  if (result == 1) {
+    if(choice == 0) {
+      rval = MakeLocalVar(var_nm);
+      if(taMisc::gui_active)
+        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+    }
+    else if(choice == 1) {
+      rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
+      prg->vars.SigEmitUpdated();
+      // if(taMisc::gui_active)
+      //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
+    }
+    if(rval) {
+      rval->SetTypeFromTypeDef(td);
+      rval->UpdateAfterEdit();
+    }
+  }
+  return true;
+}
