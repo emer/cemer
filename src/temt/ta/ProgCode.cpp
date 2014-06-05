@@ -1,4 +1,3 @@
-
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -60,129 +59,26 @@ void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
   }
 }
 
-//********* NEW VERSION ************//
-//bool ProgCode::CvtCodeToVar(String& code) {
-//  Program* prg = GET_MY_OWNER(Program);
-//  if(!prg) return false;
-//  
-//  bool has_equals = false;
-//  String lhs;
-//  if (code.contains("+=")) {
-//    lhs = trim(code.before("+="));
-//  }
-//  else if (code.contains("-=")) {
-//    lhs = trim(code.before("-="));
-//  }
-//  else if (code.contains('=')) {
-//    lhs = trim(code.before('='));
-//  }
-//  if (!lhs.contains(' '))
-//    return false;
-//  
-//  if(!code.contains(" ")) return false;
-//  String vtype = code.before(' ');
-//  TypeDef* td = ProgVar::GetTypeDefFromString(vtype);
-//  if (!td) {
-//    String lhs = code;
-//    lhs = trim(lhs.before('='));
-//    if (!lhs.contains(' '))
-//      return false;
-//    
-//    if (lhs.contains('('))  // loops, conditionals, ...
-//      return false;
-//    
-//    if (lhs.freq(' ') == 2) {  // might be something like "Func int someVar"
-//      lhs = lhs.after(' ');
-//      vtype = lhs.before(' ');
-//      td = ProgVar::GetTypeDefFromString(vtype);
-//      code = code.after(' ');
-//    }
-//  }
-//  
-//  code = trim(code.after(' '));
-//  String var_nm;
-//  int pos = 0;
-//  char c = code[pos];
-//  while(isalnum(c) || c == '_') {
-//    var_nm += c;
-//    if(code.length() > pos)
-//      c = code[++pos];
-//    else
-//      break;
-//  }
-//  
-//  ProgVar::VarType var_type = ProgVar::T_UnDef;
-//  if (td) {
-//    var_type = ProgVar::GetTypeFromTypeDef(td);
-//  }
-//  
-//  // if var exists don't ask where to create!
-//  ProgVar* var = prg->FindVarName(var_nm);
-//  if (var) {
-//    var->var_type = var_type;
-//    return true;
-//  }
-//  
-//  ProgElChoiceDlg dlg;
-//  taBase::Ref(dlg);
-//  int choice = 2;
-//  int result = 0;
-//  if(var_type == ProgVar::T_HardEnum) {
-//    result = 1;
-//    choice = 1;                 // can only be in globals
-//  }
-//  else {
-//    result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type,
-//                                      ProgElChoiceDlg::LOCALGLOBAL, true);
-//  }
-//  // true = "make new.." instructions
-//  ProgVar* rval = NULL;
-//  if (result == 1) {
-//    if(choice == 0) {
-//      rval = MakeLocalVar(var_nm);
-//      if(taMisc::gui_active)
-//        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
-//    }
-//    else if(choice == 1) {
-//      rval = (ProgVar*)prg->vars.New(1, NULL, var_nm);
-//      prg->vars.SigEmitUpdated();
-//      // if(taMisc::gui_active)
-//      //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
-//    }
-//    if(rval) {
-//      rval->SetTypeFromTypeDef(td);
-//      rval->UpdateAfterEdit();
-//    }
-//  }
-//  return true;
-//}
-
-//********* OLD VERSION ************//
 bool ProgCode::CvtCodeToVar(String& code) {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
   
   if(!code.contains(" ")) return false;
-  String vtype = code.before(' ');
-  TypeDef* td = ProgVar::GetTypeDefFromString(vtype);
-  if (!td) {
-    String lhs = code;
-    lhs = trim(lhs.before('='));
-    if (!lhs.contains(' '))
-      return false;
-    
-    if (lhs.contains('('))  // loops, conditionals, ...
-      return false;
-    
-    if (lhs.freq(' ') == 2) {  // might be something like "Func int someVar"
-      lhs = lhs.after(' ');
-      vtype = lhs.before(' ');
-      td = ProgVar::GetTypeDefFromString(vtype);
-      code = code.after(' ');
-    }
-  }
   
-  code = trim(code.after(' '));
+  String vtype;
+  TypeDef* td;
+  String_Array tokens;
+  tokens.Split(code, " ");
+  for (int i=0; i<tokens.size; i++) {
+    vtype = tokens[i].chars();
+    td = ProgVar::GetTypeDefFromString(vtype);
+    if (td)
+      break;
+  }
+  if(!td)
+    return false;
+  
+  code = trim(code.after(vtype));
   String var_nm;
   int pos = 0;
   char c = code[pos];
@@ -193,19 +89,7 @@ bool ProgCode::CvtCodeToVar(String& code) {
     else
       break;
   }
-  
-  ProgVar::VarType var_type = ProgVar::T_UnDef;
-  if (td) {
-    var_type = ProgVar::GetTypeFromTypeDef(td);
-  }
-  
-  // if var exists don't ask where to create!
-  ProgVar* var = prg->FindVarName(var_nm);
-  if (var) {
-    var->var_type = var_type;
-    return true;
-  }
-  
+  ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;
   taBase::Ref(dlg);
   int choice = 2;
@@ -233,7 +117,7 @@ bool ProgCode::CvtCodeToVar(String& code) {
       //   tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
     }
     if(rval) {
-      rval->var_type = var_type;
+      rval->SetTypeFromTypeDef(td);
       rval->UpdateAfterEdit();
     }
   }
