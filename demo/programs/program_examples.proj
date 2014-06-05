@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7280
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7286
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -354,8 +354,16 @@ LeabraProject .projects["program_examples"] {
        ProgVar @["i"] { };
       };
      };
-     CssExpr @[1] { };
-     CssExpr @[2] { };
+     ForeachLoop @[1] { 
+      ProgEl_List @.loop_code = [1] {
+       CssExpr @[0] { };
+      };
+     };
+     ForeachLoop @[2] { 
+      ProgEl_List @.loop_code = [1] {
+       CssExpr @[0] { };
+      };
+     };
     };
    };
    Program @["Switch"] { 
@@ -6624,20 +6632,48 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        };
       };
      };
-     CssExpr @[1] {
+     ForeachLoop @[1] {
       desc="this is another way to do a simple for loop, familar to python programmers -- [start:end:incr] creates an array from start to end (exclusive) with given increment (defaults to 1 if not specified)";
-      flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="foreach(i in [0:5:1]) { cout << i << \"\\n\"; };";
-      expr {
-       expr="foreach(i in [0:10:1]) { cout << i << endl; };";
+      flags=0;
+      orig_prog_code="foreach(i in [0:10:1])";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       CssExpr @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="{ cout << i << endl; };";
+	expr {
+	 expr="{ cout << i << endl; };";
+	};
+       };
+      };
+      el_var=.projects["program_examples"].programs.gp["Control"]["Foreach"].prog_code[0].local_vars["i"]$$;
+      in {
+       expr="[0:10:1]";
       };
      };
-     CssExpr @[2] {
+     ForeachLoop @[2] {
       desc="it has the advange of being easier to go in the opposite direction just by changing the incr value -- doing that in a for loop requires more changes";
-      flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="foreach(i in [0:5:1]) { cout << i << \"\\n\"; };";
-      expr {
-       expr="foreach(i in [0:10:-1]) { cout << i << endl; };";
+      flags=0;
+      orig_prog_code="foreach(i in [0:10:-1])";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       CssExpr @[0] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="{ cout << i << endl; };";
+	expr {
+	 expr="{ cout << i << endl; };";
+	};
+       };
+      };
+      el_var=$.projects["program_examples"].programs.gp["Control"]["Foreach"].prog_code[0].local_vars["i"]$;
+      in {
+       expr="[0:10:-1]";
       };
      };
     };
@@ -15410,22 +15446,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.001879699295386672;
+     value 6 0=0.1023676916956902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02546689286828041;
+     value 6 0=0.04783599078655243;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9912280440330505;
+     value 6 0=0.9909470677375793;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7971137762069702;
+     value 6 0=0.7961275577545166;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -15435,7 +15471,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABuwAABPwAAALSAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABTwAAAlcAAAGIAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -16610,17 +16646,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 6 0=0.01252847351133823;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.05137844756245613;
+       value 6 0=0.05710306391119957;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7334465384483337;
+       value 6 0=0.7107061743736267;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
