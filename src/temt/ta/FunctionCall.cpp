@@ -110,11 +110,15 @@ bool FunctionCall::CvtFmCode(const String& code) {
   String cd = code;
   if(cd.startsWith("FunCall "))
     cd = cd.after("FunCall ");
-  if(cd.startsWith("funcall "))
+  else if(cd.startsWith("funcall "))
     cd = cd.after("funcall ");
-  if(cd.startsWith("func "))
+  else if(cd.startsWith("Func "))
+    cd = cd.after("Func ");
+  else if(cd.startsWith("func "))
     cd = cd.after("func ");
-  if(cd.startsWith("fun "))
+  else if(cd.startsWith("Fun "))
+    cd = cd.after("Fun ");
+  else if(cd.startsWith("fun "))
     cd = cd.after("fun ");
   String lhs = cd;
   if(lhs.contains('('))
