@@ -169,8 +169,10 @@ bool Switch::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
-  if(cd.endsWith(';')) cd = cd.before(';',-1);
-  switch_var = FindVarNameInScope(cd, true); // prompt to make if not found
+  if(cd.endsWith(';'))
+    cd = cd.before(';',-1);
+  if (!cd.contains(' ')) // if the prompt VAR NOT SET! hasn't been changed don't try to create var
+    switch_var = FindVarNameInScope(cd, true); // prompt to make if not found
   return true;
 }
 
