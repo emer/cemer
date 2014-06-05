@@ -189,7 +189,6 @@ public:
     ERR_VEL,                     // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
 
-  bool          mtt_alt_init; // use alternative initialization compared to standard for move to target (debugging test)
   bool          show_ips;     // show the muscle insertion points on the arms
   VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
   DataTableRef  arm_state;       // this points to the data table that contains a record of all the arm state information over time, used to implement delays
@@ -209,7 +208,7 @@ public:
   float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
   float         hand_vra_dt;     // hand velocity running average time constant
 
-  ColorScalePtr	color_scale;    // #NO_SAVE for coloring insertion points -- not saved..
+  ColorScalePtr	color_scale;    // #IGNORE for coloring insertion points -- not saved..
 
   float_Matrix  ShouldIP;        // #EXPERT shoulder insertion points at rest
   float_Matrix  ArmIP;           // #EXPERT humerus insertion points at rest
