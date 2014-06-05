@@ -31,6 +31,8 @@ INHERITED(NetCounterBase)
 public:
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "net ctr init"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(NetCounterInit);
 protected:
