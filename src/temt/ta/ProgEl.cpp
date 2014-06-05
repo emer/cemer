@@ -742,12 +742,17 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
       has_type = true;
     }
   }
-  
+
   if(!has_type && CanCvtFmCode(cd, NULL)) {
     bool rval = CvtFmCode(cd);
     UpdateAfterEdit();
     return rval;
   }
+
+  if(move_after == -11) {       // special test code
+    return false;               // we've failed!!
+  }
+  
   orig_prog_code = cd;
   edit_move_after = move_after;
   tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
@@ -760,7 +765,11 @@ bool ProgEl::BrowserEditTest() {
 
 bool ProgEl::BrowserEditTest_impl() {
   String pre_str = BrowserEditString();
-  BrowserEditSet(pre_str);
+  bool setok = BrowserEditSet(pre_str, -11); // -11 is special code..
+  if(TestWarning(!setok, "BrowserEditTest", "set failed to parse for\nexpr:",
+                 pre_str)) {
+    return false;
+  }
   String post_str = BrowserEditString();
   if(TestWarning(pre_str != post_str, "BrowserEditTest", "MISMATCH!\npre_str:",
                  pre_str, "\npst_str:", post_str)) {

@@ -594,7 +594,7 @@ void taMisc::Warning(const char* a, const char* b, const char* c, const char* d,
 #endif
   taMisc::last_warn_msg = SuperCat(a, b, c, d, e, f, g, h, i);
 #ifndef NO_TA_BASE
-  if(cssMisc::cur_top && !taMisc::is_loading) {
+  if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
     taMisc::last_warn_msg += String("\n") + cssMisc::GetSourceLoc(NULL);
     if(cssMisc::cur_top->own_program) {
       bool running = cssMisc::cur_top->state & cssProg::State_Run;
@@ -834,7 +834,7 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
   // ROR: the point of this is to provide info on the program that is running when
   // the error occurs -- it is key info!
 #if !defined(NO_TA_BASE) 
-  if(cssMisc::cur_top && !taMisc::is_loading) {
+  if(cssMisc::cur_top && cssMisc::cur_top->own_program && !taMisc::is_loading) {
     fmsg += String("\n\n") + cssMisc::GetSourceLoc(NULL);
   }
 #endif
