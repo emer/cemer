@@ -71,7 +71,7 @@ public:
     y = cos_z_2*sin_y_2*cos_x_2 + sin_z_2*cos_y_2*sin_x_2;
     z = sin_z_2*cos_y_2*cos_x_2 - cos_z_2*sin_y_2*sin_x_2;
   }
-  // #CAT_Quaternion #BUTTON set quaternion from three Euler angles
+  // #CAT_Quaternion #BUTTON set quaternion from three Euler XYZ angles
   inline void	FromEulerVec(const taVector3f& euler) {
     FromEuler(euler.x, euler.y, euler.z);
   }
@@ -95,7 +95,28 @@ public:
     FromEulerZXZ(euler.x, euler.y, euler.z);
   }
   // #CAT_Quaternion set quaternion from three Euler ZXZ angles in vector form
+
+  inline void	FromEulerYXY(float alpha, float beta, float gamma) {
+    float ca2 = cosf(0.5*alpha);
+    float cb2 = cosf(0.5*beta);
+    float cg2 = cosf(0.5*gamma);
+    float sa2 = sinf(0.5*alpha);
+    float sb2 = sinf(0.5*beta);
+    float sg2 = sinf(0.5*gamma);
+	  
+    s = ca2*cb2*cg2 - sa2*cb2*sg2;
+    x = sa2*sb2*sg2 + ca2*sb2*cg2;
+    y = sa2*cb2*cg2 + ca2*cb2*sg2;
+    z = ca2*sb2*sg2 - sa2*sb2*cg2;  
+  }
+  // #CAT_Quaternion set quaternion from three Euler YXY angles
+  inline void	FromEulerVecYXY(const taVector3f& euler) {
+    FromEulerZXZ(euler.x, euler.y, euler.z);
+  }
+  // #CAT_Quaternion set quaternion from three Euler YXY angles in vector form
   
+
+
   inline void	FromVector(float d_x, float d_y, float d_z) {
     float theta_x = atan2f(d_y, d_z);
     float theta_y = atan2f(d_x * cosf(theta_x), d_z);
@@ -172,9 +193,16 @@ public:
   void	RotateEulerZXZ(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerZXZ(alpha, beta, gamma);
     q.Normalize();
-    *this *= q;
+    *this = q*(*this);
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler ZXZ rotation angles
+
+void	RotateEulerYXY(float alpha, float beta, float gamma) {
+    taQuaternion q; q.FromEulerYXY(alpha, beta, gamma);
+    q.Normalize();
+    *this = q*(*this);
+  }
+  // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler YXY rotation angles
 
   void	RotateXYZ(float& x, float& y, float& z) {
     taQuaternion vecq(0, x, y, z); // convert vec to quat

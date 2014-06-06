@@ -717,6 +717,39 @@ void VEBody::RotateEulerZXZ(float alpha, float beta, float gamma, bool init, boo
   }
 }
 
+void VEBody::RotateEulerYXY(float alpha, float beta, float gamma, bool init, bool abs_rot) {
+  VEObject* obj = GetObject();
+  if(init) {
+    if(abs_rot) {
+      init_quat.FromEulerYXY(alpha, beta, gamma);
+    }
+    else {
+      init_quat.RotateEulerYXY(alpha, beta, gamma);
+    }
+    init_quat.ToAxisAngle(init_rot);
+    init_quat.ToEulerVec(init_euler);
+  }
+  else {
+    if(obj && obj->auto_updt_rels) {
+      obj->SaveCurAsPrv();
+    }
+    if(abs_rot) {
+      cur_quat.FromEulerYXY(alpha, beta, gamma);
+    }
+    else {
+      cur_quat.RotateEulerYXY(alpha, beta, gamma);
+    }
+    UpdateCurRotFmQuat();
+  }
+  UpdateAfterEdit();            // calls CurToODE and updates display
+  if(obj && obj->auto_updt_rels) {
+    if(init)
+      obj->UpdateInitToRels();
+    else
+      obj->UpdateCurToRels();
+  }
+}
+
 void VEBody::CopyColorFrom(VEBody* cpy_fm) {
   if(!cpy_fm) return;
   set_color = cpy_fm->set_color;

@@ -50,7 +50,7 @@ public:
   float         elbow_gap_mid;  // #READ_ONLY /2
   float         wrist_gap_mid;  // #READ_ONLY /2
   float 	La;             // #READ_ONLY the length of the humerus including the elbow gap
-  float 	Lf;             // #READ_ONLY length of the forearm (ulna,hand radius,gaps)
+  float 	Lf;             // #READ_ONLY length of the forearm (ulna,hand,gaps)
   float         Ltot;           // #READ_ONLY total length of the arm
 
   TA_SIMPLE_BASEFUNS(VEArmLengths);
@@ -291,6 +291,9 @@ public:
 
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder=true);
   // #BUTTON place the hand at the target whose coordinates are the first 3 arguments. This method can crash if the arm hasn't been set to its initial position with ConfigArm. Returns true if a move is made (even if the target is not reachable). The fourth argument indicates whether the coordinates are wrt the shoulder.
+
+  virtual bool SetPose(float alp, float bet, float gam, float del);
+  // #BUTTON Set the arm pose according to the four given angles. Run ConfigArm before using this function. Returns true if a move is made.
 
   virtual bool TargetLengths(float trg_x, float trg_y, float trg_z);
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
