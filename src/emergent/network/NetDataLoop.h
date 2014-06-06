@@ -55,14 +55,16 @@ public:
   virtual void  GetItemList(int group_idx);
   // for grouped case, get items per group
 
-  String GetDisplayName() const override;
-  String GetToolbarName() const override { return "net data\nloop"; }
+  String  GetDisplayName() const override;
+  String  GetToolbarName() const override { return "net data\nloop"; }
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(NetDataLoop);
 protected:
-  void	GetOrderVar() override; // make an order variable in program if not already set
-  void	GetIndexVar() override; // make an index variable in program if not already set
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void	  GetOrderVar() override; // make an order variable in program if not already set
+  void	  GetIndexVar() override; // make an index variable in program if not already set
+  void	  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
 

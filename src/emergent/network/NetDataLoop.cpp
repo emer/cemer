@@ -17,6 +17,8 @@
 #include <DataTable>
 #include <Network>
 #include <Program>
+#include <NameVar_PArray>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(NetDataLoop);
 
@@ -53,10 +55,10 @@ void NetDataLoop::GetOrderVal() {
 void NetDataLoop::GetOrderVar() {
   inherited::GetOrderVar();
   if (!grouped) return;
-
+  
   Program* my_prog = program();
   if (!my_prog) return;
-  if (!group_order_var || group_order_var->name != "group_order") {
+  if (!group_order_var) {
     group_order_var = my_prog->vars.FindName("group_order");
     if (!group_order_var) {
       group_order_var = (ProgVar*) my_prog->vars.New(1, &TA_ProgVar);
@@ -237,30 +239,103 @@ String NetDataLoop::GetDisplayName() const {
   if(grouped) {
     String group_ord_str = GetTypeDef()->GetEnumString("Order", group_order);
     String item_ord_str = GetTypeDef()->GetEnumString("Order", order);
-    String data_nm;
-    if(data_var) data_nm = data_var->name;
-    else data_nm = "ERROR: data_var not set!";
-    String group_index_nm;
-    if(group_index_var) group_index_nm = group_index_var->name;
-    else group_index_nm = "ERROR: group_index_var not set!";
-    String item_index_nm;
-    if(index_var) item_index_nm = index_var->name;
-    else item_index_nm = "ERROR: index_var not set!";
-    return "Net Data Loop (gp: " + group_ord_str + "\n itm: " + item_ord_str
-      + " over: " + data_nm + " group index: " + group_index_nm
-      + " item index: " + item_index_nm +")";
+    ((NetDataLoop*)this)->GetOrderVal();
+    String ord_str = GetTypeDef()->GetEnumString("Order", order);
+    String rval = "Net Data Loop (grp-" + group_ord_str + " itm-" + item_ord_str + "): ";  // displaying order so users don't miss that information
+    
+    if(data_var)
+      rval += " table=" + data_var->name + " ";
+    else
+      rval += " table=? ";
+    
+    if (group_index_var)
+      rval += " group_index=" + group_index_var->name + " ";
+    else
+      rval += " group_index=? ";
+
+    if (index_var)
+      rval += " index=" + index_var->name + " ";
+    else
+      rval += " index=? ";
+    
+    if (group_order_var)
+      rval += " group_order_var=" + group_order_var->name + " ";
+    else
+      rval += " group_order_var=? ";
+
+    if (order_var)
+      rval += " order_var=" + order_var->name + " ";
+    else
+      rval += " order_var=? ";
+    
+    return rval;
   }
   else {
     ((NetDataLoop*)this)->GetOrderVal();
     String ord_str = GetTypeDef()->GetEnumString("Order", order);
-    String data_nm;
-    if(data_var) data_nm = data_var->name;
-    else data_nm = "ERROR: data_var not set!";
-    String index_nm;
-    if(index_var) index_nm = index_var->name;
-    else index_nm = "ERROR: index_var not set!";
-    return "Net Data Loop (" + ord_str + " over: " + data_nm + " index: " + index_nm +")";
-  }
+    String rval = "Net Data Loop (" + ord_str + "): ";  // displaying order so users don't miss that information
+    
+    if(data_var)
+      rval += " table=" + data_var->name + " ";
+    else
+      rval += " table=? ";
+    
+    if (index_var)
+      rval += " index=" + index_var->name + " ";
+    else
+      rval += " index=? ";
+    
+    if (order_var)
+      rval += " order_var=" + order_var->name + " ";
+    else
+      rval += " order_var=? ";
+    
+    return rval;
+    }
 }
 
+bool NetDataLoop::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("net data loop")) return true;
+  return false;
+}
 
+bool NetDataLoop::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("tab")) {
+      data_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("index")) {
+      index_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("order var") || name.startsWith("order_var")) {
+      order_var = FindVarNameInScope(value, false); // don't make
+      if (order_var) {
+        order = StringToOrderType(order_var->name);}
+    }
+    else if (name.startsWith("group index") || name.startsWith("group_index")) {
+      group_index_var = FindVarNameInScope(value, false); // don't make
+    }
+    else if (name.startsWith("group order var") || name.startsWith("group_order_var")) {
+      group_order_var = FindVarNameInScope(value, false); // don't make
+      if (group_order_var) {
+        group_order = StringToOrderType(group_order_var->name);}
+    }
+  }
+  SigEmitUpdated();
+  return true;
+}
