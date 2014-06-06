@@ -22,7 +22,10 @@ TA_BASEFUNS_CTORS_DEFN(NetCounterIncr);
 
 String NetCounterIncr::GetDisplayName() const {
   String rval = "Net Counter Incr: ";
-  if(counter) rval += counter->name;
+  if(counter)
+    rval += counter->name;
+  else
+    rval += "?";
   return rval;
 }
 
@@ -40,3 +43,23 @@ void NetCounterIncr::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
 }
 
+bool NetCounterIncr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc = trim(dc.downcase());
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  int pos = GetDisplayName().index(':');
+  String disp = GetDisplayName().before(pos + 1); disp.downcase();
+  
+  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith(disp))
+    return true;
+  return false;
+}
+
+bool NetCounterIncr::CvtFmCode(const String& code) {
+  String remainder = code.after(":");
+  if(remainder.empty())
+    return true;
+  local_ctr_var = FindVarNameInScope(remainder, false); // don't make
+  SigEmitUpdated();
+  return true;
+}
