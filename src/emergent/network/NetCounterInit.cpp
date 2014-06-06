@@ -58,10 +58,10 @@ bool NetCounterInit::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool NetCounterInit::CvtFmCode(const String& code) {
-  String remainder = code.after(":");
+  String remainder = trim(code.after(":"));
   if(remainder.empty())
     return true;
-  local_ctr_var = FindVarNameInScope(remainder, false); // don't make
+  counter = network_var->object_val->FindMember(remainder);
   SigEmitUpdated();
   return true;
 }
