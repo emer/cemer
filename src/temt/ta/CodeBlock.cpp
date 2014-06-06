@@ -62,6 +62,11 @@ ProgVar* CodeBlock::FindVarName(const String& var_nm) const {
 
 bool CodeBlock::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(code.startsWith("{")) return true;
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith("codeblock"))
+    return true;
   return false;
 }
 
