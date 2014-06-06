@@ -82,9 +82,10 @@ void MethodCall::GenCssBody_impl(Program* prog) {
 }
 
 String MethodCall::GetDisplayName() const {
-  if (!obj || !method)
-    return "(object or method not selected)";
-
+  if (!obj || !method) {
+    return "(Select object, then method) or enter inline using the form object_name->method_name()";
+  }
+  
   String rval;
   if(result_var)
     rval += result_var->name + "=";
@@ -120,6 +121,15 @@ void MethodCall::Help() {
 
 bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // fmt: [result = ]obj[.|->]method(args...
+  // don't reject if user triggers parse with display name unedited
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  String dn = GetDisplayName(); dn = trim(dn.downcase());
+  dn = dn.before(15);  // enough chars to distinguish
+  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith(dn))
+    return true;
+
   if(!code.contains('(')) return false;
   String lhs = code.before('(');
   String mthobj = lhs;
@@ -137,6 +147,9 @@ bool MethodCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool MethodCall::CvtFmCode(const String& code) {
+  if (code == GetDisplayName())  // don't bother to parse
+    return true;
+  
   String lhs = trim(code.before('('));
   String mthobj = lhs;
   String rval;
