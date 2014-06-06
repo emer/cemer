@@ -89,6 +89,10 @@ bool ProgCode::CvtCodeToVar(String& code) {
     else
       break;
   }
+  
+  if (var_nm.empty()) // no var_name
+    return true;
+
   ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;
   taBase::Ref(dlg);

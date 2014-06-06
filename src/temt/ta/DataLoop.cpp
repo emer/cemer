@@ -145,22 +145,23 @@ void DataLoop::GenCssPost_impl(Program* prog) {
 }
 
 String DataLoop::GetDisplayName() const {
-  String rval = "Data Loop: ";
+  String ord_str = GetTypeDef()->GetEnumString("Order", order);
+  String rval = "Data Loop (" + ord_str + "): ";  // displaying order so users don't miss that information
   
   if(data_var)
-    rval += " table= " + data_var->name + " ";
+    rval += " table=" + data_var->name + " ";
   else
-    rval += " table = ? ";
+    rval += " table=? ";
   
   if (index_var)
-    rval += " index = " + index_var->name + " ";
+    rval += " index=" + index_var->name + " ";
   else
-    rval += " index = ? ";
+    rval += " index=? ";
   
   if (order_var)
-    rval += " order_var = " + order_var->name + " ";
+    rval += " order_var=" + order_var->name + " ";
   else
-    rval += " order_var = ? ";
+    rval += " order_var=? ";
   
   return rval;
 }
