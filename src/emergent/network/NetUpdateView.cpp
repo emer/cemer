@@ -71,4 +71,15 @@ void NetUpdateView::GenCssBody_impl(Program* prog) {
   prog->AddVerboseLine(this);
 }
 
+bool NetUpdateView::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc = trim(dc.downcase());
+  if(dc.startsWith("net up"))
+    return true;
+  return false;
+}
+
+bool NetUpdateView::CvtFmCode(const String& code) {
+  SigEmitUpdated();
+  return true;
+}
 
