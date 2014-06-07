@@ -1085,6 +1085,8 @@ bool VEArm::ReConfigArm() {
   // taMisc::Info("humerus angular damping: ", String(handamp), "\n");
   // taMisc::Info("humerus angular damping threshold: ", String(hantre), "\n");
 
+  Worldly->Init();		// always re-init everything in environment
+
   return true;
 }
 
@@ -1195,9 +1197,13 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
     trg_y = trg_y + should_loc.y;
     trg_z = trg_z + should_loc.z;
   }
+
+  VEArmAngles save_angs;
+  save_angs = targ_angs;
   
   SetTarget(trg_x, trg_y, trg_z); // this updates the 4 arm angles and the R matrix
   init_angs = targ_angs;
+  targ_angs = save_angs;
 
   return SetPose_impl();
 }
