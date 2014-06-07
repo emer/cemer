@@ -1188,6 +1188,8 @@ void VEArm::ComputeRMatrix(float alp, float bet, float gam) {
 bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
   if(!CheckArm()) return false;
   
+  ReConfigArm();                // start from same initial starting point!
+
   if(shoulder) { // coordinates are wrt a reference frame with origin at the shoulder
     trg_x = trg_x + should_loc.x;
     trg_y = trg_y + should_loc.y;
@@ -1202,6 +1204,8 @@ bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
 
 bool VEArm::SetPose(float x_ang, float y_ang, float z_ang, float elbow_ang) {
   if(!CheckArm()) return false;
+
+  ReConfigArm();                // start from same initial starting point!
 
   init_angs.x = x_ang; init_angs.y = y_ang; init_angs.z = z_ang;
   init_angs.elbow = elbow_ang;
