@@ -87,6 +87,9 @@ public:
   float         gamma;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
   float         delta;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
 
+  void	UpdateAngles();
+  // update alpha, beta, etc from x,y,z
+
   TA_SIMPLE_BASEFUNS(VEArmAngles);
 protected:
   void  UpdateAfterEdit_impl();

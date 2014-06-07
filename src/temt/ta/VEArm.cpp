@@ -92,8 +92,7 @@ void VEArmAngles::Initialize() {
   delta = 0.0f;
 }
 
-void VEArmAngles::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
+void VEArmAngles::UpdateAngles() {
   if(up_y) {
     alpha = z;
     beta =  x;
@@ -107,6 +106,11 @@ void VEArmAngles::UpdateAfterEdit_impl() {
     gamma = y;
     delta = elbow;
   }
+}
+
+void VEArmAngles::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdateAngles();
 }
 
 void VEArmDelays::Initialize() {
@@ -255,20 +259,22 @@ bool VEArm::UpdateIPs() {
 
   // rotating the ulna's insertion points
   elbow->CurFromODE(true);      // so the angle we get is actualized
-  float delta = elbow->pos;     // DON'T KNOW IF THIS WILL WORK
+  cur_angs.elbow = elbow->pos;     // DON'T KNOW IF THIS WILL WORK
 
   if(up_axis == Y) { 
     // Now we get angle directly from humerus and ulna body rotations
     // NOTE: will need an equivalent for UP_Z -- falls back on elbow->pos for now
     taVector3f humrot;
     humerus->cur_quat_raw.ToEulerVec(humrot);
-    float beta = -humrot.x;
+    cur_angs.x = -humrot.x;
+    cur_angs.y = humrot.y;
+    cur_angs.z = humrot.z;
     taVector3f ulnarot;
     ulna->cur_quat_raw.ToEulerVec(ulnarot);
-    delta = -beta - ulnarot.x;
-    // taMisc::DebugInfo("delta:", String(delta), "beta:", String(beta), "ulnarot.x",
-    //                   String(ulnarot.x));
+    cur_angs.elbow = -cur_angs.x - ulnarot.x;
   }
+
+  cur_angs.UpdateAngles();	// get alpha, beta etc
 
   float UlnaShift_f[9] = {0.0f}; // initializes all zeros
   float T_elbowRot_f[9] = {0.0f};
@@ -279,15 +285,15 @@ bool VEArm::UpdateIPs() {
                            0, 0, -alens.La,
                            0, 0, -alens.La}; // should have one row per forearm IP
     float T_elbowRot_f[] = {1 , 0, 0,
-                    0, cos(delta),  sin(delta),
-                    0, -sin(delta), cos(delta)};
+                    0, cos(cur_angs.delta),  sin(cur_angs.delta),
+                    0, -sin(cur_angs.delta), cos(cur_angs.delta)};
     // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation
     */
     UlnaShift_f[2] = UlnaShift_f[5] = UlnaShift_f[8] = -alens.La;
     T_elbowRot_f[0] = 1;
-    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(delta);
-    T_elbowRot_f[5] = sin(delta);
-    T_elbowRot_f[7] = -sin(delta);
+    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(cur_angs.delta);
+    T_elbowRot_f[5] = sin(cur_angs.delta);
+    T_elbowRot_f[7] = -sin(cur_angs.delta);
   }
   else { // up_axis == Y 
     /* The matrices we're defining are these:
@@ -295,15 +301,15 @@ bool VEArm::UpdateIPs() {
                            0, -alens.La, 0,
                            0, -alens.La, 0}; // should have one row per forearm IP
     float T_elbowRot_f[] = {1 , 0, 0,
-                    0, cos(delta), -sin(delta),
-                    0, sin(delta), cos(delta)};
+                    0, cos(cur_angs.delta), -sin(cur_angs.delta),
+                    0, sin(cur_angs.delta), cos(cur_angs.delta)};
     // T_elbowRot is the TRANSPOSED rotation matrix for the delta rotation after the ct bilateral multiplication
     */
     UlnaShift_f[1] = UlnaShift_f[4] = UlnaShift_f[7] = -alens.La;
     T_elbowRot_f[0] = 1;
-    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(delta);
-    T_elbowRot_f[5] = -sin(delta);
-    T_elbowRot_f[7] = sin(delta);
+    T_elbowRot_f[4] = T_elbowRot_f[8] = cos(cur_angs.delta);
+    T_elbowRot_f[5] = -sin(cur_angs.delta);
+    T_elbowRot_f[7] = sin(cur_angs.delta);
   }
 
   float_Matrix UlnaShift(2,3,3);
@@ -1346,6 +1352,7 @@ bool VEArm::SetPose_impl() {
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(alens.humerus_mid),
                        RotHumCM.FastEl1d(2),false); // cur, not init
 
+    // this version shows that beta is x axis, gamma is y, and alpha is z
     //    humerus->RotateEuler(-init_angs.beta,init_angs.gamma,init_angs.alpha,false); // NOT init
     humerus->RotateEulerYXY(init_angs.alpha,-init_angs.beta,init_angs.gamma,false); // NOT init
     // humerus->RotateEulerZXZ(taMath_float::pi + init_angs.alpha,init_angs.beta,init_angs.gamma,false,true);
