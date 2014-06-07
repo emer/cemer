@@ -44,6 +44,14 @@ public:
   float         elbow_gap;      // #DEF_0.03 gap between humerus and ulna
   float         wrist_gap;      // #DEF_0.03 gap between ulna and hand
 
+  float         sh_off_x;        // #DEF_0.0 additional shoulder offset
+  float         sh_off_y;        // #DEF_0.0 additional shoulder offset
+  float         sh_off_z;        // #DEF_0.0 additional shoulder offset
+
+  float         sh_x;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
+  float         sh_y;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
+  float         sh_z;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
+
   float         humerus_mid;    // #READ_ONLY humerus / 2
   float         ulna_mid;       // #READ_ONLY ulna / 2
   float         hand_mid;       // #READ_ONLY hand / 2
@@ -54,6 +62,32 @@ public:
   float         Ltot;           // #READ_ONLY total length of the arm
 
   TA_SIMPLE_BASEFUNS(VEArmLengths);
+protected:
+  void  UpdateAfterEdit_impl();
+
+private:  
+  void  Initialize();
+  void  Destroy() { };
+};
+
+taTypeDef_Of(VEArmAngles);
+
+class TA_API VEArmAngles : public taOBase {
+  // #INLINE #INLINE_DUMP lengths of arm parameters
+INHERITED(taOBase)
+public:
+  float         x;              // (beta) angle of the upper arm along the x (horizontal) axis -- this is how far forward or backward relative to the torso the arm is (picture a hinge pin along the horizontal axis at the top of the shoulder -- that is this angle)
+  float         y;              // (gamma) angle of the upper arm along the y (vertical) axis -- this is spin around axis of arm and not very useful generally speaking
+  float         z;              // (alpha) angle of the upper arm along the z (depth) axis -- this is how far to the left or right the arm is angled
+  float         elbow;          // (delta) rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
+
+  bool          up_y;           // #HIDDEN #NO_SAVE if true, then Y is the vertical axis -- this is the default
+  float         alpha;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
+  float         beta;           // #HIDDEN #NO_SAVE canonical(?) names for the angles
+  float         gamma;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
+  float         delta;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
+
+  TA_SIMPLE_BASEFUNS(VEArmAngles);
 protected:
   void  UpdateAfterEdit_impl();
 
@@ -85,7 +119,8 @@ class TA_API VEArmErrors : public taOBase {
 INHERITED(taOBase)
 public:
   float         max;             // maximum error value -- prevents extreme forces while still allowing for high gains -- if 0 or lower then not used
-  float         norm_dra_dt;     // time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
+  float         norm_dra_dt;     // #DEF_0.3 time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
+  float         hand_vra_dt;     // #DEF_0.1 hand velocity running average time constant
   float         pid_dra_dt;      // #CONDSHOW_ON_owner.ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
   taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (delayed by delays.vis)
   taVector3f    loc_actual;      // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (not delayed)
@@ -189,9 +224,10 @@ public:
     ERR_VEL,                     // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
 
-  bool          show_ips;     // show the muscle insertion points on the arms
   VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
   DataTableRef  arm_state;       // this points to the data table that contains a record of all the arm state information over time, used to implement delays
+  bool          show_ips;        // show the muscle insertion points on the arms, as colored spheres -- color code use COLD_HOT scale for muscle group index (1-12 or so)
+  String        name_prefix;     // prefix to apply to all sub-objects (e.g., left_ or right_)
   ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
   UpAxis        up_axis;         // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
   MuscGeo       musc_geo;        // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
@@ -203,10 +239,12 @@ public:
   VEArmErrors   errors;          // Error Parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
   VEArmGains    gains;           // Gain Parameters -- used to scale forces applied to the muscle insertion points in the arm
   VEArmDamping  damping;         // Damping Parameters -- used to reduce oscillations in arm movements
-  VEArmLengths  alens;            // arm length parameters provided by last config arm call
+  VEArmLengths  alens;            // #READ_ONLY #SHOW arm length parameters provided by last config arm call
+  VEArmAngles   init_angs;        // #READ_ONLY #SHOW initial angles computed or set by initialization functions (e.g., MoveToTarget, SetPose)
+  VEArmAngles   targ_angs;        // #READ_ONLY #SHOW target angles, computed by SetTarget
+  VEArmAngles   cur_angs;        // #READ_ONLY #SHOW current arm angles -- updated as the arm moves
 
   float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
-  float         hand_vra_dt;     // hand velocity running average time constant
 
   ColorScalePtr	color_scale;    // #IGNORE for coloring insertion points -- not saved..
 
@@ -232,10 +270,6 @@ public:
   float_Matrix  targ_lens;       // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
   float         targ_lens_mag;   // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
   float_Matrix  R;               // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
-  float         alpha;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle along Z axis
-  float         beta;            // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle along X axis
-  float         gamma;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
-  float         delta;           // #READ_ONLY #HIDDEN #NO_SAVE target rotation angle
 
   bool          reach_start;     // #READ_ONLY #HIDDEN flag used to tell whether it's the start of a reach or not (since VEArm doesn't have direct access to network.cycle)
 
@@ -272,19 +306,21 @@ public:
   virtual void	InitMuscles();
   // initialize muscles and insertion point data
 
-  virtual bool  ConfigArm(const String& name_prefix="",
-                          float humerus_length = 0.3, float humerus_radius = 0.02,
+  virtual bool  ConfigArm(float humerus_length = 0.3, float humerus_radius = 0.02,
                           float ulna_length = 0.24, float ulna_radius = 0.02,
                           float hand_length = 0.08, float hand_radius = 0.03,
                           float elbow_gap = 0.03,   float wrist_gap = 0.03,
-                          float sh_offX = 0, float sh_offY = 0, float sh_offZ = 0);
+                          float sh_off_x = 0, float sh_off_y = 0, float sh_off_z = 0);
   // #BUTTON configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
+
+  virtual bool  ReConfigArm();
+  // #BUTTON reconfigure arm according to current arm length values stored in alens member -- can be used directly to initialize arm to default values
 
   virtual void  InitDynamicState();
   // initialize all the dynamic state variables used for computing muscle stimulation over time (i.e., the integ and deriv values in the PID controller), including resetting all the muscle gains back to 1.0
 
   virtual void SetTarget(float trg_x, float trg_y, float trg_z,
-                              bool add_gamma_noise = false);
+                         bool add_gamma_noise = false);
   // #IGNORE impl sets up target info based on target coords -- computes R matrix and alpha.. angles in addition to all the targ_loc* values -- optionally add noise to gamma parameter
   virtual void ComputeRMatrix(float alpha, float beta, float gamma);
   // #IGNORE compute the magic R rotation matrix from angles (R is stored on Arm object)
@@ -292,8 +328,11 @@ public:
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder=true);
   // #BUTTON place the hand at the target whose coordinates are the first 3 arguments. This method can crash if the arm hasn't been set to its initial position with ConfigArm. Returns true if a move is made (even if the target is not reachable). The fourth argument indicates whether the coordinates are wrt the shoulder.
 
-  virtual bool SetPose(float alp, float bet, float gam, float del);
-  // #BUTTON Set the arm pose according to the four given angles. Run ConfigArm before using this function. Returns true if a move is made.
+  virtual bool SetPose(float x_ang, float y_ang, float z_ang, float elbow_ang);
+  // #BUTTON Set the arm pose according to rotation angles (in radians, 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) for the shoulder along the 3 different axes, and the additional rotation angle of the elbow relative to the shoulder.  You must have run ConfigArm before using this function. Returns true if a move is made.
+
+  virtual bool SetPose_impl();
+  // #IGNORE actually moves the arm -- common for both MoveToTarget and SetPose
 
   virtual bool TargetLengths(float trg_x, float trg_y, float trg_z);
   // #BUTTON Obtain the muscle lengths which position the hand at the given coordinates, and place them in the targ_lens matrix, which will have a length equal to the number of muscles. Returns false if failed.
