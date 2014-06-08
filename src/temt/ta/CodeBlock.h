@@ -48,6 +48,7 @@ public:
   ProgVar*	FindVarName(const String& var_nm) const override;
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "block"; }
+  String 	GetTypeDecoKey() const override { return "ProgCtrl"; }
 
   bool          BrowserEditTest() override;
 
