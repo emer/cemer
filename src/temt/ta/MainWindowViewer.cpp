@@ -514,8 +514,11 @@ void MainWindowViewer::MakeWinName_impl() {
   // button instead.
   if (fname.empty())
     fname = name.empty() ? "(Untitled)" : name;
-//  String nw_name = pathnm + " - " + fname + " [*]"; // prog_nm ;
+#ifdef TA_OS_MAC
   String nw_name = pathnm + " - " + fname; // prog_nm ;
+#else
+  String nw_name = pathnm + " - " + fname + " [*]"; // prog_nm ;
+#endif
   win_name = nw_name;
   if(m_is_root) {
     win_name = taMisc::app_name + " v" + taMisc::version + " (svn: " + taMisc::svn_rev + ")";
