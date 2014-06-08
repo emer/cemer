@@ -52,8 +52,12 @@ T3NodeParent::~T3NodeParent()
 void T3NodeParent::addRemoveChildNode(SoNode* node, bool adding) {
   if (adding)
     childNodes()->addChild(node);
-  else
-    childNodes()->removeChild(node);
+  else {
+    int idx = childNodes()->findChild(node);
+    if(idx >= 0) {
+      childNodes()->removeChild(idx);
+    }
+  }
 }
 
 SoSeparator* T3NodeParent::captionSeparator(bool auto_create) {

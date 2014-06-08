@@ -857,9 +857,9 @@ public:
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]));
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm);
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm, int pt,
-	    const String& hstr=NULL, int flgs=0, int itrarg=-1);
+	    const String& hstr=_nilString, int flgs=0, int itrarg=-1);
   cssElCFun(int ac, cssEl* (*fp)(int, cssEl* args[]), const String& nm,
-	    cssEl* rtype, const String& hstr=NULL, int flgs=0, int itrarg=-1);
+	    cssEl* rtype, const String& hstr=_nilString, int flgs=0, int itrarg=-1);
   cssElCFun(const cssElCFun& cp);
   cssElCFun(const cssElCFun& cp, const String& nm);
   ~cssElCFun();
