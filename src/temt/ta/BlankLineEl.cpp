@@ -55,7 +55,9 @@ bool BlankLineEl::BrowserEditSet(const String& code, int move_after) {
 
 
 bool BlankLineEl::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.empty()) return true;
+  String cd = code;
+  cd = trim(cd);
+  if(cd.empty()) return true;
   return false;
 }
 
