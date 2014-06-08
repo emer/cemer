@@ -15,6 +15,8 @@
 
 #include "ProgramCallVar.h"
 #include <Program>
+#include <taProject>
+#include <Program_Group>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ProgramCallVar);
@@ -185,23 +187,77 @@ void ProgramCallVar::GenCssPost_impl(Program* prog) {
 }
 
 String ProgramCallVar::GetDisplayName() const {
-  String rval = "Call Fm ";
-  if (prog_group) {
-    rval += prog_group->GetName();
-    if(prog_name_var) {
-      rval += " " + prog_name_var->name;
-    }
-    if(prog_args.size > 0) {
-      rval += "(";
-      for(int i=0;i<prog_args.size;i++) {
-        ProgArg* pa = prog_args.FastEl(i);
-        if(i > 0) rval += ", ";
-        rval += pa->expr.expr;   // GetDisplayName();
-      }
-      rval += ")";
-    }
-  }
+  String rval = "Call Fm:";
+  if (prog_group)
+    rval += " prog_group=" + prog_group->GetName();
   else
-    rval += "(no program group set)";
+    rval += " prog_group=?";
+  
+  if(prog_name_var)
+    rval += " prog_name_var=" + prog_name_var->name;
+  else
+    rval += " prog_name_var=?";
+  
+  if(prog_args.size > 0) {
+    rval += "(";
+    for(int i=0;i<prog_args.size;i++) {
+      ProgArg* pa = prog_args.FastEl(i);
+      if(i > 0) rval += ", ";
+      rval += pa->expr.expr;   // GetDisplayName();
+    }
+    rval += ")";
+  }
   return rval;
+}
+
+bool ProgramCallVar::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn))
+    return true;
+  if(dc.startsWith("call fm:"))  // first part of display name -- beyond this it is dynamic
+    return true;
+  return false;
+}
+
+bool ProgramCallVar::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn))
+    return true; // nothing we can do
+  
+  String remainder = trim(code.after(":"));
+  if(remainder.empty())
+    return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
+    
+    if (name.startsWith("prog_name_var")) {
+      prog_name_var = FindVarNameInScope(value, false); // don't make
+    }
+    //    else if (name.startsWith("prog_group")) {
+    //      taProject* prj = GET_MY_OWNER(taProject);
+    //      if (prj) {
+    //        Program_TopGroup root_group = prj->programs;
+    //        taGroup_List* sub_groups = root_group.EditSubGps();
+    //        for (int i=0; i<sub_groups->size; i++) {
+    //          Program_Group* grp = (Program_Group*)sub_groups[i];
+    //          if (sub_groups[i].name == value) {
+    //            prog_group = sub_groups[i];
+    //            break;
+    //          }
+    //        }
+    //      }
+    //    }
+  }
+  SigEmitUpdated();
+  return true;
 }
