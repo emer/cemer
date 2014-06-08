@@ -39,7 +39,9 @@ void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
 }
 
 void PrintExpr::GenCssBody_impl(Program* prog) {
-  expr.ParseExpr();             // re-parse just to be sure!
+  expr.ParseExpr();             // re-parse just to be sure!]
+  if (expr.GetFullExpr().empty())
+    expr.SetExpr("\"\""); // prevents error if no expression
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
   if(my_mask && debug_level) {
@@ -67,12 +69,12 @@ String PrintExpr::GetDisplayName() const {
 
 bool PrintExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
-  if(!(code.startsWith("print ") || code.startsWith("print: ") ||
+  if(!(code.startsWith("print") || code.startsWith("print:") ||
        code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
-  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
+  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.freq('"') == 2) {
@@ -86,8 +88,8 @@ bool PrintExpr::CvtFmCode(const String& code) {
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
   else if(code.startsWith("Print ")) exprstr = trim(code.after("Print "));
-  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
-  else if(code.startsWith("Print: ")) exprstr = trim(code.after("Print: "));
+  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
+  else if(code.startsWith("Print:")) exprstr = trim(code.after("Print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   expr.SetExpr(exprstr);

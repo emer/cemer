@@ -98,12 +98,12 @@ String PrintVar::GetDisplayName() const {
 
 bool PrintVar::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
-  if(!(code.startsWith("print ") || code.startsWith("print: ") ||
+  if(!(code.startsWith("print") || code.startsWith("print:") ||
        code.startsWith("cerr << ") || code.startsWith("cout << ")))
     return false;
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
-  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
+  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   if(exprstr.contains('"')) {
@@ -116,16 +116,16 @@ bool PrintVar::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   if(exprstr.contains(',')) varnm = trim(exprstr.before(','));
   if(exprstr.contains("<<")) varnm = trim(exprstr.before("<<"));
   if(exprstr.contains(' ')) varnm = trim(exprstr.before(' '));
-  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
-  return false;
+//  if(varnm.nonempty()) return true; // cannot look it up -- have to go on nonempty status
+  return true;
 }
 
 bool PrintVar::CvtFmCode(const String& code) {
   String exprstr;
   if(code.startsWith("print ")) exprstr = trim(code.after("print "));
   else if(code.startsWith("Print ")) exprstr = trim(code.after("Print "));
-  else if(code.startsWith("print: ")) exprstr = trim(code.after("print: "));
-  else if(code.startsWith("Print: ")) exprstr = trim(code.after("Print: "));
+  else if(code.startsWith("print:")) exprstr = trim(code.after("print:"));
+  else if(code.startsWith("Print:")) exprstr = trim(code.after("Print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
   String msg;
