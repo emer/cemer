@@ -44,9 +44,9 @@ public:
   float         elbow_gap;      // #DEF_0.03 gap between humerus and ulna
   float         wrist_gap;      // #DEF_0.03 gap between ulna and hand
 
-  float         sh_off_x;        // #DEF_0.0 additional shoulder offset
-  float         sh_off_y;        // #DEF_0.0 additional shoulder offset
-  float         sh_off_z;        // #DEF_0.0 additional shoulder offset
+  float         sh_off_x;        // #DEF_0 additional shoulder offset
+  float         sh_off_y;        // #DEF_0 additional shoulder offset
+  float         sh_off_z;        // #DEF_0 additional shoulder offset
 
   float         sh_x;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
   float         sh_y;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
@@ -125,27 +125,8 @@ public:
   float         norm_dra_dt;     // #DEF_0.3 time constant for computing normalized error derivative running average value -- values < 1 result in smoother derivative estimates -- norm_err_dra is useful for cerebellar control signal
   float         hand_vra_dt;     // #DEF_0.1 hand velocity running average time constant
   float         pid_dra_dt;      // #CONDSHOW_ON_owner.ctrl_type:PID time constant for integrating error derivatives for use in the D component of PID control -- this is what is actually used, so set to 1 if you want literal PID -- setting lower can result in a less noisy derivative term
-  taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (delayed by delays.vis)
-  taVector3f    loc_actual;      // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (not delayed)
-  float         loc_mag;         // #READ_ONLY #SHOW #EXPERT total distance away from target location (delayed by delays.vis)
-  float         loc_mag_actual;  // #READ_ONLY #SHOW #EXPERT total distance away from target location (not delayed)
-  float_Matrix  len;             // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
-  float         len_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
-  float_Matrix  len_norm;        // #READ_ONLY #SHOW #EXPERT normalized muscle errors
-  float_Matrix  len_norm_dt;     // #READ_ONLY #SHOW #EXPERT normalized muscle error derivatives
-  float_Matrix  len_norm_dra;    // #READ_ONLY #SHOW #EXPERT running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control 
-  float_Matrix  len_prv;         // #EXPERT #NO_SAVE previous error values in PID
-  float_Matrix  len_norm_prv;    // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
-  float_Matrix  itg;             // #EXPERT #NO_SAVE integrated error over time (I in PID)
-  float         itg_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err_int computed
-  float_Matrix  drv;             // #EXPERT #NO_SAVE derivative of error over time (D in PID)
-  float_Matrix  drv_dra;         // #EXPERT #NO_SAVE running-average of err_deriv -- uses pid_dra_dt parameter -- this is what is actually used in PID controller, so set pid_dra_dt to 1 if you want literal std D factor
-  float         drv_dra_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of running-average of err_deriv -- uses pid_dra_dt parameter
-  float_Matrix  io;              // #READ_ONLY #SHOW #EXPERT Inferior Olivary like error signal -- 1.0 if norm_err_dra[i] > io_err_thr else 0.0
-  float         io_mag;          // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors
   float         io_thr;          // threshold on norm_err_dra values for driving an Inferior Olivary error signal for training cerebellum
 
- 
   TA_SIMPLE_BASEFUNS(VEArmErrors);
 private:
   void  Initialize();
@@ -237,7 +218,8 @@ public:
   MuscType      musc_type;       // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
   float         hill_mu;         // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
   ControlType   ctrl_type;       // type of controller to use to drive muscles in response to the difference between target lengths and current lengths
-  
+  float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
+
   VEArmDelays   delays;          // Delay Parameters -- used to delay inputs/outputs to VEArm -- each is expressed as a discrete time step (1 step = 5 ms), where the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
   VEArmErrors   errors;          // Error Parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
   VEArmGains    gains;           // Gain Parameters -- used to scale forces applied to the muscle insertion points in the arm
@@ -247,9 +229,7 @@ public:
   VEArmAngles   targ_angs;        // #READ_ONLY #SHOW target angles, computed by SetTarget
   VEArmAngles   cur_angs;        // #READ_ONLY #SHOW current arm angles -- updated as the arm moves
 
-  float 	world_step;      // #READ_ONLY a copy of the owner VEWorld's stepsize, used for calculating speeds
-
-  ColorScalePtr	color_scale;    // #IGNORE for coloring insertion points -- not saved..
+  VEMuscle_List muscles;         // pointers to the muscles attached to the arm
 
   float_Matrix  ShouldIP;        // #EXPERT shoulder insertion points at rest
   float_Matrix  ArmIP;           // #EXPERT humerus insertion points at rest
@@ -259,22 +239,6 @@ public:
   float_Matrix  ct;              // #EXPERT An autoinverse rotation matrix which transforms coordinates from one system (Y axis upwards) to another (Z axis upwards).
   taVector3f    should_loc;      // #READ_ONLY #SHOW the location of the shoulder in World coordinates
   int           n_musc;          // #READ_ONLY the total number of muscles, as implied by the IP matrices
-
-  taVector3f    targ_loc_abs;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in absolute world coordinates
-  taVector3f    hand_loc_abs;    // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
-  taVector3f    targ_loc_rel;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
-  float         targ_rel_d;      // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
-  taVector3f    hand_loc_rel;    // #READ_ONLY #SHOW #EXPERT delayed hand coordinates, in shoulder-relative coordinates
-  taVector3f    hand_loc_actual; // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
-  taVector3f    hand_loc_prv;    // #READ_ONLY #SHOW #EXPERT previous hand coordinates
-  taVector3f    hand_vel;        // #READ_ONLY #SHOW #EXPERT hand velocity
-  float         hand_vel_mag;    // #READ_ONLY #SHOW #EXPERT hand velocity
-  float         hand_vra;        // #READ_ONLY #SHOW #EXPERT temporal running average of hand_vel_mag using hand_vra_dt -- good measure of whether the reach has stopped
-  float_Matrix  targ_lens;       // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
-  float         targ_lens_mag;   // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
-  float_Matrix  R;               // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
-
-  bool          reach_start;     // #READ_ONLY #HIDDEN flag used to tell whether it's the start of a reach or not (since VEArm doesn't have direct access to network.cycle)
 
   float         arm_time;        // #GUI_READ_ONLY #SHOW #NO_SAVE time counter for arm integration
   float_Matrix  lens;            // #EXPERT #NO_SAVE current lengths, computed by ComputeStim
@@ -301,7 +265,45 @@ public:
   float_Matrix  norm_lens;       // #READ_ONLY #SHOW #EXPERT normalized current muscle lengths
   float_Matrix  norm_targ_lens;  // #READ_ONLY #SHOW #EXPERT normalized target muscle lengths
   float_Matrix  norm_vels;       // #READ_ONLY #SHOW #EXPERT normalized muscle velocities
-  VEMuscle_List muscles;         // pointers to the muscles attached to the arm
+
+
+  taVector3f    targ_loc_abs;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in absolute world coordinates
+  taVector3f    hand_loc_abs;    // #READ_ONLY #SHOW #EXPERT current hand coordinates, in absolute world coordinates
+  taVector3f    targ_loc_rel;    // #READ_ONLY #SHOW #EXPERT current target coordinates, in shoulder-relative coordinates
+  float         targ_rel_d;      // #READ_ONLY #SHOW #EXPERT distance to target (mag of targ_loc_rel)
+  taVector3f    hand_loc_rel;    // #READ_ONLY #SHOW #EXPERT delayed hand coordinates, in shoulder-relative coordinates
+  taVector3f    hand_loc_actual; // #READ_ONLY #SHOW #EXPERT current hand coordinates, in shoulder-relative coordinates
+  taVector3f    hand_loc_prv;    // #READ_ONLY #SHOW #EXPERT previous hand coordinates
+  taVector3f    hand_vel;        // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vel_mag;    // #READ_ONLY #SHOW #EXPERT hand velocity
+  float         hand_vra;        // #READ_ONLY #SHOW #EXPERT temporal running average of hand_vel_mag using hand_vra_dt -- good measure of whether the reach has stopped
+  float_Matrix  targ_lens;       // #EXPERT target lengths, computed by the TargetLengths function for a given 3D target location
+  float         targ_lens_mag;   // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of targ_lens
+  float_Matrix  R;               // #READ_ONLY #HIDDEN #NO_SAVE target rotation matrix -- used as a tmp value for various routines for setting target lengths
+
+  bool          reach_start;     // #READ_ONLY #HIDDEN flag used to tell whether it's the start of a reach or not (since VEArm doesn't have direct access to network.cycle)
+
+
+  taVector3f    loc;             // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (delayed by delays.vis)
+  taVector3f    loc_actual;      // #READ_ONLY #SHOW #EXPERT targ_loc - hand_loc -- error vector of hand away from target location (not delayed)
+  float         loc_mag;         // #READ_ONLY #SHOW #EXPERT total distance away from target location (delayed by delays.vis)
+  float         loc_mag_actual;  // #READ_ONLY #SHOW #EXPERT total distance away from target location (not delayed)
+  float_Matrix  len;             // #EXPERT #NO_SAVE current errors (targ_lens - lens), computed by ComputeStim
+  float         len_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err computed
+  float_Matrix  len_norm;        // #READ_ONLY #SHOW #EXPERT normalized muscle errors
+  float_Matrix  len_norm_dt;     // #READ_ONLY #SHOW #EXPERT normalized muscle error derivatives
+  float_Matrix  len_norm_dra;    // #READ_ONLY #SHOW #EXPERT running average of norm_err_deriv using norm_err_dra_dt time constant -- these values can be useful for computing cerebellar control 
+  float_Matrix  len_prv;         // #EXPERT #NO_SAVE previous error values in PID
+  float_Matrix  len_norm_prv;    // #READ_ONLY #SHOW #EXPERT previous normalized muscle errors
+  float_Matrix  itg;             // #EXPERT #NO_SAVE integrated error over time (I in PID)
+  float         itg_mag;         // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of err_int computed
+  float_Matrix  drv;             // #EXPERT #NO_SAVE derivative of error over time (D in PID)
+  float_Matrix  drv_dra;         // #EXPERT #NO_SAVE running-average of err_deriv -- uses pid_dra_dt parameter -- this is what is actually used in PID controller, so set pid_dra_dt to 1 if you want literal std D factor
+  float         drv_dra_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of running-average of err_deriv -- uses pid_dra_dt parameter
+  float_Matrix  io;              // #READ_ONLY #SHOW #EXPERT Inferior Olivary like error signal -- 1.0 if norm_err_dra[i] > io_err_thr else 0.0
+  float         io_mag;          // #READ_ONLY #SHOW #EXPERT #NO_SAVE overall magnitude of io errors
+
+  ColorScalePtr	color_scale;    // #IGNORE for coloring insertion points -- not saved..
 
   virtual bool  CheckArm(bool quiet = false);
   // check to see if the arm is all configured OK -- it flags an error if not unless quiet -- returns true if OK, false if not
