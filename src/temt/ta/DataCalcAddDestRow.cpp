@@ -28,13 +28,13 @@ void DataCalcAddDestRow::Initialize() {
 }
 
 String DataCalcAddDestRow::GetDisplayName() const {
-  String rval = "Add Row: ";
-  
-  if(dest_data_var)
-    rval += " table=" + dest_data_var->name + " ";
-  else
-    rval += " table=? ";
-  
+  String rval = "Add Dest Row in: ";
+  if(dest_data_var) {
+    rval += dest_data_var->name;
+  }
+  else {
+    rval += "(Set in Calc Loop)";
+  }
   return rval;
 }
 
@@ -136,23 +136,5 @@ bool DataCalcAddDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) cons
 }
 
 bool DataCalcAddDestRow::CvtFmCode(const String& code) {
-  String dc = code;  dc.downcase();
-  String remainder = code.after(":");
-  if(remainder.empty()) return true;
-  
-  NameVar_PArray nv_pairs;
-  taMisc::ToNameValuePairs(remainder, nv_pairs);
-  
-  for (int i=0; i<nv_pairs.size; i++) {
-    String name = nv_pairs.FastEl(i).name;
-    name.downcase();
-    String value = nv_pairs.FastEl(i).value.toString();
-    
-    if (name.startsWith("tab")) {
-      dest_data_var = FindVarNameInScope(value, false); // don't make
-    }
-  }
-  
-  SigEmitUpdated();
   return true;
 }

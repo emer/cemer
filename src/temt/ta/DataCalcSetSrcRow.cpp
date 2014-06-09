@@ -31,7 +31,7 @@ String DataCalcSetSrcRow::GetDisplayName() const {
     rval += src_data_var->name;
   }
   else {
-    rval += "?";
+    rval += "(Set in Calc Loop)";
   }
   return rval;
 }
@@ -114,11 +114,5 @@ bool DataCalcSetSrcRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const
 }
 
 bool DataCalcSetSrcRow::CvtFmCode(const String& code) {
-  String dc = code;  dc.downcase();
-  String remainder = code.after(":");
-  if(remainder.empty())
-    return true;
-  
-    SigEmitUpdated();
     return true;
 }
