@@ -51,7 +51,7 @@ main(int argc, char ** argv) {
 
   fmt.setSampleBuffers(true);
   fmt.setSamples(4);
-  // qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
+  qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
   qglw->makeCurrent();
   glEnable(GL_MULTISAMPLE);
 
