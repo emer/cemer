@@ -246,11 +246,9 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
     else if (name.startsWith("prog_group")) {
       taProject* prj = GET_MY_OWNER(taProject);
       if (prj) {
-        Program_TopGroup root_group = prj->programs;
-        for (int i=0; i<root_group.leaves; i++) {
-          Program_Group* grp = (Program_Group*)root_group.SafeGp(i);
-//          taMisc::DebugInfo(grp->name);
-          if (grp && grp->name == value) {
+        Program_TopGroup& root_group = prj->programs;
+        FOREACH_SUBGROUP(Program_Group, grp, root_group) {
+          if (grp->name == value) {
             prog_group = grp;
             break;
           }
