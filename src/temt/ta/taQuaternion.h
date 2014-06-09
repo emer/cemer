@@ -194,6 +194,7 @@ public:
     taQuaternion q; q.FromEulerZXZ(alpha, beta, gamma);
     q.Normalize();
     *this = q*(*this);
+    //*this *= q;
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler ZXZ rotation angles
 
@@ -201,6 +202,7 @@ void	RotateEulerYXY(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerYXY(alpha, beta, gamma);
     q.Normalize();
     *this = q*(*this);
+    //*this *= q;
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler YXY rotation angles
 

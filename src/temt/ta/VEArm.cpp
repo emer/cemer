@@ -94,16 +94,16 @@ void VEArmAngles::Initialize() {
 
 void VEArmAngles::UpdateAngles() {
   if(up_y) {
-    alpha = z;
-    beta =  x;
-    gamma = y;
+    alpha = x;
+    beta =  y;
+    gamma = z;
     delta = elbow;
   }
   else {
     // todo: is there a diff rotation for up_z?
-    alpha = z;
-    beta =  x;
-    gamma = y;
+    alpha = x;
+    beta =  y;
+    gamma = z;
     delta = elbow;
   }
 }
@@ -1243,21 +1243,20 @@ bool VEArm::SetPose_impl() {
   //------ Rotating humerus -------
 
   if(up_axis == Z) {
-    humerus->RotateEulerZXZ(init_angs.alpha,init_angs.beta,init_angs.gamma,false,true); // an absolute rotation that only sets current values
-    // humerus->RotateEuler(init_angs.beta,init_angs.gamma,init_angs.alpha,false);  
-    //  humerus->RotateEuler(init_angs.alpha,init_angs.beta,init_angs.gamma,false);
+    
     float HumCM_f[] = {0.0f,0.0f,(-alens.La+(alens.elbow_gap_mid))/2.0f};  // humerus' geometrical center at rest
     float elbow_loc_f[] = {0.0f,0.0f,-alens.La};  // elbow joint's anchor at rest
-    //    float elbow_loc_f[] = {0.0f,0.0f,(-alens.La+(alens.elbow_gap))};  // elbow joint's anchor at rest
     float init_elb_axis[] = {-1.0f,0.0f,0.0f};  // elbow joint's axis at rest
+    
     float_Matrix HumCM(2,1,3);
     float_Matrix elbow_loc(2,1,3); 
     float_Matrix elb_axis(2,1,3);
     HumCM.InitFromFloats(HumCM_f);
     elbow_loc.InitFromFloats(elbow_loc_f);
     elb_axis.InitFromFloats(init_elb_axis);
-    String elblock1, elblock2, elblock3;
-    elbow_loc.Print(elblock1);
+    
+    //String elblock1, elblock2, elblock3;
+    //elbow_loc.Print(elblock1);
     // taMisc::Info("initial elbow_loc:", elblock1, "\n");
 
     float_Matrix RotHumCM(2,1,3);
@@ -1267,51 +1266,60 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&rot_elb_loc, &R, &elbow_loc);
     taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);
     
+    humerus->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false); // a rotation on the current quaternion
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
                        RotHumCM.FastEl1d(2)+(alens.humerus_mid),false);
   
     float UlnaCM_f[] = {0,0,-(alens.ulna_mid + alens.elbow_gap_mid)};  // Ulna 'CM' with origin at elbow
-    //float Wrist_f[] = {0,0,-(alens.ulna + alens.elbow_gap_mid + alens.wrist_gap_mid)};  // wrist coords with origin at elbow
+    float handCM_f[] = {0,0,-alens.Lf};  // Hand 'CM' with origin at elbow
+ 
     float elbow_rot_f[] = {1 , 0, 0,
                            0, cosf(init_angs.delta), -sinf(init_angs.delta),
                            0, sinf(init_angs.delta), cosf(init_angs.delta)};
     float_Matrix UlnaCM(2,1,3);
     UlnaCM.InitFromFloats(UlnaCM_f);
-    //float_Matrix Wrist(2,1,3);
-    //Wrist.InitFromFloats(Wrist_f);
+    float_Matrix handCM(2,1,3);
+    handCM.InitFromFloats(handCM_f);
     float_Matrix elbow_rot(2,3,3);
     elbow_rot.InitFromFloats(elbow_rot_f);
 
-    String erout;
-    elbow_rot.Print(erout);
+    //String erout;
+    //elbow_rot.Print(erout);
 
     float_Matrix Rot1UlnaCM(2,1,3);
+    float_Matrix Rot1handCM(2,1,3);
     taMath_float::mat_mult(&Rot1UlnaCM, &elbow_rot, &UlnaCM);
-    //float_Matrix Rot1Wrist(2,1,3);
-    //taMath_float::mat_mult(&Rot1Wrist, &elbow_rot, &Wrist);
+    taMath_float::mat_mult(&Rot1handCM, &elbow_rot, &handCM);
+    
+    //String ruout;
+    //Rot1UlnaCM.Print(ruout);
+    // taMisc::Info("rotated ulna before translation:\n", ruout);
 
-    String ruout;
-    Rot1UlnaCM.Print(ruout);
+    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(2)-alens.La,1); // setting origin at shoulder
+    Rot1handCM.Set(Rot1handCM.FastEl1d(2)-alens.La,1); // setting origin at shoulder
 
-    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(2)-alens.La,2); // setting origin at shoulder
-    //Rot1Wrist.Set(Rot1Wrist.FastEl1d(2)-alens.La,2);
-
-    String rudout;
-    Rot1UlnaCM.Print(rudout);
+    //String rudout;
+    //Rot1UlnaCM.Print(rudout);
+    // taMisc::Info("rotated ulna after translation:\n", rudout);
 
     float_Matrix Rot2UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
-    //float_Matrix Rot2Wrist(2,1,3);
-    //taMath_float::mat_mult(&Rot2Wrist, &R, &Rot1Wrist);
-
-    ulna->RotateEulerZXZ(init_angs.alpha,init_angs.beta+init_angs.delta,init_angs.gamma,false,true);  // init_angs.beta+init_angs.delta?????
+    float_Matrix Rot2handCM(2,1,3);
+    taMath_float::mat_mult(&Rot2handCM, &R, &Rot1handCM); // applying shoulder rotation
+    
+    ulna->RotateEulerZXZ(0,-init_angs.delta,0,false);  
+    ulna->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false);  
     //ulna->RotateEuler(init_angs.beta+init_angs.delta,init_angs.gamma,init_angs.alpha,false);
     ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
                     Rot2UlnaCM.FastEl1d(2)+alens.humerus+
                     alens.ulna_mid+alens.elbow_gap,false);
-    hand->RotateEulerZXZ(init_angs.alpha,init_angs.beta+init_angs.delta,init_angs.gamma,false,true);
-    //hand->RotateEuler(init_angs.beta+init_angs.delta,init_angs.gamma,init_angs.alpha,false);
-    // hand->Translate(trg_x,trg_y,trg_z,false,true);
+    
+    hand->Translate(Rot2handCM.FastEl1d(0)+should_loc.x,
+                    Rot2handCM.FastEl1d(1)+should_loc.y,
+                    Rot2handCM.FastEl1d(2)+should_loc.z,false,true); // NOT init, absolute position
+
+    hand->RotateEulerZXZ(0,-init_angs.delta,0,false);
+    hand->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false);
     
     //------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
@@ -1373,8 +1381,8 @@ bool VEArm::SetPose_impl() {
     float_Matrix elbow_rot(2,3,3);
     elbow_rot.InitFromFloats(elbow_rot_f);
 
-    String erout;
-    elbow_rot.Print(erout);
+    //String erout;
+    //elbow_rot.Print(erout);
     // taMisc::Info("elbow rotation matrix :\n", erout);
 
     float_Matrix Rot1UlnaCM(2,1,3);
@@ -1382,8 +1390,8 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&Rot1UlnaCM, &elbow_rot, &UlnaCM);
     taMath_float::mat_mult(&Rot1handCM, &elbow_rot, &handCM);
 
-    String ruout;
-    Rot1UlnaCM.Print(ruout);
+    //String ruout;
+    //Rot1UlnaCM.Print(ruout);
     // taMisc::Info("rotated ulna before translation:\n", ruout);
 
     Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(1)-alens.La,1); // setting origin at shoulder
