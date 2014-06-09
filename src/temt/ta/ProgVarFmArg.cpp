@@ -16,6 +16,7 @@
 #include "ProgVarFmArg.h"
 #include <Program>
 #include <taMisc>
+#include <taProject>
 
 TA_BASEFUNS_CTORS_DEFN(ProgVarFmArg);
 
@@ -46,12 +47,20 @@ void ProgVarFmArg::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 String ProgVarFmArg::GetDisplayName() const {
   String rval;
-  rval = "Set Var: " + var_name + " in: ";
-  if(prog)
-    rval += prog->name;
+  if (!var_name.empty())
+    rval = "Set Var:" + var_name;
   else
-    rval += "(ERROR: prog not set!)";
-  rval += " Fm Arg: " + arg_name;
+    rval = "Set Var:?";
+  
+  if(prog)
+    rval += " in Program:" + prog->name;
+  else
+    rval += " in Program:?";
+  
+  if (!arg_name.empty())
+    rval += " from Arg:" + arg_name;
+  else
+    rval += " from Arg:?";
   return rval;
 }
 
@@ -82,3 +91,45 @@ void ProgVarFmArg::GenRegArgs(Program* prog) {
                              + " var_name = " + var_name + "\");");
 }
 
+bool ProgVarFmArg::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
+  String code = code_str; code.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  String dn = GetDisplayName().downcase();
+  dn = dn.before(':');
+  if(code.startsWith(tbn) || code.startsWith(tn) || code.startsWith(dn))
+    return true;
+  return false;
+}
+
+bool ProgVarFmArg::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn))
+    return true; // nothing we can do
+  
+  String remainder = trim(code.after(":"));  // use code from here to get proper casing
+  if(remainder.empty())
+    return true;
+  
+  String the_var = trim(remainder.before(' '));
+  if (the_var != "?")
+    var_name = the_var;
+  
+  remainder = trim(remainder.after("Program:"));
+  String the_prog = trim(remainder.before(' '));
+  if (the_prog != "?") {
+    taProject* prj = GET_MY_OWNER(taProject);
+    if (prj) {
+       prog = prj->programs.FindLeafName(the_prog);
+    }
+  }
+  
+  remainder = trim(remainder.after("Arg:"));
+  if (remainder != "?")
+    arg_name = remainder;
+  
+  SigEmitUpdated();
+  return true;
+}
