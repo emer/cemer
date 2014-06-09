@@ -74,7 +74,7 @@ String StaticMethodCall::GetDisplayName() const {
   String rval;
 
   if (!method) {
-    rval += object_type->name + "::? - Select a method";
+    rval += object_type->name + "::?() - Select a method";
     return rval;
   }
 
@@ -133,6 +133,7 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
   }
   // now tackle the args
   String args = trim(code.after('('));
+  args = args.before(')');
   if(args.endsWith(')')) args = trim(args.before(')',-1));
   if(args.endsWith(';')) args = trim(args.before(';',-1));
   for(int i=0; i<meth_args.size; i++) {
@@ -146,7 +147,9 @@ bool StaticMethodCall::CvtFmCode(const String& code) {
       arg = args;
       args = "";                // all done
     }
-    pa->expr.SetExpr(arg);
+    if (!arg.empty()) {
+      pa->expr.SetExpr(arg);
+    }
     if(args.empty()) break;
   }
   return true;
