@@ -26,12 +26,12 @@ void DataCalcSetDestRow::Initialize() {
 }
 
 String DataCalcSetDestRow::GetDisplayName() const {
-  String rval = "Set Row in: ";
+  String rval = "Set Dest Row in: ";
   if(dest_data_var) {
     rval += dest_data_var->name;
   }
   else {
-    rval += "ERR! dest_data_var is NULL";
+    rval += "?";
   }
   return rval;
 }
@@ -108,4 +108,26 @@ void DataCalcSetDestRow::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, dcl->dest_data_var->name + ".WriteClose();");
   dcl->dest_cols.ClearColumns();
+}
+
+bool DataCalcSetDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("set dest row"))
+    return true;
+  String dn = trim(GetDisplayName().before(":"));
+  if (code.startsWith(dn))
+    return true;
+  return false;
+}
+
+bool DataCalcSetDestRow::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  SigEmitUpdated();
+  return true;
 }

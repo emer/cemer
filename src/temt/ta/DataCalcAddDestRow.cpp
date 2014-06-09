@@ -28,14 +28,14 @@ void DataCalcAddDestRow::Initialize() {
 }
 
 String DataCalcAddDestRow::GetDisplayName() const {
-    String rval = "Add Row: ";
-    
-    if(dest_data_var)
-        rval += " table=" + dest_data_var->name + " ";
-    else
-        rval += " table=? ";
-    
-    return rval;
+  String rval = "Add Row: ";
+  
+  if(dest_data_var)
+    rval += " table=" + dest_data_var->name + " ";
+  else
+    rval += " table=? ";
+  
+  return rval;
 }
 
 void DataCalcAddDestRow::GetDataPtrsFmLoop() {
@@ -66,7 +66,7 @@ void DataCalcAddDestRow::CheckThisConfig_impl(bool quiet, bool& rval) {
   if(CheckError(!dcl->dest_data_var, quiet, rval,
                 "DataCalcLoop::dest_data_var is NULL, but is needed")) return;
   // should be done by var, not us
-//   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
+  //   CheckError(!dcl->dest_data_var->object_val, quiet, rval, "DataCalcLoop::dest_data_var variable NULL");
   CheckError(dcl->dest_data_var->object_type != &TA_DataTable, quiet, rval,
              "DataCalcLoop::dest_data_var variable does not point to a DataTable object");
 }
@@ -85,11 +85,11 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
                   ProgLine::MAIN_LINE);
     return;
   }
-
+  
   dcl->dest_cols.GetColumns(dd);
   prog->AddLine(this, dcl->dest_data_var->name + "->AddBlankRow();", ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
-
+  
   for(int i=0;i<dcl->dest_cols.size; i++) {
     DataOpEl* ds = dcl->dest_cols[i];
     if(ds->col_idx < 0) continue;
@@ -122,35 +122,37 @@ void DataCalcAddDestRow::GenCssBody_impl(Program* prog) {
 }
 
 bool DataCalcAddDestRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-    String dc = code;  dc.downcase();
-    String tbn = GetToolbarName(); tbn.downcase();
-    String tn = GetTypeDef()->name; tn.downcase();
-    if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
-    if(dc.startsWith("add new dest row") || dc.startsWith("add dest row") ||
-       dc.startsWith("+dest row")) return true;
-    return false;
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("add new dest row") || dc.startsWith("add dest row") ||
+     dc.startsWith("+dest row"))
+    return true;
+  String dn = trim(GetDisplayName().before(":"));
+  if (code.startsWith(dn))
+    return true;
+  return false;
 }
 
 bool DataCalcAddDestRow::CvtFmCode(const String& code) {
-    String dc = code;  dc.downcase();
-    String remainder = code.after(":");
-    if(remainder.empty()) return true;
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty()) return true;
+  
+  NameVar_PArray nv_pairs;
+  taMisc::ToNameValuePairs(remainder, nv_pairs);
+  
+  for (int i=0; i<nv_pairs.size; i++) {
+    String name = nv_pairs.FastEl(i).name;
+    name.downcase();
+    String value = nv_pairs.FastEl(i).value.toString();
     
-    NameVar_PArray nv_pairs;
-    taMisc::ToNameValuePairs(remainder, nv_pairs);
-    
-    for (int i=0; i<nv_pairs.size; i++) {
-        String name = nv_pairs.FastEl(i).name;
-        name.downcase();
-        String value = nv_pairs.FastEl(i).value.toString();
-        
-        if (name.startsWith("tab")) {
-            dest_data_var = FindVarNameInScope(value, false); // don't make
-        }
+    if (name.startsWith("tab")) {
+      dest_data_var = FindVarNameInScope(value, false); // don't make
     }
-    
-    SigEmitUpdated();
-    return true;
+  }
+  
+  SigEmitUpdated();
+  return true;
 }
-
-

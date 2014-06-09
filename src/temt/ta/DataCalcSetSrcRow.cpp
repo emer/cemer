@@ -26,7 +26,7 @@ void DataCalcSetSrcRow::Initialize() {
 }
 
 String DataCalcSetSrcRow::GetDisplayName() const {
-  String rval = "Set Row in: ";
+  String rval = "Set Src Row in: ";
   if(src_data_var) {
     rval += src_data_var->name;
   }
@@ -98,4 +98,27 @@ void DataCalcSetSrcRow::GenCssBody_impl(Program* prog) {
   }
   prog->AddLine(this, dcl->src_data_var->name + ".WriteClose();");
   dcl->dest_cols.ClearColumns();
+}
+
+bool DataCalcSetSrcRow::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase();
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn)) return true;
+  if(dc.startsWith("set src row"))
+    return true;
+  String dn = trim(GetDisplayName().before(":"));
+  if (code.startsWith(dn))
+    return true;
+  return false;
+}
+
+bool DataCalcSetSrcRow::CvtFmCode(const String& code) {
+  String dc = code;  dc.downcase();
+  String remainder = code.after(":");
+  if(remainder.empty())
+    return true;
+  
+    SigEmitUpdated();
+    return true;
 }
