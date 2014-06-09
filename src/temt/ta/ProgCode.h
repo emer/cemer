@@ -37,7 +37,7 @@ public:
   void         SetProgExprFlags() override;
   String       GetDisplayName() const override;
   String       GetToolbarName() const override { return "code"; }
-  String       GetTypeDecoKey() const override { return "Comment"; }
+  String       GetTypeDecoKey() const override { return "ProgCode"; }
 
   bool          BrowserEditSet(const String& code, int move_after=0) override;
 

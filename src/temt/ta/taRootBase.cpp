@@ -1518,7 +1518,9 @@ bool taRootBase::Startup_InitViewColors() {
                                          false, _nilString, true, "violet");
   taMisc::view_colors->FindMakeViewColor("ProgElBreakpointDisabled", "State: program element is set for a breakpoint",
                                          false, _nilString, true, "violet");
-  taMisc::view_colors->FindMakeViewColor("Comment", "Program comment",
+  taMisc::view_colors->FindMakeViewColor("Comment", "Program comments",
+                                         true, "sea green", true, "medium sea green");
+  taMisc::view_colors->FindMakeViewColor("ProgCode", "Program code -- proto element before being parsed into specific one",
                                          true, "firebrick", true, "firebrick1");
   taMisc::view_colors->FindMakeViewColor("ProgCtrl", "Program keyword",
                                          true, "purple2", true, "MediumPurple1");

@@ -155,10 +155,12 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     glEnable(GL_MULTISAMPLE);
   }
   else {
-    fmt.setSampleBuffers(false);
-    qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
-    qglw->makeCurrent();
-    glDisable(GL_MULTISAMPLE);
+    // just don't do anything at all -- this prevents usage of a higher version OpenGL
+    // driver on linux, and allows that to work with coin prior to fixes to support it.
+    // fmt.setSampleBuffers(false);
+    // qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
+    // qglw->makeCurrent();
+    // glDisable(GL_MULTISAMPLE);
   }
 
   if (m_selMode == SM_NONE) {

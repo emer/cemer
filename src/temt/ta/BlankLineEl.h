@@ -37,7 +37,7 @@ public:
   bool          BrowserEditSet(const String& code, int move_after=0) override;
 
   String	GetDisplayName() const override;
-  String	GetTypeDecoKey() const override { return "ProgCtrl"; }
+  String	GetTypeDecoKey() const override { return "Comment"; }
   String	GetToolbarName() const override { return "blank"; }
 
   PROGEL_SIMPLE_BASEFUNS(BlankLineEl);
