@@ -243,20 +243,20 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
     if (name.startsWith("prog_name_var")) {
       prog_name_var = FindVarNameInScope(value, false); // don't make
     }
-    //    else if (name.startsWith("prog_group")) {
-    //      taProject* prj = GET_MY_OWNER(taProject);
-    //      if (prj) {
-    //        Program_TopGroup root_group = prj->programs;
-    //        taGroup_List* sub_groups = root_group.EditSubGps();
-    //        for (int i=0; i<sub_groups->size; i++) {
-    //          Program_Group* grp = (Program_Group*)sub_groups[i];
-    //          if (sub_groups[i].name == value) {
-    //            prog_group = sub_groups[i];
-    //            break;
-    //          }
-    //        }
-    //      }
-    //    }
+    else if (name.startsWith("prog_group")) {
+      taProject* prj = GET_MY_OWNER(taProject);
+      if (prj) {
+        Program_TopGroup root_group = prj->programs;
+        for (int i=0; i<root_group.leaves; i++) {
+          Program_Group* grp = (Program_Group*)root_group.SafeGp(i);
+//          taMisc::DebugInfo(grp->name);
+          if (grp && grp->name == value) {
+            prog_group = grp;
+            break;
+          }
+        }
+      }
+    }
   }
   SigEmitUpdated();
   return true;
