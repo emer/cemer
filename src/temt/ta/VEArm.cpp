@@ -36,13 +36,13 @@ TA_BASEFUNS_CTORS_DEFN(VEArmDamping);
 TA_BASEFUNS_CTORS_DEFN(VEArm);
 
 void VEArmLengths::Initialize() {
-  humerus = 0.3f;
+  humerus = 0.28f;
   humerus_radius = 0.02f;
-  ulna = 0.24f;
+  ulna = 0.22f;
   ulna_radius = 0.02f;
   hand = 0.08f;
   hand_radius = 0.03f;
-  elbow_gap = 0.03f;
+  elbow_gap = 0.08f;
   wrist_gap = 0.03f;
 
   sh_off_x = 0.0f;
@@ -158,7 +158,7 @@ void VEArmDamping::Initialize() {
 void VEArm::Initialize() {
   // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here
 
-  show_ips = false;
+  show_ips = NO_IPS;
 
   arm_side = RIGHT_ARM;
   up_axis = Y;
@@ -1547,8 +1547,10 @@ void VEArm::InitState_Stim() {
   stims.SetGeom(1,n_musc);
   stims.InitVals(0.0f);
   stims_mag = 0.0f;
+  stims_max = 0.0f;
   gains_cur.SetGeom(1,n_musc);
   gains_mag = 1.0f;
+  gains_max = 1.0f;
 
   forces.SetGeom(2, 3, n_musc);
   forces.InitVals(0.0f);
@@ -1602,7 +1604,10 @@ bool VEArm::ComputeStim() {
   }
 
   stims_mag = taMath_float::vec_norm(&stims);
-  gains_mag = taMath_float::vec_norm(&(gains_cur));
+  gains_mag = taMath_float::vec_norm(&gains_cur);
+  int max_idx;
+  stims_max = taMath_float::vec_max(&stims, max_idx);
+  gains_max = taMath_float::vec_max(&gains_cur, max_idx);
 
   return rval;
 }
@@ -1789,6 +1794,45 @@ bool VEArm::UpdateIPs() {
   // We update the muscles' past lengths before setting new IPs
   for(int i=0; i<n_musc; i++) {
     muscles[i]->UpOld();
+  }
+
+  // setup colorscale for ip viewing
+  if(show_ips != NO_IPS) {
+    if(!color_scale) {
+      color_scale = new ColorScale;
+      taBase::Own(color_scale, this);
+    }
+    int idx;
+    switch(show_ips) {
+    case IP_STIM:
+      color_scale->SetMinMax(0.0f, MAX(stims_max, 0.1f));
+      break;
+    case IP_GAINS:
+      color_scale->SetMinMax(1.0f, MAX(gains_max, 2.0f));
+      break;
+    case IP_LEN:
+      color_scale->SetMinMax(0.0f, 1.0f);
+      break;
+    case IP_VEL:
+      color_scale->SetMinMax(0.0f, 1.0f);
+      break;
+    case IP_TRG:
+      color_scale->SetMinMax(0.0f, 1.0f);
+      break;
+    case IP_ERR:
+      color_scale->SetMinMax(taMath_float::vec_min(&err_len, idx),
+                             taMath_float::vec_max(&err_len, idx));
+      break;
+    case IP_ERR_DRV:
+      color_scale->SetMinMax(taMath_float::vec_min(&err_drv_dra, idx),
+                             taMath_float::vec_max(&err_drv_dra, idx));
+      break;
+    case IP_MUSC:
+      color_scale->SetMinMax(0.0f, (float)n_musc);
+      break;
+    default:
+      break;
+    }
   }
 
   // To set new IPs, first we'll find the coordinates of the rotated IPs
@@ -2021,7 +2065,7 @@ bool VEArm::UpdateIPs() {
 }
 
 void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
-  if(!show_ips) {
+  if(show_ips == NO_IPS) {
     if(bodies.size > N_ARM_BODIES) {
       bodies.SetSize(N_ARM_BODIES);
     }
@@ -2037,32 +2081,58 @@ void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
     bodies.SetSize(tot_bods);
     // then initialize all the bodies -- use colorscale scheme etc.
 
-    if(!color_scale) {
-      color_scale = new ColorScale;
-      taBase::Own(color_scale, this);
-    }
-    color_scale->SetMinMax(0, (float)tot_ips);
-    float sc_val;
-
     for(int i=0;i<tot_ips;i++) {
-      iColor ic = color_scale->GetColor((float)i, sc_val);
       VEBody* ipbodp = bodies[N_ARM_BODIES + 2*i];
       ipbodp->name = String("ip_") + String(i) + "_p";
-      ipbodp->color.setColor(ic);
       ipbodp->shape = VEBody::SPHERE;
       ipbodp->radius = 0.01f;
       ipbodp->SetBodyFlag(VEBody::NO_COLLIDE);
 
       VEBody* ipbodd = bodies[N_ARM_BODIES + 2*i+1];
       ipbodd->name = String("ip_") + String(i) + "_d";
-      ipbodd->color.setColor(ic);
       ipbodd->shape = VEBody::SPHERE;
       ipbodd->radius = 0.01f;
       ipbodd->SetBodyFlag(VEBody::NO_COLLIDE);
     }
   }
 
+  // color the insertion points by the current gain factor being applied!
+  float disp_val;
+  switch(show_ips) {
+  case IP_STIM:
+    disp_val = stims.SafeEl(ipno);
+    break;
+  case IP_GAINS:
+    disp_val = gains_cur.SafeEl(ipno);
+    break;
+  case IP_LEN:
+    disp_val = lens_norm.SafeEl(ipno);
+    break;
+  case IP_VEL:
+    disp_val = vels_norm.SafeEl(ipno);
+    break;
+  case IP_TRG:
+    disp_val = targ_lens_norm.SafeEl(ipno);
+    break;
+  case IP_ERR:
+    disp_val = err_len.SafeEl(ipno);
+    break;
+  case IP_ERR_DRV:
+    disp_val = err_drv_dra.SafeEl(ipno);
+    break;
+  case IP_MUSC:
+    disp_val = (float)ipno;
+    break;
+  default:
+    break;
+  }
+
+  float sc_val;
+  iColor ic = color_scale->GetColor(disp_val, sc_val);
+  
   VEBody* ipbod = bodies[N_ARM_BODIES + ipno*2 + prox_dist];
+
+  ipbod->color.setColor(ic);
   ipbod->init_pos = ip_loc;
   ipbod->Init();
 }

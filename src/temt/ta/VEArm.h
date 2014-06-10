@@ -35,13 +35,13 @@ class TA_API VEArmLengths : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
-  float         humerus;        // #DEF_0.3 length of humerus bone (upper arm)
-  float         humerus_radius; // #DEF_0.02 radius (half width) of humerus
-  float         ulna;           // #DEF_0.24 length of ulna bone (lower arm)
-  float         ulna_radius;    // #DEF_0.02 radius (half width) of ulna
+  float         humerus;        // #DEF_0.28 length of humerus bone (upper arm)
+  float         humerus_radius; // #DEF_0.015 radius (half width) of humerus
+  float         ulna;           // #DEF_0.22 length of ulna bone (lower arm)
+  float         ulna_radius;    // #DEF_0.015 radius (half width) of ulna
   float         hand;           // #DEF_0.08 length of hand
   float         hand_radius;    // #DEF_0.03 radius of hand
-  float         elbow_gap;      // #DEF_0.03 gap between humerus and ulna
+  float         elbow_gap;      // #DEF_0.08 gap between humerus and ulna
   float         wrist_gap;      // #DEF_0.03 gap between ulna and hand
 
   float         sh_off_x;        // #DEF_0 additional shoulder offset
@@ -229,6 +229,17 @@ public:
     PID,                         // proportional, integral, derivative controller -- separate gain terms for reach of these factors
     ERR_VEL,                     // stimulus is proportional to the current error minus the velocity of the muscles -- uses the single ev_gain factor 
   };
+  enum ShowIPType { // whether to show muscle insertion points, and how to color them
+    NO_IPS,                     // don't show any IP's
+    IP_STIM,                    // show IPs, colored by muscle stimulation level
+    IP_GAINS,                   // show IPs, colored by gain factors
+    IP_LEN,                     // show IPs, colored by muscle length (normalized)
+    IP_VEL,                     // show IPs, colored by muscle velocity (normalized)
+    IP_TRG,                     // show IPs, colored by muscle target length (normalized)
+    IP_ERR,                     // show IPs, colored by muscle length error
+    IP_ERR_DRV,                 // show IPs, colored by muscle length error derivative
+    IP_MUSC,                    // show IPs, colored by muscle number 
+  };
 
   VEBodyRef     torso;           // the torso body -- must be set prior to calling ConfigArm -- this should be a VEBody in another object (typically in the same object group) that serves as the torso that the shoulder attaches to
 
@@ -238,7 +249,7 @@ public:
   DataTableRef  arm_vis_data;   // data table containing visual data (hand coordinates and hand speed), with proper initial padding (set at StartNewReach) to enable reading at delays.vis_st delay rows back from end
   DataTableRef  arm_eff_data;   // data table containing effector signal data, with proper initial padding (set at StartNewReach) to enable reading at delays.eff_st delay rows back from end
 
-  bool          show_ips;        // show the muscle insertion points on the arms, as colored spheres -- color code use COLD_HOT scale for muscle group index (1-12 or so)
+  ShowIPType    show_ips;        // whether to show the muscle insertion points (IPs) on the arms, as colored spheres -- color code use default (COLD_HOT) scale for type of information selected
   String        name_prefix;     // prefix to apply to all sub-objects (e.g., left_ or right_)
   ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
   UpAxis        up_axis;         // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
@@ -298,8 +309,10 @@ public:
   float         stims_d_mag;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of PID stims_d computed
   float_Matrix  stims;           // #EXPERT #NO_SAVE stimulation values, computed by ComputeStim
   float         stims_mag;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of stims computed
-  float_Matrix  gains_cur;        // #EXPERT #NO_SAVE current muscle gain values, set from cerebellar network or other external control -- should default to 1.0
+  float         stims_max;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE max of stims computed
+  float_Matrix  gains_cur;       // #EXPERT #NO_SAVE current muscle gain values, set from cerebellar network or other external control -- should default to 1.0
   float         gains_mag;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE magnitude of gains computed
+  float         gains_max;       // #READ_ONLY #SHOW #EXPERT #NO_SAVE maximum gain value across all muscles
   float_Matrix  forces;          // #EXPERT #NO_SAVE forces, computed by ComputeStim
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -378,10 +391,10 @@ public:
   virtual void	InitMuscles();
   // #CAT_Init initialize muscles and insertion point data
 
-  virtual bool  ConfigArm(float humerus_length = 0.3, float humerus_radius = 0.02,
-                          float ulna_length = 0.24, float ulna_radius = 0.02,
+  virtual bool  ConfigArm(float humerus_length = 0.28, float humerus_radius = 0.015,
+                          float ulna_length = 0.22, float ulna_radius = 0.015,
                           float hand_length = 0.08, float hand_radius = 0.03,
-                          float elbow_gap = 0.03,   float wrist_gap = 0.03,
+                          float elbow_gap = 0.08,   float wrist_gap = 0.03,
                           float sh_off_x = 0, float sh_off_y = 0, float sh_off_z = 0);
   // #BUTTON #CAT_Init configure the arm bodies and joints, using the given length parameters and other options -- will update the lengths if the arm has already been created before -- returns success
 
