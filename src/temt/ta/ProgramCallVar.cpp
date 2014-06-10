@@ -49,6 +49,11 @@ Program_Group* ProgramCallVar::GetProgramGp() {
                        desc, "in program:", program()->name);
     return NULL;
   }
+  if(prog_group == GET_MY_OWNER(Program_Group)) {
+    taMisc::CheckError("Program_Group prog_group can not be the same as group of this program:",
+                       desc, "in program:", program()->name);
+    return NULL;
+  }
   return prog_group;
 }
 
@@ -254,6 +259,7 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
           }
         }
       }
+      
     }
   }
   SigEmitUpdated();
