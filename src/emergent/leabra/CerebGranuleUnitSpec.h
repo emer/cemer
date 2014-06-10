@@ -31,8 +31,8 @@ INHERITED(SpecMemberBase)
 public:
   float         act_thr;        // #DEF_0.5 activation threshold for initiating eligibility for learning and triggering the inhibitory window
   int           inhib_start_time; // #DEF_10 how long after unit crosses act_thr do we start inhibiting
-  int           lrn_start_time;  // #DEF_120 starting time window (in cycles) for learning -- how long after activity crosses act_thr threshold does the learning window start?
-  int           lrn_end_time;    // #DEF_150 ending time window (in cycles) for learning -- the learning window closes after this time
+  int           lrn_start_time;  // #DEF_60 starting time window (in cycles) for learning -- how long after activity crosses act_thr threshold does the learning window start?
+  int           lrn_end_time;    // #DEF_90 ending time window (in cycles) for learning -- the learning window closes after this time
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

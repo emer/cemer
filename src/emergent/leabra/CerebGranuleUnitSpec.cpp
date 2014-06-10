@@ -24,8 +24,8 @@ TA_BASEFUNS_CTORS_DEFN(CerebGranuleSpecs);
 void CerebGranuleSpecs::Initialize() {
   act_thr = 0.5f;
   inhib_start_time = 10;
-  lrn_start_time = 120;
-  lrn_end_time = 150;
+  lrn_start_time = 60;
+  lrn_end_time = 90;
 }
 
 void CerebGranuleSpecs::Defaults_init() {
