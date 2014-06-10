@@ -257,6 +257,8 @@ void PFCLayerSpec::Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   for(int mg=0; mg<lay->gp_geom.n; mg++) {
     PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
     if(!gpd->go_fired_trial && (gpd->mnt_count <= 0)) {
+    //if(!gpd->go_fired_trial) { // TODO: try applying pregate_gain before and after gating trial!
+      // if works, make an option; also - how to make it affect the p_act_p as well!!
       for(int i=0;i<nunits;i++) {
         LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, mg);
         if(ru->lesioned()) continue;
