@@ -112,7 +112,7 @@ void VEArmAngles::UpdateAfterEdit_impl() {
 void VEArmDelays::Initialize() {
   pro_ms = 35.0f;
   vis_ms = 150.0f;
-  eff_ms = 35.0f;
+  eff_ms = 5.0f;
   
   step_ms = 5.0f;
   
@@ -1827,6 +1827,17 @@ bool VEArm::UpdateIPs() {
       color_scale->SetMinMax(taMath_float::vec_min(&err_drv_dra, idx),
                              taMath_float::vec_max(&err_drv_dra, idx));
       break;
+    case IP_DEL_ERR:
+      color_scale->SetMinMax(taMath_float::vec_min(&del_lens_err, idx),
+                             taMath_float::vec_max(&del_lens_err, idx));
+      break;
+    case IP_DEL_ERR_DT:
+      color_scale->SetMinMax(taMath_float::vec_min(&del_lens_err_dt, idx),
+                             taMath_float::vec_max(&del_lens_err_dt, idx));
+      break;
+    case IP_IO_ERR:
+      color_scale->SetMinMax(0.0f, 1.0f);
+      break;
     case IP_MUSC:
       color_scale->SetMinMax(0.0f, (float)n_musc);
       break;
@@ -2119,6 +2130,15 @@ void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
     break;
   case IP_ERR_DRV:
     disp_val = err_drv_dra.SafeEl(ipno);
+    break;
+  case IP_DEL_ERR:
+    disp_val = del_lens_err.SafeEl(ipno);
+    break;
+  case IP_DEL_ERR_DT:
+    disp_val = del_lens_err_dt.SafeEl(ipno);
+    break;
+  case IP_IO_ERR:
+    disp_val = musc_io_err.SafeEl(ipno);
     break;
   case IP_MUSC:
     disp_val = (float)ipno;

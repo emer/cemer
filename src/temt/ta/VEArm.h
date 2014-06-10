@@ -107,7 +107,7 @@ INHERITED(taOBase)
 public:
   float         pro_ms; // #DEF_35 proprioceptive delay period in msec for muscle length feedback from periphery
   float         vis_ms; // #DEF_150 visual delay period in msec for visual hand coordinate feedback from cortical visual system
-  float         eff_ms; // #DEF_35 effector delay period in msec for motor command outputs to actually start affecting the muscles
+  float         eff_ms; // #DEF_5;35 effector delay period in msec for motor command outputs to actually start affecting the muscles
 
   float         step_ms;        // #DEF_5 how long in msec is one step of the system, for purposes of delay computation -- translates ms values into step values -- may not reflect VE step size depending on scaling of that for numerical issues
 
@@ -238,6 +238,9 @@ public:
     IP_TRG,                     // show IPs, colored by muscle target length (normalized)
     IP_ERR,                     // show IPs, colored by muscle length error
     IP_ERR_DRV,                 // show IPs, colored by muscle length error derivative
+    IP_DEL_ERR,                 // show IPs, colored by delayed muscle length error
+    IP_DEL_ERR_DT,              // show IPs, colored by derivative of delayed muscle length error
+    IP_IO_ERR,                  // show IPs, colored by muscle IO error signal
     IP_MUSC,                    // show IPs, colored by muscle number 
   };
 
