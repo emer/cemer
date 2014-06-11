@@ -15,6 +15,7 @@
 
 #include "Comment.h"
 #include <Program>
+#include <taProject>
 #include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Comment);
@@ -44,6 +45,15 @@ String Comment::GetColText(const KeyString& key, int itm_idx) const {
 }
 
 bool Comment::BrowserEditSet(const String& code, int move_after) {
+  if(move_after != -11) {
+    Program* prog = GET_MY_OWNER(Program);
+    if(prog) {
+      taProject* proj = GET_OWNER(prog, taProject);
+      if(proj) {
+        proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
+      }
+    }
+  }
   edit_move_after = 0;
   String cd = code; // CodeGetDesc(code);
   if(CanCvtFmCode(cd, NULL)) {

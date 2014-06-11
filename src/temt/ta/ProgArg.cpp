@@ -15,6 +15,7 @@
 
 #include "ProgArg.h"
 #include <Program>
+#include <taProject>
 #include <BuiltinTypeDefs>
 
 TA_BASEFUNS_CTORS_DEFN(ProgArg);
@@ -137,6 +138,15 @@ String ProgArg::GetDisplayName() const {
 
 bool ProgArg::BrowserEditSet(const String& code, int move_after) {
   if(!code.contains('=')) return false;
+  if(move_after != -11) {
+    Program* prog = GET_MY_OWNER(Program);
+    if(prog) {
+      taProject* proj = GET_OWNER(prog, taProject);
+      if(proj) {
+        proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
+      }
+    }
+  }
   expr.expr = trim(code.after('='));
   expr.UpdateAfterEdit();
   SigEmitUpdated();

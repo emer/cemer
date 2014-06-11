@@ -16,6 +16,7 @@
 #include "DataSelectEl.h"
 #include <MemberDef>
 #include <ProgEl>
+#include <taProject>
 #include <taMisc>
 
 
@@ -63,6 +64,12 @@ String DataSelectEl::GetDisplayName() const {
 
 bool DataSelectEl::BrowserEditSet(const String& new_val_str, int move_after) {
   if(new_val_str.empty()) return false;
+  if(move_after != -11) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
+    }
+  }
   String tnm = trim(new_val_str);
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));

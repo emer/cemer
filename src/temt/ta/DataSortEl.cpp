@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "DataSortEl.h"
+#include <taProject>
 
 #include <taMisc>
 
@@ -55,6 +56,12 @@ String DataSortEl::GetDisplayName() const {
 
 bool DataSortEl::BrowserEditSet(const String& new_val_str, int move_after) {
   if(new_val_str.empty()) return false;
+  if(move_after != -11) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
+    }
+  }
   String tnm = trim(new_val_str);
   if(tnm.contains(" ")) {
     col_name = taMisc::StringCVar(tnm.before(" "));

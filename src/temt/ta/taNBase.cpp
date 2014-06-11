@@ -14,8 +14,10 @@
 //   Lesser General Public License for more details.
 
 #include "taNBase.h"
-#include <taMisc>
+#include <taProject>
 #include <taList_impl>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taNBase);
 
@@ -62,6 +64,12 @@ bool taNBase::BrowserEditEnable() {
 }
 
 bool taNBase::BrowserEditSet(const String& new_val_str, int move_after) {
+  if(move_after != -11) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
+    }
+  }
   bool rval = SetName(new_val_str);
   UpdateAfterEdit();            // need full UAE
   return rval;

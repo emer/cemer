@@ -15,9 +15,11 @@
 
 #include "Function.h"
 #include <Program>
-#include <taMisc>
+#include <taProject>
 #include <taBase_PtrList>
 #include <FunctionCall>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Function);
 SMARTREF_OF_CPP(Function);
@@ -199,6 +201,15 @@ bool Function::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool Function::BrowserEditSet(const String& code, int move_after) {
+  if(move_after != -11) {
+    Program* prog = GET_MY_OWNER(Program);
+    if(prog) {
+      taProject* proj = GET_OWNER(prog, taProject);
+      if(proj) {
+        proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
+      }
+    }
+  }
   // always convert -- don't check and don't revert to ProgCode
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
