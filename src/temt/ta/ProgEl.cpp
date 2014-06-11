@@ -731,6 +731,15 @@ bool ProgEl::CvtFmSavedCode() {
 }
 
 bool ProgEl::BrowserEditSet(const String& code, int move_after) {
+  if(move_after != -11) {
+    Program* prog = GET_MY_OWNER(Program);
+    if(prog) {
+      taProject* proj = GET_OWNER(prog, taProject);
+      if(proj) {
+        proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
+      }
+    }
+  }
   edit_move_after = 0;
   String cd = CodeGetDesc(code);
   if(CanCvtFmCode(cd, NULL)) {
@@ -742,6 +751,9 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   }
   orig_prog_code = cd;
   edit_move_after = move_after;
+  TestWarning(move_after == -11, "BrowserEditSet",
+              "Reverting Code -- it failed to pass the CanCvtFmCode step!\n",
+              code);
   tabMisc::DelayedFunCall_gui(this, "RevertToCode"); // do it later..
   return true;
 }
@@ -787,10 +799,6 @@ bool ProgEl::RevertToCode() {
   }
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return false;
-  taProject* proj = GET_OWNER(own, taProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(own, "RevertToCode", own, false, own);
-  }
   ProgCode* cvt = new ProgCode;
   cvt->desc = desc;
   cvt->code.expr = orig_prog_code;

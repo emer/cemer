@@ -71,7 +71,7 @@ const String IfGuiPrompt::GenListing_children(int indent_level) {
 }
 
 String IfGuiPrompt::GetDisplayName() const {
-  return "if (gui && " + prompt + ")";
+  return "if (gui && \"" + prompt + "\")";
 }
 
 void IfGuiPrompt::PreGenChildren_impl(int& item_id) {
@@ -80,4 +80,18 @@ void IfGuiPrompt::PreGenChildren_impl(int& item_id) {
 ProgVar* IfGuiPrompt::FindVarName(const String& var_nm) const {
   ProgVar* pv = yes_code.FindVarName(var_nm);
   return pv;
+}
+
+bool IfGuiPrompt::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
+  String dc = code;  dc.downcase();
+  String tbn = GetToolbarName(); tbn.downcase(); tbn.gsub("\n", " ");
+  String tn = GetTypeDef()->name; tn.downcase();
+  if(dc.startsWith(tbn) || dc.startsWith(tn) || dc.startsWith("if (gui && "))
+    return true;
+  return false;
+}
+
+bool IfGuiPrompt::CvtFmCode(const String& code) {
+  // nothing to do
+  return true;
 }

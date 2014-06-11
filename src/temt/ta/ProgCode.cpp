@@ -215,9 +215,12 @@ void ProgCode::ConvertToProgEl() {
   // if(code.expr.empty()) return;
   ProgEl* cvt = CvtCodeToProgEl();
   if(!cvt) return;
-  taProject* proj = GET_OWNER(own, taProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(own, "ProgCodeCvt", own, false, own); 
+  Program* prog = GET_OWNER(own, Program);
+  if(prog) {
+    taProject* proj = GET_OWNER(prog, taProject);
+    if(proj) {
+      proj->undo_mgr.SaveUndo(this, "ProgCodeCvt", prog); 
+    }
   }
   cvt->edit_move_after = edit_move_after; // these are the ones who need it
   edit_move_after = 0;
@@ -245,7 +248,7 @@ void ProgCode::UpdateAfterEdit_impl() {
   SetProgExprFlags();
   inherited::UpdateAfterEdit_impl();
   if(HasBaseFlag(BF_MISC4)) return; // already did the conversion -- going to be nuked!
-  if(!taMisc::gui_active) return;
+  if(!taMisc::gui_active || taMisc::is_loading) return;
   ProgEl_List* own = GET_MY_OWNER(ProgEl_List);
   if(!own) return;
   String code_str = trim(code.expr);

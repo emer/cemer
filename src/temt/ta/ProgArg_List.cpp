@@ -172,13 +172,22 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
 static int read_one_arg(String& args, String& arg) {
   arg = "";
   char c;
+  char pc = '\0';
   int depth = 0;
+  bool in_quote = false;
   int pos = 0;
   int len = args.length();
-  while (pos < len && ((c = args[pos]) != EOF) && !(((c == ',')) && (depth <= 0))) {
+  while (pos < len && ((c = args[pos]) != EOF) &&
+         !(((c == ',')) && (depth <= 0) && !in_quote)) {
     arg += c;
-    if(c == '(')      depth++;
-    if(c == ')')      depth--;
+    if(c == '"' && pc != '\\') {
+      in_quote = !in_quote;
+    }
+    if(!in_quote) {
+      if(c == '(')      depth++;
+      if(c == ')')      depth--;
+    }
+    pc = c;
     pos++;
   }
   if(pos < len)
