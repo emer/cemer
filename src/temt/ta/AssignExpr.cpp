@@ -60,6 +60,14 @@ bool AssignExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
     if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path
       return true;
   }
+  if (code.freq('=') == 3) {
+    String lhs = code.before('=');
+    if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) {
+      String rhs = code.after('=');
+      if (rhs.contains("=="))
+        return true;
+    }
+  }
   return false;
 }
 
