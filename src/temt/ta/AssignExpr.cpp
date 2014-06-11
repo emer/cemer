@@ -55,7 +55,7 @@ bool AssignExpr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   // note: AssignExpr is specifically excluded if multiple matches, so no need to exclude
   // all the other things that might have an = in them -- it is just a fallback default
   if(code.endsWith(';')) return false; // don't pick up css exprs
-  if(code.freq('=') >== 1) {
+  if(code.freq('=') >= 1) {
     String lhs = code.before('=');
     if(lhs.nonempty() && !lhs.contains('.') && !lhs.contains('-')) // no path
       return true;
