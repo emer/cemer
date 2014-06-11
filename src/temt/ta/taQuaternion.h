@@ -180,29 +180,27 @@ public:
   void	RotateAxis(float x_axis, float y_axis, float z_axis, float rot_ang) {
     taQuaternion q; q.FromAxisAngle(x_axis, y_axis, z_axis, rot_ang);
     q.Normalize();
-    *this *= q;
+    *this = q * (*this);
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given axis rotation parameters
   void	RotateEuler(float theta_x, float theta_y, float theta_z) {
     taQuaternion q; q.FromEuler(theta_x, theta_y, theta_z);
     q.Normalize();
-    *this *= q;
+    *this = q * (*this);
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given rotation parameters
   
   void	RotateEulerZXZ(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerZXZ(alpha, beta, gamma);
     q.Normalize();
-    *this = q*(*this);
-    //*this *= q;
+    *this = q * (*this);
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler ZXZ rotation angles
 
 void	RotateEulerYXY(float alpha, float beta, float gamma) {
     taQuaternion q; q.FromEulerYXY(alpha, beta, gamma);
     q.Normalize();
-    *this = q*(*this);
-    //*this *= q;
+    *this = q * (*this);
   }
   // #CAT_Quaternion #BUTTON rotate this quaternion by given Euler YXY rotation angles
 
