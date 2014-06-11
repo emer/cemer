@@ -817,12 +817,17 @@ bool ProgEl::CvtCodeToVar(String& code) {
   Program* prg = GET_MY_OWNER(Program);
   if(!prg) return false;
   
-  if(!code.contains(" ")) return false;
-  
+  if(!code.contains(' ')) return false;
+
+  String ckcode = code;
+  if(ckcode.contains('\"')) {   // exclude quoted expressions
+    ckcode = ckcode.before('\"'); // we don't care about after for types -- can't decl type after..
+  }
+
   String vtype;
   TypeDef* td;
   String_Array tokens;
-  tokens.Split(code, " ");
+  tokens.Split(ckcode, " ");
   for (int i=0; i<tokens.size; i++) {
     vtype = tokens[i].chars();
     td = ProgVar::GetTypeDefFromString(vtype);
@@ -831,21 +836,24 @@ bool ProgEl::CvtCodeToVar(String& code) {
   }
   if(!td)
     return false;
-  
-  code = trim(code.after(vtype));
+
+  // if you're going to allow variable type anywhere, you can't cut out everything before!!
+  ckcode = trim(code.after(vtype)); // use this for looking for variable name
+  code = code.before(vtype) + ckcode; // this is just the code minus the variable type
+
   String var_nm;
   int pos = 0;
-  char c = code[pos];
+  char c = ckcode[pos];
   while(isalnum(c) || c == '_') {
     var_nm += c;
-    if(code.length() > pos)
-      c = code[++pos];
+    if(ckcode.length() > pos)
+      c = ckcode[++pos];
     else
       break;
   }
  
   if (var_nm.empty()) // no var_name 
-    return true;
+    return true;      // return true??
   
   ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;
