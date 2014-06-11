@@ -49,14 +49,15 @@ void IfBreak::GenCssBody_impl(Program* prog) {
 
 String IfBreak::GetDisplayName() const {
   if(cond.expr.empty())
-    return "break;";
+    return "break";
   else
-    return "if(" + cond.GetFullExpr() + ") break;";
+    return "if(" + cond.GetFullExpr() + ") break";
 }
 
 bool IfBreak::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
   if(code.startsWith("if") && code.contains("break")) return true;
+  if(code == "break") return true;
   return false;
 }
 

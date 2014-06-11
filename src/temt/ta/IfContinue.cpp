@@ -49,14 +49,15 @@ void IfContinue::GenCssBody_impl(Program* prog) {
 
 String IfContinue::GetDisplayName() const {
   if(cond.expr.empty())
-    return "continue;";
+    return "continue";
   else
-    return "if(" + cond.GetFullExpr() + ") continue;";
+    return "if(" + cond.GetFullExpr() + ") continue";
 }
 
 bool IfContinue::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
   if(code.startsWith("if") && code.contains("continue")) return true;
+  if(code == "continue") return true;
   return false;
 }
 

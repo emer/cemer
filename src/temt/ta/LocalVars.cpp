@@ -113,32 +113,8 @@ bool LocalVars::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
 }
 
 bool LocalVars::CvtFmCode(const String& code) {
-  String dc = code;
-  dc.downcase();
-  if (dc.startsWith("local_") || dc.startsWith("localv") || dc.startsWith("loc_var")) {
-    // we generally try to make sure that the toolbox name works..
-    return true;
-  }
-
-  String vartyp = trim(code.before(' '));
-  if(vartyp.endsWith('*')) vartyp = vartyp.before('*',-1);
-  String varnm = trim(code.after(' '));
-  if(varnm.endsWith(';')) varnm = varnm.before(';',-1);
-  TypeDef* td = TypeDef::FindGlobalTypeName(vartyp, false);
-  if(td == NULL) return false; // shouldn't happen
-  ProgVar* var = AddVar();
-  var->SetName(varnm);
-  if(vartyp == "int")
-    var->SetInt(0);
-  else if((vartyp == "float") || (vartyp == "double"))
-    var->SetReal(0.0);
-  else if(vartyp == "String")
-    var->SetString("");
-  else if(vartyp == "bool")
-    var->SetBool(false);
-  else {
-    var->SetObjectType(td);     // catch all.
-  }
+  // if the Can Cvt passes, then we don't care at this point -- 
+  // any var creation is done before this point by ProgEl
   return true;
 }
 

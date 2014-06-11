@@ -49,14 +49,15 @@ void IfReturn::GenCssBody_impl(Program* prog) {
 
 String IfReturn::GetDisplayName() const {
   if(cond.expr.empty())
-    return "return;";
+    return "return";
   else
-    return "if(" + cond.GetFullExpr() + ") return;";
+    return "if(" + cond.GetFullExpr() + ") return";
 }
 
 bool IfReturn::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
   if(code.startsWith("if") && code.contains("return")) return true;
+  if(code == "return") return true;
   return false;
 }
 

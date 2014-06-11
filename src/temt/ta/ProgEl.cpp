@@ -839,7 +839,6 @@ bool ProgEl::CvtCodeToVar(String& code) {
 
   // if you're going to allow variable type anywhere, you can't cut out everything before!!
   ckcode = trim(code.after(vtype)); // use this for looking for variable name
-  code = code.before(vtype) + ckcode; // this is just the code minus the variable type
 
   if(ckcode.empty())
     return false;
@@ -857,6 +856,9 @@ bool ProgEl::CvtCodeToVar(String& code) {
  
   if (var_nm.empty()) // no var_name 
     return true;      // return true??
+
+  // ONLY modify the code if we're actually going to prompt!
+  code = code.before(vtype) + ckcode; // this is just the code minus the variable type
   
   ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;
