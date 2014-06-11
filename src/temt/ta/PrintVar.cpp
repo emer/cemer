@@ -131,7 +131,7 @@ bool PrintVar::CvtFmCode(const String& code) {
   String msg;
   String vars;
   if(exprstr.contains('"')) {
-    msg = trim(exprstr.before('"',-1));
+    msg = exprstr.before('"',-1);
     msg = msg.after('"');
     message = msg;
     exprstr = trim(exprstr.after('"',-1));
