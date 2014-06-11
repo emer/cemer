@@ -51,6 +51,8 @@ public:
   int_Array	item_idx_list;	// #READ_ONLY list of item indicies within group
 
   String	GetDisplayName() const override;
+  bool    CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool    CvtFmCode(const String& code) override;
 
   virtual void	GetOrderVals();
   // get order values from order_var variables
@@ -63,8 +65,8 @@ public:
 protected:
   virtual void	GetOrderVars(); // make order variables in program
   virtual void	GetIndexVars(); // make index variables in program if not already set
-  void	UpdateAfterEdit_impl() override;
-  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void   	UpdateAfterEdit_impl() override;
+  void	  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssPre_impl(Program* prog) override; 
   void		GenCssPost_impl(Program* prog) override; 
 
