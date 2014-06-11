@@ -180,22 +180,7 @@ bool MethodCall::CvtFmCode(const String& code) {
   }
   // now tackle the args
   String args = trim(code.after('('));
-  if(args.endsWith(')')) args = trim(args.before(')',-1));
-  if(args.endsWith(';')) args = trim(args.before(';',-1));
-  for(int i=0; i<meth_args.size; i++) {
-    ProgArg* pa = meth_args.FastEl(i);
-    String arg;
-    if(args.contains(',')) {
-      arg = trim(args.before(','));
-      args = trim(args.after(','));
-    }
-    else {
-      arg = args;
-      args = "";                // all done
-    }
-    pa->expr.SetExpr(arg);
-    if(args.empty()) break;
-  }
+  meth_args.ParseArgString(args);
   return true;
 }
 

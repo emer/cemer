@@ -169,6 +169,44 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
   return any_changes;
 }
 
+static int read_one_arg(String& args, String& arg) {
+  arg = "";
+  char c;
+  int depth = 0;
+  int pos = 0;
+  int len = args.length();
+  while (pos < len && ((c = args[pos]) != EOF) && !(((c == ',')) && (depth <= 0))) {
+    arg += c;
+    if(c == '(')      depth++;
+    if(c == ')')      depth--;
+    pos++;
+  }
+  if(pos < len)
+    args = trim(args.after(pos));
+  else
+    args = "";
+  return c;
+}
+
+void ProgArg_List::ParseArgString(const String& args_in) {
+  String args = args_in;
+  if(args.endsWith(')')) args = trim(args.before(')',-1));
+  if(args.endsWith(';')) args = trim(args.before(';',-1));
+  if(args.empty()) return;
+
+  for(int i=0; i<size; i++) {
+    ProgArg* pa = FastEl(i);
+    String arg;
+    read_one_arg(args, arg);
+    pa->expr.SetExpr(arg);
+    if(args.empty()) break;
+  }
+  TestWarning(!args.empty(), "ParseArgString",
+              "args string left over after all args parsed:\n", args,
+              "orig args:\n",
+              args_in);
+}
+
 bool ProgArg_List::BrowserSelectMe() {
   Program* prog = GET_MY_OWNER(Program);
   if(!prog) return false;

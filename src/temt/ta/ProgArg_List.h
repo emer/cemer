@@ -45,6 +45,9 @@ public:
   virtual void  UpdateProgExpr_NewOwner();
   // calls UpdateProgExpr_NewOwner() on all the prog expr's in the list
 
+  virtual void  ParseArgString(const String& args);
+  // parse arg string into arg expressions -- for inline code editor system
+
   bool         BrowserSelectMe() override;
   bool         BrowserExpandAll() override;
   bool         BrowserCollapseAll() override;

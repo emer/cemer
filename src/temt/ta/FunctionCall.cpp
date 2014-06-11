@@ -143,21 +143,6 @@ bool FunctionCall::CvtFmCode(const String& code) {
   UpdateAfterEdit_impl();                          // update based on fun
   // now tackle the args
   String args = trim(cd.after('('));
-  if(args.endsWith(')')) args = trim(args.before(')',-1));
-  if(args.endsWith(';')) args = trim(args.before(';',-1));
-  for(int i=0; i<fun_args.size; i++) {
-    ProgArg* pa = fun_args.FastEl(i);
-    String arg;
-    if(args.contains(',')) {
-      arg = trim(args.before(','));
-      args = trim(args.after(','));
-    }
-    else {
-      arg = args;
-      args = "";                // all done
-    }
-    pa->expr.SetExpr(arg);
-    if(args.empty()) break;
-  }
+  fun_args.ParseArgString(args);
   return true;
 }

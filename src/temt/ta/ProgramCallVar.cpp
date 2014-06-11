@@ -269,23 +269,7 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
   }
 
   // now tackle the args
-  if(args.endsWith(')')) args = trim(args.before(')',-1));
-  if(args.endsWith(';')) args = trim(args.before(';',-1));
-  for(int i=0; i<prog_args.size; i++) {
-    ProgArg* pa = prog_args.FastEl(i);
-    String arg;
-    if(args.contains(',')) {
-      arg = trim(args.before(','));
-      args = trim(args.after(','));
-    }
-    else {
-      arg = args;
-      args = "";                // all done
-    }
-    pa->expr.SetExpr(arg);
-    if(args.empty()) break;
-  }
-
+  prog_args.ParseArgString(args);
   SigEmitUpdated();
   return true;
 }
