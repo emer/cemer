@@ -35,17 +35,19 @@ public:
  virtual void	    	ImportFromFile(std::istream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css import script from file
  virtual void	    	ExportToFile(std::ostream& strm); // #MENU_ON_Object #MENU_CONTEXT #BUTTON #EXT_css export script to file
 
-  virtual void	    	ImportFromFileName(const String& fnm); // import script from file
-  virtual void	    	ExportToFileName(const String& fnm); // export script to file
+  virtual void	    ImportFromFileName(const String& fnm); // import script from file
+  virtual void	    ExportToFileName(const String& fnm); // export script to file
   
   void		SetProgExprFlags() override;
   String	GetDisplayName() const override;
   String	GetToolbarName() const override { return "script"; }
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
+  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool		CvtFmCode(const String& code) override;
 
   PROGEL_SIMPLE_BASEFUNS(UserScript);
 protected:
-  void UpdateAfterEdit_impl() override;
+  void    UpdateAfterEdit_impl() override;
   void		GenCssBody_impl(Program* prog) override;
 
 private:
