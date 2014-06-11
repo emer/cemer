@@ -41,9 +41,9 @@ void ControlPanelsFmArgs::CheckThisConfig_impl(bool quiet, bool& rval) {
 
 String ControlPanelsFmArgs::GetDisplayName() const {
   String rval = "CtrlPanel Fm Args: ";
-  ControlPanel* se = GetControlPanel();
-  if(se) {
-    rval += "var = " + se->name + " ";
+  // ControlPanel* se = GetControlPanel();
+  if(ctrl_panel_var) {
+    rval += "var = " + ctrl_panel_var->name + " ";
   }
   else {
     rval += "var = ? ";

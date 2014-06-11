@@ -841,6 +841,9 @@ bool ProgEl::CvtCodeToVar(String& code) {
   ckcode = trim(code.after(vtype)); // use this for looking for variable name
   code = code.before(vtype) + ckcode; // this is just the code minus the variable type
 
+  if(ckcode.empty())
+    return false;
+
   String var_nm;
   int pos = 0;
   char c = ckcode[pos];
