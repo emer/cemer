@@ -76,7 +76,9 @@ void UserScript::ExportToFileName(const String& fnm) {
 }
 
 bool UserScript::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  return true;
+  if(code.endsWith(';'))
+    return true;
+  return false;
 }
 
 bool UserScript::CvtFmCode(const String& code) {
