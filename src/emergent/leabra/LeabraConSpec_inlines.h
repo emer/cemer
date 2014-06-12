@@ -19,8 +19,10 @@
 // parent includes:
 
 // member includes:
+#ifndef __MAKETA__
 #ifdef USE_SSE8
 #include "vectorclass.h"   // Abner Fog's wrapper for SSE intrinsics
+#endif
 #endif
 
 // declare all other types mentioned but not required to include:

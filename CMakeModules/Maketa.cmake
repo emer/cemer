@@ -69,9 +69,11 @@ if (WIN32)
   endmacro(SET_TA_PROPS)
 
 else (WIN32)
-  set(MAKETA_CPP "${CMAKE_CXX_COMPILER}" -x c++-header -E)
-# todo: can't get it to work with CMAKE_CXX_FLAGS
-#  set(MAKETA_CPP "${CMAKE_CXX_COMPILER}" "${CMAKE_CXX_FLAGS}" -x c++-header -E)
+  # args need to be in list format for MAKETA_CPP, but FLAGS are space separated string
+  # so we convert to list by replacing spaces with ; list separator -- do for all 
+  set(mtacppstr "-x c++-header -E ${EMERGENT_FULL_CXX_FLAGS}")
+  string(REPLACE " " ";" mtacpplist ${mtacppstr})
+  set(MAKETA_CPP "${CMAKE_CXX_COMPILER}" ${mtacpplist})
 #  message(STATUS "MAKETA_CPP ${MAKETA_CPP}")
 
   set(MAKETA_FLAGS -css -cpp=\"${MAKETA_CPP}\")
