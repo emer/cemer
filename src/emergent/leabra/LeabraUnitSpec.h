@@ -194,6 +194,13 @@ class E_API DepressSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
 INHERITED(SpecMemberBase)
 public:
+  enum PhaseActVal { // activation value to use for minus and plus phase values (act_m, act_p)
+    ACT_ND,          // use the non-depressed activations -- this is useful when using CHL-style learning, which can be distorted by effects of depression
+    ACT_EQ,          // use the rate-code equivalent activations, which are subject to depression -- not recommeded for CHL-based learning rule, but fine otherwise
+    ACT_LRN,         // use learning-specific activations, which can have different activation parameters if act_lrn is on
+  };
+
+  PhaseActVal   phase_act;      // which activation variable should be used for the phase-level activation states (act_m or act_p)?
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
   float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015;0.005 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
   float		asymp_act;	// #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)

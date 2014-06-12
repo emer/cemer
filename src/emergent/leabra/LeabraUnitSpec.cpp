@@ -157,6 +157,7 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
 
 void DepressSpec::Initialize() {
   on = false;
+  phase_act = ACT_ND;
   Defaults_init();
 }
 
@@ -1595,23 +1596,32 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     no_plus_testing = true;
   }
 
+  float use_act;
+  if(depress.phase_act == DepressSpec::ACT_ND)
+    use_act = u->act_nd;
+  else if(depress.phase_act == DepressSpec::ACT_EQ)
+    use_act = u->act_eq;
+  else                          // ACT_LRN
+    use_act = u->act_lrn;
+    
+
   switch(net->phase_order) {
   case LeabraNetwork::MINUS_PLUS:
     if(no_plus_testing) {
       u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
-      u->act_m = u->act_p = u->act_nd;
+      u->act_m = u->act_p = use_act;
       u->act_dif = 0.0f;
       u->act_dif2 = 0.0f;
       Compute_ActTimeAvg(u, net);
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE)
-        u->act_m = u->act_nd;
+        u->act_m = use_act;
       else {
         u->net_ctxt = 0.0f;
         u->p_act_p = u->act_p;
-        u->act_p = u->act_nd;
+        u->act_p = use_act;
         u->act_dif = u->act_p - u->act_m;
 	u->act_dif2 = u->act_p - u->act_m2;
         Compute_DaMod_PlusPost(u, net);
@@ -1623,21 +1633,21 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     if(no_plus_testing) {
       u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
-      u->act_m = u->act_p = u->act_nd;
+      u->act_m = u->act_p = use_act;
       u->act_dif = 0.0f;
       u->act_dif2 = 0.0f;
       Compute_ActTimeAvg(u, net);
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE) {
-        u->act_m = u->act_nd;
+        u->act_m = use_act;
         u->act_dif = u->act_p - u->act_m;
 	u->act_dif2 = u->act_p - u->act_m2;
       }
       else {
         u->net_ctxt = 0.0f;
         u->p_act_p = u->act_p;
-        u->act_p = u->act_nd;
+        u->act_p = use_act;
         Compute_ActTimeAvg(u, net);
       }
     }
@@ -1645,7 +1655,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   case LeabraNetwork::PLUS_ONLY:
     u->net_ctxt = 0.0f;
     u->p_act_p = u->act_p;
-    u->act_m = u->act_p = u->act_nd;
+    u->act_m = u->act_p = use_act;
     u->act_dif = 0.0f;
     u->act_dif2 = 0.0f;
     Compute_ActTimeAvg(u, net);
@@ -1654,32 +1664,32 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   case LeabraNetwork::MINUS_PLUS_MINUS:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_m = u->act_nd;
+      u->act_m = use_act;
     }
     else if(net->phase_no == 1) {
       u->net_ctxt = 0.0f;
       u->p_act_p = u->act_p;
-      u->act_p = u->act_nd;
+      u->act_p = use_act;
       u->act_dif = u->act_p - u->act_m;
       if(no_plus_testing) {
-        u->act_m = u->act_nd;   // update act_m because it is actually another test case!
+        u->act_m = use_act;   // update act_m because it is actually another test case!
       }
       Compute_DaMod_PlusPost(u, net);
       Compute_ActTimeAvg(u, net);
     }
     else {
-      u->act_m2 = u->act_nd;
+      u->act_m2 = use_act;
       u->act_dif2 = u->act_p - u->act_m2;
     }
     break;
   case LeabraNetwork::PLUS_NOTHING:
     // don't use actual phase values because pluses might be minuses with testing
     if(net->phase_no == 0) {
-      u->act_p = u->act_nd;
+      u->act_p = use_act;
       Compute_ActTimeAvg(u, net);
     }
     else {
-      u->act_m = u->act_nd;
+      u->act_m = use_act;
       u->act_dif = u->act_p - u->act_m;
       u->act_dif2 = u->act_p - u->act_m2;
     }
