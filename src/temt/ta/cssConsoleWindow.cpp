@@ -28,6 +28,7 @@
 #include <iRect>
 #include <QIcon>
 #include <iClipData>
+#include <QDateTime>
 
 #include <taMisc>
 
@@ -35,7 +36,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   : inherited(parent) {
 
   lock_to_proj = true;
-  in_self_resize = false;
+  self_resize_timestamp = 1;
 
   css_con = QcssConsole::getInstance(NULL, cssMisc::TopShell);
 
@@ -126,6 +127,20 @@ void cssConsoleWindow::SaveGeom() {
   tabMisc::root->console_pos.SetXY(lft, top);
 }
 
+void cssConsoleWindow::StartSelfResize() {
+  // note: resize/move combo recommended by Qt
+  QDateTime tm = QDateTime::currentDateTime();
+  self_resize_timestamp = tm.toTime_t();
+}
+
+bool cssConsoleWindow::CheckSelfResize() {
+  QDateTime tm = QDateTime::currentDateTime();
+  int64_t cur_ts = tm.toTime_t();
+  if(cur_ts - self_resize_timestamp < 10) // 10 seconds to resize..
+    return true;
+  return false;
+}
+
 void cssConsoleWindow::LoadGeom() {
   if(tabMisc::root->console_size == 0.0f) return;
 
@@ -144,11 +159,9 @@ void cssConsoleWindow::LoadGeom() {
     s.h
   );
 
-  // note: resize/move combo recommended by Qt
-  in_self_resize = true;
+  StartSelfResize();
   resize(tr.w, tr.h);
   move(tr.x, tr.y);
-  in_self_resize = false;
 }
 
 void cssConsoleWindow::PinAction() {
@@ -158,16 +171,15 @@ void cssConsoleWindow::PinAction() {
 
 void cssConsoleWindow::LockedNewGeom(int left, int top, int width, int height) {
   if(!lock_to_proj) return;
-  in_self_resize = true;
+  StartSelfResize();
   resize(width, height);
   move(left, top);
-  in_self_resize = false;
   css_con->gotoEnd();
 }
 
 void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
-  if(in_self_resize) return;
+  if(CheckSelfResize()) return;
 
   taProject* proj = tabMisc::root->projects.DefaultEl();
   if(!proj) return;             // only functions if there is a project
@@ -183,7 +195,8 @@ void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
 
 void cssConsoleWindow::moveEvent(QMoveEvent* e) {
   inherited::moveEvent(e);
-  if(in_self_resize) return;
+  if(CheckSelfResize()) return;
+
   taProject* proj = tabMisc::root->projects.DefaultEl();
   if(!proj) return;             // only functions if there is a project
 

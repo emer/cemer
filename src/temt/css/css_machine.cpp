@@ -5670,11 +5670,12 @@ void cssCmdShell::Shell_NoConsole_Run() {
   rl_event_hook = taiMiscCore::rl_callback;
   while(!external_exit && !taMisc::quitting) {
     char* curln = rl_readline((char*)act_prompt);
-    if (rl_done) break;
+    //  if (rl_done) break; -- rl_done not a useful signal it turns out!
     // NULL result is defined as EOF
     if (curln == (char*)0) {
       Exit();
-    } else {
+    }
+    else {
       QString str = curln;
       free(curln); // spec has rl allocating this
       curln = NULL;

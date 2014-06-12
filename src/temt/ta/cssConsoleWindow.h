@@ -58,7 +58,10 @@ public slots:
   // pin action pressed
 
 protected:
-  bool         in_self_resize;
+  int64_t      self_resize_timestamp;
+
+  virtual void StartSelfResize();
+  virtual bool CheckSelfResize();
 
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* e) override;
