@@ -27,7 +27,7 @@ void UserScript::SetProgExprFlags() {
 }
 
 void UserScript::Initialize() {
-  static String _def_user_script("// TODO: Add your CSS script code here.\n");
+  static String _def_user_script("TODO: Add your CSS script code here.\n");
   script.expr = _def_user_script;
   SetProgExprFlags();
 }
@@ -76,18 +76,10 @@ void UserScript::ExportToFileName(const String& fnm) {
 }
 
 bool UserScript::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
-  if(code.endsWith(';')) return true;
-  if(code.contains("=")) {
-    String lhs = code.before("=");
-    if(lhs.contains('[') && lhs.contains(']')) {
-      return true;              // we have a matrix expr on lhs..
-    }
-  }
-  return false;
+  return true;
 }
 
 bool UserScript::CvtFmCode(const String& code) {
-  script.SetExpr(code);
   return true;
 }
 
