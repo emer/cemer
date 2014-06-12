@@ -135,6 +135,7 @@ bool ProgCode::CvtCodeToVar(String& code) {
 ProgEl* ProgCode::CvtCodeToProgEl() {
   ProgEl_List candidates;
   String code_mod = code.expr;
+  String code_orig = code.expr;  // will need to reset if Css expression
   bool has_final_semi = false;
   if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_Comment));
@@ -162,17 +163,17 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
     int ctrl_n = 0;
     for(int i=candidates.size-1; i>= 0; i--) {
       ProgEl* pel = candidates[i];
-       if(pel->InheritsFrom(&TA_UserScript)) {
-         candidates.RemoveIdx(i);
-         continue;
-       }
+      if(pel->InheritsFrom(&TA_UserScript)) {
+        candidates.RemoveIdx(i);
+        continue;
+      }
       // if(pel->InheritsFrom(&TA_AssignExpr)) { // assign only matches if it is the only one..
       //   candidates.RemoveIdx(i);
       //   continue;
       // }
       if(pel->IsCtrlProgEl()) {
-	cvt = pel;		// take precidence
-	ctrl_n++;
+        cvt = pel;		// take precidence
+        ctrl_n++;
       }
     }
     if(ctrl_n != 1) {		// still need to pick -- ctrl_n should never be > 1 but who knows
@@ -183,20 +184,23 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
         for(int i=1;i<candidates.size;i++) {
           sep_but += delimiter + candidates[i]->GetToolbarName();
         }
-	int chs = iDialogChoice::ChoiceDialogSepBut
-          (NULL, "Multiple program elements match code string:\n"
-           + code_mod + "\nPlease choose correct one.",
-           sep_but,
-           "Cancel" + delimiter);
-	if(chs == 0) return NULL;
-	cvt = candidates[chs-1];
-        if(has_final_semi && cvt != tabMisc::root->GetTemplateInstance(&TA_CssExpr)) {
-          code.expr = code.expr.before(';',-1); // chop it off if not using css expr
-        }
+        int chs = iDialogChoice::ChoiceDialogSepBut
+        (NULL, "Multiple program elements match code string:\n"
+         + code_mod + "\nPlease choose correct one.",
+         sep_but,
+         "Cancel" + delimiter);
+        if(chs == 0) return NULL;
+        cvt = candidates[chs-1];
+      }
+      if(cvt == tabMisc::root->GetTemplateInstance(&TA_CssExpr)) {  // User Script already excluded
+        code.expr = code_orig;  // Css - reset the original expression
+      }
+      else if(has_final_semi) {
+        code.expr = code.expr.before(';',-1); // chop it off if not using css expr
       }
     }
   }
-
+  
   ProgEl* rval = (ProgEl*)cvt->MakeToken();
   return rval;
 }
