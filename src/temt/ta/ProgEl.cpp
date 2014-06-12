@@ -864,6 +864,9 @@ bool ProgEl::CvtCodeToVar(String& code) {
  
   if (var_nm.empty()) // no var_name 
     return true;      // return true??
+  bool exists = prg->FindVarName(var_nm);
+  if (exists)
+    return true;
 
   // ONLY modify the code if we're actually going to prompt!
   code = code.before(vtype) + ckcode; // this is just the code minus the variable type
