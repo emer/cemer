@@ -7,9 +7,9 @@ if [[ "$rtnm" == "" ]]; then
     exit 1
 fi
 
-srcnm="$rtnm"
-dmgnm="$rtnm".dmg
+set pkgnm="$rtnm".pkg
+set dmgnm="$rtnm".dmg
 
-echo "making dmg: $dmgnm from source directory: $srcnm"
+echo "making dmg: $dmgnm from package: $pkgnm"
 
-/usr/bin/hdiutil create -ov -srcfolder "$srcnm" "$dmgnm"
+/usr/bin/hdiutil create -ov -srcfolder "$pkgnm" "$dmgnm"
