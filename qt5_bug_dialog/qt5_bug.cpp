@@ -10,6 +10,7 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QTreeWidget>
+#include <QGLWidget>
 
 
 // this demo shows dialog crashing in Qt5.3.0
@@ -171,6 +172,11 @@ main(int argc, char ** argv)
 
   QPushButton* openbut = new QPushButton("Open Dialog", body);
   lay->addWidget(openbut);
+  lay->addStretch();
+
+  QGLWidget* glwidg = new QGLWidget(body);
+  glwidg->setMinimumSize(200,200);
+  lay->addWidget(glwidg);
   lay->addStretch();
 
   iDialogObjDiffBrowser* dib = iDialogObjDiffBrowser::New();
