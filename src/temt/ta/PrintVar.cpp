@@ -128,6 +128,9 @@ bool PrintVar::CvtFmCode(const String& code) {
   else if(code.startsWith("Print:")) exprstr = trim(code.after("Print:"));
   else if(code.startsWith("cerr << ")) exprstr = trim(code.after("cerr << "));
   else if(code.startsWith("cout << ")) exprstr = trim(code.after("cout << "));
+  if(exprstr.contains(" (dbg mask: ")) {
+    exprstr = exprstr.before(" (dbg mask: ");
+  }
   String msg;
   String vars;
   if(exprstr.contains('"')) {
