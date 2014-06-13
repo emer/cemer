@@ -139,7 +139,7 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
   gui_edit_op = true;
   if (op_code & OP_ROW) {
     // must have >=1 row selected to make sense
-    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE))) {
+    if ((op_code & (OP_APPEND | OP_INSERT | OP_DUPLICATE | OP_DELETE | OP_INSERT_AFTER | OP_DELETE_UNSELECTED | OP_COMPARE | OP_CLEAR_COMPARE | OP_SHOW_ALL))) {
       if (sel.height() < 1)
         goto bail;
       QModelIndex newIndex;
@@ -195,6 +195,10 @@ void iDataTableView::RowColOp_impl(int op_code, const CellRange& sel) {
         if (sel.row_fr != 0) // i.e. first row not selected
           rval = tab->RemoveRows(0, sel.row_fr);
         newIndex = this->model()->index(0, 0);
+      }
+      else if (op_code & OP_SHOW_ALL) {
+        proj->undo_mgr.SaveUndo(tab, "ShowAllRows", tab);
+        tab->ShowAllRows();
       }
       else if (op_code & OP_COMPARE) {
         tab->CompareRows(sel.row_fr, sel.height());

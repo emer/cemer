@@ -300,8 +300,6 @@ public:
   // #CAT_File #MENU #MENU_ON_Data #FILE_DIALOG_LOAD #EXT_json load JSON format data (ONLY)
   virtual void          ImportDataJSONString(const String& json_as_string);
   // #CAT_File import json string into data table - api for import when you aren't using the GUI or already have the file stream open
-  virtual void          ShowAllRows();
-  // #CAT_DataProc #MENU #MENU_ON_DataProc #FROM_GROUP_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   virtual bool          Flatten();
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Flatten permanently removes any currently invisible data rows and arranges raw memory in current order -- useful for optimizing and locking-in data table size after a series of operations.  The DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions -- *all* access to the DataTable rows goes through the indexes -- so the Flatten function will not change the appearance of the data table, but it can optimize processing in large data tables, and establish the baseline state that the ShowAllRows function will revert to.  See also the FlattenTo and ShowAllRows functions.
   virtual bool          FlattenTo(DataTable* flattened_table);
@@ -569,6 +567,8 @@ public:
   // #CAT_Rows should only be called internally
   virtual bool          AppendRows(DataTable* append_from);
   // #CAT_Rows #DROP1 #MENU append rows from another data table -- this is also available in taDataProc and in the GUI as a drag-and-drop action (appends rows of dropped item onto dropped item)
+  virtual void          ShowAllRows();
+  // #CAT_Rows #MENU #FROM_GROUP_data #NULL_OK show all available rows of data in the table, in their original raw order, effectively undoing any prior sort, filter, or row removal functions -- the DataTable rows are accessed via a set of indexes that are what is actually sorted and filtered by the relevant functions. Therefore, you can instantly regain access to the original unsorted and unfiltered rows of data by resetting these indexes to be in one-to-one correspondence with the raw data stored in the table.  Note that *all* access to the DataTable rows goes through the indexes -- it is not possible to otherwise access the raw data directly.  See also the Flatten function.
   const Variant         GetColUserData(const String& name, const Variant& col) const;
   // #CAT_Config gets user data from the column (col can be an index or a name)
   void                  SetColUserData(const String& name, const Variant& value, const Variant& col);

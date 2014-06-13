@@ -101,18 +101,19 @@ public:
 
  protected:
   enum RowColOpCode {
-    OP_APPEND                 = 0x001,
-    OP_INSERT                 = 0x002,
-    OP_DUPLICATE              = 0x004,
-    OP_DELETE                 = 0x008,
-    OP_INSERT_AFTER           = 0X010,
-    OP_DELETE_UNSELECTED      = 0X020,
-    OP_ROW                    = 0x040,
-    OP_COL                    = 0x080,
-    OP_RESIZE_TO_CONTENT      = 0x100,
-    OP_RESIZE_TO_CONTENT_ALL  = 0x200,
-    OP_COMPARE                = 0x400,
-    OP_CLEAR_COMPARE          = 0x800
+    OP_APPEND                 = 0x0001,
+    OP_INSERT                 = 0x0002,
+    OP_DUPLICATE              = 0x0004,
+    OP_DELETE                 = 0x0008,
+    OP_INSERT_AFTER           = 0x0010,
+    OP_DELETE_UNSELECTED      = 0x0020,
+    OP_ROW                    = 0x0040,
+    OP_COL                    = 0x0080,
+    OP_RESIZE_TO_CONTENT      = 0x0100,
+    OP_RESIZE_TO_CONTENT_ALL  = 0x0200,
+    OP_COMPARE                = 0x0400,
+    OP_CLEAR_COMPARE          = 0x0800,
+    OP_SHOW_ALL               = 0x1000
   };
 
   bool                  ext_select_on;     // toggled by Ctrl+space -- extends selection with keyboard movement

@@ -263,6 +263,9 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
       act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
                           iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
+      act = menu->AddItem("Show All Rows", taiWidgetMenu::normal,
+                          iAction::int_act,
+                          this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
     }
     menu->AddSep();
   }
