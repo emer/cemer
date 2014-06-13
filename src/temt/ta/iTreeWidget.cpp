@@ -398,7 +398,8 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     }
   }
   
-  if (e->modifiers() & Qt::ShiftModifier) {
+  if ((e->modifiers() & Qt::ShiftModifier) && (e->key() == Qt::Key_Up ||
+                                               e->key() == Qt::Key_Down)) {
     if (ext_select_on == false) {
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
                                                       Qt::MetaModifier));
