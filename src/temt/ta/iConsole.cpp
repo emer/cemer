@@ -333,6 +333,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
     while(true) {
       QString line = s->readLine(maxCols);
       if(line.isNull()) break;
+      if(line.endsWith("invalid drawable")) continue; // skip this error!
       n_lines_recvd++;
       promptDisp = false;
       append(line);
@@ -348,6 +349,7 @@ bool iConsole::stdDisplay(QTextStream* s) {
     while((curOutputLn < maxLines) || contPager || quitPager) {
       QString line = s->readLine(maxCols);
       if(line.isNull()) break;
+      if(line.endsWith("invalid drawable")) continue; // skip this error!
       n_lines_recvd++;
       if(!quitPager) {
         promptDisp = false;
