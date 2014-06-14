@@ -141,28 +141,6 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   m_t3viewer = value;
   if(!m_t3viewer) return;
 
-  // this is the new Multisampling method -- much better!
-
-  QGLWidget* qglw = (QGLWidget*)m_t3viewer->quarter; // it is this guy
-  QGLFormat fmt = qglw->format();
-
-  // note: can move this to an inherited Quarter widget if we need to, as it is a QGLWidget
-  if(taMisc::antialiasing_level > 1) {
-    fmt.setSampleBuffers(true);
-    fmt.setSamples(taMisc::antialiasing_level);
-    qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
-    qglw->makeCurrent();
-    glEnable(GL_MULTISAMPLE);
-  }
-  else {
-    // just don't do anything at all -- this prevents usage of a higher version OpenGL
-    // driver on linux, and allows that to work with coin prior to fixes to support it.
-    // fmt.setSampleBuffers(false);
-    // qglw->setFormat(fmt);               // obs: this is supposedly deprecated..
-    // qglw->makeCurrent();
-    // glDisable(GL_MULTISAMPLE);
-  }
-
   if (m_selMode == SM_NONE) {
     m_t3viewer->quarter->setSceneGraph(m_root_so);
   }

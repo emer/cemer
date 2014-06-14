@@ -106,7 +106,19 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
 
-  quarter = new T3QuarterWidget(this);
+  // note: we're setting our format right at construction, instead of doing
+  // it later in iT3ViewSpaceWidget, which we used to do..
+  QGLFormat fmt;
+#if (QT_VERSION >= 0x040700)
+  // this is critical for Coin3d, which depends on legacy 1.x OpenGL functionality
+  fmt.setProfile(QGLFormat::CompatibilityProfile);
+#endif
+  if(taMisc::antialiasing_level > 1) {
+    fmt.setSampleBuffers(true);
+    fmt.setSamples(taMisc::antialiasing_level);
+  }
+  quarter = new T3QuarterWidget(fmt, this);
+
   quarter->setUpdatesEnabled(false);
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);

@@ -50,6 +50,7 @@ void ProgCode::CvtCodeCheckType(ProgEl_List& candidates, TypeDef* td,
 				const String& code_str) {
   ProgEl* obj = (ProgEl*)tabMisc::root->GetTemplateInstance(td);
   if(obj) {
+    if(obj->InheritsFrom(&TA_UserScript)) return; // don't even check it
     if(obj->CanCvtFmCode(code_str, this)) {
       candidates.LinkUnique(obj);
     }
@@ -163,14 +164,6 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
     int ctrl_n = 0;
     for(int i=candidates.size-1; i>= 0; i--) {
       ProgEl* pel = candidates[i];
-      if(pel->InheritsFrom(&TA_UserScript)) {
-        candidates.RemoveIdx(i);
-        continue;
-      }
-      // if(pel->InheritsFrom(&TA_AssignExpr)) { // assign only matches if it is the only one..
-      //   candidates.RemoveIdx(i);
-      //   continue;
-      // }
       if(pel->IsCtrlProgEl()) {
         cvt = pel;		// take precidence
         ctrl_n++;
