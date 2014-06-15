@@ -80,14 +80,16 @@ bool ProgCode::CvtCodeToVar(String& code) {
   if(!td)
     return false;
   
-  code = trim(code.after(vtype));
+  String ckcode = trim(code.after(vtype)); // just for checking variable type
+  if(ckcode.empty()) return false;
+
   String var_nm;
   int pos = 0;
-  char c = code[pos];
+  char c = ckcode[pos];
   while(isalnum(c) || c == '_') {
     var_nm += c;
-    if(code.length() > pos)
-      c = code[++pos];
+    if(ckcode.length() > pos)
+      c = ckcode[++pos];
     else
       break;
   }
@@ -97,6 +99,10 @@ bool ProgCode::CvtCodeToVar(String& code) {
   bool exists = prg->FindVarName(var_nm);
   if (exists)
     return true;
+
+  // only now do we remove the type from the code -- when we're definitely making one
+  // and we remove only the variable type -- we preserve everything before and after it
+  code = code.before(vtype) + ckcode;
   
   ProgVar::VarType var_type = ProgVar::GetTypeFromTypeDef(td);
   ProgElChoiceDlg dlg;

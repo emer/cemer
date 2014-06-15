@@ -70,7 +70,10 @@ bool taNBase::BrowserEditSet(const String& new_val_str, int move_after) {
       proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
     }
   }
-  bool rval = SetName(new_val_str);
+  String use_val_str = new_val_str;
+  if(use_val_str.contains(' '))
+    use_val_str = use_val_str.before(' '); // exclude any additional info after spaces
+  bool rval = SetName(use_val_str);
   UpdateAfterEdit();            // need full UAE
   return rval;
 }
