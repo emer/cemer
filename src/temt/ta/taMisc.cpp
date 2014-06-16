@@ -178,9 +178,9 @@ bool    taMisc::save_old_fmt = false;
 
 // parameters that are strictly platform specific
 #ifdef TA_OS_MAC
-String  taMisc::font_name = "LucidaGrande";
+String  taMisc::font_name = "Lucida Grande";
 int     taMisc::font_size = 12;
-String  taMisc::console_font_name = "AndaleMono";
+String  taMisc::console_font_name = "Andale Mono";
 int     taMisc::console_font_size = 12;
 float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
@@ -501,6 +501,13 @@ namespace {
 
 void taMisc::UpdateAfterEdit() {
 #ifndef NO_TA_BASE
+  if(font_name == "LucidaGrande") {
+    font_name = "Lucida Grande";
+  }
+  if(console_font_name == "AndaleMono") {
+    console_font_name = "Andale Mono";
+  }
+
   wikis.Reset();
   addUrl(wikis, wiki1_url);
   addUrl(wikis, wiki2_url);

@@ -102,7 +102,7 @@ using namespace std;
 void iConsole::setFontNameSize(QString fnm, int sz) {
   setFontFamily(fnm);
   setFontPointSize(sz);
-  QFont font(fnm, sz);
+  QFont font(fnm, sz);          // this latter seems to be the thing that actually works..
   setFont(font);
 }
 
@@ -130,7 +130,9 @@ void iConsole::getDisplayGeom() {
 
 //Clear the console
 void iConsole::clear() {
+  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
   inherited::clear();
+  setFontNameSize(taMisc::console_font_name, taMisc::console_font_size);
   ext_select_on = false;
   getDisplayGeom();
   curPromptPos = 0;
