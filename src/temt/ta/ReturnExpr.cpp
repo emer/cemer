@@ -48,10 +48,6 @@ bool ReturnExpr::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
 
 bool ReturnExpr::CvtFmCode(const String& code) {
   String cd = trim(code.after("return"));
-  if(cd.startsWith('(')) {
-    cd = cd.after('(');
-    if(cd.endsWith(')')) cd = cd.before(')', -1);
-  }
   if(cd.endsWith(';')) cd = cd.before(';',-1);
   expr.SetExpr(cd);
   return true;
