@@ -1046,16 +1046,31 @@ class SubversionPoller(object):
     # remove given tag from jobs done or archive
     def _remove_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
-        self._remove_tag_files(tag) # remove everything
+        if debug:
+            print "removing all job files for tag: %s" % (tag)
+        self._clean_job_files(filename, rev, row) # this needs jobs_done info
         donerow = self.jobs_done.find_val("tag", tag)
         if donerow >= 0:
+            dat_files = self.jobs_done.get_val(donerow, "dat_files")
+            self._remove_files(tag, dat_files)
+            other_files = self.jobs_done.get_val(donerow, "other_files")
+            self._remove_files(tag, other_files)
             self.jobs_done.remove_row(donerow)
+            if debug:
+                print "removed jobs_done row: %d" % (donerow)
         else:
             archrow = self.jobs_archive.find_val("tag", tag)
             if archrow >= 0:
+                dat_files = self.jobs_archive.get_val(archrow, "dat_files")
+                self._remove_files(tag, dat_files)
+                other_files = self.jobs_archive.get_val(archrow, "other_files")
+                self._remove_files(tag, other_files)
                 self.jobs_archive.remove_row(archrow)
+                if debug:
+                    print "removed jobs_archive row: %d" % (archrow)
             else:
                 print "remove_job: tag %s not found in jobs done or archive" % tag
+        self._remove_tag_files(tag) # extra final attempt to remove everything with a tag
 
     # move job from done to archive
     def _move_job_to_archive(self, filename, rev, row):
@@ -1072,6 +1087,8 @@ class SubversionPoller(object):
 
     # remove all files with given tag
     def _remove_tag_files(self, tag):
+        if not tag:
+            return False
         results_dir = self.cur_proj_root + "/results/"
 
         re_tag_dat = re.compile(r".*%s.*\.dat" % tag)
@@ -1082,13 +1099,15 @@ class SubversionPoller(object):
             fullf = os.path.join(results_dir,f)
             if not os.path.isfile(fullf):
                 continue
-            try:
-                if re_tag_dat.match(f):
-                    os.remove(fullf)
-                elif re_tag.match(f):
-                    os.remove(fullf)
-            except:
-                pass
+            if not os.path.exists(fullf):
+                continue
+            if re_tag_dat.match(f) or re_tag.match(f):
+                cmd = ['svn', 'delete', '--force', '--username', self.username,
+                       '--non-interactive', fullf]
+                # Don't check_output, just dump it to stdout (or nohup.out).
+                subprocess.call(cmd)
+                try: os.remove(fullf)  # for good measure, just nuke it directly
+                except: pass
 
     # get data files for given job
     def _getdata_job(self, filename, rev, row):
@@ -1692,6 +1711,8 @@ def main():
             do_hup = True
 
     if do_hup:
+        try: os.remove("nohup.out")
+        except: pass
         cmd = ['nohup', sys.argv[0], username, repo_dir, repo_url, str(delay),
                str(check_user)]
         subprocess.Popen(cmd)
