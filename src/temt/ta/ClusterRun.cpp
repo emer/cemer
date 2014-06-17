@@ -874,12 +874,13 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SelectFiles_impl(jobs_done, row, true); // include data
+      // SelectFiles_impl(jobs_done, row, true); // include data
       SubmitRemoveJob(jobs_done, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
-    RemoveAllFilesInList();
+    // RemoveAllFilesInList();
+    // this is overwriting the last guy -- and it is unnecessary -- server side will do it
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
     int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_archive list?", "Ok", "Cancel");
@@ -887,12 +888,13 @@ void ClusterRun::RemoveJobs() {
     jobs_submit.ResetData();
     file_list.ResetData();
     for (int row = end_row; row >= st_row; --row) {
-      SelectFiles_impl(jobs_archive, row, true); // include data
+      // SelectFiles_impl(jobs_archive, row, true); // include data
       SubmitRemoveJob(jobs_archive, row);
     }
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
-    RemoveAllFilesInList();
+    // RemoveAllFilesInList();
+    // this is overwriting the last guy -- and it is unnecessary -- server side will do it
   }
   else {
     taMisc::Warning("No rows selected -- no jobs removed");
@@ -907,14 +909,15 @@ void ClusterRun::RemoveKilledJobs() {
   for (int row = jobs_done.rows-1; row >= 0; --row) {
     String status = jobs_done.GetVal("status", row).toString();
     if(status != "KILLED") continue;
-    SelectFiles_impl(jobs_done, row, true); // include data
+    // SelectFiles_impl(jobs_done, row, true); // include data
     SubmitRemoveJob(jobs_done, row);
   }
   if(jobs_submit.rows > 0) {
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
   }
-  RemoveAllFilesInList();
+  // RemoveAllFilesInList();
+  // this is overwriting the last guy -- and it is unnecessary -- server side will do it
 }
 
 void ClusterRun::RemoveAllFilesInList() {

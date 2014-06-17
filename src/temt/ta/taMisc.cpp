@@ -1141,6 +1141,9 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
 
 #if defined(DMEM_COMPILE)
   if(taMisc::dmem_nprocs > 1) {
+    if(!err && (taMisc::dmem_proc > 0) && !taMisc::dmem_output_all) {
+      return false;
+    }
     rmdr = "P" + String(taMisc::dmem_proc) + ": " + rmdr;
   }
 #endif
