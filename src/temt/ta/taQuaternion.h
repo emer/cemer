@@ -58,6 +58,7 @@ public:
   // set values from a matrix object (can be any type of matrix object) -- in order: s,x,y,z
 
   inline void	FromEuler(float theta_x, float theta_y, float theta_z) {
+  // set quaternion from 3 extrinsic rotations around the X,Y,Z axes in the order alpha, beta, gamma
     float cos_z_2 = cosf(0.5f*theta_z);
     float cos_y_2 = cosf(0.5f*theta_y);
     float cos_x_2 = cosf(0.5f*theta_x);
@@ -78,6 +79,7 @@ public:
   // #CAT_Quaternion set quaternion from three Euler angles in vector form
 
   inline void	FromEulerZXZ(float alpha, float beta, float gamma) {
+  // set quaternion from 3 extrinsic rotations around the Z,X,Z axes in the order alpha, beta, gamma
     float ca2 = cosf(0.5*alpha);
     float cb2 = cosf(0.5*beta);
     float cg2 = cosf(0.5*gamma);
@@ -98,6 +100,7 @@ public:
   // #CAT_Quaternion set quaternion from three Euler ZXZ angles in vector form
 
   inline void	FromEulerYXY(float alpha, float beta, float gamma) {
+  // set quaternion from 3 extrinsic rotations around the Y,X,Y axes in the order alpha, beta, gamma
     float ca2 = cosf(0.5*alpha);
     float cb2 = cosf(0.5*beta);
     float cg2 = cosf(0.5*gamma);

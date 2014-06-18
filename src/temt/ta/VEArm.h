@@ -76,11 +76,13 @@ class TA_API VEArmAngles : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
-  //float         x;              // (beta) angle of the upper arm along the x (horizontal) axis -- this is how far forward or backward relative to the torso the arm is (picture a hinge pin along the horizontal axis at the top of the shoulder -- that is this angle)
-  //float         y;              // (gamma) angle of the upper arm along the y (vertical) axis -- this is spin around axis of arm and not very useful generally speaking
-  //float         z;              // (alpha) angle of the upper arm along the z (depth) axis -- this is how far to the left or right the arm is angled
-  //float         elbow;          // (delta) rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
-
+/*
+  float  vert_axis_rot;	// angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
+  float  abduction;	// angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
+  float  rotation;	// degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
+  float  elbow;		// rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
+*/
+// It is preferable to have a unique representation for the angles
   bool          up_y;           // #NO_SAVE if true, then Y is the vertical axis -- this is the default
   float         alpha;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
   float         beta;           // #HIDDEN #NO_SAVE canonical(?) names for the angles
@@ -255,7 +257,7 @@ public:
   ShowIPType    show_ips;        // whether to show the muscle insertion points (IPs) on the arms, as colored spheres -- color code use default (COLD_HOT) scale for type of information selected
   String        name_prefix;     // prefix to apply to all sub-objects (e.g., left_ or right_)
   ArmSide       arm_side;        // is this the left or right arm?  affects the configuration of the arm, and where it attaches to the torso
-  UpAxis        up_axis;         // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). Coordinates transformation between these systems comes through the CT matrix.
+  UpAxis        up_axis;         // which axis points upwards. This selects whether to use the COIN coordinate system (with the Y axis upwards), or the system originally used in SimMechanics (with the Z axis pointing upwards). 
   MuscGeo       musc_geo;        // The muscle geometry. Geometries differ in the number of muscles (11 vs 12), and in the location of the insertion points
   MuscType      musc_type;       // The muscle model. Either linear (output force proportional to stimulus) or Hill-type (the muscle model used in Gribble et al. 1998) -- should correspond with actual type of muscle objects used
   float         hill_mu;         // #CONDSHOW_ON_musc_type:HILL #DEF_0.06 mu parameter for the Hill-type muscle -- dependence of muscle's threshold length on velocity
@@ -422,8 +424,14 @@ public:
   virtual bool MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder=true);
   // #BUTTON #CAT_Init place the hand at the target whose coordinates are the first 3 arguments. Reinitializes the arm prior to moving it into position.  Returns true if a move is made (even if the target is not reachable). The fourth argument indicates whether the coordinates are wrt the shoulder, or absolute 3D coords
 
-  virtual bool SetPose(float x_ang, float y_ang, float z_ang, float elbow_ang);
-  // #BUTTON #CAT_Init Set the arm pose according to rotation angles (in radians, 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) for the shoulder along the 3 different axes, and the additional rotation angle of the elbow relative to the shoulder.  Reinitializes the arm prior to moving it into position.  Returns true if a move is made.
+  virtual bool SetPose(float vert_axis_rot, float abduction, float rotation, float elbow_ang);
+  // #BUTTON #CAT_Init Set the arm pose according to rotation angles (in radians, 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) for the shoulder along the 3 different axes.
+  // vert_axis_rot = angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
+  // abduction = angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
+  // rotation = degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
+  // elbow_ang = rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
+  // Reinitializes the arm prior to moving it into position.  Returns true if a move is made.
+  // Positive rotations follow the right-hand rule.
 
   virtual bool SetPose_impl();
   // #IGNORE actually moves the arm -- common for both MoveToTarget and SetPose
