@@ -78,10 +78,10 @@ void VEArmLengths::UpdateAfterEdit_impl() {
 }
 
 void VEArmAngles::Initialize() {
-  x = 0.0f;
-  y = 0.0f;
-  z = 0.0f;
-  elbow = 0.0f;
+  //x = 0.0f;
+  //y = 0.0f;
+  //z = 0.0f;
+  //elbow = 0.0f;
   alpha = 0.0f;
   beta = 0.0f;
   gamma = 0.0f;
@@ -89,19 +89,21 @@ void VEArmAngles::Initialize() {
 }
 
 void VEArmAngles::UpdateAngles() {
-  if(up_y) {
-    alpha = z;
-    beta =  x;
-    gamma = y;
-    delta = elbow;
+  /*
+	if(up_y) {
+    x = alpha;
+    y = beta;
+    z = gamma;
+    elbow = delta;
   }
   else {
     // todo: is there a diff rotation for up_z?
-    alpha = x;
-    beta =  y;
-    gamma = z;
-    delta = elbow;
+    x = alpha;
+    y = beta;
+    z = gamma;
+    elbow = delta;
   }
+  */
 }
 
 void VEArmAngles::UpdateAfterEdit_impl() {
@@ -518,7 +520,6 @@ bool VEArm::ConfigArm(float humerus_length, float humerus_radius,
                       float elbow_gap, float wrist_gap,
                       float sh_off_x, float sh_off_y, float sh_off_z) {
                       
-  // tor_cm are the coordinates of the torso's center of mass
   // sh_off are the coordinates of the shoulder's anchor point wrt default position
 
   if(TestError(!torso, "ConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
@@ -547,7 +548,7 @@ bool VEArm::ReConfigArm() {
   if(TestError(!torso, "ReConfigArm", "torso not set -- must specify a body in another object to serve as the torso before running ConfigArm"))
     return false;
 
-  float tor_cmX = torso->init_pos.x;
+  float tor_cmX = torso->init_pos.x; // tor_cm are the coordinates of the torso's center of mass
   float tor_cmY = torso->init_pos.y;
   float tor_cmZ = torso->init_pos.z;
 
@@ -557,20 +558,24 @@ bool VEArm::ReConfigArm() {
     if(up_axis == Y)  {
       alens.sh_y = alens.sh_off_y + (torso->box.y)/2.0f;
       alens.sh_x = alens.sh_off_x - (torso->box.x)/2.0f - 0.07f;
+      alens.sh_z = alens.sh_off_z;
     } 
     else { // up_axis == Z
       alens.sh_z = alens.sh_off_z + (torso->box.z)/2.0f;
       alens.sh_x = alens.sh_off_x + (torso->box.x)/2.0f + 0.07f;
+      alens.sh_y = alens.sh_off_y;
     }
   } 
   else {  // arm_side == LEFT
     if(up_axis == Y) {
       alens.sh_y = alens.sh_off_y + (torso->box.y)/2.0f;
       alens.sh_x = alens.sh_off_x + (torso->box.x)/2.0f + 0.07f;
+      alens.sh_z = alens.sh_off_z;
     } 
     else { // up_axis == Z
       alens.sh_z = alens.sh_off_z + (torso->box.z)/2.0f;
       alens.sh_x = alens.sh_off_x - (torso->box.x)/2.0f - 0.07f;
+      alens.sh_y = alens.sh_off_y;
     }
   }
 
@@ -875,32 +880,33 @@ void VEArm::SetTarget(taVector3f& trg_abs, taVector3f& trg_rel,
   float dla2 = 2.0f * dist * alens.La;
 
   if(up_axis == Z) {
-    angs.elbow = taMath_float::pi - acos((alens.La*alens.La + alens.Lf*alens.Lf - dsq) / (lalf2));
-    angs.y = 0;
-    angs.x = acos(-trg_rel.z/dist) - acos((dsq + alens.La*alens.La - alens.Lf*alens.Lf)/(dla2));
-    angs.z = asin(-trg_rel.x/sqrt(trg_rel.x*trg_rel.x +
+    angs.delta = taMath_float::pi - acos((alens.La*alens.La + alens.Lf*alens.Lf - dsq) / (lalf2));
+    angs.gamma = 0;
+    angs.beta = acos(-trg_rel.z/dist) - acos((dsq + alens.La*alens.La - alens.Lf*alens.Lf)/(dla2));
+    angs.alpha = asin(-trg_rel.x/sqrt(trg_rel.x*trg_rel.x +
                                            trg_rel.y*trg_rel.y));
     if(trg_rel.y < 0) { // if the target is behind
-      angs.z = taMath_float::pi -angs.z;
+      angs.alpha = taMath_float::pi -angs.alpha;
     }
   }
   else { // up_axis == Y
-    angs.elbow = taMath_float::pi - acos((alens.La*alens.La + alens.Lf*alens.Lf - dsq) / (lalf2));
-    angs.y = 0;
-    angs.x = acos(-trg_rel.y/dist) - acos((dsq + alens.La*alens.La -   alens.Lf*alens.Lf)/(dla2));
-    angs.z = asin(trg_rel.x/sqrt(trg_rel.x*trg_rel.x +
+    angs.delta = taMath_float::pi - acos((alens.La*alens.La + alens.Lf*alens.Lf - dsq) / (lalf2));
+    angs.alpha = 0;
+    angs.beta = acos(-trg_rel.y/dist) - acos((dsq + alens.La*alens.La -   alens.Lf*alens.Lf)/(dla2));
+    angs.beta = -angs.beta;  // testingu
+    angs.gamma = asin(trg_rel.x/sqrt(trg_rel.x*trg_rel.x +
                                           trg_rel.z*trg_rel.z));
     if(trg_rel.z < 0) { // if the target is behind
-      angs.z = taMath_float::pi - angs.z;
+      angs.alpha = taMath_float::pi - angs.alpha;
     }
   }
 
   if(add_gamma_noise) {
     // todo: this should be parameterizable
-    angs.y += Random::UniformMinMax(-3.14*.8, 3.14*.5);
+    angs.gamma += Random::UniformMinMax(-3.14*.8, 3.14*.5);
   }
 
-  angs.UpdateAngles(); // updates a,b,g
+  angs.UpdateAngles(); 
 
   ComputeRMatrix(angs.alpha, angs.beta, angs.gamma);
 }
@@ -912,18 +918,29 @@ void VEArm::ComputeRMatrix(float alp, float bet, float gam) {
   float sb = sin(bet);  float cb = cos(bet);
   float sc = sin(gam); float cc = cos(gam);
 
-  float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
-                 sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
-                 sb*sc,           sb*cc,          cb};
-  R.SetGeom(2,3,3);
-  R.InitFromFloats(R_f);
-
+  if(up_axis == Z) {
+    float R_f[] = {ca*cc-sa*cb*sc, -ca*sc-sa*cb*cc, sa*sb,
+                   sa*cc+ca*cb*sc, -sa*sc+ca*cb*cc, -ca*sb,
+                   sb*sc,           sb*cc,          cb};
+    R.SetGeom(2,3,3);
+    R.InitFromFloats(R_f);
+  }
+  else { // up_axis == Y
+    float R_f[] = {ca*cc-sa*cb*sc,  sb*sc, sa*cc+ca*cb*sc,
+    		       sa*sb,           cb,    -ca*sb,
+    		       -ca*sc-sa*cb*cc, sb*cc, -sa*sc+ca*cb*cc};
+    R.SetGeom(2,3,3);
+    R.InitFromFloats(R_f);
+  }
+  
+/*
   if(up_axis == Y) {  // changing coordinates for R as a linear transformation
                       // taking advantage of ct being autoinverse
     float_Matrix cR = float_Matrix(2,3,3);
     taMath_float::mat_mult(&cR, &R, &ct);
     taMath_float::mat_mult(&R, &ct, &cR);
   }
+*/
 }
 
 bool VEArm::MoveToTarget(float trg_x, float trg_y, float trg_z, bool shoulder) {
@@ -951,8 +968,8 @@ bool VEArm::SetPose(float x_ang, float y_ang, float z_ang, float elbow_ang) {
 
   ReConfigArm();                // start from same initial starting point!
 
-  init_angs.x = x_ang; init_angs.y = y_ang; init_angs.z = z_ang;
-  init_angs.elbow = elbow_ang;
+  init_angs.alpha = x_ang; init_angs.beta = y_ang; init_angs.gamma = z_ang;
+  init_angs.delta = elbow_ang;
   init_angs.UpdateAfterEdit();
   
   ComputeRMatrix(init_angs.alpha, init_angs.beta, init_angs.gamma);
@@ -985,9 +1002,9 @@ bool VEArm::SetPose_impl() {
     elbow_loc.InitFromFloats(elbow_loc_f);
     elb_axis.InitFromFloats(init_elb_axis);
     
-    //String elblock1, elblock2, elblock3;
-    //elbow_loc.Print(elblock1);
-    // taMisc::Info("initial elbow_loc:", elblock1, "\n");
+    String elblock1, elblock2, elblock3;
+    elbow_loc.Print(elblock1);
+    taMisc::Info("initial elbow_loc:", elblock1, "\n");
 
     float_Matrix RotHumCM(2,1,3);
     float_Matrix rot_elb_loc(2,1,3);
@@ -996,7 +1013,7 @@ bool VEArm::SetPose_impl() {
     taMath_float::mat_mult(&rot_elb_loc, &R, &elbow_loc);
     taMath_float::mat_mult(&rot_elb_axis, &R, &elb_axis);
     
-    humerus->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false); // a rotation on the current quaternion
+    humerus->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false); // a rotation on the current quaternion
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1),
                        RotHumCM.FastEl1d(2)+(alens.humerus_mid),false);
   
@@ -1015,31 +1032,32 @@ bool VEArm::SetPose_impl() {
 
     //String erout;
     //elbow_rot.Print(erout);
+    //taMisc::Info("elbow rotation matrix:", erout, "\n");
 
     float_Matrix Rot1UlnaCM(2,1,3);
     float_Matrix Rot1handCM(2,1,3);
     taMath_float::mat_mult(&Rot1UlnaCM, &elbow_rot, &UlnaCM);
     taMath_float::mat_mult(&Rot1handCM, &elbow_rot, &handCM);
     
-    //String ruout;
-    //Rot1UlnaCM.Print(ruout);
-    // taMisc::Info("rotated ulna before translation:\n", ruout);
+    String ruout;
+    Rot1UlnaCM.Print(ruout);
+    taMisc::Info("rotated ulna before translation, origin at elbow:\n", ruout);
 
-    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(2)-alens.La,1); // setting origin at shoulder
-    Rot1handCM.Set(Rot1handCM.FastEl1d(2)-alens.La,1); // setting origin at shoulder
+    Rot1UlnaCM.Set(Rot1UlnaCM.FastEl1d(2)-alens.La,2); // setting origin at shoulder
+    Rot1handCM.Set(Rot1handCM.FastEl1d(2)-alens.La,2); // setting origin at shoulder
 
-    //String rudout;
-    //Rot1UlnaCM.Print(rudout);
-    // taMisc::Info("rotated ulna after translation:\n", rudout);
+    String rudout;
+    Rot1UlnaCM.Print(rudout);
+    taMisc::Info("rotated ulna after translation, origin at shoulder:\n", rudout);
 
     float_Matrix Rot2UlnaCM(2,1,3);
     taMath_float::mat_mult(&Rot2UlnaCM, &R, &Rot1UlnaCM); // applying shoulder rotation
     float_Matrix Rot2handCM(2,1,3);
     taMath_float::mat_mult(&Rot2handCM, &R, &Rot1handCM); // applying shoulder rotation
     
-    ulna->RotateEulerZXZ(0,-init_angs.delta,0,false);  
-    ulna->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false);  
-    //ulna->RotateEuler(init_angs.beta+init_angs.delta,init_angs.gamma,init_angs.alpha,false);
+    ulna->RotateEulerZXZ(0,init_angs.delta,0,false);  
+    ulna->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false);  
+
     ulna->Translate(Rot2UlnaCM.FastEl1d(0),Rot2UlnaCM.FastEl1d(1),
                     Rot2UlnaCM.FastEl1d(2)+alens.humerus+
                     alens.ulna_mid+alens.elbow_gap,false);
@@ -1048,8 +1066,8 @@ bool VEArm::SetPose_impl() {
                     Rot2handCM.FastEl1d(1)+should_loc.y,
                     Rot2handCM.FastEl1d(2)+should_loc.z,false,true); // NOT init, absolute position
 
-    hand->RotateEulerZXZ(0,-init_angs.delta,0,false);
-    hand->RotateEulerZXZ(init_angs.alpha,-init_angs.beta,init_angs.gamma,false);
+    hand->RotateEulerZXZ(0,init_angs.delta,0,false);
+    hand->RotateEulerZXZ(init_angs.gamma,init_angs.beta,init_angs.alpha,false);
     
     //------- calculating and updating the joint values --------
     // setting the axes for the elbow joint
@@ -1091,11 +1109,7 @@ bool VEArm::SetPose_impl() {
     humerus->Translate(RotHumCM.FastEl1d(0),RotHumCM.FastEl1d(1)+(alens.humerus_mid),
                        RotHumCM.FastEl1d(2),false); // cur, not init
 
-    // this version shows that beta is x axis, gamma is y, and alpha is z
-    //    humerus->RotateEuler(-init_angs.beta,init_angs.gamma,init_angs.alpha,false); // NOT init
-    humerus->RotateEulerYXY(init_angs.alpha,-init_angs.beta,init_angs.gamma,false); // NOT init
-    // humerus->RotateEulerZXZ(taMath_float::pi + init_angs.alpha,init_angs.beta,init_angs.gamma,false,true);
-    // humerus->RotateEuler(init_angs.beta,init_angs.gamma,taMath_float::pi + init_angs.alpha,false);
+    humerus->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma,false); // NOT init
 
     taMath_float::mat_mult(&elbow_loc, &R, &elbow_loc);
  
@@ -1142,7 +1156,7 @@ bool VEArm::SetPose_impl() {
 
     //ulna->RotateEuler(-(init_angs.beta+init_angs.delta),init_angs.gamma,init_angs.alpha, false); // NOT init
     ulna->RotateEulerYXY(0,-init_angs.delta,0, false); // NOT init
-    ulna->RotateEulerYXY(init_angs.alpha,-init_angs.beta,init_angs.gamma, false); // NOT init
+    ulna->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma, false); // NOT init
     // ulna->RotateEulerZXZ(taMath_float::pi+init_angs.alpha,init_angs.beta+init_angs.delta,init_angs.gamma,false,true);
     // ulna->RotateEuler(init_angs.beta+init_angs.delta,init_angs.gamma,taMath_float::pi+init_angs.alpha,false);
 
@@ -1152,7 +1166,7 @@ bool VEArm::SetPose_impl() {
 
     //hand->RotateEuler(-(init_angs.beta+init_angs.delta),-init_angs.gamma,init_angs.alpha, false); // NOT init
     hand->RotateEulerYXY(0,-init_angs.delta,0,false);
-    hand->RotateEulerYXY(init_angs.alpha,-init_angs.beta,init_angs.gamma,false);
+    hand->RotateEulerYXY(init_angs.alpha,init_angs.beta,init_angs.gamma,false);
     // hand->RotateEuler(init_angs.beta+init_angs.delta,init_angs.gamma,taMath_float::pi+init_angs.alpha,false);
     // hand->Translate(trg_x, trg_y+(alens.humerus+alens.ulna+alens.elbow_gap+
     //                 alens.wrist_gap+(hand->length_mid)),trg_z,false);
@@ -1884,22 +1898,36 @@ bool VEArm::UpdateIPs() {
 
   // rotating the ulna's insertion points
   elbow->CurFromODE(true);      // so the angle we get is actualized
-  cur_angs.elbow = elbow->pos;     // DON'T KNOW IF THIS WILL WORK
+  cur_angs.delta = elbow->pos;     // DON'T KNOW IF THIS WILL WORK
 
   if(up_axis == Y) { 
     // Now we get angle directly from humerus and ulna body rotations
     // NOTE: will need an equivalent for UP_Z -- falls back on elbow->pos for now
     taVector3f humrot;
-    humerus->cur_quat_raw.ToEulerVec(humrot);
-    cur_angs.x = -humrot.x;
-    cur_angs.y = humrot.y;
-    cur_angs.z = humrot.z;
+    humerus->cur_quat_raw.ToEulerVecYXY(humrot);
+    cur_angs.alpha = humrot.z;
+    cur_angs.beta = humrot.y;
+    cur_angs.gamma = humrot.x;
     taVector3f ulnarot;
-    ulna->cur_quat_raw.ToEulerVec(ulnarot);
-    cur_angs.elbow = -cur_angs.x - ulnarot.x;
+    ulna->cur_quat_raw.ToEulerVecYXY(ulnarot);
+    cur_angs.delta = elbow->pos; //-cur_angs.beta + ulnarot.y;
+    taMisc::Info("ulna rotation: ", ulnarot.GetStr(),"\n");
+  }
+  else {  // up_axis == Z
+    taVector3f humrot;
+    humerus->cur_quat_raw.ToEulerVecZXZ(humrot);
+	cur_angs.alpha = humrot.x;
+	cur_angs.beta = humrot.y;
+    cur_angs.gamma = humrot.z;
+    taVector3f ulnarot;
+    ulna->cur_quat_raw.ToEulerVecZXZ(ulnarot);
+    cur_angs.delta = elbow->pos; //-cur_angs.beta + ulnarot.y;
+    taMisc::Info("ulna rotation: ", ulnarot.GetStr(),"\n");
   }
 
-  cur_angs.UpdateAngles();	// get alpha, beta etc
+  taMisc::Info("delta angle: ", String(cur_angs.delta), "\n");
+ 
+  cur_angs.UpdateAngles();	
 
   float UlnaShift_f[9] = {0.0f}; // initializes all zeros
   float T_elbowRot_f[9] = {0.0f};
@@ -2153,7 +2181,7 @@ void VEArm::ShowIP(int ipno, int prox_dist, taVector3f& ip_loc) {
   VEBody* ipbod = bodies[N_ARM_BODIES + ipno*2 + prox_dist];
 
   ipbod->color.setColor(ic);
-  ipbod->init_pos = ip_loc;
+  ipbod->init_pos = ip_loc + should_loc;
   ipbod->Init();
 }
 

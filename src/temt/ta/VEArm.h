@@ -48,9 +48,9 @@ public:
   float         sh_off_y;        // #DEF_0 additional shoulder offset
   float         sh_off_z;        // #DEF_0 additional shoulder offset
 
-  float         sh_x;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
-  float         sh_y;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
-  float         sh_z;            // #READ_ONLY full shoulder offset -- updated in config arm to be relative to torso center of mass
+  float         sh_x;            // #READ_ONLY #SHOW full shoulder offset -- updated in config arm to be relative to torso center of mass
+  float         sh_y;            // #READ_ONLY #SHOW full shoulder offset -- updated in config arm to be relative to torso center of mass
+  float         sh_z;            // #READ_ONLY #SHOW full shoulder offset -- updated in config arm to be relative to torso center of mass
 
   float         humerus_mid;    // #READ_ONLY humerus / 2
   float         ulna_mid;       // #READ_ONLY ulna / 2
@@ -76,12 +76,12 @@ class TA_API VEArmAngles : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
-  float         x;              // (beta) angle of the upper arm along the x (horizontal) axis -- this is how far forward or backward relative to the torso the arm is (picture a hinge pin along the horizontal axis at the top of the shoulder -- that is this angle)
-  float         y;              // (gamma) angle of the upper arm along the y (vertical) axis -- this is spin around axis of arm and not very useful generally speaking
-  float         z;              // (alpha) angle of the upper arm along the z (depth) axis -- this is how far to the left or right the arm is angled
-  float         elbow;          // (delta) rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
+  //float         x;              // (beta) angle of the upper arm along the x (horizontal) axis -- this is how far forward or backward relative to the torso the arm is (picture a hinge pin along the horizontal axis at the top of the shoulder -- that is this angle)
+  //float         y;              // (gamma) angle of the upper arm along the y (vertical) axis -- this is spin around axis of arm and not very useful generally speaking
+  //float         z;              // (alpha) angle of the upper arm along the z (depth) axis -- this is how far to the left or right the arm is angled
+  //float         elbow;          // (delta) rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
 
-  bool          up_y;           // #HIDDEN #NO_SAVE if true, then Y is the vertical axis -- this is the default
+  bool          up_y;           // #NO_SAVE if true, then Y is the vertical axis -- this is the default
   float         alpha;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
   float         beta;           // #HIDDEN #NO_SAVE canonical(?) names for the angles
   float         gamma;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
