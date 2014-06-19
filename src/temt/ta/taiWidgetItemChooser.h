@@ -42,7 +42,6 @@ public:
   item_filter_fun       item_filter; // #IGNORE optional filter, in ITEM_FILTER_xxx
   cust_chooser_fun      cust_chooser; // #IGNORE customization call, in CUST_CHOOSER_xxx
   String                filter_start_txt; // if nonempty, item name must start with this text to be included
-
   virtual const String  labelText(); // "tag: name" for button
   virtual const String  titleText(); // title of overall chooser;
   virtual int           columnCount(int view) const = 0;
@@ -78,6 +77,7 @@ public:
   // apply optional item_filter and filter_start_txt, else true
 
   virtual void          GetImage(void* cur_sel, TypeDef* targ_typ);
+  virtual int           GetDefaultView() { return 0; }
 
   virtual void          BuildCategories(); // for types that support categories
   virtual void          BuildChooser(iDialogItemChooser* ic, int view = 0);

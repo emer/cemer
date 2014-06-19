@@ -166,7 +166,8 @@ QTreeWidgetItem* iDialogItemChooser::AddItem(const QString& itm_txt,
 
 bool iDialogItemChooser::SetInitView(void* sel_val, const String& filt_str) {
   if(sel_val == NULL && filt_str.empty()) {
-    setView(0, true);           // nothing..
+    int vw = client()->GetDefaultView();
+    setView(vw, true);
     return false;
   }
   else if(filt_str.nonempty()) {

@@ -70,12 +70,12 @@ public:
 
   QFrame*               body;
   QVBoxLayout*          layOuter;
-  QComboBox*              cmbView;
-  QComboBox*              cmbCat; //note: item 0 is "all" (i.e., no filtering)
-  iTreeWidget*            items;        // list of items
-  QPushButton*              btnOk;
-  QPushButton*              btnCancel;
-  QLineEdit*              filter;
+  QComboBox*            cmbView;
+  QComboBox*            cmbCat; //note: item 0 is "all" (i.e., no filtering)
+  iTreeWidget*          items;        // list of items
+  QPushButton*          btnOk;
+  QPushButton*          btnCancel;
+  QLineEdit*            filter;
 
   virtual bool          Choose(taiWidgetItemChooser* client);
   // main user interface: this actually puts up the dialog, returns true if Ok, false if cancel

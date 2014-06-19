@@ -39,10 +39,17 @@ void taiWidgetMethodDefChooser::btnHelp_clicked() {
   iHelpBrowser::StatLoadMethod(mth);
 }
 
+int taiWidgetMethodDefChooser::GetDefaultView() {
+  if (!targ_typ->name.contains("Base"))
+    return 1;
+  else
+    return 0;
+}
+
 void taiWidgetMethodDefChooser::BuildCategories_impl() {
   if (cats) cats->Reset();
   else cats = new String_Array;
-
+  
   MethodSpace* mbs = &targ_typ->methods;
   String cat;
   for (int i = 0; i < mbs->size; ++i) {

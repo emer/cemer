@@ -37,9 +37,10 @@ public:
   void                  GetImage(MethodDef* cur_sel, TypeDef* targ_typ)
     {taiWidgetItemChooser::GetImage((void*)cur_sel, targ_typ);}
   MethodDef*            GetValue() {return md();}
+  virtual int           GetDefaultView();
 
   void                  BuildChooser(iDialogItemChooser* ic, int view = 0) override;
-  void         btnHelp_clicked() override;
+  void                  btnHelp_clicked() override;
 
   taiWidgetMethodDefChooser(TypeDef* typ_, IWidgetHost* host,
                      taiWidget* par, QWidget* gui_parent_, int flags_ = 0,
@@ -48,7 +49,7 @@ protected:
   const String          itemTag() const {return "Method: ";}
   const String          labelNameNonNull() const;
 
-  void         BuildCategories_impl() override;
+  void                  BuildCategories_impl() override;
   void                  BuildChooser_0(iDialogItemChooser* ic);
   int                   BuildChooser_1(iDialogItemChooser* ic, TypeDef* top_typ,
     QTreeWidgetItem* top_item); // we use this recursively
