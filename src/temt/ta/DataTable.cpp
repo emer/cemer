@@ -2188,25 +2188,25 @@ bool DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name
   JSONNode root(JSON_NODE);
   switch (dc->valType()) {
   case VT_STRING:
-    root.push_back(JSONNode("result", json_string(dc->GetValAsStringM(row, cell).chars())));
+    root.push_back(JSONNode("values", json_string(dc->GetValAsStringM(row, cell).chars())));
     break;
   case VT_DOUBLE:
-    root.push_back(JSONNode("result", dc->GetValAsDoubleM(row, cell)));
+    root.push_back(JSONNode("values", dc->GetValAsDoubleM(row, cell)));
     break;
   case VT_FLOAT:
-    root.push_back(JSONNode("result", dc->GetValAsFloatM(row, cell)));
+    root.push_back(JSONNode("values", dc->GetValAsFloatM(row, cell)));
     break;
   case VT_INT:
-    root.push_back(JSONNode("result", dc->GetValAsIntM(row, cell)));
+    root.push_back(JSONNode("values", dc->GetValAsIntM(row, cell)));
     break;
   case VT_BYTE:
-    root.push_back(JSONNode("result", dc->GetValAsByteM(row, cell)));
+    root.push_back(JSONNode("values", dc->GetValAsByteM(row, cell)));
     break;
   case VT_VARIANT:
-    root.push_back(JSONNode("result", json_string(dc->GetValAsStringM(row, cell).chars())));
+    root.push_back(JSONNode("values", json_string(dc->GetValAsStringM(row, cell).chars())));
     break;
   default:
-    root.push_back(JSONNode("result", json_string(dc->GetValAsStringM(row, cell).chars())));
+    root.push_back(JSONNode("values", json_string(dc->GetValAsStringM(row, cell).chars())));
     taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
   }
   std::string theString = root.write_formatted();
@@ -2274,7 +2274,7 @@ bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
       aColumn.push_back(dimensions);
     }
     JSONNode values(JSON_ARRAY);
-    values.set_name("result");
+    values.set_name("values");
     if (!dc->is_matrix) {  // single array of values - row 1 to row n
       for (int j=start_row; j < stop_row; j++) {
         switch (dc->valType()) {
