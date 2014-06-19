@@ -78,10 +78,11 @@ void VEArmLengths::UpdateAfterEdit_impl() {
 }
 
 void VEArmAngles::Initialize() {
-  //x = 0.0f;
-  //y = 0.0f;
-  //z = 0.0f;
-  //elbow = 0.0f;
+  vert_axis_rot = 0.0f;
+  abduction = 0.0f;
+  rotation = 0.0f;
+  elbow = 0.0f;
+  up_y = true;
   alpha = 0.0f;
   beta = 0.0f;
   gamma = 0.0f;
@@ -89,22 +90,18 @@ void VEArmAngles::Initialize() {
 }
 
 void VEArmAngles::UpdateAngles() {
-  // this function is not necessary when using a single representation
-  /*
-	if(up_y) {
-    x = alpha;
-    y = beta;
-    z = gamma;
-    elbow = delta;
+  if(up_y) {
+    alpha = rotation;
+    beta = abduction;
+    gamma = vert_axis_rot;
   }
   else {
-    // todo: is there a diff rotation for up_z?
-    x = alpha;
-    y = beta;
-    z = gamma;
-    elbow = delta;
+    alpha = vert_axis_rot; 
+    beta = abduction;
+    gamma = rotation;
   }
-  */
+  
+  delta = elbow; 
 }
 
 void VEArmAngles::UpdateAfterEdit_impl() {
@@ -975,6 +972,13 @@ bool VEArm::SetPose(float vert_axis_rot, float abduction, float rotation, float 
   ReConfigArm();                // start from same initial starting point!
   
   // Setting the arm angles according to the arm's configuration
+  init_angs.vert_axis_rot = vert_axis_rot;
+  init_angs.abduction = abduction;
+  init_angs.rotation = rotation;
+  init_angs.elbow = elbow_ang;
+
+  //  init_angs.UpdateAngles();
+
   if(up_axis == Z) {
     init_angs.alpha = vert_axis_rot; init_angs.beta = abduction; init_angs.gamma = rotation;
   } 

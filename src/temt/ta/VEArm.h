@@ -76,21 +76,19 @@ class TA_API VEArmAngles : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
-/*
   float  vert_axis_rot;	// angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
   float  abduction;	// angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
   float  rotation;	// degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
   float  elbow;		// rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
-*/
-// It is preferable to have a unique representation for the angles
+
   bool          up_y;           // #NO_SAVE if true, then Y is the vertical axis -- this is the default
-  float         alpha;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
-  float         beta;           // #HIDDEN #NO_SAVE canonical(?) names for the angles
-  float         gamma;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
-  float         delta;          // #HIDDEN #NO_SAVE canonical(?) names for the angles
+  float         alpha;          // #HIDDEN #NO_SAVE canonical names for the angles
+  float         beta;           // #HIDDEN #NO_SAVE canonical names for the angles
+  float         gamma;          // #HIDDEN #NO_SAVE canonical names for the angles
+  float         delta;          // #HIDDEN #NO_SAVE canonical names for the angles
 
   void	UpdateAngles();
-  // update alpha, beta, etc from x,y,z
+  // update alpha, beta, etc from human readable versions
 
   TA_SIMPLE_BASEFUNS(VEArmAngles);
 protected:
@@ -425,13 +423,7 @@ public:
   // #BUTTON #CAT_Init place the hand at the target whose coordinates are the first 3 arguments. Reinitializes the arm prior to moving it into position.  Returns true if a move is made (even if the target is not reachable). The fourth argument indicates whether the coordinates are wrt the shoulder, or absolute 3D coords
 
   virtual bool SetPose(float vert_axis_rot, float abduction, float rotation, float elbow_ang);
-  // #BUTTON #CAT_Init Set the arm pose according to rotation angles (in radians, 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) for the shoulder along the 3 different axes.
-  // vert_axis_rot = angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.
-  // abduction = angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.
-  // rotation = degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.
-  // elbow_ang = rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle
-  // Reinitializes the arm prior to moving it into position.  Returns true if a move is made.
-  // Positive rotations follow the right-hand rule.
+  // #BUTTON #CAT_Init Set the arm pose according to rotation angles (in radians, 180deg = 3.1415, 90deg = 1.5708, 45deg = .7854) for the shoulder along the 3 different axes.  vert_axis_rot = angle of the upper arm's projection on the horizontal plane -- this corresponds to a rotation around the vertical axis.  abduction = angle of the upper arm with the negative vertical axis (or with the torso) -- this corresponds to abduction.  rotation = degree of rotation of the humerus around its own axis -- this corresponds to upper arm rotation.  elbow_ang = rotation of the ulna around the elbow on its hinge joint relative to the humerus -- 0 is straight in line with the humerus, and positive numbers produce contraction of that angle. Reinitializes the arm prior to moving it into position.  Returns true if a move is made.  Positive rotations follow the right-hand rule.
 
   virtual bool SetPose_impl();
   // #IGNORE actually moves the arm -- common for both MoveToTarget and SetPose
