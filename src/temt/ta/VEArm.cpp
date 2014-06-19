@@ -89,7 +89,7 @@ void VEArmAngles::Initialize() {
   delta = 0.0f;
 }
 
-void VEArmAngles::UpdateAngles() {
+void VEArmAngles::EnglishToGreek() {
   if(up_y) {
     alpha = rotation;
     beta = abduction;
@@ -104,9 +104,24 @@ void VEArmAngles::UpdateAngles() {
   delta = elbow; 
 }
 
+void VEArmAngles::GreekToEnglish() {
+  if(up_y) {
+    rotation      = alpha;
+    abduction     = beta ;
+    vert_axis_rot = gamma;
+  }
+  else {
+    vert_axis_rot = alpha; 
+    abduction    = beta ;
+    rotation     = gamma;
+  }
+
+  elbow = delta; 
+}
+
 void VEArmAngles::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  UpdateAngles();
+  EnglishToGreek();
 }
 
 void VEArmDelays::Initialize() {
@@ -903,7 +918,7 @@ void VEArm::SetTarget(taVector3f& trg_abs, taVector3f& trg_rel,
     angs.gamma += Random::UniformMinMax(-3.14*.8, 3.14*.5);
   }
 
-  angs.UpdateAngles(); 
+  angs.GreekToEnglish();
 
   ComputeRMatrix(angs.alpha, angs.beta, angs.gamma);
 }
@@ -977,17 +992,8 @@ bool VEArm::SetPose(float vert_axis_rot, float abduction, float rotation, float 
   init_angs.rotation = rotation;
   init_angs.elbow = elbow_ang;
 
-  //  init_angs.UpdateAngles();
+  init_angs.EnglishToGreek();
 
-  if(up_axis == Z) {
-    init_angs.alpha = vert_axis_rot; init_angs.beta = abduction; init_angs.gamma = rotation;
-  } 
-  else { // up_axis == Y
-      init_angs.alpha = rotation; init_angs.beta = abduction; init_angs.gamma = vert_axis_rot;
-  }
-  
-  init_angs.delta = elbow_ang;
-  
   ComputeRMatrix(init_angs.alpha, init_angs.beta, init_angs.gamma);
 
   return SetPose_impl();
@@ -1911,7 +1917,6 @@ bool VEArm::UpdateIPs() {
 
   if(up_axis == Y) { 
     // Now we get angle directly from humerus and ulna body rotations
-    // NOTE: will need an equivalent for UP_Z -- falls back on elbow->pos for now
     taVector3f humrot;
     humerus->cur_quat_raw.ToEulerVecYXY(humrot);
     cur_angs.alpha = humrot.z;  // changing from extrinsic to intrinsic
@@ -1936,7 +1941,7 @@ bool VEArm::UpdateIPs() {
 
   //taMisc::Info("delta angle: ", String(cur_angs.delta), "\n");
  
-  cur_angs.UpdateAngles();	
+  cur_angs.GreekToEnglish();	
 
   float UlnaShift_f[9] = {0.0f}; // initializes all zeros
   float T_elbowRot_f[9] = {0.0f};

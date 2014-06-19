@@ -87,7 +87,9 @@ public:
   float         gamma;          // #HIDDEN #NO_SAVE canonical names for the angles
   float         delta;          // #HIDDEN #NO_SAVE canonical names for the angles
 
-  void	UpdateAngles();
+  void	GreekToEnglish();
+  // update human readable versions from alpha, beta, etc
+  void	EnglishToGreek();
   // update alpha, beta, etc from human readable versions
 
   TA_SIMPLE_BASEFUNS(VEArmAngles);

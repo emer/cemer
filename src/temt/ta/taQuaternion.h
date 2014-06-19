@@ -218,8 +218,8 @@ public:
   void	RotateEuler(float theta_x, float theta_y, float theta_z) {
     taQuaternion q; q.FromEuler(theta_x, theta_y, theta_z);
     q.Normalize();
-     *this = q * (*this);
-    //     *this *= q;
+    // *this = q * (*this);
+    *this *= q;
   }
   // #CAT_Quaternion #BUTTON rotate this rotation by given rotation parameters
   
