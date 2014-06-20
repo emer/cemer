@@ -389,6 +389,7 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
   // if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
   toolsMenu = menu->AddSubMenu("&Tools");
+  connect(toolsMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(toolsMenu_aboutToShow()));
   dataMenu = menu->AddSubMenu("&Data");
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
@@ -1055,6 +1056,10 @@ void iMainWindowViewer::Constr_ToolsMenu()
   toolsSvnBrowseActionSvn3 = AddAction
       (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name,
           QKeySequence(), "toolsSvnBrowseActionSvn3"));
+  
+  toolsOpenServerAction = AddAction(new iAction(0, "&Open Remote Server", QKeySequence(), "toolsOpenServerAction"));
+  toolsCloseServerAction = AddAction(new iAction(0, "&Close Remote Server", QKeySequence(), "toolsCloseServerAction"));
+
 
   // Build menu items.
   if (toolsMenu) {
@@ -1068,6 +1073,9 @@ void iMainWindowViewer::Constr_ToolsMenu()
       toolsMenu->AddAction(toolsSvnBrowseActionSvn2);
     if(taMisc::svn_repo3_url.name.nonempty())
       toolsMenu->AddAction(toolsSvnBrowseActionSvn3);
+    toolsMenu->insertSeparator();
+    toolsMenu->AddAction(toolsOpenServerAction);
+    toolsMenu->AddAction(toolsCloseServerAction);
   }
 
   // Make connetions.
@@ -1082,7 +1090,11 @@ void iMainWindowViewer::Constr_ToolsMenu()
   connect(toolsSvnBrowseActionSvn3, SIGNAL(triggered()),
       this, SLOT(toolsSvnBrowserSvn3()));
   connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
-      this, SLOT(toolsTypeInfoBrowser()));
+          this, SLOT(toolsTypeInfoBrowser()));
+  connect(toolsOpenServerAction, SIGNAL(triggered()),
+          this, SLOT(toolsOpenRemoteServer()));
+  connect(toolsCloseServerAction, SIGNAL(triggered()),
+          this, SLOT(toolsCloseRemoteServer()));
 }
 
 void iMainWindowViewer::Constr_HelpMenu()
@@ -2351,6 +2363,11 @@ void iMainWindowViewer::showMenu_aboutToShow() {
   (*show_menu)[4]->setChecked(!(value & TypeItem::NO_HIDDEN));
 }
 
+void iMainWindowViewer::toolsMenu_aboutToShow() {
+  toolsOpenServerAction->setEnabled(!taRootBase::instance()->IsServerOpen());
+  toolsCloseServerAction->setEnabled(taRootBase::instance()->IsServerOpen());
+}
+
 void iMainWindowViewer::this_DockSelect(iAction* me) {
   iDockViewer* itb = (iDockViewer*)(me->usr_data.toPtr());
   DockViewer* tb = itb->viewer();
@@ -2679,6 +2696,14 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
     else
       pv_T3->Hide();
   }
+}
+
+void iMainWindowViewer::toolsOpenRemoteServer() {
+  taRootBase::instance()->CallFun("OpenRemoteServer");  // call fun so we get the port dialog
+}
+
+void iMainWindowViewer::toolsCloseRemoteServer() {
+  taRootBase::instance()->CloseRemoteServer();
 }
 
 //////////////////////////////////

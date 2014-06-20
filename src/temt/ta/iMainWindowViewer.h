@@ -185,6 +185,8 @@ public:
   iAction*            toolsSvnBrowseActionSvn1;
   iAction*            toolsSvnBrowseActionSvn2;
   iAction*            toolsSvnBrowseActionSvn3;
+  iAction*            toolsOpenServerAction;
+  iAction*            toolsCloseServerAction;
 
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
@@ -345,6 +347,9 @@ public slots:
   void          toolsSvnBrowserSvn1();
   void          toolsSvnBrowserSvn2();
   void          toolsSvnBrowserSvn3();
+  void          toolsOpenRemoteServer();
+  void          toolsCloseRemoteServer();
+  virtual void  toolsMenu_aboutToShow();
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();

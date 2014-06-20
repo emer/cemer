@@ -487,6 +487,15 @@ void taRootBase::CloseRemoteServer() {
   srv->CloseServer();
 }
 
+bool taRootBase::IsServerOpen() {
+  TemtServer* srv = (TemtServer*)FindGlobalObject(&TA_TemtServer);
+  if (!srv)
+    return false;
+  if (!srv->isOpen())
+    return false;
+  return true;
+}
+
 taBase* taRootBase::GetTemplateInstance(TypeDef* typ) {
   return GetTemplateInstance_impl(typ, &templates);
 }

@@ -80,7 +80,9 @@ public:
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application
   void          CloseRemoteServer();
   // #MENU #MENU_ON_Server Close an open Server, if any
-
+  bool          IsServerOpen();
+  // so others can check server state
+  
   virtual void  Options();
   // edit global settings/parameters (taMisc)
   virtual void  About();
