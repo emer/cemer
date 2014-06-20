@@ -182,7 +182,8 @@ bool iDialogItemChooser::SetInitView(void* sel_val, const String& filt_str) {
     }
   }
   else if(sel_val != NULL) {
-    for(int vw = 0; vw < m_client->viewCount(); vw++) {
+    // work backwards most to least scoped
+    for(int vw = m_client->viewCount() - 1; vw >= 0; vw--) {
       setView(vw, true);
 //       taMisc::ProcessEvents();
       if(SetCurrentItemByData(sel_val)) {
