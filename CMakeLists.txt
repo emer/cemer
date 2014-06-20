@@ -302,7 +302,7 @@ if (WIN32)
     DESTINATION bin
   )
   if (QT_USE_5)
-    install(FILES ${QT_PLUGINS_DIR}/platforms/*.dll
+    install(FILES "${QT_PLUGINS_DIR}/platforms/qwindows.dll" "${QT_PLUGINS_DIR}/platforms/qminimal.dll"
       DESTINATION bin/platforms
     )
   endif (QT_USE_5)
