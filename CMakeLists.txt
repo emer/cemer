@@ -301,6 +301,11 @@ if (WIN32)
   install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent.ico
     DESTINATION bin
   )
+  if (QT_USE_5)
+    install(FILES ${QT_PLUGINS_DIR}/platforms/*.dll
+      DESTINATION bin/platforms
+    )
+  endif (QT_USE_5)
 else (WIN32)
   # plugin folder, so emergent doesn't complain
   install(DIRECTORY
