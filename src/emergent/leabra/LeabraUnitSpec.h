@@ -167,7 +167,8 @@ public:
   float		dt;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.007 rate constant of the adaptation dynamics -- for 1 ms normalized units, default is 1/144 msec = .007
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
   float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- for rate code activations, uses act value weighting and only computes every interval
-  int		interval;	// #CONDSHOW_ON_on how many time steps between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
+  int		interval;	// #CONDSHOW_ON_on how many time steps (cycles, in terms of a modulus on the ct_cycle counter, unless trials is clicked in which case the unit of time is the trial) between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
+  bool          trials;         // #CONDSHOW_ON_on only update synaptic depression at the trial level, not at the cycle level -- this does NOT work for SPIKE mode (which is cycle-only) -- this can be useful for not affecting more complex within-trial settling dynamics (which also can affect learning in various ways), and producing longer-lasting effects across trials -- the interval still applies at the trials level, but a value of 1 is recommended
   float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
 
   float	Compute_dAdapt(float vm, float e_rev_l, float adapt) {
@@ -205,7 +206,8 @@ public:
   float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015;0.005 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
   float		asymp_act;	// #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
   float		depl;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
-  int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using ct_cycle) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
+  int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using a modulus on the ct_cycle, unless trials is clicked in which case the unit of time is the trial) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
+  bool          trials;         // #CONDSHOW_ON_on only update synaptic depression at the trial level, not at the cycle level -- this can be useful for not affecting more complex within-trial settling dynamics (which also can affect learning in various ways), and producing longer-lasting effects across trials -- the interval still applies at the trials level, but a value of 1 is recommended
   float		max_amp;	// #CONDSHOW_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -668,19 +670,26 @@ public:
       inline float Compute_ActValFmVmVal_rate(float val_sub_thr) 
       { return Compute_ActValFmVmVal_rate_impl(val_sub_thr, act, nxx1_fun); }
       // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
-      virtual void Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
 
       virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- discrete spiking
-      virtual void Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential -- spike functions
       virtual void Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
       // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
+
     virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 3: compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
     virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the trial time scale
+      virtual void Compute_ActAdapt_Cycle_rate(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
+      virtual void Compute_ActAdapt_Cycle_spike(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential -- spike functions
+      virtual void Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
+      virtual void Compute_Depress_Cycle(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute whole-neuron (presynaptic) synaptic depression at the cycle level, using the depress parameters -- updates the spk_amp variable
+      virtual void Compute_Depress_Trial(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute whole-neuron (presynaptic) synaptic depression at the trial level, using the depress parameters -- updates the spk_amp variable
 
     virtual float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)

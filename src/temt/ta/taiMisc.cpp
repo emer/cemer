@@ -525,6 +525,7 @@ void taiMisc::Quit_impl(CancelOp cancel_op) {
     }
     
     qApp->closeAllWindows();
+    qApp->quit();               // the cssConsole does not close -- just quit!
   }
 }
 

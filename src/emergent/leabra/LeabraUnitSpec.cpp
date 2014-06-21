@@ -146,6 +146,7 @@ void ActAdaptSpec::Defaults_init() {
   vm_gain = 0.04f;
   spike_gain = 0.00805f;
   interval = 10;
+  trials = false;
 
   dt_time = 1.0f / dt;
 }
@@ -158,6 +159,7 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
 void DepressSpec::Initialize() {
   on = false;
   phase_act = ACT_ND;
+  trials = false;
   Defaults_init();
 }
 
@@ -1312,12 +1314,10 @@ void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     Compute_ActFmVm_spike(u, net);
     Compute_ActLrnFmVm_rate(u, net); // todo: use rate-coded learning here???
-    Compute_ActAdapt_spike(u, net);
   }
   else {
     Compute_ActFmVm_rate(u, net);
     Compute_ActLrnFmVm_rate(u, net);
-    Compute_ActAdapt_rate(u, net);
   }
 }
 
@@ -1393,11 +1393,6 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   if(depress.on) {                   // synaptic depression
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= MIN(u->spk_amp, 1.0f);
-    if((net->ct_cycle+1) % depress.interval == 0) {
-      u->spk_amp += -new_act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
-    }
-    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
-    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
   }
 
   u->da = new_act - u->act;
@@ -1440,18 +1435,6 @@ void LeabraUnitSpec::Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net) 
   u->act_lrn = act_range.Clip(new_act_lrn);
 }
 
-void LeabraUnitSpec::Compute_ActAdapt_rate(LeabraUnit* u, LeabraNetwork* net) {
-  if(!adapt.on)
-    u->adapt = 0.0f;
-  else {
-    float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
-    if(net->ct_cycle % adapt.interval == 0) {
-      dad += u->act * adapt.spike_gain; // rate code version of spiking
-    }
-    u->adapt += dad;
-  }
-}
-
 void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   if(u->v_m > spike_misc.spk_thr) {
     u->act = 1.0f;
@@ -1478,9 +1461,6 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
 
   if(depress.on) {
     u->act *= MIN(u->spk_amp, 1.0f);    // after eq
-    u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
-    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
-    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
     u->act_eq = u->spk_amp * u->act_nd; // act_eq is depressed rate code, nd is non-depressed!
   }
   else {
@@ -1488,9 +1468,13 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-void LeabraUnitSpec::Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net) {
-  if(!adapt.on)
+////////////////////////////////////////////////////////////////////
+//              Self reg / adapt / depress
+
+void LeabraUnitSpec::Compute_ActAdapt_Cycle_spike(LeabraUnit* u, LeabraNetwork* net) {
+  if(!adapt.on) {
     u->adapt = 0.0f;
+  }
   else {
     float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt);
     if(u->act > 0.0f) {                                               // spiked
@@ -1500,7 +1484,72 @@ void LeabraUnitSpec::Compute_ActAdapt_spike(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
-void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork*) {
+void LeabraUnitSpec::Compute_ActAdapt_Cycle_rate(LeabraUnit* u, LeabraNetwork* net) {
+  if(!adapt.on) {
+    u->adapt = 0.0f;
+  }
+  else {
+    if(net->ct_cycle % adapt.interval == 0) {
+      float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
+      dad += u->act * adapt.spike_gain; // rate code version of spiking
+      u->adapt += dad;
+    }
+  }
+}
+
+void LeabraUnitSpec::Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* net) {
+  if(!adapt.on) {
+    u->adapt = 0.0f;
+  }
+  else {
+    if(net->trial % adapt.interval == 0) {
+      float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
+      dad += u->act * adapt.spike_gain; // rate code version of spiking
+      u->adapt += dad;
+    }
+  }
+}
+
+void LeabraUnitSpec::Compute_Depress_Cycle(LeabraUnit* u, LeabraNetwork* net) {
+  if(!depress.on) {
+    u->spk_amp = depress.max_amp;
+  }
+  else {
+    if((net->ct_cycle+1) % depress.interval == 0) {
+      u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    }
+    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
+  }
+}
+
+void LeabraUnitSpec::Compute_Depress_Trial(LeabraUnit* u, LeabraNetwork* net) {
+  if(!depress.on) {
+    u->spk_amp = depress.max_amp;
+  }
+  else {
+    if((net->trial+1) % depress.interval == 0) {
+      u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    }
+    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
+    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
+  }
+}
+
+void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net) {
+  if(act_fun == SPIKE) {
+    Compute_ActAdapt_Cycle_spike(u, net);
+    Compute_Depress_Cycle(u, net);
+  }
+  else {
+    if(!adapt.trials) {
+      Compute_ActAdapt_Cycle_rate(u, net);
+    }
+    if(!depress.trials) {
+      Compute_Depress_Cycle(u, net);
+    }
+  }
+
   // fast time scale updated every cycle
   if(hyst.on && !hyst.trl)
     hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
@@ -1508,7 +1557,16 @@ void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork*) {
     acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
 }
 
-void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork*) {
+void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net) {
+  if(act_fun != SPIKE) {
+    if(adapt.trials) {
+      Compute_ActAdapt_Trial_rate(u, net);
+    }
+    if(depress.trials) {
+      Compute_Depress_Trial(u, net);
+    }
+  }
+
   // slow time scale updated at end of trial
   if(hyst.on && hyst.trl)
     hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
