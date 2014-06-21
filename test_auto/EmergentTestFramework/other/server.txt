@@ -31,7 +31,7 @@ Connection
     Sleep                  1 sec
     ${output} =            Read
     Print                  ${output}
-    Should Contain         ${output}    Emergent Server v6.
+    Should Contain         ${output}    Emergent Server v7.
 
 # TODO: Start another process and check for the "Too many connections already" error.
 
@@ -83,11 +83,11 @@ JSON Format Error
 
 Unknown Command Error
     ${output} =              Run Command Wait      {"command": "UnknownCommand"}
-    Status Error Match       ${output}             2         Unknown command: UnknownCommand
+    Status Error Match       ${output}             2         Unknown command: UnknownCommand-- remember everything is case sensitive
 
 No Command Error
     ${output} =              Run Command Wait      {}
-    Status Error Match       ${output}             2         Unknown command: \
+    Status Error Match       ${output}             2         Unknown command: -- remember everything is case sensitive
 
 Unknown Parameter Error
     ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
