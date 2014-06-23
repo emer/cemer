@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7321
+// ta_Dump File v3.0 -- code v7.0.0.0 rev7365
 LeabraProject .projects["cereb_arm_v3"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectDocs"] { };
@@ -902,6 +902,343 @@ LeabraProject .projects["cereb_arm_v3"] {
     };
    };
   };
+  Program_Group @.gp["AnalysisProgs"] = [1] { 
+   Program @["AnalyzeReaches"] { 
+    ProgObjList @.objs = [3] {
+     VEWorld @["VEWorld_0"] { 
+      VEObject_Group @.objects = [0] {
+      };
+
+      VESpace_Group @.spaces = [0] {
+      };
+
+      VETexture_List @.textures = [0] {
+      };
+     };
+     DataTable @["TrialStats_tmp"] { 
+      DataTableCols @.data = [12] {
+       float_Data @["loc_err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["io_err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["hand_vel_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["musc_gains_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_p_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_i_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_d_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["time_reach_completed"] { };
+       float_Data @["max_disp"] { };
+       float_Data @["vel_peaks"] { };
+       float_Data @["trial"] { };
+      };
+     };
+     DataTable @["EpochStats_tmp"] { 
+      DataTableCols @.data = [12] {
+       float_Data @["loc_err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["io_err_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["hand_vel_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["musc_gains_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_p_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_i_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["stims_d_mag"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["time_reach_completed"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["max_disp"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["vel_peaks"] { 
+	UserDataItem_List @*(.user_data_) {
+	 UserDataItem @["view_panel_wd"] { };
+	};
+       };
+       float_Data @["epoch"] { };
+      };
+     };
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [2] {
+     ProgVar @["network"] { };
+     ProgVar @["config_id"] { };
+    };
+
+    ProgVar_List @.vars = [13] {
+     ProgVar @["cycles_per_reach"] { };
+     ProgVar @["VEWorld_0"] { };
+     ProgVar @["ArmData"] { };
+     ProgVar @["TrialStats_tmp"] { };
+     ProgVar @["TrialStats"] { };
+     ProgVar @["EpochStats_tmp"] { };
+     ProgVar @["EpochStats"] { };
+     ProgVar @["i"] { };
+     ProgVar @["time_reach_completed"] { };
+     ProgVar @["max_disp"] { };
+     ProgVar @["vel_peaks"] { };
+     ProgVar @["trial"] { };
+     ProgVar @["epoch"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [4] {
+     MethodCall @[0] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[1] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+
+    ProgEl_List @.prog_code = [26] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [3] {
+       ProgVar @["max_disp_tmp"] { };
+       ProgVar @["vel_peaks_tmp"] { };
+       ProgVar @["reach_complete"] { };
+      };
+     };
+     Comment @[1] { };
+     DataGroupProg @[2] { 
+      DataOpList @.group_spec.ops = [8] {
+       DataGroupEl @["del_hand_err_mag_MEAN_0"] { };
+       DataGroupEl @["err_len_mag_MEAN_1"] { };
+       DataGroupEl @["hand_io_err_MEAN_2"] { };
+       DataGroupEl @["hand_vel_mag_MAX_3"] { };
+       DataGroupEl @["musc_gains_mag_MEAN_4"] { };
+       DataGroupEl @["stims_p_mag_MEAN_5"] { };
+       DataGroupEl @["stims_i_mag_MEAN_6"] { };
+       DataGroupEl @["stims_d_mag_MEAN_7"] { };
+      };
+     };
+     Comment @[3] { };
+     Comment @[4] { };
+     MethodCall @[5] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     MethodCall @[6] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     ForLoop @[7] { 
+      ProgEl_List @.loop_code = [2] {
+       If @[0] { 
+	ProgEl_List @.true_code = [1] {
+	 MathCall @[0] { 
+	  ProgArg_List @.meth_args = [2] {
+	   ProgArg @[0] { };
+	   ProgArg @[1] { };
+	  };
+	 };
+	};
+       };
+       Else @[1] { 
+	ProgEl_List @.else_code = [2] {
+	 If @[0] { 
+	  ProgEl_List @.true_code = [2] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [5] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	     ProgArg @[3] { };
+	     ProgArg @[4] { };
+	    };
+	   };
+	   AssignExpr @[1] { };
+	  };
+	 };
+	 Else @[1] { 
+	  ProgEl_List @.else_code = [1] {
+	   MethodCall @[0] { 
+	    ProgArg_List @.meth_args = [3] {
+	     ProgArg @[0] { };
+	     ProgArg @[1] { };
+	     ProgArg @[2] { };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+     MethodCall @[8] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     Comment @[9] { };
+     MethodCall @[10] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     ForLoop @[11] { 
+      ProgEl_List @.loop_code = [1] {
+       If @[0] { 
+	ProgEl_List @.true_code = [1] {
+	 VarIncr @[0] { };
+	};
+       };
+      };
+     };
+     MethodCall @[12] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     Comment @[13] { };
+     MethodCall @[14] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     MethodCall @[15] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     DataProcCall @[16] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     BlankLineEl @[17] { };
+     Comment @[18] { };
+     Comment @[19] { };
+     DataGroupProg @[20] { 
+      DataOpList @.group_spec.ops = [11] {
+       DataGroupEl @["loc_err_mag_MEAN_0"] { };
+       DataGroupEl @["err_mag_MEAN_1"] { };
+       DataGroupEl @["io_err_mag_MEAN_2"] { };
+       DataGroupEl @["hand_vel_mag_MEAN_3"] { };
+       DataGroupEl @["musc_gains_mag_MEAN_4"] { };
+       DataGroupEl @["stims_p_mag_MEAN_5"] { };
+       DataGroupEl @["stims_i_mag_MEAN_6"] { };
+       DataGroupEl @["stims_d_mag_MEAN_7"] { };
+       DataGroupEl @["time_reach_completed_MEAN_8"] { };
+       DataGroupEl @["max_disp_MEAN_9"] { };
+       DataGroupEl @["vel_peaks_MEAN_10"] { };
+      };
+     };
+     Comment @[21] { };
+     MethodCall @[22] { 
+      ProgArg_List @.meth_args = [1] {
+       ProgArg @[0] { };
+      };
+     };
+     MethodCall @[23] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     DataProcCall @[24] { 
+      ProgArg_List @.meth_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     MethodCall @[25] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+    };
+   };
+  };
   Program_Group @.gp["StartupProgs"] = [1] { 
    Program @["BasicStartup"] { 
     ProgObjList @.objs = [0] {
@@ -962,343 +1299,6 @@ LeabraProject .projects["cereb_arm_v3"] {
 	 ProgArg @[1] { };
 	 ProgArg @[2] { };
 	};
-       };
-      };
-     };
-    };
-   };
-   Program_Group @.gp["AnalysisProgs"] = [1] { 
-    Program @["AnalyzeReaches"] { 
-     ProgObjList @.objs = [3] {
-      VEWorld @["VEWorld_0"] { 
-       VEObject_Group @.objects = [0] {
-       };
-
-       VESpace_Group @.spaces = [0] {
-       };
-
-       VETexture_List @.textures = [0] {
-       };
-      };
-      DataTable @["TrialStats_tmp"] { 
-       DataTableCols @.data = [12] {
-	float_Data @["loc_err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["io_err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["hand_vel_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["musc_gains_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_p_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_i_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_d_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["time_reach_completed"] { };
-	float_Data @["max_disp"] { };
-	float_Data @["vel_peaks"] { };
-	float_Data @["trial"] { };
-       };
-      };
-      DataTable @["EpochStats_tmp"] { 
-       DataTableCols @.data = [12] {
-	float_Data @["loc_err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["io_err_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["hand_vel_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["musc_gains_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_p_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_i_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["stims_d_mag"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["time_reach_completed"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["max_disp"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["vel_peaks"] { 
-	 UserDataItem_List @*(.user_data_) {
-	  UserDataItem @["view_panel_wd"] { };
-	 };
-	};
-	float_Data @["epoch"] { };
-       };
-      };
-     };
-
-     ProgType_List @.types = [0] {
-     };
-
-     ProgVar_List @.args = [2] {
-      ProgVar @["network"] { };
-      ProgVar @["config_id"] { };
-     };
-
-     ProgVar_List @.vars = [13] {
-      ProgVar @["cycles_per_reach"] { };
-      ProgVar @["VEWorld_0"] { };
-      ProgVar @["ArmData"] { };
-      ProgVar @["TrialStats_tmp"] { };
-      ProgVar @["TrialStats"] { };
-      ProgVar @["EpochStats_tmp"] { };
-      ProgVar @["EpochStats"] { };
-      ProgVar @["i"] { };
-      ProgVar @["time_reach_completed"] { };
-      ProgVar @["max_disp"] { };
-      ProgVar @["vel_peaks"] { };
-      ProgVar @["trial"] { };
-      ProgVar @["epoch"] { };
-     };
-
-     Function_List @.functions = [0] {
-     };
-
-     ProgEl_List @.init_code = [4] {
-      MethodCall @[0] { 
-       ProgArg_List @.meth_args = [0] {
-       };
-      };
-      MethodCall @[1] { 
-       ProgArg_List @.meth_args = [0] {
-       };
-      };
-      MethodCall @[2] { 
-       ProgArg_List @.meth_args = [0] {
-       };
-      };
-      MethodCall @[3] { 
-       ProgArg_List @.meth_args = [0] {
-       };
-      };
-     };
-
-     ProgEl_List @.prog_code = [26] {
-      LocalVars @[0] { 
-       ProgVar_List @.local_vars = [3] {
-	ProgVar @["max_disp_tmp"] { };
-	ProgVar @["vel_peaks_tmp"] { };
-	ProgVar @["reach_complete"] { };
-       };
-      };
-      Comment @[1] { };
-      DataGroupProg @[2] { 
-       DataOpList @.group_spec.ops = [8] {
-	DataGroupEl @["del_hand_err_mag_MEAN_0"] { };
-	DataGroupEl @["err_len_mag_MEAN_1"] { };
-	DataGroupEl @["hand_io_err_MEAN_2"] { };
-	DataGroupEl @["hand_vel_mag_MAX_3"] { };
-	DataGroupEl @["musc_gains_mag_MEAN_4"] { };
-	DataGroupEl @["stims_p_mag_MEAN_5"] { };
-	DataGroupEl @["stims_i_mag_MEAN_6"] { };
-	DataGroupEl @["stims_d_mag_MEAN_7"] { };
-       };
-      };
-      Comment @[3] { };
-      Comment @[4] { };
-      MethodCall @[5] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      MethodCall @[6] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      ForLoop @[7] { 
-       ProgEl_List @.loop_code = [2] {
-	If @[0] { 
-	 ProgEl_List @.true_code = [1] {
-	  MathCall @[0] { 
-	   ProgArg_List @.meth_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	   };
-	  };
-	 };
-	};
-	Else @[1] { 
-	 ProgEl_List @.else_code = [2] {
-	  If @[0] { 
-	   ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	     ProgArg_List @.meth_args = [5] {
-	      ProgArg @[0] { };
-	      ProgArg @[1] { };
-	      ProgArg @[2] { };
-	      ProgArg @[3] { };
-	      ProgArg @[4] { };
-	     };
-	    };
-	    AssignExpr @[1] { };
-	   };
-	  };
-	  Else @[1] { 
-	   ProgEl_List @.else_code = [1] {
-	    MethodCall @[0] { 
-	     ProgArg_List @.meth_args = [3] {
-	      ProgArg @[0] { };
-	      ProgArg @[1] { };
-	      ProgArg @[2] { };
-	     };
-	    };
-	   };
-	  };
-	 };
-	};
-       };
-      };
-      MethodCall @[8] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-      Comment @[9] { };
-      MethodCall @[10] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      ForLoop @[11] { 
-       ProgEl_List @.loop_code = [1] {
-	If @[0] { 
-	 ProgEl_List @.true_code = [1] {
-	  VarIncr @[0] { };
-	 };
-	};
-       };
-      };
-      MethodCall @[12] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-      Comment @[13] { };
-      MethodCall @[14] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      MethodCall @[15] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-      DataProcCall @[16] { 
-       ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-       };
-      };
-      BlankLineEl @[17] { };
-      Comment @[18] { };
-      Comment @[19] { };
-      DataGroupProg @[20] { 
-       DataOpList @.group_spec.ops = [11] {
-	DataGroupEl @["loc_err_mag_MEAN_0"] { };
-	DataGroupEl @["err_mag_MEAN_1"] { };
-	DataGroupEl @["io_err_mag_MEAN_2"] { };
-	DataGroupEl @["hand_vel_mag_MEAN_3"] { };
-	DataGroupEl @["musc_gains_mag_MEAN_4"] { };
-	DataGroupEl @["stims_p_mag_MEAN_5"] { };
-	DataGroupEl @["stims_i_mag_MEAN_6"] { };
-	DataGroupEl @["stims_d_mag_MEAN_7"] { };
-	DataGroupEl @["time_reach_completed_MEAN_8"] { };
-	DataGroupEl @["max_disp_MEAN_9"] { };
-	DataGroupEl @["vel_peaks_MEAN_10"] { };
-       };
-      };
-      Comment @[21] { };
-      MethodCall @[22] { 
-       ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-       };
-      };
-      MethodCall @[23] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-      DataProcCall @[24] { 
-       ProgArg_List @.meth_args = [2] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-       };
-      };
-      MethodCall @[25] { 
-       ProgArg_List @.meth_args = [0] {
        };
       };
      };
@@ -3382,9 +3382,9 @@ LeabraProject .projects["cereb_arm_v3"] {
      ProgVar @["init_arm_x"] { };
      ProgVar @["init_arm_y"] { };
      ProgVar @["init_arm_z"] { };
-     ProgVar @["arm_ang_x"] { };
-     ProgVar @["arm_ang_y"] { };
-     ProgVar @["arm_ang_z"] { };
+     ProgVar @["vert_axis_rot"] { };
+     ProgVar @["abduction"] { };
+     ProgVar @["rotation"] { };
      ProgVar @["arm_ang_elbow"] { };
      ProgVar @["EmerArm_ArmProData"] { };
      ProgVar @["EmerArm_ArmVisData"] { };
@@ -7102,10 +7102,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     EditMbrItem @[22] {
-     label="EmerArm_arm_ang_x";
+     label="EmerArm_vert_axis_rot";
      desc=" real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["arm_ang_x"]$$;
+     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["vert_axis_rot"]$$;
      mbr=ProgVar::real_val;
      is_numeric=1;
      is_single=1;
@@ -7114,14 +7114,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       min_val=0;
       max_val=1;
       next_val=0;
-      incr=0.1000000014901161;
+      incr=0.1;
      };
     };
     EditMbrItem @[23] {
-     label="EmerArm_arm_ang_y";
+     label="EmerArm_abduction";
      desc=" real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["arm_ang_y"]$$;
+     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["abduction"]$$;
      mbr=ProgVar::real_val;
      is_numeric=1;
      is_single=1;
@@ -7130,14 +7130,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       min_val=0;
       max_val=1;
       next_val=0;
-      incr=0.1000000014901161;
+      incr=0.1;
      };
     };
     EditMbrItem @[24] {
-     label="EmerArm_arm_ang_z";
+     label="EmerArm_arm_rotation";
      desc=" real value -- this is the current actual value of the variable at all times for global variables, and is used as an initialization value for local variables (they start with this value, but what you see here is NOT their current value as the program runs)";
      cust_desc=0;
-     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["arm_ang_z"]$$;
+     base=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].vars["rotation"]$$;
      mbr=ProgVar::real_val;
      is_numeric=1;
      is_single=1;
@@ -7146,7 +7146,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       min_val=0;
       max_val=1;
       next_val=0;
-      incr=0.1000000014901161;
+      incr=0.1;
      };
     };
     EditMbrItem @[25] {
@@ -9653,7 +9653,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [3] 0;1;2;    };
    };
    DataTable @["CycleOutputData"] {
     name="CycleOutputData";
@@ -9852,7 +9852,68 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [614] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;83;84;85;86;87;88;89;
+90;91;92;93;94;95;96;97;98;99;
+100;101;102;103;104;105;106;107;108;109;
+110;111;112;113;114;115;116;117;118;119;
+120;121;122;123;124;125;126;127;128;129;
+130;131;132;133;134;135;136;137;138;139;
+140;141;142;143;144;145;146;147;148;149;
+150;151;152;153;154;155;156;157;158;159;
+160;161;162;163;164;165;166;167;168;169;
+170;171;172;173;174;175;176;177;178;179;
+180;181;182;183;184;185;186;187;188;189;
+190;191;192;193;194;195;196;197;198;199;
+200;201;202;203;204;205;206;207;208;209;
+210;211;212;213;214;215;216;217;218;219;
+220;221;222;223;224;225;226;227;228;229;
+230;231;232;233;234;235;236;237;238;239;
+240;241;242;243;244;245;246;247;248;249;
+250;251;252;253;254;255;256;257;258;259;
+260;261;262;263;264;265;266;267;268;269;
+270;271;272;273;274;275;276;277;278;279;
+280;281;282;283;284;285;286;287;288;289;
+290;291;292;293;294;295;296;297;298;299;
+300;301;302;303;304;305;306;307;308;309;
+310;311;312;313;314;315;316;317;318;319;
+320;321;322;323;324;325;326;327;328;329;
+330;331;332;333;334;335;336;337;338;339;
+340;341;342;343;344;345;346;347;348;349;
+350;351;352;353;354;355;356;357;358;359;
+360;361;362;363;364;365;366;367;368;369;
+370;371;372;373;374;375;376;377;378;379;
+380;381;382;383;384;385;386;387;388;389;
+390;391;392;393;394;395;396;397;398;399;
+400;401;402;403;404;405;406;407;408;409;
+410;411;412;413;414;415;416;417;418;419;
+420;421;422;423;424;425;426;427;428;429;
+430;431;432;433;434;435;436;437;438;439;
+440;441;442;443;444;445;446;447;448;449;
+450;451;452;453;454;455;456;457;458;459;
+460;461;462;463;464;465;466;467;468;469;
+470;471;472;473;474;475;476;477;478;479;
+480;481;482;483;484;485;486;487;488;489;
+490;491;492;493;494;495;496;497;498;499;
+500;501;502;503;504;505;506;507;508;509;
+510;511;512;513;514;515;516;517;518;519;
+520;521;522;523;524;525;526;527;528;529;
+530;531;532;533;534;535;536;537;538;539;
+540;541;542;543;544;545;546;547;548;549;
+550;551;552;553;554;555;556;557;558;559;
+560;561;562;563;564;565;566;567;568;569;
+570;571;572;573;574;575;576;577;578;579;
+580;581;582;583;584;585;586;587;588;589;
+590;591;592;593;594;595;596;597;598;599;
+600;601;602;603;604;605;606;607;608;609;
+610;611;612;613;    };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -16568,6 +16629,1740 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
    step_prog=.projects["cereb_arm_v3"].programs.gp["UtilProgs"]["Cycle"]$$;
    step_n=1;
   };
+  Program_Group @.gp["AnalysisProgs"] {
+   name="AnalysisProgs";
+   el_typ=Program;
+   el_def=0;
+   tags=;
+   desc=;
+   Program @["AnalyzeReaches"] {
+    name="AnalyzeReaches";
+    short_nm="nlyRch";
+    tags=;
+    desc="run cerebellar training";
+    flags=NO_STOP_STEP;
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+     VEWorld @["VEWorld_0"] {
+      name="VEWorld_0";
+      desc=;
+      space_type=HASH_SPACE;
+      hash_levels {min=-3: max=10: };
+      step_type=STD_STEP;
+      stepsize=0.01;
+      quick_iters=20;
+      gravity {x=0: y=0: z=0: };
+      updt_display=1;
+      shadows {
+       on=0;
+       epsilon=1e-5;
+       precision=0.5;
+       quality=0.5;
+       near_radius=-1;
+       far_radius=-1;
+       threshold=0.1;
+       smoothing=0;
+      };
+      ode_params {
+       erp=0.2;
+       cfm=1e-5;
+       max_cor_vel=1000000;
+       contact_depth=0.001;
+       max_col_pts=4;
+      };
+      objects {
+       name="objects";
+       el_typ=VEObject;
+       el_def=0;
+      };
+      spaces {
+       name="spaces";
+       el_typ=VESpace;
+       el_def=0;
+      };
+      textures {
+       name="textures";
+       el_typ=VETexture;
+       el_def=0;
+      };
+      camera_0=NULL;
+      camera_1=NULL;
+      bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+      sun_light {
+       on=1;
+       intensity=1;
+       color {r=1: g=1: b=1: a=1: };
+      };
+      light_0=NULL;
+      light_1=NULL;
+     };
+     DataTable @["TrialStats_tmp"] {
+      name="TrialStats_tmp";
+      desc=;
+      data {
+       name="data";
+       el_typ=String_Data;
+       el_def=0;
+       float_Data @["loc_err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="loc_err_mag";
+	desc="magnitude of location error -- distance of hand away from target";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="err_mag";
+	desc="total magnitude of the target - current muscle length error";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["io_err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1751313507556915;
+	  val_type_fixed=0;
+	 };
+	};
+	name="io_err_mag";
+	desc="inferior olive err magnitude -- how much error is occuring now";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=139;
+       };
+       float_Data @["hand_vel_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2434325814247131;
+	  val_type_fixed=0;
+	 };
+	};
+	name="hand_vel_mag";
+	desc="hand velocity magnitude";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=139;
+       };
+       float_Data @["musc_gains_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1751313507556915;
+	  val_type_fixed=0;
+	 };
+	};
+	name="musc_gains_mag";
+	desc="muscle gains magnitude -- this is how the cerebellum modulates the motion";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["stims_p_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_p_mag";
+	desc="total proportional stimulation, P in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["stims_i_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_i_mag";
+	desc="total integrated error stimulation, I in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["stims_d_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2434325814247131;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_d_mag";
+	desc="total error derivative stimulation, D in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+       };
+       float_Data @["time_reach_completed"] {
+	name="time_reach_completed";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+       };
+       float_Data @["max_disp"] {
+	name="max_disp";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+       };
+       float_Data @["vel_peaks"] {
+	name="vel_peaks";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+       };
+       float_Data @["trial"] {
+	name="trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+       };
+      };
+      data_flags=AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name="row_indexes";
+      [0]       };
+     };
+     DataTable @["EpochStats_tmp"] {
+      name="EpochStats_tmp";
+      desc=;
+      data {
+       name="data";
+       el_typ=float_Data;
+       el_def=0;
+       float_Data @["loc_err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="loc_err_mag";
+	desc="mean location error magnitude over a single trial -- average distance of hand away from target";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="err_mag";
+	desc="mean magnitude of the target - current muscle length error, over a single trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["io_err_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2434325814247131;
+	  val_type_fixed=0;
+	 };
+	};
+	name="io_err_mag";
+	desc="mean inferior olive error magnitude over a single trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=139;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["hand_vel_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1733800321817398;
+	  val_type_fixed=0;
+	 };
+	};
+	name="hand_vel_mag";
+	desc="maximum hand velocity magnitude over a single trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=99;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["musc_gains_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="musc_gains_mag";
+	desc="mean muscle gain magnitude -- how much the cerebellum modulated motion, on average, over a single trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["stims_p_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_p_mag";
+	desc="mean proportional stimulation, P in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["stims_i_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_i_mag";
+	desc="mean integrated error stimulation, I in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["stims_d_mag"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.2889667153358459;
+	  val_type_fixed=0;
+	 };
+	};
+	name="stims_d_mag";
+	desc="mean error derivative stimulation, D in PID";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=165;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["time_reach_completed"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1733800321817398;
+	  val_type_fixed=0;
+	 };
+	};
+	name="time_reach_completed";
+	desc="timestep at which the hand reached the target during that trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=99;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["max_disp"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1733800321817398;
+	  val_type_fixed=0;
+	 };
+	};
+	name="max_disp";
+	desc="maximum linear distance (in cm) the hand traveled away from the target after reaching it";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=99;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["vel_peaks"] {
+	UserDataItem_List @*(.user_data_) {
+	 name=;
+	 el_typ=UserDataItem;
+	 el_def=0;
+	 UserDataItem @["view_panel_wd"] {
+	  name="view_panel_wd";
+	  value 6 0=0.1733800321817398;
+	  val_type_fixed=0;
+	 };
+	};
+	name="vel_peaks";
+	desc="total number of peaks (local maxima) in hand velocity over a single trial";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=99;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+       float_Data @["epoch"] {
+	name="epoch";
+	col_flags=SAVE_ROWS|SAVE_DATA;
+	is_matrix=0;
+	cell_geom{ 1;	};
+	calc_expr {
+	 expr=;
+	};
+	dim_names {
+	 name="dim_names";
+	[0] 	};
+	width=0;
+	ar {
+	 name="ar";
+	[0] 	};
+       };
+      };
+      data_flags=SAVE_ROWS|AUTO_CALC;
+      auto_load=NO_AUTO_LOAD;
+      auto_load_file=;
+      keygen 4 0=0;
+      row_indexes {
+       name="row_indexes";
+      [0]       };
+     };
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["network"] {
+      name="network";
+      var_type=T_Object;
+      object_type=LeabraNetwork;
+      object_val=$.projects["cereb_arm_v3"].networks["CerebNet"]$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="network to operate on -- updates batch counter on network and passes it to train program";
+      init_from=NULL;
+     };
+     ProgVar @["config_id"] {
+      name="config_id";
+      var_type=T_String;
+      string_val="train_cereb_long_reach";
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      reference=0;
+      desc="configuration to use -- lookup in Config table";
+      init_from=NULL;
+     };
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["cycles_per_reach"] {
+      name="cycles_per_reach";
+      var_type=T_Int;
+      int_val=400;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
+      reference=0;
+      desc=;
+      init_from=.projects["cereb_arm_v3"].programs.gp["UtilProgs"]["StdGlobalsInit"]$$;
+     };
+     ProgVar @["VEWorld_0"] {
+      name="VEWorld_0";
+      var_type=T_Object;
+      object_type=VEWorld;
+      object_val=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].objs["VEWorld_0"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["ArmData"] {
+      name="ArmData";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].objs["ArmLogData"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["TrialStats_tmp"] {
+      name="TrialStats_tmp";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].objs["TrialStats_tmp"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["TrialStats"] {
+      name="TrialStats";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["cereb_arm_v3"].data.gp["AnalysisData"]["TrialStats"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["EpochStats_tmp"] {
+      name="EpochStats_tmp";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].objs["EpochStats_tmp"]$$;
+      objs_ptr=1;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["EpochStats"] {
+      name="EpochStats";
+      var_type=T_Object;
+      object_type=DataTable;
+      object_val=.projects["cereb_arm_v3"].data.gp["AnalysisData"]["EpochStats"]$$;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["i"] {
+      name="i";
+      var_type=T_Int;
+      int_val=400;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["time_reach_completed"] {
+      name="time_reach_completed";
+      var_type=T_String;
+      string_val="time_reach_completed";
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["max_disp"] {
+      name="max_disp";
+      var_type=T_String;
+      string_val="max_disp";
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["vel_peaks"] {
+      name="vel_peaks";
+      var_type=T_String;
+      string_val="vel_peaks";
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["trial"] {
+      name="trial";
+      var_type=T_String;
+      string_val="trial";
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["epoch"] {
+      name="epoch";
+      var_type=T_String;
+      string_val="epoch";
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+     MethodCall @[0] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="ArmData->ResetData()";
+      result_var=NULL;
+      obj=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[1] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="ArmData->ResetData()";
+      result_var=NULL;
+      obj=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[2] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="ArmData->ResetData()";
+      result_var=NULL;
+      obj=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     MethodCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="ArmData->ResetData()";
+      result_var=NULL;
+      obj=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats"]$$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["max_disp_tmp"] {
+	name="max_disp_tmp";
+	var_type=T_Real;
+	real_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["vel_peaks_tmp"] {
+	name="vel_peaks_tmp";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["reach_complete"] {
+	name="reach_complete";
+	var_type=T_Bool;
+	bool_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     Comment @[1] {
+      desc="Get general statistic data from the trial, then add to TrialStats_tmp";
+      flags=0;
+      orig_prog_code=;
+     };
+     DataGroupProg @[2] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["ArmData"]$$;
+      dest_data_var=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      group_spec {
+       name="group_spec";
+       ops {
+	name="ops";
+	el_typ=DataGroupEl;
+	el_def=0;
+	DataGroupEl @["del_hand_err_mag_MEAN_0"] {
+	 col_name="del_hand_err_mag";
+	 name="del_hand_err_mag_MEAN_0";
+	 agg {name="AggregateSpec_41": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["err_len_mag_MEAN_1"] {
+	 col_name="err_len_mag";
+	 name="err_len_mag_MEAN_1";
+	 agg {name="AggregateSpec_47": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["hand_io_err_MEAN_2"] {
+	 col_name="hand_io_err";
+	 name="hand_io_err_MEAN_2";
+	 agg {name="AggregateSpec_45": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["hand_vel_mag_MAX_3"] {
+	 col_name="hand_vel_mag";
+	 name="hand_vel_mag_MAX_3";
+	 agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["musc_gains_mag_MEAN_4"] {
+	 col_name="musc_gains_mag";
+	 name="musc_gains_mag_MEAN_4";
+	 agg {name="AggregateSpec_46": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_p_mag_MEAN_5"] {
+	 col_name="stims_p_mag";
+	 name="stims_p_mag_MEAN_5";
+	 agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_i_mag_MEAN_6"] {
+	 col_name="stims_i_mag";
+	 name="stims_i_mag_MEAN_6";
+	 agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_d_mag_MEAN_7"] {
+	 col_name="stims_d_mag";
+	 name="stims_d_mag_MEAN_7";
+	 agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+       };
+       append_agg_name=0;
+      };
+     };
+     Comment @[3] {
+      desc="Get reach completion time and maximum displacement";
+      flags=0;
+      orig_prog_code=;
+     };
+     Comment @[4] {
+      desc="after reach was completed, then add to TrialStats_tmp";
+      flags=0;
+      orig_prog_code=;
+     };
+     MethodCall @[5] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::NewColFloat;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="col_nm";
+	required=1;
+	def_val=;
+	expr {
+	 expr="time_reach_completed";
+	};
+       };
+      };
+     };
+     MethodCall @[6] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::NewColFloat;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="col_nm";
+	required=1;
+	def_val=;
+	expr {
+	 expr="max_disp";
+	};
+       };
+      };
+     };
+     ForLoop @[7] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       If @[0] {
+	desc="find the maximum distance the hand moves away from the target after reaching it";
+	flags=0;
+	orig_prog_code=;
+	cond {
+	 expr="reach_complete";
+	};
+	true_code {
+	 name="true_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 MathCall @[0] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  result_var=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["max_disp_tmp"]$$;
+	  object_type=taMath_float;
+	  method=taMath_float::max;
+	  meth_args {
+	   name="meth_args";
+	   el_typ=ProgArg;
+	   el_def=0;
+	   ProgArg @[0] {
+	    arg_type=float;
+	    type="float";
+	    name="x";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="max_disp_tmp";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=float;
+	    type="float";
+	    name="y";
+	    required=1;
+	    def_val=;
+	    expr {
+	     expr="ArmData[\"loc_err_mag\"][i]";
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+       Else @[1] {
+	desc="find the timestep at which the hand has reached the target";
+	flags=0;
+	orig_prog_code=;
+	else_code {
+	 name="else_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 If @[0] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  cond {
+	   expr="(ArmData->GetVal(\"hand_vra\", i) <= 0.001) && (ArmData->GetVal(\"loc_err_mag\", i) <= 0.05) && (network.trial + network.epoch != 0)";
+	  };
+	  true_code {
+	   name="true_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=0;
+	    orig_prog_code=;
+	    result_var=NULL;
+	    obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+	    method=DataTable::CopyCell;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_Variant_ref;
+	      type="Variant&";
+	      name="dest_col";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="\"time_reach_completed\"";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=int;
+	      type="int";
+	      name="dest_row";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="0";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=const_DataTable_ref;
+	      type="DataTable&";
+	      name="src";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="ArmData";
+	      };
+	     };
+	     ProgArg @[3] {
+	      arg_type=const_Variant_ref;
+	      type="Variant&";
+	      name="src_col";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="\"time\"";
+	      };
+	     };
+	     ProgArg @[4] {
+	      arg_type=int;
+	      type="int";
+	      name="src_row";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="i";
+	      };
+	     };
+	    };
+	   };
+	   AssignExpr @[1] {
+	    desc=;
+	    flags=0;
+	    orig_prog_code=;
+	    result_var=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["reach_complete"]$$;
+	    expr {
+	     expr="true";
+	    };
+	   };
+	  };
+	 };
+	 Else @[1] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  else_code {
+	   name="else_code";
+	   el_typ=ProgCode;
+	   el_def=0;
+	   MethodCall @[0] {
+	    desc=;
+	    flags=0;
+	    orig_prog_code=;
+	    result_var=NULL;
+	    obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+	    method=DataTable::SetVal;
+	    meth_args {
+	     name="meth_args";
+	     el_typ=ProgArg;
+	     el_def=0;
+	     ProgArg @[0] {
+	      arg_type=const_Variant_ref;
+	      type="Variant&";
+	      name="val";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="cycles_per_reach / 200";
+	      };
+	     };
+	     ProgArg @[1] {
+	      arg_type=const_Variant_ref;
+	      type="Variant&";
+	      name="col";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="\"time_reach_completed\"";
+	      };
+	     };
+	     ProgArg @[2] {
+	      arg_type=int;
+	      type="int";
+	      name="row";
+	      required=1;
+	      def_val=;
+	      expr {
+	       expr="0";
+	      };
+	     };
+	    };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+      init {
+       expr="i = 0";
+      };
+      test {
+       expr=" i < ArmData.rows";
+      };
+      iter {
+       expr=" i++";
+      };
+     };
+     MethodCall @[8] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::SetVal;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="val";
+	required=1;
+	def_val=;
+	expr {
+	 expr="max_disp_tmp";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="col";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"max_disp\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=1;
+	def_val=;
+	expr {
+	 expr="0";
+	};
+       };
+      };
+     };
+     Comment @[9] {
+      desc="Get number of peaks (local maxima) in hand velocity, then add to TrialStats_tmp";
+      flags=0;
+      orig_prog_code=;
+     };
+     MethodCall @[10] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::NewColFloat;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="col_nm";
+	required=1;
+	def_val=;
+	expr {
+	 expr="vel_peaks";
+	};
+       };
+      };
+     };
+     ForLoop @[11] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       If @[0] {
+	desc=;
+	flags=0;
+	orig_prog_code=;
+	cond {
+	 expr="(ArmData[\"hand_vel_mag\"][i] > ArmData[\"hand_vel_mag\"][i-1]) && (ArmData[\"hand_vel_mag\"][i] > ArmData[\"hand_vel_mag\"][i+1])";
+	};
+	true_code {
+	 name="true_code";
+	 el_typ=ProgCode;
+	 el_def=0;
+	 VarIncr @[0] {
+	  desc=;
+	  flags=0;
+	  orig_prog_code=;
+	  var=.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["vel_peaks_tmp"]$$;
+	  expr {
+	   expr="1";
+	  };
+	 };
+	};
+       };
+      };
+      init {
+       expr="i = 1";
+      };
+      test {
+       expr="i < (ArmData.rows - 1)";
+      };
+      iter {
+       expr="i++";
+      };
+     };
+     MethodCall @[12] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::SetVal;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="val";
+	required=1;
+	def_val=;
+	expr {
+	 expr="vel_peaks_tmp";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="col";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"vel_peaks\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=1;
+	def_val=;
+	expr {
+	 expr="0";
+	};
+       };
+      };
+     };
+     Comment @[13] {
+      desc="Get current trial number, add to TrialStats_tmp, then update TrialStats";
+      flags=0;
+      orig_prog_code=;
+     };
+     MethodCall @[14] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::NewColFloat;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="col_nm";
+	required=1;
+	def_val=;
+	expr {
+	 expr="trial";
+	};
+       };
+      };
+     };
+     MethodCall @[15] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
+      method=DataTable::SetVal;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="val";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network.trial";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="col";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"trial\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=1;
+	def_val=;
+	expr {
+	 expr="0";
+	};
+       };
+      };
+     };
+     DataProcCall @[16] {
+      desc="add TrialStats_tmp as a row in TrialStats";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      object_type=taDataProc;
+      method=taDataProc::AppendRows;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="dest";
+	required=1;
+	def_val=;
+	expr {
+	 expr="TrialStats";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="src";
+	required=1;
+	def_val=;
+	expr {
+	 expr="TrialStats_tmp";
+	};
+       };
+      };
+     };
+     BlankLineEl @[17] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+     };
+     Comment @[18] {
+      desc="epoch-level analysis -- move somewhere else..";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// epoch-level analysis -- move somewhere else..";
+     };
+     Comment @[19] {
+      desc="Get mean statistic data from the epoch, then add to EpochStats_tmp";
+      flags=0;
+      orig_prog_code=;
+     };
+     DataGroupProg @[20] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      src_data_var=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$;
+      dest_data_var=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
+      group_spec {
+       name="group_spec";
+       ops {
+	name="ops";
+	el_typ=DataGroupEl;
+	el_def=0;
+	DataGroupEl @["loc_err_mag_MEAN_0"] {
+	 col_name="loc_err_mag";
+	 name="loc_err_mag_MEAN_0";
+	 agg {name="AggregateSpec_69": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["err_mag_MEAN_1"] {
+	 col_name="err_mag";
+	 name="err_mag_MEAN_1";
+	 agg {name="AggregateSpec_70": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["io_err_mag_MEAN_2"] {
+	 col_name="io_err_mag";
+	 name="io_err_mag_MEAN_2";
+	 agg {name="AggregateSpec_71": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["hand_vel_mag_MEAN_3"] {
+	 col_name="hand_vel_mag";
+	 name="hand_vel_mag_MEAN_3";
+	 agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["musc_gains_mag_MEAN_4"] {
+	 col_name="musc_gains_mag";
+	 name="musc_gains_mag_MEAN_4";
+	 agg {name="AggregateSpec_72": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_p_mag_MEAN_5"] {
+	 col_name="stims_p_mag";
+	 name="stims_p_mag_MEAN_5";
+	 agg {name="AggregateSpec_73": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_i_mag_MEAN_6"] {
+	 col_name="stims_i_mag";
+	 name="stims_i_mag_MEAN_6";
+	 agg {name="AggregateSpec_74": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["stims_d_mag_MEAN_7"] {
+	 col_name="stims_d_mag";
+	 name="stims_d_mag_MEAN_7";
+	 agg {name="AggregateSpec_75": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["time_reach_completed_MEAN_8"] {
+	 col_name="time_reach_completed";
+	 name="time_reach_completed_MEAN_8";
+	 agg {name="AggregateSpec_55": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["max_disp_MEAN_9"] {
+	 col_name="max_disp";
+	 name="max_disp_MEAN_9";
+	 agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+	DataGroupEl @["vel_peaks_MEAN_10"] {
+	 col_name="vel_peaks";
+	 name="vel_peaks_MEAN_10";
+	 agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	};
+       };
+       append_agg_name=0;
+      };
+     };
+     Comment @[21] {
+      desc="Get current epoch number, add to EpochStats_tmp, then update EpochStats";
+      flags=0;
+      orig_prog_code=;
+     };
+     MethodCall @[22] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
+      method=DataTable::NewColFloat;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_taString_ref;
+	type="taString&";
+	name="col_nm";
+	required=1;
+	def_val=;
+	expr {
+	 expr="epoch";
+	};
+       };
+      };
+     };
+     MethodCall @[23] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
+      method=DataTable::SetVal;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="val";
+	required=1;
+	def_val=;
+	expr {
+	 expr="network.epoch";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=const_Variant_ref;
+	type="Variant&";
+	name="col";
+	required=1;
+	def_val=;
+	expr {
+	 expr="\"epoch\"";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="row";
+	required=1;
+	def_val=;
+	expr {
+	 expr="0";
+	};
+       };
+      };
+     };
+     DataProcCall @[24] {
+      desc="add EpochStats_tmp as a row in EpochStats";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      object_type=taDataProc;
+      method=taDataProc::AppendRows;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="dest";
+	required=1;
+	def_val=;
+	expr {
+	 expr="EpochStats";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=DataTable_ptr;
+	type="DataTable*";
+	name="src";
+	required=1;
+	def_val=;
+	expr {
+	 expr="EpochStats_tmp";
+	};
+       };
+      };
+     };
+     MethodCall @[25] {
+      desc="prepare TrialStats for a new epoch";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="ArmData->ResetData()";
+      result_var=NULL;
+      obj=$.projects["cereb_arm_v3"].programs.gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$;
+      method=DataTable::ResetData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+    };
+    step_prog=.projects["cereb_arm_v3"].programs.gp["TaskProgs"]["CerebCycle"]$$;
+    step_n=1;
+   };
+  };
   Program_Group @.gp["StartupProgs"] {
    name="StartupProgs";
    el_typ=Program;
@@ -16900,1740 +18695,6 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
     };
     step_prog=NULL;
     step_n=1;
-   };
-   Program_Group @.gp["AnalysisProgs"] {
-    name="AnalysisProgs";
-    el_typ=Program;
-    el_def=0;
-    tags=;
-    desc=;
-    Program @["AnalyzeReaches"] {
-     name="AnalyzeReaches";
-     short_nm="nlyRch";
-     tags=;
-     desc="run cerebellar training";
-     flags=NO_STOP_STEP;
-     objs {
-      name="objs";
-      el_typ=taNBase;
-      el_def=0;
-      VEWorld @["VEWorld_0"] {
-       name="VEWorld_0";
-       desc=;
-       space_type=HASH_SPACE;
-       hash_levels {min=-3: max=10: };
-       step_type=STD_STEP;
-       stepsize=0.01;
-       quick_iters=20;
-       gravity {x=0: y=0: z=0: };
-       updt_display=1;
-       shadows {
-	on=0;
-	epsilon=1e-5;
-	precision=0.5;
-	quality=0.5;
-	near_radius=-1;
-	far_radius=-1;
-	threshold=0.1;
-	smoothing=0;
-       };
-       ode_params {
-	erp=0.2;
-	cfm=1e-5;
-	max_cor_vel=1000000;
-	contact_depth=0.001;
-	max_col_pts=4;
-       };
-       objects {
-	name="objects";
-	el_typ=VEObject;
-	el_def=0;
-       };
-       spaces {
-	name="spaces";
-	el_typ=VESpace;
-	el_def=0;
-       };
-       textures {
-	name="textures";
-	el_typ=VETexture;
-	el_def=0;
-       };
-       camera_0=NULL;
-       camera_1=NULL;
-       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
-       sun_light {
-	on=1;
-	intensity=1;
-	color {r=1: g=1: b=1: a=1: };
-       };
-       light_0=NULL;
-       light_1=NULL;
-      };
-      DataTable @["TrialStats_tmp"] {
-       name="TrialStats_tmp";
-       desc=;
-       data {
-	name="data";
-	el_typ=String_Data;
-	el_def=0;
-	float_Data @["loc_err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="loc_err_mag";
-	 desc="magnitude of location error -- distance of hand away from target";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="err_mag";
-	 desc="total magnitude of the target - current muscle length error";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["io_err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1751313507556915;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="io_err_mag";
-	 desc="inferior olive err magnitude -- how much error is occuring now";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=139;
-	};
-	float_Data @["hand_vel_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2434325814247131;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="hand_vel_mag";
-	 desc="hand velocity magnitude";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=139;
-	};
-	float_Data @["musc_gains_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1751313507556915;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="musc_gains_mag";
-	 desc="muscle gains magnitude -- this is how the cerebellum modulates the motion";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["stims_p_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_p_mag";
-	 desc="total proportional stimulation, P in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["stims_i_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_i_mag";
-	 desc="total integrated error stimulation, I in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["stims_d_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2434325814247131;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_d_mag";
-	 desc="total error derivative stimulation, D in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	};
-	float_Data @["time_reach_completed"] {
-	 name="time_reach_completed";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=0;
-	};
-	float_Data @["max_disp"] {
-	 name="max_disp";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=0;
-	};
-	float_Data @["vel_peaks"] {
-	 name="vel_peaks";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=0;
-	};
-	float_Data @["trial"] {
-	 name="trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=0;
-	};
-       };
-       data_flags=AUTO_CALC;
-       auto_load=NO_AUTO_LOAD;
-       auto_load_file=;
-       keygen 4 0=0;
-       row_indexes {
-	name="row_indexes";
-       [0]        };
-      };
-      DataTable @["EpochStats_tmp"] {
-       name="EpochStats_tmp";
-       desc=;
-       data {
-	name="data";
-	el_typ=float_Data;
-	el_def=0;
-	float_Data @["loc_err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="loc_err_mag";
-	 desc="mean location error magnitude over a single trial -- average distance of hand away from target";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="err_mag";
-	 desc="mean magnitude of the target - current muscle length error, over a single trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["io_err_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2434325814247131;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="io_err_mag";
-	 desc="mean inferior olive error magnitude over a single trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=139;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["hand_vel_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1733800321817398;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="hand_vel_mag";
-	 desc="maximum hand velocity magnitude over a single trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=99;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["musc_gains_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="musc_gains_mag";
-	 desc="mean muscle gain magnitude -- how much the cerebellum modulated motion, on average, over a single trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["stims_p_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_p_mag";
-	 desc="mean proportional stimulation, P in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["stims_i_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_i_mag";
-	 desc="mean integrated error stimulation, I in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["stims_d_mag"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.2889667153358459;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="stims_d_mag";
-	 desc="mean error derivative stimulation, D in PID";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=165;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["time_reach_completed"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1733800321817398;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="time_reach_completed";
-	 desc="timestep at which the hand reached the target during that trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=99;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["max_disp"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1733800321817398;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="max_disp";
-	 desc="maximum linear distance (in cm) the hand traveled away from the target after reaching it";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=99;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["vel_peaks"] {
-	 UserDataItem_List @*(.user_data_) {
-	  name=;
-	  el_typ=UserDataItem;
-	  el_def=0;
-	  UserDataItem @["view_panel_wd"] {
-	   name="view_panel_wd";
-	   value 6 0=0.1733800321817398;
-	   val_type_fixed=0;
-	  };
-	 };
-	 name="vel_peaks";
-	 desc="total number of peaks (local maxima) in hand velocity over a single trial";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=99;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-	float_Data @["epoch"] {
-	 name="epoch";
-	 col_flags=SAVE_ROWS|SAVE_DATA;
-	 is_matrix=0;
-	 cell_geom{ 1;	 };
-	 calc_expr {
-	  expr=;
-	 };
-	 dim_names {
-	  name="dim_names";
-	 [0] 	 };
-	 width=0;
-	 ar {
-	  name="ar";
-	 [0] 	 };
-	};
-       };
-       data_flags=SAVE_ROWS|AUTO_CALC;
-       auto_load=NO_AUTO_LOAD;
-       auto_load_file=;
-       keygen 4 0=0;
-       row_indexes {
-	name="row_indexes";
-       [0]        };
-      };
-     };
-     types {
-      name="types";
-      el_typ=DynEnumType;
-      el_def=0;
-     };
-     args {
-      name="args";
-      el_typ=ProgVar;
-      el_def=0;
-      ProgVar @["network"] {
-       name="network";
-       var_type=T_Object;
-       object_type=LeabraNetwork;
-       object_val=$.projects["cereb_arm_v3"].networks["CerebNet"]$;
-       objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc="network to operate on -- updates batch counter on network and passes it to train program";
-       init_from=NULL;
-      };
-      ProgVar @["config_id"] {
-       name="config_id";
-       var_type=T_String;
-       string_val="train_cereb_long_reach";
-       objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-       reference=0;
-       desc="configuration to use -- lookup in Config table";
-       init_from=NULL;
-      };
-     };
-     vars {
-      name="vars";
-      el_typ=ProgVar;
-      el_def=0;
-      ProgVar @["cycles_per_reach"] {
-       name="cycles_per_reach";
-       var_type=T_Int;
-       int_val=400;
-       objs_ptr=0;
-       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED;
-       reference=0;
-       desc=;
-       init_from=.projects["cereb_arm_v3"].programs.gp["UtilProgs"]["StdGlobalsInit"]$$;
-      };
-      ProgVar @["VEWorld_0"] {
-       name="VEWorld_0";
-       var_type=T_Object;
-       object_type=VEWorld;
-       object_val=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].objs["VEWorld_0"]$$;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["ArmData"] {
-       name="ArmData";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].objs["ArmLogData"]$$;
-       objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["TrialStats_tmp"] {
-       name="TrialStats_tmp";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].objs["TrialStats_tmp"]$$;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["TrialStats"] {
-       name="TrialStats";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["cereb_arm_v3"].data.gp["AnalysisData"]["TrialStats"]$$;
-       objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["EpochStats_tmp"] {
-       name="EpochStats_tmp";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].objs["EpochStats_tmp"]$$;
-       objs_ptr=1;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["EpochStats"] {
-       name="EpochStats";
-       var_type=T_Object;
-       object_type=DataTable;
-       object_val=.projects["cereb_arm_v3"].data.gp["AnalysisData"]["EpochStats"]$$;
-       objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["i"] {
-       name="i";
-       var_type=T_Int;
-       int_val=400;
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["time_reach_completed"] {
-       name="time_reach_completed";
-       var_type=T_String;
-       string_val="time_reach_completed";
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["max_disp"] {
-       name="max_disp";
-       var_type=T_String;
-       string_val="max_disp";
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["vel_peaks"] {
-       name="vel_peaks";
-       var_type=T_String;
-       string_val="vel_peaks";
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["trial"] {
-       name="trial";
-       var_type=T_String;
-       string_val="trial";
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-      ProgVar @["epoch"] {
-       name="epoch";
-       var_type=T_String;
-       string_val="epoch";
-       objs_ptr=0;
-       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-       reference=0;
-       desc=;
-       init_from=NULL;
-      };
-     };
-     functions {
-      name="functions";
-      el_typ=Function;
-      el_def=0;
-     };
-     init_code {
-      name="init_code";
-      el_typ=ProgCode;
-      el_def=0;
-      MethodCall @[0] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="ArmData->ResetData()";
-       result_var=NULL;
-       obj=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$$;
-       method=DataTable::ResetData;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-      MethodCall @[1] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="ArmData->ResetData()";
-       result_var=NULL;
-       obj=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$$;
-       method=DataTable::ResetData;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-      MethodCall @[2] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="ArmData->ResetData()";
-       result_var=NULL;
-       obj=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$$;
-       method=DataTable::ResetData;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-      MethodCall @[3] {
-       desc=;
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="ArmData->ResetData()";
-       result_var=NULL;
-       obj=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats"]$$;
-       method=DataTable::ResetData;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-     };
-     prog_code {
-      name="prog_code";
-      el_typ=ProgCode;
-      el_def=0;
-      LocalVars @[0] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       local_vars {
-	name="local_vars";
-	el_typ=ProgVar;
-	el_def=0;
-	ProgVar @["max_disp_tmp"] {
-	 name="max_disp_tmp";
-	 var_type=T_Real;
-	 real_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-	ProgVar @["vel_peaks_tmp"] {
-	 name="vel_peaks_tmp";
-	 var_type=T_Int;
-	 int_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-	ProgVar @["reach_complete"] {
-	 name="reach_complete";
-	 var_type=T_Bool;
-	 bool_val=0;
-	 objs_ptr=0;
-	 flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	 reference=0;
-	 desc=;
-	 init_from=NULL;
-	};
-       };
-      };
-      Comment @[1] {
-       desc="Get general statistic data from the trial, then add to TrialStats_tmp";
-       flags=0;
-       orig_prog_code=;
-      };
-      DataGroupProg @[2] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       src_data_var=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["ArmData"]$$;
-       dest_data_var=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       group_spec {
-	name="group_spec";
-	ops {
-	 name="ops";
-	 el_typ=DataGroupEl;
-	 el_def=0;
-	 DataGroupEl @["del_hand_err_mag_MEAN_0"] {
-	  col_name="del_hand_err_mag";
-	  name="del_hand_err_mag_MEAN_0";
-	  agg {name="AggregateSpec_41": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["err_len_mag_MEAN_1"] {
-	  col_name="err_len_mag";
-	  name="err_len_mag_MEAN_1";
-	  agg {name="AggregateSpec_47": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["hand_io_err_MEAN_2"] {
-	  col_name="hand_io_err";
-	  name="hand_io_err_MEAN_2";
-	  agg {name="AggregateSpec_45": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["hand_vel_mag_MAX_3"] {
-	  col_name="hand_vel_mag";
-	  name="hand_vel_mag_MAX_3";
-	  agg {name="agg": op=MAX: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["musc_gains_mag_MEAN_4"] {
-	  col_name="musc_gains_mag";
-	  name="musc_gains_mag_MEAN_4";
-	  agg {name="AggregateSpec_46": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_p_mag_MEAN_5"] {
-	  col_name="stims_p_mag";
-	  name="stims_p_mag_MEAN_5";
-	  agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_i_mag_MEAN_6"] {
-	  col_name="stims_i_mag";
-	  name="stims_i_mag_MEAN_6";
-	  agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_d_mag_MEAN_7"] {
-	  col_name="stims_d_mag";
-	  name="stims_d_mag_MEAN_7";
-	  agg {name="AggregateSpec_42": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	};
-	append_agg_name=0;
-       };
-      };
-      Comment @[3] {
-       desc="Get reach completion time and maximum displacement";
-       flags=0;
-       orig_prog_code=;
-      };
-      Comment @[4] {
-       desc="after reach was completed, then add to TrialStats_tmp";
-       flags=0;
-       orig_prog_code=;
-      };
-      MethodCall @[5] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::NewColFloat;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="col_nm";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="time_reach_completed";
-	 };
-	};
-       };
-      };
-      MethodCall @[6] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::NewColFloat;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="col_nm";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="max_disp";
-	 };
-	};
-       };
-      };
-      ForLoop @[7] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       loop_code {
-	name="loop_code";
-	el_typ=ProgCode;
-	el_def=0;
-	If @[0] {
-	 desc="find the maximum distance the hand moves away from the target after reaching it";
-	 flags=0;
-	 orig_prog_code=;
-	 cond {
-	  expr="reach_complete";
-	 };
-	 true_code {
-	  name="true_code";
-	  el_typ=ProgCode;
-	  el_def=0;
-	  MathCall @[0] {
-	   desc=;
-	   flags=0;
-	   orig_prog_code=;
-	   result_var=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["max_disp_tmp"]$$;
-	   object_type=taMath_float;
-	   method=taMath_float::max;
-	   meth_args {
-	    name="meth_args";
-	    el_typ=ProgArg;
-	    el_def=0;
-	    ProgArg @[0] {
-	     arg_type=float;
-	     type="float";
-	     name="x";
-	     required=1;
-	     def_val=;
-	     expr {
-	      expr="max_disp_tmp";
-	     };
-	    };
-	    ProgArg @[1] {
-	     arg_type=float;
-	     type="float";
-	     name="y";
-	     required=1;
-	     def_val=;
-	     expr {
-	      expr="ArmData[\"loc_err_mag\"][i]";
-	     };
-	    };
-	   };
-	  };
-	 };
-	};
-	Else @[1] {
-	 desc="find the timestep at which the hand has reached the target";
-	 flags=0;
-	 orig_prog_code=;
-	 else_code {
-	  name="else_code";
-	  el_typ=ProgCode;
-	  el_def=0;
-	  If @[0] {
-	   desc=;
-	   flags=0;
-	   orig_prog_code=;
-	   cond {
-	    expr="(ArmData->GetVal(\"hand_vra\", i) <= 0.001) && (ArmData->GetVal(\"loc_err_mag\", i) <= 0.05) && (network.trial + network.epoch != 0)";
-	   };
-	   true_code {
-	    name="true_code";
-	    el_typ=ProgCode;
-	    el_def=0;
-	    MethodCall @[0] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code=;
-	     result_var=NULL;
-	     obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-	     method=DataTable::CopyCell;
-	     meth_args {
-	      name="meth_args";
-	      el_typ=ProgArg;
-	      el_def=0;
-	      ProgArg @[0] {
-	       arg_type=const_Variant_ref;
-	       type="Variant&";
-	       name="dest_col";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="\"time_reach_completed\"";
-	       };
-	      };
-	      ProgArg @[1] {
-	       arg_type=int;
-	       type="int";
-	       name="dest_row";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="0";
-	       };
-	      };
-	      ProgArg @[2] {
-	       arg_type=const_DataTable_ref;
-	       type="DataTable&";
-	       name="src";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="ArmData";
-	       };
-	      };
-	      ProgArg @[3] {
-	       arg_type=const_Variant_ref;
-	       type="Variant&";
-	       name="src_col";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="\"time\"";
-	       };
-	      };
-	      ProgArg @[4] {
-	       arg_type=int;
-	       type="int";
-	       name="src_row";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="i";
-	       };
-	      };
-	     };
-	    };
-	    AssignExpr @[1] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code=;
-	     result_var=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["reach_complete"]$$;
-	     expr {
-	      expr="true";
-	     };
-	    };
-	   };
-	  };
-	  Else @[1] {
-	   desc=;
-	   flags=0;
-	   orig_prog_code=;
-	   else_code {
-	    name="else_code";
-	    el_typ=ProgCode;
-	    el_def=0;
-	    MethodCall @[0] {
-	     desc=;
-	     flags=0;
-	     orig_prog_code=;
-	     result_var=NULL;
-	     obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-	     method=DataTable::SetVal;
-	     meth_args {
-	      name="meth_args";
-	      el_typ=ProgArg;
-	      el_def=0;
-	      ProgArg @[0] {
-	       arg_type=const_Variant_ref;
-	       type="Variant&";
-	       name="val";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="cycles_per_reach / 200";
-	       };
-	      };
-	      ProgArg @[1] {
-	       arg_type=const_Variant_ref;
-	       type="Variant&";
-	       name="col";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="\"time_reach_completed\"";
-	       };
-	      };
-	      ProgArg @[2] {
-	       arg_type=int;
-	       type="int";
-	       name="row";
-	       required=1;
-	       def_val=;
-	       expr {
-		expr="0";
-	       };
-	      };
-	     };
-	    };
-	   };
-	  };
-	 };
-	};
-       };
-       init {
-	expr="i = 0";
-       };
-       test {
-	expr=" i < ArmData.rows";
-       };
-       iter {
-	expr=" i++";
-       };
-      };
-      MethodCall @[8] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::SetVal;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="val";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="max_disp_tmp";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="col";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="\"max_disp\"";
-	 };
-	};
-	ProgArg @[2] {
-	 arg_type=int;
-	 type="int";
-	 name="row";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="0";
-	 };
-	};
-       };
-      };
-      Comment @[9] {
-       desc="Get number of peaks (local maxima) in hand velocity, then add to TrialStats_tmp";
-       flags=0;
-       orig_prog_code=;
-      };
-      MethodCall @[10] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::NewColFloat;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="col_nm";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="vel_peaks";
-	 };
-	};
-       };
-      };
-      ForLoop @[11] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       loop_code {
-	name="loop_code";
-	el_typ=ProgCode;
-	el_def=0;
-	If @[0] {
-	 desc=;
-	 flags=0;
-	 orig_prog_code=;
-	 cond {
-	  expr="(ArmData[\"hand_vel_mag\"][i] > ArmData[\"hand_vel_mag\"][i-1]) && (ArmData[\"hand_vel_mag\"][i] > ArmData[\"hand_vel_mag\"][i+1])";
-	 };
-	 true_code {
-	  name="true_code";
-	  el_typ=ProgCode;
-	  el_def=0;
-	  VarIncr @[0] {
-	   desc=;
-	   flags=0;
-	   orig_prog_code=;
-	   var=.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].prog_code[0].local_vars["vel_peaks_tmp"]$$;
-	   expr {
-	    expr="1";
-	   };
-	  };
-	 };
-	};
-       };
-       init {
-	expr="i = 1";
-       };
-       test {
-	expr="i < (ArmData.rows - 1)";
-       };
-       iter {
-	expr="i++";
-       };
-      };
-      MethodCall @[12] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::SetVal;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="val";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="vel_peaks_tmp";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="col";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="\"vel_peaks\"";
-	 };
-	};
-	ProgArg @[2] {
-	 arg_type=int;
-	 type="int";
-	 name="row";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="0";
-	 };
-	};
-       };
-      };
-      Comment @[13] {
-       desc="Get current trial number, add to TrialStats_tmp, then update TrialStats";
-       flags=0;
-       orig_prog_code=;
-      };
-      MethodCall @[14] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::NewColFloat;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="col_nm";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="trial";
-	 };
-	};
-       };
-      };
-      MethodCall @[15] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats_tmp"]$;
-       method=DataTable::SetVal;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="val";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="network.trial";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="col";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="\"trial\"";
-	 };
-	};
-	ProgArg @[2] {
-	 arg_type=int;
-	 type="int";
-	 name="row";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="0";
-	 };
-	};
-       };
-      };
-      DataProcCall @[16] {
-       desc="add TrialStats_tmp as a row in TrialStats";
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       object_type=taDataProc;
-       method=taDataProc::AppendRows;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=DataTable_ptr;
-	 type="DataTable*";
-	 name="dest";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="TrialStats";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=DataTable_ptr;
-	 type="DataTable*";
-	 name="src";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="TrialStats_tmp";
-	 };
-	};
-       };
-      };
-      BlankLineEl @[17] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-      };
-      Comment @[18] {
-       desc="epoch-level analysis -- move somewhere else..";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="// epoch-level analysis -- move somewhere else..";
-      };
-      Comment @[19] {
-       desc="Get mean statistic data from the epoch, then add to EpochStats_tmp";
-       flags=0;
-       orig_prog_code=;
-      };
-      DataGroupProg @[20] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       src_data_var=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$;
-       dest_data_var=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
-       group_spec {
-	name="group_spec";
-	ops {
-	 name="ops";
-	 el_typ=DataGroupEl;
-	 el_def=0;
-	 DataGroupEl @["loc_err_mag_MEAN_0"] {
-	  col_name="loc_err_mag";
-	  name="loc_err_mag_MEAN_0";
-	  agg {name="AggregateSpec_69": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["err_mag_MEAN_1"] {
-	  col_name="err_mag";
-	  name="err_mag_MEAN_1";
-	  agg {name="AggregateSpec_70": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["io_err_mag_MEAN_2"] {
-	  col_name="io_err_mag";
-	  name="io_err_mag_MEAN_2";
-	  agg {name="AggregateSpec_71": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["hand_vel_mag_MEAN_3"] {
-	  col_name="hand_vel_mag";
-	  name="hand_vel_mag_MEAN_3";
-	  agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["musc_gains_mag_MEAN_4"] {
-	  col_name="musc_gains_mag";
-	  name="musc_gains_mag_MEAN_4";
-	  agg {name="AggregateSpec_72": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_p_mag_MEAN_5"] {
-	  col_name="stims_p_mag";
-	  name="stims_p_mag_MEAN_5";
-	  agg {name="AggregateSpec_73": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_i_mag_MEAN_6"] {
-	  col_name="stims_i_mag";
-	  name="stims_i_mag_MEAN_6";
-	  agg {name="AggregateSpec_74": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["stims_d_mag_MEAN_7"] {
-	  col_name="stims_d_mag";
-	  name="stims_d_mag_MEAN_7";
-	  agg {name="AggregateSpec_75": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["time_reach_completed_MEAN_8"] {
-	  col_name="time_reach_completed";
-	  name="time_reach_completed_MEAN_8";
-	  agg {name="AggregateSpec_55": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["max_disp_MEAN_9"] {
-	  col_name="max_disp";
-	  name="max_disp_MEAN_9";
-	  agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	 DataGroupEl @["vel_peaks_MEAN_10"] {
-	  col_name="vel_peaks";
-	  name="vel_peaks_MEAN_10";
-	  agg {name="agg": op=MEAN: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	 };
-	};
-	append_agg_name=0;
-       };
-      };
-      Comment @[21] {
-       desc="Get current epoch number, add to EpochStats_tmp, then update EpochStats";
-       flags=0;
-       orig_prog_code=;
-      };
-      MethodCall @[22] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
-       method=DataTable::NewColFloat;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_taString_ref;
-	 type="taString&";
-	 name="col_nm";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="epoch";
-	 };
-	};
-       };
-      };
-      MethodCall @[23] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["EpochStats_tmp"]$;
-       method=DataTable::SetVal;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="val";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="network.epoch";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=const_Variant_ref;
-	 type="Variant&";
-	 name="col";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="\"epoch\"";
-	 };
-	};
-	ProgArg @[2] {
-	 arg_type=int;
-	 type="int";
-	 name="row";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="0";
-	 };
-	};
-       };
-      };
-      DataProcCall @[24] {
-       desc="add EpochStats_tmp as a row in EpochStats";
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       object_type=taDataProc;
-       method=taDataProc::AppendRows;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-	ProgArg @[0] {
-	 arg_type=DataTable_ptr;
-	 type="DataTable*";
-	 name="dest";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="EpochStats";
-	 };
-	};
-	ProgArg @[1] {
-	 arg_type=DataTable_ptr;
-	 type="DataTable*";
-	 name="src";
-	 required=1;
-	 def_val=;
-	 expr {
-	  expr="EpochStats_tmp";
-	 };
-	};
-       };
-      };
-      MethodCall @[25] {
-       desc="prepare TrialStats for a new epoch";
-       flags=CAN_REVERT_TO_CODE;
-       orig_prog_code="ArmData->ResetData()";
-       result_var=NULL;
-       obj=$.projects["cereb_arm_v3"].programs.gp["StartupProgs"].gp["AnalysisProgs"]["AnalyzeReaches"].vars["TrialStats"]$;
-       method=DataTable::ResetData;
-       meth_args {
-	name="meth_args";
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-     };
-     step_prog=.projects["cereb_arm_v3"].programs.gp["TaskProgs"]["CerebCycle"]$$;
-     step_n=1;
-    };
    };
   };
   Program_Group @.gp["ConfigProgs"] {
@@ -25456,7 +25517,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["cur_idx"] {
       name="cur_idx";
       var_type=T_Int;
-      int_val=-1;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -26594,13 +26655,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.25: y=-0.2: z=0: };
+	   cur_pos {x=-0.2500052: y=-0.1999368: z=9.160024e-6: };
 	   cur_rot {x=0.7870862: y=-0.1665832: z=-0.5939237: rot=0: };
-	   cur_euler {x=0: y=-0: z=0: };
-	   cur_quat {s=1: x=0: y=0: z=0: };
-	   cur_quat_raw {s=1: x=0: y=0: z=0: };
-	   cur_lin_vel {x=0: y=0: z=0: };
-	   cur_ang_vel {x=0: y=0: z=0: };
+	   cur_euler {x=1.831733e-6: y=-2.247694e-6: z=1.648763e-5: };
+	   cur_quat {s=1: x=9.158758e-7: y=-1.12384e-6: z=8.243818e-6: };
+	   cur_quat_raw {s=1: x=9.158758e-7: y=-1.12384e-6: z=8.243818e-6: };
+	   cur_lin_vel {x=-0.00018848: y=-0.00237245: z=2.201613e-5: };
+	   cur_ang_vel {x=4.203825e-6: y=-6.043672e-6: z=-0.000542429: };
 	   shape=BOX;
 	   mass=1;
 	   radius=0.2;
@@ -26672,13 +26733,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   init_quat {s=-0.04964805: x=0.004059106: y=-0.9954377: z=-0.0813783: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.004999995: y=-0.1394921: z=0.0119143: };
-	   cur_rot {x=-1: y=0: z=0: rot=1.656005: };
-	   cur_euler {x=-1.656005: y=0: z=0: };
-	   cur_quat {s=0.6763484: x=-0.7365819: y=0: z=0: };
-	   cur_quat_raw {s=0.9990927: x=-0.04258972: y=0: z=0: };
-	   cur_lin_vel {x=0: y=0: z=0: };
-	   cur_ang_vel {x=0: y=0: z=0: };
+	   cur_pos {x=-0.005527521: y=-0.139843: z=-0.002952875: };
+	   cur_rot {x=-0.9999883: y=0.004752496: z=0.001091769: rot=1.549574: };
+	   cur_euler {x=-1.549572: y=0.005820048: z=-0.003560134: };
+	   cur_quat {s=0.7145701: x=-0.6995556: y=0.003324675: z=0.0007637625: };
+	   cur_quat_raw {s=0.9999379: x=0.01061863: y=0.002890958: z=-0.001810844: };
+	   cur_lin_vel {x=-0.04497845: y=-0.002425393: z=-0.1289779: };
+	   cur_ang_vel {x=0.9228141: y=0.4780935: z=-0.3110749: };
 	   shape=CAPSULE;
 	   mass=1;
 	   radius=0.015;
@@ -26733,13 +26794,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   init_quat {s=0.04959032: x=0.004712319: y=0.994279: z=-0.09448763: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.004999995: y=-0.4466395: z=0.1057633: };
-	   cur_rot {x=-1: y=0: z=0: rot=2.121797: };
-	   cur_euler {x=-2.121797: y=0: z=0: };
-	   cur_quat {s=0.488088: x=-0.8727944: y=0: z=0: };
-	   cur_quat_raw {s=0.9622897: x=-0.2720268: y=0: z=0: };
-	   cur_lin_vel {x=0: y=0: z=0: };
-	   cur_ang_vel {x=0: y=0: z=0: };
+	   cur_pos {x=-0.005734307: y=-0.3992351: z=0.1204746: };
+	   cur_rot {x=-0.9999937: y=0.002621909: z=0.002391066: rot=2.583581: };
+	   cur_euler {x=-2.583588: y=0.005807736: z=-0.003580068: };
+	   cur_quat {s=0.2754: x=-0.9613236: y=0.002520519: z=0.002298602: };
+	   cur_quat_raw {s=0.8744966: x=-0.4850196: y=0.003407633: z=-0.0001569252: };
+	   cur_lin_vel {x=-0.06560842: y=0.07713387: z=-0.2473468: };
+	   cur_ang_vel {x=-0.6005: y=0.4815107: z=-0.3053432: };
 	   shape=CAPSULE;
 	   mass=1;
 	   radius=0.015;
@@ -26794,13 +26855,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   init_quat {s=0.04959032: x=0.004712319: y=0.994279: z=-0.09448763: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.004999995: y=-0.6: z=0.2: };
-	   cur_rot {x=-1: y=0: z=0: rot=2.121797: };
-	   cur_euler {x=-2.121797: y=0: z=0: };
-	   cur_quat {s=0.488088: x=-0.8727944: y=0: z=0: };
-	   cur_quat_raw {s=0.9622897: x=-0.2720268: y=0: z=0: };
-	   cur_lin_vel {x=0: y=0: z=0: };
-	   cur_ang_vel {x=0: y=0: z=0: };
+	   cur_pos {x=-0.005190018: y=-0.4945491: z=0.2731716: };
+	   cur_rot {x=-0.9999937: y=0.002621906: z=0.002391059: rot=2.583581: };
+	   cur_euler {x=-2.583588: y=0.005807722: z=-0.003580065: };
+	   cur_quat {s=0.2754: x=-0.9613236: y=0.002520516: z=0.002298596: };
+	   cur_quat_raw {s=0.8744966: x=-0.4850196: y=0.003407626: z=-0.0001569272: };
+	   cur_lin_vel {x=-0.02141137: y=0.1686666: z=-0.1901706: };
+	   cur_ang_vel {x=-0.6005001: y=0.4815102: z=-0.3053413: };
 	   shape=CAPSULE;
 	   mass=1;
 	   radius=0.03;
@@ -26849,13 +26910,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.05: y=0: z=-0.01: };
+	   init_pos {x=-0.055: y=0: z=-0.01: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.05: y=0: z=-0.01: };
+	   cur_pos {x=-0.055: y=0: z=-0.01: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -26910,13 +26971,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0.015: y=-0.05066966: z=-0.005708424: };
+	   init_pos {x=0.009758083: y=-0.04982938: z=-0.01114597: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0.015: y=-0.05066966: z=-0.005708424: };
+	   cur_pos {x=0.009758083: y=-0.04982938: z=-0.01114597: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -26971,13 +27032,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.05: y=0: z=0.01: };
+	   init_pos {x=-0.055: y=0: z=0.01: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.05: y=0: z=0.01: };
+	   cur_pos {x=-0.055: y=0: z=0.01: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27032,13 +27093,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0.015: y=-0.04896754: z=0.01421901: };
+	   init_pos {x=0.009872945: y=-0.05025423: z=0.008849195: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0.015: y=-0.04896754: z=0.01421901: };
+	   cur_pos {x=0.009872945: y=-0.05025423: z=0.008849195: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27093,13 +27154,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.11: y=-0.07: z=0: };
+	   init_pos {x=-0.115: y=-0.07: z=0: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.11: y=-0.07: z=0: };
+	   cur_pos {x=-0.115: y=-0.07: z=0: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27154,13 +27215,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.02: y=-0.0498186: z=0.004255295: };
+	   init_pos {x=-0.02518367: y=-0.04991721: z=-0.0009446846: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.02: y=-0.0498186: z=0.004255295: };
+	   cur_pos {x=-0.02518367: y=-0.04991721: z=-0.0009446846: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27215,13 +27276,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.08: y=0: z=0.01: };
+	   init_pos {x=-0.08499999: y=0: z=0.01: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.08: y=0: z=0.01: };
+	   cur_pos {x=-0.08499999: y=0: z=0.01: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27276,13 +27337,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=0.001702118: z=0.01992744: };
+	   init_pos {x=-0.004885133: y=-0.0004248524: z=0.01999516: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=0.001702118: z=0.01992744: };
+	   cur_pos {x=-0.004885133: y=-0.0004248524: z=0.01999516: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27337,13 +27398,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.08: y=0: z=-0.01: };
+	   init_pos {x=-0.08499999: y=0: z=-0.01: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.08: y=0: z=-0.01: };
+	   cur_pos {x=-0.08499999: y=0: z=-0.01: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27398,13 +27459,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=-0.001702118: z=-0.01992744: };
+	   init_pos {x=-0.005114858: y=0.0004248524: z=-0.01999516: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=-0.001702118: z=-0.01992744: };
+	   cur_pos {x=-0.005114858: y=0.0004248524: z=-0.01999516: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27459,13 +27520,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.14: y=0: z=0.06: };
+	   init_pos {x=-0.145: y=0: z=0.06: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.14: y=0: z=0.06: };
+	   cur_pos {x=-0.145: y=0: z=0.06: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27520,13 +27581,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0.01: y=-0.05893126: z=0.01507007: };
+	   init_pos {x=0.004836232: y=-0.06023411: z=0.008666079: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0.01: y=-0.05893126: z=0.01507007: };
+	   cur_pos {x=0.004836232: y=-0.06023411: z=0.008666079: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27581,13 +27642,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.1: y=0: z=-0.05: };
+	   init_pos {x=-0.105: y=0: z=-0.05: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.1: y=0: z=-0.05: };
+	   cur_pos {x=-0.105: y=0: z=-0.05: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27642,13 +27703,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0.01: y=-0.06063338: z=-0.004857366: };
+	   init_pos {x=0.004721371: y=-0.05980926: z=-0.01132908: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0.01: y=-0.06063338: z=-0.004857366: };
+	   cur_pos {x=0.004721371: y=-0.05980926: z=-0.01132908: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27703,13 +27764,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.14: y=-0.12: z=0.06: };
+	   init_pos {x=-0.145: y=-0.12: z=0.06: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.14: y=-0.12: z=0.06: };
+	   cur_pos {x=-0.145: y=-0.12: z=0.06: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27764,13 +27825,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.01: y=-0.05893126: z=0.01507007: };
+	   init_pos {x=-0.0151633: y=-0.06016291: z=0.008782479: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.01: y=-0.05893126: z=0.01507007: };
+	   cur_pos {x=-0.0151633: y=-0.06016291: z=0.008782479: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27825,13 +27886,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.1: y=-0.12: z=-0.05: };
+	   init_pos {x=-0.105: y=-0.12: z=-0.05: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.1: y=-0.12: z=-0.05: };
+	   cur_pos {x=-0.105: y=-0.12: z=-0.05: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27886,13 +27947,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.01: y=-0.06063338: z=-0.004857366: };
+	   init_pos {x=-0.01527816: y=-0.05973806: z=-0.01121268: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.01: y=-0.06063338: z=-0.004857366: };
+	   cur_pos {x=-0.01527816: y=-0.05973806: z=-0.01121268: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -27947,13 +28008,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.02: y=0.01: z=0.02: };
+	   init_pos {x=-0.02499999: y=0.01: z=0.02: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.02: y=0.01: z=0.02: };
+	   cur_pos {x=-0.02499999: y=0.01: z=0.02: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28008,13 +28069,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=-0.353586: z=0.06619093: };
+	   init_pos {x=-0.006276499: y=-0.3702329: z=0.007144341: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=-0.353586: z=0.06619093: };
+	   cur_pos {x=-0.006276499: y=-0.3702329: z=0.007144341: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28069,13 +28130,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=-0.06105891: z=-0.009839226: };
+	   init_pos {x=-0.005307112: y=-0.05966745: z=-0.01626967: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=-0.06105891: z=-0.009839226: };
+	   cur_pos {x=-0.005307112: y=-0.05966745: z=-0.01626967: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28130,13 +28191,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=-0.2958967: z=0.007267667: };
+	   init_pos {x=-0.006096734: y=-0.2898265: z=-0.01115308: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=-0.2958967: z=0.007267667: };
+	   cur_pos {x=-0.006096734: y=-0.2898265: z=-0.01115308: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28191,13 +28252,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=0: y=-0.1481792: z=0.02771147: };
+	   init_pos {x=-0.005466274: y=-0.1502839: z=0.01181311: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=0: y=-0.1481792: z=0.02771147: };
+	   cur_pos {x=-0.005466274: y=-0.1502839: z=0.01181311: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28252,13 +28313,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   rel_euler {x=0: y=0: z=0: };
 	   rel_lin_vel {x=0: y=0: z=0: };
 	   rel_ang_vel {x=0: y=0: z=0: };
-	   init_pos {x=-0.01: y=-0.345066: z=0.06095551: };
+	   init_pos {x=-0.01623944: y=-0.3601995: z=0.007414759: };
 	   init_rot {x=0: y=0: z=1: rot=0: };
 	   init_euler {x=0: y=0: z=0: };
 	   init_quat {s=1: x=0: y=0: z=0: };
 	   init_lin_vel {x=0: y=0: z=0: };
 	   init_ang_vel {x=0: y=0: z=0: };
-	   cur_pos {x=-0.01: y=-0.345066: z=0.06095551: };
+	   cur_pos {x=-0.01623944: y=-0.3601995: z=0.007414759: };
 	   cur_rot {x=0: y=0: z=1: rot=0: };
 	   cur_euler {x=0: y=-0: z=0: };
 	   cur_quat {s=1: x=0: y=0: z=0: };
@@ -28366,10 +28427,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   pos2=0;
 	   pos2_norm=0;
 	   vel2=0;
-	   cur_force1 {x=0: y=0: z=0: };
-	   cur_torque1 {x=0: y=0: z=0: };
-	   cur_force2 {x=0: y=0: z=0: };
-	   cur_torque2 {x=0: y=0: z=0: };
+	   cur_force1 {x=-35.7466: y=63.15235: z=38.38651: };
+	   cur_torque1 {x=7.677426: y=-9.404581: z=22.62157: };
+	   cur_force2 {x=35.7466: y=-63.15235: z=-38.38651: };
+	   cur_torque2 {x=-5.226423: y=0.09436279: z=-5.022235: };
 	  };
 	  VEJoint @["Elbow"] {
 	   name="Elbow";
@@ -28424,16 +28485,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    erp=0.2;
 	    cfm=1e-5;
 	   };
-	   pos=0.4657922;
-	   pos_norm=0.5741353;
-	   vel=0;
+	   pos=1.034016;
+	   pos_norm=0.6645736;
+	   vel=1.523324;
 	   pos2=0;
 	   pos2_norm=0;
 	   vel2=0;
-	   cur_force1 {x=-0.8015004: y=1.044005: z=-1.283046: };
-	   cur_torque1 {x=0.08914219: y=-0.1306331: z=-0.0529587: };
-	   cur_force2 {x=0.8015004: y=-1.044005: z=1.283046: };
-	   cur_torque2 {x=-0.2164603: y=0.06674662: z=0.08050852: };
+	   cur_force1 {x=3.819028: y=20.87204: z=-8.636827: };
+	   cur_torque1 {x=1.620467: y=0.8198686: z=1.243557: };
+	   cur_force2 {x=-3.819028: y=-20.87204: z=8.636827: };
+	   cur_torque2 {x=-1.965214: y=-0.3471564: z=-0.2536253: };
 	  };
 	  VEJoint @["Wrist"] {
 	   name="Wrist";
@@ -28494,10 +28555,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   pos2=0;
 	   pos2_norm=0;
 	   vel2=0;
-	   cur_force1 {x=0: y=0: z=0: };
-	   cur_torque1 {x=0: y=0: z=0: };
-	   cur_force2 {x=0: y=0: z=0: };
-	   cur_torque2 {x=0: y=0: z=0: };
+	   cur_force1 {x=1.853681: y=2.449579: z=-4.02229: };
+	   cur_torque1 {x=0.006105031: y=0.2776066: z=0.1843658: };
+	   cur_force2 {x=-1.853681: y=-2.449579: z=4.02229: };
+	   cur_torque2 {x=0.005772982: y=0.00621268: z=-0.006045482: };
 	  };
 	 };
 	 torso=$.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].objs["VEWorld_0"].objects.gp["EmerGroup"]["EmerBody"].bodies["EmerTorso"]$;
@@ -28521,9 +28582,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 io_err {ra_dt=1: hand_thr=0.07: musc_thr=0.01: };
 	 damping {fac=0: thr=0.05: };
 	 alens {humerus=0.28: humerus_radius=0.015: ulna=0.22: ulna_radius=0.015: hand=0.08: hand_radius=0.03: elbow_gap=0.08: wrist_gap=0.03: sh_off_x=0: sh_off_y=0: sh_off_z=0: sh_x=0.245: sh_y=0.2: sh_z=0: humerus_mid=0.14: ulna_mid=0.11: hand_mid=0.04: elbow_gap_mid=0.04: wrist_gap_mid=0.015: La=0.32: Lf=0.33: Ltot=0.65: };
-	 init_angs {x=0.08520517: y=0: z=0: elbow=0.4657923: };
-	 targ_angs {x=0.6529517: y=0: z=0.4334465: elbow=1.324203: };
-	 cur_angs {x=0.08520521: y=0: z=0: elbow=0.4657921: };
+	 init_angs {vert_axis_rot=0: abduction=0: rotation=0: elbow=1: };
+	 targ_angs {vert_axis_rot=0: abduction=0: rotation=0: elbow=0: };
+	 cur_angs {vert_axis_rot=0: abduction=0: rotation=0: elbow=0: };
 	 n_musc=12;
 	 muscles {
 	  name="muscles";
@@ -28532,122 +28593,122 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  VELinearMuscle @["VELinearMuscle_1"] {
 	   name="VELinearMuscle_1";
 	   IPprox {x=-0.05: y=0: z=-0.01: };
-	   IPdist {x=0.015: y=-0.05066966: z=-0.005708424: };
-	   p3 {x=0.03: y=0.01546756: z=-0.02906487: };
+	   IPdist {x=0.01475808: y=-0.04982938: z=-0.01114597: };
+	   p3 {x=0.03: y=0.01427348: z=-0.03145303: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1554085;
-	   old_length2=0.1554085;
+	   old_length1=0.1530771;
+	   old_length2=0.1531758;
 	  };
 	  VELinearMuscle @["VELinearMuscle_2"] {
 	   name="VELinearMuscle_2";
 	   IPprox {x=-0.05: y=0: z=0.01: };
-	   IPdist {x=0.015: y=-0.04896754: z=0.01421901: };
-	   p3 {x=0.03: y=0.01360217: z=0.03279565: };
+	   IPdist {x=0.01487294: y=-0.05025423: z=0.008849195: };
+	   p3 {x=0.03: y=0.01477802: z=0.03044397: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1512598;
-	   old_length2=0.1512598;
+	   old_length1=0.1539025;
+	   old_length2=0.153744;
 	  };
 	  VELinearMuscle @["VELinearMuscle_3"] {
 	   name="VELinearMuscle_3";
 	   IPprox {x=-0.11: y=-0.07: z=0: };
-	   IPdist {x=-0.02: y=-0.0498186: z=0.004255295: };
+	   IPdist {x=-0.02018367: y=-0.04991721: z=-0.0009446846: };
 	   p3 {x=0: y=0: z=0: };
 	   bend=0;
 	   gain=1;
-	   old_length1=0.09233308;
-	   old_length2=0.09233308;
+	   old_length1=0.09210744;
+	   old_length2=0.09216336;
 	  };
 	  VELinearMuscle @["VELinearMuscle_4"] {
 	   name="VELinearMuscle_4";
 	   IPprox {x=-0.08: y=0: z=0.01: };
-	   IPdist {x=0: y=0.001702118: z=0.01992744: };
+	   IPdist {x=0.0001148623: y=-0.0004248524: z=0.01999516: };
 	   p3 {x=0: y=0: z=0: };
 	   bend=0;
 	   gain=1;
-	   old_length1=0.08063158;
-	   old_length2=0.08063158;
+	   old_length1=0.08069003;
+	   old_length2=0.0806489;
 	  };
 	  VELinearMuscle @["VELinearMuscle_5"] {
 	   name="VELinearMuscle_5";
 	   IPprox {x=-0.08: y=0: z=-0.01: };
-	   IPdist {x=0: y=-0.001702118: z=-0.01992744: };
-	   p3 {x=0: y=0: z=0: };
-	   bend=0;
+	   IPdist {x=-0.0001148623: y=0.0004248524: z=-0.01999516: };
+	   p3 {x=0: y=0.0004242625: z=-0.02: };
+	   bend=1;
 	   gain=1;
-	   old_length1=0.08063158;
-	   old_length2=0.08063158;
+	   old_length1=0.08069097;
+	   old_length2=0.08064931;
 	  };
 	  VELinearMuscle @["VELinearMuscle_6"] {
 	   name="VELinearMuscle_6";
 	   IPprox {x=-0.14: y=0: z=0.06: };
-	   IPdist {x=0.01: y=-0.05893126: z=0.01507007: };
-	   p3 {x=-0.02796766: y=-0.0437413: z=0.03: };
+	   IPdist {x=0.009836228: y=-0.06023411: z=0.008666079: };
+	   p3 {x=-0.02802734: y=-0.04421871: z=0.03: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1674875;
-	   old_length2=0.1674875;
+	   old_length1=0.1702885;
+	   old_length2=0.170168;
 	  };
 	  VELinearMuscle @["VELinearMuscle_7"] {
 	   name="VELinearMuscle_7";
 	   IPprox {x=-0.1: y=0: z=-0.05: };
-	   IPdist {x=0.01: y=-0.06063338: z=-0.004857366: };
-	   p3 {x=-0.006656904: y=-0.03991214: z=-0.04665691: };
+	   IPdist {x=0.009721366: y=-0.05980926: z=-0.01132908: };
+	   p3 {x=-0.006789539: y=-0.04110586: z=-0.04678954: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1511112;
-	   old_length2=0.1511112;
+	   old_length1=0.1455862;
+	   old_length2=0.1459083;
 	  };
 	  VELinearMuscle @["VELinearMuscle_8"] {
 	   name="VELinearMuscle_8";
 	   IPprox {x=-0.14: y=-0.12: z=0.06: };
-	   IPdist {x=-0.01: y=-0.05893126: z=0.01507007: };
+	   IPdist {x=-0.01016331: y=-0.06016291: z=0.008782479: };
 	   p3 {x=-0.03: y=-0.06: z=0.03: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1538219;
-	   old_length2=0.1538219;
+	   old_length1=0.1577526;
+	   old_length2=0.1575868;
 	  };
 	  VELinearMuscle @["VELinearMuscle_9"] {
 	   name="VELinearMuscle_9";
 	   IPprox {x=-0.1: y=-0.12: z=-0.05: };
-	   IPdist {x=-0.01: y=-0.06063338: z=-0.004857366: };
+	   IPdist {x=-0.01027817: y=-0.05973806: z=-0.01121268: };
 	   p3 {x=-0.01: y=-0.07: z=-0.05: };
 	   bend=1;
 	   gain=1;
-	   old_length1=0.1490604;
-	   old_length2=0.1490604;
+	   old_length1=0.1433045;
+	   old_length2=0.1435613;
 	  };
 	  VELinearMuscle @["VELinearMuscle_10"] {
 	   name="VELinearMuscle_10";
 	   IPprox {x=-0.02: y=0.01: z=0.02: };
-	   IPdist {x=0: y=-0.353586: z=0.06619093: };
+	   IPdist {x=-0.001276503: y=-0.3702329: z=0.007144341: };
 	   p3 {x=0: y=0: z=0: };
 	   bend=0;
 	   gain=1;
-	   old_length1=0.3670536;
-	   old_length2=0.3670536;
+	   old_length1=0.3808493;
+	   old_length2=0.3807729;
 	  };
 	  VELinearMuscle @["VELinearMuscle_11"] {
 	   name="VELinearMuscle_11";
-	   IPprox {x=0: y=-0.06105891: z=-0.009839226: };
-	   IPdist {x=0: y=-0.2958967: z=0.007267667: };
+	   IPprox {x=-0.0003071169: y=-0.05966745: z=-0.01626967: };
+	   IPdist {x=-0.001096738: y=-0.2898265: z=-0.01115308: };
 	   p3 {x=0: y=0: z=0: };
 	   bend=0;
 	   gain=1;
-	   old_length1=0.23546;
-	   old_length2=0.23546;
+	   old_length1=0.2302173;
+	   old_length2=0.2302173;
 	  };
 	  VELinearMuscle @["VELinearMuscle_12"] {
 	   name="VELinearMuscle_12";
-	   IPprox {x=0: y=-0.1481792: z=0.02771147: };
-	   IPdist {x=-0.01: y=-0.345066: z=0.06095551: };
+	   IPprox {x=-0.0004662789: y=-0.1502839: z=0.01181311: };
+	   IPdist {x=-0.01123944: y=-0.3601995: z=0.007414759: };
 	   p3 {x=0: y=0: z=0: };
 	   bend=0;
 	   gain=1;
-	   old_length1=0.1999239;
-	   old_length2=0.1999239;
+	   old_length1=0.2102379;
+	   old_length2=0.2102379;
 	  };
 	 };
 	 should_loc {x=-0.004999995: y=0: z=0: };
@@ -29327,7 +29388,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [9] 0;1;2;3;4;5;6;7;8;      };
      };
      DataTable @["ArmInputData"] {
       name="ArmInputData";
@@ -29361,7 +29422,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1] 0;	};
+	[1] 0.044999994;	};
        };
        float_Data @["targ_lengths"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29388,8 +29449,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 12 1] 0;0;0;0;0;0;0;0;0;0;
-0;0;	};
+	[1 1 1 12 1] 0.8572675;0.79910469;0.085398309;0.50570494;0.50481796;-13.633298;1.3305236;-1.2594478;-4.9657378;0.92986625;
+0.04542096;0.9655081;	};
        };
        float_Data @["lengths"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29416,8 +29477,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 12 1] 0;0;0;0;0;0;0;0;0;0;
-0;0;	};
+	[1 1 1 12 1] 0.85726857;0.79910374;0.085398309;0.50570494;0.50481796;-13.63334;1.330551;-1.2594515;-4.9656949;0.92986548;
+0.045421187;0.9655081;	};
        };
        float_Data @["vels"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29444,8 +29505,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 12 1] 0;0;0;0;0;0;0;0;0;0;
-0;0;	};
+	[1 1 1 12 1] 0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;0.5;
+0.5;0.5;	};
        };
        float_Data @["targ_pos"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29472,7 +29533,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 3 1] 0;0;0;	};
+	[1 1 1 3 1] 0.66920352;0.39980882;0.79465717;	};
        };
        float_Data @["hand_pos"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29499,7 +29560,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 3 1] 0;0;0;	};
+	[1 1 1 3 1] 0.5;0.096518427;0.52720833;	};
        };
        float_Data @["hand_vel"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29526,7 +29587,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	width=0;
 	ar {
 	 name="ar";
-	[1 1 1 3 1] 0;0;0;	};
+	[1 1 1 3 1] 0.5;0.5;0.5;	};
        };
        float_Data @["musc_io_err"] {
 	UserDataItem_List @*(.user_data_) {
@@ -29651,7 +29712,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [7] 0;1;2;3;4;5;6;      };
+      [16] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;      };
      };
      DataTable @["EmerArm_ArmVisData"] {
       name="EmerArm_ArmVisData";
@@ -29739,10 +29801,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [30] 0;1;2;3;4;5;6;7;8;9;
+      [39] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
 20;21;22;23;24;25;26;27;28;29;
-      };
+30;31;32;33;34;35;36;37;38;      };
      };
      DataTable @["EmerArm_ArmEffData"] {
       name="EmerArm_ArmEffData";
@@ -29830,7 +29892,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [3] 0;1;2;      };
+      [10] 0;1;2;3;4;5;6;7;8;9;
+      };
      };
     };
     types {
@@ -30166,7 +30229,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["time_avg_vel"] {
       name="time_avg_vel";
       var_type=T_Real;
-      real_val=0.000269767886493355;
+      real_val=-0.0380849801003933;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -30188,7 +30251,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_DynEnum;
       dyn_enum_val {
        enum_type=.projects["cereb_arm_v3"].programs.gp["EnviroProgs"]["EmerArm"].types["InitType"]$$;
-       value=1;
+       value=2;
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -30226,30 +30289,30 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       desc=;
       init_from=NULL;
      };
-     ProgVar @["arm_ang_x"] {
-      name="arm_ang_x";
+     ProgVar @["vert_axis_rot"] {
+      name="vert_axis_rot";
       var_type=T_Real;
-      real_val=1.5;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
      };
-     ProgVar @["arm_ang_y"] {
-      name="arm_ang_y";
+     ProgVar @["abduction"] {
+      name="abduction";
       var_type=T_Real;
-      real_val=-1.5;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
      };
-     ProgVar @["arm_ang_z"] {
-      name="arm_ang_z";
+     ProgVar @["rotation"] {
+      name="rotation";
       var_type=T_Real;
-      real_val=1.5;
+      real_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -30259,7 +30322,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["arm_ang_elbow"] {
       name="arm_ang_elbow";
       var_type=T_Real;
-      real_val=1.5;
+      real_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -31243,31 +31306,31 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	     ProgArg @[0] {
 	      arg_type=float;
 	      type="float";
-	      name="x_ang";
+	      name="vert_axis_rot";
 	      required=1;
 	      def_val=;
 	      expr {
-	       expr="arm_ang_x";
+	       expr="vert_axis_rot";
 	      };
 	     };
 	     ProgArg @[1] {
 	      arg_type=float;
 	      type="float";
-	      name="y_ang";
+	      name="abduction";
 	      required=1;
 	      def_val=;
 	      expr {
-	       expr="arm_ang_y";
+	       expr="abduction";
 	      };
 	     };
 	     ProgArg @[2] {
 	      arg_type=float;
 	      type="float";
-	      name="z_ang";
+	      name="rotation";
 	      required=1;
 	      def_val=;
 	      expr {
-	       expr="arm_ang_z";
+	       expr="rotation";
 	      };
 	     };
 	     ProgArg @[3] {
@@ -39152,7 +39215,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.03989813104271889;
+     value 6 0=0.03904923424124718;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -39162,7 +39225,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 6 0=0.7979626655578613;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -39172,7 +39235,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_splitter_state"] {
      name="view_splitter_state";
-     value 9 0="AAAA/wAAAAEAAAADAAABEQAAApUAAAOhAQAAAAcBAAAAAQE=";
+     value 9 0="AAAA/wAAAAEAAAADAAABIgAAAYsAAAJFAQAAAAcBAAAAAQE=";
      val_type_fixed=0;
     };
    };
@@ -40067,7 +40130,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=8: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -40095,7 +40158,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0.04499999: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -40134,7 +40197,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -40153,7 +40216,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.4383421: fix_max=0: max=0.4383421: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -40172,7 +40235,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -40191,7 +40254,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -40210,7 +40273,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=3.464102: fix_max=0: max=3.464102: };
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -40229,7 +40292,7 @@ taTransform @*(.m_transform) {scale={x=0.3299354: y=0.3299354: z=0.3299354: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.4618468: fix_max=0: max=0.4628021: };
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -41029,7 +41092,7 @@ taTransform @*(.m_transform) {scale={x=0.3357125: y=0.3357126: z=0.3357124: }: r
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=8: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -41134,7 +41197,7 @@ taTransform @*(.m_transform) {scale={x=0.3357125: y=0.3357126: z=0.3357124: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.3998088: fix_max=0: max=0.3998088: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -41991,7 +42054,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=8: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -42019,7 +42082,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=1: min=0: fix_max=0: max=0.04499999: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -42036,7 +42099,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=-1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=8: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -42058,7 +42121,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=1.446292e-5: fix_max=0: max=11.04285: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -42077,7 +42140,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=1.441644e-5: fix_max=0: max=0.4247147: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -42096,7 +42159,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=9.497664e-9: fix_max=0: max=0.0002810971: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -42115,7 +42178,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=10.63453: };
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -42134,7 +42197,7 @@ taTransform @*(.m_transform) {scale={x=0.3567603: y=0.3567603: z=0.3567603: }: r
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.6375092: fix_max=0: max=0.6389387: };
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -43047,7 +43110,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=8: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -43075,7 +43138,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0.005: fix_max=0: max=0.04499999: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -43114,7 +43177,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -43133,7 +43196,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0.4383421: fix_max=0: max=0.4383421: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -43152,7 +43215,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -43171,7 +43234,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -43190,7 +43253,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=3.464102: fix_max=0: max=3.464102: };
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -50072,12 +50135,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.04046858474612236;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.7342954277992249;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -50282,7 +50345,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interval=10;
       dt_time=144.0001;
      };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
      syn_delay {
       on=0;
       delay=4;
@@ -50348,7 +50411,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interval=10;
       dt_time=144.0001;
      };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
      syn_delay {
       on=0;
       delay=4;
@@ -50877,7 +50940,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interval=10;
       dt_time=142.8571;
      };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
      syn_delay {
       on=0;
       delay=4;
@@ -51790,7 +51853,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=3514;
-   n_cons=216136;
+   n_cons=216005;
    max_prjns=6;
    max_disp_size {x=92: y=50: z=2: };
    max_disp_size2d {x=50: y=174: };
