@@ -38,6 +38,7 @@ void LeabraLayer::Initialize() {
   cos_diff = 0.0f;
   cos_diff_avg = 0.0f;
   cos_diff_lrate = 1.0f;
+  trial_cos_diff = 0.0f;
   da_updt = false;
 
   avg_netin_n = 0;
@@ -109,6 +110,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   cos_diff = cp.cos_diff;
   cos_diff_avg = cp.cos_diff_avg;
   cos_diff_lrate = cp.cos_diff_lrate;
+  trial_cos_diff = cp.trial_cos_diff;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!

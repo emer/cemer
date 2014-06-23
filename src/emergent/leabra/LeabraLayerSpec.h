@@ -637,7 +637,9 @@ public:
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
 
   virtual float  Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute cosine (normalized dot product) of trail activation difference in this layer: act_p compared to p_act_p -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual float  Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2 -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
 

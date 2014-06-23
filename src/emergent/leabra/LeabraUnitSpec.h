@@ -75,7 +75,8 @@ public:
 
   float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
-  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions (what currents to include or exclude in determining what amount of inhibition would keep the unit just at threshold firing) -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
+  bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
+  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions -- IRRELEVANT for FFFB Inhibition -- determines what currents to include or exclude in computing amount of inhibition to keep the unit just at threshold firing -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
 
   TA_SIMPLE_BASEFUNS(LeabraActFunExSpec);
 private:

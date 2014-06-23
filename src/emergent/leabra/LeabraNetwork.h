@@ -406,6 +406,11 @@ public:
   float		avg_cos_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos diff in this epoch
   int		avg_cos_diff_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cos diff value computation for this epoch
 
+  float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) activation difference across trials between act_p and p_act_p activations on this trial -- excludes input layers which are represented in the cos_err measure
+  float		avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) trial diff (computed over previous epoch)
+  float		avg_trial_cos_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average trial cos diff in this epoch
+  int		avg_trial_cos_diff_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average trial cos diff value computation for this epoch
+
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
 
@@ -632,6 +637,8 @@ public:
   // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
   virtual float	Compute_CosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  virtual float	Compute_TrialCosDiff();
+  // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between p_act_p and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual float	Compute_CosDiff2();
   // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual void	Compute_MinusCycles();
@@ -671,6 +678,8 @@ public:
   // #CAT_Statistic compute average sending pct (at an epoch-level timescale)
   virtual void	Compute_AvgCosDiff();
   // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgTrialCosDiff();
+  // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
   virtual void	Compute_CtLrnTrigAvgs();
   // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
   void	Compute_EpochStats() override;

@@ -435,6 +435,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = 0.0f;
   lay->cos_diff_avg = 0.0f;
   lay->cos_diff_lrate = 1.0f;
+  lay->trial_cos_diff = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -1915,6 +1916,25 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
     cos_diff_lrate.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
     lay->cos_diff_lrate = cos_diff_lrate.LrateMod(lay->cos_diff_avg, lay->cos_diff);
   }
+
+  return cosv;
+}
+
+float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->trial_cos_diff = 0.0f;
+  float cosv = 0.0f;
+  float ssm = 0.0f;
+  float sst = 0.0f;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    cosv += u->act_p * u->p_act_p;
+    ssm += u->p_act_p * u->p_act_p;
+    sst += u->act_p * u->act_p;
+  }
+  float dist = sqrtf(ssm * sst);
+  if(dist != 0.0f)
+    cosv /= dist;
+  lay->trial_cos_diff = cosv;
 
   return cosv;
 }

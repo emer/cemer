@@ -80,6 +80,7 @@ void LeabraActFunExSpec::Initialize() {
 void LeabraActFunExSpec::Defaults_init() {
   avg_dt = .005f;
   avg_init = 0.15f;
+  rescale_ctxt = true;
 }
 
 void SpikeFunSpec::Initialize() {
@@ -860,6 +861,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
       u->bias_scale /= (float)u->n_recv_cons; // one over n scaling for bias!
   }
 
+  float ctxt_rel_scale = 0.0f;
   // now renormalize, each one separately..
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -872,10 +874,21 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
         recv_gp->scale_eff /= inhib_net_scale;
     }
     else {
-      if(u->net_scale > 0.0f)
+      if(u->net_scale > 0.0f) {
         recv_gp->scale_eff /= u->net_scale;
+        if(cs->IsTICtxtCon()) {
+          ctxt_rel_scale += recv_gp->scale_eff;
+        }
+      }
     }
   }
+
+  if(act.rescale_ctxt && u->ctxt_scale > 0.0f && ctxt_rel_scale > 0.0f) {
+    // context is computed in plus phase, with plus phase scaling.  thus we need to do it 
+    // both ways -- up and down -- in either case, always going toward current
+    u->act_ctxt *= (ctxt_rel_scale / u->ctxt_scale);
+  }
+  u->ctxt_scale = ctxt_rel_scale;
 }
 
 void LeabraUnitSpec::Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork* net) {

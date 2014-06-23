@@ -278,6 +278,11 @@ void LeabraNetwork::Initialize() {
   avg_cos_diff_sum = 0.0f;
   avg_cos_diff_n = 0;
 
+  trial_cos_diff = 0.0f;
+  avg_trial_cos_diff = 1.0f;
+  avg_trial_cos_diff_sum = 0.0f;
+  avg_trial_cos_diff_n = 0;
+
   inhib_cons_used = false;
   init_netins_cycle_stat = false;
 }
@@ -408,6 +413,11 @@ void LeabraNetwork::Init_Stats() {
   avg_cos_diff = 1.0f;
   avg_cos_diff_sum = 0.0f;
   avg_cos_diff_n = 0;
+
+  trial_cos_diff = 0.0f;
+  avg_trial_cos_diff = 1.0f;
+  avg_trial_cos_diff_sum = 0.0f;
+  avg_trial_cos_diff_n = 0;
 
   lrn_trig.Init_Stats();
 }
@@ -966,6 +976,7 @@ void LeabraNetwork::PostSettle() {
   }
   if((cos_diff_on || cos_diff_auto) && phase == LeabraNetwork::PLUS_PHASE) {
     Compute_CosDiff();
+    Compute_TrialCosDiff();
   }
 }
 
@@ -1506,6 +1517,30 @@ float LeabraNetwork::Compute_CosDiff() {
   return cosv;
 }
 
+float LeabraNetwork::Compute_TrialCosDiff() {
+  float cosv = 0.0f;
+  int n_lays = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    float lcosv = l->Compute_TrialCosDiff(this);
+    if(!l->HasExtFlag(Unit::TARG | Unit::COMP)) {
+      cosv += lcosv;
+      n_lays++;
+    }
+  }
+  if(n_lays > 0) {
+    cosv /= (float)n_lays;
+
+    trial_cos_diff = cosv;
+    avg_trial_cos_diff_sum += trial_cos_diff;
+    avg_trial_cos_diff_n++;
+  }
+  else {
+    trial_cos_diff = 0.0f;
+  }
+  return cosv;
+}
+
 float LeabraNetwork::Compute_CosDiff2() {
   float cosv = 0.0f;
   int n_lays = 0;
@@ -1760,6 +1795,14 @@ void LeabraNetwork::Compute_AvgCosDiff() {
   avg_cos_diff_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgTrialCosDiff() {
+  if(avg_trial_cos_diff_n > 0) {
+    avg_trial_cos_diff = avg_trial_cos_diff_sum / (float)avg_trial_cos_diff_n;
+  }
+  avg_trial_cos_diff_sum = 0.0f;
+  avg_trial_cos_diff_n = 0;
+}
+
 void LeabraNetwork::Compute_CtLrnTrigAvgs() {
   if(lrn_trig.lrn_stats_n > 0) {
     float ltrign = (float)lrn_trig.lrn_stats_n;
@@ -1802,6 +1845,7 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgNormErr();
   Compute_AvgCosErr();
   Compute_AvgCosDiff();
+  Compute_AvgTrialCosDiff();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
   Compute_CtLrnTrigAvgs();
