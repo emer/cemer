@@ -185,7 +185,7 @@ int     taMisc::console_font_size = 12;
 float   taMisc::doc_text_scale = 1.0f;
 #elif defined(TA_OS_WIN)
 String  taMisc::font_name = "Arial";
-int     taMisc::font_size = 8;
+int     taMisc::font_size = 10;
 String  taMisc::console_font_name = "Fixed";
 int     taMisc::console_font_size = 10;
 float   taMisc::doc_text_scale = 1.5f;
