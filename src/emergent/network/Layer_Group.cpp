@@ -595,3 +595,10 @@ Layer_Group* Layer_Group::FindMakeLayerGroup(const String& nm, TypeDef* td, bool
   return lay;
 }
 
+void Layer_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(Layer, lay, *this) {
+    if(lay->GetUserDataAsBool("user_pinned")) {
+      lay->EditPanel(true, true); // true,true = new tab, pinned in place
+    }
+  }
+}

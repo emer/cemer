@@ -273,9 +273,12 @@ void taProject::DoView() {
   if(vwr->widget()) {
     vwr->widget()->GetMainTreeView()->ExpandDefault();
   }
-  docs.AutoEdit();
+  docs.RestorePanels();
+//  wizards.RestorePanels();
   wizards.AutoEdit();
-  ctrl_panels.AutoEdit();
+  ctrl_panels.RestorePanels();
+  data.RestorePanels();
+  programs.RestorePanels();
   // this is very hacky... select the 2nd tab, which will
   // be the first auto guy if there were any
   taiMiscCore::ProcessEvents();

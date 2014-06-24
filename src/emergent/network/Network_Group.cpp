@@ -31,3 +31,10 @@ void Network_Group::CutLinks() {
   inherited::CutLinks();
 }
 
+void Network_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(Network, net, *this) {
+    if(net->GetUserDataAsBool("user_pinned")) {
+      net->EditPanel(true, true); // true,true = new tab, pinned in place
+    }
+  }
+}

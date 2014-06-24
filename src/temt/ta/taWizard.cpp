@@ -14,12 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "taWizard.h"
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(taWizard);
 
 void taWizard::Initialize() {
-  auto_open = true;
-  SetBaseFlag(NAME_READONLY);
+ auto_open = true;
+ SetBaseFlag(NAME_READONLY);
 }
 
 void taWizard::InitLinks() {
@@ -32,6 +33,12 @@ void taWizard::InitLinks() {
 void taWizard::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   wiz_doc.SetName(name);        // same name as us..
+  // commented out 6/23/14 until I understand why wizard pinning doesn't work like everything else
+//  if (taMisc::is_loading) {
+//    if (auto_open) { // obsolete - convert
+//      SetUserData("user_pinned", true);
+//    }
+//  }
 }
 
 void taWizard::RenderWizDoc() {

@@ -850,28 +850,30 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   }
 
   //////////////////////////////////////////////////////////////////////////////////
-  // select edit
+  // control panel
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  ControlPanel* edit = proj->FindMakeControlPanel("PVLV");
-  if(edit) {
-    edit->auto_edit = true;
-    pvr_cons->AddToControlPanelNm("lrate", edit, "pvr");
-    pvi_cons->AddToControlPanelNm("lrate", edit, "pvi");
-    lve_cons->AddToControlPanelNm("lrate", edit, "lve");
-    // lvi_cons->AddToControlPanelNm("lrate", edit, "lvi");
-    nv_cons->AddToControlPanelNm("lrate", edit, "nv");
-    pvesp->AddToControlPanelNm("rew", edit, "pve");
-    pvisp->AddToControlPanelNm("pv", edit, "pvi");
-    lvesp->AddToControlPanelNm("lv", edit, "lve");
-    pvrsp->AddToControlPanelNm("pv_detect", edit, "pvr");
-    nvsp->AddToControlPanelNm("nv", edit, "nv");
-//     pvisp->AddToControlPanelNm("scalar", edit, "pvi");
-//     lvesp->AddToControlPanelNm("scalar", edit, "lve");
-//     pvisp->AddToControlPanelNm("bias_val", edit, "pvi");
-//     lvesp->AddToControlPanelNm("bias_val", edit, "lve");
-//    dasp->AddToControlPanelNm("avg_da", edit, "vta");
-    dasp->AddToControlPanelNm("da", edit, "vta");
+  ControlPanel* cp = proj->FindMakeControlPanel("PVLV");
+  if(cp) {
+    cp->SetUserData("user_pinned", true);
+
+    pvr_cons->AddToControlPanelNm("lrate", cp, "pvr");
+    pvi_cons->AddToControlPanelNm("lrate", cp, "pvi");
+    lve_cons->AddToControlPanelNm("lrate", cp, "lve");
+    // lvi_cons->AddToControlPanelNm("lrate", cp, "lvi");
+    nv_cons->AddToControlPanelNm("lrate", cp, "nv");
+    pvesp->AddToControlPanelNm("rew", cp, "pve");
+    pvisp->AddToControlPanelNm("pv", cp, "pvi");
+    lvesp->AddToControlPanelNm("lv", cp, "lve");
+    pvrsp->AddToControlPanelNm("pv_detect", cp, "pvr");
+    nvsp->AddToControlPanelNm("nv", cp, "nv");
+//     pvisp->AddToControlPanelNm("scalar", cp, "pvi");
+//     lvesp->AddToControlPanelNm("scalar", cp, "lve");
+//     pvisp->AddToControlPanelNm("bias_val", cp, "pvi");
+//     lvesp->AddToControlPanelNm("bias_val", cp, "lve");
+//    dasp->AddToControlPanelNm("avg_da", cp, "vta");
+    dasp->AddToControlPanelNm("da", cp, "vta");
+    cp->EditPanel(true, true);
   }
 
   return true;
@@ -1661,37 +1663,40 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   }
 
   //////////////////////////////////////////////////////////////////////////////////
-  // select edit
+  // control panel
 
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  ControlPanel* edit = proj->FindMakeControlPanel("PBWM");
-  if(edit != NULL) {
-    edit->auto_edit = true;
+  ControlPanel* cp = proj->FindMakeControlPanel("PBWM");
+  if(cp != NULL) {
+    cp->SetUserData("user_pinned", true);
+
     String subgp;
     subgp = "PFC";
-    pfc_mnt_sp->AddToControlPanelNm("gate", edit, "pfc_mnt", subgp);
-    pfc_mnt_sp->AddToControlPanelNm("gp_kwta", edit, "pfc_mnt", subgp,
+    pfc_mnt_sp->AddToControlPanelNm("gate", cp, "pfc_mnt", subgp);
+    pfc_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "pfc_mnt", subgp,
       "pfc kwta parameters -- pct is main param for pfc dynamics, and act_pct for balancing excitation to other layers");
-    topfc_cons->AddToControlPanelNm("lrate", edit, "to_pfc", subgp,
+    topfc_cons->AddToControlPanelNm("lrate", cp, "to_pfc", subgp,
         "PFC requires a slower learning rate in general, around .002");
 
     subgp = "Matrix";
-    matrix_go_mnt_sp->AddToControlPanelNm("matrix", edit, "matrix", subgp);
-    matrix_go_mnt_sp->AddToControlPanelNm("gp_kwta", edit, "matrix", subgp,
+    matrix_go_mnt_sp->AddToControlPanelNm("matrix", cp, "matrix", subgp);
+    matrix_go_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "matrix", subgp,
       "matrix kwta parameters -- pct, gp_g are main for matrix dynamics (gp_g = 1 almost always best)");
 
-    matrix_units->AddToControlPanelNm("noise", edit, "matrix", subgp,
+    matrix_units->AddToControlPanelNm("noise", cp, "matrix", subgp,
       "matrix noise -- variance around .001 seems best overall");
-    matrix_units->AddToControlPanelNm("noise_adapt", edit, "matrix", subgp);
-    matrix_cons->AddToControlPanelNm("lrate", edit, "matrix", subgp,
+    matrix_units->AddToControlPanelNm("noise_adapt", cp, "matrix", subgp);
+    matrix_cons->AddToControlPanelNm("lrate", cp, "matrix", subgp,
      "Default Matrix lrate is .002");
 
     subgp = "SNrThal";
-    snrthalsp->AddToControlPanelNm("kwta", edit, "snrthal", subgp,
+    snrthalsp->AddToControlPanelNm("kwta", cp, "snrthal", subgp,
       "snrthal kwta parameter -- how many stripes can gate at once");
-    snrthalsp->AddToControlPanelNm("inhib", edit, "snrthal", subgp,
+    snrthalsp->AddToControlPanelNm("inhib", cp, "snrthal", subgp,
       "Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
-    snrthalsp->AddToControlPanelNm("snrthal", edit, "snrthal", subgp);
+    snrthalsp->AddToControlPanelNm("snrthal", cp, "snrthal", subgp);
+    
+    cp->EditPanel(true, true);
   }
   return true;
 }

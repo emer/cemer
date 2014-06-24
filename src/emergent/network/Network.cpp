@@ -384,6 +384,9 @@ void Network::Build() {
 //   }
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
+  
+  specs.RestorePanels();
+  layers.RestorePanels();
 }
 
 void Network::CheckSpecs() {

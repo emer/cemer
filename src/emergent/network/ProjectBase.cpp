@@ -103,6 +103,7 @@ void ProjectBase::AutoBuildNets() {
     taMisc::Info("Network:",net->name,"auto building");
     net->Build();
   }
+  networks.RestorePanels();
 }
 
 Network* ProjectBase::GetNewNetwork(TypeDef* typ) {

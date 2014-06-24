@@ -32,6 +32,8 @@ class TA_API Doc_Group : public taGroup<taDoc> {
 INHERITED(taGroup<taDoc>)
 public:
   virtual void          AutoEdit();
+  virtual void          RestorePanels();
+  // if the panel was pinned when the program was saved redisplay it on project open
 
   virtual taDoc*  NewProjWikiDoc(const String& wiki_name);
   // #BUTTON make a new Doc pointing to a wiki page with the same name as the current project -- quick way to get you started toward documenting your projects!

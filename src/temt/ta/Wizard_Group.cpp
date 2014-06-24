@@ -18,10 +18,17 @@
 
 TA_BASEFUNS_CTORS_DEFN(Wizard_Group);
 
-void Wizard_Group::AutoEdit() {
+void Wizard_Group::AutoEdit() { // Obsolete - see RestorePanels()
   FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
     if (wz->auto_open)
       wz->EditPanel(true, true);// true,true = new tab, pinned in place
   }
 }
 
+void Wizard_Group::RestorePanels() {
+//  FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
+//    if(wz->GetUserDataAsBool("user_pinned")) {
+//      wz->EditPanel(true, true); // true,true = new tab, pinned in place
+//    }
+//  }
+}

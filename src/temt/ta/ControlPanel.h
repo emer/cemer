@@ -47,7 +47,7 @@ class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
 public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
-  bool                  auto_edit; // automatically activate control panel upon loading
+  bool                  auto_edit; // #HIDDEN #NO_SAVE automatically activate control panel upon loading
   bool                  running_updt; // update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
   EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the control panel
@@ -176,7 +176,7 @@ public: // public API
   // #CAT_PSearch_Access set current value for given member name and, optionally if non-empty, the associated label
   virtual bool          PSearchNextToCur(const String& mbr_nm, const String& label = "")
   { return mbrs.PSearchNextToCur(mbr_nm, label); }
-  // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated label
+  // #CAT_PSearch_Access set current value to stored next value for given member name and, optionally if non-empty, the associated labe
 
 public: // IRefListClient i/f
   void*        This() override {return this;}

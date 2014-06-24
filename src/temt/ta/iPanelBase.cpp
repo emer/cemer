@@ -22,7 +22,6 @@
 #include <QVBoxLayout>
 #include <QScrollBar>
 
-
 iPanelBase::iPanelBase(taiSigLink* dl_)
 :QFrame(NULL)
 {
@@ -158,6 +157,9 @@ void iPanelBase::setPinned(bool value) {
   m_pinned = value; // no action needed... "pinned is just a state of mind"
   if (tabView())
     tabView()->UpdateTabNames(); //updates the icons
+  if (link_()) {
+    link_()->taData()->SetUserData("user_pinned", value);
+  }
 }
 
 void iPanelBase::hideEvent(QHideEvent* ev) {
@@ -238,4 +240,3 @@ QPoint iPanelBase::MapToPanel(QWidget* widg, const QPoint& pt) {
 int iPanelBase::MapToPanelV(QWidget* widg, int pt_y) {
   return taiMisc::MapToAreaV_SA(scr, scr->widget(), widg, pt_y);
 }
-

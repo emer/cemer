@@ -176,3 +176,12 @@ void BaseSpec_Group::SetParam(TypeDef* spec_type, const String& param_path,
       bs->SetParam(param_path, value);
   }
 }
+
+void BaseSpec_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
+    if(bs->GetUserDataAsBool("user_pinned")) {
+      bs->EditPanel(true, true); // true,true = new tab, pinned in place
+    }
+  }
+}
+

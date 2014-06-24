@@ -35,6 +35,8 @@ public:
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
+  void         RestorePanels();
+
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS_NOCOPY(Network_Group); //

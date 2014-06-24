@@ -19,4 +19,10 @@
 TA_BASEFUNS_CTORS_DEFN(DataTable_Group);
 SMARTREF_OF_CPP(DataTable_Group);
 
-
+void DataTable_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(DataTable, dt, *this) {
+    if(dt->GetUserDataAsBool("user_pinned")) {
+      dt->EditPanel(true, true);
+    }
+  }
+}

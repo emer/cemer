@@ -32,7 +32,6 @@ using namespace std;
 
 
 void PluginWizard::Initialize() {
-  auto_open = false;
   plugin_name = "myplugin";
   class_name_prefix = "Myplugin";
   plugin_type = UserPlugin;

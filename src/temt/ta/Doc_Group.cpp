@@ -20,13 +20,20 @@
 
 TA_BASEFUNS_CTORS_DEFN(Doc_Group);
 
-void Doc_Group::AutoEdit() {
+void Doc_Group::AutoEdit() {  // Obsolete - see RestorePanels()
   FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
     if (doc->auto_open)
       doc->EditPanel(true, true); // true,true = new tab, pinned in place
   }
 }
 
+void Doc_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(taDoc, doc, *this) {
+    if(doc->GetUserDataAsBool("user_pinned")) {
+      doc->EditPanel(true, true);
+    }
+  }
+}
 
 taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
   // todo: make a chooser for taMisc::wikis!
@@ -36,7 +43,6 @@ taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
   doc->name = "ProjectDoc";
   doc->wiki = wiki_name;
   doc->url = proj->name;
-  doc->auto_open = true;
   doc->web_doc = true;
   doc->UpdateAfterEdit();
   tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");

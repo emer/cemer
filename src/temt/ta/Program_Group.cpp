@@ -129,6 +129,14 @@ void Program_Group::BrowserSelectFirstEl() {
   tabMisc::DelayedFunCall_gui(first_guy, "BrowserSelectMe");
 }
 
+void Program_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
+    if(prog->GetUserDataAsBool("user_pinned")) {
+      prog->EditPanel(true, true);
+    }
+  }
+}
+
 #ifdef DEBUG
 bool Program_Group::BrowserEditTest() {
   bool any_errs = false;

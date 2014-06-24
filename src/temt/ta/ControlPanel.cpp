@@ -38,7 +38,6 @@ void ControlPanel::StatSigEmit_Group(taGroup_impl* grp, int sls,
 
 
 void ControlPanel::Initialize() {
-  auto_edit = true;
   running_updt = false;
   m_changing = 0;
   base_refs.setOwner(this);
@@ -53,7 +52,6 @@ void ControlPanel::Destroy() {
 }
 
 void ControlPanel::Copy_(const ControlPanel& cp) {
-  auto_edit = cp.auto_edit;
   desc = cp.desc;
   base_refs.Reset(); // should get added by copies below
   mbrs = cp.mbrs;
@@ -65,6 +63,9 @@ void ControlPanel::Copy_(const ControlPanel& cp) {
 void ControlPanel::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
+    if (auto_edit) { // obsolete - convert
+      SetUserData("user_pinned", true);
+    }
     // add all the bases, since they weren't available during load
     FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
       BaseAdded(sei);
@@ -389,4 +390,3 @@ int ControlPanel::FindMethBase(taBase* base, MethodDef* md) {
   ControlPanelItem::StatFindItemBase(&mths, base, md, rval);
   return rval;
 }
-

@@ -114,6 +114,9 @@ public:
 
   void          TriggerContextUpdate();
   // #CAT_Activation for context layers, manually triggers the update
+  
+  void          RestorePanels();
+  // if the panel was pinned when the program was saved redisplay it on project open
 
   String GetTypeDecoKey() const override { return "Layer"; }
 

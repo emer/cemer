@@ -35,8 +35,9 @@ public:
   bool          save_tables;    // #DEF_true save the data tables in this group -- turn this off for groups of data tables that are all temporary and should not be saved -- saves space for headers etc in dump file
 
   String       GetTypeDecoKey() const override { return "DataTable"; }
-
   bool         Dump_QuerySaveChildren() override { return save_tables; }
+  void         RestorePanels();
+  // if the user has pinned the panel open it when project opens
 
   TA_BASEFUNS(DataTable_Group);
 private:

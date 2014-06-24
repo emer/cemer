@@ -18,10 +18,18 @@
 
 TA_BASEFUNS_CTORS_DEFN(ControlPanel_Group);
 
-void ControlPanel_Group::AutoEdit() {
+void ControlPanel_Group::AutoEdit() { // Obsolete - see RestorePanels()
   FOREACH_ELEM_IN_GROUP(ControlPanel, se, *this) {
     if(se->autoEdit()) {
       se->EditPanel(true, true);        // true,true = new tab, pinned in place
+    }
+  }
+}
+
+void ControlPanel_Group::RestorePanels() {
+  FOREACH_ELEM_IN_GROUP(ControlPanel, cp, *this) {
+    if(cp->GetUserDataAsBool("user_pinned")) {
+      cp->EditPanel(true, true); // true,true = new tab, pinned in place
     }
   }
 }

@@ -29,7 +29,6 @@ const String taDoc::init_text(
 "</html>\n");
 
 void taDoc::Initialize() {
-  auto_open = false;
   web_doc = false;
   url = "local";
   full_url = "local";
@@ -90,6 +89,10 @@ String taDoc::GetURL() {
 
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if (taMisc::is_loading) {
+    if (auto_open)  // obsolete - convert
+      SetUserData("user_pinned", true);
+  }
   if(url.empty() || url == "local")
     web_doc = false;
   else

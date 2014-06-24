@@ -32,6 +32,8 @@ class TA_API Wizard_Group : public taGroup<taWizard> {
 INHERITED(taGroup<taWizard>)
 public:
   virtual void          AutoEdit();
+  virtual void          RestorePanels();
+  // if the panel was pinned when the program was saved redisplay it on project open
 
   String       GetTypeDecoKey() const override { return "Wizard"; }
 
