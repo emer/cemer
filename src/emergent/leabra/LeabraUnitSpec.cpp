@@ -167,9 +167,11 @@ void DepressSpec::Initialize() {
 void DepressSpec::Defaults_init() {
   rec = .2f;
   asymp_act = .5f;
-  depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
-  interval = 1;
+  delay = 0;
+  interval = 10;
   max_amp = 1.0f;
+
+  depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
 }
 
 void DepressSpec::UpdateAfterEdit_impl() {
@@ -1528,8 +1530,16 @@ void LeabraUnitSpec::Compute_Depress_Cycle(LeabraUnit* u, LeabraNetwork* net) {
     u->spk_amp = depress.max_amp;
   }
   else {
-    if((net->ct_cycle+1) % depress.interval == 0) {
-      u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
+    if(net->ct_cycle < depress.delay) {
+      if((net->ct_cycle+1) % depress.interval == 0) {
+        u->spk_amp += (depress.max_amp - u->spk_amp) * depress.rec; // recover only
+      }
+    }
+    else {
+      if(((net->ct_cycle-depress.delay)+1) % depress.interval == 0) {
+        u->spk_amp += -u->act * depress.depl +
+          (depress.max_amp - u->spk_amp) * depress.rec;
+      }
     }
     if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
     else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
