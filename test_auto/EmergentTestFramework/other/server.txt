@@ -176,28 +176,28 @@ GetData Full Table
     Json Value Should Equal    ${output}             /result/columns/0/matrix  false
     Json Value Should Equal    ${output}             /result/columns/1/matrix  true
     Json Value Should Equal    ${output}             /result/columns/2/matrix  true
-    Json String Should Match   ${output}             /result/columns/0/result/0  checks
-    Json String Should Match   ${output}             /result/columns/0/result/1  mitvert
-    Json String Should Match   ${output}             /result/columns/0/result/2  midhoriz
-    Json String Should Match   ${output}             /result/columns/0/result/3  rdiag
-    Json String Should Match   ${output}             /result/columns/0/result/4  ldiag
-    Json String Should Match   ${output}             /result/columns/0/result/5  random
-    Json Value Should Equal    ${output}             /result/columns/1/result/0/0/0  1
-    Json Value Should Equal    ${output}             /result/columns/1/result/0/1/2  0
-    Json Value Should Equal    ${output}             /result/columns/1/result/0/2/2  1
-    Json Value Should Equal    ${output}             /result/columns/1/result/2/2/2  1
-    Json Value Should Equal    ${output}             /result/columns/1/result/2/1/0  0
+    Json String Should Match   ${output}             /result/columns/0/values/0  checks
+    Json String Should Match   ${output}             /result/columns/0/values/1  mitvert
+    Json String Should Match   ${output}             /result/columns/0/values/2  midhoriz
+    Json String Should Match   ${output}             /result/columns/0/values/3  rdiag
+    Json String Should Match   ${output}             /result/columns/0/values/4  ldiag
+    Json String Should Match   ${output}             /result/columns/0/values/5  random
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/0/0  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/1/2  0
+    Json Value Should Equal    ${output}             /result/columns/1/values/0/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/2/2/2  1
+    Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
 
 GetData Column
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name    Name
-    Json String Should Match     ${output}           /result/columns/0/result/0  checks
-    Json String Should Match     ${output}           /result/columns/0/result/1  mitvert
-    Json String Should Match     ${output}           /result/columns/0/result/2  midhoriz
-    Json String Should Match     ${output}           /result/columns/0/result/3  rdiag
-    Json String Should Match     ${output}           /result/columns/0/result/4  ldiag
-    Json String Should Match     ${output}           /result/columns/0/result/5  random
+    Json String Should Match     ${output}           /result/columns/0/values/0  checks
+    Json String Should Match     ${output}           /result/columns/0/values/1  mitvert
+    Json String Should Match     ${output}           /result/columns/0/values/2  midhoriz
+    Json String Should Match     ${output}           /result/columns/0/values/3  rdiag
+    Json String Should Match     ${output}           /result/columns/0/values/4  ldiag
+    Json String Should Match     ${output}           /result/columns/0/values/5  random
     Json Value Should Not Exist  ${output}           /result/columns/1
     Json Value Should Not Exist  ${output}           /result/columns/2
 
@@ -213,13 +213,13 @@ GetData Row
     Json Value Should Equal      ${output}           /result/columns/0/matrix  false
     Json Value Should Equal      ${output}           /result/columns/1/matrix  true
     Json Value Should Equal      ${output}           /result/columns/2/matrix  true
-    Json String Should Match     ${output}           /result/columns/0/result/0  rdiag
-    Json String Should Match     ${output}           /result/columns/0/result/1  ldiag
-    Json Value Should Equal      ${output}           /result/columns/1/result/0/2/2  1
-    Json Value Should Equal      ${output}           /result/columns/1/result/0/1/0  0
-    Json Value Should Not Exist  ${output}           /result/columns/0/result/2
-    Json Value Should Not Exist  ${output}           /result/columns/1/result/2
-    Json Value Should Not Exist  ${output}           /result/columns/2/result/2
+    Json String Should Match     ${output}           /result/columns/0/values/0  rdiag
+    Json String Should Match     ${output}           /result/columns/0/values/1  ldiag
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/2/2  1
+    Json Value Should Equal      ${output}           /result/columns/1/values/0/1/0  0
+    Json Value Should Not Exist  ${output}           /result/columns/0/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/1/values/2
+    Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
 GetData Cell
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
@@ -227,13 +227,11 @@ GetData Cell
     Json String Should Match   ${output}             /result/columns/0/name       Name
     Json String Should Match   ${output}             /result/columns/0/type       String
     Json Value Should Equal    ${output}             /result/columns/0/matrix     false
-    Json String Should Match   ${output}             /result/columns/0/result/0   rdiag
+    Json String Should Match   ${output}             /result/columns/0/values/0   rdiag
 
 GetDataMatrixCell
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
     Status OK Equal Result     ${output}             1
-    # Used to be "value"
-    # Json Value Should Equal    ${output}           /value			1
 
 # Modifying data tables - normal operation tests
 #   Note, these tests must be done in order, and require that the Program operations above be run
@@ -243,31 +241,31 @@ SetData Row Specified
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
-    Json Value Should Equal      ${output}             /result/columns/2/result/0   3     # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/1/result/0   6
-    Json String Should Match     ${output}             /result/columns/3/result/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/7/result/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
+    Json Value Should Equal      ${output}             /result/columns/2/values/0   3     # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
+    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
 
 RemoveData First Two Rows
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "rows": 2}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/2/result/0  2  # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/2/result/1  3  # This is the old/previous value
-    Json Value Should Equal      ${output}             /result/columns/2/result/2  4  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/values/0  2  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/values/1  3  # This is the old/previous value
+    Json Value Should Equal      ${output}             /result/columns/2/values/2  4  # This is the old/previous value
 
 SetData No Row Specified
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
-    Json Value Should Equal      ${output}             /result/columns/1/result/0   6
-    Json Value Should Equal      ${output}             /result/columns/2/result/0   2     # This is the old/previous value
-    Json String Should Match     ${output}             /result/columns/3/result/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/7/result/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   6
+    Json Value Should Equal      ${output}             /result/columns/2/values/0   2     # This is the old/previous value
+    Json String Should Match     ${output}             /result/columns/3/values/0   letrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
 
 RemoveData All Rows                    
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
@@ -281,21 +279,21 @@ AppendData
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/result/0   7
-    Json Value Should Equal      ${output}             /result/columns/1/result/0   9
-    Json String Should Match     ${output}             /result/columns/3/result/0   mytrial
-    Json Value Should Equal      ${output}             /result/columns/7/result/0   10.2
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   7
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   9
+    Json String Should Match     ${output}             /result/columns/3/values/0   mytrial
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   10.2
 
 SetData Add Column
     ${output} =                  Run Command Wait      {"command": "SetData", "create": true, "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [10] }, { "name": "trial_name", "values": ["mytrial2"] }, { "name": "sse", "values": [10.3] }, { "name": "new_col", "values": ["new_col_value"] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
     Status OK Has Result         ${output}
-    Json Value Should Equal      ${output}             /result/columns/0/result/0   8
-    Json Value Should Equal      ${output}             /result/columns/1/result/0   10
-    Json String Should Match     ${output}             /result/columns/3/result/0   mytrial2
-    Json Value Should Equal      ${output}             /result/columns/7/result/0   10.3
-    Json String Should Match     ${output}             /result/columns/9/result/0   new_col_value
+    Json Value Should Equal      ${output}             /result/columns/0/values/0   8
+    Json Value Should Equal      ${output}             /result/columns/1/values/0   10
+    Json String Should Match     ${output}             /result/columns/3/values/0   mytrial2
+    Json Value Should Equal      ${output}             /result/columns/7/values/0   10.3
+    Json String Should Match     ${output}             /result/columns/9/values/0   new_col_value
 
 SetData Matrix Cell
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
@@ -303,7 +301,6 @@ SetData Matrix Cell
     ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
     # change next 2 lines if "value" is changed to "result"
     Status OK Equal Result       ${output}             0
-#    Json Value Should Equal      ${output}           /value			0
 
 # Data Table error tests
 
