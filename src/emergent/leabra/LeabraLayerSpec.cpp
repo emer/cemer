@@ -435,6 +435,8 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = 0.0f;
   lay->cos_diff_avg = 0.0f;
   lay->cos_diff_lrate = 1.0f;
+  lay->avg_act_diff = 0.0f;
+  lay->avg_act_diff_sm = 0.0f;
   lay->trial_cos_diff = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
