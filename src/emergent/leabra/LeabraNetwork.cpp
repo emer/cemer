@@ -976,6 +976,8 @@ void LeabraNetwork::PostSettle() {
   }
   if((cos_diff_on || cos_diff_auto) && phase == LeabraNetwork::PLUS_PHASE) {
     Compute_CosDiff();
+    Compute_AvgActDiff();
+    Compute_AvgActDiffSM();
     Compute_TrialCosDiff();
   }
 }
@@ -1517,6 +1519,54 @@ float LeabraNetwork::Compute_CosDiff() {
   return cosv;
 }
 
+float LeabraNetwork::Compute_AvgActDiff() {
+  float adiff = 0.0f;
+  int n_lays = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    float ladiff = l->Compute_AvgActDiff(this);
+    if(!l->HasExtFlag(Unit::TARG | Unit::COMP)) {
+      adiff += ladiff;
+      n_lays++;
+    }
+  }
+  if(n_lays > 0) {
+    adiff /= (float)n_lays;
+
+    avg_act_diff = adiff;
+    avg_avg_act_diff_sum += avg_act_diff;
+    avg_avg_act_diff_n++;
+  }
+  else {
+    avg_act_diff = 0.0f;
+  }
+  return adiff;
+}
+
+float LeabraNetwork::Compute_AvgActDiffSM() {
+  float adiff = 0.0f;
+  int n_lays = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
+    if(l->lesioned()) continue;
+    float ladiff = l->Compute_AvgActDiffSM(this);
+    if(!l->HasExtFlag(Unit::TARG | Unit::COMP)) {
+      adiff += ladiff;
+      n_lays++;
+    }
+  }
+  if(n_lays > 0) {
+    adiff /= (float)n_lays;
+
+    avg_act_diff_sm = adiff;
+    avg_avg_act_diff_sm_sum += avg_act_diff_sm;
+    avg_avg_act_diff_sm_n++;
+  }
+  else {
+    avg_act_diff_sm = 0.0f;
+  }
+  return adiff;
+}
+
 float LeabraNetwork::Compute_TrialCosDiff() {
   float cosv = 0.0f;
   int n_lays = 0;
@@ -1795,6 +1845,22 @@ void LeabraNetwork::Compute_AvgCosDiff() {
   avg_cos_diff_n = 0;
 }
 
+void LeabraNetwork::Compute_AvgAvgActDiff() {
+  if(avg_avg_act_diff_n > 0) {
+    avg_avg_act_diff = avg_avg_act_diff_sum / (float)avg_avg_act_diff_n;
+  }
+  avg_avg_act_diff_sum = 0.0f;
+  avg_avg_act_diff_n = 0;
+}
+
+void LeabraNetwork::Compute_AvgAvgActDiffSM() {
+  if(avg_avg_act_diff_sm_n > 0) {
+    avg_avg_act_diff_sm = avg_avg_act_diff_sm_sum / (float)avg_avg_act_diff_sm_n;
+  }
+  avg_avg_act_diff_sm_sum = 0.0f;
+  avg_avg_act_diff_sm_n = 0;
+}
+
 void LeabraNetwork::Compute_AvgTrialCosDiff() {
   if(avg_trial_cos_diff_n > 0) {
     avg_trial_cos_diff = avg_trial_cos_diff_sum / (float)avg_trial_cos_diff_n;
@@ -1845,6 +1911,8 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgNormErr();
   Compute_AvgCosErr();
   Compute_AvgCosDiff();
+  Compute_AvgAvgActDiff();
+  Compute_AvgAvgActDiffSM();
   Compute_AvgTrialCosDiff();
   Compute_AvgExtRew();
   Compute_AvgSendPct();

@@ -398,13 +398,23 @@ public:
   float		avg_cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) error on vs prv (see cos_err_vs_prv) (computed over previous epoch)
   float		avg_cos_err_vs_prv_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos err vs prv in this epoch
 
-  bool		cos_diff_on;      // #CAT_Learning manually enable Compute_CosDiff call at end of plus phase (if conspec cos_diff_mod.on flag is set, then cos_diff will automatically be computed regardless)
-  bool		cos_diff_auto;    // #CAT_Learning #READ_ONLY enable Compute_CosDiff call at end of plus phase -- LeabraConSpec will auto set this flag if LeabraConSpec::cos_dif_mod.on flag is on, and off if not -- updated in SetCurLrate call
+  bool		cos_diff_on;      // #CAT_Learning manually enable Compute_CosDiff call at end of plus phase (if conspec cos_diff_lrate or X_COS_DIFF is set, then cos_diff will automatically be computed regardless)
+  bool		cos_diff_auto;    // #CAT_Learning #READ_ONLY enable Compute_CosDiff call at end of plus phase -- LeabraConSpec will auto set this flag if LeabraConSpec::cos_diff_lrate or X_COS_DIFF is set, and off if not -- updated in SetCurLrate call
   bool          cos_diff_survey;  // #IGNORE a tmp flag used for surveying whether to set cos_diff_auto -- used during SetCurLrate
   float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
   float		avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) diff (computed over previous epoch)
   float		avg_cos_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos diff in this epoch
   int		avg_cos_diff_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cos diff value computation for this epoch
+
+  float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW average act_diff (act_p - act_m) -- this is an important statistic to track overall 'main effect' differences across phases -- excludes input layers
+  float		avg_avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average avg_act_diff (computed over previous epoch)
+  float		avg_avg_act_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average in this epoch
+  int		avg_avg_act_diff_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average value computation for this epoch
+
+  float		avg_act_diff_sm;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW average act_diff in terms of short vs. medium term averages (avg_s - avg_m) -- which drive XCAL learning -- this is an important statistic to track overall 'main effect' differences across phases -- excludes input layers
+  float		avg_avg_act_diff_sm;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average avg_act_diff_sm (computed over previous epoch)
+  float		avg_avg_act_diff_sm_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average in this epoch
+  int		avg_avg_act_diff_sm_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average value computation for this epoch
 
   float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) activation difference across trials between act_p and p_act_p activations on this trial -- excludes input layers which are represented in the cos_err measure
   float		avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) trial diff (computed over previous epoch)
@@ -637,6 +647,10 @@ public:
   // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
   virtual float	Compute_CosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  virtual float	Compute_AvgActDiff();
+  // #CAT_Statistic compute average act_diff (act_p - act_m) -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
+  virtual float	Compute_AvgActDiffSM();
+  // #CAT_Statistic compute average act_diff in terms of short vs. medium term averages (avg_s - avg_m) for this layer -- which drive XCAL learning -- this is an important statistic to track overall 'main effect' differences across phases
   virtual float	Compute_TrialCosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between p_act_p and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual float	Compute_CosDiff2();
@@ -680,6 +694,10 @@ public:
   // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
   virtual void	Compute_AvgTrialCosDiff();
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgAvgActDiff();
+  // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgAvgActDiffSM();
+  // #CAT_Statistic compute average avg_act_diff_sm (at an epoch-level timescale)
   virtual void	Compute_CtLrnTrigAvgs();
   // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
   void	Compute_EpochStats() override;

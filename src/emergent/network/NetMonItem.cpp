@@ -163,6 +163,9 @@ void NetMonItem::UpdateAfterEdit_impl() {
     if(data_agg) {
       agg_col.SetDataTable(data_src);
       select_spec.SetDataTable(data_src);
+      if(agg_col.col_name.nonempty() && (name.empty() || name.contains("NetMonItem"))) {
+        SetName(agg_col.col_name); // use this as a default..
+      }
     }
     else {
       data_src = NULL;
@@ -190,12 +193,12 @@ void NetMonItem::UpdateAfterEdit_impl() {
     if(name_style == MY_NAME) {
       if(!computed) {
         if(name.empty()) {
-          name = GetAutoName(object);
+          SetName(GetAutoName(object));
         }
       }
     }
     else {                      // AUTO_NAME = always update!
-      name = GetAutoName(object);
+      SetName(GetAutoName(object));
     }
     name = taMisc::StringCVar(name);            // keep it clean for css var names
     ScanObject();

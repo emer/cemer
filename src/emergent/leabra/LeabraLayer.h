@@ -61,6 +61,8 @@ public:
   float		cos_diff_lrate;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic learning rate multiplier computed by CosDiffLrateSpec based on cos_diff and cos_diff_avg
   float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, for activations on previous trial (p_act_p) -- computed automatically during ti_mode
   float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for ti_mode
+  float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average act_diff (act_p - act_m) for this layer -- this is an important statistic to track overall 'main effect' differences across phases 
+  float		avg_act_diff_sm; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average act_diff in terms of short vs. medium term averages (avg_s - avg_m) for this layer -- which drive XCAL learning -- this is an important statistic to track overall 'main effect' differences across phases
   float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) trial-level activation difference between act_p and p_act_p on this trial for this layer -- computed by Compute_TrialCosDiff -- must be called after SettleFinal in plus phase to get act_p values
   int		da_updt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for kwta computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
@@ -293,6 +295,12 @@ public:
   float Compute_CosDiff(LeabraNetwork* net)
   { return spec->Compute_CosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  float Compute_AvgActDiff(LeabraNetwork* net)
+  { return spec->Compute_AvgActDiff(this, net); }
+  // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
+  float Compute_AvgActDiffSM(LeabraNetwork* net)
+  { return spec->Compute_AvgActDiffSM(this, net); }
+  // #CAT_Statistic compute average act_diff in terms of short vs. medium term averages (avg_s - avg_m) for this layer -- which drive XCAL learning -- this is an important statistic to track overall 'main effect' differences across phases
   float Compute_TrialCosDiff(LeabraNetwork* net)
   { return spec->Compute_TrialCosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of trial activaiton difference in this layer: act_p compared to p_act_p -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values

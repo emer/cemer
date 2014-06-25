@@ -1920,6 +1920,36 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   return cosv;
 }
 
+float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_act_diff = 0.0f;
+  float adiff = 0.0f;
+  int nd = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    adiff += u->act_p - u->act_m;
+    nd++;
+  }
+  if(nd > 0)
+    adiff /= (float)nd;
+  lay->avg_act_diff = adiff;
+  return adiff;
+}
+
+float LeabraLayerSpec::Compute_AvgActDiffSM(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_act_diff_sm = 0.0f;
+  float adiff = 0.0f;
+  int nd = 0;
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    adiff += u->avg_s - u->avg_m;
+    nd++;
+  }
+  if(nd > 0)
+    adiff /= (float)nd;
+  lay->avg_act_diff_sm = adiff;
+  return adiff;
+}
+
 float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   lay->trial_cos_diff = 0.0f;
   float cosv = 0.0f;
