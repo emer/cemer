@@ -183,5 +183,9 @@ void BaseSpec_Group::RestorePanels() {
       bs->EditPanel(true, true); // true,true = new tab, pinned in place
     }
   }
+  // then check the children
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
+    bs->children.RestorePanels();
+  }
 }
 
