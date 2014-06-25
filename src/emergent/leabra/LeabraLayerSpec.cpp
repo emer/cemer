@@ -436,7 +436,6 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff_avg = 0.0f;
   lay->cos_diff_lrate = 1.0f;
   lay->avg_act_diff = 0.0f;
-  lay->avg_act_diff_sm = 0.0f;
   lay->trial_cos_diff = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
@@ -1934,21 +1933,6 @@ float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) 
   if(nd > 0)
     adiff /= (float)nd;
   lay->avg_act_diff = adiff;
-  return adiff;
-}
-
-float LeabraLayerSpec::Compute_AvgActDiffSM(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->avg_act_diff_sm = 0.0f;
-  float adiff = 0.0f;
-  int nd = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    adiff += u->avg_s - u->avg_m;
-    nd++;
-  }
-  if(nd > 0)
-    adiff /= (float)nd;
-  lay->avg_act_diff_sm = adiff;
   return adiff;
 }
 
