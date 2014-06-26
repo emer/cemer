@@ -73,8 +73,8 @@ void iLineEdit::editInEditor() {
   dlg->deleteLater();
 }
 
-void iLineEdit::focusInEvent(QFocusEvent* ev) {
-  inherited::focusInEvent(ev);
+void iLineEdit::focusInEvent(QFocusEvent* e) {
+  inherited::focusInEvent(e);
   if(hasSelectedText()) {
     deselect();
     if(init_start_pos == -1) {
@@ -94,8 +94,8 @@ void iLineEdit::focusInEvent(QFocusEvent* ev) {
   // emit focusChanged(true);
 }
 
-void iLineEdit::focusOutEvent(QFocusEvent* ev) {
-  inherited::focusOutEvent(ev);
+void iLineEdit::focusOutEvent(QFocusEvent* e) {
+  inherited::focusOutEvent(e);
   // std::cerr << "focus out" << std::endl;
   // emit focusChanged(false);
 }
@@ -202,6 +202,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     case Qt::Key_D:
       e->accept();
+      copy();  // copy to clipboard before delete
       del();
       clearExtSelection();
       return;
@@ -244,7 +245,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     }
   }
-  else if (e->modifiers() & Qt::AltModifier) {
+  else if (e->modifiers() & Qt::AltModifier) {  // mac option key
     if (e->key() == Qt::Key_W
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
         || e->key() == 0x2211   // weird mac key
@@ -275,17 +276,17 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
   //   return;
   // }
 
-  QLineEdit::keyPressEvent( e );
+  QLineEdit::keyPressEvent(e);
 }
 
 void iLineEdit::doLookup() {
   emit lookupKeyPressed(this);
 }
 
-void iLineEdit::wheelEvent(QWheelEvent * event)
+void iLineEdit::wheelEvent(QWheelEvent * e)
 {
   // actually, this is ok..
-  inherited::wheelEvent(event);
+  inherited::wheelEvent(e);
   return;
 }
 

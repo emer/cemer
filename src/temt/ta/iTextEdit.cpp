@@ -111,6 +111,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       return;
     case Qt::Key_D:
       e->accept();
+      copy();  // put text on clipboard before delete
       cursor.deleteChar();
       setTextCursor(cursor);
       return;

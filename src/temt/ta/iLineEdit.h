@@ -24,16 +24,16 @@ class TA_API iLineEdit: public QLineEdit {
   Q_OBJECT
 INHERITED(QLineEdit)
 public:
-  int init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start 
+  int  init_start_pos;           // initial starting position for editing -- -1 = end, 0 = start 
   bool init_start_kill;          // at start of editing, kill contents
 
   iLineEdit(QWidget* parent = 0);
   iLineEdit(const char* text, QWidget* parent); //note: can't have defaults, ambiguity
 
   inline int	charWidth() {return mchar_width;} 
-  void		setCharWidth(int num); // sets width to accommodate num chars of
+  void		    setCharWidth(int num); // sets width to accommodate num chars of
   inline int	minCharWidth() {return mmin_char_width;} 
-  void		setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
+  void		    setMinCharWidth(int num); // sets aprox min width to accommodate num chars of average text in current font; 0=no restriction; limited to 128
   virtual void	clearExtSelection();	   // clear extended selection mode and also clear any existing selection
   virtual void	emitReturnPressed();	   // emit this signal
   
@@ -50,16 +50,17 @@ public slots:
   virtual void  doLookup();     // what we do when the lookup key is pressed
 
 protected:
-  int		mmin_char_width; // note: we limit to 128
-  int		mchar_width; // note: we limit to 128
+  int		  mmin_char_width; // note: we limit to 128
+  int		  mchar_width; // note: we limit to 128
   bool		ext_select_on;	   // toggled by Ctrl+space -- extends selection with keyboard movement
   
-  void 		focusInEvent(QFocusEvent* ev) override;
-  void 		focusOutEvent(QFocusEvent* ev) override;
+  void 		focusInEvent(QFocusEvent* e) override;
+  void 		focusOutEvent(QFocusEvent* e) override;
   void 		keyPressEvent(QKeyEvent* e) override;
-  void 		wheelEvent(QWheelEvent * event);
-  bool 		event(QEvent * event);
-private:  
+  void 		wheelEvent(QWheelEvent * e);
+  bool 		event(QEvent * e);
+
+private:
   void		init();
 };
 
