@@ -62,6 +62,7 @@ void ClusterRun::Initialize() {
   nowin_x = false;
   m_cm = 0;
   svn_other = NULL;
+  auto_edit = false;
 }
 
 void ClusterRun::Destroy() {
