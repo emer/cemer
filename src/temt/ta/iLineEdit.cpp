@@ -202,7 +202,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     case Qt::Key_D:
       e->accept();
-      copy();  // copy to clipboard before delete
       del();
       clearExtSelection();
       return;
