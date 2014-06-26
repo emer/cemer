@@ -19,26 +19,31 @@
 TA_BASEFUNS_CTORS_DEFN(taWizard);
 
 void taWizard::Initialize() {
- auto_open = true;
+// auto_open = true;
  SetBaseFlag(NAME_READONLY);
 }
 
 void taWizard::InitLinks() {
   inherited::InitLinks();
   wiz_doc.SetName(name);        // same name as us..
+  taBase::Own(wiz_doc, this);
   SetUserData("NO_CLIP", true);
   RenderWizDoc();
+}
+
+void taWizard::CutLinks() {
+  wiz_doc.CutLinks();
 }
 
 void taWizard::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   wiz_doc.SetName(name);        // same name as us..
   // commented out 6/23/14 until I understand why wizard pinning doesn't work like everything else
-//  if (taMisc::is_loading) {
-//    if (auto_open) { // obsolete - convert
-//      SetUserData("user_pinned", true);
-//    }
-//  }
+  if (taMisc::is_loading) {
+    if (auto_open) { // obsolete - convert
+      SetUserData("user_pinned", true);
+    }
+  }
 }
 
 void taWizard::RenderWizDoc() {

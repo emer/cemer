@@ -158,7 +158,13 @@ void iPanelBase::setPinned(bool value) {
   if (tabView())
     tabView()->UpdateTabNames(); //updates the icons
   if (link_()) {
-    link_()->taData()->SetUserData("user_pinned", value);
+    taBase* owner = link_()->taData()->GetMemberOwner();
+    if (owner) {
+      owner->SetUserData("user_pinned", value);
+    }
+    else {
+      link_()->taData()->SetUserData("user_pinned", value);
+    }
   }
 }
 
@@ -196,13 +202,18 @@ iTabBar::TabIcon iPanelBase::tabIcon() const {
 }
 
 String iPanelBase::TabText() const {
-/*Qt3  ISelectable* ci = tabViewerWin()->curItem();
-  if (ci) {
-    return ci->view_name();
-  } else return _nilString; */
-  if (m_link)
-    return link()->GetDisplayName();
-  else return _nilString;
+  if (m_link) {
+    taBase* owner = link_()->taData()->GetMemberOwner();
+    if (owner) {
+      return owner->GetDisplayName();
+    }
+    else {
+      return link()->GetDisplayName();
+    }
+  }
+  else {
+    return _nilString;
+  }
 }
 
 void iPanelBase::SaveScrollPos() {

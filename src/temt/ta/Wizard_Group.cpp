@@ -26,9 +26,9 @@ void Wizard_Group::AutoEdit() { // Obsolete - see RestorePanels()
 }
 
 void Wizard_Group::RestorePanels() {
-//  FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
-//    if(wz->GetUserDataAsBool("user_pinned")) {
-//      wz->EditPanel(true, true); // true,true = new tab, pinned in place
-//    }
-//  }
+  FOREACH_ELEM_IN_GROUP(taWizard, wz, *this) {
+    if(wz->GetUserDataAsBool("user_pinned")) {
+      wz->EditPanel(true, true); // true,true = new tab, pinned in place
+    }
+  }
 }

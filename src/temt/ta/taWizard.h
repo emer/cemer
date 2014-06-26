@@ -40,6 +40,7 @@ public:
   String       GetTypeDecoKey() const override { return "Wizard"; }
 
   void  InitLinks();
+  void  CutLinks();
   TA_BASEFUNS(taWizard);
 protected:
   void  UpdateAfterEdit_impl();

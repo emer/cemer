@@ -274,8 +274,7 @@ void taProject::DoView() {
     vwr->widget()->GetMainTreeView()->ExpandDefault();
   }
   docs.RestorePanels();
-//  wizards.RestorePanels();
-  wizards.AutoEdit();
+  wizards.RestorePanels();
   ctrl_panels.RestorePanels();
   data.RestorePanels();
   programs.RestorePanels();
