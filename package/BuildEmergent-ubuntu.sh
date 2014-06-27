@@ -46,7 +46,7 @@ if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
 QTVER="qt4"
 read -p "Use QT5? [Y/n]:" 
-if [ -z $REPLY ]; then
+if [ -z $REPLY ] || [$REPLY == "Y"] || [$REPLY == "y"]; then
   QTVER="qt5"
   if [ -z $QTDIR ]; then
     read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
