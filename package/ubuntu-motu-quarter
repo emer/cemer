@@ -8,24 +8,20 @@ set -e
 
 echo "Building Quarter from source repository (grey.colorado.edu)"
 
-QTVER="qt5"
+QTVER="qt4"
 CONFFLAGS=""
-read -p "Use QT5? [Y/n]:" QTVER
-if [ "$QTVER" == "Y" ]; then 
+read -p "Use QT5? [Y/n]:" 
+if [ -z $REPLY ]; then
   QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
-fi
-if [ "$QTVER" == "y" ]; then 
-  QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
+  if [ -z $QTDIR ]; read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
 fi
 
 if [ "$QTVER" == "qt5" ]; then
   if [ -z $QTDIR ]; then
-    CPPFLAGS="-I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui -L/usr/lib/x86_64-linux-gnu/ -fPIC"
+    export CPPFLAGS="-I/usr/include/qt5/QtCore -I/usr/include/qt5/QtWidgets -I/usr/include/qt5/QtOpenGL -I/usr/include/qt5/QtGui -L/usr/lib/x86_64-linux-gnu/ -fPIC"
   else
-    CPPFLAGS="-I$QTDIR/include/QtCore -I$QTDIR/include/QtWidgets -I$QTDIR/include/QtOpenGL -I$QTDIR/include/QtGui -fPIC"
-    CONFFLAGS="--with-qt=${QTDIR}"
+    export CPPFLAGS="-I$QTDIR/include/QtCore -I$QTDIR/include/QtWidgets -I$QTDIR/include/QtOpenGL -I$QTDIR/include/QtGui -fPIC"
+    export CONFFLAGS="--with-qt=${QTDIR}"
   fi
 fi
 

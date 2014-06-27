@@ -45,14 +45,10 @@ fi
 if [ $TAG != "trunk" ]; then TAG="tags/$TAG"; fi
 
 QTVER="qt4"
-read -p "Use QT5? [y/N]:"
-if [ "$REPLY" == "Y" ]; then 
+read -p "Use QT5? [Y/n]:" 
+if [ -z $REPLY ]; then
   QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)? " QTDIR; fi
-fi
-if [ "$REPLY" == "y" ]; then 
-  QTVER="qt5"
-  if [ -z $QTDIR ]; then read -p "Where is Qt5 installed (leave blank if installed from package)? " QTDIR; fi
+  if [ -z $QTDIR ]; read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
 fi
 
 # Check if the Quarter library should be rebuilt.  Defaults to Yes, unless
