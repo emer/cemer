@@ -13,7 +13,8 @@ CONFFLAGS=""
 read -p "Use QT5? [Y/n]:" 
 if [ -z $REPLY ]; then
   QTVER="qt5"
-  if [ -z $QTDIR ]; read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
+  if [ -z $QTDIR ]; then
+    read -p "Where is Qt5 installed (leave blank if installed from package)?" QTDIR; fi
 fi
 
 if [ "$QTVER" == "qt5" ]; then
