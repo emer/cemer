@@ -157,7 +157,7 @@ void iPanelBase::setPinned(bool value) {
   m_pinned = value; // no action needed... "pinned is just a state of mind"
   if (tabView())
     tabView()->UpdateTabNames(); //updates the icons
-  if (link_()) {
+  if (link_() && link_()->taData()) {
     taBase* owner = link_()->taData()->GetMemberOwner();
     if (owner) {
       owner->SetUserData("user_pinned", value);
@@ -202,14 +202,14 @@ iTabBar::TabIcon iPanelBase::tabIcon() const {
 }
 
 String iPanelBase::TabText() const {
-  if (m_link) {
+  if (link_() && link_()->taData()) {
     taBase* owner = link_()->taData()->GetMemberOwner();
     if (owner) {
       return owner->GetDisplayName();
     }
-    else {
-      return link()->GetDisplayName();
-    }
+  }
+  if(link()) {
+    return link()->GetDisplayName();
   }
   else {
     return _nilString;
