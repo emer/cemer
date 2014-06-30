@@ -712,9 +712,7 @@ class SubversionPoller(object):
             if self.got_submit or self.status_change:
                 self._get_cluster_info()
                 self._update_running_jobs(True)  # get latest info on all running jobs
-
-            # 3. Commit the changes.
-            self._commit_changes()
+                self._commit_changes()
 
             # 4. Sleep until next poll cycle.
             time.sleep(self.delay)
