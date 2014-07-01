@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7286
+// ta_Dump File v3.0 -- code v7.0.1.0 rev7395
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -11,12 +11,17 @@ LeabraProject .projects["program_examples"] {
   LeabraWizard @["LeabraWizard_0"] { 
    UserDataItem_List @*(.user_data_) {
     UserDataItem @["NO_CLIP"] { };
+    UserDataItem @["user_pinned"] { };
    };
   };
  };
 
  ControlPanel_Group @.ctrl_panels = [1] {
   ClusterRun @["ClusterRun"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["user_pinned"] { };
+   };
+
    EditMbrItem_Group @.mbrs = [0] {
    };
 
@@ -293,7 +298,7 @@ LeabraProject .projects["program_examples"] {
  };
 
  Program_TopGroup @.programs = [0] {
-  Program_Group @.gp["Control"] = [4] { 
+  Program_Group @.gp["Control"] = [5] { 
    Program @["For"] { 
     ProgObjList @.objs = [0] {
     };
@@ -475,6 +480,55 @@ LeabraProject .projects["program_examples"] {
        PrintExpr @[0] { };
       };
      };
+    };
+   };
+   Program @["Conditional_Printing"] { 
+    UserDataItem_List @*(.user_data_) {
+     UserDataItem @["user_pinned"] { };
+    };
+
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [1] {
+     DynEnumType @["debug_level"] { 
+      DynEnumItem_List @.enums = [2] {
+       DynEnumItem @["debug_level_1"] { };
+       DynEnumItem @["debug_level_2"] { };
+      };
+     };
+    };
+
+    ProgVar_List @.args = [0] {
+    };
+
+    ProgVar_List @.vars = [3] {
+     ProgVar @["debug_level_1"] { };
+     ProgVar @["debug_level_2"] { };
+     ProgVar @["debug_current_level"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [0] {
+    };
+
+    ProgEl_List @.prog_code = [11] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [0] {
+      };
+     };
+     Comment @[1] { };
+     Comment @[2] { };
+     Comment @[3] { };
+     Comment @[4] { };
+     Comment @[5] { };
+     Comment @[6] { };
+     Comment @[7] { };
+     Comment @[8] { };
+     PrintExpr @[9] { };
+     PrintExpr @[10] { };
     };
    };
   };
@@ -2509,6 +2563,8 @@ LeabraProject .projects["program_examples"] {
  Network_Group @.networks = [1] {
   LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
+    UserDataItem @["trial_cos_diff"] { };
+    UserDataItem @["avg_act_diff"] { };
     UserDataItem @["cos_diff"] { };
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
@@ -2628,7 +2684,6 @@ LeabraProject .projects["program_examples"] {
   taDoc @["DataTables"] {
    name="DataTables";
    desc=;
-   auto_open=0;
    web_doc=1;
    wiki="emergent";
    url="DataTable";
@@ -3379,7 +3434,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   taDoc @["Matrix_css"] {
    name="Matrix_css";
    desc="docs for Matrix css operations";
-   auto_open=0;
    web_doc=1;
    wiki="emergent";
    url="Matrix_css";
@@ -3761,7 +3815,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   taDoc @["DataTable_css"] {
    name="DataTable_css";
    desc="docs for DataTable special css expressions";
-   auto_open=0;
    web_doc=1;
    wiki="emergent";
    url="DataTable_css";
@@ -3992,7 +4045,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   taDoc @["DataOperations_tutorial"] {
    name="DataOperations_tutorial";
    desc=;
-   auto_open=0;
    web_doc=1;
    wiki="emergent";
    url="DataProcTutorial";
@@ -4246,9 +4298,13 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      value 1 0=1;
      val_type_fixed=0;
     };
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
    };
    name="LeabraWizard_0";
-   auto_open=1;
   };
  };
  ctrl_panels {
@@ -4256,8 +4312,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   el_typ=ControlPanel;
   el_def=0;
   ClusterRun @["ClusterRun"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["user_pinned"] {
+     name="user_pinned";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
    name="ClusterRun";
-   auto_edit=1;
    running_updt=0;
    desc=;
    mbrs {
@@ -7070,6 +7135,189 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	debug_level=NULL;
        };
       };
+     };
+    };
+    step_prog=NULL;
+    step_n=1;
+   };
+   Program @["Conditional_Printing"] {
+    UserDataItem_List @*(.user_data_) {
+     name="UserDataItem_List_170";
+     el_typ=UserDataItem;
+     el_def=0;
+     UserDataItem @["user_pinned"] {
+      name="user_pinned";
+      value 1 0=1;
+      val_type_fixed=0;
+     };
+    };
+    name="Conditional_Printing";
+    short_nm="CndPrn";
+    tags=;
+    desc="Print debug statements based on current debug_level";
+    flags=NO_STOP_STEP;
+    objs {
+     name="ProgObjList_35";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="ProgType_List_0";
+     el_typ=DynEnumType;
+     el_def=0;
+     DynEnumType @["debug_level"] {
+      name="debug_level";
+      desc=;
+      enums {
+       name="enums";
+       el_typ=DynEnumItem;
+       el_def=0;
+       DynEnumItem @["debug_level_1"] {
+	name="debug_level_1";
+	value=1;
+	desc=;
+       };
+       DynEnumItem @["debug_level_2"] {
+	name="debug_level_2";
+	value=2;
+	desc=;
+       };
+      };
+      bits=1;
+     };
+    };
+    args {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+    };
+    vars {
+     name="ProgVar_List_0";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["debug_level_1"] {
+      name="debug_level_1";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$$;
+       value=1;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="you can have one level of printing at a time or turn on multiple levels";
+      init_from=NULL;
+     };
+     ProgVar @["debug_level_2"] {
+      name="debug_level_2";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$;
+       value=2;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+     ProgVar @["debug_current_level"] {
+      name="debug_current_level";
+      var_type=T_DynEnum;
+      dyn_enum_val {
+       enum_type=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].types["debug_level"]$;
+       value=1;
+      };
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="this is how to set what statements get printed, all, some or none";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="Function_List_35";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="ProgEl_List_208";
+     el_typ=ProgCode;
+     el_def=0;
+    };
+    prog_code {
+     name="ProgEl_List_209";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+      };
+     };
+     Comment @[1] {
+      desc="This example shows how to print conditionally based on the current debug level";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// This example shows how to print conditionally based on the current debug level";
+     };
+     Comment @[2] {
+      desc="First create a dynamic enum type in the types group and one or more enums of this type - here we have two";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// First create a dynamic enum in the types group and add one or more enums";
+     };
+     Comment @[3] {
+      desc="You must set the bits flag for this to work";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// You must";
+     };
+     Comment @[4] {
+      desc="Now create a variable of this type to hold the current debug level";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// Now create a variable of this type to hold the current debug level";
+     };
+     Comment @[5] {
+      desc="Next create a var that will be the debug level associated with a print statement -";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// Next create a var that will be the debug level associated with the print statement -";
+     };
+     Comment @[6] {
+      desc="Finally create a print statement and set the debug level to the var holding the current debug level";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// Finally create a print statement and set the debug level to the var holding the current debug level";
+     };
+     Comment @[7] {
+      desc="and set the mask to the var that holds the debug level for when to fire the print statement";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// and set the mask to the var that holds the debug level for when to fire the print statement";
+     };
+     Comment @[8] {
+      desc="Easier than it sounds, study the example";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// Easier than it sounds, study the example";
+     };
+     PrintExpr @[9] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"hello\"";
+      expr {
+       expr="\"Print if debug level 1\"";
+      };
+      my_mask=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_level_1"]$$;
+      debug_level=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_current_level"]$$;
+     };
+     PrintExpr @[10] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print \"hello\"";
+      expr {
+       expr="\"Print if debug level 2\"";
+      };
+      my_mask=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_level_2"]$$;
+      debug_level=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_current_level"]$;
      };
     };
     step_prog=NULL;
@@ -15446,22 +15694,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.1023676916956902;
+     value 6 0=0.01838810555636883;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.04783599078655243;
+     value 6 0=0.066995769739151;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9909470677375793;
+     value 6 0=0.9906103014945984;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7961275577545166;
+     value 6 0=0.7954866290092468;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16646,17 +16894,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.01252847351133823;
+       value 6 0=0.007757404819130898;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.05710306391119957;
+       value 6 0=0.03208137676119804;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7107061743736267;
+       value 6 0=0.7425951957702637;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -16693,6 +16941,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="UserDataItem_List_7";
     el_typ=UserDataItem;
     el_def=0;
+    UserDataItem @["trial_cos_diff"] {
+     name="trial_cos_diff";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["avg_act_diff"] {
+     name="avg_act_diff";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["cos_diff"] {
      name="cos_diff";
      value 1 0=1;
@@ -16913,7 +17171,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: i_thr=STD: };
+     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
      act_lrn_on=0;
      act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
@@ -16946,9 +17204,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       vm_gain=0.04;
       spike_gain=0.00805;
       interval=10;
+      trials=0;
       dt_time=142.8571;
      };
-     depress {on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: interval=1: max_amp=1: };
+     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=1: trials=0: max_amp=1: };
      syn_delay {
       on=0;
       delay=4;
