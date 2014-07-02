@@ -154,7 +154,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   reference = cp.reference;
   desc = cp.desc;
   init_from = cp.init_from;
-
+  
   if(var_type == T_Object) {
     if((bool)object_val) {
       // note that updatepointers will reset to null if not found, so it is key
@@ -172,6 +172,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
     if(myprg == othprg)
       objs_ptr = false; // if in same program, then it is a duplicate and cannot be objs_ptr
   }
+  SetCopyName(cp);
 }
 
 bool ProgVar::CheckUndefType(const String& function_context) const {

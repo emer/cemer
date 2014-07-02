@@ -56,6 +56,40 @@ bool taNBase::SetName(const String& nm) {
   return true;
 }
 
+bool taNBase::SetCopyName(const taNBase& cp) {
+  if(!owner || !owner->InheritsFrom(&TA_taList_impl))
+    return false;
+  
+  String tmp_name = cp.name;
+  String root_name = cp.name;
+  if (tmp_name.contains("_copy")) {
+    // remove any suffix - could be just _copy or could be _copy_1 etc
+    root_name = tmp_name.before("_copy");
+  }
+  // add back the extension
+  tmp_name = root_name + "_copy";
+  int idx = dynamic_cast<taList_impl*>(owner)->FindNameIdx(tmp_name);
+  if (idx == -1) {
+    name = tmp_name;
+  }
+  else {
+    bool done = false;
+    int i = 1;
+    while (!done) {
+      tmp_name = root_name + "_copy_" + taString(i);
+      idx = dynamic_cast<taList_impl*>(owner)->FindNameIdx(tmp_name);
+      if(idx == -1) {
+        name = tmp_name;
+        done = true;
+      }
+      else {
+        i++;
+      }
+    }
+  }
+  return true;
+}
+
 bool taNBase::BrowserEditEnable() {
   if(GetMemberOwner() != NULL) {
     return false;               // if we are a member, can't edit
