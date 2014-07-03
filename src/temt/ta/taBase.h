@@ -731,6 +731,7 @@ public:
   virtual void          SetDefaultName() {} // #IGNORE note: called non-virtually in every constructor
   void                  SetDefaultName_(); // #IGNORE default behavior for >=taNBase -- you can call this manually for taOBase (or others that implement Name)
   virtual void          SetDefaultName_impl(int idx); // #IGNORE called from within, or by list -- NAME_TYPE will determine what we do with idx
+  virtual bool          SetCopyName(const taBase& cp) {return false;} // #IGNORE called by Copy_ in taNBase and specific non-taNBase classes that need to set object copy name
   virtual String        GetTypeDecoKey() const { return _nilString; }
   // #IGNORE lookup key for visual decoration of an item reflecting its overall type information, used for font colors in the gui browser, for example
   virtual bool          GetQuiet() const {return false;}

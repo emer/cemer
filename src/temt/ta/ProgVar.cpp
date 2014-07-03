@@ -172,7 +172,6 @@ void ProgVar::Copy_(const ProgVar& cp) {
     if(myprg == othprg)
       objs_ptr = false; // if in same program, then it is a duplicate and cannot be objs_ptr
   }
-  SetCopyName(cp);
 }
 
 bool ProgVar::CheckUndefType(const String& function_context) const {
@@ -945,4 +944,3 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
   }
   return inherited::GetColText(key, itm_idx);
 }
-

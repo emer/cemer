@@ -31,12 +31,12 @@ INHERITED(taOBase)
 public:
   String      name; // #CONDEDIT_OFF_base_flags:NAME_READONLY #CAT_taBase name of the object
 
-  bool        HasName() const override { return true; }
-  bool        SetName(const String& nm) override;
-  String      GetName() const  override { return name; }
-  void        SetDefaultName() override;
-  void        MakeNameUnique() override;
-  bool        SetCopyName(const taNBase& cp);
+  bool            HasName() const override { return true; }
+  bool            SetName(const String& nm) override;
+  String          GetName() const  override { return name; }
+  void            SetDefaultName() override;
+  void            MakeNameUnique() override;
+  bool            SetCopyName(const taBase& cp) override;
 
   bool        BrowserEditEnable() override;
   String      BrowserEditString() override { return GetDisplayName(); }
@@ -47,7 +47,8 @@ protected:
   void         UpdateAfterEdit_impl() override;
 
 private:
-  NOCOPY(taNBase); //note: we don't copy name, because it causes too many issues
+  void  Copy_(const taNBase& cp);
+
   void  Initialize()    { }
   void  Destroy()       { }
 };

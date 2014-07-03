@@ -21,6 +21,10 @@
 
 TA_BASEFUNS_CTORS_DEFN(taNBase);
 
+void taNBase::Copy_(const taNBase& cp) {
+  SetCopyName(cp);
+}
+
 void taNBase::SetDefaultName() {
   if(taMisc::not_constr || taMisc::in_init || GetTypeDef() == &TA_taNBase)
     return;
@@ -56,12 +60,15 @@ bool taNBase::SetName(const String& nm) {
   return true;
 }
 
-bool taNBase::SetCopyName(const taNBase& cp) {
-  if(!owner || !owner->InheritsFrom(&TA_taList_impl))
+bool taNBase::SetCopyName(const taBase& cp) {
+  if(!cp.InheritsFrom(&TA_taNBase) || !owner || !owner->InheritsFrom(&TA_taList_impl))
     return false;
   
-  String tmp_name = cp.name;
-  String root_name = cp.name;
+  if(dynamic_cast<const taNBase&>(cp).name.empty())
+    return false;
+  
+  String tmp_name = dynamic_cast<const taNBase&>(cp).name;
+  String root_name = dynamic_cast<const taNBase&>(cp).name;
   if (tmp_name.contains("_copy")) {
     // remove any suffix - could be just _copy or could be _copy_1 etc
     root_name = tmp_name.before("_copy");

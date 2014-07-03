@@ -186,7 +186,6 @@ void Program::Copy_(const Program& cp) {
   sub_progs_dir.RemoveAll();
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
   UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
-  SetCopyName(cp);
 }
 
 void Program::UpdateAfterEdit_impl() {
