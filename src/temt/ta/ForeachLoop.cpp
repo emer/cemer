@@ -97,9 +97,9 @@ bool ForeachLoop::CvtFmCode(const String& code) {
     if(cd.endsWith(')'))
       cd = cd.before(')', -1);
   }
-  String inexpr = trim(cd.after("in"));
+  String inexpr = trim(cd.after(" in "));
   in.SetExpr(inexpr);
-  String varexpr = trim(cd.before("in"));
+  String varexpr = trim(cd.before(" in "));
   if (!varexpr.contains("<el_var not set>")) { // not if it is still the prompt
     el_var = FindVarNameInScope(varexpr, true); // option to make
   }
