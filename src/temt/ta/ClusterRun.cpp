@@ -348,7 +348,10 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
     String dnm = fl.before(".dat", -1);
     dnm = taMisc::StringCVar(dnm);
     DataTable* dat = dgp->FindName(dnm);
-    if(!dat) {
+    if(dat) {
+      dat->ResetData();
+    }
+    else {
       dat = dgp->NewEl(1);
       dat->name = dnm;
       dat->ClearDataFlag(DataTable::SAVE_ROWS); // don't save these by default!!
