@@ -34,7 +34,6 @@ REPONAME=`lsb_release -cs` # e.g., "maverick"
 QUARTER_BLD_DIR=libquarter0-${QUARTER_VERSION}
 QUARTER_BLD_PATH=/tmp/${QUARTER_BLD_DIR}
 rm -fr ${QUARTER_BLD_PATH}
-# Quarter in the grey repository builds against (at least) libcoin80
 svn co --username anonymous --password emergent https://grey.colorado.edu/svn/coin3d/quarter/trunk ${QUARTER_BLD_PATH}
 # Create tarball (?)
 cd /tmp
@@ -58,7 +57,7 @@ Quarter
 # Create debian/control
 #################################################
 if [ "$QTVER" == "qt5" ] && [ -z $QTDIR ]; then
-  QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev"
+  QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev"
 fi
 
 cat > debian/control <<Quarter
