@@ -7,6 +7,7 @@ set -e
 # (could use /usr/bin/lsb_release to get this info)
 NEED_BACKPORT="n"
 ISSUE="Ubuntu 14.10"
+USE_LIBCOIN="libcoin80-dev"
 if ! grep -q "$ISSUE" /etc/issue; then
   ISSUE="Ubuntu 14.04"
   if ! grep -q "$ISSUE" /etc/issue; then
@@ -15,8 +16,10 @@ if ! grep -q "$ISSUE" /etc/issue; then
       ISSUE="Ubuntu 13.04"
       if ! grep -q "$ISSUE" /etc/issue; then
         ISSUE="Ubuntu 12.10"
+        USE_LIBCOIN="libcoin60-dev"
         if ! grep -q "$ISSUE" /etc/issue; then
           ISSUE="Ubuntu 12.04"
+          USE_LIBCOIN="libcoin60-dev"
           if ! grep -q "$ISSUE" /etc/issue; then
             echo "ERROR: This script should be run on ${ISSUE} or higher"
             exit
@@ -115,7 +118,7 @@ DEBUILD_PKGS="build-essential gnupg lintian fakeroot debhelper dh-make subversio
 #  * don't need libquarter here since we will be building it ourselves.
 # Changed libCoin60 to libCoin80, and removed libqt4-dev, for packaging. (Legacy versions can build against the older one 
 # but we don't care here in the packaging script.) tmankad 20140522
-EMERGENT_PKGS="checkinstall subversion cmake g++ libcoin80-dev libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev libsvn-dev"
+EMERGENT_PKGS="checkinstall subversion cmake g++ $USE_LIBCOIN libreadline6-dev libgsl0-dev zlib1g-dev libode-sp-dev libpng-dev libjpeg-dev libncurses-dev libsvn-dev"
 
 # Packages needed to build Quarter.  It also requires some of the
 # ones already listed in EMERGENT_PKGS, but this one is specifically
