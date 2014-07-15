@@ -179,6 +179,7 @@ public:
   iAction*            viewPanelsAndT3Action;
   iAction*            viewAllFramesAction;
 
+  iAction*            toolsDiffCompareAction;
   iAction*            toolsTypeInfoBrowseAction;
   iAction*            toolsHelpBrowseAction;
   iAction*            toolsSvnBrowseActionEmergent;
@@ -341,6 +342,7 @@ public slots:
   virtual void  showMenu_aboutToShow();
   virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 
+  void          toolsDiffCompare();
   void          toolsTypeInfoBrowser();
   void          toolsHelpBrowser();
   void          toolsSvnBrowserEmergent();

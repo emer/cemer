@@ -431,13 +431,13 @@ void iMainWindowViewer::Constr_FileMenu()
   // filePrintAction = AddAction(new iAction("&Print...", QKeySequence(), "filePrintAction"));
   // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
 
-  fileSaveNotesAction = AddAction(new iAction("Save Note &Changes", QKeySequence(), "fileSaveNotesAction"));
-  fileSaveAsTemplateAction = AddAction(new iAction("Save As &Template", QKeySequence(), "fileSaveAsTemplate"));
-  fileUpdateChangeLogAction = AddAction(new iAction("&Updt Change Log", QKeySequence(), "fileUpdateChangeLogAction"));
+  fileSaveNotesAction = AddAction(new iAction("Save Note &Changes...", QKeySequence(), "fileSaveNotesAction"));
+  fileSaveAsTemplateAction = AddAction(new iAction("Save As &Template...", QKeySequence(), "fileSaveAsTemplate"));
+  fileUpdateChangeLogAction = AddAction(new iAction("&Updt Change Log...", QKeySequence(), "fileUpdateChangeLogAction"));
   fileSaveAllAction = AddAction(new iAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
   fileOpenSvnBrowserAction = AddAction(new iAction("SVN Browser", QKeySequence(), "fileOpenSvnBrowserAction"));
-  fileSvnCommitAction = AddAction(new iAction("SVN Commit", QKeySequence(), "fileSvnCommitAction"));
+  fileSvnCommitAction = AddAction(new iAction("SVN Commit...", QKeySequence(), "fileSvnCommitAction"));
 
   // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
   filePublishProjectOnWebAction = AddAction(new iAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
@@ -1043,6 +1043,7 @@ void iMainWindowViewer::Constr_DataMenu() {
 
 void iMainWindowViewer::Constr_ToolsMenu()
 {
+  toolsDiffCompareAction = AddAction(new iAction(0, "Diff Compare...", QKeySequence(), "toolsDiffCompareAction"));
   toolsHelpBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsHelpBrowseAction"));
   toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
 
@@ -1057,12 +1058,14 @@ void iMainWindowViewer::Constr_ToolsMenu()
       (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name,
           QKeySequence(), "toolsSvnBrowseActionSvn3"));
   
-  toolsOpenServerAction = AddAction(new iAction(0, "&Open Remote Server", QKeySequence(), "toolsOpenServerAction"));
+  toolsOpenServerAction = AddAction(new iAction(0, "&Open Remote Server...", QKeySequence(), "toolsOpenServerAction"));
   toolsCloseServerAction = AddAction(new iAction(0, "&Close Remote Server", QKeySequence(), "toolsCloseServerAction"));
 
 
   // Build menu items.
   if (toolsMenu) {
+    toolsMenu->AddAction(toolsDiffCompareAction);
+    toolsMenu->insertSeparator();
     toolsMenu->AddAction(toolsHelpBrowseAction);
     toolsMenu->AddAction(toolsTypeInfoBrowseAction);
     toolsMenu->insertSeparator();
@@ -1079,8 +1082,10 @@ void iMainWindowViewer::Constr_ToolsMenu()
   }
 
   // Make connetions.
+  connect(toolsDiffCompareAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffCompare()));
   connect(toolsHelpBrowseAction, SIGNAL(triggered()),
-      this, SLOT(toolsHelpBrowser()));
+          this, SLOT(toolsHelpBrowser()));
   connect(toolsSvnBrowseActionEmergent, SIGNAL(triggered()),
       this, SLOT(toolsSvnBrowserEmergent()));
   connect(toolsSvnBrowseActionSvn1, SIGNAL(triggered()),
@@ -2364,6 +2369,7 @@ void iMainWindowViewer::showMenu_aboutToShow() {
 }
 
 void iMainWindowViewer::toolsMenu_aboutToShow() {
+  toolsDiffCompareAction->setEnabled(false);
   toolsOpenServerAction->setEnabled(!taRootBase::instance()->IsServerOpen());
   toolsCloseServerAction->setEnabled(taRootBase::instance()->IsServerOpen());
 }
@@ -2399,6 +2405,9 @@ void iMainWindowViewer::this_ToolBarSelect(iAction* me) {
   } else { //need to show
     tb->Hide();
   }
+}
+
+void iMainWindowViewer::toolsDiffCompare() {
 }
 
 void iMainWindowViewer::toolsTypeInfoBrowser() {
