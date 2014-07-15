@@ -610,8 +610,8 @@ void Program::Stop_impl() {
   last_stop_prog = this;
   global_trace = RenderGlobalTrace(taMisc::gui_active); // gotta grab it while its hot
   script->Stop();
-  //   setRunState(STOP);
-  //   SigEmit(SLS_ITEM_UPDATED_ND); // update button state
+  //  SetRunState(STOP);
+  //  SigEmit(SLS_ITEM_UPDATED_ND); // update button state
 }
 
 bool Program::IsStepProg() {
@@ -797,6 +797,11 @@ void Program::ScriptCompiled() {
 void Program::setStale() {
   //note: we don't propagate setStale
   //note: 2nd recursive call of this during itself doesn't do anything
+  // john - 07/14/14 - Fix for bug 2007 - but who is setting the run_state to DONE when stopped at a breakpoint
+  if(run_state == DONE && (stop_reason == SR_USER_STOP || stop_reason == SR_BREAKPOINT)) {
+    return;
+  }
+  // john - 07/14/14 - why isn't STOP in the test?
   if(run_state == RUN || run_state == INIT) return;          // change is likely self-generated during running, don't do it!
   bool changed = false;
   if (script_compiled) {
