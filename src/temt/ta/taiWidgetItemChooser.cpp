@@ -147,9 +147,14 @@ const String taiWidgetItemChooser::labelText() {
 }
 
 const String taiWidgetItemChooser::titleText() {
-  String chs_title = "Choose " + itemTag();
-  if(targ_typ) chs_title += " from: " + targ_typ->name;
-  return chs_title;
+  if (title_text.empty()) {
+    String chs_title = "Choose " + itemTag();
+    if(targ_typ) chs_title += " from: " + targ_typ->name;
+    return chs_title;
+  }
+  else {
+    return title_text;
+  }
 }
 
 bool taiWidgetItemChooser::OpenChooser() {
@@ -198,3 +203,6 @@ void taiWidgetItemChooser::UpdateImage(void* cur_sel) {
   rep()->setText(labelText());
 }
 
+void taiWidgetItemChooser::SetTitleText(String title) {
+  title_text = title;
+}

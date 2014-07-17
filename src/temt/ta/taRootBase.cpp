@@ -2264,12 +2264,17 @@ void taRootBase::SaveRecoverFileHandler(int err) {
 #endif //
 }
 
-void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj) {
+void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj, String title_name) {
   bool okc;
   taBase* obj_one = NULL;
   taBase* obj_two = NULL;
+  String title;
   taiWidgetTokenChooser* chooser =  NULL;
   TypeDef* targ_type = NULL;
+  
+  if (title_name.empty()) {
+    title_name = type_name;
+  }
   
   targ_type = taMisc::FindTypeName(type_name);
   if (!targ_type) {
@@ -2284,6 +2289,8 @@ void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj) {
     else {
       chooser->GetImage(NULL, targ_type);
     }
+    title = "Select first of two " + title_name + "s for comparison";
+    chooser->SetTitleText(title);
     okc = chooser->OpenChooser();
     if(okc && chooser->token()) {
       obj_one = chooser->token();
@@ -2293,6 +2300,8 @@ void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj) {
     if (obj_one != NULL) {
       chooser =  new taiWidgetTokenChooser(targ_type, NULL, NULL, NULL);
       chooser->GetImage(NULL, targ_type);
+      title = "Select second " + title_name;
+      chooser->SetTitleText(title);
       okc = chooser->OpenChooser();
       if(okc && chooser->token()) {
         obj_two = chooser->token();

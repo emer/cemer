@@ -111,7 +111,8 @@ public:
   taBase*       GetTemplateInstance(TypeDef* typ);
   // get an instance of the indicated tab type, or NULL if not found
   
-  void          ChooseForDiffCompare(String type_name, taProject* cur_prj = NULL);
+  void          ChooseForDiffCompare(String type_name, taProject* cur_prj, String title_name = "");
+  // title_name may be different than type_name (e.g. BaseSpec and Spec)
 
   ///////////////////////////////////////////////////////////////////////////////
   //            Startup Code    (in order of calling by Startup_Main)

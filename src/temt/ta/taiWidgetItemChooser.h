@@ -82,6 +82,7 @@ public:
   virtual void          BuildCategories(); // for types that support categories
   virtual void          BuildChooser(iDialogItemChooser* ic, int view = 0);
   // builds the tree
+  virtual void          SetTitleText(String title);
 
   ~taiWidgetItemChooser();
 
@@ -103,6 +104,7 @@ protected:
   String                new1_text;
   taBase*               new2_par; // where to create new object
   String                new2_text;
+  String                title_text;
 
   virtual const String  itemTag() const {return _nilString;} // for "N: label" on button, is "N: "
   virtual const String  labelNameNonNull() const = 0; // name part of label, when obj non-null

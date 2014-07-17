@@ -2436,7 +2436,7 @@ void iMainWindowViewer::this_ToolBarSelect(iAction* me) {
 }
 
 void iMainWindowViewer::toolsDiffProjects() {
-  taRootBase::instance()->ChooseForDiffCompare("Project");
+  taRootBase::instance()->ChooseForDiffCompare("taProject", NULL, "Project");
 }
 
 void iMainWindowViewer::toolsDiffPrograms() {
@@ -2461,7 +2461,7 @@ void iMainWindowViewer::toolsDiffLayers() {
 
 void iMainWindowViewer::toolsDiffSpecs() {
   taProject* prj = curProject();
-  taRootBase::instance()->ChooseForDiffCompare("BaseSpec", prj);
+  taRootBase::instance()->ChooseForDiffCompare("BaseSpec", prj, "Spec");
 }
 
 void iMainWindowViewer::toolsTypeInfoBrowser() {
