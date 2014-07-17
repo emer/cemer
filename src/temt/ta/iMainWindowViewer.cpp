@@ -1043,28 +1043,41 @@ void iMainWindowViewer::Constr_DataMenu() {
 
 void iMainWindowViewer::Constr_ToolsMenu()
 {
-  toolsDiffCompareAction = AddAction(new iAction(0, "Diff Compare...", QKeySequence(), "toolsDiffCompareAction"));
+  toolsDiffProjectsAction = AddAction(new iAction(0, "Projects...", QKeySequence(), "toolsDiffProjectsAction"));
+  toolsDiffProgramsAction = AddAction(new iAction(0, "Programs...", QKeySequence(), "toolsDiffProgramsAction"));
+  toolsDiffDataTablesAction = AddAction(new iAction(0, "Data Tables...", QKeySequence(), "toolsDiffDataTablesAction"));
+  toolsDiffNetworksAction = AddAction(new iAction(0, "Networks...", QKeySequence(), "toolsDiffNetworksAction"));
+  toolsDiffLayersAction = AddAction(new iAction(0, "Layers...", QKeySequence(), "toolsDiffLayersAction"));
+  toolsDiffSpecsAction = AddAction(new iAction(0, "Specs...", QKeySequence(), "toolsDiffSpecsAction"));
+  
   toolsHelpBrowseAction = AddAction(new iAction(0, "&Help Browser", QKeySequence(), "toolsHelpBrowseAction"));
   toolsTypeInfoBrowseAction = AddAction(new iAction(0, "Type Info Browser", QKeySequence(), "toolsTypeInfoBrowseAction"));
-
+  
   toolsSvnBrowseActionEmergent = AddAction(new iAction(0, "&SVN Browser Emergent", QKeySequence(), "toolsSvnBrowseActionEmergent"));
   toolsSvnBrowseActionSvn1 = AddAction
-      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo1_url.name,
-          QKeySequence(), "toolsSvnBrowseActionSvn1"));
+  (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo1_url.name,
+               QKeySequence(), "toolsSvnBrowseActionSvn1"));
   toolsSvnBrowseActionSvn2 = AddAction
-      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo2_url.name,
-          QKeySequence(), "toolsSvnBrowseActionSvn2"));
+  (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo2_url.name,
+               QKeySequence(), "toolsSvnBrowseActionSvn2"));
   toolsSvnBrowseActionSvn3 = AddAction
-      (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name,
-          QKeySequence(), "toolsSvnBrowseActionSvn3"));
+  (new iAction(0, String("SVN Browser Repo ") + taMisc::svn_repo3_url.name,
+               QKeySequence(), "toolsSvnBrowseActionSvn3"));
   
   toolsOpenServerAction = AddAction(new iAction(0, "&Open Remote Server...", QKeySequence(), "toolsOpenServerAction"));
   toolsCloseServerAction = AddAction(new iAction(0, "&Close Remote Server", QKeySequence(), "toolsCloseServerAction"));
-
-
+  
+  
   // Build menu items.
   if (toolsMenu) {
-    toolsMenu->AddAction(toolsDiffCompareAction);
+    diffCompareMenu = toolsMenu->AddSubMenu("Diff Compare");
+    diffCompareMenu->AddAction(toolsDiffProjectsAction);
+    diffCompareMenu->AddAction(toolsDiffProgramsAction);
+    diffCompareMenu->AddAction(toolsDiffDataTablesAction);
+    diffCompareMenu->AddAction(toolsDiffNetworksAction);
+    diffCompareMenu->AddAction(toolsDiffLayersAction);
+    diffCompareMenu->AddAction(toolsDiffSpecsAction);
+    
     toolsMenu->insertSeparator();
     toolsMenu->AddAction(toolsHelpBrowseAction);
     toolsMenu->AddAction(toolsTypeInfoBrowseAction);
@@ -1080,20 +1093,30 @@ void iMainWindowViewer::Constr_ToolsMenu()
     toolsMenu->AddAction(toolsOpenServerAction);
     toolsMenu->AddAction(toolsCloseServerAction);
   }
-
+  
   // Make connetions.
-  connect(toolsDiffCompareAction, SIGNAL(triggered()),
-          this, SLOT(toolsDiffCompare()));
+  connect(toolsDiffProjectsAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffProjects()));
+  connect(toolsDiffProgramsAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffPrograms()));
+  connect(toolsDiffDataTablesAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffDataTables()));
+  connect(toolsDiffNetworksAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffNetworks()));
+  connect(toolsDiffLayersAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffLayers()));
+  connect(toolsDiffSpecsAction, SIGNAL(triggered()),
+          this, SLOT(toolsDiffSpecs()));
   connect(toolsHelpBrowseAction, SIGNAL(triggered()),
           this, SLOT(toolsHelpBrowser()));
   connect(toolsSvnBrowseActionEmergent, SIGNAL(triggered()),
-      this, SLOT(toolsSvnBrowserEmergent()));
+          this, SLOT(toolsSvnBrowserEmergent()));
   connect(toolsSvnBrowseActionSvn1, SIGNAL(triggered()),
-      this, SLOT(toolsSvnBrowserSvn1()));
+          this, SLOT(toolsSvnBrowserSvn1()));
   connect(toolsSvnBrowseActionSvn2, SIGNAL(triggered()),
-      this, SLOT(toolsSvnBrowserSvn2()));
+          this, SLOT(toolsSvnBrowserSvn2()));
   connect(toolsSvnBrowseActionSvn3, SIGNAL(triggered()),
-      this, SLOT(toolsSvnBrowserSvn3()));
+          this, SLOT(toolsSvnBrowserSvn3()));
   connect(toolsTypeInfoBrowseAction, SIGNAL(triggered()),
           this, SLOT(toolsTypeInfoBrowser()));
   connect(toolsOpenServerAction, SIGNAL(triggered()),
@@ -2369,7 +2392,12 @@ void iMainWindowViewer::showMenu_aboutToShow() {
 }
 
 void iMainWindowViewer::toolsMenu_aboutToShow() {
-  toolsDiffCompareAction->setEnabled(false);
+  toolsDiffProjectsAction->setEnabled(tabMisc::root->projects.size > 1);
+  toolsDiffProgramsAction->setEnabled(tabMisc::root->projects.size > 0);
+  toolsDiffDataTablesAction->setEnabled(tabMisc::root->projects.size > 0);
+  toolsDiffNetworksAction->setEnabled(tabMisc::root->projects.size > 0);
+  toolsDiffLayersAction->setEnabled(tabMisc::root->projects.size > 0);
+  toolsDiffSpecsAction->setEnabled(tabMisc::root->projects.size > 0);
   toolsOpenServerAction->setEnabled(!taRootBase::instance()->IsServerOpen());
   toolsCloseServerAction->setEnabled(taRootBase::instance()->IsServerOpen());
 }
@@ -2407,7 +2435,33 @@ void iMainWindowViewer::this_ToolBarSelect(iAction* me) {
   }
 }
 
-void iMainWindowViewer::toolsDiffCompare() {
+void iMainWindowViewer::toolsDiffProjects() {
+  taRootBase::instance()->ChooseForDiffCompare("Project");
+}
+
+void iMainWindowViewer::toolsDiffPrograms() {
+  taProject* prj = curProject();
+  taRootBase::instance()->ChooseForDiffCompare("Program", prj);
+}
+
+void iMainWindowViewer::toolsDiffDataTables() {
+  taProject* prj = curProject();
+  taRootBase::instance()->ChooseForDiffCompare("DataTable", prj);
+}
+
+void iMainWindowViewer::toolsDiffNetworks() {
+  taProject* prj = curProject();
+  taRootBase::instance()->ChooseForDiffCompare("Network", prj);
+}
+
+void iMainWindowViewer::toolsDiffLayers() {
+  taProject* prj = curProject();
+  taRootBase::instance()->ChooseForDiffCompare("Layer", prj);
+}
+
+void iMainWindowViewer::toolsDiffSpecs() {
+  taProject* prj = curProject();
+  taRootBase::instance()->ChooseForDiffCompare("BaseSpec", prj);
 }
 
 void iMainWindowViewer::toolsTypeInfoBrowser() {

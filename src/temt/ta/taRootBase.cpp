@@ -35,6 +35,7 @@
 #include <taCodeUtils>
 #include <Program>
 #include <taDoc>
+#include <taiWidgetTokenChooser>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -2261,5 +2262,46 @@ void taRootBase::SaveRecoverFileHandler(int err) {
     }
   }
 #endif //
+}
 
+void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj) {
+  bool okc;
+  taBase* obj_one = NULL;
+  taBase* obj_two = NULL;
+  taiWidgetTokenChooser* chooser =  NULL;
+  TypeDef* targ_type = NULL;
+  
+  targ_type = taMisc::FindTypeName(type_name);
+  if (!targ_type) {
+    taMisc::Warning("Please report this program error, taProject::ChooseForDiffCompare - unknown type_name");
+  }
+  
+  if (targ_type != NULL) {
+    chooser = new taiWidgetTokenChooser(targ_type, NULL, NULL, NULL);
+    if (cur_prj) {
+      chooser->GetImageScoped(NULL, targ_type, cur_prj, &TA_taProject);
+    }
+    else {
+      chooser->GetImage(NULL, targ_type);
+    }
+    okc = chooser->OpenChooser();
+    if(okc && chooser->token()) {
+      obj_one = chooser->token();
+    }
+    delete chooser;
+    
+    if (obj_one != NULL) {
+      chooser =  new taiWidgetTokenChooser(targ_type, NULL, NULL, NULL);
+      chooser->GetImage(NULL, targ_type);
+      okc = chooser->OpenChooser();
+      if(okc && chooser->token()) {
+        obj_two = chooser->token();
+      }
+      delete chooser;
+    }
+    
+    if (obj_one != NULL && obj_two != NULL) {
+      obj_one->DiffCompare(obj_two);
+    }
+  }
 }

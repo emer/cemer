@@ -34,6 +34,7 @@
 #include <taVector2i>
 #include <taVector2f>
 #include <ContextFlag>
+#include <taProject>
 
 // declare all other types mentioned but not required to include:
 class TypeDef; // 
@@ -109,6 +110,8 @@ public:
 
   taBase*       GetTemplateInstance(TypeDef* typ);
   // get an instance of the indicated tab type, or NULL if not found
+  
+  void          ChooseForDiffCompare(String type_name, taProject* cur_prj = NULL);
 
   ///////////////////////////////////////////////////////////////////////////////
   //            Startup Code    (in order of calling by Startup_Main)
@@ -162,6 +165,7 @@ public:
   static void   ProjectOpened();
   // #IGNORE called when a project is opened so we can minimize the root window if this is the first project to be opened
 
+  
   static void   Cleanup_Main();
   // #IGNORE after init, or running, do final cleanups (called by StartupInit on fail, or Startup_Run)
 

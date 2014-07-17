@@ -95,18 +95,19 @@ public:
   taiWidgetMenu*              viewMenu;
   taiWidgetMenu*              show_menu;
   taiWidgetMenu*              ctrlMenu;
-  taiWidgetMenu*              frameMenu;   // enumeration of all Frame guys
-  taiWidgetMenu*              toolBarMenu; // enumeration of all ToolBar guys
-  taiWidgetMenu*              dockMenu;    // enumeration of all Dock guys
+  taiWidgetMenu*              frameMenu;        // enumeration of all Frame guys
+  taiWidgetMenu*              toolBarMenu;      // enumeration of all ToolBar guys
+  taiWidgetMenu*              dockMenu;         // enumeration of all Dock guys
   taiWidgetMenu*              dataMenu;
   taiWidgetMenu*              toolsMenu;
-  taiWidgetMenu*              windowMenu;  // on-demand
+  taiWidgetMenu*              windowMenu;        // on-demand
   taiWidgetMenu*              helpMenu;
-  taiWidgetMenu*              processMenu;        // data_proc methods
-  taiWidgetMenu*              analysisMenu;       // data_analysis methods
-  taiWidgetMenu*              generateMenu;       // data_gen methods
-  taiWidgetMenu*              processImageMenu;   // image_proc methods
-  
+  taiWidgetMenu*              processMenu;       // data_proc methods
+  taiWidgetMenu*              analysisMenu;      // data_analysis methods
+  taiWidgetMenu*              generateMenu;      // data_gen methods
+  taiWidgetMenu*              processImageMenu;  // image_proc methods
+  taiWidgetMenu*              diffCompareMenu;   // all the types you can diff compare
+
   iAction*            historyBackAction;
   iAction*            historyForwardAction;
   iAction*            fileNewAction;
@@ -179,7 +180,12 @@ public:
   iAction*            viewPanelsAndT3Action;
   iAction*            viewAllFramesAction;
 
-  iAction*            toolsDiffCompareAction;
+  iAction*            toolsDiffProjectsAction;
+  iAction*            toolsDiffProgramsAction;
+  iAction*            toolsDiffDataTablesAction;
+  iAction*            toolsDiffNetworksAction;
+  iAction*            toolsDiffLayersAction;
+  iAction*            toolsDiffSpecsAction;
   iAction*            toolsTypeInfoBrowseAction;
   iAction*            toolsHelpBrowseAction;
   iAction*            toolsSvnBrowseActionEmergent;
@@ -216,7 +222,7 @@ public:
   int                   uniqueId() const {return m_unique_id;} // for urls
   inline MainWindowViewer* viewer() const {return (MainWindowViewer*)m_viewer;}
 
-  virtual iAction*    AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
+  virtual iAction*      AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
   void                  AddPanel(iPanelBase* panel, bool new_tab = true);
     // insures we have a iPanelViewer; adds panel; if requested, adds a new tab, sets panel active in it
   virtual void          AddApplicationToolBar(iToolBar* tb); // add the toolbar, showing it if it is mapped
@@ -342,7 +348,12 @@ public slots:
   virtual void  showMenu_aboutToShow();
   virtual void  ShowChange(iAction* sender);  // when show/hide menu changes
 
-  void          toolsDiffCompare();
+  void          toolsDiffProjects();
+  void          toolsDiffPrograms();
+  void          toolsDiffDataTables();
+  void          toolsDiffNetworks();
+  void          toolsDiffLayers();
+  void          toolsDiffSpecs();
   void          toolsTypeInfoBrowser();
   void          toolsHelpBrowser();
   void          toolsSvnBrowserEmergent();
