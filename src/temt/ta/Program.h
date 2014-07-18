@@ -116,6 +116,8 @@ public:
   // #READ_ONLY #NO_SAVE the program was run in step mode -- check for stepping
   static ProgramRef     cur_step_prog;
   // #READ_ONLY #NO_SAVE the current program to be single-stepped -- set by the Step call of the program that was last run
+  static ProgramRef     last_step_prog;
+  // #READ_ONLY #NO_SAVE the last program to be single-stepped -- set by the Step call of the program that was last run
   static ProgramRef     last_run_prog;
   // #READ_ONLY #NO_SAVE the last program to have been run by the user -- top-level run call
   static ProgramRef     last_stop_prog;

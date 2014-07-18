@@ -734,17 +734,23 @@ void iMainWindowViewer::Constr_ControlMenu()
   ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
   ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
   
+  ctrlStepAction = AddAction(new iAction("Step", QKeySequence(), "ctrlStepAction"));
+  ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
+  ctrlStepAction->setToolTip("Step: Step again");
+  
   progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
   progStatusAction->setToolTip("Current Program status -- click button to see the current Global Backtrace of programs run");
 
   // Build menu items.
   ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlContAction);
+  ctrlMenu->AddAction(ctrlStepAction);
   ctrlMenu->AddAction(progStatusAction);
 
   // Make connections.
   connect(ctrlStopAction, SIGNAL(Action()), this, SLOT(ctrlStop()));
   connect(ctrlContAction, SIGNAL(Action()), this, SLOT(ctrlCont()));
+  connect(ctrlStepAction, SIGNAL(Action()), this, SLOT(ctrlStep()));
   connect(progStatusAction, SIGNAL(Action()), this, SLOT(progStatus()));
 }
 
@@ -1542,6 +1548,14 @@ void iMainWindowViewer::ctrlCont() {
   }
   taMisc::Info("Continue: running program:", Program::last_run_prog->name);
   Program::last_run_prog->Run_Gui();
+}
+
+void iMainWindowViewer::ctrlStep() {
+  if(!Program::last_step_prog) {
+    taMisc::Error("Step: cannot step because there is no record of which step was last run");
+    return;
+  }
+  Program::last_run_prog->Step(Program::last_step_prog);
 }
 
 void iMainWindowViewer::progStatus() {
@@ -2594,6 +2608,7 @@ void iMainWindowViewer::UpdateUi() {
   bool css_running = (Program::global_run_state == Program::RUN);
   ctrlStopAction->setEnabled(css_running);
   ctrlContAction->setEnabled(!css_running && Program::last_run_prog);
+  ctrlStepAction->setEnabled(!css_running && Program::last_step_prog);
 
   progStatusAction->setText(Program::GlobalStatus());
 

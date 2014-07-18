@@ -61,6 +61,7 @@ bool Program::step_mode = false;
 ProgramRef Program::cur_step_prog;
 ProgramRef Program::last_run_prog;
 ProgramRef Program::last_stop_prog;
+ProgramRef Program::last_step_prog;
 int Program::cur_step_n = 1;
 int Program::cur_step_cnt = 0;
 Program::RunState Program::global_run_state = Program::NOT_INIT;
@@ -455,6 +456,7 @@ void Program::Run() {
   SetAllBreakpoints();          // reinstate all active breakpoints
   step_mode = false;
   cur_step_prog = NULL;
+  last_step_prog = NULL;
   taMisc::Busy();
   SetRunState(RUN);
   UpdateUi();
@@ -524,6 +526,7 @@ void Program::Step(Program* step_prg) {
     return;
   }
   
+  last_step_prog = step_prg;    // the last step_pgm that was run -- static -- called by gui repeat last step button
   if(step_prog != step_prg)     // save this as new default..
     step_prog = step_prg;
   
