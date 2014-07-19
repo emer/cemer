@@ -46,7 +46,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
   }
 }
 
-bool DynEnumType::CopyToAllProgs() {
+bool DynEnumType::UpdateOtherProgs() {
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return false;
   FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {

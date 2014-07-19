@@ -35,7 +35,7 @@ public:
   // #BUTTON create a new enum item
   virtual void          SeqNumberItems(int first_val = 0);
   // #BUTTON assign values to items sequentially, starting with given first value
-  virtual bool          CopyToAllProgs();
+  virtual bool          UpdateOtherProgs();
   // #BUTTON #CONFIRM copy this type information to all programs that have an enum with this same name in their types section -- provides a convenient way to update when multiple programs use the same dynamic enum types
   virtual bool          EnumsFromDataTable(DataTable* dt, const Variant& col);
   // #BUTTON initialize enum values from values in given data table column (TIP: DynEnumTableCol is a better choice - updates automatically whenever the column values change or rows are added)
