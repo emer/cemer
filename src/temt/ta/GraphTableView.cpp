@@ -1803,6 +1803,7 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     bool clr_ok = false;
     bool new_trace = false;
     bool new_trace_z = false;
+    bool out_of_bounds = false;
     if(x_axis.row_num) {
       dat.x = row;
     }
@@ -1838,12 +1839,22 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
 
     plt.x = x_axis.DataToPlot(dat.x);
     if((graph_type == RASTER) && da_rst) {
-      if(dat.y < ax_rst->range.min || dat.y > ax_rst->range.max) continue;
+      if(dat.y < ax_rst->range.min || dat.y > ax_rst->range.max)
+        continue;
       plt.y = ax_rst->DataToPlot(dat.y);
     }
     else {
-      if(dat.y < yax.range.min || dat.y > yax.range.max) continue;
-      plt.y = yax.DataToPlot(dat.y);
+      if(dat.y < yax.range.min) {
+        plt.y = yax.DataToPlot(yax.range.min);
+        out_of_bounds = true;
+      }
+      else if(dat.y > yax.range.max) {
+        plt.y = yax.DataToPlot(yax.range.max);
+        out_of_bounds = true;
+      }
+      else {
+        plt.y = yax.DataToPlot(dat.y);
+      }
     }
     if(z_axis.on || matz)
       plt.z = z_axis.DataToPlot(dat.z);
@@ -1852,7 +1863,6 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
       new_trace = true;
     if(z_axis.on && (dat.z < last_z))
       new_trace_z = true;
-
 
     if(clr_idx >= 0) {
       clr_ok = true;
@@ -1927,17 +1937,18 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     }
 
     // render marker, if any
-    if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS)) {
-      // todo: in general need to move this to using just simple line drawings instead
-      // of the built-in markers, which are too small.  The line drawings would be rendered
-      // in svg as well..
-      if(row % point_spacing == 0) {
+    if((plot_style == POINTS) || (plot_style == LINE_AND_POINTS) || out_of_bounds) {
+      T3GraphLine::MarkerStyle mrk = (T3GraphLine::MarkerStyle)plv.point_style;
+      if(out_of_bounds)
+        mrk = T3GraphLine::STAR; // indicates out of bounds
+
+      if(row % point_spacing == 0 || out_of_bounds) {
         if(clr_ok)
-          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style, (T3Color)(clr));
+          t3gl->markerAt(plt, mrk, (T3Color)(clr));
         else
-          t3gl->markerAt(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+          t3gl->markerAt(plt, mrk);
         if(render_svg) {
-          svg_markers << t3gl->markerAtSvg(plt, (T3GraphLine::MarkerStyle)plv.point_style);
+          svg_markers << t3gl->markerAtSvg(plt, mrk);
         }
       }
     }
