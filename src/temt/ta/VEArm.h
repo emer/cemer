@@ -357,6 +357,11 @@ public:
   taVector3f    hand_pos_err;     // #READ_ONLY #SHOW #EXPERT #NO_SAVE targ_pos_rel - hand_pos_rel -- error vector of hand away from target location
   float         hand_pos_err_mag; // #READ_ONLY #SHOW #EXPERT #NO_SAVE total distance away from target location
 
+  float         avg_time;         // #SHOW #EXPERT #NO_SAVE average time it takes the hand to reach the target (in seconds)
+  float         total_dist;       // #SHOW #EXPERT #NO_SAVE total distance from the hand to the target at the beginning of a reach
+  float         max_vel;          // #SHOW #EXPERT #NO_SAVE maximum velocity expected by isochronic movement, based on a sigmoid distribution of distance-to-target over time -- equal to (5 * total distance-to-target) / (2 * average movement time)
+  float         iso_err;          // #SHOW #EXPERT #NO_SAVE isochrony error -- a percentage describing the difference between (actual velocity / max velocity) and (expected velocity / max velocity), where expected velocity is based on a Gaussian distribution of velocity over distance-to-target
+
 
   ///////////////////////////////////////////////////////////////////////////////////
   //    delayed values read from data tables -- used for computing io_err
@@ -512,6 +517,11 @@ public:
   // #CAT_State Put the muscle contraction velocities of the last time step in the given matrix -- sets vel geom to 1,n_musc
   virtual void NormVels(float_Matrix& vel_nrm, const float_Matrix& vel);
   // #CAT_State normalize velocities from vel into vel_nrm
+  
+  virtual void IsoMaxVel();
+  // #CAT_State calculate the maximum velocity expected by isochronous movement, given the total distance (from origin to target) and the average movement time
+  virtual void IsoError();
+  // #CAT_State calculate the isochrony error percentage by calculating the difference between current velocity and the velocity expected by isochronous movement at the current position
 
   virtual void HandPos(taVector3f& hpos);
   // #CAT_State get the current hand position into vector

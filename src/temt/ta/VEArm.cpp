@@ -173,6 +173,11 @@ void VEArmDamping::Initialize() {
 void VEArm::Initialize() {
   // just the default initial values here -- note that VEObject parent initializes all the space stuff in its Initialize, so you don't need to do that here
 
+  avg_time = 2.0f;
+  total_dist = 0.0f;
+  max_vel = 0.0f;
+  iso_err = 0.0f;
+
   show_ips = NO_IPS;
 
   arm_side = RIGHT_ARM;
@@ -1496,8 +1501,9 @@ void VEArm::UpdateArmStep() {
   ReadArmDelData();             // read the properly delayed values 
   ComputeIOErr();               // compute io_err using delayed data
   ApplyDelayedStim();           // apply stim from *delayed* data
+  IsoError();                   // calculate the isochrony error
   WriteArmInputData();          // write current input data to present to network
-  WriteArmLogData();            // log data for monitoring eerything
+  WriteArmLogData();            // log data for monitoring everything
 }
 
 void VEArm::InitState_Hand() {
@@ -2277,6 +2283,17 @@ void VEArm::NormVels(float_Matrix& vel_nrm, const float_Matrix& vel) {
   }
 }
 
+void VEArm::IsoMaxVel() {
+  max_vel = 2.5 * (total_dist / avg_time); // V = 5s / 2t
+}
+
+void VEArm::IsoError() {
+  float vel_pct = hand_vel_mag / max_vel;
+  float dist_pct = hand_pos_err_mag / total_dist;
+  float expected_vel_pct = (1.03621f * exp(-13.493f * pow((dist_pct - 0.5f), 2))) - 0.0355;
+  iso_err = vel_pct - expected_vel_pct;
+}
+
 void VEArm::HandPos(taVector3f& hpos) {
   VEBody* hand = bodies[HAND];
   if(!hand) return;
@@ -2442,6 +2459,9 @@ void VEArm::InitArmLogData() {
 
   dc = dt.FindMakeCol("gains_mag", VT_FLOAT);
   dc->desc = "muscle gains magnitude -- this is how the cerebellum modulates the motion -- should see it anticipating the musc_io_err_mag signal as learning proceeds";
+  
+  dc = dt.FindMakeCol("iso_err", VT_FLOAT);
+  dc->desc = "isochrony error -- a percentage describing the difference between (actual velocity / max velocity) and (expected velocity / max velocity), where expected velocity is based on a Gaussian distribution of velocity over distance-to-target";
 
   dt.StructUpdate(false);
 }
@@ -2835,6 +2855,9 @@ void VEArm::WriteArmLogData() {
 
   dc = dt.FindMakeCol("gains_mag", VT_FLOAT);
   dc->SetValAsFloat(gains_mag, -1);
+
+  dc = dt.FindMakeCol("iso_err", VT_FLOAT);
+  dc->SetValAsFloat(iso_err, -1);
 
   // dc = dt.FindMakeCol("", VT_FLOAT);
   //  dc->SetValAsFloat(, -1);
