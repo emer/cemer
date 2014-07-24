@@ -2709,7 +2709,7 @@ void iMainWindowViewer::ShowHideFrames(int combo) {
   PanelViewer* pv_panels = (PanelViewer*)viewer()->GetMiddlePanel();
   PanelViewer* pv_T3 = (PanelViewer*)viewer()->GetRightViewer();
 
-  DockViewer* dv = viewer()->FindDockViewerByName("ProgramToolbar");
+  DockViewer* dv = viewer()->FindDockViewerByName("Tools");
   if (dv) {
     if ((pv_browse && pv_browse->isVisible()) || (pv_panels && pv_panels->isVisible()))
       tools_dock_was_visible = dv->isVisible();  // save the state for case when dock is hidden because the browse and panel frames are hidden
