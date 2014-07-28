@@ -1,0 +1,11 @@
+July 27 2014 (rohrlich)
+
+Lots of script changes to get packaging working for ubuntu 12.04 using the latest scripts which were intended to work for all releases and both qt4 and 5.
+
+One change is that whereas before the BuildEmergent-ubuntu.sh script called ubuntu-motu-quarter it now calls either ubuntu-motu-quarter or conditionally unbuntu-motu-quarter-qt4. The version without the qt4 modifier expects qt5.
+
+The ubuntu-motu-emergent script is a single version that handles the qt version conditionally.
+
+These scripts can be run standalone, you don't need to call BuildEmergent-ubuntu first but it does some upfront work for you like checking out sources, etc.
+
+As of this date we are still using qt4 for the ubuntu 12.04 packages and that is the main reason for continuing with qt4 on ubuntu
