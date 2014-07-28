@@ -166,11 +166,23 @@ if [ "$BUILD_QUARTER" == "y" ]; then
   OUTPUT="libQuarter-build-output.txt"
   if [ -x "$XTERM" ]; then
     $XTERM -si -geometry 160x50 -T "libQuarter build progress (safe to close this window)" -e tail -F $OUTPUT &
-    ./ubuntu-motu-quarter 2>&1 > $OUTPUT
+    if [ $QTVER == qt4 ]; then
+      ./ubuntu-motu-quarter-qt4 2>&1 > $OUTPUT
+    else
+      ./ubuntu-motu-quarter 2>&1 > $OUTPUT
+    fi
   else
-    ./ubuntu-motu-quarter 2>&1 | tee $OUTPUT
-  fi
+    if [ $QTVER != qt5 ]; then
+      echo "Expecting QT to be version 4 or 5 - exiting"
+      exit $?
+    fi
 
+    if [ $QTVER == qt4 ]; then
+      ./ubuntu-motu-quarter-qt4 2>&1 | tee $OUTPUT
+    else
+      ./ubuntu-motu-quarter 2>&1 | tee $OUTPUT
+    fi
+  fi
   echo -e "\nInstalling the Quarter libraries before building emergent..."
   sudo dpkg -i /tmp/libquarter0_*.deb
 fi
@@ -211,7 +223,7 @@ Done!
 
 INSTRUCTIONS
 
-GREY_USER="tmankad"
-read -p "Please enter your user name on grey.colorado.edu: " $GREY_USER
+GREY_USER=""
+read -p "Please enter your user name on grey.colorado.edu: " GREY_USER
 
-scp ${DEBS} $GREY_USER@grey.colorado.edu:/home/$GREY_USER/$REPONAME/
+scp ${DEBS} $GREY_USER@grey.colorado.edu:/home/$GREY_USER/$REPONAME
