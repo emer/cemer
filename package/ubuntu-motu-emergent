@@ -7,11 +7,15 @@ if [ -z $REV ]; then
   if [ -z $REV ]; then REV="HEAD"; fi
 fi
 
+echo "$rev $REV"
+
 TAG="$2"
 if [ -z $TAG ]; then TAG="trunk"; fi
 
+# for qt4 use the qt4 version of this script
 QTVER="$3"
 if [ -z $QTVER ]; then QTVER="qt4"; fi
+#QTVER="qt5"
 
 echo "Building emergent from Subversion rev $REV ($TAG) on "
 cat /etc/issue || echo "Unknown platform"
@@ -33,9 +37,14 @@ if [ -d $EMERGENT_SRC_DIR ]; then
   if [ $TAG != "trunk" ]; then
     REV=$(svn log --stop-on-copy http://grey.colorado.edu/svn/emergent/emergent/${TAG} | sed -n '2s/\ .*$//p' | sed 's/r/-r/')
   fi
-  svn update --username anonymous --password emergent ${REV} ${EMERGENT_SRC_DIR}
+  svn update --username anonymous --password emergent -r ${REV} ${EMERGENT_SRC_DIR}
+  echo "executing configure --clean --$QTVER"
+  $EMERGENT_SRC_DIR/configure --clean --$QTVER
 else
-  echo "${EMERGENT_SRC_DIR} does not exist; checking out revision ${REV}"
+  echo "${EMERGENT_SRC_DIR} does not exist; creating ~/emergent"
+  mkdir ~/emergent
+   echo "checking out revision ${REV}"
+   echo "${EMERGENT_SRC_DIR} does not exist; checking out revision ${REV}"
   svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
 fi
 
@@ -78,7 +87,7 @@ Emergent
 # is to have a single package for emergent, vs. having an emergnet.deb and
 # a separate emergent-dev.deb for people who want to compile plugins.  Also
 # include subversion so users can download and compile the latest emergent.
-EMERGENT_BLD_DEPS="cmake, subversion, g++, libcoin80-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
+EMERGENT_BLD_DEPS="cmake, subversion, g++, libcoin60-dev, libreadline6-dev, libgsl0-dev, libode-sp-dev, libpng-dev, libjpeg-dev, zlib1g-dev, libquarter0, libncurses-dev, libsvn-dev"
 if [ "$QTVER" == "qt5" ] && [ -z $QTDIR ]; then
   QT_BLD_DEPS="qt5-default, qttools5-dev, qtlocation5-dev, libqt5designer5, libqt5webkit5-dev, qtdeclarative5-dev, qtsensors5-dev, qtlocation5-dev"
 fi
