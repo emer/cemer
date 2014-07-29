@@ -2552,12 +2552,14 @@ bool DataTable::Flatten() {
 bool DataTable::FlattenTo(DataTable* flattened_table) {
   bool made_new = false;
   bool in_place = false;
+  String old_name;
   if(flattened_table == NULL) {
     DataTable_Group* group = GET_OWNER(this, DataTable_Group);
     flattened_table = group->NewEl(1, NULL);   // add a new data table to the group
     made_new = true;   // note: set the name of new tables
   }
   else if(flattened_table == this) { // in place
+    old_name = this->name;  // copy will alter then name so save for resetting
     in_place = true;
     flattened_table = new DataTable;
   }
@@ -2575,7 +2577,9 @@ bool DataTable::FlattenTo(DataTable* flattened_table) {
 
   if(in_place) {
     this->CopyFrom(flattened_table);
+    this->SetName(old_name);
     delete flattened_table;
+    this->SigEmitUpdated();
   }
   return true;
 }
