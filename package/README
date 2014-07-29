@@ -6,8 +6,6 @@ One change is that whereas before the BuildEmergent-ubuntu.sh script called ubun
 
 The ubuntu-motu-emergent script is a single version that handles the qt version conditionally.
 
-These scripts can be run standalone, you don't need to call BuildEmergent-ubuntu first but it does some upfront work for you like checking out sources, etc.
-
 As of this date we are still using qt4 for the ubuntu 12.04 packages and that is the main reason for continuing with qt4 on ubuntu
 
-Make directories for each release, precise, trusty, etc in your home directory on grey before running BuildEmergent-ubuntu.sh
+Make directories for each release, precise, trusty, etc in your home directory on grey before running BuildEmergent-ubuntu.sh for the .deb files that will be copied over.
