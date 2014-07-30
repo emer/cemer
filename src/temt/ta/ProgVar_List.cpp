@@ -56,7 +56,8 @@ void ProgVar_List::AddVarTo(taNBase* src) {
   }
   ProgVar* it = (ProgVar*)New(1);
   it->SetObject(src);
-  it->SetName(src->GetName());
+  String temp = src->GetName().CamelToSnake();
+  it->SetName(temp);
   it->UpdateAfterEdit();
   if(taMisc::gui_active) {
     tabMisc::DelayedFunCall_gui(it, "BrowserSelectMe");

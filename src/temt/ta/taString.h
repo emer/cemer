@@ -474,6 +474,7 @@ public:
   // #CAT_Modify if has newlines, elide to first line
   taString                wrap(int max_width) const;
   // #CAT_Modify add newlines every max_width chars
+  taString                CamelToSnake(); // e.g. StdInputData to std_input_data
 
   void                  del(const taString& y, int startpos = 0);
   void                  del(const char* t, int startpos = 0);

@@ -1074,6 +1074,37 @@ taString& taString::upcase() {
   return *this;
 }
 
+taString taString::CamelToSnake() {
+  makeUnique();
+  int found = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if (isupper(mrep->s[n]))
+      found++;
+  }
+
+  if (found == 0)
+    return this;
+  
+  taString rval(this->length() + found, 0, ' ');
+  rval.makeUnique();
+  
+  rval[0] = mrep->s[0];
+  uint increment = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if (!isupper(mrep->s[n])) {
+      rval[n + increment] = mrep->s[n];
+    }
+    else {
+      rval[n + increment] = '_';
+      increment++;
+      rval[n + increment] = mrep->s[n];
+    }
+  }
+  
+  rval.downcase();
+  return rval;
+}
+
 /*
  * substring extraction
  */
