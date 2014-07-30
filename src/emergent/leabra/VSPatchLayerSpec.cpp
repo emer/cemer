@@ -54,7 +54,7 @@ bool VSPatchLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
+    if(!pv_lay && recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       pv_lay = flay;
       continue;
@@ -80,7 +80,7 @@ void VSPatchLayerSpec::Compute_PVPlus(LeabraLayer* lay, LeabraNetwork* net) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
         pv_val = recv_gp->Un(0,net)->act;
-        continue;
+        break;
       }
     }
     u->act_p = pv_val;
