@@ -1504,11 +1504,12 @@ void LeabraUnitSpec::Compute_ActAdapt_Cycle_rate(LeabraUnit* u, LeabraNetwork* n
     u->adapt = 0.0f;
   }
   else {
+    float dad = dt.integ * adapt.Compute_dAdapt(0.0f, u->act, u->adapt);
+    // vm_gain is now driving based on (0 - act) -- the more active, the longer it is in refractory, and thus the longer the adapt goes down..
     if(net->ct_cycle % adapt.interval == 0) {
-      float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
       dad += u->act * adapt.spike_gain; // rate code version of spiking
-      u->adapt += dad;
     }
+    u->adapt += dad;
   }
 }
 
@@ -1517,10 +1518,10 @@ void LeabraUnitSpec::Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* n
     u->adapt = 0.0f;
   }
   else {
+    float dad = dt.integ * adapt.Compute_dAdapt(0.0f, u->act, u->adapt);
+    // vm_gain is now driving based on (0 - act) -- the more active, the longer it is in refractory, and thus the longer the adapt goes down..
     if(net->trial % adapt.interval == 0) {
-      float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt); // rest relative
       dad += u->act * adapt.spike_gain; // rate code version of spiking
-      u->adapt += dad;
     }
   }
 }
