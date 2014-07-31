@@ -43,6 +43,7 @@ void iApplicationToolBar::Constr_post() {
     but->setText("");
   }
 
+  tb->addSeparator();
   tb->addAction(win->editFindAction);
 
   tb->addSeparator();

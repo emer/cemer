@@ -425,9 +425,10 @@ void iMainWindowViewer::Constr_FileMenu()
   fileOpenAction->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
 
   fileSaveAction = AddAction(new iAction("&Save Project", QKeySequence(cmd_str + "S"), "fileSaveAction"));
-  fileSaveAction->setIcon(QIcon(QPixmap(":/images/filesave.png")));
+  fileSaveAction->setIcon(QIcon(QPixmap(":/images/save_icon.png")));
 
   fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(cmd_str + "Shift+S"), "fileSaveAsAction"));
+  fileSaveAsAction->setIcon(QIcon(QPixmap(":/images/save_as_icon.png")));
   // filePrintAction = AddAction(new iAction("&Print...", QKeySequence(), "filePrintAction"));
   // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
 
@@ -573,6 +574,7 @@ void iMainWindowViewer::Constr_EditMenu()
   editUnlinkAction = AddAction(new iAction(iClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
 
   editFindAction = AddAction(new iAction(0, "&Find...", QKeySequence(), "editFindAction"));
+  editFindAction->setIcon(QIcon(QPixmap(":/images/find_icon.png")));
   editFindNextAction = AddAction(new iAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
 
   // Build menu items.
@@ -1135,11 +1137,13 @@ void iMainWindowViewer::Constr_HelpMenu()
 {
   String s = taMisc::app_name + " Help on the web";
   helpHelpAction = AddAction(new iAction("&Help", QKeySequence("F1"), "helpHelpAction"));
+  helpHelpAction->setIcon(QIcon(QPixmap(":/images/help_icon.png")));
   helpHelpAction->setToolTip(s);
   helpHelpAction->setStatusTip(s);
 
   helpAboutAction = AddAction(new iAction("&About", QKeySequence(), "helpAboutAction"));
   helpFileBugAction = AddAction(new iAction("Report Bug", QKeySequence(), "helpFileBugAction"));
+  helpFileBugAction->setIcon(QIcon(QPixmap(":/images/report_bug_icon.png")));
   helpFileBugAction->setToolTip("Opens web page for reporting a problem or requesting an enhancement");
 
   // Build menu items.

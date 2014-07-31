@@ -17,6 +17,11 @@
   <file>images/stop_icon.png</file>
   <file>images/play_icon.png</file>
   <file>images/step_icon.png</file>
+  <file>images/save_icon.png</file>
+  <file>images/save_as_icon.png</file>
+  <file>images/find_icon.png</file>
+  <file>images/help_icon.png</file>
+  <file>images/report_bug_icon.png</file>
   <file>images/emergent_16x16x256.ico</file>
   <file>images/emergent_32x32.png</file>
 </qresource>
