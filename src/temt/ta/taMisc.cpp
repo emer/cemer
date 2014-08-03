@@ -205,6 +205,9 @@ String  taMisc::t3d_text_color = "black";
 taMisc::ConsoleOptions taMisc::console_options = CO_PAGER;
 
 taMisc::GuiStyle taMisc::gui_style = taMisc::GS_DEFAULT;
+taMisc::AppToolbarStyle taMisc::app_toolbar_style = taMisc::TB_TEXT_UNDER_ICON;
+
+
 int     taMisc::display_width = 120;
 int     taMisc::max_display_width = 255;
 int     taMisc::indent_spc = 2;

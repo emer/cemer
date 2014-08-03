@@ -11,6 +11,8 @@
   <file>images/fileopen.png</file>
   <file>images/fileprint.png</file>
   <file>images/filesave.png</file>
+  <file>images/project_open_icon.png</file>
+  <file>images/project_close_icon.png</file>
   <file>images/tab_unpushed.png</file>
   <file>images/tab_pushed.png</file>
   <file>images/tab_locked.png</file>
@@ -22,7 +24,12 @@
   <file>images/find_icon.png</file>
   <file>images/help_icon.png</file>
   <file>images/report_bug_icon.png</file>
+  <file>images/svn_browse_icon.png</file>
+  <file>images/svn_commit_icon.png</file>
+  <file>images/preferences_icon.png</file>
   <file>images/emergent_16x16x256.ico</file>
   <file>images/emergent_32x32.png</file>
+  <file>images/previous_icon.png</file>
+  <file>images/next_icon.png</file>
 </qresource>
 </RCC>

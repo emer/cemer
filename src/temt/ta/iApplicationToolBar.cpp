@@ -17,6 +17,7 @@
 #include <iMainWindowViewer>
 
 
+#include <taMisc>
 #include <taiMisc>
 
 #include <QToolButton>
@@ -24,24 +25,21 @@
 void iApplicationToolBar::Constr_post() {
   iMainWindowViewer* win = viewerWindow(); //cache
   iToolBar* tb = this;
-
+  
+  tb->setToolButtonStyle(static_cast<Qt::ToolButtonStyle>(taMisc::app_toolbar_style));
+  
   int icon_sz = taiM_->label_height(taiMisc::sizMedium);
   tb->setIconSize(QSize(icon_sz, icon_sz));
 
   // Actions have already been constructed for the viewer window's menus.
   // Now add these actions to the toolbar for convenient access.
   tb->addAction(win->historyBackAction);
-  tb->addAction(win->historyForwardAction);
+  win->historyBackAction->setIcon(QIcon(QPixmap(":/images/previous_icon.png")));
+//  win->historyBackAction->setIconText("Previous");
 
-  //TEMP
-  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyBackAction))) {
-    but->setArrowType(Qt::LeftArrow);
-    but->setText("");
-  }
-  if (QToolButton* but = qobject_cast<QToolButton*>(tb->widgetForAction(win->historyForwardAction))) {
-    but->setArrowType(Qt::RightArrow);
-    but->setText("");
-  }
+  tb->addAction(win->historyForwardAction);
+  win->historyForwardAction->setIcon(QIcon(QPixmap(":/images/next_icon.png")));
+//  win->historyForwardAction->setIconText("Next");
 
   tb->addSeparator();
   tb->addAction(win->editFindAction);
@@ -49,11 +47,11 @@ void iApplicationToolBar::Constr_post() {
   tb->addSeparator();
   tb->addAction(win->fileNewAction);
   tb->addAction(win->fileOpenAction);
+  tb->addAction(win->fileCloseAction);
   tb->addAction(win->fileSaveAction);
   tb->addAction(win->fileSaveAsAction);
   // tb->addAction(win->fileSaveNotesAction);
   //  tb->addAction(win->fileUpdateChangeLogAction);
-  tb->addAction(win->fileCloseAction);
   // tb->addAction(win->filePrintAction);
   tb->addSeparator();
 
@@ -80,6 +78,7 @@ void iApplicationToolBar::Constr_post() {
 
   tb->addSeparator();
   tb->addAction(win->helpHelpAction);
+  tb->addAction(win->fileOptionsAction);
   tb->addAction(win->helpFileBugAction);
 }
 

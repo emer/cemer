@@ -420,15 +420,20 @@ void iMainWindowViewer::Constr_FileMenu()
 {
   fileNewAction = AddAction(new iAction("&New Project...", QKeySequence(), "fileNewAction"));
   fileNewAction->setIcon(QIcon(":/images/filenew.png"));
+  fileNewAction->setIconText("New");
 
   fileOpenAction = AddAction(new iAction("&Open Project...", QKeySequence(), "fileOpenAction"));
-  fileOpenAction->setIcon(QIcon(QPixmap(":/images/fileopen.png")));
+  fileOpenAction->setIcon(QIcon(QPixmap(":/images/project_open_icon.png")));
+  fileOpenAction->setIconText("Open");
 
   fileSaveAction = AddAction(new iAction("&Save Project", QKeySequence(cmd_str + "S"), "fileSaveAction"));
   fileSaveAction->setIcon(QIcon(QPixmap(":/images/save_icon.png")));
+  fileSaveAction->setIconText("Save");
 
   fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(cmd_str + "Shift+S"), "fileSaveAsAction"));
   fileSaveAsAction->setIcon(QIcon(QPixmap(":/images/save_as_icon.png")));
+  fileSaveAsAction->setIconText("Save As");
+  
   // filePrintAction = AddAction(new iAction("&Print...", QKeySequence(), "filePrintAction"));
   // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
 
@@ -438,13 +443,26 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSaveAllAction = AddAction(new iAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
   fileOpenSvnBrowserAction = AddAction(new iAction("SVN Browser", QKeySequence(), "fileOpenSvnBrowserAction"));
+  fileOpenSvnBrowserAction->setToolTip("Browse source code in the subversion repository");
+  fileOpenSvnBrowserAction->setIcon(QIcon(QPixmap(":/images/svn_browse_icon.png")));
+  fileOpenSvnBrowserAction->setIconText("Browse");
+
   fileSvnCommitAction = AddAction(new iAction("SVN Commit...", QKeySequence(), "fileSvnCommitAction"));
+  fileSvnCommitAction->setToolTip("Save/update this project to the subversion repository");
+  fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
+  fileSvnCommitAction->setIconText("Commit");
 
   // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
   filePublishProjectOnWebAction = AddAction(new iAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
 
   fileCloseAction = AddAction(new iAction("Close Project", QKeySequence(), "fileCloseAction"));
+  fileCloseAction->setIcon(QIcon(QPixmap(":/images/project_close_icon.png")));
+  fileCloseAction->setIconText("Close");
+
   fileOptionsAction = AddAction(new iAction("&Options...", QKeySequence(), "fileOptionsAction"));
+  fileOptionsAction->setToolTip("Set various GUI preferences and other settings");
+  fileOptionsAction->setIcon(QIcon(QPixmap(":/images/preferences_icon.png")));
+  fileOptionsAction->setIconText("Prefs");
 
   // Build menu items.
   fileMenu->AddAction(fileNewAction);

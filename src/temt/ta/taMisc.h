@@ -163,7 +163,7 @@ public:
     VO_NO_TOOLBOX = 0x010,       // #LABEL_NoToolbox do not turn on the program toolbox by default in new projectd views
   };
 
-  enum  GuiStyle {      // style options provided by the gui system (not all are available on all platforms)
+  enum GuiStyle {      // style options provided by the gui system (not all are available on all platforms)
     GS_DEFAULT,         // #LABEL_Default use the default style for whatever platform you're running on
     GS_PLASTIQUE,       // #LABEL_Plastique default style on linux -- a good choice to try
     GS_CLEANLOOKS,      // #LABEL_CleanLooks similar overall to plastique, with a bit more of a windows look
@@ -182,6 +182,13 @@ public:
     GS_WINDOWSXP,       // #NO_SHOW
     GS_WINDOWSVISTA,    // #NO_SHOW
 #endif
+  };
+  
+  enum AppToolbarStyle { // some of the options offered by Qt
+    TB_ICON_ONLY = 0,   // #LABEL_Icon_Only
+    TB_TEXT_ONLY = 1,   // #LABEL_Text_Only
+    TB_TEXT_BESIDE_ICON = 2,   // #NO_SHOW
+    TB_TEXT_UNDER_ICON = 3  // #LABEL_Text_Under_Icon
   };
 
   enum HelpDetail { // level of detail for generated help information
@@ -226,6 +233,7 @@ public:
   //    TA GUI parameters
 
   static GuiStyle       gui_style;      // #SAVE #CAT_GUI #DEF_GS_DEFAULT style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
+  static AppToolbarStyle app_toolbar_style;      // #SAVE #CAT_GUI #DEF_TB_UNDER_ICON style options provided by the gui system, change only takes effect on restarting the program
   static String         font_name;      // #SAVE #CAT_GUI default font name to use
   static int            font_size;      // #SAVE #CAT_GUI default font size to use
   static String         t3d_bg_color;   // #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
@@ -285,6 +293,7 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
+  
  ////////////////////////////////////////////////////////
   //    File/Paths Info
 
