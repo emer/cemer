@@ -806,9 +806,7 @@ void Program::setStale() {
   
   if(run_state == RUN || run_state == INIT)
     return;  // change is likely self-generated during running, don't do it!
-  
-  taMisc::DebugInfo("going to set to stale!");
-  
+    
   bool changed = false;
   if (script_compiled) {
     // make sure this always reflects stale status -- is used as check for compiling..
