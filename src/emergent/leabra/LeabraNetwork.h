@@ -580,6 +580,8 @@ public:
 
   virtual void TI_CtxtUpdate();
   // #CAT_TI called if ti_mode is true -- updates context activation at end of plus phase (called from PostSettle())
+    virtual void TI_Compute_DeepAct();
+    // #CAT_TI compute deep 5b activations from thal and act_p
     virtual void TI_Send_CtxtNetin();
     // #CAT_TI send context netinput
     virtual void TI_Compute_CtxtAct();

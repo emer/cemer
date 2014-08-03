@@ -23,6 +23,8 @@
 
 // declare all other types mentioned but not required to include:
 
+// todo: add specs here for turning off deep burst after x cycles
+
 eTypeDef_Of(LeabraTICtxtLayerSpec);
 
 class E_API LeabraTICtxtLayerSpec : public LeabraLayerSpec {
@@ -30,6 +32,7 @@ class E_API LeabraTICtxtLayerSpec : public LeabraLayerSpec {
 INHERITED(LeabraLayerSpec)
 public:
   enum TIActVal {
+    DEEP,			// copy the deep value from the source network -- this is the driver of the context values for that unit / microcolumn
     P_ACT_P,			// copy the p_act_p value from the source network -- this is the activation at the time of gating (e.g., for PFCLayers)
     ACT_CTXT,			// copy the act_ctxt value from the source network -- this is the already-mixed and normalized context netinput value
   };

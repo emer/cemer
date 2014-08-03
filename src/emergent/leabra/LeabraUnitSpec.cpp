@@ -37,6 +37,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(VChanSpec);
 TA_BASEFUNS_CTORS_DEFN(MaxDaSpec);
+TA_BASEFUNS_CTORS_DEFN(CIFERSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 SMARTREF_OF_CPP(LeabraUnitSpec);
@@ -289,6 +290,18 @@ void VChanBasis::Copy_(const VChanBasis& cp) {
   acc_on = cp.acc_on;
   g_h = cp.g_h;
   g_a = cp.g_a;
+}
+
+void CIFERSpec::Initialize() {
+  on = false;
+  super_gain = .05f;
+  deep_thr = 0.5f;
+  bg_lrate = .1f;
+  fg_lrate = 1.0f;
+  Defaults_init();
+}
+
+void CIFERSpec::Defaults_init() {
 }
 
 void DaModSpec::Initialize() {
@@ -617,6 +630,8 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->avg_ss = act.avg_init;
   lu->avg_s = act.avg_init;
   lu->avg_m = act.avg_init;
+  lu->thal = 0.0f;
+  lu->deep = 0.0f;
   lu->act_ctxt = 0.0f;
   lu->net_ctxt = 0.0f;
   lu->p_act_p = 0.0f;
@@ -1084,6 +1099,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
   if(net->ti_mode) {
     tot_net += u->act_ctxt;
+  }
+
+  if(cifer.on) {
+    tot_net += cifer.super_gain * u->thal * tot_net;
   }
 
   u->net_delta = 0.0f;  // clear for next use
@@ -1799,9 +1818,23 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
 /////////////////////////////////////////////////
 //              Leabra TI
 
+void LeabraUnitSpec::TI_Compute_DeepAct(LeabraUnit* u, LeabraNetwork* net) {
+  if(cifer.on) {
+    if(u->thal >= cifer.deep_thr) {
+      u->deep = u->thal * u->act_p;
+    }
+    else {
+      u->deep = 0.0f;
+    }
+  }
+  else {
+    u->deep = u->act_p;         // compatible with std TI
+  }
+}
+
 void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                              int thread_no) {
-  float act_ts = u->act_p;
+  float act_ts = u->deep;
 
   if(act_ts > opt_thresh.send) {
     for(int g=0; g<u->send.size; g++) {
@@ -1832,6 +1865,7 @@ void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
+  u->deep = 0.0f;
   u->act_ctxt = 0.0f;
   u->net_ctxt = 0.0f;
   u->p_act_p = 0.0f;

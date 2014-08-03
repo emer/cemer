@@ -58,6 +58,8 @@ void LeabraInhibSpec::Defaults_init() {
   ff0 = 0.1f;
   fb = 0.5f;
   self_fb = 0.0f;
+  prv_trl_ff = 0.0f;
+  prv_phs_ff = 0.0f;
   dt = 0.7f;
   up_immed = false;
 }
@@ -1045,6 +1047,12 @@ void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
   float nw_fbi = ispec.FBInhib(thr->acts.avg);
 
   thr->kwta.ffi = nw_ffi;
+
+  // add this after the fact, so that it isn't constantly compounded -- in reality it
+  // should just be based on netin, but probably simpler to use ffi
+  nw_ffi += ispec.prv_trl_ff * thr->kwta.prv_trl_ffi +
+    ispec.prv_phs_ff * thr->kwta.prv_phs_ffi;
+
   // dt only on fbi part
   if(ispec.up_immed) {
     if(nw_fbi > thr->kwta.fbi) {
@@ -1058,7 +1066,7 @@ void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
     thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
   }
 
-  thr->i_val.kwta = ispec.gi * (thr->kwta.ffi + thr->kwta.fbi); // combine
+  thr->i_val.kwta = ispec.gi * (nw_ffi + thr->kwta.fbi); // combine
   thr->kwta.k_ithr = 0.0f;
   thr->kwta.k1_ithr = 0.0f;
 }
@@ -1113,7 +1121,12 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
         // dt only on fbi part
         lay->kwta.fbi = inhib.dt * nw_fbi + (1.0f - inhib.dt) * lay->kwta.fbi;
 
-        lay->i_val.kwta = unit_gp_inhib.lay_gi * (lay->kwta.ffi + lay->kwta.fbi);
+        // add this after the fact, so that it isn't constantly compounded -- in reality it
+        // should just be based on netin, but probably simpler to use ffi
+        nw_ffi += inhib.prv_trl_ff * lay->kwta.prv_trl_ffi +
+          inhib.prv_phs_ff * lay->kwta.prv_phs_ffi;
+
+        lay->i_val.kwta = unit_gp_inhib.lay_gi * (nw_ffi + lay->kwta.fbi);
         lay->i_val.g_i = lay->i_val.kwta;
         
         for(int g=0; g < lay->gp_geom.n; g++) {
@@ -1548,21 +1561,27 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts;
   lay->acts_m_avg.UpdtTimeAvg(lay->acts_m, kwta.avg_dt);
+  lay->kwta.prv_phs_ffi = lay->kwta.ffi;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts;
       gpd->acts_m_avg.UpdtTimeAvg(gpd->acts_m, kwta.avg_dt);
+      gpd->kwta.prv_phs_ffi = gpd->kwta.ffi;
     }
   }
 }
 
 void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts;
+  lay->kwta.prv_phs_ffi = lay->kwta.ffi;
+  lay->kwta.prv_trl_ffi = lay->kwta.ffi;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts;
+      gpd->kwta.prv_phs_ffi = gpd->kwta.ffi;
+      gpd->kwta.prv_trl_ffi = gpd->kwta.ffi;
     }
   }
 }
@@ -1694,6 +1713,14 @@ void LeabraLayerSpec::Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* ne
 
 ///////////////////////////////////////////////////////////////////////
 //      TI
+
+void LeabraLayerSpec::TI_Compute_DeepAct(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    u->TI_Compute_DeepAct(net);
+  }
+  //  Compute_Deep_AvgMax(lay, net);
+}
 
 void LeabraLayerSpec::TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {

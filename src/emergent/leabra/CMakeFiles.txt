@@ -109,6 +109,7 @@ set(leabra_HEADS_MAKETA
   PVLVDaLayerSpec.h
   PVLVTonicDaLayerSpec.h
 
+  ThalLayerSpec.h
   LearnDriverLayerSpec.h
   LearnFlagDeltaConSpec.h
   LearnFlagHebbConSpec.h
@@ -274,6 +275,7 @@ set(leabra_SRCS
   PVLVDaLayerSpec.cpp
   PVLVTonicDaLayerSpec.cpp
 
+  ThalLayerSpec.cpp
   LearnDriverLayerSpec.cpp
   LearnFlagDeltaConSpec.cpp
   LearnFlagHebbConSpec.cpp

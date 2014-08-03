@@ -47,11 +47,13 @@ public:
 
   InhibType	type;		// how to compute inhibition (g_i)
   float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
-  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB [1.5-2.3 typical, can go much lower or higher as needed] overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- FF_FB does NOT use kwta.pct parameter to set inhibition, so you must adjust it here
-  float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput (i.e., synaptic drive into layer)
-  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
-  float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not good for typical hidden layers (use .02 max)
-  float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.7 time constant for integrating inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid .7 typically works, but may need to go lower if oscillations are a problem
+  float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 [1.5-2.3 typical, can go much lower or higher as needed] overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- FF_FB does NOT use kwta.pct parameter to set inhibition, so you must adjust it here
+  float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput (i.e., synaptic drive into layer)
+  float		fb;		// #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- computed from average activation
+  float		self_fb;	// #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not good for typical hidden layers (use .02 max)
+  float         prv_trl_ff;     // #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 amount of previous trial's final ff inhibition to carry forward to the current trial -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the trial level
+  float         prv_phs_ff;     // #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 amount of previous phase's final ff inhibition to carry forward to the current phase -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the phase level
+  float         dt;             // #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 #DEF_0.7 time constant for integrating inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid .7 typically works, but may need to go lower if oscillations are a problem
   bool          up_immed;       // #CONDSHOW_ON_type:FF_FB_INHIB inhibition rises immediately, and dt only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units
   float         ff0;            // #CONDSHOW_ON_type:FF_FB_INHIB #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB match kwta dynamics more closely), but if FF inhib is not strong enough, you may need to lower it
   float		min_i;		// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0 minimum inhibition value -- set this higher than zero to prevent units from getting active even if there is not much overall excitation
@@ -577,6 +579,8 @@ public:
   virtual bool  TI_UpdateContextTest(LeabraLayer* lay, LeabraNetwork* net)
   { return true; }
   // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  virtual void  TI_Compute_DeepAct(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_TI compute CIFER deep activation from thal and act_p
   virtual void  TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TI compute TI context activation -- act_ctxt from net_ctxt
   virtual void  TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);

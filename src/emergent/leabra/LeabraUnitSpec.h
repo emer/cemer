@@ -415,6 +415,29 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+eTypeDef_Of(CIFERSpec);
+
+class E_API CIFERSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep activation
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable the CIFER mechanisms (otherwise, deep == act and thal is ignored)
+  float         super_gain;     // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin -- thal only increases netin otherwise recv'd: netin = (1 + gain * thal) * netin_raw
+  float		deep_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on thal value for deep neurons to fire -- neurons below this level have deep = 0 -- above this level, deep = thal * act
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: dwt = lrate * (bg_lrate * dwt + fg_lrate * deep * dwt)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: dwt = lrate * (bg_lrate * dwt + fg_lrate * deep * dwt)
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(CIFERSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(DaModSpec);
 
 class E_API DaModSpec : public SpecMemberBase {
@@ -517,6 +540,7 @@ public:
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  CIFERSpec	cifer;		// #CAT_Learning cortical information flow via extra range -- uses thalmic input to drive a foreground active processing pattern (in deep acts) on top of distributed corticocortical background activations (in superficial acts)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -724,6 +748,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
+  virtual void	TI_Compute_DeepAct(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_LeabraTI compute deep activations using cifer specs -- integrates thal and act_p
   virtual void	TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections

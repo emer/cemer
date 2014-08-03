@@ -1042,8 +1042,16 @@ void LeabraNetwork::TI_CtxtUpdate() {
     phase_order = MINUS_PLUS;
   }
   if(do_updt) {
+    TI_Compute_DeepAct();
     TI_Send_CtxtNetin();
     TI_Compute_CtxtAct();
+  }
+}
+
+void LeabraNetwork::TI_Compute_DeepAct() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->TI_Compute_DeepAct(this);
   }
 }
 

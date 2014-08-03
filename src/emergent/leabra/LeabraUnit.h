@@ -94,8 +94,10 @@ public:
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
   float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
   float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
+  float 	thal;		// #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalamicLayerSpec -- used by thal params in LeabraUnitSpec and possibly other specs to respond to thalamic inputs
+  float         deep;           // #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information
   float         act_ctxt;       // #VIEW_HOT #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- this is equivalent to net_ctxt except for PFC units, where gating and other factors modulate it
-  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on
+  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- computed from sending deep (5b) values, which then project to layer 6 which integrates the contextualized value
   float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float		davg;		// #CAT_Activation delta average activation -- computed from changes in the short time-scale activation average (avg_s) -- used for detecting jolts or transitions in the network, to drive learning
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
@@ -272,6 +274,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
+  void	TI_Compute_DeepAct(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_DeepAct(this, net); }
+  // #CAT_TI compute deep 5b activations
   void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
