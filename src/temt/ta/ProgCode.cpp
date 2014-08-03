@@ -31,6 +31,7 @@ taTypeDef_Of(If);
 taTypeDef_Of(ElseIf);
 taTypeDef_Of(Else);
 taTypeDef_Of(UserScript);
+taTypeDef_Of(BlankLineEl);
 
 void ProgCode::Initialize() {
   SetProgExprFlags();
@@ -66,6 +67,10 @@ ProgEl* ProgCode::CvtCodeToProgEl() {
   String code_mod = code.expr;
   String code_orig = code.expr;  // will need to reset if Css expression
   bool has_final_semi = false;
+  // rohrlich 8/3/2014 - this handling of blankline is for bug 2020 - is this an improvement??
+  if(code_mod.empty()) {
+    candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_BlankLineEl));
+  }
   if(code_mod.startsWith("//") || code_mod.startsWith("/*")) {
     candidates.Link((ProgEl*)tabMisc::root->GetTemplateInstance(&TA_Comment));
   }
@@ -134,9 +139,11 @@ bool ProgCode::BrowserEditSet(const String& code_str, int move_after) {
   else {
     code.expr = CodeGetDesc(code_str);
   }
-  if(code.expr.nonempty()) {
+  // rohrlich 8/3/2014 - see comment at start of CvtCodeToProgEl()
+  // uncomment these lines if that is reversed
+//  if(code.expr.nonempty()) {
     tabMisc::DelayedFunCall_gui(this, "ConvertToProgEl"); // do it later..
-  }
+//  }
   return false;
 }
 
