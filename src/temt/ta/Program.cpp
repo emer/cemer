@@ -800,12 +800,15 @@ void Program::ScriptCompiled() {
 void Program::setStale() {
   //note: we don't propagate setStale
   //note: 2nd recursive call of this during itself doesn't do anything
-  // john - 07/14/14 - Fix for bug 2007 - but who is setting the run_state to DONE when stopped at a breakpoint
-  if(run_state == DONE && (stop_reason == SR_USER_STOP || stop_reason == SR_BREAKPOINT)) {
+  if((run_state == DONE || run_state == STOP) && (stop_reason == SR_USER_STOP || stop_reason == SR_BREAKPOINT)) {
     return;
   }
-  // john - 07/14/14 - why isn't STOP in the test?
-  if(run_state == RUN || run_state == INIT) return;          // change is likely self-generated during running, don't do it!
+  
+  if(run_state == RUN || run_state == INIT)
+    return;  // change is likely self-generated during running, don't do it!
+  
+  taMisc::DebugInfo("going to set to stale!");
+  
   bool changed = false;
   if (script_compiled) {
     // make sure this always reflects stale status -- is used as check for compiling..
