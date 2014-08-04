@@ -18,6 +18,7 @@
 #include <ProgLine>
 #include <taSigLink>
 #include <taMisc>
+#include <tabMisc>
 #include <SigLinkSignal>
 
 TA_BASEFUNS_CTORS_DEFN(ProgBrkPt);
@@ -99,4 +100,8 @@ String ProgBrkPt::GetDisplayName() const {
   }
   display = "brk on: " + display;
   return display;
+}
+
+void ProgBrkPt::JumpToCode() {
+  tabMisc::DelayedFunCall_gui(prog_el, "BrowserSelectMe");
 }

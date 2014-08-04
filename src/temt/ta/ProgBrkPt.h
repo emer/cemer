@@ -50,7 +50,7 @@ public:
   String       GetStateDecoKey() const override;
   void         UpdateAfterEdit_impl() override;
   String       GetDisplayName() const override;
-
+  void         JumpToCode(); // #MENU #DYN1
 
   void          InitLinks();
   void          CutLinks();
