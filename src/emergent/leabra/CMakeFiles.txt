@@ -41,6 +41,8 @@ set(leabra_HEADS_MAKETA
 
   LeabraTICtxtLayerSpec.h
   LeabraTICtxtConSpec.h
+  Deep5bThalConSpec.h
+
   MarkerConSpec.h
   XCalSRAvgConSpec.h
   TrialSynDepCon.h
@@ -206,6 +208,7 @@ set(leabra_SRCS
 
   LeabraTICtxtLayerSpec.cpp
   LeabraTICtxtConSpec.cpp
+  Deep5bThalConSpec.cpp
 
   MarkerConSpec.cpp
   XCalSRAvgConSpec.cpp

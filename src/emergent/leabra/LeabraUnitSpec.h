@@ -418,14 +418,18 @@ private:
 eTypeDef_Of(CIFERSpec);
 
 class E_API CIFERSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep activation
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep5b activation
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the CIFER mechanisms (otherwise, deep == act and thal is ignored)
+  bool          on;             // enable the CIFER mechanisms (otherwise, deep5b == act and thal is ignored)
+  bool          phase_updt;     // #CONDSHOW_ON_on TI context and deep layer activations update at the end of every phase (e.g., for PFC) -- otherwise update is at the end of every trial (posterior cortex)
   float         super_gain;     // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin -- thal only increases netin otherwise recv'd: netin = (1 + gain * thal) * netin_raw
-  float		deep_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on thal value for deep neurons to fire -- neurons below this level have deep = 0 -- above this level, deep = thal * act
-  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: dwt = lrate * (bg_lrate * dwt + fg_lrate * deep * dwt)
-  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: dwt = lrate * (bg_lrate * dwt + fg_lrate * deep * dwt)
+  float	        thal_5b_thr;    // #CONDSHOW_ON_on #MIN_0 threshold on thal value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
+  float	        act_5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
+  bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
+  float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: lrate_eff = lrate * (bg_lrate + fg_lrate * deep5b)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: lrate_eff = lrate * (bg_lrate + fg_lrate * deep5b)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -540,7 +544,7 @@ public:
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
-  CIFERSpec	cifer;		// #CAT_Learning cortical information flow via extra range -- uses thalmic input to drive a foreground active processing pattern (in deep acts) on top of distributed corticocortical background activations (in superficial acts)
+  CIFERSpec	cifer;		// #CAT_Learning cortical information flow via extra range -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -746,15 +750,20 @@ public:
     // #CAT_Activation post-plus dav modulation
 
   ///////////////////////////////////////////////////////////////////////
-  //	LeabraTI
+  //	LeabraTI / CIFER thalmocortical computations
 
-  virtual void	TI_Compute_DeepAct(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_LeabraTI compute deep activations using cifer specs -- integrates thal and act_p
+  virtual void	TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_LeabraTI compute deep5b activations using cifer specs -- integrates thal and act_eq
   virtual void	TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
   virtual void	TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
+  virtual void	TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
+                                  int thread_no=-1);
+  // #CAT_LeabraTI send deep5b netinputs through Deep5bThalConSpec connections
+  virtual void	TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_LeabraTI send context netinputs through Deep5bThalConSpec connections -- post processing rollup
   virtual void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI compute context activations
   virtual void	TI_ClearContext(LeabraUnit* u, LeabraNetwork* net);

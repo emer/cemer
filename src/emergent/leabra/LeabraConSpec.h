@@ -412,6 +412,8 @@ public:
   // #IGNORE compute recv_gp->scale_eff based on params in from layer
   inline virtual bool  IsTICtxtCon() { return false; }
   // #IGNORE is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
+  inline virtual bool  IsDeep5bCon() { return false; }
+  // #IGNORE is this a deep5b connection (Deep5bThalConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta_Thread(const float wt, float* send_netin_vec,
                                          const int ru_idx, const float su_act_delta_eff)

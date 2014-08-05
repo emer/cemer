@@ -270,10 +270,19 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
+  const bool cifer_on = us->cifer.on; // should be global for send, recv..
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   float clrate = cur_lrate;
   if(stable_mix.cos_diff_lrate) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     clrate *= rlay->cos_diff_lrate;
+  }
+
+  float bg_lrate;
+  float fg_lrate;
+  if(cifer_on) {
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->unit_spec.SPtr();
+    bg_lrate = rus->cifer.bg_lrate;
+    fg_lrate = rus->cifer.fg_lrate;
   }
 
   const float su_avg_s = su->avg_s;
@@ -282,7 +291,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   const int sz = cg->size;
 
   if(xcal.l_mix == XCalLearnSpec::X_COS_DIFF) {
-    LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
     float rlay_cos_diff_avg = 1.0f - rlay->cos_diff_avg;
     if(rlay->layer_type != Layer::HIDDEN)
       rlay_cos_diff_avg = 0.0f; // any kind of clamped layer should not use this!
@@ -291,6 +299,9 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     const float su_act_mult = efflmix * su_avg_m;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      if(cifer_on) {
+        clrate *= (bg_lrate + fg_lrate * ru->deep);
+      }
       C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], clrate, ru->avg_s,
                                     ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
                                                su_act_mult, effmmix);
@@ -299,6 +310,9 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   else if(xcal.l_mix == XCalLearnSpec::X_ERR) {
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      if(cifer_on) {
+        clrate *= (bg_lrate + fg_lrate * ru->deep);
+      }
       C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
                                   ru->avg_m, ru->avg_l, su_avg_s, su_avg_m);
     }
@@ -307,6 +321,9 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     const float su_act_mult = xcal.thr_l_mix * su_avg_m;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      if(cifer_on) {
+        clrate *= (bg_lrate + fg_lrate * ru->deep);
+      }
       C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], clrate, ru->avg_s, ru->avg_m, ru->avg_l,
                                        su_avg_s, su_avg_m, su_act_mult);
     }

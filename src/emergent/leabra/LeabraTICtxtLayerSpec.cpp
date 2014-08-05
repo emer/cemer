@@ -19,7 +19,17 @@
 #include <PFCLayerSpec>
 #include <PBWMUnGpData>
 
+TA_BASEFUNS_CTORS_DEFN(DeepActSpec);
+
 TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtLayerSpec);
+
+void DeepActSpec::Initialize() {
+  off_start_cyc = 10;
+  off_fade_cyc = 1;
+}
+
+void DeepActSpec::Defaults_init() {
+}
 
 void LeabraTICtxtLayerSpec::Initialize() {
   act_val = P_ACT_P;
@@ -72,15 +82,37 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
     if(!cg) return;
     LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
     if(!su) return;
+    LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
+    if(fmlay->lesioned()) {
+      u->act = 0.0f;
+      return;
+    }
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(act_val == P_ACT_P) {
+    if(act_val == DEEP) {
+      LeabraUnitSpec* sus = (LeabraUnitSpec*)u->GetUnitSpec();
+      int eff_cyc = net->ct_cycle;
+      if(sus->cifer.on && sus->cifer.phase_updt) {
+        eff_cyc = net->cycle;   // should be specific to each phase
+      }
+      if(eff_cyc >= (deep_act.off_start_cyc + deep_act.off_fade_cyc)) {
+        u->act = 0.0f;
+      }
+      else if(eff_cyc >= deep_act.off_start_cyc) {
+        int fade_cyc = (eff_cyc - deep_act.off_start_cyc) + 1;
+        float fade_pct = 1.0f - ((float)fade_cyc / deep_act.off_fade_cyc);
+        u->act = su->deep * fade_pct;
+      }
+      else {
+        u->act = su->deep;
+      }        
+    }
+    else if(act_val == P_ACT_P) {
       u->act = su->p_act_p;
     }
     else {
       u->act = su->act_ctxt;
     }
     if(pfc_gate_dynamic_updt) {
-      LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
       int rgpidx = u->UnitGpIdx();
       if(rgpidx >= 0) {
         PBWMUnGpData* gpd = (PBWMUnGpData*)fmlay->ungp_data.FastEl(rgpidx);

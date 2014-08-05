@@ -1041,8 +1041,12 @@ void LeabraNetwork::TI_CtxtUpdate() {
               "LeabraTI ti_on mode is only compatible with phase_order = MINUS_PLUS -- I just set it");
     phase_order = MINUS_PLUS;
   }
+
+  // todo: only doing deep act at end of every phase -- if need to update TI context
+  // then need to delegate entirely to unit level..
+  TI_Compute_DeepAct();
+
   if(do_updt) {
-    TI_Compute_DeepAct();
     TI_Send_CtxtNetin();
     TI_Compute_CtxtAct();
   }
