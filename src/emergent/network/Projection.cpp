@@ -168,7 +168,8 @@ void Projection::UpdateName() {
     if(con_spec.SPtr()) {
       con_spec.SPtr()->GetPrjnName(*this, nwnm);
     }
-    if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_')) {
+    if(!name.startsWith(nwnm) || !name.after(nwnm).startsWith('_') ||
+       name.endsWith("_copy")) {
       SetName(nwnm);            // setname ensures uniqueness
       SigEmitUpdated();
     }

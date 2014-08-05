@@ -301,8 +301,8 @@ void CIFERSpec::Initialize() {
   act_5b_thr = 0.5f;
   binary5b = false;
   ti_5b = 0.5f;
-  bg_lrate = .1f;
-  fg_lrate = 1.0f;
+  bg_lrate = 1.0f;
+  fg_lrate = 0.0f;
   Defaults_init();
 }
 
@@ -930,6 +930,7 @@ void LeabraUnitSpec::Compute_NetinScale_Senders(LeabraUnit* u, LeabraNetwork* ne
 
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnit* u, LeabraNetwork*) {
   u->net = u->ext;
+  u->thal = u->ext;             // thalamus is external input
   u->act_eq = clamp_range.Clip(u->ext);
   u->act_nd = u->act_eq;
   u->act_lrn = u->act_eq;
@@ -1716,6 +1717,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   case LeabraNetwork::MINUS_PLUS:
     if(no_plus_testing) {
       u->net_ctxt = 0.0f;
+      u->deep5b_net = 0.0f;
       u->p_act_p = u->act_p;
       u->act_m = u->act_p = use_act;
       u->act_dif = 0.0f;
@@ -1727,6 +1729,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
         u->act_m = use_act;
       else {
         u->net_ctxt = 0.0f;
+        u->deep5b_net = 0.0f;
         u->p_act_p = u->act_p;
         u->act_p = use_act;
         u->act_dif = u->act_p - u->act_m;
@@ -1739,6 +1742,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   case LeabraNetwork::PLUS_MINUS:
     if(no_plus_testing) {
       u->net_ctxt = 0.0f;
+      u->deep5b_net = 0.0f;
       u->p_act_p = u->act_p;
       u->act_m = u->act_p = use_act;
       u->act_dif = 0.0f;
@@ -1753,6 +1757,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       }
       else {
         u->net_ctxt = 0.0f;
+        u->deep5b_net = 0.0f;
         u->p_act_p = u->act_p;
         u->act_p = use_act;
         Compute_ActTimeAvg(u, net);
@@ -1761,6 +1766,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     break;
   case LeabraNetwork::PLUS_ONLY:
     u->net_ctxt = 0.0f;
+    u->deep5b_net = 0.0f;
     u->p_act_p = u->act_p;
     u->act_m = u->act_p = use_act;
     u->act_dif = 0.0f;
@@ -1775,6 +1781,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     }
     else if(net->phase_no == 1) {
       u->net_ctxt = 0.0f;
+      u->deep5b_net = 0.0f;
       u->p_act_p = u->act_p;
       u->act_p = use_act;
       u->act_dif = u->act_p - u->act_m;

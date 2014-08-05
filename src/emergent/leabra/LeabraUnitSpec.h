@@ -428,8 +428,8 @@ public:
   float	        act_5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
   bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
-  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: lrate_eff = lrate * (bg_lrate + fg_lrate * deep5b)
-  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: lrate_eff = lrate * (bg_lrate + fg_lrate * deep5b)
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
