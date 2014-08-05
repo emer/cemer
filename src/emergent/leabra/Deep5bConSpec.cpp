@@ -13,15 +13,15 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "Deep5bThalConSpec.h"
+#include "Deep5bConSpec.h"
 
-TA_BASEFUNS_CTORS_DEFN(Deep5bThalConSpec);
+TA_BASEFUNS_CTORS_DEFN(Deep5bConSpec);
 
-void Deep5bThalConSpec::Initialize() {
+void Deep5bConSpec::Initialize() {
   SetUnique("wt_scale", true);
   wt_scale.rel = 3.0;           // good default
 }
 
-void Deep5bThalConSpec::GetPrjnName(Projection& prjn, String& nm) {
+void Deep5bConSpec::GetPrjnName(Projection& prjn, String& nm) {
   nm = "Deep5b_" + nm;
 }

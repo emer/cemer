@@ -300,7 +300,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       if(cifer_on) {
-        clrate *= (bg_lrate + fg_lrate * ru->deep);
+        clrate *= (bg_lrate + fg_lrate * ru->deep5b);
       }
       C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], clrate, ru->avg_s,
                                     ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
@@ -311,7 +311,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       if(cifer_on) {
-        clrate *= (bg_lrate + fg_lrate * ru->deep);
+        clrate *= (bg_lrate + fg_lrate * ru->deep5b);
       }
       C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
                                   ru->avg_m, ru->avg_l, su_avg_s, su_avg_m);
@@ -322,7 +322,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       if(cifer_on) {
-        clrate *= (bg_lrate + fg_lrate * ru->deep);
+        clrate *= (bg_lrate + fg_lrate * ru->deep5b);
       }
       C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], clrate, ru->avg_s, ru->avg_m, ru->avg_l,
                                        su_avg_s, su_avg_m, su_act_mult);

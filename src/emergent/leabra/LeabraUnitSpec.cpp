@@ -17,6 +17,7 @@
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
 #include <LeabraTICtxtConSpec>
+#include <Deep5bConSpec>
 #include <taProject>
 #include <taMath_double>
 #include <DataTable>
@@ -636,6 +637,7 @@ void LeabraUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->avg_m = act.avg_init;
   lu->thal = 0.0f;
   lu->deep5b = 0.0f;
+  lu->deep5b_net = 0.0f;
   lu->act_ctxt = 0.0f;
   lu->net_ctxt = 0.0f;
   lu->p_act_p = 0.0f;
@@ -1102,7 +1104,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   if(net->ti_mode) {
-    tot_net += u->act_ctxt;
+    tot_net += u->act_ctxt + u->deep5b_net;
   }
 
   if(cifer.on) {
@@ -1885,9 +1887,9 @@ void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(!send_gp->size || send_gp->prjn->off)      continue;
       if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
-      Deep5bThalConSpec* sp = (Deep5bThalConSpec*)send_gp->GetConSpec();
-      if(!tol->TI_UpdateContextTest(net)) continue;
-      sp->Send_CtxtNetin(send_gp, net, thread_no, act_ts);
+      Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
+      // if(!tol->TI_UpdateContextTest(net)) continue;
+      sp->Send_Deep5bNetin(send_gp, net, thread_no, act_ts);
     }
   }
 }
@@ -1899,7 +1901,7 @@ void LeabraUnitSpec::TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net)
     for(int j=0;j<nt;j++) {
       nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
     }
-    u->net_ctxt = nw_nt;
+    u->deep5b_net = nw_nt;
   }
 }
 
@@ -1908,7 +1910,8 @@ void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
-  u->deep = 0.0f;
+  u->deep5b = 0.0f;
+  u->deep5b_net = 0.0f;
   u->act_ctxt = 0.0f;
   u->net_ctxt = 0.0f;
   u->p_act_p = 0.0f;

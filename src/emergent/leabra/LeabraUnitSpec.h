@@ -761,9 +761,9 @@ public:
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
   virtual void	TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
-  // #CAT_LeabraTI send deep5b netinputs through Deep5bThalConSpec connections
+  // #CAT_LeabraTI send deep5b netinputs through Deep5bConSpec connections
   virtual void	TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_LeabraTI send context netinputs through Deep5bThalConSpec connections -- post processing rollup
+  // #CAT_LeabraTI send context netinputs through Deep5bConSpec connections -- post processing rollup
   virtual void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_LeabraTI compute context activations
   virtual void	TI_ClearContext(LeabraUnit* u, LeabraNetwork* net);

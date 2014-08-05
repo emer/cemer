@@ -19,17 +19,7 @@
 #include <PFCLayerSpec>
 #include <PBWMUnGpData>
 
-TA_BASEFUNS_CTORS_DEFN(DeepActSpec);
-
 TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtLayerSpec);
-
-void DeepActSpec::Initialize() {
-  off_start_cyc = 10;
-  off_fade_cyc = 1;
-}
-
-void DeepActSpec::Defaults_init() {
-}
 
 void LeabraTICtxtLayerSpec::Initialize() {
   act_val = P_ACT_P;
@@ -88,23 +78,8 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
       return;
     }
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(act_val == DEEP) {
-      LeabraUnitSpec* sus = (LeabraUnitSpec*)u->GetUnitSpec();
-      int eff_cyc = net->ct_cycle;
-      if(sus->cifer.on && sus->cifer.phase_updt) {
-        eff_cyc = net->cycle;   // should be specific to each phase
-      }
-      if(eff_cyc >= (deep_act.off_start_cyc + deep_act.off_fade_cyc)) {
-        u->act = 0.0f;
-      }
-      else if(eff_cyc >= deep_act.off_start_cyc) {
-        int fade_cyc = (eff_cyc - deep_act.off_start_cyc) + 1;
-        float fade_pct = 1.0f - ((float)fade_cyc / deep_act.off_fade_cyc);
-        u->act = su->deep * fade_pct;
-      }
-      else {
-        u->act = su->deep;
-      }        
+    if(act_val == DEEP_5B) {
+      u->act = su->deep5b;
     }
     else if(act_val == P_ACT_P) {
       u->act = su->p_act_p;

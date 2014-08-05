@@ -1044,19 +1044,44 @@ void LeabraNetwork::TI_CtxtUpdate() {
 
   // todo: only doing deep act at end of every phase -- if need to update TI context
   // then need to delegate entirely to unit level..
-  TI_Compute_DeepAct();
+  TI_Compute_Deep5bAct();
 
   if(do_updt) {
+    TI_Send_Deep5bNetin();
     TI_Send_CtxtNetin();
     TI_Compute_CtxtAct();
   }
 }
 
-void LeabraNetwork::TI_Compute_DeepAct() {
+void LeabraNetwork::TI_Compute_Deep5bAct() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
-      lay->TI_Compute_DeepAct(this);
+      lay->TI_Compute_Deep5bAct(this);
   }
+}
+
+void LeabraNetwork::TI_Send_Deep5bNetin() {
+  send_pct_n = send_pct_tot = 0;
+  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Send_Deep5bNetin);
+  if(thread_flags & NETIN)
+    threads.Run(&un_call, 1.0f);
+  else
+    threads.Run(&un_call, -1.0f); // -1 = always run localized
+
+  // now need to roll up the netinput into unit vals
+  if(threads.using_threads) {	// if not used, goes directly into unit vals
+    const int nu = units_flat.size;
+    for(int i=1;i<nu;i++) {   // 0 = dummy idx
+      LeabraUnit* u = (LeabraUnit*)units_flat[i];
+      u->TI_Send_Deep5bNetin_Post(this);
+    }
+
+    send_netin_tmp.InitVals(0.0f); // reset for next time around
+  }
+  // todo: need this??
+// #ifdef DMEM_COMPILE
+//   dmem_share_units.Sync(3);
+// #endif
 }
 
 void LeabraNetwork::TI_Send_CtxtNetin() {
@@ -1068,13 +1093,13 @@ void LeabraNetwork::TI_Send_CtxtNetin() {
     threads.Run(&un_call, -1.0f); // -1 = always run localized
 
   // now need to roll up the netinput into unit vals
-  const int nu = units_flat.size;
-  for(int i=1;i<nu;i++) {   // 0 = dummy idx
-    LeabraUnit* u = (LeabraUnit*)units_flat[i];
-    u->TI_Send_CtxtNetin_Post(this);
-  }
+  if(threads.using_threads) {	// if not used, goes directly into unit vals
+    const int nu = units_flat.size;
+    for(int i=1;i<nu;i++) {   // 0 = dummy idx
+      LeabraUnit* u = (LeabraUnit*)units_flat[i];
+      u->TI_Send_CtxtNetin_Post(this);
+    }
 
-  if(threads.using_threads) {
     send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
   // todo: need this??

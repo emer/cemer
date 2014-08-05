@@ -46,6 +46,7 @@ void LeabraUnit::Initialize() {
   avg_l = 0.15f;
   thal = 0.0f;
   deep5b = 0.0f;
+  deep5b_net = 0.0f;
   act_ctxt = 0.0f;
   net_ctxt = 0.0f;
   p_act_p = 0.0f;
@@ -136,6 +137,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   avg_l = cp.avg_l;
   thal = cp.thal;
   deep5b = cp.deep5b;
+  deep5b_net = cp.deep5b_net;
   act_ctxt = cp.act_ctxt;
   net_ctxt = cp.net_ctxt;
   p_act_p = cp.p_act_p;

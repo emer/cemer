@@ -1714,10 +1714,10 @@ void LeabraLayerSpec::Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* ne
 ///////////////////////////////////////////////////////////////////////
 //      TI
 
-void LeabraLayerSpec::TI_Compute_DeepAct(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::TI_Compute_Deep5bAct(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->TI_Compute_DeepAct(net);
+    u->TI_Compute_Deep5bAct(net);
   }
   //  Compute_Deep_AvgMax(lay, net);
 }

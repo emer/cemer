@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Deep5bThalConSpec_h
-#define Deep5bThalConSpec_h 1
+#ifndef Deep5bConSpec_h
+#define Deep5bConSpec_h 1
 
 // parent includes:
 #include <LeabraConSpec>
@@ -24,10 +24,10 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(Deep5bThalConSpec);
+eTypeDef_Of(Deep5bConSpec);
 
-class E_API Deep5bThalConSpec : public LeabraConSpec {
-  // deep layer 5b cortical projection to thalamus connection spec -- sends deep5b activation values to thalamus, which then integrates them over time with other inputs
+class E_API Deep5bConSpec : public LeabraConSpec {
+  // deep layer 5b connection spec -- sends deep5b activation values instead of usual act values -- used e.g., in projections to thalamus
 INHERITED(LeabraConSpec)
 public:
   // special!
@@ -39,7 +39,7 @@ public:
     float* wts = cg->OwnCnVar(WT);
     if(thread_no < 0) {
       CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread(wts[i],
-                                       ((LeabraUnit*)cg->Un(i,net))->net_ctxt,
+                                       ((LeabraUnit*)cg->Un(i,net))->deep5b_net,
                                         su_act_eff));
     }
     else {
@@ -59,10 +59,10 @@ public:
 
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
-  TA_SIMPLE_BASEFUNS(Deep5bThalConSpec);
+  TA_SIMPLE_BASEFUNS(Deep5bConSpec);
 private:
   void Initialize();
   void Destroy()     { };
 };
 
-#endif // Deep5bThalConSpec_h
+#endif // Deep5bConSpec_h

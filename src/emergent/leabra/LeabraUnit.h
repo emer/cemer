@@ -96,6 +96,7 @@ public:
   float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
   float 	thal;		// #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalamicLayerSpec -- used by thal params in LeabraUnitSpec and possibly other specs to respond to thalamic inputs
   float         deep5b;         // #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information
+  float         deep5b_net;     // #CAT_Activation net input from deep layer 5b activation values
   float         act_ctxt;       // #VIEW_HOT #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- this is equivalent to net_ctxt except for PFC units, where gating and other factors modulate it
   float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value
   float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
@@ -277,6 +278,12 @@ public:
   void	TI_Compute_Deep5bAct(LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_Deep5bAct(this, net); }
   // #CAT_TI compute deep 5b activations
+  void	TI_Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin(this, net, thread_no); }
+  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
+  void	TI_Send_Deep5bNetin_Post(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin_Post(this, net); }
+  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections -- post processing rollup
   void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
