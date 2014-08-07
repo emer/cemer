@@ -1,8 +1,8 @@
 /****************************  vectori128.h   *******************************
 * Author:        Agner Fog
 * Date created:  2012-05-30
-* Last modified: 2012-08-01
-* Version:       1.02 Beta
+* Last modified: 2014-07-23
+* Version:       1.14
 * Project:       vector classes
 * Description:
 * Header file defining integer vector classes as interface to intrinsic 
@@ -16,15 +16,19 @@
 * compiler does not automatically do so.
 *
 * The following vector classes are defined here:
-* Vec128b   Vector of 128  1-bit unsigned integers or Booleans
-* Vec16c    Vector of  16  8-bit signed   integers
-* Vec16uc   Vector of  16  8-bit unsigned integers
-* Vec8s     Vector of   8 16-bit signed   integers
-* Vec8us    Vector of   8 16-bit unsigned integers
-* Vec4i     Vector of   4 32-bit signed   integers
-* Vec4ui    Vector of   4 32-bit unsigned integers
-* Vec2q     Vector of   2 64-bit signed   integers
-* Vec2uq    Vector of   2 64-bit unsigned integers
+* Vec128b   Vector of 128  1-bit unsigned  integers or Booleans
+* Vec16c    Vector of  16  8-bit signed    integers
+* Vec16uc   Vector of  16  8-bit unsigned  integers
+* Vec16cb   Vector of  16  Booleans for use with Vec16c and Vec16uc
+* Vec8s     Vector of   8  16-bit signed   integers
+* Vec8us    Vector of   8  16-bit unsigned integers
+* Vec8sb    Vector of   8  Booleans for use with Vec8s and Vec8us
+* Vec4i     Vector of   4  32-bit signed   integers
+* Vec4ui    Vector of   4  32-bit unsigned integers
+* Vec4ib    Vector of   4  Booleans for use with Vec4i and Vec4ui
+* Vec2q     Vector of   2  64-bit signed   integers
+* Vec2uq    Vector of   2  64-bit unsigned integers
+* Vec2qb    Vector of   2  Booleans for use with Vec2q and Vec2uq
 *
 * Each vector object is represented internally in the CPU as a 128-bit register.
 * This header file defines operators and functions for these vectors.
@@ -35,7 +39,7 @@
 *
 * For detailed instructions, see VectorClass.pdf
 *
-* (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+* (c) Copyright 2012 - 2013 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 #ifndef VECTORI128_H
 #define VECTORI128_H
@@ -60,10 +64,11 @@ public:
     // Default constructor:
     Vec128b() {
     };
-    // Constructor to broadcast the same value into all elements:
-    Vec128b(int i) {
-        xmm = _mm_set1_epi32(-(i & 1));
-    };
+    // Constructor to broadcast the same value into all elements
+    // Removed because of undesired implicit conversions
+    // Vec128b(int i) {
+    //     xmm = _mm_set1_epi32(-(i & 1));}
+
     // Constructor to convert from type __m128i used in intrinsics:
     Vec128b(__m128i const & x) {
         xmm = x;
@@ -137,6 +142,9 @@ public:
     // Operator [] can only read an element, not write.
     bool operator [] (uint32_t index) const {
         return get_bit(index) != 0;
+    }
+    static int size() {
+        return 128;
     }
 };
 
@@ -295,7 +303,7 @@ public:
     }
     // Constructor to broadcast the same value into all elements:
     Vec16c(int i) {
-        xmm = _mm_set1_epi8(i);
+        xmm = _mm_set1_epi8((char)i);
     }
     // Constructor to build from all elements:
     Vec16c(int8_t i0, int8_t i1, int8_t i2, int8_t i3, int8_t i4, int8_t i5, int8_t i6, int8_t i7,
@@ -403,9 +411,49 @@ public:
     int8_t operator [] (uint32_t index) const {
         return extract(index);
     }
+    static int size() {
+        return 16;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec16cb: Vector of 16 Booleans for use with Vec16c and Vec16uc
+*
+*****************************************************************************/
+
+class Vec16cb : public Vec16c {
+public:
+    // Constructor to convert from type __m128i used in intrinsics:
+    Vec16cb(__m128i const & x) {
+        xmm = x;
+    }
+    // Assignment operator to convert from type __m128i used in intrinsics:
+    Vec16cb & operator = (__m128i const & x) {
+        xmm = x;
+        return *this;
+    }
+    Vec16cb & insert (int index, bool a) {
+        Vec16c::insert(index, -(int)a);
+        return *this;
+    }
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec16c::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Define operators for Vec16c
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec16c operator + (Vec16c const & a, Vec16c const & b) {
@@ -482,7 +530,7 @@ static inline Vec16c & operator *= (Vec16c & a, Vec16c const & b) {
 // vector operator << : shift left all elements
 static inline Vec16c operator << (Vec16c const & a, int b) {
     uint32_t mask = (uint32_t)0xFF >> (uint32_t)b;         // mask to remove bits that are shifted out
-    __m128i am    = _mm_and_si128(a,_mm_set1_epi8(mask));  // remove bits that will overflow
+    __m128i am    = _mm_and_si128(a,_mm_set1_epi8((char)mask));  // remove bits that will overflow
     __m128i res   = _mm_sll_epi16(am,_mm_cvtsi32_si128(b));// 16-bit shifts
     return res;
 }
@@ -510,40 +558,40 @@ static inline Vec16c & operator >>= (Vec16c & a, int b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec16c operator == (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator == (Vec16c const & a, Vec16c const & b) {
     return _mm_cmpeq_epi8(a,b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec16c operator != (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator != (Vec16c const & a, Vec16c const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comneq_epi8(a,b);
 #else  // SSE2 instruction set
-    return Vec16c(~(a == b));
+    return Vec16cb(Vec16c(~(a == b)));
 #endif
 }
 
 // vector operator > : returns true for elements for which a > b (signed)
-static inline Vec16c operator > (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator > (Vec16c const & a, Vec16c const & b) {
     return _mm_cmpgt_epi8(a,b);
 }
 
 // vector operator < : returns true for elements for which a < b (signed)
-static inline Vec16c operator < (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator < (Vec16c const & a, Vec16c const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec16c operator >= (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator >= (Vec16c const & a, Vec16c const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comge_epi8(a,b);
 #else  // SSE2 instruction set
-    return Vec16c(~(b > a));
+    return Vec16cb(Vec16c(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec16c operator <= (Vec16c const & a, Vec16c const & b) {
+static inline Vec16cb operator <= (Vec16c const & a, Vec16c const & b) {
     return b >= a;
 }
 
@@ -554,6 +602,11 @@ static inline Vec16c operator & (Vec16c const & a, Vec16c const & b) {
 static inline Vec16c operator && (Vec16c const & a, Vec16c const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec16c & operator &= (Vec16c & a, Vec16c const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec16c operator | (Vec16c const & a, Vec16c const & b) {
@@ -562,10 +615,20 @@ static inline Vec16c operator | (Vec16c const & a, Vec16c const & b) {
 static inline Vec16c operator || (Vec16c const & a, Vec16c const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec16c & operator |= (Vec16c & a, Vec16c const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec16c operator ^ (Vec16c const & a, Vec16c const & b) {
     return Vec16c(Vec128b(a) ^ Vec128b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec16c & operator ^= (Vec16c & a, Vec16c const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -574,7 +637,7 @@ static inline Vec16c operator ~ (Vec16c const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec16c operator ! (Vec16c const & a) {
+static inline Vec16cb operator ! (Vec16c const & a) {
     return _mm_cmpeq_epi8(a,_mm_setzero_si128());
 }
 
@@ -583,8 +646,13 @@ static inline Vec16c operator ! (Vec16c const & a) {
 // Select between two operands. Corresponds to this pseudocode:
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
-static inline Vec16c select (Vec16c const & s, Vec16c const & a, Vec16c const & b) {
+static inline Vec16c select (Vec16cb const & s, Vec16c const & a, Vec16c const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16c if_add (Vec16cb const & f, Vec16c const & a, Vec16c const & b) {
+    return a + (Vec16c(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -593,8 +661,8 @@ static inline int32_t horizontal_add (Vec16c const & a) {
     __m128i sum1 = _mm_sad_epu8(a,_mm_setzero_si128());
     __m128i sum2 = _mm_shuffle_epi32(sum1,2);
     __m128i sum3 = _mm_add_epi16(sum1,sum2);
-    int8_t  sum4 = _mm_cvtsi128_si32(sum3);      // truncate to 8 bits
-    return  sum4;                                // sign extend to 32 bits
+    int8_t  sum4 = (int8_t)_mm_cvtsi128_si32(sum3);        // truncate to 8 bits
+    return  sum4;                                          // sign extend to 32 bits
 }
 
 // Horizontal add extended: Calculates the sum of all vector elements.
@@ -613,7 +681,7 @@ static inline int32_t horizontal_add_x (Vec16c const & a) {
     __m128i sum2  = _mm_hadd_epi16(sum1,sum1);             // horizontally add 8 elements in 3 steps
     __m128i sum3  = _mm_hadd_epi16(sum2,sum2);
     __m128i sum4  = _mm_hadd_epi16(sum3,sum3);
-    int16_t sum5  = _mm_cvtsi128_si32(sum4);               // 16 bit sum
+    int16_t sum5  = (int16_t)_mm_cvtsi128_si32(sum4);      // 16 bit sum
     return  sum5;                                          // sign extend to 32 bits
 #else                 // SSE2
     __m128i aeven = _mm_slli_epi16(a,8);                   // even numbered elements of a. get sign bit in position
@@ -721,7 +789,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec16uc(uint32_t i) {
-        xmm = _mm_set1_epi8(i);
+        xmm = _mm_set1_epi8((char)i);
     };
     // Constructor to build from all elements:
     Vec16uc(uint8_t i0, uint8_t i1, uint8_t i2, uint8_t i3, uint8_t i4, uint8_t i5, uint8_t i6, uint8_t i7,
@@ -769,7 +837,7 @@ public:
 // vector operator << : shift left all elements
 static inline Vec16uc operator << (Vec16uc const & a, uint32_t b) {
     uint32_t mask = (uint32_t)0xFF >> (uint32_t)b;         // mask to remove bits that are shifted out
-    __m128i am    = _mm_and_si128(a,_mm_set1_epi8(mask));  // remove bits that will overflow
+    __m128i am    = _mm_and_si128(a,_mm_set1_epi8((char)mask));  // remove bits that will overflow
     __m128i res   = _mm_sll_epi16(am,_mm_cvtsi32_si128(b));// 16-bit shifts
     return res;
 }
@@ -782,7 +850,7 @@ static inline Vec16uc operator << (Vec16uc const & a, int32_t b) {
 // vector operator >> : shift right logical all elements
 static inline Vec16uc operator >> (Vec16uc const & a, uint32_t b) {
     uint32_t mask = (uint32_t)0xFF << (uint32_t)b;         // mask to remove bits that are shifted out
-    __m128i am    = _mm_and_si128(a,_mm_set1_epi8(mask));  // remove bits that will overflow
+    __m128i am    = _mm_and_si128(a,_mm_set1_epi8((char)mask));  // remove bits that will overflow
     __m128i res   = _mm_srl_epi16(am,_mm_cvtsi32_si128(b));// 16-bit shifts
     return res;
 }
@@ -799,7 +867,7 @@ static inline Vec16uc & operator >>= (Vec16uc & a, int b) {
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec16c operator >= (Vec16uc const & a, Vec16uc const & b) {
+static inline Vec16cb operator >= (Vec16uc const & a, Vec16uc const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comge_epu8(a,b);
 #else  // SSE2 instruction set
@@ -808,21 +876,21 @@ static inline Vec16c operator >= (Vec16uc const & a, Vec16uc const & b) {
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec16c operator <= (Vec16uc const & a, Vec16uc const & b) {
+static inline Vec16cb operator <= (Vec16uc const & a, Vec16uc const & b) {
     return b >= a;
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec16c operator > (Vec16uc const & a, Vec16uc const & b) {
+static inline Vec16cb operator > (Vec16uc const & a, Vec16uc const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comgt_epu8(a,b);
 #else  // SSE2 instruction set
-    return Vec16c(~(b >= a));
+    return Vec16cb(Vec16c(~(b >= a)));
 #endif
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec16c operator < (Vec16uc const & a, Vec16uc const & b) {
+static inline Vec16cb operator < (Vec16uc const & a, Vec16uc const & b) {
     return b > a;
 }
 
@@ -873,8 +941,13 @@ static inline Vec16uc operator ~ (Vec16uc const & a) {
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec16uc select (Vec16c const & s, Vec16uc const & a, Vec16uc const & b) {
+static inline Vec16uc select (Vec16cb const & s, Vec16uc const & a, Vec16uc const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16uc if_add (Vec16cb const & f, Vec16uc const & a, Vec16uc const & b) {
+    return a + (Vec16uc(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -884,7 +957,7 @@ static inline uint32_t horizontal_add (Vec16uc const & a) {
     __m128i sum1 = _mm_sad_epu8(a,_mm_setzero_si128());
     __m128i sum2 = _mm_shuffle_epi32(sum1,2);
     __m128i sum3 = _mm_add_epi16(sum1,sum2);
-    uint8_t sum4 = _mm_cvtsi128_si32(sum3);      // truncate to 8 bits
+    uint16_t sum4 = (uint16_t)_mm_cvtsi128_si32(sum3);      // truncate to 16 bits
     return  sum4;
 }
 
@@ -932,7 +1005,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec8s(int i) {
-        xmm = _mm_set1_epi16(i);
+        xmm = _mm_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec8s(int16_t i0, int16_t i1, int16_t i2, int16_t i3, int16_t i4, int16_t i5, int16_t i6, int16_t i7) {
@@ -1039,21 +1112,21 @@ public:
     int16_t extract(uint32_t index) const {
         switch(index) {
         case 0:
-            return _mm_extract_epi16(xmm,0);
+            return (int16_t)_mm_extract_epi16(xmm,0);
         case 1:
-            return _mm_extract_epi16(xmm,1);
+            return (int16_t)_mm_extract_epi16(xmm,1);
         case 2:
-            return _mm_extract_epi16(xmm,2);
+            return (int16_t)_mm_extract_epi16(xmm,2);
         case 3:
-            return _mm_extract_epi16(xmm,3);
+            return (int16_t)_mm_extract_epi16(xmm,3);
         case 4:
-            return _mm_extract_epi16(xmm,4);
+            return (int16_t)_mm_extract_epi16(xmm,4);
         case 5:
-            return _mm_extract_epi16(xmm,5);
+            return (int16_t)_mm_extract_epi16(xmm,5);
         case 6:
-            return _mm_extract_epi16(xmm,6);
+            return (int16_t)_mm_extract_epi16(xmm,6);
         case 7:
-            return _mm_extract_epi16(xmm,7);
+            return (int16_t)_mm_extract_epi16(xmm,7);
         }
         return 0;
     }
@@ -1062,9 +1135,53 @@ public:
     int16_t operator [] (uint32_t index) const {
         return extract(index);
     }
+    static int size() {
+        return 8;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec8sb: Vector of 8 Booleans for use with Vec8s and Vec8us
+*
+*****************************************************************************/
+
+class Vec8sb : public Vec8s {
+public:
+    // Default constructor:
+    Vec8sb() {
+    }
+    // Constructor to convert from type __m128i used in intrinsics:
+    Vec8sb(__m128i const & x) {
+        xmm = x;
+    }
+    // Assignment operator to convert from type __m128i used in intrinsics:
+    Vec8sb & operator = (__m128i const & x) {
+        xmm = x;
+        return *this;
+    }
+    Vec8sb & insert (int index, bool a) {
+        Vec8s::insert(index, -(int)a);
+        return *this;
+    }
+    // Member function extract a single element from vector
+    // Note: This function is inefficient. Use store function if extracting more than one element
+    bool extract(uint32_t index) const {
+        return Vec8s::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*         operators for Vec8s
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec8s operator + (Vec8s const & a, Vec8s const & b) {
@@ -1201,6 +1318,11 @@ static inline Vec8s operator & (Vec8s const & a, Vec8s const & b) {
 static inline Vec8s operator && (Vec8s const & a, Vec8s const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec8s & operator &= (Vec8s & a, Vec8s const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec8s operator | (Vec8s const & a, Vec8s const & b) {
@@ -1209,10 +1331,20 @@ static inline Vec8s operator | (Vec8s const & a, Vec8s const & b) {
 static inline Vec8s operator || (Vec8s const & a, Vec8s const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec8s & operator |= (Vec8s & a, Vec8s const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec8s operator ^ (Vec8s const & a, Vec8s const & b) {
     return Vec8s(Vec128b(a) ^ Vec128b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec8s & operator ^= (Vec8s & a, Vec8s const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1235,6 +1367,11 @@ static inline Vec8s select (Vec8s const & s, Vec8s const & a, Vec8s const & b) {
     return selectb(s,a,b);
 }
 
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8s if_add (Vec8sb const & f, Vec8s const & a, Vec8s const & b) {
+    return a + (Vec8s(f) & b);
+}
+
 // Horizontal add: Calculates the sum of all vector elements.
 // Overflow will wrap around
 static inline int32_t horizontal_add (Vec8s const & a) {
@@ -1248,7 +1385,7 @@ static inline int32_t horizontal_add (Vec8s const & a) {
     __m128i sum1  = _mm_hadd_epi16(a,a);                   // horizontally add 8 elements in 3 steps
     __m128i sum2  = _mm_hadd_epi16(sum1,sum1);
     __m128i sum3  = _mm_hadd_epi16(sum2,sum2);
-    int16_t sum4  = _mm_cvtsi128_si32(sum3);               // 16 bit sum
+    int16_t sum4  = (int16_t)_mm_cvtsi128_si32(sum3);      // 16 bit sum
     return  sum4;                                          // sign extend to 32 bits
 #else                 // SSE2
     __m128i sum1  = _mm_shuffle_epi32(a,0x0E);             // 4 high elements
@@ -1342,7 +1479,6 @@ static inline Vec8s rotate_left(Vec8s const & a, int b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 8 16-bit unsigned integers
@@ -1356,7 +1492,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec8us(uint32_t i) {
-        xmm = _mm_set1_epi16(i);
+        xmm = _mm_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec8us(uint16_t i0, uint16_t i1, uint16_t i2, uint16_t i3, uint16_t i4, uint16_t i5, uint16_t i6, uint16_t i7) {
@@ -1513,6 +1649,11 @@ static inline Vec8us select (Vec8s const & s, Vec8us const & a, Vec8us const & b
     return selectb(s,a,b);
 }
 
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8us if_add (Vec8sb const & f, Vec8us const & a, Vec8us const & b) {
+    return a + (Vec8us(f) & b);
+}
+
 // Horizontal add: Calculates the sum of all vector elements.
 // Overflow will wrap around
 static inline uint32_t horizontal_add (Vec8us const & a) {
@@ -1526,7 +1667,7 @@ static inline uint32_t horizontal_add (Vec8us const & a) {
     __m128i sum1  = _mm_hadd_epi16(a,a);                   // horizontally add 8 elements in 3 steps
     __m128i sum2  = _mm_hadd_epi16(sum1,sum1);
     __m128i sum3  = _mm_hadd_epi16(sum2,sum2);
-    uint16_t sum4 = _mm_cvtsi128_si32(sum3);               // 16 bit sum
+    uint16_t sum4 = (uint16_t)_mm_cvtsi128_si32(sum3);     // 16 bit sum
     return  sum4;                                          // zero extend to 32 bits
 #else                 // SSE2
     __m128i sum1  = _mm_shuffle_epi32(a,0x0E);             // 4 high elements
@@ -1716,9 +1857,52 @@ public:
     int32_t operator [] (uint32_t index) const {
         return extract(index);
     }
+    static int size() {
+        return 4;
+    }
 };
 
-// Define operators for this class
+
+/*****************************************************************************
+*
+*          Vec4ib: Vector of 4 Booleans for use with Vec4i and Vec4ui
+*
+*****************************************************************************/
+class Vec4ib : public Vec4i {
+public:
+    // Default constructor:
+    Vec4ib() {
+    }
+    // Constructor to convert from type __m128i used in intrinsics:
+    Vec4ib(__m128i const & x) {
+        xmm = x;
+    }
+    // Assignment operator to convert from type __m128i used in intrinsics:
+    Vec4ib & operator = (__m128i const & x) {
+        xmm = x;
+        return *this;
+    }
+    Vec4ib & insert (int index, bool a) {
+        Vec4i::insert(index, -(int)a);
+        return *this;
+    }    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec4i::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec4i
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec4i operator + (Vec4i const & a, Vec4i const & b) {
@@ -1821,40 +2005,40 @@ static inline Vec4i & operator >>= (Vec4i & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec4i operator == (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator == (Vec4i const & a, Vec4i const & b) {
     return _mm_cmpeq_epi32(a, b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec4i operator != (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator != (Vec4i const & a, Vec4i const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comneq_epi32(a,b);
 #else  // SSE2 instruction set
-    return Vec4i (~(a == b));
+    return Vec4ib(Vec4i (~(a == b)));
 #endif
 }
   
 // vector operator > : returns true for elements for which a > b
-static inline Vec4i operator > (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator > (Vec4i const & a, Vec4i const & b) {
     return _mm_cmpgt_epi32(a, b);
 }
 
 // vector operator < : returns true for elements for which a < b
-static inline Vec4i operator < (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator < (Vec4i const & a, Vec4i const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec4i operator >= (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator >= (Vec4i const & a, Vec4i const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comge_epi32(a,b);
 #else  // SSE2 instruction set
-    return Vec4i (~(b > a));
+    return Vec4ib(Vec4i (~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec4i operator <= (Vec4i const & a, Vec4i const & b) {
+static inline Vec4ib operator <= (Vec4i const & a, Vec4i const & b) {
     return b >= a;
 }
 
@@ -1865,6 +2049,11 @@ static inline Vec4i operator & (Vec4i const & a, Vec4i const & b) {
 static inline Vec4i operator && (Vec4i const & a, Vec4i const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec4i & operator &= (Vec4i & a, Vec4i const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec4i operator | (Vec4i const & a, Vec4i const & b) {
@@ -1873,10 +2062,20 @@ static inline Vec4i operator | (Vec4i const & a, Vec4i const & b) {
 static inline Vec4i operator || (Vec4i const & a, Vec4i const & b) {
     return a | b;
 }
+// vector operator |= : bitwise and
+static inline Vec4i & operator |= (Vec4i & a, Vec4i const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec4i operator ^ (Vec4i const & a, Vec4i const & b) {
     return Vec4i(Vec128b(a) ^ Vec128b(b));
+}
+// vector operator ^= : bitwise and
+static inline Vec4i & operator ^= (Vec4i & a, Vec4i const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1885,7 +2084,7 @@ static inline Vec4i operator ~ (Vec4i const & a) {
 }
 
 // vector operator ! : returns true for elements == 0
-static inline Vec4i operator ! (Vec4i const & a) {
+static inline Vec4ib operator ! (Vec4i const & a) {
     return _mm_cmpeq_epi32(a,_mm_setzero_si128());
 }
 
@@ -1895,8 +2094,13 @@ static inline Vec4i operator ! (Vec4i const & a) {
 // for (int i = 0; i < 4; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4i select (Vec4i const & s, Vec4i const & a, Vec4i const & b) {
+static inline Vec4i select (Vec4ib const & s, Vec4i const & a, Vec4i const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4i if_add (Vec4ib const & f, Vec4i const & a, Vec4i const & b) {
+    return a + (Vec4i(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2125,7 +2329,7 @@ static inline Vec4ui operator << (Vec4ui const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec4i operator > (Vec4ui const & a, Vec4ui const & b) {
+static inline Vec4ib operator > (Vec4ui const & a, Vec4ui const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comgt_epu32(a,b);
 #else  // SSE2 instruction set
@@ -2137,24 +2341,24 @@ static inline Vec4i operator > (Vec4ui const & a, Vec4ui const & b) {
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec4i operator < (Vec4ui const & a, Vec4ui const & b) {
+static inline Vec4ib operator < (Vec4ui const & a, Vec4ui const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec4i operator >= (Vec4ui const & a, Vec4ui const & b) {
+static inline Vec4ib operator >= (Vec4ui const & a, Vec4ui const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
     return _mm_comge_epu32(a,b);
 #elif INSTRSET >= 5   // SSE4.1
     __m128i max_ab = _mm_max_epu32(a,b);                   // max(a,b), unsigned
     return _mm_cmpeq_epi32(a,max_ab);                      // a == max(a,b)
 #else  // SSE2 instruction set
-    return Vec4i (~(b > a));
+    return Vec4ib(Vec4i (~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec4i operator <= (Vec4ui const & a, Vec4ui const & b) {
+static inline Vec4ib operator <= (Vec4ui const & a, Vec4ui const & b) {
     return b >= a;
 }
 
@@ -2190,8 +2394,13 @@ static inline Vec4ui operator ~ (Vec4ui const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4ui select (Vec4i const & s, Vec4ui const & a, Vec4ui const & b) {
+static inline Vec4ui select (Vec4ib const & s, Vec4ui const & a, Vec4ui const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4ui if_add (Vec4ib const & f, Vec4ui const & a, Vec4ui const & b) {
+    return a + (Vec4ui(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2259,7 +2468,6 @@ static inline Vec4ui min(Vec4ui const & a, Vec4ui const & b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 2 64-bit signed integers
@@ -2274,51 +2482,58 @@ public:
     // Constructor to broadcast the same value into all elements:
     Vec2q(int64_t i) {
 #if defined (_MSC_VER) && ! defined(__INTEL_COMPILER)
-        // MS compiler has no _mm_set1_epi64x
+        // MS compiler has no _mm_set1_epi64x in 32 bit mode
 #if defined(__x86_64__)                                    // 64 bit mode
+#if _MSC_VER < 1700
         __m128i x1 = _mm_cvtsi64_si128(i);                 // 64 bit load
         xmm = _mm_unpacklo_epi64(x1,x1);                   // broadcast
 #else
-        // MS compiler cannot put 64-bit values into xmm register without using
-        // mmx registers, and it makes no emms  // !!
+		xmm =  _mm_set1_epi64x(i);
+#endif
+#else
         union {
             int64_t q[2];
             int32_t r[4];
         } u;
         u.q[0] = u.q[1] = i;
         xmm = _mm_setr_epi32(u.r[0], u.r[1], u.r[2], u.r[3]);
-#endif  // __x86_64__
-#else   // Intel and Gnu compilers
-        xmm = _mm_set1_epi64x(i);   // Intel  emmintrin.h
-        /*
+        /*    // this will use an mm register and produce store forwarding stall:
         union {
             __m64 m;
             int64_t ii;
         } u;
         u.ii = i;
         xmm = _mm_set1_epi64(u.m);
-        */
+		_m_empty();        */
+
+#endif  // __x86_64__
+#else   // Other compilers
+        xmm = _mm_set1_epi64x(i);   // emmintrin.h
 #endif
     };
+
     // Constructor to build from all elements:
     Vec2q(int64_t i0, int64_t i1) {
 #if defined (_MSC_VER) && ! defined(__INTEL_COMPILER)
-        // MS compiler has no _mm_set_epi64x     // !!
+        // MS compiler has no _mm_set_epi64x in 32 bit mode
 #if defined(__x86_64__)                                    // 64 bit mode
+#if _MSC_VER < 1700
         __m128i x0 = _mm_cvtsi64_si128(i0);                // 64 bit load
         __m128i x1 = _mm_cvtsi64_si128(i1);                // 64 bit load
         xmm = _mm_unpacklo_epi64(x0,x1);                   // combine
 #else
-        // MS compiler cannot put 64-bit values into xmm register without using
-        // mmx registers, and it makes no emms
+		xmm = _mm_set_epi64x(i1, i0);
+#endif
+#else   // MS compiler in 32-bit mode
         union {
             int64_t q[2];
             int32_t r[4];
         } u;
         u.q[0] = i0;  u.q[1] = i1;
+		// this is inefficient, but other solutions are worse
         xmm = _mm_setr_epi32(u.r[0], u.r[1], u.r[2], u.r[3]);
 #endif  // __x86_64__
-#else   // Intel and Gnu compilers
+#else   // Other compilers
         xmm = _mm_set_epi64x(i1, i0);
 #endif
     };
@@ -2421,9 +2636,52 @@ public:
     int64_t operator [] (uint32_t index) const {
         return extract(index);
     }
+    static int size() {
+        return 8;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec2qb: Vector of 2 Booleans for use with Vec2q and Vec2uq
+*
+*****************************************************************************/
+// Definition will be different for the AVX512 instruction set
+class Vec2qb : public Vec2q {
+public:
+    // Default constructor:
+    Vec2qb() {
+    };
+    // Constructor to convert from type __m128i used in intrinsics:
+    Vec2qb(__m128i const & x) {
+        xmm = x;
+    };
+    // Assignment operator to convert from type __m128i used in intrinsics:
+    Vec2qb & operator = (__m128i const & x) {
+        xmm = x;
+        return *this;
+    };
+    Vec2qb & insert (int index, bool a) {
+        Vec2q::insert(index, -(int64_t)a);
+        return *this;
+    }    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec2q::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec2q
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec2q operator + (Vec2q const & a, Vec2q const & b) {
@@ -2542,7 +2800,7 @@ static inline Vec2q & operator >>= (Vec2q & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec2q operator == (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator == (Vec2q const & a, Vec2q const & b) {
 #if INSTRSET >= 5   // SSE4.1 supported
     return _mm_cmpeq_epi64(a, b);
 #else               // SSE2
@@ -2552,23 +2810,23 @@ static inline Vec2q operator == (Vec2q const & a, Vec2q const & b) {
     __m128i test   = _mm_and_si128(com32,com32s);          // low & high
     __m128i teste  = _mm_srai_epi32(test,31);              // extend sign bit to 32 bits
     __m128i testee = _mm_shuffle_epi32(teste,0xF5);        // extend sign bit to 64 bits
-    return  testee;
+    return  Vec2qb(Vec2q(testee));
 #endif
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec2q operator != (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator != (Vec2q const & a, Vec2q const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
-    return _mm_comneq_epi64(a,b);
+    return Vec2q(_mm_comneq_epi64(a,b));
 #else  // SSE2 instruction set
-    return Vec2q (~(a == b));
+    return Vec2qb(Vec2q(~(a == b)));
 #endif
 }
   
 // vector operator < : returns true for elements for which a < b
-static inline Vec2q operator < (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator < (Vec2q const & a, Vec2q const & b) {
 #if INSTRSET >= 6   // SSE4.2 supported
-    return _mm_cmpgt_epi64(b, a);
+    return Vec2qb(Vec2q(_mm_cmpgt_epi64(b, a)));
 #else               // SSE2
     // no 64 compare instruction. Subtract
     __m128i s      = _mm_sub_epi64(a,b);                   // a-b
@@ -2585,21 +2843,21 @@ static inline Vec2q operator < (Vec2q const & a, Vec2q const & b) {
 }
 
 // vector operator > : returns true for elements for which a > b
-static inline Vec2q operator > (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator > (Vec2q const & a, Vec2q const & b) {
     return b < a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec2q operator >= (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator >= (Vec2q const & a, Vec2q const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
-    return _mm_comge_epi64(a,b);
+    return Vec2q(_mm_comge_epi64(a,b));
 #else  // SSE2 instruction set
-    return Vec2q (~(a < b));
+    return Vec2qb(Vec2q(~(a < b)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec2q operator <= (Vec2q const & a, Vec2q const & b) {
+static inline Vec2qb operator <= (Vec2q const & a, Vec2q const & b) {
     return b >= a;
 }
 
@@ -2610,6 +2868,11 @@ static inline Vec2q operator & (Vec2q const & a, Vec2q const & b) {
 static inline Vec2q operator && (Vec2q const & a, Vec2q const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec2q & operator &= (Vec2q & a, Vec2q const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec2q operator | (Vec2q const & a, Vec2q const & b) {
@@ -2618,10 +2881,20 @@ static inline Vec2q operator | (Vec2q const & a, Vec2q const & b) {
 static inline Vec2q operator || (Vec2q const & a, Vec2q const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec2q & operator |= (Vec2q & a, Vec2q const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec2q operator ^ (Vec2q const & a, Vec2q const & b) {
     return Vec2q(Vec128b(a) ^ Vec128b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec2q & operator ^= (Vec2q & a, Vec2q const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -2630,8 +2903,8 @@ static inline Vec2q operator ~ (Vec2q const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec2q operator ! (Vec2q const & a) {
-  return a == (Vec2q)_mm_setzero_si128();
+static inline Vec2qb operator ! (Vec2q const & a) {
+    return a == Vec2q(_mm_setzero_si128());
 }
 
 // Functions for this class
@@ -2640,8 +2913,13 @@ static inline Vec2q operator ! (Vec2q const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec2q select (Vec2q const & s, Vec2q const & a, Vec2q const & b) {
+static inline Vec2q select (Vec2qb const & s, Vec2q const & a, Vec2q const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec2q if_add (Vec2qb const & f, Vec2q const & a, Vec2q const & b) {
+    return a + (Vec2q(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2707,7 +2985,6 @@ static inline Vec2q rotate_left(Vec2q const & a, int b) {
     return  rot;
 #endif
 }
-
 
 
 /*****************************************************************************
@@ -2809,9 +3086,9 @@ static inline Vec2uq operator << (Vec2uq const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec2q operator > (Vec2uq const & a, Vec2uq const & b) {
+static inline Vec2qb operator > (Vec2uq const & a, Vec2uq const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
-    return _mm_comgt_epu64(a,b);
+    return Vec2q(_mm_comgt_epu64(a,b));
 #else  // SSE2 instruction set
     __m128i sign32  = _mm_set1_epi32(0x80000000);          // sign bit of each dword
     __m128i aflip   = _mm_xor_si128(a,sign32);             // a with sign bits flipped
@@ -2822,26 +3099,26 @@ static inline Vec2q operator > (Vec2uq const & a, Vec2uq const & b) {
     __m128i eqbig   = _mm_and_si128(equal,biggerl);        // high part equal and low part bigger
     __m128i hibig   = _mm_or_si128(bigger,eqbig);          // high part bigger or high part equal and low part bigger
     __m128i big     = _mm_shuffle_epi32(hibig,0xF5);       // result copied to low part
-    return  big;
+    return  Vec2qb(Vec2q(big));
 #endif
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec2q operator < (Vec2uq const & a, Vec2uq const & b) {
+static inline Vec2qb operator < (Vec2uq const & a, Vec2uq const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec2q operator >= (Vec2uq const & a, Vec2uq const & b) {
+static inline Vec2qb operator >= (Vec2uq const & a, Vec2uq const & b) {
 #ifdef __XOP__  // AMD XOP instruction set
-    return _mm_comge_epu64(a,b);
+    return Vec2q(_mm_comge_epu64(a,b));
 #else  // SSE2 instruction set
-    return  Vec2q (~(b > a));
+    return  Vec2qb(Vec2q(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec2q operator <= (Vec2uq const & a, Vec2uq const & b) {
+static inline Vec2qb operator <= (Vec2uq const & a, Vec2uq const & b) {
     return b >= a;
 }
 
@@ -2878,8 +3155,13 @@ static inline Vec2uq operator ~ (Vec2uq const & a) {
 // for (int i = 0; i < 2; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec2uq select (Vec2q const & s, Vec2uq const & a, Vec2uq const & b) {
+static inline Vec2uq select (Vec2qb const & s, Vec2uq const & a, Vec2uq const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec2uq if_add (Vec2qb const & f, Vec2uq const & a, Vec2uq const & b) {
+    return a + (Vec2uq(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -3830,6 +4112,9 @@ static inline Vec4i blend4i(Vec4i const & a, Vec4i const & b) {
 
     // partially finished result
     __m128i temp;
+#ifdef _MSC_VER
+    temp = a;  // avoid spurious warning message for temp unused
+#endif
 
     // special case: no elements from b
     if ((m1 & 0x04040404 & mz) == 0) {
@@ -3878,7 +4163,7 @@ static inline Vec4i blend4i(Vec4i const & a, Vec4i const & b) {
 #if INSTRSET >= 5   // SSE4.1 supported
     if ((((m1 & ~0x04040404) ^ 0x03020100) & mz) == 0) {
         // blending without permuting
-        temp = _mm_blend_epi16(a, b, (i0>>2&1)*3 | ((i1>>2&1)*3)<<2 | ((i2>>2&1)*3)<<4 | ((i3>>2&1)*3)<<6 );
+        temp = _mm_blend_epi16(a, b, ((i0>>2)&1)*3 | ((((i1>>2)&1)*3)<<2) | ((((i2>>2)&1)*3)<<4) | ((((i3>>2)&1)*3)<<6));
         if (do_zero) zeroing_pending = true; else return temp;
     }
 #endif // SSE4.1
@@ -4105,7 +4390,7 @@ static inline Vec8s lookup(Vec8s const & index, void const * table) {
         index1 = min(Vec8us(index), n-1);
     }
 #if INSTRSET >= 8 // AVX2. Use VPERMD
-    Vec8s t1 = _mm_i32gather_epi32((const int *)table, Vec4ui(index1) & 0x0000FFFF, 2);  // even positions
+    Vec8s t1 = _mm_i32gather_epi32((const int *)table, __m128i((Vec4i(index1)) & (Vec4i(0x0000FFFF))), 2);  // even positions
     Vec8s t2 = _mm_i32gather_epi32((const int *)table, _mm_srli_epi32(index1, 16) , 2);  // odd  positions
     return blend8s<0,8,2,10,4,12,6,14>(t1, t2);
 #else
@@ -4120,10 +4405,7 @@ static inline Vec4i lookup4(Vec4i const & index, Vec4i const & table) {
 #if INSTRSET >= 5  // SSSE3
     return _mm_shuffle_epi8(table, index * 0x04040404 + 0x03020100);
 #else
-    int32_t ii[4], tt[4], rr[4];
-    table.store(tt);  index.store(ii);
-    for (int j = 0; j < 4; j++) rr[j] = tt[ii[j] & 0x03];
-    return Vec4i().load(rr);
+    return Vec4i(table[index[0]],table[index[1]],table[index[2]],table[index[3]]);
 #endif
 }
 
@@ -4134,10 +4416,10 @@ static inline Vec4i lookup8(Vec4i const & index, Vec4i const & table0, Vec4i con
 #elif INSTRSET >= 8 // AVX2. Use VPERMD
     __m256i table01 = _mm256_inserti128_si256(_mm256_castsi128_si256(table0), table1, 1); // join tables into 256 bit vector
 
-#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
-    // bug in MS VS 11 beta: operands in wrong order  //!!
+#if defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)
+    // bug in MS VS 11 beta: operands in wrong order
     return _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index), table01));
-#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && ! defined(__INTEL_COMPILER)        
+#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && !defined(__INTEL_COMPILER) && !defined(__clang__)
     // Gcc 4.7.0 also has operands in wrong order
     return _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index), table01));
 #else
@@ -4160,11 +4442,11 @@ static inline Vec4i lookup16(Vec4i const & index, Vec4i const & table0, Vec4i co
 #if INSTRSET >= 8 // AVX2. Use VPERMD
     __m256i table01 = _mm256_inserti128_si256(_mm256_castsi128_si256(table0), table1, 1); // join tables into 256 bit vector
     __m256i table23 = _mm256_inserti128_si256(_mm256_castsi128_si256(table2), table3, 1); // join tables into 256 bit vector
-#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
-    // bug in MS VS 11 beta: operands in wrong order  //!!
+#if defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)
+    // bug in MS VS 11 beta: operands in wrong order
     __m128i r0 = _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index    ), table01));
     __m128i r1 = _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index ^ 8), table23));
-#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && ! defined(__INTEL_COMPILER)        
+#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && !defined(__INTEL_COMPILER) && !defined(__clang__)
     // Gcc 4.7.0 also has operands in wrong order
     __m128i r0 = _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index    ), table01));
     __m128i r1 = _mm256_castsi256_si128(_mm256_permutevar8x32_epi32(_mm256_castsi128_si256(index ^ 8), table23));
@@ -4295,6 +4577,71 @@ static inline Vec16c shift_bytes_down(Vec16c const & a, int b) {
 #endif
 }
 
+/*****************************************************************************
+*
+*          Gather functions with fixed indexes
+*
+*****************************************************************************/
+// Load elements from array a with indices i0, i1, i2, i3
+template <int i0, int i1, int i2, int i3>
+static inline Vec4i gather4i(void const * a) {
+    Static_error_check<(i0|i1|i2|i3)>=0> Negative_array_index;  // Error message if index is negative
+    const int i01min = i0 < i1 ? i0 : i1;
+    const int i23min = i2 < i3 ? i2 : i3;
+    const int imin   = i01min < i23min ? i01min : i23min;
+    const int i01max = i0 > i1 ? i0 : i1;
+    const int i23max = i2 > i3 ? i2 : i3;
+    const int imax   = i01max > i23max ? i01max : i23max;
+    if (imax - imin <= 3) {
+        // load one contiguous block and permute
+        if (imax > 3) {
+            // make sure we don't read past the end of the array
+            Vec4i b = Vec4i().load((int32_t const *)a + imax-3);
+            return permute4i<i0-imax+3, i1-imax+3, i2-imax+3, i3-imax+3>(b);
+        }
+        else {
+            Vec4i b = Vec4i().load((int32_t const *)a + imin);
+            return permute4i<i0-imin, i1-imin, i2-imin, i3-imin>(b);
+        }
+    }
+    if ((i0<imin+4 || i0>imax-4) && (i1<imin+4 || i1>imax-4) && (i2<imin+4 || i2>imax-4) && (i3<imin+4 || i3>imax-4)) {
+        // load two contiguous blocks and blend
+        Vec4i b = Vec4i().load((int32_t const *)a + imin);
+        Vec4i c = Vec4i().load((int32_t const *)a + imax-3);
+        const int j0 = i0<imin+4 ? i0-imin : 7-imax+i0;
+        const int j1 = i1<imin+4 ? i1-imin : 7-imax+i1;
+        const int j2 = i2<imin+4 ? i2-imin : 7-imax+i2;
+        const int j3 = i3<imin+4 ? i3-imin : 7-imax+i3;
+        return blend4i<j0, j1, j2, j3>(b, c);
+    }
+    // use AVX2 gather if available
+#if INSTRSET >= 8
+    return _mm_i32gather_epi32((const int *)a, Vec4i(i0,i1,i2,i3), 4);
+#else
+    return lookup<imax+1>(Vec4i(i0,i1,i2,i3), a);
+#endif
+}
+
+// Load elements from array a with indices i0, i1
+template <int i0, int i1>
+static inline Vec2q gather2q(void const * a) {
+    Static_error_check<(i0|i1)>=0> Negative_array_index;  // Error message if index is negative
+    const int imin = i0 < i1 ? i0 : i1;
+    const int imax = i0 > i1 ? i0 : i1;
+    if (imax - imin <= 1) {
+        // load one contiguous block and permute
+        if (imax > 1) {
+            // make sure we don't read past the end of the array
+            Vec2q b = Vec2q().load((int64_t const *)a + imax-1);
+            return permute2q<i0-imax+1, i1-imax+1>(b);
+        }
+        else {
+            Vec2q b = Vec2q().load((int64_t const *)a + imin);
+            return permute2q<i0-imin, i1-imin>(b);
+        }
+    }
+    return Vec2q(((int64_t*)a)[i0], ((int64_t*)a)[i1]);
+}
 
 
 /*****************************************************************************
@@ -4528,6 +4875,86 @@ static inline Vec4ui compress_saturated (Vec2uq const & low, Vec2uq const & high
     return  Vec4ui (compress(Vec2q(lowsatur), Vec2q(hisatur)));
 }
 
+/*****************************************************************************
+*
+*          Helper functions for division and bit scan
+*
+*****************************************************************************/
+
+// Define popcount function. Gives sum of bits
+#if INSTRSET >= 6   // SSE4.2
+    // popcnt instruction is not officially part of the SSE4.2 instruction set,
+    // but available in all known processors with SSE4.2
+#if defined (__GNUC__) || defined(__clang__)
+static inline uint32_t vml_popcnt (uint32_t a) __attribute__ ((pure));
+static inline uint32_t vml_popcnt (uint32_t a) {	
+    uint32_t r;
+    __asm("popcnt %1, %0" : "=r"(r) : "r"(a) : );
+    return r;
+}
+#else
+static inline uint32_t vml_popcnt (uint32_t a) {	
+    return _mm_popcnt_u32(a);  // MS intrinsic
+}
+#endif // platform
+#else  // no SSE4.2
+static inline uint32_t vml_popcnt (uint32_t a) {	
+    // popcnt instruction not available
+    uint32_t b = a - ((a >> 1) & 0x55555555);
+    uint32_t c = (b & 0x33333333) + ((b >> 2) & 0x33333333);
+    uint32_t d = (c + (c >> 4)) & 0x0F0F0F0F;
+    uint32_t e = d * 0x01010101;
+    return   e >> 24;
+}
+#endif
+
+
+// Define bit-scan-forward function. Gives index to lowest set bit
+#if defined (__GNUC__) || defined(__clang__)
+static inline uint32_t bit_scan_reverse (uint32_t a) __attribute__ ((pure));
+static inline uint32_t bit_scan_forward (uint32_t a) {	
+    uint32_t r;
+    __asm("bsfl %1, %0" : "=r"(r) : "r"(a) : );
+    return r;
+}
+#else
+static inline uint32_t bit_scan_forward (uint32_t a) {	
+    unsigned long r;
+    _BitScanForward(&r, a);                      // defined in intrin.h for MS and Intel compilers
+    return r;
+}
+#endif
+
+// Define bit-scan-reverse function. Gives index to highest set bit = floor(log2(a))
+#if defined (__GNUC__) || defined(__clang__)
+static inline uint32_t bit_scan_reverse (uint32_t a) __attribute__ ((pure));
+static inline uint32_t bit_scan_reverse (uint32_t a) {	
+    uint32_t r;
+    __asm("bsrl %1, %0" : "=r"(r) : "r"(a) : );
+    return r;
+}
+#else
+static inline uint32_t bit_scan_reverse (uint32_t a) {	
+    unsigned long r;
+    _BitScanReverse(&r, a);                      // defined in intrin.h for MS and Intel compilers
+    return r;
+}
+#endif
+
+// Same function, for compile-time constants.
+// We need template metaprogramming for calculating this function at compile time
+template <uint32_t n> 
+struct BitScanR {
+    enum {val = (
+        n >= 0x10 ? 4 + (BitScanR<(n>>4)>::val) :
+        n  <    2 ? 0 :
+        n  <    4 ? 1 :
+        n  <    8 ? 2 : 3 )                       };
+};
+template <> struct BitScanR<0> {enum {val = 0};};          // Avoid infinite template recursion
+
+#define bit_scan_reverse_const(n)  (BitScanR<n>::val)      // n must be a valid compile-time constant
+
 
 /*****************************************************************************
 *
@@ -4623,38 +5050,6 @@ static inline Vec4ui compress_saturated (Vec2uq const & low, Vec2uq const & high
 *
 *
 *****************************************************************************/
-
-
-// Define bit-scan-reverse function. Gives index to highest set bit = floor(log2(a))
-#ifdef __GNUC__
-static inline uint32_t bit_scan_reverse (uint32_t a) __attribute__ ((pure));
-static inline uint32_t bit_scan_reverse (uint32_t a) {	
-    uint32_t r;
-    __asm("bsrl %1, %0" : "=r"(r) : "r"(a) : );
-    return r;
-}
-#else
-static inline uint32_t bit_scan_reverse (uint32_t a) {	
-    unsigned long r;
-    _BitScanReverse(&r, a);                                          // defined in intrin.h for MS and Intel compilers
-    return r;
-}
-#endif
-
-// Same function, for compile-time constants.
-// We need template metaprogramming for calculating this function at compile time
-template <uint32_t n> 
-struct BitScanR {
-    enum {val = (
-        n >= 0x10 ? 4 + (BitScanR<(n>>4)>::val) :
-        n  <    2 ? 0 :
-        n  <    4 ? 1 :
-        n  <    8 ? 2 : 3 )                       };
-};
-template <> struct BitScanR<0> {enum {val = 0};};                    // Avoid infinite template recursion
-
-#define bit_scan_reverse_const(n)  (BitScanR<n>::val)                // n must be a valid compile-time constant
-
 
 // encapsulate parameters for fast division on vector of 4 32-bit signed integers
 class Divisor_i {
@@ -4830,7 +5225,7 @@ public:
             m = 1; sh1 = 1; sh2 = 0;                       // parameters for d = 2
             break;
         default:                                           // general case for d > 2
-            L  = bit_scan_reverse(d-1)+1;                  // ceil(log2(d))
+            L  = (uint16_t)bit_scan_reverse(d-1)+1;        // ceil(log2(d))
             L2 = uint16_t(1 << L);                         // 2^L, overflow to 0 if L = 16
             m  = 1 + uint16_t((uint32_t(L2 - d) << 16) / d); // multiplier
             sh1 = 1;  sh2 = L - 1;                         // shift counts
@@ -4855,7 +5250,7 @@ public:
 
 // vector of 4 32-bit signed integers
 static inline Vec4i operator / (Vec4i const & a, Divisor_i const & d) {
-#if defined (__XOP__) && defined (GCC_VERSION) && GCC_VERSION <= /*40701*/ 99999 && ! defined(__INTEL_COMPILER)
+#if defined (__XOP__) && defined (GCC_VERSION) && GCC_VERSION <= 40702/*??*/ && !defined(__INTEL_COMPILER) && !defined(__clang__)
 #define XOP_MUL_BUG                                       // GCC has bug in XOP multiply
 // Bug found in GCC version 4.7.0 and 4.7.1
 #endif
@@ -5212,7 +5607,7 @@ static inline Vec8us divide_by_ui(Vec8us const & x) {
     __m128i xm = _mm_mulhi_epu16(x1, multv);                         // high part of 16x16->32 bit unsigned multiplication
     Vec8us q    = _mm_srli_epi16(xm, b);                             // shift right by b
     if (round_down) {
-      Vec8s overfl = (x1 == (Vec8us)_mm_setzero_si128());                  // check for overflow of x+1
+        Vec8s overfl = (x1 == (Vec8us)_mm_setzero_si128());                  // check for overflow of x+1
         return select(overfl, Vec8us(mult >> b), q);                 // deal with overflow (rarely needed)
     }
     else {
@@ -5306,5 +5701,145 @@ static inline Vec16uc & operator /= (Vec16uc & a, Const_int_t<d> b) {
     a = a / b;
     return a;
 }
+
+/*****************************************************************************
+*
+*          Horizontal scan functions
+*
+*****************************************************************************/
+
+// Get index to the first element that is true. Return -1 if all are false
+static inline int horizontal_find_first(Vec16cb const & x) {
+    uint32_t a = _mm_movemask_epi8(x);
+    if (a == 0) return -1;
+    int32_t b = bit_scan_forward(a);
+    return b;
+}
+
+static inline int horizontal_find_first(Vec8sb const & x) {
+    return horizontal_find_first(Vec16cb(x)) >> 1;   // must use signed shift
+}
+
+static inline int horizontal_find_first(Vec4ib const & x) {
+    return horizontal_find_first(Vec16cb(x)) >> 2;   // must use signed shift
+}
+
+static inline int horizontal_find_first(Vec2qb const & x) {
+    return horizontal_find_first(Vec16cb(x)) >> 3;   // must use signed shift
+}
+
+// Count the number of elements that are true
+static inline uint32_t horizontal_count(Vec16cb const & x) {
+    uint32_t a = _mm_movemask_epi8(x);
+    return vml_popcnt(a);
+}
+
+static inline uint32_t horizontal_count(Vec8sb const & x) {
+    return horizontal_count(Vec16cb(x)) >> 1;
+}
+
+static inline uint32_t horizontal_count(Vec4ib const & x) {
+    return horizontal_count(Vec16cb(x)) >> 2;
+}
+
+static inline uint32_t horizontal_count(Vec2qb const & x) {
+    return horizontal_count(Vec16cb(x)) >> 3;
+}
+
+
+/*****************************************************************************
+*
+*          Boolean <-> bitfield conversion functions
+*
+*****************************************************************************/
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint16_t to_bits(Vec16cb const & x) {
+    return (uint16_t)_mm_movemask_epi8(x);
+}
+
+// to_Vec16bc: convert integer bitfield to boolean vector
+static inline Vec16cb to_Vec16cb(uint16_t x) {
+    static const uint32_t table[16] = {  // lookup-table
+        0x00000000, 0x000000FF, 0x0000FF00, 0x0000FFFF, 
+        0x00FF0000, 0x00FF00FF, 0x00FFFF00, 0x00FFFFFF, 
+        0xFF000000, 0xFF0000FF, 0xFF00FF00, 0xFF00FFFF, 
+        0xFFFF0000, 0xFFFF00FF, 0xFFFFFF00, 0xFFFFFFFF}; 
+    uint32_t a0 = table[x       & 0xF];
+    uint32_t a1 = table[(x>>4)  & 0xF];
+    uint32_t a2 = table[(x>>8)  & 0xF];
+    uint32_t a3 = table[(x>>12) & 0xF];
+    return Vec16cb(Vec16c(Vec4ui(a0, a1, a2, a3)));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec8sb const & x) {
+    __m128i a = _mm_packs_epi16(x, x);  // 16-bit words to bytes
+    return (uint8_t)_mm_movemask_epi8(a);
+}
+
+// to_Vec8sb: convert integer bitfield to boolean vector
+static inline Vec8sb to_Vec8sb(uint8_t x) {
+    static const uint32_t table[16] = {  // lookup-table
+        0x00000000, 0x000000FF, 0x0000FF00, 0x0000FFFF, 
+        0x00FF0000, 0x00FF00FF, 0x00FFFF00, 0x00FFFFFF, 
+        0xFF000000, 0xFF0000FF, 0xFF00FF00, 0xFF00FFFF, 
+        0xFFFF0000, 0xFFFF00FF, 0xFFFFFF00, 0xFFFFFFFF}; 
+    uint32_t a0 = table[x       & 0xF];
+    uint32_t a1 = table[(x>>4)  & 0xF];
+    Vec4ui   b  = Vec4ui(a0, a1, a0, a1);
+    return _mm_unpacklo_epi8(b, b);  // duplicate bytes to 16-bit words
+}
+
+#if INSTRSET < 9 || MAX_VECTOR_SIZE < 512
+// These functions are defined in Vectori512.h if AVX512 instruction set is used
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4ib const & x) {
+    __m128i a = _mm_packs_epi32(x, x);  // 32-bit dwords to 16-bit words
+    __m128i b = _mm_packs_epi16(a, a);  // 16-bit words to bytes
+    return _mm_movemask_epi8(b) & 0xF;
+}
+
+// to_Vec4ib: convert integer bitfield to boolean vector
+static inline Vec4ib to_Vec4ib(uint8_t x) {
+    static const uint32_t table[16] = {    // lookup-table
+        0x00000000, 0x000000FF, 0x0000FF00, 0x0000FFFF, 
+        0x00FF0000, 0x00FF00FF, 0x00FFFF00, 0x00FFFFFF, 
+        0xFF000000, 0xFF0000FF, 0xFF00FF00, 0xFF00FFFF, 
+        0xFFFF0000, 0xFFFF00FF, 0xFFFFFF00, 0xFFFFFFFF}; 
+    uint32_t a = table[x & 0xF];           // 4 bytes
+    __m128i b = _mm_cvtsi32_si128(a);      // transfer to vector register
+    __m128i c = _mm_unpacklo_epi8(b, b);   // duplicate bytes to 16-bit words
+    __m128i d = _mm_unpacklo_epi16(c, c);  // duplicate 16-bit words to 32-bit dwords
+    return d;
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec2qb const & x) {
+    uint32_t a = _mm_movemask_epi8(x);
+    return (a & 1) | ((a >> 7) & 2);
+}
+
+// to_Vec2qb: convert integer bitfield to boolean vector
+static inline Vec2qb to_Vec2qb(uint8_t x) {
+    return Vec2qb(Vec2q(-(x&1), -((x>>1)&1)));
+}
+
+#else  // function prototypes here only
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4ib x);
+
+// to_Vec4ib: convert integer bitfield to boolean vector
+static inline Vec4ib to_Vec4ib(uint8_t x);
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec2qb x);
+
+// to_Vec2qb: convert integer bitfield to boolean vector
+static inline Vec2qb to_Vec2qb(uint8_t x);
+
+#endif  // INSTRSET < 9 || MAX_VECTOR_SIZE < 512
 
 #endif // VECTORI128_H

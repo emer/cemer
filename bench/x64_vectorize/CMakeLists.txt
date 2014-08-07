@@ -15,7 +15,7 @@ add_definitions(-march=native)
 add_definitions(-Ofast -ffast-math)
 
 # needed on g++ on linux for vectorizing
-add_definitions(-fabi-version=4)
+#add_definitions(-fabi-version=4)
 
 # need this for g++
 #add_definitions(-std=c++11)

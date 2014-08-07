@@ -1,13 +1,13 @@
 /**************************  instrset_detect.cpp   ****************************
 | Author:        Agner Fog
 | Date created:  2012-05-30
-| Last modified: 2012-07-08
-| Version:       1.01 Beta
+| Last modified: 2014-07-23
+| Version:       1.14
 | Project:       vector classes
 | Description:
 | Functions for checking which instruction sets are supported.
 |
-| (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+| (c) Copyright 2012 - 2014 GNU General Public License http://www.gnu.org/licenses
 \*****************************************************************************/
 
 #include "instrset.h"
@@ -20,7 +20,7 @@ static inline void cpuid (int output[4], int functionnumber) {
 
     __cpuidex(output, functionnumber, 0);                  // intrinsic function for CPUID
 
-#elif defined(__GNUC__)                                    // use inline assembly, Gnu/AT&T syntax
+#elif defined(__GNUC__) || defined(__clang__)              // use inline assembly, Gnu/AT&T syntax
 
    int a, b, c, d;
    __asm("cpuid" : "=a"(a),"=b"(b),"=c"(c),"=d"(d) : "a"(functionnumber),"c"(0) : );
@@ -85,6 +85,7 @@ static inline int64_t xgetbv (int ctr) {
     6  or above = SSE4.2
     7  or above = AVX supported by CPU and operating system
     8  or above = AVX2
+    9  or above = AVX512F
 */
 int instrset_detect(void) {
 
@@ -121,6 +122,9 @@ int instrset_detect(void) {
     cpuid(abcd, 7);                                        // call cpuid leaf 7 for feature flags
     if ((abcd[1] & (1 <<  5)) == 0) return iset;           // no AVX2
     iset = 8;                                              // 8: AVX2 supported
+    cpuid(abcd, 0xD);                                      // call cpuid leaf 0xD for feature flags
+    if ((abcd[0] & 0x60) != 0x60)   return iset;           // no AVX512
+    iset = 9;                                              // 8: AVX512F supported
     return iset;
 }
 

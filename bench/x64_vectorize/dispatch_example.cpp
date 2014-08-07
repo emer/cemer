@@ -1,23 +1,28 @@
 /*************************  dispatch_example.cpp   ****************************
 | Author:        Agner Fog
 | Date created:  2012-05-30
-| Last modified: 2012-07-08
-| Version:       1.01 Beta
+| Last modified: 2014-07-23
+| Version:       1.14
 | Project:       vector classes
 | Description:
 | Example of CPU dispatching.
 |
 | # Example of compiling this with GCC compiler:
-| # Compile dispatch_example.cpp three times for different instruction sets:
-| g++ -O3 -msse2   -c dispatch_example.cpp -od2.o
-| g++ -O3 -msse4.1 -c dispatch_example.cpp -od5.o
-| g++ -O3 -mavx    -c dispatch_example.cpp -od8.o
-| g++ -O3 -msse2      instrset_detect.cpp d2.o d5.o d8.o
+| # Compile dispatch_example.cpp five times for different instruction sets:
+| g++ -O3 -msse2    -c dispatch_example.cpp -od2.o
+| g++ -O3 -msse4.1  -c dispatch_example.cpp -od5.o
+| g++ -O3 -mavx     -c dispatch_example.cpp -od7.o
+| g++ -O3 -mavx2    -c dispatch_example.cpp -od8.o
+| g++ -O3 -mavx512f -c dispatch_example.cpp -od9.o
+| g++ -O3 -msse2 -otest instrset_detect.cpp d2.o d5.o d7.o d8.o d9.o
+| ./test
 |
-| (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+| (c) Copyright 2012 - 2014 GNU General Public License http://www.gnu.org/licenses
 \*****************************************************************************/
 
 #include <stdio.h>
+
+#define MAX_VECTOR_SIZE 512
 #include "vectorclass.h"
 
 
@@ -25,7 +30,7 @@
 typedef float MyFuncType(float*);
 
 // function prototypes for each version
-MyFuncType  myfunc, myfunc_SSE2, myfunc_SSE41, myfunc_AVX, myfunc_dispatch; 
+MyFuncType  myfunc, myfunc_SSE2, myfunc_SSE41, myfunc_AVX, myfunc_AVX2, myfunc_AVX512, myfunc_dispatch; 
 
 // Define function name depending on which instruction set we compile for
 #if   INSTRSET == 2                    // SSE2
@@ -34,13 +39,17 @@ MyFuncType  myfunc, myfunc_SSE2, myfunc_SSE41, myfunc_AVX, myfunc_dispatch;
 #define FUNCNAME myfunc_SSE41
 #elif INSTRSET == 7                    // AVX
 #define FUNCNAME myfunc_AVX
+#elif INSTRSET == 8                    // AVX2
+#define FUNCNAME myfunc_AVX2
+#elif INSTRSET == 9                    // AVX512
+#define FUNCNAME myfunc_AVX512
 #endif
 
 // specific version of the function. Compile once for each version
 float FUNCNAME (float * f) {
-    Vec8f a;                           // vector of 8 floats
+    Vec16f a;                          // vector of 16 floats
     a.load(f);                         // load array into vector
-    return horizontal_add(a);          // return sum of 8 elements
+    return horizontal_add(a);          // return sum of 16 elements
 }
 
 
@@ -54,7 +63,9 @@ MyFuncType * myfunc_pointer = &myfunc_dispatch;            // function pointer
 // Dispatcher
 float myfunc_dispatch(float * f) {
     int iset = instrset_detect();                          // Detect supported instruction set
-    if      (iset >= 7) myfunc_pointer = &myfunc_AVX;      // AVX version
+    if      (iset >= 9) myfunc_pointer = &myfunc_AVX512;   // AVX512 version
+    else if (iset >= 8) myfunc_pointer = &myfunc_AVX2;     // AVX2 version
+    else if (iset >= 7) myfunc_pointer = &myfunc_AVX;      // AVX version
     else if (iset >= 5) myfunc_pointer = &myfunc_SSE41;    // SSE4.1 version
     else if (iset >= 2) myfunc_pointer = &myfunc_SSE2;     // SSE2 version
     else {
@@ -76,7 +87,7 @@ inline float myfunc(float * f) {
 // Example: main calls myfunc
 int main(int argc, char* argv[]) 
 {
-    float a[8] = {1,2,3,4,5,6,7,8};                        // array of 8 floats
+    float a[16]={1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};  // array of 16 floats
 
     float sum = myfunc(a);                                 // call function with dispatching
 
@@ -85,3 +96,4 @@ int main(int argc, char* argv[])
 }
 
 #endif  // INSTRSET == 2
+

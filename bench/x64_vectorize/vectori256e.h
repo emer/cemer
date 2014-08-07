@@ -1,27 +1,31 @@
 /****************************  vectori256e.h   *******************************
 * Author:        Agner Fog
 * Date created:  2012-05-30
-* Last modified: 2012-08-01
-* Version:       1.02 Beta
+* Last modified: 2014-07-23
+* Version:       1.14
 * Project:       vector classes
 * Description:
 * Header file defining 256-bit integer point vector classes as interface
 * to intrinsic functions. Emulated for processors without AVX2 instruction set.
 *
 * The following vector classes are defined here:
-* Vec256b   Vector of 256  1-bit unsigned integers or Booleans
-* Vec32c    Vector of  32  8-bit signed   integers
-* Vec32uc   Vector of  32  8-bit unsigned integers
-* Vec16s    Vector of  16 16-bit signed   integers
-* Vec16us   Vector of  16 16-bit unsigned integers
-* Vec8i     Vector of   8 32-bit signed   integers
-* Vec8ui    Vector of   8 32-bit unsigned integers
-* Vec4q     Vector of   4 64-bit signed   integers
-* Vec4uq    Vector of   4 64-bit unsigned integers
+* Vec256b   Vector of 256  1-bit unsigned  integers or Booleans
+* Vec32c    Vector of  32  8-bit signed    integers
+* Vec32uc   Vector of  32  8-bit unsigned  integers
+* Vec32cb   Vector of  32  Booleans for use with Vec32c and Vec32uc
+* Vec16s    Vector of  16  16-bit signed   integers
+* Vec16us   Vector of  16  16-bit unsigned integers
+* Vec16sb   Vector of  16  Booleans for use with Vec16s and Vec16us
+* Vec8i     Vector of   8  32-bit signed   integers
+* Vec8ui    Vector of   8  32-bit unsigned integers
+* Vec8ib    Vector of   8  Booleans for use with Vec8i and Vec8ui
+* Vec4q     Vector of   4  64-bit signed   integers
+* Vec4uq    Vector of   4  64-bit unsigned integers
+* Vec4qb    Vector of   4  Booleans for use with Vec4q and Vec4uq
 *
 * For detailed instructions, see VectorClass.pdf
 *
-* (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+* (c) Copyright 2012 - 2014 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 
 // check combination of header files
@@ -47,6 +51,9 @@
 *****************************************************************************/
 // base class to replace Vec256ie when AVX2 is not supported
 class Vec256ie {
+protected:
+    __m128i y0;                         // low half
+    __m128i y1;                         // high half
 public:
     Vec256ie(void) {};                  // default constructor
     Vec256ie(__m128i x0, __m128i x1) {  // constructor to build from two __m128i
@@ -58,9 +65,6 @@ public:
     __m128i get_high() const {          // get high half
         return y1;
     }
-protected:
-    __m128i y0;                         // low half
-    __m128i y1;                         // high half
 };
 
 
@@ -69,15 +73,17 @@ protected:
 *          Vector of 256 1-bit unsigned integers or Booleans
 *
 *****************************************************************************/
+
 class Vec256b : public Vec256ie {
 public:
     // Default constructor:
     Vec256b() {
-    };
-    // Constructor to broadcast the same value into all elements:
-    Vec256b(int i) {
-        y1 = y0 = _mm_set1_epi32(-(i & 1));
-    };
+    }
+    // Constructor to broadcast the same value into all elements
+    // Removed because of undesired implicit conversions
+    //Vec256b(int i) {
+    //    y1 = y0 = _mm_set1_epi32(-(i & 1));}
+
     // Constructor to build from two Vec128b:
     Vec256b(Vec128b const & a0, Vec128b const & a1) {
         y0 = a0;  y1 = a1;
@@ -85,12 +91,12 @@ public:
     // Constructor to convert from type Vec256ie
     Vec256b(Vec256ie const & x) {
         y0 = x.get_low();  y1 = x.get_high();
-    };
+    }
     // Assignment operator to convert from type Vec256ie
     Vec256b & operator = (Vec256ie const & x) {
         y0 = x.get_low();  y1 = x.get_high();
         return *this;
-    };
+    }
     // Member function to load from array (unaligned)
     Vec256b & load(void const * p) {
         y0 = _mm_loadu_si128((__m128i const*)p);
@@ -150,8 +156,10 @@ public:
     Vec128b get_high() const {
         return y1;
     }
+    static int size () {
+        return 256;
+    }
 };
-
 
 // Define operators for this class
 
@@ -207,7 +215,6 @@ static inline Vec256b andnot (Vec256b const & a, Vec256b const & b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Generate compile-time constant vector
@@ -259,7 +266,6 @@ static inline bool horizontal_or (Vec256b const & a) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 32 8-bit signed integers
@@ -273,7 +279,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec32c(int i) {
-        y1 = y0 = _mm_set1_epi8(i);
+        y1 = y0 = _mm_set1_epi8((char)i);
     };
     // Constructor to build from all elements:
     Vec32c(int8_t i0, int8_t i1, int8_t i2, int8_t i3, int8_t i4, int8_t i5, int8_t i6, int8_t i7,
@@ -384,9 +390,61 @@ public:
     Vec16c get_high() const {
         return y1;
     }
+    static int size () {
+        return 32;
+    }
 };
 
-// Define operators for this class
+
+/*****************************************************************************
+*
+*          Vec32cb: Vector of 32 Booleans for use with Vec32c and Vec32uc
+*
+*****************************************************************************/
+
+class Vec32cb : public Vec32c {
+public:
+    // Default constructor:
+    Vec32cb(){
+    }
+    // Constructor to convert from type Vec256ie
+    Vec32cb(Vec256ie const & x) {
+        y0 = x.get_low();
+        y1 = x.get_high();
+    }
+    // Assignment operator to convert from type Vec256ie
+    Vec32cb & operator = (Vec256ie const & x) {
+        y0 = x.get_low();
+        y1 = x.get_high();
+        return *this;
+    }
+    // Member functions to split into two Vec16c:
+    Vec16cb get_low() const {
+        return y0;
+    }
+    Vec16cb get_high() const {
+        return y1;
+    }
+    Vec32cb & insert (int index, bool a) {
+        Vec32c::insert(index, -(int)a);
+        return *this;
+    }    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec32c::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+/*****************************************************************************
+*
+*          Operators for Vec32c
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec32c operator + (Vec32c const & a, Vec32c const & b) {
@@ -486,32 +544,32 @@ static inline Vec32c & operator >>= (Vec32c & a, int b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec32c operator == (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator == (Vec32c const & a, Vec32c const & b) {
     return Vec32c(a.get_low() == b.get_low(), a.get_high() == b.get_high());
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec32c operator != (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator != (Vec32c const & a, Vec32c const & b) {
     return Vec32c(a.get_low() != b.get_low(), a.get_high() != b.get_high());
 }
 
 // vector operator > : returns true for elements for which a > b (signed)
-static inline Vec32c operator > (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator > (Vec32c const & a, Vec32c const & b) {
     return Vec32c(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b (signed)
-static inline Vec32c operator < (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator < (Vec32c const & a, Vec32c const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec32c operator >= (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator >= (Vec32c const & a, Vec32c const & b) {
     return Vec32c(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec32c operator <= (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator <= (Vec32c const & a, Vec32c const & b) {
     return b >= a;
 }
 
@@ -522,6 +580,11 @@ static inline Vec32c operator & (Vec32c const & a, Vec32c const & b) {
 static inline Vec32c operator && (Vec32c const & a, Vec32c const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec32c & operator &= (Vec32c & a, Vec32c const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec32c operator | (Vec32c const & a, Vec32c const & b) {
@@ -530,10 +593,20 @@ static inline Vec32c operator | (Vec32c const & a, Vec32c const & b) {
 static inline Vec32c operator || (Vec32c const & a, Vec32c const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec32c & operator |= (Vec32c & a, Vec32c const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec32c operator ^ (Vec32c const & a, Vec32c const & b) {
     return Vec32c(a.get_low() ^ b.get_low(), a.get_high() ^ b.get_high());
+}
+// vector operator ^= : bitwise xor
+static inline Vec32c & operator ^= (Vec32c & a, Vec32c const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -542,7 +615,7 @@ static inline Vec32c operator ~ (Vec32c const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec32c operator ! (Vec32c const & a) {
+static inline Vec32cb operator ! (Vec32c const & a) {
     return Vec32c(!a.get_low(), !a.get_high());
 }
 
@@ -551,8 +624,13 @@ static inline Vec32c operator ! (Vec32c const & a) {
 // Select between two operands. Corresponds to this pseudocode:
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
-static inline Vec32c select (Vec32c const & s, Vec32c const & a, Vec32c const & b) {
+static inline Vec32c select (Vec32cb const & s, Vec32c const & a, Vec32c const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec32c if_add (Vec32cb const & f, Vec32c const & a, Vec32c const & b) {
+    return a + (Vec32c(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -605,7 +683,6 @@ static inline Vec32c rotate_left(Vec32c const & a, int b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 16 8-bit unsigned integers
@@ -619,7 +696,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec32uc(uint32_t i) {
-        y1 = y0 = _mm_set1_epi8(i);
+        y1 = y0 = _mm_set1_epi8((char)i);
     };
     // Constructor to build from all elements:
     Vec32uc(uint8_t i0, uint8_t i1, uint8_t i2, uint8_t i3, uint8_t i4, uint8_t i5, uint8_t i6, uint8_t i7,
@@ -733,22 +810,22 @@ static inline Vec32uc & operator >>= (Vec32uc & a, uint32_t b) {
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec32c operator >= (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator >= (Vec32uc const & a, Vec32uc const & b) {
     return Vec32c(a.get_low() >= b.get_low(), a.get_high() >= b.get_high()); 
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec32c operator <= (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator <= (Vec32uc const & a, Vec32uc const & b) {
     return b >= a;
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec32c operator > (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator > (Vec32uc const & a, Vec32uc const & b) {
     return Vec32c(a.get_low() > b.get_low(), a.get_high() > b.get_high()); 
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec32c operator < (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator < (Vec32uc const & a, Vec32uc const & b) {
     return b > a;
 }
 
@@ -784,8 +861,13 @@ static inline Vec32uc operator ~ (Vec32uc const & a) {
 // for (int i = 0; i < 32; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec32uc select (Vec32c const & s, Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32uc select (Vec32cb const & s, Vec32uc const & a, Vec32uc const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec32uc if_add (Vec32cb const & f, Vec32uc const & a, Vec32uc const & b) {
+    return a + (Vec32uc(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -836,7 +918,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec16s(int i) {
-        y1 = y0 = _mm_set1_epi16(i);
+        y1 = y0 = _mm_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec16s(int16_t i0, int16_t i1, int16_t i2,  int16_t i3,  int16_t i4,  int16_t i5,  int16_t i6,  int16_t i7,
@@ -938,9 +1020,59 @@ public:
     Vec8s get_high() const {
         return y1;
     }
+    static int size () {
+        return 16;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec16sb: Vector of 16 Booleans for use with Vec16s and Vec16us
+*
+*****************************************************************************/
+
+class Vec16sb : public Vec16s {
+public:
+    // Default constructor:
+    Vec16sb() {
+    };
+    // Constructor to convert from type Vec256ie
+    Vec16sb(Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+    };
+    // Assignment operator to convert from type Vec256ie
+    Vec16sb & operator = (Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+        return *this;
+    };
+    // Member functions to split into two Vec8s:
+    Vec8sb get_low() const {
+        return y0;
+    }
+    Vec8sb get_high() const {
+        return y1;
+    }
+    Vec16sb & insert (int index, bool a) {
+        Vec16s::insert(index, -(int)a);
+        return *this;
+    };    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec16s::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec16s
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec16s operator + (Vec16s const & a, Vec16s const & b) {
@@ -1040,32 +1172,32 @@ static inline Vec16s & operator >>= (Vec16s & a, int b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec16s operator == (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator == (Vec16s const & a, Vec16s const & b) {
     return Vec16s(a.get_low() == b.get_low(), a.get_high() == b.get_high());
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec16s operator != (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator != (Vec16s const & a, Vec16s const & b) {
     return Vec16s(a.get_low() != b.get_low(), a.get_high() != b.get_high());
 }
 
 // vector operator > : returns true for elements for which a > b
-static inline Vec16s operator > (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator > (Vec16s const & a, Vec16s const & b) {
     return Vec16s(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b
-static inline Vec16s operator < (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator < (Vec16s const & a, Vec16s const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec16s operator >= (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator >= (Vec16s const & a, Vec16s const & b) {
     return Vec16s(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec16s operator <= (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator <= (Vec16s const & a, Vec16s const & b) {
     return b >= a;
 }
 
@@ -1076,6 +1208,11 @@ static inline Vec16s operator & (Vec16s const & a, Vec16s const & b) {
 static inline Vec16s operator && (Vec16s const & a, Vec16s const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec16s & operator &= (Vec16s & a, Vec16s const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec16s operator | (Vec16s const & a, Vec16s const & b) {
@@ -1084,10 +1221,20 @@ static inline Vec16s operator | (Vec16s const & a, Vec16s const & b) {
 static inline Vec16s operator || (Vec16s const & a, Vec16s const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec16s & operator |= (Vec16s & a, Vec16s const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec16s operator ^ (Vec16s const & a, Vec16s const & b) {
     return Vec16s(a.get_low() ^ b.get_low(), a.get_high() ^ b.get_high());
+}
+// vector operator ^= : bitwise xor
+static inline Vec16s & operator ^= (Vec16s & a, Vec16s const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1096,7 +1243,7 @@ static inline Vec16s operator ~ (Vec16s const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec16s operator ! (Vec16s const & a) {
+static inline Vec16sb operator ! (Vec16s const & a) {
     return Vec16s(!a.get_low(), !a.get_high());
 }
 
@@ -1106,8 +1253,13 @@ static inline Vec16s operator ! (Vec16s const & a) {
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec16s select (Vec16s const & s, Vec16s const & a, Vec16s const & b) {
+static inline Vec16s select (Vec16sb const & s, Vec16s const & a, Vec16s const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16s if_add (Vec16sb const & f, Vec16s const & a, Vec16s const & b) {
+    return a + (Vec16s(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1159,7 +1311,6 @@ static inline Vec16s rotate_left(Vec16s const & a, int b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 16 16-bit unsigned integers
@@ -1173,7 +1324,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec16us(uint32_t i) {
-        y1 = y0 = _mm_set1_epi16(i);
+        y1 = y0 = _mm_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec16us(uint16_t i0, uint16_t i1, uint16_t i2,  uint16_t i3,  uint16_t i4,  uint16_t i5,  uint16_t i6,  uint16_t i7,
@@ -1285,22 +1436,22 @@ static inline Vec16us operator << (Vec16us const & a, int32_t b) {
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec16s operator >= (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator >= (Vec16us const & a, Vec16us const & b) {
     return Vec16s(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec16s operator <= (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator <= (Vec16us const & a, Vec16us const & b) {
     return b >= a;
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec16s operator > (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator > (Vec16us const & a, Vec16us const & b) {
     return Vec16s(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec16s operator < (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator < (Vec16us const & a, Vec16us const & b) {
     return b > a;
 }
 
@@ -1337,8 +1488,13 @@ static inline Vec16us operator ~ (Vec16us const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec16us select (Vec16s const & s, Vec16us const & a, Vec16us const & b) {
+static inline Vec16us select (Vec16sb const & s, Vec16us const & a, Vec16us const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16us if_add (Vec16sb const & f, Vec16us const & a, Vec16us const & b) {
+    return a + (Vec16us(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1490,9 +1646,60 @@ public:
     Vec4i get_high() const {
         return y1;
     }
+    static int size () {
+        return 8;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec8ib: Vector of 8 Booleans for use with Vec8i and Vec8ui
+*
+*****************************************************************************/
+
+class Vec8ib : public Vec8i {
+public:
+    // Default constructor:
+    Vec8ib() {
+    }
+    // Constructor to convert from type Vec256ie
+    Vec8ib(Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+    }
+    // Assignment operator to convert from type Vec256ie
+    Vec8ib & operator = (Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+        return *this;
+    }
+    // Member functions to split into two Vec4i:
+    Vec4ib get_low() const {
+        return y0;
+    }
+    Vec4ib get_high() const {
+        return y1;
+    }
+    Vec8ib & insert (int index, bool a) {
+        Vec8i::insert(index, -(int)a);
+        return *this;
+    };
+    // Member function extract a single element from vector
+    // Note: This function is inefficient. Use store function if extracting more than one element
+    bool extract(uint32_t index) const {
+        return Vec8i::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec8i
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec8i operator + (Vec8i const & a, Vec8i const & b) {
@@ -1592,32 +1799,32 @@ static inline Vec8i & operator >>= (Vec8i & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec8i operator == (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator == (Vec8i const & a, Vec8i const & b) {
     return Vec8i(a.get_low() == b.get_low(), a.get_high() == b.get_high());
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec8i operator != (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator != (Vec8i const & a, Vec8i const & b) {
     return Vec8i(a.get_low() != b.get_low(), a.get_high() != b.get_high());
 }
   
 // vector operator > : returns true for elements for which a > b
-static inline Vec8i operator > (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator > (Vec8i const & a, Vec8i const & b) {
     return Vec8i(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b
-static inline Vec8i operator < (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator < (Vec8i const & a, Vec8i const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec8i operator >= (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator >= (Vec8i const & a, Vec8i const & b) {
     return Vec8i(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec8i operator <= (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator <= (Vec8i const & a, Vec8i const & b) {
     return b >= a;
 }
 
@@ -1628,6 +1835,11 @@ static inline Vec8i operator & (Vec8i const & a, Vec8i const & b) {
 static inline Vec8i operator && (Vec8i const & a, Vec8i const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec8i & operator &= (Vec8i & a, Vec8i const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec8i operator | (Vec8i const & a, Vec8i const & b) {
@@ -1636,10 +1848,20 @@ static inline Vec8i operator | (Vec8i const & a, Vec8i const & b) {
 static inline Vec8i operator || (Vec8i const & a, Vec8i const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec8i & operator |= (Vec8i & a, Vec8i const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec8i operator ^ (Vec8i const & a, Vec8i const & b) {
     return Vec8i(a.get_low() ^ b.get_low(), a.get_high() ^ b.get_high());
+}
+// vector operator ^= : bitwise xor
+static inline Vec8i & operator ^= (Vec8i & a, Vec8i const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1648,7 +1870,7 @@ static inline Vec8i operator ~ (Vec8i const & a) {
 }
 
 // vector operator ! : returns true for elements == 0
-static inline Vec8i operator ! (Vec8i const & a) {
+static inline Vec8ib operator ! (Vec8i const & a) {
     return Vec8i(!a.get_low(), !a.get_high());
 }
 
@@ -1658,8 +1880,13 @@ static inline Vec8i operator ! (Vec8i const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec8i select (Vec8i const & s, Vec8i const & a, Vec8i const & b) {
+static inline Vec8i select (Vec8ib const & s, Vec8i const & a, Vec8i const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8i if_add (Vec8ib const & f, Vec8i const & a, Vec8i const & b) {
+    return a + (Vec8i(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1841,22 +2068,22 @@ static inline Vec8ui operator << (Vec8ui const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec8i operator > (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator > (Vec8ui const & a, Vec8ui const & b) {
     return Vec8i(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec8i operator < (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator < (Vec8ui const & a, Vec8ui const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec8i operator >= (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator >= (Vec8ui const & a, Vec8ui const & b) {
     return Vec8i(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec8i operator <= (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator <= (Vec8ui const & a, Vec8ui const & b) {
     return b >= a;
 }
 
@@ -1892,8 +2119,13 @@ static inline Vec8ui operator ~ (Vec8ui const & a) {
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec8ui select (Vec8i const & s, Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ui select (Vec8ib const & s, Vec8ui const & a, Vec8ui const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8ui if_add (Vec8ib const & f, Vec8ui const & a, Vec8ui const & b) {
+    return a + (Vec8ui(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2045,9 +2277,60 @@ public:
     Vec2q get_high() const {
         return y1;
     }
+    static int size () {
+        return 4;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec4qb: Vector of 4 Booleans for use with Vec4q and Vec4uq
+*
+*****************************************************************************/
+
+class Vec4qb : public Vec4q {
+public:
+    // Default constructor:
+    Vec4qb() {
+    }
+    // Constructor to convert from type Vec256ie
+    Vec4qb(Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+    }
+    // Assignment operator to convert from type Vec256ie
+    Vec4qb & operator = (Vec256ie const & x) {
+        y0 = x.get_low();  y1 = x.get_high();
+        return *this;
+    }
+    // Member functions to split into two Vec2qb:
+    Vec2qb get_low() const {
+        return y0;
+    }
+    Vec2qb get_high() const {
+        return y1;
+    }
+    Vec4qb & insert (int index, bool a) {
+        Vec4q::insert(index, -(int64_t)a);
+        return *this;
+    };    
+    // Member function extract a single element from vector
+    // Note: This function is inefficient. Use store function if extracting more than one element
+    bool extract(uint32_t index) const {
+        return Vec4q::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec4q
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec4q operator + (Vec4q const & a, Vec4q const & b) {
@@ -2136,32 +2419,32 @@ static inline Vec4q & operator >>= (Vec4q & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec4q operator == (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator == (Vec4q const & a, Vec4q const & b) {
     return Vec4q(a.get_low() == b.get_low(), a.get_high() == b.get_high());
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec4q operator != (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator != (Vec4q const & a, Vec4q const & b) {
     return Vec4q(a.get_low() != b.get_low(), a.get_high() != b.get_high());
 }
   
 // vector operator < : returns true for elements for which a < b
-static inline Vec4q operator < (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator < (Vec4q const & a, Vec4q const & b) {
     return Vec4q(a.get_low() < b.get_low(), a.get_high() < b.get_high());
 }
 
 // vector operator > : returns true for elements for which a > b
-static inline Vec4q operator > (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator > (Vec4q const & a, Vec4q const & b) {
     return b < a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec4q operator >= (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator >= (Vec4q const & a, Vec4q const & b) {
     return Vec4q(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec4q operator <= (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator <= (Vec4q const & a, Vec4q const & b) {
     return b >= a;
 }
 
@@ -2172,6 +2455,11 @@ static inline Vec4q operator & (Vec4q const & a, Vec4q const & b) {
 static inline Vec4q operator && (Vec4q const & a, Vec4q const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec4q & operator &= (Vec4q & a, Vec4q const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec4q operator | (Vec4q const & a, Vec4q const & b) {
@@ -2180,11 +2468,22 @@ static inline Vec4q operator | (Vec4q const & a, Vec4q const & b) {
 static inline Vec4q operator || (Vec4q const & a, Vec4q const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec4q & operator |= (Vec4q & a, Vec4q const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec4q operator ^ (Vec4q const & a, Vec4q const & b) {
     return Vec4q(a.get_low() ^ b.get_low(), a.get_high() ^ b.get_high());
 }
+// vector operator ^= : bitwise xor
+static inline Vec4q & operator ^= (Vec4q & a, Vec4q const & b) {
+    a = a ^ b;
+    return a;
+}
+
 
 // vector operator ~ : bitwise not
 static inline Vec4q operator ~ (Vec4q const & a) {
@@ -2192,7 +2491,7 @@ static inline Vec4q operator ~ (Vec4q const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec4q operator ! (Vec4q const & a) {
+static inline Vec4qb operator ! (Vec4q const & a) {
     return Vec4q(!a.get_low(), !a.get_high());
 }
 
@@ -2202,8 +2501,13 @@ static inline Vec4q operator ! (Vec4q const & a) {
 // for (int i = 0; i < 4; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4q select (Vec4q const & s, Vec4q const & a, Vec4q const & b) {
+static inline Vec4q select (Vec4qb const & s, Vec4q const & a, Vec4q const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4q if_add (Vec4qb const & f, Vec4q const & a, Vec4q const & b) {
+    return a + (Vec4q(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2237,7 +2541,6 @@ static inline Vec4q abs_saturated(Vec4q const & a) {
 static inline Vec4q rotate_left(Vec4q const & a, int b) {
     return Vec4q(rotate_left(a.get_low(),b), rotate_left(a.get_high(),b));
 }
-
 
 
 /*****************************************************************************
@@ -2353,22 +2656,22 @@ static inline Vec4uq operator << (Vec4uq const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec4q operator > (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator > (Vec4uq const & a, Vec4uq const & b) {
     return Vec4q(a.get_low() > b.get_low(), a.get_high() > b.get_high());
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec4q operator < (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator < (Vec4uq const & a, Vec4uq const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec4q operator >= (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator >= (Vec4uq const & a, Vec4uq const & b) {
     return Vec4q(a.get_low() >= b.get_low(), a.get_high() >= b.get_high());
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec4q operator <= (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator <= (Vec4uq const & a, Vec4uq const & b) {
     return b >= a;
 }
 
@@ -2404,8 +2707,13 @@ static inline Vec4uq operator ~ (Vec4uq const & a) {
 // for (int i = 0; i < 4; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4q select (Vec4q const & s, Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4uq select (Vec4qb const & s, Vec4uq const & a, Vec4uq const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4uq if_add (Vec4qb const & f, Vec4uq const & a, Vec4uq const & b) {
+    return a + (Vec4uq(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -3081,21 +3389,18 @@ static inline Vec16s lookup(Vec16s const & index, void const * table) {
     }
     if (n <= 16) return lookup16(index, Vec16s().load(table));
     // n > 16. Limit index
-    Vec16us index1;
+    Vec16us i1;
     if ((n & (n-1)) == 0) {
         // n is a power of 2, make index modulo n
-        index1 = Vec16us(index) & (n-1);
+        i1 = Vec16us(index) & (n-1);
     }
     else {
         // n is not a power of 2, limit to n-1
-        index1 = min(Vec16us(index), n-1);
+        i1 = min(Vec16us(index), n-1);
     }
-    uint16_t ii[16];  index1.store(ii);
-    int16_t  rr[16];
-    for (int j = 0; j < 16; j++) {
-        rr[j] = ((int16_t const *)table)[ii[j]];
-    }
-    return Vec16s().load(rr);
+    int16_t const * t = (int16_t const *)table;
+    return Vec16s(t[i1[0]],t[i1[1]],t[i1[2]],t[i1[3]],t[i1[4]],t[i1[5]],t[i1[6]],t[i1[7]],
+        t[i1[8]],t[i1[9]],t[i1[10]],t[i1[11]],t[i1[12]],t[i1[13]],t[i1[14]],t[i1[15]]);
 }
 
 static inline Vec8i lookup8(Vec8i const & index, Vec8i const & table) {
@@ -3117,21 +3422,17 @@ static inline Vec8i lookup(Vec8i const & index, void const * table) {
         return lookup8(index, Vec8i().load(table));
     }
     // n > 8. Limit index
-    Vec8ui index1;
+    Vec8ui i1;
     if ((n & (n-1)) == 0) {
         // n is a power of 2, make index modulo n
-        index1 = Vec8ui(index) & (n-1);
+        i1 = Vec8ui(index) & (n-1);
     }
     else {
         // n is not a power of 2, limit to n-1
-        index1 = min(Vec8ui(index), n-1);
+        i1 = min(Vec8ui(index), n-1);
     }
-    uint32_t ii[8];  index1.store(ii);
-    int32_t  rr[8];
-    for (int j = 0; j < 8; j++) {
-        rr[j] = ((int32_t const *)table)[ii[j]];
-    }
-    return Vec8i().load(rr);    
+    int32_t const * t = (int32_t const *)table;
+    return Vec8i(t[i1[0]],t[i1[1]],t[i1[2]],t[i1[3]],t[i1[4]],t[i1[5]],t[i1[6]],t[i1[7]]);
 }
 
 static inline Vec4q lookup4(Vec4q const & index, Vec4q const & table) {
@@ -3186,6 +3487,98 @@ static inline Vec32c shift_bytes_down(Vec32c const & a, int b) {
         return Vec32c(shift_bytes_down(a.get_high(),b-16), Vec16c(0));
     }
 }
+
+/*****************************************************************************
+*
+*          Gather functions with fixed indexes
+*
+*****************************************************************************/
+// Load elements from array a with indices i0, i1, i2, i3, i4, i5, i6, i7
+template <int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7>
+static inline Vec8i gather8i(void const * a) {
+    Static_error_check<(i0|i1|i2|i3|i4|i5|i6|i7)>=0> Negative_array_index;  // Error message if index is negative
+    const int i01min = i0 < i1 ? i0 : i1;
+    const int i23min = i2 < i3 ? i2 : i3;
+    const int i45min = i4 < i5 ? i4 : i5;
+    const int i67min = i6 < i7 ? i6 : i7;
+    const int i0123min = i01min < i23min ? i01min : i23min;
+    const int i4567min = i45min < i67min ? i45min : i67min;
+    const int imin = i0123min < i4567min ? i0123min : i4567min;
+    const int i01max = i0 > i1 ? i0 : i1;
+    const int i23max = i2 > i3 ? i2 : i3;
+    const int i45max = i4 > i5 ? i4 : i5;
+    const int i67max = i6 > i7 ? i6 : i7;
+    const int i0123max = i01max > i23max ? i01max : i23max;
+    const int i4567max = i45max > i67max ? i45max : i67max;
+    const int imax = i0123max > i4567max ? i0123max : i4567max;
+
+    if (imax - imin <= 7) {
+        // load one contiguous block and permute
+        if (imax > 7) {
+            // make sure we don't read past the end of the array
+            Vec8i b = Vec8i().load((int32_t const *)a + imax-7);
+            return permute8i<i0-imax+7, i1-imax+7, i2-imax+7, i3-imax+7, i4-imax+7, i5-imax+7, i6-imax+7, i7-imax+7>(b);
+        }
+        else {
+            Vec8i b = Vec8i().load((int32_t const *)a + imin);
+            return permute8i<i0-imin, i1-imin, i2-imin, i3-imin, i4-imin, i5-imin, i6-imin, i7-imin>(b);
+        }
+    }
+    if ((i0<imin+8 || i0>imax-8) && (i1<imin+8 || i1>imax-8) && (i2<imin+8 || i2>imax-8) && (i3<imin+8 || i3>imax-8)
+    &&  (i4<imin+8 || i4>imax-8) && (i5<imin+8 || i5>imax-8) && (i6<imin+8 || i6>imax-8) && (i7<imin+8 || i7>imax-8)) {
+        // load two contiguous blocks and blend
+        Vec8i b = Vec8i().load((int32_t const *)a + imin);
+        Vec8i c = Vec8i().load((int32_t const *)a + imax-7);
+        const int j0 = i0<imin+8 ? i0-imin : 15-imax+i0;
+        const int j1 = i1<imin+8 ? i1-imin : 15-imax+i1;
+        const int j2 = i2<imin+8 ? i2-imin : 15-imax+i2;
+        const int j3 = i3<imin+8 ? i3-imin : 15-imax+i3;
+        const int j4 = i4<imin+8 ? i4-imin : 15-imax+i4;
+        const int j5 = i5<imin+8 ? i5-imin : 15-imax+i5;
+        const int j6 = i6<imin+8 ? i6-imin : 15-imax+i6;
+        const int j7 = i7<imin+8 ? i7-imin : 15-imax+i7;
+        return blend8i<j0, j1, j2, j3, j4, j5, j6, j7>(b, c);
+    }
+    // use lookup function
+    return lookup<imax+1>(Vec8i(i0,i1,i2,i3,i4,i5,i6,i7), a);
+}
+
+template <int i0, int i1, int i2, int i3>
+static inline Vec4q gather4q(void const * a) {
+    Static_error_check<(i0|i1|i2|i3)>=0> Negative_array_index;  // Error message if index is negative
+    const int i01min = i0 < i1 ? i0 : i1;
+    const int i23min = i2 < i3 ? i2 : i3;
+    const int imin   = i01min < i23min ? i01min : i23min;
+    const int i01max = i0 > i1 ? i0 : i1;
+    const int i23max = i2 > i3 ? i2 : i3;
+    const int imax   = i01max > i23max ? i01max : i23max;
+    if (imax - imin <= 3) {
+        // load one contiguous block and permute
+        if (imax > 3) {
+            // make sure we don't read past the end of the array
+            Vec4q b = Vec4q().load((int64_t const *)a + imax-3);
+            return permute4q<i0-imax+3, i1-imax+3, i2-imax+3, i3-imax+3>(b);
+        }
+        else {
+            Vec4q b = Vec4q().load((int64_t const *)a + imin);
+            return permute4q<i0-imin, i1-imin, i2-imin, i3-imin>(b);
+        }
+    }
+    if ((i0<imin+4 || i0>imax-4) && (i1<imin+4 || i1>imax-4) && (i2<imin+4 || i2>imax-4) && (i3<imin+4 || i3>imax-4)) {
+        // load two contiguous blocks and blend
+        Vec4q b = Vec4q().load((int64_t const *)a + imin);
+        Vec4q c = Vec4q().load((int64_t const *)a + imax-3);
+        const int j0 = i0<imin+4 ? i0-imin : 7-imax+i0;
+        const int j1 = i1<imin+4 ? i1-imin : 7-imax+i1;
+        const int j2 = i2<imin+4 ? i2-imin : 7-imax+i2;
+        const int j3 = i3<imin+4 ? i3-imin : 7-imax+i3;
+        return blend4q<j0, j1, j2, j3>(b, c);
+    }
+    // use lookup function
+    return lookup<imax+1>(Vec4q(i0,i1,i2,i3), a);
+}
+
+
 
 
 /*****************************************************************************
@@ -3345,7 +3738,7 @@ static inline Vec8ui compress_saturated (Vec4uq const & low, Vec4uq const & high
 *
 *****************************************************************************/
 
-// Divide Vec4i by compile-time constant
+// Divide Vec8i by compile-time constant
 template <int32_t d>
 static inline Vec8i divide_by_i(Vec8i const & a) {
     return Vec8i( divide_by_i<d>(a.get_low()), divide_by_i<d>(a.get_high()));
@@ -3540,4 +3933,94 @@ static inline Vec32uc & operator /= (Vec32uc & a, Const_int_t<d> b) {
     return a;
 }
 
-#endif // VECTORI128_H
+/*****************************************************************************
+*
+*          Horizontal scan functions
+*
+*****************************************************************************/
+
+// Get index to the first element that is true. Return -1 if all are false
+static inline int horizontal_find_first(Vec32cb const & x) {
+    int a1 = horizontal_find_first(x.get_low());
+    if (a1 >= 0) return a1;
+    int a2 = horizontal_find_first(x.get_high());
+    if (a2 < 0) return a2;
+    return a2 + 16;;
+}
+
+static inline int horizontal_find_first(Vec16sb const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 1;
+}
+
+static inline int horizontal_find_first(Vec8ib const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 2;
+}
+
+static inline int horizontal_find_first(Vec4qb const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 3;
+}
+
+// Count the number of elements that are true
+static inline uint32_t horizontal_count(Vec32cb const & x) {
+    return horizontal_count(x.get_low()) + horizontal_count(x.get_high());
+}
+
+static inline uint32_t horizontal_count(Vec16sb const & x) {
+    return horizontal_count(Vec32cb(x)) >> 1;
+}
+
+static inline uint32_t horizontal_count(Vec8ib const & x) {
+    return horizontal_count(Vec32cb(x)) >> 2;
+}
+
+static inline uint32_t horizontal_count(Vec4qb const & x) {
+    return horizontal_count(Vec32cb(x)) >> 3;
+}
+
+/*****************************************************************************
+*
+*          Boolean <-> bitfield conversion functions
+*
+*****************************************************************************/
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint32_t to_bits(Vec32cb const & x) {
+    return to_bits(x.get_low()) | (uint32_t)to_bits(x.get_high()) << 16;
+}
+
+// to_Vec16c: convert integer bitfield to boolean vector
+static inline Vec32cb to_Vec32cb(uint32_t x) {
+    return Vec32c(to_Vec16cb(uint16_t(x)), to_Vec16cb(uint16_t(x>>16)));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint16_t to_bits(Vec16sb const & x) {
+    return to_bits(x.get_low()) | (uint16_t)to_bits(x.get_high()) << 8;
+}
+
+// to_Vec16sb: convert integer bitfield to boolean vector
+static inline Vec16sb to_Vec16sb(uint16_t x) {
+    return Vec16s(to_Vec8sb(uint8_t(x)), to_Vec8sb(uint8_t(x>>8)));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec8ib const & x) {
+    return to_bits(x.get_low()) | (uint8_t)to_bits(x.get_high()) << 4;
+}
+
+// to_Vec8ib: convert integer bitfield to boolean vector
+static inline Vec8ib to_Vec8ib(uint8_t x) {
+    return Vec8i(to_Vec4ib(x), to_Vec4ib(x>>4));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4qb const & x) {
+    return to_bits(x.get_low()) | to_bits(x.get_high()) << 2;
+}
+
+// to_Vec16c: convert integer bitfield to boolean vector
+static inline Vec4qb to_Vec4qb(uint8_t x) {
+    return Vec4q(to_Vec2qb(x), to_Vec2qb(x>>2));
+}
+
+#endif // VECTORI256_H
