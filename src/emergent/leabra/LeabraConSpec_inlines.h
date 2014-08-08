@@ -39,6 +39,8 @@ inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit*
 
 
 #ifdef USE_SSE8
+
+#if 0
 inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
                                                 const float su_act_delta_eff,
                                                 float* send_netin_vec, const float* wts)
@@ -49,27 +51,17 @@ inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg,
   for(int i=0; i<parsz; i+=8) {
     Vec8f wt;  wt.load(wts+i);
     Vec8f dp = wt * sa;
-    float sni[8];
-    sni[0] = send_netin_vec[cg->unit_idxs[i+0]];
-    sni[1] = send_netin_vec[cg->unit_idxs[i+1]];
-    sni[2] = send_netin_vec[cg->unit_idxs[i+2]];
-    sni[3] = send_netin_vec[cg->unit_idxs[i+3]];
-    sni[4] = send_netin_vec[cg->unit_idxs[i+4]];
-    sni[5] = send_netin_vec[cg->unit_idxs[i+5]];
-    sni[6] = send_netin_vec[cg->unit_idxs[i+6]];
-    sni[7] = send_netin_vec[cg->unit_idxs[i+7]];
-    Vec8f sn;
-    sn.load(sni);
-    sn += dp;
-    send_netin_vec[cg->unit_idxs[i+0]] = sn[0];
-    send_netin_vec[cg->unit_idxs[i+1]] = sn[1];
-    send_netin_vec[cg->unit_idxs[i+2]] = sn[2];
-    send_netin_vec[cg->unit_idxs[i+3]] = sn[3];
-    send_netin_vec[cg->unit_idxs[i+4]] = sn[4];
-    send_netin_vec[cg->unit_idxs[i+5]] = sn[5];
-    send_netin_vec[cg->unit_idxs[i+6]] = sn[6];
-    send_netin_vec[cg->unit_idxs[i+7]] = sn[7];
+
+    send_netin_vec[cg->unit_idxs[i+0]] += dp[0];
+    send_netin_vec[cg->unit_idxs[i+1]] += dp[1];
+    send_netin_vec[cg->unit_idxs[i+2]] += dp[2];
+    send_netin_vec[cg->unit_idxs[i+3]] += dp[3];
+    send_netin_vec[cg->unit_idxs[i+4]] += dp[4];
+    send_netin_vec[cg->unit_idxs[i+5]] += dp[5];
+    send_netin_vec[cg->unit_idxs[i+6]] += dp[6];
+    send_netin_vec[cg->unit_idxs[i+7]] += dp[7];
   }
+
   // then do the extra parts that didn't fit in mod 8 bit
   if(parsz < sz)
     send_netin_vec[cg->unit_idxs[parsz]] += wts[parsz] * su_act_delta_eff;
@@ -86,6 +78,34 @@ inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg,
   if(parsz+6 < sz)
     send_netin_vec[cg->unit_idxs[parsz+6]] += wts[parsz+6] * su_act_delta_eff;
 }
+#endif
+
+inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
+                                                const float su_act_delta_eff,
+                                                float* send_netin_vec, const float* wts)
+{
+  Vec4f sa(su_act_delta_eff);
+  const int sz = cg->size;
+  const int parsz = 4 * (sz / 4);
+  for(int i=0; i<parsz; i+=4) {
+    Vec4f wt;  wt.load(wts+i);
+    Vec4f dp = wt * sa;
+
+    send_netin_vec[cg->unit_idxs[i+0]] += dp[0];
+    send_netin_vec[cg->unit_idxs[i+1]] += dp[1];
+    send_netin_vec[cg->unit_idxs[i+2]] += dp[2];
+    send_netin_vec[cg->unit_idxs[i+3]] += dp[3];
+  }
+
+  // then do the extra parts that didn't fit in mod 4 bit
+  if(parsz < sz)
+    send_netin_vec[cg->unit_idxs[parsz]] += wts[parsz] * su_act_delta_eff;
+  if(parsz+1 < sz)
+    send_netin_vec[cg->unit_idxs[parsz+1]] += wts[parsz+1] * su_act_delta_eff;
+  if(parsz+2 < sz)
+    send_netin_vec[cg->unit_idxs[parsz+2]] += wts[parsz+2] * su_act_delta_eff;
+}
+
 #else 
 inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
                                                 const float su_act_delta_eff,

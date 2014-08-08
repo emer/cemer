@@ -151,3 +151,11 @@ bool hasXOP(void) {
     cpuid(abcd, 0x80000001);                               // call cpuid function 0x80000001
     return ((abcd[2] & (1 << 11)) != 0);                   // ecx bit 11 indicates XOP
 }
+
+#include "stdio.h"
+
+int main(int, char* argv[]) {
+  int iset = instrset_detect();
+  printf("instruction set: %d\n", iset);
+  return 0;
+}
