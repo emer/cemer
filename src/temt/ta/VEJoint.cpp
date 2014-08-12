@@ -59,7 +59,7 @@ void ODEJointParams::Initialize() {
 
 void VEJoint::Initialize() {
   joint_id = NULL;
-  flags = FEEDBACK;
+  flags = (JointFlags)(FEEDBACK | INIT_ATTACH);
   cur_type = NO_JOINT;
   joint_type = HINGE;
   axis.x = 1.0f;
@@ -185,18 +185,29 @@ void VEJoint::Init() {
                "Init", "body2 of joint MUST be specified and already exist -- use fixed field on body to set fixed bodies!"))
     return;
 
-  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) || body2->HasBodyFlag(VEBody::OFF)) {
+  if(HasJointFlag(OFF) || body1->HasBodyFlag(VEBody::OFF) ||
+     body2->HasBodyFlag(VEBody::OFF)) {
     DestroyODE();
     return;
   }
 
-  dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
+  if(HasJointFlag(INIT_ATTACH)) {
+    AttachJoint();
+  }
+}
 
+void VEJoint::AttachJoint() {
+  if(HasJointFlag(OFF)) {
+    return;
+  }
+  if(!joint_id) return;
+  dJointID jid = (dJointID)joint_id;
+
+  dJointAttach(jid, (dBodyID)body1->body_id, (dBodyID)body2->body_id);
   Init_Anchor();
   Init_Stops();
   Init_Motor();
   Init_ODEParams();
-
   if(HasJointFlag(FEEDBACK)) {
     dJointSetFeedback(jid, &ode_fdbk_obj);
   }
@@ -204,7 +215,7 @@ void VEJoint::Init() {
 
 void VEJoint::Init_Anchor() {
   dJointID jid = (dJointID)joint_id;
-  taVector3f wanchor = body1->init_pos + anchor; // world anchor offset from body1 position
+  taVector3f wanchor = body1->cur_pos + anchor; // world anchor offset from body1 position
 
   switch(joint_type) {
   case BALL:

@@ -109,6 +109,7 @@ public:
     OFF                 = 0x0001, // joint is not functional and turned off
     FEEDBACK            = 0x0002, // collect feedback information about the joint
     USE_ODE_PARAMS      = 0x0004, // use special ODE parameters for this joint (else uses world settings)
+    INIT_ATTACH		= 0x0008, // attach the joint during Init -- if this flag is off, then user must call AttachJoint at some later point, at which point it will use the current positions of the objects -- this is important for cases where the joint should be attached to bodies in different positions than their init_pos
   };
 
   enum JointType {      // type of joint: Important -- must be sync'd with joint types in ode/common.h!!!
@@ -181,6 +182,8 @@ public:
 
   virtual void  Init();
   // #CAT_ODE #BUTTON re-initialize this object -- sets all the object current information to the init_ settings, and initializes the physics engine -- only works if the VEWorld has been initialized already
+  virtual void	AttachJoint();
+  // #CAT_ODE #BUTTON attach the joint to its bodies -- normally this is done automatically during Init, but see NO_INIT_ATTACH flag for doing this later
   virtual void  SetValsToODE() { Init(); }
   // #CAT_Obsolete NOTE: Obsolete -- just use Init() -- set the initial values to ODE, and creates id's if not already done
   virtual void  CurFromODE(bool updt_disp = false);
