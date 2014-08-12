@@ -1891,7 +1891,6 @@ void Variant::setString(const String& val, bool null) {
 
 void Variant::setType(VarType value) {
   if (m_type == value) return;
-  releaseType();
   switch (value) {
   case T_Invalid: setInvalid(); break;
   case T_Bool: setBool(false); break;
