@@ -59,7 +59,7 @@ void ODEJointParams::Initialize() {
 
 void VEJoint::Initialize() {
   joint_id = NULL;
-  flags = (JointFlags)(FEEDBACK | INIT_ATTACH);
+  flags = (JointFlags)(FEEDBACK);
   cur_type = NO_JOINT;
   joint_type = HINGE;
   axis.x = 1.0f;
@@ -191,7 +191,7 @@ void VEJoint::Init() {
     return;
   }
 
-  if(HasJointFlag(INIT_ATTACH)) {
+  if(!HasJointFlag(NO_INIT_ATTACH)) {
     AttachJoint();
   }
 }
