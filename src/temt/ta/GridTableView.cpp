@@ -1059,7 +1059,6 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
           }
 
           sogr->render();
-          taBase::UnRef(cell_mat);
           grsep->addChild(sogr);
         }
       }
