@@ -1038,11 +1038,10 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
         tr->translation.setValue(gr_mg_sz, -(row_height-gr_mg_sz), 0.0f);
         tr->rotation.setValue(SbVec3f(1.0f, 0.0f, 0.0f), mat_rot_rad);
 
-        taMatrix* cell_mat =  dc->GetValAsMatrix(act_idx);
+        taMatrix* cell_mat =  dc->AR();
         if(cell_mat) {
-          taBase::Ref(cell_mat);
           SoMatrixGrid* sogr = new SoMatrixGrid
-            (cell_mat, cvs->mat_odd_vert, &colorscale, 
+            (cell_mat, act_idx, cvs->mat_odd_vert, &colorscale, 
              (SoMatrixGrid::MatrixLayout)cvs->mat_layout, mat_val_text);
           sogr->spacing = mat_block_spc;
           sogr->block_height = mat_block_height;
@@ -1315,7 +1314,8 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       }
       SoMatrixGrid* mtxg = (SoMatrixGrid*)pobj;
       DataCol* dcol = (DataCol*)mtxg->user_data;
-      taMatrix* matrix = mtxg->matrix;
+      taMatrixPtr matrix;
+      matrix = mtxg->matrix->GetFrameSlice_(mtxg->slice_idx);
       SbVec3f pt = pp->getObjectPoint(pobj);
 
       int geom_x, geom_y;

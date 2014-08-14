@@ -55,6 +55,7 @@ public:
 
   MatrixLayout	mat_layout; 	// #DEF_BOT_ZERO layout of matrix and image cells
   taMatrixRef	matrix;	    	// the matrix to render (required!)
+  int           slice_idx;      // if >= 0, then we are actually plotting a slice of matrix, at this index, instead of the full matrix
   bool		odd_y;		// how to deal with odd-dimensional matricies: put extra odd dimension in the y axis (else x)
   ColorScale*	scale; 		// The color scale for this display (required!)
   bool		val_text;	// display text representation of values?
@@ -69,7 +70,7 @@ public:
   taVector3f    svg_off;        // position offset for svg rendering output
   taVector3f    svg_sz;         // sizes
 
-  void		setMatrix(taMatrix* mat, bool oddy);
+  void		setMatrix(taMatrix* mat, bool oddy, int slice = -1);
   void		setColorScale(ColorScale* cs);
   void		setLayout(MatrixLayout layout);
   void		setValText(bool val_txt);
@@ -88,7 +89,9 @@ public:
   using inherited::getMatrix;
   taMatrix*	getMatrix() const { return matrix; }
 
-  SoMatrixGrid(taMatrix* mat = NULL, bool oddy = true, ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO, bool val_txt = false);
+  SoMatrixGrid(taMatrix* mat = NULL, int slice = -1, bool oddy = true,
+               ColorScale* cs = NULL, MatrixLayout layout = BOT_ZERO,
+               bool val_txt = false);
   ~SoMatrixGrid();
 
 protected:

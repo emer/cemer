@@ -39,7 +39,8 @@ void SoMatrixGrid::initClass()
   SO_NODE_INIT_CLASS(SoMatrixGrid, SoSeparator, "SoSeparator");
 }
 
-SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayout layout, bool val_txt) {
+SoMatrixGrid::SoMatrixGrid(taMatrix* mat, int slice, bool oddy, ColorScale* sc,
+                           MatrixLayout layout, bool val_txt) {
   SO_NODE_CONSTRUCTOR(SoMatrixGrid);
 
   transform_ = new SoTransform;
@@ -52,6 +53,7 @@ SoMatrixGrid::SoMatrixGrid(taMatrix* mat, bool oddy, ColorScale* sc, MatrixLayou
   cell_fnt_ = NULL;
 
   matrix = mat;
+  slice_idx = slice;
   odd_y = oddy;
   scale = sc;
   mat_layout = layout;
@@ -71,9 +73,10 @@ SoMatrixGrid::~SoMatrixGrid() {
   matrix.CutLinks();
 }
 
-void SoMatrixGrid::setMatrix(taMatrix* mat, bool oddy) { 
+void SoMatrixGrid::setMatrix(taMatrix* mat, bool oddy, int slice) { 
   matrix = mat; 
   odd_y = oddy;
+  slice_idx = slice;
   render();
 }
 
@@ -117,6 +120,14 @@ void SoMatrixGrid::render() {
   if(!matrix || !scale) return;
   if(!shape_ || !vtx_prop_) return; // something wrong..
 
+  taMatrixPtr matptr;           // actual matrix to plot -- could be slice
+  if(slice_idx >= 0) {
+    matptr = matrix->GetFrameSlice_(slice_idx);
+  }
+  else {
+    matptr = matrix;
+  }
+
   SoMFVec3f& vertex = vtx_prop_->vertex;
   SoMFVec3f& normal = vtx_prop_->normal;
   SoMFUInt32& color = vtx_prop_->orderedRGBA;
@@ -135,15 +146,15 @@ void SoMatrixGrid::render() {
   normal.finishEditing();
 
   int geom_x, geom_y;
-  matrix->geom.Get2DGeomGui(geom_x, geom_y, odd_y, 1);
-//SB?  matrix->geom.Get2DGeom(geom_x, geom_y);
+  matptr->geom.Get2DGeomGui(geom_x, geom_y, odd_y, 1);
+//SB?  matptr->geom.Get2DGeom(geom_x, geom_y);
   float cl_x = 1.0f / (float)geom_x;	// how big each cell is
   float cl_y = 1.0f / (float)geom_y;
   max_xy = MAX(cl_x, cl_y);
   cl_spc = spacing * max_xy;
   blk_ht = block_height * max_xy;
   
-  int n_geom = matrix->count();	// not always x * y due to spaces in display geom
+  int n_geom = matptr->count();	// not always x * y due to spaces in display geom
   int n_per_vtx = 8;
   int tot_vtx =  n_geom * n_per_vtx;
   vertex.setNum(tot_vtx);
@@ -186,7 +197,7 @@ void SoMatrixGrid::render() {
   int t_idx = 2;		// base color + font
   // these go in normal order; indexes are backwards
 
-  if(matrix->dims() <= 2) {
+  if(matptr->dims() <= 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	float xp = ((float)pos.x + cl_spc) * cl_x;
@@ -212,10 +223,10 @@ void SoMatrixGrid::render() {
       }
     }
   }
-  else if(matrix->dims() == 3) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int zmax = matrix->dim(2);
+  else if(matptr->dims() == 3) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int zmax = matptr->dim(2);
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
@@ -248,11 +259,11 @@ void SoMatrixGrid::render() {
       }
     }
   }
-  else if(matrix->dims() == 4) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int xxmax = matrix->dim(2);
-    int yymax = matrix->dim(3);
+  else if(matptr->dims() == 4) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int xxmax = matptr->dim(2);
+    int yymax = matptr->dim(3);
     taVector2i opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
@@ -315,7 +326,7 @@ void SoMatrixGrid::render() {
   int cidx = 0;
   int nidx = 0;
   int midx = 0;
-  if(matrix->dims() <= 2) {
+  if(matptr->dims() <= 2) {
     int nx = geom_x;
     for(pos.y=geom_y-1; pos.y>=0; pos.y--) { // go back to front
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
@@ -333,17 +344,17 @@ void SoMatrixGrid::render() {
           yp = 1.0f - yp; yp1 = 1.0f - yp1; // always flip y
 
           float val, sc_val;
-          if(matrix->dims() == 1) { // 1d is arranged vertically, not horizontally!
+          if(matptr->dims() == 1) { // 1d is arranged vertically, not horizontally!
             if(mat_layout == BOT_ZERO)
-              val = matrix->FastElAsFloat(geom_y-1-pos.y);
+              val = matptr->FastElAsFloat(geom_y-1-pos.y);
             else
-              val = matrix->FastElAsFloat(pos.y);
+              val = matptr->FastElAsFloat(pos.y);
           }
           else {
             if(mat_layout == BOT_ZERO)
-              val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+              val = matptr->FastElAsFloat(pos.x, geom_y-1-pos.y);
             else
-              val = matrix->FastElAsFloat(pos.x, pos.y);
+              val = matptr->FastElAsFloat(pos.x, pos.y);
           }
           iColor fl;  iColor tx;
           scale->GetColor(val,sc_val,&fl,&tx);
@@ -361,14 +372,14 @@ void SoMatrixGrid::render() {
       }
     }
   }
-  else if(matrix->dims() == 3) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int zmax = matrix->dim(2);
+  else if(matptr->dims() == 3) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int zmax = matptr->dim(2);
     for(int z=zmax-1; z>=0; z--) {
       for(pos.y=ymax-1; pos.y>=0; pos.y--) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
-	  int mat_idx = matrix->FastElIndex(pos.x, pos.y, z);
+	  int mat_idx = matptr->FastElIndex(pos.x, pos.y, z);
 	  int c00_0 = mat_idx * n_per_vtx;
 	  render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat,
                            cidx, nidx, midx);
@@ -387,9 +398,9 @@ void SoMatrixGrid::render() {
 
             float val, sc_val;
             if(mat_layout == BOT_ZERO)
-              val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
+              val = matptr->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
             else
-              val = matrix->FastElAsFloat(pos.x, pos.y, z);
+              val = matptr->FastElAsFloat(pos.x, pos.y, z);
             iColor fl;  iColor tx;
             scale->GetColor(val,sc_val,&fl,&tx);
             float zp = sc_val * blk_ht;
@@ -407,17 +418,17 @@ void SoMatrixGrid::render() {
       }
     }
   }
-  else if(matrix->dims() == 4) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int xxmax = matrix->dim(2);
-    int yymax = matrix->dim(3);
+  else if(matptr->dims() == 4) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int xxmax = matptr->dim(2);
+    int yymax = matptr->dim(3);
     taVector2i opos;
     for(opos.y=yymax-1; opos.y>=0; opos.y--) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=ymax-1; pos.y>=0; pos.y--) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
-	    int mat_idx = matrix->FastElIndex(pos.x, pos.y, opos.x, opos.y);
+	    int mat_idx = matptr->FastElIndex(pos.x, pos.y, opos.x, opos.y);
 	    int c00_0 = mat_idx * n_per_vtx;
 	    render_block_idx(c00_0, mat_idx, coords_dat, norms_dat, mats_dat,
                              cidx, nidx, midx);
@@ -435,9 +446,9 @@ void SoMatrixGrid::render() {
 
               float val, sc_val;
               if(mat_layout == BOT_ZERO)
-                val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+                val = matptr->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
               else
-                val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+                val = matptr->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
               iColor fl;  iColor tx;
               scale->GetColor(val,sc_val,&fl,&tx);
               float zp = sc_val * blk_ht;
@@ -565,9 +576,17 @@ void SoMatrixGrid::renderValues() {
   if(!matrix || !scale) return;
   if(!shape_ || !vtx_prop_) return; // something wrong..
 
+  taMatrixPtr matptr;           // actual matrix to plot -- could be slice
+  if(slice_idx >= 0) {
+    matptr = matrix->GetFrameSlice_(slice_idx);
+  }
+  else {
+    matptr = matrix;
+  }
+
   int geom_x, geom_y;
-  matrix->geom.Get2DGeomGui(geom_x, geom_y, odd_y, 1);
-//SB?  matrix->geom.Get2DGeom(geom_x, geom_y);
+  matptr->geom.Get2DGeomGui(geom_x, geom_y, odd_y, 1);
+//SB?  matptr->geom.Get2DGeom(geom_x, geom_y);
 
   SoMFVec3f& vertex = vtx_prop_->vertex;
   SoMFUInt32& color = vtx_prop_->orderedRGBA;
@@ -586,14 +605,14 @@ void SoMatrixGrid::renderValues() {
 
   // these go in normal order; indexes are backwards
   // note: only 2d case right yet..
-  if(matrix->dims() == 1) {
+  if(matptr->dims() == 1) {
     pos.x = 0;
-    int ymax = matrix->dim(0);	// assumes odd_y
+    int ymax = matptr->dim(0);	// assumes odd_y
     for(pos.y=0; pos.y<ymax; pos.y++) {
       if(mat_layout == BOT_ZERO)
-	val = matrix->FastElAsFloat(ymax-1-pos.y);
+	val = matptr->FastElAsFloat(ymax-1-pos.y);
       else
-	val = matrix->FastElAsFloat(pos.y);
+	val = matptr->FastElAsFloat(pos.y);
 
       iColor fl;  iColor tx;
       scale->GetColor(val,sc_val,&fl,&tx);
@@ -606,13 +625,13 @@ void SoMatrixGrid::renderValues() {
       if(val_text) {
 	SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	if(matrix->GetDataValType() == taBase::VT_STRING) {
+	if(matptr->GetDataValType() == taBase::VT_STRING) {
 	  if(mat_layout == BOT_ZERO) {
-	    val_str = ((String_Matrix*)matrix.ptr())->
+	    val_str = ((String_Matrix*)matptr.ptr())->
               FastEl1d(ymax-1-pos.y).elidedTo(max_txt_len);
           }
 	  else {
-	    val_str = ((String_Matrix*)matrix.ptr())->
+	    val_str = ((String_Matrix*)matptr.ptr())->
               FastEl1d(pos.y).elidedTo(max_txt_len);
           }
 	}
@@ -624,13 +643,13 @@ void SoMatrixGrid::renderValues() {
       }
     }
   }
-  else if(matrix->dims() == 2) {
+  else if(matptr->dims() == 2) {
     for(pos.y=0; pos.y<geom_y; pos.y++) {
       for(pos.x=0; pos.x<geom_x; pos.x++) { // right to left
 	if(mat_layout == BOT_ZERO)
-	  val = matrix->FastElAsFloat(pos.x, geom_y-1-pos.y);
+	  val = matptr->FastElAsFloat(pos.x, geom_y-1-pos.y);
 	else
-	  val = matrix->FastElAsFloat(pos.x, pos.y);
+	  val = matptr->FastElAsFloat(pos.x, pos.y);
 	iColor fl;  iColor tx;
 	scale->GetColor(val,sc_val,&fl,&tx);
 	float zp = sc_val * blk_ht;
@@ -642,13 +661,13 @@ void SoMatrixGrid::renderValues() {
 	if(val_text) {
 	  SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	  SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	  if(matrix->GetDataValType() == taBase::VT_STRING) {
+	  if(matptr->GetDataValType() == taBase::VT_STRING) {
 	    if(mat_layout == BOT_ZERO) {
-	      val_str = ((String_Matrix*)matrix.ptr())->
+	      val_str = ((String_Matrix*)matptr.ptr())->
                 FastEl2d(pos.x, geom_y-1-pos.y).elidedTo(max_txt_len);
             }
 	    else {
-	      val_str = ((String_Matrix*)matrix.ptr())->
+	      val_str = ((String_Matrix*)matptr.ptr())->
                 FastEl2d(pos.x, pos.y).elidedTo(max_txt_len);
             }
 	  }
@@ -661,17 +680,17 @@ void SoMatrixGrid::renderValues() {
       }
     }
   }
-  else if(matrix->dims() == 3) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int zmax = matrix->dim(2);
+  else if(matptr->dims() == 3) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int zmax = matptr->dim(2);
     for(int z=0; z<zmax; z++) {
       for(pos.y=0; pos.y<ymax; pos.y++) {
 	for(pos.x=0; pos.x<xmax; pos.x++) {
 	  if(mat_layout == BOT_ZERO)
-	    val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
+	    val = matptr->FastElAsFloat(pos.x, ymax-1-pos.y, zmax-1-z);
 	  else
-	    val = matrix->FastElAsFloat(pos.x, pos.y, z);
+	    val = matptr->FastElAsFloat(pos.x, pos.y, z);
 	  iColor fl;  iColor tx;
 	  scale->GetColor(val,sc_val,&fl,&tx);
 	  float zp = sc_val * blk_ht;
@@ -683,13 +702,13 @@ void SoMatrixGrid::renderValues() {
 	  if(val_text) {
 	    SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	    SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	    if(matrix->GetDataValType() == taBase::VT_STRING) { // todo: replicate if compiles
+	    if(matptr->GetDataValType() == taBase::VT_STRING) { // todo: replicate if compiles
 	      if(mat_layout == BOT_ZERO) {
-		val_str = ((String_Matrix*)matrix.ptr())->
+		val_str = ((String_Matrix*)matptr.ptr())->
                   FastEl3d(pos.x, ymax-1-pos.y, zmax-1-z).elidedTo(max_txt_len);
               }
 	      else {
-		val_str = ((String_Matrix*)matrix.ptr())->
+		val_str = ((String_Matrix*)matptr.ptr())->
                   FastEl3d(pos.x, pos.y, z).elidedTo(max_txt_len);
               }
 	    }
@@ -703,20 +722,20 @@ void SoMatrixGrid::renderValues() {
       }
     }
   }
-  else if(matrix->dims() == 4) {
-    int xmax = matrix->dim(0);
-    int ymax = matrix->dim(1);
-    int xxmax = matrix->dim(2);
-    int yymax = matrix->dim(3);
+  else if(matptr->dims() == 4) {
+    int xmax = matptr->dim(0);
+    int ymax = matptr->dim(1);
+    int xxmax = matptr->dim(2);
+    int yymax = matptr->dim(3);
     taVector2i opos;
     for(opos.y=0; opos.y<yymax; opos.y++) {
       for(opos.x=0; opos.x<xxmax; opos.x++) {
 	for(pos.y=0; pos.y<ymax; pos.y++) {
 	  for(pos.x=0; pos.x<xmax; pos.x++) {
 	    if(mat_layout == BOT_ZERO)
-	      val = matrix->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
+	      val = matptr->FastElAsFloat(pos.x, ymax-1-pos.y, opos.x, yymax-1-opos.y);
 	    else
-	      val = matrix->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
+	      val = matptr->FastElAsFloat(pos.x, pos.y, opos.x, opos.y);
 	    iColor fl;  iColor tx;
 	    scale->GetColor(val,sc_val,&fl,&tx);
 	    float zp = sc_val * blk_ht;
@@ -728,14 +747,14 @@ void SoMatrixGrid::renderValues() {
 	    if(val_text) {
 	      SoSeparator* tsep = (SoSeparator*)cell_text_->getChild(t_idx);
 	      SoAsciiText* txt = (SoAsciiText*)tsep->getChild(1);
-	      if(matrix->GetDataValType() == taBase::VT_STRING) {
+	      if(matptr->GetDataValType() == taBase::VT_STRING) {
 		if(mat_layout == BOT_ZERO) {
-		  val_str = ((String_Matrix*)matrix.ptr())->
+		  val_str = ((String_Matrix*)matptr.ptr())->
                     FastEl4d(pos.x, ymax-1-pos.y, opos.x,
                              yymax-1-opos.y).elidedTo(max_txt_len);
                 }
 		else {
-		  val_str = ((String_Matrix*)matrix.ptr())->
+		  val_str = ((String_Matrix*)matptr.ptr())->
                     FastEl4d(pos.x, pos.y, opos.x, opos.y).elidedTo(max_txt_len);
                 }
 	      }
