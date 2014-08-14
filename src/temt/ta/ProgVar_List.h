@@ -48,7 +48,7 @@ public:
   virtual const String  GenListing(int indent_level) const; // generate listing of program
 
   virtual void  AddVarTo(taNBase* src);
-  // #DROPN add a var to the given object
+  // #DROPN #EXCLUDE_METHOD_FOR_ProgVar add a var to the given object
   virtual void  CreateDataColVars(DataTable* src);
   // #DROP1 #BUTTON create column variables for given database object (only for scalar vals -- not matrix ones)
 

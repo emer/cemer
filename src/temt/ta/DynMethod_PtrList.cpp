@@ -20,6 +20,7 @@
 #include <taiSigLink>
 #include <taiObjectsMimeItem>
 #include <taiMimeSource>
+#include <TypeItem>
 
 #include <taMisc>
 
@@ -117,13 +118,15 @@ void DynMethod_PtrList::FillForDrop(const taiMimeSource& ms,
     }
     // meth must be marked for drop
     if (!(md->HasOption("DROPN") ||
-      ((mi->count() == 1) && md->HasOption("DROP1")))) continue;
-
+          ((mi->count() == 1) && md->HasOption("DROP1")))) continue;
+    // the method may be excluded for certain types
+    if (md->HasOptionAfter("EXCLUDE_METHOD_FOR_", tms->name)) {
+        continue;
+    }
     // now get the non-pointer type
     arg0_typ = arg0_typ->GetNonPtrType();
     if (!tms->InheritsFrom(arg0_typ)) continue;
     AddNew(Type_MimeN_N, md);
   }
-
 }
 
