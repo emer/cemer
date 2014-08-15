@@ -44,12 +44,19 @@ String DoLoop::GetDisplayName() const {
 
 bool DoLoop::CanCvtFmCode(const String& code_str, ProgEl* scope_el) const {
   String code = code_str; code.downcase();
-  if(code.startsWith("do")) return true;
+  if(code.startsWith("do(") || code.startsWith("do (") ||
+     code.startsWith("do while"))
+    return true;
   return false;
 }
 
 bool DoLoop::CvtFmCode(const String& code) {
-  String cd = trim(code.after("do"));
+  String cd;
+  if (code.startsWith("do while"))
+    cd = trim(code.after("do while"));
+  else
+    cd = trim(code.after("do"));
+              
   if(cd.contains('(')) {
     cd = cd.after('(');
     if(cd.endsWith(')'))

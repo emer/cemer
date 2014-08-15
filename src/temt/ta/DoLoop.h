@@ -39,7 +39,7 @@ public:
   bool		IsCtrlProgEl() 	override { return true; }
 
   String	GetDisplayName() const override;
-  String	GetToolbarName() const override { return "do"; }
+  String	GetToolbarName() const override { return "do while"; }
 
   PROGEL_SIMPLE_BASEFUNS(DoLoop);
 protected:
