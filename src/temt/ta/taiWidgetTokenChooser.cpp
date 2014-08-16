@@ -26,8 +26,9 @@
 #include <tabMisc>
 #include <taRootBase>
 
-#include <iTreeWidget>
+#include <iTreeWidget>g
 #include <QTreeWidgetItem>
+#include <MemberDef>
 
 taiWidgetTokenChooser::taiWidgetTokenChooser(TypeDef* typ_, IWidgetHost* host,
                                      taiWidget* par, QWidget* gui_parent_, int flags_,
@@ -176,6 +177,15 @@ int taiWidgetTokenChooser::BuildChooser_0(iDialogItemChooser* ic, TypeDef* td,
   
   for (int i = 0; i < td->tokens.size; ++i) {
     taBase* btmp = (taBase*)td->tokens.FastEl(i);
+    
+    // added to keep cluster run data tables from showing in chooser but perhaps otherwise useful
+    taBase* owner = btmp->GetOwner();
+    if (owner) {
+      MemberDef* md = owner->FindMember(btmp->GetName());
+      if (md && md->HasOption("HIDDEN_CHOOSER"))
+        continue;
+    }
+    
     if ((bool)scope_ref && !btmp->SameScope(scope_ref, scope_typ))
       continue;
     if (!ShowToken(btmp)) continue;

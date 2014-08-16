@@ -48,13 +48,13 @@ class TA_API ClusterRun : public ControlPanel {
 public:
   static String timestamp_fmt;  // #NO_SAVE #HIDDEN time stamp format string -- yyyy_MM_dd_hh_mm_ss
 
-  DataTable     jobs_submit;    // #NO_SAVE #EXPERT current set of jobs to submit
-  DataTable     jobs_submitted; // #NO_SAVE #EXPERT jobs submitted -- just a local copy of jobs_submit
-  DataTable     jobs_running;   // #SHOW_TREE #EXPERT jobs that are currently running
-  DataTable     jobs_done;      // #SHOW_TREE #EXPERT jobs that have finished running
-  DataTable     jobs_archive;   // #SHOW_TREE #EXPERT jobs that have been archived -- already analyzed but possibly still relevant to look at
-  DataTable     file_list;      // #SHOW_TREE #EXPERT list of files -- used for various operations -- transferring and deleting
-  DataTable     cluster_info;   // #SHOW_TREE #EXPERT cluster status information and list of jobs currently running, etc
+  DataTable     jobs_submit;    // #NO_SAVE #EXPERT #HIDDEN_CHOOSER current set of jobs to submit
+  DataTable     jobs_submitted; // #NO_SAVE #EXPERT #HIDDEN_CHOOSER jobs submitted -- just a local copy of jobs_submit
+  DataTable     jobs_running;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that are currently running
+  DataTable     jobs_done;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have finished running
+  DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been archived -- already analyzed but possibly still relevant to look at
+  DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
+  DataTable     cluster_info;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 
