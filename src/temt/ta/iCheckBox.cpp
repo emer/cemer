@@ -53,22 +53,16 @@ void iCheckBox::init() {
 }
 
 void iCheckBox::setReadOnly(bool value) {
-  if (mread_only == value) return;
+  if (mread_only == value)
+    return;
   mread_only = value;
-  QPalette pal(palette());
   if (value) {
-//    setFocusPolicy(ClickFocus);
-    pal.setColor(backgroundRole(), Qt::lightGray);
+    this->setStyleSheet("color: gray");
   }
   else {
-//    setFocusPolicy(StrongFocus);
-    pal.setColor(backgroundRole(), 
-      QApplication::palette(this).color(QPalette::Base));
+    this->setStyleSheet("color: black");
   }
-  setPalette(pal);
-  //  setCheckable(!value);
   setEnabled(!value); // temp
 }
-
 
 #endif
