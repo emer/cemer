@@ -324,6 +324,12 @@ public:
       Vec4f wv;
       wv.load(wts+i);
       Vec4f dp = wv * sa;
+
+      Vec4f rnet;
+      rnet.load(send_netin_vec + unit_idxs[i+0]);
+      rnet += dp;
+      rnet.store(send_netin_vec + unit_idxs[i+0]);
+
       // Vec4i ui;
       // ui.load(unit_idxs + i);
       // Vec4f sn = lookup<8192>(ui, send_netin_vec); // this has to be compile time const
@@ -337,10 +343,10 @@ public:
       // sn.load(sni);
       // sn += dp;
       // sn.store(sni); this is much slower than using the extract direct from sn
-      send_netin_vec[unit_idxs[i+0]] += dp[0];
-      send_netin_vec[unit_idxs[i+1]] += dp[1];
-      send_netin_vec[unit_idxs[i+2]] += dp[2];
-      send_netin_vec[unit_idxs[i+3]] += dp[3];
+      // send_netin_vec[unit_idxs[i+0]] += dp[0];
+      // send_netin_vec[unit_idxs[i+1]] += dp[1];
+      // send_netin_vec[unit_idxs[i+2]] += dp[2];
+      // send_netin_vec[unit_idxs[i+3]] += dp[3];
     }
   }
 
@@ -356,15 +362,19 @@ public:
       Vec8f wv;
       wv.load(wts+i);
       Vec8f dp = wv * sa;
+      Vec8f rnet;
+      rnet.load(send_netin_vec + unit_idxs[i+0]);
+      rnet += dp;
+      rnet.store(send_netin_vec + unit_idxs[i+0]);
 
-      send_netin_vec[unit_idxs[i+0]] += dp[0];
-      send_netin_vec[unit_idxs[i+1]] += dp[1];
-      send_netin_vec[unit_idxs[i+2]] += dp[2];
-      send_netin_vec[unit_idxs[i+3]] += dp[3];
-      send_netin_vec[unit_idxs[i+4]] += dp[4];
-      send_netin_vec[unit_idxs[i+5]] += dp[5];
-      send_netin_vec[unit_idxs[i+6]] += dp[6];
-      send_netin_vec[unit_idxs[i+7]] += dp[7];
+      // send_netin_vec[unit_idxs[i+0]] += dp[0];
+      // send_netin_vec[unit_idxs[i+1]] += dp[1];
+      // send_netin_vec[unit_idxs[i+2]] += dp[2];
+      // send_netin_vec[unit_idxs[i+3]] += dp[3];
+      // send_netin_vec[unit_idxs[i+4]] += dp[4];
+      // send_netin_vec[unit_idxs[i+5]] += dp[5];
+      // send_netin_vec[unit_idxs[i+6]] += dp[6];
+      // send_netin_vec[unit_idxs[i+7]] += dp[7];
     }
   }
 
