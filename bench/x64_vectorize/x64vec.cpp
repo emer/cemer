@@ -67,9 +67,11 @@ void LeabraNetwork::FreeUnits() {
 void LeabraNetwork::ConnectUnits(int n_per_un, int n_layers, int n_prjns) {
   int n_per_lay = n_units / n_layers;
   int n_per_prjn = n_per_un / n_prjns;
+  n_per_prjn = (n_per_prjn / 8) * 8; // make sure it is modulus 8
   while(n_per_lay < n_per_prjn) { // make sure it fits
     n_prjns++;
     n_per_prjn = n_per_un / n_prjns;
+    n_per_prjn = (n_per_prjn / 8) * 8;
     std::cerr << "incremeted prjns to: " << n_prjns << std::endl;
   }
 
@@ -89,9 +91,16 @@ void LeabraNetwork::ConnectUnits(int n_per_un, int n_layers, int n_prjns) {
       if(to_lay < 0) to_lay += n_layers;
       if(to_lay >= n_layers) to_lay -= n_layers;
 
-      int to_lay_st = to_lay * n_per_un + lay_pos; // start at our offset in layer
+      int to_lay_st = to_lay * n_per_un; // + lay_pos; // start at our offset in layer
+      if(to_lay_st >= n_units)
+        to_lay_st = to_lay_st % n_units;
       for(int k=0; k<n_per_prjn; k++) {
-        int to_idx = (to_lay_st + k) % n_units;
+        int to_idx = to_lay_st + k;
+        if(to_idx >= n_units) {
+          std::cerr << "prjn allocation error -- to_idx >= n_units: " << to_idx
+                    << std::endl;
+          break;
+        }
         int idx = un->send[0].ConnectUnOwnCn(to_idx);
         un->send[0].OwnCn(idx, LeabraSendCons::WT) = rand_float();
       }
@@ -208,7 +217,7 @@ int main(int argc, char* argv[]) {
   int n_per_un = 2048;
   int n_epochs = 2;
 
-  int n_layers = 5;
+  int n_layers = 4;
   int n_prjns = 2;
 
   int n_trials = 100;

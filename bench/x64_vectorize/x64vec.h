@@ -23,7 +23,7 @@
 
 // include Agner Fog's c++ extensions on top of "intrinsics" for SIMD stuff
 #if 1
-#define INSTRSET 7
+// #define INSTRSET 7
 #include "vectorclass.h"
 #endif
 
