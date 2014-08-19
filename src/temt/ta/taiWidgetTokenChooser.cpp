@@ -26,7 +26,7 @@
 #include <tabMisc>
 #include <taRootBase>
 
-#include <iTreeWidget>g
+#include <iTreeWidget>
 #include <QTreeWidgetItem>
 #include <MemberDef>
 
