@@ -455,8 +455,8 @@ void T3Panel::SetTextBgColor(const String &new_text_color, const String &new_bg_
 
 void T3Panel::SetColorScheme(ColorScheme color_scheme) {
   switch (color_scheme) {
-    case BLACK_ON_GREY:  SetTextBgColor("black", "grey");  break;
     case BLACK_ON_WHITE: SetTextBgColor("black", "white"); break;
+    case BLACK_ON_GREY:  SetTextBgColor("black", "grey");  break;
     case WHITE_ON_BLACK: SetTextBgColor("white", "black"); break;
     case RED_ON_BLACK:   SetTextBgColor("red",   "black"); break;
     case GREEN_ON_BLACK: SetTextBgColor("green", "black"); break;

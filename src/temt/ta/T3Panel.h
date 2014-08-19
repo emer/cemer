@@ -60,8 +60,8 @@ public:
   };
 
   enum ColorScheme {
-    BLACK_ON_GREY,  // Black text on grey background (default)
     BLACK_ON_WHITE, // Black text on white background
+    BLACK_ON_GREY,  // Black text on grey background (default)
     WHITE_ON_BLACK, // White text on black background
     RED_ON_BLACK,   // Red text on black background
     GREEN_ON_BLACK, // Green text on black background
