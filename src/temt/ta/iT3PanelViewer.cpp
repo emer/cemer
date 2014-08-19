@@ -110,6 +110,27 @@ void iT3PanelViewer::FirstViewProperties(int tab_idx) {
   dvm->EditDialog(false);
 }
 
+void iT3PanelViewer::SetColorScheme(int tab_idx) {
+  T3Panel* fr = viewPanel(tab_idx);
+  if (!fr) return;
+  fr->CallFun("SetColorScheme");
+}
+
+void iT3PanelViewer::SetAllColorScheme(int tab_idx) {
+  T3Panel* fr = viewPanel(tab_idx);
+  if (!fr) return;
+  fr->CallFun("SetColorScheme");
+
+  for (int i = 0; i < viewer()->panels.size; ++i) {
+    T3Panel* panl = viewer()->panels.FastEl(i);
+    if(panl != fr) {
+      panl->bg_color = fr->bg_color;
+      panl->text_color = fr->text_color;
+      panl->UpdateAfterEdit();
+    }
+  }
+}
+
 void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
    menu->AddItem("&Add Panel", iAction::action,
                  this, SLOT(AddPanel()),_nilVariant);
@@ -126,6 +147,11 @@ void iT3PanelViewer::FillContextMenu_impl(taiWidgetMenu* menu, int tab_idx) {
     menu->AddItem("&1st View Properties...", iAction::int_act,
                   this, SLOT(FirstViewProperties(int)), tab_idx);
 
+    menu->AddItem("Set Color Scheme", iAction::int_act,
+                  this, SLOT(SetColorScheme(int)), tab_idx);
+
+    menu->AddItem("Set Color Scheme -- All Views", iAction::int_act,
+                  this, SLOT(SetAllColorScheme(int)), tab_idx);
   }
 }
 

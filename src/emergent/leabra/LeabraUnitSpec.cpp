@@ -1276,7 +1276,7 @@ void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
   if(ls->adapt_i.type == AdaptISpec::G_BAR_IL)
     g_bar_l_val = lay->adapt_i.g_bar_l; // adapting value..
   u->gc.i *= g_bar_i_val;
-  //  u->net *= g_bar_e_val; // do NOT do this -- keep in original units for dnet stuff
+  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
   u->gc.l = g_bar_l_val;
   u->gc.h = g_bar.h * u->vcb.g_h;
   u->gc.a = g_bar.a * u->vcb.g_a;

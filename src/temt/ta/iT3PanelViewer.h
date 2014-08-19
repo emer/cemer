@@ -59,6 +59,8 @@ public slots:
   void                  DeletePanel(int tab_idx);
   void                  PanelProperties(int tab_idx);
   void                  FirstViewProperties(int tab_idx);
+  void                  SetColorScheme(int tab_idx);
+  void                  SetAllColorScheme(int tab_idx);
   void                  FocusFirstTab(); // hack to get first tab focussed on load
 
 protected: // IViewerWidget i/f
