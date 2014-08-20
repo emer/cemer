@@ -340,12 +340,14 @@ int taBase::EditActionS_impl(int ea) {
 int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
   //TODO: decode AssignTo
   if (ea & (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN)) {
+    String saved_name = this->GetName();  // save name to restore after the copy
     taBase* obj = ms->tabObject();
     bool ok; // dummy
     if (CheckError((!obj), false, ok,
       "Could not retrieve object from clipboard"))
       return iClipData::ER_ERROR;
     this->Copy(obj);
+    this->SetName(saved_name);  // restore the name
     UpdateAfterEdit();
   }
 
