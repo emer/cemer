@@ -823,6 +823,8 @@ void iViewPanelOfNetwork::dynbuttonActivated(int but_no) {
   iAction* dyb = vw->getDynButton(but_no);
   if (!dyb) return;
 
+  nv->ClearCaption();
+  
   String nm = dyb->text();
   nv->cur_unit_vals.Reset();
   nv->cur_unit_vals.Add(nm);

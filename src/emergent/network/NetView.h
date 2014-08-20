@@ -145,7 +145,7 @@ public:
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer
 
   bool                  display;        // whether to update the display when values change (under control of programs)
-  LayerLayout   	lay_layout;     // how to display layers -- 2d or 3d
+  LayerLayout   	      lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display text box below network with counters etc
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
@@ -155,6 +155,8 @@ public:
   String_Array          cur_unit_vals;  // #NO_COPY #READ_ONLY currently selected unit values to display -- theoretically can display multiple values, but this is not currently supported, so it always just has one entry at most
   UnitRef               unit_src;       // #NO_SAVE #NO_COPY #READ_ONLY unit last picked (if any) for display
   String                unit_src_path;  // ##READ_ONLY path of unit_src unit relative to the network -- used for saving and reloading
+  String                last_sel_unit_val;   // #READ_ONLY #SHOW #NO_SAVE value of last selected unit (for display)
+
   bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
   MemberDef*            unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
@@ -253,7 +255,8 @@ public:
 
   virtual void          UpdateName();
   // update name from network
-
+  void                  ClearCaption();
+  
   virtual void          CopyFromView(NetView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
 

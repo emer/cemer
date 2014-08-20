@@ -121,17 +121,17 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
           fail_cnt++;
           continue;
         }
-        //       taMisc::Info("obj typ: ", pobj->getTypeId().getName());
+        // taMisc::Info("obj typ: ", pobj->getTypeId().getName());
         if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
           pobj = pp->getPath()->getNodeFromTail(3);
-          //    taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
+          // taMisc::Info("2: obj typ: ", pobj->getTypeId().getName());
           if(!pobj->isOfType(T3UnitGroupNode::getClassTypeId())) {
             pobj = pp->getPath()->getNodeFromTail(1);
-            //    taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
+            // taMisc::Info("3: obj typ: ", pobj->getTypeId().getName());
             if(pobj->getName() == "WtLines") {
               // disable selecting of wt lines!
               ecb->setHandled();
-              //            taMisc::Info("wt lines bail");
+              // taMisc::Info("wt lines bail");
               return;
             }
             //    taMisc::Info("not unitgroupnode! bail");
@@ -142,13 +142,24 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
         Layer* lay = act_ugv->layer(); //cache
         float disp_scale = lay->disp_scale;
-
+        
         SbVec3f pt = pp->getObjectPoint(pobj);
         int xp = (int)((pt[0] * tnv->eff_max_size.x) / disp_scale);
         int yp = (int)(-(pt[2] * tnv->eff_max_size.y) / disp_scale);
-
+        
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           Unit* unit = lay->UnitAtDispCoord(xp, yp);
+          
+          if (unit) {
+            MemberDef* md = nv->unit_disp_md;
+            if (md) {
+              MemberDef* u_md = unit->FindMember(md->name);
+              if (u_md) {
+                nv->last_sel_unit_val = u_md->GetValStr((void*)unit);
+              }
+            }
+          }
+          
           if(unit && tnv->unit_src != unit) {
             tnv->setUnitSrc(NULL, unit);
             tnv->InitDisplay();   // this is apparently needed here!!
@@ -167,8 +178,8 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
 }
 
 /*
-
-  Scale Range semantics
+ 
+ Scale Range semantics
 
   The user can choose for each variable viewed whether to autoscale, and if not, what is the scale.
   Since only one scale can be in effect at once, and the scales are keyed by the display name
@@ -346,6 +357,7 @@ void NetView::Initialize() {
 
   no_init_on_rerender = false;
   hist_reset_req = false;
+  last_sel_unit_val = "";
 }
 
 void NetView::Destroy() {
@@ -1141,8 +1153,12 @@ void NetView::Render_impl() {
   node_so->resizeCaption(font_sizes.net_name);
 
   String cap_txt = data()->GetName() + " Value: ";
-  if(unit_disp_md)
+  if(unit_disp_md) {
     cap_txt += unit_disp_md->name;
+    if (!last_sel_unit_val.empty()) {
+      cap_txt += " = " +  last_sel_unit_val;
+    }
+  }
 
   if(node_so->shapeDraw())
     node_so->shapeDraw()->lineWidth = view_params.laygp_width;
@@ -1522,6 +1538,10 @@ void NetView::Reset_impl() {
   ctr_hist_idx.Reset();
   prjns.Reset();
   inherited::Reset_impl();
+}
+
+void NetView::ClearCaption() {
+  last_sel_unit_val = "";
 }
 
 void NetView::SelectVar(const char* var_name, bool add, bool update) {
