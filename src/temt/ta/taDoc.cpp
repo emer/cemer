@@ -90,8 +90,10 @@ String taDoc::GetURL() {
 void taDoc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if (taMisc::is_loading) {
-    if (auto_open)  // obsolete - convert
+    if (auto_open) { // obsolete - convert
       SetUserData("user_pinned", true);
+      auto_open = false;
+    }
   }
   if(url.empty() || url == "local")
     web_doc = false;
