@@ -19,8 +19,8 @@
 TA_BASEFUNS_CTORS_DEFN(taWizard);
 
 void taWizard::Initialize() {
-  auto_open = false;
   SetBaseFlag(NAME_READONLY);
+  auto_open = false;
 }
 
 void taWizard::InitLinks() {

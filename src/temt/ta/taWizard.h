@@ -31,8 +31,10 @@ class TA_API taWizard : public taNBase {
   // ##BUTROWS_2 ##EDIT_WIDTH_60 ##CAT_Wizard wizard for automating construction of simulation objects
 INHERITED(taNBase)
 public:
-  bool          auto_open;      // #HIDDEN #NO_SAVE open this wizard upon startup
   taDoc         wiz_doc;        // #HIDDEN #NO_SAVE wizard doc object
+
+  bool          auto_open;      // #HIDDEN #NO_SAVE #OBSOLETE open this wizard upon startup -- replaced with user data user_pinned
+
 
   virtual void          RenderWizDoc();
   // #IGNORE render the wizard doc, providing the interface that the user sees to select wizard elements -- called in InitLinks -- calls header, impl, footer -- use impl to override raw text render

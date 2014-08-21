@@ -47,11 +47,12 @@ class TA_API ControlPanel: public taNBase, public virtual IRefListClient {
 public:
   static void           StatSigEmit_Group(taGroup_impl* grp, int sls, void* op1, void* op2);
 
-  bool                  auto_edit; // #HIDDEN #NO_SAVE automatically activate control panel upon loading
   bool                  running_updt; // update the control panel while a program is running -- specs and other objects can be updated quite frequently and can slow things down considerably due to constant updating of the display -- only enable if you need it!
   String                desc;   // #EDIT_DIALOG description of what this edit contains
   EditMbrItem_Group     mbrs; // #TREE_EXPERT the members of the control panel
   EditMthItem_Group     mths; // #TREE_EXPERT the mthods of the control panel
+
+  bool                  auto_edit; // #HIDDEN #NO_SAVE #OBSOLETE automatically activate control panel upon loading -- replaced with user data user_pinned 
 
   EditMbrItem*          mbr(int i) const; // convenience accessor for flat access
   int                   mbrSize(int i) const {return mbrs.leaves;} // flat size

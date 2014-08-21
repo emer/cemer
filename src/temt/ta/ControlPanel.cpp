@@ -41,6 +41,7 @@ void ControlPanel::Initialize() {
   running_updt = false;
   m_changing = 0;
   base_refs.setOwner(this);
+  auto_edit = false;
 }
 
 void ControlPanel::Destroy() {
@@ -65,6 +66,7 @@ void ControlPanel::UpdateAfterEdit_impl() {
   if (taMisc::is_loading) {
     if (auto_edit) { // obsolete - convert
       SetUserData("user_pinned", true);
+      auto_edit = false;
     }
     // add all the bases, since they weren't available during load
     FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
