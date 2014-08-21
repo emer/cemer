@@ -30,6 +30,7 @@ const String taDoc::init_text(
 
 void taDoc::Initialize() {
   web_doc = false;
+  auto_open = false;
   url = "local";
   full_url = "local";
   text_size = 1.0f;
