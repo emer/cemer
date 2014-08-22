@@ -2247,7 +2247,11 @@ bool taBase::Copy(const taBase* cp) {
 
 bool taBase::CopyFrom(taBase* cp) {
   // copyfrom is used widely but really Copy has the best semantics and is the one and only
-  return CanDoCopy_impl(cp, false, true);
+  bool rval = false;
+  String saved_name = this->GetName();
+  rval = CanDoCopy_impl(cp, false, true);
+  this->SetName(saved_name);
+  return rval;
   // // this one is easy, since it is really just the same as Copy, but with warnings
   // if (!CanCopy(cpy_from, false)) return false;
   // UnSafeCopy(cpy_from);
