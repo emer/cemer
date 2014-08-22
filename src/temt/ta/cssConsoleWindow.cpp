@@ -56,15 +56,15 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
 
   unpinned = new QIcon(":/images/tab_unpushed.png");
   pinned = new QIcon(":/images/tab_locked.png");
+  clear_icon = new QIcon(":/images/clear.png");
 
   pin_act = new iAction("&pin", QKeySequence(), "pin");
   pin_act->setIcon(*pinned);
   pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
   tb->addAction(pin_act);
-
-  tb->addSeparator();
-  
   connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
+    
+  tb->addSeparator();
 
   iAction* editCutAction = new iAction(iClipData::EA_CUT, "Cu&t",
                                        QKeySequence("Ctrl+X"), "editCutAction");
@@ -83,6 +83,14 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   editPasteAction->setIcon(QIcon(":/images/editpaste.png"));
   tb->addAction(editPasteAction);
   connect(editPasteAction, SIGNAL(Action()), css_con, SLOT(paste()));
+    
+  tb->addSeparator();
+
+  clear_act = new iAction("&clear", QKeySequence(), "clear");
+  clear_act->setIcon(*clear_icon);
+  clear_act->setToolTip("Clear the console window");
+  tb->addAction(clear_act);
+  connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
 
   setWindowTitle("css Console");
 }

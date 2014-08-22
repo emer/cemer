@@ -31,5 +31,6 @@
   <file>images/emergent_32x32.png</file>
   <file>images/previous_icon.png</file>
   <file>images/next_icon.png</file>
+  <file>images/clear.png</file>
 </qresource>
 </RCC>

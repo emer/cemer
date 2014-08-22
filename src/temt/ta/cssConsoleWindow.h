@@ -38,7 +38,9 @@ public:
   QcssConsole*  css_con;
   QIcon*        pinned;
   QIcon*        unpinned;
+  QIcon*        clear_icon;
   iAction*      pin_act;
+  iAction*      clear_act;
 
   virtual void  UpdateFmLock();
   // update based on current lock status
