@@ -45,7 +45,7 @@ public:
     UNIT_INHIB,			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
-  InhibType	type;		// how to compute inhibition (g_i)
+  InhibType	type;		// #DEF_FF_FB_INHIB how to compute inhibition (resulting in inhibitory conductance g_i in units) -- FF_FB feedforward and feedback is the default and should be used except for legacy models using KWTA variants, or UNIT_INHIB for more biologically detailed models
   float		kwta_pt;	// #CONDSHOW_OFF_type:FF_FB_INHIB #DEF_0.2;0.5 [Defaults: .2 for KWTA_INHIB, .5 for KWTA_AVG] 
   float         gi;             // #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 [1.5-2.3 typical, can go much lower or higher as needed] overall gain on ff & fb inhibition -- this is main paramter to adjust to change overall activation levels -- FF_FB does NOT use kwta.pct parameter to set inhibition, so you must adjust it here
   float		ff;		// #CONDSHOW_ON_type:FF_FB_INHIB #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- computed from average netinput (i.e., synaptic drive into layer)

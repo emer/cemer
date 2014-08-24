@@ -34,7 +34,7 @@ public:
   TypeDef*	network_type;	// #HIDDEN #NO_SAVE just to anchor the memberdef*
   ProgVarRef 	local_ctr_var;	// #ITEM_FILTER_StdProgVarFilter local version of the counter variable, maintained by the program -- must have same name as the counter!  automatically created if not set
   MemberDef*	counter;	// #TYPE_ON_network_type #DEFCAT_Counter counter variable on network to operate on
-  bool		update_after;	// call UpdateAfterEdit on network after updating counter value -- not necessary except to trigger updating of various displays, etc
+  bool		update_after;	// #DEF_false call UpdateAfterEdit on network after updating counter value -- should generally be OFF except in special / debugging situations -- will drive automatic updating of displays, and slow down processing overall
   
   String 	GetTypeDecoKey() const override { return "ProgVar"; }
 

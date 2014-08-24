@@ -224,7 +224,7 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 void LeabraActAvgSpec::Initialize() {
   l_up_add = true;
   l_dn_pct = true;
-  l_up_dt = 0.25f;
+  l_up_dt = 0.2f;
   l_dn_dt = 0.4f;
   m_dt = 0.1f;
   s_dt = 0.2f;
