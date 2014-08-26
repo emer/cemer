@@ -801,6 +801,18 @@ void Network::RemoveCons() {
   //  RemoveMonitors(); // not needed with smartref!
   FOREACH_ELEM_IN_GROUP(Layer, l, layers)
     l->RemoveCons_Net();
+
+  if(own_cons_mem) {
+    free(own_cons_mem);
+    own_cons_mem = 0;
+  }
+  own_cons_cnt = 0;
+  if(ptr_cons_mem) {
+    free(ptr_cons_mem);
+    ptr_cons_mem = 0;
+  }
+  ptr_cons_cnt = 0;
+
   StructUpdate(false);
   taMisc::DoneBusy();
 }
