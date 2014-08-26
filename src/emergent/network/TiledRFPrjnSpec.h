@@ -53,7 +53,7 @@ public:
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
   virtual void	SelectRF(Projection* prjn);

@@ -19,7 +19,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(FullPrjnSpec);
 
-void FullPrjnSpec::Connect_impl(Projection* prjn) {
+void FullPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   int recv_no = prjn->from->units.leaves;
@@ -30,14 +30,17 @@ void FullPrjnSpec::Connect_impl(Projection* prjn) {
   if(!self_con && (prjn->from.ptr() == prjn->layer))
     send_no--;
 
-  // pre-allocate connections!
-  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-  prjn->from->SendConsPreAlloc(send_no, prjn);
-
-  FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-    FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
-      if(self_con || (ru != su))
-        ru->ConnectFrom(su, prjn);
+  if(!make_cons) {
+    // pre-allocate connections!
+    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+    prjn->from->SendConsPreAlloc(send_no, prjn);
+  }
+  else {
+    FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
+      FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+        if(self_con || (ru != su))
+          ru->ConnectFrom(su, prjn);
+      }
     }
   }
 }

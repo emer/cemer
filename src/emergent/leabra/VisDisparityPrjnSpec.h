@@ -52,14 +52,14 @@ public:
   float_Matrix	v1b_weights;	// #READ_ONLY #NO_SAVE v1 binocular gaussian weighting factors for integrating disparity values into v1b unit activations -- for each tuning disparity [max_width][tot_disps] -- only v1b_widths[disp] are used per disparity
   int_Matrix	v1b_stencils; 	// #READ_ONLY #NO_SAVE stencils for binocularity detectors, in terms of v1s location offsets per image: 2d: [XY][max_width][tot_disps]
 
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
   void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
 
   virtual void InitStencils(Projection* prjn);
   // initialize the stencils for given geometry of layers for this projection -- called at Connect_LeftEye
-  virtual void Connect_RightEye(Projection* prjn);
+  virtual void Connect_RightEye(Projection* prjn, bool make_cons);
   // right eye is simple replicated one-to-one connectivity
-  virtual void Connect_LeftEye(Projection* prjn);
+  virtual void Connect_LeftEye(Projection* prjn, bool make_cons);
   // left eye has all the disparity integration connections
 
   virtual void	UpdateFmV1sSize(int v1s_img_x) {

@@ -149,7 +149,7 @@ float PolarRndPrjnSpec::GetDistProb(Projection* prjn, Unit* ru, Unit* su) {
 
 // todo: could put in some sending limits, and do recvs in random order
 
-void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
+void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(same_seed)
     rndm_seed.OldSeed();
@@ -169,8 +169,11 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
   // pre-allocate connections!
-  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-  prjn->from->SendConsPreAlloc(send_no, prjn);
+  if(!make_cons) {
+    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+    prjn->from->SendConsPreAlloc(send_no, prjn);
+    return;
+  }
 
   Unit* ru, *su;
   taLeafItr ru_itr;

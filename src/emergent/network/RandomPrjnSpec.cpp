@@ -22,7 +22,6 @@ TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 void RandomPrjnSpec::Initialize() {
   p_con = .25;
   sym_self = false;
-  same_seed = false;
   rndm_seed.GetCurrent();
 }
 
@@ -32,10 +31,9 @@ void RandomPrjnSpec::UpdateAfterEdit_impl() {
   if(p_con < 0.0f) p_con = 0.0f;
 }
 
-void RandomPrjnSpec::Connect_impl(Projection* prjn) {
+void RandomPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
-  if(same_seed)
-    rndm_seed.OldSeed();
+  rndm_seed.OldSeed();
 
   int n_send_units = prjn->from->units.leaves;
   int n_recv_units = prjn->layer->units.leaves;
@@ -58,16 +56,19 @@ void RandomPrjnSpec::Connect_impl(Projection* prjn) {
     }
   }
 
-  for (int i = 0; i < n_recv_units; i++)
-    prjn->layer->units.FastEl(i)->RecvConsPreAlloc(recv_alloc->FastEl1d(i), prjn);
+  if(!make_cons) {
+    for (int i = 0; i < n_recv_units; i++)
+      prjn->layer->units.FastEl(i)->RecvConsPreAlloc(recv_alloc->FastEl1d(i), prjn);
 
-  for (int j = 0; j < n_send_units; j++)
-    prjn->from->units.FastEl(j)->SendConsPreAlloc(send_alloc->FastEl1d(j), prjn);
-
-  for (int i = 0; i < n_recv_units; i++) {
-    for (int j = 0; j < n_send_units; j++) {
-      if (cons->FastEl2d(i, j))
-        prjn->layer->units.FastEl(i)->ConnectFrom(prjn->from->units.FastEl(j), prjn);
+    for (int j = 0; j < n_send_units; j++)
+      prjn->from->units.FastEl(j)->SendConsPreAlloc(send_alloc->FastEl1d(j), prjn);
+  }
+  else {
+    for (int i = 0; i < n_recv_units; i++) {
+      for (int j = 0; j < n_send_units; j++) {
+        if (cons->FastEl2d(i, j))
+          prjn->layer->units.FastEl(i)->ConnectFrom(prjn->from->units.FastEl(j), prjn);
+      }
     }
   }
 }

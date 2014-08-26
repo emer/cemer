@@ -34,7 +34,7 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
-  void	Connect_impl(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(RndGpOneToOnePrjnSpec);
 protected:

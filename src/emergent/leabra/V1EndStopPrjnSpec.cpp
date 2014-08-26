@@ -143,7 +143,7 @@ void V1EndStopPrjnSpec::InitStencils(Projection* prjn) {
   }
 }
 
-void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
+void V1EndStopPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
@@ -184,57 +184,55 @@ void V1EndStopPrjnSpec::Connect_impl(Projection* prjn) {
   int n_cons = sun_geo.y + 2 * 2 * (n_angles-1) * sun_geo.y;
 
   taVector2i ruc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+  int rgpidx = 0;
+  for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
 
-        for(int ang = 0; ang < n_angles; ang++) { // angles
-          int rui = ang;
-          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-          if(!ru_u) continue;
-          if(!alloc_loop)
-            ru_u->RecvConsPreAlloc(n_cons, prjn);
+      for(int ang = 0; ang < n_angles; ang++) { // angles
+        int rui = ang;
+        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        if(!ru_u) continue;
+        if(!make_cons)
+          ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          taVector2i sun;
-          for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
-            // central point (same as ruc -- use rgpidx)
-            int sui = sun.y * n_angles + ang;
-            Unit* su_u = send_lay->UnitAtUnGpIdx(sui, rgpidx);
-            if(!su_u) continue;
-            ru_u->ConnectFrom(su_u, prjn, alloc_loop);
+        taVector2i sun;
+        for(sun.y = 0; sun.y < sun_geo.y; sun.y++) {
+          // central point (same as ruc -- use rgpidx)
+          int sui = sun.y * n_angles + ang;
+          Unit* su_u = send_lay->UnitAtUnGpIdx(sui, rgpidx);
+          if(!su_u) continue;
+          ru_u->ConnectFrom(su_u, prjn, !make_cons);
 
-            for(int sidx=0; sidx < 2; sidx++) {
-              for(int lpdx=0; lpdx < 2; lpdx++) {
-                int xp = v1c_es_stencils.FastEl4d(X,lpdx,sidx,ang);
-                int yp = v1c_es_stencils.FastEl4d(Y,lpdx,sidx,ang);
+          for(int sidx=0; sidx < 2; sidx++) {
+            for(int lpdx=0; lpdx < 2; lpdx++) {
+              int xp = v1c_es_stencils.FastEl4d(X,lpdx,sidx,ang);
+              int yp = v1c_es_stencils.FastEl4d(Y,lpdx,sidx,ang);
 
-                taVector2i suc = ruc;
-                suc.x += xp;  suc.y += yp;
-                taVector2i suc_wrp = suc;
-                if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
-                  continue;
-                int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-                if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+              taVector2i suc = ruc;
+              suc.x += xp;  suc.y += yp;
+              taVector2i suc_wrp = suc;
+              if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
+                continue;
+              int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+              if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-                for(int opang=0; opang<n_angles; opang++) {
-                  float angwt = v1c_es_angwts.FastEl2d(ang, opang);
-                  if(angwt == 0.0f) continue;
+              for(int opang=0; opang<n_angles; opang++) {
+                float angwt = v1c_es_angwts.FastEl2d(ang, opang);
+                if(angwt == 0.0f) continue;
 
-                  int sui = sun.y * n_angles + opang;
-                  Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-                  if(!su_u) continue;
-                  ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-                }
+                int sui = sun.y * n_angles + opang;
+                Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+                if(!su_u) continue;
+                ru_u->ConnectFrom(su_u, prjn, !make_cons);
               }
             }
           }
-        }  // for ang
-      }
+        }
+      }  // for ang
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

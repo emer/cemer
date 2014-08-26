@@ -21,7 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(GpMapConvergePrjnSpec);
 void GpMapConvergePrjnSpec::Initialize() {
 }
 
-void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
+void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -35,7 +35,7 @@ void GpMapConvergePrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
 
-Layer* recv_lay = prjn->layer;
+  Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   taVector2i su_geo = send_lay->gp_geom;
   int n_su_gps = send_lay->gp_geom.n;
@@ -43,21 +43,27 @@ Layer* recv_lay = prjn->layer;
   int alloc_no = n_su_gps;      // number of cons per recv unit
 
   // pre-alloc senders -- only 1
-  FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units)
-    su->SendConsPreAlloc(1, prjn);
+  if(!make_cons) {
+    FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units)
+      su->SendConsPreAlloc(1, prjn);
+  }
 
   for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
     Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
     if(!ru_u) break;
-    ru_u->RecvConsPreAlloc(alloc_no, prjn);
 
-    taVector2i suc;
-    for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
-      for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
-        int sgpidx = send_lay->UnitGpIdxFmPos(suc);
-        Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
-        if(su_u) {
-          ru_u->ConnectFrom(su_u, prjn);
+    if(!make_cons) {
+      ru_u->RecvConsPreAlloc(alloc_no, prjn);
+    }
+    else {
+      taVector2i suc;
+      for(suc.y = 0; suc.y < su_geo.y; suc.y++) {
+        for(suc.x = 0; suc.x < su_geo.x; suc.x++) {
+          int sgpidx = send_lay->UnitGpIdxFmPos(suc);
+          Unit* su_u = send_lay->UnitAtUnGpIdx(ri, sgpidx);
+          if(su_u) {
+            ru_u->ConnectFrom(su_u, prjn);
+          }
         }
       }
     }

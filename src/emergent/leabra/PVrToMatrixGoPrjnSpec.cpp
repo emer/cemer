@@ -23,7 +23,7 @@
 TA_BASEFUNS_CTORS_DEFN(PVrToMatrixGoPrjnSpec);
 
 
-void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn) {
+void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   LeabraLayer* mtx_lay = (LeabraLayer*)prjn->layer;
@@ -65,19 +65,23 @@ void PVrToMatrixGoPrjnSpec::Connect_impl(Projection* prjn) {
   }
 
   if(!pvr_su) return;
-  pvr_su->SendConsPreAlloc(tot_un, prjn);
 
-  for(int rgi=0; rgi < n_gps; rgi++) {
-    for(int rui=0; rui < n_per_gp; rui++) {
-      Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
-      ru->RecvConsPreAlloc(1, prjn);
+  if(!make_cons) {
+    pvr_su->SendConsPreAlloc(tot_un, prjn);
+
+    for(int rgi=0; rgi < n_gps; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+        Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+        ru->RecvConsPreAlloc(1, prjn);
+      }
     }
   }
-
-  for(int rgi=0; rgi < n_gps; rgi++) {
-    for(int rui=0; rui < n_per_gp; rui++) {
-      Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
-      ru->ConnectFrom(pvr_su, prjn);
+  else {
+    for(int rgi=0; rgi < n_gps; rgi++) {
+      for(int rui=0; rui < n_per_gp; rui++) {
+        Unit* ru = mtx_lay->UnitAccess(racc_md, rui, rgi);
+        ru->ConnectFrom(pvr_su, prjn);
+      }
     }
   }
 }

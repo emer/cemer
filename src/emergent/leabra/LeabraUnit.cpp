@@ -107,15 +107,13 @@ void LeabraUnit::CutLinks() {
   inherited::CutLinks();
 }
 
-bool LeabraUnit::BuildUnits() {
-  bool rval = inherited::BuildUnits();
-  if(!rval) return false;
+void LeabraUnit::BuildUnits() {
+  inherited::BuildUnits();
   LeabraUnitSpec* us = (LeabraUnitSpec*)GetUnitSpec();
   if(us) {
     us->Init_SpikeBuff(this);
     us->Init_ActBuff(this);
   }
-  return rval;
 }
 
 void LeabraUnit::GetInSubGp() {

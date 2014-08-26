@@ -220,7 +220,7 @@ void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const taVector2i& ruc, Project
   }
 }
 
-void TesselPrjnSpec::Connect_impl(Projection* prjn) {
+void TesselPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   if(prjn->layer->units.leaves == 0) // an empty layer!
@@ -238,23 +238,21 @@ void TesselPrjnSpec::Connect_impl(Projection* prjn) {
     use_recv_n.y = ru_geo.y;
 
   taVector2i ruc, nuc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
-        ruc.y += recv_skip.y, nuc.y++)
-      {
-        for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
-            ruc.x += recv_skip.x, nuc.x++)
-          {
-            Unit* ru_u = prjn->layer->UnitAtCoord(ruc);
-            if(ru_u == NULL)
-              continue;
-            Connect_RecvUnit(ru_u, ruc, prjn, alloc_loop);
-          }
-      }
-
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
+  for(ruc.y = recv_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_n.y);
+      ruc.y += recv_skip.y, nuc.y++)
+    {
+      for(ruc.x = recv_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_n.x);
+          ruc.x += recv_skip.x, nuc.x++)
+        {
+          Unit* ru_u = prjn->layer->UnitAtCoord(ruc);
+          if(ru_u == NULL)
+            continue;
+          Connect_RecvUnit(ru_u, ruc, prjn, !make_cons);
+        }
     }
+
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

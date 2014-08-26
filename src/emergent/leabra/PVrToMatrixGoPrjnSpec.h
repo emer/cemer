@@ -30,7 +30,7 @@ class E_API PVrToMatrixGoPrjnSpec : public ProjectionSpec {
   // Projection from PVLV PVr layer to Matrix_Go layer -- PVr=1 value unit (right-most) connects to Output Go units, while PVr=.5 value unit (middle) connects to Input and Maint Go units, providing a bias for output gating when rewards are expected
 INHERITED(ProjectionSpec)
 public:
-  void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn, bool make_cons);
 
   TA_BASEFUNS_NOCOPY(PVrToMatrixGoPrjnSpec);
 protected:

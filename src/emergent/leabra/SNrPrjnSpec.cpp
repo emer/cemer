@@ -22,7 +22,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(SNrPrjnSpec);
 
-void SNrPrjnSpec::Connect_impl(Projection* prjn) {
+void SNrPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   LeabraLayer* to_lay = (LeabraLayer*)prjn->layer;
@@ -42,7 +42,7 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn) {
     }
     if(snr_st_idx >= 0) {
       for(int i=0; i<fm_lay->gp_geom.n; i++) {
-	Connect_Gp(prjn, Layer::ACC_GP, snr_st_idx + i, Layer::ACC_GP, i);
+	Connect_Gp(prjn, Layer::ACC_GP, snr_st_idx + i, Layer::ACC_GP, i, make_cons);
       }
     }
   }
@@ -58,7 +58,7 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn) {
     }
     if(snr_st_idx >= 0) {
       for(int i=0; i<to_lay->gp_geom.n; i++) {
-	Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, snr_st_idx + i);
+	Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, snr_st_idx + i, make_cons);
       }
     }
   }

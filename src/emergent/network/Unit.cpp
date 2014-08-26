@@ -45,6 +45,7 @@ void Unit::Initialize() {
   flat_idx = 0;
   voxels = NULL;
   m_unit_spec = NULL;
+  bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
 }
 
 void Unit::Destroy() {
@@ -201,25 +202,31 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na
   }
 }
 
-bool Unit::BuildUnits() {
-  bool rval = false;
+void Unit::BuildUnits() {
+}
+
+void Unit::AllocBias() {
   if(!GetUnitSpec())
-    return false;
+    return;
   TypeDef* bstd = GetUnitSpec()->bias_con_type;
+  bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
   if(bstd == NULL) {
     bias.Reset();
-    rval = true;
     bias.SetConSpec(NULL);
   }
   else {
     bias.SetConType(bstd);
-    if(bias.size == 0) {
-      bias.AllocCons(1);
-      bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
-    }
+    bias.AllocCons(1);
     bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
   }
-  return rval;
+}
+
+void Unit::ConnectBias() {
+  if(!GetUnitSpec())
+    return;
+  TypeDef* bstd = GetUnitSpec()->bias_con_type;
+  if(!bstd) return;
+  bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
 }
 
 void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {

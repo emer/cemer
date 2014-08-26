@@ -149,7 +149,7 @@ float V2BoLateralPrjnSpec::ConWt(taVector2i& suc, int rang_dx, int sang_dx, int 
   return netwt;
 }
 
-void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
+void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 //   dbg_hit_cnt = 0;           // debugging
 
   if(!(bool)prjn->from) return;
@@ -183,53 +183,51 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
   float n_angles = (float)un_geo.x;
 
   taVector2i ruc;
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
-        taVector2i suc;
-        taVector2i suc_wrp;
-        for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
-          for(suc.x = ruc.x-radius; suc.x <= ruc.x+radius; suc.x++) {
-            suc_wrp = suc;
-            if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
-              continue;
-            int sgpidx = lay->UnitGpIdxFmPos(suc_wrp);
-            if(!lay->UnitGpIdxIsValid(sgpidx)) continue;
+  int rgpidx = 0;
+  for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+      taVector2i suc;
+      taVector2i suc_wrp;
+      for(suc.y = ruc.y-radius; suc.y <= ruc.y+radius; suc.y++) {
+        for(suc.x = ruc.x-radius; suc.x <= ruc.x+radius; suc.x++) {
+          suc_wrp = suc;
+          if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
+            continue;
+          int sgpidx = lay->UnitGpIdxFmPos(suc_wrp);
+          if(!lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-            taVector2i del = suc - ruc; // don't use wrap!
-            float dst = del.Mag();
-            if(dst > (float)radius) continue; // out of bounds
-            if(dst == 0.0f) continue;         // no selfs
+          taVector2i del = suc - ruc; // don't use wrap!
+          float dst = del.Mag();
+          if(dst > (float)radius) continue; // out of bounds
+          if(dst == 0.0f) continue;         // no selfs
 
-            taVector2i run;
-            taVector2i sun;
+          taVector2i run;
+          taVector2i sun;
 
-            for(run.x = 0; run.x < un_geo.x; run.x++) {
-              for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
-                for(run.y = 0; run.y < un_geo.y; run.y++) {
-                  int syst = (run.y / 2) * 2;
-                  int syed = syst+2;
-                  for(sun.y = syst; sun.y < syed; sun.y++) {
-                    // mod 2 on y allows for multiple depths to be replicated
-                    float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius,
-                                                     sun.y % 2, sun.x, run.y % 2, run.x);
-                    if(wt <= con_thr) continue;
+          for(run.x = 0; run.x < un_geo.x; run.x++) {
+            for(sun.x = 0; sun.x < un_geo.x; sun.x++) {
+              for(run.y = 0; run.y < un_geo.y; run.y++) {
+                int syst = (run.y / 2) * 2;
+                int syed = syst+2;
+                for(sun.y = syst; sun.y < syed; sun.y++) {
+                  // mod 2 on y allows for multiple depths to be replicated
+                  float wt = v2ffbo_weights.FastEl(del.x +radius, del.y+radius,
+                                                   sun.y % 2, sun.x, run.y % 2, run.x);
+                  if(wt <= con_thr) continue;
 
-                    int rui = run.y * un_geo.x + run.x;
-                    int sui = sun.y * un_geo.x + sun.x;
+                  int rui = run.y * un_geo.x + run.x;
+                  int sui = sun.y * un_geo.x + sun.x;
 
-                    Unit* ru_u = lay->UnitAtUnGpIdx(rui, rgpidx);
-                    if(!ru_u) continue;
-                    Unit* su_u = lay->UnitAtUnGpIdx(sui, sgpidx);
-                    if(!su_u) continue;
-                    if(alloc_loop) {
-                      ru_u->RecvConsAllocInc(1, prjn);
-                      su_u->SendConsAllocInc(1, prjn);
-                    }
-                    else {
-                      ru_u->ConnectFrom(su_u, prjn, alloc_loop, true, wt);
-                    }
+                  Unit* ru_u = lay->UnitAtUnGpIdx(rui, rgpidx);
+                  if(!ru_u) continue;
+                  Unit* su_u = lay->UnitAtUnGpIdx(sui, sgpidx);
+                  if(!su_u) continue;
+                  if(!make_cons) {
+                    ru_u->RecvConsAllocInc(1, prjn);
+                    su_u->SendConsAllocInc(1, prjn);
+                  }
+                  else {
+                    ru_u->ConnectFrom(su_u, prjn, !make_cons, true, wt);
                   }
                 }
               }
@@ -238,10 +236,10 @@ void V2BoLateralPrjnSpec::Connect_impl(Projection* prjn) {
         }
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do allocations
-      prjn->layer->RecvConsPostAlloc(prjn);
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do allocations
+    prjn->layer->RecvConsPostAlloc(prjn);
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

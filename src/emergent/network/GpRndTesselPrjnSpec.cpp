@@ -402,7 +402,7 @@ void GpRndTesselPrjnSpec::Connect_RecvGp(int rgpidx, const taVector2i& ruc,
   }
 }
 
-void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
+void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(same_seed)
     rndm_seed.OldSeed();
@@ -433,22 +433,20 @@ void GpRndTesselPrjnSpec::Connect_impl(Projection* prjn) {
     use_recv_gp_n.y = ru_geo.y;
 
   taVector2i ruc, nuc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
-        ruc.y += recv_gp_skip.y, nuc.y++)
-      {
-        for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
-            ruc.x += recv_gp_skip.x, nuc.x++)
-          {
-            int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
-            if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
-            Connect_RecvGp(rgpidx, ruc, prjn, alloc_loop);
-          }
-      }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      recv_lay->RecvConsPostAlloc(prjn);
-      send_lay->SendConsPostAlloc(prjn);
+  for(ruc.y = recv_gp_off.y, nuc.y = 0; (ruc.y < ru_geo.y) && (nuc.y < use_recv_gp_n.y);
+      ruc.y += recv_gp_skip.y, nuc.y++)
+    {
+      for(ruc.x = recv_gp_off.x, nuc.x = 0; (ruc.x < ru_geo.x) && (nuc.x < use_recv_gp_n.x);
+          ruc.x += recv_gp_skip.x, nuc.x++)
+        {
+          int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+          if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
+          Connect_RecvGp(rgpidx, ruc, prjn, !make_cons);
+        }
     }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    recv_lay->RecvConsPostAlloc(prjn);
+    send_lay->SendConsPostAlloc(prjn);
   }
 }
 

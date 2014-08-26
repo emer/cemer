@@ -73,7 +73,7 @@ bool TopoWtsPrjnSpec::TestWarning(bool test, const char* fun_name,
   return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
-void TopoWtsPrjnSpec::Connect_impl(Projection* prjn) {
+void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   already_warned = 0;		// reset
@@ -87,51 +87,54 @@ void TopoWtsPrjnSpec::Connect_impl(Projection* prjn) {
     send_no--;
 
   // pre-allocate connections!
-  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-  prjn->from->SendConsPreAlloc(send_no, prjn);
-
-  if(!index_by_gps_recv.on) { // not using recv_gps
-    for(int y = 0; y < prjn->layer->flat_geom.y; y++) {
-      for(int x = 0; x < prjn->layer->flat_geom.x; x++) {
-	Unit* ru = prjn->layer->UnitAtCoord(x,y);
-	//ru->ConnectFrom(su, prjn);
-	if(!index_by_gps_send.on) { // not using send_gps
-	  for(int y = 0; y < prjn->from->flat_geom.y; y++) {
-	    for(int x = 0; x < prjn->from->flat_geom.x; x++) {
-	      Unit* su = prjn->from->UnitAtCoord(x,y);
-	      ru->ConnectFrom(su, prjn);
-	    }
-	  }
-	}
-	else { // send YES -- using send_gps
-	  FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
-	    if(self_con || (ru != su))
-	      ru->ConnectFrom(su, prjn);
-	  }
-	}
+  if(!make_cons) {
+    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+    prjn->from->SendConsPreAlloc(send_no, prjn);
+  }
+  else {
+    if(!index_by_gps_recv.on) { // not using recv_gps
+      for(int y = 0; y < prjn->layer->flat_geom.y; y++) {
+        for(int x = 0; x < prjn->layer->flat_geom.x; x++) {
+          Unit* ru = prjn->layer->UnitAtCoord(x,y);
+          //ru->ConnectFrom(su, prjn);
+          if(!index_by_gps_send.on) { // not using send_gps
+            for(int y = 0; y < prjn->from->flat_geom.y; y++) {
+              for(int x = 0; x < prjn->from->flat_geom.x; x++) {
+                Unit* su = prjn->from->UnitAtCoord(x,y);
+                ru->ConnectFrom(su, prjn);
+              }
+            }
+          }
+          else { // send YES -- using send_gps
+            FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+              if(self_con || (ru != su))
+                ru->ConnectFrom(su, prjn);
+            }
+          }
+        }
       }
     }
-  }
-  else { // recv YES -- using recv_gps
-    FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-      //bool !use_unit_gps = false;
-      //prjn->from.ptr()->unit_groups
-      //if(!index_by_gps_send.on && prjn->from.ptr()->unit_groups)
-      //!use_unit_gps = true;
-      //if(!use_unit_gps) {
-      if(!index_by_gps_send.on) { // send NO -- not using send_gps
-	for(int y = 0; y < prjn->from->flat_geom.y; y++) {
-	  for(int x = 0; x < prjn->from->flat_geom.x; x++) {
-	    Unit* su = prjn->from->UnitAtCoord(x,y);
-	    ru->ConnectFrom(su, prjn);
-	  }
-	}
-      }
-      else { // send YES -- using send gps
-	FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
-	  if(self_con || (ru != su))
-	    ru->ConnectFrom(su, prjn);
-	}
+    else { // recv YES -- using recv_gps
+      FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
+        //bool !use_unit_gps = false;
+        //prjn->from.ptr()->unit_groups
+        //if(!index_by_gps_send.on && prjn->from.ptr()->unit_groups)
+        //!use_unit_gps = true;
+        //if(!use_unit_gps) {
+        if(!index_by_gps_send.on) { // send NO -- not using send_gps
+          for(int y = 0; y < prjn->from->flat_geom.y; y++) {
+            for(int x = 0; x < prjn->from->flat_geom.x; x++) {
+              Unit* su = prjn->from->UnitAtCoord(x,y);
+              ru->ConnectFrom(su, prjn);
+            }
+          }
+        }
+        else { // send YES -- using send gps
+          FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
+            if(self_con || (ru != su))
+              ru->ConnectFrom(su, prjn);
+          }
+        }
       }
     }
   }

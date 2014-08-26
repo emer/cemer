@@ -46,12 +46,14 @@ public:
   bool          add_rnd_wts;  	   // #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
   float		add_rnd_wts_scale; // #CONDSHOW_ON_init_wts scales added random weight values by the projection spec -- don't need a custom spec!
 
-  virtual void  Connect(Projection* prjn);
-  // #CAT_Structure connects the network, doing PreConnect, Connect_impl, then Init_Weights -- generally do not override this function
+  virtual void  Connect_Sizes(Projection* prjn);
+  // #CAT_Structure first-pass connects the network, doing PreConnect, Connect_impl(false), ending up with target allocation sizes
     virtual void        PreConnect(Projection* prjn);
     // #CAT_Structure Prepare to connect (init con_groups)
-    virtual void        Connect_impl(Projection*) { };
-    // #CAT_Structure actually implements specific connection code
+    virtual void        Connect_impl(Projection*, bool make_cons) { };
+    // #CAT_Structure actually implements specific connection code -- called in two passes -- first with make_cons = false does allocation, and second with make_cons = true
+  virtual void  Connect_Cons(Projection* prjn);
+  // #CAT_Structure second pass connection -- actually makes the connections via Connect_impl(true), and then calls Init_Weights
 
   virtual int   ProbAddCons(Projection* prjn, float p_add_con, float init_wt = 0.0);
   // #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection

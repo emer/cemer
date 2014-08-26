@@ -185,6 +185,10 @@ public:
   UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads and for connection indexes -- first (0 index) is a null unit that is skipped over and should never be computed on
   Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
   float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+  int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
+  float*        own_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
+  int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
+  float*        ptr_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int           dmem_nprocs;    // #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -217,7 +221,7 @@ public:
   inline Unit*  UnFmIdx_Safe(int idx) const { return units_flat.SafeEl(idx); }
   // #CAT_Structure get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
 
-  void  Build();
+  virtual void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
     virtual void  CheckSpecs();
     // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
@@ -231,8 +235,18 @@ public:
     // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
     virtual void  BuildPrjns();
     // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
-  void  Connect();
+  virtual void  Connect();
   // #MENU #CAT_Structure Connect this network according to projections on Layers
+    virtual void  Connect_Sizes();
+    // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information (done by projection specs)
+    virtual void  Connect_Alloc();
+    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list
+    virtual void  Connect_Alloc_RecvOwns();
+    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list -- for recv owns cons
+    virtual void  Connect_Alloc_SendOwns();
+    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list -- for send owns cons
+    virtual void  Connect_Cons();
+    // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
 
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built

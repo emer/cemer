@@ -21,7 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(GpMapDivergePrjnSpec);
 void GpMapDivergePrjnSpec::Initialize() {
 }
 
-void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn) {
+void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -43,26 +43,29 @@ void GpMapDivergePrjnSpec::Connect_impl(Projection* prjn) {
   int su_alloc_no = n_ru_gps;   // number of cons from each send unit
 
   // pre-alloc senders
-  FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units)
-    su->SendConsPreAlloc(su_alloc_no, prjn);
+  if(!make_cons) {
+    FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units)
+      su->SendConsPreAlloc(su_alloc_no, prjn);
 
-  // pre-alloc receivers -- only 1
-  for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
-    Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
-    if(!ru_u) break;
-    ru_u->RecvConsPreAlloc(1, prjn);
+    // pre-alloc receivers -- only 1
+    for(int ri = 0; ri<recv_lay->units.leaves; ri++) {
+      Unit* ru_u = (Unit*)recv_lay->units.Leaf(ri);
+      if(!ru_u) break;
+      ru_u->RecvConsPreAlloc(1, prjn);
+    }
   }
-
-  // now actually build connections
-  for(int si = 0; si<send_lay->units.leaves; si++) {
-    Unit* su_u = (Unit*)send_lay->units.Leaf(si);
-    taVector2i ruc;
-    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
-        int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
-        Unit* ru_u = recv_lay->UnitAtUnGpIdx(si, rgpidx);
-        if(ru_u) {
-          ru_u->ConnectFrom(su_u, prjn);
+  else {
+    // now actually build connections
+    for(int si = 0; si<send_lay->units.leaves; si++) {
+      Unit* su_u = (Unit*)send_lay->units.Leaf(si);
+      taVector2i ruc;
+      for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
+        for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++) {
+          int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+          Unit* ru_u = recv_lay->UnitAtUnGpIdx(si, rgpidx);
+          if(ru_u) {
+            ru_u->ConnectFrom(su_u, prjn);
+          }
         }
       }
     }

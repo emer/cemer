@@ -18,7 +18,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(PFCLVPrjnSpec);
 
-void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
+void PFCLVPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   LeabraLayer* lv_lay = (LeabraLayer*)prjn->layer;
@@ -44,34 +44,35 @@ void PFCLVPrjnSpec::Connect_impl(Projection* prjn) {
   int n_pfc_stripes = pfc_lay->gp_geom.n;
 
   if(n_lv_stripes <= 1) {       // just full connectivity
-    Connect_Gp(prjn, Layer::ACC_LAY, 0, Layer::ACC_LAY, 0);
+    Connect_Gp(prjn, Layer::ACC_LAY, 0, Layer::ACC_LAY, 0, make_cons);
   }
   else if(n_lv_stripes == n_pfc_stripes) { // just one-to-one
     for(int i=0; i<n_pfc_stripes; i++) {
-      Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, i);
+      Connect_Gp(prjn, Layer::ACC_GP, i, Layer::ACC_GP, i, make_cons);
     }
   }
   else if(n_lv_stripes == n_pfc_stripes + 1) { // full plus one-to-one
-    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0, make_cons); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Connect_Gp(prjn, Layer::ACC_GP, i+1, Layer::ACC_GP, i);
+      Connect_Gp(prjn, Layer::ACC_GP, i+1, Layer::ACC_GP, i, make_cons);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes) { // multi-pfc just one-to-one
     for(int i=0; i<n_pfc_stripes; i++) {
-      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i, make_cons);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes + 1) { // multi-pfc full plus one-to-one
-    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, 0, Layer::ACC_LAY, 0, make_cons); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + i, Layer::ACC_GP, i, make_cons);
     }
   }
   else if(n_lv_stripes == tot_pfc_stripes + tot_pfc_prjns) { // multi-pfc separate full plus one-to-one
-    Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx, Layer::ACC_LAY, 0); // full for first prjn
+    Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx, Layer::ACC_LAY, 0, make_cons); // full for first prjn
     for(int i=0; i<n_pfc_stripes; i++) { // then gp one-to-one
-      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx + i+1, Layer::ACC_GP, i);
+      Connect_Gp(prjn, Layer::ACC_GP, my_start_stripe + my_prjn_idx + i+1, Layer::ACC_GP, i,
+                 make_cons);
     }
   }
   else {

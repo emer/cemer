@@ -30,7 +30,7 @@ class E_API PFCLVPrjnSpec : public GpCustomPrjnSpecBase {
 INHERITED(GpCustomPrjnSpecBase)
 public:
 
-  void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn, bool make_cons);
 
   TA_BASEFUNS_NOCOPY(PFCLVPrjnSpec);
 protected:

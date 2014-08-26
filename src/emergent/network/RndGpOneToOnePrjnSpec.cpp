@@ -31,7 +31,7 @@ void RndGpOneToOnePrjnSpec::UpdateAfterEdit_impl() {
   if(p_con < 0.0f) p_con = 0.0f;
 }
 
-void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
+void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(same_seed)
     rndm_seed.OldSeed();
@@ -74,26 +74,29 @@ void RndGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     if(send_no > ru_nunits) send_no = ru_nunits;
 
     // pre-allocate connections
-    for(int rui=0; rui < ru_nunits; rui++) {
-      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-      ru->RecvConsPreAlloc(recv_no, prjn);
-    }
-    for(int sui=0; sui < su_nunits; sui++) {
-      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-      su->SendConsPreAlloc(send_no, prjn);
-    }
-
-    UnitPtrList perm_list;      // permution list
-    for(int rui=0; rui < ru_nunits; rui++) {
-      perm_list.Reset();
-      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+    if(!make_cons) {
+      for(int rui=0; rui < ru_nunits; rui++) {
+        Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        ru->RecvConsPreAlloc(recv_no, prjn);
+      }
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-        perm_list.Link(su);
+        su->SendConsPreAlloc(send_no, prjn);
       }
-      perm_list.Permute();
-      for(int j=0; j<recv_no; j++)
-        ru->ConnectFrom((Unit*)perm_list[j], prjn);
+    }
+    else {
+      UnitPtrList perm_list;      // permution list
+      for(int rui=0; rui < ru_nunits; rui++) {
+        perm_list.Reset();
+        Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        for(int sui=0; sui < su_nunits; sui++) {
+          Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+          perm_list.Link(su);
+        }
+        perm_list.Permute();
+        for(int j=0; j<recv_no; j++)
+          ru->ConnectFrom((Unit*)perm_list[j], prjn);
+      }
     }
   }
 }

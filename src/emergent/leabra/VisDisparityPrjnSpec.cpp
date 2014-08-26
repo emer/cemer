@@ -39,7 +39,7 @@ void VisDisparityPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 
-void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
+void VisDisparityPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -76,12 +76,12 @@ void VisDisparityPrjnSpec::Connect_impl(Projection* prjn) {
   }
 
   if(prjn->recv_idx == 0)       // right eye
-    Connect_RightEye(prjn);
+    Connect_RightEye(prjn, make_cons);
   else
-    Connect_LeftEye(prjn);
+    Connect_LeftEye(prjn, make_cons);
 }
 
-void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn) {
+void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn, bool make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   taVector2i gp_geo = recv_lay->gp_geom;
@@ -93,26 +93,24 @@ void VisDisparityPrjnSpec::Connect_RightEye(Projection* prjn) {
 
   // note: could optimize this code b/c sender alloc = tot_disps so could be pre-alloc entirely
   taVector2i ruc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
-        for(int rui=0; rui<ru_n; rui++) {
-          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-          if(!ru_u) continue;
-          if(!alloc_loop)
-            ru_u->RecvConsPreAlloc(1, prjn); // just one prjn!
+  int rgpidx = 0;
+  for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+      for(int rui=0; rui<ru_n; rui++) {
+        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        if(!ru_u) continue;
+        if(!make_cons)
+          ru_u->RecvConsPreAlloc(1, prjn); // just one prjn!
 
-          int sui = rui % su_n; // just modulus -- recv from same features tot_disps times
-          Unit* su_u = send_lay->UnitAtUnGpIdx(sui, rgpidx); // rgp = sgp
-          if(!su_u) continue;
-          ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-        }
+        int sui = rui % su_n; // just modulus -- recv from same features tot_disps times
+        Unit* su_u = send_lay->UnitAtUnGpIdx(sui, rgpidx); // rgp = sgp
+        if(!su_u) continue;
+        ru_u->ConnectFrom(su_u, prjn, !make_cons);
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 
@@ -183,7 +181,7 @@ void VisDisparityPrjnSpec::InitStencils(Projection* prjn) {
   taMath_float::vec_norm_max(&v1b_weights); // max norm to 1
 }
 
-void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
+void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn, bool make_cons) {
   InitStencils(prjn);
 
   Layer* recv_lay = prjn->layer;
@@ -196,44 +194,42 @@ void VisDisparityPrjnSpec::Connect_LeftEye(Projection* prjn) {
   int ru_n = run_geo.Product();
 
   taVector2i ruc;
-  for(int alloc_loop=1; alloc_loop >= 0; alloc_loop--) {
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
-        for(int didx=0; didx < tot_disps; didx++) {
-          int dwd = v1b_widths.FastEl1d(didx);
+  int rgpidx = 0;
+  for(ruc.y = 0; ruc.y < gp_geo.y; ruc.y++) {
+    for(ruc.x = 0; ruc.x < gp_geo.x; ruc.x++, rgpidx++) {
+      for(int didx=0; didx < tot_disps; didx++) {
+        int dwd = v1b_widths.FastEl1d(didx);
 
-          int strui = didx * su_n; // starting index
-          for(int sui=0; sui<su_n; sui++) {
-            int rui = strui + sui;
-            Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-            if(!ru_u) continue;
-            if(!alloc_loop)
-              ru_u->RecvConsPreAlloc(dwd, prjn);
+        int strui = didx * su_n; // starting index
+        for(int sui=0; sui<su_n; sui++) {
+          int rui = strui + sui;
+          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+          if(!ru_u) continue;
+          if(!make_cons)
+            ru_u->RecvConsPreAlloc(dwd, prjn);
 
-            for(int twidx = 0; twidx < dwd; twidx++) {
-              int off = v1b_stencils.FastEl2d(twidx, didx);
-              // float wt = v1b_weights.FastEl2d(twidx, didx);
+          for(int twidx = 0; twidx < dwd; twidx++) {
+            int off = v1b_stencils.FastEl2d(twidx, didx);
+            // float wt = v1b_weights.FastEl2d(twidx, didx);
 
-              taVector2i suc = ruc;
-              suc.x += off;     // offset
-              taVector2i suc_wrp = suc;
-              if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
-                continue;
-              int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-              if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+            taVector2i suc = ruc;
+            suc.x += off;     // offset
+            taVector2i suc_wrp = suc;
+            if(suc_wrp.WrapClip(wrap, gp_geo) && !wrap)
+              continue;
+            int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+            if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-              Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-              if(!su_u) continue;
-              ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-            }
+            Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+            if(!su_u) continue;
+            ru_u->ConnectFrom(su_u, prjn, !make_cons);
           }
         }
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

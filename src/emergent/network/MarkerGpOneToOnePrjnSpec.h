@@ -29,7 +29,7 @@ class E_API MarkerGpOneToOnePrjnSpec : public OneToOnePrjnSpec {
   // unit_group based one-to-one connectivity for marking a projection -- all of the recv units receive from just the first unit in the sending unit group, thus providing a marker for where to receive information from the sending group
 INHERITED(OneToOnePrjnSpec)
 public:
-  void	Connect_impl(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(MarkerGpOneToOnePrjnSpec);
 private:

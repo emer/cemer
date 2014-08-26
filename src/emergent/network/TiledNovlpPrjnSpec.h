@@ -40,8 +40,8 @@ public:
 
   virtual bool	InitRFSizes(Projection* prjn); // initialize sending receptive field sizes
 
-  void Connect_impl(Projection* prjn) override;
-  virtual void 	Connect_Reciprocal(Projection* prjn);
+  void Connect_impl(Projection* prjn, bool make_cons) override;
+  virtual void 	Connect_Reciprocal(Projection* prjn, bool make_cons);
 //   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 
 //   virtual void	SelectRF(Projection* prjn);

@@ -27,7 +27,7 @@ void OneToOnePrjnSpec::Initialize() {
   self_con = true;              // doesn't make sense to not do self con!
 }
 
-void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
+void OneToOnePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   int n_recv = prjn->layer->units.leaves - recv_start;
@@ -37,11 +37,11 @@ void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
 
   if(use_gp) {
     if(prjn->layer->unit_groups && prjn->layer->un_geom.n >= n_send) {
-      ConnectRecvGp_impl(prjn);
+      ConnectRecvGp_impl(prjn, make_cons);
       return;
     }
     else if(prjn->from->unit_groups && prjn->from->un_geom.n >= n_recv) {
-      ConnectSendGp_impl(prjn);
+      ConnectSendGp_impl(prjn, make_cons);
       return;
     }
   }
@@ -55,14 +55,18 @@ void OneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     Unit* ru = (Unit*)prjn->layer->units.Leaf(recv_start + i);
     Unit* su = (Unit*)prjn->from->units.Leaf(send_start + i);
     if(self_con || (ru != su)) {
-      ru->RecvConsPreAlloc(1, prjn);
-      su->SendConsPreAlloc(1, prjn);
-      ru->ConnectFrom(su, prjn);
+      if(!make_cons) {
+        ru->RecvConsPreAlloc(1, prjn);
+        su->SendConsPreAlloc(1, prjn);
+      }
+      else {
+        ru->ConnectFrom(su, prjn);
+      }
     }
   }
 }
 
-void OneToOnePrjnSpec::ConnectRecvGp_impl(Projection* prjn) {
+void OneToOnePrjnSpec::ConnectRecvGp_impl(Projection* prjn, bool make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
@@ -83,16 +87,20 @@ void OneToOnePrjnSpec::ConnectRecvGp_impl(Projection* prjn) {
       Unit* ru = recv_lay->UnitAccess(acc_md, recv_start + i, gi);
       Unit* su = (Unit*)prjn->from->units.Leaf(send_start + i);
       if(self_con || (ru != su)) {
-        ru->RecvConsPreAlloc(1, prjn);
-        if(gi == 0)
-          su->SendConsPreAlloc(n_gps, prjn);
-        ru->ConnectFrom(su, prjn);
+        if(!make_cons) {
+          ru->RecvConsPreAlloc(1, prjn);
+          if(gi == 0)
+            su->SendConsPreAlloc(n_gps, prjn);
+        }
+        else {
+          ru->ConnectFrom(su, prjn);
+        }
       }
     }
   }
 }
 
-void OneToOnePrjnSpec::ConnectSendGp_impl(Projection* prjn) {
+void OneToOnePrjnSpec::ConnectSendGp_impl(Projection* prjn, bool make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
@@ -113,10 +121,14 @@ void OneToOnePrjnSpec::ConnectSendGp_impl(Projection* prjn) {
       Unit* ru = (Unit*)prjn->layer->units.Leaf(recv_start + i);
       Unit* su = send_lay->UnitAccess(acc_md, send_start + i, gi);
       if(self_con || (ru != su)) {
-        if(gi == 0)
-          ru->RecvConsPreAlloc(n_gps, prjn);
-        su->SendConsPreAlloc(1, prjn);
-        ru->ConnectFrom(su, prjn);
+        if(!make_cons) {
+          if(gi == 0)
+            ru->RecvConsPreAlloc(n_gps, prjn);
+          su->SendConsPreAlloc(1, prjn);
+        }
+        else {
+          ru->ConnectFrom(su, prjn);
+        }
       }
     }
   }

@@ -100,7 +100,7 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
 
   void C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
   // calls one of the four InitWeights fns below according to use of unit groups
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
   // enables flexibility whether to use unit group indexing (default) or not
   virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg, Unit* ru);
   // uses flat idx'ing of both send and recv layers (just unit positions)

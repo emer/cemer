@@ -27,15 +27,14 @@
 eTypeDef_Of(RandomPrjnSpec);
 
 class E_API RandomPrjnSpec : public ProjectionSpec {
-  // Connects all units with probability p_con.
+  // Connects all units with probability p_con -- note it ALWAYS uses the same seed, because of the two-pass nature of the connection process -- you can update rndm_seed prior to connecting to get different patterns of connectivity
 INHERITED(ProjectionSpec)
 public:
   float		p_con;		// overall probability of connection
   bool		sym_self;	// if a self projection, make it symmetric (senders = receivers) otherwise it is not
-  bool		same_seed;	// use the same random seed each time (same connect pattern)
-  RndSeed	rndm_seed;	// #HIDDEN random seed
+  RndSeed	rndm_seed;	// random seed -- call NewSeed() to get a new random connectivity pattern
 
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(RandomPrjnSpec);
 protected:

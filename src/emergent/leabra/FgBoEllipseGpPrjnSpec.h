@@ -84,7 +84,7 @@ public:
   virtual void	CreateStencils();
   // create stencil -- always done as first step in connection function
 
-  void	Connect_impl(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
   void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
 
   virtual FgBoEllipseGpPrjnEl* NewGroupSpec();

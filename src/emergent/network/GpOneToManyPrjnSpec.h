@@ -41,7 +41,7 @@ public:
   // get number of connection groups for the projection
 
   void	PreConnect(Projection* prjn) override;
-  void	Connect_impl(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(GpOneToManyPrjnSpec);
 private:

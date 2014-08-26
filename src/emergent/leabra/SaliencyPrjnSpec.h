@@ -42,11 +42,11 @@ public:
 
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   
-  void 		Connect_impl(Projection* prjn);
+  void 		Connect_impl(Projection* prjn, bool make_cons);
   void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
 
-  virtual void 	Connect_feat_only(Projection* prjn);
-  virtual void 	Connect_full_dog(Projection* prjn);
+  virtual void 	Connect_feat_only(Projection* prjn, bool make_cons);
+  virtual void 	Connect_full_dog(Projection* prjn, bool make_cons);
 
   virtual void	GraphFilter(DataTable* disp_data);
   // #BUTTON #NULL_OK plot the DoG center-surround weights into data table and generate a graph

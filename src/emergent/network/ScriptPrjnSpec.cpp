@@ -22,10 +22,12 @@ TA_BASEFUNS_CTORS_DEFN(ScriptPrjnSpec);
 
 void ScriptPrjnSpec::Initialize() {
   prjn = NULL;
+  make_cons = false;
 }
 
 void ScriptPrjnSpec::Destroy() {
   prjn = NULL;
+  make_cons = false;
 }
 
 void ScriptPrjnSpec::InitLinks() {
@@ -50,8 +52,9 @@ void ScriptPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
     "The script did not compile -- please recompile and check console for errors");
 }
 
-void ScriptPrjnSpec::Connect_impl(Projection* prj) {
+void ScriptPrjnSpec::Connect_impl(Projection* prj, bool make_cns) {
   prjn = prj;                   // set the arg for the script
+  make_cons = make_cns;
   RunScript();
   prjn = NULL;
 }

@@ -346,7 +346,7 @@ public:
   //	Misc Housekeeping, non Compute functions
 
   void	GetInSubGp();
-  bool	BuildUnits() override;
+  void	BuildUnits() override;
 
   void	InitLinks();
   void	CutLinks();

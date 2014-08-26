@@ -120,7 +120,7 @@ void GpOneToManyPrjnSpec::PreConnect(Projection* prjn) {
   }
 }
 
-void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
+void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   int orig_recv_idx = prjn->recv_idx;
@@ -150,18 +150,21 @@ void GpOneToManyPrjnSpec::Connect_impl(Projection* prjn) {
       if(n_con_groups == RECV_SEND_PAIR)
         prjn->send_idx = orig_send_idx + r;
 
-      // then its full connectivity..
-      FOREACH_ELEM_IN_GROUP(Unit, ru, *rgp) {
-        ru->RecvConsPreAlloc(sgp->leaves, prjn);
-      }
-      FOREACH_ELEM_IN_GROUP(Unit, su, *sgp) {
-        su->SendConsPreAlloc(rgp->leaves, prjn);
-      }
-
-      FOREACH_ELEM_IN_GROUP(Unit, ru, *rgp) {
+      if(!make_cons) {
+        // then its full connectivity..
+        FOREACH_ELEM_IN_GROUP(Unit, ru, *rgp) {
+          ru->RecvConsPreAlloc(sgp->leaves, prjn);
+        }
         FOREACH_ELEM_IN_GROUP(Unit, su, *sgp) {
-          if(self_con || (ru != su))
-            ru->ConnectFrom(su, prjn);
+          su->SendConsPreAlloc(rgp->leaves, prjn);
+        }
+      }
+      else {
+        FOREACH_ELEM_IN_GROUP(Unit, ru, *rgp) {
+          FOREACH_ELEM_IN_GROUP(Unit, su, *sgp) {
+            if(self_con || (ru != su))
+              ru->ConnectFrom(su, prjn);
+          }
         }
       }
     }

@@ -363,9 +363,9 @@ public:
       wv.load(wts+i);
       Vec8f dp = wv * sa;
       Vec8f rnet;
-      rnet.load(send_netin_vec + unit_idxs[i+0]);
+      rnet.load(send_netin_vec + unit_idxs[i]);
       rnet += dp;
-      rnet.store(send_netin_vec + unit_idxs[i+0]);
+      rnet.store(send_netin_vec + unit_idxs[i]);
 
       // send_netin_vec[unit_idxs[i+0]] += dp[0];
       // send_netin_vec[unit_idxs[i+1]] += dp[1];

@@ -17,6 +17,7 @@
 #include <iostream>
 #include <memory>
 #include <cstring>
+#include <stdlib.h>
 
 // todo: ifdef for gcc instead of clang
 // #include <random>
@@ -28,6 +29,7 @@ float rand_float() {
   return r;
 }
 
+static int n_bad_alloc = 0;
 
 //////////////////////////////////////////////////
 //      LeabraNetwork
@@ -183,10 +185,17 @@ void LeabraSendCons::AllocCons(int sz) {
   alloc_size = sz;
   if(alloc_size == 0) return;
   cons_own = (float**)calloc(N_CON_VARS, sizeof(float*));
+  //  cons_own = (float**)aligned_alloc(32, N_CON_VARS* sizeof(float*));
+  //  posix_memalign((void**)&cons_own, 64, N_CON_VARS * sizeof(float*));
   for(int i=0; i< N_CON_VARS; i++) {
     cons_own[i] = (float*)calloc(alloc_size, sizeof(float));
+    //    posix_memalign((void**)(cons_own + i), 32, alloc_size * sizeof(float));
+    if(((size_t)cons_own[i] & 31) != 0) { // check for alignment
+      n_bad_alloc++;
+    }
   }
-  unit_idxs = (int*)calloc(alloc_size, sizeof(int));
+  //  unit_idxs = (int*)calloc(alloc_size, sizeof(int));
+  posix_memalign((void**)(&unit_idxs), 32, alloc_size * sizeof(int));
 }
 
 void LeabraSendCons::FreeCons() {
@@ -289,6 +298,10 @@ int main(int argc, char* argv[]) {
   net.BuildUnits(n_units);
   net.ConnectUnits(n_per_un, n_layers, n_prjns);
 
+  if(n_bad_alloc > 0) {
+    std::cout << "n bad alloc (not 32 bit aligned): " << n_bad_alloc << std::endl;
+  }
+  
   TimeUsedHR time_used;
   time_used.StartTimer(true);
   

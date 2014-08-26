@@ -25,12 +25,12 @@
 
 inline Unit* BaseCons::Un(int idx, Network* net) const {
   if(!InRange(idx)) return NULL;
-  return net->UnFmIdx(unit_idxs[idx]);
+  return net->UnFmIdx(UnIdx(idx));
 }
 
 inline bool BaseCons::SetUn(int idx, Unit* un) {
   if(!InRange(idx)) return false;
-  unit_idxs[idx] = un->flat_idx;
+  UnIdx(idx) = un->flat_idx;
   return true;
 }
 

@@ -38,7 +38,7 @@ public:
 			    Layer::AccessMode racc_md, int n_recv);
   // allocate send cons for given send gp, for given number of recv groups
   virtual void Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
-			  Layer::AccessMode sacc_md, int sgpidx,
+			  Layer::AccessMode sacc_md, int sgpidx, bool make_cons,
 			  int extra_rgp_alloc = 0, int extra_sgp_alloc = 0);
   // make a projection from all senders in sugp into all receivers in rugp -- if extra_*gp_alloc > 0 then alloc this many extra groups worth of [recv/send] for the [recv/send] -- use -1 for already allocated to prevent re-allocation
 

@@ -74,7 +74,7 @@ bool TiledRFPrjnSpec::InitRFSizes(Projection* prjn) {
   return true;
 }
 
-void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
+void TiledRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!InitRFSizes(prjn)) return;
   int n_cons = rf_width.Product();
   taVector2i ruc;
@@ -84,42 +84,40 @@ void TiledRFPrjnSpec::Connect_impl(Projection* prjn) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
-      for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
+  for(ruc.y = recv_gp_border.y; ruc.y < recv_gp_ed.y; ruc.y++) {
+    for(ruc.x = recv_gp_border.x; ruc.x < recv_gp_ed.x; ruc.x++) {
 
-        if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
-           (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
+      if((ruc.y >= recv_gp_ex_st.y) && (ruc.y < recv_gp_ex_ed.y) &&
+         (ruc.x >= recv_gp_ex_st.x) && (ruc.x < recv_gp_ex_ed.x)) continue;
 
-        int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
-        if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
+      int rgpidx = recv_lay->UnitGpIdxFmPos(ruc);
+      if(!recv_lay->UnitGpIdxIsValid(rgpidx)) continue;
 
-        taVector2i su_st;
-        su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
-        su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
+      taVector2i su_st;
+      su_st.x = send_border.x + (int)floor((float)(ruc.x - recv_gp_border.x) * rf_move.x);
+      su_st.y = send_border.y + (int)floor((float)(ruc.y - recv_gp_border.y) * rf_move.y);
 
-        taVector2i su_ed = su_st + rf_width;
+      taVector2i su_ed = su_st + rf_width;
 
-        for(int rui=0;rui < ru_nunits; rui++) {
-          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-          if(!alloc_loop)
-            ru_u->RecvConsPreAlloc(n_cons, prjn);
+      for(int rui=0;rui < ru_nunits; rui++) {
+        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        if(!make_cons)
+          ru_u->RecvConsPreAlloc(n_cons, prjn);
 
-          taVector2i suc;
-          for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
-            for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
-              Unit* su_u = prjn->from->UnitAtCoord(suc);
-              if(su_u == NULL) continue;
-              if(!self_con && (su_u == ru_u)) continue;
-              ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-            }
+        taVector2i suc;
+        for(suc.y = su_st.y; suc.y < su_ed.y; suc.y++) {
+          for(suc.x = su_st.x; suc.x < su_ed.x; suc.x++) {
+            Unit* su_u = prjn->from->UnitAtCoord(suc);
+            if(su_u == NULL) continue;
+            if(!self_con && (su_u == ru_u)) continue;
+            ru_u->ConnectFrom(su_u, prjn, !make_cons);
           }
         }
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

@@ -52,7 +52,7 @@ void GpCustomPrjnSpecBase::AllocGp_Send(Projection* prjn, Layer::AccessMode sacc
 }
 
 void GpCustomPrjnSpecBase::Connect_Gp(Projection* prjn, Layer::AccessMode racc_md, int rgpidx,
-			     Layer::AccessMode sacc_md, int sgpidx,
+			     Layer::AccessMode sacc_md, int sgpidx, bool make_cons,
 			     int extra_rgp_alloc, int extra_sgp_alloc) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
@@ -69,28 +69,31 @@ void GpCustomPrjnSpecBase::Connect_Gp(Projection* prjn, Layer::AccessMode racc_m
   }
 
   // pre-allocate connections!
-  if(extra_sgp_alloc >= 0) {
+  if(!make_cons) {
+    if(extra_sgp_alloc >= 0) {
+      for(int rui=0; rui < ru_nunits; rui++) {
+        Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        if(ru)
+          ru->RecvConsPreAlloc(alloc_su, prjn);
+      }
+    }
+    if(extra_rgp_alloc >= 0) {
+      for(int sui=0; sui < su_nunits; sui++) {
+        Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+        if(su)
+          su->SendConsPreAlloc(alloc_ru, prjn);
+      }
+    }
+  }
+  else {
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-      if(ru)
-	ru->RecvConsPreAlloc(alloc_su, prjn);
-    }
-  }
-  if(extra_rgp_alloc >= 0) {
-    for(int sui=0; sui < su_nunits; sui++) {
-      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-      if(su)
-	su->SendConsPreAlloc(alloc_ru, prjn);
-    }
-  }
-
-  for(int rui=0; rui < ru_nunits; rui++) {
-    Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-    if(!ru) continue;
-    for(int sui=0; sui < su_nunits; sui++) {
-      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-      if(su && (self_con || (ru != su)))
-        ru->ConnectFrom(su, prjn);
+      if(!ru) continue;
+      for(int sui=0; sui < su_nunits; sui++) {
+        Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+        if(su && (self_con || (ru != su)))
+          ru->ConnectFrom(su, prjn);
+      }
     }
   }
 }

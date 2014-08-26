@@ -709,20 +709,32 @@ void Layer::RemoveUnitGroups() {
   taMisc::DoneBusy();
 }
 
-void Layer::PreConnect() {
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
-    p->PreConnect();
-}
-
-void Layer::Connect() {
+void Layer::Connect_Sizes(Network* net) {
   taMisc::Busy();
   StructUpdate(true);
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    p->Connect();
+    p->Connect_Sizes();
   }
+
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->BuildUnits();                    // this is for the bias connections!
+    u->AllocBias();
   }
+
+  StructUpdate(false);
+  taMisc::DoneBusy();
+}
+
+void Layer::Connect_Cons(Network* net) {
+  taMisc::Busy();
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    p->Connect_Cons();
+  }
+
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    u->ConnectBias();
+  }
+
   StructUpdate(false);
   taMisc::DoneBusy();
 }

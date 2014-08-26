@@ -47,7 +47,7 @@ public:
   virtual void	CreateStencil();
   // create stencil -- always done as first step in connection function
 
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
   void Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				                 int rgpidx, int sgpidx, int alloc_loop) override;
   void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;

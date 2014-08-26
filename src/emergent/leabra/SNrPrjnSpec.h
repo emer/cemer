@@ -29,7 +29,7 @@ class E_API SNrPrjnSpec : public GpCustomPrjnSpecBase {
   // SNrThal projection -- automatically deals with the convergence and divergence of connectivity between gating-specific layers in either Matrix or PFC (INPUT, IN_MNT, OUTPUT, etc.) and the SNrThal which represents all gating types in one layer 
 INHERITED(GpCustomPrjnSpecBase)
 public:
-  void	Connect_impl(Projection* prjn);
+  void	Connect_impl(Projection* prjn, bool make_cons);
 
   TA_BASEFUNS_NOCOPY(SNrPrjnSpec);
 protected:

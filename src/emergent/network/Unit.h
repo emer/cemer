@@ -231,8 +231,12 @@ public: //
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
-  virtual bool  BuildUnits();
-  // #CAT_Structure build unit: make sure bias connection is created and right type
+  virtual void  BuildUnits();
+  // #CAT_Structure build unit -- allocate any extra unit-level memory etc
+  virtual void  AllocBias();
+  // #IGNORE allocate bias connection
+  virtual void  ConnectBias();
+  // #IGNORE self-connect bias
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built
   virtual void  RemoveCons();

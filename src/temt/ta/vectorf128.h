@@ -1,8 +1,8 @@
 /****************************  vectorf128.h   *******************************
 * Author:        Agner Fog
 * Date created:  2012-05-30
-* Last modified: 2012-08-01
-* Version:       1.02 Beta
+* Last modified: 2014-07-23
+* Version:       1.14
 * Project:       vector classes
 * Description:
 * Header file defining floating point vector classes as interface to 
@@ -17,8 +17,8 @@
 *
 * The following vector classes are defined here:
 * Vec4f     Vector of 4 single precision floating point numbers
-* Vec2d     Vector of 2 double precision floating point numbers
 * Vec4fb    Vector of 4 Booleans for use with Vec4f
+* Vec2d     Vector of 2 double precision floating point numbers
 * Vec2db    Vector of 2 Booleans for use with Vec2d
 *
 * Each vector object is represented internally in the CPU as a 128-bit register.
@@ -30,7 +30,7 @@
 *
 * For detailed instructions, see VectorClass.pdf
 *
-* (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+* (c) Copyright 2012 - 2014 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 #ifndef VECTORF128_H
 #define VECTORF128_H
@@ -76,8 +76,7 @@ static inline __m128d selectd (__m128d const & s, __m128d const & a, __m128d con
         _mm_and_pd(s,a),
         _mm_andnot_pd(s,b));
 #endif
-}
-
+} 
 
 
 /*****************************************************************************
@@ -92,41 +91,45 @@ protected:
 public:
     // Default constructor:
     Vec4fb() {
-    };
+    }
     // Constructor to broadcast the same value into all elements:
     Vec4fb(bool b) {
         xmm = _mm_castsi128_ps(_mm_set1_epi32(-(int)b));
-    };
+    }
     // Constructor to build from all elements:
     Vec4fb(bool b0, bool b1, bool b2, bool b3) {
         xmm = _mm_castsi128_ps(_mm_setr_epi32(-(int)b0, -(int)b1, -(int)b2, -(int)b3)); 
-    };
+    }
     // Constructor to convert from type __m128 used in intrinsics:
     Vec4fb(__m128 const & x) {
         xmm = x;
-    };
+    }
     // Assignment operator to convert from type __m128 used in intrinsics:
     Vec4fb & operator = (__m128 const & x) {
         xmm = x;
         return *this;
-    };
+    }
     // Type cast operator to convert to __m128 used in intrinsics
     operator __m128() const {
         return xmm;
     }
-    // Constructor to convert from type Vec4i used as Boolean for integer vectors
-    Vec4fb(Vec4i const & x) {
+    // Constructor to convert from type Vec4ib used as Boolean for integer vectors
+    Vec4fb(Vec4ib const & x) {
         xmm = _mm_castsi128_ps(x);
-    };
-    // Assignment operator to convert from type Vec4i used as Boolean for integer vectors
-    Vec4fb & operator = (Vec4i const & x) {
+    }
+    // Assignment operator to convert from type Vec4ib used as Boolean for integer vectors
+    Vec4fb & operator = (Vec4ib const & x) {
         xmm = _mm_castsi128_ps(x);
         return *this;
-    };
-    // Type cast operator to convert to type Vec4i used as Boolean for integer vectors
-    operator Vec4i() const {
+    }
+#if defined (__clang__)
+#define FIX_CLANG_VECTOR_ALIAS_AMBIGUITY  // clang 3.3 and 3.4 has silent conversion between intrinsic vector types. Will probably be fixed in v. 3.4
+#else
+    // Type cast operator to convert to type Vec4ib used as Boolean for integer vectors
+    operator Vec4ib() const {
         return _mm_castps_si128(xmm);
     }
+#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec4fb const & insert(uint32_t index, bool value) {
@@ -139,15 +142,18 @@ public:
             xmm = _mm_andnot_ps(mask,xmm);
         }
         return *this;
-    };
+    }
     // Member function extract a single element from vector
-    int extract(uint32_t index) const {
-        //return Vec4i(*this).extract(index); // problem in clang !!
-        return ((*this).operator Vec4i()).extract(index); // tell silly clang which way to go
+    bool extract(uint32_t index) const {
+        //return Vec4ib(*this).extract(index);
+        return Vec4ib(_mm_castps_si128(xmm)).extract(index);
     }
     // Extract a single element. Operator [] can only read an element, not write.
-    int operator [] (uint32_t index) const {
+    bool operator [] (uint32_t index) const {
         return extract(index);
+    }
+    static int size() {
+        return 4;
     }
 };
 
@@ -206,7 +212,7 @@ static inline Vec4fb operator ~ (Vec4fb const & a) {
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
 static inline Vec4fb operator ! (Vec4fb const & a) {
-    return Vec4fb( ! ((a).operator Vec4i())); //!!
+    return Vec4fb( ! Vec4ib(a));
 }
 
 // Functions for Vec4fb
@@ -268,19 +274,21 @@ public:
     operator __m128d() const {
         return xmm;
     }
-    // Constructor to convert from type Vec2q used as Boolean for integer vectors
-    Vec2db(Vec2q const & x) {
+    // Constructor to convert from type Vec2qb used as Boolean for integer vectors
+    Vec2db(Vec2qb const & x) {
         xmm = _mm_castsi128_pd(x);
     };
-    // Assignment operator to convert from type Vec2q used as Boolean for integer vectors
-    Vec2db & operator = (Vec2q const & x) {
+    // Assignment operator to convert from type Vec2qb used as Boolean for integer vectors
+    Vec2db & operator = (Vec2qb const & x) {
         xmm = _mm_castsi128_pd(x);
         return *this;
     };
-    // Type cast operator to convert to type Vec2q used as Boolean for integer vectors
-    operator Vec2q() const {
+#ifndef FIX_CLANG_VECTOR_ALIAS_AMBIGUITY
+    // Type cast operator to convert to type Vec2qb used as Boolean for integer vectors
+    operator Vec2qb() const {
         return _mm_castpd_si128(xmm);
     }
+#endif
     // Member function to change a single element in vector
     // Note: This function is inefficient. Use load function if changing more than one element
     Vec2db const & insert(uint32_t index, bool value) {
@@ -295,13 +303,15 @@ public:
         return *this;
     };
     // Member function extract a single element from vector
-    int extract(uint32_t index) const {
-        //return int32_t(Vec2q(*this).extract(index)); // problem in clang  !!
-        return int32_t(((*this).operator Vec2q()).extract(index)); // tell silly clang which way to go
+    bool extract(uint32_t index) const {
+        return Vec2qb(*this).extract(index);
     }
     // Extract a single element. Operator [] can only read an element, not write.
-    int operator [] (uint32_t index) const {
+    bool operator [] (uint32_t index) const {
         return extract(index);
+    }
+    static int size() {
+        return 2;
     }
 };
 
@@ -360,8 +370,7 @@ static inline Vec2db operator ~ (Vec2db const & a) {
 // (operator ! is less efficient than operator ~. Use only where not
 // all bits in an element are the same)
 static inline Vec2db operator ! (Vec2db const & a) {
-    //return Vec2db (! Vec2q(a)); // problem in clang!!
-    return Vec2db (! (a.operator Vec2q()) );
+    return Vec2db (! Vec2qb(a));
 }
 
 // Functions for Vec2db
@@ -529,6 +538,9 @@ public:
     float operator [] (uint32_t index) const {
         return extract(index);
     }
+    static int size() {
+        return 4;
+    }
 };
 
 
@@ -689,6 +701,14 @@ static inline Vec4f & operator &= (Vec4f & a, Vec4f const & b) {
     return a;
 }
 
+// vector operator & : bitwise and of Vec4f and Vec4fb
+static inline Vec4f operator & (Vec4f const & a, Vec4fb const & b) {
+    return _mm_and_ps(a, b);
+}
+static inline Vec4f operator & (Vec4fb const & a, Vec4f const & b) {
+    return _mm_and_ps(a, b);
+}
+
 // vector operator | : bitwise or
 static inline Vec4f operator | (Vec4f const & a, Vec4f const & b) {
     return _mm_or_ps(a, b);
@@ -713,7 +733,7 @@ static inline Vec4f & operator ^= (Vec4f & a, Vec4f const & b) {
 
 // vector operator ! : logical not. Returns Boolean vector
 static inline Vec4fb operator ! (Vec4f const & a) {
-    return a == 0.0f;
+    return a == Vec4f(0.0f);
 }
 
 
@@ -729,6 +749,17 @@ static inline Vec4fb operator ! (Vec4f const & a) {
 static inline Vec4f select (Vec4fb const & s, Vec4f const & a, Vec4f const & b) {
     return selectf(s,a,b);
 }
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4f if_add (Vec4fb const & f, Vec4f const & a, Vec4f const & b) {
+    return a + (Vec4f(f) & b);
+}
+
+// Conditional multiply: For all vector elements i: result[i] = f[i] ? (a[i] * b[i]) : a[i]
+static inline Vec4f if_mul (Vec4fb const & f, Vec4f const & a, Vec4f const & b) {
+    return a * select(f, b, 1.f);
+}
+
 
 // General arithmetic functions, etc.
 
@@ -791,6 +822,8 @@ static inline Vec4f pow(Vec4f const & a, int n) {
         return Vec4f(1.0f)/pow(x,-n);  // reciprocal
     }
 }
+// prevent implicit conversion of float exponent to int
+static Vec4f pow(Vec4f const & x, float y);
 
 // Raise floating point numbers to integer power n, where n is a compile-time constant
 template <int n>
@@ -840,18 +873,23 @@ static inline Vec4f pow_n(Vec4f const & a) {
     return y;
 }
 
+// implement as function pow(vector, const_int)
 template <int n>
 static inline Vec4f pow(Vec4f const & a, Const_int_t<n>) {
     return pow_n<n>(a);
 }
 
+// implement the same as macro pow_const(vector, int)
+#define pow_const(x,n) pow_n<n>(x)
+
 
 // avoid unsafe optimization in function round
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && INSTRSET < 5
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__) && INSTRSET < 5
 static inline Vec4f round(Vec4f const & a) __attribute__ ((optimize("-fno-unsafe-math-optimizations")));
-#elif (defined (_MSC_VER) || defined(__INTEL_COMPILER)) && INSTRSET < 5
+#elif (defined (_MSC_VER) || defined(__INTEL_COMPILER) || defined(__clang__)) && INSTRSET < 5
 #pragma float_control(push) 
 #pragma float_control(precise,on)
+#define FLOAT_CONTROL_PRECISE_FOR_ROUND
 #endif
 // function round: round to nearest integer (even). (result as float vector)
 static inline Vec4f round(Vec4f const & a) {
@@ -860,14 +898,14 @@ static inline Vec4f round(Vec4f const & a) {
 #else // SSE2. Use magic number method
     // Note: assume MXCSR control register is set to rounding
     // (don't use conversion to int, it will limit the value to +/- 2^31)
-    Vec4f signmask    = _mm_castsi128_ps(constant4i<0x80000000,0x80000000,0x80000000,0x80000000>());  // -0.0
+    Vec4f signmask    = _mm_castsi128_ps(constant4i<(int)0x80000000,(int)0x80000000,(int)0x80000000,(int)0x80000000>());  // -0.0
     Vec4f magic       = _mm_castsi128_ps(constant4i<0x4B000000,0x4B000000,0x4B000000,0x4B000000>());  // magic number = 2^23
     Vec4f sign        = _mm_and_ps(a, signmask);                                    // signbit of a
     Vec4f signedmagic = _mm_or_ps(magic, sign);                                     // magic number with sign of a
     return a + signedmagic - signedmagic;                                           // round by adding magic number
 #endif
 }
-#if (defined (_MSC_VER) || defined(__INTEL_COMPILER)) && INSTRSET < 5
+#ifdef FLOAT_CONTROL_PRECISE_FOR_ROUND
 #pragma float_control(pop)
 #endif
 
@@ -976,19 +1014,21 @@ static inline Vec4f exp2(Vec4i const & n) {
     Vec4i t4 = t3 << 23;               // put exponent into position 23
     return _mm_castsi128_ps(t4);       // reinterpret as float
 }
+static Vec4f exp2(Vec4f const & x); // defined in vectormath_exp.h
+
 
 // Control word manipulaton
 // ------------------------
 // The MXCSR control word has the following bits:
 //  0:    Invalid Operation Flag
-//  1:    Denormal Flag
+//  1:    Denormal Flag (=subnormal)
 //  2:    Divide-by-Zero Flag
 //  3:    Overflow Flag
 //  4:    Underflow Flag
 //  5:    Precision Flag
-//  6:    Denormals Are Zeros
+//  6:    Denormals Are Zeros (=subnormals)
 //  7:    Invalid Operation Mask
-//  8:    Denormal Operation Mask
+//  8:    Denormal Operation Mask (=subnormal)
 //  9:    Divide-by-Zero Mask
 // 10:    Overflow Mask
 // 11:    Underflow Mask
@@ -1012,10 +1052,10 @@ static inline void set_control_word(uint32_t w) {
     _mm_setcsr(w);
 }
 
-// Function no_denormals:
+// Function no_subnormals:
 // Set "Denormals Are Zeros" and "Flush to Zero" mode to avoid the extremely
 // time-consuming denormals in case of underflow
-static inline void no_denormals() {
+static inline void no_subnormals() {
     uint32_t t1 = get_control_word();
     t1 |= (1 << 6) | (1 << 15);     // set bit 6 and 15 in MXCSR
     set_control_word(t1);
@@ -1042,6 +1082,13 @@ static inline Vec4fb sign_bit(Vec4f const & a) {
     return _mm_castsi128_ps(t2);       // reinterpret as 32-bit Boolean
 }
 
+// Function sign_combine: changes the sign of a when b has the sign bit set
+// same as select(sign_bit(b), -a, a)
+static inline Vec4f sign_combine(Vec4f const & a, Vec4f const & b) {
+    Vec4f signmask = _mm_castsi128_ps(constant4i<(int)0x80000000,(int)0x80000000,(int)0x80000000,(int)0x80000000>());  // -0.0
+    return a ^ (b & signmask);
+}
+
 // Function is_finite: gives true for elements that are normal, denormal or zero, 
 // false for INF and NAN
 // (the underscore in the name avoids a conflict with a macro in Intel's mathimf.h)
@@ -1049,7 +1096,7 @@ static inline Vec4fb is_finite(Vec4f const & a) {
     Vec4i t1 = _mm_castps_si128(a);    // reinterpret as 32-bit integer
     Vec4i t2 = t1 << 1;                // shift out sign bit
     Vec4i t3 = Vec4i(t2 & 0xFF000000) != 0xFF000000; // exponent field is not all 1s
-    return t3;
+    return Vec4ib(t3);
 }
 
 // Function is_inf: gives true for elements that are +INF or -INF
@@ -1058,7 +1105,7 @@ static inline Vec4fb is_finite(Vec4f const & a) {
 static inline Vec4fb is_inf(Vec4f const & a) {
     Vec4i t1 = _mm_castps_si128(a);    // reinterpret as 32-bit integer
     Vec4i t2 = t1 << 1;                // shift out sign bit
-    return t2 == 0xFF000000;           // exponent is all 1s, fraction is 0
+    return t2 == Vec4i(0xFF000000);    // exponent is all 1s, fraction is 0
 }
 
 // Function is_nan: gives true for elements that are +NAN or -NAN
@@ -1070,18 +1117,26 @@ static inline Vec4fb is_nan(Vec4f const & a) {
     Vec4i t3 = 0xFF000000;             // exponent mask
     Vec4i t4 = t2 & t3;                // exponent
     Vec4i t5 = _mm_andnot_si128(t3,t2);// fraction
-    return Vec4i((t4 == t3) & (t5 != 0));// exponent = all 1s and fraction != 0
+    return Vec4ib((t4 == t3) & (t5 != 0));// exponent = all 1s and fraction != 0
 }
 
-// Function is_denormal: gives true for elements that are denormal (subnormal)
+// Function is_subnormal: gives true for elements that are denormal (subnormal)
 // false for finite numbers, zero, NAN and INF
-static inline Vec4fb is_denormal(Vec4f const & a) {
+static inline Vec4fb is_subnormal(Vec4f const & a) {
     Vec4i t1 = _mm_castps_si128(a);    // reinterpret as 32-bit integer
     Vec4i t2 = t1 << 1;                // shift out sign bit
     Vec4i t3 = 0xFF000000;             // exponent mask
     Vec4i t4 = t2 & t3;                // exponent
     Vec4i t5 = _mm_andnot_si128(t3,t2);// fraction
-    return Vec4i((t4 == 0) & (t5 != 0));// exponent = 0 and fraction != 0
+    return Vec4ib((t4 == 0) & (t5 != 0));// exponent = 0 and fraction != 0
+}
+
+// Function is_zero_or_subnormal: gives true for elements that are zero or subnormal (denormal)
+// false for finite numbers, NAN and INF
+static inline Vec4fb is_zero_or_subnormal(Vec4f const & a) {
+    Vec4i t = _mm_castps_si128(a);     // reinterpret as 32-bit integer
+          t &= 0x7F800000;             // isolate exponent
+    return t == 0;                     // exponent = 0
 }
 
 // Function infinite4f: returns a vector where all elements are +INF
@@ -1089,15 +1144,9 @@ static inline Vec4f infinite4f() {
     return _mm_castsi128_ps(_mm_set1_epi32(0x7F800000));
 }
 
-// Function nan4f: returns a vector where all elements are +NAN (quiet)
-static inline Vec4f nan4f() {
-    return _mm_castsi128_ps(_mm_setr_epi32(0x7FC00010, 0x7FC00011, 0x7FC00012, 0x7FC00013));
-}
-
-// Function snan4f: returns a vector where all elements are signalling +NAN
-// Note: You can probably not rely on the behavior of signalling NANs
-static inline Vec4f snan4f() {
-    return _mm_castsi128_ps(_mm_setr_epi32(0x7F800020, 0x7F800021, 0x7F800022, 0x7F800023));
+// Function nan4f: returns a vector where all elements are NAN (quiet)
+static inline Vec4f nan4f(int n = 0x10) {
+    return _mm_castsi128_ps(_mm_set1_epi32(0x7FC00000 + n));
 }
 
 
@@ -1226,18 +1275,55 @@ static inline Vec4f blend4f(Vec4f const & a, Vec4f const & b) {
         __m128 t1 = selectf(_mm_castsi128_ps(sel1), a, b);   // select
         return  _mm_and_ps(t1, _mm_castsi128_ps(mask1));     // zero
     }
-    // general case. combine two permutes
-    __m128 a1 = permute4f <
-        (uint32_t)i0 < 4 ? i0 : -1,
-        (uint32_t)i1 < 4 ? i1 : -1,
-        (uint32_t)i2 < 4 ? i2 : -1,
-        (uint32_t)i3 < 4 ? i3 : -1  > (a);
-    __m128 b1 = permute4f <
-        (uint32_t)(i0^4) < 4 ? (i0^4) : -1,
-        (uint32_t)(i1^4) < 4 ? (i1^4) : -1,
-        (uint32_t)(i2^4) < 4 ? (i2^4) : -1,
-        (uint32_t)(i3^4) < 4 ? (i3^4) : -1  > (b);
-    return  _mm_or_ps(a1,b1);
+    // special cases unpckhps, unpcklps, shufps
+    Vec4f t;
+    if (((m1 ^ 0x05010400) & m2) == 0) {
+        t = _mm_unpacklo_ps(a, b);
+        goto DOZERO;
+    }
+    if (((m1 ^ 0x01050004) & m2) == 0) {
+        t = _mm_unpacklo_ps(b, a);
+        goto DOZERO;
+    }
+    if (((m1 ^ 0x07030602) & m2) == 0) {
+        t = _mm_unpackhi_ps(a, b);
+        goto DOZERO;
+    }
+    if (((m1 ^ 0x03070206) & m2) == 0) {
+        t = _mm_unpackhi_ps(b, a);
+        goto DOZERO;
+    }    
+    // first two elements from a, last two from b
+    if (((m1^0x04040000) & 0x04040404 & m2) == 0) {
+        t = _mm_shuffle_ps(a, b, (i0&3) + ((i1&3)<<2) + ((i2&3)<<4) + ((i3&3)<<6));
+        goto DOZERO;
+    } 
+    // first two elements from b, last two from a
+    if (((m1^0x00000404) & 0x04040404 & m2) == 0) {
+        t = _mm_shuffle_ps(b, a, (i0&3) + ((i1&3)<<2) + ((i2&3)<<4) + ((i3&3)<<6));
+        goto DOZERO;
+    }
+    {   // general case. combine two permutes
+        __m128 a1 = permute4f <
+            (uint32_t)i0 < 4 ? i0 : -1,
+            (uint32_t)i1 < 4 ? i1 : -1,
+            (uint32_t)i2 < 4 ? i2 : -1,
+            (uint32_t)i3 < 4 ? i3 : -1  > (a);
+        __m128 b1 = permute4f <
+            (uint32_t)(i0^4) < 4 ? (i0^4) : -1,
+            (uint32_t)(i1^4) < 4 ? (i1^4) : -1,
+            (uint32_t)(i2^4) < 4 ? (i2^4) : -1,
+            (uint32_t)(i3^4) < 4 ? (i3^4) : -1  > (b);
+        return  _mm_or_ps(a1,b1);
+    }
+DOZERO:
+    if ((i0|i1|i2|i3) & 0x80) {
+        // zero some elements
+        __m128i mask1 = constant4i< -int(i0>=0), -int(i1>=0), -int(i2>=0), -int(i3>=0) >();
+        t = _mm_and_ps(t,_mm_castsi128_ps(mask1));     // zero with AND mask
+    }        
+    return t;
+
 #endif // __XOP__
 }
 
@@ -1360,6 +1446,9 @@ public:
     // Operator [] can only read an element, not write.
     double operator [] (uint32_t index) const {
         return extract(index);
+    }
+    static int size() {
+        return 2;
     }
 };
 
@@ -1521,6 +1610,14 @@ static inline Vec2d & operator &= (Vec2d & a, Vec2d const & b) {
     return a;
 }
 
+// vector operator & : bitwise and of Vec2d and Vec2db
+static inline Vec2d operator & (Vec2d const & a, Vec2db const & b) {
+    return _mm_and_pd(a, b);
+}
+static inline Vec2d operator & (Vec2db const & a, Vec2d const & b) {
+    return _mm_and_pd(a, b);
+}
+
 // vector operator | : bitwise or
 static inline Vec2d operator | (Vec2d const & a, Vec2d const & b) {
     return _mm_or_pd(a, b);
@@ -1545,7 +1642,7 @@ static inline Vec2d & operator ^= (Vec2d & a, Vec2d const & b) {
 
 // vector operator ! : logical not. Returns Boolean vector
 static inline Vec2db operator ! (Vec2d const & a) {
-    return a == 0.0;
+    return a == Vec2d(0.0);
 }
 
 
@@ -1562,6 +1659,17 @@ static inline Vec2db operator ! (Vec2d const & a) {
 static inline Vec2d select (Vec2db const & s, Vec2d const & a, Vec2d const & b) {
     return selectd(s,a,b);
 }
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec2d if_add (Vec2db const & f, Vec2d const & a, Vec2d const & b) {
+    return a + (Vec2d(f) & b);
+}
+
+// Conditional multiply: For all vector elements i: result[i] = f[i] ? (a[i] * b[i]) : a[i]
+static inline Vec2d if_mul (Vec2db const & f, Vec2d const & a, Vec2d const & b) {
+    return a * select(f, b, 1.);
+}
+
 
 // General arithmetic functions, etc.
 
@@ -1622,6 +1730,9 @@ static inline Vec2d pow(Vec2d const & a, int n) {
         return Vec2d(1.0)/pow(x,-n);   // reciprocal
     }
 }
+// prevent implicit conversion of exponent to int
+static Vec2d pow(Vec2d const & x, double y);
+
 
 // Raise floating point numbers to integer power n, where n is a compile-time constant
 template <int n>
@@ -1678,9 +1789,9 @@ static inline Vec2d pow(Vec2d const & a, Const_int_t<n>) {
 
 
 // avoid unsafe optimization in function round
-#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && INSTRSET < 5
+#if defined(__GNUC__) && !defined(__INTEL_COMPILER) && !defined(__clang__) && INSTRSET < 5
 static inline Vec4f round(Vec4f const & a) __attribute__ ((optimize("-fno-unsafe-math-optimizations")));
-#elif (defined (_MSC_VER) || defined(__INTEL_COMPILER)) && INSTRSET < 5
+#elif defined (FLOAT_CONTROL_PRECISE_FOR_ROUND)
 #pragma float_control(push) 
 #pragma float_control(precise,on)
 #endif
@@ -1691,14 +1802,14 @@ static inline Vec2d round(Vec2d const & a) {
 #else // SSE2. Use magic number method
     // Note: assume MXCSR control register is set to rounding
     // (don't use conversion to int, it will limit the value to +/- 2^31)
-    Vec2d signmask    = _mm_castsi128_pd(constant4i<0,0x80000000,0,0x80000000>());  // -0.0
+    Vec2d signmask    = _mm_castsi128_pd(constant4i<0,(int)0x80000000,0,(int)0x80000000>());  // -0.0
     Vec2d magic       = _mm_castsi128_pd(constant4i<0,0x43300000,0,0x43300000>());  // magic number = 2^52
     Vec2d sign        = _mm_and_pd(a, signmask);                                    // signbit of a
     Vec2d signedmagic = _mm_or_pd(magic, sign);                                     // magic number with sign of a
     return a + signedmagic - signedmagic;                                           // round by adding magic number
 #endif
 }
-#if (defined (_MSC_VER) || defined(__INTEL_COMPILER)) && INSTRSET < 5
+#if defined (FLOAT_CONTROL_PRECISE_FOR_ROUND)
 #pragma float_control(pop)
 #endif
 
@@ -1746,14 +1857,6 @@ static inline Vec2d ceil(Vec2d const & a) {
 #endif
 }
 
-// function round_to_int: round to nearest integer (even). (result as integer vector)
-static inline Vec4i round_to_int(Vec2d const & a, Vec2d const & b) {
-    // Note: assume MXCSR control register is set to rounding
-    Vec4i t1 = _mm_cvtpd_epi32(a);
-    Vec4i t2 = _mm_cvtpd_epi32(b);
-    return blend4i<0,1,4,5> (t1, t2);
-}
-
 // function truncate_to_int: round towards zero.
 static inline Vec4i truncate_to_int(Vec2d const & a, Vec2d const & b) {
     Vec4i t1 = _mm_cvttpd_epi32(a);
@@ -1768,11 +1871,54 @@ static inline Vec2q truncate_to_int64(Vec2d const & a) {
     return Vec2q(int64_t(aa[0]), int64_t(aa[1]));
 }
 
+// function truncate_to_int64_limited: round towards zero. (inefficient)
+// result as 64-bit integer vector, but with limited range
+static inline Vec2q truncate_to_int64_limited(Vec2d const & a) {
+    // Note: assume MXCSR control register is set to rounding
+    Vec4i t1 = _mm_cvttpd_epi32(a);
+    return extend_low(t1);
+}
+
+// function round_to_int: round to nearest integer (even).
+// result as 32-bit integer vector
+static inline Vec4i round_to_int(Vec2d const & a, Vec2d const & b) {
+    // Note: assume MXCSR control register is set to rounding
+    Vec4i t1 = _mm_cvtpd_epi32(a);
+    Vec4i t2 = _mm_cvtpd_epi32(b);
+    return blend4i<0,1,4,5> (t1, t2);
+}
+// function round_to_int: round to nearest integer (even).
+// result as 32-bit integer vector. Upper two values of result are 0
+static inline Vec4i round_to_int(Vec2d const & a) {
+    Vec4i t1 = _mm_cvtpd_epi32(a);
+    return t1;
+}
+
+// function round_to_int64: round to nearest or even. (inefficient)
+static inline Vec2q round_to_int64(Vec2d const & a) {
+    return truncate_to_int64(round(a));
+}
+
+// function round_to_int: round to nearest integer (even)
+// result as 64-bit integer vector, but with limited range
+static inline Vec2q round_to_int64_limited(Vec2d const & a) {
+    // Note: assume MXCSR control register is set to rounding
+    Vec4i t1 = _mm_cvtpd_epi32(a);
+    return extend_low(t1);
+}
+
 // function to_double: convert integer vector elements to double vector (inefficient)
 static inline Vec2d to_double(Vec2q const & a) {
     int64_t aa[2];
     a.store(aa);
     return Vec2d(double(aa[0]), double(aa[1]));
+}
+
+// function to_double_limited: convert integer vector elements to double vector
+// limited to abs(x) < 2^31
+static inline Vec2d to_double_limited(Vec2q const & x) {
+    Vec4i compressed = permute4i<0,2,-256,-256>(Vec4i(x));
+    return _mm_cvtepi32_pd(compressed);
 }
 
 // function to_double_low: convert integer vector elements [0] and [1] to double vector
@@ -1836,6 +1982,7 @@ static inline Vec2d exp2(Vec2q const & n) {
     Vec2q t4 = t3 << 52;               // put exponent into position 52
     return _mm_castsi128_pd(t4);       // reinterpret as double
 }
+static Vec2d exp2(Vec2d const & x); // defined in vectormath_exp.h
 
 
 // Categorization functions
@@ -1849,20 +1996,27 @@ static inline Vec2db sign_bit(Vec2d const & a) {
     return _mm_castsi128_pd(t2);       // reinterpret as 64-bit Boolean
 }
 
+// Function sign_combine: changes the sign of a when b has the sign bit set
+// same as select(sign_bit(b), -a, a)
+static inline Vec2d sign_combine(Vec2d const & a, Vec2d const & b) {
+    Vec2d signmask = _mm_castsi128_pd(constant4i<0,(int)0x80000000,0,(int)0x80000000>());  // -0.0
+    return a ^ (b & signmask);
+}
+
 // Function is_finite: gives true for elements that are normal, denormal or zero, 
 // false for INF and NAN
 static inline Vec2db is_finite(Vec2d const & a) {
-    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as 32-bit integer
+    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as integer
     Vec2q t2 = t1 << 1;                // shift out sign bit
     Vec2q t3 = 0xFFE0000000000000ll;   // exponent mask
-    Vec2q t4 = Vec2q(t2 & t3) != t3;   // exponent field is not all 1s
+    Vec2qb t4 = Vec2q(t2 & t3) != t3;  // exponent field is not all 1s
     return t4;
 }
 
 // Function is_inf: gives true for elements that are +INF or -INF
 // false for finite numbers and NAN
 static inline Vec2db is_inf(Vec2d const & a) {
-    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as 32-bit integer
+    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as integer
     Vec2q t2 = t1 << 1;                // shift out sign bit
     return t2 == 0xFFE0000000000000ll; // exponent is all 1s, fraction is 0
 }
@@ -1870,23 +2024,31 @@ static inline Vec2db is_inf(Vec2d const & a) {
 // Function is_nan: gives true for elements that are +NAN or -NAN
 // false for finite numbers and +/-INF
 static inline Vec2db is_nan(Vec2d const & a) {
-    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as 32-bit integer
+    Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as integer
     Vec2q t2 = t1 << 1;                // shift out sign bit
     Vec2q t3 = 0xFFE0000000000000ll;   // exponent mask
     Vec2q t4 = t2 & t3;                // exponent
     Vec2q t5 = _mm_andnot_si128(t3,t2);// fraction
-    return Vec2q((t4==t3) & (t5!=0));  // exponent = all 1s and fraction != 0
+    return Vec2qb((t4==t3) & (t5!=0)); // exponent = all 1s and fraction != 0
 }
 
-// Function is_denormal: gives true for elements that are denormal (subnormal)
+// Function is_subnormal: gives true for elements that are subnormal (denormal)
 // false for finite numbers, zero, NAN and INF
-static inline Vec2db is_denormal(Vec2d const & a) {
+static inline Vec2db is_subnormal(Vec2d const & a) {
     Vec2q t1 = _mm_castpd_si128(a);    // reinterpret as 32-bit integer
     Vec2q t2 = t1 << 1;                // shift out sign bit
     Vec2q t3 = 0xFFE0000000000000ll;   // exponent mask
     Vec2q t4 = t2 & t3;                // exponent
     Vec2q t5 = _mm_andnot_si128(t3,t2);// fraction
-    return Vec2q((t4==0) & (t5!=0));   // exponent = 0 and fraction != 0
+    return Vec2qb((t4==0) & (t5!=0));  // exponent = 0 and fraction != 0
+}
+
+// Function is_zero_or_subnormal: gives true for elements that are zero or subnormal (denormal)
+// false for finite numbers, NAN and INF
+static inline Vec2db is_zero_or_subnormal(Vec2d const & a) {
+    Vec2q t = _mm_castpd_si128(a);     // reinterpret as 32-bit integer
+          t &= 0x7FF0000000000000ll;   // isolate exponent
+    return t == 0;                     // exponent = 0
 }
 
 // Function infinite2d: returns a vector where all elements are +INF
@@ -1895,14 +2057,8 @@ static inline Vec2d infinite2d() {
 }
 
 // Function nan2d: returns a vector where all elements are +NAN (quiet)
-static inline Vec2d nan2d() {
-    return _mm_castsi128_pd(_mm_setr_epi32(0x30, 0x7FF80000, 0x31, 0x7FF80000));
-}
-
-// Function snan2d: returns a vector where all elements are signalling +NAN
-// Note: You can probably not rely on the behavior of signalling NANs
-static inline Vec2d snan2d() {
-    return _mm_castsi128_pd(_mm_setr_epi32(0x40, 0x7FF00000, 0x41, 0x7FF00000));
+static inline Vec2d nan2d(int n = 0x10) {
+    return _mm_castsi128_pd(_mm_setr_epi32(n, 0x7FF80000, n, 0x7FF80000));
 }
 
 
@@ -2102,11 +2258,11 @@ static inline Vec4f lookup8(Vec4i const & index, Vec4f const & table0, Vec4f con
 #if INSTRSET >= 8  // AVX2
     __m256 tt = _mm256_insertf128_ps(_mm256_castps128_ps256(table0), table1, 1); // combine tables
 
-#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)        
-    // bug in MS VS 11 beta: operands in wrong order  //!!
+#if defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)        
+    // bug in MS VS 11 beta: operands in wrong order
     __m128 r = _mm256_castps256_ps128(_mm256_permutevar8x32_ps(_mm256_castsi256_ps(_mm256_castsi128_si256(index)), _mm256_castps_si256(tt))); 
     r = _mm_and_ps(r,r); // fix another bug in VS 11 beta (would store r as 256 bits aligned by 16)
-#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && ! defined(__INTEL_COMPILER)        
+#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && !defined(__INTEL_COMPILER) && !defined(__clang__)
     // Gcc 4.7.0 has wrong parameter type and operands in wrong order
     __m128 r = _mm256_castps256_ps128(_mm256_permutevar8x32_ps(_mm256_castsi256_ps(_mm256_castsi128_si256(index)), tt)); 
 #else
@@ -2142,11 +2298,11 @@ static inline Vec4f lookup(Vec4i const & index, float const * table) {
     if (n <= 8) {
 #if INSTRSET >= 8  // AVX2
         __m256 tt = _mm256_loadu_ps(table);
-#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)        
-        // bug in MS VS 11 beta: operands in wrong order  //!!
+#if defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)        
+        // bug in MS VS 11 beta: operands in wrong order
         __m128 r = _mm256_castps256_ps128(_mm256_permutevar8x32_ps(_mm256_castsi256_ps(_mm256_castsi128_si256(index)), _mm256_castps_si256(tt)));
         r = _mm_and_ps(r,r); // fix another bug in VS 11 beta (would store r as 256 bits aligned by 16)
-#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && ! defined(__INTEL_COMPILER)        
+#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && !defined(__INTEL_COMPILER) && !defined(__clang__)
         // Gcc 4.7.0 has wrong parameter type and operands in wrong order
         __m128 r = _mm256_castps256_ps128(_mm256_permutevar8x32_ps(_mm256_castsi256_ps(_mm256_castsi128_si256(index)), tt));
 #else
@@ -2226,6 +2382,76 @@ static inline Vec2d lookup(Vec2q const & index, double const * table) {
     uint32_t ii[4];  index1.store(ii);
     return Vec2d(table[ii[0]], table[ii[2]]);
 #endif
+}
+
+
+/*****************************************************************************
+*
+*          Gather functions with fixed indexes
+*
+*****************************************************************************/
+// Load elements from array a with indices i0, i1, i2, i3
+template <int i0, int i1, int i2, int i3>
+static inline Vec4f gather4f(void const * a) {
+    return reinterpret_f(gather4i<i0, i1, i2, i3>(a));
+}
+
+// Load elements from array a with indices i0, i1
+template <int i0, int i1>
+static inline Vec2d gather2d(void const * a) {
+    return reinterpret_d(gather2q<i0, i1>(a));
+}
+
+
+
+/*****************************************************************************
+*
+*          Horizontal scan functions
+*
+*****************************************************************************/
+
+// Get index to the first element that is true. Return -1 if all are false
+static inline int horizontal_find_first(Vec4fb const & x) {
+    return horizontal_find_first(Vec4ib(x));
+}
+
+static inline int horizontal_find_first(Vec2db const & x) {
+    return horizontal_find_first(Vec2qb(x));
+}
+
+// Count the number of elements that are true
+static inline uint32_t horizontal_count(Vec4fb const & x) {
+    return horizontal_count(Vec4ib(x));
+}
+
+static inline uint32_t horizontal_count(Vec2db const & x) {
+    return horizontal_count(Vec2qb(x));
+}
+
+/*****************************************************************************
+*
+*          Boolean <-> bitfield conversion functions
+*
+*****************************************************************************/
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4fb const & x) {
+    return to_bits(Vec4ib(x));
+}
+
+// to_Vec4fb: convert integer bitfield to boolean vector
+static inline Vec4fb to_Vec4fb(uint8_t x) {
+    return Vec4fb(to_Vec4ib(x));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec2db const & x) {
+    return to_bits(Vec2qb(x));
+}
+
+// to_Vec2db: convert integer bitfield to boolean vector
+static inline Vec2db to_Vec2db(uint8_t x) {
+    return Vec2db(to_Vec2qb(x));
 }
 
 #endif // VECTORF128_H

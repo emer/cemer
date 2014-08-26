@@ -39,7 +39,7 @@ public:
   taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer geometry (either gp or unit, depending on outer vs. inner) -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
   taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  void Connect_impl(Projection* prjn) override;
+  void  Connect_impl(Projection* prjn, bool make_cons) override;
   void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
 
   virtual bool	TrgRecvFmSend(int send_x, int send_y);

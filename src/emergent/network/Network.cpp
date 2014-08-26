@@ -122,6 +122,10 @@ void Network::Initialize() {
   old_load_cons = false;
 
   null_unit = NULL;
+  own_cons_cnt = 0;
+  own_cons_mem = NULL;
+  ptr_cons_cnt = 0;
+  ptr_cons_mem = NULL;
 
 #ifdef DMEM_COMPILE
   // dmem_net_comm = ??
@@ -475,6 +479,18 @@ void Network::Connect() {
   CheckSpecs();
   RemoveCons();
   SyncSendPrjns();
+
+  Connect_Sizes();
+  Connect_Alloc();
+  Connect_Cons();
+
+  UpdtAfterNetMod();
+  StructUpdate(false);
+  --taMisc::no_auto_expand;
+  taMisc::DoneBusy();
+}
+
+void Network::Connect_Sizes() {
   // go in reverse order so that symmetric prjns can be made in
   // response to receiver-based projections
   Layer* l;
@@ -482,13 +498,123 @@ void Network::Connect() {
   for(i=layers.leaves-1;i>=0;i--) {
     l = (Layer*)layers.Leaf(i);
     if(l->lesioned()) continue;
-    l->Connect();
+    l->Connect_Sizes(this);
   }
-  UpdtAfterNetMod();
-  StructUpdate(false);
-  --taMisc::no_auto_expand;
-  taMisc::DoneBusy();
 }
+
+void Network::Connect_Alloc() {
+  if(RecvOwnsCons())
+    Connect_Alloc_RecvOwns();
+  else
+    Connect_Alloc_SendOwns();
+}
+
+void Network::Connect_Alloc_RecvOwns() {
+  const int nu = units_flat.size;
+
+  // first collect total count
+  own_cons_cnt = 0;
+  ptr_cons_cnt = 0;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    for(int p=0;p<un->recv.size;p++) {
+      RecvCons* rc = un->recv[p];
+      own_cons_cnt += rc->OwnMemReq();
+    }
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+      ptr_cons_cnt += sc->PtrMemReq();
+    }
+    if(un->bias.alloc_size == 1) {
+      own_cons_cnt += un->bias.OwnMemReq();
+    }
+  }
+
+  // use posix_memalign to ensure that for this monster, we've got maximum possible alignment
+  posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
+  posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
+
+  // then dole it out to the units..
+  int own_cons_idx = 0;
+  int ptr_cons_idx = 0;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    for(int p=0;p<un->recv.size;p++) {
+      RecvCons* rc = un->recv[p];
+      rc->SetMemStart(own_cons_mem + own_cons_idx);
+      own_cons_idx += rc->OwnMemReq();
+    }
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+      sc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
+      ptr_cons_idx += sc->PtrMemReq();
+    }
+    if(un->bias.alloc_size == 1) {
+      un->bias.SetMemStart(own_cons_mem + own_cons_idx);
+      own_cons_idx += un->bias.OwnMemReq();
+    }
+  }
+}
+
+void Network::Connect_Alloc_SendOwns() {
+  const int nu = units_flat.size;
+
+  // first collect total count
+  own_cons_cnt = 0;
+  ptr_cons_cnt = 0;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    for(int p=0;p<un->recv.size;p++) {
+      RecvCons* rc = un->recv[p];
+      ptr_cons_cnt += rc->PtrMemReq();
+    }
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+      own_cons_cnt += sc->OwnMemReq();
+    }
+    if(un->bias.alloc_size == 1) {
+      own_cons_cnt += un->bias.OwnMemReq();
+    }
+  }
+
+  // use posix_memalign to ensure that for this monster, we've got maximum possible alignment
+  posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
+  posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
+
+  // then dole it out to the units..
+  int own_cons_idx = 0;
+  int ptr_cons_idx = 0;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    for(int p=0;p<un->recv.size;p++) {
+      RecvCons* rc = un->recv[p];
+      rc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
+      ptr_cons_idx += rc->PtrMemReq();
+    }
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+      sc->SetMemStart(own_cons_mem + own_cons_idx);
+      own_cons_idx += sc->OwnMemReq();
+    }
+    if(un->bias.alloc_size == 1) {
+      un->bias.SetMemStart(own_cons_mem + own_cons_idx);
+      own_cons_idx += un->bias.OwnMemReq();
+    }
+  }
+}
+
+void Network::Connect_Cons() {
+  // go in reverse order so that symmetric prjns can be made in
+  // response to receiver-based projections
+  Layer* l;
+  int i;
+  for(i=layers.leaves-1;i>=0;i--) {
+    l = (Layer*)layers.Leaf(i);
+    if(l->lesioned()) continue;
+    l->Connect_Cons(this);
+  }
+}
+
 
 void Network::CountRecvCons() {
   n_units = 0;

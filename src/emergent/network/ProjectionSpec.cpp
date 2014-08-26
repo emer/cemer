@@ -64,15 +64,20 @@ void ProjectionSpec::PreConnect(Projection* prjn) {
   }
 }
 
-void ProjectionSpec::Connect(Projection* prjn) {
-  prjn->RemoveCons();
+void ProjectionSpec::Connect_Sizes(Projection* prjn) {
   prjn->SetFrom();
   if(TestWarning(!(bool)prjn->from, "Connect", "from pointer is NULL -- cannot make this projection"))
     return;
-  if(prjn->off) return;
-  if(prjn->from->lesioned()) return;
+  if(prjn->off || prjn->from->lesioned()) return;
   PreConnect(prjn);
-  Connect_impl(prjn);
+  Connect_impl(prjn, false);
+}
+
+void ProjectionSpec::Connect_Cons(Projection* prjn) {
+  if(!(bool)prjn->from)
+    return;
+  if(prjn->off || prjn->from->lesioned()) return;
+  Connect_impl(prjn, true);
   Init_Weights(prjn);
   prjn->projected = true;
 }

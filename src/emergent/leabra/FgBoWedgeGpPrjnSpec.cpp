@@ -137,9 +137,9 @@ float FgBoWedgeGpPrjnSpec::ConWt_Line(int line, taVector2i& suc, taVector2i& su_
   return netwt;
 }
 
-void FgBoWedgeGpPrjnSpec::Connect_impl(Projection* prjn) {
+void FgBoWedgeGpPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   CreateStencil();
-  inherited::Connect_impl(prjn);
+  inherited::Connect_impl(prjn, make_cons);
 }
 
 void FgBoWedgeGpPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,

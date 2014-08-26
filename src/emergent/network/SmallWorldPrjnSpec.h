@@ -20,6 +20,7 @@
 #include <ProjectionSpec>
 
 // member includes:
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 
@@ -29,10 +30,11 @@ class E_API SmallWorldPrjnSpec : public ProjectionSpec {
   // Wolfgang Maass'-inspired Small World Connectivity
 INHERITED(ProjectionSpec)
 public:
+  float         lambda;         // what is this parameter?
+  DataTable     prjns;          // #HIDDEN #NO_SAVE 
+  DataTable     coords;         // #HIDDEN #NO_SAVE 
 
-  float lambda;
-
-  void	Connect_impl(Projection* prjn) override;
+  void	Connect_impl(Projection* prjn, bool make_cons) override;
 
   TA_SIMPLE_BASEFUNS(SmallWorldPrjnSpec);
 private:

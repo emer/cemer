@@ -36,6 +36,22 @@ class Projection; //
 class Layer; //
 class DataTable; //
 
+// Connection memory is allocated and controlled by the Network
+// float*  mem_start = start of this group's worth of memory -- we just cache this out from
+// the global network pool, instead of having to constantly de-ref from network with index
+
+// Memory structure for connection owners =
+// block of (con_type->members.size + 1) * sizeof(float) * alloc_size
+// where sizeof(float) *better be* same size as int32_t (4 bytes, 32 bits)
+//
+// int32_t unit_idxs = mem_start[0..alloc_size-1]  // we have to cast from the float*
+// float   con_val1 =  mem_start[alloc_size .. 2*alloc_size -1]
+// float   con_val2..
+
+// Memory for connection pointers = block of 2 * sizeof(int32_t) * alloc_size
+// int32_t unit_idxs = mem_start[0..alloc_size-1]
+// int32_t con_idxs = mem_start[alloc_size .. 2*alloc_size -1]
+
 eTypeDef_Of(BaseCons);
 
 class E_API BaseCons : public taOBase {
@@ -52,6 +68,7 @@ public:
   enum BaseConsFlags {  // note: following use base_flags so have high values to avoid conflicts
     OWN_CONS = 0x01000000,      // this guy owns the connections -- else gets links to others
     RECV_CONS = 0x02000000,     // we are a recv con group -- else a send con group
+    VEC_CHUNKED = 0x04000000,   // our connections are confirmed to be chunked appropriately according to the vec_chunk_targ value, and are suitable for vector-optimized computations -- for sender-based connections, this means that every vec_chunk_targ group of recv units that we send to are *contiguous* in the unit pointer list, and our size is a multiple of vec_chunk_targ (with padding to 0 "null" unit index as needed)
   };
 
   // note: define new enums for other variables, typically in ConSpec, adding from DWT
@@ -61,6 +78,7 @@ public:
   };
 
   static float  null_rval;      // #IGNORE null return value for reference funs
+  static int    vec_chunk_targ; // #READ_ONLY target chunk size for vectorized operations over connections -- typically 4 or 8 -- can be set dynamically -- affects allocation modulus
 
   int           size;           // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections currently active
   int           alloc_size;     // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW allocated size -- no more than this number of connections may be created -- it is a hard limit set by the alloc function
@@ -70,13 +88,7 @@ public:
 
   ConSpec*      m_con_spec;     // #IGNORE con spec that we use: controlled entirely by the projection!
 
-#ifndef __MAKETA__
-  union {
-    float**         cons_own;       // if we own the cons, this is their physical memory -- float* array of pointers to allocated float memory, corresponding exactly to con_type float* variables
-    int32_t*        cons_idx;       // if we don't own the cons, these are indexes into the connections of the unit on the other side of the connection, for each connection
-  };
-#endif
-  int32_t*          unit_idxs;      // #IGNORE list of unit flat_idx indexes on the other side of the connection, in index association with the connections
+  float*        mem_start;      // #IGNORE pointer into Network allocated connection memory -- we do not own this!  for owned cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for ptr cons, it is 2 * sizeof(float) * alloc_size
 
   ////////////////////////////////////////////////////////////////////////////////
   //    Primary infrastructure management routines
@@ -89,36 +101,64 @@ public:
   // #CAT_Structure is this a receiving con group?  else sending
   bool  IsSend() const  { return !HasBaseFlag(RECV_CONS); }
   // #CAT_Structure is this a sending con group?  else receiving
+  bool  IsVecChunked() const  { return HasBaseFlag(VEC_CHUNKED); }
+  // #CAT_Structure are the connections allocated in a vectorization chunk compatible manner?  if so, this is suitable for vector-optimized computations
 
   inline bool           InRange(int idx) const
   { return ((idx < size) && (idx >= 0)); }
   // #CAT_Access is index in range?
 
+  inline int            NConVars() const
+  { return con_type->members.size; }
+  // #CAT_Access number of connection-level variables
+
+  inline bool           VarInRange(int var_no) const {
+    if(var_no < 0 || var_no >= NConVars()) return false;
+    return true;
+  }
+
+  inline float*         MemBlock(int mem_block) const
+  { return mem_start + alloc_size * mem_block; }
+  // #IGNORE access given memory block -- just increments of alloc_size from mem_start -- for low-level routines
+
+  inline int            OwnMemReq()
+  { return alloc_size * (NConVars() + 1); }
+  // #IGNORE memory allocation requirements for con owner, in terms of numbers of float's/int32's
+  inline int            PtrMemReq()
+  { return alloc_size * 2; }
+  // #IGNORE memory allocation requirements for con ptr, in terms of numbers of float's/int32's
+
+  inline void           SetMemStart(float* ms) {
+    mem_start = ms;
+  }
+  // #IGNORE set our starting memory location -- called by Network Connect_Alloc routine
+
+
 #ifdef DEBUG
   inline float*         OwnCnVar(int var_no) const
   { if(TestError(!OwnCons(), "OwnCnVar", "programmer error -- don't own cons"))
       return NULL; 
-    return cons_own[var_no]; }
+    return mem_start + (alloc_size * (1 + var_no)); }
 #else
   inline float*          OwnCnVar(int var_no) const
-  { return cons_own[var_no]; }
+  { return mem_start + (alloc_size * (1 + var_no)); }
 #endif
   // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline float&          OwnCn(int idx, int var_no) const
-  { return cons_own[var_no][idx]; }
+  { return mem_start[(alloc_size * (1 + var_no)) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline const int32_t& UnIdx(int idx) const
-  { return unit_idxs[idx]; }
+  { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   inline int32_t&       UnIdx(int idx)
-  { return unit_idxs[idx]; }
+  { return ((int32_t*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   inline Unit*          Un(int idx, Network* net) const;
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
   inline Unit*          UnFmLst(int idx, Unit** flat_units) const
-  { return flat_units[unit_idxs[idx]]; }
+  { return flat_units[UnIdx(idx)]; }
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given index (goes through flat index at network level) -- this is the unit on the other end of this connection 
   Unit*                 SafeUn(int idx) const;
   // #CAT_Access safe access (range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection -- mainly for program access
@@ -131,10 +171,10 @@ public:
   // #IGNORE get BaseCons for this projection in unit at given index at other end of this connection -- uses safe access
 
   inline const int32_t& PtrCnIdx(int idx) const
-  { return cons_idx[idx]; }
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
   inline int32_t&       PtrCnIdx(int idx)
-  { return cons_idx[idx]; }
+  { return ((int32_t*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
 
   inline float&         PtrCn(int idx, int var_no, Network* net) const
@@ -178,7 +218,7 @@ public:
   virtual bool          SetConType(TypeDef* cn_tp);
   // #CAT_Structure set new connection type -- will fail (err msg, return false) if connections are already allocated -- can only set prior to allocation
   virtual void          AllocCons(int n);
-  // #CAT_Structure allocate storage for given number of connections (and Unit pointers) -- this MUST be called prior to making any new connections
+  // #CAT_Structure specify number of connections to allocate (and Unit pointers) -- called during first Connect_Sizes phase of connecting -- used for allocating proper number of connections
   virtual void          FreeCons();
   // #CAT_Structure deallocate all connection-level storage (cons and units)
   virtual bool          CopyCons(const BaseCons& cp);

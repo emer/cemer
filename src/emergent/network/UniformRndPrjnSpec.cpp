@@ -31,7 +31,7 @@ void UniformRndPrjnSpec::UpdateAfterEdit_impl() {
   if(p_con < 0.0f) p_con = 0.0f;
 }
 
-void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
+void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(same_seed)
     rndm_seed.OldSeed();
@@ -53,8 +53,11 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn) {
   if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
   // pre-allocate connections!
-  prjn->layer->RecvConsPreAlloc(recv_no, prjn);
-  prjn->from->SendConsPreAlloc(send_no, prjn);
+  if(!make_cons) {
+    prjn->layer->RecvConsPreAlloc(recv_no, prjn);
+    prjn->from->SendConsPreAlloc(send_no, prjn);
+    return;
+  }
 
   if((prjn->from.ptr() == prjn->layer) && sym_self) {
     Layer* lay = prjn->layer;

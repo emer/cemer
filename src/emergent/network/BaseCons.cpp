@@ -33,6 +33,7 @@ TA_BASEFUNS_CTORS_DEFN(BaseCons);
 using namespace std;
 
 float BaseCons::null_rval = 0.0f;
+int   BaseCons::vec_chunk_targ = 4;
 
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types
@@ -42,8 +43,7 @@ void BaseCons::Initialize() {
   other_idx = -1;
   m_con_spec = NULL;
   con_type = &TA_Connection;
-  cons_own = NULL;
-  unit_idxs = NULL;
+  mem_start = 0;
 }
 
 void BaseCons::Destroy() {
@@ -98,84 +98,6 @@ void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-// todo: confirm -- this stuff should not be needed anymore with index-based storage
-
-// int BaseCons::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
-//   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
-//   if(old_par->InheritsFrom(&TA_Network) && new_par->InheritsFrom(&TA_Network)) {
-//     // this is optimized for networks to use the getmyleafindex
-//     Network* nw_net = (Network*)new_par;
-//     Network* old_net = (Network*)old_par;
-//     for(int i=size-1; i >= 0; i--) {
-//       Unit* itm = Un(i,old_net);
-//       if(!itm) continue;
-//       Layer* old_lay = GET_OWNER(itm,Layer);
-//       int lidx = old_net->layers.FindLeafEl(old_lay);
-//       int uidx = itm->GetMyLeafIndex();
-//       if((lidx >= 0) && (uidx >= 0)) {
-//         Layer* nw_lay = (Layer*)nw_net->layers.Leaf(lidx);
-//         if(nw_lay) {
-//           Unit* nw_un = (Unit*)nw_lay->units.Leaf(uidx);
-//           if(nw_un) {
-//             SetUn(i, nw_un);
-//             nchg++;
-//           }
-//           else {
-//             RemoveConIdx(i);
-//           }
-//         }
-//       }
-//     }
-//   }
-//   else {
-//     Network* old_net = GET_OWNER(old_par, Network);
-//     for(int i=size-1; i >= 0; i--) {
-//       Unit* itm = Un(i,old_net);
-//       if(!itm) continue;
-//       taBase* old_own = itm->GetOwner(old_par->GetTypeDef());
-//       if(old_own != old_par) continue;
-//       String old_path = itm->GetPath(NULL, old_par);
-//       MemberDef* md;
-//       Unit* nitm = (Unit*)new_par->FindFromPath(old_path, md);
-//       if(nitm) {
-//         SetUn(i, nitm);
-//         nchg++;
-//       }
-//       else {
-//         RemoveConIdx(i);
-//       }
-//     }
-//   }
-//   return nchg;
-// }
-
-// int BaseCons::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
-//   Network* old_net = GET_MY_OWNER(Network);
-//   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
-//   if(size <= 0) return 0;
-//   Unit* itm = Un(0, old_net);
-//   taBase* old_par = itm->GetOwner(par_typ);
-//   nchg += UpdatePointers_NewPar(old_par, new_par);
-//   return nchg;
-// }
-
-// int BaseCons::UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) {
-//   Network* old_net = GET_MY_OWNER(Network);
-//   int nchg = inherited::UpdatePointers_NewObj(old_ptr, new_ptr);
-//   for(int i=size-1; i>=0; i--) {
-//     Unit* itm = Un(i, old_net);
-//     if(!itm) continue;
-//     if(itm == old_ptr) {           // if it is the old guy, it is by defn a link because we're not the owner..
-//       if(!new_ptr)                 // if replacement is null, just remove it
-//         RemoveConIdx(i);
-//       else
-//         SetUn(i, (Unit*)new_ptr);    // it is a link to old guy; replace it!
-//       nchg++;
-//     }
-//   }
-//   return nchg;
-// }
-
 void BaseCons::Copy_Weights(const BaseCons* src, Network* net) {
   int mx = MIN(size, src->size);
   for(int i=0; i < mx; i++) {
@@ -193,9 +115,9 @@ float& BaseCons::SafeCn(int idx, int var_no) const {
                "size:", String(size))) {
     return null_rval;
   }
-  if(TestError(var_no < 0 || var_no >= con_type->members.size,
+  if(TestError(!VarInRange(var_no),
                "SafeCn", "variable number out of range:", String(var_no),
-               "number of variables:", String(con_type->members.size))) {
+               "number of variables:", String(NConVars()))) {
     return null_rval;
   }
   Unit* un = GET_MY_OWNER(Unit);
@@ -222,9 +144,9 @@ bool BaseCons::SetCnVal(float val, int idx, int var_no) {
                "size:", String(size))) {
     return false;
   }
-  if(TestError(var_no < 0 || var_no >= con_type->members.size,
+  if(TestError(!VarInRange(var_no),
                "SetCnVal", "variable number out of range:", String(var_no),
-               "number of variables:", String(con_type->members.size))) {
+               "number of variables:", String(NConVars()))) {
     return false;
   }
   Unit* un = GET_MY_OWNER(Unit);
@@ -257,7 +179,7 @@ Unit* BaseCons::SafeUn(int idx) const {
 }
 
 int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
-                                     bool allow_null_unit) {
+                             bool allow_null_unit) {
   static bool warned_already = false;
   if(TestError(!OwnCons(), "ConnectUnOwnCn", "does not own cons!"))
     return -1;
@@ -274,7 +196,7 @@ int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
   }
   warned_already = false;
   int rval = size;
-  unit_idxs[size++] = (int32_t)un->flat_idx;
+  UnIdx(size++) = (int32_t)un->flat_idx;
   return rval;
 }
 
@@ -294,8 +216,8 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
     return false;
   }
   warned_already = false;
-  cons_idx[size] = con_idx;
-  unit_idxs[size++] = (int32_t)un->flat_idx;
+  PtrCnIdx(size) = con_idx;
+  UnIdx(size++) = (int32_t)un->flat_idx;
   return true;
 }
 
@@ -349,35 +271,17 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
 }
 
 void BaseCons::AllocCons(int sz) {
+  if(vec_chunk_targ > 1 && sz > vec_chunk_targ && (sz % vec_chunk_targ != 0)) {
+    // increase to mod chunk
+    sz = ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ;
+  }
   if(sz == alloc_size) return;
   FreeCons();
   alloc_size = sz;
-  if(alloc_size == 0) return;
-  if(OwnCons()) {
-    cons_own = (float**)calloc(con_type->members.size, sizeof(float*));
-    for(int i=0; i< con_type->members.size; i++) {
-      cons_own[i] = (float*)calloc(alloc_size, sizeof(float));
-    }
-  }
-  else {
-    cons_idx = (int32_t*)calloc(alloc_size, sizeof(int32_t));
-  }
-  unit_idxs = (int32_t*)calloc(alloc_size, sizeof(int32_t));
 }
 
 void BaseCons::FreeCons() {
-  if(OwnCons()) {
-    if(cons_own) {
-      for(int i=0; i< con_type->members.size; i++) {
-        free(cons_own[i]);
-      }
-      free(cons_own); cons_own = NULL;
-    }
-  }
-  else {
-    if(cons_idx) { free(cons_idx); cons_idx = NULL; }
-  }
-  if(unit_idxs) { free(unit_idxs); unit_idxs = NULL; }
+  mem_start = 0;
   size = 0;
   alloc_size = 0;
 }
@@ -389,15 +293,17 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   if(size == 0) return true;
 
   if(OwnCons()) {
-    for(int i=0; i< con_type->members.size; i++) {
-      memcpy(cons_own[i], (char*)cp.cons_own[i], size * sizeof(float));
+    int ncv = NConVars() + 1;
+    for(int i=0; i< ncv; i++) {
+      memcpy(MemBlock(i), (char*)cp.MemBlock(i), size * sizeof(float));
     }
   }
   else {
-    memcpy(cons_idx, (char*)cp.cons_idx, size * sizeof(int32_t));
+    for(int i=0; i< 2; i++) {
+      memcpy(MemBlock(i), (char*)cp.MemBlock(i), size * sizeof(float));
+    }
   }
 
-  memcpy(unit_idxs, (char*)cp.unit_idxs, size * sizeof(int32_t));
   return true;
 }
 
@@ -412,18 +318,19 @@ bool BaseCons::RemoveConIdx(int i, Unit* myun, Network* net) {
       if(myidx >= 0) {
         othcn->PtrCnIdx(myidx)--; // our index is decreased by 1
       }
-      for(int k=0; k<con_type->members.size; k++) {
+      int ncv = NConVars();
+      for(int k=0; k<ncv; k++) {
         OwnCn(j,k) = OwnCn(j+1,k);
       }
     }
   }
   else {
     for(int j=i; j<size-1; j++)
-      cons_idx[j] = cons_idx[j+1];
+      PtrCnIdx(j) = PtrCnIdx(j+1);
   }
 
   for(int j=i; j<size-1; j++) {
-    unit_idxs[j] = unit_idxs[j+1];
+    UnIdx(j) = UnIdx(j+1);
   }
 
   size--;
@@ -939,7 +846,8 @@ int BaseCons::Dump_Save_Cons(ostream& strm, int indent) {
   strm << "};\n";
 
   // output the connection values
-  for(int j=0; j<con_type->members.size; j++) {
+  int ncv = NConVars();
+  for(int j=0; j<ncv; j++) {
     MemberDef* md = con_type->members.FastEl(j);
     if((md->type->IsAnyPtr()) || (md->HasOption("NO_SAVE")))
       continue;

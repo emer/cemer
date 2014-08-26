@@ -1,8 +1,8 @@
 /****************************  vectori256.h   *******************************
 * Author:        Agner Fog
 * Date created:  2012-05-30
-* Last modified: 2012-08-01
-* Version:       1.02 Beta
+* Last modified: 2014-07-23
+* Version:       1.14
 * Project:       vector classes
 * Description:
 * Header file defining integer vector classes as interface to intrinsic 
@@ -13,15 +13,19 @@
 * instruction set, which must be at least AVX2. 
 *
 * The following vector classes are defined here:
-* Vec256b   Vector of 256  1-bit unsigned integers or Booleans
-* Vec32c    Vector of  32  8-bit signed   integers
-* Vec32uc   Vector of  32  8-bit unsigned integers
-* Vec16s    Vector of  16 16-bit signed   integers
-* Vec16us   Vector of  16 16-bit unsigned integers
-* Vec8i     Vector of   8 32-bit signed   integers
-* Vec8ui    Vector of   8 32-bit unsigned integers
-* Vec4q     Vector of   4 64-bit signed   integers
-* Vec4uq    Vector of   4 64-bit unsigned integers
+* Vec256b   Vector of 256  1-bit unsigned  integers or Booleans
+* Vec32c    Vector of  32  8-bit signed    integers
+* Vec32uc   Vector of  32  8-bit unsigned  integers
+* Vec32cb   Vector of  32  Booleans for use with Vec32c and Vec32uc
+* Vec16s    Vector of  16  16-bit signed   integers
+* Vec16us   Vector of  16  16-bit unsigned integers
+* Vec16sb   Vector of  16  Booleans for use with Vec16s and Vec16us
+* Vec8i     Vector of   8  32-bit signed   integers
+* Vec8ui    Vector of   8  32-bit unsigned integers
+* Vec8ib    Vector of   8  Booleans for use with Vec8i and Vec8ui
+* Vec4q     Vector of   4  64-bit signed   integers
+* Vec4uq    Vector of   4  64-bit unsigned integers
+* Vec4qb    Vector of   4  Booleans for use with Vec4q and Vec4uq
 *
 * Each vector object is represented internally in the CPU as a 256-bit register.
 * This header file defines operators and functions for these vectors.
@@ -32,7 +36,7 @@
 *
 * For detailed instructions, see VectorClass.pdf
 *
-* (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
+* (c) Copyright 2012 - 2013 GNU General Public License http://www.gnu.org/licenses
 *****************************************************************************/
 
 // check combination of header files
@@ -75,10 +79,11 @@ public:
     // Default constructor:
     Vec256b() {
     };
-    // Constructor to broadcast the same value into all elements:
-    Vec256b(int i) {
-        ymm = _mm256_set1_epi32(-(i & 1));
-    };
+    // Constructor to broadcast the same value into all elements
+    // Removed because of undesired implicit conversions
+    //Vec256b(int i) {
+    //    ymm = _mm256_set1_epi32(-(i & 1));}
+
     // Constructor to build from two Vec128b:
     Vec256b(Vec128b const & a0, Vec128b const & a1) {
         ymm = set_m128ir(a0, a1);
@@ -150,7 +155,7 @@ public:
     // Extract a single element. Use store function if extracting more than one element.
     // Operator [] can only read an element, not write.
     bool operator [] (uint32_t index) const {
-        return get_bit(index);
+        return get_bit(index) != 0;
     }
     // Member functions to split into two Vec128b:
     Vec128b get_low() const {
@@ -158,6 +163,9 @@ public:
     }
     Vec128b get_high() const {
         return _mm256_extractf128_si256(ymm,1);
+    }
+    static int size() {
+        return 256;
     }
 };
 
@@ -280,7 +288,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec32c(int i) {
-        ymm = _mm256_set1_epi8(i);
+        ymm = _mm256_set1_epi8((char)i);
     };
     // Constructor to build from all elements:
     Vec32c(int8_t i0, int8_t i1, int8_t i2, int8_t i3, int8_t i4, int8_t i5, int8_t i6, int8_t i7,
@@ -386,14 +394,65 @@ public:
     }
     Vec16c get_high() const {
 #if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
-        return _mm256_extractf128_si256(ymm,1);    // problem in MS compiler VS 11 beta
+        return _mm256_extractf128_si256(ymm,1);    // workaround bug in MS compiler VS 11
 #else
         return _mm256_extracti128_si256(ymm,1);
 #endif
     }
+    static int size() {
+        return 32;
+    }
 };
 
-// Define operators for this class
+
+/*****************************************************************************
+*
+*          Vec32cb: Vector of 32 Booleans for use with Vec32c and Vec32uc
+*
+*****************************************************************************/
+
+class Vec32cb : public Vec32c {
+public:
+    // Default constructor:
+    Vec32cb(){
+    };
+    // Constructor to convert from type __m256i used in intrinsics:
+    Vec32cb(__m256i const & x) {
+        ymm = x;
+    };
+    // Assignment operator to convert from type __m256i used in intrinsics:
+    Vec32cb & operator = (__m256i const & x) {
+        ymm = x;
+        return *this;
+    };
+    // Member functions to split into two Vec16c:
+    Vec16cb get_low() const {
+        return Vec16cb(Vec32c::get_low());
+    }
+    Vec16cb get_high() const {
+        return Vec16cb(Vec32c::get_high());
+    }
+    Vec32cb & insert (int index, bool a) {
+        Vec32c::insert(index, -(int)a);
+        return *this;
+    };    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec32c::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec32c
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec32c operator + (Vec32c const & a, Vec32c const & b) {
@@ -470,7 +529,7 @@ static inline Vec32c & operator *= (Vec32c & a, Vec32c const & b) {
 // vector operator << : shift left all elements
 static inline Vec32c operator << (Vec32c const & a, int b) {
     uint32_t mask = (uint32_t)0xFF >> (uint32_t)b;                // mask to remove bits that are shifted out
-    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8(mask));   // remove bits that will overflow
+    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8((char)mask));// remove bits that will overflow
     __m256i res   = _mm256_sll_epi16(am,_mm_cvtsi32_si128(b));   // 16-bit shifts
     return res;
 }
@@ -498,40 +557,40 @@ static inline Vec32c & operator >>= (Vec32c & a, int b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec32c operator == (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator == (Vec32c const & a, Vec32c const & b) {
     return _mm256_cmpeq_epi8(a,b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec32c operator != (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator != (Vec32c const & a, Vec32c const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comneq_epi8(a,b);
 #else  // AVX2 instruction set
-    return Vec32c(~(a == b));
+    return Vec32cb(Vec32c(~(a == b)));
 #endif
 }
 
 // vector operator > : returns true for elements for which a > b (signed)
-static inline Vec32c operator > (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator > (Vec32c const & a, Vec32c const & b) {
     return _mm256_cmpgt_epi8(a,b);
 }
 
 // vector operator < : returns true for elements for which a < b (signed)
-static inline Vec32c operator < (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator < (Vec32c const & a, Vec32c const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec32c operator >= (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator >= (Vec32c const & a, Vec32c const & b) {
 #ifdef __XOP2__  // // Possible future 256-bit XOP extension ?
     return _mm256_comge_epi8(a,b);
 #else  // SSE2 instruction set
-    return Vec32c(~(b > a));
+    return Vec32cb(Vec32c(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec32c operator <= (Vec32c const & a, Vec32c const & b) {
+static inline Vec32cb operator <= (Vec32c const & a, Vec32c const & b) {
     return b >= a;
 }
 
@@ -542,6 +601,11 @@ static inline Vec32c operator & (Vec32c const & a, Vec32c const & b) {
 static inline Vec32c operator && (Vec32c const & a, Vec32c const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec32c & operator &= (Vec32c & a, Vec32c const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec32c operator | (Vec32c const & a, Vec32c const & b) {
@@ -550,10 +614,20 @@ static inline Vec32c operator | (Vec32c const & a, Vec32c const & b) {
 static inline Vec32c operator || (Vec32c const & a, Vec32c const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec32c & operator |= (Vec32c & a, Vec32c const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec32c operator ^ (Vec32c const & a, Vec32c const & b) {
     return Vec32c(Vec256b(a) ^ Vec256b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec32c & operator ^= (Vec32c & a, Vec32c const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -562,7 +636,7 @@ static inline Vec32c operator ~ (Vec32c const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec32c operator ! (Vec32c const & a) {
+static inline Vec32cb operator ! (Vec32c const & a) {
     return _mm256_cmpeq_epi8(a,_mm256_setzero_si256());
 }
 
@@ -571,8 +645,13 @@ static inline Vec32c operator ! (Vec32c const & a) {
 // Select between two operands. Corresponds to this pseudocode:
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
-static inline Vec32c select (Vec32c const & s, Vec32c const & a, Vec32c const & b) {
+static inline Vec32c select (Vec32cb const & s, Vec32c const & a, Vec32c const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec32c if_add (Vec32cb const & f, Vec32c const & a, Vec32c const & b) {
+    return a + (Vec32c(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -581,30 +660,35 @@ static inline uint32_t horizontal_add (Vec32c const & a) {
     __m256i sum1 = _mm256_sad_epu8(a,_mm256_setzero_si256());
     __m256i sum2 = _mm256_shuffle_epi32(sum1,2);
     __m256i sum3 = _mm256_add_epi16(sum1,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4 = _mm256_extractf128_si256(sum3,1);                // bug in MS VS 11
+#else
     __m128i sum4 = _mm256_extracti128_si256(sum3,1);
+#endif
     __m128i sum5 = _mm_add_epi16(_mm256_castsi256_si128(sum3),sum4);
-    int8_t  sum6 = _mm_cvtsi128_si32(sum5);         // truncate to 8 bits
-    return  sum6;                                   // sign extend to 32 bits
+    int8_t  sum6 = (int8_t)_mm_cvtsi128_si32(sum5);                  // truncate to 8 bits
+    return  sum6;                                                    // sign extend to 32 bits
 }
 
 // Horizontal add extended: Calculates the sum of all vector elements.
 // Each element is sign-extended before addition to avoid overflow
 static inline int32_t horizontal_add_x (Vec32c const & a) {
-// #ifdef __XOP2__       // Possible future 256-bit XOP extension ?
-
-    __m256i aeven = _mm256_slli_epi16(a,8);                           // even numbered elements of a. get sign bit in position
-            aeven = _mm256_srai_epi16(aeven,8);                       // sign extend even numbered elements
-    __m256i aodd  = _mm256_srai_epi16(a,8);                           // sign extend odd  numbered elements
-    __m256i sum1  = _mm256_add_epi16(aeven,aodd);                     // add even and odd elements
-    __m256i sum2  = _mm256_hadd_epi16(sum1,sum1);                     // horizontally add 2x8 elements in 3 steps
+    __m256i aeven = _mm256_slli_epi16(a,8);                          // even numbered elements of a. get sign bit in position
+            aeven = _mm256_srai_epi16(aeven,8);                      // sign extend even numbered elements
+    __m256i aodd  = _mm256_srai_epi16(a,8);                          // sign extend odd  numbered elements
+    __m256i sum1  = _mm256_add_epi16(aeven,aodd);                    // add even and odd elements
+    __m256i sum2  = _mm256_hadd_epi16(sum1,sum1);                    // horizontally add 2x8 elements in 3 steps
     __m256i sum3  = _mm256_hadd_epi16(sum2,sum2);
     __m256i sum4  = _mm256_hadd_epi16(sum3,sum3);
-    __m128i sum5  = _mm256_extracti128_si256(sum4,1);                 // get high sum
-    __m128i sum6  = _mm_add_epi16(_mm256_castsi256_si128(sum4),sum5); // add high and low sum
-    int16_t sum7  = _mm_cvtsi128_si32(sum6);                          // 16 bit sum
-    return  sum7;                                                     // sign extend to 32 bits
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum5  = _mm256_extractf128_si256(sum4,1);                // bug in MS VS 11
+#else
+    __m128i sum5  = _mm256_extracti128_si256(sum4,1);                // get high sum
+#endif
+    __m128i sum6  = _mm_add_epi16(_mm256_castsi256_si128(sum4),sum5);// add high and low sum
+    int16_t sum7  = (int16_t)_mm_cvtsi128_si32(sum6);                // 16 bit sum
+    return  sum7;                                                    // sign extend to 32 bits
 }
-
 
 // function add_saturated: add element by element, signed with saturation
 static inline Vec32c add_saturated(Vec32c const & a, Vec32c const & b) {
@@ -675,7 +759,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec32uc(uint32_t i) {
-        ymm = _mm256_set1_epi8(i);
+        ymm = _mm256_set1_epi8((char)i);
     };
     // Constructor to build from all elements:
     Vec32uc(uint8_t i0, uint8_t i1, uint8_t i2, uint8_t i3, uint8_t i4, uint8_t i5, uint8_t i6, uint8_t i7,
@@ -752,7 +836,7 @@ static inline Vec32uc operator * (Vec32uc const & a, Vec32uc const & b) {
 // vector operator << : shift left all elements
 static inline Vec32uc operator << (Vec32uc const & a, uint32_t b) {
     uint32_t mask = (uint32_t)0xFF >> (uint32_t)b;                // mask to remove bits that are shifted out
-    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8(mask));   // remove bits that will overflow
+    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8((char)mask));// remove bits that will overflow
     __m256i res   = _mm256_sll_epi16(am,_mm_cvtsi32_si128(b));    // 16-bit shifts
     return res;
 }
@@ -765,7 +849,7 @@ static inline Vec32uc operator << (Vec32uc const & a, int32_t b) {
 // vector operator >> : shift right logical all elements
 static inline Vec32uc operator >> (Vec32uc const & a, uint32_t b) {
     uint32_t mask = (uint32_t)0xFF << (uint32_t)b;                // mask to remove bits that are shifted out
-    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8(mask));   // remove bits that will overflow
+    __m256i am    = _mm256_and_si256(a,_mm256_set1_epi8((char)mask));// remove bits that will overflow
     __m256i res   = _mm256_srl_epi16(am,_mm_cvtsi32_si128(b));    // 16-bit shifts
     return res;
 }
@@ -775,8 +859,14 @@ static inline Vec32uc operator >> (Vec32uc const & a, int32_t b) {
     return a >> (uint32_t)b;
 }
 
+// vector operator >>= : shift right artihmetic
+static inline Vec32uc & operator >>= (Vec32uc & a, uint32_t b) {
+    a = a >> b;
+    return a;
+}
+
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec32c operator >= (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator >= (Vec32uc const & a, Vec32uc const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epu8(a,b);
 #else 
@@ -785,21 +875,21 @@ static inline Vec32c operator >= (Vec32uc const & a, Vec32uc const & b) {
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec32c operator <= (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator <= (Vec32uc const & a, Vec32uc const & b) {
     return b >= a;
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec32c operator > (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator > (Vec32uc const & a, Vec32uc const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comgt_epu8(a,b);
 #else  // SSE2 instruction set
-    return Vec32c(~(b >= a));
+    return Vec32cb(Vec32c(~(b >= a)));
 #endif
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec32c operator < (Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32cb operator < (Vec32uc const & a, Vec32uc const & b) {
     return b > a;
 }
 
@@ -835,8 +925,13 @@ static inline Vec32uc operator ~ (Vec32uc const & a) {
 // for (int i = 0; i < 32; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec32uc select (Vec32c const & s, Vec32uc const & a, Vec32uc const & b) {
+static inline Vec32uc select (Vec32cb const & s, Vec32uc const & a, Vec32uc const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec32uc if_add (Vec32cb const & f, Vec32uc const & a, Vec32uc const & b) {
+    return a + (Vec32uc(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -846,9 +941,13 @@ static inline uint32_t horizontal_add (Vec32uc const & a) {
     __m256i  sum1 = _mm256_sad_epu8(a,_mm256_setzero_si256());
     __m256i  sum2 = _mm256_shuffle_epi32(sum1,2);
     __m256i  sum3 = _mm256_add_epi16(sum1,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i  sum4 = _mm256_extractf128_si256(sum3,1); // bug in MS compiler VS 11
+#else
     __m128i  sum4 = _mm256_extracti128_si256(sum3,1);
+#endif
     __m128i  sum5 = _mm_add_epi16(_mm256_castsi256_si128(sum3),sum4);
-    uint8_t  sum6 = _mm_cvtsi128_si32(sum5);          // truncate to 8 bits
+    uint8_t  sum6 = (uint8_t)_mm_cvtsi128_si32(sum5); // truncate to 8 bits
     return   sum6;                                    // zero extend to 32 bits
 }
 
@@ -858,7 +957,11 @@ static inline uint32_t horizontal_add_x (Vec32uc const & a) {
     __m256i sum1 = _mm256_sad_epu8(a,_mm256_setzero_si256());
     __m256i sum2 = _mm256_shuffle_epi32(sum1,2);
     __m256i sum3 = _mm256_add_epi16(sum1,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4 = _mm256_extractf128_si256(sum3,1); // bug in MS compiler VS 11
+#else
     __m128i sum4 = _mm256_extracti128_si256(sum3,1);
+#endif
     __m128i sum5 = _mm_add_epi16(_mm256_castsi256_si128(sum3),sum4);
     return         _mm_cvtsi128_si32(sum5);
 }
@@ -898,7 +1001,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec16s(int i) {
-        ymm = _mm256_set1_epi16(i);
+        ymm = _mm256_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec16s(int16_t i0, int16_t i1, int16_t i2,  int16_t i3,  int16_t i4,  int16_t i5,  int16_t i6,  int16_t i7,
@@ -996,9 +1099,58 @@ public:
     Vec8s get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
+    static int size() {
+        return 16;
+    }
 };
 
-// Define operators for this class
+
+/*****************************************************************************
+*
+*          Vec16sb: Vector of 16 Booleans for use with Vec16s and Vec16us
+*
+*****************************************************************************/
+class Vec16sb : public Vec16s {
+public:
+    // Default constructor:
+    Vec16sb() {
+    }
+    // Constructor to convert from type __m256i used in intrinsics:
+    Vec16sb(__m256i const & x) {
+        ymm = x;
+    }
+    // Assignment operator to convert from type __m256i used in intrinsics:
+    Vec16sb & operator = (__m256i const & x) {
+        ymm = x;
+        return *this;
+    }
+    Vec8sb get_low() const {
+        return Vec8sb(Vec16s::get_low());
+    }
+    Vec8sb get_high() const {
+        return Vec8sb(Vec16s::get_high());
+    }
+    Vec16sb & insert (int index, bool a) {
+        Vec16s::insert(index, -(int)a);
+        return *this;
+    }    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec16s::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec16s
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec16s operator + (Vec16s const & a, Vec16s const & b) {
@@ -1091,40 +1243,40 @@ static inline Vec16s & operator >>= (Vec16s & a, int b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec16s operator == (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator == (Vec16s const & a, Vec16s const & b) {
     return _mm256_cmpeq_epi16(a, b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec16s operator != (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator != (Vec16s const & a, Vec16s const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comneq_epi16(a,b);
 #else  // SSE2 instruction set
-    return Vec16s (~(a == b));
+    return Vec16sb(Vec16s(~(a == b)));
 #endif
 }
 
 // vector operator > : returns true for elements for which a > b
-static inline Vec16s operator > (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator > (Vec16s const & a, Vec16s const & b) {
     return _mm256_cmpgt_epi16(a, b);
 }
 
 // vector operator < : returns true for elements for which a < b
-static inline Vec16s operator < (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator < (Vec16s const & a, Vec16s const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec16s operator >= (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator >= (Vec16s const & a, Vec16s const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epi16(a,b);
 #else  // SSE2 instruction set
-    return Vec16s (~(b > a));
+    return Vec16sb(Vec16s(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec16s operator <= (Vec16s const & a, Vec16s const & b) {
+static inline Vec16sb operator <= (Vec16s const & a, Vec16s const & b) {
     return b >= a;
 }
 
@@ -1135,6 +1287,11 @@ static inline Vec16s operator & (Vec16s const & a, Vec16s const & b) {
 static inline Vec16s operator && (Vec16s const & a, Vec16s const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec16s & operator &= (Vec16s & a, Vec16s const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec16s operator | (Vec16s const & a, Vec16s const & b) {
@@ -1143,10 +1300,20 @@ static inline Vec16s operator | (Vec16s const & a, Vec16s const & b) {
 static inline Vec16s operator || (Vec16s const & a, Vec16s const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec16s & operator |= (Vec16s & a, Vec16s const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec16s operator ^ (Vec16s const & a, Vec16s const & b) {
     return Vec16s(Vec256b(a) ^ Vec256b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec16s & operator ^= (Vec16s & a, Vec16s const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1155,7 +1322,7 @@ static inline Vec16s operator ~ (Vec16s const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec16s operator ! (Vec16s const & a) {
+static inline Vec16sb operator ! (Vec16s const & a) {
     return _mm256_cmpeq_epi16(a,_mm256_setzero_si256());
 }
 
@@ -1165,8 +1332,13 @@ static inline Vec16s operator ! (Vec16s const & a) {
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec16s select (Vec16s const & s, Vec16s const & a, Vec16s const & b) {
+static inline Vec16s select (Vec16sb const & s, Vec16s const & a, Vec16s const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16s if_add (Vec16sb const & f, Vec16s const & a, Vec16s const & b) {
+    return a + (Vec16s(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1176,23 +1348,30 @@ static inline int32_t horizontal_add (Vec16s const & a) {
     __m256i sum1  = _mm256_hadd_epi16(a,a);                           // horizontally add 2x8 elements in 3 steps
     __m256i sum2  = _mm256_hadd_epi16(sum1,sum1);
     __m256i sum3  = _mm256_hadd_epi16(sum2,sum2); 
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4  = _mm256_extractf128_si256(sum3,1);                 // bug in MS compiler VS 11
+#else
     __m128i sum4  = _mm256_extracti128_si256(sum3,1);                 // get high part
+#endif
     __m128i sum5  = _mm_add_epi16(_mm256_castsi256_si128(sum3),sum4); // add low and high parts
-    int16_t sum6  = _mm_cvtsi128_si32(sum5);                          // truncate to 16 bits
+    int16_t sum6  = (int16_t)_mm_cvtsi128_si32(sum5);                 // truncate to 16 bits
     return  sum6;                                                     // sign extend to 32 bits
 }
 
 // Horizontal add extended: Calculates the sum of all vector elements.
 // Elements are sign extended before adding to avoid overflow
 static inline int32_t horizontal_add_x (Vec16s const & a) {
-// #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     __m256i aeven = _mm256_slli_epi32(a,16);                  // even numbered elements of a. get sign bit in position
             aeven = _mm256_srai_epi32(aeven,16);              // sign extend even numbered elements
     __m256i aodd  = _mm256_srai_epi32(a,16);                  // sign extend odd  numbered elements
     __m256i sum1  = _mm256_add_epi32(aeven,aodd);             // add even and odd elements
     __m256i sum2  = _mm256_hadd_epi32(sum1,sum1);             // horizontally add 2x4 elements in 2 steps
     __m256i sum3  = _mm256_hadd_epi32(sum2,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4  = _mm256_extractf128_si256(sum3,1);         // bug in MS compiler VS 11
+#else
     __m128i sum4  = _mm256_extracti128_si256(sum3,1);
+#endif
     __m128i sum5  = _mm_add_epi32(_mm256_castsi256_si128(sum3),sum4);
     return          _mm_cvtsi128_si32(sum5); 
 }
@@ -1243,7 +1422,6 @@ static inline Vec16s rotate_left(Vec16s const & a, int b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 16 16-bit unsigned integers
@@ -1257,7 +1435,7 @@ public:
     };
     // Constructor to broadcast the same value into all elements:
     Vec16us(uint32_t i) {
-        ymm = _mm256_set1_epi16(i);
+        ymm = _mm256_set1_epi16((int16_t)i);
     };
     // Constructor to build from all elements:
     Vec16us(uint16_t i0, uint16_t i1, uint16_t i2,  uint16_t i3,  uint16_t i4,  uint16_t i5,  uint16_t i6,  uint16_t i7,
@@ -1341,6 +1519,12 @@ static inline Vec16us operator >> (Vec16us const & a, int32_t b) {
     return a >> (uint32_t)b;
 }
 
+// vector operator >>= : shift right artihmetic
+static inline Vec16us & operator >>= (Vec16us & a, uint32_t b) {
+    a = a >> b;
+    return a;
+}
+
 // vector operator << : shift left all elements
 static inline Vec16us operator << (Vec16us const & a, uint32_t b) {
     return _mm256_sll_epi16(a,_mm_cvtsi32_si128(b)); 
@@ -1352,7 +1536,7 @@ static inline Vec16us operator << (Vec16us const & a, int32_t b) {
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec16s operator >= (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator >= (Vec16us const & a, Vec16us const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epu16(a,b);
 #else
@@ -1362,21 +1546,21 @@ static inline Vec16s operator >= (Vec16us const & a, Vec16us const & b) {
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec16s operator <= (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator <= (Vec16us const & a, Vec16us const & b) {
     return b >= a;
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec16s operator > (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator > (Vec16us const & a, Vec16us const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comgt_epu16(a,b);
 #else  // SSE2 instruction set
-    return Vec16s (~(b >= a));
+    return Vec16sb(Vec16s(~(b >= a)));
 #endif
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec16s operator < (Vec16us const & a, Vec16us const & b) {
+static inline Vec16sb operator < (Vec16us const & a, Vec16us const & b) {
     return b > a;
 }
 
@@ -1412,8 +1596,13 @@ static inline Vec16us operator ~ (Vec16us const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec16us select (Vec16s const & s, Vec16us const & a, Vec16us const & b) {
+static inline Vec16us select (Vec16sb const & s, Vec16us const & a, Vec16us const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec16us if_add (Vec16sb const & f, Vec16us const & a, Vec16us const & b) {
+    return a + (Vec16us(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1423,7 +1612,11 @@ static inline uint32_t horizontal_add (Vec16us const & a) {
     __m256i sum1  = _mm256_hadd_epi16(a,a);                           // horizontally add 2x8 elements in 3 steps
     __m256i sum2  = _mm256_hadd_epi16(sum1,sum1);
     __m256i sum3  = _mm256_hadd_epi16(sum2,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4  = _mm256_extractf128_si256(sum3,1);                 // bug in MS compiler VS 11
+#else
     __m128i sum4  = _mm256_extracti128_si256(sum3,1);                 // get high part
+#endif
     __m128i sum5  = _mm_add_epi32(_mm256_castsi256_si128(sum3),sum4); // add low and high parts
     return          _mm_cvtsi128_si32(sum5);  
 }
@@ -1431,14 +1624,17 @@ static inline uint32_t horizontal_add (Vec16us const & a) {
 // Horizontal add extended: Calculates the sum of all vector elements.
 // Each element is zero-extended before addition to avoid overflow
 static inline uint32_t horizontal_add_x (Vec16us const & a) {
-//#ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     __m256i mask  = _mm256_set1_epi32(0x0000FFFF);                    // mask for even positions
     __m256i aeven = _mm256_and_si256(a,mask);                         // even numbered elements of a
     __m256i aodd  = _mm256_srli_epi32(a,16);                          // zero extend odd numbered elements
     __m256i sum1  = _mm256_add_epi32(aeven,aodd);                     // add even and odd elements
     __m256i sum2  = _mm256_hadd_epi32(sum1,sum1);                     // horizontally add 2x4 elements in 2 steps
     __m256i sum3  = _mm256_hadd_epi32(sum2,sum2);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum4  = _mm256_extractf128_si256(sum3,1);                 // bug in MS compiler VS 11
+#else
     __m128i sum4  = _mm256_extracti128_si256(sum3,1);                 // get high part
+#endif
     __m128i sum5  = _mm_add_epi32(_mm256_castsi256_si128(sum3),sum4); // add low and high parts
     return          _mm_cvtsi128_si32(sum5);  
 }
@@ -1462,7 +1658,6 @@ static inline Vec16us max(Vec16us const & a, Vec16us const & b) {
 static inline Vec16us min(Vec16us const & a, Vec16us const & b) {
     return _mm256_min_epu16(a,b);
 }
-
 
 
 /*****************************************************************************
@@ -1575,9 +1770,58 @@ public:
     Vec4i get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
+    static int size() {
+        return 8;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec8ib: Vector of 8 Booleans for use with Vec8i and Vec8ui
+*
+*****************************************************************************/
+
+class Vec8ib : public Vec8i {
+public:
+    // Default constructor:
+    Vec8ib() {
+    }
+    // Constructor to convert from type __m256i used in intrinsics:
+    Vec8ib(__m256i const & x) {
+        ymm = x;
+    }
+    // Assignment operator to convert from type __m256i used in intrinsics:
+    Vec8ib & operator = (__m256i const & x) {
+        ymm = x;
+        return *this;
+    }
+    Vec4ib get_low() const {
+        return Vec4ib(Vec8i::get_low());
+    }
+    Vec4ib get_high() const {
+        return Vec4ib(Vec8i::get_high());
+    }
+    Vec8ib & insert (int index, bool a) {
+        Vec8i::insert(index, -(int)a);
+        return *this;
+    }
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec8i::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec8i
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec8i operator + (Vec8i const & a, Vec8i const & b) {
@@ -1670,40 +1914,40 @@ static inline Vec8i & operator >>= (Vec8i & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec8i operator == (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator == (Vec8i const & a, Vec8i const & b) {
     return _mm256_cmpeq_epi32(a, b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec8i operator != (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator != (Vec8i const & a, Vec8i const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comneq_epi32(a,b);
 #else  // SSE2 instruction set
-    return Vec8i (~(a == b));
+    return Vec8ib(Vec8i(~(a == b)));
 #endif
 }
   
 // vector operator > : returns true for elements for which a > b
-static inline Vec8i operator > (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator > (Vec8i const & a, Vec8i const & b) {
     return _mm256_cmpgt_epi32(a, b);
 }
 
 // vector operator < : returns true for elements for which a < b
-static inline Vec8i operator < (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator < (Vec8i const & a, Vec8i const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec8i operator >= (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator >= (Vec8i const & a, Vec8i const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epi32(a,b);
 #else  // SSE2 instruction set
-    return Vec8i (~(b > a));
+    return Vec8ib(Vec8i(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec8i operator <= (Vec8i const & a, Vec8i const & b) {
+static inline Vec8ib operator <= (Vec8i const & a, Vec8i const & b) {
     return b >= a;
 }
 
@@ -1714,6 +1958,11 @@ static inline Vec8i operator & (Vec8i const & a, Vec8i const & b) {
 static inline Vec8i operator && (Vec8i const & a, Vec8i const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec8i & operator &= (Vec8i & a, Vec8i const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec8i operator | (Vec8i const & a, Vec8i const & b) {
@@ -1722,10 +1971,20 @@ static inline Vec8i operator | (Vec8i const & a, Vec8i const & b) {
 static inline Vec8i operator || (Vec8i const & a, Vec8i const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec8i & operator |= (Vec8i & a, Vec8i const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec8i operator ^ (Vec8i const & a, Vec8i const & b) {
     return Vec8i(Vec256b(a) ^ Vec256b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec8i & operator ^= (Vec8i & a, Vec8i const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -1734,7 +1993,7 @@ static inline Vec8i operator ~ (Vec8i const & a) {
 }
 
 // vector operator ! : returns true for elements == 0
-static inline Vec8i operator ! (Vec8i const & a) {
+static inline Vec8ib operator ! (Vec8i const & a) {
     return _mm256_cmpeq_epi32(a, _mm256_setzero_si256());
 }
 
@@ -1744,8 +2003,13 @@ static inline Vec8i operator ! (Vec8i const & a) {
 // for (int i = 0; i < 8; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec8i select (Vec8i const & s, Vec8i const & a, Vec8i const & b) {
+static inline Vec8i select (Vec8ib const & s, Vec8i const & a, Vec8i const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8i if_add (Vec8ib const & f, Vec8i const & a, Vec8i const & b) {
+    return a + (Vec8i(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -1754,35 +2018,18 @@ static inline int32_t horizontal_add (Vec8i const & a) {
 //#ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     __m256i sum1  = _mm256_hadd_epi32(a,a);                           // horizontally add 2x4 elements in 2 steps
     __m256i sum2  = _mm256_hadd_epi32(sum1,sum1);
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum3  = _mm256_extractf128_si256(sum2,1);                 // bug in MS VS 11
+#else
     __m128i sum3  = _mm256_extracti128_si256(sum2,1);                 // get high part
+#endif
     __m128i sum4  = _mm_add_epi32(_mm256_castsi256_si128(sum2),sum3); // add low and high parts
     return          _mm_cvtsi128_si32(sum4);
 }
 
 // Horizontal add extended: Calculates the sum of all vector elements.
 // Elements are sign extended before adding to avoid overflow
-static inline int64_t horizontal_add_x (Vec8i const & a) {
-//(#ifdef __XOP2__  // Possible future 256-bit XOP extension?)
-
-    __m256i signs = _mm256_srai_epi32(a,31);                          // sign of all elements
-    __m256i a01   = _mm256_unpacklo_epi32(a,signs);                   // sign-extended a0, a1, a4, a5
-    __m256i a23   = _mm256_unpackhi_epi32(a,signs);                   // sign-extended a2, a3, a6, a7
-    __m256i sum1  = _mm256_add_epi64(a01,a23);                        // add
-    __m256i sum2  = _mm256_unpackhi_epi64(sum1,sum1);                 // odd qwords
-    __m256i sum3  = _mm256_add_epi64(sum1,sum2);                      // add qwords
-    __m128i sum4  = _mm256_extracti128_si256(sum3,1);                 // get high part
-    __m128i sum5  = _mm_add_epi64(_mm256_castsi256_si128(sum3),sum4); // add low and high parts
-#if defined (__x86_64__)
-    return          _mm_cvtsi128_si64(sum5);                          // 64 bit mode
-#else
-    union {
-        __m128i x;    // silly definition of _mm256_storel_epi64 requires __m128i
-        int64_t i;
-    } u;
-    _mm_storel_epi64(&u.x,sum5);
-    return u.i;
-#endif
-}
+// static inline int64_t horizontal_add_x (Vec8i const & a); // defined below
 
 // function add_saturated: add element by element, signed with saturation
 static inline Vec8i add_saturated(Vec8i const & a, Vec8i const & b) {
@@ -1848,7 +2095,7 @@ static inline Vec8i rotate_left(Vec8i const & a, int b) {
 
 /*****************************************************************************
 *
-*          Vector of 4 32-bit unsigned integers
+*          Vector of 8 32-bit unsigned integers
 *
 *****************************************************************************/
 
@@ -1942,6 +2189,12 @@ static inline Vec8ui operator >> (Vec8ui const & a, int32_t b) {
     return a >> (uint32_t)b;
 }
 
+// vector operator >>= : shift right logical
+static inline Vec8ui & operator >>= (Vec8ui & a, uint32_t b) {
+    a = a >> b;
+    return a;
+} 
+
 // vector operator << : shift left all elements
 static inline Vec8ui operator << (Vec8ui const & a, uint32_t b) {
     return Vec8ui ((Vec8i)a << (int32_t)b);
@@ -1953,7 +2206,7 @@ static inline Vec8ui operator << (Vec8ui const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec8i operator > (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator > (Vec8ui const & a, Vec8ui const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comgt_epu32(a,b);
 #else  // AVX2 instruction set
@@ -1965,12 +2218,12 @@ static inline Vec8i operator > (Vec8ui const & a, Vec8ui const & b) {
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec8i operator < (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator < (Vec8ui const & a, Vec8ui const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec8i operator >= (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator >= (Vec8ui const & a, Vec8ui const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epu32(a,b);
 #else
@@ -1980,7 +2233,7 @@ static inline Vec8i operator >= (Vec8ui const & a, Vec8ui const & b) {
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec8i operator <= (Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ib operator <= (Vec8ui const & a, Vec8ui const & b) {
     return b >= a;
 }
 
@@ -2016,8 +2269,13 @@ static inline Vec8ui operator ~ (Vec8ui const & a) {
 // for (int i = 0; i < 16; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec8ui select (Vec8i const & s, Vec8ui const & a, Vec8ui const & b) {
+static inline Vec8ui select (Vec8ib const & s, Vec8ui const & a, Vec8ui const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec8ui if_add (Vec8ib const & f, Vec8ui const & a, Vec8ui const & b) {
+    return a + (Vec8ui(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2028,27 +2286,7 @@ static inline uint32_t horizontal_add (Vec8ui const & a) {
 
 // Horizontal add extended: Calculates the sum of all vector elements.
 // Elements are zero extended before adding to avoid overflow
-static inline uint64_t horizontal_add_x (Vec8ui const & a) {
-//#ifdef __XOP2__  // Possible future 256-bit XOP extension ?
-    __m256i zero  = _mm256_setzero_si256();                           // 0
-    __m256i a01   = _mm256_unpacklo_epi32(a,zero);                    // zero-extended a0, a1
-    __m256i a23   = _mm256_unpackhi_epi32(a,zero);                    // zero-extended a2, a3
-    __m256i sum1  = _mm256_add_epi64(a01,a23);                        // add
-    __m256i sum2  = _mm256_unpackhi_epi64(sum1,sum1);                 // high qword
-    __m256i sum3  = _mm256_add_epi64(sum1,sum2);                      // add
-    __m128i sum4  = _mm256_extracti128_si256(sum3, 1);                // get high part
-    __m128i sum5  = _mm_add_epi64(_mm256_castsi256_si128(sum3),sum4); // add low and high parts
-#ifdef __x86_64__
-    return          _mm_cvtsi128_si64(sum5);                          // 64 bit mode
-#else
-    union {
-        __m128i x;  // silly definition of _mm256_storel_epi64 requires __m256i
-        uint64_t i;
-    } u;
-    _mm_storel_epi64(&u.x,sum5);
-    return u.i;
-#endif
-}
+// static inline uint64_t horizontal_add_x (Vec8ui const & a); // defined later
 
 // function add_saturated: add element by element, unsigned with saturation
 static inline Vec8ui add_saturated(Vec8ui const & a, Vec8ui const & b) {
@@ -2076,7 +2314,6 @@ static inline Vec8ui min(Vec8ui const & a, Vec8ui const & b) {
 }
 
 
-
 /*****************************************************************************
 *
 *          Vector of 4 64-bit signed integers
@@ -2091,9 +2328,9 @@ public:
     // Constructor to broadcast the same value into all elements:
     Vec4q(int64_t i) {
 #if defined (_MSC_VER) && ! defined (__x86_64__) && ! defined(__INTEL_COMPILER)
-        // MS compiler cannot use _mm256_set1_epi64x in 64 bit mode, and  
+        // MS compiler cannot use _mm256_set1_epi64x in 32 bit mode, and  
         // cannot put 64-bit values into xmm register without using
-        // mmx registers, and it makes no emms // !!
+        // mmx registers, and it makes no emms
         union {
             int64_t q[4];
             int32_t r[8];
@@ -2217,9 +2454,59 @@ public:
     Vec2q get_high() const {
         return _mm256_extractf128_si256(ymm,1);
     }
+    static int size() {
+        return 4;
+    }
 };
 
-// Define operators for this class
+/*****************************************************************************
+*
+*          Vec4qb: Vector of 4 Booleans for use with Vec4q and Vec4uq
+*
+*****************************************************************************/
+
+class Vec4qb : public Vec4q {
+public:
+    // Default constructor:
+    Vec4qb() {
+    }
+    // Constructor to convert from type __m256i used in intrinsics:
+    Vec4qb(__m256i const & x) {
+        ymm = x;
+    }
+    // Assignment operator to convert from type __m256i used in intrinsics:
+    Vec4qb & operator = (__m256i const & x) {
+        ymm = x;
+        return *this;
+    }
+    // Member functions to split into two Vec2qb:
+    Vec2qb get_low() const {
+        return Vec2qb(Vec4q::get_low());
+    }
+    Vec2qb get_high() const {
+        return Vec2qb(Vec4q::get_high());
+    }
+    Vec4qb & insert (int index, bool a) {
+        Vec4q::insert(index, -(int64_t)a);
+        return *this;
+    };    
+    // Member function extract a single element from vector
+    bool extract(uint32_t index) const {
+        return Vec4q::extract(index) != 0;
+    }
+    // Extract a single element. Use store function if extracting more than one element.
+    // Operator [] can only read an element, not write.
+    bool operator [] (uint32_t index) const {
+        return extract(index);
+    }
+};
+
+
+/*****************************************************************************
+*
+*          Operators for Vec4q
+*
+*****************************************************************************/
 
 // vector operator + : add element by element
 static inline Vec4q operator + (Vec4q const & a, Vec4q const & b) {
@@ -2331,40 +2618,40 @@ static inline Vec4q & operator >>= (Vec4q & a, int32_t b) {
 }
 
 // vector operator == : returns true for elements for which a == b
-static inline Vec4q operator == (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator == (Vec4q const & a, Vec4q const & b) {
     return _mm256_cmpeq_epi64(a, b);
 }
 
 // vector operator != : returns true for elements for which a != b
-static inline Vec4q operator != (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator != (Vec4q const & a, Vec4q const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comneq_epi64(a,b);
 #else 
-    return Vec4q (~(a == b));
+    return Vec4qb(Vec4q(~(a == b)));
 #endif
 }
   
 // vector operator < : returns true for elements for which a < b
-static inline Vec4q operator < (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator < (Vec4q const & a, Vec4q const & b) {
     return _mm256_cmpgt_epi64(b, a);
 }
 
 // vector operator > : returns true for elements for which a > b
-static inline Vec4q operator > (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator > (Vec4q const & a, Vec4q const & b) {
     return b < a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (signed)
-static inline Vec4q operator >= (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator >= (Vec4q const & a, Vec4q const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epi64(a,b);
 #else  // SSE2 instruction set
-    return Vec4q (~(a < b));
+    return Vec4qb(Vec4q(~(a < b)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (signed)
-static inline Vec4q operator <= (Vec4q const & a, Vec4q const & b) {
+static inline Vec4qb operator <= (Vec4q const & a, Vec4q const & b) {
     return b >= a;
 }
 
@@ -2375,6 +2662,11 @@ static inline Vec4q operator & (Vec4q const & a, Vec4q const & b) {
 static inline Vec4q operator && (Vec4q const & a, Vec4q const & b) {
     return a & b;
 }
+// vector operator &= : bitwise and
+static inline Vec4q & operator &= (Vec4q & a, Vec4q const & b) {
+    a = a & b;
+    return a;
+}
 
 // vector operator | : bitwise or
 static inline Vec4q operator | (Vec4q const & a, Vec4q const & b) {
@@ -2383,10 +2675,20 @@ static inline Vec4q operator | (Vec4q const & a, Vec4q const & b) {
 static inline Vec4q operator || (Vec4q const & a, Vec4q const & b) {
     return a | b;
 }
+// vector operator |= : bitwise or
+static inline Vec4q & operator |= (Vec4q & a, Vec4q const & b) {
+    a = a | b;
+    return a;
+}
 
 // vector operator ^ : bitwise xor
 static inline Vec4q operator ^ (Vec4q const & a, Vec4q const & b) {
     return Vec4q(Vec256b(a) ^ Vec256b(b));
+}
+// vector operator ^= : bitwise xor
+static inline Vec4q & operator ^= (Vec4q & a, Vec4q const & b) {
+    a = a ^ b;
+    return a;
 }
 
 // vector operator ~ : bitwise not
@@ -2395,8 +2697,8 @@ static inline Vec4q operator ~ (Vec4q const & a) {
 }
 
 // vector operator ! : logical not, returns true for elements == 0
-static inline Vec4q operator ! (Vec4q const & a) {
-    return a == _mm256_setzero_si256();
+static inline Vec4qb operator ! (Vec4q const & a) {
+    return a == Vec4q(_mm256_setzero_si256());
 }
 
 // Functions for this class
@@ -2405,8 +2707,13 @@ static inline Vec4q operator ! (Vec4q const & a) {
 // for (int i = 0; i < 4; i++) result[i] = s[i] ? a[i] : b[i];
 // Each byte in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4q select (Vec4q const & s, Vec4q const & a, Vec4q const & b) {
+static inline Vec4q select (Vec4qb const & s, Vec4q const & a, Vec4q const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4q if_add (Vec4qb const & f, Vec4q const & a, Vec4q const & b) {
+    return a + (Vec4q(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
@@ -2414,7 +2721,11 @@ static inline Vec4q select (Vec4q const & s, Vec4q const & a, Vec4q const & b) {
 static inline int64_t horizontal_add (Vec4q const & a) {
     __m256i sum1  = _mm256_shuffle_epi32(a,0x0E);                     // high element
     __m256i sum2  = _mm256_add_epi64(a,sum1);                         // sum
+#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
+    __m128i sum3  = _mm256_extractf128_si256(sum2, 1);                // bug in MS compiler VS 11
+#else
     __m128i sum3  = _mm256_extracti128_si256(sum2, 1);                // get high part
+#endif
     __m128i sum4  = _mm_add_epi64(_mm256_castsi256_si128(sum2),sum3); // add low and high parts
 #if defined(__x86_64__)
     return          _mm_cvtsi128_si64(sum4);                          // 64 bit mode
@@ -2464,7 +2775,6 @@ static inline Vec4q rotate_left(Vec4q const & a, int b) {
     return  rot;
 #endif
 }
-
 
 
 /*****************************************************************************
@@ -2560,6 +2870,12 @@ static inline Vec4uq operator >> (Vec4uq const & a, int32_t b) {
     return a >> (uint32_t)b;
 }
 
+// vector operator >>= : shift right artihmetic
+static inline Vec4uq & operator >>= (Vec4uq & a, uint32_t b) {
+    a = a >> b;
+    return a;
+} 
+
 // vector operator << : shift left all elements
 static inline Vec4uq operator << (Vec4uq const & a, uint32_t b) {
     return Vec4uq ((Vec4q)a << (int32_t)b);
@@ -2571,7 +2887,7 @@ static inline Vec4uq operator << (Vec4uq const & a, int32_t b) {
 }
 
 // vector operator > : returns true for elements for which a > b (unsigned)
-static inline Vec4q operator > (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator > (Vec4uq const & a, Vec4uq const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comgt_epu64(a,b);
 #else  // SSE2 instruction set
@@ -2589,21 +2905,21 @@ static inline Vec4q operator > (Vec4uq const & a, Vec4uq const & b) {
 }
 
 // vector operator < : returns true for elements for which a < b (unsigned)
-static inline Vec4q operator < (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator < (Vec4uq const & a, Vec4uq const & b) {
     return b > a;
 }
 
 // vector operator >= : returns true for elements for which a >= b (unsigned)
-static inline Vec4q operator >= (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator >= (Vec4uq const & a, Vec4uq const & b) {
 #ifdef __XOP2__  // Possible future 256-bit XOP extension ?
     return _mm256_comge_epu64(a,b);
 #else  // SSE2 instruction set
-    return  Vec4q (~(b > a));
+    return  Vec4qb(Vec4q(~(b > a)));
 #endif
 }
 
 // vector operator <= : returns true for elements for which a <= b (unsigned)
-static inline Vec4q operator <= (Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4qb operator <= (Vec4uq const & a, Vec4uq const & b) {
     return b >= a;
 }
 
@@ -2634,14 +2950,35 @@ static inline Vec4uq operator ^ (Vec4uq const & a, Vec4uq const & b) {
 // for (int i = 0; i < 4; i++) result[i] = s[i] ? a[i] : b[i];
 // Each word in s must be either 0 (false) or -1 (true). No other values are allowed.
 // (s is signed)
-static inline Vec4q select (Vec4q const & s, Vec4uq const & a, Vec4uq const & b) {
+static inline Vec4uq select (Vec4qb const & s, Vec4uq const & a, Vec4uq const & b) {
     return selectb(s,a,b);
+}
+
+// Conditional add: For all vector elements i: result[i] = f[i] ? (a[i] + b[i]) : a[i]
+static inline Vec4uq if_add (Vec4qb const & f, Vec4uq const & a, Vec4uq const & b) {
+    return a + (Vec4uq(f) & b);
 }
 
 // Horizontal add: Calculates the sum of all vector elements.
 // Overflow will wrap around
 static inline uint64_t horizontal_add (Vec4uq const & a) {
     return horizontal_add((Vec4q)a);
+}
+
+// Horizontal add extended: Calculates the sum of all vector elements.
+// Elements are sing/zero extended before adding to avoid overflow
+static inline int64_t horizontal_add_x (Vec8i const & a) {
+    __m256i signs = _mm256_srai_epi32(a,31);                          // sign of all elements
+    Vec4q   a01   = _mm256_unpacklo_epi32(a,signs);                   // sign-extended a0, a1, a4, a5
+    Vec4q   a23   = _mm256_unpackhi_epi32(a,signs);                   // sign-extended a2, a3, a6, a7
+    return  horizontal_add(a01 + a23);
+}
+
+static inline uint64_t horizontal_add_x (Vec8ui const & a) {
+    __m256i zero  = _mm256_setzero_si256();                           // 0
+    __m256i a01   = _mm256_unpacklo_epi32(a,zero);                    // zero-extended a0, a1
+    __m256i a23   = _mm256_unpackhi_epi32(a,zero);                    // zero-extended a2, a3
+    return horizontal_add(Vec4q(a01) + Vec4q(a23));
 }
 
 // function max: a > b ? a : b
@@ -2827,10 +3164,10 @@ static inline Vec8i permute8i(Vec8i const & a) {
         i2 < 0 ? -1 : (i2 & 7), i3 < 0 ? -1 : (i3 & 7),
         i4 < 0 ? -1 : (i4 & 7), i5 < 0 ? -1 : (i5 & 7),
         i6 < 0 ? -1 : (i6 & 7), i7 < 0 ? -1 : (i7 & 7) > ();
-#if defined (_MSC_VER) && _MSC_VER <= 1700 && ! defined(__INTEL_COMPILER)
-    // bug in MS VS 11 beta: operands in wrong order  //!!
+#if defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)
+    // bug in MS VS 11 beta: operands in wrong order. fixed in v. 11.0
     t1 = _mm256_permutevar8x32_epi32(mask, a);   // ms
-#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && ! defined(__INTEL_COMPILER)
+#elif defined (GCC_VERSION) && GCC_VERSION <= 40700 && !defined(__INTEL_COMPILER) && !defined(__clang__)
     // Gcc 4.7.0 also has operands in wrong order. fixed in version 4.7.1
     t1 = _mm256_permutevar8x32_epi32(mask, a);   // GCC
 #else
@@ -3957,9 +4294,9 @@ static inline Vec32c lookup(Vec32uc const & index, void const * table) {
         index1 = min(Vec32uc(index), uint8_t(n-1));
     }
     Vec8ui mask0 = Vec8ui(0x000000FF);  // mask 8 bits
-    Vec32c t0 = _mm256_i32gather_epi32((const int *)table, mask0 & Vec8ui(index1),               1); // positions 0, 4, 8,  ...
-    Vec32c t1 = _mm256_i32gather_epi32((const int *)table, mask0 & _mm256_srli_epi32(index1, 8), 1); // positions 1, 5, 9,  ...
-    Vec32c t2 = _mm256_i32gather_epi32((const int *)table, mask0 & _mm256_srli_epi32(index1,16), 1); // positions 2, 6, 10, ...
+    Vec32c t0 = _mm256_i32gather_epi32((const int *)table, __m256i(mask0 & Vec8ui(index1)),      1); // positions 0, 4, 8,  ...
+    Vec32c t1 = _mm256_i32gather_epi32((const int *)table, __m256i(mask0 & _mm256_srli_epi32(index1, 8)), 1); // positions 1, 5, 9,  ...
+    Vec32c t2 = _mm256_i32gather_epi32((const int *)table, __m256i(mask0 & _mm256_srli_epi32(index1,16)), 1); // positions 2, 6, 10, ...
     Vec32c t3 = _mm256_i32gather_epi32((const int *)table,         _mm256_srli_epi32(index1,24), 1); // positions 3, 7, 11, ...
     t0 = t0 & mask0;
     t1 = _mm256_slli_epi32(t1 & mask0,  8);
@@ -3998,19 +4335,13 @@ static inline Vec16s lookup(Vec16s const & index, void const * table) {
         // n is not a power of 2, limit to n-1
         index1 = min(Vec16us(index), n-1);
     }
-    Vec16s t1 = _mm256_i32gather_epi32((const int *)table, Vec8ui(index1) & 0x0000FFFF, 2);     // even positions
-    Vec16s t2 = _mm256_i32gather_epi32((const int *)table, _mm256_srli_epi32(index1, 16) , 2);  // odd  positions
+    Vec16s t1 = _mm256_i32gather_epi32((const int *)table, __m256i(Vec8ui(index1) & 0x0000FFFF), 2);  // even positions
+    Vec16s t2 = _mm256_i32gather_epi32((const int *)table, _mm256_srli_epi32(index1, 16) , 2);        // odd  positions
     return blend16s<0,16,2,18,4,20,6,22,8,24,10,26,12,28,14,30>(t1, t2);
 }
 
 static inline Vec8i lookup8(Vec8i const & index, Vec8i const & table) {
-    Vec32c index1 = Vec32c(index * 0x04040404 + 0x03020100);
-    Vec32c f0 = constant8i<0,0,0,0,0x10101010,0x10101010,0x10101010,0x10101010>();
-    Vec32c f1 = constant8i<0x10101010,0x10101010,0x10101010,0x10101010,0,0,0,0>();
-    Vec32c tablef = _mm256_permute4x64_epi64(table, 0x4E);   // low and high parts swapped
-    Vec32c r0 = _mm256_shuffle_epi8(table,  (index1 ^ f0) + 0x70);
-    Vec32c r1 = _mm256_shuffle_epi8(tablef, (index1 ^ f1) + 0x70);
-    return Vec8i(r0 | r1);
+    return _mm256_permutevar8x32_epi32(table, index);
 }
 
 template <int n>
@@ -4040,7 +4371,7 @@ static inline Vec4q lookup4(Vec4q const & index, Vec4q const & table) {
 }
 
 template <int n>
-static inline Vec4q lookup(Vec4q const & index, void const * table) {
+static inline Vec4q lookup(Vec4q const & index, int64_t const * table) {
     if (n <= 0) return 0;
     // n > 0. Limit index
     Vec4uq index1;
@@ -4054,11 +4385,16 @@ static inline Vec4q lookup(Vec4q const & index, void const * table) {
         // since n is a 32-bit integer
         index1 = Vec4uq(min(Vec8ui(index), constant8i<n-1, 0, n-1, 0, n-1, 0, n-1, 0>()));
     }
-#if defined (__GNUC__) && ! defined(__INTEL_COMPILER)  
-// compilers can't agree how to define a 64 bit integer (doc. error reported to Intel 2012-04-14)
-    return _mm256_i64gather_epi64((const long long *)table, index1, 8);
-#else
+// old compilers can't agree how to define a 64 bit integer. Intel and MS use __int64, gcc use long long
+#if defined (__clang__) && CLANG_VERSION < 30400
+// clang 3.3 uses const int * in accordance with official Intel doc., which is wrong. will be fixed
+    return _mm256_i64gather_epi64((const int *)table, index1, 8);
+#elif defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)
+// Old MS and Intel use non-standard type __int64
     return _mm256_i64gather_epi64((const int64_t *)table, index1, 8);
+#else
+// Gnu, Clang 3.4, MS 11.0
+    return _mm256_i64gather_epi64((const long long *)table, index1, 8);
 #endif
 }
 
@@ -4089,6 +4425,106 @@ static inline Vec32c shift_bytes_down(Vec32c const & a, int b) {
     else {
         return Vec32c(shift_bytes_down(a.get_high(),b-16), Vec16c(0));
     }
+}
+
+/*****************************************************************************
+*
+*          Gather functions with fixed indexes
+*
+*****************************************************************************/
+// Load elements from array a with indices i0, i1, i2, i3, i4, i5, i6, i7
+template <int i0, int i1, int i2, int i3, int i4, int i5, int i6, int i7>
+static inline Vec8i gather8i(void const * a) {
+    Static_error_check<(i0|i1|i2|i3|i4|i5|i6|i7)>=0> Negative_array_index;  // Error message if index is negative
+    const int i01min = i0 < i1 ? i0 : i1;
+    const int i23min = i2 < i3 ? i2 : i3;
+    const int i45min = i4 < i5 ? i4 : i5;
+    const int i67min = i6 < i7 ? i6 : i7;
+    const int i0123min = i01min < i23min ? i01min : i23min;
+    const int i4567min = i45min < i67min ? i45min : i67min;
+    const int imin = i0123min < i4567min ? i0123min : i4567min;
+    const int i01max = i0 > i1 ? i0 : i1;
+    const int i23max = i2 > i3 ? i2 : i3;
+    const int i45max = i4 > i5 ? i4 : i5;
+    const int i67max = i6 > i7 ? i6 : i7;
+    const int i0123max = i01max > i23max ? i01max : i23max;
+    const int i4567max = i45max > i67max ? i45max : i67max;
+    const int imax = i0123max > i4567max ? i0123max : i4567max;
+
+    if (imax - imin <= 7) {
+        // load one contiguous block and permute
+        if (imax > 7) {
+            // make sure we don't read past the end of the array
+            Vec8i b = Vec8i().load((int32_t const *)a + imax-7);
+            return permute8i<i0-imax+7, i1-imax+7, i2-imax+7, i3-imax+7, i4-imax+7, i5-imax+7, i6-imax+7, i7-imax+7>(b);
+        }
+        else {
+            Vec8i b = Vec8i().load((int32_t const *)a + imin);
+            return permute8i<i0-imin, i1-imin, i2-imin, i3-imin, i4-imin, i5-imin, i6-imin, i7-imin>(b);
+        }
+    }
+    if ((i0<imin+8 || i0>imax-8) && (i1<imin+8 || i1>imax-8) && (i2<imin+8 || i2>imax-8) && (i3<imin+8 || i3>imax-8)
+    &&  (i4<imin+8 || i4>imax-8) && (i5<imin+8 || i5>imax-8) && (i6<imin+8 || i6>imax-8) && (i7<imin+8 || i7>imax-8)) {
+        // load two contiguous blocks and blend
+        Vec8i b = Vec8i().load((int32_t const *)a + imin);
+        Vec8i c = Vec8i().load((int32_t const *)a + imax-7);
+        const int j0 = i0<imin+8 ? i0-imin : 15-imax+i0;
+        const int j1 = i1<imin+8 ? i1-imin : 15-imax+i1;
+        const int j2 = i2<imin+8 ? i2-imin : 15-imax+i2;
+        const int j3 = i3<imin+8 ? i3-imin : 15-imax+i3;
+        const int j4 = i4<imin+8 ? i4-imin : 15-imax+i4;
+        const int j5 = i5<imin+8 ? i5-imin : 15-imax+i5;
+        const int j6 = i6<imin+8 ? i6-imin : 15-imax+i6;
+        const int j7 = i7<imin+8 ? i7-imin : 15-imax+i7;
+        return blend8i<j0, j1, j2, j3, j4, j5, j6, j7>(b, c);
+    }
+    // use AVX2 gather
+    return _mm256_i32gather_epi32((const int *)a, Vec8i(i0,i1,i2,i3,i4,i5,i6,i7), 4);
+}
+
+template <int i0, int i1, int i2, int i3>
+static inline Vec4q gather4q(void const * a) {
+    Static_error_check<(i0|i1|i2|i3)>=0> Negative_array_index;  // Error message if index is negative
+    const int i01min = i0 < i1 ? i0 : i1;
+    const int i23min = i2 < i3 ? i2 : i3;
+    const int imin   = i01min < i23min ? i01min : i23min;
+    const int i01max = i0 > i1 ? i0 : i1;
+    const int i23max = i2 > i3 ? i2 : i3;
+    const int imax   = i01max > i23max ? i01max : i23max;
+    if (imax - imin <= 3) {
+        // load one contiguous block and permute
+        if (imax > 3) {
+            // make sure we don't read past the end of the array
+            Vec4q b = Vec4q().load((int64_t const *)a + imax-3);
+            return permute4q<i0-imax+3, i1-imax+3, i2-imax+3, i3-imax+3>(b);
+        }
+        else {
+            Vec4q b = Vec4q().load((int64_t const *)a + imin);
+            return permute4q<i0-imin, i1-imin, i2-imin, i3-imin>(b);
+        }
+    }
+    if ((i0<imin+4 || i0>imax-4) && (i1<imin+4 || i1>imax-4) && (i2<imin+4 || i2>imax-4) && (i3<imin+4 || i3>imax-4)) {
+        // load two contiguous blocks and blend
+        Vec4q b = Vec4q().load((int64_t const *)a + imin);
+        Vec4q c = Vec4q().load((int64_t const *)a + imax-3);
+        const int j0 = i0<imin+4 ? i0-imin : 7-imax+i0;
+        const int j1 = i1<imin+4 ? i1-imin : 7-imax+i1;
+        const int j2 = i2<imin+4 ? i2-imin : 7-imax+i2;
+        const int j3 = i3<imin+4 ? i3-imin : 7-imax+i3;
+        return blend4q<j0, j1, j2, j3>(b, c);
+    }
+    // use AVX2 gather
+    // old compilers can't agree how to define a 64 bit integer. Intel and MS use __int64, gcc use long long
+#if defined (__clang__) && CLANG_VERSION < 30400
+    // clang 3.3 uses const int * in accordance with official Intel doc., which is wrong. will be fixed
+    return _mm256_i32gather_epi64((const int *)a, Vec4i(i0,i1,i2,i3), 8);
+#elif defined (_MSC_VER) && _MSC_VER < 1700 && ! defined(__INTEL_COMPILER)
+    // Old MS and Intel use non-standard type __int64
+    return _mm256_i32gather_epi64((const int64_t *)a, Vec4i(i0,i1,i2,i3), 8);
+#else
+    // Gnu, Clang 3.4, MS 11.0
+    return _mm256_i32gather_epi64((const long long *)a, Vec4i(i0,i1,i2,i3), 8);
+#endif
 }
 
 
@@ -4271,14 +4707,14 @@ static inline Vec8i compress (Vec4q const & low, Vec4q const & high) {
 
 // Function compress : packs two vectors of 64-bit integers into one vector of 32-bit integers
 // Signed, with saturation
-static inline Vec8i compress_saturated (Vec4q const & low, Vec4q const & high) {
-    Vec4q maxval = constant8i<0,0x7FFFFFFF,0,0x7FFFFFFF,0,0x7FFFFFFF,0,0x7FFFFFFF>();
-    Vec4q minval = constant8i<80000000,0xFFFFFFFF,80000000,0xFFFFFFFF,80000000,0xFFFFFFFF,80000000,0xFFFFFFFF>();
-    Vec4q low1   = min(low,maxval);
-    Vec4q high1  = min(high,maxval);
-    Vec4q low2   = max(low1,minval);
-    Vec4q high2  = max(high1,minval);
-    return compress(low2,high2);
+static inline Vec8i compress_saturated (Vec4q const & a, Vec4q const & b) {
+    Vec4q maxval = constant8i<0x7FFFFFFF,0,0x7FFFFFFF,0,0x7FFFFFFF,0,0x7FFFFFFF,0>();
+    Vec4q minval = constant8i<(int)0x80000000,-1,(int)0x80000000,-1,(int)0x80000000,-1,(int)0x80000000,-1>();
+    Vec4q a1  = min(a,maxval);
+    Vec4q b1  = min(b,maxval);
+    Vec4q a2  = max(a1,minval);
+    Vec4q b2  = max(b1,minval);
+    return compress(a2,b2);
 }
 
 // Function compress : packs two vectors of 32-bit integers into one vector of 16-bit integers
@@ -4550,7 +4986,7 @@ static inline Vec8ui & operator /= (Vec8ui & a, Const_int_t<d> b) {
 
 // Divide Vec16s by compile-time constant 
 template <int d>
-static inline Vec16s divide_by_i(Vec16s x) {
+static inline Vec16s divide_by_i(Vec16s const & x) {
     const int16_t d0 = int16_t(d);                                   // truncate d to 16 bits
     Static_error_check<(d0 != 0)> Dividing_by_zero;                  // Error message if dividing by zero
     if (d0 ==  1) return  x;                                         // divide by  1
@@ -4630,8 +5066,8 @@ static inline Vec16us divide_by_ui(Vec16us const & x) {
     __m256i xm = _mm256_mulhi_epu16(x1, multv);                      // high part of 16x16->32 bit unsigned multiplication
     Vec16us q    = _mm256_srli_epi16(xm, b);                         // shift right by b
     if (round_down) {
-        Vec16s overfl = (x1 == _mm256_setzero_si256());              // check for overflow of x+1
-        return select(overfl, Vec16us(mult >> b), q);                 // deal with overflow (rarely needed)
+        Vec16sb overfl = (x1 == Vec16us(_mm256_setzero_si256()));     // check for overflow of x+1
+        return select(overfl, Vec16us(mult >> b), q);                // deal with overflow (rarely needed)
     }
     else {
         return q;                                                    // no overflow possible
@@ -4725,4 +5161,118 @@ static inline Vec32uc & operator /= (Vec32uc & a, Const_int_t<d> b) {
     return a;
 }
 
-#endif // VECTORI128_H
+/*****************************************************************************
+*
+*          Horizontal scan functions
+*
+*****************************************************************************/
+
+// Get index to the first element that is true. Return -1 if all are false
+static inline int horizontal_find_first(Vec32cb const & x) {
+    uint32_t a = _mm256_movemask_epi8(x);
+    if (a == 0) return -1;
+    int32_t b = bit_scan_forward(a);
+    return b;
+}
+
+static inline int horizontal_find_first(Vec16sb const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 1;
+}
+
+static inline int horizontal_find_first(Vec8ib const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 2;
+}
+
+static inline int horizontal_find_first(Vec4qb const & x) {
+    return horizontal_find_first(Vec32cb(x)) >> 3;
+}
+
+// Count the number of elements that are true
+static inline uint32_t horizontal_count(Vec32cb const & x) {
+    uint32_t a = _mm256_movemask_epi8(x);
+    return vml_popcnt(a);
+}
+
+static inline uint32_t horizontal_count(Vec16sb const & x) {
+    return horizontal_count(Vec32cb(x)) >> 1;
+}
+
+static inline uint32_t horizontal_count(Vec8ib const & x) {
+    return horizontal_count(Vec32cb(x)) >> 2;
+}
+
+static inline uint32_t horizontal_count(Vec4qb const & x) {
+    return horizontal_count(Vec32cb(x)) >> 3;
+}
+
+/*****************************************************************************
+*
+*          Boolean <-> bitfield conversion functions
+*
+*****************************************************************************/
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint32_t to_bits(Vec32cb const & x) {
+    return (uint32_t)_mm256_movemask_epi8(x);
+}
+
+// to_Vec16c: convert integer bitfield to boolean vector
+static inline Vec32cb to_Vec32cb(uint32_t x) {
+    return Vec32cb(Vec32c(to_Vec16cb(uint16_t(x)), to_Vec16cb(uint16_t(x>>16))));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint16_t to_bits(Vec16sb const & x) {
+    __m128i a = _mm_packs_epi16(x.get_low(), x.get_high());  // 16-bit words to bytes
+    return (uint16_t)_mm_movemask_epi8(a);
+}
+
+// to_Vec16sb: convert integer bitfield to boolean vector
+static inline Vec16sb to_Vec16sb(uint16_t x) {
+    return Vec16sb(Vec16s(to_Vec8sb(uint8_t(x)), to_Vec8sb(uint8_t(x>>8))));
+}
+
+#if INSTRSET < 9 || MAX_VECTOR_SIZE < 512
+// These functions are defined in Vectori512.h if AVX512 instruction set is used
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec8ib const & x) {
+    __m128i a = _mm_packs_epi32(x.get_low(), x.get_high());  // 32-bit dwords to 16-bit words
+    __m128i b = _mm_packs_epi16(a, a);  // 16-bit words to bytes
+    return (uint8_t)_mm_movemask_epi8(b);
+}
+
+// to_Vec8ib: convert integer bitfield to boolean vector
+static inline Vec8ib to_Vec8ib(uint8_t x) {
+    return Vec8ib(Vec8i(to_Vec4ib(x), to_Vec4ib(x>>4)));
+}
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4qb const & x) {
+    uint32_t a = _mm256_movemask_epi8(x);
+    return ((a & 1) | ((a >> 7) & 2)) | (((a >> 14) & 4) | ((a >> 21) & 8));
+}
+
+// to_Vec4qb: convert integer bitfield to boolean vector
+static inline Vec4qb to_Vec4qb(uint8_t x) {
+    return  Vec4qb(Vec4q(-(x&1), -((x>>1)&1), -((x>>2)&1), -((x>>3)&1)));
+}
+
+#else  // function prototypes here only
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec8ib x);
+
+// to_Vec8ib: convert integer bitfield to boolean vector
+static inline Vec8ib to_Vec8ib(uint8_t x);
+
+// to_bits: convert boolean vector to integer bitfield
+static inline uint8_t to_bits(Vec4qb x);
+
+// to_Vec4qb: convert integer bitfield to boolean vector
+static inline Vec4qb to_Vec4qb(uint8_t x);
+
+#endif  // INSTRSET < 9 || MAX_VECTOR_SIZE < 512
+
+
+#endif // VECTORI256_H

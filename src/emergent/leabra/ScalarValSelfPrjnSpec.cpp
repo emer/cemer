@@ -27,7 +27,7 @@ void ScalarValSelfPrjnSpec::Initialize() {
 
 void ScalarValSelfPrjnSpec::Connect_UnitGroup(Layer* lay,
                                               Layer::AccessMode acc_md, int gpidx,
-                                              Projection* prjn) {
+                                              Projection* prjn, bool make_cons) {
 //   float neigh1 = 1.0f / wt_width;
 //   float val1 = expf(-(neigh1 * neigh1));
 //  float scale_val = wt_max / val1;
@@ -35,36 +35,34 @@ void ScalarValSelfPrjnSpec::Connect_UnitGroup(Layer* lay,
   int n_cons = 2*width + 1;
   int nunits = lay->UnitAccess_NUnits(acc_md);
 
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    for(int i=0;i<nunits;i++) {
-      LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+  for(int i=0;i<nunits;i++) {
+    LeabraUnit* ru = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
 
-      if(!alloc_loop)
-        ru->RecvConsPreAlloc(n_cons, prjn);
+    if(!make_cons)
+      ru->RecvConsPreAlloc(n_cons, prjn);
 
-      int j;
-      for(j=-width;j<=width;j++) {
-        int sidx = i+j;
-        if((sidx < 0) || (sidx >= nunits)) continue;
-        LeabraUnit* su = (LeabraUnit*)lay->UnitAccess(acc_md, sidx, gpidx);
-        if(!self_con && (ru == su)) continue;
-        ru->ConnectFromCk(su, prjn);
-      }
+    int j;
+    for(j=-width;j<=width;j++) {
+      int sidx = i+j;
+      if((sidx < 0) || (sidx >= nunits)) continue;
+      LeabraUnit* su = (LeabraUnit*)lay->UnitAccess(acc_md, sidx, gpidx);
+      if(!self_con && (ru == su)) continue;
+      ru->ConnectFromCk(su, prjn);
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 
-void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn) {
+void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!prjn->from)       return;
   if(TestError(prjn->from.ptr() != prjn->layer, "Connect_impl", "must be used as a self-projection!")) {
     return;
   }
 
   Layer* lay = prjn->layer;
-  UNIT_GP_ITR(lay, Connect_UnitGroup(lay, acc_md, gpidx, prjn); );
+  UNIT_GP_ITR(lay, Connect_UnitGroup(lay, acc_md, gpidx, prjn, make_cons); );
 }
 
 void ScalarValSelfPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {

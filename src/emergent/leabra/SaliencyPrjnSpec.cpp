@@ -34,7 +34,7 @@ void SaliencyPrjnSpec::Initialize() {
   units_per_feat_gp = 4;
 }
 
-void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
+void SaliencyPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
@@ -47,12 +47,12 @@ void SaliencyPrjnSpec::Connect_impl(Projection* prjn) {
     return;
   }
   if(feat_only)
-    Connect_feat_only(prjn);
+    Connect_feat_only(prjn, make_cons);
   else
-    Connect_full_dog(prjn);
+    Connect_full_dog(prjn, make_cons);
 }
 
-void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
+void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn, bool make_cons) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
@@ -60,8 +60,10 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
     recv_lay = prjn->from;
     send_lay = prjn->layer;
 
-    FOREACH_ELEM_IN_GROUP(Unit, su, send_lay->units) {
-      su->RecvConsPreAlloc(1, prjn); // only ever have 1!
+    if(!make_cons) {
+      FOREACH_ELEM_IN_GROUP(Unit, su, send_lay->units) {
+        su->RecvConsPreAlloc(1, prjn); // only ever have 1!
+      }
     }
   }
 
@@ -74,51 +76,49 @@ void SaliencyPrjnSpec::Connect_feat_only(Projection* prjn) {
 
   int feat_no = 0;
   taVector2i rug;
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
-      for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
-        Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(rug);
-        if(!ru_gp) continue;
+  for(rug.y = 0; rug.y < rug_geo.y; rug.y++) {
+    for(rug.x = 0; rug.x < rug_geo.x; rug.x++, feat_no++) {
+      Unit_Group* ru_gp = recv_lay->UnitGpAtCoord(rug);
+      if(!ru_gp) continue;
 
-        int rui = 0;
-        taVector2i ruc;
-        for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
-          for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
+      int rui = 0;
+      taVector2i ruc;
+      for(ruc.y = 0; ruc.y < ruu_geo.y; ruc.y++) {
+        for(ruc.x = 0; ruc.x < ruu_geo.x; ruc.x++, rui++) {
 
-            taVector2i su_st = ruc*convergence;
+          taVector2i su_st = ruc*convergence;
 
-            Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
-            if(!ru_u) break;
-            if(!reciprocal && !alloc_loop)
-              ru_u->RecvConsPreAlloc(sg_sz_tot, prjn);
+          Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
+          if(!ru_u) break;
+          if(!reciprocal && !make_cons)
+            ru_u->RecvConsPreAlloc(sg_sz_tot, prjn);
 
-            taVector2i suc;
-            for(suc.y = 0; suc.y < fltsz; suc.y++) {
-              for(suc.x = 0; suc.x < fltsz; suc.x++) {
-                taVector2i sugc = su_st + suc;
-                Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
-                if(!su_gp) continue;
+          taVector2i suc;
+          for(suc.y = 0; suc.y < fltsz; suc.y++) {
+            for(suc.x = 0; suc.x < fltsz; suc.x++) {
+              taVector2i sugc = su_st + suc;
+              Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
+              if(!su_gp) continue;
 
-                Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
-                if(su_u) {
-                  if(reciprocal)
-                    su_u->ConnectFrom(ru_u, prjn, alloc_loop);
-                  else
-                    ru_u->ConnectFrom(su_u, prjn, alloc_loop);
-                }
+              Unit* su_u = (Unit*)su_gp->SafeEl(feat_no);
+              if(su_u) {
+                if(reciprocal)
+                  su_u->ConnectFrom(ru_u, prjn, !make_cons);
+                else
+                  ru_u->ConnectFrom(su_u, prjn, !make_cons);
               }
             }
           }
         }
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do sending allocations
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 
-void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
+void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
   dog_wts.UpdateFilter();
   taMath_float::vec_norm_abs_max(&(dog_wts.net_filter)); // renorm to abs max = 1
 
@@ -155,19 +155,22 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn) {
 
           Unit* ru_u = (Unit*)ru_gp->SafeEl(rui);
           if(!ru_u) break;
-          ru_u->RecvConsPreAlloc(alloc_no, prjn);
+          if(!make_cons) {
+            ru_u->RecvConsPreAlloc(alloc_no, prjn);
+          }
+          else {
+            taVector2i suc;
+            for(suc.y = 0; suc.y < fltsz; suc.y++) {
+              for(suc.x = 0; suc.x < fltsz; suc.x++) {
+                taVector2i sugc = su_st + suc;
+                Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
+                if(!su_gp) continue;
 
-          taVector2i suc;
-          for(suc.y = 0; suc.y < fltsz; suc.y++) {
-            for(suc.x = 0; suc.x < fltsz; suc.x++) {
-              taVector2i sugc = su_st + suc;
-              Unit_Group* su_gp = send_lay->UnitGpAtCoord(sugc);
-              if(!su_gp) continue;
-
-              for(int sui=0;sui<su_gp->size;sui++) {
-                Unit* su_u = (Unit*)su_gp->FastEl(sui);
-                if(!self_con && (su_u == ru_u)) continue;
-                ru_u->ConnectFrom(su_u, prjn);
+                for(int sui=0;sui<su_gp->size;sui++) {
+                  Unit* su_u = (Unit*)su_gp->FastEl(sui);
+                  if(!self_con && (su_u == ru_u)) continue;
+                  ru_u->ConnectFrom(su_u, prjn);
+                }
               }
             }
           }

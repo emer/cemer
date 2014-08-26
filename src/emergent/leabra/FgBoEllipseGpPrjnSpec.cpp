@@ -127,7 +127,7 @@ void FgBoEllipseGpPrjnSpec::CreateStencils() {
   }
 }
 
-void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
+void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 //   dbg_hit_cnt = 0;           // debugging
 
   if(!(bool)prjn->from) return;
@@ -189,70 +189,68 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
 
 
   taVector2i ruc;
-  for(int alloc_loop=1; alloc_loop>=0; alloc_loop--) {
-    int rcnt = 0;
-    taVector2i run;
-    for(run.y = 0; run.y < run_geo.y; run.y++) {
-      int depth = run.y / ruy_per_depth;
-      int suy_st = depth * 2;
-      for(run.x = 0; run.x < run_geo.x; run.x++, rcnt++) {
-        FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
+  int rcnt = 0;
+  taVector2i run;
+  for(run.y = 0; run.y < run_geo.y; run.y++) {
+    int depth = run.y / ruy_per_depth;
+    int suy_st = depth * 2;
+    for(run.x = 0; run.x < run_geo.x; run.x++, rcnt++) {
+      FgBoEllipseGpPrjnEl* el = group_specs.FastEl(rcnt % group_specs.size);
 
-        float wt_renorm = (1.0f - el->min_wt);
+      float wt_renorm = (1.0f - el->min_wt);
 
-        int rgpidx = 0;
-        for(ruc.y = 0; ruc.y < rgp_geo.y; ruc.y++) {
-          for(ruc.x = 0; ruc.x < rgp_geo.x; ruc.x++, rgpidx++) {
-            taVector2i ruc_s = ruc * rgp_sc; // project ruc into s coords
+      int rgpidx = 0;
+      for(ruc.y = 0; ruc.y < rgp_geo.y; ruc.y++) {
+        for(ruc.x = 0; ruc.x < rgp_geo.x; ruc.x++, rgpidx++) {
+          taVector2i ruc_s = ruc * rgp_sc; // project ruc into s coords
 
-            taVector2i suc;
-            taVector2i suc_wrp;
-            for(suc.y = ruc_s.y-el->con_radius; suc.y <= ruc_s.y+el->con_radius; suc.y++) {
-              for(suc.x = ruc_s.x-el->con_radius; suc.x <= ruc_s.x+el->con_radius; suc.x++) {
-                suc_wrp = suc;
-                if(suc_wrp.WrapClip(wrap, sgp_geo) && !wrap)
-                  continue;
-                int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-                if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+          taVector2i suc;
+          taVector2i suc_wrp;
+          for(suc.y = ruc_s.y-el->con_radius; suc.y <= ruc_s.y+el->con_radius; suc.y++) {
+            for(suc.x = ruc_s.x-el->con_radius; suc.x <= ruc_s.x+el->con_radius; suc.x++) {
+              suc_wrp = suc;
+              if(suc_wrp.WrapClip(wrap, sgp_geo) && !wrap)
+                continue;
+              int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+              if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-                taVector2i del = suc - ruc_s; // don't use wrap!
-                float dst = del.Mag();
-                if(dst > (float)el->con_radius) continue; // out of bounds
-                if(dst == 0.0f) continue;             // no selfs
+              taVector2i del = suc - ruc_s; // don't use wrap!
+              float dst = del.Mag();
+              if(dst > (float)el->con_radius) continue; // out of bounds
+              if(dst == 0.0f) continue;             // no selfs
 
-                taVector2i sun;
+              taVector2i sun;
 
-                for(sun.x = 0; sun.x < sun_geo.x; sun.x++) {
-                  for(sun.y = suy_st; sun.y < suy_st+2; sun.y++) {
-                    float wt = el->fgbo_weights.FastEl4d(del.x +el->con_radius,
-                                               del.y+el->con_radius, sun.y-suy_st, sun.x);
-                    if(wt <= el->con_thr) continue;
-                    wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
+              for(sun.x = 0; sun.x < sun_geo.x; sun.x++) {
+                for(sun.y = suy_st; sun.y < suy_st+2; sun.y++) {
+                  float wt = el->fgbo_weights.FastEl4d(del.x +el->con_radius,
+                                                       del.y+el->con_radius, sun.y-suy_st, sun.x);
+                  if(wt <= el->con_thr) continue;
+                  wt = wt * wt_renorm + el->min_wt; // renorm to min wt range
 
-                    int rui = run.y * run_geo.x + run.x;
-                    int sui = sun.y * sun_geo.x + sun.x;
+                  int rui = run.y * run_geo.x + run.x;
+                  int sui = sun.y * sun_geo.x + sun.x;
 
-                    Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-                    if(!ru_u) continue;
-                    Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-                    if(!su_u) continue;
-                    if(alloc_loop) {
-                      if(reciprocal) {
-                        su_u->RecvConsAllocInc(1, prjn);
-                        ru_u->SendConsAllocInc(1, prjn);
-                      }
-                      else {
-                        ru_u->RecvConsAllocInc(1, prjn);
-                        su_u->SendConsAllocInc(1, prjn);
-                      }
+                  Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+                  if(!ru_u) continue;
+                  Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+                  if(!su_u) continue;
+                  if(!make_cons) {
+                    if(reciprocal) {
+                      su_u->RecvConsAllocInc(1, prjn);
+                      ru_u->SendConsAllocInc(1, prjn);
                     }
                     else {
-                      if(reciprocal) {
-                        su_u->ConnectFrom(ru_u, prjn, alloc_loop, true, wt);
-                      }
-                      else {
-                        ru_u->ConnectFrom(su_u, prjn, alloc_loop, true, wt);
-                      }
+                      ru_u->RecvConsAllocInc(1, prjn);
+                      su_u->SendConsAllocInc(1, prjn);
+                    }
+                  }
+                  else {
+                    if(reciprocal) {
+                      su_u->ConnectFrom(ru_u, prjn, !make_cons, true, wt);
+                    }
+                    else {
+                      ru_u->ConnectFrom(su_u, prjn, !make_cons, true, wt);
                     }
                   }
                 }
@@ -262,10 +260,10 @@ void FgBoEllipseGpPrjnSpec::Connect_impl(Projection* prjn) {
         }
       }
     }
-    if(alloc_loop) { // on first pass through alloc loop, do allocations
-      prjn->layer->RecvConsPostAlloc(prjn);
-      prjn->from->SendConsPostAlloc(prjn);
-    }
+  }
+  if(!make_cons) { // on first pass through alloc loop, do allocations
+    prjn->layer->RecvConsPostAlloc(prjn);
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 

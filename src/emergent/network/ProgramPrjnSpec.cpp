@@ -33,10 +33,12 @@ void ProgramPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
              "The program does not have the required 'prjn' arg variable -- no projections will be made!");
 }
 
-void ProgramPrjnSpec::Connect_impl(Projection* prj) {
+void ProgramPrjnSpec::Connect_impl(Projection* prj, bool make_cons) {
   if(!prog) return;
   bool did_it = prog->SetVar("prjn", prj);
   if(!did_it) return;
+  bool did_it2 = prog->SetVar("make_cons", make_cons);
+  if(!did_it2) return;
   prog->Run();
 }
 

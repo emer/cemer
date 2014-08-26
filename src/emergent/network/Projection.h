@@ -108,13 +108,13 @@ public:
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
 
   // convenience functions for those defined in the spec
-  void  PreConnect()            { spec->PreConnect(this); }
-  // #CAT_Structure pre-configure connection state
-  void  Connect()               { spec->Connect(this); }
-  // #BUTTON #CONFIRM #CAT_Structure Make all connections for this projection (resets first)
-  void  Connect_impl()          { spec->Connect_impl(this); }
-  // #CAT_Structure actually do the connecting
-  int   ProbAddCons(float p_add_con, float init_wt = 0.0) { return spec->ProbAddCons(this, p_add_con, init_wt); }
+  void  Connect_Sizes()         { spec->Connect_Sizes(this); }
+  // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information
+  void  Connect_Cons()         { spec->Connect_Cons(this); }
+  // #IGNORE third pass of connecting -- actually make the connections
+
+  int   ProbAddCons(float p_add_con, float init_wt = 0.0)
+  { return spec->ProbAddCons(this, p_add_con, init_wt); }
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
   void  Init_dWt()              { spec->Init_dWt(this); }
   // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection

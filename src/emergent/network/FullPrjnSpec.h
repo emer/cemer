@@ -29,7 +29,7 @@ class E_API FullPrjnSpec : public ProjectionSpec {
   // Full connectivity between layers
 INHERITED(ProjectionSpec)
 public:
-  void Connect_impl(Projection* prjn) override;
+  void Connect_impl(Projection* prjn, bool make_cons) override;
   // Connection function for full connectivity
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
 

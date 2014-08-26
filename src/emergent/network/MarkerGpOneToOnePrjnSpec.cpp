@@ -19,7 +19,7 @@
 
 TA_BASEFUNS_CTORS_DEFN(MarkerGpOneToOnePrjnSpec);
 
-void MarkerGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
+void MarkerGpOneToOnePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   Layer* recv_lay = prjn->layer;
@@ -49,22 +49,25 @@ void MarkerGpOneToOnePrjnSpec::Connect_impl(Projection* prjn) {
     int rgpidx = i + recv_start;
     int sgpidx = i + send_start;
 
-    // pre-allocate connections
-    for(int rui=0; rui < ru_nunits; rui++) {
-      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-      ru->RecvConsPreAlloc(1, prjn);
+    if(!make_cons) {
+      // pre-allocate connections
+      for(int rui=0; rui < ru_nunits; rui++) {
+        Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        ru->RecvConsPreAlloc(1, prjn);
+      }
+      for(int sui=0; sui < su_nunits; sui++) {
+        Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+        su->SendConsPreAlloc(s_alloc, prjn);
+      }
     }
-    for(int sui=0; sui < su_nunits; sui++) {
-      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-      su->SendConsPreAlloc(s_alloc, prjn);
-    }
-
-    for(int rui=0; rui < ru_nunits; rui++) {
-      Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-      int sui = rui % su_nunits;
-      Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-      if(self_con || (ru != su))
-	ru->ConnectFrom(su, prjn);
+    else {
+      for(int rui=0; rui < ru_nunits; rui++) {
+        Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        int sui = rui % su_nunits;
+        Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+        if(self_con || (ru != su))
+          ru->ConnectFrom(su, prjn);
+      }
     }
   }
 }
