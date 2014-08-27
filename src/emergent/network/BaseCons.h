@@ -128,11 +128,13 @@ public:
   { return alloc_size * 2; }
   // #IGNORE memory allocation requirements for con ptr, in terms of numbers of float's/int32's
 
-  inline void           SetMemStart(float* ms) {
-    mem_start = ms;
-  }
+  inline void           SetMemStart(float* ms)
+  { mem_start = ms; }
   // #IGNORE set our starting memory location -- called by Network Connect_Alloc routine
 
+  inline int            VecChunkMod(int sz) 
+  { return ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ; }
+  // return value that is modulus of vec_chunk_targ -- for computing allocation sizes, etc
 
 #ifdef DEBUG
   inline float*         OwnCnVar(int var_no) const

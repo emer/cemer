@@ -273,10 +273,10 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
 void BaseCons::AllocCons(int sz) {
   if(vec_chunk_targ > 1 && sz > vec_chunk_targ && (sz % vec_chunk_targ != 0)) {
     // increase to mod chunk
-    sz = ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ;
+    sz = VecChunkMod(sz);
   }
-  if(sz == alloc_size) return;
-  FreeCons();
+  mem_start = 0;
+  size = 0;
   alloc_size = sz;
 }
 
