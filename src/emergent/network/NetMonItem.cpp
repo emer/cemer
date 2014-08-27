@@ -793,8 +793,7 @@ void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
 
   for (int i = 0; i < pg->size; i++) {
     if (Projection* prjn = pg->FastEl(i)) {
-      // skip if off or lesioned (or if 'from' is null)
-      if (!prjn->off && prjn->from && !prjn->from->lesioned()) {
+      if(prjn->IsActive()) {
         ScanObject_Projection(prjn, var);
       }
     }
@@ -876,7 +875,7 @@ void NetMonItem::ScanObject_Unit(Unit* u, String var) {
 }
 
 void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
-  if(!cg || !cg->prjn) return;
+  if(!cg || !cg->IsActive()) return;
   MemberDef* con_md = cg->con_type->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 
@@ -916,7 +915,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
 }
 
 void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
-  if(!cg || !cg->prjn) return;
+  if(!cg || !cg->IsActive()) return;
   MemberDef* con_md = cg->con_type->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 

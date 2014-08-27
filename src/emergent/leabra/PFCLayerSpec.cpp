@@ -237,9 +237,9 @@ void PFCLayerSpec::GateOnDeepPrjns_ugp(LeabraLayer* lay, Layer::AccessMode acc_m
 
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       if(!recv_gp->prjn->spec.SPtr()->InheritsFrom(&TA_PFCDeepGatedConSpec)) continue;
       LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)       continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       cs->Compute_NetinScale(recv_gp, from, false); // false = not plus phase
       recv_gp->scale_eff /= u->net_scale; // normalize by total connection scale (prev computed)

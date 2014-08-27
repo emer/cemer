@@ -232,7 +232,7 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if((recv_gp->prjn == NULL) || (recv_gp->prjn->spec.SPtr() == NULL)) continue;
+    if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
       if(lay->CheckError(cs->wt_scale.rel > 0.5f, quiet, rval,
@@ -267,6 +267,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode 
     float act = .03f * bias_val.wt_gain * scalar.GetUnitAct(i);
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->InheritsFrom(TA_MarkerConSpec)) continue;

@@ -68,6 +68,7 @@ public:
   enum BaseConsFlags {  // note: following use base_flags so have high values to avoid conflicts
     OWN_CONS = 0x01000000,      // this guy owns the connections -- else gets links to others
     RECV_CONS = 0x02000000,     // we are a recv con group -- else a send con group
+    IS_ACTIVE = 0x04000000,     // we are an active con group -- projection is active and size > 0
   };
 
   // note: define new enums for other variables, typically in ConSpec, adding from DWT
@@ -101,6 +102,24 @@ public:
   // #CAT_Structure is this a receiving con group?  else sending
   bool  IsSend() const  { return !HasBaseFlag(RECV_CONS); }
   // #CAT_Structure is this a sending con group?  else receiving
+  bool  IsActive() const { return HasBaseFlag(IS_ACTIVE); }
+  // #CAT_Structure is this an active connection group, with connections and an active projection?
+  bool  NotActive() const { return !HasBaseFlag(IS_ACTIVE); }
+  // #CAT_Structure is this NOT an active connection group, with connections and an active projection?
+
+  inline bool           PrjnIsActive();
+  // #IGNORE is the projection active for this connection group?
+
+  inline void           UpdtIsActive()
+  { if((bool)mem_start && alloc_size > 0 && size > 0 && PrjnIsActive())
+      SetBaseFlag(IS_ACTIVE);
+    else ClearBaseFlag(IS_ACTIVE);
+  }
+  // #IGNORE update active status: is this an active connection group, with connections and an active projection?
+
+  inline void           SetInactive()
+  { ClearBaseFlag(IS_ACTIVE); }
+  // #CAT_Structure set to inactive status
 
   inline bool           InRange(int idx) const
   { return ((idx < size) && (idx >= 0)); }
@@ -192,7 +211,7 @@ public:
   float&                SafeCn(int idx, int var_no) const;
   // #CAT_Access fully safe generic access of connection variable value at given index, regardless of whether it is owned or a pointer -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- this is mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
   float&                SafeCnName(int idx, const String& var_nm) const;
-  // #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
+  // #BUTTON #USE_RVAL #CAT_Access generic safe access of connection variable value by name (e.g., wt, dwt, pdw, etc) at given index, regardless of whether it is owned or a pointer -- mainly for program access -- do not use in compute algorithm code that knows the ownership status of the connections (use OwnCn* or PtrCn*)
 
   bool                  SetCnVal(float val, int idx, int var_no);
   // #CAT_Access set connection variable to given value -- for use by programs, which cannot assign the value through the SafeCn function -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW) -- 

@@ -118,6 +118,7 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       if(recv_gp->prjn->from->name == "RewTarg")
         rew_targ_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -173,6 +174,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
       if(rew_lay->name != "RewTarg") continue;
@@ -194,6 +196,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
   int   n_comps = 0;            // number of comp layers
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -210,6 +213,7 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
   float toterr = 0.0f;          // total error
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     if(!recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec))
       continue;
     LeabraLayer* rew_lay = (LeabraLayer*)recv_gp->prjn->from.ptr();

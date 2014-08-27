@@ -66,6 +66,7 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   bool pv_neg = false;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
     if(from->name.contains("Patch")) {
@@ -136,6 +137,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     float pv_neg = 0.0f;
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
       recv_gp->net_raw += recv_gp->net_delta;
@@ -247,6 +249,7 @@ void LHbRMTgUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
       float matrix_ind = 0.0f;
       for(int g=0; g<u->recv.size; g++) {
         LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+        if(recv_gp->NotActive()) continue;
         LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
         if(from->name.contains("Matrix") && (from->name.contains("Ind") ||
                                              from->name.contains("NoGo"))) {

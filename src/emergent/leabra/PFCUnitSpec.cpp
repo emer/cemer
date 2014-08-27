@@ -129,9 +129,9 @@ void PFCUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     // didn't fire: zero it out
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       if(!recv_gp->prjn->spec.SPtr()->InheritsFrom(&TA_PFCDeepGatedConSpec)) continue;
       LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-      if(from->lesioned() || !recv_gp->size)       continue;
       recv_gp->scale_eff = 0.0f; // negate!!
     }
   }

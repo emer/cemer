@@ -266,6 +266,8 @@ public: //
   // #MENU #MENU_ON_Actions #CAT_Structure disconnect unit from all other units
   virtual int   CountRecvCons();
   // #CAT_Structure count total number of receiving connections
+  virtual void  UpdtActiveCons();
+  // #CAT_Structure update the active state of all connection groups
 
   virtual void  GetLocalistName();
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name

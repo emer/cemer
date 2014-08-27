@@ -182,6 +182,7 @@ void BpUnitSpec::SetCurLrate(BpUnit* u, int epoch) {
   ((BpConSpec*)bias_spec.SPtr())->SetCurLrate(epoch);
   for(int g=0; g<u->recv.size; g++) {
     BpRecvCons* recv_gp = (BpRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     recv_gp->SetCurLrate(epoch);
   }
 }
@@ -216,8 +217,8 @@ void BpUnitSpec::Compute_dEdA(BpUnit* u, BpNetwork* net, int thread_no) {
   u->err = 0.0f;
   for(int g=0; g<u->send.size; g++) {
     BpSendCons* send_gp = (BpSendCons*)u->send.FastEl(g);
-    if(!send_gp->prjn->layer->lesioned())
-      u->dEdA += send_gp->Compute_dEdA(u, net);
+    if(send_gp->NotActive()) continue;
+    u->dEdA += send_gp->Compute_dEdA(u, net);
   }
 }
 
@@ -509,7 +510,7 @@ void RBFBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   u->net = 0.0f;
   for(int g=0; g<u->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     u->net += recv_gp->Compute_Dist(u, net);
   }
   if(u->bias.size > 0)

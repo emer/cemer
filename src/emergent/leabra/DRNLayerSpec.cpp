@@ -108,6 +108,7 @@ void DRNLayerSpec::Compute_Se(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*)recv_gp->prjn->from.ptr();
     const float act_avg = from->acts.avg;
     if(from->name.contains("Pos")) {
@@ -164,8 +165,8 @@ void DRNLayerSpec::Send_Se(LeabraLayer* lay, LeabraNetwork* net) {
     const float snd_val = u->act;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
         ((LeabraUnit*)send_gp->Un(j,net))->sev = snd_val;
       }

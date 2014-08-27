@@ -23,6 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 
+inline bool BaseCons::PrjnIsActive() {
+  return (prjn && prjn->IsActive());
+}
+
 inline Unit* BaseCons::Un(int idx, Network* net) const {
   if(!InRange(idx)) return NULL;
   return net->UnFmIdx(UnIdx(idx));

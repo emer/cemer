@@ -375,6 +375,8 @@ public:
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
   virtual int   CountRecvCons();
   // #CAT_Structure count recv connections for all units in layer
+  virtual void  UpdtActiveCons();
+  // #CAT_Structure update the active state of all connection groups
 
   void          SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
   // #CAT_Activation set external input data flag
@@ -582,5 +584,10 @@ private:
   void  Initialize();
   void  Destroy()       { CutLinks(); }
 };
+
+// Inline from projection that refers to Layer
+
+inline bool Projection::IsActive()
+{ return !off && (bool)from && !from->lesioned() && !layer->lesioned(); }
 
 #endif // Layer_h

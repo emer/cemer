@@ -96,6 +96,7 @@ void VisDisparityLayerSpec::ComputeDispToExt(LeabraLayer* lay, LeabraNetwork* ne
     if(disp.incl_other_res && net->cycle > 1) {
       for(int j=2; j<u->recv.size; j++) {
         LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.FastEl(j);
+        if(cg->NotActive()) continue;
         LeabraLayer* fm = (LeabraLayer*)cg->prjn->from.ptr();
         LeabraLayerSpec* ls = (LeabraLayerSpec*)fm->spec.SPtr();
         if(!ls->InheritsFrom(&TA_VisDisparityLayerSpec)) continue;

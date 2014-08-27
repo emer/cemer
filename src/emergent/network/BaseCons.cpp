@@ -186,10 +186,10 @@ int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
     return -1;
   if(!allow_null_unit && un->flat_idx == 0)
     return -1; // null unit -- don't even connect!
-  if(size >= alloc_size) {
+  if(size >= alloc_size || mem_start == NULL) {
     if(!taMisc::err_cancel) {
       TestError(!ignore_alloc_errs && !warned_already, "ConnectUnOwnCn",
-                "size already at maximum allocated of",
+                "mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");
     }
     warned_already = true;
@@ -207,10 +207,10 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
     return false;
   if(un->flat_idx == 0)
     return false; // null unit -- don't even connect!
-  if(size >= alloc_size) {
+  if(size >= alloc_size || mem_start == NULL) {
     if(!taMisc::err_cancel) {
       TestError(!ignore_alloc_errs && !warned_already, "ConnectUnPtrCn",
-                "size already at maximum allocated of",
+                "mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");
     }
     warned_already = true;
@@ -272,10 +272,14 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
 }
 
 void BaseCons::AllocCons(int sz) {
+  TestError(mem_start != 0, "AllocCons",
+            "mem_start is not null -- re-allocating already allocated connection -- this is a programmer error in the ProjectionSpec, usually from not following make_cons flag");
+
   mem_start = 0;
   size = 0;
   vec_chunked_size = 0;
   alloc_size = sz;
+  SetInactive();
 }
 
 void BaseCons::FreeCons() {
@@ -283,6 +287,7 @@ void BaseCons::FreeCons() {
   size = 0;
   vec_chunked_size = 0;
   alloc_size = 0;
+  SetInactive();
 }
 
 bool BaseCons::CopyCons(const BaseCons& cp) {
@@ -335,6 +340,7 @@ bool BaseCons::RemoveConIdx(int i, Unit* myun, Network* net) {
   }
 
   size--;
+  UpdtIsActive();
   return true;
 }
 
@@ -443,7 +449,10 @@ void BaseCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
 float BaseCons::VecChunk_SendOwns(Unit* su, Network* net, 
                                   int* tmp_chunks, int* tmp_not_chunks,
                                   float* tmp_con_mem) {
-  if(!IsSend() || !OwnCons()) return 0.0f; // must be these two things for this to work
+  if(!IsSend() || !OwnCons()) { // must be these two things for this to work
+    vec_chunked_size = 0;
+    return 0.0f; 
+  }
 
   if(size < vec_chunk_targ || mem_start == 0) {
     vec_chunked_size = 0;

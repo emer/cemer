@@ -196,8 +196,9 @@ void TesselPrjnSpec::GetCtrFmRecv(taVector2i& sctr, taVector2i ruc) {
 void TesselPrjnSpec::Connect_RecvUnit(Unit* ru_u, const taVector2i& ruc, Projection* prjn,
                                       bool send_alloc) {
   // allocate cons
-  if(!send_alloc)
+  if(send_alloc) {
     ru_u->RecvConsPreAlloc(send_offs.size, prjn);
+  }
 
   PosVector2i su_geo = prjn->from->flat_geom;
   // positions of center of recv in sending layer

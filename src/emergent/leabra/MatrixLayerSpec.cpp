@@ -156,6 +156,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     if(recv_gp->prjn->from.ptr() == recv_gp->prjn->layer) // self projection, skip it
       continue;
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
@@ -426,6 +427,7 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
     // now save the sending unit activations at time of gating
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(cs->InheritsFrom(&TA_MatrixConSpec)) {
         ((MatrixConSpec*)cs)->Compute_NTr(recv_gp, u, net);

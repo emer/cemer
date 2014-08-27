@@ -29,8 +29,8 @@ void ThalLayerSpec::Send_Thal(LeabraLayer* lay, LeabraNetwork* net) {
     const float snd_val = u->act;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
         ((LeabraUnit*)send_gp->Un(j,net))->thal = snd_val;
       }

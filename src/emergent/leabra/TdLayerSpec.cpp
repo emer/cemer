@@ -87,11 +87,8 @@ bool TdLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* rewinteg_lay = NULL;
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    if(lay->CheckError(fmlay == NULL, quiet, rval,
-                  "null from layer in recv projection:", (String)g)) {
-      return false;
-    }
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)
         && fmlay->spec.SPtr()->InheritsFrom(TA_TDRewIntegLayerSpec)) {
       rewinteg_lay = fmlay;
@@ -169,8 +166,8 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
     if(u->lesioned()) continue;
     for(int g=0; g<u->send.size; g++) {
       LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(tol->lesioned())       continue;
       for(int j=0;j<send_gp->size; j++) {
         ((LeabraTdUnit*)send_gp->Un(j,net))->dav = u->act;
       }

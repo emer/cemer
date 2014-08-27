@@ -297,6 +297,8 @@ void Network::UpdateAfterEdit_impl(){
 
 void Network::UpdtAfterNetMod() {
   //  SyncSendPrjns();
+  UpdtActiveCons();
+  // make sure active flags are updated on all connections, e.g., from lesions
   CountRecvCons();
   BuildUnits_Threads();
   small_batch_n_eff = small_batch_n;
@@ -305,6 +307,25 @@ void Network::UpdtAfterNetMod() {
   DMem_SyncNRecvCons();
   DMem_UpdtWtUpdt();
 #endif
+}
+
+void Network::UpdtActiveCons() {
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    //    if(l->lesioned()) continue;  // do for all to mark as invalid if there
+    l->UpdtActiveCons();
+  }
+}
+
+void Network::CountRecvCons() {
+  n_units = 0;
+  n_cons = 0;
+  max_prjns = 1;
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    if(l->lesioned()) continue;
+    n_cons += l->CountRecvCons();
+    n_units += l->units.leaves;
+    max_prjns = MAX(l->projections.size, max_prjns);
+  }
 }
 
 void Network::SetProjectionDefaultTypes(Projection* prjn) {
@@ -486,9 +507,10 @@ void Network::Connect() {
   Connect_Sizes();
   Connect_Alloc();
   Connect_Cons();
+  UpdtAfterNetMod();            // this updates con active flags
+
   Connect_VecChunk(); 
 
-  UpdtAfterNetMod();
   StructUpdate(false);
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
@@ -525,12 +547,14 @@ void Network::Connect_Alloc_RecvOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
+      if(!rc->PrjnIsActive()) continue;
       own_cons_cnt += rc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, rc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, rc->NConVars());
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
+      if(!sc->PrjnIsActive()) continue;
       ptr_cons_cnt += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
@@ -549,11 +573,13 @@ void Network::Connect_Alloc_RecvOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
+      if(!rc->PrjnIsActive()) continue;
       rc->SetMemStart(own_cons_mem + own_cons_idx);
       own_cons_idx += rc->OwnMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
+      if(!sc->PrjnIsActive()) continue;
       sc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
       ptr_cons_idx += sc->PtrMemReq();
     }
@@ -576,10 +602,12 @@ void Network::Connect_Alloc_SendOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
+      if(!rc->PrjnIsActive()) continue;
       ptr_cons_cnt += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
+      if(!sc->PrjnIsActive()) continue;
       own_cons_cnt += sc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, sc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
@@ -600,11 +628,13 @@ void Network::Connect_Alloc_SendOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
+      if(!rc->PrjnIsActive()) continue;
       rc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
       ptr_cons_idx += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
+      if(!sc->PrjnIsActive()) continue;
       sc->SetMemStart(own_cons_mem + own_cons_idx);
       own_cons_idx += sc->OwnMemReq();
     }
@@ -641,14 +671,14 @@ void Network::Connect_VecChunk_SendOwns() {
   int* tmp_not_chunks = new int[own_cons_max_size];
   float* tmp_con_mem =  new float[own_cons_max_size * (own_cons_max_vars + 1)];
 
-  float pct_chunked = 0.0f;
+  double pct_chunked = 0.0f;
   int   ncg = 0;
 
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
-
+      if(sc->NotActive()) continue;
       pct_chunked += sc->VecChunk_SendOwns(un, this,
                                            tmp_chunks, tmp_not_chunks,
                                            tmp_con_mem);
@@ -656,7 +686,12 @@ void Network::Connect_VecChunk_SendOwns() {
     }
   }
 
-  pct_cons_vec_chunked = pct_chunked / (float)ncg;
+  if(ncg > 0) {
+    pct_cons_vec_chunked = (float)(pct_chunked / (double)ncg);
+  }
+  else {
+    pct_cons_vec_chunked = 0.0f;
+  }    
   // taMisc::DebugInfo((String)pct_cons_vec_chunked);
 
   delete[] tmp_chunks;
@@ -668,17 +703,6 @@ void Network::Connect_VecChunk_RecvOwns() {
   
 }
 
-
-void Network::CountRecvCons() {
-  n_units = 0;
-  n_cons = 0;
-  max_prjns = 1;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    n_cons += l->CountRecvCons();
-    n_units += l->units.leaves;
-    max_prjns = MAX(l->projections.size, max_prjns);
-  }
-}
 
 bool Network::CheckBuild(bool quiet) {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
@@ -1503,6 +1527,8 @@ void Network::DMem_PruneNonLocalCons() {
 }
 
 void Network::DMem_SumDWts(MPI_Comm comm) {
+  // todo: re write this!!!!
+
   wt_sync_time.StartTimer(false); // don't reset
   static float_Array values;
   static float_Array results;
@@ -2365,7 +2391,7 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
   for(int g = 0; g < (swt ? u->send.size : u->recv.size); g++) {
     taOBase* cg = (swt ? (taOBase*)u->send.FastEl(g) : (taOBase*)u->recv.FastEl(g));
     Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-    if(!prjn) continue;
+    if(!prjn || prjn->NotActive()) continue;
     Layer* slay = (swt ? prjn->layer : prjn->from);
 
     if(slay->lesioned() || (prjn->from.ptr() == prjn->layer) ||
@@ -2417,7 +2443,7 @@ void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool s
   for(int g = 0; g < (swt ? src_u->send.size : src_u->recv.size); g++) {
     taOBase* cg = (swt ? (taOBase*)src_u->send.FastEl(g) : (taOBase*)src_u->recv.FastEl(g));
     Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-    if(!prjn) continue;
+    if(!prjn || prjn->NotActive()) continue;
     Layer* slay = (swt ? prjn->layer : prjn->from);
 
     if(slay->lesioned() || (prjn->from.ptr() == prjn->layer)) continue; // no self prjns!!

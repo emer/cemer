@@ -765,6 +765,13 @@ int Layer::CountRecvCons() {
   return n_cons;
 }
 
+void Layer::UpdtActiveCons() {
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
+    //    if(u->lesioned()) continue;
+    u->UpdtActiveCons();
+  }
+}
+
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
@@ -1021,7 +1028,7 @@ void Layer::PropagateInputDistance() {
 void Layer::PropagateOutputDistance() {
   int new_dist = dist.fm_output + 1;
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(!p->from || p->from->lesioned()) continue;
+    if(p->NotActive()) continue;
     if(p->from->dist.fm_output >= 0) { // already set
       if(new_dist < p->from->dist.fm_output) { // but we're closer
         p->from->dist.fm_output = new_dist;
@@ -1038,7 +1045,7 @@ void Layer::PropagateOutputDistance() {
 
 void Layer::Compute_PrjnDirections() {
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(!p->from || p->from->lesioned()) {
+    if(p->NotActive()) {
       p->direction = Projection::DIR_UNKNOWN;
       continue;
     }

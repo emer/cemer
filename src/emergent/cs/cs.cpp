@@ -205,8 +205,9 @@ void CsUnitSpec::Compute_ClampNet(CsUnit* u, CsNetwork* net) {
     return;
   for(int g=0; g<u->recv.size; g++) {
     CsRecvCons* recv_gp = (CsRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     Layer* lay = recv_gp->prjn->from;
-    if(lay->lesioned() || !(lay->ext_flag & Unit::EXT))
+    if(!(lay->ext_flag & Unit::EXT))
       continue;
     u->clmp_net += recv_gp->Compute_Netin(u, net);
   }
@@ -220,8 +221,9 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     cu->net = 0.0f;
     for(int g=0; g<u->recv.size; g++) {
       CsRecvCons* recv_gp = (CsRecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       Layer* lay = recv_gp->prjn->from;
-      if(lay->lesioned() || (lay->ext_flag & Unit::EXT)) // don't add from clamped!
+      if((lay->ext_flag & Unit::EXT)) // don't add from clamped!
         continue;
       u->net += recv_gp->Compute_Netin(u, net);
     }
@@ -291,8 +293,8 @@ void CsUnitSpec::Aggregate_dWt(CsUnit* cu, CsNetwork* net, int thread_no) {
   ((CsConSpec*)bias_spec.SPtr())->B_Aggregate_dWt(&cu->bias, cu, phase);
   for(int g=0; g<cu->recv.size; g++) {
     CsRecvCons* recv_gp = (CsRecvCons*)cu->recv.FastEl(g);
-    if(!recv_gp->prjn->from->lesioned())
-      recv_gp->Aggregate_dWt(cu, net, phase);
+    if(recv_gp->NotActive()) continue;
+    recv_gp->Aggregate_dWt(cu, net, phase);
   }
   cu->n_dwt_aggs++;
 }

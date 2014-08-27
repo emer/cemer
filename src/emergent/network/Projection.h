@@ -79,6 +79,14 @@ public:
   inline ProjectionSpec* GetPrjnSpec()  { return spec.spec.ptr(); }
   // #CAT_Structure get the projection spec for this projection
 
+  // note: following defined in Layer.h
+  inline bool   IsActive();
+  // #CAT_Access is this projection active and valid?
+
+  inline bool   NotActive() 
+  { return !IsActive(); }
+  // #CAT_Access is this projection NOT active and valid?
+
   virtual void  UpdateName();
   // #CAT_Structure update the name of projection to reflect any changes in where it receives from
   virtual void  SetFrom();

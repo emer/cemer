@@ -216,6 +216,7 @@ void Unit::AllocBias() {
   }
   else {
     bias.SetConType(bstd);
+    bias.FreeCons();
     bias.AllocCons(1);
     bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
   }
@@ -227,6 +228,7 @@ void Unit::ConnectBias() {
   TypeDef* bstd = GetUnitSpec()->bias_con_type;
   if(!bstd) return;
   bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
+  bias.UpdtIsActive();
 }
 
 void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -294,6 +296,7 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     if(is_send) {
       for(int g=0;g<recv.size;g++) {
         RecvCons* tcong = recv.FastEl(g);
+        if(tcong->NotActive()) continue;
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md) continue;
         int con = tcong->FindConFromIdx(src_u);
@@ -305,6 +308,7 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     else {
       for(int g=0;g<send.size;g++) {
         SendCons* tcong = send.FastEl(g);
+        if(tcong->NotActive()) continue;
         MemberDef* act_md = tcong->con_type->members.FindName(cvar);
         if(!act_md)     continue;
         int con = tcong->FindConFromIdx(src_u);
@@ -540,9 +544,34 @@ int Unit::CountRecvCons() {
   n_recv_cons = 0;
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
+    if(cg->NotActive()) continue;
     n_recv_cons += cg->size;
   }
   return n_recv_cons;
+}
+
+void Unit::UpdtActiveCons() {
+  Layer* ol = own_lay();
+  if(lesioned() || !ol || ol->lesioned()) {
+    for(int g = 0; g < recv.size; g++) {
+      RecvCons* cg = recv.FastEl(g);
+      cg->SetInactive();
+    }
+    for(int g = 0; g < send.size; g++) {
+      SendCons* cg = send.FastEl(g);
+      cg->SetInactive();
+    }
+  }
+  else {
+    for(int g = 0; g < recv.size; g++) {
+      RecvCons* cg = recv.FastEl(g);
+      cg->UpdtIsActive();
+    }
+    for(int g = 0; g < send.size; g++) {
+      SendCons* cg = send.FastEl(g);
+      cg->UpdtIsActive();
+    }
+  }
 }
 
 Network* Unit::own_net() const {
@@ -570,7 +599,7 @@ void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   for(int i=0; i<mx; i++) {
     RecvCons* cg = recv.FastEl(i);
     RecvCons* scg = src->recv.FastEl(i);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->Copy_Weights(scg, net);
   }
 }
@@ -594,7 +623,7 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
   // each process -- need to include size=0 place holders for non-local units
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || (prjn && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || (prjn && (cg->prjn != prjn))) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, net, fmt);
     strm << "</Cg>\n";
@@ -727,7 +756,7 @@ void Unit::GetLocalistName() {
   Network* net = own_net();
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned()) continue;
+    if(cg->NotActive()) continue;
     if(cg->size != 1) continue; // only 1-to-1
     Unit* un = cg->Un(0,net);
     if(!un->name.empty()) {
@@ -740,7 +769,7 @@ void Unit::GetLocalistName() {
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->TransformWeights(trans);
   }
 }
@@ -748,7 +777,7 @@ void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
 void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->AddNoiseToWeights(noise_spec);
   }
 }
@@ -760,7 +789,7 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
   int g;
   for(g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->PruneCons(this, pre_proc, rel, cmp_val);
   }
   n_recv_cons -= rval;
@@ -771,7 +800,7 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   int rval = 0;
   for(int g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
   }
   n_recv_cons -= rval;
@@ -819,7 +848,7 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
   dt->StructUpdate(true);
   for(int g=0; g<recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
-    if(cg->prjn->from->lesioned() || ((prjn) && (cg->prjn != prjn))) continue;
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
                        var9, var10, var11, var12, var13, var14);
   }

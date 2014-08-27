@@ -235,7 +235,8 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       else {
         for(int g=0;g<unit->send.size;g++) {
           SendCons* tcong = unit->send.FastEl(g);
-          if(check_prjn && tcong->prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
+          if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
+             !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
           MemberDef* act_md = tcong->con_type->members.FindName(nm);
           if (!act_md)  continue;

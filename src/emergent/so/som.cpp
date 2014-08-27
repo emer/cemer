@@ -34,8 +34,8 @@ void SomUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     u->net = 0.0f;
     for(int g=0; g<u->recv.size; g++) {
       SoRecvCons* recv_gp = (SoRecvCons*)u->recv.FastEl(g);
-      if(!recv_gp->prjn->from->lesioned())
-	u->net += recv_gp->Compute_Dist(u, net);
+      if(recv_gp->NotActive()) continue;
+      u->net += recv_gp->Compute_Dist(u, net);
     }
   }
 }

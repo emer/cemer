@@ -267,6 +267,8 @@ public:
   virtual void  SetUnitType(TypeDef* td);
   // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
 
+  virtual void  UpdtActiveCons();
+  // #CAT_Structure update active status of all connections
   virtual void  SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  CountRecvCons();

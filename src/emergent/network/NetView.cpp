@@ -603,8 +603,7 @@ void NetView::BuildAll() { // populates all T3 guys
   FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
     if(lay->lesioned() || lay->Iconified()) continue;
     FOREACH_ELEM_IN_GROUP(Projection, prjn, lay->projections) {
-      if((prjn->from.ptr() == NULL) || prjn->from->lesioned()
-         || prjn->from->Iconified() || prjn->off || !prjn->disp) continue;
+      if(prjn->NotActive() || prjn->from->Iconified() || !prjn->disp) continue;
       PrjnView* pv = new PrjnView();
       pv->SetData(prjn);
       //nn prjns.Add(pv); // this is automatic from the childadding thing
@@ -1367,7 +1366,7 @@ void NetView::Render_wt_lines() {
     for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
       taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
       Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-      if(!prjn || !prjn->from || !prjn->layer) continue;
+      if(!prjn || !prjn->IsActive()) continue;
       if(prjn->from->Iconified()) continue;
 
       n_prjns++;
@@ -1427,7 +1426,7 @@ void NetView::Render_wt_lines() {
   for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
     taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
     Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
-    if(!prjn || !prjn->from || !prjn->layer) continue;
+    if(!prjn || !prjn->IsActive()) continue;
     if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
     Layer* lay_to = (swt ? prjn->from : prjn->layer);

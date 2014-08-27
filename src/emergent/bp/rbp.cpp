@@ -102,8 +102,9 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_n
   if(!fast_hard_clamp_net) return;
   for(int g=0; g<ru->recv.size; g++) {
     RecvCons* recv_gp = (RecvCons*)ru->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
     Layer* fmlay = recv_gp->prjn->from;
-    if(fmlay->lesioned() || !(fmlay->ext_flag & Unit::EXT))
+    if(!(fmlay->ext_flag & Unit::EXT))
       continue;		// don't get from the non-clamped layers!
     ru->clmp_net += recv_gp->Compute_Netin(ru,net);
   }
@@ -120,8 +121,9 @@ void RBpUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     ru->net = ru->clmp_net;
     for(int g=0; g<u->recv.size; g++) {
       RecvCons* recv_gp = (RecvCons*)u->recv.FastEl(g);
+      if(recv_gp->NotActive()) continue;
       Layer* fmlay = recv_gp->prjn->from;
-      if(fmlay->lesioned() || (fmlay->ext_flag & Unit::EXT))
+      if((fmlay->ext_flag & Unit::EXT))
 	continue;		// don't get from the clamped layers
       u->net += recv_gp->Compute_Netin(u,net);
     }

@@ -119,7 +119,7 @@ void UnitSpec::Init_Acts(Unit* u, Network* net) {
 void UnitSpec::Init_dWt(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     recv_gp->Init_dWt(u, net);
   }
   if(u->bias.size > 0) {
@@ -157,7 +157,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
 void UnitSpec::Init_Weights_post(Unit* u, Network* net) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     recv_gp->Init_Weights_post(u, net);
   }
   if(u->bias.size > 0) {
@@ -169,7 +169,7 @@ void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
   u->net = 0.0f;
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     u->net += recv_gp->Compute_Netin(u, net);
   }
   if(u->bias.size > 0)
@@ -184,16 +184,16 @@ void UnitSpec::Send_Netin(Unit* u, Network* net, int thread_no) {
   if(net->NetinPerPrjn()) {
     for(int g = 0; g < u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
       Layer* tol = send_gp->prjn->layer;
-      if(tol->lesioned() || !send_gp->size) continue;
       send_gp->Send_Netin_PerPrjn(net, thread_no, u);
     }
   }
   else {
     for(int g = 0; g < u->send.size; g++) {
       SendCons* send_gp = u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
       Layer* tol = send_gp->prjn->layer;
-      if(tol->lesioned() || !send_gp->size) continue;
       send_gp->Send_Netin(net, thread_no, u);
     }
   }
@@ -217,7 +217,7 @@ void UnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
 void UnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     recv_gp->Compute_dWt(u, net);
   }
   // NOTE: derived classes must supply bias.OwnCn(0)->Compute_dWt call because C_Compute_dWt
@@ -228,7 +228,7 @@ void UnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
 void UnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->prjn->from->lesioned() || !recv_gp->size) continue;
+    if(recv_gp->NotActive()) continue;
     recv_gp->Compute_Weights(u, net);
   }
   // NOTE: derived classes must supply bias.OwnCn(0)->Compute_Weights call because C_Compute_Weights
