@@ -68,7 +68,6 @@ public:
   enum BaseConsFlags {  // note: following use base_flags so have high values to avoid conflicts
     OWN_CONS = 0x01000000,      // this guy owns the connections -- else gets links to others
     RECV_CONS = 0x02000000,     // we are a recv con group -- else a send con group
-    VEC_CHUNKED = 0x04000000,   // our connections are confirmed to be chunked appropriately according to the vec_chunk_targ value, and are suitable for vector-optimized computations -- for sender-based connections, this means that every vec_chunk_targ group of recv units that we send to are *contiguous* in the unit pointer list, and our size is a multiple of vec_chunk_targ (with padding to 0 "null" unit index as needed)
   };
 
   // note: define new enums for other variables, typically in ConSpec, adding from DWT
@@ -81,6 +80,7 @@ public:
   static int    vec_chunk_targ; // #READ_ONLY target chunk size for vectorized operations over connections -- typically 4 or 8 -- can be set dynamically -- affects allocation modulus
 
   int           size;           // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections currently active
+  int           vec_chunked_size; // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections at start of list that are chunked according to vec_chunk_targ -- for sender-based, this means that the recv unit_idx's are sequential for each of the chunks (individually) -- between chunks can be non-sequential
   int           alloc_size;     // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW allocated size -- no more than this number of connections may be created -- it is a hard limit set by the alloc function
   TypeDef*      con_type;       // #CAT_Structure #READ_ONLY #SHOW type of connection object currently allocated
   Projection*   prjn;           // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
@@ -101,8 +101,6 @@ public:
   // #CAT_Structure is this a receiving con group?  else sending
   bool  IsSend() const  { return !HasBaseFlag(RECV_CONS); }
   // #CAT_Structure is this a sending con group?  else receiving
-  bool  IsVecChunked() const  { return HasBaseFlag(VEC_CHUNKED); }
-  // #CAT_Structure are the connections allocated in a vectorization chunk compatible manner?  if so, this is suitable for vector-optimized computations
 
   inline bool           InRange(int idx) const
   { return ((idx < size) && (idx >= 0)); }
@@ -257,6 +255,16 @@ public:
   // #CAT_Structure find the reciprocal recv con group and con index for sending unit su to this receiving unit ru
   static SendCons*      FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su_lay);
   // #CAT_Structure find the reciprocal send con group and con index for receiving unit ru from this sending unit su
+
+  virtual void          FixConPtrs_SendOwns(Unit* su, Network* net);
+  // #CAT_Structure only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group -- called with our owning send unit
+  virtual void          FixConPtrs_RecvOwns(Unit* ru, Network* net);
+  // #CAT_Structure only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group -- called with our owning recv unit
+
+  virtual float         VecChunk_SendOwns(Unit* su, Network* net, 
+                                          int* tmp_chunks, int* tmp_not_chunks,
+                                          float* tmp_con_mem);
+  // #CAT_Structure chunks the connections in vectorizable units, for sender own case -- gets our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization -- returns proportion of cons that are vec chunked -- sets vec_chunked_size
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are computational functions needed for basic infrastructure

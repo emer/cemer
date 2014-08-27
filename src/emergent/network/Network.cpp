@@ -124,6 +124,9 @@ void Network::Initialize() {
   null_unit = NULL;
   own_cons_cnt = 0;
   own_cons_mem = NULL;
+  own_cons_max_size = 0;
+  own_cons_max_vars = 0;
+  pct_cons_vec_chunked = 0.0f;
   ptr_cons_cnt = 0;
   ptr_cons_mem = NULL;
 
@@ -483,6 +486,7 @@ void Network::Connect() {
   Connect_Sizes();
   Connect_Alloc();
   Connect_Cons();
+  Connect_VecChunk(); 
 
   UpdtAfterNetMod();
   StructUpdate(false);
@@ -515,11 +519,15 @@ void Network::Connect_Alloc_RecvOwns() {
   // first collect total count
   own_cons_cnt = 0;
   ptr_cons_cnt = 0;
+  own_cons_max_size = 0;
+  own_cons_max_vars = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
       own_cons_cnt += rc->OwnMemReq();
+      own_cons_max_size = MAX(own_cons_max_size, rc->alloc_size);
+      own_cons_max_vars = MAX(own_cons_max_vars, rc->NConVars());
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
@@ -562,6 +570,8 @@ void Network::Connect_Alloc_SendOwns() {
   // first collect total count
   own_cons_cnt = 0;
   ptr_cons_cnt = 0;
+  own_cons_max_size = 0;
+  own_cons_max_vars = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
@@ -571,6 +581,8 @@ void Network::Connect_Alloc_SendOwns() {
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
       own_cons_cnt += sc->OwnMemReq();
+      own_cons_max_size = MAX(own_cons_max_size, sc->alloc_size);
+      own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
     }
     if(un->bias.alloc_size == 1) {
       own_cons_cnt += un->bias.OwnMemReq();
@@ -613,6 +625,47 @@ void Network::Connect_Cons() {
     if(l->lesioned()) continue;
     l->Connect_Cons(this);
   }
+}
+
+void Network::Connect_VecChunk() {
+  if(RecvOwnsCons())
+    Connect_VecChunk_RecvOwns();
+  else
+    Connect_VecChunk_SendOwns();
+}
+
+void Network::Connect_VecChunk_SendOwns() {
+  const int nu = units_flat.size;
+
+  int* tmp_chunks = new int[own_cons_max_size];
+  int* tmp_not_chunks = new int[own_cons_max_size];
+  float* tmp_con_mem =  new float[own_cons_max_size * (own_cons_max_vars + 1)];
+
+  float pct_chunked = 0.0f;
+  int   ncg = 0;
+
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+
+      pct_chunked += sc->VecChunk_SendOwns(un, this,
+                                           tmp_chunks, tmp_not_chunks,
+                                           tmp_con_mem);
+      ncg++;
+    }
+  }
+
+  pct_cons_vec_chunked = pct_chunked / (float)ncg;
+  // taMisc::DebugInfo((String)pct_cons_vec_chunked);
+
+  delete[] tmp_chunks;
+  delete[] tmp_not_chunks;
+  delete[] tmp_con_mem;
+}
+
+void Network::Connect_VecChunk_RecvOwns() {
+  
 }
 
 

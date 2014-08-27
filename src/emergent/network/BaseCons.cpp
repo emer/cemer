@@ -38,6 +38,7 @@ int   BaseCons::vec_chunk_targ = 4;
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types
   size = 0;
+  vec_chunked_size = 0;
   alloc_size = 0;
   prjn = NULL;
   other_idx = -1;
@@ -271,18 +272,16 @@ bool BaseCons::SetConType(TypeDef* cn_tp) {
 }
 
 void BaseCons::AllocCons(int sz) {
-  if(vec_chunk_targ > 1 && sz > vec_chunk_targ && (sz % vec_chunk_targ != 0)) {
-    // increase to mod chunk
-    sz = VecChunkMod(sz);
-  }
   mem_start = 0;
   size = 0;
+  vec_chunked_size = 0;
   alloc_size = sz;
 }
 
 void BaseCons::FreeCons() {
   mem_start = 0;
   size = 0;
+  vec_chunked_size = 0;
   alloc_size = 0;
 }
 
@@ -290,6 +289,7 @@ bool BaseCons::CopyCons(const BaseCons& cp) {
   if(con_type != cp.con_type || OwnCons() != cp.OwnCons()) return false;
 
   size = MIN(alloc_size, cp.size); // cannot go bigger than our alloc
+  vec_chunked_size = 0;              // reset
   if(size == 0) return true;
 
   if(OwnCons()) {
@@ -325,8 +325,9 @@ bool BaseCons::RemoveConIdx(int i, Unit* myun, Network* net) {
     }
   }
   else {
-    for(int j=i; j<size-1; j++)
+    for(int j=i; j<size-1; j++) {
       PtrCnIdx(j) = PtrCnIdx(j+1);
+    }
   }
 
   for(int j=i; j<size-1; j++) {
@@ -405,10 +406,147 @@ SendCons* BaseCons::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su
   return NULL;
 }
 
+void BaseCons::FixConPtrs_SendOwns(Unit* su, Network* net) {
+  if(!IsSend() || !OwnCons()) return; // must be these two things for this to work
+
+  for(int i=0; i < size; i++) {
+    Unit* ru = Un(i, net);
+    RecvCons* recv_gp = GetPrjnRecvCons(ru);
+    if(!recv_gp) continue;      // shouldn't happen
+    int ru_ci = recv_gp->FindConFromIdx(su);
+    if(ru_ci >= 0) {
+      recv_gp->PtrCnIdx(ru_ci) = i; // point to us..
+    }
+  }
+}
+
+void BaseCons::FixConPtrs_RecvOwns(Unit* ru, Network* net) {
+  if(!IsRecv() || !OwnCons()) return; // must be these two things for this to work
+
+  for(int i=0; i < size; i++) {
+    Unit* su = Un(i, net);
+    SendCons* send_gp = GetPrjnSendCons(su);
+    if(!send_gp) continue;      // shouldn't happen
+    int su_ci = send_gp->FindConFromIdx(ru);
+    if(su_ci >= 0) {
+      send_gp->PtrCnIdx(su_ci) = i; // point to us..
+    }
+  }
+}
+
 void BaseCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);
 }
+
+
+float BaseCons::VecChunk_SendOwns(Unit* su, Network* net, 
+                                  int* tmp_chunks, int* tmp_not_chunks,
+                                  float* tmp_con_mem) {
+  if(!IsSend() || !OwnCons()) return 0.0f; // must be these two things for this to work
+
+  if(size < vec_chunk_targ || mem_start == 0) {
+    vec_chunked_size = 0;
+    return 0.0f;
+  }
+
+  // first find all the chunks and not-chunks
+  int n_chunks = 0;
+  int n_not_chunks = 0;
+  int prv_uni = -1;
+  int cur_seq_st = -1;
+  int i;
+  for(i=0; i < size; i++) {
+    int uni = UnIdx(i);
+    if(prv_uni < 0) {
+      prv_uni = uni;
+      continue;                 // new start
+    }
+    if(uni == prv_uni+1) {      // sequential
+      prv_uni = uni;
+      if(cur_seq_st < 0) {
+        cur_seq_st = i-1;       // new chunk start..
+      }
+      else {
+        if(i-cur_seq_st == (vec_chunk_targ-1)) { // got a chunk's worth
+          tmp_chunks[n_chunks] = cur_seq_st; // record
+          n_chunks++;
+          prv_uni = -1;
+          cur_seq_st = -1;      // start again
+        }
+        // otherwise keep going..
+      }
+    }
+    else {
+      prv_uni = uni;
+      if(cur_seq_st < 0) {
+        // last guy is definitely a non-chunk
+        tmp_not_chunks[n_not_chunks++] = i-1;
+      }
+      else {
+        // everybody from cur_seq_st to before me is a non-matcher
+        for(int j=cur_seq_st; j < i; j++) {
+          tmp_not_chunks[n_not_chunks++] = j;
+        }
+        cur_seq_st = -1;          // reset
+      }
+    }
+  }
+  if(prv_uni >= 0) {            // was working on something
+    if(cur_seq_st < 0) {
+      // last guy is definitely a non-chunk
+      tmp_not_chunks[n_not_chunks++] = i-1;
+    }
+    else {
+      // everybody from cur_seq_st to before me is a non-matcher
+      for(int j=cur_seq_st; j < i; j++) {
+        tmp_not_chunks[n_not_chunks++] = j;
+      }
+    }
+  }
+
+  if(n_chunks == 0) return 0.0f;
+  
+  int ncv = NConVars()+1;       // include unit idx
+
+  // now construct new reorganized data
+  int cur_sz = 0;
+  for(i=0; i<n_chunks; i++) {
+    int seq_st = tmp_chunks[i];
+    for(int j=seq_st; j< seq_st+vec_chunk_targ; j++) {
+      for(int v=0; v<ncv; v++) {
+        tmp_con_mem[alloc_size * v + cur_sz] = mem_start[alloc_size * v + j];
+      }
+      cur_sz++;
+    }
+  }
+  for(i=0; i<n_not_chunks; i++) {
+    int j = tmp_not_chunks[i];
+    for(int v=0; v<ncv; v++) {
+      tmp_con_mem[alloc_size * v + cur_sz] = mem_start[alloc_size * v + j];
+    }
+    cur_sz++;
+  }
+
+  if(TestError(cur_sz != size, "VecChunk_SendOwns", "new size != orig size -- oops!")) {
+    // this is just for debugging
+    return 0.0f;
+  }
+
+  // then copy over the newly reorganized guys..
+  for(int i=0; i< ncv; i++) {
+    memcpy(MemBlock(i), (char*)(tmp_con_mem + alloc_size * i), size * sizeof(float));
+  }
+
+  // finally, fix all the other guy con pointers
+  FixConPtrs_SendOwns(su, net);
+
+  vec_chunked_size = n_chunks * vec_chunk_targ; // we are now certfied chunkable..
+
+  // rval is percent of our cons that are vec chunked
+  return (float)vec_chunked_size / (float)size;
+}
+
 
 /////////////////////////////////////////////////////////////
 //      Weight ops

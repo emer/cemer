@@ -186,6 +186,9 @@ public:
   Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
   float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
   int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
+  int           own_cons_max_size; // #HIDDEN #NO_SAVE maximum alloc_size of any owning connection group -- for allocating temp structures..
+  int           own_cons_max_vars; // #HIDDEN #NO_SAVE maximum NConVars of any owning connection group -- for allocating temp structures..
+  float         pct_cons_vec_chunked; // #READ_ONLY #NO_SAVE #SHOW average percent of connections that are vector chunked (across owned projections and units)
   float*        own_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
   float*        ptr_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
@@ -247,6 +250,12 @@ public:
     // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list -- for send owns cons
     virtual void  Connect_Cons();
     // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
+    virtual void  Connect_VecChunk();
+    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
+    virtual void  Connect_VecChunk_RecvOwns();
+    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks -- recv owns connections
+    virtual void  Connect_VecChunk_SendOwns();
+    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks -- send owns connections
 
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built
