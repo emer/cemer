@@ -504,22 +504,22 @@ void Network::Connect() {
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
 
-  taMisc::Info("Starting Connect..");
+  // taMisc::Info("Starting Connect..");
   CheckSpecs();
   RemoveCons();
   SyncSendPrjns();
 
-  taMisc::Info("Starting Connect_Sizes..");
+  // taMisc::Info("Starting Connect_Sizes..");
   Connect_Sizes();
-  taMisc::Info("Starting Connect_Alloc..");
+  // taMisc::Info("Starting Connect_Alloc..");
   Connect_Alloc();
-  taMisc::Info("Starting Connect_Cons..");
+  // taMisc::Info("Starting Connect_Cons..");
   Connect_Cons();
   UpdtAfterNetMod();            // this updates con active flags
 
-  taMisc::Info("Starting Connect_VecChunk..");
+  // taMisc::Info("Starting Connect_VecChunk..");
   Connect_VecChunk(); 
-  taMisc::Info("Done with Connect..");
+  // taMisc::Info("Done with Connect..");
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
