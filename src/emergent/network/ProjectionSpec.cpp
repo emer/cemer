@@ -76,7 +76,7 @@ void ProjectionSpec::Connect_Sizes(Projection* prjn) {
 void ProjectionSpec::Connect_Cons(Projection* prjn) {
   if(!prjn->IsActive()) return;
   Connect_impl(prjn, true);
-  Init_Weights(prjn);
+  // Init_Weights(prjn);
   prjn->projected = true;
 }
 

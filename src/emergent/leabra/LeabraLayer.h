@@ -106,9 +106,9 @@ public:
   void	SetLearnRule(LeabraNetwork* net) 	{ if(spec) spec->SetLearnRule(this, net); }
   // #CAT_Learning set current learning rule from the network
 
-  void	Init_Weights(Network* net) override
-  { if(spec) spec->Init_Weights(this, (LeabraNetwork*)net); }
-  // #CAT_Learning initialize weight values and other permanent state
+  void	Init_Weights_Layer(Network* net) override
+  { if(spec) spec->Init_Weights_Layer(this, (LeabraNetwork*)net); }
+  // #CAT_Learning layer-level initialization taking place after Init_Weights on units
 
   void	Init_ActAvg(LeabraNetwork* net) 	{ spec->Init_ActAvg(this, net); }
   // #CAT_Activation initialize act_avg values

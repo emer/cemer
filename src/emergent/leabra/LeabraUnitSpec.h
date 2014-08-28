@@ -562,7 +562,7 @@ public:
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 
-  void Init_Weights(Unit* u, Network* net) override;
+  void  Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
   void	Init_Acts(Unit* u, Network* net) override;
   virtual void 	Init_ActAvg(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation initialize average activation values, used to control learning

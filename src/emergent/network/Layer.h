@@ -407,10 +407,8 @@ public:
   // #CAT_Activation Initialize the unit state variables
   virtual void  Init_dWt(Network* net);
   // #CAT_Learning Initialize the weight change variables
-  virtual void  Init_Weights(Network* net);
-  // #MENU #MENU_ON_State #CONFIRM #CAT_Learning Initialize the weights
-  virtual void  Init_Weights_post(Network* net);
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+  virtual void  Init_Weights_Layer(Network* net);
+  // #CAT_Learning layer-level initialization taking place after Init_Weights on units
 
   virtual float Compute_SSE(Network* net, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis

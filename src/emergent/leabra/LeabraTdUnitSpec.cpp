@@ -30,8 +30,8 @@ void LeabraTdUnitSpec::Init_Acts(Unit* u, Network* net) {
   lu->p_act_p = -.01f;
 }
 
-void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net) {
-  inherited::Init_Weights(u, net);
+void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
+  inherited::Init_Weights(u, net, thread_no);
   ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 

@@ -180,7 +180,7 @@ void DRNLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_CycleStats(lay, net);
 }
 
-void DRNLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void DRNLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   lay->sev = se.se_base;
 }

@@ -195,7 +195,7 @@ public:
   Schedule	gain_sched;		// #CONDEDIT_ON_use_sharp:true schedule of gain multipliers
 
   void	Init_Acts(Unit* u, Network* net) override;
-  void Init_Weights(Unit* u, Network* net) override; 	// also init aggregation stuff
+  void Init_Weights(Unit* u, Network* net, int thread_no=-1) override; 	// also init aggregation stuff
 
   virtual void 	Compute_ClampAct(CsUnit* u, CsNetwork* net);
   // hard-fast-clamp inputs (at start of settling)

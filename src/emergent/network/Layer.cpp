@@ -912,17 +912,8 @@ void  Layer::Init_dWt(Network* net) {
   }
 }
 
-void Layer::Init_Weights(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->Init_Weights(net);
-  }
+void Layer::Init_Weights_Layer(Network* net) {
   sse = 0.0f;
-}
-
-void Layer::Init_Weights_post(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->Init_Weights_post(net);
-  }
 }
 
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
@@ -940,7 +931,8 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) &&
+                                  HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }

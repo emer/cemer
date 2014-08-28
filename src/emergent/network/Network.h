@@ -192,6 +192,9 @@ public:
   float*        own_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
   float*        ptr_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
+  int*          tmp_chunks;      // #IGNORE tmp con vec chunking memory
+  int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
+  float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory
 
   DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
   int           dmem_nprocs;    // #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
@@ -252,10 +255,6 @@ public:
     // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
     virtual void  Connect_VecChunk();
     // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
-    virtual void  Connect_VecChunk_RecvOwns();
-    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks -- recv owns connections
-    virtual void  Connect_VecChunk_SendOwns();
-    // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks -- send owns connections
 
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built
@@ -329,9 +328,11 @@ public:
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats
+  // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+    virtual void Init_Weights_Layer();
+    // #CAT_Learning call layer-level init weights functions -- after unit level
   virtual void  Init_Weights_post();
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+  // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   virtual void  Init_Metrics();
   // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers

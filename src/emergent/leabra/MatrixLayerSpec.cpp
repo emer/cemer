@@ -230,8 +230,8 @@ LeabraLayer* MatrixLayerSpec::SNrThalStartIdx(LeabraLayer* lay, int& snr_st_idx,
   return snr_lay;
 }
 
-void MatrixLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void MatrixLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   lay->SetUserData("tonic_da", 0.0f); // store tonic da per layer
   // NameMatrixUnits(lay, net);
 }

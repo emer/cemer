@@ -555,9 +555,22 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
 }
 
-void LeabraUnitSpec::Init_Weights(Unit* u, Network* net) {
-  inherited::Init_Weights(u, net);
+void LeabraUnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
   LeabraUnit* lu = (LeabraUnit*)u;
+  // do this sender based!
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    if(send_gp->NotActive()) continue;
+    send_gp->Init_Weights(lu, (LeabraNetwork*)net);
+  }
+
+  if(u->bias.size > 0) {
+    bias_spec->C_Init_Weights(&u->bias, 0, u, NULL, net);
+    // this is a virtual fun
+    bias_spec->C_Init_dWt(&u->bias, 0, u, NULL, net);
+    // don't forget delta too!!
+  }
+
   lu->act_avg = act.avg_init;
   lu->misc_1 = 0.0f;
   lu->spk_amp = depress.max_amp;

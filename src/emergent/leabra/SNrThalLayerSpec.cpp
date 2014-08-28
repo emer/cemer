@@ -315,8 +315,8 @@ void SNrThalLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
   // nop -- don't do the default thing -- already done by GatedActs
 }
 
-void SNrThalLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void SNrThalLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   lay->SetUserData("n_fired_trial", 0);
   lay->SetUserData("n_fired_now", 0);
 

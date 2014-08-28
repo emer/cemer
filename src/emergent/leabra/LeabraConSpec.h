@@ -375,16 +375,12 @@ public:
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
-  inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net) override
-  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->Cn(idx,PDW,net) = 0.0f; }
-  // #IGNORE
+  inline void 	C_Init_Weights_sender(LeabraSendCons* cg, const int idx,
+                                      float* wts, float* dwts, float* pdws);
+  // #IGNORE sender-based init weights function
 
-  inline void Init_Weights(RecvCons* cg, Unit* ru, Network* net) override
-  { inherited::Init_Weights(cg, ru, net);
-    if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
-      wt_scale.rel = wt_scale_init.rel; } }
-  // #IGNORE
+  inline void Init_Weights_sender(LeabraSendCons* cg, LeabraUnit* ru, LeabraNetwork* net);
+  // #IGNORE sender-based init weights function
 
   // note: following is called after loading weights too
   inline void   C_Init_Weights_post(BaseCons* cg, const int idx, Unit* ru,

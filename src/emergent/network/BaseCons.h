@@ -275,15 +275,28 @@ public:
   static SendCons*      FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su_lay);
   // #CAT_Structure find the reciprocal send con group and con index for receiving unit ru from this sending unit su
 
-  virtual void          FixConPtrs_SendOwns(Unit* su, Network* net);
+  virtual void          FixConPtrs_SendOwns(Unit* su, Network* net, int st_idx = 0);
   // #CAT_Structure only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group -- called with our owning send unit
-  virtual void          FixConPtrs_RecvOwns(Unit* ru, Network* net);
+  virtual void          FixConPtrs_RecvOwns(Unit* ru, Network* net, int st_idx = 0);
   // #CAT_Structure only for sending cons that own the connections: fix all the pointer connections to our connections to be correct -- called after reorganizing the order of connections within this group -- called with our owning recv unit
 
-  virtual float         VecChunk_SendOwns(Unit* su, Network* net, 
+
+  inline float          VecChunkPct()
+  {  if(size > 0) return (float)vec_chunked_size / (float)size; return 0.0f; }
+  // #CAT_Structure return percent of our cons that are vec chunked
+
+  virtual void          VecChunk_SendOwns(Unit* su, Network* net, 
                                           int* tmp_chunks, int* tmp_not_chunks,
                                           float* tmp_con_mem);
-  // #CAT_Structure chunks the connections in vectorizable units, for sender own case -- gets our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization -- returns proportion of cons that are vec chunked -- sets vec_chunked_size
+  // #CAT_Structure chunks the connections in vectorizable units, for sender own case -- pass in our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+  virtual void          VecChunk_RecvOwns(Unit* ru, Network* net, 
+                                          int* tmp_chunks, int* tmp_not_chunks,
+                                          float* tmp_con_mem);
+  // #CAT_Structure chunks the connections in vectorizable units, for recv own case -- pass in our recv own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
+
+  virtual int           VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
+                                      float* tmp_con_mem);
+  // #IGNORE impl -- returns first_change index for fixing con ptrs, and sets vec_chunked_size -- chunks the connections in vectorizable units, for sender own case -- gets our sending own unit, and temp scratch memory guaranteed to be >= alloc_size for doing the reorganization
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are computational functions needed for basic infrastructure

@@ -370,8 +370,8 @@ void TwoDValLayerSpec::Compute_BiasVal(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void TwoDValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void TwoDValLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   Compute_BiasVal(lay, net);
 }
 

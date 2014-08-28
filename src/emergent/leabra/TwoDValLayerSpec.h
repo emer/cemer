@@ -155,7 +155,7 @@ public:
 				    float x_val, float y_val);
     // #IGNORE
 
-  void Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
     void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
     virtual void Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,

@@ -127,7 +127,7 @@ void UnitSpec::Init_dWt(Unit* u, Network* net) {
   }
 }
 
-void UnitSpec::Init_Weights(Unit* u, Network* net) {
+void UnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
   u->snap = 0.0f;
 
 #ifdef DMEM_COMPILE
@@ -140,8 +140,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
     {
       for(int g = 0; g < u->recv.size; g++) {
         RecvCons* recv_gp = u->recv.FastEl(g);
-        // ignore lesion here because n_recv_cons does not take into account lesioned layers, so dmem would get out of sync
-        //    if(!recv_gp->prjn->from->lesioned())
+        if(recv_gp->NotActive()) continue;
         recv_gp->Init_Weights(u, net);
       }
     }
@@ -154,7 +153,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net) {
   }
 }
 
-void UnitSpec::Init_Weights_post(Unit* u, Network* net) {
+void UnitSpec::Init_Weights_post(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;

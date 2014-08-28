@@ -101,8 +101,8 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return true;
 }
 
-void LVeLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void LVeLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   Layer::AccessMode acc_md = Layer::ACC_GP;
   if(lv.gd_pvlv) {  // set as though we just had a primrary reward
     UNIT_GP_ITR

@@ -274,6 +274,7 @@ bool Unit::CheckBuild(bool quiet) {
 void Unit::RemoveCons() {
   recv.RemoveAll();             // blunt, but effective
   send.RemoveAll();
+  bias.Reset();
   n_recv_cons = 0;
 }
 
@@ -402,6 +403,34 @@ void Unit::RecvConsPostAlloc(Projection* prjn) {
     prjn->recv_idx = recv.size-1;
   }
   cgp->AllocConsFmSize();
+}
+
+void Unit::Connect_VecChunk_SendOwns(Network* net, int thread_no) {
+  if(thread_no < 0) thread_no = 0;
+  int* tmp_chunks = net->tmp_chunks + thread_no * net->own_cons_max_size;
+  int* tmp_not_chunks = net->tmp_not_chunks + thread_no * net->own_cons_max_size;
+  float* tmp_con_mem = net->tmp_con_mem + thread_no * (net->own_cons_max_size *
+                                                       (net->own_cons_max_vars + 1));
+  for(int p=0;p<send.size;p++) {
+    SendCons* sc = send[p];
+    if(sc->NotActive()) continue;
+    sc->VecChunk_SendOwns(this, net, tmp_chunks, tmp_not_chunks,
+                          tmp_con_mem);
+  }
+}
+
+void Unit::Connect_VecChunk_RecvOwns(Network* net, int thread_no) {
+  if(thread_no < 0) thread_no = 0;
+  int* tmp_chunks = net->tmp_chunks + thread_no * net->own_cons_max_size;
+  int* tmp_not_chunks = net->tmp_not_chunks + thread_no * net->own_cons_max_size;
+  float* tmp_con_mem = net->tmp_con_mem + thread_no * (net->own_cons_max_size *
+                                                       (net->own_cons_max_vars + 1));
+  for(int p=0;p<recv.size;p++) {
+    RecvCons* rc = recv[p];
+    if(rc->NotActive()) continue;
+    rc->VecChunk_RecvOwns(this, net, tmp_chunks, tmp_not_chunks,
+                          tmp_con_mem);
+  }
 }
 
 int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,

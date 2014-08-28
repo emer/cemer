@@ -185,8 +185,8 @@ void CsUnitSpec::DecayState(CsUnit* u, CsNetwork* net) {
   cu->clmp_net = 0.0f;
 }
 
-void CsUnitSpec::Init_Weights(Unit* u, Network* net) {
-  inherited::Init_Weights(u, net);
+void CsUnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
+  inherited::Init_Weights(u, net, thread_no);
   CsUnit* cu = (CsUnit*)u;
   cu->n_dwt_aggs = 0; // initialize it here
   cu->act_m = cu->act_p = 0.0f;

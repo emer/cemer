@@ -358,12 +358,12 @@ public:
   virtual void	SetLearnRule(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 
-  virtual void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning initialize weight values and other permanent state
+  virtual void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning layer-level initialization taking place after Init_Weights on units
     virtual void Init_Inhib(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation called in Init_Weights initialize the inhibitory state values
+    // #CAT_Activation called in Init_Weights_Layer initialize the inhibitory state values
     virtual void Init_Stats(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Statistic called in Init_Weights intialize statistic variables
+    // #CAT_Statistic called in Init_Weights_Layer intialize statistic variables
 
   virtual void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)

@@ -129,6 +129,9 @@ void Network::Initialize() {
   pct_cons_vec_chunked = 0.0f;
   ptr_cons_cnt = 0;
   ptr_cons_mem = NULL;
+  tmp_chunks = NULL;
+  tmp_not_chunks = NULL;
+  tmp_con_mem =  NULL;
 
 #ifdef DMEM_COMPILE
   // dmem_net_comm = ??
@@ -500,16 +503,23 @@ void Network::Connect() {
   taMisc::Busy();
   ++taMisc::no_auto_expand; // c'mon...!!! ;)
   StructUpdate(true);
+
+  taMisc::Info("Starting Connect..");
   CheckSpecs();
   RemoveCons();
   SyncSendPrjns();
 
+  taMisc::Info("Starting Connect_Sizes..");
   Connect_Sizes();
+  taMisc::Info("Starting Connect_Alloc..");
   Connect_Alloc();
+  taMisc::Info("Starting Connect_Cons..");
   Connect_Cons();
   UpdtAfterNetMod();            // this updates con active flags
 
+  taMisc::Info("Starting Connect_VecChunk..");
   Connect_VecChunk(); 
+  taMisc::Info("Done with Connect..");
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -658,51 +668,60 @@ void Network::Connect_Cons() {
 }
 
 void Network::Connect_VecChunk() {
-  if(RecvOwnsCons())
-    Connect_VecChunk_RecvOwns();
-  else
-    Connect_VecChunk_SendOwns();
-}
+  const int nt = threads.tasks.size;
+  tmp_chunks = new int[nt * own_cons_max_size];
+  tmp_not_chunks = new int[nt * own_cons_max_size];
+  tmp_con_mem =  new float[nt * (own_cons_max_size * (own_cons_max_vars + 1))];
 
-void Network::Connect_VecChunk_SendOwns() {
+  if(RecvOwnsCons()) {
+    ThreadUnitCall un_call(&Unit::Connect_VecChunk_RecvOwns);
+    threads.Run(&un_call, 1.0f);
+  }
+  else {
+    ThreadUnitCall un_call(&Unit::Connect_VecChunk_SendOwns);
+    threads.Run(&un_call, 1.0f);
+  }
+
+  delete[] tmp_chunks;
+  delete[] tmp_not_chunks;
+  delete[] tmp_con_mem;
+  tmp_chunks = NULL;
+  tmp_not_chunks = NULL;
+  tmp_con_mem =  NULL;
+
+  // now add up all the stats on total chunkification
   const int nu = units_flat.size;
-
-  int* tmp_chunks = new int[own_cons_max_size];
-  int* tmp_not_chunks = new int[own_cons_max_size];
-  float* tmp_con_mem =  new float[own_cons_max_size * (own_cons_max_vars + 1)];
-
-  double pct_chunked = 0.0f;
+  float pct_chunked = 0.0f;
   int   ncg = 0;
-
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
-    for(int p=0;p<un->send.size;p++) {
-      SendCons* sc = un->send[p];
-      if(sc->NotActive()) continue;
-      pct_chunked += sc->VecChunk_SendOwns(un, this,
-                                           tmp_chunks, tmp_not_chunks,
-                                           tmp_con_mem);
-      ncg++;
+    if(RecvOwnsCons()) {
+      for(int p=0;p<un->recv.size;p++) {
+        RecvCons* rc = un->recv[p];
+        if(rc->NotActive()) continue;
+        pct_chunked += rc->VecChunkPct();
+        ncg++;
+      }
+    }
+    else {
+      for(int p=0;p<un->send.size;p++) {
+        SendCons* sc = un->send[p];
+        if(sc->NotActive()) continue;
+        pct_chunked += sc->VecChunkPct();
+        ncg++;
+      }
     }
   }
 
   if(ncg > 0) {
-    pct_cons_vec_chunked = (float)(pct_chunked / (double)ncg);
+    pct_cons_vec_chunked = (pct_chunked / (float)ncg);
   }
   else {
     pct_cons_vec_chunked = 0.0f;
   }    
   // taMisc::DebugInfo((String)pct_cons_vec_chunked);
 
-  delete[] tmp_chunks;
-  delete[] tmp_not_chunks;
-  delete[] tmp_con_mem;
 }
-
-void Network::Connect_VecChunk_RecvOwns() {
-  
-}
-
 
 bool Network::CheckBuild(bool quiet) {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
@@ -920,13 +939,21 @@ void Network::Init_Weights() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
   //NOTE: this will typically be nested inside a gui check
   if (!CheckConfig(false)) return;
-
   taMisc::Busy();
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->Init_Weights(this);
+
+  // can't actually do this threaded because random number gen is not thread safe,
+  // for the time being..
+  // ThreadUnitCall un_call(&Unit::Init_Weights);
+  // threads.Run(&un_call, 1.0f);
+  const int nu = units_flat.size;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    un->Init_Weights(this, -1);
   }
-  Init_Weights_post();          // done after all initialization (for scaling wts...)
+
+  Init_Weights_post();
+
+  Init_Weights_Layer();
 
 #ifdef DMEM_COMPILE
   // do the dmem weight symmetrizing!
@@ -939,10 +966,22 @@ void Network::Init_Weights() {
   taMisc::DoneBusy();
 }
 
-void Network::Init_Weights_post() {
+void Network::Init_Weights_Layer() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
-      l->Init_Weights_post(this);
+      l->Init_Weights_Layer(this);
+  }
+}
+
+void Network::Init_Weights_post() {
+  // cannot run threaded yet..
+  // ThreadUnitCall un_call(&Unit::Init_Weights_post);
+  // threads.Run(&un_call, 1.0f);
+
+  const int nu = units_flat.size;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    un->Init_Weights(this, -1);
   }
 }
 

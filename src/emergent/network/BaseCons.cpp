@@ -412,10 +412,10 @@ SendCons* BaseCons::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su
   return NULL;
 }
 
-void BaseCons::FixConPtrs_SendOwns(Unit* su, Network* net) {
+void BaseCons::FixConPtrs_SendOwns(Unit* su, Network* net, int st_idx) {
   if(!IsSend() || !OwnCons()) return; // must be these two things for this to work
 
-  for(int i=0; i < size; i++) {
+  for(int i=st_idx; i < size; i++) {
     Unit* ru = Un(i, net);
     RecvCons* recv_gp = GetPrjnRecvCons(ru);
     if(!recv_gp) continue;      // shouldn't happen
@@ -426,10 +426,10 @@ void BaseCons::FixConPtrs_SendOwns(Unit* su, Network* net) {
   }
 }
 
-void BaseCons::FixConPtrs_RecvOwns(Unit* ru, Network* net) {
+void BaseCons::FixConPtrs_RecvOwns(Unit* ru, Network* net, int st_idx) {
   if(!IsRecv() || !OwnCons()) return; // must be these two things for this to work
 
-  for(int i=0; i < size; i++) {
+  for(int i=st_idx; i < size; i++) {
     Unit* su = Un(i, net);
     SendCons* send_gp = GetPrjnSendCons(su);
     if(!send_gp) continue;      // shouldn't happen
@@ -445,19 +445,48 @@ void BaseCons::MonitorVar(NetMonitor* net_mon, const String& variable) {
   net_mon->AddObject(this, variable);
 }
 
-
-float BaseCons::VecChunk_SendOwns(Unit* su, Network* net, 
-                                  int* tmp_chunks, int* tmp_not_chunks,
-                                  float* tmp_con_mem) {
-  if(!IsSend() || !OwnCons()) { // must be these two things for this to work
-    vec_chunked_size = 0;
-    return 0.0f; 
+void BaseCons::VecChunk_SendOwns(Unit* su, Network* net, 
+                                 int* tmp_chunks, int* tmp_not_chunks,
+                                 float* tmp_con_mem) {
+  vec_chunked_size = 0;
+  if(!IsSend() || !OwnCons()) {  // must be these two things for this to work
+    return;
+  }
+  if(vec_chunk_targ <= 1 || size < vec_chunk_targ || mem_start == 0) {
+    return;
   }
 
-  if(size < vec_chunk_targ || mem_start == 0) {
-    vec_chunked_size = 0;
-    return 0.0f;
+  int first_change = VecChunk_impl(tmp_chunks, tmp_not_chunks, tmp_con_mem);
+
+  // fix all the other guy con pointers
+  if(first_change >= 0 && first_change < size) {
+    FixConPtrs_SendOwns(su, net, first_change);
   }
+}
+
+void BaseCons::VecChunk_RecvOwns(Unit* ru, Network* net, 
+                                 int* tmp_chunks, int* tmp_not_chunks,
+                                 float* tmp_con_mem) {
+  vec_chunked_size = 0;
+  if(!IsRecv() || !OwnCons()) {  // must be these two things for this to work
+    return;
+  }
+  if(vec_chunk_targ <= 1 || size < vec_chunk_targ || mem_start == 0) {
+    return;
+  }
+
+  int first_change = VecChunk_impl(tmp_chunks, tmp_not_chunks, tmp_con_mem);
+
+  // fix all the other guy con pointers
+  if(first_change >= 0 && first_change < size) {
+    FixConPtrs_RecvOwns(ru, net, first_change);
+  }
+}
+
+
+int BaseCons::VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
+                            float* tmp_con_mem) {
+  vec_chunked_size = 0;
 
   // first find all the chunks and not-chunks
   int n_chunks = 0;
@@ -514,7 +543,8 @@ float BaseCons::VecChunk_SendOwns(Unit* su, Network* net,
     }
   }
 
-  if(n_chunks == 0) return 0.0f;
+  if(n_chunks == 0)
+    return size;                // no changes
   
   int ncv = NConVars()+1;       // include unit idx
 
@@ -537,9 +567,18 @@ float BaseCons::VecChunk_SendOwns(Unit* su, Network* net,
     cur_sz++;
   }
 
+#ifdef DEBUG
   if(TestError(cur_sz != size, "VecChunk_SendOwns", "new size != orig size -- oops!")) {
-    // this is just for debugging
-    return 0.0f;
+    return size;
+  }
+#endif
+
+  int first_change = -1;
+  for(i=0; i<size; i++) {
+    if(UnIdx(i) != ((int32_t*)tmp_con_mem)[i]) {
+      first_change = i;
+      break;
+    }
   }
 
   // then copy over the newly reorganized guys..
@@ -547,13 +586,9 @@ float BaseCons::VecChunk_SendOwns(Unit* su, Network* net,
     memcpy(MemBlock(i), (char*)(tmp_con_mem + alloc_size * i), size * sizeof(float));
   }
 
-  // finally, fix all the other guy con pointers
-  FixConPtrs_SendOwns(su, net);
-
   vec_chunked_size = n_chunks * vec_chunk_targ; // we are now certfied chunkable..
 
-  // rval is percent of our cons that are vec chunked
-  return (float)vec_chunked_size / (float)size;
+  return first_change;
 }
 
 

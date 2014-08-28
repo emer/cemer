@@ -32,7 +32,7 @@ public:
   float		lambda;		// exponential decay parameter for updating activation trace values over time: these trace values are used in learning.  in principle this should also include the effects of the discount (gamma) parameter from the TdRewInteg layer
 
   void	Init_Acts(Unit* u, Network* net) override;
-  void Init_Weights(Unit* u, Network* net) override;
+  void Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
   void EncodeState(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);

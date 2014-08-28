@@ -27,6 +27,41 @@
 
 // declare all other types mentioned but not required to include:
 
+inline void LeabraConSpec::C_Init_Weights_sender(LeabraSendCons* cg, const int idx,
+                                                 float* wts, float* dwts, float* pdws) {
+  if(rnd.type != Random::NONE)  { // don't do anything (e.g. so connect fun can do it)
+    wts[idx] = rnd.Gen();
+  }
+  else {
+    rnd.Gen();          // keep random seeds synchronized for dmem
+  }
+  wt_limits.ApplyLimits(wts[idx]);
+  dwts[idx] = 0.0f;
+  pdws[idx] = 0.0f;
+}
+
+inline void LeabraConSpec::Init_Weights_sender(LeabraSendCons* cg, LeabraUnit* ru,
+                                               LeabraNetwork* net) 
+{ // Projection* prjn = cg->prjn;
+  // if(prjn->spec->init_wts) {
+  //   prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
+  //   if(prjn->spec->add_rnd_wts) {
+  //     const float scl = prjn->spec->add_rnd_wts_scale;
+  //     CON_GROUP_LOOP(cg, C_AddRndWeights(cg, i, ru, cg->Un(i,net), scl, net));
+  //   }
+  // }
+  // else {
+
+  float* wts = cg->OwnCnVar(WT);
+  float* dwts = cg->OwnCnVar(DWT);
+  float* pdws = cg->OwnCnVar(PDW);
+
+  CON_GROUP_LOOP(cg, C_Init_Weights_sender(cg, i, wts, dwts, pdws));
+
+  if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
+    wt_scale.rel = wt_scale_init.rel; }
+}
+
 inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net) {
   if(!learn) return;

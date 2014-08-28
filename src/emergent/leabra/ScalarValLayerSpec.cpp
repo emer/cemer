@@ -368,8 +368,8 @@ void ScalarValLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net
   UNIT_GP_ITR(lay, BuildUnits_Threads_ugp(lay, acc_md, gpidx, net););
 }
 
-void ScalarValLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Init_Weights(lay, net);
+void ScalarValLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Init_Weights_Layer(lay, net);
   Compute_BiasVal(lay, net);
   if(scalar.init_nms)
     LabelUnits(lay, net);

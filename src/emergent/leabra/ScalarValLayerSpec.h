@@ -190,11 +190,11 @@ public:
   void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) override;
     virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 					LeabraNetwork* net);
-  void Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
-  int  LayerStatsStartUnitIdx() override { return 1; } // skip first unit
+  int   LayerStatsStartUnitIdx() override { return 1; } // skip first unit
 
   float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false) override;

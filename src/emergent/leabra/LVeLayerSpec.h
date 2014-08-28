@@ -79,7 +79,7 @@ public:
   bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override;
   bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

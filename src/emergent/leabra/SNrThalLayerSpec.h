@@ -78,7 +78,7 @@ public:
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Init_Weights(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // don't do any learning:

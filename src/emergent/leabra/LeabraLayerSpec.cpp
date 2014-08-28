@@ -385,12 +385,9 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void LeabraLayerSpec::Init_Weights(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->BuildKwtaBuffs();        // make sure kwta buffs are rebuilt!
-  Compute_Active_K(lay, net);   // need kwta.pct for init
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    u->Init_Weights(net);
-  }
+  Compute_Active_K(lay, net);   // need kwta.pct for init -- TODO: really?
   lay->acts_m_avg.InitForTimeAvg(lay->kwta.pct, 0.9f);
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {

@@ -191,9 +191,11 @@ public: //
   // #MENU #CAT_Activation initialize unit state variables
   void  Init_dWt(Network* net)  { GetUnitSpec()->Init_dWt(this, net); }
   // #MENU #CAT_Learning initialze weight change variables
-  void  Init_Weights(Network* net) { GetUnitSpec()->Init_Weights(this, net); }
+  void  Init_Weights(Network* net, int thread_no=-1)
+  { GetUnitSpec()->Init_Weights(this, net, thread_no); }
   // #MENU #CAT_Learning Initialize weight values
-  void  Init_Weights_post(Network* net) { GetUnitSpec()->Init_Weights_post(this, net); }
+  void  Init_Weights_post(Network* net, int thread_no=-1)
+  { GetUnitSpec()->Init_Weights_post(this, net, thread_no); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
   void  Compute_Netin(Network* net, int thread_no=-1)
@@ -253,6 +255,11 @@ public: //
   // #CAT_Structure post-allocate given no of sending connections (calls AllocConsFmSize on send con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual void  RecvConsPostAlloc(Projection* prjn);
   // #CAT_Structure post-allocate given no of recv connections (calls AllocConsFmSize on recv con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
+  virtual void  Connect_VecChunk_SendOwns(Network* net, int thread_no=-1);
+  // #IGNORE threaded vector-chunking of connections, sender owns cons
+  virtual void  Connect_VecChunk_RecvOwns(Network* net, int thread_no=-1);
+  // #IGNORE threaded vector-chunking of connections, recv owns cons
+
   virtual int   ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false,
                             bool ignore_alloc_errs = false, bool set_init_wt = false,
                             float init_wt = 0.0f);
