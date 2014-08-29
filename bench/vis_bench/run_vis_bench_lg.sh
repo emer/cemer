@@ -33,5 +33,5 @@ set exe=../../build/bin/emergent
 
 echo " "
 echo "=============================================================="
-echo "vis_bench_lg -- large size vision model, for 1 epoch of 20 patterns"
+echo "vis_bench_lg -- large size vision model, for 1 epoch of 50 patterns"
 $exe -nogui -ni -p vis_bench_lg.proj epochs=1 $*

@@ -83,10 +83,19 @@ public:
   }
   // #IGNORE reset synaptic depression effective weight (remove any existing synaptic depression and associated variables)
 
-  inline void C_Init_Weights_post(BaseCons* cg, const int idx,
-                                           Unit* ru, Unit* su, Network* net) override {
-    inherited::C_Init_Weights_post(cg, idx, ru, su, net);
-    cg->Cn(idx,EFFWT,net) = cg->Cn(idx,WT,net); cg->Cn(idx,CAI,net) = 0.0f;
+  inline void Init_Weights_post(BaseCons* cg, Unit* un, Network* net) override {
+    inherited::Init_Weights_post(cg, un, net);
+    float* wts = cg->OwnCnVar(WT);
+    float* effs = cg->OwnCnVar(EFFWT);
+    float* cais = cg->OwnCnVar(CAI);
+    for(int i=0; i<cg->size; i++) {
+      effs[i] = wts[i];
+      cais[i] = 0.0f;
+    }
+  }
+  inline void   B_Init_Weights_post(RecvCons* cg, Unit* ru, Network* net) {
+    float wt = cg->OwnCn(0, WT);
+    cg->OwnCn(0, EFFWT) = wt; cg->OwnCn(0, CAI) = 0.0f;
   }
 
   inline void Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,

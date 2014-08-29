@@ -76,8 +76,7 @@ public:
   bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
 
   void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) override;
-  bool Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override;
-  bool Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override;
+  bool Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
 

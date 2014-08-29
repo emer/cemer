@@ -40,15 +40,9 @@ void PVMiscSpec::Initialize() {
 void PViLayerSpec::Initialize() {
   // SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 
   bias_val.un = ScalarValBias::GC;
   bias_val.val = .5f;           // default is no-information case; extrew = .5
-
-  // SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void PViLayerSpec::HelpConfig() {
@@ -79,7 +73,6 @@ bool PViLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
@@ -204,21 +197,6 @@ void PViLayerSpec::Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no < net->phase_max-1)
     return;
   Compute_PVPlusPhaseDwt(lay, net);
-}
-
-bool PViLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  // only do FINAL dWt even though logically it should occur in first plus, because
-  // if pbwm is used, then the clamped plus-phase value will be weird, and all the
-  // state information should be available etc
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  return true;
-}
-
-bool PViLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no < net->phase_max-1)
-    return false;
-  return true;
 }
 
 

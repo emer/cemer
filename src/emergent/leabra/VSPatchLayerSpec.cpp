@@ -24,10 +24,6 @@
 TA_BASEFUNS_CTORS_DEFN(VSPatchLayerSpec);
 
 void VSPatchLayerSpec::Initialize() {
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void VSPatchLayerSpec::Defaults_init() {

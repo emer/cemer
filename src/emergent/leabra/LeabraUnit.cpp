@@ -52,7 +52,7 @@ void LeabraUnit::Initialize() {
   p_act_p = 0.0f;
   davg = 0.0f;
   act_p = act_m = act_dif = 0.0f;
-  act_m2 = act_mid = act_dif2 = 0.0f;
+  act_mid = 0.0f;
   da = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
@@ -143,9 +143,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
-  act_m2 = cp.act_m2;
   act_mid = cp.act_mid;
-  act_dif2 = cp.act_dif2;
   da = cp.da;
   vcb = cp.vcb;
   gc = cp.gc;

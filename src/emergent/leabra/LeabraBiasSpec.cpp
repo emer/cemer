@@ -24,7 +24,6 @@ void LeabraBiasSpec::Initialize() {
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
-  SetUnique("wt_scale_init", true);
 
   Defaults_init();
 }

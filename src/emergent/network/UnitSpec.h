@@ -59,12 +59,14 @@ public:
 
   virtual void  Init_Acts(Unit* u, Network* net);
   // #CAT_Activation initialize unit activation state variables
-  virtual void  Init_dWt(Unit* u, Network* net);
+  virtual void  Init_dWt(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Learning initialize the weight change variables
   virtual void  Init_Weights(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Learning init weight state variables
-  virtual void  Init_Weights_post(Unit* u, Network* net, int thread_no=-1);
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+    virtual void  Init_Weights_sym(Unit* u, Network* net, int thread_no=-1);
+    // #CAT_Structure symmetrize weights if needed after weight init -- threaded for speed
+    virtual void  Init_Weights_post(Unit* u, Network* net, int thread_no=-1);
+    // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- threaded for speed
 
   virtual void  Compute_Netin(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Activation compute net input: activations times weights (receiver based)

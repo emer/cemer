@@ -43,9 +43,7 @@ public:
 
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
 
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;

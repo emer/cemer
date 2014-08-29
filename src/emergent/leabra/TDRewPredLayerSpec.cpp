@@ -27,15 +27,10 @@ TA_BASEFUNS_CTORS_DEFN(TDRewPredLayerSpec);
 
 void TDRewPredLayerSpec::Initialize() {
   SetUnique("decay", true);
-  decay.phase2 = 0.0f;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit_NoGui();
   val_range.UpdateAfterEdit_NoGui();
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void TDRewPredLayerSpec::UpdateAfterEdit_impl() {
@@ -67,9 +62,6 @@ bool TDRewPredLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                 "must have LeabraTdUnits!")) {
     return false;
   }
-
-  SetUnique("decay", true);
-  decay.phase2 = 0.0f;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,
@@ -174,11 +166,3 @@ void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   }
 }
 
-bool TDRewPredLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  // doing second because act_p is computed only at end of settling!
-  // this is better than clamping the value in the middle of everything
-  // and then continuing with settling..
-  if(net->phase_no < net->phase_max-1)
-    return false; // only do FINAL dwt!
-  return true;
-}

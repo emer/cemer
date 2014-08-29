@@ -48,7 +48,7 @@ private:
 eTypeDef_Of(SNrThalLayerSpec);
 
 class E_API SNrThalLayerSpec : public LeabraLayerSpec {
-  // Represents the substantia nigra, pars reticulata (SNr) or globus pallidus internal segment (GPi) and Thalamus (e.g., MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix go projections -- all nogo enters into matrix activations, not snrthal -- within gating time window, registers whether given stripe gets over threshold, with gating val in act_mid and acts, and gating info recorded in unit group data per stripe -- act_m2 preserves the last value during gating window for non-gating stripes
+  // Represents the substantia nigra, pars reticulata (SNr) or globus pallidus internal segment (GPi) and Thalamus (e.g., MD) circuits that project from basal ganglia up to frontal cortex -- activation is directly computed from matrix go projections -- all nogo enters into matrix activations, not snrthal -- within gating time window, registers whether given stripe gets over threshold, with gating val in act_mid and acts, and gating info recorded in unit group data per stripe -- net_ctxt preserves the last value during gating window for non-gating stripes
 INHERITED(LeabraLayerSpec)
 public:
   enum GatingTypes {		// #BITS types of gating stripes present, for INPUT, IN_MNT, OUTPUT, etc. gating -- used for coordinating structure of network (projections mostly) -- all gating is functionally identical
@@ -84,9 +84,7 @@ public:
   // don't do any learning:
   bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
 
   virtual void	GatingTypesNStripes(LeabraLayer* lay, int& n_in, int& n_mnt, int& n_out, int& n_mnt_out, int& n_out_mnt);

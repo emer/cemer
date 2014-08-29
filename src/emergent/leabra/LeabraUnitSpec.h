@@ -562,7 +562,11 @@ public:
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 
+  void  Init_dWt(Unit* u, Network* net, int thread_no=-1) override;
   void  Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
+  void  Init_Weights_sym(Unit* u, Network* net, int thread_no=-1) override;
+  void  Init_Weights_post(Unit* u, Network* net, int thread_no=-1) override;
+
   void	Init_Acts(Unit* u, Network* net) override;
   virtual void 	Init_ActAvg(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation initialize average activation values, used to control learning
@@ -781,12 +785,8 @@ public:
   virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabraX/CAL)
 
-  virtual void 	Compute_dWt_FirstMinus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
-  virtual void 	Compute_dWt_FirstPlus(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_Nothing(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  void 	        Compute_dWt(Unit* u, Network* net, int thread_no=-1) override;
+
   virtual void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
 
@@ -802,8 +802,6 @@ public:
   bool	 Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) override;
   virtual float  Compute_NormErr(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0
-  virtual float  Compute_M2SSE(LeabraUnit* u, LeabraNetwork* net, bool& has_targ);
-  // #CAT_Statistic compute sum-squared error of target compared to act_m2 instead of act_m 
 
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions

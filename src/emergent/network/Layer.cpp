@@ -906,12 +906,6 @@ void  Layer::Init_Acts(Network* net) {
   }
 }
 
-void  Layer::Init_dWt(Network* net) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->Init_dWt(net);
-  }
-}
-
 void Layer::Init_Weights_Layer(Network* net) {
   sse = 0.0f;
 }

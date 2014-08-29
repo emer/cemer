@@ -80,9 +80,36 @@ public:
   void 		(*decay_fun)(BpConSpec* spec, float& wt, float& dwt);
   // #LIST_BpConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  inline void C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                      Network* net) override
-  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
+  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    for(int i=0; i<cg->size; i++) {
+      C_Init_dWt(dwts[i]);
+      pdws[i] = 0.0f;
+    }
+  }
+
+  inline void   Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
+    Init_Weights_symflag(net);
+    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
+
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+
+    if(rnd.type != Random::NONE) {
+      for(int i=0; i<cg->size; i++) {
+        C_Init_Weight_Rnd(wts[i]);
+        C_Init_dWt(dwts[i]);
+        pdws[i] = 0.0f;
+      }
+    }
+  }
+
+  inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
+    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+    cg->OwnCn(0, PDW) = 0.0f;
+  }
 
   inline float		C_Compute_dEdA(const float wt, const float ru_dEdNet)
   { return wt * ru_dEdNet; }
@@ -94,7 +121,7 @@ public:
                                      const float su_act)
   { dwt += su_act * ru_dEdNet; }
   // #IGNORE
-  inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+  inline void 		Compute_dWt(BaseCons* cg, Unit* ru, Network* net) override;
   inline virtual void	B_Compute_dWt(RecvCons* bias, BpUnit* ru);
   // Compute dE with respect to the weights
 
@@ -124,7 +151,7 @@ public:
   }
   // NORMALIZED
 
-  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
+  inline void	Compute_Weights(BaseCons* cg, Unit* ru, Network* net) override;
   inline virtual void B_Compute_Weights(RecvCons* bias, BpUnit* ru);
   // for the bias unit
 
@@ -287,16 +314,19 @@ inline float BpConSpec::Compute_dEdA(BpSendCons* cg, BpUnit* su, Network* net) {
   return rval;
 }
 
-inline void BpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+inline void BpConSpec::Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
   const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_dEdNet, cg->Un(i,net)->act));
+  // todo: if unit act is all in a contiguous vector, and with vec chunking, this 
+  // could be a very fast vector op
 }
+
 inline void BpConSpec::B_Compute_dWt(RecvCons* bias, BpUnit* ru) {
   bias->OwnCn(0, DWT) += ru->dEdNet;
 }
 
-inline void BpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+inline void BpConSpec::Compute_Weights(BaseCons* cg, Unit* ru, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdwts = cg->OwnCnVar(PDW);
@@ -322,7 +352,7 @@ inline void BpConSpec::B_Compute_Weights(RecvCons* bias, BpUnit* ru) {
   else
     C_NRM_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
                           bias->OwnCn(0,PDW));
-  C_ApplyLimits(bias->OwnCn(0,WT), ru, NULL);
+  C_ApplyLimits(bias->OwnCn(0,WT));
 }
 
 //////////////////////////////////////////
@@ -338,7 +368,7 @@ public:
   inline void 		C_Compute_dWt(float& dwt, const float ru_act,
                                      const float su_act)
   { dwt += su_act * ru_act; }
-  inline void 		Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
+  inline void 		Compute_dWt(BaseCons* cg, Unit* ru, Network* net);
 
   inline void		B_Compute_dWt(RecvCons* bias, BpUnit* ru);
 
@@ -348,7 +378,7 @@ private:
   void 	Destroy()		{ };
 };
 
-inline void HebbBpConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+inline void HebbBpConSpec::Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
   const float ru_act = (ru->ext_flag & Unit::TARG) ? ru->targ : ru->act;
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));
@@ -412,9 +442,24 @@ public:
   float		lrate_decr;	// rate of learning rate decrease (multiplicative)
   float		act_lrate_incr;	// #HIDDEN actual lrate increase (times lrate)
 
-  inline void 	C_Init_Weights(RecvCons* cg, int idx, Unit* ru, Unit* su,
-                                       Network* net) override
-  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,LRATE) = lrate; }
+  inline void   Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
+    Init_Weights_symflag(net);
+    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
+
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    float* lrs = cg->OwnCnVar(LRATE);
+
+    if(rnd.type != Random::NONE) {
+      for(int i=0; i<cg->size; i++) {
+        C_Init_Weight_Rnd(wts[i]);
+        C_Init_dWt(dwts[i]);
+        pdws[i] = 0.0f;
+        lrs[i] = lrate;
+      }
+    }
+  }
 
   inline void	C_UpdateLrate(float& lrate, const float dwt, const float pdw) {
     const float prod = pdw * dwt;
@@ -447,7 +492,7 @@ public:
     dwt = 0.0f;
   }
 
-  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net) override;
+  inline void	Compute_Weights(BaseCons* cg, Unit* ru, Network* net) override;
   inline void	B_Compute_Weights(RecvCons* bias, BpUnit* ru) override;
 
   TA_SIMPLE_BASEFUNS(DeltaBarDeltaBpConSpec);
@@ -460,7 +505,7 @@ private:
   void	Defaults_init();
 };
 
-inline void DeltaBarDeltaBpConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+inline void DeltaBarDeltaBpConSpec::Compute_Weights(BaseCons* cg, Unit* ru, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdwts = cg->OwnCnVar(PDW);
@@ -487,7 +532,7 @@ inline void DeltaBarDeltaBpConSpec::B_Compute_Weights(RecvCons* bias, BpUnit* ru
   else
     C_NRM_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
                           bias->OwnCn(0,PDW), bias->OwnCn(0,LRATE));
-  C_ApplyLimits(bias->OwnCn(0,WT), ru, NULL);
+  C_ApplyLimits(bias->OwnCn(0,WT));
 }
 
 
@@ -514,7 +559,7 @@ public:
 
   // nullify all other functions..
   void Compute_Netin(Unit*, Network* net, int thread_no=-1) 	override { };
-  void Init_dWt(Unit*, Network* net) 	override { };
+  void Init_dWt(Unit*, Network* net, int thread_no=-1) 	override { };
   void Compute_dWt(Unit*, Network* net, int thread_no=-1) 	override { };
   void Compute_Weights(Unit*, Network* net, int thread_no=-1) 	override { };
 

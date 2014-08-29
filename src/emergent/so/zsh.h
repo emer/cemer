@@ -41,7 +41,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
     Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
     const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
     const float ru_act = ru->act;
@@ -85,7 +85,7 @@ public:
     dwt += tmp;
   }
 
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
     Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
     const float avg_in_act = ((SoRecvCons*)cg)->avg_in_act;
     const float ru_act = ru->act;

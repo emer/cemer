@@ -88,14 +88,27 @@ bool ConSpec::CheckType_impl(TypeDef* td) {
   return inherited::CheckType_impl(td);
 }
 
-void ConSpec::ApplySymmetry(RecvCons* cg, Unit* ru, Network* net) {
+void ConSpec::ApplySymmetry_r(RecvCons* cg, Unit* ru, Network* net) {
   if(!wt_limits.sym) return;
   for(int i=0; i<cg->size;i++) {
     int con_idx = -1;
     RecvCons* rrcg = BaseCons::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
                                                 cg->prjn->layer);
     if(rrcg) {
-      rrcg->Cn(con_idx, WT, net) = cg->Cn(i, WT, net);
+      rrcg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
+      // set other's weight to ours (otherwise no random..)
+    }
+  }
+}
+
+void ConSpec::ApplySymmetry_s(SendCons* cg, Unit* su, Network* net) {
+  if(!wt_limits.sym) return;
+  for(int i=0; i<cg->size;i++) {
+    int con_idx = -1;
+    SendCons* rscg = BaseCons::FindRecipSendCon(con_idx, cg->Un(i,net), su,
+                                                cg->prjn->from.ptr());
+    if(rscg) {
+      rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
       // set other's weight to ours (otherwise no random..)
     }
   }

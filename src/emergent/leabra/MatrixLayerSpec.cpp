@@ -70,12 +70,6 @@ void MatrixLayerSpec::Defaults_init() {
 
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
-
-  // SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 
   //  SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
@@ -88,12 +82,6 @@ void MatrixLayerSpec::Defaults_init() {
   unit_gp_inhib.gp_g = 1.0f;
   lay_gp_inhib.on = false;      // off now by default!
   lay_gp_inhib.gp_g = 1.0f;
-
-  //  SetUnique("tie_brk", true);        // turn on tie breaking by default
-  tie_brk.on = false;
-  tie_brk.diff_thr = 0.2f;
-  tie_brk.thr_gain = 0.005f;
-  tie_brk.loser_gain = 1.0f;
 }
 
 void MatrixLayerSpec::UpdateAfterEdit_impl() {
@@ -121,9 +109,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  // SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 
   if(lay->CheckError(!lay->unit_groups, quiet, rval,
                 "layer must have unit_groups = true (= stripes) (multiple are good for independent searching of gating space!")) {
@@ -386,7 +372,7 @@ void MatrixLayerSpec::Compute_PreGatingAct_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_mid = 0.0f;
-    u->act_m2 = 0.0f;
+    u->net_ctxt = 0.0f;
   }
 }
 
@@ -410,7 +396,7 @@ void MatrixLayerSpec::Compute_NoGatingRecAct_ugp(LeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->act_m2 = u->act_eq;
+    u->net_ctxt = u->act_eq;
   }
 }
 
@@ -422,7 +408,7 @@ void MatrixLayerSpec::Compute_GoGatingAct_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     u->act_mid = u->act_eq;
-    u->act_m2 = u->act_eq;       // also grab this
+    u->net_ctxt = u->act_eq;       // also grab this
 
     // now save the sending unit activations at time of gating
     for(int g=0; g<u->recv.size; g++) {
@@ -486,7 +472,7 @@ void MatrixLayerSpec::Compute_GatingActs_ugp(LeabraLayer* lay,
       Compute_ShowGatingAct_ugp(lay, acc_md, gpidx, net); // show what happened
     }
     else if(net->ct_cycle >= snr_ls->snrthal.min_cycle) {
-      Compute_NoGatingRecAct_ugp(lay, acc_md, gpidx, net); // record to act_m2
+      Compute_NoGatingRecAct_ugp(lay, acc_md, gpidx, net); // record to net_ctxt
     }
   }
 }

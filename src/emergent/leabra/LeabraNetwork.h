@@ -58,11 +58,8 @@ public:
   bool		use;		// whether to use these parameters to determine trial timing -- on by default for all Ct (continuous time) algorithms, and off for CHL by default
   int		minus;		// #DEF_50:200 #CONDSHOW_ON_use number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// #DEF_20:200 #CONDSHOW_ON_use number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
-  int		inhib;		// #DEF_0;1 #CONDSHOW_ON_use number of cycles to run in the final inhibitory phase -- only relevant for MINUS_PLUS_NOTHING case
-  int		n_avg_only_epcs; // #DEF_0 #CONDSHOW_ON_use number of epochs during which time only ravg values are accumulated, and no learning occurs
 
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
-  int		inhib_start;	// #READ_ONLY computed start of inhib phase (=minus + plus)
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -84,7 +81,6 @@ INHERITED(taOBase)
 public:
   bool		manual;		// the determination of when to compute sravg is made externally (e.g., by a program) -- sravg_vals.state flag must be set prior to calling Network::Cycle_Run() to take effect -- by default layers will copy network sravg_vals.state flag setting, so you only need to set it globally for the network (see layer-level manual_sravg flag if you want to set everything manually)
   int		start;		// #CONDSHOW_OFF_manual #DEF_30:60 number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		end;		// #CONDSHOW_OFF_manual #DEF_0;1 number of cycles from the start of the final inhibitory phase to continue recording sravg
   int		interval;	// #CONDSHOW_OFF_manual #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
   int		plus_s_st;	// #CONDSHOW_OFF_manual [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
   bool		plus_s_only;	// #CONDSHOW_OFF_manual plus increments short-term only, not short and medium term activations
@@ -103,164 +99,6 @@ private:
 };
 
 
-eTypeDef_Of(CtSineInhibMod);
-
-class E_API CtSineInhibMod : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra sinusoidal inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
-INHERITED(taOBase)
-public:
-  int		start;		// #DEF_30:60 number of cycles from onset of new input to start applying sinusoidal inhibitory modulation
-  int		duration;	// #DEF_20 number of cycles from start to apply modulation
-  float		n_pi;		// #DEF_2 number of multiples of PI to produce within duration of modulation (1.0 = positive only wave, 2.0 = full pos/neg wave, 4.0 = two waves, etc)
-  float		burst_i;	// #DEF_0.02;0 maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
-  float		trough_i;	// #DEF_0.02;0 maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
-
-  float		GetInhibMod(int ct_cycle, float bi, float ti) {
-    if((ct_cycle < start) || (ct_cycle >= (start + duration))) return 0.0f;
-    float rads = (((float)(ct_cycle - start) / (float)duration) * taMath_float::pi * n_pi);
-    float sinval = -taMath_float::sin(rads);
-    if(sinval < 0.0f) 	sinval *= bi; // signs are reversed for inhib vs activation
-    else		sinval *= ti;
-    return sinval;
-  }
-  // returns inhibitory modulation to apply as a fraction of computed kwta value
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  SIMPLE_COPY(CtSineInhibMod);
-  TA_BASEFUNS(CtSineInhibMod);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-eTypeDef_Of(CtFinalInhibMod);
-
-class E_API CtFinalInhibMod : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra extra inhibition to apply at end of stimulus processing during inhib phase, to clear out existing pattern
-INHERITED(taOBase)
-public:
-  int		start;		// number of cycles into inhib phase for inhibition ramp to start
-  int		end;		// number of cycles into inhib phase for inhibition ramp to end -- remains at full inhibition level from end to end of inhib phase
-  float		inhib_i;	// [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
-
-  float		GetInhibMod(int inh_cyc, float ii) {
-    if(inh_cyc < start) return 0.0f;
-    if(inh_cyc >= end) return ii;
-    float slp = (float)(inh_cyc - start) / (float)(end - start);
-    return slp * ii;
-  }
-  // returns inhibitory modulation to apply as a fraction of computed kwta value
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  SIMPLE_COPY(CtFinalInhibMod);
-  TA_BASEFUNS(CtFinalInhibMod);
-// protected:
-//   void UpdateAfterEdit_impl();
-
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-
-eTypeDef_Of(CtLrnTrigSpec);
-
-class E_API CtLrnTrigSpec : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
-INHERITED(taOBase)
-public:
-  int		plus_lrn_cyc;	// #DEF_-1 if this is > 0, then do learning at this number of cycles into the plus phase, instead of what would be computed by the parameters here -- allows for debugging of other network parameters and comparison with an 'optimal' learning trigger
-  float		davg_dt;	// #DEF_0.1 #MIN_0 #MAX_1 time constant (rate) for continuously updating the delta-average activation value (davg) -- provides some level of initial smoothing over the instantaneous delta-avg_s value, which can otherwise be somewhat noisy
-  float		davg_s_dt;	// #DEF_0.05 #MIN_0 #MAX_1 time constant (rate) for continuously updating the short-time frame average of the davg value -- this is contrasted with davg_m to give a smooth acceleration term to measure jolt
-  float		davg_m_dt;	// #DEF_0.03 #MIN_0 #MAX_1 time constant (rate) for continuously updating the medium-time frame average of the davg value -- this is contrasted with davg_s to give a smooth acceleration term to measure jolt
-  float		davg_l_dt;	// #DEF_0.0005 #MIN_0 #MAX_1 time constant (rate) for continuously updating the long-term average of davg_smd (davg_l) and the long-term maximum (davg_max) -- provides the range for the threshold value computation
-  float		thr_min;	// #DEF_-0.15 minimum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold
-  float		thr_max;	// #DEF_0.5 maximum threshold for learning as a proportion of distance between davg_l and davg_max -- current local maximum davg_smd value is compared to this threshold -- changes can be too big for learning -- typically representing transitions between disparate events, so this value should be < 1
-  int		loc_max_cyc;	// #DEF_8 #MIN_1 how many cycles of downward-going davg_smd values are required past a local peak, before that peak value is used for checking against the thresholds -- this is an exact number -- if doesn't meet criteria at this point, it is skipped until next peak
-  float		loc_max_dec;	// #DEF_0.01 #MIN_0 how much must the current davg_smd value drop below the local max value before learning can take place -- this ensures that the peak was not just a tiny wiggle -- expressed as a positive number 
-  int		lrn_delay;	// #DEF_40 #MIN_1 how many cycles after learning is triggered does it actually take place?
-  int		lrn_refract;	// #DEF_100 #MIN_1 refractory period after learning before any learning can take place again
-  float		davg_l_init; 	// #DEF_0 #MIN_0 initial value for davg_l
-  float		davg_max_init; 	// #DEF_0.001 #MIN_0 initial value for davg_max
-
-  float		davg_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_dt) for continuously updating davg
-  float		davg_s_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_m_dt) for continuously updating davg_m
-  float		davg_m_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_m_dt) for continuously updating davg_m
-  float		davg_l_time; 	// #READ_ONLY #SHOW time constant (in cycles, 1/davg_l_dt) for continuously updating davg_l
-
-  float		lrn_delay_inc;	// #READ_ONLY #HIDDEN 1.0f / lrn_delay_inc -- increment per count to compute normalized lrn_trig
-  float		lrn_refract_inc; // #READ_ONLY #HIDDEN 1.0f / lrn_refract_inc -- increment per count to compute normalized lrn_trig
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(CtLrnTrigSpec);
-protected:
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-
-eTypeDef_Of(CtLrnTrigVals);
-
-class E_API CtLrnTrigVals : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra state variables for continuous-time learning trigger -- based on overall rate of change of the short-term average activation in the layer
-INHERITED(taOBase)
-public:
-  float		davg;		// average absolute value of davg delta average activation change across entire network
-  float		davg_s;		// shorter time average of the davg value 
-  float		davg_m;		// medium time average of the davg value
-  float		davg_smd;	// davg_s - davg_m -- local acceleration of the curve
-  float		davg_l; 	// long-term average of davg_smd -- used for enabling normalized thresholds between this long-term average and the long-term max davg_max
-  float		davg_max; 	// long-term maximum of davg_smd -- used for enabling normalized thresholds between davg_l and this long-term max 
-  int		cyc_fm_inc;	// number of cycles since an increase was detected
-  int		cyc_fm_dec;	// number of cycles since a decrease was detected
-  float		loc_max;	// local maximum value of davg_smd -- jolt detection happens on the local peak of davg_m
-  float		lrn_max;	// local maximum value of davg_smd that actually drove learning -- recorded for stats purposes
-  float		lrn_trig;	// learning trigger variable -- determines when to learn -- starts counting up from 0 to 1 when threshold is met -- learning happens at 1
-  int		lrn;		// did layer learn on this cycle -- 1 if true, 0 if false
-
-  float		lrn_min;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in first minus phase -- computed every epoch
-  float		lrn_min_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into first minus phase did it learn on average -- computed every epoch
-  float		lrn_min_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for first minus phase learning -- computed every epoch
-  float		lrn_min_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_min_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_min_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-
-  float		lrn_plus;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in plus phase -- computed every epoch
-  float		lrn_plus_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into plus phase did it learn on average -- computed every epoch
-  float		lrn_plus_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for plus phase learning -- computed every epoch
-  float		lrn_plus_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_plus_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_plus_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-
-  float		lrn_noth;	// #NO_SAVE #CAT_Statistic what proportion of times did it learn in nothing phase -- computed every epoch
-  float		lrn_noth_cyc;	// #NO_SAVE #CAT_Statistic how many cycles into nothing phase did it learn on average -- computed every epoch
-  float		lrn_noth_thr;	// #NO_SAVE #CAT_Statistic average value of threshold-determining variable (davg_smd) for nothing phase learning -- computed every epoch
-  float		lrn_noth_sum;	// #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_noth_cyc_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-  float		lrn_noth_thr_sum; // #NO_SAVE #CAT_Statistic #READ_ONLY sum
-
-  int		lrn_stats_n;	// #NO_SAVE #CAT_Statistic #READ_ONLY count of number of times stats have been incremented
-
-  void		Init_Stats();	// initialize stats vars (all to 0)
-  void		Init_Stats_Sums(); // initialize stats sums (all to 0)
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(CtLrnTrigVals);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-
 eTypeDef_Of(LeabraNetwork);
 
 class E_API LeabraNetwork : public Network {
@@ -272,7 +110,6 @@ public:
   enum LearnRule {
     CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
     LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_XCAL_C,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, fully continuous version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
     CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
   };
 
@@ -289,11 +126,7 @@ public:
 
   enum PhaseOrder {
     MINUS_PLUS,			// standard minus-plus (err and assoc)
-    PLUS_MINUS,			// reverse order: plus phase first
     PLUS_ONLY,			// only present the plus phase (hebbian-only)
-    PLUS_NOTHING,		// just an auto-encoder (no initial minus phase)
-    MINUS_PLUS_NOTHING,		// standard for CtLeabra_X/CAL and auto-encoder version with final 'nothing' minus phase
-    MINUS_PLUS_MINUS,		// alternative version for CtLeabra_X/CAL with input still in final phase -- this 2nd minus is also marked as a nothing_phase 
   };
 
   enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
@@ -316,7 +149,6 @@ public:
   StateInit	sequence_init;	// #DEF_DO_NOTHING #CAT_Activation how to initialize network state at start of a sequence of trials
 
   Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
-  bool		nothing_phase;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter the current phase is a NOTHING phase (phase will indicate MINUS for learning purposes)
   int		phase_no;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
@@ -332,11 +164,7 @@ public:
 
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
-  CtSineInhibMod ct_sin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL sinusoidal inhibition parameters for inhibitory modulations during trial, simulating oscillations resulting from imperfect inhibtory set point behavior
-  CtFinalInhibMod ct_fin_i;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL final inhibition parameters for extra inhibition to apply during final inhib phase, simulating slow-onset GABA currents
   CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
-  CtLrnTrigSpec	ct_lrn_trig;	// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger parameters based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
-  CtLrnTrigVals	lrn_trig; 	// #CAT_Learning #EXPERT #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL_C learning trigger values -- based on changes in short-term average activation value -- determines when CTLEABRA_XCAL_C learns
   ThreadFlags	thread_flags;	// #NO_SAVE #CAT_Structure #EXPERT flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
 
   float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
@@ -441,7 +269,7 @@ public:
   void	Init_Counters() override;
   void	Init_Stats() override;
   void	Init_Sequence() override;
-  void Init_Weights() override;
+  void  Init_Weights() override;
 
   virtual void  Init_Netins();
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
@@ -508,7 +336,7 @@ public:
     virtual void ExtToComp();
     // #CAT_SettleInit move external input values to comparison values (not currently used)
     virtual void TargExtToComp();
-    // #CAT_SettleInit move target and external input values to comparison (for PLUS_NOTHING, called by Settle_Init)
+    // #CAT_SettleInit move target and external input values to comparison
 
   virtual void  NewInputData_Init();
   // #CAT_SettleInit perform initialization stuff needed to update external input data signals so they actually show up as activations in the network: Settle_Init_Layer, Settle_Init_TrgFlags, Compute_HardClamp
@@ -572,8 +400,6 @@ public:
     // #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
     virtual void Settle_Compute_dWt();
     // #CAT_SettleFinal compute weight changes at end of settling as needed depending on phase order -- all weight changes are computed here for consistency
-    virtual void AdaptKWTAPt();
-    // #CAT_SettleFinal adapt the kwta point based on average activation values
 
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI Special code
@@ -613,18 +439,11 @@ public:
   virtual void 	Compute_SRAvg();
   // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- calls Compute_SRAvg_Layer on layers, and then threaded down to unit level -- behavior is completely determined by sravg_vals.state flag setting
 
-  virtual void 	Compute_XCalC_dWt();
-  // #CAT_Learning compute CT_LEABRA_XCA_C learning rule
-
   virtual void	Compute_dWt_Layer_pre();
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
-  virtual void	Compute_dWt_FirstMinus();
-  // #CAT_Learning compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
-  virtual void	Compute_dWt_FirstPlus();
-  // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual void	Compute_dWt_Nothing();
-  // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  void	Compute_dWt() override;
+  // #CAT_Learning compute weight change after first plus phase has been encountered
   virtual void	Compute_dWt_Norm();
   // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
 
@@ -650,8 +469,6 @@ public:
   // #CAT_Statistic compute average act_diff (act_p - act_m) -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float	Compute_TrialCosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between p_act_p and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
-  virtual float	Compute_CosDiff2();
-  // #CAT_Statistic compute cosine (normalized dot product) phase difference 2 between act_m2 and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
   virtual void	Compute_MinusCycles();
   // #CAT_Statistic compute minus-phase cycles (and increment epoch sums) -- at the end of the minus phase (of course)
   void	Compute_TrialStats() override;
@@ -670,12 +487,10 @@ public:
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
   virtual void	Compute_AvgAbsRelNetin();
   // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
-  virtual void	Compute_TrgRelNetin();
-  // #MENU #MENU_SEP_BEFORE #CONFIRM #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
-  virtual void	Compute_AdaptRelNetin();
-  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
-  virtual void	Compute_AdaptAbsNetin();
-  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
+  virtual void	Compute_AdaptRelNetin() { };
+  // #CAT_Learning #OBSOLETE NOTE: this is now obsolete and does not do anything -- please remove from your program!
+  virtual void	Compute_AdaptAbsNetin() { };
+  // #CAT_Learning #OBSOLETE NOTE: this is now obsolete and does not do anything -- please remove from your program!
 
   virtual void	Compute_AvgCycles();
   // #CAT_Statistic compute average cycles (at an epoch-level timescale)
@@ -693,14 +508,9 @@ public:
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
   virtual void	Compute_AvgAvgActDiff();
   // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
-  virtual void	Compute_CtLrnTrigAvgs();
-  // #CAT_Statistic compute Ct learning trigger stats averages (at an epoch-level timescale)
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
-
-  virtual void	GraphInhibMod(bool flip_sign = true, DataTable* graph_data = NULL);
-  // #MENU #MENU_SEP_BEFORE #NULL_OK #NULL_TEXT_NewGraphData graph the overall inhibitory modulation curve, including sinusoidal and final -- if flip_sign is true, then sign is reversed so that graph looks like the activation profile instead of the inhibition profile
 
   void  BuildNullUnit() override;
 

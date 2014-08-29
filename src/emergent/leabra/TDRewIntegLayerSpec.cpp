@@ -35,15 +35,10 @@ void TDRewIntegSpec::Initialize() {
 
 void TDRewIntegLayerSpec::Initialize() {
   SetUnique("decay", true);
-  decay.phase2 = 0.0f;
   unit_range.min = 0.0f;
   unit_range.max = 3.0f;
   unit_range.UpdateAfterEdit_NoGui();
   val_range.UpdateAfterEdit_NoGui();
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void TDRewIntegLayerSpec::UpdateAfterEdit_impl() {
@@ -81,9 +76,6 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                 "must have LeabraTdUnits!")) {
     return false;
   }
-
-  SetUnique("decay", true);
-  decay.phase2 = 0.0f;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   if(lay->CheckError(!us->InheritsFrom(TA_LeabraTdUnitSpec), quiet, rval,

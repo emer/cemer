@@ -44,7 +44,7 @@ public:
     pdw = dwt;
     wt += dwt;
     dwt = 0.0f;
-    C_ApplyLimits(wt, ru, NULL);
+    C_ApplyLimits(wt);
   }
 
   inline void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru) {

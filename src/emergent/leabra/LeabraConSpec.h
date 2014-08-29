@@ -67,27 +67,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(WtScaleSpecInit);
-
-class E_API WtScaleSpecInit : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra initial weight scaling values -- applied to active WtScaleSpec values during InitWeights -- useful for adapting scale values
-INHERITED(SpecMemberBase)
-public:
-  bool		init;		// use these scaling values to initialize the wt_scale parameters during InitWeights (if false, these values have no effect at all)
-  float		abs;		// #CONDSHOW_ON_init #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
-  float		rel;		// #CONDSHOW_ON_init [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
-
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(WtScaleSpecInit);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
-};
-
 eTypeDef_Of(WtSigSpec);
 
 class E_API WtSigSpec : public SpecMemberBase {
@@ -282,37 +261,6 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-eTypeDef_Of(AdaptRelNetinSpec);
-
-class E_API AdaptRelNetinSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra parameters to adapt the relative netinput strength of different projections (to be used at epoch-level in AdaptRelNetin call, after AvgAbsRelNetin vals on projection have been computed)
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// whether to adapt relative netinput values for this connection (only applied if AdaptAbsNetin is called, after AbsRelNetin and AvgAbsRelNetin)
-  float		trg_fm_input;	// #CONDSHOW_ON_on (typically 0.85) #MIN_0 #MAX_1 target relative netinput for fm_input projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_output and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_fm_output;	// #CONDSHOW_ON_on (typically 0.10) #MIN_0 #MAX_1 target relative netwinput for fm_output projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them) -- this plus fm_input and lateral should sum to 1. if other types are missing, this is increased in proportion
-  float		trg_lateral;	// #CONDSHOW_ON_on (typically 0.05) #MIN_0 #MAX_1 target relative netinput for lateral projections (set by Compute_TrgRelNetin fun): all such projections should sum to this amount (divide equally among them)  -- this plus fm_input and lateral should sum to 1.  if other types are missing, this is increased in proportion
-  float		trg_sum;	// #CONDSHOW_ON_on #READ_ONLY #SHOW sum of trg values -- should be 1!
-
-  float		tol_lg;		// #CONDSHOW_ON_on #DEF_0.05 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on large numbers (>.25), within which parameters are not adapted
-  float		tol_sm;		// #CONDSHOW_ON_on #DEF_0.2 #MIN_0 #MAX_1 tolerance from target value (as a proportion of target value) on small numbers (<.25), within which parameters are not adapted
-  float		rel_lrate;	// #CONDSHOW_ON_on #DEF_0.2 #MIN_0 #MAX_1 adpatation 'learning' rate on wt_scale.rel parameter
-
-  virtual bool	CheckInTolerance(float trg, float val);
-  // check if value is inside the tolerance from trg
-
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(AdaptRelNetinSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();	// does not change the on flag
-};
-
 eTypeDef_Of(LeabraConSpec);
 
 class E_API LeabraConSpec : public ConSpec {
@@ -324,7 +272,6 @@ public:
   enum LearnRule {
     CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
     LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_XCAL_C,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, fully continuous version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
     CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
   };
 
@@ -348,7 +295,6 @@ public:
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   bool          diff_scale_p;   // #CAT_Activation use a different wt_scale setting for the plus phase compared to the std wt_scale which is used only for the minus phase if this is checked
   WtScaleSpec	wt_scale_p;	// #CAT_Activation #CONDSHOW_ON_diff_scale_p plus phase only: scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
-  WtScaleSpecInit wt_scale_init;// #CAT_Activation initial values of wt_scale parameters, set during InitWeights -- useful for rel_net_adapt and abs_net_adapt (on LayerSpec)
 
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] #CONDSHOW_ON_learn learning rate -- how fast do the weights change per experience
@@ -360,11 +306,9 @@ public:
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   StableMixSpec stable_mix;     // #CAT_Learning #CONDSHOW_ON_learn mixing parameters for stable (swt) vs. learning weight (lwt) to compute the overall effective weight value (wt) -- stable wt reflects protein-synthesis dependent consolidated weight -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights!
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
-  XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL,CTLEABRA_XCAL_C&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
+  XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   SAvgCorSpec	savg_cor;	// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn for original CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
 
-  AdaptRelNetinSpec rel_net_adapt; // #CAT_Learning #CONDSHOW_ON_learn adapt relative netinput values based on targets for fm_input, fm_output, and lateral projections -- not used by default (call Compute_RelNetinAdapt to activate; requires Compute_RelNetin and Compute_AvgRelNetin for underlying data)
-  
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
   WtSigSpec	wt_sig_fun_lst;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning last values of wt sig parameters for which the wt_sig_fun's were computed; prevents excessive updating
@@ -375,18 +319,41 @@ public:
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
-  inline void 	C_Init_Weights_sender(LeabraSendCons* cg, const int idx,
-                                      float* wts, float* dwts, float* pdws);
-  // #IGNORE sender-based init weights function
+  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    for(int i=0; i<cg->size; i++) {
+      C_Init_dWt(dwts[i]);
+      pdws[i] = 0.0f;
+    }
+  }
 
-  inline void Init_Weights_sender(LeabraSendCons* cg, LeabraUnit* ru, LeabraNetwork* net);
-  // #IGNORE sender-based init weights function
+  inline void Init_Weights(BaseCons* cg, Unit* ru, Network* net) override {
+    Init_Weights_symflag(net);
+    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
-  // note: following is called after loading weights too
-  inline void   C_Init_Weights_post(BaseCons* cg, const int idx, Unit* ru,
-                                             Unit* su, Network* net) override
-  { cg->Cn(idx,SWT,net) = cg->Cn(idx,LWT,net) = cg->Cn(idx,WT,net); }
-  // #IGNORE
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+
+    if(rnd.type != Random::NONE) {
+      for(int i=0; i<cg->size; i++) {
+        C_Init_Weight_Rnd(wts[i]);
+        C_Init_dWt(dwts[i]);
+        pdws[i] = 0.0f;
+      }
+    }
+  }
+
+  inline void Init_Weights_post(BaseCons* cg, Unit* un, Network* net) override {
+    float* wts = cg->OwnCnVar(WT);
+    float* swts = cg->OwnCnVar(SWT);
+    float* lwts = cg->OwnCnVar(LWT);
+    for(int i=0; i<cg->size; i++) {
+      swts[i] = wts[i];
+      lwts[i] = wts[i];
+    }
+  }
 
   inline void C_Compute_EffWt(float& wt, const float swt, const float lwt)
   { wt = stable_mix.EffWt(swt, lwt); }
@@ -565,24 +532,6 @@ public:
 
 
   /////////////////////////////////////
-  // CtLeabraXCalC code -- note that this is RECEIVER BASED due to triggered nature of learning
-
-  inline void 	C_Compute_dWt_CtLeabraXCalC(float& dwt, 
-                       const float ru_avg_s, const float ru_avg_m, const float ru_avg_l,
-                       const float su_avg_s, const float su_avg_m) 
-  {   // todo: add some further modulation by avg_ds???
-    float srs = ru_avg_s * su_avg_s;
-    float srm = ru_avg_m * su_avg_m;
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float effthr = xcal.thr_m_mix * srm + xcal.thr_l_mix * su_avg_m * ru_avg_l;
-    dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
-  }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
-  inline virtual void Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru,
-                                                LeabraNetwork* net);
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning -- fully continuous version (XCAL_C)
-
-  /////////////////////////////////////
   // CtLeabraCAL code
 
   inline void C_Compute_SRAvg_m(float& sravg_m, const float ru_act, const float su_act) 
@@ -633,12 +582,10 @@ public:
   /////////////////////////////////////
   // Master dWt, Weights functions
 
-  inline void	Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su,
-                                   LeabraNetwork* net);
+  inline void	Compute_dWt(BaseCons* cg, Unit* su, Network* net) override;
   // #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
-  inline void	Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su,
-                                       LeabraNetwork* net);
+  inline void	Compute_Weights(BaseCons* cg, Unit* su, Network* net) override;
   // #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   inline virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru,
@@ -647,6 +594,16 @@ public:
 
   /////////////////////////////////////
   // 	Bias Weights
+
+  inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
+    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+    cg->OwnCn(0, PDW) = 0.0f;
+  }
+
+  inline void   B_Init_Weights_post(RecvCons* cg, Unit* ru, Network* net) {
+    float wt = cg->OwnCn(0, WT);
+    cg->OwnCn(0, SWT) = wt; cg->OwnCn(0, LWT) = wt;
+  }
 
   inline virtual void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru);
   // #IGNORE compute bias weight change for netin model of bias weight
@@ -658,7 +615,7 @@ public:
                                                   LeabraLayer* rlay);
   // #IGNORE compute bias weight change for CAL rule
 
-  inline void	B_Compute_Leabra_dWt(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay);
+  inline void	B_Compute_dWt(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay);
   // #IGNORE overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   inline virtual void	B_Compute_Weights(RecvCons* bias, LeabraUnit* ru);

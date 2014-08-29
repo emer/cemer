@@ -521,6 +521,8 @@ void Network::Connect() {
   Connect_VecChunk(); 
   // taMisc::Info("Done with Connect..");
 
+  // Init_Weights(); // not doing -- slow for large nets -- this is separate now
+
   StructUpdate(false);
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();
@@ -929,10 +931,8 @@ void Network::Init_Acts(){
 }
 
 void Network::Init_dWt(){
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(!l->lesioned())
-      l->Init_dWt(this);
-  }
+  ThreadUnitCall un_call(&Unit::Init_dWt);
+  threads.Run(&un_call, 1.0f);
 }
 
 void Network::Init_Weights() {
@@ -941,18 +941,26 @@ void Network::Init_Weights() {
   if (!CheckConfig(false)) return;
   taMisc::Busy();
 
+  needs_wt_sym = false;          // will get set to true if needed
+
   // can't actually do this threaded because random number gen is not thread safe,
   // for the time being..
   // ThreadUnitCall un_call(&Unit::Init_Weights);
   // threads.Run(&un_call, 1.0f);
+  // taMisc::Info("Starting Init_Weights...");
   const int nu = units_flat.size;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     un->Init_Weights(this, -1);
   }
 
+  if(needs_wt_sym) {
+    // taMisc::Info("Starting Init_Weights_sym...");
+    Init_Weights_sym();
+  }
+  // taMisc::Info("Starting Init_Weights_post...");
   Init_Weights_post();
-
+  // taMisc::Info("Starting Init_Weights_Layer..");
   Init_Weights_Layer();
 
 #ifdef DMEM_COMPILE
@@ -963,25 +971,34 @@ void Network::Init_Weights() {
   Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
   UpdateAllViews();
+
+  // taMisc::Info("Done Init_Weights...");
+
   taMisc::DoneBusy();
+}
+
+void Network::Init_Weights_sym() {
+  // this should be thread-safe
+  ThreadUnitCall un_call(&Unit::Init_Weights_sym);
+  threads.Run(&un_call, 1.0f);
+}
+
+void Network::Init_Weights_post() {
+  // this should be thread-safe
+  ThreadUnitCall un_call(&Unit::Init_Weights_post);
+  threads.Run(&un_call, 1.0f);
+
+  // const int nu = units_flat.size;
+  // for(int i=1;i<nu;i++) {     // 0 = dummy idx
+  //   Unit* un = units_flat[i];
+  //   un->Init_Weights_post(this, -1);
+  // }
 }
 
 void Network::Init_Weights_Layer() {
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->Init_Weights_Layer(this);
-  }
-}
-
-void Network::Init_Weights_post() {
-  // cannot run threaded yet..
-  // ThreadUnitCall un_call(&Unit::Init_Weights_post);
-  // threads.Run(&un_call, 1.0f);
-
-  const int nu = units_flat.size;
-  for(int i=1;i<nu;i++) {     // 0 = dummy idx
-    Unit* un = units_flat[i];
-    un->Init_Weights(this, -1);
   }
 }
 

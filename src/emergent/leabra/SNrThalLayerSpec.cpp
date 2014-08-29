@@ -55,16 +55,6 @@ void SNrThalLayerSpec::Defaults_init() {
   // SetUnique("kwta", true);
   kwta.k_from = KWTASpec::USE_K;
   kwta.k = 3;
-
-  // SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
-
-  // SetUnique("tie_brk", false);
-  tie_brk.on = false;
-  tie_brk.thr_gain = 0.2f;
-  tie_brk.loser_gain = 1.0f;
 }
 
 void SNrThalLayerSpec::HelpConfig() {
@@ -209,7 +199,7 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
       PBWMUnGpData* gpd = (PBWMUnGpData*)lay->ungp_data.FastEl(mg);
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, mg); // assuming one unit
       if(u->lesioned()) continue;
-      u->act_m2 = u->act_mid = 0.0f;         // nuke pre-gating values
+      u->net_ctxt = u->act_mid = 0.0f;         // nuke pre-gating values
     }
     return;
   }
@@ -236,7 +226,7 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
       n_fired_trial++;
       gpd->go_fired_now = false;
       u->act_lrn = u->act = u->act_eq = u->act_nd = u->act_mid;
-      u->act_m2 = u->act_mid;
+      u->net_ctxt = u->act_mid;
     }
     else {
       if(u->act_eq >= snrthal.go_thr) {
@@ -250,7 +240,7 @@ void SNrThalLayerSpec::Compute_GateActs(LeabraLayer* lay, LeabraNetwork* net) {
         u->act_mid = u->act_eq;
       }
       else {
-        u->act_m2 = u->act_eq;  // keep the trace around
+        u->net_ctxt = u->act_eq;  // keep the trace around
       }
     }
   }

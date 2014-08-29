@@ -185,13 +185,15 @@ public:
   UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads and for connection indexes -- first (0 index) is a null unit that is skipped over and should never be computed on
   Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
   float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+
+  bool          needs_wt_sym;   // #HIDDEN #NO_SAVE tmp flag managed by Init_Weights to determine if any connections have the wt_limits.sym flag checked and thus need weight symmetrizing to happen
   int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
   int           own_cons_max_size; // #HIDDEN #NO_SAVE maximum alloc_size of any owning connection group -- for allocating temp structures..
   int           own_cons_max_vars; // #HIDDEN #NO_SAVE maximum NConVars of any owning connection group -- for allocating temp structures..
   float         pct_cons_vec_chunked; // #READ_ONLY #NO_SAVE #SHOW average percent of connections that are vector chunked (across owned projections and units)
-  float*        own_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
+  float*        own_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
-  float*        ptr_cons_mem;   // #HIDDEN #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
+  float*        ptr_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int*          tmp_chunks;      // #IGNORE tmp con vec chunking memory
   int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
   float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory
@@ -329,10 +331,12 @@ public:
   // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights();
   // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+    virtual void Init_Weights_sym();
+    // #CAT_Learning symmetrize weights after first init pass, called when needed
+    virtual void Init_Weights_post();
+    // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
     virtual void Init_Weights_Layer();
-    // #CAT_Learning call layer-level init weights functions -- after unit level
-  virtual void  Init_Weights_post();
-  // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+    // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
 
   virtual void  Init_Metrics();
   // #CAT_Statistic this is an omnibus guy that initializes every metric: Counters, Stats, and Timers

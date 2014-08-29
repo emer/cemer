@@ -28,7 +28,6 @@ void LeabraPrjn::Initialize() {
   avg_netin_rel_sum = 0.0f;
   avg_netin_n = 0;
 
-  trg_netin_rel = -1.0f;                // indicates not set
 #ifdef DMEM_COMPILE
   dmem_agg_sum.agg_op = MPI_SUM;
   DMem_InitAggs();
@@ -47,8 +46,6 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   avg_netin_rel = cp.avg_netin_rel;
   avg_netin_rel_sum = cp.avg_netin_rel_sum;
   avg_netin_n = cp.avg_netin_n;
-
-  trg_netin_rel = cp.trg_netin_rel;
 }
 
 void LeabraPrjn::SetCurLrate(LeabraNetwork* net, int epoch) {

@@ -82,10 +82,11 @@ private:
   void  Destroy()               { };
 };
 
+
 eTypeDef_Of(ConSpec);
 
 class E_API ConSpec: public BaseSpec {
-  // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection
+  // ##CAT_Spec Connection specs: for processing over a set of connections all from the same projection -- all BaseCons functions should be called on one that owns the connections
 INHERITED(BaseSpec)
 public:
   enum ConVars {                // Connection variables -- must align with Connection obj
@@ -96,38 +97,62 @@ public:
   RandomSpec    rnd;            // #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc
   WeightLimits  wt_limits;      // #CAT_ConSpec limits on weight sign, symmetry
 
-  inline void           C_ApplyLimits(float& wt, Unit*, Unit*)
+  inline void           C_ApplyLimits(float& wt)
   { wt_limits.ApplyLimits(wt); }
   // #IGNORE #CAT_Learning apply weight limits to single connection
-  inline virtual void   ApplyLimits(RecvCons* cg, Unit* ru, Network* net);
-  // #IGNORE #CAT_Learning apply weight limits (sign, magnitude)
+  inline virtual void   ApplyLimits(BaseCons* cg, Unit* un, Network* net);
+  // #IGNORE #CAT_Learning apply weight limits (sign, magnitude) -- automatically enforced during Init_Weights -- this is if needed outside of that
 
-  virtual void          ApplySymmetry(RecvCons* cg, Unit* ru, Network* net);
-  // #CAT_Learning apply weight symmetrizing between reciprocal units
+  virtual void          ApplySymmetry_r(RecvCons* cg, Unit* ru, Network* net);
+  // #CAT_Learning apply weight symmetrizing between reciprocal units -- recv owns cons version
+  virtual void          ApplySymmetry_s(SendCons* cg, Unit* su, Network* net);
+  // #CAT_Learning apply weight symmetrizing between reciprocal units -- send owns cons version
 
   ////////////////////////////////////////////////////////////////////////////////
   //    Below are the primary computational interface to the Network Objects
   //    for performing algorithm-specific activation and learning
 
-  inline virtual void   C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net);
-  // #IGNORE #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_AddRndWeights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                        const float scale, Network* net);
-  // #CAT_Learning add random noise to existing weight variables -- for add_rnd_wts after prjn spec init_wts based initialization
-  inline virtual void   Init_Weights(RecvCons* cg, Unit* ru, Network* net);
+  inline void   C_Init_Weight_Rnd(float& wt) {
+    wt = rnd.Gen();
+    C_ApplyLimits(wt);
+  }
+  // #CAT_Learning initialize the weight according to the random number specs, and apply weight limits (not symmetry)
+  inline void   C_Init_Weight_AddRnd(float& wt) {
+    wt += rnd.Gen();
+    C_ApplyLimits(wt);
+  }
+  // #CAT_Learning initialize the weight by adding number according to the random number specs, and apply weight limits (not symmetry)
+  inline void   C_Init_dWt(float& dwt)
+  { dwt = 0.0f; }
+  // #CAT_Learning initialize weight-change variable to 0
+
+  inline void           Init_Weights_symflag(Network* net);
+  // #IGNORE must be called during Init_Weights to update net flag for weight symmetrizing
+
+  inline virtual void   Init_Weights(BaseCons* cg, Unit* un, Network* net);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
-  inline virtual void   C_Init_Weights_post(BaseCons* cg, const int idx,
-                                            Unit* ru, Unit* su, Network* net)
+
+  inline virtual void   Init_Weights_sym_r(RecvCons* cg, Unit* un, Network* net)
+  { ApplySymmetry_r(cg, un, net); }
+  // #CAT_Structure apply symmetry after weight init, recv based
+  inline virtual void   Init_Weights_sym_s(SendCons* cg, Unit* un, Network* net)
+  { ApplySymmetry_s(cg, un, net); }
+  // #CAT_Structure apply symmetry after weight init, sender based
+  inline virtual void   Init_Weights_post(BaseCons* cg, Unit* un, Network* net)
   { };
-  // #IGNORE post-initialize vars
-  inline virtual void   Init_Weights_post(BaseCons* cg, Unit* ru, Network* net);
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
-  inline virtual void   C_Init_dWt(RecvCons* cg, const int idx, Unit*, Unit*,
-                                   Network* net);
-  // #IGNORE #CAT_Learning initialize weight-change variables on a single connection
-  inline virtual void   Init_dWt(RecvCons* cg, Unit* ru, Network* net);
-  // #CAT_Learning initialize weight-change variables for whole set
+
+  inline virtual void   Init_dWt(BaseCons* cg, Unit* un, Network* net);
+  // #CAT_Learning initialize weight-change variables for all cons
+
+
+  inline virtual void   B_Init_dWt(RecvCons* cg, Unit* ru, Network* net);
+  // #CAT_Learning bias initialize delta-weights
+  inline virtual void   B_Init_Weights(RecvCons* cg, Unit* ru, Network* net);
+  // #CAT_Learning bias initialize weights
+  inline virtual void   B_Init_Weights_post(RecvCons* cg, Unit* ru, Network* net)
+  { }
+  // #CAT_Learning bias post - initialize weights
 
   inline float          C_Compute_Netin(const float wt, const float su_act)
   { return wt * su_act; }
@@ -155,13 +180,15 @@ public:
                                       const float su_act)
   { dwt += ru_act * su_act; }
   // #IGNORE define in subclass to take proper args -- this is just for demo -- best to take all the vals as direct floats
-  inline virtual void   Compute_dWt(RecvCons* cg, Unit* ru, Network* net);
-  // #CAT_Learning compute the delta-weight change
+  inline virtual void   Compute_dWt(BaseCons* cg, Unit* ru, Network* net);
+  // #CAT_Learning compute the delta-weight change -- recv owns cons version
+
   inline void           C_Compute_Weights(float& wt, float& dwt)
   { wt += dwt; dwt = 0.0f; }
   // #IGNORE define in subclass to take proper args -- this is just for demo -- best to take all the vals as direct floats
-  inline virtual void   Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
+  inline virtual void   Compute_Weights(BaseCons* cg, Unit* un, Network* net);
   // #CAT_Learning update weights (ie. add delta-wt to wt, zero delta-wt)
+
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing

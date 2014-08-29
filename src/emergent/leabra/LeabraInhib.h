@@ -34,13 +34,9 @@ public:
   int		k;       	// target number of active units for this collection
   float		pct;		// actual percent activity in group
   float		pct_c;		// #HIDDEN complement of (1.0 - ) actual percent activity in group
-  int		adth_k;		// #HIDDEN adapting threshold k value -- how many units can adapt per time
   float		k_ithr;		// inhib threshold for k unit (top k for kwta_avg)
   float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
   float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
-  float		tie_brk_gain;	// strength of the tie breaking mechanisms as a function of how bclosely tied the units are -- 1 if maximally tied, 0 if minimally tied -- used to modulate the tie breaking mechanisms: (tie_brk.diff_thr - ithr_diff) / tie_brk.diff_thr)
-  float		eff_loser_gain;	// effective loser gain -- only computed if tie_brk in effect: 1 + loser_gain * tie_brk_gain
-  int		tie_brk;	// was a tie break operation applied to this layer based on ithr_diff value?
   float         ffi;            // for FF_FB_INHIB, the amount of feedforward inhibition
   float         fbi;            // for FF_FB_INHIB, the amount of feedback inhibition (total)
   float         prv_trl_ffi;    // for FF_FB_INHIB, the amount of feedforward inhibition on the previous trial
@@ -54,26 +50,6 @@ public:
 
   void	Copy_(const KWTAVals& cp);
   TA_BASEFUNS(KWTAVals);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-eTypeDef_Of(AdaptIVals);
-
-class E_API AdaptIVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for adapting kwta stuff
-INHERITED(taOBase)
-public:
-  float		avg_avg;	// average of the average activation in a layer
-  float		i_kwta_pt;	// adapting point to place inhibition between k and k+1 for kwta
-  float		g_bar_i;	// adapting g_bar.i value 
-  float		g_bar_l;	// adapting g_bar.l value 
-
-  String       GetTypeDecoKey() const override { return "Layer"; }
-
-  void	Copy_(const AdaptIVals& cp);
-  TA_BASEFUNS(AdaptIVals);
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -123,7 +99,6 @@ public:
   KWTAVals	kwta;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
   InhibVals	i_val;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
-  AdaptIVals	adapt_i;	// #NO_SAVE #READ_ONLY #AKA_adapt_pt #EXPERT #CAT_Activation adapting inhibition values
   float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }

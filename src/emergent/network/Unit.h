@@ -189,14 +189,18 @@ public: //
 
   void  Init_Acts(Network* net) { GetUnitSpec()->Init_Acts(this, net); }
   // #MENU #CAT_Activation initialize unit state variables
-  void  Init_dWt(Network* net)  { GetUnitSpec()->Init_dWt(this, net); }
+  void  Init_dWt(Network* net, int thread_no=-1)
+  { GetUnitSpec()->Init_dWt(this, net, thread_no); }
   // #MENU #CAT_Learning initialze weight change variables
   void  Init_Weights(Network* net, int thread_no=-1)
   { GetUnitSpec()->Init_Weights(this, net, thread_no); }
   // #MENU #CAT_Learning Initialize weight values
+  void  Init_Weights_sym(Network* net, int thread_no=-1)
+  { GetUnitSpec()->Init_Weights_sym(this, net, thread_no); }
+  // #CAT_Structure symmetrize weights after first pass init -- called when needed -- threaded for speed
   void  Init_Weights_post(Network* net, int thread_no=-1)
   { GetUnitSpec()->Init_Weights_post(this, net, thread_no); }
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- threaded for speed
 
   void  Compute_Netin(Network* net, int thread_no=-1)
   { GetUnitSpec()->Compute_Netin(this, net, thread_no); }

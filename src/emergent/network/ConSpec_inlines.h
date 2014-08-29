@@ -23,75 +23,56 @@
 
 // declare all other types mentioned but not required to include:
 
-// NOTE: most computationally intensive of these are written in
-// optimized form assuming that the recv group owns the connections
-// which is the default for most algos -- if using sender-own, then
-// DEFINITELY need to re-write!!
+// NOTE: all this base-level code assumes it is being called with the 
+// con group that owns the connections, as it calls OwnCnVar -- thus
+// it is imperitive that the algorithm use this code appropriately!
 
-inline void ConSpec::ApplyLimits(RecvCons* cg, Unit* ru, Network* net) {
+inline void ConSpec::ApplyLimits(BaseCons* cg, Unit* un, Network* net) {
+  float* wts = cg->OwnCnVar(WT);
   if(wt_limits.type != WeightLimits::NONE) {
-    CON_GROUP_LOOP(cg, C_ApplyLimits(cg->Cn(i,WT,net), ru, cg->Un(i,net)));
+    CON_GROUP_LOOP(cg, C_ApplyLimits(wts[i]));
   }
 }
 
-inline void ConSpec::C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                    Network* net) {
-  float& wt = cg->Cn(idx, WT, net);
-  if(rnd.type != Random::NONE)  { // don't do anything (e.g. so connect fun can do it)
-    wt = rnd.Gen();
-  }
-  else {
-    rnd.Gen();          // keep random seeds synchronized for dmem
-  }
-  C_ApplyLimits(wt,ru,su);
+inline void ConSpec::Init_Weights_symflag(Network* net) {
+  if(wt_limits.sym) net->needs_wt_sym = true;
 }
 
-inline void ConSpec::C_AddRndWeights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                     const float scale, Network* net) {
-  float& wt = cg->Cn(idx, WT, net);
-  if(rnd.type != Random::NONE)  { // don't do anything (e.g. so connect fun can do it)
-    wt += scale * rnd.Gen();
-  }
-  else {
-    rnd.Gen();          // keep random seeds synchronized for dmem
-  }
-  C_ApplyLimits(wt,ru,su);
-}
+inline void ConSpec::Init_Weights(BaseCons* cg, Unit* un, Network* net) {
+  Init_Weights_symflag(net);
+  if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
-inline void ConSpec::Init_Weights(RecvCons* cg, Unit* ru, Network* net) {
-  Projection* prjn = cg->prjn;
-  if(prjn->spec->init_wts) {
-    prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
-    if(prjn->spec->add_rnd_wts) {
-      const float scl = prjn->spec->add_rnd_wts_scale;
-      CON_GROUP_LOOP(cg, C_AddRndWeights(cg, i, ru, cg->Un(i,net), scl, net));
+  float* wts = cg->OwnCnVar(WT);
+  float* dwts = cg->OwnCnVar(DWT);
+
+  if(rnd.type != Random::NONE) {
+    for(int i=0; i<cg->size; i++) {
+      C_Init_Weight_Rnd(wts[i]);
+      C_Init_dWt(dwts[i]);
     }
   }
-  else {
-    CON_GROUP_LOOP(cg, C_Init_Weights(cg, i, ru, cg->Un(i,net), net));
-  }
-
-  Init_dWt(cg,ru,net);
-  ApplySymmetry(cg,ru,net);
 }
 
-inline void ConSpec::Init_Weights_post(BaseCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg, C_Init_Weights_post(cg, i, ru, cg->Un(i,net), net));
+inline void ConSpec::Init_dWt(BaseCons* cg, Unit* un, Network* net) {
+  float* dwts = cg->OwnCnVar(DWT);
+  CON_GROUP_LOOP(cg, C_Init_dWt(dwts[i]));
 }
 
-inline void ConSpec::C_Init_dWt(RecvCons* cg, const int idx, Unit*, Unit*,
-                                Network* net) {
-  cg->Cn(idx,DWT,net) = 0.0f;
+inline void ConSpec::B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) {
+  C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
 }
 
-inline void ConSpec::Init_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  CON_GROUP_LOOP(cg, C_Init_dWt(cg, i, ru, cg->Un(i,net), net));
+inline void ConSpec::B_Init_Weights(RecvCons* cg, Unit* ru, Network* net) {
+  C_Init_Weight_Rnd(cg->OwnCn(0, BaseCons::WT));
+  B_Init_dWt(cg, ru, net);          // virtual..
 }
 
 inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
   float rval=0.0f;
   float* wts = cg->OwnCnVar(WT);
   CON_GROUP_LOOP(cg, rval += C_Compute_Netin(wts[i], cg->Un(i,net)->act));
+  // todo: if unit act is all in a contiguous vector, and with vec chunking, this 
+  // could be a very fast vector op
   return rval;
 }
 
@@ -120,23 +101,23 @@ inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru, Network* net) {
   float rval=0.0f;
   float* wts = cg->OwnCnVar(WT);
   CON_GROUP_LOOP(cg, rval += C_Compute_Dist(wts[i], cg->Un(i,net)->act));
+  // todo: if unit act is all in a contiguous vector, and with vec chunking, this 
+  // could be a very fast vector op
   return rval;
 }
 
-inline void ConSpec::Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  // assumes recv based owner
+inline void ConSpec::Compute_dWt(BaseCons* cg, Unit* un, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
-  const float ru_act = ru->act;
+  const float ru_act = un->act; // assume recv based
   CON_GROUP_LOOP(cg, C_Compute_dWt(wts[i], dwts[i], ru_act, cg->Un(i,net)->act));
 }
 
-inline void ConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
-  // assumes recv based owner
+inline void ConSpec::Compute_Weights(BaseCons* cg, Unit* un, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Compute_Weights(wts[i], dwts[i]));
-  ApplyLimits(cg,ru,net); // ApplySymmetry(cg,ru);  don't apply symmetry during learning..
+  ApplyLimits(cg,un,net); // ApplySymmetry_r(cg,ru);  don't apply symmetry during learning..
 }
 
 #endif // ConSpec_inlines_h

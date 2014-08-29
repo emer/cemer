@@ -21,16 +21,12 @@
 
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
-TA_BASEFUNS_CTORS_DEFN(CtLayerInhibMod);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(KWTASpec);
 TA_BASEFUNS_CTORS_DEFN(GpInhibSpec);
-TA_BASEFUNS_CTORS_DEFN(KwtaTieBreak);
-TA_BASEFUNS_CTORS_DEFN(AdaptISpec);
 TA_BASEFUNS_CTORS_DEFN(ClampSpec);
 TA_BASEFUNS_CTORS_DEFN(DecaySpec);
 TA_BASEFUNS_CTORS_DEFN(CosDiffLrateSpec);
-TA_BASEFUNS_CTORS_DEFN(LayAbsNetAdaptSpec);
 SMARTREF_OF_CPP(LeabraLayerSpec);
 
 eTypeDef_Of(MarkerConSpec);
@@ -107,31 +103,6 @@ void GpInhibSpec::UpdateAfterEdit_impl() {
 }
   
 
-void KwtaTieBreak::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void KwtaTieBreak::Defaults_init() {
-  k_thr = 1.0f;
-  diff_thr = 0.2f;
-  thr_gain = 0.005f;
-  loser_gain = 1.0f;
-}
-
-void AdaptISpec::Initialize() {
-  type = NONE;
-  Defaults_init();
-}
-
-void AdaptISpec::Defaults_init() {
-  tol = .02f;                   // allow to be off by this amount before taking action
-  p_dt = .1f;                   // take reasonably quick action..
-  mx_d = .9f;                   // move this far in either direction
-  l = .2f;                      // proportion to assign to leak..
-  a_dt = .005f;                 // time averaging
-}
-
 void ClampSpec::Initialize() {
   hard = true;
   Defaults_init();
@@ -154,7 +125,6 @@ void ClampSpec::Defaults_init() {
 void DecaySpec::Initialize() {
   event = 1.0f;
   phase = 1.0f;
-  phase2 = 0.0f;
 }
 
 void CosDiffLrateSpec::Initialize() {
@@ -199,27 +169,6 @@ void CosDiffLrateSpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
   diff_avg += avg_dt * (eff_diff - diff_avg);
 }
 
-
-void CtLayerInhibMod::Initialize() {
-  manual_sravg = false;
-  sravg_delay = 0;
-  use_sin = false;
-  burst_i = 0.02f;
-  trough_i = 0.02f;
-  use_fin = false;
-  inhib_i = 0.0f;
-}
-
-void LayAbsNetAdaptSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void LayAbsNetAdaptSpec::Defaults_init() {
-  trg_net = .5f;
-  tol = .1f;
-  abs_lrate = .2f;
-}
 
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
@@ -269,7 +218,6 @@ bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                    "LeabraLayerSpec decay.phase should be 0 or small for for CTLEABRA_X/CAL -- I just set it to 0 for you in spec:", name)) {
       SetUnique("decay", true);
       decay.phase = 0.0f;
-      decay.phase2 = 0.0f;
     }
   }
 
@@ -277,26 +225,6 @@ bool LeabraLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                 "does not have LeabraPrjn projection base type!",
                 "project must be updated and projections remade"))
     return false;
-  bool has_rel_net_conspec = false;
-  for(int i=0;i<lay->projections.size;i++) {
-    Projection* prjn = (Projection*)lay->projections[i];
-    lay->CheckError(!prjn->InheritsFrom(&TA_LeabraPrjn), quiet, rval,
-               "does not have LeabraPrjn projection base type!",
-               "Projection must be re-made");
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.GetSpec();
-    if(cs && cs->rel_net_adapt.on) has_rel_net_conspec = true;
-  }
-  if(has_rel_net_conspec) {
-    // check for total trg_netin_rel
-    float sum_trg_netin_rel = 0.0f;
-    for(int i=0;i<lay->projections.size;i++) {
-      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-      sum_trg_netin_rel += prjn->trg_netin_rel;
-    }
-    lay->CheckError((fabsf(sum_trg_netin_rel - 1.0f) > .001f), quiet, rval,
-                    "sum of trg_netin_rel values for layer:",String(sum_trg_netin_rel),
-                    "!= 1.0 -- must fix!");
-  }
 
   lay->CheckError((inhib_group == UNIT_GROUPS && !lay->unit_groups), quiet, rval,
                   "inhib_group is UNIT_GROUPS but layer is not set to use unit_groups!  will not work.");
@@ -373,7 +301,6 @@ void LeabraLayerSpec::SetLearnRule(LeabraLayer* lay, LeabraNetwork* net) {
   }
   else {
     decay.phase = 0.0f;         // no phase decay -- these are not even called
-    decay.phase2 = 0.0f;
   }
 
   if(lay->unit_spec.SPtr()) {
@@ -402,20 +329,6 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->adapt_i.avg_avg = lay->kwta.pct;
-  lay->adapt_i.i_kwta_pt = inhib.kwta_pt;
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  lay->adapt_i.g_bar_i = us->g_bar.i;
-  lay->adapt_i.g_bar_l = us->g_bar.l;
-  if(lay->unit_groups) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->adapt_i.avg_avg = gpd->kwta.pct;
-      gpd->adapt_i.i_kwta_pt = inhib.kwta_pt;
-      gpd->adapt_i.g_bar_i = us->g_bar.i;
-      gpd->adapt_i.g_bar_l = us->g_bar.l;
-    }
-  }
 }
 
 void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
@@ -806,8 +719,6 @@ void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
     }
     Compute_LayInhibToGps(lay, net);
   }
-
-  Compute_CtDynamicInhib(lay, net);
 }
 
 void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
@@ -908,23 +819,6 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Sort(LeabraLayer* lay, Layer::AccessMod
   }
 }
 
-void LeabraLayerSpec::Compute_Inhib_BreakTie(LeabraInhib* thr) {
-  if(thr->kwta.k_ithr > 0.0f)
-    thr->kwta.ithr_diff = (thr->kwta.k_ithr - thr->kwta.k1_ithr) / thr->kwta.k_ithr;
-  else
-    thr->kwta.ithr_diff = 0.0f;
-  thr->kwta.tie_brk = 0;
-  if(tie_brk.on && (thr->kwta.k_ithr > tie_brk.k_thr)) {
-    if(thr->kwta.ithr_diff < tie_brk.diff_thr) {
-      // we now have an official tie: break it by reducing firing of "others"
-      thr->kwta.tie_brk = 1;
-      thr->kwta.tie_brk_gain = (tie_brk.diff_thr - thr->kwta.ithr_diff) / tie_brk.diff_thr;
-      thr->kwta.k1_ithr *= (1.0f - thr->kwta.tie_brk_gain * tie_brk.thr_gain);
-      thr->kwta.eff_loser_gain = 1.0f + (tie_brk.loser_gain * thr->kwta.tie_brk_gain);
-    }
-  }
-}
-
 // actual kwta impls:
 
 void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer* lay,
@@ -974,8 +868,6 @@ void LeabraLayerSpec::Compute_Inhib_kWTA(LeabraLayer* lay,
   thr->kwta.k_ithr = k_i;
   thr->kwta.k1_ithr = k1_i;
 
-  Compute_Inhib_BreakTie(thr);
-
   // place kwta inhibition between k and k+1
   float nw_gi = thr->kwta.k1_ithr + ispec.kwta_pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
   nw_gi = MAX(nw_gi, ispec.min_i);
@@ -1023,12 +915,8 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
   // place kwta inhibition between two averages
   // this uses the adapting point!
   float pt = ispec.kwta_pt;
-  if(adapt_i.type == AdaptISpec::KWTA_PT)
-    pt = thr->adapt_i.i_kwta_pt;
   thr->kwta.k_ithr = k_avg;
   thr->kwta.k1_ithr = oth_avg;
-
-  Compute_Inhib_BreakTie(thr);
 
   float nw_gi = thr->kwta.k1_ithr + pt * (thr->kwta.k_ithr - thr->kwta.k1_ithr);
 
@@ -1066,33 +954,6 @@ void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
   thr->i_val.kwta = ispec.gi * (nw_ffi + thr->kwta.fbi); // combine
   thr->kwta.k_ithr = 0.0f;
   thr->kwta.k1_ithr = 0.0f;
-}
-
-void LeabraLayerSpec::Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->learn_rule == LeabraNetwork::LEABRA_CHL) return;
-
-  float bi = net->ct_sin_i.burst_i;
-  float ti = net->ct_sin_i.trough_i;
-  if(ct_inhib_mod.use_sin) {
-    bi = ct_inhib_mod.burst_i;
-    ti = ct_inhib_mod.trough_i;
-  }
-  float ii = net->ct_fin_i.inhib_i;
-  if(ct_inhib_mod.use_fin) {
-    ii = ct_inhib_mod.inhib_i;
-  }
-  float imod = net->ct_sin_i.GetInhibMod(net->ct_cycle, bi, ti) +
-    net->ct_fin_i.GetInhibMod(net->ct_cycle - net->ct_time.inhib_start, ii);
-
-  // only one is going to be in effect at a time..
-  lay->i_val.g_i += imod * lay->i_val.g_i;
-
-  if(inhib_group != ENTIRE_LAYER) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->i_val.g_i += imod * gpd->i_val.g_i;
-    }
-  }
 }
 
 ////////////////////////////////////////////////////////////////////////////////////
@@ -1177,21 +1038,10 @@ void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
   if(unit_gp_inhib.on && (inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
     inhib_val *= unit_gp_inhib.self_g;
   }
-  if(thr->kwta.tie_brk == 1) {
-    float inhib_thr = thr->kwta.k_ithr;
-    float inhib_loser = thr->kwta.eff_loser_gain * thr->i_val.g_i;
-    for(int i=0; i<nunits; i++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-      if(u->lesioned()) continue;
-      u->Compute_ApplyInhib_LoserGain(this, net, inhib_thr, inhib_val, inhib_loser);
-    }
-  }
-  else {
-    for(int i=0; i<nunits; i++) {
-      LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-      if(u->lesioned()) continue;
-      u->Compute_ApplyInhib(this, net, inhib_val);
-    }
+  for(int i=0; i<nunits; i++) {
+    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
+    if(u->lesioned()) continue;
+    u->Compute_ApplyInhib(this, net, inhib_val);
   }
 }
 
@@ -1498,60 +1348,16 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
       }
     }
     break;
-  case LeabraNetwork::PLUS_MINUS:
-    if(no_plus_testing) {
-      PostSettle_GetMinus(lay, net);
-      PostSettle_GetPlus(lay, net);
-      lay->phase_dif_ratio = 1.0f;
-    }
-    else {
-      if(net->phase == LeabraNetwork::MINUS_PHASE) {
-        PostSettle_GetMinus(lay, net);
-        PostSettle_GetPhaseDifRatio(lay, net);
-      }
-      else {
-        PostSettle_GetPlus(lay, net);
-      }
-    }
-    break;
   case LeabraNetwork::PLUS_ONLY:
     PostSettle_GetMinus(lay, net);
     PostSettle_GetPlus(lay, net);
     lay->phase_dif_ratio = 1.0f;
-    break;
-  case LeabraNetwork::MINUS_PLUS_NOTHING:
-  case LeabraNetwork::MINUS_PLUS_MINUS:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      PostSettle_GetMinus(lay, net);
-    }
-    else if(net->phase_no == 1) {
-      PostSettle_GetPlus(lay, net);
-      PostSettle_GetPhaseDifRatio(lay, net);
-    }
-    else {
-      PostSettle_GetMinus2(lay, net);
-    }
-    break;
-  case LeabraNetwork::PLUS_NOTHING:
-    // don't use actual phase values because pluses might be minuses with testing
-    if(net->phase_no == 0) {
-      PostSettle_GetPlus(lay, net);
-    }
-    else {
-      PostSettle_GetMinus(lay, net);
-      PostSettle_GetPhaseDifRatio(lay, net);
-    }
     break;
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->PostSettle(net);
-  }
-
-  if((adapt_i.type == AdaptISpec::G_BAR_I) || (adapt_i.type == AdaptISpec::G_BAR_IL)) {
-    AdaptGBarI(lay, net);
   }
 }
 
@@ -1605,30 +1411,6 @@ void LeabraLayerSpec::PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwor
         gpd->phase_dif_ratio = gpd->acts_m.avg / gpd->acts_p.avg;
       else
         gpd->phase_dif_ratio = 1.0f;
-    }
-  }
-}
-
-void LeabraLayerSpec::AdaptGBarI(LeabraLayer* lay, LeabraNetwork*) {
-  float diff = lay->kwta.pct - lay->acts.avg;
-  if(fabsf(diff) > adapt_i.tol) {
-    float p_i = 1.0f;
-    if(adapt_i.type == AdaptISpec::G_BAR_IL) {
-      p_i = 1.0f - adapt_i.l;
-    }
-    lay->adapt_i.g_bar_i -= p_i * adapt_i.p_dt * diff;
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    float minv = us->g_bar.i * (1.0 - adapt_i.mx_d);
-    float maxv = us->g_bar.i * (1.0 + adapt_i.mx_d);
-    if(lay->adapt_i.g_bar_i < minv) lay->adapt_i.g_bar_i = minv;
-    if(lay->adapt_i.g_bar_i > maxv) lay->adapt_i.g_bar_i = maxv;
-    if(adapt_i.type == AdaptISpec::G_BAR_IL) {
-      lay->adapt_i.g_bar_l -= adapt_i.l * adapt_i.p_dt * diff;
-      LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-      float minv = us->g_bar.l * (1.0 - adapt_i.mx_d);
-      float maxv = us->g_bar.l * (1.0 + adapt_i.mx_d);
-      if(lay->adapt_i.g_bar_l < minv) lay->adapt_i.g_bar_l = minv;
-      if(lay->adapt_i.g_bar_l > maxv) lay->adapt_i.g_bar_l = maxv;
     }
   }
 }
@@ -1758,19 +1540,7 @@ void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net
 //      Learning
 
 void LeabraLayerSpec::Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net) {
-  if(!ct_inhib_mod.manual_sravg) {
-    lay->sravg_vals.state = net->sravg_vals.state; // default is to just copy
-
-    if(lay->sravg_vals.state != CtSRAvgVals::NO_SRAVG) {
-      if(ct_inhib_mod.sravg_delay > 0) {
-	if(net->phase != LeabraNetwork::PLUS_PHASE) {
-	  int into = net->ct_cycle - net->ct_sravg.start;
-	  if(into <= ct_inhib_mod.sravg_delay) // override!
-	    lay->sravg_vals.state = CtSRAvgVals::NO_SRAVG;
-	}
-      }
-    }
-  }
+  lay->sravg_vals.state = net->sravg_vals.state; // default is to just copy
 }
 
 void LeabraLayerSpec::Compute_SRAvg_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1793,24 +1563,8 @@ bool LeabraLayerSpec::Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net) {
   return true;
 }
 
-bool LeabraLayerSpec::Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  return false;			// standard layers never do it
-}
-
-bool LeabraLayerSpec::Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->phase_order == LeabraNetwork::MINUS_PLUS_NOTHING ||
-      net->phase_order == LeabraNetwork::MINUS_PLUS_MINUS) &&
-     (net->learn_rule != LeabraNetwork::LEABRA_CHL &&
-      net->learn_rule != LeabraNetwork::CTLEABRA_XCAL_C)) { // xcal_c learns on 1st plus!
-    return false;
-  }
+bool LeabraLayerSpec::Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) {
   return true;
-}
-
-bool LeabraLayerSpec::Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  // shouldn't happen, but just in case..
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) return false; // only 1st plus
-  return true;          // all types learn here..
 }
 
 void LeabraLayerSpec::SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1979,53 +1733,6 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   return cosv;
 }
 
-float LeabraLayerSpec::Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net) {
-  float cosv = 0.0f;
-  float ssm = 0.0f;
-  float sst = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    cosv += u->act_p * u->act_m2;
-    ssm += u->act_m2 * u->act_m2;
-    sst += u->act_p * u->act_p;
-  }
-  float dist = sqrtf(ssm * sst);
-  if(dist != 0.0f)
-    cosv /= dist;
-  return cosv;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-//      Parameter Adaptation over longer timesales
-
-void LeabraLayerSpec::AdaptKWTAPt_ugp(LeabraLayer* lay,
-                                      Layer::AccessMode acc_md, int gpidx,
-                                      LeabraInhib* thr, LeabraNetwork* net) {
-  thr->adapt_i.avg_avg += adapt_i.a_dt * (thr->acts_m.avg - thr->adapt_i.avg_avg);
-  float dif = thr->adapt_i.avg_avg - thr->kwta.pct;
-  if(dif < -adapt_i.tol) {      // average is less than target
-    // so reduce the point towards lower value
-    thr->adapt_i.i_kwta_pt += adapt_i.p_dt *
-      ((inhib.kwta_pt - adapt_i.mx_d) - thr->adapt_i.i_kwta_pt);
-  }
-  else if(dif > adapt_i.tol) {  // average is more than target
-    // so increase point towards higher value
-    thr->adapt_i.i_kwta_pt += adapt_i.p_dt *
-      ((inhib.kwta_pt + adapt_i.mx_d) - thr->adapt_i.i_kwta_pt);
-  }
-}
-
-void LeabraLayerSpec::AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net) {
-  if(lay->HasExtFlag(Unit::EXT) && !lay->HasExtFlag(Unit::TARG))
-    return;                     // don't adapt points for input-only layers
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      AdaptKWTAPt_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
-    }
-  }
-  AdaptKWTAPt_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
-}
 
 void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->netin.max < 0.01f) return; // not getting enough activation to count!
@@ -2047,6 +1754,7 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) 
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
       float netin = cg->Compute_Netin(u,net);
+      // todo: optimize this to use prjn-specific computation and do it automatically!
       cg->net = netin;
       prjn->netin_avg += netin;
       netin_avg_n++;
@@ -2091,82 +1799,6 @@ void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* ne
     prjn->avg_netin_n = 0;
     prjn->avg_netin_avg_sum = 0.0f;
     prjn->avg_netin_rel_sum = 0.0f;
-  }
-}
-
-void LeabraLayerSpec::Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork*) {
-  int n_in = 0;
-  int n_out = 0;
-  int n_lat = 0;
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) {
-      prjn->trg_netin_rel = 0.0f;
-      continue;
-    }
-    if(prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) { // fix these guys
-      prjn->trg_netin_rel = 0.0f;
-      prjn->direction = Projection::DIR_UNKNOWN;
-      continue;
-    }
-    if(prjn->direction == Projection::FM_INPUT) n_in++;
-    else if(prjn->direction == Projection::FM_OUTPUT) n_out++;
-    else if(prjn->direction == Projection::LATERAL) n_lat++;
-  }
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
-    float in_trg = cs->rel_net_adapt.trg_fm_input;
-    float out_trg = cs->rel_net_adapt.trg_fm_output;
-    float lat_trg = cs->rel_net_adapt.trg_lateral;
-    if(prjn->direction == Projection::FM_INPUT) {
-      if(n_out == 0 && n_lat == 0) in_trg = 1.0;
-      else if(n_out == 0) in_trg = in_trg / (in_trg + lat_trg);
-      else if(n_lat == 0) in_trg = in_trg / (in_trg + out_trg);
-      prjn->trg_netin_rel = in_trg / (float)n_in;
-    }
-    else if(prjn->direction == Projection::FM_OUTPUT) {
-      if(n_in == 0 && n_lat == 0) out_trg = 1.0;
-      else if(n_in == 0) out_trg = out_trg / (out_trg + lat_trg);
-      else if(n_lat == 0) out_trg = out_trg / (out_trg + in_trg);
-      prjn->trg_netin_rel = out_trg / (float)n_out;
-    }
-    else if(prjn->direction == Projection::LATERAL) {
-      if(n_in == 0 && n_out == 0) lat_trg = 1.0;
-      else if(n_in == 0) lat_trg = lat_trg / (lat_trg + out_trg);
-      else if(n_out == 0) lat_trg = lat_trg / (lat_trg + in_trg);
-      prjn->trg_netin_rel = lat_trg / (float)n_lat;
-    }
-  }
-}
-
-void LeabraLayerSpec::Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork*) {
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
-    if(prjn->trg_netin_rel <= 0.0f) continue; // not set
-    if(!cs->rel_net_adapt.on) continue;
-    if(cs->rel_net_adapt.CheckInTolerance(prjn->trg_netin_rel, prjn->avg_netin_rel))
-      continue;
-    cs->SetUnique("wt_scale", true);
-    cs->wt_scale.rel += cs->rel_net_adapt.rel_lrate *
-      (prjn->trg_netin_rel - prjn->avg_netin_rel);
-    if(cs->wt_scale.rel <= 0.0f) cs->wt_scale.rel = 0.0f;
-  }
-}
-
-void LeabraLayerSpec::Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork*) {
-  if(!abs_net_adapt.on) return;
-  float dst = abs_net_adapt.trg_net - lay->avg_netin.max;
-  if(fabsf(dst) < abs_net_adapt.tol) return;
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)prjn->con_spec.SPtr();
-    cs->SetUnique("wt_scale", true);
-    cs->wt_scale.abs += abs_net_adapt.abs_lrate * dst;
   }
 }
 

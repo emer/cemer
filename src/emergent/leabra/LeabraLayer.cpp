@@ -65,7 +65,6 @@ void LeabraLayer::InitLinks() {
 
   taBase::Own(kwta, this);
   taBase::Own(i_val, this);
-  taBase::Own(adapt_i, this);
 
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);

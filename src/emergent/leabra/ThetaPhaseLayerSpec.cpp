@@ -62,8 +62,7 @@ void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* 
   float sse_err = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->act_dif2 = u->act_eq - u->act_mid;
-    float sse = u->act_dif2;
+    float sse = u->act_eq - u->act_mid;
     if(fabsf(sse) < us->sse_tol)
       sse = 0.0f;
     sse *= sse;

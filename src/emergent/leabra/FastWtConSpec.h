@@ -77,9 +77,9 @@ public:
   //   cg->Cn(idx,SWT,net) = cg->Cn(idx,WT,net);
   // }
 
-  inline void C_Init_dWt(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                  Network* net) override
-  { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->Cn(idx,SDWT,net)=0.0f; }
+  // inline void C_Init_dWt(RecvCons* cg, const int idx, Unit* ru, Unit* su,
+  //                                 Network* net) override
+  // { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->Cn(idx,SDWT,net)=0.0f; }
   // #IGNORE 
   void SetCurLrate(LeabraNetwork* net, int epoch) override;
 

@@ -23,12 +23,10 @@
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
-TA_BASEFUNS_CTORS_DEFN(WtScaleSpecInit);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(StableMixSpec);
 TA_BASEFUNS_CTORS_DEFN(LearnMixSpec);
 TA_BASEFUNS_CTORS_DEFN(SAvgCorSpec);
-TA_BASEFUNS_CTORS_DEFN(AdaptRelNetinSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
@@ -40,6 +38,7 @@ void WtScaleSpec::Initialize() {
 }
 
 void WtScaleSpec::Defaults_init() {
+  sem_extra = 2;
 }
 
 
@@ -59,12 +58,6 @@ float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const floa
     rval = 1.0f / (float)r_exp_act_n;
   }
   return rval;
-}
-
-void WtScaleSpecInit::Initialize() {
-  init = false;
-  rel = 1.0f;
-  abs = 1.0f;
 }
 
 void WtSigSpec::Initialize() {
@@ -148,38 +141,6 @@ void SAvgCorSpec::Initialize() {
   thresh = .001f;
 }
 
-void AdaptRelNetinSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void AdaptRelNetinSpec::Defaults_init() {
-  trg_fm_input = .85f;
-  trg_fm_output = .15f;
-  trg_lateral = 0.0f;
-  trg_sum = 1.0f;
-  tol_lg = 0.05f;
-  tol_sm = 0.2f;
-  rel_lrate = .2f;
-}
-
-void AdaptRelNetinSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  trg_sum = trg_fm_input + trg_fm_output + trg_lateral;
-  TestWarning(fabsf(trg_sum - 1.0f) > .01, "UAE", "target values do not sum to 1");
-}
-
-bool AdaptRelNetinSpec::CheckInTolerance(float trg, float val) {
-  float tol;
-  if(trg > .25f)
-    tol = tol_lg * trg;
-  else
-    tol = tol_sm * trg;
-  if(fabsf(trg - val) <= tol) return true;
-  return false;
-}
-
-
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
   learn_rule = CTLEABRA_XCAL;
@@ -246,7 +207,6 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   stable_mix.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
-  rel_net_adapt.UpdateAfterEdit_NoGui();
   CreateWtSigFun();
   LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
   if(mynet) {

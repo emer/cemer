@@ -86,9 +86,7 @@ public:
   float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
   float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
-  float		act_m2;		// #CAT_Activation second minus_phase (e.g., nothing phase) activation (act_nd), set after settling, used for learning and performance stats
   float		act_mid;	// #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) 
-  float		act_dif2;	// #CAT_Activation difference between second set of phases, where relevant (e.g., act_p - act_m2 for MINUS_PLUS_NOTHING)
   float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
   float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
   float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
@@ -315,15 +313,6 @@ public:
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg(this, net, thread_no); }
   // #CAT_Learning compute sending-receiving activation product averages (CtLeabra_X/CAL)
 
-  void 	Compute_dWt_FirstMinus(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstMinus(this, net, thread_no); }
-  // #CAT_Learning compute weight change after first minus phase has been encountered: not currently used.. 
-  void 	Compute_dWt_FirstPlus(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_FirstPlus(this, net, thread_no); }
-  // #CAT_Learning compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  void 	Compute_dWt_Nothing(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Nothing(this, net, thread_no); }
-  // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
   void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }
   // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
@@ -338,9 +327,6 @@ public:
   float	Compute_NormErr(LeabraNetwork* net)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_NormErr(this, net); }
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off from target) according to settings on the network (returns a 1 or 0)
-  float	Compute_M2SSE(LeabraNetwork* net, bool& has_targ)
-  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_M2SSE(this, net, has_targ); }
-  // #CAT_Statistic compute sum-squared error based on act_m2 value vs. target
 
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions

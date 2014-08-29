@@ -16,16 +16,12 @@
 #include "LeabraInhib.h"
 
 TA_BASEFUNS_CTORS_DEFN(KWTAVals);
-
-TA_BASEFUNS_CTORS_DEFN(AdaptIVals);
-
 TA_BASEFUNS_CTORS_DEFN(InhibVals);
 
 void KWTAVals::Initialize() {
   k = 12;
   pct = .25f;
   pct_c = .75f;
-  adth_k = 1;
 
   InitVals();
 }
@@ -34,9 +30,6 @@ void KWTAVals::InitVals() {
   k_ithr = 0.0f;
   k1_ithr = 0.0f;
   ithr_diff = 0.0f;
-  tie_brk_gain = 0.0f;
-  eff_loser_gain = 1.0f;
-  tie_brk = 0;
   ffi = 0.0f;
   fbi = 0.0f;
   prv_trl_ffi = 0.0f;
@@ -47,13 +40,9 @@ void KWTAVals::Copy_(const KWTAVals& cp) {
   k = cp.k;
   pct = cp.pct;
   pct_c = cp.pct_c;
-  adth_k = cp.adth_k;
   k_ithr = cp.k_ithr;
   k1_ithr = cp.k1_ithr;
   ithr_diff = cp.ithr_diff;
-  tie_brk_gain = cp.tie_brk_gain;
-  eff_loser_gain = cp.eff_loser_gain;
-  tie_brk = cp.tie_brk;
   ffi = cp.ffi;
   fbi = cp.fbi;
   prv_trl_ffi = cp.prv_trl_ffi;
@@ -66,20 +55,6 @@ void KWTAVals::Compute_Pct(int n_units) {
   else
     pct = 0.0f;
   pct_c = 1.0f - pct;
-}
-
-void AdaptIVals::Initialize() {
-  avg_avg = 0.0f;
-  i_kwta_pt = 0.0f;
-  g_bar_i = 1.0f;
-  g_bar_l = .1f;
-}
-
-void AdaptIVals::Copy_(const AdaptIVals& cp) {
-  avg_avg = cp.avg_avg;
-  i_kwta_pt = cp.i_kwta_pt;
-  g_bar_i = cp.g_bar_i;
-  g_bar_l = cp.g_bar_l;
 }
 
 void InhibVals::Initialize() {

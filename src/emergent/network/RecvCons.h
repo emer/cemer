@@ -39,10 +39,13 @@ public:
 
   void  Init_Weights(Unit* ru, Network* net)
   { if(GetConSpec()) GetConSpec()->Init_Weights(this,ru,net); }
-  // #CAT_Learning initialize weights for group
-  void  C_Init_Weights(int idx, Unit* ru, Unit* su, Network* net)
-  { GetConSpec()->C_Init_Weights(this, idx, ru, su, net); }
-  // #CAT_Learning initialize weights for single connection
+  // #CAT_Learning initialize weights for group -- must set net->needs_wt_sym if wt_limits.sym is set
+  void  C_Init_Weight_Rnd(float& wt)
+  { GetConSpec()->C_Init_Weight_Rnd(wt); }
+  // #CAT_Learning initialize weight value according to random number specs
+  void  Init_Weights_sym(Unit* ru, Network* net)
+  { if(GetConSpec()) GetConSpec()->Init_Weights_sym_r(this,ru,net); }
+  // #CAT_Structure symmetrize the weights
   void  Init_Weights_post(Unit* ru, Network* net)
   { if(GetConSpec()) GetConSpec()->Init_Weights_post(this,ru,net); }
   // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
@@ -56,6 +59,7 @@ public:
   float Compute_Dist(Unit* ru, Network* net)
   { return GetConSpec()->Compute_Dist(this,ru,net); }
   // #CAT_Activation compute net input as distance between activation and weights
+
   void  Compute_dWt(Unit* ru, Network* net)
   { GetConSpec()->Compute_dWt(this,ru,net); }
   // #CAT_Learning compute weight changes (the fundamental learning problem)

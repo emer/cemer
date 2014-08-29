@@ -37,7 +37,6 @@ void LeabraUnGpData::InitLinks() {
 
   taBase::Own(kwta, this);
   taBase::Own(i_val, this);
-  taBase::Own(adapt_i, this);
 }
 
 void LeabraUnGpData::Copy_(const LeabraUnGpData& cp) {

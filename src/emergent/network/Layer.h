@@ -405,8 +405,6 @@ public:
   // #CAT_Activation Initializes external and target inputs
   virtual void  Init_Acts(Network* net);
   // #CAT_Activation Initialize the unit state variables
-  virtual void  Init_dWt(Network* net);
-  // #CAT_Learning Initialize the weight change variables
   virtual void  Init_Weights_Layer(Network* net);
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
 

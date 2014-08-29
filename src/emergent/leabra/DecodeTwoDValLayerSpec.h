@@ -34,9 +34,7 @@ public:
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // don't do any learning:
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }
 
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);

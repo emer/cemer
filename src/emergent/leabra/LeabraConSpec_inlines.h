@@ -27,41 +27,6 @@
 
 // declare all other types mentioned but not required to include:
 
-inline void LeabraConSpec::C_Init_Weights_sender(LeabraSendCons* cg, const int idx,
-                                                 float* wts, float* dwts, float* pdws) {
-  if(rnd.type != Random::NONE)  { // don't do anything (e.g. so connect fun can do it)
-    wts[idx] = rnd.Gen();
-  }
-  else {
-    rnd.Gen();          // keep random seeds synchronized for dmem
-  }
-  wt_limits.ApplyLimits(wts[idx]);
-  dwts[idx] = 0.0f;
-  pdws[idx] = 0.0f;
-}
-
-inline void LeabraConSpec::Init_Weights_sender(LeabraSendCons* cg, LeabraUnit* ru,
-                                               LeabraNetwork* net) 
-{ // Projection* prjn = cg->prjn;
-  // if(prjn->spec->init_wts) {
-  //   prjn->C_Init_Weights(cg, ru); // NOTE: this must call PrjnSpec::C_Init_Weights which does basic ConSpec C_Init_Weights
-  //   if(prjn->spec->add_rnd_wts) {
-  //     const float scl = prjn->spec->add_rnd_wts_scale;
-  //     CON_GROUP_LOOP(cg, C_AddRndWeights(cg, i, ru, cg->Un(i,net), scl, net));
-  //   }
-  // }
-  // else {
-
-  float* wts = cg->OwnCnVar(WT);
-  float* dwts = cg->OwnCnVar(DWT);
-  float* pdws = cg->OwnCnVar(PDW);
-
-  CON_GROUP_LOOP(cg, C_Init_Weights_sender(cg, i, wts, dwts, pdws));
-
-  if(wt_scale_init.init) { wt_scale.abs = wt_scale_init.abs;
-    wt_scale.rel = wt_scale_init.rel; }
-}
-
 inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net) {
   if(!learn) return;
@@ -276,6 +241,8 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraU
 //   for(i=0; i<parsz; i+=8) {
 //     Vec8f dwt;  dwt.load(dwts+i);
 
+// NOTE: these can be vectorized when units become vectorized -- will be big improvement
+
 //     float rus[8];    float rum[8];    float rul[8];
 //     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+0,net);
 //       rus[0] = ru->avg_s;  rum[0] = ru->avg_m;  rul[0] = ru->avg_l; }
@@ -480,22 +447,6 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg,
 
 
 //////////////////////////////////////////////////////////////////////////////////
-//     Computing dWt: CtLeabra_XCalC -- receiver based for triggered learning..
-
-inline void LeabraConSpec::Compute_dWt_CtLeabraXCalC(LeabraRecvCons* cg, LeabraUnit* ru,
-                                                     LeabraNetwork* net) {
-  float ru_avg_s = ru->avg_s;
-  float ru_avg_m = ru->avg_m;
-  float ru_avg_l = ru->avg_l;
-  const int sz = cg->size;
-  for(int i=0; i<sz; i++) {
-    LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
-    C_Compute_dWt_CtLeabraXCalC(cg->PtrCn(i,DWT,net), ru_avg_s, ru_avg_m, ru_avg_l,
-                                su->avg_s, su->avg_m);
-  }
-}
-
-//////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_CAL -- NOTE: Requires LeabraSRAvgCon connections!
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -560,36 +511,38 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, Leabr
 /////////////////////////////////////
 // Master dWt function
 
-inline void LeabraConSpec::Compute_Leabra_dWt(LeabraSendCons* cg, LeabraUnit* su,
-                                              LeabraNetwork* net) {
+inline void LeabraConSpec::Compute_dWt(BaseCons* bcg, Unit* bsu, Network* bnet) {
   if(!learn) return;
+  LeabraSendCons* cg = (LeabraSendCons*)bcg;
+  LeabraUnit* su = (LeabraUnit*)bsu;
+  LeabraNetwork* net = (LeabraNetwork*)bnet;
   switch(learn_rule) {
+  case CTLEABRA_XCAL:
+    Compute_dWt_CtLeabraXCAL(cg, su, net);
+    break;
   case LEABRA_CHL:
     Compute_dWt_LeabraCHL(cg, su, net);
     break;
   case CTLEABRA_CAL:
     Compute_dWt_CtLeabraCAL(cg, su, net);
     break;
-  case CTLEABRA_XCAL:
-  case CTLEABRA_XCAL_C:
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-    break;
   }
 }
 
-inline void LeabraConSpec::Compute_Leabra_Weights(LeabraSendCons* cg, LeabraUnit* su,
-                                                  LeabraNetwork* net) {
+inline void LeabraConSpec::Compute_Weights(BaseCons* bcg, Unit* bsu, Network* bnet) {
   if(!learn) return;
+  LeabraSendCons* cg = (LeabraSendCons*)bcg;
+  LeabraUnit* su = (LeabraUnit*)bsu;
+  LeabraNetwork* net = (LeabraNetwork*)bnet;
   switch(learn_rule) {
+  case CTLEABRA_XCAL:
+    Compute_Weights_CtLeabraXCAL(cg, su, net);
+    break;
   case LEABRA_CHL:
     Compute_Weights_LeabraCHL(cg, su, net);
     break;
   case CTLEABRA_CAL:
     Compute_Weights_CtLeabraCAL(cg, su, net);
-    break;
-  case CTLEABRA_XCAL:
-  case CTLEABRA_XCAL_C:
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
     break;
   }
 }
@@ -631,7 +584,7 @@ inline void LeabraConSpec::B_Compute_Weights(RecvCons* bias, LeabraUnit* ru) {
   }
   pdw = dwt;
   dwt = 0.0f;
-  C_ApplyLimits(bias->OwnCn(0,WT), ru, NULL);
+  C_ApplyLimits(bias->OwnCn(0,WT));
 }
 
 inline void LeabraConSpec::B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
@@ -650,19 +603,18 @@ inline void LeabraConSpec::B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit*
 /////////////////////////////////////
 // Master Bias dWt function
 
-inline void LeabraConSpec::B_Compute_Leabra_dWt(RecvCons* bias, LeabraUnit* ru,
-                                                LeabraLayer* rlay) {
+inline void LeabraConSpec::B_Compute_dWt(RecvCons* bias, LeabraUnit* ru,
+                                         LeabraLayer* rlay) {
   if(!learn) return;
   switch(learn_rule) {
+  case CTLEABRA_XCAL:
+    B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
+    break;
   case LEABRA_CHL:
     B_Compute_dWt_LeabraCHL(bias, ru);
     break;
   case CTLEABRA_CAL:
     B_Compute_dWt_CtLeabraCAL(bias, ru, rlay);
-    break;
-  case CTLEABRA_XCAL:
-  case CTLEABRA_XCAL_C:
-    B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
     break;
   }
 }

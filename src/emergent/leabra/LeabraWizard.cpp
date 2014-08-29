@@ -239,9 +239,6 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   ff_inhib_cs->wt_scale.abs = .4f;
 
   basic_ls->inhib.type = LeabraInhibSpec::UNIT_INHIB;
-  basic_ls->adapt_i.type = AdaptISpec::G_BAR_I;
-  basic_ls->adapt_i.tol = .02f; // these params sometimes get off..
-  basic_ls->adapt_i.p_dt = .1f;
 
   inhib_ls->SetUnique("kwta", true);
   inhib_ls->kwta.k_from = KWTASpec::USE_PCT;

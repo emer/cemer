@@ -49,11 +49,6 @@ void ExtRewSpec::Initialize() {
 void ExtRewLayerSpec::Initialize() {
   SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 
   rew_type = OUT_ERR_REW;
 
@@ -97,7 +92,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 
   SetUnique("decay", true);
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 
   // sometimes this is used as a target layer for ext rew and it should NEVER drive sse
   lay->SetLayerFlag(Layer::NO_ADD_SSE);

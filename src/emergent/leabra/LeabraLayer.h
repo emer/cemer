@@ -265,15 +265,9 @@ public:
   void	Compute_dWt_Layer_pre(LeabraNetwork* net)  { spec->Compute_dWt_Layer_pre(this, net); }
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
-  bool	Compute_dWt_FirstMinus_Test(LeabraNetwork* net)
-  { return spec->Compute_dWt_FirstMinus_Test(this, net); }
-  // #CAT_Learning test whether to compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
-  bool	Compute_dWt_FirstPlus_Test(LeabraNetwork* net)
-  { return spec->Compute_dWt_FirstPlus_Test(this, net); }
-  // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  bool	Compute_dWt_Nothing_Test(LeabraNetwork* net)
-  { return spec->Compute_dWt_Nothing_Test(this, net); }
-  // #CAT_Learning test whether to compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  bool	Compute_dWt_Test(LeabraNetwork* net)
+  { return spec->Compute_dWt_Test(this, net); }
+  // #CAT_Learning test whether to compute weight change on this layer -- layers can opt-out of weight changes if they automatically don't learn
 
   void	SetUnitLearnFlags(LeabraNetwork* net)
   { spec->SetUnitLearnFlags(this, net); }
@@ -303,27 +297,15 @@ public:
   float Compute_TrialCosDiff(LeabraNetwork* net)
   { return spec->Compute_TrialCosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of trial activaiton difference in this layer: act_p compared to p_act_p -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
-  float Compute_CosDiff2(LeabraNetwork* net)
-  { return spec->Compute_CosDiff2(this, net); }
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2 -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
 
   ////////////////////////////////////////////////////////////////////////////////
   //	Parameter Adaptation over longer timesales
-
-  void	AdaptKWTAPt(LeabraNetwork* net) { spec->AdaptKWTAPt(this, net); }
-  // #CAT_Activation adapt the kwta point based on average activity
 
   void	Compute_AbsRelNetin(LeabraNetwork* net)	{ spec->Compute_AbsRelNetin(this, net); }
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
   void	Compute_AvgAbsRelNetin(LeabraNetwork* net) { spec->Compute_AvgAbsRelNetin(this, net); }
   // #CAT_Statistic compute the average absolute layer-level and relative netinput from different projections into this layer (over an epoch-level timescale)
 
-  void	Compute_TrgRelNetin(LeabraNetwork* net) { spec->Compute_TrgRelNetin(this, net); }
-  // #CAT_Statistic compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
-  void	Compute_AdaptRelNetin(LeabraNetwork* net) { spec->Compute_AdaptRelNetin(this, net); }
-  // #CAT_Statistic adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
-  void	Compute_AdaptAbsNetin(LeabraNetwork* net) { spec->Compute_AdaptAbsNetin(this, net); }
-  // #CAT_Statistic adapt the absolute net input values by changing the conspec wt_scale.abs parameter
 
   ////////////////////////////////////////////
   //	Misc structural routines

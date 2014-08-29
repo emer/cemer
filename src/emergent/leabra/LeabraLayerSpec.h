@@ -145,60 +145,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(KwtaTieBreak);
-
-class E_API KwtaTieBreak : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra break ties where all the units have similar netinputs and thus none get activated.  this lowers the inhibition so that all get active to some extent
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// whether to perform the tie breaking function at all
-  float		k_thr; 		// #CONDSHOW_ON_on #DEF_1 threshold on inhibitory threshold (i_thr) for top kwta units before tie break is engaged: don't break ties for weakly activated layers
-  float		diff_thr;	// #CONDSHOW_ON_on #DEF_0.2 threshold for tie breaking mechanisms to be engaged, based on difference ratio between top k and rest: ithr_diff = (k_ithr - k1_ithr) / k_ithr.  ithr_diff value is stored in kwta field of layer or unit group, along with tie_brk_gain which is normalized value of ithr_diff relative to this threshold: (diff_thr - ithr_diff) / diff_thr -- this determines how strongly the tie breaking mechanisms are engaged
-  float		thr_gain;	// #CONDSHOW_ON_on #DEF_0.005:0.2 how much k1_ithr is reduced relative to k_ithr to fix the tie -- determines how strongly active the tied units are -- actual amount of reduction is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr
-  float		loser_gain;	// #CONDSHOW_ON_on #DEF_1 how much extra inhibition to apply to units that are below the kwta cutoff ("losers") -- loser_gain is additive to a 1.0 gain baseline, so 0 means no additional gain, and any positive number increases the gain -- actual gain is a function tie_brk_gain (see diff_thr field for details), so it smoothly transitions to normal inhibitory dynamics as ithr_diff goes above diff_thr: eff_loser_gain = 1 + loser_gain * tie_brk_gain
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(KwtaTieBreak);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
-
-eTypeDef_Of(AdaptISpec);
-
-class E_API AdaptISpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies adaptive kwta specs (esp for avg-based)
-INHERITED(SpecMemberBase)
-public:
-  enum AdaptType {
-    NONE,			// don't adapt anything
-    KWTA_PT,			// adapt kwta point (i_kwta_pt) based on running-average layer activation as compared to target value
-    G_BAR_I,			// adapt g_bar.i for unit inhibition values based on layer activation at any point in time
-    G_BAR_IL			// adapt g_bar.i and g_bar.l for unit inhibition & leak values based on layer activation at any point in time
-  };
-
-  AdaptType	type;		// what to adapt, or none for nothing
-  float		tol;		// #CONDSHOW_OFF_type:NONE #DEF_0.02 tolerance around target avg act before changing parameter
-  float		p_dt;		// #CONDSHOW_OFF_type:NONE #DEF_0.1 #AKA_pt_dt time constant for changing the parameter (i_kwta_pt or g_bar.i)
-  float		mx_d;		// #CONDSHOW_OFF_type:NONE #DEF_0.9 maximum deviation (proportion) from initial parameter setting allowed
-  float		l;		// #CONDSHOW_ON_type:G_BAR_IL proportion of difference from target activation to allocate to the leak in G_BAR_IL mode
-  float		a_dt;		// #CONDSHOW_ON_type:KWTA_PT #DEF_0.005 time constant for integrating average average activation, which is basis for adapting i_kwta_pt
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(AdaptISpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
 
 eTypeDef_Of(ClampSpec);
 
@@ -232,7 +178,6 @@ INHERITED(SpecMemberBase)
 public:
   float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
   float		phase;		// #MIN_0 #MAX_1 [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
-  float		phase2;		// #MIN_0 #MAX_1 #DEF_0 proportion decay of state vars after second phase, before third phase -- only applicable for 3-phase case (MINUS_PLUS_NOTHING)
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
@@ -275,53 +220,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(CtLayerInhibMod);
-
-class E_API CtLayerInhibMod : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level sinusoidal and final inhibitory modulation parameters simulating initial burst of activation and subsequent oscillatory ringing
-INHERITED(SpecMemberBase)
-public:
-  bool		manual_sravg;	// #DEF_false the sravg_vals.state flag must be set manually (i.e., by program control) for this layer -- otherwise it is copied directly from the network-level value
-  int		sravg_delay;	// #DEF_0 [0 = use network value] -- delay in cycles to start computing medium time-scale average (not relevant for XCAL_C), specific to this layer.  adding a delay for layers that are higher up in the network, while setting the network start earlier, can result in better overall learning throughout the network
-  bool		use_sin;	// if on, actually use layer-level sinusoidal values (burst_i, trough_i) -- else use network level
-  float		burst_i;	// #CONDSHOW_ON_use_sin [.02] maximum reduction in inhibition as a proportion of computed kwta value to subtract for positive activation (burst) phase of wave -- value should be a positive number
-  float		trough_i;	// #CONDSHOW_ON_use_sin [.02] maximum extra inhibition as proportion of computed kwta value to add for negative activation (trough) phase of wave -- value shoudl be a positive number
-  bool		use_fin;	// if on, actually use layer-level final values (inhib_i) -- else use network level
-  float		inhib_i;	// #CONDSHOW_ON_use_fin [.05 when in use] maximum extra inhibition as proportion of computed kwta value to add during final inhib phase
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  SIMPLE_COPY(CtLayerInhibMod);
-  TA_BASEFUNS(CtLayerInhibMod);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
-};
-
-eTypeDef_Of(LayAbsNetAdaptSpec);
-
-class E_API LayAbsNetAdaptSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra adapt absolute netinput values by adjusting the wt_scale.abs parameters in the conspecs of projections into this layer, based on differences between time-averaged max netinput values and the target
-INHERITED(SpecMemberBase)
-public:
-  bool		on;		// whether to apply layer netinput rescaling
-  float		trg_net; 	// #CONDSHOW_ON_on #DEF_0.5 target maximum netinput value
-  float		tol;		// #CONDSHOW_ON_on #DEF_0.1 tolerance around target value -- if actual value is within this tolerance from target, then do not adapt
-  float		abs_lrate;	// #CONDSHOW_ON_on #DEF_0.2 learning rate for adapting the wt_scale.abs parameters for all projections into layer
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LayAbsNetAdaptSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
 
 eTypeDef_Of(LeabraLayerSpec);
 
@@ -344,10 +242,6 @@ public:
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
   CosDiffLrateSpec cos_diff_lrate;  // #CAT_Learning modulation of learning rate by the recv layer cos_diff between act_p and act_m -- maximum learning in the zone of proximal development
-  CtLayerInhibMod  ct_inhib_mod; // layer-level inhibitory modulation parameters, to be used instead of network-level values where needed
-  KwtaTieBreak	tie_brk;	// #CAT_Activation break ties when all the units in the layer have similar netinputs, which puts the inhbition value too close to everyone's threshold and produces no activation at all.  this will lower the inhibition and allow all the units to have some activation
-  AdaptISpec	adapt_i;	// #CAT_Activation adapt the inhibition: either i_kwta_pt point based on diffs between actual and target k level (for avg-based), or g_bar.i for unit-inhib
-  LayAbsNetAdaptSpec abs_net_adapt; // #CAT_Learning adapt absolute netinput values (must call AbsRelNetin functions, and AdaptAbsNetin)
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -455,8 +349,6 @@ public:
 					 KwtaSortBuff& act_buff, KwtaSortBuff& inact_buff,
 					 int& k_eff, float& k_net, int& k_idx);
     // #CAT_Activation implementation of sort into active and inactive unit buffers -- basic to various kwta functions: eff_k = effective k to use, k_net = net of kth unit (lowest unit in act_buf), k_idx = index of kth unit
-    virtual void Compute_Inhib_BreakTie(LeabraInhib* thr);
-    // #IGNORE break any ties in the kwta function -- called by specific kwta functions, and depends on tie_brk.on
 
     virtual void Compute_Inhib_kWTA(LeabraLayer* lay,
 			 Layer::AccessMode acc_md, int gpidx,
@@ -470,9 +362,6 @@ public:
 			 Layer::AccessMode acc_md, int gpidx,
 			   LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of feed-forward, feed-back inhibition computation
-
-    virtual void Compute_CtDynamicInhib(LeabraLayer* lay, LeabraNetwork* net);
-    // #IGNORE compute extra dynamic inhibition for CtLeabra_X/CAL algorithm
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
@@ -563,8 +452,6 @@ public:
     // #CAT_Activation get 2nd minus phase act stats
     virtual void PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get phase dif ratio from minus to plus
-    virtual void AdaptGBarI(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation adapt inhibitory conductances based on target activation values relative to current values
 
   virtual void	Compute_ActM_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used
@@ -597,12 +484,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
-  virtual void	AdaptKWTAPt(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation adapt the kwta point based on average activity
-    virtual void AdaptKWTAPt_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				 LeabraInhib* thr, LeabraNetwork* net);
-    // #CAT_Activation unit group -- adapt the kwta point based on average activity
-
   virtual void	Compute_SRAvg_State(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning compute state flag setting for sending-receiving activation averages (CtLeabra_X/CAL) -- called at the Cycle_Run level by network Compute_SRAvg_State -- unless manual_sravg flag is on, it just copies the network-level sravg_vals.state setting
   virtual void	Compute_SRAvg_Layer(LeabraLayer* lay, LeabraNetwork* net);
@@ -613,12 +494,8 @@ public:
   virtual void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
-  virtual bool	Compute_dWt_FirstMinus_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute weight change after first minus phase has been encountered: for out-of-phase LeabraTI context layers (or anything similar)
-  virtual bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute weight change after first plus phase has been encountered: standard layers do a weight change here, except under CtLeabra_X/CAL
-  virtual bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning compute weight change after final nothing phase: standard layers do a weight change here under both learning rules
+  virtual bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning test whether to compute weight changes -- layers can opt out of learning entirely if they automatically don't learn
 
   virtual void	SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning set the LEARN flags for all units in the layer
@@ -646,24 +523,12 @@ public:
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of trail activation difference in this layer: act_p compared to p_act_p -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
-  virtual float  Compute_CosDiff2(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of phase difference 2 in this layer: act_p compared to act_m2 -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
-
-
-  ////////////////////////////////////////////////////////////////////////////////
-  //	Parameter Adaptation over longer timesales
 
   virtual void	Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
   virtual void	Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
 
-  virtual void	Compute_TrgRelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning compute target rel netin based on projection direction information plus the adapt_rel_net values in the conspec
-  virtual void	Compute_AdaptRelNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning adapt the relative input values by changing the conspec wt_scale.rel parameter; See Compute_AdaptAbsNetin for adaptation of wt_scale.abs parameters to achieve good netinput values overall
-  virtual void	Compute_AdaptAbsNetin(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning adapt the absolute net input values by changing the conspec wt_scale.abs parameter
 
   ////////////////////////////////////////////
   //	Misc structural routines

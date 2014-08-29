@@ -70,7 +70,6 @@ void PFCLayerSpec::Defaults_init() {
   // SetUnique("decay", true);
   decay.event = 0.0f;
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 }
 
 void PFCLayerSpec::UpdateAfterEdit_impl() {
@@ -103,7 +102,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
 
   decay.event = 0.0f;
   decay.phase = 0.0f;
-  decay.phase2 = 0.0f;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;

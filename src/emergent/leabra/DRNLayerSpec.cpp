@@ -45,10 +45,6 @@ void DRNLayerSpec::Initialize() {
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inhib.kwta_pt = .25;
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
 }
 
 void DRNLayerSpec::HelpConfig() {

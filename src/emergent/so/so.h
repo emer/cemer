@@ -54,21 +54,48 @@ public:
     LAYER_AVG_ACT,		// from layer's average activation
     COMPUTE_AVG_ACT 		// compute the avg_in_act directly from my inputs (more computationally expensive but always accurate)
   };
-  enum CsConVars {
+  enum SoConVars {
     PDW = DWT+1,                // previous delta weight
-    DWT_AGG,                    // for aggregating the outer products
   };
 
   float		lrate;		// learning rate
   AvgInActSource avg_act_source; // source of average input actviation value
 
-  inline void 	C_Init_Weights(RecvCons* cg, const int idx, Unit* ru, Unit* su,
-                                       Network* net) override
-  { inherited::C_Init_Weights(cg, idx, ru, su, net); cg->OwnCn(idx,PDW) = 0.0f; }
+
+  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+    for(int i=0; i<cg->size; i++) {
+      C_Init_dWt(dwts[i]);
+      pdws[i] = 0.0f;
+    }
+  }
+
+  inline void   Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
+    Init_Weights_symflag(net);
+    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
+
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* pdws = cg->OwnCnVar(PDW);
+
+    if(rnd.type != Random::NONE) {
+      for(int i=0; i<cg->size; i++) {
+        C_Init_Weight_Rnd(wts[i]);
+        C_Init_dWt(dwts[i]);
+        pdws[i] = 0.0f;
+      }
+    }
+  }
+
+  inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
+    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+    cg->OwnCn(0, PDW) = 0.0f;
+  }
 
   inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
   { pdw = dwt;  wt += lrate * dwt;  dwt = 0.0f; }
-  inline void	Compute_Weights(RecvCons* cg, Unit* ru, Network* net);
+  inline void	Compute_Weights(BaseCons* cg, Unit* ru, Network* net);
 
   inline virtual void	Compute_AvgInAct(SoRecvCons* cg, SoUnit* ru, SoNetwork* net);
   // compute the average input activation 
@@ -275,7 +302,7 @@ private:
 //	Inline Functions	//
 //////////////////////////////////
 
-inline void SoConSpec::Compute_Weights(RecvCons* cg, Unit* ru, Network* net) {
+inline void SoConSpec::Compute_Weights(BaseCons* cg, Unit* ru, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdws = cg->OwnCnVar(PDW);
@@ -312,7 +339,8 @@ INHERITED(SoConSpec)
 public:
   inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act) 
   { dwt += ru_act * su_act; }
-  inline void 	Compute_dWt(RecvCons* cg, Unit* ru, Network* net) {
+
+  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = ru->act;
     CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));

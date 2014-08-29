@@ -36,10 +36,6 @@ public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied from recv cons group where it is computed
   float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
 
-  void 	Init_Weights(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Init_Weights_sender(this, su, net); }
-  // #IGNORE #CAT_Activation Initialize weights
-
   void 	Send_NetinDelta(LeabraNetwork* net, int thread_no, float su_act_delta)
   { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, net, thread_no, su_act_delta); }
   // #CAT_Activation send delta-netin
@@ -70,13 +66,6 @@ public:
   void	Compute_Weights_CtLeabraCAL(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraCAL(this, su, net); }
   // #CAT_Learning compute weights: CtLeabra CAL version
-
-  void	Compute_Leabra_dWt(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_dWt(this, su, net); }
-  // #CAT_Learning #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
-  void	Compute_Leabra_Weights(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Leabra_Weights(this, su, net); }
-  // #CAT_Learning #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
 
   void	Compute_CycSynDep(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, su, net); }

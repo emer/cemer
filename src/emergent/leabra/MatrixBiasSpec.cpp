@@ -21,7 +21,6 @@ void MatrixBiasSpec::Initialize() {
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
-  SetUnique("wt_scale_init", true);
   rnd.mean = 0.0f;
   rnd.var = 0.0f;
   wt_limits.min = -1.0f;

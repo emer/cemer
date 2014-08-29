@@ -34,10 +34,6 @@ void PVLVTonicDaLayerSpec::Initialize() {
   SetUnique("inhib", true);
   inhib.type = LeabraInhibSpec::KWTA_INHIB;
   inhib.kwta_pt = 0.25f;
-  SetUnique("ct_inhib_mod", true);
-  ct_inhib_mod.use_sin = true;
-  ct_inhib_mod.burst_i = 0.0f;
-  ct_inhib_mod.trough_i = 0.0f;
   SetUnique("scalar", true);
   scalar.rep = ScalarValSpec::GAUSSIAN;
   scalar.un_width = 0.2f;

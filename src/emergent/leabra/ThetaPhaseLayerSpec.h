@@ -58,7 +58,7 @@ public:
   virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
   // save current act_nd values as act_mid -- minus phase for auto-encoder learning
   virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
-  // compute act_dif2 as act_eq - act_mid, and based on that compute error stats as user data on layer (enc_sse, enc_norm_err)
+  // compute compute error stats as user data on layer (enc_sse, enc_norm_err)
 
   TA_SIMPLE_BASEFUNS(ThetaPhaseLayerSpec);
 protected:

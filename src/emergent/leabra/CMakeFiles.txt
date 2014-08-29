@@ -58,7 +58,6 @@ set(leabra_HEADS_MAKETA
   LeabraDeltaConSpec.h
   DaDeltaConSpec.h
   LeabraSpikeCon.h
-  LeabraXCALSpikeConSpec.h
   LeabraLimPrecConSpec.h
   
   LeabraNegBiasSpec.h
@@ -78,16 +77,10 @@ set(leabra_HEADS_MAKETA
 
   ScalarValSelfPrjnSpec.h
   SaliencyPrjnSpec.h
-  V1LateralContourPrjnSpec.h
-  V2BoLateralPrjnSpec.h
-  FgBoEllipseGpPrjnSpec.h
-  FgBoWedgeGpPrjnSpec.h
-  V1EndStopPrjnSpec.h
   VisDisparityPrjnSpec.h
   VisDisparityLayerSpec.h
   TiledGpRFOneToOnePrjnSpec.h
   TiledGpRFOneToOneWtsPrjnSpec.h
-  V2toV4DepthPrjnSpec.h
   CerebConj2PrjnSpec.h
 
   DaModUnit.h
@@ -225,7 +218,6 @@ set(leabra_SRCS
   LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
   LeabraSpikeCon.cpp
-  LeabraXCALSpikeConSpec.cpp
   LeabraLimPrecConSpec.cpp
   
   LeabraNegBiasSpec.cpp
@@ -245,16 +237,10 @@ set(leabra_SRCS
 
   ScalarValSelfPrjnSpec.cpp
   SaliencyPrjnSpec.cpp
-  V1LateralContourPrjnSpec.cpp
-  V2BoLateralPrjnSpec.cpp
-  FgBoEllipseGpPrjnSpec.cpp
-  FgBoWedgeGpPrjnSpec.cpp
-  V1EndStopPrjnSpec.cpp
   VisDisparityPrjnSpec.cpp
   VisDisparityLayerSpec.cpp
   TiledGpRFOneToOnePrjnSpec.cpp
   TiledGpRFOneToOneWtsPrjnSpec.cpp
-  V2toV4DepthPrjnSpec.cpp
   CerebConj2PrjnSpec.cpp
 
   DaModUnit.cpp

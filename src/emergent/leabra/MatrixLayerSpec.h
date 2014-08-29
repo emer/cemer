@@ -73,7 +73,7 @@ private:
 eTypeDef_Of(MatrixLayerSpec);
 
 class E_API MatrixLayerSpec : public LeabraLayerSpec {
-  // basal ganglia matrix layer -- regular dynamics -- just records gating states based on SNrThal projection -- diff layers for Go vs NoGo -- Go can recv marker con from NoGo -- gating happens in minus phase per SNrThal -- acts are set to 0 for stripes that did not fire Go (pre gating values avail in act_m2) -- learns via dav value from a dopamine layer
+  // basal ganglia matrix layer -- regular dynamics -- just records gating states based on SNrThal projection -- diff layers for Go vs NoGo -- Go can recv marker con from NoGo -- gating happens in minus phase per SNrThal -- acts are set to 0 for stripes that did not fire Go (pre gating values avail in net_ctxt) -- learns via dav value from a dopamine layer
 INHERITED(LeabraLayerSpec)
 public:
   enum GoNoGo {
@@ -112,7 +112,7 @@ public:
   virtual void Compute_PreGatingAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net);
-  // before gating window, reset act_mid and act_m2 to zero
+  // before gating window, reset act_mid and net_ctxt to zero
   virtual void Compute_NoGatingZeroAct_ugp(LeabraLayer* lay,
                                            Layer::AccessMode acc_md, int gpidx,
                                            LeabraNetwork* net);
@@ -120,7 +120,7 @@ public:
   virtual void Compute_NoGatingRecAct_ugp(LeabraLayer* lay,
                                           Layer::AccessMode acc_md, int gpidx,
                                           LeabraNetwork* net);
-  // record activity of guys that haven't gated into act_m2 -- for display purposes
+  // record activity of guys that haven't gated into net_ctxt -- for display purposes
   virtual void Compute_GoGatingAct_ugp(LeabraLayer* lay,
                                        Layer::AccessMode acc_md, int gpidx,
                                        LeabraNetwork* net);
@@ -146,10 +146,8 @@ public:
   void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
   void  Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return true; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  {return false; }
 
   TypeDef* 	UnGpDataType()  override { return &TA_PBWMUnGpData; }
 

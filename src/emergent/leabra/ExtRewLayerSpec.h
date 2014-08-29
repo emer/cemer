@@ -129,8 +129,7 @@ public:
 
   // don't do any learning:
   bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
-  bool	Compute_dWt_FirstPlus_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
-  bool	Compute_dWt_Nothing_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
