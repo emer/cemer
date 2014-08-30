@@ -79,11 +79,6 @@ public:
     JUST_WEIGHTS                // just do a 'write weights' command
   };
 
-  enum DMem_SyncLevel {
-    DMEM_SYNC_NETWORK,          // synchronize the entire network at a time
-    DMEM_SYNC_LAYER             // synchronize only layer-by-layer
-  };
-
   enum WtSaveFormat {
     TEXT,                       // weights are saved as ascii text representation of digits (completely portable)
     BINARY,                     // weights are written directly to the file in binary format (no loss in accuracy and more space efficient, but possibly non-portable)
@@ -198,10 +193,6 @@ public:
   int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
   float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory
 
-  DMem_SyncLevel dmem_sync_level; // #CAT_DMem at what level of network structure should information be synchronized across processes?
-  int           dmem_nprocs;    // #CAT_DMem number of processors to use in distributed memory computation of connection-level processing (actual number may be less, depending on processors requested!)
-  int           dmem_nprocs_actual; // #READ_ONLY #NO_SAVE actual number of processors being used
-
   Usr1SaveFmt   usr1_save_fmt;  // #CAT_File save network for -USR1 signal: full net or weights
   WtSaveFormat  wt_save_fmt;    // #CAT_File format to save weights in if saving weights
 
@@ -272,8 +263,8 @@ public:
   // #CAT_Structure update active status of all connections
   virtual void  SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
-  virtual void  CountRecvCons();
-  // #CAT_Structure count recv connections for all units in network
+  virtual void  CountOwnCons();
+  // #CAT_Structure count owned connections for all units in network
   virtual bool  RecvOwnsCons() { return true; }
   // #CAT_Structure does the receiver own the connections (default) or does the sender?
 
@@ -575,37 +566,16 @@ public:
   // #CAT_DMem block all dmem processors at the trial level until everyone reaches this same point in the program flow -- cordinates all the processors at this point -- important for cases where there are interdependencies among processors, where they need to be coordinated going forward -- does nothing if dmem_nprocs <= 1 or not using dmem
 
 #ifdef DMEM_COMPILE
-  DMemComm      dmem_net_comm;  // #IGNORE the dmem communicator for the network-level dmem computations (the inner subgroup of units, each of size dmem_nprocs_actual)
   DMemComm      dmem_trl_comm;  // #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup
-  DMemShare     dmem_share_units;       // #IGNORE the shared units
   DMemAggVars   dmem_agg_sum;           // #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
-  virtual void  DMem_SyncNRecvCons();
-  // syncronize number of receiving connections (share set 0)
-  virtual void  DMem_SyncNet();
-  // #IGNORE synchronize just the netinputs (share set 1)
-  virtual void  DMem_SyncAct();
-  // #IGNORE synchronize just the activations (share set 2)
-  virtual void  DMem_DistributeUnits();
-  // #CAT_DMem distribute units to different nodes
   virtual void  DMem_UpdtWtUpdt();
   // #CAT_DMem update wt_update and small_batch parameters for dmem, depending on trl_comm.nprocs
   virtual void  DMem_InitAggs();
   // #IGNORE initialize aggregation stuff
-  virtual void  DMem_PruneNonLocalCons();
-  // #IGNORE prune non-local connections from all units: units only have their own local connections
   virtual void  DMem_SumDWts(MPI_Comm comm);
   // #IGNORE sync weights across trial-level dmem by summing delta-weights across processors (prior to computing weight updates)
-  virtual void  DMem_AvgWts(MPI_Comm comm);
-  // #IGNORE sync weights across trial-level dmem by averaging weight values across processors (this is not mathematically equivalent to anything normally done, but it may be useful in some situations)
   virtual void  DMem_ComputeAggs(MPI_Comm comm);
   // #IGNORE aggregate network variables across procs for trial-level dmem
-  virtual void  DMem_SymmetrizeWts();
-  // #IGNORE symmetrize the weights (if necessary) by sharing weight values across processors
-#else
-  virtual void  DMem_SyncNRecvCons() { };
-  // #CAT_DMem syncronize number of receiving connections (share set 0)
-  virtual void  DMem_DistributeUnits() { };
-  // #CAT_DMem distribute units to different nodes
 #endif
 
   int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;

@@ -60,7 +60,7 @@ class E_API LeabraUnitChans : public taBase {
 INHERITED(taBase)
 public:
   float		l;		// leak
-  float		i;		// #DMEM_SHARE_SET_1 inhibitory
+  float		i;		// inhibitory
   float		h;		// hysteresis (Ca)
   float		a;		// accomodation (K)
 
@@ -76,7 +76,7 @@ private:
 eTypeDef_Of(LeabraUnit);
 
 class E_API LeabraUnit : public Unit {
-  // #STEM_BASE ##DMEM_SHARE_SETS_5 ##CAT_Leabra Leabra unit, point-neuron approximation
+  // #STEM_BASE ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:
   float		act_eq;		// #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act)
@@ -100,7 +100,7 @@ public:
   float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float		davg;		// #CAT_Activation delta average activation -- computed from changes in the short time-scale activation average (avg_s) -- used for detecting jolts or transitions in the network, to drive learning
   VChanBasis	vcb;		// #CAT_Activation voltage-gated channel basis variables
-  LeabraUnitChans gc;		// #DMEM_SHARE_SET_1 #NO_SAVE #CAT_Activation current unit channel conductances
+  LeabraUnitChans gc;		// #NO_SAVE #CAT_Activation current unit channel conductances
   float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
   float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
   float		vm_dend;	// #NO_SAVE #CAT_Activation dendritic membrane potential -- reflects back-propagated spike values in spiking mode -- these are not subject to immediate AHP and thus decay exponentially, and are used for learning

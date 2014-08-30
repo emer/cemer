@@ -29,13 +29,11 @@
 #include <PRerrVals>
 #include <String_Matrix>
 #include <LayerSpec>
-#include <DMemShare>
 
 // declare all other types mentioned but not required to include:
 class Network; //
 class ProjectBase; //
 class DataCol; //
-class DMemShare; //
 
 // use this macro for iterating over either unit groups one-by-one, or the 
 // global layer, and applying 'code' to either
@@ -82,11 +80,6 @@ class E_API Layer : public taNBase {
   // ##EXT_lay ##COMPRESS ##CAT_Network ##SCOPE_Network ##HAS_CONDTREE layer containing units
 INHERITED(taNBase)
 public:
-  enum DMemDist {
-    DMEM_DIST_DEFAULT,          // distribute units to different processors for distributed memory processing according to the default sequential scheme
-    DMEM_DIST_UNITGP            // distribute units according to unit groups, which can be less even but allows for shared weights by unit group
-  }; //
-
   enum LayerType {      // type of layer, used to determine various default settings
     HIDDEN,             // layer does not receive external input of any form
     INPUT,              // layer receives external input (EXT) that drives activation states directly
@@ -133,7 +126,6 @@ public:
   Unit_Group            units;          // #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
   Unit::ExtType         ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
-  DMemDist              dmem_dist;      // #CAT_DMem how to distribute units across multiple distributed memory processors
 
   LayerDistances        dist;           // #CAT_Structure distances from closest input/output layers to this layer
 
@@ -373,8 +365,8 @@ public:
   // #EXPERT #CAT_Structure allocate recv connections based on those allocated previously
   virtual void  DisConnect();
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
-  virtual int   CountRecvCons();
-  // #CAT_Structure count recv connections for all units in layer
+  virtual int   CountOwnCons(Network* net);
+  // #CAT_Structure count owned connections for all units in layer
   virtual void  UpdtActiveCons();
   // #CAT_Structure update the active state of all connection groups
 
@@ -525,17 +517,6 @@ public:
   // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this layer (must be a float type variable)
   virtual bool  VarToVal(const String& dest_var, float val);
   // #CAT_Structure set variable to given value for all units within this layer (must be a float type variable)
-
-#ifdef DMEM_COMPILE
-  DMemShare     dmem_share_units;       // #IGNORE the shared units
-  virtual void  DMem_SyncNRecvCons();   // #IGNORE syncronize number of receiving connections (share set 0)
-  virtual void  DMem_SyncNet();         // #IGNORE syncronize just the netinputs (share set 1)
-  virtual void  DMem_SyncAct();         // #IGNORE syncronize just the activations (share set 2)
-  virtual void  DMem_DistributeUnits(); // #IGNORE distribute units to different nodes (for this layer)
-  virtual bool  DMem_DistributeUnits_impl(DMemShare& dms); // #IGNORE implementation: if true, a non-standard distribution was used (i.e., unit_groups)
-#else
-  virtual bool  DMem_DistributeUnits_impl(DMemShare&) { return false; } // #IGNORE to keep the ta file consistent..
-#endif
 
   String GetDesc() const       override { return desc; }
   int    GetEnabled() const    override { return !lesioned(); }

@@ -40,6 +40,7 @@ void Unit::Initialize() {
   snap = 0.0f;
   // recv, send, bias = ??
   n_recv_cons = 0;
+  n_send_cons = 0;
   // pos = ??
   idx = -1;
   flat_idx = 0;
@@ -93,6 +94,7 @@ void Unit::Copy_(const Unit& cp) {
   send = cp.send;
   bias = cp.bias;
   n_recv_cons = cp.n_recv_cons;
+  n_send_cons = cp.n_send_cons;
   m_unit_spec = cp.m_unit_spec;
 }
 
@@ -171,10 +173,6 @@ void Unit::AddRelPos2d(taVector2i& rel_pos) {
     ugp->AddRelPos2d(rel_pos);
   }
 }
-
-#ifdef DMEM_COMPILE
-int Unit::dmem_this_proc = 0;
-#endif
 
 void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na_by_range) {
   // note: not all flag values are valid, so following is a fuzzy cascade
@@ -276,6 +274,7 @@ void Unit::RemoveCons() {
   send.RemoveAll();
   bias.Reset();
   n_recv_cons = 0;
+  n_send_cons = 0;
 }
 
 void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
@@ -343,9 +342,6 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
 }
 
 void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
-#endif
   RecvCons* cgp = NULL;
   if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     cgp = recv.NewPrjn(prjn); // sets the type
@@ -382,9 +378,6 @@ void Unit::SendConsPostAlloc(Projection* prjn) {
 }
 
 void Unit::RecvConsAllocInc(int no, Projection* prjn) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
-#endif
   RecvCons* cgp = NULL;
   if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     cgp = recv.NewPrjn(prjn); // sets the type
@@ -394,9 +387,6 @@ void Unit::RecvConsAllocInc(int no, Projection* prjn) {
 }
 
 void Unit::RecvConsPostAlloc(Projection* prjn) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return;
-#endif
   RecvCons* cgp = NULL;
   if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
     cgp = recv.NewPrjn(prjn); // sets the type
@@ -435,9 +425,6 @@ void Unit::Connect_VecChunk_RecvOwns(Network* net, int thread_no) {
 
 int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
                       bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
-#endif
   RecvCons* recv_gp = NULL;
   SendCons* send_gp = NULL;
   if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
@@ -460,17 +447,11 @@ int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
 
   int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
                                   set_init_wt, init_wt);
-  if(con >= 0) {
-    n_recv_cons++;
-  }
   return con;
 }
 
 int Unit::ConnectFromCk(Unit* su, Projection* prjn,
                         bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal() && !prjn->con_spec->DMem_AlwaysLocal()) return NULL;
-#endif
   Network* net = own_net();
 
   RecvCons* recv_gp = NULL;
@@ -493,9 +474,6 @@ int Unit::ConnectFromCk(Unit* su, Projection* prjn,
 
   int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
                                   set_init_wt, init_wt);
-  if(con >= 0) {
-    n_recv_cons++;
-  }
   return con;
 }
 
@@ -524,7 +502,6 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
   }
 
   recv_gp->RemoveConUn(su, this, net);
-  n_recv_cons--;
   return send_gp->RemoveConUn(this, su, net);
 }
 
@@ -567,14 +544,21 @@ void Unit::DisConnectAll() {
     send_gp->other_idx = -1;
   }
   n_recv_cons = 0;
+  n_send_cons = 0;
 }
 
-int Unit::CountRecvCons() {
+int Unit::CountOwnCons(Network* net) {
   n_recv_cons = 0;
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->NotActive()) continue;
     n_recv_cons += cg->size;
+  }
+  n_send_cons = 0;
+  for(int g = 0; g < send.size; g++) {
+    SendCons* cg = send.FastEl(g);
+    if(cg->NotActive()) continue;
+    n_send_cons += cg->size;
   }
   return n_recv_cons;
 }
@@ -648,8 +632,6 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
     strm << "\n";
     break;
   }
-  // not using ITR here in case of DMEM where we write separate files for
-  // each process -- need to include size=0 place holders for non-local units
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
     if(cg->NotActive() || (prjn && (cg->prjn != prjn))) continue;
@@ -683,22 +665,6 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     bias.OwnCn(0, BaseCons::WT) = bwt;
   }
 
-#ifdef DMEM_COMPILE
-  if(!DMem_IsLocal()) {
-    // bypass non-local connections!
-    while(true) {
-      stat = taMisc::read_tag(strm, tag, val);
-      if(stat != taMisc::TAG_GOT) break;                // *should* break at TAG_END of Un
-      if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-      stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
-      if(stat != taMisc::TAG_END) break; // something is wrong
-      stat = taMisc::TAG_NONE;         // reset so EndTag will definitely read new tag
-      RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
-      if(stat != taMisc::TAG_END) break;
-    }
-  }
-  else {
-#endif
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
     if(stat != taMisc::TAG_GOT) break;                  // *should* break at TAG_END
@@ -725,9 +691,7 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-#ifdef DMEM_COMPILE
-  }
-#endif
+
   RecvCons::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
   return stat;
 }
@@ -821,7 +785,7 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->PruneCons(this, pre_proc, rel, cmp_val);
   }
-  n_recv_cons -= rval;
+  //  n_recv_cons -= rval;
   return rval;
 }
 
@@ -832,7 +796,7 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
   }
-  n_recv_cons -= rval;
+  //  n_recv_cons -= rval;
   return rval;
 }
 

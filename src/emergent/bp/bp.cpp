@@ -617,12 +617,6 @@ void BpNetwork::Initialize() {
 }
 
 void BpNetwork::UpdateAfterEdit_impl() {
-  if(TestWarning(dmem_nprocs > 1,
-              "Note: you cannot currently use dmem (MPI) to compute in Bp networks,",
-              "due to incompatibilities with the new threading mechanism.",
-                 "dmem_nprocs was set back to 1 for you.")) {
-    dmem_nprocs = 1;
-  }
   inherited::UpdateAfterEdit_impl();
 }
 

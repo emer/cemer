@@ -202,9 +202,6 @@ public:
   virtual  void         Init_Weights_Net();
   // #BUTTON #CAT_Learning initializes all weights in the network
 
-  virtual bool          DMem_AlwaysLocal() { return false; }
-  // #CAT_DMem overload this function to prevent this projection from being pruned for non-local units under dmem processing (for "special" connection types)
-
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
   void  InitLinks();

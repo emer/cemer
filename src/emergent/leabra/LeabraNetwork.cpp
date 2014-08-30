@@ -348,6 +348,7 @@ void LeabraNetwork::BuildUnits_Threads() {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::BuildUnits_Threads();
+  cyc_threads.InitAll();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -605,9 +606,6 @@ void LeabraNetwork::Send_Netin() {
     send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
 
-#ifdef DMEM_COMPILE
-  dmem_share_units.Sync(3);
-#endif
   if(send_pct_tot > 0) {        // only avail for non-threaded calls
     send_pct = (float)send_pct_n / (float)send_pct_tot;
     avg_send_pct_sum += send_pct;
@@ -840,10 +838,6 @@ void LeabraNetwork::TI_Send_Deep5bNetin() {
 
     send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
-  // todo: need this??
-// #ifdef DMEM_COMPILE
-//   dmem_share_units.Sync(3);
-// #endif
 }
 
 void LeabraNetwork::TI_Send_CtxtNetin() {
@@ -864,10 +858,6 @@ void LeabraNetwork::TI_Send_CtxtNetin() {
 
     send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
-  // todo: need this??
-// #ifdef DMEM_COMPILE
-//   dmem_share_units.Sync(3);
-// #endif
 }
 
 void LeabraNetwork::TI_Compute_CtxtAct() {

@@ -180,7 +180,6 @@ void Projection::RemoveCons() {
   if(layer) {
     FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
       u->recv.RemovePrjn(this);
-      u->n_recv_cons = 0;
     }
   }
 

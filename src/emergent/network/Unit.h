@@ -38,7 +38,7 @@ class Unit_Group; //
 eTypeDef_Of(Unit);
 
 class E_API Unit: public taNBase {
-  // ##NO_TOKENS ##DMEM_SHARE_SETS_3 ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
+  // ##NO_TOKENS ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
 INHERITED(taNBase)
 public: //
   enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
@@ -67,9 +67,9 @@ public: //
   float         ext;
   // #VIEW_HOT #CAT_Activation external input: drives activation of unit from outside influences (e.g., sensory input)
   float         act;
-  // #DMEM_SHARE_SET_2 #VIEW_HOT #CAT_Activation activation value -- what the unit communicates to others
+  // #VIEW_HOT #CAT_Activation activation value -- what the unit communicates to others
   float         net;
-  // #DMEM_SHARE_SET_1 #VIEW_HOT #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
+  // #VIEW_HOT #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
   float         wt_prjn;
   // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
   float         snap;
@@ -85,25 +85,17 @@ public: //
   // #CAT_Structure bias weight connection (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
 
   int           n_recv_cons;
-  // #CAT_Structure #DMEM_SHARE_SET_0 #READ_ONLY #EXPERT total number of receiving connections
-  taVector3i       pos;
+  // #CAT_Structure #READ_ONLY #EXPERT total number of recv connections for this unit
+  int           n_send_cons;
+  // #CAT_Structure #READ_ONLY #EXPERT total number of send connections for this unit
+  taVector3i    pos;
   // #CAT_Structure display position in space relative to owning group or layer -- in structural 3D coordinates
-  Voxel_List*    voxels;
+  Voxel_List*   voxels;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #NO_VIEW Voxels assigned to this unit in a brain view.
   int           idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
-
-#ifdef DMEM_COMPILE
-  static int    dmem_this_proc; // #IGNORE processor rank for this processor RELATIVE TO COMMUNICATOR for the network
-  int           dmem_local_proc; // #IGNORE processor on which these units are local
-  virtual bool  DMem_IsLocalProc(int proc)      { return dmem_local_proc == proc; } // #IGNORE
-  virtual bool  DMem_IsLocal()                  { return dmem_local_proc == dmem_this_proc; }  // #IGNORE
-  virtual int   DMem_GetLocalProc()             { return dmem_local_proc; } // #IGNORE
-  virtual void  DMem_SetLocalProc(int lproc)    { dmem_local_proc = lproc; } // #IGNORE
-  virtual void  DMem_SetThisProc(int proc)      { dmem_this_proc = proc; } // #IGNORE
-#endif
 
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
   // set flag state on
@@ -275,8 +267,8 @@ public: //
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void  DisConnectAll();
   // #MENU #MENU_ON_Actions #CAT_Structure disconnect unit from all other units
-  virtual int   CountRecvCons();
-  // #CAT_Structure count total number of receiving connections
+  virtual int   CountOwnCons(Network* net);
+  // #CAT_Structure count total number of owned connections
   virtual void  UpdtActiveCons();
   // #CAT_Structure update the active state of all connection groups
 

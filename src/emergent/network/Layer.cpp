@@ -53,7 +53,6 @@ void Layer::Initialize() {
   // flat_geom = ??
   disp_geom = un_geom;
   scaled_disp_geom = disp_geom;
-  dmem_dist = DMEM_DIST_DEFAULT;
   // dist = ??
   // output_name = ??
   // gp_output_names = ??
@@ -90,10 +89,6 @@ void Layer::InitLinks() {
   taBase::Own(gp_output_names, this);
   taBase::Own(prerr, this);
   taBase::Own(unit_names, this);
-
-#ifdef DMEM_COMPILE
-  taBase::Own(dmem_share_units, this);
-#endif
 
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
@@ -756,11 +751,11 @@ void Layer::DisConnect() {
   StructUpdate(false);
 }
 
-int Layer::CountRecvCons() {
+int Layer::CountOwnCons(Network* net) {
   int n_cons = 0;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    n_cons += u->CountRecvCons();
+    n_cons += u->CountOwnCons(net);
   }
   return n_cons;
 }
@@ -1640,66 +1635,4 @@ bool Layer::ChangeMyType(TypeDef* new_typ) {
   return inherited::ChangeMyType(new_typ);
 }
 
-#ifdef DMEM_COMPILE
-void Layer::DMem_DistributeUnits() {
-  dmem_share_units.Reset();
-  DMem_DistributeUnits_impl(dmem_share_units);
-  dmem_share_units.Compile_ShareTypes();
-}
-
-bool Layer::DMem_DistributeUnits_impl(DMemShare& dms) {
-  int np = 0; MPI_Comm_size(dmem_share_units.comm, &np);
-  int this_proc = 0; MPI_Comm_rank(dmem_share_units.comm, &this_proc);
-  if((dmem_dist == DMEM_DIST_DEFAULT) || (units.gp.size <= 0)) {
-    int cnt = 0;
-    FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-      if(u->lesioned()) continue;
-      u->DMem_SetLocalProc(cnt % np);
-      u->DMem_SetThisProc(this_proc);
-      dms.Link(u);
-      cnt++;
-    }
-    return false;
-  }
-  else {
-    int g;
-    for(g=0; g<units.gp.size; g++) {
-      Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
-      int cnt = 0;
-      FOREACH_ELEM_IN_GROUP(Unit, u, *ug) {
-        if(u->lesioned()) continue;
-        u->DMem_SetLocalProc(cnt % np);
-        u->DMem_SetThisProc(this_proc);
-        dms.Link(u);
-        cnt++;
-      }
-    }
-    return true;
-  }
-}
-
-void Layer::DMem_SyncNRecvCons() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNRecvCons",
-               "attempt to DMem sync at layer level, should only be at network level!")) {
-    return;
-  }
-  dmem_share_units.Sync(0);
-}
-
-void Layer::DMem_SyncNet() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncNet",
-               "attempt to DMem sync layer level, should only be at network level!")) {
-    return;
-  }
-  dmem_share_units.Sync(1);
-}
-
-void Layer::DMem_SyncAct() {
-  if(TestError(own_net->dmem_sync_level != Network::DMEM_SYNC_LAYER, "DMem_SyncAct",
-               "attempt to DMem sync layer level, should only be at network level!")) {
-    return;
-  }
-  dmem_share_units.Sync(2);
-}
-#endif
 

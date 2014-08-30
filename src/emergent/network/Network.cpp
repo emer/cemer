@@ -102,9 +102,6 @@ void Network::Initialize() {
   // units_flat = ??
   // send_netin_tmp = ??
 
-  dmem_sync_level = DMEM_SYNC_NETWORK;
-  dmem_nprocs = 1;
-  dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
   usr1_save_fmt = FULL_NET;
   wt_save_fmt = TEXT;
 
@@ -134,9 +131,7 @@ void Network::Initialize() {
   tmp_con_mem =  NULL;
 
 #ifdef DMEM_COMPILE
-  // dmem_net_comm = ??
   // dmem_trl_comm = ??
-  dmem_share_units.comm = (MPI_Comm)MPI_COMM_WORLD;
   dmem_agg_sum.agg_op = MPI_SUM;
 #endif
 }
@@ -173,10 +168,9 @@ void Network::InitLinks() {
   brain_atlas = brain_atlases->FindNameContains("Talairach"); // default
   
 #ifdef DMEM_COMPILE
-  taBase::Own(dmem_net_comm, this);
   taBase::Own(dmem_trl_comm, this);
-  taBase::Own(dmem_share_units, this);
   taBase::Own(dmem_agg_sum, this);
+  dmem_trl_comm.CommAll();
   DMem_InitAggs();
 #endif
 
@@ -188,7 +182,6 @@ void Network::InitLinks() {
 void Network::CutLinks() {
   if(!owner) return; // already replacing or already dead
 #ifdef DMEM_COMPILE
-  dmem_net_comm.FreeComm();
   dmem_trl_comm.FreeComm();
 #endif
   units_flat.Reset();
@@ -254,10 +247,6 @@ void Network::Copy_(const Network& cp) {
   sum_prerr = cp.sum_prerr;
   epc_prerr = cp.epc_prerr;
 
-  dmem_sync_level = cp.dmem_sync_level;
-  dmem_nprocs = cp.dmem_nprocs;
-  dmem_nprocs_actual = cp.dmem_nprocs_actual;
-
   usr1_save_fmt = cp.usr1_save_fmt;
   wt_save_fmt = cp.wt_save_fmt;
 
@@ -269,9 +258,6 @@ void Network::Copy_(const Network& cp) {
   FixPrjnIndexes();                          // fix the recv_idx and send_idx (not copied!)
   UpdateAllSpecs();
   BuildUnits_Threads();
-#ifdef DMEM_COMPILE
-  DMem_DistributeUnits();
-#endif
 //   ((Network&)cp).SyncSendPrjns(); // these get screwed up in there somewhere..
   //note: batch update in tabase copy
 }
@@ -302,12 +288,11 @@ void Network::UpdtAfterNetMod() {
   //  SyncSendPrjns();
   UpdtActiveCons();
   // make sure active flags are updated on all connections, e.g., from lesions
-  CountRecvCons();
+  CountOwnCons();
   BuildUnits_Threads();
   small_batch_n_eff = small_batch_n;
   if(small_batch_n_eff < 1) small_batch_n_eff = 1;
 #ifdef DMEM_COMPILE
-  DMem_SyncNRecvCons();
   DMem_UpdtWtUpdt();
 #endif
 }
@@ -319,13 +304,13 @@ void Network::UpdtActiveCons() {
   }
 }
 
-void Network::CountRecvCons() {
+void Network::CountOwnCons() {
   n_units = 0;
   n_cons = 0;
   max_prjns = 1;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
-    n_cons += l->CountRecvCons();
+    n_cons += l->CountOwnCons(this);
     n_units += l->units.leaves;
     max_prjns = MAX(l->projections.size, max_prjns);
   }
@@ -363,8 +348,6 @@ int Network::Dump_Load_Value(istream& strm, taBase* par) {
 
   BuildUnits_Threads();
 #ifdef DMEM_COMPILE
-  DMem_DistributeUnits();
-  DMem_PruneNonLocalCons();
   DMem_UpdtWtUpdt();
 #endif
 
@@ -447,9 +430,6 @@ void Network::BuildUnits() {
   }
   StructUpdate(false);
   taMisc::DoneBusy();
-#ifdef DMEM_COMPILE
-  DMem_DistributeUnits();
-#endif
   UpdtAfterNetMod();            // calls BuildUnits_Threads
   if(!taMisc::gui_active)    return;
 }
@@ -963,11 +943,6 @@ void Network::Init_Weights() {
   // taMisc::Info("Starting Init_Weights_Layer..");
   Init_Weights_Layer();
 
-#ifdef DMEM_COMPILE
-  // do the dmem weight symmetrizing!
-  DMem_SymmetrizeWts();
-#endif
-
   Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
   UpdateAllViews();
@@ -1053,10 +1028,6 @@ void Network::Init_Timers() {
 void Network::Compute_Netin() {
   ThreadUnitCall un_call(&Unit::Compute_Netin);
   threads.Run(&un_call, 1.0f);
-
-#ifdef DMEM_COMPILE
-  DMem_SyncNet();
-#endif
 }
 
 void Network::Send_Netin() {
@@ -1110,10 +1081,6 @@ void Network::Send_Netin() {
     }
   }
   send_netin_tmp.InitVals(0.0f); // reset for next time around
-
-#ifdef DMEM_COMPILE
-  DMem_SyncNet();
-#endif
 }
 
 void Network::Compute_Act() {
@@ -1122,12 +1089,6 @@ void Network::Compute_Act() {
 }
 
 void Network::Compute_NetinAct() {
-  // important note: any algorithms using this for feedforward computation are not
-  // compatible with dmem computation on the network level (over connections)
-  // because otherwise the netinput needs to be sync'd at the layer level prior to calling
-  // the activation function at the layer level.  Threading should be much faster than
-  // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for
-  // a warning message that should be included.
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
   threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
 }
@@ -1476,75 +1437,6 @@ void Network::DMemTrialBarrier() {
 
 #ifdef DMEM_COMPILE
 
-void Network::DMem_SyncNRecvCons() {
-  if(dmem_nprocs_actual <= 1) return;
-  if(n_cons <= 0) return;
-  if(dmem_sync_level == DMEM_SYNC_LAYER) {
-    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-      if(!l->lesioned())
-        l->DMem_SyncNRecvCons();
-    }
-  }
-  else {
-    dmem_share_units.Sync(0);
-  }
-  // need to re-agg all the cons after syncing!
-  n_cons = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, u, l->units) {
-      if(u->lesioned()) continue;
-      n_cons += u->n_recv_cons;
-    }
-  }
-}
-
-void Network::DMem_SyncNet() {
-  if(dmem_nprocs_actual <= 1) return;
-  if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncNet",
-               "attempt to DMem sync at network level, should only be at layer level!")) {
-    return;
-  }
-  dmem_share_units.Sync(1);
-}
-
-void Network::DMem_SyncAct() {
-  if(dmem_nprocs_actual <= 1) return;
-  if(TestError(dmem_sync_level != DMEM_SYNC_NETWORK, "DMem_SyncAct",
-               "attempt to DMem sync at network level, should only be at layer level!")) {
-    return;
-  }
-  dmem_share_units.Sync(2);
-}
-
-void Network::DMem_DistributeUnits() {
-  dmem_nprocs_actual = MIN(dmem_nprocs, taMisc::dmem_nprocs);
-  dmem_net_comm.CommSubGpInner(dmem_nprocs_actual);     // network is inner-group
-  dmem_trl_comm.CommSubGpOuter(dmem_nprocs_actual);     // trial is outer-group
-  dmem_share_units.comm = dmem_net_comm.comm;
-
-  dmem_share_units.Reset();
-  bool any_custom_distrib = false;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->dmem_share_units.comm = dmem_share_units.comm;
-    if(dmem_sync_level == DMEM_SYNC_LAYER) {
-      lay->DMem_DistributeUnits();
-    }
-    else {
-      if(lay->DMem_DistributeUnits_impl(dmem_share_units))
-        any_custom_distrib = true;
-    }
-  }
-  if(dmem_sync_level == DMEM_SYNC_NETWORK) {
-    if(!any_custom_distrib) {
-      dmem_share_units.DistributeItems(); // use more efficient full distribution
-    }
-    else
-      dmem_share_units.Compile_ShareTypes(); // use custom distribution: just compile it
-  }
-}
-
 void Network::DMem_UpdtWtUpdt() {
   if(dmem_trl_comm.nprocs > 1) {
     TestWarning(wt_update != SMALL_BATCH, "DMem_UpdtWtUpdt",
@@ -1560,37 +1452,15 @@ void Network::DMem_InitAggs() {
   dmem_agg_sum.CompileVars();
 }
 
-void Network::DMem_PruneNonLocalCons() {
-  if(dmem_nprocs_actual <= 1) return;
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, u, l->units) {
-      if(u->DMem_IsLocal()) {
-        continue;
-      }
-      // only non-local
-      RecvCons* recv_gp;
-      int g;
-      for (g = 0; g < u->recv.size; g++) {
-        recv_gp = (RecvCons *)u->recv.FastEl(g);
-        if(recv_gp->GetConSpec()->DMem_AlwaysLocal()) continue;
-        for (int sui = recv_gp->size-1; sui >= 0; sui--) {
-          u->DisConnectFrom(recv_gp->Un(sui,this), NULL);
-        }
-      }
-    }
-  }
-}
-
 void Network::DMem_SumDWts(MPI_Comm comm) {
-  // todo: re write this!!!!
-
   wt_sync_time.StartTimer(false); // don't reset
   static float_Array values;
   static float_Array results;
 
   int np = 0; MPI_Comm_size(comm, &np);
   if(np <= 1) return;
+
+  // note: memory is not contiguous for all DWT vars, so we still need to do this..
 
   values.SetSize(n_cons + n_units);
 
@@ -1604,19 +1474,25 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
       if(RecvOwnsCons()) {
         for(int g = 0; g < un->recv.size; g++) {
           RecvCons* cg = un->recv.FastEl(g);
+          if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          for(int i = 0;i<cg->size;i++) { // todo: could use memcopy here!
-            values.FastEl(cidx++) = dwts[i];
-          }
+          memcpy(values + cidx, (char*)dwts, cg->size * sizeof(float));
+          cidx += cg->size;
+          // for(int i = 0;i<cg->size;i++) {
+          //   values.FastEl(cidx++) = dwts[i];
+          // }
         }
       }
       else {
         for(int g = 0; g < un->send.size; g++) {
           SendCons* cg = un->send.FastEl(g);
+          if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          for(int i = 0;i<cg->size;i++) {
-            values.FastEl(cidx++) = dwts[i];
-          }
+          memcpy(values + cidx, (char*)dwts, cg->size * sizeof(float));
+          cidx += cg->size;
+          // for(int i = 0;i<cg->size;i++) {
+          //   values.FastEl(cidx++) = dwts[i];
+          // }
         }
       }
     }
@@ -1636,19 +1512,25 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
       if(RecvOwnsCons()) {
         for(int g = 0; g < un->recv.size; g++) {
           RecvCons* cg = un->recv.FastEl(g);
+          if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          for(int i = 0;i<cg->size;i++) {
-            dwts[i] = results.FastEl(cidx++);
-          }
+          memcpy(dwts, (char*)(results + cidx), cg->size * sizeof(float));
+          cidx += cg->size;
+          // for(int i = 0;i<cg->size;i++) {
+          //   dwts[i] = results.FastEl(cidx++);
+          // }
         }
       }
       else {
         for(int g = 0; g < un->send.size; g++) {
           SendCons* cg = un->send.FastEl(g);
+          if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          for(int i = 0;i<cg->size;i++) {
-            dwts[i] = results.FastEl(cidx++);
-          }
+          memcpy(dwts, (char*)(results + cidx), cg->size * sizeof(float));
+          cidx += cg->size;
+          // for(int i = 0;i<cg->size;i++) {
+          //   dwts[i] = results.FastEl(cidx++);
+          // }
         }
       }
     }
@@ -1656,183 +1538,8 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   wt_sync_time.EndTimer();
 }
 
-void Network::DMem_AvgWts(MPI_Comm comm) {
-  static float_Array values;
-  static float_Array results;
-
-  int np = 0; MPI_Comm_size(comm, &np);
-  if(np <= 1) return;
-
-  values.SetSize(n_cons + n_units);
-
-  int cidx = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-      if(un->lesioned()) continue;
-      if(un->bias.size)
-        values.FastEl(cidx++) = un->bias.OwnCn(0,BaseCons::WT);
-      if(RecvOwnsCons()) {
-        for(int g = 0; g < un->recv.size; g++) {
-          RecvCons* cg = un->recv.FastEl(g);
-          float* wts = cg->OwnCnVar(BaseCons::WT);
-          for(int i = 0;i<cg->size;i++) {
-            values.FastEl(cidx++) = wts[i];
-          }
-        }
-      }
-      else {
-        for(int g = 0; g < un->send.size; g++) {
-          SendCons* cg = un->send.FastEl(g);
-          float* wts = cg->OwnCnVar(BaseCons::WT);
-          for(int i = 0;i<cg->size;i++) {
-            values.FastEl(cidx++) = wts[i];
-          }
-        }
-      }
-    }
-  }
-
-  results.SetSize(cidx);
-  DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-                     "Network::AvgWts", "Allreduce");
-
-  float avg_mult = 1.0f / (float)np;
-  cidx = 0;
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-      if(un->lesioned()) continue;
-      if(un->bias.size)
-        un->bias.OwnCn(0,BaseCons::WT) = avg_mult * results.FastEl(cidx++);
-      if(RecvOwnsCons()) {
-        for(int g = 0; g < un->recv.size; g++) {
-          RecvCons* cg = un->recv.FastEl(g);
-          float* wts = cg->OwnCnVar(BaseCons::WT);
-          for(int i = 0;i<cg->size;i++) {
-            wts[i] = avg_mult * results.FastEl(cidx++);
-          }
-        }
-      }
-      else {
-        for(int g = 0; g < un->send.size; g++) {
-          SendCons* cg = un->send.FastEl(g);
-          float* wts = cg->OwnCnVar(BaseCons::WT);
-          for(int i = 0;i<cg->size;i++) {
-            wts[i] = avg_mult * results.FastEl(cidx++);
-          }
-        }
-      }
-    }
-  }
-}
-
 void Network::DMem_ComputeAggs(MPI_Comm comm) {
   dmem_agg_sum.AggVar(comm, MPI_SUM);
-}
-
-void Network::DMem_SymmetrizeWts() {
-  MPI_Comm comm = dmem_share_units.comm;
-  int np = 0; MPI_Comm_size(comm, &np);
-
-  if(np <= 1) return;
-
-  static int_Array unit_idxs;
-  static float_Array wt_vals;
-
-  static int_Array all_unit_idxs;
-  static float_Array all_wt_vals;
-
-  FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-    if(lay->lesioned()) continue;
-    if(lay->projections.size == 0) continue;
-    FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-      if(un->lesioned()) continue;
-      int gi;
-      for(gi=0;gi<un->recv.size;gi++) {
-        RecvCons* cg = un->recv[gi];
-        if(!cg->GetConSpec()->wt_limits.sym) continue;
-
-        // check for presence of reciprocal connections in the first place..
-        Layer* fmlay = cg->prjn->from;
-        bool has_recip_prjn = false;
-        FOREACH_ELEM_IN_GROUP(Projection, fmpj, fmlay->projections) {
-          if(fmpj->from == lay) {
-            has_recip_prjn = true;
-            break;
-          }
-        }
-        if(!has_recip_prjn) continue; // no sym cons there anyway
-
-        // todo: below could probably use flat_idx instead of computing indexes on the fly
-
-        if(un->DMem_IsLocal()) {
-          // I'm local: I recv values from all other procs: each sends unit index and wt
-          all_unit_idxs.Reset();
-          all_wt_vals.Reset();
-          int proc;
-          for(proc = 0; proc < np; proc++) {
-            if(proc == un->dmem_local_proc) continue;
-            // recv the number of connection values obtained
-            int msgsize = 0;
-            MPI_Status status;
-            DMEM_MPICALL(MPI_Recv((void*)&msgsize, 1, MPI_INT, proc, 101, comm, &status),
-                         "DMem_SymmetrizeWts", "MPI_Recv msgsize");
-            if(msgsize > 0) {
-              unit_idxs.SetSize(msgsize);
-              wt_vals.SetSize(msgsize);
-              DMEM_MPICALL(MPI_Recv(unit_idxs.el, msgsize, MPI_INT, proc, 102, comm, &status),
-                           "DMem_SymmetrizeWts", "MPI_Recv unit_idxs");
-              DMEM_MPICALL(MPI_Recv(wt_vals.el, msgsize, MPI_FLOAT, proc, 103, comm, &status),
-                           "DMem_SymmetrizeWts", "MPI_Recv wt_vals");
-
-              all_unit_idxs.CopyVals(unit_idxs, 0, -1, all_unit_idxs.size);
-              all_wt_vals.CopyVals(wt_vals, 0, -1, all_wt_vals.size);
-            }
-          }
-          // now have all the data collected, to through and get the sym values!
-          for(int i=0;i<cg->size;i++) {
-            Unit* fm = cg->Un(i,this);
-            int uidx = fm->GetMyLeafIndex();
-            if(uidx < 0) continue;
-            int sidx = all_unit_idxs.FindEl(uidx);
-            if(sidx < 0) continue;
-            cg->Cn(i,BaseCons::WT,this) = all_wt_vals[sidx];
-          }
-        }
-        else {
-          // collect my data and send it off!
-          unit_idxs.Reset();
-          wt_vals.Reset();
-          int uni;
-          for(uni=0;uni<fmlay->units.leaves;uni++) {
-            Unit* fm = fmlay->units.Leaf(uni);
-            if(!fm->DMem_IsLocal()) continue;
-            for(int g = 0; g < fm->recv.size; g++) {
-              RecvCons* fmg = fm->recv.FastEl(g);
-              if(fmg->prjn->from != lay) continue;
-              int con = fmg->FindConFromIdx(un);
-              if(con >= 0) {
-                unit_idxs.Add(uni);
-                wt_vals.Add(fmg->Cn(con, BaseCons::WT, this));
-              }
-            }
-          }
-          // send the number, then the data
-          int msgsize = unit_idxs.size;
-          DMEM_MPICALL(MPI_Send((void*)&msgsize, 1, MPI_INT, un->dmem_local_proc, 101, comm),
-                       "DMem_SymmetrizeWts", "MPI_Send msgsize");
-
-          if(msgsize > 0) {
-            DMEM_MPICALL(MPI_Send(unit_idxs.el, msgsize, MPI_INT, un->dmem_local_proc, 102, comm),
-                         "DMem_SymmetrizeWts", "MPI_Send unit_idxs");
-            DMEM_MPICALL(MPI_Send(wt_vals.el, msgsize, MPI_FLOAT, un->dmem_local_proc, 103, comm),
-                         "DMem_SymmetrizeWts", "MPI_Send wt_vals");
-          }
-        }
-      }
-    }
-  }
 }
 
 #endif  // DMEM

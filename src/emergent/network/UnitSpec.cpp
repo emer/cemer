@@ -130,20 +130,11 @@ void UnitSpec::Init_dWt(Unit* u, Network* net, int thread_no) {
 void UnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
   u->snap = 0.0f;
 
-#ifdef DMEM_COMPILE
-  if(!u->DMem_IsLocal()) {
-    // make up for random numbers not being used for non-local connections.
-    for(int i=0; i<u->n_recv_cons; i++) Random::ZeroOne();
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
+    recv_gp->Init_Weights(u, net);
   }
-  else
-#endif
-    {
-      for(int g = 0; g < u->recv.size; g++) {
-        RecvCons* recv_gp = u->recv.FastEl(g);
-        if(recv_gp->NotActive()) continue;
-        recv_gp->Init_Weights(u, net);
-      }
-    }
 
   if(u->bias.size > 0) {
     bias_spec->B_Init_Weights(&u->bias, u, net);

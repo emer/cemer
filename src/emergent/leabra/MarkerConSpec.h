@@ -44,9 +44,6 @@ public:
   void	Compute_Weights_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
 
-  bool	DMem_AlwaysLocal() override { return true; }
-  // these connections always need to be there on all nodes..
-
   TA_BASEFUNS_NOCOPY(MarkerConSpec);
 protected:
   SPEC_DEFAULTS;

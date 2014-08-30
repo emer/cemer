@@ -143,6 +143,7 @@ set(leabra_HEADS_MAKETA
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   ClampDaLayerSpec.h
+  LeabraCycleThreadMgr.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -303,4 +304,5 @@ set(leabra_SRCS
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   ClampDaLayerSpec.cpp
+  LeabraCycleThreadMgr.cpp
 )
