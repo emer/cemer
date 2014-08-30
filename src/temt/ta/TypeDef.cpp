@@ -1651,6 +1651,7 @@ String TypeDef::GetValStr(const void* base_, void* par, MemberDef* memb_def,
 	    case SC_STREAMING:
 	      return dumpMisc::path_tokens.GetPath(rbase);        // use path tokens when saving..
 	    case SC_DISPLAY:
+            case SC_SEARCH:
 	      return rbase->GetName();
 	    default:
 	      return rbase->GetPathNames();

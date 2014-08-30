@@ -88,6 +88,7 @@ public:
     SC_STREAMING,       // value is being used for streaming, ex. strings are quoted/escaped
     SC_VALUE,           // value is being manipulated programmatically, ex. strings are not quoted/escaped
     SC_DISPLAY,         // value is being used for display purposes, and result includes html (rich text) formatting tags, etc
+    SC_SEARCH,          // value is used for searching -- like value but does not include paths or other things that will confuse searching
   };
 
   // const guys help speed up oft-looked up values by avoiding String churning

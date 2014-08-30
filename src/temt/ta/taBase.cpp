@@ -1855,10 +1855,13 @@ String taBase::GetValStr_ptr(const TypeDef* td, const void* base, void* par, Mem
                              TypeDef::StrContext sc, bool force_inline) {
   taBase* rbase = *((taBase**)base);
   if(rbase && (rbase->GetOwner() || (rbase == tabMisc::root))) {
-    if (sc == TypeDef::SC_STREAMING) {
+    switch(sc) {
+    case TypeDef::SC_STREAMING:
       return dumpMisc::path_tokens.GetPath(rbase);      // use path tokens when saving..
-    }
-    else {
+    case TypeDef::SC_DISPLAY:
+    case TypeDef::SC_SEARCH:
+      return rbase->GetName();
+    default:
       return rbase->GetPathNames();
     }
   }
@@ -2462,6 +2465,23 @@ bool taBase::SearchTestStr_impl(const String& srch, String tst,
   return false;
 }
 
+static String SearchGetObjVal_impl(taBase* obj) {
+  String strval;
+  if(obj->InheritsFrom(&TA_taMatrix)) {
+    taMatrix* mat = (taMatrix*)obj;
+    if(mat->size < 1000) {  // prevent long delays from ginormous tables
+      strval = obj->GetTypeDef()->GetValStr(obj, NULL, NULL,
+                                            TypeDef::SC_VALUE, true);
+    }
+  }
+  else {
+    // important to use display to avoid path names and just use names of objs
+    strval = obj->GetTypeDef()->GetValStr(obj, NULL, NULL,
+                                          TypeDef::SC_VALUE, true);
+  }
+  return strval;
+}
+
 
 // todo: turn this on to get useful debug info about what is matching in a search function
 // #define SEARCH_DEBUG 1
@@ -2482,7 +2502,27 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
   for(int s=0; s<srch.size; s++) {
     String sstr = srch[s];
     bool cur_matched = false;
-    if(md && mbr_name) {
+    if(sstr.contains('=')) {
+      String nm = sstr.before('=');
+      String vl = sstr.after('=');
+      if(md) {
+        cur_matched = SearchTestStr_impl(nm, md->name, contains, case_sensitive);
+      }
+      else {
+        cur_matched = SearchTestStr_impl(nm, GetName(), contains, case_sensitive);
+      }
+      if(cur_matched) {
+        String strval = SearchGetObjVal_impl(this);
+#ifdef SEARCH_DEBUG
+        taMisc::DebugInfo("nm:", nm, "vl:", vl, "strval:", strval);
+#endif
+        cur_matched = SearchTestStr_impl(vl, strval, contains, case_sensitive);
+#ifdef SEARCH_DEBUG
+        if(cur_matched) srch_match = "nm=val: " + nm + "=" + strval;
+#endif
+      }
+    }
+    if(!cur_matched && md && mbr_name) {
       cur_matched = SearchTestStr_impl(sstr, md->name, contains, case_sensitive);
 #ifdef SEARCH_DEBUG
       if(cur_matched) srch_match = "md: " + md->name;
@@ -2521,28 +2561,11 @@ bool taBase::SearchTestItem_impl(const String_Array& srch,
 #endif
     }
     if(!cur_matched && obj_val) {
-      if(InheritsFrom(&TA_taMatrix)) {
-        taMatrix* mat = (taMatrix*)this;
-        if(mat->size < 1000) {  // prevent long delays from ginormous tables
-          String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
-                                                  TypeDef::SC_DISPLAY, true);
-          // true = force_inline
-          cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
+      String strval = SearchGetObjVal_impl(this);
+      cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
 #ifdef SEARCH_DEBUG
-          if(cur_matched) srch_match = "matrix val";
+      if(cur_matched) srch_match = "val str: " + strval;
 #endif
-        }
-      }
-      else {
-        // important to use display to avoid path names and just use names of objs
-        String strval = GetTypeDef()->GetValStr(this, NULL, NULL,
-                                                TypeDef::SC_DISPLAY, true);
-        // true = force_inline
-        cur_matched = SearchTestStr_impl(sstr, strval, contains, case_sensitive);
-#ifdef SEARCH_DEBUG
-        if(cur_matched) srch_match = "val str: " + strval;
-#endif
-      }
     }
     if(!cur_matched && mbr_name) {
       TypeDef* td = GetTypeDef();
