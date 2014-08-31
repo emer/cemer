@@ -95,8 +95,7 @@ void ConSpec::ApplySymmetry_r(RecvCons* cg, Unit* ru, Network* net) {
     RecvCons* rrcg = BaseCons::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
                                                 cg->prjn->layer);
     if(rrcg) {
-      rrcg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
-      // set other's weight to ours (otherwise no random..)
+      cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
     }
   }
 }
@@ -108,8 +107,7 @@ void ConSpec::ApplySymmetry_s(SendCons* cg, Unit* su, Network* net) {
     SendCons* rscg = BaseCons::FindRecipSendCon(con_idx, cg->Un(i,net), su,
                                                 cg->prjn->from.ptr());
     if(rscg) {
-      rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
-      // set other's weight to ours (otherwise no random..)
+      cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
     }
   }
 }

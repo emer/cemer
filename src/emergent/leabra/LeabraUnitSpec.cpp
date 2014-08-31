@@ -606,6 +606,9 @@ void LeabraUnitSpec::Init_Weights_sym(Unit* ru, Network* rnet, int thread_no) {
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
+    Projection* prjn = send_gp->prjn;
+    if(prjn->layer->units_flat_idx < prjn->from->units_flat_idx)
+      continue;                 // higher copies from lower, so if we're lower, bail..
     send_gp->Init_Weights_sym(u, (LeabraNetwork*)net);
   }
 }

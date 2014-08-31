@@ -352,8 +352,36 @@ bool BaseCons::RemoveConUn(Unit* un, Unit* myun, Network* net) {
 
 int BaseCons::FindConFromIdx(Unit* un) const {
   const int trg_idx = un->flat_idx;
-  for(int i=0; i<size; i++) {
-    if(UnIdx(i) == trg_idx) return i;
+  if(size > 10) {
+    // starting point for search: proportional location of unit in its own layer, 
+    // mapped on to size of connections
+    // then search in both directions out from there
+    int proploc = (int)(((float)un->idx / (float)un->own_lay()->units.leaves) *
+                        (float)size);
+    int upi = proploc+1;
+    int dni = proploc;
+    while(true) {
+      bool upo = false;
+      if(upi < size) {
+        if(UnIdx(upi) == trg_idx) return upi;
+        ++upi;
+      }
+      else {
+        upo = true;
+      }
+      if(dni >= 0) {
+        if(UnIdx(dni) == trg_idx) return dni;
+        --dni;
+      }
+      else if(upo) {
+        break;
+      }
+    }        
+  }
+  else {
+    for(int i=0; i<size; i++) {
+      if(UnIdx(i) == trg_idx) return i;
+    }
   }
   return -1;
 }
@@ -389,7 +417,6 @@ RecvCons* BaseCons::GetPrjnRecvCons(Unit* ru) const {
 // static
 RecvCons* BaseCons::FindRecipRecvCon(int& con_idx, Unit* su, Unit* ru, Layer* ru_lay) {
   con_idx = -1;
-  Network* net = ru_lay->own_net;
   for(int g=0; g<su->recv.size; g++) {
     RecvCons* cg = su->recv.FastEl(g);
     if(!cg->prjn || (cg->prjn->from.ptr() != ru_lay)) continue;
@@ -402,7 +429,6 @@ RecvCons* BaseCons::FindRecipRecvCon(int& con_idx, Unit* su, Unit* ru, Layer* ru
 // static
 SendCons* BaseCons::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su_lay) {
   con_idx = -1;
-  Network* net = su_lay->own_net;
   for(int g=0; g<ru->send.size; g++) {
     SendCons* cg = ru->send.FastEl(g);
     if(!cg->prjn || (cg->prjn->layer != su_lay)) continue;

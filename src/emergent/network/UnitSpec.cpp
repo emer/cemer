@@ -146,6 +146,9 @@ void UnitSpec::Init_Weights_sym(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
+    Projection* prjn = recv_gp->prjn;
+    if(prjn->layer->units_flat_idx < prjn->from->units_flat_idx)
+      continue;                 // higher copies from lower, so if we're lower, bail..
     recv_gp->Init_Weights_sym(u, net);
   }
 }

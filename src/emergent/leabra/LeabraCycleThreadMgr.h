@@ -50,7 +50,7 @@ public:
   int           avg_wait_time_n; // number of measures in the average
 
   void  run() override;
-  // runs specified chunks and then nibbles on remainder
+  // runs full cycle
 
   void  SyncAtom(QAtomicInt& stage);
   // #IGNORE sync on given atomic step
