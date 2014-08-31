@@ -123,32 +123,25 @@ inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwor
     Send_NetinDelta_sse8(cg, su_act_delta_eff, send_netin_vec, wts);
 #else
     CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                 cg->UnIdx(i), su_act_delta_eff));
+                                                cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
   else {
-    // todo: might want to make everything go through tmp for vectorization speed..
-    if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread(wts[i],
-                                          ((LeabraUnit*)cg->Un(i,net))->net_delta,
-                                           su_act_delta_eff));
-    }
-    else {
-      float* send_netin_vec = net->send_netin_tmp.el
-	+ net->send_netin_tmp.FastElIndex(0, thread_no);
+    float* send_netin_vec = net->send_netin_tmp.el
+      + net->send_netin_tmp.FastElIndex(0, thread_no);
 #ifdef USE_SSE8                 // only faster on very recent ivy bridge machines
-      Send_NetinDelta_sse8(cg, su_act_delta_eff, send_netin_vec, wts);
+    Send_NetinDelta_sse8(cg, su_act_delta_eff, send_netin_vec, wts);
 #else
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                  cg->UnIdx(i), su_act_delta_eff));
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+                                                cg->UnIdx(i), su_act_delta_eff));
 #endif
-    }
   }
 }
 
 inline void LeabraConSpec::Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
                                            const int thread_no, const float su_act_delta)
 {
+  // note: _impl is used b/c subclasses replace WT var with another variable
   Send_NetinDelta_impl(cg, net, thread_no, su_act_delta, cg->OwnCnVar(WT));
 }
 

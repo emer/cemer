@@ -209,9 +209,6 @@ public:
   void	Send_NetinDelta(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta(this, net, thread_no); }
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold -- only this delta form is supported
-  void	Send_NetinDelta_Post(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Send_NetinDelta_Post(this, net); }
-  // #CAT_Activation send netinput post-processing -- integrate deltas across multiple threads and deal with NETIN_PER_PRJN
   void	Compute_NetinInteg(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinInteg(this, net, thread_no); }
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)

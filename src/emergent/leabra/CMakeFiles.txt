@@ -35,6 +35,7 @@ set(leabra_HEADS_MAKETA
   LeabraLayerSpec.h
 
   LeabraNetwork.h
+  LeabraCycleThreadMgr.h
   LeabraProject.h
 
   LeabraWizard.h
@@ -64,8 +65,7 @@ set(leabra_HEADS_MAKETA
 
   LayerActUnitSpec.h
   LeabraLinUnitSpec.h
-  LeabraExtOnlyUnitSpec.h
-
+  
   LeabraContextLayerSpec.h
   LeabraMultCopyLayerSpec.h
   ScalarValLayerSpec.h
@@ -77,8 +77,6 @@ set(leabra_HEADS_MAKETA
 
   ScalarValSelfPrjnSpec.h
   SaliencyPrjnSpec.h
-  VisDisparityPrjnSpec.h
-  VisDisparityLayerSpec.h
   TiledGpRFOneToOnePrjnSpec.h
   TiledGpRFOneToOneWtsPrjnSpec.h
   CerebConj2PrjnSpec.h
@@ -143,7 +141,6 @@ set(leabra_HEADS_MAKETA
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   ClampDaLayerSpec.h
-  LeabraCycleThreadMgr.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -196,6 +193,7 @@ set(leabra_SRCS
   LeabraLayer.cpp
 
   LeabraNetwork.cpp
+  LeabraCycleThreadMgr.cpp
   LeabraProject.cpp
 
   LeabraWizard.cpp
@@ -225,8 +223,7 @@ set(leabra_SRCS
 
   LayerActUnitSpec.cpp
   LeabraLinUnitSpec.cpp
-  LeabraExtOnlyUnitSpec.cpp
-
+  
   LeabraContextLayerSpec.cpp
   LeabraMultCopyLayerSpec.cpp
   ScalarValLayerSpec.cpp
@@ -238,8 +235,6 @@ set(leabra_SRCS
 
   ScalarValSelfPrjnSpec.cpp
   SaliencyPrjnSpec.cpp
-  VisDisparityPrjnSpec.cpp
-  VisDisparityLayerSpec.cpp
   TiledGpRFOneToOnePrjnSpec.cpp
   TiledGpRFOneToOneWtsPrjnSpec.cpp
   CerebConj2PrjnSpec.cpp
@@ -304,5 +299,4 @@ set(leabra_SRCS
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   ClampDaLayerSpec.cpp
-  LeabraCycleThreadMgr.cpp
 )

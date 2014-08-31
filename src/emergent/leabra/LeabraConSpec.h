@@ -382,10 +382,6 @@ public:
                                          const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
-  inline void 	C_Send_NetinDelta_NoThread(const float wt, float& ru_net_delta,
-                                           const float su_act_delta_eff) 
-  {  ru_net_delta += wt * su_act_delta_eff; }
-  // #IGNORE
   inline void 	Send_NetinDelta_sse8(LeabraSendCons* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
   // #IGNORE sse8 (SIMD) version
@@ -632,8 +628,8 @@ public:
                                   LeabraNetwork* net);
   // #IGNORE copy weights from src_cg to cg -- typically used to compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
-  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
-  // #CAT_Learning set current learning rate based on schedule given epoch (or error value)
+  virtual void	Trial_Init_Specs(LeabraNetwork* net);
+  // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
 

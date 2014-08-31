@@ -232,6 +232,8 @@ public:
     // #IGNORE make the null_unit unit
     virtual void  BuildUnits_Threads();
     // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
+    virtual void  BuildUnits_Threads_send_netin_tmp();
+    // #IGNORE allocate send_netin_tmp for netin computation
     virtual void  BuildPrjns();
     // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
   virtual void  Connect();

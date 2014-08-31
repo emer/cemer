@@ -130,8 +130,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
-  void	SetCurLrate(LeabraNetwork* net, int epoch) { spec->SetCurLrate(this, net, epoch); }
-  // #CAT_Learning set current learning rate based on epoch
+  void	Trial_Init_Specs(LeabraNetwork* net) { spec->Trial_Init_Specs(this, net); }
+  // #CAT_Learning initialize specs and specs update network flags 
   void	Trial_Init_Layer(LeabraNetwork* net) { spec->Trial_Init_Layer(this, net); }
   // #CAT_Learning layer-level trial init
     void	Trial_DecayState(LeabraNetwork* net)
@@ -171,8 +171,6 @@ public:
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
 
-  void	Compute_ExtraNetin(LeabraNetwork* net) { spec->Compute_ExtraNetin(this, net); }
-  // #CAT_Activation compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
   void	Compute_NetinStats(LeabraNetwork* net)  { spec->Compute_NetinStats(this, net); }
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
 

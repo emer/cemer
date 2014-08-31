@@ -22,14 +22,12 @@ void LeabraRecvCons::Initialize() {
   SetConType(&TA_LeabraCon);
   scale_eff = 0.0f;
   net = 0.0f;
-  net_delta = 0.0f;
   net_raw = 0.0f;
 }
 
 void LeabraRecvCons::Copy_(const LeabraRecvCons& cp) {
   scale_eff = cp.scale_eff;
   net = cp.net;
-  net_delta = cp.net_delta;
   net_raw = cp.net_raw;
 }
 

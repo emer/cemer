@@ -43,17 +43,18 @@ public:
 
   TimeUsedHR	run_time; 	// total time for this thread during run() call
   float         avg_run_time;   // progressive average run time since rebalancing
-  int           avg_run_time_n; // number of measures in the average
-
   TimeUsedHR	wait_time; 	// total time for this thread during run() call
-  float         avg_wait_time;   // progressive average run time since rebalancing
-  int           avg_wait_time_n; // number of measures in the average
+  float         avg_wait_time;  // progressive average run time since rebalancing
+  int           avg_time_n;     // number of measures in the average
 
   void  run() override;
   // runs full cycle
 
   void  SyncAtom(QAtomicInt& stage);
   // #IGNORE sync on given atomic step
+
+  String   ThreadReport();
+  // return a report on thread stats, etc
 
   LeabraCycleThreadMgr* mgr() { return (LeabraCycleThreadMgr*)owner->GetOwner(); }
 
@@ -69,23 +70,24 @@ class E_API LeabraCycleThreadMgr : public taThreadMgr {
   // #INLINE thread manager for LeabraCycle tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
+  int           n_threads_act;  // #READ_ONLY #SHOW actual number of threads deployed, based on parameters
+  int           n_cycles;       // #MIN_1 how many cycles to run at a time -- more efficient to run multiple cycles per Run
   int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
   bool          sync_steps;     // keep each step of computation within the cycle syncronized, using atomic ints 
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
   // the following track how many threads have reached each stage -- atomic incremented by working threads
   QAtomicInt    stage_net;       // #IGNORE 
-  QAtomicInt    stage_net_post;  // #IGNORE 
-  QAtomicInt    stage_exnet;     // #IGNORE 
   QAtomicInt    stage_net_int;   // #IGNORE 
-  QAtomicInt    stage_net_stats; // #IGNORE 
 
+  QAtomicInt    stage_inhib_lay; // #IGNORE 
+  QAtomicInt    stage_inhib_gp; // #IGNORE 
   QAtomicInt    stage_inhib;     // #IGNORE 
-  QAtomicInt    stage_applyinhib; // #IGNORE 
+
   QAtomicInt    stage_act;       // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
 
-  QAtomicInt    stage_cyc_syndep; // #IGNORE 
+  QAtomicInt    stage_sravg_state; // #IGNORE 
   QAtomicInt    stage_sravg;       // #IGNORE 
 
   Network*      network()       { return (Network*)owner; }
@@ -101,6 +103,9 @@ public:
 
   void  InitStages(); 
   // #IGNORE set all stage counters to 0
+
+  String   ThreadReport();
+  // return a report on thread stats, etc
 
   TA_BASEFUNS_NOCOPY(LeabraCycleThreadMgr);
 protected:

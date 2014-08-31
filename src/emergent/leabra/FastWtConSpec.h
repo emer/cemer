@@ -81,7 +81,7 @@ public:
   //                                 Network* net) override
   // { inherited::C_Init_dWt(cg, idx, ru, su, net); cg->Cn(idx,SDWT,net)=0.0f; }
   // #IGNORE 
-  void SetCurLrate(LeabraNetwork* net, int epoch) override;
+  void Trial_Init_Specs(LeabraNetwork* net) override;
 
   // inline float C_Compute_SlowHebb(FastWtCon* cn, LeabraSendCons* cg,
   //       			  float lin_wt, float ru_act, float su_act)

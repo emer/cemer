@@ -24,16 +24,13 @@ void LeabraUnGpData::Initialize() {
 void LeabraUnGpData::InitLinks() {
   inherited::InitLinks();
   taBase::Own(netin, this);
-  taBase::Own(netin_top_k, this);
-  taBase::Own(i_thrs, this);
   taBase::Own(acts, this);
-  taBase::Own(acts_top_k, this);
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);
   taBase::Own(acts_m_avg, this);
   taBase::Own(acts_ctxt, this);
-  taBase::Own(acts_m2, this);
+  taBase::Own(acts_mid, this);
 
   taBase::Own(kwta, this);
   taBase::Own(i_val, this);

@@ -264,11 +264,11 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
   UpdateAfterEdit();            // pick up flags
 }
 
-void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
+void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
-  if(wt_sig.dwt_norm) net->dwt_norm_survey = true;
+  if(wt_sig.dwt_norm) net->net_misc.dwt_norm_used = true;
   if(stable_mix.cos_diff_lrate || xcal.l_mix == XCalLearnSpec::X_COS_DIFF)
-    net->cos_diff_survey = true;
+    net->cos_diff_auto = true;
 
   if(lrs_value == NO_LRS) return;
 
@@ -282,7 +282,7 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
       return;
     }
     else {
-      TestWarning(true, "SetCurLrate", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
+      TestWarning(true, "Trial_Init_Specs", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
       SetUnique("lrs_value", true);
       lrs_value = EPOCH;
       UpdateAfterEdit();
@@ -298,7 +298,7 @@ void LeabraConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
     }
   }
   if(lrs_value == EPOCH) {
-    cur_lrate = lrate * lrate_sched.GetVal(epoch);
+    cur_lrate = lrate * lrate_sched.GetVal(net->epoch);
   }
 }
 

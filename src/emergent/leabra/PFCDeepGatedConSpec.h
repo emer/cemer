@@ -46,25 +46,13 @@ public:
       }
     }
     else {
-      // todo: might want to make everything go through tmp for vectorization speed..
-      if(thread_no < 0) {
-        for(int i=0; i<cg->size; i++) {
-          LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-          LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-          C_Send_NetinDelta_NoThread(wts[i],
-                                     ((LeabraUnit*)cg->Un(i,net))->net_delta,
-                                     rcg->scale_eff * su_act_delta);
-        }
-      }
-      else {
-        float* send_netin_vec = net->send_netin_tmp.el
-          + net->send_netin_tmp.FastElIndex(0, thread_no);
-        for(int i=0; i<cg->size; i++) {
-          LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-          LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
-          C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                   cg->UnIdx(i), rcg->scale_eff * su_act_delta);
-        }
+      float* send_netin_vec = net->send_netin_tmp.el
+        + net->send_netin_tmp.FastElIndex(0, thread_no);
+      for(int i=0; i<cg->size; i++) {
+        LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
+        LeabraRecvCons* rcg = (LeabraRecvCons*)ru->recv.FastEl(cg->recv_idx());
+        C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+                                 cg->UnIdx(i), rcg->scale_eff * su_act_delta);
       }
     }
   }

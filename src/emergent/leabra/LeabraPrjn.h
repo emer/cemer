@@ -43,8 +43,8 @@ public:
   int		avg_netin_n;		// #NO_SAVE #READ_ONLY #HIDDEN #DMEM_AGG_SUM #CAT_Statistic count for computing epoch-level averages
 
 
-  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
-  // #CAT_Learning set current learning rate based on epoch
+  virtual void	Trial_Init_Specs(LeabraNetwork* net);
+  // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on epoch
   virtual void	SetLearnRule(LeabraNetwork* net);
   // #CAT_Learning set current learning rule from the network
   virtual void	CheckInhibCons(LeabraNetwork* net);

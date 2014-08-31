@@ -48,9 +48,9 @@ void LeabraPrjn::Copy_(const LeabraPrjn& cp) {
   avg_netin_n = cp.avg_netin_n;
 }
 
-void LeabraPrjn::SetCurLrate(LeabraNetwork* net, int epoch) {
+void LeabraPrjn::Trial_Init_Specs(LeabraNetwork* net) {
   if(con_spec.SPtr())
-    ((LeabraConSpec*)con_spec.SPtr())->SetCurLrate(net, epoch);
+    ((LeabraConSpec*)con_spec.SPtr())->Trial_Init_Specs(net);
 }
 
 void LeabraPrjn::SetLearnRule(LeabraNetwork* net) {

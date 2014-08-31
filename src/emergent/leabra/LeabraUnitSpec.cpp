@@ -654,7 +654,6 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     recv_gp->net = 0.0f;
     recv_gp->net_raw = 0.0f;
-    recv_gp->net_delta = 0.0f;
   }
 }
 
@@ -807,9 +806,9 @@ void LeabraUnitSpec::Init_ActBuff(LeabraUnit* u) {
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit functions
 
-void LeabraUnitSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
+void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(bias_spec.SPtr())
-    ((LeabraConSpec*)bias_spec.SPtr())->SetCurLrate(net, epoch);
+    ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
 }
 
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1043,8 +1042,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   int thno_arg = thread_no;
   if(thread_no < 0) {
     net->send_pct_tot++;        // only safe for non-thread case
-    if(net->NetinPerPrjn())
-      thno_arg = 0;		// pass 0 as arg -- need to store in tmp vec
+    thno_arg = 0;		// pass 0 as arg -- need to store in tmp vec
   }
   float act_ts = u->act;
   if(syn_delay.on) {
@@ -1083,58 +1081,51 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   }
 }
 
-void LeabraUnitSpec::Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net) {
-  int nt = net->threads.tasks.size;
+void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  // this integrates from SendDelta and then does further integration
+  int nt = net->cyc_threads.n_threads_act;
   float nw_nt = 0.0f;
-  // todo: use incremented index counter instead of computing fresh
-  if(net->NetinPerPrjn()) {	// always uses netin_tmp -- this is where inhib goes
+
+  LeabraLayer* lay = u->own_lay();
+  if(lay->hard_clamped) return;
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+
+  if(net->NetinPerPrjn()) {
     float nw_inhb = 0.0f;
-    if(!net->threads.using_threads)
-      nt = 1;
     for(int g=0; g<u->recv.size; g++) {
       LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
       if(recv_gp->NotActive()) continue;
       float g_nw_nt = 0.0f;
       for(int j=0;j<nt;j++) {
-	g_nw_nt += net->send_netin_tmp.FastEl3d(u->flat_idx, g, j);
+        float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
+	g_nw_nt += ndval;
+        ndval = 0.0f;           // zero immediately upon use -- for threads
+        // note: if another thread in async mode is still in SendDelta, it could
+        // theoretically be writing to this value at the same time we're zeroing
+        // causing data corruption -- these are the risks..
       }
-      recv_gp->net_delta = g_nw_nt;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       // todo: incorporate finer-grained inhib here..
       if(cs->inhib)
 	nw_inhb += g_nw_nt;
       else
 	nw_nt += g_nw_nt;
+
+      recv_gp->net_raw += g_nw_nt;
+      // todo: not clear if we need this at this point..
+      // u->net += dt.net * (tot_net - u->net);
+      // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
     }
     u->net_delta = nw_nt;
     u->g_i_delta = nw_inhb;
   }
   else {
-    if(net->threads.using_threads) {	// if not used, goes directly into unit vals
-      for(int j=0;j<nt;j++) {
-	nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
-      }
-      u->net_delta = nw_nt;
+    for(int j=0;j<nt;j++) {
+      float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
+      nw_nt += ndval;
+      ndval = 0.0f;           // zero immediately upon use -- for threads
     }
-  }
-}
-
-void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-
-  if(net->NetinPerPrjn()) {
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->NotActive()) continue;
-      recv_gp->net_raw += recv_gp->net_delta;
-      recv_gp->net_delta = 0.0f; // clear for next use
-
-      // todo: not clear if we need this at this point..
-      // u->net += dt.net * (tot_net - u->net);
-      // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
-    }
+    u->net_delta = nw_nt;
   }
 
   if(net->inhib_cons_used) {
@@ -1189,7 +1180,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     u->net += Compute_Noise(u, net);
   }
-  u->i_thr = Compute_IThresh(u, net);
+
+  if(net->net_misc.kwta_used) {
+    u->i_thr = Compute_IThresh(u, net);
+  }
 }
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net) {
@@ -1867,14 +1861,16 @@ void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
 }
 
 void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
-  int nt = net->threads.tasks.size;
+  int nt = net->threads.tasks.size; // todo: cyc_threads or threads?
+  if(!net->threads.using_threads)
+    nt = 1;
   float nw_nt = 0.0f;
-  if(net->threads.using_threads) {	// if not used, goes directly into unit vals
-    for(int j=0;j<nt;j++) {
-      nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
-    }
-    u->net_ctxt = nw_nt;
+  for(int j=0;j<nt;j++) {
+    float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
+    nw_nt += ndval;
+    ndval = 0.0f;             // zero immediately..
   }
+  u->net_ctxt = nw_nt;
 }
 
 void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
@@ -1896,13 +1892,15 @@ void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
   int nt = net->threads.tasks.size;
+  if(!net->threads.using_threads)
+    nt = 1;
   float nw_nt = 0.0f;
-  if(net->threads.using_threads) {	// if not used, goes directly into unit vals
-    for(int j=0;j<nt;j++) {
-      nw_nt += net->send_netin_tmp.FastEl2d(u->flat_idx, j);
-    }
-    u->deep5b_net = nw_nt;
+  for(int j=0;j<nt;j++) {
+    float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
+    nw_nt += ndval;
+    ndval = 0.0f;             // zero immediately..
   }
+  u->deep5b_net = nw_nt;
 }
 
 void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {

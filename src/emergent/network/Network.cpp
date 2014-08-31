@@ -456,8 +456,15 @@ void Network::BuildUnits_Threads() {
     }
     l->BuildUnits_Threads(this);
   }
+
+  BuildUnits_Threads_send_netin_tmp();
+}
+
+void Network::BuildUnits_Threads_send_netin_tmp() {
   // temporary storage for sender-based netinput computation
   if(units_flat.size > 0 && threads.n_threads > 0) {
+    // note: n_threads should always be > 0, so in general we have this buffer around
+    // in all cases
     if(NetinPerPrjn()) {
       send_netin_tmp.SetGeom(3, units_flat.size, max_prjns, threads.n_threads);
     }
@@ -1044,7 +1051,9 @@ void Network::Send_Netin() {
         float nw_nt = 0.0f;
         for(int p=0;p<un->recv.size;p++) {
           for(int j=0;j<nt;j++) {
-            nw_nt += send_netin_tmp.FastEl3d(i, p, j);
+            float& ntmp = send_netin_tmp.FastEl3d(i, p, j);
+            nw_nt += ntmp;
+            ntmp = 0.0f; // reset immediately
           }
         }
         un->Compute_SentNetin(this, nw_nt);
@@ -1055,7 +1064,9 @@ void Network::Send_Netin() {
         Unit* un = units_flat[i];
         float nw_nt = 0.0f;
         for(int p=0;p<un->recv.size;p++) {
-          nw_nt += send_netin_tmp.FastEl3d(i, p, 0); // use 0 thread
+          float& ntmp = send_netin_tmp.FastEl3d(i, p, 0); // use 0 thread
+          nw_nt += ntmp;
+          ntmp = 0.0f;          // reset immediately
         }
         un->Compute_SentNetin(this, nw_nt);
       }
@@ -1067,7 +1078,9 @@ void Network::Send_Netin() {
         Unit* un = units_flat[i];
         float nw_nt = 0.0f;
         for(int j=0;j<nt;j++) {
-          nw_nt += send_netin_tmp.FastEl2d(i, j);
+          float& ntmp = send_netin_tmp.FastEl2d(i, j);
+          nw_nt += ntmp;
+          ntmp = 0.0f;
         }
         un->Compute_SentNetin(this, nw_nt);
       }
@@ -1075,12 +1088,13 @@ void Network::Send_Netin() {
     else {
       for(int i=1;i<nu;i++) {     // 0 = dummy idx
         Unit* un = units_flat[i];
-        float nw_nt = send_netin_tmp.FastEl2d(i, 0); // use 0 thread
+        float& ntmp = send_netin_tmp.FastEl2d(i, 0); // use 0 thread
+        float nw_nt = ntmp;
+        ntmp = 0.0f;
         un->Compute_SentNetin(this, nw_nt);
       }
     }
   }
-  send_netin_tmp.InitVals(0.0f); // reset for next time around
 }
 
 void Network::Compute_Act() {

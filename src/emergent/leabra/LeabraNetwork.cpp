@@ -26,6 +26,9 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 //////////////////////////
 
 void LeabraNetMisc::Initialize() {
+  dwt_norm_used = false;
+  kwta_used = false;
+  lay_gp_inhib = false;
   cyc_syn_dep = false;
   syn_dep_int = 20;
 }
@@ -71,7 +74,6 @@ void LeabraNetwork::Initialize() {
   cycle_max = 60;
   mid_minus_cycle = -1;
   min_cycles = 15;
-  dwt_norm_enabled = false;
   cos_diff_on = false;
   cos_diff_auto = false;
 
@@ -351,6 +353,21 @@ void LeabraNetwork::BuildUnits_Threads() {
   cyc_threads.InitAll();
 }
 
+void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
+  // temporary storage for sender-based netinput computation
+  if(units_flat.size > 0 && cyc_threads.n_threads > 0) {
+    // note: n_threads should always be > 0, so in general we have this buffer around
+    // in all cases
+    if(NetinPerPrjn()) {
+      send_netin_tmp.SetGeom(3, units_flat.size, max_prjns, cyc_threads.n_threads);
+    }
+    else {
+      send_netin_tmp.SetGeom(2, units_flat.size, cyc_threads.n_threads);
+    }
+    send_netin_tmp.InitVals(0.0f);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
 
@@ -358,7 +375,7 @@ void LeabraNetwork::Trial_Init() {
   unlearnable_trial = false;
   cycle = -1;
   Trial_Init_Phases();
-  SetCurLrate();
+  Trial_Init_Specs();
 
   Trial_Init_Unit(); // performs following at unit-level
 //   Trial_DecayState();
@@ -390,15 +407,16 @@ void LeabraNetwork::Trial_Init_Phases() {
   }
 }
 
-void LeabraNetwork::SetCurLrate() {
-  dwt_norm_survey = false;
-  cos_diff_survey = false;
+void LeabraNetwork::Trial_Init_Specs() {
+  net_misc.dwt_norm_used = false;
+  net_misc.kwta_used = false;
+  net_misc.lay_gp_inhib = false;
+  net_misc.cyc_syn_dep = false;
+  cos_diff_auto = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
-      lay->SetCurLrate(this, epoch);
+      lay->Trial_Init_Specs(this);
   }
-  dwt_norm_enabled = dwt_norm_survey;
-  cos_diff_auto = cos_diff_survey;
 }
 
 void LeabraNetwork::Trial_Init_Unit() {
@@ -456,6 +474,9 @@ void LeabraNetwork::Settle_Init() {
 //   Settle_Init_TargFlags();
 //   Settle_DecayState();
 //   Compute_NetinScale();              // compute net scaling
+
+  // these could have accumulated netin deltas for clamped layers..
+  send_netin_tmp.InitVals(0.0f); // reset for next time around
 
   Compute_HardClamp();          // clamp all hard-clamped input acts: not easily threadable
   cycle = tmp_cycle;
@@ -562,50 +583,46 @@ void LeabraNetwork::Cycle_Run() {
   if(phase_no == 0 && cycle == 0) // detect start of trial
     ct_cycle = 0;
 
-  Send_Netin();
-  Compute_ExtraNetin();         // layer level extra netinput for special algorithms
-  Compute_NetinInteg();
-  Compute_NetinStats();
+  if(cyc_threads.CanRun()) {
+    cyc_threads.Run();
+    ct_cycle += cyc_threads.n_cycles;
+    time += cyc_threads.n_cycles * time_inc; // always increment time..
+  }
+  else {
+    Send_Netin();
+    Compute_NetinInteg();
+    Compute_NetinStats();
 
-  Compute_Inhib();
-  Compute_ApplyInhib();
+    Compute_Inhib();
+    Compute_ApplyInhib();
 
-  Compute_Act();
-  Compute_CycleStats();
+    Compute_Act();
+    Compute_CycleStats();
 
-  Compute_CycSynDep();
+    Compute_CycSynDep();
 
-  Compute_SRAvg_State();
-  Compute_SRAvg();              // note: only ctleabra variants do con-level compute here
-  Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
+    Compute_SRAvg_State();
+    Compute_SRAvg();              // note: only ctleabra variants do con-level compute here
+    Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
 
-  ct_cycle++;
-  time += time_inc;                     // always increment time..
+    ct_cycle += 1;
+    time +=  time_inc; // always increment time..
+  }
 }
 
 ///////////////////////////////////////////////////////
 //      Cycle Stage 1: netinput
 
+
 void LeabraNetwork::Send_Netin() {
   // always use delta mode!
+  // no threads -- only threaded version supported is cyc_threads, due to need to
+  // use correct thread roll-up numbers, etc
   send_pct_n = send_pct_tot = 0;
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Send_NetinDelta);
-  if(thread_flags & NETIN)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
-
-  // now need to roll up the netinput into unit vals
-  const int nu = units_flat.size;
-  for(int i=1;i<nu;i++) {   // 0 = dummy idx
-    LeabraUnit* u = (LeabraUnit*)units_flat[i];
-    u->Send_NetinDelta_Post(this);
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Send_NetinDelta(this, -1);
   }
-
-  if(NetinPerPrjn() || threads.using_threads) {
-    send_netin_tmp.InitVals(0.0f); // reset for next time around
-  }
-
   if(send_pct_tot > 0) {        // only avail for non-threaded calls
     send_pct = (float)send_pct_n / (float)send_pct_tot;
     avg_send_pct_sum += send_pct;
@@ -613,19 +630,16 @@ void LeabraNetwork::Send_Netin() {
   }
 }
 
-void LeabraNetwork::Compute_ExtraNetin() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Compute_ExtraNetin(this);
-  }
-}
-
 void LeabraNetwork::Compute_NetinInteg() {
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinInteg);
-  if(thread_flags & NETIN_INTEG)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_NetinInteg(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinInteg);
+  // if(thread_flags & NETIN_INTEG)
+  //   threads.Run(&un_call, 0.4f);
+  // else
+  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 void LeabraNetwork::Compute_NetinStats() {
@@ -639,39 +653,36 @@ void LeabraNetwork::Compute_NetinStats() {
 //      Cycle Step 2: Inhibition
 
 void LeabraNetwork::Compute_Inhib() {
-  bool do_lay_gp = false;
-  if(layers.gp.size == 0) do_lay_gp = true; // falsely set to true to prevent further checking
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->Compute_Inhib(this);
-    if(!do_lay_gp) {
-      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-      if(laysp->lay_gp_inhib.on) do_lay_gp = true;
-    }
   }
-  if(layers.gp.size == 0) do_lay_gp = false; // now override anything
-  if(do_lay_gp) {
-    for(int lgi = 0; lgi < layers.gp.size; lgi++) {
-      Layer_Group* lg = (Layer_Group*)layers.gp[lgi];
-      float lay_gp_g_i = 0.0f;
+  if(net_misc.lay_gp_inhib)
+    Compute_Inhib_LayGp();
+}
+
+void LeabraNetwork::Compute_Inhib_LayGp() {
+  if(!net_misc.lay_gp_inhib || layers.gp.size == 0) return;
+  for(int lgi = 0; lgi < layers.gp.size; lgi++) {
+    Layer_Group* lg = (Layer_Group*)layers.gp[lgi];
+    float lay_gp_g_i = 0.0f;
+    for(int li = 0; li < lg->size; li++) {
+      LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
+      LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+      if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
+      float lay_val = laysp->lay_gp_inhib.gp_g * lay->i_val.g_i;
+      lay_gp_g_i = MAX(lay_val, lay_gp_g_i);
+    }
+    if(lay_gp_g_i > 0.0f) {   // actually got something
       for(int li = 0; li < lg->size; li++) {
         LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
         LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
         if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-        float lay_val = laysp->lay_gp_inhib.gp_g * lay->i_val.g_i;
-        lay_gp_g_i = MAX(lay_val, lay_gp_g_i);
-      }
-      if(lay_gp_g_i > 0.0f) {   // actually got something
-        for(int li = 0; li < lg->size; li++) {
-          LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
-          LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-          if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-          lay->i_val.gp_g_i = lay_gp_g_i;
-          lay->i_val.g_i = MAX(lay->i_val.gp_g_i, lay->i_val.g_i);
+        lay->i_val.gp_g_i = lay_gp_g_i;
+        lay->i_val.g_i = MAX(lay->i_val.gp_g_i, lay->i_val.g_i);
 
-          if(lay->unit_groups) {
-            lay->Compute_LayInhibToGps(this);
-          }
+        if(lay->unit_groups) {
+          lay->Compute_LayInhibToGps(this);
         }
       }
     }
@@ -690,11 +701,15 @@ void LeabraNetwork::Compute_ApplyInhib() {
 //      Cycle Step 3: Activation
 
 void LeabraNetwork::Compute_Act() {
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_Act);
-  if(thread_flags & ACT)
-    threads.Run(&un_call, 0.4f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_Act(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_Act);
+  // if(thread_flags & ACT)
+  //   threads.Run(&un_call, 0.4f);
+  // else
+  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -835,8 +850,6 @@ void LeabraNetwork::TI_Send_Deep5bNetin() {
       LeabraUnit* u = (LeabraUnit*)units_flat[i];
       u->TI_Send_Deep5bNetin_Post(this);
     }
-
-    send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
 }
 
@@ -855,8 +868,6 @@ void LeabraNetwork::TI_Send_CtxtNetin() {
       LeabraUnit* u = (LeabraUnit*)units_flat[i];
       u->TI_Send_CtxtNetin_Post(this);
     }
-
-    send_netin_tmp.InitVals(0.0f); // reset for next time around
   }
 }
 
@@ -965,9 +976,7 @@ void LeabraNetwork::Compute_SRAvg_State() {
     if(!lay->lesioned())
       lay->Compute_SRAvg_State(this);
   }
-}
 
-void LeabraNetwork::Compute_SRAvg() {
   // update the network-level sravg_vals, even though these should not generally be used
   if(sravg_vals.state == CtSRAvgVals::SRAVG_M ||
      sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
@@ -986,12 +995,18 @@ void LeabraNetwork::Compute_SRAvg() {
     if(!lay->lesioned())
       lay->Compute_SRAvg_Layer(this);
   }
+}
 
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
-  if(thread_flags & SRAVG)
-    threads.Run(&un_call, 0.9f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+void LeabraNetwork::Compute_SRAvg() {
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_SRAvg(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
+  // if(thread_flags & SRAVG)
+  //   threads.Run(&un_call, 0.9f);
+  // else
+  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 void LeabraNetwork::Compute_dWt_Layer_pre() {
@@ -1016,7 +1031,7 @@ void LeabraNetwork::Compute_dWt() {
 }
 
 void LeabraNetwork::Compute_dWt_Norm() {
-  if(!dwt_norm_enabled) return;
+  if(!net_misc.dwt_norm_used) return;
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Norm);
   if(thread_flags & DWT)
     threads.Run(&un_call, 0.6f);

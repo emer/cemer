@@ -180,11 +180,11 @@ void SubiculumLayerSpec::Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net) 
   if(cs) {
     cs->lrate_sched.default_val = lrate;
     cs->UpdateAfterEdit_NoGui();        // propagate to children
-    cs->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+    cs->Trial_Init_Specs(net);	// actually make it take NOW to affect cur_lrate
     FOREACH_ELEM_IN_GROUP(LeabraConSpec, lc, cs->children) {
       lc->lrate_sched.default_val = lrate;
       lc->UpdateAfterEdit_NoGui();        // propagate to children
-      lc->SetCurLrate(net, net->epoch);	// actually make it take NOW to affect cur_lrate
+      lc->Trial_Init_Specs(net);	// actually make it take NOW to affect cur_lrate
     }
   }
 }

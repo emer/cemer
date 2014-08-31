@@ -584,8 +584,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
-  virtual void	SetCurLrate(LeabraNetwork* net, int epoch);
-  // #CAT_Learning set current learning rate based on epoch
+  virtual void	Trial_Init_Specs(LeabraNetwork* net);
+  // #CAT_Learning initialize specs and specs update network flags 
 
   virtual void	Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation trial unit-level initialization functions: DecayState, NoiseInit, Trial_Init_SRAvg
@@ -629,8 +629,6 @@ public:
 
   virtual void 	Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold -- only this delta form is supported
-  virtual void 	Send_NetinDelta_Post(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Activation send netinput post-processing -- integrate deltas across multiple threads and deal with NETIN_PER_PRJN
   virtual void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
     virtual void Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net);

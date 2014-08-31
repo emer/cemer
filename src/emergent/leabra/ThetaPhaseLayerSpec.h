@@ -55,7 +55,7 @@ INHERITED(LeabraLayerSpec)
 public:
   int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_mid is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
 
-  virtual void 	RecordActM2(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void 	RecordActMid(LeabraLayer* lay, LeabraNetwork* net);
   // save current act_nd values as act_mid -- minus phase for auto-encoder learning
   virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
   // compute compute error stats as user data on layer (enc_sse, enc_norm_err)

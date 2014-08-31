@@ -85,7 +85,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
     float inval = inu->act_eq;
     if(clamp.max_plus) {
-      float min_max = MAX(lay->acts_m.max, lay->acts_m2.max); // consider auto enc max too -- esp if doing pretraining on encoder only, this is important
+      float min_max = MAX(lay->acts_m.max, lay->acts_mid.max); // consider auto enc max too -- esp if doing pretraining on encoder only, this is important
       float clmp = min_max + clamp.plus;
       clmp = MAX(clmp, clamp.min_clamp);
       inval *= clmp;            // downscale
@@ -99,7 +99,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
 
 void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->ct_cycle == auto_m_cycles)
-    RecordActM2(lay,net);
+    RecordActMid(lay,net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     ClampFromECin(lay, net);
     if(net->cycle <= 1)

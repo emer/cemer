@@ -37,17 +37,10 @@ public:
                                const int thread_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
-    if(thread_no < 0) {
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_NoThread(wts[i],
-                                       ((LeabraUnit*)cg->Un(i,net))->deep5b_net,
-                                        su_act_eff));
-    }
-    else {
-      float* send_netin_vec = net->send_netin_tmp.el
-        + net->send_netin_tmp.FastElIndex(0, thread_no);
-      CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                  cg->UnIdx(i), su_act_eff));
-    }
+    float* send_netin_vec = net->send_netin_tmp.el
+      + net->send_netin_tmp.FastElIndex(0, thread_no);
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
+                                                cg->UnIdx(i), su_act_eff));
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 

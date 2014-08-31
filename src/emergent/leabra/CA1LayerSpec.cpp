@@ -106,7 +106,7 @@ void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->ct_cycle == auto_m_cycles)
-    RecordActM2(lay,net);
+    RecordActMid(lay,net);
   if(net->ct_cycle == auto_m_cycles+1) {
     if(!(use_test_mode && net->train_mode == Network::TEST))
       lay->DecayState(net, recall_decay); // specifically CA1 activations at recall

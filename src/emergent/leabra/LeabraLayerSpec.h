@@ -272,8 +272,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
-  virtual void	SetCurLrate(LeabraLayer* lay, LeabraNetwork* net, int epoch);
-  // #CAT_Learning set current learning rate based on epoch -- goes through projections
+  virtual void	Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Learning initialize specs and specs update network flags
   virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
@@ -320,12 +320,8 @@ public:
   //	Cycle Step 1: Netinput 
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
-  // then Compute_ExtraNetin
   // followed by Compute_NetinInteg on units
   // then Compute_NetinStats
-
-  virtual void	Compute_ExtraNetin(LeabraLayer* lay, LeabraNetwork* net) { };
-  // #CAT_Activation compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
 
   virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
@@ -448,8 +444,6 @@ public:
     // #CAT_Activation get minus phase act stats
     virtual void PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get plus phase act stats
-    virtual void PostSettle_GetMinus2(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation get 2nd minus phase act stats
     virtual void PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get phase dif ratio from minus to plus
 

@@ -28,14 +28,14 @@ void ThetaPhaseLayerSpec::Defaults_init() {
   inhib.kwta_pt = 0.7f;
 }
 
-void ThetaPhaseLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
+void ThetaPhaseLayerSpec::RecordActMid(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->act_mid = u->act_nd;      // record the minus phase before overwriting it..
   }
 
   // record stats for act_mid
-  AvgMaxVals& vals = lay->acts_m2;
+  AvgMaxVals& vals = lay->acts_mid;
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
@@ -46,8 +46,8 @@ void ThetaPhaseLayerSpec::RecordActM2(LeabraLayer* lay, LeabraNetwork* net) {
     int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_m2, mb_off);
-      vals.UpdtFmAvgMax(gpd->acts_m2, nunits, g);
+      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_mid, mb_off);
+      vals.UpdtFmAvgMax(gpd->acts_mid, nunits, g);
     }
     vals.CalcAvg(lay->units.leaves);
   }

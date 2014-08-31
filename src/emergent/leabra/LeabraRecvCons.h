@@ -34,7 +34,6 @@ INHERITED(RecvCons)
 public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied to send cons group where it is actually used, but it is computed here
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
-  float		net_delta;	// #NO_SAVE #CAT_Activation delta netinput to this con_group -- only used for NETIN_PER_PRJN
   float		net_raw;	// #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
 
   void	Compute_dWt_Norm(LeabraUnit* ru, LeabraNetwork* net)

@@ -32,10 +32,10 @@ void FastWtConSpec::Initialize() {
   min_obj_type = &TA_FastWtCon;
 }
 
-void FastWtConSpec::SetCurLrate(LeabraNetwork* net, int epoch) {
-  LeabraConSpec::SetCurLrate(net, epoch);
+void FastWtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  LeabraConSpec::Trial_Init_Specs(net);
   if(fast_wt.use_lrs)
-    fast_wt.cur_lrate = fast_wt.lrate * lrate_sched.GetVal(epoch);
+    fast_wt.cur_lrate = fast_wt.lrate * lrate_sched.GetVal(net->epoch);
   else
     fast_wt.cur_lrate = fast_wt.lrate;
 }

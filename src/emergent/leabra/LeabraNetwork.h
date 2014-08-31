@@ -35,7 +35,10 @@ class E_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
-  bool		cyc_syn_dep;	// if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation)
+  bool		dwt_norm_used; // #READ_ONLY #SHOW dwt_norm is used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
+  bool          kwta_used;        // #READ_ONLY #SHOW do any layers use kwta for computing inhibition (otherwise FF_FB which is the default and is more computationally efficient)?  set automatically in Trial_Init_Specs, based on LayerSpec.inhib settings
+  bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation
+  bool		cyc_syn_dep;	// #READ_ONLY #SHOW if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation) -- automatically set if needed in Trial_Init_Specs call
   int		syn_dep_int;	// [20] #CONDSHOW_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
   String       GetTypeDecoKey() const override { return "Network"; }
@@ -157,13 +160,12 @@ public:
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
   LeabraCycleThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
+  LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
   int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
   int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
   int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
-  bool		dwt_norm_enabled; // #CAT_Learning enable dwt_norm computation -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in SetCurLrate call
-  bool          dwt_norm_survey;  // #IGNORE a tmp flag used for surveying whether to set dwt_norm_enabled -- used during SetCurLrate
 
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
@@ -176,8 +178,6 @@ public:
   int		avg_cycles_n;	// #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic N for average cycles computation for this epoch
 
   String	minus_output_name; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
-
-  LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
   float		send_pct;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic proportion of sending units that actually sent activations on this cycle
   int		send_pct_n;	// #NO_SAVE #READ_ONLY #CAT_Statistic number of units sending activation this cycle
@@ -230,8 +230,7 @@ public:
   float		avg_cos_err_vs_prv_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos err vs prv in this epoch
 
   bool		cos_diff_on;      // #CAT_Learning manually enable Compute_CosDiff call at end of plus phase (if conspec cos_diff_lrate or X_COS_DIFF is set, then cos_diff will automatically be computed regardless)
-  bool		cos_diff_auto;    // #CAT_Learning #READ_ONLY enable Compute_CosDiff call at end of plus phase -- LeabraConSpec will auto set this flag if LeabraConSpec::cos_diff_lrate or X_COS_DIFF is set, and off if not -- updated in SetCurLrate call
-  bool          cos_diff_survey;  // #IGNORE a tmp flag used for surveying whether to set cos_diff_auto -- used during SetCurLrate
+  bool		cos_diff_auto;    // #CAT_Learning #READ_ONLY enable Compute_CosDiff call at end of plus phase -- LeabraConSpec will auto set this flag if LeabraConSpec::cos_diff_lrate or X_COS_DIFF is set, and off if not -- updated in Trial_Init_Specs call
   float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
   float		avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average cosine (normalized dot product) diff (computed over previous epoch)
   float		avg_cos_diff_sum; // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic sum for computing current average cos diff in this epoch
@@ -287,17 +286,18 @@ public:
 
   virtual void	CheckInhibCons();
   void	BuildUnits_Threads() override;
+  void  BuildUnits_Threads_send_netin_tmp() override;
   bool RecvOwnsCons() override { return false; }
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
   virtual void 	Trial_Init();
-  // #CAT_TrialInit initialize at start of trial (SetCurLrate, set phase_max, Decay state)
+  // #CAT_TrialInit initialize at start of trial (init specs, set phase_max, Decay state)
     virtual void Trial_Init_Phases();
     // #CAT_TrialInit init phase_max and current phase based on phase_order -- network-only
-    virtual void SetCurLrate();
-    // #CAT_TrialInit set the current learning rate according to the LeabraConSpec parameters -- goes through projections
+    virtual void Trial_Init_Specs();
+    // #CAT_TrialInit initialize specs and specs update network flags
 
     virtual void Trial_Init_Unit();
     // #CAT_TrialInit trial unit-level initialization functions: DecayState, NoiseInit, Trial_Init_SRAvg -- replaces those functions
@@ -355,8 +355,6 @@ public:
 
   void	Send_Netin() override;
   // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- new values go in net_delta or g_i_delta (summed up from tmp array for threaded case)
-  virtual void Compute_ExtraNetin();
-  // #CAT_Cycle Stage 1.2 compute extra netinput based on any kind of algorithmic computation -- goes to the layerspec and stops there -- not much overhead if not used
   virtual void Compute_NetinInteg();
   // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 
@@ -369,6 +367,8 @@ public:
 
   virtual void	Compute_Inhib();
   // #CAT_Cycle compute inhibitory conductances (kwta) -- also calls LayInhibToGps to coordinate group-level inhibition sharing
+    virtual void Compute_Inhib_LayGp();
+    // #CAT_Cycle compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
   virtual void	Compute_ApplyInhib();
   // #CAT_Cycle Stage 2.3 apply inhibitory conductances from kwta to individual units -- separate step after all inhib is integrated and computed
 

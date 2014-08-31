@@ -128,6 +128,11 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
   if(lay->hard_clamped) return;
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
+  int nt = net->cyc_threads.tasks.size;
+  if(!net->cyc_threads.using_threads)
+    nt = 1;
+  float nw_nt = 0.0f;
+
   if(net->NetinPerPrjn()) {     // this is set to be true automatically
     float patch_dir = 0.0f;
     float patch_ind = 0.0f;
@@ -140,8 +145,14 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
       if(recv_gp->NotActive()) continue;
       LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
-      recv_gp->net_raw += recv_gp->net_delta;
-      recv_gp->net_delta = 0.0f; // clear for next use
+      float g_nw_nt = 0.0f;
+      for(int j=0;j<nt;j++) {
+        float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
+	g_nw_nt += ndval;
+        ndval = 0.0f;           // zero immediately upon use -- for threads
+      }
+
+      recv_gp->net_raw += g_nw_nt;
 
       if(from->name.contains("Patch")) {
         if(from->name.contains("Ind")) {
