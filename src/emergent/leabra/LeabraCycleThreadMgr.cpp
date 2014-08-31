@@ -91,6 +91,7 @@ void LeabraCycleTask::run() {
       for(int i=lay_st; i<lay_ed; i++) {
         if(i >= net->layers.leaves) continue;
         LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+        if(lay->lesioned()) continue;
         lay->Compute_NetinStats(net);
         lay->Compute_Inhib(net);
         lay->Compute_ApplyInhib(net);
@@ -105,6 +106,7 @@ void LeabraCycleTask::run() {
       for(int i=lay_st; i<lay_ed; i++) {
         if(i >= net->layers.leaves) continue;
         LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+        if(lay->lesioned()) continue;
         lay->Compute_NetinStats(net);
         lay->Compute_Inhib(net);
       }
@@ -118,6 +120,7 @@ void LeabraCycleTask::run() {
       for(int i=lay_st; i<lay_ed; i++) {
         if(i >= net->layers.leaves) continue;
         LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+        if(lay->lesioned()) continue;
         lay->Compute_ApplyInhib(net);
       }
       if(mg->sync_steps)
@@ -183,9 +186,9 @@ void LeabraCycleTask::run() {
   }
   else {
     // continuous integrating of average
-    avg_run_time += (run_time.s_used + avg_run_time * (float)(avg_time_n - 1)) /
+    avg_run_time = (run_time.s_used + avg_run_time * (float)(avg_time_n - 1)) /
       (float)avg_time_n;
-    avg_wait_time += (wait_time.s_used + avg_wait_time * (float)(avg_time_n - 1)) /
+    avg_wait_time = (wait_time.s_used + avg_wait_time * (float)(avg_time_n - 1)) /
       (float)avg_time_n;
   }
 }

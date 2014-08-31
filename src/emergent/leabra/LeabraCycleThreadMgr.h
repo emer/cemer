@@ -35,17 +35,17 @@ eTypeDef_Of(LeabraCycleTask);
 class E_API LeabraCycleTask : public taTask {
 INHERITED(taTask)
 public:
-  NetworkRef    network;        // the network we're operating on
-  int           uidx_st;        // unit list number to start on
-  int           uidx_ed;        // unit number to end before
-  int           lay_st;         // layer leaf number to start on
-  int           lay_ed;         // layer leaf number to end on
+  NetworkRef    network;        // #NO_SAVE the network we're operating on
+  int           uidx_st;        // #NO_SAVE unit list number to start on
+  int           uidx_ed;        // #NO_SAVE unit number to end before
+  int           lay_st;         // #NO_SAVE layer leaf number to start on
+  int           lay_ed;         // #NO_SAVE layer leaf number to end on
 
-  TimeUsedHR	run_time; 	// total time for this thread during run() call
-  float         avg_run_time;   // progressive average run time since rebalancing
-  TimeUsedHR	wait_time; 	// total time for this thread during run() call
-  float         avg_wait_time;  // progressive average run time since rebalancing
-  int           avg_time_n;     // number of measures in the average
+  TimeUsedHR	run_time; 	// #NO_SAVE total time for this thread during run() call
+  float         avg_run_time;   // #NO_SAVE progressive average run time since rebalancing
+  TimeUsedHR	wait_time; 	// #NO_SAVE total time for this thread during run() call
+  float         avg_wait_time;  // #NO_SAVE progressive average run time since rebalancing
+  int           avg_time_n;     // #NO_SAVE number of measures in the average
 
   void  run() override;
   // runs full cycle

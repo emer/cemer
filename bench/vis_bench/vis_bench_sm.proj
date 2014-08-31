@@ -1575,15 +1575,20 @@ LeabraProject .projects["vis_bench_sm"] {
     Function_List @.functions = [0] {
     };
 
-    ProgEl_List @.init_code = [6] {
-     AssignExpr @[0] { };
-     MethodCall @[1] { 
+    ProgEl_List @.init_code = [7] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["report"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     MethodCall @[2] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     AssignExpr @[2] { };
-     If @[3] { 
+     AssignExpr @[3] { };
+     If @[4] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -1591,7 +1596,7 @@ LeabraProject .projects["vis_bench_sm"] {
        };
       };
      };
-     Else @[4] { 
+     Else @[5] { 
       ProgEl_List @.else_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -1599,26 +1604,36 @@ LeabraProject .projects["vis_bench_sm"] {
        };
       };
      };
-     IfGuiPrompt @[5] { 
-      ProgEl_List @.yes_code = [2] {
+     IfGuiPrompt @[6] { 
+      ProgEl_List @.yes_code = [4] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
 	};
        };
        PrintExpr @[1] { };
+       MemberMethodCall @[2] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+       PrintVar @[3] { };
       };
      };
     };
 
-    ProgEl_List @.prog_code = [13] {
-     AssignExpr @[0] { };
-     MethodCall @[1] { 
+    ProgEl_List @.prog_code = [16] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["report"] { };
+      };
+     };
+     AssignExpr @[1] { };
+     MethodCall @[2] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MemberAssign @[2] { };
-     If @[3] { 
+     MemberAssign @[3] { };
+     If @[4] { 
       ProgEl_List @.true_code = [2] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -1627,17 +1642,22 @@ LeabraProject .projects["vis_bench_sm"] {
        PrintExpr @[1] { };
       };
      };
-     AssignExpr @[4] { };
      MemberMethodCall @[5] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MethodCall @[6] { 
+     PrintVar @[6] { };
+     AssignExpr @[7] { };
+     MemberMethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[9] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     WhileLoop @[7] { 
+     WhileLoop @[10] { 
       ProgEl_List @.loop_code = [3] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -1649,21 +1669,21 @@ LeabraProject .projects["vis_bench_sm"] {
        IfBreak @[2] { };
       };
      };
-     MemberMethodCall @[8] { 
+     MemberMethodCall @[11] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[9] { 
+     MethodCall @[12] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     PrintExpr @[10] { };
-     MethodCall @[11] { 
+     PrintExpr @[13] { };
+     MethodCall @[14] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[12] { 
+     ProgramCall @[15] { 
       ProgArg_List @.prog_args = [0] {
       };
      };
@@ -4233,7 +4253,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Ctxt_Fm_V1h_l"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4608] {
       };
      };
      LeabraLayer @["V1h_r"] { 
@@ -4242,7 +4262,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Ctxt_Fm_V1h_r"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [4608] {
       };
      };
      LeabraLayer @["V1m_l"] { 
@@ -4251,7 +4271,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Ctxt_Fm_V1m_l"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1152] {
       };
      };
      LeabraLayer @["V1m_r"] { 
@@ -4260,7 +4280,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Ctxt_Fm_V1m_r"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [1152] {
       };
      };
     };
@@ -4274,7 +4294,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [3600] {
       };
      };
      LeabraLayer @["V2m"] { 
@@ -4286,7 +4306,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_V4"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [900] {
       };
      };
      LeabraLayer @["V2m_sum"] { 
@@ -4294,7 +4314,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_V2m"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [36] {
       };
      };
      LeabraLayer @["V2h_sum"] { 
@@ -4302,7 +4322,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_V2h"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [144] {
       };
      };
     };
@@ -4317,7 +4337,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_V2h_sum"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [576] {
       };
      };
     };
@@ -4330,7 +4350,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_IT"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [576] {
       };
      };
     };
@@ -4341,7 +4361,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_Output"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [200] {
       };
      };
     };
@@ -4351,7 +4371,7 @@ LeabraProject .projects["vis_bench_sm"] {
        LeabraPrjn @["Fm_IT"] { };
       };
 
-      Unit_Group @.units = [0] {
+      Unit_Group @.units = [20] {
       };
      };
     };
@@ -4521,23 +4541,7 @@ To summarize, these generalization results demonstrate that the hierarchical ser
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/CompCogNeuro/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Computational Cognitive Neuroscience Wiki Atom feed\" href=\"/CompCogNeuro/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
-.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute;left:-99999999px}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:after{content:\".\";display:block;height:0;clear:both;visibility:hidden}.ui-helper-clearfix{display:inline-block} * html .ui-helper-clearfix{height:1%}.ui-helper-clearfix{display:block} .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:sans-serif;font-size:0.8em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:sans-serif;font-size:1em}.ui-widget-content{border:1px solid #cccccc;background:#f2f5f7 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAKElEQVQYV2P6+ev3fyYGIBiGxH8w6/9/GAsshuD+Byv5D2dhKh6eBAAABBSmkTpaYQAAAABJRU5ErkJggg==) 50% top repeat-x;background:#f2f5f7 url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_100_f2f5f7_1x100.png?2014-04-01T18:51:40Z) 50% top repeat-x!ie;color:#362b36}.ui-widget-content a{color:#362b36}.ui-widget-header{border-bottom:1px solid #bbbbbb;line-height:1em;background:#ffffff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAF0lEQVQYV2P49+/ff4ZhQPwHglGCKAIAdlSOCIOoOV0AAAAASUVORK5CYII=) 50% 50% repeat-x;background:#ffffff url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_ffffff_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #aed0ea;background:#d7ebf9 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAL0lEQVQY02N69eXPfyYGIBhexH+G/0DiP5gFJP79RxAwiX9giX//kZUgdDAMXwIA/14cgwH0gmgAAAAASUVORK5CYII=) 50% 50% repeat-x;background:#d7ebf9 url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_80_d7ebf9_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#2779aa}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#2779aa;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #74b2e2;background:#e4f1fb url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAMUlEQVQYV2P68vPvfyYGIBhCxP//cBacYAAKInGRlIBYaBJQHWAWXBuqoVBZmNhwIgBlYh6Ywkr41gAAAABJRU5ErkJggg==) 50% 50% repeat-x;background:#e4f1fb url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_e4f1fb_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#0070a3}.ui-state-hover a,.ui-state-hover a:hover{color:#0070a3;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #cccccc;background:#f0f0f0 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAIElEQVQYV2P68OHDfyYGIBiuBCMjIzILGxdNDI017AgARXMEsCkUdugAAAAASUVORK5CYII=) 50% 50% repeat-x;url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_inset-hard_100_f0f0f0_1x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;font-weight:normal;color:#000000}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#000000;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #f9dd34;background:#ffef8f url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAAEwK2r2AAAAX0lEQVQYV2P+/3HBf+aGyoAGTMK3gbm+3B1IVLgCuRUe2AlsBtRX+oG0eYEMcAOpcyNeLx4CbKgP3GRPEAtssjse95HkcOoQUO/7obrZG+rwBrjrGyo8oa6vJ88L5BEAeRC4pmqV01IAAAAASUVORK5CYII=) 50% top repeat-x;url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_25_ffef8f_1x100.png?2014-04-01T18:51:40Z) 50% top repeat-x!ie;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#cd0a0a url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEXNCgokNzldAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_flat_15_cd0a0a_40x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;color:#ffffff}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#ffffff}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#ffffff}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px}.ui-icon,.ui-widget-content .ui-icon,.ui-widget-header .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEV0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psyPQTyXAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_72a7cf_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-default .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_3d80b3_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEUkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwOSETqAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_2694e8_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-active .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_666666_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-highlight .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_2e83ff_256x240.png?2014-04-01T18:51:40Z)!ie}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-icons_ffffff_256x240.png?2014-04-01T18:51:40Z)!ie} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-tl{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0}.ui-corner-tr{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bl{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-br{-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-top{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bottom{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-right{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-left{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-all{-moz-border-radius:0;-webkit-border-radius:0} .ui-widget-overlay{background:#000000;opacity:.75;filter:Alpha(Opacity=75)}.ui-widget-shadow{margin:-7px 0 0 -7px;padding:7px;background:#000000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEUAAACnej3aAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;background:#000000 url(https://grey.colorado.edu/CompCogNeuro/resources/jquery.ui/themes/vector/images/ui-bg_flat_70_000000_40x100.png?2014-04-01T18:51:40Z) 50% 50% repeat-x!ie;opacity:.20;filter:Alpha(Opacity=20);-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:ee9940a1d159180ee5eb4a0b8a28be30 */</style><style>
-.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:09e43d1292df09b412447d2a1c11b776 */</style><style>
-.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
-.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
-.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
-.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/mediawiki.action/images/green-checkmark.png?2014-04-01T18:51:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:1eda29f55be362459a1cbf2cf062586e */
-#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
-.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: compcogneuro:resourceloader:filter:minify-css:7:e574a44ae23fd78ac104b2dd7100973a */</style>
@@ -4751,14 +4755,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	<li><a href=\"/CompCogNeuro/index.php/CCNBook/Main\">CCN Book</a></li><li><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\">Recent Changes</a></li><li><a href=\"/CompCogNeuro/index.php/Special:Upload\">Upload File</a></li><li><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\">Special Pages</a></li><li><a href=\"/CompCogNeuro/index.php/Main_Page\">Main Page</a></li></ul>
+<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -4777,14 +4781,14 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=edit\" title=\"This page is protected.
-You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
-					<span class=\"placeholder\" style=\"display: none;\"></span>
+You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 90px;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 24px;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 1px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
 	<div class=\"menu\">
-		<ul><li id=\"ca-history\" class=\"collapsible\" style=\"display: list-item;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
+		<ul>
 					</ul>
 	</div>
 </div>
@@ -4792,45 +4796,45 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/CompCogNeuro/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\" class=\"collapsible-nav\">
+			<div id=\"mw-panel\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//CompCogNeuro/logo.png);\" href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
 			<li id=\"n-CCN-Book\"><a href=\"/CompCogNeuro/index.php/CCNBook/Main\">CCN Book</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [ctrl-alt-x]\" accesskey=\"x\">Random page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [x]\" accesskey=\"x\">Random page</a></li>
 			<li id=\"n-help\"><a href=\"https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents\" rel=\"nofollow\" title=\"The place to find out\">Help</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
-	<div class=\"body\" style=\"display: block;\">
+<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\">Tools</h3>
+	<div class=\"body\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=info\">Page information</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
+<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=CCNBook%2FSims%2FPerception%2FObjrec\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=CCNBook%2FSims%2FPerception%2FObjrec&amp;oldid=4616&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -4839,7 +4843,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 24 August 2014, at 21:58.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 6,585 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 6,586 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-privacy\"><a href=\"/CompCogNeuro/index.php/Project:Privacy_policy\" title=\"Project:Privacy policy\">Privacy policy</a></li>
@@ -4862,8 +4866,8 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
-<script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script><div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div>
-<!-- Served in 0.367 secs. -->
+<script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
+<!-- Served in 0.321 secs. -->
 	
 
 </body></html>";
@@ -18279,7 +18283,27 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      name="init_code";
      el_typ=ProgCode;
      el_def=0;
-     AssignExpr @[0] {
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["report"] {
+	name="report";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18288,7 +18312,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="false";
       };
      };
-     MethodCall @[1] {
+     MethodCall @[2] {
       desc="check network to make sure it is ready to be run";
       flags=0;
       orig_prog_code=;
@@ -18311,7 +18335,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     AssignExpr @[2] {
+     AssignExpr @[3] {
       desc="get our pointer to the network training time object";
       flags=OFF;
       orig_prog_code=;
@@ -18320,7 +18344,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="network.train_time";
       };
      };
-     If @[3] {
+     If @[4] {
       desc="initialize random seed (either old or new)";
       flags=0;
       orig_prog_code=;
@@ -18346,7 +18370,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     Else @[4] {
+     Else @[5] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18369,7 +18393,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     IfGuiPrompt @[5] {
+     IfGuiPrompt @[6] {
       desc="don't initialize weights without checking";
       flags=0;
       orig_prog_code=;
@@ -18403,6 +18427,34 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	my_mask=NULL;
 	debug_level=NULL;
        };
+       MemberMethodCall @[2] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="network.cyc_threads.ThreadReport()";
+	obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
+	path="cyc_threads";
+	result_var=.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["report"]$$;
+	method=LeabraCycleThreadMgr::ThreadReport;
+	meth_args {
+	 name="meth_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+       };
+       PrintVar @[3] {
+	desc=;
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="print report";
+	message=;
+	print_var=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["report"]$;
+	print_var2=NULL;
+	print_var3=NULL;
+	print_var4=NULL;
+	print_var5=NULL;
+	print_var6=NULL;
+	my_mask=NULL;
+	debug_level=NULL;
+       };
       };
      };
     };
@@ -18410,7 +18462,27 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     AssignExpr @[0] {
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["report"] {
+	name="report";
+	var_type=T_String;
+	string_val=;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     AssignExpr @[1] {
       desc="get our pointer to the network training time object";
       flags=0;
       orig_prog_code=;
@@ -18419,7 +18491,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="network.train_time";
       };
      };
-     MethodCall @[1] {
+     MethodCall @[2] {
       desc="start timer to keep track of how long it takes to run entire training run";
       flags=0;
       orig_prog_code=;
@@ -18442,7 +18514,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     MemberAssign @[2] {
+     MemberAssign @[3] {
       desc="set network's training mode to our local value";
       flags=0;
       orig_prog_code=;
@@ -18453,7 +18525,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
       update_after=0;
      };
-     If @[3] {
+     If @[4] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18489,7 +18561,35 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     AssignExpr @[4] {
+     MemberMethodCall @[5] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="network.cyc_threads.ThreadReport()";
+      obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
+      path="cyc_threads";
+      result_var=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["report"]$;
+      method=LeabraCycleThreadMgr::ThreadReport;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+     };
+     PrintVar @[6] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="print report";
+      message=;
+      print_var=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["report"]$;
+      print_var2=NULL;
+      print_var3=NULL;
+      print_var4=NULL;
+      print_var5=NULL;
+      print_var6=NULL;
+      my_mask=NULL;
+      debug_level=NULL;
+     };
+     AssignExpr @[7] {
       desc="grab the official network epoch counter: will be initialized if needed by now";
       flags=0;
       orig_prog_code=;
@@ -18498,7 +18598,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="network.epoch";
       };
      };
-     MemberMethodCall @[5] {
+     MemberMethodCall @[8] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18512,7 +18612,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     MethodCall @[6] {
+     MethodCall @[9] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18535,7 +18635,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     WhileLoop @[7] {
+     WhileLoop @[10] {
       desc="main loop over epochs of training";
       flags=0;
       orig_prog_code=;
@@ -18597,7 +18697,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        expr="epoch < max_epoch";
       };
      };
-     MemberMethodCall @[8] {
+     MemberMethodCall @[11] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18621,7 +18721,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     MethodCall @[9] {
+     MethodCall @[12] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18634,7 +18734,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     PrintExpr @[10] {
+     PrintExpr @[13] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -18644,7 +18744,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       my_mask=NULL;
       debug_level=NULL;
      };
-     MethodCall @[11] {
+     MethodCall @[14] {
       desc="stop the timer -- time elapsed is now recorded in this object, and can be displayed or recorded to a data table";
       flags=0;
       orig_prog_code=;
@@ -18657,7 +18757,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     ProgramCall @[12] {
+     ProgramCall @[15] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -19188,7 +19288,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	var_type=T_String;
 	string_val=;
 	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
