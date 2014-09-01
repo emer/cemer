@@ -34,13 +34,24 @@ void NetCounterIncr::GenCssBody_impl(Program* prog) {
     prog->AddLine(this, "// NetCounterIncr ERROR: vars not set!", ProgLine::MAIN_LINE);
     return;
   }
-  prog->AddLine(this, counter->name + "++;");
-  prog->AddLine(this, network_var->name + "->" + counter->name + " = " + counter->name + ";",
-                ProgLine::MAIN_LINE);
-  prog->AddVerboseLine(this);
-  prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
-  if(update_after)
-    prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
+  TypeDef* netype = network_var->act_object_type();
+  if((counter->name == "cycle") && netype->InheritsFromName("LeabraNetwork")) {
+    prog->AddLine(this,
+                  counter->name + " = " + network_var->name + "->" + counter->name + ";",
+                  ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+    prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
+  }
+  else {
+    prog->AddLine(this, counter->name + "++;");
+    prog->AddLine(this,
+                  network_var->name + "->" + counter->name + " = " + counter->name + ";",
+                  ProgLine::MAIN_LINE);
+    prog->AddVerboseLine(this);
+    prog->AddVerboseLine(this, false, "\"new value:\", String(" + counter->name + ")");
+    if(update_after)
+      prog->AddLine(this, network_var->name + "->UpdateAfterEdit();");
+  }
 }
 
 bool NetCounterIncr::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

@@ -37,20 +37,21 @@ void LeabraCycleTask::Destroy() {
   network.CutLinks();
 }
 
-void LeabraCycleTask::SyncAtom(QAtomicInt& stage) {
+void LeabraCycleTask::SyncAtom(QAtomicInt& stage, int cyc) {
   LeabraCycleThreadMgr* mg = mgr();
   if(mg->tasks.size == 1) return;
+  int trg = (cyc+1) * mg->tasks.size;
+
   int cur_cnt = stage.fetchAndAddOrdered(1);
-  if(cur_cnt >= mg->tasks.size) // we were the last guy
+  if(cur_cnt == trg) // we were the last guy
     return;
 
   run_time.EndTimer();
   wait_time.StartTimer(false);
 
-  // todo: could try other sync's here..
-  while(cur_cnt < mg->tasks.size) {
-    taManagedThread::usleep(1);
-    cur_cnt = stage.load();
+  while(cur_cnt < trg) {
+    // taManagedThread::usleep(1);
+    cur_cnt = stage.loadAcquire();
   }
 
   wait_time.EndTimer();
@@ -74,7 +75,7 @@ void LeabraCycleTask::run() {
       un->Send_NetinDelta(net, task_id);
     }
     if(mg->sync_steps)
-      SyncAtom(mg->stage_net);
+      SyncAtom(mg->stage_net, cyc);
 
     // Compute_NetinInteg();
     for(int i=uidx_st; i<uidx_ed; i++) {
@@ -82,7 +83,7 @@ void LeabraCycleTask::run() {
       un->Compute_NetinInteg(net, task_id);
     }
     if(mg->sync_steps)
-      SyncAtom(mg->stage_net_int);
+      SyncAtom(mg->stage_net_int, cyc);
 
     // Compute_NetinStats();
     // Compute_Inhib();
@@ -99,7 +100,7 @@ void LeabraCycleTask::run() {
         // done in unit loop, not layer loop..
       }
       if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib);
+        SyncAtom(mg->stage_inhib, cyc);
     }
     else {
       // layer-group inhibition is a LOT more expensive coordination-wise
@@ -111,12 +112,12 @@ void LeabraCycleTask::run() {
         lay->Compute_Inhib(net);
       }
       if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib_lay);
+        SyncAtom(mg->stage_inhib_lay, cyc);
       if(task_id == 0) {        // first thread does this..
         net->Compute_Inhib_LayGp();
       }
       if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib_gp);
+        SyncAtom(mg->stage_inhib_gp, cyc);
       for(int i=lay_st; i<lay_ed; i++) {
         if(i >= net->layers.leaves) continue;
         LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
@@ -124,7 +125,7 @@ void LeabraCycleTask::run() {
         lay->Compute_ApplyInhib(net);
       }
       if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib);
+        SyncAtom(mg->stage_inhib, cyc);
     }
 
     // Compute_Act();
@@ -133,7 +134,7 @@ void LeabraCycleTask::run() {
       un->Compute_Act(net, task_id);
     }
     if(mg->sync_steps)
-      SyncAtom(mg->stage_act);
+      SyncAtom(mg->stage_act, cyc);
 
     // Compute_CycleStats();
     if(task_id == 0) {        // first thread does this..
@@ -158,7 +159,7 @@ void LeabraCycleTask::run() {
     }
 
     if(mg->sync_steps)
-      SyncAtom(mg->stage_sravg_state);
+      SyncAtom(mg->stage_sravg_state, cyc);
 
     // Compute_SRAvg();
     for(int i=uidx_st; i<uidx_ed; i++) {
@@ -167,13 +168,15 @@ void LeabraCycleTask::run() {
     }
 
     if(mg->sync_steps)
-      SyncAtom(mg->stage_sravg);
+      SyncAtom(mg->stage_sravg, cyc);
 
     // Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
     // todo: figure this one out!
 
-    if(task_id == 0) {        // first thread does this..
-      mg->InitStages();           // start stages over within loop
+    if(task_id == 0) {
+      net->cycle++;
+      net->ct_cycle++;
+      net->time += net->time_inc; // always increment time..
     }
   }
 
@@ -206,6 +209,8 @@ String LeabraCycleTask::ThreadReport() {
 void LeabraCycleThreadMgr::Initialize() {
   n_threads_act = 1;
   n_cycles = 1;
+  input_cost = 0.1f;
+  target_cost = 0.5f;
   min_units = taMisc::thread_defaults.min_units;
   sync_steps = true;
   using_threads = false;
@@ -236,19 +241,19 @@ void LeabraCycleThreadMgr::InitAll() {
   if(net->n_cons == 0 || net->units_flat.size == 0) return; // nothing to do..
 
   // allocate units to threads based on number of sending connections
-  int cons_per_thr = net->n_cons / tasks.size;
-  if(cons_per_thr < 1)          // this shouldn't happen..
-    cons_per_thr = 1;
+  float cons_per_thr = net->n_cons_cost / (float)tasks.size;
+  if(cons_per_thr < 1.0f)          // this shouldn't happen..
+    cons_per_thr = 1.0f;
   int un_idx = 1;
   for(int i=0;i<tasks.size;i++) {
     LeabraCycleTask* uct = (LeabraCycleTask*)tasks[i];
     uct->network = net;
 
-    int cons_th = 0;
+    float cons_th = 0.0f;
     uct->uidx_st = un_idx;
     while(cons_th < cons_per_thr && un_idx < net->units_flat.size) {
       LeabraUnit* u = (LeabraUnit*)net->units_flat[un_idx++];
-      cons_th += u->n_send_cons;
+      cons_th += u->n_send_cons_cost;
     }
     uct->uidx_ed = un_idx;
   }

@@ -50,7 +50,7 @@ public:
   void  run() override;
   // runs full cycle
 
-  void  SyncAtom(QAtomicInt& stage);
+  void  SyncAtom(QAtomicInt& stage, int cyc);
   // #IGNORE sync on given atomic step
 
   String   ThreadReport();
@@ -70,10 +70,12 @@ class E_API LeabraCycleThreadMgr : public taThreadMgr {
   // #INLINE thread manager for LeabraCycle tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  int           n_threads_act;  // #READ_ONLY #SHOW actual number of threads deployed, based on parameters
+  int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   int           n_cycles;       // #MIN_1 how many cycles to run at a time -- more efficient to run multiple cycles per Run
+  float         input_cost;     // relative computational cost of a hard-clamped INPUT layer compared to a full hidden layer -- much reduced due to many steps skipped for these layers -- optimize this to get initial allocation closer to balanced
+  float         target_cost;     // relative computational cost of a hard-clamped TARGET layer compared to a full hidden layer -- reduced due to many steps skipped for these layers -- optimize this to get initial allocation closer to balanced
   int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
-  bool          sync_steps;     // keep each step of computation within the cycle syncronized, using atomic ints 
+  bool          sync_steps;     // keep each step of computation within the cycle syncronized, using atomic ints -- ensures 100% accurate computation -- turning this off is untested and likely to cause problems at this point
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
   // the following track how many threads have reached each stage -- atomic incremented by working threads

@@ -29,6 +29,14 @@ inline Layer* Unit::own_lay() const {
   return ((Unit_Group*)owner)->own_lay;
 }
 
+inline Network* Unit::own_net() const {
+  return own_lay()->own_net;
+}
+
+inline int Unit::UnitGpIdx() const {
+  return own_lay()->UnitGpIdx((Unit*)this);
+}
+
 inline bool Unit::lay_lesioned() const {
   return own_lay()->lesioned();
 }

@@ -109,7 +109,6 @@ public:
   float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   float 	sev;		// #CAT_Activation serotonin value 
 
-  bool		in_subgp;	// #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
   float		net_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
   float		bias_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
   float		ctxt_scale;	// #NO_SAVE #EXPERT #CAT_Activation total context netinput weight scaling factor -- computed from TI context projections, and used for auto-rescaling of act_ctxt in plus phase to keep proportions the same
@@ -126,6 +125,7 @@ public:
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in ct_cycle units when spiking last occurred (-1 for not yet)
+  float         n_send_cons_cost; // #CAT_Structure #READ_ONLY #EXPERT total number of sending connections weighed by computational cost (see network cyc_threads params)
   float_CircBuffer* act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
   float_CircBuffer* spike_e_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of excitatory net input from spikes for synaptic integration over discrete spikes
   float_CircBuffer* spike_i_buf; // #NO_VIEW #NO_SAVE #CAT_Activation buffer of inhibitory net input from spikes for synaptic integration over discrete spikes
@@ -136,6 +136,7 @@ public:
   // add current activation to act buf if synaptic delay is on
 
   inline LeabraLayer*	own_lay() const {return (LeabraLayer*)inherited::own_lay();}
+  inline LeabraNetwork*	own_net() const {return (LeabraNetwork*)inherited::own_net();}
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -328,8 +329,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions
 
-  void	GetInSubGp();
   void	BuildUnits() override;
+  int   CountCons(Network* net) override
+  { return ((LeabraUnitSpec*)GetUnitSpec())->CountCons(this, (LeabraNetwork*)net); }
 
   void	InitLinks();
   void	CutLinks();

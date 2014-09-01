@@ -70,6 +70,7 @@ void LeabraNetwork::Initialize() {
 
   ct_cycle = 0;
   time_inc = 1.0f;              // just a simple counter by default
+  n_cons_cost = 0.0f;
 
   cycle_max = 60;
   mid_minus_cycle = -1;
@@ -344,6 +345,11 @@ void LeabraNetwork::CheckInhibCons() {
   }
 }
 
+void LeabraNetwork::CountCons() {
+  n_cons_cost = 0.0f;
+  inherited::CountCons();
+}
+
 void LeabraNetwork::BuildUnits_Threads() {
   CheckInhibCons();
   if(inhib_cons_used) {
@@ -585,8 +591,6 @@ void LeabraNetwork::Cycle_Run() {
 
   if(cyc_threads.CanRun()) {
     cyc_threads.Run();
-    ct_cycle += cyc_threads.n_cycles;
-    time += cyc_threads.n_cycles * time_inc; // always increment time..
   }
   else {
     Send_Netin();
@@ -605,7 +609,8 @@ void LeabraNetwork::Cycle_Run() {
     Compute_SRAvg();              // note: only ctleabra variants do con-level compute here
     Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
 
-    ct_cycle += 1;
+    cycle++;
+    ct_cycle++;
     time +=  time_inc; // always increment time..
   }
 }

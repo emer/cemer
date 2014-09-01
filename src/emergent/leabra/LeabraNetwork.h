@@ -158,6 +158,7 @@ public:
 
   int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
+  float         n_cons_cost;    // computational-cost weighted number of total connections -- weighted by input_cost and target_cost in cyc_threads
 
   LeabraCycleThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
@@ -287,7 +288,8 @@ public:
   virtual void	CheckInhibCons();
   void	BuildUnits_Threads() override;
   void  BuildUnits_Threads_send_netin_tmp() override;
-  bool RecvOwnsCons() override { return false; }
+  bool  RecvOwnsCons() override { return false; }
+  void  CountCons() override;
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial

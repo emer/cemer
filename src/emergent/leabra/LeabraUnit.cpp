@@ -60,7 +60,6 @@ void LeabraUnit::Initialize() {
   dav = 0.0f;
   sev = 0.0f;
 
-  in_subgp = false;
   net_scale = 0.0f;
   bias_scale = 0.0f;
   ctxt_scale = 0.0f;
@@ -78,6 +77,8 @@ void LeabraUnit::Initialize() {
   misc_1 = 0.0f;
   spk_t = -1;
 
+  n_send_cons_cost = 0.0f;
+  
   act_buf = NULL;
   spike_e_buf = NULL;
   spike_i_buf = NULL;
@@ -87,7 +88,6 @@ void LeabraUnit::InitLinks() {
   inherited::InitLinks();
   taBase::Own(vcb, this);
   taBase::Own(gc, this);
-  GetInSubGp();
 }
 
 void LeabraUnit::CutLinks() {
@@ -114,14 +114,6 @@ void LeabraUnit::BuildUnits() {
     us->Init_SpikeBuff(this);
     us->Init_ActBuff(this);
   }
-}
-
-void LeabraUnit::GetInSubGp() {
-  Unit_Group* ownr = (Unit_Group*)owner;
-  if((ownr != NULL) && (ownr->owner != NULL) && ownr->owner->InheritsFrom(TA_taSubGroup))
-    in_subgp = true;
-  else
-    in_subgp = false;
 }
 
 void LeabraUnit::Copy_(const LeabraUnit& cp) {
@@ -167,4 +159,5 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
   spk_t = cp.spk_t;
+  n_send_cons_cost = cp.n_send_cons_cost;
 }

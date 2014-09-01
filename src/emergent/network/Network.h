@@ -265,8 +265,8 @@ public:
   // #CAT_Structure update active status of all connections
   virtual void  SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
-  virtual void  CountOwnCons();
-  // #CAT_Structure count owned connections for all units in network
+  virtual void  CountCons();
+  // #CAT_Structure count connections for all units in network
   virtual bool  RecvOwnsCons() { return true; }
   // #CAT_Structure does the receiver own the connections (default) or does the sender?
 

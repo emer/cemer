@@ -96,6 +96,8 @@ public: //
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
+  bool		in_subgp;
+  // #CAT_Structure #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
 
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
   // set flag state on
@@ -124,16 +126,19 @@ public: //
   virtual void  UpdtAfterNetModIfNecc();
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
-  inline bool   lay_lesioned() const;
+  inline bool           lay_lesioned() const;
   // #CAT_Structure #IGNORE is the layer this unit is in lesioned?
-  inline Layer* own_lay() const;
+  inline Layer*         own_lay() const;
   // #CAT_Structure #IGNORE get the owning layer of this unit
-  Network*      own_net() const;
-  // #CAT_Structure get the owning network of this unit
-  Unit_Group*   own_subgp() const;
+  inline Network*       own_net() const;
+  // #CAT_Structure #IGNORE get the owning network of this unit
+  inline Unit_Group*    own_subgp() const
+  { if(!in_subgp) return NULL; return (Unit_Group*)owner; }
   // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup -- note that with virt_groups as default, most units do not have an owning subgroup even if there are logical subgroups
-  int           UnitGpIdx() const;
-  // #CAT_Structure get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
+  inline int            UnitGpIdx() const;
+  // #CAT_Structure #IGNORE get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
+  void                  GetInSubGp();
+  // #IGNORE determine if unit is in a subgroup -- sets in_subgp flag -- called by InitLinks() -- should be good..
 
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
@@ -267,7 +272,7 @@ public: //
   // #CAT_Structure remove connection from given unit (projection is optional)
   virtual void  DisConnectAll();
   // #MENU #MENU_ON_Actions #CAT_Structure disconnect unit from all other units
-  virtual int   CountOwnCons(Network* net);
+  virtual int   CountCons(Network* net);
   // #CAT_Structure count total number of owned connections
   virtual void  UpdtActiveCons();
   // #CAT_Structure update the active state of all connection groups
@@ -300,8 +305,8 @@ public: //
                Projection* prjn=NULL);
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var" -- prjn restricts to that prjn
 
-  int  GetIndex() const override { return idx; }
-  void SetIndex(int i) override { idx = i; }
+  int           GetIndex() const override { return idx; }
+  void          SetIndex(int i) override { idx = i; }
   virtual int   GetMyLeafIndex();
   // #CAT_Structure compute leaf index from my individual index in an efficient manner
   void          GetAbsPos(taVector3i& abs_pos)  { abs_pos = pos; AddRelPos(abs_pos); }

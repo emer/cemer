@@ -44,6 +44,7 @@ void Unit::Initialize() {
   // pos = ??
   idx = -1;
   flat_idx = 0;
+  in_subgp = false;
   voxels = NULL;
   m_unit_spec = NULL;
   bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
@@ -59,6 +60,7 @@ void Unit::InitLinks() {
   taBase::Own(send, this);
   taBase::Own(bias, this);
   taBase::Own(pos, this);
+  GetInSubGp();
   BuildUnits();
 }
 
@@ -69,6 +71,7 @@ void Unit::CutLinks() {
   m_unit_spec = NULL;
   idx = -1;
   flat_idx = 0;
+  in_subgp = false;
   if(voxels) {
     taBase::DelPointer((taBase**)&voxels);
   }
@@ -547,7 +550,7 @@ void Unit::DisConnectAll() {
   n_send_cons = 0;
 }
 
-int Unit::CountOwnCons(Network* net) {
+int Unit::CountCons(Network* net) {
   n_recv_cons = 0;
   for(int g = 0; g < recv.size; g++) {
     RecvCons* cg = recv.FastEl(g);
@@ -587,20 +590,12 @@ void Unit::UpdtActiveCons() {
   }
 }
 
-Network* Unit::own_net() const {
-  Layer* ol = own_lay();
-  if(!ol) return NULL;
-  return ol->own_net;
-}
-
-Unit_Group* Unit::own_subgp() const {
-  if(!owner || !owner->GetOwner()) return NULL;
-  if(owner->GetOwner()->InheritsFrom(&TA_Layer)) return NULL; // we're owned by the layer really
-  return (Unit_Group*)owner;
-}
-
-int Unit::UnitGpIdx() const {
-  return own_lay()->UnitGpIdx((Unit*)this);
+void Unit::GetInSubGp() {
+  Unit_Group* ownr = (Unit_Group*)owner;
+  if((ownr != NULL) && (ownr->owner != NULL) && ownr->owner->InheritsFrom(TA_taSubGroup))
+    in_subgp = true;
+  else
+    in_subgp = false;
 }
 
 void Unit::Copy_Weights(const Unit* src, Projection* prjn) {

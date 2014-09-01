@@ -288,7 +288,7 @@ void Network::UpdtAfterNetMod() {
   //  SyncSendPrjns();
   UpdtActiveCons();
   // make sure active flags are updated on all connections, e.g., from lesions
-  CountOwnCons();
+  CountCons();
   BuildUnits_Threads();
   small_batch_n_eff = small_batch_n;
   if(small_batch_n_eff < 1) small_batch_n_eff = 1;
@@ -304,13 +304,13 @@ void Network::UpdtActiveCons() {
   }
 }
 
-void Network::CountOwnCons() {
+void Network::CountCons() {
   n_units = 0;
   n_cons = 0;
   max_prjns = 1;
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
-    n_cons += l->CountOwnCons(this);
+    n_cons += l->CountCons(this);
     n_units += l->units.leaves;
     max_prjns = MAX(l->projections.size, max_prjns);
   }

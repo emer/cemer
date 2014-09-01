@@ -78,9 +78,10 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem 
 #endif
 
-  void CheckSpecs() override;
+  void  CheckSpecs() override;
+  int   CountCons(Network* net) override;
   void	BuildUnits() override;
-  void BuildUnits_Threads(Network* net) override
+  void  BuildUnits_Threads(Network* net) override
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
   virtual  void	BuildKwtaBuffs();
   // #IGNORE build kwta buffers etc -- needs to be done at load and build time

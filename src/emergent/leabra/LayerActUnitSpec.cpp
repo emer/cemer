@@ -15,5 +15,12 @@
 
 #include "LayerActUnitSpec.h"
 
+#include <LeabraNetwork>
+
 TA_BASEFUNS_CTORS_DEFN(LayerActUnitSpec);
 
+int LayerActUnitSpec::CountCons(LeabraUnit* u, LeabraNetwork* net) {
+  int rval = inherited::CountCons(u, net);
+  u->n_send_cons_cost *= .2f;      // discount -- todo: tune this!
+  return rval;
+}

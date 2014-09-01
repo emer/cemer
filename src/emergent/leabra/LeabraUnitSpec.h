@@ -830,6 +830,9 @@ public:
   virtual void TimeExp(int mode, int nreps=100000000);
   // #MENU_BUTTON #MENU_ON_Graph ime how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
+  virtual int   CountCons(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_Structure count total number of connections -- include cost-weighted estimates -- specific subtypes that involve more or less computation might want to override and set appropriately
+
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
 
   void	InitLinks();

@@ -79,10 +79,13 @@ void taThreadMgr::InitThreads() {
   if(threads.size == n_threads-1) return;
   int n_to_make = n_threads-1;	// 0 = main guy!
 
+  String thnm = GetTypeDef()->name + "_";
+  
   // have to create and destroy wholesale, because they are all waiting on the same signal
   RemoveThreads();
   for(int i = 0; i < n_to_make; ++i) {
     taManagedThread* tt = new taManagedThread(this);
+    tt->setObjectName(thnm + (String)(i+1));
     threads.Add(tt);
   }
   n_active = 0;			// reset now for sure

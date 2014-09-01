@@ -751,11 +751,11 @@ void Layer::DisConnect() {
   StructUpdate(false);
 }
 
-int Layer::CountOwnCons(Network* net) {
+int Layer::CountCons(Network* net) {
   int n_cons = 0;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    n_cons += u->CountOwnCons(net);
+    n_cons += u->CountCons(net);
   }
   return n_cons;
 }
