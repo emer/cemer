@@ -18,6 +18,12 @@
 #include <LeabraNetwork>
 #include <taMisc>
 
+// todo: timer flag to turn off timing -- how long is that taking?
+// timing separate for layer vs. unit level!  then we can optimize each separately!
+// actually: separate timers for each function, and separate start/end for each
+// then we can really optimize each one separately
+// flat linked list of active (non-lesioned) layers for better distribution
+// ApplyInhib happens at unit level
 
 TA_BASEFUNS_CTORS_DEFN(LeabraCycleThreadMgr);
 
