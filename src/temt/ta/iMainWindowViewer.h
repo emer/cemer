@@ -297,9 +297,9 @@ public:
   //bogus: see Qt docs on geometry under X
   bool                  AlignCssConsole();
   // align css console to our window, if applicable
-  void			ProjDirToCurrent();
+  void                  ProjDirToCurrent();
   // set current project directory to current directory
-  virtual void         raise();
+  virtual void          raise();
 
   static iMainWindowViewer* GetViewerForObj(taBase* obj);
   // useful utility to get main window viewer for any given object
@@ -344,6 +344,10 @@ public slots:
   virtual void  editFindNext();
   virtual void  viewRefresh() { Refresh(); UpdateUi(); } // manually rebuild/refresh the current view
   virtual void  viewSaveView(); // save the current view state
+  
+  virtual void  editCut();
+  virtual void  editCopy();
+  virtual void  editPaste();
 
   virtual void  ShowHideFrames(int combo);
   virtual void  showMenu_aboutToShow();
@@ -364,6 +368,7 @@ public slots:
   void          toolsOpenRemoteServer();
   void          toolsCloseRemoteServer();
   virtual void  toolsMenu_aboutToShow();
+  virtual void  dataMenu_aboutToShow();
 
   virtual void  ctrlStop();
   virtual void  ctrlCont();

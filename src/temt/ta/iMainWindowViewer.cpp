@@ -68,8 +68,9 @@
 #include <QKeyEvent>
 #include <QSignalMapper>
 #include <QApplication>
-
-
+#include <QPalette>
+#include <QLineEdit>
+#include <QClipboard>
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -391,11 +392,11 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   toolsMenu = menu->AddSubMenu("&Tools");
   connect(toolsMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(toolsMenu_aboutToShow()));
   dataMenu = menu->AddSubMenu("&Data");
+  connect(dataMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(dataMenu_aboutToShow()));
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
   helpMenu = menu->AddSubMenu("&Help");
   connect(editMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(editMenu_aboutToShow()));
-
 }
 
 void iMainWindowViewer::Constr_Menu_impl()
@@ -574,7 +575,7 @@ void iMainWindowViewer::Constr_EditMenu()
   editCopyAction->setIcon(QIcon(QPixmap(":/images/editcopy.png")));
 
   // Note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
-  editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate  (Ctrl+M)", QKeySequence(), "editDuplicateAction"));
+  editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate", QKeySequence(Qt::META + Qt::Key_M), "editDuplicateAction"));
   QPixmap editpaste(":/images/editpaste.png");
   editPasteAction = AddAction(new iAction(iClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str + "V"), "editPasteAction"));
   editPasteAction->setIcon(QIcon(editpaste));
@@ -619,10 +620,9 @@ void iMainWindowViewer::Constr_EditMenu()
   // Make connections.
   connect(editUndoAction, SIGNAL(Action()), this, SLOT(editUndo()));
   connect(editRedoAction, SIGNAL(Action()), this, SLOT(editRedo()));
-  connect(editCutAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
-  connect(editCopyAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
-  connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
-  connect(editPasteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editCutAction, SIGNAL(Action()), this, SLOT(editCut()));
+  connect(editCopyAction, SIGNAL(Action()), this, SLOT(editCopy()));
+  connect(editPasteAction, SIGNAL(Action()), this, SLOT(editPaste()));
   connect(editPasteIntoAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editPasteAssignAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editPasteAppendAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
@@ -630,6 +630,7 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editLinkIntoAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editUnlinkAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editDeleteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
+  connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
   connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
 }
@@ -2128,15 +2129,116 @@ void iMainWindowViewer::viewSaveView() {
   viewer()->GetWinState();
 }
 
-// undo/redo were not always visually updated so this ensures they are
-// makes me wonder about the other menu items
+// cut is only for text - delete is for objects
+void iMainWindowViewer::editCut() {
+  QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
+  if (lineEdit)
+  {
+    // text fields don't
+    lineEdit->cut();
+  }
+}
+
+void iMainWindowViewer::editCopy() {
+  QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
+  if (lineEdit) // if text
+  {
+    lineEdit->copy();
+  }
+  else {  // else object
+    emit_EditAction(iClipData::EA_COPY);
+  }
+}
+
+void iMainWindowViewer::editPaste() {
+  QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
+  if (lineEdit)  // if text
+  {
+    lineEdit->paste();
+  }
+  else {  // else object
+    emit_EditAction(iClipData::EA_PASTE);
+  }
+}
+
 void iMainWindowViewer::editMenu_aboutToShow() {
   taProject* proj = myProject();
   if(proj) {
     editUndoAction->setEnabled(proj->undo_mgr.UndosAvail() > 0);
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
+    
+    QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
+    bool edit_text = lineEdit != NULL;
+    if (edit_text) {
+      editCutAction->setEnabled(edit_text && lineEdit->hasSelectedText());
+      editCopyAction->setEnabled(edit_text && lineEdit->hasSelectedText());
+      
+      QClipboard *clipboard = QApplication::clipboard();
+      QString clip_text = clipboard->text();
+      taMisc::DebugInfo((String)clip_text.isEmpty());
+      editPasteAction->setEnabled(edit_text && !clip_text.isEmpty());
+      
+      // these aren't for text
+      editDupeAction->setEnabled(false);
+      editDeleteAction->setEnabled(false);
+      
+      // these are not always visible
+      editPasteIntoAction->setVisible(false);
+      editPasteAssignAction->setVisible(false);
+      editPasteAppendAction->setVisible(false);
+    }
+    else {  // focus is not in text field
+      editCutAction->setEnabled(false);
+      
+      int ea = GetEditActions();
+      editCopyAction->setEnabled(ea & iClipData::EA_COPY);
+      editDupeAction->setEnabled(ea & iClipData::EA_DUPE);
+      editDeleteAction->setEnabled(ea & iClipData::EA_DELETE);
+      
+      int paste_cnt = 0;
+      if (ea & iClipData::EA_PASTE) ++paste_cnt;
+      if (ea & iClipData::EA_PASTE_INTO) ++paste_cnt;
+      if (ea & iClipData::EA_PASTE_ASSIGN) ++paste_cnt;
+      if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
+      
+      editPasteAction->setEnabled(ea & iClipData::EA_PASTE);
+      editPasteIntoAction->setVisible(ea & iClipData::EA_PASTE_INTO);
+      editPasteAssignAction->setVisible(ea & iClipData::EA_PASTE_ASSIGN);
+      editPasteAppendAction->setVisible(ea & iClipData::EA_PASTE_APPEND);
+      
+      if (ea & iClipData::EA_PASTE_INTO) {
+        if (paste_cnt > 1) {
+          editPasteIntoAction->setText("Paste Into");
+          editPasteIntoAction->setShortcut(QKeySequence());
+        } else {
+          editPasteIntoAction->setText("&Paste Into");
+          editPasteIntoAction->setShortcut(QKeySequence(cmd_str + "V"));
+        }
+      }
+      if (ea & iClipData::EA_PASTE_ASSIGN)  {
+        if (paste_cnt > 1) {
+          editPasteAssignAction->setText("Paste Assign");
+          editPasteAssignAction->setShortcut(QKeySequence());
+        } else {
+          editPasteAssignAction->setText("&Paste Assign");
+          editPasteAssignAction->setShortcut(QKeySequence(cmd_str + "V"));
+        }
+      }
+      if (ea & iClipData::EA_PASTE_APPEND)  {
+        if (paste_cnt > 1) {
+          editPasteAppendAction->setText("Paste Append");
+          editPasteAppendAction->setShortcut(QKeySequence());
+        } else {
+          editPasteAppendAction->setText("&Paste Append");
+          editPasteAppendAction->setShortcut(QKeySequence(cmd_str + "V"));
+        }
+      }
+    }
+    emit SetActionsEnabled();
   }
 }
+
+
 
 void iMainWindowViewer::windowMenu_aboutToShow() {
   // Clear and rebuild submenu.
@@ -2340,7 +2442,8 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
     const char* actions_enabled_slot,
     const char* update_ui_signal)
 {
-  if (last_clip_handler == handler_obj) return; // nothing to do
+  if (last_clip_handler == handler_obj)
+    return; // nothing to do
   // always disconnect first
   if (last_clip_handler) {
     disconnect(this, SIGNAL(GetEditActionsEnabled(int&)), last_clip_handler, NULL);
@@ -2436,6 +2539,66 @@ void iMainWindowViewer::toolsMenu_aboutToShow() {
   toolsDiffSpecsAction->setEnabled(tabMisc::root->projects.size > 0);
   toolsOpenServerAction->setEnabled(!taRootBase::instance()->IsServerOpen());
   toolsCloseServerAction->setEnabled(taRootBase::instance()->IsServerOpen());
+}
+
+void iMainWindowViewer::dataMenu_aboutToShow() {
+  for (int i=0; i<dataProcCopyActions.size; i++) {
+    dataProcCopyActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataProcOrderActions.size; i++) {
+    dataProcOrderActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataProcSelectActions.size; i++) {
+    dataProcSelectActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataProcColumnsActions.size; i++) {
+    dataProcColumnsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalStatsActions.size; i++) {
+    dataAnalStatsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalDistanceActions.size; i++) {
+    dataAnalDistanceActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalHighDimActions.size; i++) {
+    dataAnalHighDimActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalCleanActions.size; i++) {
+    dataAnalCleanActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataAnalGraphActions.size; i++) {
+    dataAnalGraphActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenBasicActions.size; i++) {
+    dataGenBasicActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenListsActions.size; i++) {
+    dataGenListsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenDrawActions.size; i++) {
+    dataGenDrawActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenRandomActions.size; i++) {
+    dataGenRandomActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenFeatPatsActions.size; i++) {
+    dataGenFeatPatsActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<dataGenFilesActions.size; i++) {
+    dataGenFilesActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<imageProcTransformActions.size; i++) {
+    imageProcTransformActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<imageProcFilterActions.size; i++) {
+    imageProcFilterActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<imageProcNoiseActions.size; i++) {
+    imageProcNoiseActions[i]->setEnabled(myProject());
+  }
+  for (int i=0; i<imageProcImageProcActions.size; i++) {
+    imageProcImageProcActions[i]->setEnabled(myProject());
+  }
 }
 
 void iMainWindowViewer::this_DockSelect(iAction* me) {
@@ -2551,53 +2714,6 @@ void iMainWindowViewer::UpdateUi() {
   TurnOffTouchEventsForWindow(windowHandle());
 #endif
   int ea = GetEditActions();
-  // some actions we always show, others we only show if available
-  // editCutAction->setEnabled(ea & iClipData::EA_CUT);
-  // editCopyAction->setEnabled(ea & iClipData::EA_COPY);
-  // editDupeAction->setVisible(ea & iClipData::EA_DUPE);
-  editCutAction->setEnabled(true);
-  editCopyAction->setEnabled(true);
-  editDupeAction->setVisible(true);
-  // we always show the plainjane Paste (enable or disable)
-  // if more than one paste guy is enabled, no shortcuts/accelerators
-  int paste_cnt = 0;
-  if (ea & iClipData::EA_PASTE) ++paste_cnt;
-  if (ea & iClipData::EA_PASTE_INTO) ++paste_cnt;
-  if (ea & iClipData::EA_PASTE_ASSIGN) ++paste_cnt;
-  if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
-  editPasteAction->setEnabled(ea & iClipData::EA_PASTE);
-  editPasteIntoAction->setVisible(ea & iClipData::EA_PASTE_INTO);
-  editPasteAssignAction->setVisible(ea & iClipData::EA_PASTE_ASSIGN);
-  editPasteAppendAction->setVisible(ea & iClipData::EA_PASTE_APPEND);
-  if (ea & iClipData::EA_PASTE_INTO) {
-    if (paste_cnt > 1) {
-      editPasteIntoAction->setText("Paste Into");
-      editPasteIntoAction->setShortcut(QKeySequence());
-    } else {
-      editPasteIntoAction->setText("&Paste Into");
-      editPasteIntoAction->setShortcut(QKeySequence(cmd_str + "V"));
-    }
-  }
-  if (ea & iClipData::EA_PASTE_ASSIGN)  {
-    if (paste_cnt > 1) {
-      editPasteAssignAction->setText("Paste Assign");
-      editPasteAssignAction->setShortcut(QKeySequence());
-    } else {
-      editPasteAssignAction->setText("&Paste Assign");
-      editPasteAssignAction->setShortcut(QKeySequence(cmd_str + "V"));
-    }
-  }
-  if (ea & iClipData::EA_PASTE_APPEND)  {
-    if (paste_cnt > 1) {
-      editPasteAppendAction->setText("Paste Append");
-      editPasteAppendAction->setShortcut(QKeySequence());
-    } else {
-      editPasteAppendAction->setText("&Paste Append");
-      editPasteAppendAction->setShortcut(QKeySequence(cmd_str + "V"));
-    }
-  }
-
-  editDeleteAction->setEnabled(ea & iClipData::EA_DELETE);
 
   // linking is currently not really used, so we'll not show by default
   // if we later add more linking capability, we may want to always enable,
@@ -2645,65 +2761,6 @@ void iMainWindowViewer::UpdateUi() {
     fileSaveAction->setEnabled(!curProject()->save_as_only);
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
   }
-
-  for (int i=0; i<dataProcCopyActions.size; i++) {
-    dataProcCopyActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataProcOrderActions.size; i++) {
-    dataProcOrderActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataProcSelectActions.size; i++) {
-    dataProcSelectActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataProcColumnsActions.size; i++) {
-    dataProcColumnsActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataAnalStatsActions.size; i++) {
-    dataAnalStatsActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataAnalDistanceActions.size; i++) {
-    dataAnalDistanceActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataAnalHighDimActions.size; i++) {
-    dataAnalHighDimActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataAnalCleanActions.size; i++) {
-    dataAnalCleanActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataAnalGraphActions.size; i++) {
-    dataAnalGraphActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenBasicActions.size; i++) {
-    dataGenBasicActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenListsActions.size; i++) {
-    dataGenListsActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenDrawActions.size; i++) {
-    dataGenDrawActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenRandomActions.size; i++) {
-    dataGenRandomActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenFeatPatsActions.size; i++) {
-    dataGenFeatPatsActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<dataGenFilesActions.size; i++) {
-    dataGenFilesActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcTransformActions.size; i++) {
-    imageProcTransformActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcFilterActions.size; i++) {
-    imageProcFilterActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcNoiseActions.size; i++) {
-    imageProcNoiseActions[i]->setEnabled(myProject());
-  }
-  for (int i=0; i<imageProcImageProcActions.size; i++) {
-    imageProcImageProcActions[i]->setEnabled(myProject());
-  }
-
   emit SetActionsEnabled();
 }
 
