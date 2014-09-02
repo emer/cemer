@@ -20,6 +20,7 @@
 #include <taNBase>
 
 // member includes:
+#include <Average>
 
 // declare all other types mentioned but not required to include:
 class TimeUsedHRd; // #IGNORE
@@ -32,12 +33,24 @@ INHERITED(taNBase)
 public:
   double        s_used;         // #SHOW #GUI_READ_ONLY total number of seconds used
   int           n_used;         // #SHOW #GUI_READ_ONLY number of individual times the timer has been used without resetting accumulation
+  Average       avg_used;       // #SHOW #GUI_READ_ONLY running average of s_used, updated whenever UpdtAvg is called -- useful for keeping track of averages over time
 
   virtual void  StartTimer(bool reset_used = true);
-  // record the current time as the starting time, and optionally reset the time used information
-  virtual void  EndTimer();     // record the current time as the ending time, and compute difference as the time used
+  // #CAT_TimeUsed record the current time as the starting time, and optionally reset the time used information
+  virtual void  EndTimer();
+  // #CAT_TimeUsed record the current time as the ending time, and compute difference as the time used
   virtual void  ResetUsed();
-  // reset time used information
+  // #CAT_TimeUsed reset time used information -- does NOT reset the avg_used accumulator
+
+  inline float IncrAvg()
+  { return avg_used.IncrementAvg(s_used); }
+  // #CAT_TimeUsed increment the avg_used running average with the current s_used data -- note this is the total accumulated s_used, not the average of s_used / n_used -- see IncrAvgFmAvg
+  inline float IncrAvgFmAvg()
+  { if(n_used > 0) return avg_used.IncrementAvg(s_used / (float)n_used); return 0.0f; }
+  // #CAT_TimeUsed increment the avg_used running average with the current s_used / n_used average -- see also IncrAvg
+  inline void  ResetAvg()
+  { avg_used.ResetAvg(); }
+  // #CAT_TimeUsed reset the avg_used running average accumulator
 
   TA_BASEFUNS(TimeUsedHR);
 protected:

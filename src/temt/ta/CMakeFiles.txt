@@ -148,6 +148,7 @@ set(ta_HEADS_MAKETA_NOMOC
   MinMaxInt.h
   FixedMinMax.h
   Modulo.h
+  Average.h
 
   XYNGeom.h
   ValIdx.h
@@ -1271,6 +1272,7 @@ set(ta_SRCS_MAKETA
   MinMaxInt.cpp
   FixedMinMax.cpp
   Modulo.cpp
+  Average.cpp
 
   XYNGeom.cpp
   ValIdx.cpp

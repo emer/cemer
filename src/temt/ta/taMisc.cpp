@@ -240,6 +240,7 @@ taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS |
 // nobody besides Brad uses 2x2..
 taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
 taMisc::ViewerOptions   taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
+taMisc::EditOptions     taMisc::edit_options = EO_0;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 ViewBackground_List* taMisc::view_backgrounds = NULL;
@@ -262,7 +263,6 @@ short                   taMisc::num_browse_history = 20;
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
 
-bool                    taMisc::alt_cell_editing = false;
 
 ////////////////////////////////////////////////////////
 //      File/Path/Arg Info

@@ -79,7 +79,8 @@ void iLineEdit::editInEditor() {
 void iLineEdit::focusInEvent(QFocusEvent* e) {
   inherited::focusInEvent(e);
   
-  if (taMisc::alt_cell_editing && e->reason() != Qt::PopupFocusReason) {
+  if (!(taMisc::edit_options & taMisc::TYPING_REPLACES) &&
+      e->reason() != Qt::PopupFocusReason) {
     if(hasSelectedText()) {
       deselect();
       if(init_start_pos == -1) {

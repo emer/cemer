@@ -156,11 +156,16 @@ public:
 
   enum ViewerOptions { // #BITS options for the viewer
     VO_0                = 0, // #IGNORE
-    VO_DOUBLE_CLICK_EXP_ALL = 0X001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
+    VO_DOUBLE_CLICK_EXP_ALL = 0x001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
     VO_AUTO_SELECT_NEW  = 0x002, // #LABEL_AutoSelectNew automatically select (the first) of a new tree item that is made with New or similar menu commands
     VO_AUTO_EXPAND_NEW  = 0x004, // #LABEL_AutoExpandNew automatically expand new tree items that are made with New or similar menu commands
     VO_NO_TOOLBAR = 0x008,       // #LABEL_NoToolbar do not turn on the toolbar by default in new project views
     VO_NO_TOOLBOX = 0x010,       // #LABEL_NoToolbox do not turn on the program toolbox by default in new projectd views
+  };
+
+  enum EditOptions { // #BITS options for editing
+    EO_0  = 0,          // #IGNORE
+    TYPING_REPLACES = 0x0001,    // typing into a text field at the start of editing replaces any existing text -- otherwise it inserts at the start of existing text
   };
 
   enum GuiStyle {      // style options provided by the gui system (not all are available on all platforms)
@@ -270,6 +275,7 @@ public:
   static ColorHints     color_hints; // #SAVE #CAT_GUI #EXPERT what types of color hinting to use in the application
   static ProjViewPref   proj_view_pref; // #SAVE #CAT_GUI #EXPERT the default way to view projects
   static ViewerOptions  viewer_options; // #SAVE #CAT_GUI #EXPERT misc options for the viewer
+  static EditOptions    edit_options;  // #SAVE #CAT_GUI #EXPERT misc options for how editing behaves 
 #ifndef NO_TA_BASE
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
@@ -293,8 +299,6 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
-  
-  static bool           alt_cell_editing; // #SAVE #CAT_GUI an alternate style of datatable cell editing so that you can start typing immediately and the characters will go before the first existing character. Otherwise the chars would replace the current text of the cell.
   
  ////////////////////////////////////////////////////////
   //    File/Paths Info
