@@ -2175,7 +2175,6 @@ void iMainWindowViewer::editMenu_aboutToShow() {
       
       QClipboard *clipboard = QApplication::clipboard();
       QString clip_text = clipboard->text();
-      taMisc::DebugInfo((String)clip_text.isEmpty());
       editPasteAction->setEnabled(edit_text && !clip_text.isEmpty());
       
       // these aren't for text
