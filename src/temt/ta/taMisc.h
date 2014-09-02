@@ -294,6 +294,8 @@ public:
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
   
+  static bool           alt_cell_editing; // #SAVE #CAT_GUI an alternate style of datatable cell editing so that you can start typing immediately and the characters will go before the first existing character. Otherwise the chars would replace the current text of the cell.
+  
  ////////////////////////////////////////////////////////
   //    File/Paths Info
 

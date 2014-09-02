@@ -23,6 +23,9 @@
 #include <QApplication>
 #include <QTextEdit>
 #include <QKeyEvent>
+#include <QObject>
+
+#include <taMisc>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -75,19 +78,22 @@ void iLineEdit::editInEditor() {
 
 void iLineEdit::focusInEvent(QFocusEvent* e) {
   inherited::focusInEvent(e);
-  if(hasSelectedText()) {
-    deselect();
-    if(init_start_pos == -1) {
-      end(false);
+  
+  if (taMisc::alt_cell_editing && e->reason() != Qt::PopupFocusReason) {
+    if(hasSelectedText()) {
+      deselect();
+      if(init_start_pos == -1) {
+        end(false);
+      }
+      else {
+        setCursorPosition(0);
+      }
     }
-    else {
-      setCursorPosition(0);
+    if(init_start_kill) {
+      end(true);                // mark
+      cut();
+      clearExtSelection();
     }
-  }
-  if(init_start_kill) {
-    end(true);                // mark
-    cut();
-    clearExtSelection();
   }
   // activateWindow();          // make sure we're active when we click in a box!
   // std::cerr << "focus in" << std::endl;
@@ -169,79 +175,79 @@ bool iLineEdit::event(QEvent* e)
 
 void iLineEdit::keyPressEvent(QKeyEvent* e)
 {
-  // std::cerr << "keypress" << std::endl;
-
+  std::cerr << "keypress" << std::endl;
+  
   // emacs keys!!
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if (ctrl_pressed) {
     switch (e->key()) {
-    case Qt::Key_Space:
-      e->accept();
-      deselect();
-      ext_select_on = true;
-      return;
-    case Qt::Key_G:
-      e->accept();
-      clearExtSelection();
-      return;
-    case Qt::Key_A:
-      e->accept();
-      home(ext_select_on);
-      return;
-    case Qt::Key_E:
-      e->accept();
-      end(ext_select_on);
-      return;
-    case Qt::Key_F:
-      e->accept();
-      cursorForward(ext_select_on, 1);
-      return;
-    case Qt::Key_B:
-      e->accept();
-      cursorBackward(ext_select_on, 1);
-      return;
-    case Qt::Key_D:
-      e->accept();
-      del();
-      clearExtSelection();
-      return;
-    case Qt::Key_H:
-      e->accept();
-      backspace();
-      clearExtSelection();
-      return;
-    case Qt::Key_K:
-      e->accept();
-      end(true);                // mark
-      cut();
-      clearExtSelection();
-      return;
-    case Qt::Key_U:
-      e->accept();
-      selectAll();
-      return;
-    case Qt::Key_Y:
-      e->accept();
-      paste();
-      clearExtSelection();
-      return;
-    case Qt::Key_W:
-      e->accept();
-      cut();
-      clearExtSelection();
-      return;
-    case Qt::Key_Slash:
-      e->accept();
-      undo();
-      return;
-    case Qt::Key_Minus:
-      e->accept();
-      undo();
-      return;
-    case Qt::Key_L:
-      e->accept();
-      doLookup();
-      return;
+      case Qt::Key_Space:
+        e->accept();
+        deselect();
+        ext_select_on = true;
+        return;
+      case Qt::Key_G:
+        e->accept();
+        clearExtSelection();
+        return;
+      case Qt::Key_A:
+        e->accept();
+        home(ext_select_on);
+        return;
+      case Qt::Key_E:
+        e->accept();
+        end(ext_select_on);
+        return;
+      case Qt::Key_F:
+        e->accept();
+        cursorForward(ext_select_on, 1);
+        return;
+      case Qt::Key_B:
+        e->accept();
+        cursorBackward(ext_select_on, 1);
+        return;
+      case Qt::Key_D:
+        e->accept();
+        del();
+        clearExtSelection();
+        return;
+      case Qt::Key_H:
+        e->accept();
+        backspace();
+        clearExtSelection();
+        return;
+      case Qt::Key_K:
+        e->accept();
+        end(true);                // mark
+        cut();
+        clearExtSelection();
+        return;
+      case Qt::Key_U:
+        e->accept();
+        selectAll();
+        return;
+      case Qt::Key_Y:
+        e->accept();
+        paste();
+        clearExtSelection();
+        return;
+      case Qt::Key_W:
+        e->accept();
+        cut();
+        clearExtSelection();
+        return;
+      case Qt::Key_Slash:
+        e->accept();
+        undo();
+        return;
+      case Qt::Key_Minus:
+        e->accept();
+        undo();
+        return;
+      case Qt::Key_L:
+        e->accept();
+        doLookup();
+        return;
     }
   }
   else if (e->modifiers() & Qt::AltModifier) {  // mac option key
@@ -267,14 +273,13 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     }
   }
-
+  
   // Esc interferes with dialog cancel and other such things
   // if(e->key() == Qt::Key_Escape) {
   //   e->ignore();             // fake ignore so that any dialog ops will happen as expected
   //   clearExtSelection();
   //   return;
-  // }
-
+  // }  
   QLineEdit::keyPressEvent(e);
 }
 

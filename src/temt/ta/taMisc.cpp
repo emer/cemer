@@ -262,6 +262,8 @@ short                   taMisc::num_browse_history = 20;
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
 
+bool                    taMisc::alt_cell_editing = false;
+
 ////////////////////////////////////////////////////////
 //      File/Path/Arg Info
 
