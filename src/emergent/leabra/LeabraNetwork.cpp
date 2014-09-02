@@ -593,20 +593,22 @@ void LeabraNetwork::Cycle_Run() {
     cyc_threads.Run();
   }
   else {
+    Compute_SRAvg_State();
+
     Send_Netin();
     Compute_NetinInteg();
-    Compute_NetinStats();
 
     Compute_Inhib();
-    Compute_ApplyInhib();
 
     Compute_Act();
-    Compute_CycleStats();
+    if(Compute_SRAvg_Cons_Test()) {
+      Compute_SRAvg_Cons(); 
+    }
+
+    Compute_CycleStats_Pre();
+    Compute_CycleStats_Layer();
 
     Compute_CycSynDep();
-
-    Compute_SRAvg_State();
-    Compute_SRAvg();              // note: only ctleabra variants do con-level compute here
     Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
 
     cycle++;
@@ -645,13 +647,6 @@ void LeabraNetwork::Compute_NetinInteg() {
   //   threads.Run(&un_call, 0.4f);
   // else
   //   threads.Run(&un_call, -1.0f); // -1 = always run localized
-}
-
-void LeabraNetwork::Compute_NetinStats() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Compute_NetinStats(this);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -694,14 +689,6 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
   }
 }
 
-void LeabraNetwork::Compute_ApplyInhib() {
-  // this is not threadable due to interactions with inhib vals at layer level
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Compute_ApplyInhib(this);
-  }
-}
-
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 3: Activation
 
@@ -717,20 +704,109 @@ void LeabraNetwork::Compute_Act() {
   //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
+void LeabraNetwork::Compute_SRAvg_State() {
+  if(!ct_sravg.manual) {
+    sravg_vals.state = CtSRAvgVals::NO_SRAVG;
+    int eff_int = ct_sravg.interval;
+
+    if(ct_sravg.plus_s_only) {
+      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
+	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
+	  eff_int = 1;              // make sure you get short-time/plus phase info!
+	}
+	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_S; // s-only
+	}
+      }
+      else if(phase == LeabraNetwork::MINUS_PHASE) { // m only in minus phase
+	if((ct_cycle >= ct_sravg.start) &&
+	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
+	}
+      }
+    }
+    else {
+      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
+	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
+	  eff_int = 1;              // make sure you get short-time/plus phase info!
+	}
+	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
+	}
+      }
+      else {
+	if((ct_cycle >= ct_sravg.start) &&
+	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
+	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
+	}
+      }
+    }
+  }
+  
+  // now go through layers and let them update their own state values -- usu just
+  // copy from network..
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Compute_SRAvg_State(this);
+  }
+
+  // update the network-level sravg_vals, even though these should not generally be used
+  if(sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    sravg_vals.m_sum += 1.0f;
+    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
+  }
+
+  if(sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    sravg_vals.s_sum += 1.0f;
+    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
+  }
+
+  // first go through layers and let them update
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Compute_SRAvg_Layer(this);
+  }
+}
+
+bool LeabraNetwork::Compute_SRAvg_Cons_Test() {
+  if(!(learn_rule == CTLEABRA_CAL || ct_sravg.force_con))
+    return false;
+  if(train_mode == TEST)
+    return false; // expensive con-level only for training
+  return true;
+}
+
+void LeabraNetwork::Compute_SRAvg_Cons() {
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_SRAvg_Cons(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
+  // if(thread_flags & SRAVG)
+  //   threads.Run(&un_call, 0.9f);
+  // else
+  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats
 
-void LeabraNetwork::Compute_CycleStats() {
+void LeabraNetwork::Compute_CycleStats_Pre() {
   // stats are never threadable due to updating at higher levels
   output_name = "";             // this will be updated by layer
   maxda = 0.0f;         // initialize
   trg_max_act = 0.0f;
   init_netins_cycle_stat = false;
+}
 
+void LeabraNetwork::Compute_CycleStats_Layer() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->Compute_CycleStats(this);
   }
+  // todo: eliminate this!
   if(init_netins_cycle_stat) {
     Init_Netins();
   }
@@ -935,84 +1011,6 @@ void LeabraNetwork::Compute_SelfReg_Trial() {
 
 ///////////////////////////////////////////////////////////////////////
 //      Learning
-
-void LeabraNetwork::Compute_SRAvg_State() {
-  if(!ct_sravg.manual) {
-    sravg_vals.state = CtSRAvgVals::NO_SRAVG;
-    int eff_int = ct_sravg.interval;
-
-    if(ct_sravg.plus_s_only) {
-      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-	  eff_int = 1;              // make sure you get short-time/plus phase info!
-	}
-	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_S; // s-only
-	}
-      }
-      else if(phase == LeabraNetwork::MINUS_PHASE) { // m only in minus phase
-	if((ct_cycle >= ct_sravg.start) &&
-	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
-	}
-      }
-    }
-    else {
-      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-	  eff_int = 1;              // make sure you get short-time/plus phase info!
-	}
-	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
-	}
-      }
-      else {
-	if((ct_cycle >= ct_sravg.start) &&
-	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
-	}
-      }
-    }
-  }
-  
-  // now go through layers and let them update their own state values -- usu just
-  // copy from network..
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_SRAvg_State(this);
-  }
-
-  // update the network-level sravg_vals, even though these should not generally be used
-  if(sravg_vals.state == CtSRAvgVals::SRAVG_M ||
-     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    sravg_vals.m_sum += 1.0f;
-    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
-  }
-
-  if(sravg_vals.state == CtSRAvgVals::SRAVG_S ||
-     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    sravg_vals.s_sum += 1.0f;
-    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
-  }
-
-  // first go through layers and let them update
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_SRAvg_Layer(this);
-  }
-}
-
-void LeabraNetwork::Compute_SRAvg() {
-  for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Compute_SRAvg(this, -1);
-  }
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
-  // if(thread_flags & SRAVG)
-  //   threads.Run(&un_call, 0.9f);
-  // else
-  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
-}
 
 void LeabraNetwork::Compute_dWt_Layer_pre() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {

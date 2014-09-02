@@ -438,10 +438,10 @@ void Layer::LayoutUnits() {
     int ui = 0;
     Unit_Group* eff_ug = &units;
     for(gpgeo.y=0; gpgeo.y < gp_geom.y; gpgeo.y++) {
-      for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++) {
+      for(gpgeo.x=0; gpgeo.x < gp_geom.x; gpgeo.x++, gi++) {
         taVector2i gp_pos = gpgeo * eff_un_sz;
         if(!virt_groups) {
-          Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi++);
+          Unit_Group* ug = (Unit_Group*)units.gp.FastEl(gi);
           ug->pos.x = gp_pos.x; ug->pos.y = gp_pos.y;
           eff_ug = ug;
           ui = 0;
@@ -452,6 +452,7 @@ void Layer::LayoutUnits() {
             if(ui >= eff_ug->size)
               break;
             Unit* un = (Unit*)eff_ug->FastEl(ui++);
+            un->ug_idx = gi;
             taVector2i upos = ugeo;
             if(virt_groups)
               upos += gp_pos;
@@ -469,6 +470,7 @@ void Layer::LayoutUnits() {
         if(i >= units.size)
           break;
         Unit* un = (Unit*)units.FastEl(i++);
+        un->ug_idx = -1;
         un->pos.x = ugeo.x; un->pos.y = ugeo.y;
       }
     }
@@ -1591,19 +1593,6 @@ void Layer::UnitDispPos(Unit* un, int& x, int& y) const {
   else {                        // otherwise unit has it directly..
     x = un->pos.x;
     y = un->pos.y;
-  }
-}
-
-int Layer::UnitGpIdx(Unit* u) const {
-  if(!u || !unit_groups) return -1;
-  Unit_Group* osg = u->own_subgp();
-  if(osg) {
-    return osg->idx;
-  }
-  else {
-    int osg_uidx;  int osg_gpidx;
-    UnGpIdxFmUnitIdx(u->idx, osg_uidx, osg_gpidx);
-    return osg_gpidx;
   }
 }
 

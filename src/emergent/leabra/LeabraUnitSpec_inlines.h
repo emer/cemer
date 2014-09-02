@@ -37,19 +37,6 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* l
   u->gc.i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
 }
 
-inline void LeabraUnitSpec::Compute_ApplyInhib_LoserGain(LeabraUnit* u,
-                                 LeabraLayerSpec* lspec, LeabraNetwork* net,
-                                 float inhib_thr, float inhib_top,
-				 float inhib_loser) {
-  Compute_SelfInhib(u, lspec, net);
-  if(u->i_thr >= inhib_thr) {
-    u->gc.i = inhib_top + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
-  }
-  else {
-    u->gc.i = inhib_loser + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
-  }
-}
-
 inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net * g_bar.e;
   if(u->bias.size)		// subtract out bias weights so they can change k
@@ -126,6 +113,15 @@ inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
 		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a) - u->adapt) / 
 		  (u->net + u->gc.l + u->gc.i + u->gc.h + u->gc.a));
   return new_v_m;
+}
+
+inline LeabraInhib* LeabraUnitSpec::GetInhib(LeabraUnit* u) {
+  LeabraLayer* lay = u->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  if(ls->HasUnitGpInhib(lay))
+    return (LeabraInhib*)lay->UnGpDataUn(u);
+  else
+    return (LeabraInhib*)lay;
 }
 
 #endif // LeabraUnitSpec_inlines_h

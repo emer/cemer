@@ -28,7 +28,57 @@
 
 // declare all other types mentioned but not required to include:
 class LeabraCycleThreadMgr; //
-class LeabraUnit; //
+
+taTypeDef_Of(RunWaitTime);
+
+class TA_API RunWaitTime : public taNBase {
+  // ##CAT_Program contains timers for run time and wait time
+INHERITED(taNBase)
+public:
+  TimeUsedHR    run;            // amount of run time used
+  TimeUsedHR    wait;           // amount of wait time used
+
+  inline void  StartRun(bool reset_used = true)
+  { run.StartTimer(reset_used); }
+  // #CAT_TimeUsed start the run timer
+  inline void  StartWait(bool reset_used = true)
+  { wait.StartTimer(reset_used); }
+  // #CAT_TimeUsed start the wait timer
+
+  inline void  EndRun()
+  { run.EndTimer(); }
+  // #CAT_TimeUsed end the run timer
+  inline void  EndWait()
+  { wait.EndTimer(); }
+  // #CAT_TimeUsed end the wait timer
+
+  inline void  RunToWait()
+  { EndRun(); StartWait(false); }
+  // #CAT_TimeUsed transition from running to waiting -- no reset
+  inline void  WaitToRun()
+  { EndWait(); StartRun(false); }
+  // #CAT_TimeUsed transition from waiting to running -- no reset
+
+  inline void  ResetUsed()
+  { run.ResetUsed(); wait.ResetUsed(); }
+  // #CAT_TimeUsed reset time used information for both run and wait
+
+  inline void IncrAvg()
+  { run.IncrAvg(); wait.IncrAvg(); }
+  // #CAT_TimeUsed increment the avg_used running average with the current s_used data -- for both run and wait timers
+
+  inline void ResetAvg() 
+  { run.ResetAvg(); wait.ResetAvg(); }
+  // #CAT_TimeUsed reset the running averages
+
+  String        ReportAvg(float rescale = 1.0f);
+  // return string with run: <avg>, wait: <avg> values -- optional rescaling factor just multiplies averages, to get a value in a different set of units
+
+  TA_SIMPLE_BASEFUNS(RunWaitTime);
+private:
+  void  Initialize()    { }
+  void  Destroy()       { };
+};
 
 eTypeDef_Of(LeabraCycleTask);
 
@@ -41,24 +91,41 @@ public:
   int           lay_st;         // #NO_SAVE layer leaf number to start on
   int           lay_ed;         // #NO_SAVE layer leaf number to end on
 
-  TimeUsedHR	run_time; 	// #NO_SAVE total time for this thread during run() call
-  float         avg_run_time;   // #NO_SAVE progressive average run time since rebalancing
-  TimeUsedHR	wait_time; 	// #NO_SAVE total time for this thread during run() call
-  float         avg_wait_time;  // #NO_SAVE progressive average run time since rebalancing
-  int           avg_time_n;     // #NO_SAVE number of measures in the average
+  RunWaitTime   send_netin_time;  // #NO_SAVE connection-level send netin computation
+  RunWaitTime   netin_integ_time; // #NO_SAVE unit-level netin integration computation
+  RunWaitTime   inhib_time;       // #NO_SAVE layer-level inhibition computation
+  RunWaitTime   act_time;         // #NO_SAVE unit-level act computation
+  RunWaitTime   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
+
+  // optional ones
+  RunWaitTime   sravg_cons_time; // #NO_SAVE connection-level sravg
+  RunWaitTime   cycsyndep_time;  // #NO_SAVE connection-level syn dep
 
   void  run() override;
   // runs full cycle
 
-  void  SyncAtom(QAtomicInt& stage, int cyc);
-  // #IGNORE sync on given atomic step
+  void          StartCycle();
+  // reset all the timers
+
+  inline void   StartStep(RunWaitTime& time)
+  { time.StartRun(false); }
+
+  void          EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc);
+  // #IGNORE end a given step, including sync on given atomic step
+
+  inline void   EndTime(RunWaitTime& time) 
+  { time.EndRun(); }
+  // use this one if there isn't a sync possibility -- just stop the timer
+
+  void          EndCycle();
+  // end all the timers
 
   String   ThreadReport();
   // return a report on thread stats, etc
 
   LeabraCycleThreadMgr* mgr() { return (LeabraCycleThreadMgr*)owner->GetOwner(); }
 
-  TA_BASEFUNS_NOCOPY(LeabraCycleTask);
+  TA_SIMPLE_BASEFUNS(LeabraCycleTask);
 private:
   void  Initialize();
   void  Destroy();
@@ -82,15 +149,10 @@ public:
   QAtomicInt    stage_net;       // #IGNORE 
   QAtomicInt    stage_net_int;   // #IGNORE 
 
-  QAtomicInt    stage_inhib_lay; // #IGNORE 
-  QAtomicInt    stage_inhib_gp; // #IGNORE 
   QAtomicInt    stage_inhib;     // #IGNORE 
 
   QAtomicInt    stage_act;       // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
-
-  QAtomicInt    stage_sravg_state; // #IGNORE 
-  QAtomicInt    stage_sravg;       // #IGNORE 
 
   Network*      network()       { return (Network*)owner; }
 

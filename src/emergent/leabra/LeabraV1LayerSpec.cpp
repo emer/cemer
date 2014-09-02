@@ -118,9 +118,9 @@ void LeabraV1LayerSpec::Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group*
 }
 
 
-void LeabraV1LayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Compute_Inhib(lay, net);
   if(!feat_inhib.on) {          // do the normal
-    inherited::Compute_ApplyInhib(lay, net);
     return;
   }
   if((net->cycle >= 0) && lay->hard_clamped)

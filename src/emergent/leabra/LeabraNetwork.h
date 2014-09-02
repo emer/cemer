@@ -360,19 +360,14 @@ public:
   virtual void Compute_NetinInteg();
   // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 
-  virtual void Compute_NetinStats();
-  // #CAT_Cycle Stage 1.3 compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions -- not threadable
-
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
   virtual void	Compute_Inhib();
-  // #CAT_Cycle compute inhibitory conductances (kwta) -- also calls LayInhibToGps to coordinate group-level inhibition sharing
+  // #CAT_Cycle compute inhibitory conductances via inhib functions (FFFB, kWTA) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
     virtual void Compute_Inhib_LayGp();
     // #CAT_Cycle compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
-  virtual void	Compute_ApplyInhib();
-  // #CAT_Cycle Stage 2.3 apply inhibitory conductances from kwta to individual units -- separate step after all inhib is integrated and computed
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -380,11 +375,20 @@ public:
   void	Compute_Act() override;
   // #CAT_Cycle compute activations
 
+  virtual void 	Compute_SRAvg_State();
+  // #CAT_Learning compute state flag setting for sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- just updates the sravg_vals.state flag for network and layers -- called at start of cycle
+  virtual bool 	Compute_SRAvg_Cons_Test();
+  // #CAT_Learning test if sravg cons level should be run -- not used for XCAL typically -- just for CtLeabra_CAL -- not for testing
+  virtual void 	Compute_SRAvg_Cons();
+  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
+
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  virtual void	Compute_CycleStats();
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
+  virtual void	Compute_CycleStats_Pre();
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc -- network-level pre-step
+  virtual void	Compute_CycleStats_Layer();
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc -- layer level computation
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
@@ -438,11 +442,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
-
-  virtual void 	Compute_SRAvg_State();
-  // #CAT_Learning compute state flag setting for sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- just updates the sravg_vals.state flag for network and layers, does nothing if 
-  virtual void 	Compute_SRAvg();
-  // #CAT_Learning compute sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- calls Compute_SRAvg_Layer on layers, and then threaded down to unit level -- behavior is completely determined by sravg_vals.state flag setting
 
   virtual void	Compute_dWt_Layer_pre();
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes

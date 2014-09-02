@@ -229,8 +229,7 @@ INHERITED(LayerSpec)
 public:
   enum InhibGroup {
     ENTIRE_LAYER,		// treat entire layer as one inhibitory group (even if subgroups exist)
-    UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups (but also uses gp_i and gp_g if set, to have some sharing of inhib across groups
-    LAY_AND_GPS			// compute inhib over both groups and whole layer, inhibi is max of layer and group inhib
+    UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups -- only works if layer actually has unit groups -- layer-level inhibition contributes according to the unit_gp_inhib parameters if set
   };
 
   InhibGroup	inhib_group;	// #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
@@ -242,6 +241,17 @@ public:
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
   CosDiffLrateSpec cos_diff_lrate;  // #CAT_Learning modulation of learning rate by the recv layer cos_diff between act_p and act_m -- maximum learning in the zone of proximal development
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Access, status functions
+
+  inline bool   HasUnitGpInhib(Layer* lay)
+  { return (inhib_group == UNIT_GROUPS) && lay->unit_groups; }
+  // does this layer have unit-group level inhibition?
+  inline bool   HasLayerInhib(Layer* lay)
+  { return !HasUnitGpInhib(lay); }
+  // does this layer have unit-group level inhibition
+
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -321,17 +331,17 @@ public:
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
   // followed by Compute_NetinInteg on units
-  // then Compute_NetinStats
+
+
+  ///////////////////////////////////////////////////////////////////////
+  //	Cycle Step 2: Inhibition
 
   virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
+  // #CAT_Activation compute AvgMax stats on netin values computed during netin computation -- used for FF_FB inhibition -- called automatically by Compute_Inhib
     virtual void Compute_NetinStats_ugp(LeabraLayer* lay,
 					Layer::AccessMode acc_md, int gpidx,
 					LeabraInhib* thr,  LeabraNetwork* net);
     // #IGNORE compute AvgMax stats on netin and i_thr values computed during netin computation -- per unit group
-
-  ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 2: Inhibition
 
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
@@ -361,12 +371,6 @@ public:
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
-
-  virtual void	Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation Stage 2.3: apply computed inhib value to individual unit inhibitory conductances
-    virtual void Compute_ApplyInhib_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-					LeabraInhib* thr, LeabraNetwork* net);
-    // #IGNORE unit-group apply inhibition computation
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation

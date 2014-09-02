@@ -459,7 +459,7 @@ void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
   if(!us->noise_adapt.trial_fixed) return;
 
   if(us->noise_adapt.k_pos_noise) {
-    if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+    if(HasUnitGpInhib(lay)) {
       for(int g=0; g < lay->gp_geom.n; g++) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
         Trial_NoiseInit_KPos_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
@@ -469,13 +469,6 @@ void LeabraLayerSpec::Trial_NoiseInit(LeabraLayer* lay, LeabraNetwork* net) {
       Trial_NoiseInit_KPos_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
     }
   }
-  // don't do this b/c already done at unit level for this case..
-//   else {
-//     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-//      if(u->lesioned()) continue;
-//       u->Trial_NoiseInit(net);
-//     }
-//   }
 }
 
 void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
@@ -489,27 +482,25 @@ void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
 //      SettleInit -- at start of settling
 
 void LeabraLayerSpec::Compute_Active_K(LeabraLayer* lay, LeabraNetwork* net) {
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+  if(HasUnitGpInhib(lay)) {
     int totk = 0;
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       Compute_Active_K_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, gp_kwta);
       totk += gpd->kwta.k;
     }
-    if(inhib_group == UNIT_GROUPS) {
-      if(lay->kwta.k != totk) {
-        lay->lay_kbuffs.ResetAllBuffs();
-        lay->Inhib_ResetSortBuf();
-      }
-      lay->kwta.k = totk;
-      lay->kwta.Compute_Pct(lay->units.leaves);
-      if(gp_kwta.diff_act_pct)
-        lay->kwta.pct = gp_kwta.act_pct;        // override!!
-      if(unit_gp_inhib.on && unit_gp_inhib.diff_act_pct)
-        lay->kwta.pct *= unit_gp_inhib.act_pct_mult;
+    if(lay->kwta.k != totk) {
+      lay->lay_kbuffs.ResetAllBuffs();
+      lay->Inhib_ResetSortBuf();
     }
+    lay->kwta.k = totk;
+    lay->kwta.Compute_Pct(lay->units.leaves);
+    if(gp_kwta.diff_act_pct)
+      lay->kwta.pct = gp_kwta.act_pct;        // override!!
+    if(unit_gp_inhib.on && unit_gp_inhib.diff_act_pct)
+      lay->kwta.pct *= unit_gp_inhib.act_pct_mult;
   }
-  if(inhib_group != UNIT_GROUPS) {
+  else {
     Compute_Active_K_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, kwta);
     if(kwta.diff_act_pct)
       lay->kwta.pct = kwta.act_pct;     // override!!
@@ -646,7 +637,7 @@ void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 ///////////////////////////////////////////////////////////////////////
-//      Cycle Step 1: Netinput
+//      Cycle Step 2: Inhibition -- netin stats
 
 void LeabraLayerSpec::Compute_NetinStats_ugp(LeabraLayer* lay,
                                              Layer::AccessMode acc_md, int gpidx,
@@ -665,7 +656,7 @@ void LeabraLayerSpec::Compute_NetinStats_ugp(LeabraLayer* lay,
 void LeabraLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->hard_clamped) return;
 
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+  if(HasUnitGpInhib(lay)) {
     lay->netin.InitVals();
     int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
     int sti = LayerStatsStartUnitIdx();
@@ -688,28 +679,22 @@ void LeabraLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->hard_clamped) return; // say no more..
 
-  if(inhib_group != UNIT_GROUPS) {
-    Compute_Inhib_impl(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net, inhib);
-  }
-  if(lay->unit_groups) {
-    if(inhib_group == UNIT_GROUPS) {
-      lay->Inhib_SetVals(0.0f);
-      for(int g=0; g < lay->gp_geom.n; g++) {
-        LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-        Compute_Inhib_impl(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net, inhib);
-        float gp_g_i = gpd->i_val.g_i;
-        if(unit_gp_inhib.on)
-          gp_g_i *= unit_gp_inhib.gp_g;
-        lay->i_val.g_i = MAX(lay->i_val.g_i, gp_g_i);
-      }
-    }
-    else if(inhib_group == LAY_AND_GPS) {
-      for(int g=0; g < lay->gp_geom.n; g++) {
-        LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-        Compute_Inhib_impl(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net, inhib);
-      }
+  Compute_NetinStats(lay, net); // for all cases, do this!
+
+  if(HasUnitGpInhib(lay)) {
+    lay->Inhib_SetVals(0.0f);
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      Compute_Inhib_impl(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net, inhib);
+      float gp_g_i = gpd->i_val.g_i;
+      if(unit_gp_inhib.on)
+        gp_g_i *= unit_gp_inhib.gp_g;
+      lay->i_val.g_i = MAX(lay->i_val.g_i, gp_g_i);
     }
     Compute_LayInhibToGps(lay, net);
+  }
+  else {
+    Compute_Inhib_impl(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net, inhib);
   }
 }
 
@@ -721,14 +706,14 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
   }
   else {
     switch(ispec.type) {
+    case LeabraInhibSpec::FF_FB_INHIB:
+      Compute_Inhib_FfFb(lay, acc_md, gpidx, thr, net, ispec);
+      break;
     case LeabraInhibSpec::KWTA_INHIB:
       Compute_Inhib_kWTA(lay, acc_md, gpidx, thr, net, ispec);
       break;
     case LeabraInhibSpec::KWTA_AVG_INHIB:
       Compute_Inhib_kWTA_Avg(lay, acc_md, gpidx, thr, net, ispec);
-      break;
-    case LeabraInhibSpec::FF_FB_INHIB:
-      Compute_Inhib_FfFb(lay, acc_md, gpidx, thr, net, ispec);
       break;
     case LeabraInhibSpec::UNIT_INHIB:
       break;
@@ -738,6 +723,41 @@ void LeabraLayerSpec::Compute_Inhib_impl(LeabraLayer* lay,
 
   thr->i_val.g_i_orig = thr->i_val.g_i; // retain original values..
 }
+
+void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
+                         Layer::AccessMode acc_md, int gpidx,
+                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
+
+  float nw_ffi = ispec.FFInhib(thr->netin.avg);
+  float nw_fbi = ispec.FBInhib(thr->acts.avg);
+
+  thr->kwta.ffi = nw_ffi;
+
+  // add this after the fact, so that it isn't constantly compounded -- in reality it
+  // should just be based on netin, but probably simpler to use ffi
+  nw_ffi += ispec.prv_trl_ff * thr->kwta.prv_trl_ffi +
+    ispec.prv_phs_ff * thr->kwta.prv_phs_ffi;
+
+  // dt only on fbi part
+  if(ispec.up_immed) {
+    if(nw_fbi > thr->kwta.fbi) {
+      thr->kwta.fbi = nw_fbi;
+    }
+    else {
+      thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
+    }
+  }
+  else {
+    thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
+  }
+
+  thr->i_val.kwta = ispec.gi * (nw_ffi + thr->kwta.fbi); // combine
+  thr->kwta.k_ithr = 0.0f;
+  thr->kwta.k1_ithr = 0.0f;
+}
+
+//////////////////////////////////
+// KWTA-based functions
 
 // basic sorting function:
 
@@ -916,52 +936,13 @@ void LeabraLayerSpec::Compute_Inhib_kWTA_Avg(LeabraLayer* lay,
   thr->i_val.kwta = nw_gi;
 }
 
-void LeabraLayerSpec::Compute_Inhib_FfFb(LeabraLayer* lay,
-                         Layer::AccessMode acc_md, int gpidx,
-                         LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-
-  float nw_ffi = ispec.FFInhib(thr->netin.avg);
-  float nw_fbi = ispec.FBInhib(thr->acts.avg);
-
-  thr->kwta.ffi = nw_ffi;
-
-  // add this after the fact, so that it isn't constantly compounded -- in reality it
-  // should just be based on netin, but probably simpler to use ffi
-  nw_ffi += ispec.prv_trl_ff * thr->kwta.prv_trl_ffi +
-    ispec.prv_phs_ff * thr->kwta.prv_phs_ffi;
-
-  // dt only on fbi part
-  if(ispec.up_immed) {
-    if(nw_fbi > thr->kwta.fbi) {
-      thr->kwta.fbi = nw_fbi;
-    }
-    else {
-      thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
-    }
-  }
-  else {
-    thr->kwta.fbi = ispec.dt * nw_fbi + (1.0f - ispec.dt) * thr->kwta.fbi;
-  }
-
-  thr->i_val.kwta = ispec.gi * (nw_ffi + thr->kwta.fbi); // combine
-  thr->kwta.k_ithr = 0.0f;
-  thr->kwta.k1_ithr = 0.0f;
-}
-
 ////////////////////////////////////////////////////////////////////////////////////
 //      Inhibition Stage 2.2: LayInhibToGps
 
 void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
   if(!lay->unit_groups) return;
 
-  if(inhib_group == ENTIRE_LAYER) {
-    // propagate g_i to all subgroups even if doing ENTIRE_LAYER
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->i_val.g_i = lay->i_val.g_i;
-    }
-  }
-  else if(inhib_group == UNIT_GROUPS) {
+  if(HasUnitGpInhib(lay)) {
     if(unit_gp_inhib.on) {  // linking groups: get max from layer
       if(inhib.type == LeabraInhibSpec::FF_FB_INHIB && unit_gp_inhib.fffb) {
         float nw_ffi = inhib.FFInhib(lay->netin.avg);
@@ -982,58 +963,24 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
         for(int g=0; g < lay->gp_geom.n; g++) {
           LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
           gpd->i_val.gp_g_i = lay->i_val.g_i;
-          gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+          gpd->i_val.g_i = unit_gp_inhib.self_g * MAX(gpd->i_val.g_i, lay->i_val.g_i);
         }        
       }
       else {
         for(int g=0; g < lay->gp_geom.n; g++) {
           LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
           gpd->i_val.gp_g_i = lay->i_val.g_i;
-          gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+          gpd->i_val.g_i = unit_gp_inhib.self_g * MAX(gpd->i_val.g_i, lay->i_val.g_i);
         }
       }
     }
   }
-  else if(inhib_group == LAY_AND_GPS) {
-    // actual inhibition is max of layer and group
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
-    }
-  }
-}
-
-////////////////////////////////////////////////////////////////////////////////////
-//      Inhibition Stage 2.3: Apply Inhib
-
-void LeabraLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
-  if((net->cycle >= 0) && lay->hard_clamped)
-    return;                     // don't do this during normal processing
-
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_ApplyInhib_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
-    }
-  }
   else {
-    Compute_ApplyInhib_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
-  }
-}
-
-void LeabraLayerSpec::Compute_ApplyInhib_ugp(LeabraLayer* lay,
-                                             Layer::AccessMode acc_md, int gpidx,
-                                             LeabraInhib* thr, LeabraNetwork* net)
-{
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  float inhib_val = thr->i_val.g_i;
-  if(unit_gp_inhib.on && (inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
-    inhib_val *= unit_gp_inhib.self_g;
-  }
-  for(int i=0; i<nunits; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    u->Compute_ApplyInhib(this, net, inhib_val);
+    // propagate g_i to all subgroups even if doing ENTIRE_LAYER
+    for(int g=0; g < lay->gp_geom.n; g++) {
+      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+      gpd->i_val.g_i = lay->i_val.g_i;
+    }
   }
 }
 
@@ -1569,7 +1516,7 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 
   float nerr = 0.0f;
   int ntot = 0;
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+  if(HasUnitGpInhib(lay)) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       nerr += Compute_NormErr_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);

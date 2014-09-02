@@ -35,6 +35,7 @@ class LeabraNetwork; //
 class LeabraUnit; // 
 class DataTable; // 
 class LeabraLayerSpec; //
+class LeabraInhib; //
 
 eTypeDef_Of(LeabraActFunSpec);
 
@@ -659,25 +660,24 @@ public:
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold -- uses act_lrn.thr
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Step 2: Inhibition
+  //	Cycle Step 2: Inhibition: these are actually called by Compute_Act to integrate
+  //            inhibition computed at the layer level
+
+  inline LeabraInhib* GetInhib(LeabraUnit* u);
+  // #CAT_Activation #IGNORE get the inhib that applies to this unit (either unit group or entire layer, depending on layer spec setting)
 
   inline void	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
                                    LeabraNetwork* net);
   // #CAT_Activation #IGNORE compute self inhibition value, for fffb g_i_self inhib val
   inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
                                    LeabraNetwork* net, float inhib_val);
-  // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance
-  inline void	Compute_ApplyInhib_LoserGain(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                                             LeabraNetwork* net,
-                                             float inhib_thr,
-					     float inhib_top, float inhib_loser);
-  // #CAT_Activation #IGNORE apply computed (kwta) inhibition value to unit inhibitory conductance -- when eff_loser_gain in effect
+  // #CAT_Activation #IGNORE apply computed inhibition value to unit inhibitory conductance
 
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
 
-  // main function is basic Compute_Act which calls all the various sub-functions
+  // main function is basic Compute_Act which calls all the various sub-functions, including Compute_SRAvg
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
     virtual void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
@@ -725,6 +725,11 @@ public:
 
     virtual float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
+
+  virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Learning compute sending-receiving activation product averages -- unit level only, used for XCAL
+  virtual void 	Compute_SRAvg_Cons(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
@@ -779,9 +784,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
-
-  virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute sending-receiving activation product averages (CtLeabraX/CAL)
 
   void 	        Compute_dWt(Unit* u, Network* net, int thread_no=-1) override;
 

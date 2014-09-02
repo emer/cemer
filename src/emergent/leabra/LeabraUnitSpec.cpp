@@ -1288,7 +1288,15 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
       Compute_ClampSpike(u, net, u->ext * spike_misc.clamp_max_p);
       u->AddToActBuf(syn_delay);
     }
+    Compute_SRAvg(u, net, thread_no); // unit level -- needed even for clamped
     return; // don't re-compute
+  }
+
+  // first, apply inhibition 
+  LeabraInhib* thr = GetInhib(u);
+  if(thr) {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    Compute_ApplyInhib(u, ls, net, thr->i_val.g_i);
   }
 
   Compute_Conduct(u, net);
@@ -1297,6 +1305,8 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   Compute_SelfReg_Cycle(u, net);
 
   u->AddToActBuf(syn_delay);
+
+  Compute_SRAvg(u, net, thread_no); // unit level only, not cons (must be separate)
 }
 
 void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
@@ -1718,6 +1728,83 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   return rval;
 }
 
+void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* lay = u->own_lay();
+  if(!lay) return;
+  if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
+
+  float ru_act; // activation to use for updating averages
+  if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
+     net->learn_rule == LeabraNetwork::LEABRA_CHL) {
+    ru_act = u->act_nd;
+  }
+  else {
+    ru_act = u->act_lrn;        // note: using lrn here..
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
+    if(rus->act_fun == LeabraUnitSpec::SPIKE)
+      ru_act *= rus->spike.eq_gain;
+  }
+
+  bool do_s = false;
+
+  // if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
+  //   // note: this is cascade version -- each builds upon the other
+  //   u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
+  //   float ds = act_avg.s_dt * (u->avg_ss - u->avg_s);
+  //   u->avg_s += ds;
+  //   u->davg += net->ct_lrn_trig.davg_dt * (ds - u->davg);
+
+  //   u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
+
+  //   float lval = u->avg_m; // note this is *avg_m* not act_m..
+  //   if(lval > u->avg_l)
+  //     u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
+  //   else
+  //     u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
+  // }
+  // else {
+
+  // use continuous updating so these are always current -- no need for post-average step
+  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    if(lay->sravg_vals.m_sum == 1.0f) {
+      u->avg_m = ru_act;
+    }
+    else {
+      u->avg_m = (ru_act + u->avg_m * (lay->sravg_vals.m_sum - 1.0f)) /
+        lay->sravg_vals.m_sum;
+    }
+  }
+
+  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    do_s = true;
+    if(lay->sravg_vals.s_sum == 1.0f) {
+      u->avg_s = ru_act;
+    }
+    else {
+      u->avg_s = (ru_act + u->avg_s * (lay->sravg_vals.s_sum - 1.0f)) /
+        lay->sravg_vals.s_sum;
+    }
+  }
+}
+
+void LeabraUnitSpec::Compute_SRAvg_Cons(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* lay = u->own_lay();
+  bool do_s = false;
+  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+    do_s = true;
+  }
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    if(send_gp->NotActive()) continue;
+    LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
+    if(!rlay->Compute_SRAvg_Test(net)) continue;
+    send_gp->Compute_SRAvg(u, net, do_s);
+  }
+}
+
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats
 
@@ -1933,80 +2020,6 @@ void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////////////
 //      Stage 6: Learning               //
 //////////////////////////////////////////
-
-void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  LeabraLayer* lay = u->own_lay();
-  if(!lay) return;
-  if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
-
-  float ru_act; // activation to use for updating averages
-  if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
-     net->learn_rule == LeabraNetwork::LEABRA_CHL) {
-    ru_act = u->act_nd;
-  }
-  else {
-    ru_act = u->act_lrn;        // note: using lrn here..
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(rus->act_fun == LeabraUnitSpec::SPIKE)
-      ru_act *= rus->spike.eq_gain;
-  }
-
-  bool do_s = false;
-
-  // if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
-  //   // note: this is cascade version -- each builds upon the other
-  //   u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
-  //   float ds = act_avg.s_dt * (u->avg_ss - u->avg_s);
-  //   u->avg_s += ds;
-  //   u->davg += net->ct_lrn_trig.davg_dt * (ds - u->davg);
-
-  //   u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
-
-  //   float lval = u->avg_m; // note this is *avg_m* not act_m..
-  //   if(lval > u->avg_l)
-  //     u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
-  //   else
-  //     u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
-  // }
-  // else {
-
-  // use continuous updating so these are always current -- no need for post-average step
-  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
-     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    if(lay->sravg_vals.m_sum == 1.0f) {
-      u->avg_m = ru_act;
-    }
-    else {
-      u->avg_m = (ru_act + u->avg_m * (lay->sravg_vals.m_sum - 1.0f)) /
-        lay->sravg_vals.m_sum;
-    }
-  }
-
-  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
-     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    do_s = true;
-    if(lay->sravg_vals.s_sum == 1.0f) {
-      u->avg_s = ru_act;
-    }
-    else {
-      u->avg_s = (ru_act + u->avg_s * (lay->sravg_vals.s_sum - 1.0f)) /
-        lay->sravg_vals.s_sum;
-    }
-  }
-
-  // lastly, do the connection-level sravg if needed:
-  if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con) {
-    if(net->train_mode != LeabraNetwork::TEST) { // expensive con-level only for training
-      for(int g=0; g<u->send.size; g++) {
-        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-        if(send_gp->NotActive()) continue;
-        LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
-        if(!rlay->Compute_SRAvg_Test(net)) continue;
-        send_gp->Compute_SRAvg(u, net, do_s);
-      }
-    }
-  }
-}
 
 void LeabraUnitSpec::Compute_dWt(Unit* ru, Network* rnet, int thread_no) {
   LeabraUnit* u = (LeabraUnit*)ru;

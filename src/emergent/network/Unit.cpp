@@ -44,6 +44,7 @@ void Unit::Initialize() {
   // pos = ??
   idx = -1;
   flat_idx = 0;
+  ug_idx = -1;
   in_subgp = false;
   voxels = NULL;
   m_unit_spec = NULL;
@@ -71,6 +72,7 @@ void Unit::CutLinks() {
   m_unit_spec = NULL;
   idx = -1;
   flat_idx = 0;
+  ug_idx = -1;
   in_subgp = false;
   if(voxels) {
     taBase::DelPointer((taBase**)&voxels);
@@ -140,10 +142,9 @@ void Unit::UpdtAfterNetModIfNecc() {
 int Unit::GetMyLeafIndex() {
   if(idx < 0 || !owner) return idx;
   Unit_Group* ug = (Unit_Group*)owner;
-  if(ug->owner->InheritsFrom(&TA_Layer))
+  if(!in_subgp)
     return idx; // simple: we're the only unit group
   // note: this assumes only one layer of subgroups, which is all that is supported anyway
-//  Layer* lay = (Layer*)ug->own_lay;
   return ug->idx * ug->size + idx; // our unit group index within its owning list, times number of items per group (presumably same throughout), plus our own index..
 }
 

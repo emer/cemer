@@ -96,8 +96,10 @@ public: //
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
+  int		ug_idx;
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure unit group index, if this unit belongs in a unit group (virtual or real) -- assigned at build by layer
   bool		in_subgp;
-  // #CAT_Structure #READ_ONLY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
 
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
   // set flag state on
@@ -135,8 +137,9 @@ public: //
   inline Unit_Group*    own_subgp() const
   { if(!in_subgp) return NULL; return (Unit_Group*)owner; }
   // #CAT_Structure get the owning subgroup of this unit -- NULL if unit lives directly within the layer and not in a subgroup -- note that with virt_groups as default, most units do not have an owning subgroup even if there are logical subgroups
-  inline int            UnitGpIdx() const;
-  // #CAT_Structure #IGNORE get unit's subgroup index -- returns -1 if layer does not have unit groups -- directly from info avail on unit itself
+  inline int            UnitGpIdx() const
+  { return ug_idx; }
+  // #CAT_Structure #IGNORE unit's subgroup index -- returns -1 if layer does not have unit groups (can be either virtual or real)
   void                  GetInSubGp();
   // #IGNORE determine if unit is in a subgroup -- sets in_subgp flag -- called by InitLinks() -- should be good..
 

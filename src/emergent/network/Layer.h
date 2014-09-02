@@ -243,9 +243,6 @@ public:
   { return gpidx >= 0 && gpidx < gp_geom.n; }
   // #CAT_Access is the group index valid (within range)
 
-  int           UnitGpIdx(Unit* u) const;
-  // #CAT_Access get unit's subgroup index (unit must live in this layer, returns -1 if layer does not have unit groups), directly from info avail on unit itself
-
   ////////////  display coordinate versions
 
   Unit*         UnitAtDispCoord(int x, int y) const;

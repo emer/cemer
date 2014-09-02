@@ -33,10 +33,6 @@ inline Network* Unit::own_net() const {
   return own_lay()->own_net;
 }
 
-inline int Unit::UnitGpIdx() const {
-  return own_lay()->UnitGpIdx((Unit*)this);
-}
-
 inline bool Unit::lay_lesioned() const {
   return own_lay()->lesioned();
 }

@@ -25,131 +25,154 @@
 // flat linked list of active (non-lesioned) layers for better distribution
 // ApplyInhib happens at unit level
 
+TA_BASEFUNS_CTORS_DEFN(LeabraCycleTask);
+TA_BASEFUNS_CTORS_DEFN(RunWaitTime);
 TA_BASEFUNS_CTORS_DEFN(LeabraCycleThreadMgr);
 
-TA_BASEFUNS_CTORS_DEFN(LeabraCycleTask);
+String RunWaitTime::ReportAvg(float rescale) {
+  String rval = name;
+  rval << " run: " << (rescale * run.avg_used.avg)
+       << ", wait: " << (rescale * wait.avg_used.avg);
+  return rval;
+}
 
 void LeabraCycleTask::Initialize() {
   uidx_st = 0;
   uidx_ed = 0;
   lay_st = 0;
   lay_ed = 0;
-  avg_run_time = 0.0f;
-  avg_wait_time = 0.0f;
-  avg_time_n = 0;
 }
 
 void LeabraCycleTask::Destroy() {
   network.CutLinks();
 }
 
-void LeabraCycleTask::SyncAtom(QAtomicInt& stage, int cyc) {
+void LeabraCycleTask::StartCycle() {
+  send_netin_time.ResetUsed();
+  netin_integ_time.ResetUsed();
+  inhib_time.ResetUsed();
+  act_time.ResetUsed();
+  cycstats_time.ResetUsed();
+
+  sravg_cons_time.ResetUsed();
+  cycsyndep_time.ResetUsed();
+}
+
+void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   LeabraCycleThreadMgr* mg = mgr();
-  if(mg->tasks.size == 1) return;
+  time.EndRun();
+  if(mg->tasks.size == 1 || !mg->sync_steps) {
+    return;
+  }
   int trg = (cyc+1) * mg->tasks.size;
 
   int cur_cnt = stage.fetchAndAddOrdered(1);
-  if(cur_cnt == trg) // we were the last guy
+  if(cur_cnt == trg) { // we were the last guy
     return;
+  }
 
-  run_time.EndTimer();
-  wait_time.StartTimer(false);
+  time.StartWait(false);
 
   while(cur_cnt < trg) {
-    // taManagedThread::usleep(1);
+    // taManagedThread::usleep(1); // just slows down a tiny bit, no value..
     cur_cnt = stage.loadAcquire();
   }
 
-  wait_time.EndTimer();
-  run_time.StartTimer(false);
+  time.EndWait();
+}
+
+void LeabraCycleTask::EndCycle() {
+  send_netin_time.IncrAvg();
+  netin_integ_time.IncrAvg();
+  inhib_time.IncrAvg();
+  act_time.IncrAvg();
+  cycstats_time.IncrAvg();
+
+  sravg_cons_time.IncrAvg();
+  cycsyndep_time.IncrAvg();
 }
 
 void LeabraCycleTask::run() {
   LeabraCycleThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
-  wait_time.ResetUsed();
-
-  run_time.StartTimer(true);    // reset
+  StartCycle();
 
   for(int cyc=0; cyc < mg->n_cycles; cyc++) {
     // this replicates LeabraNetwork::Cycle()
-    // Send_NetinDelta
 
+    // Compute_SRAvg_State();
+    if(task_id == 0) {        // first thread does this -- very fast -- get it done early
+      net->Compute_SRAvg_State();
+    }
+
+    // Send_NetinDelta
+    StartStep(send_netin_time);
     for(int i=uidx_st; i<uidx_ed; i++) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
       un->Send_NetinDelta(net, task_id);
     }
-    if(mg->sync_steps)
-      SyncAtom(mg->stage_net, cyc);
+    EndStep(mg->stage_net, send_netin_time, cyc);
 
     // Compute_NetinInteg();
+    StartStep(netin_integ_time);
     for(int i=uidx_st; i<uidx_ed; i++) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
       un->Compute_NetinInteg(net, task_id);
     }
-    if(mg->sync_steps)
-      SyncAtom(mg->stage_net_int, cyc);
+    EndStep(mg->stage_net_int, netin_integ_time, cyc);
 
-    // Compute_NetinStats();
     // Compute_Inhib();
-    // Compute_ApplyInhib();
-    if(!net->net_misc.lay_gp_inhib) {
-      for(int i=lay_st; i<lay_ed; i++) {
-        if(i >= net->layers.leaves) continue;
-        LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-        if(lay->lesioned()) continue;
-        lay->Compute_NetinStats(net);
-        lay->Compute_Inhib(net);
-        lay->Compute_ApplyInhib(net);
-        // todo: break apply inhib out into separate steps -- unit-level one should be
-        // done in unit loop, not layer loop..
-      }
-      if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib, cyc);
+    StartStep(inhib_time);
+    for(int i=lay_st; i<lay_ed; i++) {
+      if(i >= net->layers.leaves) continue;
+      LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+      if(lay->lesioned()) continue;
+      lay->Compute_Inhib(net);
     }
-    else {
-      // layer-group inhibition is a LOT more expensive coordination-wise
-      for(int i=lay_st; i<lay_ed; i++) {
-        if(i >= net->layers.leaves) continue;
-        LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-        if(lay->lesioned()) continue;
-        lay->Compute_NetinStats(net);
-        lay->Compute_Inhib(net);
-      }
-      if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib_lay, cyc);
+    EndStep(mg->stage_inhib, inhib_time, cyc);
+
+    if(net->net_misc.lay_gp_inhib) {
       if(task_id == 0) {        // first thread does this..
         net->Compute_Inhib_LayGp();
+        // todo: this needs to apply all the way out to layer groups -- also it is 
+        // incompatible with the self setting.. probably need to get rid of self!
       }
-      if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib_gp, cyc);
-      for(int i=lay_st; i<lay_ed; i++) {
-        if(i >= net->layers.leaves) continue;
-        LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-        if(lay->lesioned()) continue;
-        lay->Compute_ApplyInhib(net);
-      }
-      if(mg->sync_steps)
-        SyncAtom(mg->stage_inhib, cyc);
     }
 
     // Compute_Act();
+    StartStep(act_time);
     for(int i=uidx_st; i<uidx_ed; i++) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
-      un->Compute_Act(net, task_id);
+      un->Compute_Act(net, task_id); // includes SRAvg
     }
-    if(mg->sync_steps)
-      SyncAtom(mg->stage_act, cyc);
+    EndStep(mg->stage_act, act_time, cyc);
+
+    if(net->Compute_SRAvg_Cons_Test()) {
+      StartStep(sravg_cons_time);
+      for(int i=uidx_st; i<uidx_ed; i++) {
+        LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+        un->Compute_SRAvg_Cons(net, task_id);
+      }
+      EndTime(sravg_cons_time); // no sync -- no dependency with next
+    }
 
     // Compute_CycleStats();
+    StartStep(cycstats_time);
     if(task_id == 0) {        // first thread does this..
-      net->Compute_CycleStats(); // todo: need to break this out into two separate ones
-      // one that is layer-parallel and one that is not..
+      net->Compute_CycleStats_Pre();
     }
+    for(int i=lay_st; i<lay_ed; i++) {
+      if(i >= net->layers.leaves) continue;
+      LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+      if(lay->lesioned()) continue;
+      lay->Compute_CycleStats(net);
+    }
+    EndStep(mg->stage_cyc_stats, cycstats_time, cyc);
 
     // Compute_CycSynDep();
     if(net->net_misc.cyc_syn_dep) {
+      StartStep(cycsyndep_time);
       if(net->ct_cycle % net->net_misc.syn_dep_int == 0) {
         for(int i=uidx_st; i<uidx_ed; i++) {
           LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
@@ -157,24 +180,8 @@ void LeabraCycleTask::run() {
         }
       }
       // no sync needed here really -- no dependency on next steps
+      EndTime(cycsyndep_time);
     }
-
-    // Compute_SRAvg_State();
-    if(task_id == 0) {        // first thread does this..
-      net->Compute_SRAvg_State();
-    }
-
-    if(mg->sync_steps)
-      SyncAtom(mg->stage_sravg_state, cyc);
-
-    // Compute_SRAvg();
-    for(int i=uidx_st; i<uidx_ed; i++) {
-      LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
-      un->Compute_SRAvg(net, task_id);
-    }
-
-    if(mg->sync_steps)
-      SyncAtom(mg->stage_sravg, cyc);
 
     // Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
     // todo: figure this one out!
@@ -186,28 +193,20 @@ void LeabraCycleTask::run() {
     }
   }
 
-  run_time.EndTimer();
-
-  avg_time_n++;
-  if(avg_time_n == 1) {
-    avg_run_time = run_time.s_used;
-    avg_wait_time = wait_time.s_used;
-  }
-  else {
-    // continuous integrating of average
-    avg_run_time = (run_time.s_used + avg_run_time * (float)(avg_time_n - 1)) /
-      (float)avg_time_n;
-    avg_wait_time = (wait_time.s_used + avg_wait_time * (float)(avg_time_n - 1)) /
-      (float)avg_time_n;
-  }
+  EndCycle();
 }
 
 String LeabraCycleTask::ThreadReport() {
+  float rescale = 1.0e6;        // how many microseconds
   String rval;
   rval << task_id << ": " << "un: " << uidx_st << " - " << uidx_ed
        << "  lay: " << lay_st << " - " << lay_ed
-       << "  || run: " << avg_run_time
-       << " wait: " << avg_wait_time
+       << "  || "
+       << send_netin_time.ReportAvg(rescale) << "; "
+       << netin_integ_time.ReportAvg(rescale) << "; "
+       << inhib_time.ReportAvg(rescale) << "; "
+       << act_time.ReportAvg(rescale) << "; "
+       << cycstats_time.ReportAvg(rescale) << "; "
        << "\n";
   return rval;
 }
@@ -300,15 +299,10 @@ void LeabraCycleThreadMgr::InitStages() {
   stage_net = 0;
   stage_net_int = 0;
 
-  stage_inhib_lay = 0;
-  stage_inhib_gp = 0;
   stage_inhib = 0;
 
   stage_act = 0;
   stage_cyc_stats = 0;
-
-  stage_sravg_state = 0;
-  stage_sravg = 0;
 }
 
 void LeabraCycleThreadMgr::Run() {

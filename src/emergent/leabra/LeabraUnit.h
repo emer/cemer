@@ -226,12 +226,6 @@ public:
   void	Compute_ApplyInhib(LeabraLayerSpec* lspec, LeabraNetwork* net, float inhib_val)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lspec, net, inhib_val); }
   // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance
-  void	Compute_ApplyInhib_LoserGain(LeabraLayerSpec* lspec, LeabraNetwork* net,
-                                     float inhib_thr,
-				     float inhib_top, float inhib_loser)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib_LoserGain(this, lspec, net,
- inhib_thr, inhib_top, inhib_loser); }
-  // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance -- when eff_loser_gain in effect
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -307,9 +301,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
-  void	Compute_SRAvg(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg(this, net, thread_no); }
-  // #CAT_Learning compute sending-receiving activation product averages (CtLeabra_X/CAL)
+  void	Compute_SRAvg_Cons(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg_Cons(this, net, thread_no); }
+  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
 
   void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }

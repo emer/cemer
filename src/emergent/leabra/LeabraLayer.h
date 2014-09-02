@@ -96,10 +96,12 @@ public:
     return &lay_kbuffs;
   }
   // #CAT_Activation get kwta sort buffer list for given access mode (gp or layer)
-  LeabraUnGpData* 	UnGpData(int gpidx) {
-    return ungp_data.SafeEl(gpidx);
-  }
+  LeabraUnGpData* 	UnGpData(int gpidx)
+  { return ungp_data.SafeEl(gpidx); }
   // #CAT_Structure get unit group data structure for given unit group index
+  LeabraUnGpData* 	UnGpDataUn(Unit* un)
+  { return ungp_data.SafeEl(un->ug_idx); }
+  // #CAT_Structure get unit group data structure for unit group for given unit
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -180,10 +182,9 @@ public:
 
   void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, net); }
   // #CAT_Activation compute the inhibition for layer
-  void	Compute_LayInhibToGps(LeabraNetwork* net) { spec->Compute_LayInhibToGps(this, net); }
+  void	Compute_LayInhibToGps(LeabraNetwork* net)
+  { spec->Compute_LayInhibToGps(this, net); }
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
-  void	Compute_ApplyInhib(LeabraNetwork* net)	{ spec->Compute_ApplyInhib(this, net); }
-  // #CAT_Activation Stage 2.3: apply computed inhib value to individual unit inhibitory conductances
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
