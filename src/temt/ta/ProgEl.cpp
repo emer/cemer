@@ -832,6 +832,9 @@ bool ProgEl::CvtCodeToVar(String& code) {
     ckcode = ckcode.before('\"'); // we don't care about after for types -- can't decl type after..
   }
 
+  // the parser likes a space after a left parens :)
+  ckcode.gsub('(', "( ");
+
   String vtype;
   TypeDef* td;
   String_Array tokens;
