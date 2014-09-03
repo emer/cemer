@@ -129,7 +129,7 @@ void LeabraCycleTask::run() {
   int n_task = mg->tasks.size;
   int chk = mg->unit_chunks;
   int un_st = (task_id * chk) + 1; // 1 offset
-  int un_inc = (n_task * chk) - 1; // already adds the 1
+  int un_inc = ((n_task-1) * chk);
   int un_mx = net->units_flat.size;
   int i;
   int ci;
@@ -137,6 +137,11 @@ void LeabraCycleTask::run() {
   int n_lays = net->active_layer_idx.size;
 
   StartCycle(st_ct_cyc, mg->n_cycles);
+
+  // 1 2 3 4 5 6 7 8 9 10 11 12
+  // 0 0 0             0  0  0
+  //       1 1 1 
+  //             2 2 2
 
   for(int cyc=0; cyc < mg->n_cycles; cyc++) {
     int cur_net_cyc = st_ct_cyc + cyc;
