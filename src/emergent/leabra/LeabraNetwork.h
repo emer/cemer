@@ -249,6 +249,11 @@ public:
 
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
+  
+  int_Matrix    snet_un_to_th;
+  // #NO_SAVE #IHIDDEN #CAT_Activation [max_n][n_threads] for sending netinput computation, mapping of units to threads -- splits up each layer into chunks, to balance the loads across layers, which vary cycle-by-cycle -- inner dimension is unit index, outer is per thread
+  int_Matrix    snet_un_to_th_n;
+  // #NO_SAVE #IHIDDEN #CAT_Activation for sending netinput computation, mapping of units to threads -- splits up each layer into chunks, to balance the loads across layers, which vary cycle-by-cycle -- count of number per thread
 
   ///////////////////////////////////////////////////////////////////////
   //	Thread Flags

@@ -134,8 +134,8 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
     LeabraLayerSpec* lsin = (LeabraLayerSpec*)lin->GetLayerSpec();
     LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout->GetLayerSpec();
 
-    if((lsin->inhib_group != ENTIRE_LAYER) && lin->unit_groups) {
-      for(int g=0; g < lay->gp_geom.n; g++) {
+    if(lsin->HasUnitGpInhib(lin)) {
+      for(int g=0; g < lin->gp_geom.n; g++) {
         LeabraUnGpData* gpdin = lin->ungp_data.FastEl(g);
         nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_GP, g, net);
         if(net->on_errs && net->off_errs)

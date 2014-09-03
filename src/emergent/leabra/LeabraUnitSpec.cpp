@@ -738,7 +738,10 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
 
 
 void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) {
-  Init_Netins(u, net);
+  // todo: turn this on after next round of testing
+  if(decay > 0.0f) {            // no need to reset netin if not decaying at all
+    Init_Netins(u, net);
+  }
 
   u->v_m -= decay * (u->v_m - v_m_init.mean);
   u->vm_dend -= decay * u->vm_dend;

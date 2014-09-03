@@ -745,7 +745,7 @@ float TwoDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
 
   float nerr = 0.0f;
   float ntot = 0;
-  if((inhib_group != ENTIRE_LAYER) && lay->unit_groups) {
+  if(HasUnitGpInhib(lay)) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       nerr += Compute_NormErr_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);

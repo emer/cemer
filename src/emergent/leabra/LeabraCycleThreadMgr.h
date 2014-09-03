@@ -28,6 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 class LeabraCycleThreadMgr; //
+class DataTable; //
 
 taTypeDef_Of(RunWaitTime);
 
@@ -80,48 +81,74 @@ private:
   void  Destroy()       { };
 };
 
+
+taTypeDef_Of(RunWaitTime_List);
+
+class TA_API RunWaitTime_List: public taList<RunWaitTime> {
+  // ##CAT_Program a list of run-wait-timers
+INHERITED(taList<RunWaitTime>)
+public:
+
+  void  ResetUsed(int st_idx, int n);
+  // #CAT_TimeUsed reset time used information for both run and wait for given range of timers
+
+  TA_BASEFUNS_NOCOPY(RunWaitTime_List);
+private:
+  void          Initialize() { SetBaseType(&TA_RunWaitTime); }
+  void          Destroy() { }
+};
+
+
+
 eTypeDef_Of(LeabraCycleTask);
 
 class E_API LeabraCycleTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef    network;        // #NO_SAVE the network we're operating on
-  int           uidx_st;        // #NO_SAVE unit list number to start on
-  int           uidx_ed;        // #NO_SAVE unit number to end before
+  int           un_scon_st;     // #NO_SAVE for sending connections computation (send netin), unit to start processing
+  int           un_scon_ed;     // #NO_SAVE for sending connections computation (send netin), unit to end (before) processing
+  int           un_st;          // #NO_SAVE for unit-level computation (netin integ, act), unit to start processing
+  int           un_ed;          // #NO_SAVE for unit-level computation (netin integ, act), unit to end (before) processing
   int           lay_st;         // #NO_SAVE layer leaf number to start on
   int           lay_ed;         // #NO_SAVE layer leaf number to end on
 
-  RunWaitTime   send_netin_time;  // #NO_SAVE connection-level send netin computation
-  RunWaitTime   netin_integ_time; // #NO_SAVE unit-level netin integration computation
-  RunWaitTime   inhib_time;       // #NO_SAVE layer-level inhibition computation
-  RunWaitTime   act_time;         // #NO_SAVE unit-level act computation
-  RunWaitTime   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
+  // keeping track of these by cycle
+  RunWaitTime_List   send_netin_time;  // #NO_SAVE connection-level send netin computation
+  RunWaitTime_List   netin_integ_time; // #NO_SAVE unit-level netin integration computation
+  RunWaitTime_List   inhib_time;       // #NO_SAVE layer-level inhibition computation
+  RunWaitTime_List   act_time;         // #NO_SAVE unit-level act computation
+  RunWaitTime_List   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
 
   // optional ones
-  RunWaitTime   sravg_cons_time; // #NO_SAVE connection-level sravg
-  RunWaitTime   cycsyndep_time;  // #NO_SAVE connection-level syn dep
+  RunWaitTime_List   sravg_cons_time; // #NO_SAVE connection-level sravg
+  RunWaitTime_List   cycsyndep_time;  // #NO_SAVE connection-level syn dep
 
   void  run() override;
   // runs full cycle
 
-  void          StartCycle();
+  void          InitTimers(int tot_cyc);
+  // initialize timers to hold at most tot_cyc -- good idea to pad if will not always be same
+
+  void          StartCycle(int st_ct_cyc, int n_run_cyc);
   // reset all the timers
 
-  inline void   StartStep(RunWaitTime& time)
-  { time.StartRun(false); }
+  inline void   StartStep(RunWaitTime_List& time, int cur_net_cyc)
+  { time[cur_net_cyc]->StartRun(false); }
 
-  void          EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc);
+  void          EndStep(QAtomicInt& stage, RunWaitTime_List& time, int cyc,
+                        int cur_net_cyc);
   // #IGNORE end a given step, including sync on given atomic step
 
-  inline void   EndTime(RunWaitTime& time) 
-  { time.EndRun(); }
+  inline void   EndTime(RunWaitTime_List& time, int cur_net_cyc) 
+  { time[cur_net_cyc]->EndRun(); }
   // use this one if there isn't a sync possibility -- just stop the timer
 
-  void          EndCycle();
+  void          EndCycle(int cur_net_cyc);
   // end all the timers
 
-  String   ThreadReport();
-  // return a report on thread stats, etc
+  void          ThreadReport(DataTable& dt);
+  // report data to data table
 
   LeabraCycleThreadMgr* mgr() { return (LeabraCycleThreadMgr*)owner->GetOwner(); }
 
@@ -168,8 +195,8 @@ public:
   void  InitStages(); 
   // #IGNORE set all stage counters to 0
 
-  String   ThreadReport();
-  // return a report on thread stats, etc
+  void   ThreadReport(DataTable* table);
+  // run a report on thread stats, to data table (which is fully reset in the process)
 
   TA_BASEFUNS_NOCOPY(LeabraCycleThreadMgr);
 protected:

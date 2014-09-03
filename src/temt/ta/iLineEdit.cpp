@@ -176,7 +176,7 @@ bool iLineEdit::event(QEvent* e)
 
 void iLineEdit::keyPressEvent(QKeyEvent* e)
 {
-  std::cerr << "keypress" << std::endl;
+  // std::cerr << "keypress" << std::endl;
   
   // emacs keys!!
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
