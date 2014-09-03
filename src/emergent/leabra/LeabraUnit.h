@@ -125,7 +125,6 @@ public:
   float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in ct_cycle units when spiking last occurred (-1 for not yet)
-  float         n_send_cons_cost; // #CAT_Structure #READ_ONLY #EXPERT total number of sending connections weighed by computational cost (see network cyc_threads params)
   float_CircBuffer* act_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of activation states for synaptic delay computation
   float_CircBuffer* spike_e_buf;	// #NO_VIEW #NO_SAVE #CAT_Activation buffer of excitatory net input from spikes for synaptic integration over discrete spikes
   float_CircBuffer* spike_i_buf; // #NO_VIEW #NO_SAVE #CAT_Activation buffer of inhibitory net input from spikes for synaptic integration over discrete spikes

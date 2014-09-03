@@ -557,15 +557,6 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
 
 int LeabraUnitSpec::CountCons(LeabraUnit* u, LeabraNetwork* net) {
   int rval = u->Unit::CountCons(net);
-  LeabraLayer* lay = u->own_lay();
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-  u->n_send_cons_cost = (float)u->n_send_cons;
-  if(lay->layer_type == Layer::INPUT && ls->clamp.hard) {
-    u->n_send_cons_cost *= net->cyc_threads.input_cost;
-  }
-  if(lay->layer_type == Layer::TARGET && ls->clamp.hard) {
-    u->n_send_cons_cost *= net->cyc_threads.target_cost;
-  }
   return rval;
 }
 

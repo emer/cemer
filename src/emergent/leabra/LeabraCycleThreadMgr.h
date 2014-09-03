@@ -106,12 +106,6 @@ class E_API LeabraCycleTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef    network;        // #NO_SAVE the network we're operating on
-  int           un_scon_st;     // #NO_SAVE for sending connections computation (send netin), unit to start processing
-  int           un_scon_ed;     // #NO_SAVE for sending connections computation (send netin), unit to end (before) processing
-  int           un_st;          // #NO_SAVE for unit-level computation (netin integ, act), unit to start processing
-  int           un_ed;          // #NO_SAVE for unit-level computation (netin integ, act), unit to end (before) processing
-  int           lay_st;         // #NO_SAVE layer leaf number to start on
-  int           lay_ed;         // #NO_SAVE layer leaf number to end on
 
   // keeping track of these by cycle
   RunWaitTime_List   send_netin_time;  // #NO_SAVE connection-level send netin computation
@@ -140,8 +134,7 @@ public:
                         int cur_net_cyc);
   // #IGNORE end a given step, including sync on given atomic step
 
-  inline void   EndTime(RunWaitTime_List& time, int cur_net_cyc) 
-  { time[cur_net_cyc]->EndRun(); }
+  void          EndTime(RunWaitTime_List& time, int cur_net_cyc);
   // use this one if there isn't a sync possibility -- just stop the timer
 
   void          EndCycle(int cur_net_cyc);
@@ -166,10 +159,9 @@ INHERITED(taThreadMgr)
 public:
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   int           n_cycles;       // #MIN_1 how many cycles to run at a time -- more efficient to run multiple cycles per Run
-  float         input_cost;     // relative computational cost of a hard-clamped INPUT layer compared to a full hidden layer -- much reduced due to many steps skipped for these layers -- optimize this to get initial allocation closer to balanced
-  float         target_cost;     // relative computational cost of a hard-clamped TARGET layer compared to a full hidden layer -- reduced due to many steps skipped for these layers -- optimize this to get initial allocation closer to balanced
+  int           unit_chunks;    // #MIN_1 how many units to bite off for each thread off of the list at a time
   int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
-  bool          sync_steps;     // keep each step of computation within the cycle syncronized, using atomic ints -- ensures 100% accurate computation -- turning this off is untested and likely to cause problems at this point
+  bool          cyc_timers;     // Accumulate timing information at the cycle level for each different type of operation -- for debugging / optimizing threading
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
   // the following track how many threads have reached each stage -- atomic incremented by working threads

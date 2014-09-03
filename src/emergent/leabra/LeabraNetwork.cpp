@@ -70,7 +70,6 @@ void LeabraNetwork::Initialize() {
 
   ct_cycle = 0;
   time_inc = 1.0f;              // just a simple counter by default
-  n_cons_cost = 0.0f;
 
   cycle_max = 60;
   mid_minus_cycle = -1;
@@ -346,7 +345,6 @@ void LeabraNetwork::CheckInhibCons() {
 }
 
 void LeabraNetwork::CountCons() {
-  n_cons_cost = 0.0f;
   inherited::CountCons();
 }
 
@@ -356,38 +354,18 @@ void LeabraNetwork::BuildUnits_Threads() {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::BuildUnits_Threads();
-  
-  cyc_threads.InitAll();
 
-  // figure out snet_un_to_threads
-  if(units_flat.size > 0) {
-    int n_thr = cyc_threads.n_threads;
-    int max_n_per = (units_flat.size / n_thr) + 2 * layers.leaves; // some extra
-    snet_un_to_th.SetGeom(2, max_n_per, n_thr);
-    snet_un_to_th_n.SetGeom(1, n_thr);
-    snet_un_to_th_n.InitVals(0.0f);
-
-    FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-      if(l->lesioned()) 
-        continue;
-      int nu = l->units.leaves;
-      float nuper = (float)nu / (float)n_thr;
-      int uis = l->units_flat_idx;
-      int thr = 0;
-      for(int i=0; i<nu; i++, uis++) {
-        if(uis >= units_flat.size) break;
-        // int trg = (int)(((float)(thr+1) * nuper) + 0.5f);
-        // if(i == trg) {          // increment thread at target sum
-        //   if(thr < n_thr-1)
-        //     thr++;
-        // }
-        thr = i % n_thr;        // just alternate -- best division of load
-        int& n = snet_un_to_th_n.FastEl1d(thr);
-        snet_un_to_th.FastEl2d(n, thr) = uis;
-        n++;
-      }
-    }
+  active_layer_idx.Reset();
+  for(int i=0;i<layers.leaves; i++) {
+    LeabraLayer* l = (LeabraLayer*)layers.Leaf(i);
+    if(l->lesioned()) continue;
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)l->GetLayerSpec();
+    if(l->layer_type == Layer::INPUT && ls->clamp.hard)
+      continue;                 // not active for our purposes..
+    active_layer_idx.Add(i);
   }
+
+  cyc_threads.InitAll();
 }
 
 void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {

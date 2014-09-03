@@ -77,8 +77,6 @@ void LeabraUnit::Initialize() {
   misc_1 = 0.0f;
   spk_t = -1;
 
-  n_send_cons_cost = 0.0f;
-  
   act_buf = NULL;
   spike_e_buf = NULL;
   spike_i_buf = NULL;
@@ -159,5 +157,4 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
   spk_t = cp.spk_t;
-  n_send_cons_cost = cp.n_send_cons_cost;
 }

@@ -991,6 +991,7 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
 //      Cycle Stats
 
 void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+  // todo: for threading, need to remove this!
   if((net->cycle >= 0) && lay->hard_clamped) {
     Compute_OutputName(lay, net); // need to keep doing this because network clears it
     return;

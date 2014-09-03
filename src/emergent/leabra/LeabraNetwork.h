@@ -158,7 +158,6 @@ public:
 
   int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
-  float         n_cons_cost;    // computational-cost weighted number of total connections -- weighted by input_cost and target_cost in cyc_threads
 
   LeabraCycleThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
@@ -249,11 +248,9 @@ public:
 
   bool		inhib_cons_used; // #NO_SAVE #READ_ONLY #CAT_Threads inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
-  
-  int_Matrix    snet_un_to_th;
-  // #NO_SAVE #IHIDDEN #CAT_Activation [max_n][n_threads] for sending netinput computation, mapping of units to threads -- splits up each layer into chunks, to balance the loads across layers, which vary cycle-by-cycle -- inner dimension is unit index, outer is per thread
-  int_Matrix    snet_un_to_th_n;
-  // #NO_SAVE #IHIDDEN #CAT_Activation for sending netinput computation, mapping of units to threads -- splits up each layer into chunks, to balance the loads across layers, which vary cycle-by-cycle -- count of number per thread
+
+  int_Array     active_layer_idx;
+  // #NO_SAVE #IHIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
 
   ///////////////////////////////////////////////////////////////////////
   //	Thread Flags
