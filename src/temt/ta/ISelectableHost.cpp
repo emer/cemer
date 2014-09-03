@@ -32,6 +32,8 @@
 #include <css_qtdialog.h>
 #include <css_ta.h>
 
+#include <QApplication>
+#include <QClipboard>
 
 void ISelectableHost::ItemDeleting(ISelectable* item) {
   taPtrList_impl* insts = ISelectable_PtrList::insts; // cache for convenience
@@ -137,6 +139,7 @@ void ISelectableHost::EditAction(int ea,
       if (chs != 1) return;
     }
     EditAction_Delete(gc_typ);
+    QApplication::clipboard()->clear();
   } else {
     ISelectable_PtrList items(selItems());
     ci->EditAction_(items, ea, gc_typ);
