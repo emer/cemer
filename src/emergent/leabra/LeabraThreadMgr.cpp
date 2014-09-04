@@ -312,69 +312,92 @@ void LeabraTask::ThreadReport(DataTable& dt) {
   int idx;
   DataCol* thc = dt.FindMakeColName("thread", idx, VT_INT);
   DataCol* stat = dt.FindMakeColName("stat", idx, VT_STRING);
-  DataCol* sn_r = dt.FindMakeColName("send_net_run", idx, VT_FLOAT);
-  DataCol* sn_w = dt.FindMakeColName("send_net_wait", idx, VT_FLOAT);
-  DataCol* ni_r = dt.FindMakeColName("net_int_run", idx, VT_FLOAT);
-  DataCol* ni_w = dt.FindMakeColName("net_int_wait", idx, VT_FLOAT);
-  DataCol* ih_r = dt.FindMakeColName("inhib_run", idx, VT_FLOAT);
-  DataCol* ih_w = dt.FindMakeColName("inhib_wait", idx, VT_FLOAT);
-  DataCol* ac_r = dt.FindMakeColName("act_run", idx, VT_FLOAT);
-  DataCol* ac_w = dt.FindMakeColName("act_wait", idx, VT_FLOAT);
-  DataCol* cs_r = dt.FindMakeColName("cyc_stat_run", idx, VT_FLOAT);
-  DataCol* cs_w = dt.FindMakeColName("cyc_stat_wait", idx, VT_FLOAT);
-  DataCol* dw_r = dt.FindMakeColName("dwt_run", idx, VT_FLOAT);
-  DataCol* dw_w = dt.FindMakeColName("dwt_wait", idx, VT_FLOAT);
-  DataCol* dwn_r = dt.FindMakeColName("dwt_norm_run", idx, VT_FLOAT);
-  DataCol* dwn_w = dt.FindMakeColName("dwt_norm_wait", idx, VT_FLOAT);
-  DataCol* wt_r = dt.FindMakeColName("wt_run", idx, VT_FLOAT);
-  DataCol* wt_w = dt.FindMakeColName("wt_wait", idx, VT_FLOAT);
-  DataCol* dn_w = dt.FindMakeColName("done_wait", idx, VT_FLOAT);
-
-  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
-  int tot_cyc = net->ct_time.total_cycles;
-
+  DataCol* rca = dt.FindMakeColName("run_avg", idx, VT_FLOAT);
+  DataCol* rcs = dt.FindMakeColName("run_sum", idx, VT_FLOAT);
+  DataCol* wca = dt.FindMakeColName("wait_avg", idx, VT_FLOAT);
+  DataCol* wcs = dt.FindMakeColName("wait_sum", idx, VT_FLOAT);
+  
   float rescale = 1.0e6;        // how many microseconds
   dt.AddBlankRow();
   thc->SetValAsInt(task_id, -1);
-  stat->SetValAsString("avg", -1);
-  sn_r->SetValAsFloat(send_netin_time.run.avg_used.avg * rescale, -1);
-  sn_w->SetValAsFloat(send_netin_time.wait.avg_used.avg * rescale, -1);
-  ni_r->SetValAsFloat(netin_integ_time.run.avg_used.avg * rescale, -1);
-  ni_w->SetValAsFloat(netin_integ_time.wait.avg_used.avg * rescale, -1);
-  ih_r->SetValAsFloat(inhib_time.run.avg_used.avg * rescale, -1);
-  ih_w->SetValAsFloat(inhib_time.wait.avg_used.avg * rescale, -1);
-  ac_r->SetValAsFloat(act_time.run.avg_used.avg * rescale, -1);
-  ac_w->SetValAsFloat(act_time.wait.avg_used.avg * rescale, -1);
-  cs_r->SetValAsFloat(cycstats_time.run.avg_used.avg * rescale, -1);
-  cs_w->SetValAsFloat(cycstats_time.wait.avg_used.avg * rescale, -1);
-  dw_r->SetValAsFloat(dwt_time.run.avg_used.avg * rescale, -1);
-  dw_w->SetValAsFloat(dwt_time.wait.avg_used.avg * rescale, -1);
-  dwn_r->SetValAsFloat(dwt_norm_time.run.avg_used.avg * rescale, -1);
-  dwn_w->SetValAsFloat(dwt_norm_time.wait.avg_used.avg * rescale, -1);
-  wt_r->SetValAsFloat(wt_time.run.avg_used.avg * rescale, -1);
-  wt_w->SetValAsFloat(wt_time.wait.avg_used.avg * rescale, -1);
-  dn_w->SetValAsFloat(done_time.wait.avg_used.avg * rescale, -1);
+  stat->SetValAsString("send_netin_time", -1);
+  rca->SetValAsFloat(send_netin_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(send_netin_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(send_netin_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(send_netin_time.wait.avg_used.sum, -1);
 
   dt.AddBlankRow();
   thc->SetValAsInt(task_id, -1);
-  stat->SetValAsString("sum", -1);
-  sn_r->SetValAsFloat(send_netin_time.run.avg_used.sum, -1);
-  sn_w->SetValAsFloat(send_netin_time.wait.avg_used.sum, -1);
-  ni_r->SetValAsFloat(netin_integ_time.run.avg_used.sum, -1);
-  ni_w->SetValAsFloat(netin_integ_time.wait.avg_used.sum, -1);
-  ih_r->SetValAsFloat(inhib_time.run.avg_used.sum, -1);
-  ih_w->SetValAsFloat(inhib_time.wait.avg_used.sum, -1);
-  ac_r->SetValAsFloat(act_time.run.avg_used.sum, -1);
-  ac_w->SetValAsFloat(act_time.wait.avg_used.sum, -1);
-  cs_r->SetValAsFloat(cycstats_time.run.avg_used.sum, -1);
-  cs_w->SetValAsFloat(cycstats_time.wait.avg_used.sum, -1);
-  dw_r->SetValAsFloat(dwt_time.run.avg_used.sum, -1);
-  dw_w->SetValAsFloat(dwt_time.wait.avg_used.sum, -1);
-  dwn_r->SetValAsFloat(dwt_norm_time.run.avg_used.sum, -1);
-  dwn_w->SetValAsFloat(dwt_norm_time.wait.avg_used.sum, -1);
-  wt_r->SetValAsFloat(wt_time.run.avg_used.sum, -1);
-  wt_w->SetValAsFloat(wt_time.wait.avg_used.sum, -1);
-  dn_w->SetValAsFloat(done_time.wait.avg_used.sum, -1);
+  stat->SetValAsString("netin_integ_time", -1);
+  rca->SetValAsFloat(netin_integ_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(netin_integ_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(netin_integ_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(netin_integ_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("inhib_time", -1);
+  rca->SetValAsFloat(inhib_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(inhib_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(inhib_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(inhib_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("act_time", -1);
+  rca->SetValAsFloat(act_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(act_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(act_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(act_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("cycstats_time", -1);
+  rca->SetValAsFloat(cycstats_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(cycstats_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(cycstats_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(cycstats_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("dwt_time", -1);
+  rca->SetValAsFloat(dwt_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(dwt_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(dwt_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(dwt_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("send_netin_time", -1);
+  rca->SetValAsFloat(send_netin_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(send_netin_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(send_netin_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(send_netin_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("dwt_norm_time", -1);
+  rca->SetValAsFloat(dwt_norm_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(dwt_norm_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(dwt_norm_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(dwt_norm_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("wt_time", -1);
+  rca->SetValAsFloat(wt_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(wt_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(wt_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(wt_time.wait.avg_used.sum, -1);
+
+  dt.AddBlankRow();
+  thc->SetValAsInt(task_id, -1);
+  stat->SetValAsString("ti_netin_time", -1);
+  rca->SetValAsFloat(ti_netin_time.run.avg_used.avg * rescale, -1);
+  wca->SetValAsFloat(ti_netin_time.wait.avg_used.avg * rescale, -1);
+  rcs->SetValAsFloat(ti_netin_time.run.avg_used.sum, -1);
+  wcs->SetValAsFloat(ti_netin_time.wait.avg_used.sum, -1);
+
 }
 
 void LeabraTask::run() {
