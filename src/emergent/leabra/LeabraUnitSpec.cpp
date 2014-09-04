@@ -1934,6 +1934,35 @@ void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
   }
 }
 
+void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
+                                         int thread_no) {
+  float act_ts = u->deep5b;
+
+  if(act_ts > opt_thresh.send) {
+    for(int g=0; g<u->send.size; g++) {
+      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      if(send_gp->NotActive()) continue;
+      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
+      Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
+      // if(!tol->TI_UpdateContextTest(net)) continue;
+      sp->Send_Deep5bNetin(send_gp, net, thread_no, act_ts);
+    }
+  }
+}
+
+void LeabraUnitSpec::TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
+                                         int thread_no) {
+  int nt = net->lthreads.n_threads_act;
+  float nw_nt = 0.0f;
+  for(int j=0;j<nt;j++) {
+    float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
+    nw_nt += ndval;
+    ndval = 0.0f;             // zero immediately..
+  }
+  u->deep5b_net = nw_nt;
+}
+
 void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                        int thread_no) {
   float act_ts = u->act_eq;
@@ -1955,10 +1984,9 @@ void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
   }
 }
 
-void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
-  int nt = net->threads.tasks.size; // todo: cyc_threads or threads?
-  if(!net->threads.using_threads)
-    nt = 1;
+void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net,
+                                            int thread_no) {
+  int nt = net->lthreads.n_threads_act;
   float nw_nt = 0.0f;
   for(int j=0;j<nt;j++) {
     float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
@@ -1966,36 +1994,6 @@ void LeabraUnitSpec::TI_Send_CtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
     ndval = 0.0f;             // zero immediately..
   }
   u->net_ctxt = nw_nt;
-}
-
-void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
-                                         int thread_no) {
-  float act_ts = u->deep5b;
-
-  if(act_ts > opt_thresh.send) {
-    for(int g=0; g<u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
-      Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-      // if(!tol->TI_UpdateContextTest(net)) continue;
-      sp->Send_Deep5bNetin(send_gp, net, thread_no, act_ts);
-    }
-  }
-}
-
-void LeabraUnitSpec::TI_Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net) {
-  int nt = net->threads.tasks.size;
-  if(!net->threads.using_threads)
-    nt = 1;
-  float nw_nt = 0.0f;
-  for(int j=0;j<nt;j++) {
-    float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
-    nw_nt += ndval;
-    ndval = 0.0f;             // zero immediately..
-  }
-  u->deep5b_net = nw_nt;
 }
 
 void LeabraUnitSpec::TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) {

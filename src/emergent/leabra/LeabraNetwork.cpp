@@ -894,8 +894,7 @@ void LeabraNetwork::TI_CtxtUpdate() {
   TI_Compute_Deep5bAct();
 
   if(do_updt) {
-    TI_Send_Deep5bNetin();
-    TI_Send_CtxtNetin();
+    TI_Send_Netins();
     TI_Compute_CtxtAct();
   }
 }
@@ -907,50 +906,46 @@ void LeabraNetwork::TI_Compute_Deep5bAct() {
   }
 }
 
+void LeabraNetwork::TI_Send_Netins() {
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_TI_NETS);
+  }
+  else {
+    TI_Send_Deep5bNetin();
+    TI_Send_CtxtNetin();
+  }
+}
+
 void LeabraNetwork::TI_Send_Deep5bNetin() {
   send_pct_n = send_pct_tot = 0;
 
-  if(lthreads.CanRun()) {
-    lthreads.Run(LeabraThreadMgr::RUN_DEEP5B_NET);
-  }
-  else {
-    // non-threaded
-    for(int i=1; i<units_flat.size; i++) {
-      LeabraUnit* un = (LeabraUnit*)units_flat[i];
-      un->TI_Send_Deep5bNetin(this, -1);
-    }
+  // non-threaded
+  const int nu = units_flat.size;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->TI_Send_Deep5bNetin(this, -1);
   }
 
-  // now need to roll up the netinput into unit vals
-  if(lthreads.using_threads) {	// if not used, goes directly into unit vals
-    const int nu = units_flat.size;
-    for(int i=1;i<nu;i++) {   // 0 = dummy idx
-      LeabraUnit* u = (LeabraUnit*)units_flat[i];
-      u->TI_Send_Deep5bNetin_Post(this);
-    }
+  // always need to roll up the netinput into unit vals -- thread or not
+  for(int i=1;i<nu;i++) {   // 0 = dummy idx
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    u->TI_Send_Deep5bNetin_Post(this);
   }
 }
 
 void LeabraNetwork::TI_Send_CtxtNetin() {
   send_pct_n = send_pct_tot = 0;
 
-  if(lthreads.CanRun()) {
-    lthreads.Run(LeabraThreadMgr::RUN_CTXT_NET);
+  // non-threaded
+  const int nu = units_flat.size;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->TI_Send_CtxtNetin(this, -1);
   }
-  else {
-    // non-threaded
-    for(int i=1; i<units_flat.size; i++) {
-      LeabraUnit* un = (LeabraUnit*)units_flat[i];
-      un->TI_Send_CtxtNetin(this, -1);
-    }
-  }
-  // now need to roll up the netinput into unit vals
-  if(lthreads.using_threads) {	// if not used, goes directly into unit vals
-    const int nu = units_flat.size;
-    for(int i=1;i<nu;i++) {   // 0 = dummy idx
-      LeabraUnit* u = (LeabraUnit*)units_flat[i];
-      u->TI_Send_CtxtNetin_Post(this);
-    }
+  // always need to roll up the netinput into unit vals
+  for(int i=1;i<nu;i++) {   // 0 = dummy idx
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    u->TI_Send_CtxtNetin_Post(this);
   }
 }
 

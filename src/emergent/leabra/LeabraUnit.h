@@ -273,14 +273,14 @@ public:
   void	TI_Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin(this, net, thread_no); }
   // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
-  void	TI_Send_Deep5bNetin_Post(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin_Post(this, net); }
+  void	TI_Send_Deep5bNetin_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin_Post(this, net, thread_no); }
   // #CAT_TI send deep5b netinputs through Deep5bConSpec connections -- post processing rollup
   void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
-  void	TI_Send_CtxtNetin_Post(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin_Post(this, net); }
+  void	TI_Send_CtxtNetin_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin_Post(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
   void	TI_Compute_CtxtAct(LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_CtxtAct(this, net); }

@@ -48,42 +48,11 @@ void LeabraTask::Destroy() {
   network.CutLinks();
 }
 
-void LeabraTask::StartCycle() {
-  LeabraThreadMgr* mg = mgr();
-  if(!mg->timers_on) return;
-
-  send_netin_time.ResetUsed();
-  netin_integ_time.ResetUsed();
-  inhib_time.ResetUsed();
-  act_time.ResetUsed();
-  cycstats_time.ResetUsed();
-
-  sravg_cons_time.ResetUsed();
-  cycsyndep_time.ResetUsed();
-}
-
-void LeabraTask::EndCycle() {
-  LeabraThreadMgr* mg = mgr();
-  if(!mg->timers_on) return;
-
-  send_netin_time.IncrAvg();
-  netin_integ_time.IncrAvg();
-  inhib_time.IncrAvg();
-  act_time.IncrAvg();
-  cycstats_time.IncrAvg();
-
-  sravg_cons_time.IncrAvg();
-  cycsyndep_time.IncrAvg();
-}
-
 void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   LeabraThreadMgr* mg = mgr();
   const bool timers_on = mg->timers_on;
   if(timers_on) {
     time.EndRun();
-  }
-  if(mg->tasks.size == 1) {
-    return;
   }
   int trg = (cyc+1) * mg->tasks.size;
 
@@ -91,6 +60,7 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   // essentially automatic whenever a volitile variable is written to anyway
   int cur_cnt = stage.fetchAndAddOrdered(1); // write should be acquire based like lock?
   if(cur_cnt == trg) { // we were the last guy
+    mg->cur_un_idx = 1;    // as the last guy, we get to reset the nibble count
     return;
   }
 
@@ -106,12 +76,18 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
     cur_cnt = (int)stage;       // should be ordered semantics??
 #endif
   }
+  if(cur_cnt == trg) { // all done now
+    mg->cur_un_idx = 1; // this is a bit wasteful -- everyone will try at same time
+    return;
+  }
 
   if(timers_on) {
     time.EndWait();
   }
 }
 
+#if 0
+// fixed allocation based on thread id -- less flexible..
 void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call) {
   LeabraThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
@@ -140,6 +116,31 @@ void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call) {
   }
 }
 
+#else 
+
+// dynamic allocation with nibbling
+void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call) {
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  const int chk = mg->unit_chunks;
+  const int un_mx = net->units_flat.size;
+
+  while(true) {
+    int nxt_uidx = mg->cur_un_idx.fetchAndAddOrdered(chk);
+    if(nxt_uidx >= un_mx)
+      break;
+    const int mx = MIN(un_mx, nxt_uidx + chk);
+    for(int i=nxt_uidx; i <mx; i++) {
+      LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+      unit_call.call(un, net, task_id); // task id indicates threading, and which thread
+    }
+    if(mx == un_mx) break;
+  }
+}
+
+#endif
+
 void LeabraTask::RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& stage,
                               RunWaitTime& time, int cyc, bool reset_used) {
   LeabraThreadMgr* mg = mgr();
@@ -151,6 +152,8 @@ void LeabraTask::RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& stage
   }
   RunUnits(unit_call);
   EndStep(stage, time, cyc);
+  if(timers_on)
+    time.IncrAvg();
 }
 
 void LeabraTask::RunUnitsTime(LeabraThreadUnitCall& unit_call,
@@ -165,8 +168,7 @@ void LeabraTask::RunUnitsTime(LeabraThreadUnitCall& unit_call,
   RunUnits(unit_call);
   if(timers_on) {
     EndTime(time);
-    if(reset_used)
-      time.IncrAvg();           // resets always incr
+    time.IncrAvg();           // resets always incr
   }
 }
 
@@ -182,8 +184,6 @@ void LeabraTask::Cycle_Run() {
   const int n_task = mg->tasks.size;
 
   const int n_lays = net->active_layer_idx.size;
-
-  StartCycle();
 
   for(int cyc=0; cyc < n_cyc; cyc++) {
     int cur_net_cyc = st_ct_cyc + cyc;
@@ -261,22 +261,29 @@ void LeabraTask::Cycle_Run() {
       net->ct_cycle++;
       net->time += net->time_inc; // always increment time..
     }
-    EndCycle();
   }
 }
 
-void LeabraTask::TI_Send_Deep5bNetin() {
+void LeabraTask::TI_Send_Netins() {
   LeabraThreadMgr* mg = mgr();
 
-  LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_Deep5bNetin);
-  RunUnitsStep(un_call, mg->stage_deep5b, deep5b_time, 0, true); // cyc = 0, reset
-}
+  {
+    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_Deep5bNetin);
+    RunUnitsStep(un_call, mg->stage_deep5b, ti_netin_time, 0); // cyc = 0
+  }
+  { 
+    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_Deep5bNetin_Post);
+    RunUnitsStep(un_call, mg->stage_deep5b_p, ti_netin_time, 0, false); // cyc = 0, no reset
+  }
 
-void LeabraTask::TI_Send_CtxtNetin() {
-  LeabraThreadMgr* mg = mgr();
-
-  LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_CtxtNetin);
-  RunUnitsStep(un_call, mg->stage_ctxt, ctxt_time, 0, true); // cyc = 0, reset
+  {
+    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_CtxtNetin);
+    RunUnitsStep(un_call, mg->stage_ctxt, ti_netin_time, 0, false); // cyc = 0, no reset
+  }
+  { 
+    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_CtxtNetin_Post);
+    RunUnitsStep(un_call, mg->stage_ctxt_p, ti_netin_time, 0, false); // cyc = 0, no reset
+  }
 }
 
 void LeabraTask::Compute_dWt() {
@@ -403,19 +410,12 @@ void LeabraTask::run() {
         mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
       return;                   // this is the final step for testing
-      break;
-    case LeabraThreadMgr::RUN_DEEP5B_NET:
-      TI_Send_Deep5bNetin();
-      if(task_id == 0) {
-        mg->run_state = LeabraThreadMgr::ACTIVE_WAIT; // stay active
-      }
-      break;
-    case LeabraThreadMgr::RUN_CTXT_NET:
-      TI_Send_CtxtNetin();
+    case LeabraThreadMgr::RUN_TI_NETS:
+      TI_Send_Netins();
       if(task_id == 0) {
         mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
-      return;                   // this is the final step in computation so we bail
+      return;
     case LeabraThreadMgr::RUN_DWT:
       Compute_dWt();
       if(task_id == 0) {
@@ -444,8 +444,7 @@ void LeabraThreadMgr::Initialize() {
   run_state = NOT_RUNNING;
   n_threads_act = 1;
   n_cycles = 10;
-  unit_chunks = 2;
-  min_units = taMisc::thread_defaults.min_units;
+  unit_chunks = 32;
   timers_on = false;
   using_threads = false;
   n_threads_prev = n_threads;
@@ -485,8 +484,9 @@ void LeabraThreadMgr::InitAll() {
 bool LeabraThreadMgr::CanRun() {
   Network* net = network();
 
-  bool other_reasons = (net->units_flat.size < min_units
-                        || net->units_flat.size < tasks.size);
+  int min_units = unit_chunks * tasks.size;
+
+  bool other_reasons = (net->units_flat.size < min_units);
 
   if(n_threads == 1 || other_reasons) {
     using_threads = false;
@@ -497,6 +497,8 @@ bool LeabraThreadMgr::CanRun() {
 }
 
 void LeabraThreadMgr::InitStages() {
+  cur_un_idx = 1;               // starts at 1
+
   done_run = 0;
 
   stage_net = 0;
@@ -508,7 +510,9 @@ void LeabraThreadMgr::InitStages() {
   stage_cyc_stats = 0;
 
   stage_deep5b = 0;
+  stage_deep5b_p = 0;
   stage_ctxt = 0;
+  stage_ctxt_p = 0;
   
   stage_dwt = 0;
   stage_dwt_norm = 0;

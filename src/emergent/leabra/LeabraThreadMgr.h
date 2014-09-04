@@ -132,8 +132,7 @@ public:
   RunWaitTime   sravg_cons_time; // #NO_SAVE connection-level sravg
   RunWaitTime   cycsyndep_time;  // #NO_SAVE connection-level syn dep
 
-  RunWaitTime   deep5b_time;       // #NO_SAVE deep5b 
-  RunWaitTime   ctxt_time;         // #NO_SAVE ctxt
+  RunWaitTime   ti_netin_time;     // #NO_SAVE TI netins
 
   RunWaitTime   dwt_time;          // #NO_SAVE weight change
   RunWaitTime   dwt_norm_time;     // #NO_SAVE dwt norm
@@ -152,25 +151,19 @@ public:
   void          RunUnits(LeabraThreadUnitCall& unit_call);
   // #IGNORE run units on given method 
   void          RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& stage,
-                             RunWaitTime& time, int cyc, bool reset_used = false);
+                             RunWaitTime& time, int cyc, bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndStep
   void          RunUnitsTime(LeabraThreadUnitCall& unit_call, 
-                             RunWaitTime& time, bool reset_used = false);
+                             RunWaitTime& time, bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndTime
 
   void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
-  void          TI_Send_Deep5bNetin();
-  void          TI_Send_CtxtNetin();
+  void          TI_Send_Netins();
   void          Compute_dWt();  // run compute_dwt
   void          Compute_Weights(); // run compute_weights
 
   void  run() override;
   // run loop
-
-  void          StartCycle();
-  // reset all the timers
-  void          EndCycle();
-  // increment all the cycle timers
 
   void          ThreadReport(DataTable& dt);
   // report data to data table
@@ -193,16 +186,14 @@ public:
     NOT_RUNNING,                // no current run call is active for the threads -- need to get them started up again -- this can also be used as a stop signal
     ACTIVE_WAIT,                // threads are active (busy tight loop) waiting for a change in run state
     RUN_CYCLE,                  // Cycle_Run()
-    RUN_DEEP5B_NET,             // TI_Send_Deep5bNetin()
-    RUN_CTXT_NET,               // TI_Send_CtxtNetin()
+    RUN_TI_NETS,                // TI_Send_Netins: Deep5bNetin(), CtxtNetin()
     RUN_DWT,                    // Compute_dWt()
     RUN_WT,                     // Compute_Weights()
   };
 
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   int           n_cycles;       // #MIN_1 #DEF_10 how many cycles to run at a time -- more efficient to run multiple cycles per Run
-  int           unit_chunks;    // #MIN_1 #DEF_2 how many units to bite off for each thread off of the list at a time
-  int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
+  int           unit_chunks;    // #MIN_1 #DEF_32 how many units to bite off for each thread off of the list at a time
   bool          timers_on;      // Accumulate timing information for each step of processing -- including at the cycle level for each different type of operation -- for debugging / optimizing threading
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
@@ -219,11 +210,15 @@ public:
   QAtomicInt    stage_cyc_stats; // #IGNORE 
 
   QAtomicInt    stage_deep5b;    // #IGNORE 
+  QAtomicInt    stage_deep5b_p;  // #IGNORE post
   QAtomicInt    stage_ctxt;      // #IGNORE 
+  QAtomicInt    stage_ctxt_p;    // #IGNORE post
 
   QAtomicInt    stage_dwt;      // #IGNORE 
   QAtomicInt    stage_dwt_norm; // #IGNORE 
   QAtomicInt    stage_wt;       // #IGNORE 
+
+  QAtomicInt    cur_un_idx;     // #IGNORE current unit index avail for processing -- this is for the "nibble" based thread allocation strategy
 
   Network*      network()       { return (Network*)owner; }
 
