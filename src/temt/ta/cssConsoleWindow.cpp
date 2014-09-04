@@ -86,7 +86,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
     
   tb->addSeparator();
 
-  clear_act = new iAction("&clear", QKeySequence(), "clear");
+  clear_act = new iAction("&Clear", QKeySequence("Ctrl+."), "clear_act");
   clear_act->setIcon(*clear_icon);
   clear_act->setToolTip("Clear the console window");
   tb->addAction(clear_act);
@@ -99,6 +99,7 @@ cssConsoleWindow::~cssConsoleWindow() {
   delete pinned;
   delete unpinned;
   delete pin_act;
+  delete clear_act;
 }
 
 void cssConsoleWindow::UpdateFmLock() {
