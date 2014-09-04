@@ -128,8 +128,8 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
   if(lay->hard_clamped) return;
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
-  int nt = net->cyc_threads.tasks.size;
-  if(!net->cyc_threads.using_threads)
+  int nt = net->lthreads.tasks.size;
+  if(!net->lthreads.using_threads)
     nt = 1;
   float nw_nt = 0.0f;
 

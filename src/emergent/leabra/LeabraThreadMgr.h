@@ -100,12 +100,14 @@ private:
 
 
 
-eTypeDef_Of(LeabraCycleTask);
+eTypeDef_Of(LeabraTask);
 
-class E_API LeabraCycleTask : public taTask {
+class E_API LeabraTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef    network;        // #NO_SAVE the network we're operating on
+
+  RunWaitTime        done_time;        // #NO_SAVE just waiting for everyone to be fully done
 
   // keeping track of these by cycle
   RunWaitTime_List   send_netin_time;  // #NO_SAVE connection-level send netin computation
@@ -118,13 +120,22 @@ public:
   RunWaitTime_List   sravg_cons_time; // #NO_SAVE connection-level sravg
   RunWaitTime_List   cycsyndep_time;  // #NO_SAVE connection-level syn dep
 
-  RunWaitTimet       dwt_time;          // #NO_SAVE weight change
-  RunWaitTimet       wt_time;           // #NO_SAVE update weights
+  RunWaitTime        deep5b_time;       // #NO_SAVE deep5b 
+  RunWaitTime        ctxt_time;         // #NO_SAVE ctxt
+
+  RunWaitTime        dwt_time;          // #NO_SAVE weight change
+  RunWaitTime        dwt_norm_time;     // #NO_SAVE dwt norm
+  RunWaitTime        wt_time;           // #NO_SAVE update weights
 
   void  run() override;
   // run loop
 
+  void          RunStayActive();
+  // run and stay active -- version of run (currently not used!) that keeps threads active across multiple method calls in a program
+
   void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
+  void          TI_Send_Deep5bNetin();
+  void          TI_Send_CtxtNetin();
   void          Compute_dWt();  // run compute_dwt
   void          Compute_Weights(); // run compute_weights
 
@@ -134,14 +145,14 @@ public:
   void          StartCycle(int st_ct_cyc, int n_run_cyc);
   // reset all the timers
 
-  inline void   StartStep(RunWaitTime& time, int cur_net_cyc)
+  inline void   StartStep(RunWaitTime& time)
   { time.StartRun(false); }
 
   void          EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc);
   // #IGNORE end a given step, including sync on given atomic step
 
   inline void   EndTime(RunWaitTime& time)
-  { time.EndRun() }
+  { time.EndRun(); }
   // use this one if there isn't a sync possibility -- just stop the timer
 
   void          EndCycle(int cur_net_cyc);
@@ -152,7 +163,7 @@ public:
 
   LeabraThreadMgr* mgr() { return (LeabraThreadMgr*)owner->GetOwner(); }
 
-  TA_SIMPLE_BASEFUNS(LeabraCycleTask);
+  TA_SIMPLE_BASEFUNS(LeabraTask);
 private:
   void  Initialize();
   void  Destroy();
@@ -161,14 +172,15 @@ private:
 eTypeDef_Of(LeabraThreadMgr);
 
 class E_API LeabraThreadMgr : public taThreadMgr {
-  // #INLINE thread manager for LeabraCycle tasks -- manages threads and tasks, and coordinates threads running the tasks
+  // #INLINE thread manager for Leabra tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
   enum RunStates {              // defines run_state states
-    NOT_RUNNING,                // no current run call is active for the threads -- need to get them started up again
+    NOT_RUNNING,                // no current run call is active for the threads -- need to get them started up again -- this can also be used as a stop signal
     ACTIVE_WAIT,                // threads are active (busy tight loop) waiting for a change in run state
-    STOP,                       // threads exit run() and stop processing -- happens after a Compute_Weights call or when program is stoppped
     RUN_CYCLE,                  // Cycle_Run()
+    RUN_DEEP5B_NET,             // TI_Send_Deep5bNetin()
+    RUN_CTXT_NET,               // TI_Send_CtxtNetin()
     RUN_DWT,                    // Compute_dWt()
     RUN_WT,                     // Compute_Weights()
   };
@@ -176,12 +188,13 @@ public:
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   int           n_cycles;       // #MIN_1 #DEF_10 how many cycles to run at a time -- more efficient to run multiple cycles per Run
   int           unit_chunks;    // #MIN_1 #DEF_2 how many units to bite off for each thread off of the list at a time
-  int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
+  int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
   bool          timers_on;      // Accumulate timing information for each step of processing -- including at the cycle level for each different type of operation -- for debugging / optimizing threading
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 
   // the following track how many threads have reached each stage -- atomic incremented by working threads
   QAtomicInt    run_state;       // #IGNORE a fast lock mechanism that the threads wait on and 
+  QAtomicInt    done_run;        // #IGNORE done with current run -- make sure!
 
   QAtomicInt    stage_net;       // #IGNORE 
   QAtomicInt    stage_net_int;   // #IGNORE 
@@ -190,6 +203,13 @@ public:
 
   QAtomicInt    stage_act;       // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
+
+  QAtomicInt    stage_deep5b;    // #IGNORE 
+  QAtomicInt    stage_ctxt;      // #IGNORE 
+
+  QAtomicInt    stage_dwt;      // #IGNORE 
+  QAtomicInt    stage_dwt_norm; // #IGNORE 
+  QAtomicInt    stage_wt;       // #IGNORE 
 
   Network*      network()       { return (Network*)owner; }
 

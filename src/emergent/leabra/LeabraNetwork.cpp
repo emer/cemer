@@ -363,19 +363,19 @@ void LeabraNetwork::BuildUnits_Threads() {
     active_layer_idx.Add(i);
   }
 
-  cyc_threads.InitAll();
+  lthreads.InitAll();
 }
 
 void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
   // temporary storage for sender-based netinput computation
-  if(units_flat.size > 0 && cyc_threads.n_threads > 0) {
+  if(units_flat.size > 0 && lthreads.n_threads > 0) {
     // note: n_threads should always be > 0, so in general we have this buffer around
     // in all cases
     if(NetinPerPrjn()) {
-      send_netin_tmp.SetGeom(3, units_flat.size, max_prjns, cyc_threads.n_threads);
+      send_netin_tmp.SetGeom(3, units_flat.size, max_prjns, lthreads.n_threads);
     }
     else {
-      send_netin_tmp.SetGeom(2, units_flat.size, cyc_threads.n_threads);
+      send_netin_tmp.SetGeom(2, units_flat.size, lthreads.n_threads);
     }
     send_netin_tmp.InitVals(0.0f);
   }
@@ -592,8 +592,8 @@ void LeabraNetwork::Cycle_Run() {
   if(phase_no == 0 && cycle == 0) // detect start of trial
     ct_cycle = 0;
 
-  if(cyc_threads.CanRun()) {
-    cyc_threads.Run(LeabraThreadMgr::RUN_CYCLE);
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_CYCLE);
   }
   else {
     Compute_SRAvg_State();
@@ -626,7 +626,7 @@ void LeabraNetwork::Cycle_Run() {
 
 void LeabraNetwork::Send_Netin() {
   // always use delta mode!
-  // no threads -- only threaded version supported is cyc_threads, due to need to
+  // no threads -- only threaded version supported is lthreads, due to need to
   // use correct thread roll-up numbers, etc
   send_pct_n = send_pct_tot = 0;
   for(int i=1; i<units_flat.size; i++) {
@@ -909,12 +909,20 @@ void LeabraNetwork::TI_Compute_Deep5bAct() {
 
 void LeabraNetwork::TI_Send_Deep5bNetin() {
   send_pct_n = send_pct_tot = 0;
-  // todo: need to incorporate into main threading guy!
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Send_Deep5bNetin);
-  threads.Run(&un_call, 1.0f);
+
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_DEEP5B_NET);
+  }
+  else {
+    // non-threaded
+    for(int i=1; i<units_flat.size; i++) {
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      un->TI_Send_Deep5bNetin(this, -1);
+    }
+  }
 
   // now need to roll up the netinput into unit vals
-  if(threads.using_threads) {	// if not used, goes directly into unit vals
+  if(lthreads.using_threads) {	// if not used, goes directly into unit vals
     const int nu = units_flat.size;
     for(int i=1;i<nu;i++) {   // 0 = dummy idx
       LeabraUnit* u = (LeabraUnit*)units_flat[i];
@@ -925,12 +933,19 @@ void LeabraNetwork::TI_Send_Deep5bNetin() {
 
 void LeabraNetwork::TI_Send_CtxtNetin() {
   send_pct_n = send_pct_tot = 0;
-  // todo: need to incorporate into main threading guy!
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Send_CtxtNetin);
-  threads.Run(&un_call, 1.0f);
 
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_CTXT_NET);
+  }
+  else {
+    // non-threaded
+    for(int i=1; i<units_flat.size; i++) {
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      un->TI_Send_CtxtNetin(this, -1);
+    }
+  }
   // now need to roll up the netinput into unit vals
-  if(threads.using_threads) {	// if not used, goes directly into unit vals
+  if(lthreads.using_threads) {	// if not used, goes directly into unit vals
     const int nu = units_flat.size;
     for(int i=1;i<nu;i++) {   // 0 = dummy idx
       LeabraUnit* u = (LeabraUnit*)units_flat[i];
@@ -1013,8 +1028,8 @@ void LeabraNetwork::Compute_dWt() {
 
   Compute_dWt_Layer_pre();
 
-  if(cyc_threads.CanRun()) {
-    cyc_threads.Run(LeabraThreadMgr::RUN_DWT);
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_DWT); // does both dwt and dwt_norm
   }
   else {
     // non-threaded
@@ -1036,10 +1051,15 @@ void LeabraNetwork::Compute_dWt_Norm() {
 }
 
 void LeabraNetwork::Compute_Weights_impl() {
-  // non-threaded
-  for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Compute_Weights(this, -1);
+  if(lthreads.CanRun()) {
+    lthreads.Run(LeabraThreadMgr::RUN_WT);
+  }
+  else {
+    // non-threaded
+    for(int i=1; i<units_flat.size; i++) {
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      un->Compute_Weights(this, -1);
+    }
   }
 }
 

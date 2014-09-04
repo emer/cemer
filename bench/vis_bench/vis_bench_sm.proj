@@ -4779,7 +4779,19 @@ To summarize, these generalization results demonstrate that the hierarchical ser
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/CompCogNeuro/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Computational Cognitive Neuroscience Wiki Atom feed\" href=\"/CompCogNeuro/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
+.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/mediawiki.action/images/green-checkmark.png?2014-04-01T18:51:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:1eda29f55be362459a1cbf2cf062586e */
+#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: compcogneuro:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: compcogneuro:resourceloader:filter:minify-css:7:e574a44ae23fd78ac104b2dd7100973a */</style>
@@ -4970,8 +4982,8 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.260 seconds
-Real time usage: 0.287 seconds
+CPU time usage: 0.280 seconds
+Real time usage: 0.308 seconds
 Preprocessor visited node count: 390/1000000
 Preprocessor generated node count: 1371/1000000
 Post?expand include size: 14912/2097152 bytes
@@ -4980,7 +4992,7 @@ Highest expansion depth: 5/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20140903062208
+<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20140904083156
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\">https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616</a>\"				</div>
@@ -4993,14 +5005,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -5019,12 +5031,12 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=edit\" title=\"This page is protected.
-You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 90px;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 28.79400708047489px;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 1px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 17.346112739384083px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
 	<div class=\"menu\">
 		<ul>
 					</ul>
@@ -5034,45 +5046,45 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/CompCogNeuro/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\">
+			<div id=\"mw-panel\" class=\"collapsible-nav\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//CompCogNeuro/logo.png);\" href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
 			<li id=\"n-CCN-Book\"><a href=\"/CompCogNeuro/index.php/CCNBook/Main\">CCN Book</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [x]\" accesskey=\"x\">Random page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [ctrl-alt-x]\" accesskey=\"x\">Random page</a></li>
 			<li id=\"n-help\"><a href=\"https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents\" rel=\"nofollow\" title=\"The place to find out\">Help</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
+<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
+	<div class=\"body\" style=\"display: block;\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=info\">Page information</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=CCNBook%2FSims%2FPerception%2FObjrec\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=CCNBook%2FSims%2FPerception%2FObjrec&amp;oldid=4616&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -5081,7 +5093,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 24 August 2014, at 21:58.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 6,607 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 6,612 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-privacy\"><a href=\"/CompCogNeuro/index.php/Project:Privacy_policy\" title=\"Project:Privacy policy\">Privacy policy</a></li>
@@ -5105,10 +5117,10 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.331 secs. -->
+<!-- Served in 0.316 secs. -->
 	
 
-</body></html>";
+<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
   };
  };
  wizards {
@@ -5201,10 +5213,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     EditMbrItem @[3] {
      label="n_cycles";
-     desc=" how many cycles to run at a time -- more efficient to run multiple cycles per Run";
+     desc="[Default: 10]  how many cycles to run at a time -- more efficient to run multiple cycles per Run";
      cust_desc=0;
-     base=.projects["vis_bench_sm"].networks["ObjrecNet"].cyc_threads$$;
-     mbr=LeabraCycleThreadMgr::n_cycles;
+     base=.projects["vis_bench_sm"].networks["ObjrecNet"].lthreads$$;
+     mbr=LeabraThreadMgr::n_cycles;
      is_numeric=1;
      is_single=1;
      param_search {
@@ -5217,10 +5229,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     EditMbrItem @[4] {
      label="unit_chunks";
-     desc=" how many units to bite off for each thread off of the list at a time";
+     desc="[Default: 2]  how many units to bite off for each thread off of the list at a time";
      cust_desc=0;
-     base=$.projects["vis_bench_sm"].networks["ObjrecNet"].cyc_threads$;
-     mbr=LeabraCycleThreadMgr::unit_chunks;
+     base=$.projects["vis_bench_sm"].networks["ObjrecNet"].lthreads$;
+     mbr=LeabraThreadMgr::unit_chunks;
      is_numeric=1;
      is_single=1;
      param_search {
@@ -5232,11 +5244,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     EditMbrItem @[5] {
-     label="cyc_timers";
-     desc=" Accumulate timing information at the cycle level for each different type of operation -- for debugging / optimizing threading";
+     label="timers_on";
+     desc=" Accumulate timing information for each step of processing -- including at the cycle level for each different type of operation -- for debugging / optimizing threading";
      cust_desc=0;
-     base=$.projects["vis_bench_sm"].networks["ObjrecNet"].cyc_threads$;
-     mbr=LeabraCycleThreadMgr::cyc_timers;
+     base=$.projects["vis_bench_sm"].networks["ObjrecNet"].lthreads$;
+     mbr=LeabraThreadMgr::timers_on;
      is_numeric=0;
      is_single=1;
      param_search {
@@ -19124,7 +19136,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$.projects["vis_bench_sm"].data.gp["AnalysisData"]["ThreadReportData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc=;
       init_from=NULL;
@@ -19290,7 +19302,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
 	path="cyc_threads";
 	result_var=.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].prog_code[0].local_vars["report"]$$;
-	method=LeabraCycleThreadMgr::ThreadReport;
+	method=NULL;
 	meth_args {
 	 name="meth_args";
 	 el_typ=ProgArg;
@@ -19738,9 +19750,9 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="network.cyc_threads.ThreadReport()";
       obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
-      path="cyc_threads";
+      path="lthreads";
       result_var=NULL;
-      method=LeabraCycleThreadMgr::ThreadReport;
+      method=LeabraThreadMgr::ThreadReport;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
@@ -20404,7 +20416,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
       path="cyc_threads";
       result_var=.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrial"].prog_code[0].local_vars["report"]$$;
-      method=LeabraCycleThreadMgr::ThreadReport;
+      method=NULL;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
@@ -25216,7 +25228,7 @@ err_output_data.data.pct_err.UpdateAfterEdit();";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9968051314353943;
+     value 6 0=0.9962726235389709;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -32374,8 +32386,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       diff_scale_p=0;
       wt_scale_p {abs=1: rel=1: sem_extra=2: };
       learn=0;
-      lrate=0;
-      cur_lrate=0;
+      lrate=0.02;
+      cur_lrate=0.02;
       lrs_value=EPOCH;
       lrate_sched {
        name="lrate_sched";
@@ -32427,11 +32439,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
       };
       ignore_unlearnable=1;
-      wt_sig {gain=6: off=1: dwt_norm=1: };
+      wt_sig {gain=6: off=1: dwt_norm=0: };
       stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
       lmix {hebb=0.998: err=0.001999974: err_sb=1: };
-      xcal {l_mix=X_ERR: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0: d_rev_ratio=-9: };
-      savg_cor {cor=0.5: thresh=0.0001: };
+      xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+      savg_cor {cor=0.4: thresh=0.001: };
       dwt_thresh=0.1;
      };
      GpRndTesselPrjnSpec @["Ctxt_3x3"] {
@@ -36989,6 +37001,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=6;
    max_disp_size {x=80: y=76: z=3: };
    max_disp_size2d {x=266: y=578: };
+   lthreads {
+    run_time {name="": s_used=0: n_used=0: avg_used=Average: };
+    sync_time {name="": s_used=0: n_used=0: avg_used=Average: };
+    total_time {name="": s_used=0: n_used=0: avg_used=Average: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=1.262536567725354e-308;
+    n_cycles=10;
+    unit_chunks=2;
+    timers_on=0;
+   };
    learn_rule=CTLEABRA_XCAL;
    ti_mode=1;
    phase_order=MINUS_PLUS;
@@ -36996,18 +37020,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    sequence_init=DO_NOTHING;
    phase_max=2;
    time_inc=1;
-   cyc_threads {
-    run_time {name="": s_used=0: n_used=0: avg_used=Average: };
-    sync_time {name="": s_used=0: n_used=0: avg_used=Average: };
-    total_time {name="": s_used=0: n_used=0: avg_used=Average: };
-    n_wake_in_sync=0;
-    run_time_pct=0;
-    sync_time_pct=0;
-    wake_in_sync_pct=8.223398876310714;
-    n_cycles=1;
-    unit_chunks=1;
-    cyc_timers=0;
-   };
    net_misc {
     dwt_norm_used=0;
     kwta_used=0;

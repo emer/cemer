@@ -137,6 +137,7 @@ public:
   UnitCallThreadMgr threads;    // #HIDDEN unit-call threading mechanism -- lthreads used instead
 #endif
 
+  LeabraThreadMgr lthreads;     // #CAT_Threads parallel threading for leabra algorithm -- handles majority of computation within threads that are kept active and ready to go
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
   bool          ti_mode;        // turn on LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase -- must have this flag on for TI to work!
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
@@ -150,7 +151,6 @@ public:
   int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
-  LeabraThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process

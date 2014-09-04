@@ -17,9 +17,11 @@
 
 #include <LeabraNetwork>
 #include <DataTable>
+#include <Program>
+
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(LeabraCycleTask);
+TA_BASEFUNS_CTORS_DEFN(LeabraTask);
 TA_BASEFUNS_CTORS_DEFN(RunWaitTime);
 TA_BASEFUNS_CTORS_DEFN(RunWaitTime_List);
 TA_BASEFUNS_CTORS_DEFN(LeabraThreadMgr);
@@ -39,14 +41,14 @@ void RunWaitTime_List::ResetUsed(int st_idx, int n) {
   }
 }
 
-void LeabraCycleTask::Initialize() {
+void LeabraTask::Initialize() {
 }
 
-void LeabraCycleTask::Destroy() {
+void LeabraTask::Destroy() {
   network.CutLinks();
 }
 
-void LeabraCycleTask::InitTimers(int tot_cyc) {
+void LeabraTask::InitTimers(int tot_cyc) {
   send_netin_time.SetSize(tot_cyc);
   netin_integ_time.SetSize(tot_cyc);
   inhib_time.SetSize(tot_cyc);
@@ -57,7 +59,7 @@ void LeabraCycleTask::InitTimers(int tot_cyc) {
   cycsyndep_time.SetSize(tot_cyc);
 }
 
-void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
+void LeabraTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
   LeabraThreadMgr* mg = mgr();
   if(!mg->timers_on) return;
 
@@ -71,7 +73,7 @@ void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
   cycsyndep_time.ResetUsed(st_ct_cyc, n_run_cyc);
 }
 
-void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
+void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   LeabraThreadMgr* mg = mgr();
   const bool timers_on = mg->timers_on;
   if(timers_on) {
@@ -103,7 +105,7 @@ void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   }
 }
 
-void LeabraCycleTask::EndCycle(int cur_net_cyc) {
+void LeabraTask::EndCycle(int cur_net_cyc) {
   LeabraThreadMgr* mg = mgr();
   if(!mg->timers_on) return;
   send_netin_time[cur_net_cyc]->IncrAvg();
@@ -116,12 +118,7 @@ void LeabraCycleTask::EndCycle(int cur_net_cyc) {
   cycsyndep_time[cur_net_cyc]->IncrAvg();
 }
 
-void LeabraCycleTask::run() {
-  LeabraThreadMgr* mg = mgr();
-
-}
-
-void LeabraCycleTask::Cycle_Run() {
+void LeabraTask::Cycle_Run() {
   LeabraThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
@@ -277,7 +274,73 @@ void LeabraCycleTask::Cycle_Run() {
   }
 }
 
-void LeabraCycleTask::Compute_dWt() {
+void LeabraTask::TI_Send_Deep5bNetin() {
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  const bool timers_on = mg->timers_on;
+
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
+  int i;
+  int ci;
+
+  if(timers_on) {
+    deep5b_time.ResetUsed();
+    StartStep(deep5b_time);
+  }
+  i = un_st; ci = 0;
+  while(i<un_mx) {
+    LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+    un->TI_Send_Deep5bNetin(net, task_id);
+    i++; ci++;
+    if(ci == chk) {
+      i += un_inc; ci = 0;
+    }
+  }
+  EndStep(mg->stage_deep5b, deep5b_time, 0); // cyc = 0
+  if(timers_on) {
+    deep5b_time.IncrAvg();
+  }
+}
+
+void LeabraTask::TI_Send_CtxtNetin() {
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  const bool timers_on = mg->timers_on;
+
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
+  int i;
+  int ci;
+
+  if(timers_on) {
+    ctxt_time.ResetUsed();
+    StartStep(ctxt_time);
+  }
+  i = un_st; ci = 0;
+  while(i<un_mx) {
+    LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+    un->TI_Send_CtxtNetin(net, task_id);
+    i++; ci++;
+    if(ci == chk) {
+      i += un_inc; ci = 0;
+    }
+  }
+  EndStep(mg->stage_ctxt, ctxt_time, 0); // cyc = 0
+  if(timers_on) {
+    ctxt_time.IncrAvg();
+  }
+}
+
+void LeabraTask::Compute_dWt() {
   LeabraThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
@@ -304,27 +367,66 @@ void LeabraCycleTask::Compute_dWt() {
       i += un_inc; ci = 0;
     }
   }
-  EndStep(mg->stage_dwt, wt_time, 0); // cyc = 0
+  EndStep(mg->stage_dwt, dwt_time, 0); // cyc = 0
+  if(timers_on) {
+    dwt_time.IncrAvg();
+  }
 
-  if(net_misc.dwt_norm_used) {
+  if(net->net_misc.dwt_norm_used) {
     if(timers_on) {
-      dwt_time.ResetUsed();
-      StartStep(dwt_time);
+      dwt_norm_time.ResetUsed();
+      StartStep(dwt_norm_time);
     }
     i = un_st; ci = 0;
     while(i<un_mx) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
-      un->Compute_dWt(net, task_id);
+      un->Compute_dWt_Norm(net, task_id);
       i++; ci++;
       if(ci == chk) {
         i += un_inc; ci = 0;
       }
     }
-    EndStep(mg->stage_dwt, wt_time, 0); // cyc = 0
+    EndStep(mg->stage_dwt_norm, dwt_norm_time, 0); // cyc = 0
+    if(timers_on) {
+      dwt_norm_time.IncrAvg();
+    }
   }
 }
 
-void LeabraCycleTask::ThreadReport(DataTable& dt) {
+void LeabraTask::Compute_Weights() {
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  const bool timers_on = mg->timers_on;
+
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
+  int i;
+  int ci;
+
+  if(timers_on) {
+    wt_time.ResetUsed();
+    StartStep(wt_time);
+  }
+  i = un_st; ci = 0;
+  while(i<un_mx) {
+    LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+    un->Compute_Weights(net, task_id);
+    i++; ci++;
+    if(ci == chk) {
+      i += un_inc; ci = 0;
+    }
+  }
+  EndStep(mg->stage_wt, wt_time, 0); // cyc = 0
+  if(timers_on) {
+    wt_time.IncrAvg();
+  }
+}
+
+void LeabraTask::ThreadReport(DataTable& dt) {
   int idx;
   DataCol* thc = dt.FindMakeColName("thread", idx, VT_INT);
   DataCol* cyc = dt.FindMakeColName("cycle", idx, VT_INT);
@@ -338,6 +440,13 @@ void LeabraCycleTask::ThreadReport(DataTable& dt) {
   DataCol* ac_w = dt.FindMakeColName("act_wait", idx, VT_FLOAT);
   DataCol* cs_r = dt.FindMakeColName("cyc_stat_run", idx, VT_FLOAT);
   DataCol* cs_w = dt.FindMakeColName("cyc_stat_wait", idx, VT_FLOAT);
+  DataCol* dw_r = dt.FindMakeColName("dwt_run", idx, VT_FLOAT);
+  DataCol* dw_w = dt.FindMakeColName("dwt_wait", idx, VT_FLOAT);
+  DataCol* dwn_r = dt.FindMakeColName("dwt_norm_run", idx, VT_FLOAT);
+  DataCol* dwn_w = dt.FindMakeColName("dwt_norm_wait", idx, VT_FLOAT);
+  DataCol* wt_r = dt.FindMakeColName("wt_run", idx, VT_FLOAT);
+  DataCol* wt_w = dt.FindMakeColName("wt_wait", idx, VT_FLOAT);
+  DataCol* dn_w = dt.FindMakeColName("done_wait", idx, VT_FLOAT);
 
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
   int tot_cyc = net->ct_time.total_cycles;
@@ -358,10 +467,109 @@ void LeabraCycleTask::ThreadReport(DataTable& dt) {
     ac_w->SetValAsFloat(act_time[i]->wait.avg_used.avg * rescale, -1);
     cs_r->SetValAsFloat(cycstats_time[i]->run.avg_used.avg * rescale, -1);
     cs_w->SetValAsFloat(cycstats_time[i]->wait.avg_used.avg * rescale, -1);
+    dw_r->SetValAsFloat(dwt_time.run.avg_used.avg * rescale, -1);
+    dw_w->SetValAsFloat(dwt_time.wait.avg_used.avg * rescale, -1);
+    dwn_r->SetValAsFloat(dwt_norm_time.run.avg_used.avg * rescale, -1);
+    dwn_w->SetValAsFloat(dwt_norm_time.wait.avg_used.avg * rescale, -1);
+    wt_r->SetValAsFloat(wt_time.run.avg_used.avg * rescale, -1);
+    wt_w->SetValAsFloat(wt_time.wait.avg_used.avg * rescale, -1);
+    dn_w->SetValAsFloat(done_time.wait.avg_used.avg * rescale, -1);
+  }
+}
+
+void LeabraTask::run() {
+  LeabraThreadMgr* mg = mgr();
+
+  int run_st = mg->run_state.loadAcquire(); // find out where we're at
+
+  switch(run_st) {
+  case LeabraThreadMgr::RUN_CYCLE:
+    Cycle_Run();
+    break;
+  case LeabraThreadMgr::RUN_DEEP5B_NET:
+    TI_Send_Deep5bNetin();
+    break;
+  case LeabraThreadMgr::RUN_CTXT_NET:
+    TI_Send_CtxtNetin();
+    break;
+  case LeabraThreadMgr::RUN_DWT:
+    Compute_dWt();
+    break;
+  case LeabraThreadMgr::RUN_WT:
+    Compute_Weights();
+    break;
+  }
+}
+
+void LeabraTask::RunStayActive() {
+  // NOTE: currently not used!!  turns out staying active is not useful
+  // but it took a lot of effort to make all this logic, so JUST IN CASE
+  // it is saved for later..
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  while(true) {
+    int run_st = mg->run_state.loadAcquire(); // find out where we're at
+    bool prog_stop = (Program::global_run_state != Program::RUN); // program has stopped!
+
+    switch(run_st) {
+    case LeabraThreadMgr::NOT_RUNNING:
+      return;                   // well, we better not be!
+    case LeabraThreadMgr::ACTIVE_WAIT:           // just keep waiting..
+      if(task_id == 0) {
+        taMisc::Info("task 0 got an ACTIVE_WAIT run state -- shouldn't happen");
+        return;
+      }
+      if(prog_stop) {
+        if(task_id == 1) {      // this guy is delegated to update run state in this case
+          mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING);
+        }
+        return;
+      }
+      continue;                 // loop again here until we get something different
+    case LeabraThreadMgr::RUN_CYCLE:
+      Cycle_Run();
+      if(task_id == 0) {
+        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+      }
+      return;                   // this is the final step for testing
+      break;
+    case LeabraThreadMgr::RUN_DEEP5B_NET:
+      TI_Send_Deep5bNetin();
+      if(task_id == 0) {
+        mg->run_state.storeRelease(LeabraThreadMgr::ACTIVE_WAIT); // stay active
+      }
+      break;
+    case LeabraThreadMgr::RUN_CTXT_NET:
+      TI_Send_CtxtNetin();
+      if(task_id == 0) {
+        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+      }
+      return;                   // this is the final step in computation so we bail
+    case LeabraThreadMgr::RUN_DWT:
+      Compute_dWt();
+      if(task_id == 0) {
+        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+        // stopping here makes a BIG diff in performance!
+      }
+      return;                   // this is the final step in computation so we bail
+    case LeabraThreadMgr::RUN_WT:
+      Compute_Weights();
+      if(task_id == 0) {
+        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+      }
+      return;                   // this is the final step in computation so we bail
+    }
+
+    EndStep(mg->done_run, done_time, 0); // get all to sync here -- don't re-sample run state (which should be active_wait) until task_0 has updated it!!
+    if(task_id == 0) {                   // we always bail!
+      return;
+    }
   }
 }
 
 void LeabraThreadMgr::Initialize() {
+  run_state = NOT_RUNNING;
   n_threads_act = 1;
   n_cycles = 10;
   unit_chunks = 2;
@@ -369,7 +577,7 @@ void LeabraThreadMgr::Initialize() {
   timers_on = false;
   using_threads = false;
   n_threads_prev = n_threads;
-  task_type = &TA_LeabraCycleTask;
+  task_type = &TA_LeabraTask;
   InitStages();
 }
 
@@ -397,7 +605,7 @@ void LeabraThreadMgr::InitAll() {
 
   int un_idx = 1;
   for(int i=0;i<tasks.size;i++) {
-    LeabraCycleTask* uct = (LeabraCycleTask*)tasks[i];
+    LeabraTask* uct = (LeabraTask*)tasks[i];
     uct->network = net;
     uct->InitTimers(tot_cyc);
   }
@@ -418,6 +626,8 @@ bool LeabraThreadMgr::CanRun() {
 }
 
 void LeabraThreadMgr::InitStages() {
+  done_run = 0;
+
   stage_net = 0;
   stage_net_int = 0;
 
@@ -425,19 +635,49 @@ void LeabraThreadMgr::InitStages() {
 
   stage_act = 0;
   stage_cyc_stats = 0;
+
+  stage_deep5b = 0;
+  stage_ctxt = 0;
+  
+  stage_dwt = 0;
+  stage_dwt_norm = 0;
+  stage_wt = 0;
 }
 
-void LeabraThreadMgr::Run() {
+void LeabraThreadMgr::Run(RunStates run_typ) {
   using_threads = true;
   n_threads_act = tasks.size;
 
+  // only task 0 gets to set run state, except for program stopping, where task 1 is it
+
+  // int cur_run_state = run_state.loadAcquire();   // where are we at start here?
+
+  // if(!(cur_run_state == NOT_RUNNING || cur_run_state == ACTIVE_WAIT)) {
+  //   taMisc::Error("threading programmer error: run state is not NOT_RUNNING or ACTIVE_WAIT at start of threaded call -- please report bug!", String(cur_run_state));
+  //   return;
+  // }
+
+  // note: not using the ACTIVE_WAIT mode at all now..
+
   InitStages();
 
-  RunThreads();         // then run the subsidiary guys
-  tasks[0]->run();      // run our own set..
+  run_state = run_typ; // get 'em going -- active wait guys will go NOW!
+  // if(cur_run_state == NOT_RUNNING) {
+    RunThreads();         // then run the subsidiary guys
+    tasks[0]->run();      // run our own set..
+  // }
+  // else {
+  //   tasks[0]->run();      // run our own set..
+  // }
+
+  // task 0 will always return here -- other guys will be in wait release or not running
+  // all the run_state updating is handled in run()
 
   // finally, always need to sync at end to ensure that everyone is done!
-  SyncThreads();
+  // int end_run_state = run_state.loadAcquire();   // where are we at now?
+  // if(end_run_state == NOT_RUNNING) {
+    SyncThreads();              // stop them all!
+  // }
 }
 
 void LeabraThreadMgr::ThreadReport(DataTable* table) {
@@ -446,7 +686,7 @@ void LeabraThreadMgr::ThreadReport(DataTable* table) {
   table->ResetData();
 
   for(int i=0; i<tasks.size; i++) {
-    LeabraCycleTask* uct = (LeabraCycleTask*)tasks[i];
+    LeabraTask* uct = (LeabraTask*)tasks[i];
     uct->ThreadReport(*table);
   }
   table->StructUpdate(false);

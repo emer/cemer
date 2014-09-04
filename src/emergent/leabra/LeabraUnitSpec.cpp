@@ -1091,7 +1091,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
 
 void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   // this integrates from SendDelta and then does further integration
-  int nt = net->cyc_threads.n_threads_act;
+  int nt = net->lthreads.n_threads_act;
   float nw_nt = 0.0f;
 
   LeabraLayer* lay = u->own_lay();
