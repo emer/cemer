@@ -77,8 +77,6 @@ void LeabraNetwork::Initialize() {
   cos_diff_on = false;
   cos_diff_auto = false;
 
-  thread_flags = TF_ALL;
-
   minus_cycles = 0.0f;
   avg_cycles = 0.0f;
   avg_cycles_sum = 0.0f;
@@ -436,10 +434,8 @@ void LeabraNetwork::Trial_Init_Specs() {
 
 void LeabraNetwork::Trial_Init_Unit() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Trial_Init_Unit);
-  if(thread_flags & TRIAL_INIT)
-    threads.Run(&un_call, .2f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  // todo: add into main threads
+  threads.Run(&un_call, -1.0f); // -1 = always run localized
 
   sravg_vals.InitVals();        // reset sravg vals, after Trial_Init_SRAvg!
 }
@@ -519,10 +515,8 @@ void LeabraNetwork::Compute_Active_K() {
 
 void LeabraNetwork::Settle_Init_Unit() {
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_Init_Unit);
-  if(thread_flags & SETTLE_INIT)
-    threads.Run(&un_call, .1f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  // todo: add into main threads
+  threads.Run(&un_call, -1.0f); // -1 = always run localized
 
   Settle_Init_Layer();
 
@@ -599,7 +593,7 @@ void LeabraNetwork::Cycle_Run() {
     ct_cycle = 0;
 
   if(cyc_threads.CanRun()) {
-    cyc_threads.Run();
+    cyc_threads.Run(LeabraCycleThreadMgr::RUN_CYCLE);
   }
   else {
     Compute_SRAvg_State();
@@ -647,15 +641,11 @@ void LeabraNetwork::Send_Netin() {
 }
 
 void LeabraNetwork::Compute_NetinInteg() {
+  // non-threaded
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_NetinInteg(this, -1);
   }
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinInteg);
-  // if(thread_flags & NETIN_INTEG)
-  //   threads.Run(&un_call, 0.4f);
-  // else
-  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -702,15 +692,11 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 //      Cycle Step 3: Activation
 
 void LeabraNetwork::Compute_Act() {
+  // non-threaded
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_Act(this, -1);
   }
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_Act);
-  // if(thread_flags & ACT)
-  //   threads.Run(&un_call, 0.4f);
-  // else
-  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 void LeabraNetwork::Compute_SRAvg_State() {
@@ -788,15 +774,11 @@ bool LeabraNetwork::Compute_SRAvg_Cons_Test() {
 }
 
 void LeabraNetwork::Compute_SRAvg_Cons() {
+  // non-threaded
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_SRAvg_Cons(this, -1);
   }
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_SRAvg);
-  // if(thread_flags & SRAVG)
-  //   threads.Run(&un_call, 0.9f);
-  // else
-  //   threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -927,11 +909,9 @@ void LeabraNetwork::TI_Compute_Deep5bAct() {
 
 void LeabraNetwork::TI_Send_Deep5bNetin() {
   send_pct_n = send_pct_tot = 0;
+  // todo: need to incorporate into main threading guy!
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Send_Deep5bNetin);
-  if(thread_flags & NETIN)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  threads.Run(&un_call, 1.0f);
 
   // now need to roll up the netinput into unit vals
   if(threads.using_threads) {	// if not used, goes directly into unit vals
@@ -945,11 +925,9 @@ void LeabraNetwork::TI_Send_Deep5bNetin() {
 
 void LeabraNetwork::TI_Send_CtxtNetin() {
   send_pct_n = send_pct_tot = 0;
+  // todo: need to incorporate into main threading guy!
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::TI_Send_CtxtNetin);
-  if(thread_flags & NETIN)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  threads.Run(&un_call, 1.0f);
 
   // now need to roll up the netinput into unit vals
   if(threads.using_threads) {	// if not used, goes directly into unit vals
@@ -1034,37 +1012,41 @@ void LeabraNetwork::Compute_dWt() {
   }
 
   Compute_dWt_Layer_pre();
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt);
-  if(thread_flags & DWT)
-    threads.Run(&un_call, 0.6f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
-  Compute_dWt_Norm();
+
+  if(cyc_threads.CanRun()) {
+    cyc_threads.Run(LeabraCycleThreadMgr::RUN_DWT);
+  }
+  else {
+    // non-threaded
+    for(int i=1; i<units_flat.size; i++) {
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      un->Compute_dWt(this, -1);
+    }
+    Compute_dWt_Norm();
+  }
 }
 
 void LeabraNetwork::Compute_dWt_Norm() {
   if(!net_misc.dwt_norm_used) return;
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_dWt_Norm);
-  if(thread_flags & DWT)
-    threads.Run(&un_call, 0.6f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  // non-threaded
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_dWt_Norm(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_Weights_impl() {
-  ThreadUnitCall un_call(&Unit::Compute_Weights);
-  if(thread_flags & WEIGHTS)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  // non-threaded
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_Weights(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_StableWeights() {
+  // todo: remove!!!!
   ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_StableWeights);
-  if(thread_flags & WEIGHTS)
-    threads.Run(&un_call, 1.0f);
-  else
-    threads.Run(&un_call, -1.0f); // -1 = always run localized
+  threads.Run(&un_call, 1.0f);
 }
 
 

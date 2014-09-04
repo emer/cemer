@@ -133,18 +133,9 @@ public:
     PLUS_ONLY,			// only present the plus phase (hebbian-only)
   };
 
-  enum ThreadFlags { // #BITS flags for controlling the parallel threading process (which functions are threaded)
-    TF_NONE	= 0x00,	// #NO_BIT no thread flags set
-    NETIN 	= 0x01,	// ~20% of compute time, norm comp val = 1.0, the net input computation (sender-based), computed per cycle
-    NETIN_INTEG	= 0x02,	// ~20% of compute time, norm comp val = 1.0, the net input computation (sender-based), computed per cycle
-    SRAVG 	= 0x04,	// ~12% of compute time, norm comp val = 0.9, the sender-receiver average activation (cal only), computed per ct_sravg.interval (typically every 5 cycles)
-    ACT		= 0x08,	// ~7% of compute time, norm comp val = 0.4, activation, computed per cycle
-    WEIGHTS	= 0x10,	// ~7% of compute time, norm comp val = 1.0, weight update from dwt changes, computed per trial (and still that expensive)
-    DWT		= 0x20,	// ~3% of compute time, norm comp val = 0.6, delta-weight changes (learning), computed per trial
-    TRIAL_INIT	= 0x40,	// ~2% of compute time, norm comp val = 0.2, trial-level initialization -- includes SRAvg init over connections if using xcal, which can be expensive
-    SETTLE_INIT	= 0x80,	// ~.5% of compute time, norm comp val = 0.1, settle-level initialization -- only at unit level and the most lightweight function -- may not be worth it in general to parallelize
-    TF_ALL	= 0xFF,	// #NO_BIT all thread flags set
-  };
+#ifdef __MAKETA__
+  UnitCallThreadMgr threads;    // #HIDDEN unit-call threading mechanism -- lthreads used instead
+#endif
 
   LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
   bool          ti_mode;        // turn on LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase -- must have this flag on for TI to work!
@@ -170,7 +161,6 @@ public:
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
   CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
-  ThreadFlags	thread_flags;	// #NO_SAVE #CAT_Structure #EXPERT flags for controlling the parallel threading process (which functions are threaded) -- this is just for testing and debugging purposes, and not for general use -- they are not saved
 
   float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   float		avg_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average settling cycles in the minus phase (computed over previous epoch)
@@ -251,21 +241,6 @@ public:
 
   int_Array     active_layer_idx;
   // #NO_SAVE #IHIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
-
-  ///////////////////////////////////////////////////////////////////////
-  //	Thread Flags
-
-  inline void	SetThreadFlag(ThreadFlags flg)
-  { thread_flags = (ThreadFlags)(thread_flags | flg); }
-  // set flag state on
-  inline void	ClearThreadFlag(ThreadFlags flg)
-  { thread_flags = (ThreadFlags)(thread_flags & ~flg); }
-  // clear flag state (set off)
-  inline bool	HasThreadFlag(ThreadFlags flg) const { return (thread_flags & flg); }
-  // check if flag is set
-  inline void	SetThreadFlagState(ThreadFlags flg, bool on)
-  { if(on) SetThreadFlag(flg); else ClearThreadFlag(flg); }
-  // set flag state according to on bool (if true, set flag, if false, clear it)
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions

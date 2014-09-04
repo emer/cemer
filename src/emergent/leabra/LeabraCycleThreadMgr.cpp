@@ -59,7 +59,7 @@ void LeabraCycleTask::InitTimers(int tot_cyc) {
 
 void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
   LeabraCycleThreadMgr* mg = mgr();
-  if(!mg->cyc_timers) return;
+  if(!mg->timers_on) return;
 
   send_netin_time.ResetUsed(st_ct_cyc, n_run_cyc);
   netin_integ_time.ResetUsed(st_ct_cyc, n_run_cyc);
@@ -71,24 +71,26 @@ void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
   cycsyndep_time.ResetUsed(st_ct_cyc, n_run_cyc);
 }
 
-void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime_List& time, int cyc,
-                              int cur_net_cyc) {
+void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   LeabraCycleThreadMgr* mg = mgr();
-  if(mg->cyc_timers) {
-    time[cur_net_cyc]->EndRun();
+  const bool timers_on = mg->timers_on;
+  if(timers_on) {
+    time.EndRun();
   }
   if(mg->tasks.size == 1) {
     return;
   }
   int trg = (cyc+1) * mg->tasks.size;
 
-  int cur_cnt = stage.fetchAndAddOrdered(1);
+  // acquire vs. ordered is not really a big deal here -- generating a release is
+  // essentially automatic whenever a volitile variable is written to anyway
+  int cur_cnt = stage.fetchAndAddOrdered(1); // write should be acquire based like lock?
   if(cur_cnt == trg) { // we were the last guy
     return;
   }
 
-  if(mg->cyc_timers) {
-    time[cur_net_cyc]->StartWait(false);
+  if(timers_on) {
+    time.StartWait(false);
   }
 
   while(cur_cnt < trg) {
@@ -96,20 +98,14 @@ void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime_List& time, int cyc
     cur_cnt = stage.loadAcquire();
   }
 
-  if(mg->cyc_timers) {
-    time[cur_net_cyc]->EndWait();
+  if(timers_on) {
+    time.EndWait();
   }
-}
-
-void LeabraCycleTask::EndTime(RunWaitTime_List& time, int cur_net_cyc) {
-  LeabraCycleThreadMgr* mg = mgr();
-  if(!mg->cyc_timers) return;
-  time[cur_net_cyc]->EndRun();
 }
 
 void LeabraCycleTask::EndCycle(int cur_net_cyc) {
   LeabraCycleThreadMgr* mg = mgr();
-  if(!mg->cyc_timers) return;
+  if(!mg->timers_on) return;
   send_netin_time[cur_net_cyc]->IncrAvg();
   netin_integ_time[cur_net_cyc]->IncrAvg();
   inhib_time[cur_net_cyc]->IncrAvg();
@@ -122,28 +118,36 @@ void LeabraCycleTask::EndCycle(int cur_net_cyc) {
 
 void LeabraCycleTask::run() {
   LeabraCycleThreadMgr* mg = mgr();
+
+}
+
+void LeabraCycleTask::Cycle_Run() {
+  LeabraCycleThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
-  int st_ct_cyc = net->ct_cycle;  // our starting cycle
+  const bool timers_on = mg->timers_on;
 
-  int n_task = mg->tasks.size;
-  int chk = mg->unit_chunks;
-  int un_st = (task_id * chk) + 1; // 1 offset
-  int un_inc = ((n_task-1) * chk);
-  int un_mx = net->units_flat.size;
+  const int st_ct_cyc = net->ct_cycle;  // our starting cycle
+  const int n_cyc = mg->n_cycles;
+
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
   int i;
   int ci;
 
-  int n_lays = net->active_layer_idx.size;
+  const int n_lays = net->active_layer_idx.size;
 
-  StartCycle(st_ct_cyc, mg->n_cycles);
+  StartCycle(st_ct_cyc, n_cyc);
 
   // 1 2 3 4 5 6 7 8 9 10 11 12
   // 0 0 0             0  0  0
   //       1 1 1 
   //             2 2 2
 
-  for(int cyc=0; cyc < mg->n_cycles; cyc++) {
+  for(int cyc=0; cyc < n_cyc; cyc++) {
     int cur_net_cyc = st_ct_cyc + cyc;
     // this replicates LeabraNetwork::Cycle()
 
@@ -153,7 +157,8 @@ void LeabraCycleTask::run() {
     }
 
     // Send_NetinDelta
-    StartStep(send_netin_time, cur_net_cyc);
+    if(timers_on)
+      StartStep(*send_netin_time[cur_net_cyc]);
     i = un_st; ci = 0;
     while(i<un_mx) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
@@ -163,10 +168,11 @@ void LeabraCycleTask::run() {
         i += un_inc; ci = 0;
       }
     }
-    EndStep(mg->stage_net, send_netin_time, cyc, cur_net_cyc);
+    EndStep(mg->stage_net, *send_netin_time[cur_net_cyc], cyc);
 
     // Compute_NetinInteg();
-    StartStep(netin_integ_time, cur_net_cyc);
+    if(timers_on)
+      StartStep(*netin_integ_time[cur_net_cyc]);
     i = un_st; ci = 0;
     while(i<un_mx) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
@@ -176,16 +182,17 @@ void LeabraCycleTask::run() {
         i += un_inc; ci = 0;
       }
     }
-    EndStep(mg->stage_net_int, netin_integ_time, cyc, cur_net_cyc);
+    EndStep(mg->stage_net_int, *netin_integ_time[cur_net_cyc], cyc);
 
     // Compute_Inhib();
-    StartStep(inhib_time, cur_net_cyc);
+    if(timers_on)
+      StartStep(*inhib_time[cur_net_cyc]);
     for(i=task_id; i<n_lays; i+= n_task) {
       int li = net->active_layer_idx[i];
       LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
       lay->Compute_Inhib(net);
     }
-    EndStep(mg->stage_inhib, inhib_time, cyc, cur_net_cyc);
+    EndStep(mg->stage_inhib, *inhib_time[cur_net_cyc], cyc);
 
     if(net->net_misc.lay_gp_inhib) {
       if(task_id == 0) {        // first thread does this..
@@ -196,7 +203,8 @@ void LeabraCycleTask::run() {
     }
 
     // Compute_Act();
-    StartStep(act_time, cur_net_cyc);
+    if(timers_on)
+      StartStep(*act_time[cur_net_cyc]);
     i = un_st; ci = 0;
     while(i<un_mx) {
       LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
@@ -206,10 +214,11 @@ void LeabraCycleTask::run() {
         i += un_inc; ci = 0;
       }
     }
-    EndStep(mg->stage_act, act_time, cyc, cur_net_cyc);
+    EndStep(mg->stage_act, *act_time[cur_net_cyc], cyc);
 
     if(net->Compute_SRAvg_Cons_Test()) {
-      StartStep(sravg_cons_time, cur_net_cyc);
+      if(timers_on)
+        StartStep(*sravg_cons_time[cur_net_cyc]);
       i = un_st; ci = 0;
       while(i<un_mx) {
         LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
@@ -219,11 +228,13 @@ void LeabraCycleTask::run() {
           i += un_inc; ci = 0;
         }
       }
-      EndTime(sravg_cons_time, cur_net_cyc); // no sync -- no dependency with next
+      if(timers_on)
+        EndTime(*sravg_cons_time[cur_net_cyc]); // no sync -- no dependency with next
     }
 
     // Compute_CycleStats();
-    StartStep(cycstats_time, cur_net_cyc);
+    if(timers_on)
+      StartStep(*cycstats_time[cur_net_cyc]);
     if(task_id == 0) {        // first thread does this..
       net->Compute_CycleStats_Pre();
     }
@@ -232,11 +243,12 @@ void LeabraCycleTask::run() {
       LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
       lay->Compute_CycleStats(net);
     }
-    EndStep(mg->stage_cyc_stats, cycstats_time, cyc, cur_net_cyc);
+    EndStep(mg->stage_cyc_stats, *cycstats_time[cur_net_cyc], cyc);
 
     // Compute_CycSynDep();
     if(net->net_misc.cyc_syn_dep) {
-      StartStep(cycsyndep_time, cur_net_cyc);
+      if(timers_on)
+        StartStep(*cycsyndep_time[cur_net_cyc]);
       if(net->ct_cycle % net->net_misc.syn_dep_int == 0) {
         i = un_st; ci = 0;
         while(i<un_mx) {
@@ -249,7 +261,8 @@ void LeabraCycleTask::run() {
         }
       }
       // no sync needed here really -- no dependency on next steps
-      EndTime(cycsyndep_time, cur_net_cyc);
+      if(timers_on)
+        EndTime(*cycsyndep_time[cur_net_cyc]);
     }
 
     // Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
@@ -261,6 +274,53 @@ void LeabraCycleTask::run() {
       net->time += net->time_inc; // always increment time..
     }
     EndCycle(cur_net_cyc);
+  }
+}
+
+void LeabraCycleTask::Compute_dWt() {
+  LeabraCycleThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+
+  const bool timers_on = mg->timers_on;
+
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
+  int i;
+  int ci;
+
+  if(timers_on) {
+    dwt_time.ResetUsed();
+    StartStep(dwt_time);
+  }
+  i = un_st; ci = 0;
+  while(i<un_mx) {
+    LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+    un->Compute_dWt(net, task_id);
+    i++; ci++;
+    if(ci == chk) {
+      i += un_inc; ci = 0;
+    }
+  }
+  EndStep(mg->stage_dwt, wt_time, 0); // cyc = 0
+
+  if(net_misc.dwt_norm_used) {
+    if(timers_on) {
+      dwt_time.ResetUsed();
+      StartStep(dwt_time);
+    }
+    i = un_st; ci = 0;
+    while(i<un_mx) {
+      LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+      un->Compute_dWt(net, task_id);
+      i++; ci++;
+      if(ci == chk) {
+        i += un_inc; ci = 0;
+      }
+    }
+    EndStep(mg->stage_dwt, wt_time, 0); // cyc = 0
   }
 }
 
@@ -303,10 +363,10 @@ void LeabraCycleTask::ThreadReport(DataTable& dt) {
 
 void LeabraCycleThreadMgr::Initialize() {
   n_threads_act = 1;
-  n_cycles = 1;
-  unit_chunks = 1;
+  n_cycles = 10;
+  unit_chunks = 2;
   min_units = taMisc::thread_defaults.min_units;
-  cyc_timers = false;
+  timers_on = false;
   using_threads = false;
   n_threads_prev = n_threads;
   task_type = &TA_LeabraCycleTask;
