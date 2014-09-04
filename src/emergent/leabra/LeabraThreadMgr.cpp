@@ -100,7 +100,8 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
 
   while(cur_cnt < trg) {
     // taManagedThread::usleep(1); // just slows down a tiny bit, no value..
-    cur_cnt = stage.loadAcquire();
+    //    cur_cnt = stage.loadAcquire();
+    cur_cnt = (int)stage;       // should be ordered semantics??
   }
 
   if(timers_on) {
@@ -371,7 +372,8 @@ void LeabraTask::run() {
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
   while(true) {
-    int run_st = mg->run_state.loadAcquire(); // find out where we're at
+    //    int run_st = mg->run_state.loadAcquire(); // find out where we're at
+    int run_st = (int)mg->run_state;
     bool prog_stop = (Program::global_run_state != Program::RUN); // program has stopped!
 
     switch(run_st) {
@@ -384,7 +386,7 @@ void LeabraTask::run() {
       }
       if(prog_stop) {
         if(task_id == 1) {      // this guy is delegated to update run state in this case
-          mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING);
+          mg->run_state = LeabraThreadMgr::NOT_RUNNING;
         }
         return;
       }
@@ -392,33 +394,33 @@ void LeabraTask::run() {
     case LeabraThreadMgr::RUN_CYCLE:
       Cycle_Run();
       if(task_id == 0) {
-        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+        mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
       return;                   // this is the final step for testing
       break;
     case LeabraThreadMgr::RUN_DEEP5B_NET:
       TI_Send_Deep5bNetin();
       if(task_id == 0) {
-        mg->run_state.storeRelease(LeabraThreadMgr::ACTIVE_WAIT); // stay active
+        mg->run_state = LeabraThreadMgr::ACTIVE_WAIT; // stay active
       }
       break;
     case LeabraThreadMgr::RUN_CTXT_NET:
       TI_Send_CtxtNetin();
       if(task_id == 0) {
-        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+        mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
       return;                   // this is the final step in computation so we bail
     case LeabraThreadMgr::RUN_DWT:
       Compute_dWt();
       if(task_id == 0) {
-        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+        mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
         // stopping here makes a BIG diff in performance!
       }
       return;                   // this is the final step in computation so we bail
     case LeabraThreadMgr::RUN_WT:
       Compute_Weights();
       if(task_id == 0) {
-        mg->run_state.storeRelease(LeabraThreadMgr::NOT_RUNNING); // stopped!
+        mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
       return;                   // this is the final step in computation so we bail
     }
@@ -513,7 +515,7 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
 
   // only task 0 gets to set run state, except for program stopping, where task 1 is it
 
-  int cur_run_state = run_state.loadAcquire();   // where are we at start here?
+  int cur_run_state = (int)run_state;
 
   if(!(cur_run_state == NOT_RUNNING || cur_run_state == ACTIVE_WAIT)) {
     taMisc::Error("threading programmer error: run state is not NOT_RUNNING or ACTIVE_WAIT at start of threaded call -- please report bug!", String(cur_run_state));
@@ -535,7 +537,7 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
   // all the run_state updating is handled in run()
 
   // finally, always need to sync at end to ensure that everyone is done!
-  int end_run_state = run_state.loadAcquire();   // where are we at now?
+  int end_run_state = (int)run_state;
   if(end_run_state == NOT_RUNNING) {
     SyncThreads();              // stop them all!
   }
