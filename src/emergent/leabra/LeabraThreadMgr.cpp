@@ -101,7 +101,7 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
   while(cur_cnt < trg) {
     // taManagedThread::usleep(1); // just slows down a tiny bit, no value..
     //    cur_cnt = stage.loadAcquire();
-    cur_cnt = (int)stage;       // should be ordered semantics??
+    cur_cnt = int(stage);       // should be ordered semantics??
   }
 
   if(timers_on) {
