@@ -230,6 +230,9 @@ public:
   //	Cycle Step 3: Activation
 
   // main function is basic Compute_Act which calls a bunch of sub-functions on the unitspec
+  void  Compute_Act_l(LeabraNetwork* net, int thread_no=-1)
+  { GetUnitSpec()->Compute_Act(this, (Network*)net, thread_no); }
+  // #CAT_Activation compute activation value: what we send to others -- leabra version
 
   float Compute_ActValFmVmVal_rate(float val_sub_thr)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActValFmVmVal_rate(val_sub_thr); }
@@ -303,6 +306,13 @@ public:
   void	Compute_SRAvg_Cons(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg_Cons(this, net, thread_no); }
   // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
+
+  void  Compute_dWt_l(LeabraNetwork* net, int thread_no=-1)
+  { GetUnitSpec()->Compute_dWt(this, (Network*)net, thread_no); }
+  // #CAT_Learning compute weight changes: the essence of learning -- leabra version
+  void  Compute_Weights_l(LeabraNetwork* net, int thread_no=-1)
+  { GetUnitSpec()->Compute_Weights(this,(Network*)net, thread_no); }
+  // #CAT_Learning update weight values from weight change variables -- leabra version
 
   void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }

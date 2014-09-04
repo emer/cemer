@@ -29,6 +29,19 @@
 // declare all other types mentioned but not required to include:
 class LeabraThreadMgr; //
 class DataTable; //
+class LeabraUnit; //
+class LeabraNetwork; //
+
+// this is the standard unit function call taking a network pointer arg
+// and the thread number int value
+// all threaded unit-level functions MUST use this call signature!
+#ifdef __MAKETA__
+typedef void* LeabraThreadUnitCall;
+#else
+typedef taTaskMethCall2<LeabraUnit, void, LeabraNetwork*, int> LeabraThreadUnitCall;
+typedef void (LeabraUnit::*LeabraThreadUnitMethod)(LeabraNetwork*, int);
+#endif
+
 
 taTypeDef_Of(RunWaitTime);
 
@@ -107,45 +120,26 @@ INHERITED(taTask)
 public:
   NetworkRef    network;        // #NO_SAVE the network we're operating on
 
-  RunWaitTime        done_time;        // #NO_SAVE just waiting for everyone to be fully done
+  RunWaitTime   done_time;        // #NO_SAVE just waiting for everyone to be fully done
 
-  // keeping track of these by cycle
-  RunWaitTime_List   send_netin_time;  // #NO_SAVE connection-level send netin computation
-  RunWaitTime_List   netin_integ_time; // #NO_SAVE unit-level netin integration computation
-  RunWaitTime_List   inhib_time;       // #NO_SAVE layer-level inhibition computation
-  RunWaitTime_List   act_time;         // #NO_SAVE unit-level act computation
-  RunWaitTime_List   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
+  RunWaitTime   send_netin_time;  // #NO_SAVE connection-level send netin computation
+  RunWaitTime   netin_integ_time; // #NO_SAVE unit-level netin integration computation
+  RunWaitTime   inhib_time;       // #NO_SAVE layer-level inhibition computation
+  RunWaitTime   act_time;         // #NO_SAVE unit-level act computation
+  RunWaitTime   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
 
   // optional ones
-  RunWaitTime_List   sravg_cons_time; // #NO_SAVE connection-level sravg
-  RunWaitTime_List   cycsyndep_time;  // #NO_SAVE connection-level syn dep
+  RunWaitTime   sravg_cons_time; // #NO_SAVE connection-level sravg
+  RunWaitTime   cycsyndep_time;  // #NO_SAVE connection-level syn dep
 
-  RunWaitTime        deep5b_time;       // #NO_SAVE deep5b 
-  RunWaitTime        ctxt_time;         // #NO_SAVE ctxt
+  RunWaitTime   deep5b_time;       // #NO_SAVE deep5b 
+  RunWaitTime   ctxt_time;         // #NO_SAVE ctxt
 
-  RunWaitTime        dwt_time;          // #NO_SAVE weight change
-  RunWaitTime        dwt_norm_time;     // #NO_SAVE dwt norm
-  RunWaitTime        wt_time;           // #NO_SAVE update weights
+  RunWaitTime   dwt_time;          // #NO_SAVE weight change
+  RunWaitTime   dwt_norm_time;     // #NO_SAVE dwt norm
+  RunWaitTime   wt_time;           // #NO_SAVE update weights
 
-  void  run() override;
-  // run loop
-
-  void          RunStayActive();
-  // run and stay active -- version of run (currently not used!) that keeps threads active across multiple method calls in a program
-
-  void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
-  void          TI_Send_Deep5bNetin();
-  void          TI_Send_CtxtNetin();
-  void          Compute_dWt();  // run compute_dwt
-  void          Compute_Weights(); // run compute_weights
-
-  void          InitTimers(int tot_cyc);
-  // initialize timers to hold at most tot_cyc -- good idea to pad if will not always be same
-
-  void          StartCycle(int st_ct_cyc, int n_run_cyc);
-  // reset all the timers
-
-  inline void   StartStep(RunWaitTime& time)
+  inline void   StartTime(RunWaitTime& time)
   { time.StartRun(false); }
 
   void          EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc);
@@ -155,8 +149,28 @@ public:
   { time.EndRun(); }
   // use this one if there isn't a sync possibility -- just stop the timer
 
-  void          EndCycle(int cur_net_cyc);
-  // end all the cycle timers
+  void          RunUnits(LeabraThreadUnitCall& unit_call);
+  // #IGNORE run units on given method 
+  void          RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& stage,
+                             RunWaitTime& time, int cyc, bool reset_used = false);
+  // #IGNORE run units on given method with StartTime, EndStep
+  void          RunUnitsTime(LeabraThreadUnitCall& unit_call, 
+                             RunWaitTime& time, bool reset_used = false);
+  // #IGNORE run units on given method with StartTime, EndTime
+
+  void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
+  void          TI_Send_Deep5bNetin();
+  void          TI_Send_CtxtNetin();
+  void          Compute_dWt();  // run compute_dwt
+  void          Compute_Weights(); // run compute_weights
+
+  void  run() override;
+  // run loop
+
+  void          StartCycle();
+  // reset all the timers
+  void          EndCycle();
+  // increment all the cycle timers
 
   void          ThreadReport(DataTable& dt);
   // report data to data table

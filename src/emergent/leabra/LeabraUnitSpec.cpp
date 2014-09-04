@@ -1935,7 +1935,7 @@ void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::TI_Send_CtxtNetin(LeabraUnit* u, LeabraNetwork* net,
-                                             int thread_no) {
+                                       int thread_no) {
   float act_ts = u->act_eq;
   if(cifer.on) {
     act_ts *= (1.0f - cifer.ti_5b);
