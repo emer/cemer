@@ -13,7 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraCycleThreadMgr.h"
+#include "LeabraThreadMgr.h"
 
 #include <LeabraNetwork>
 #include <DataTable>
@@ -22,7 +22,7 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraCycleTask);
 TA_BASEFUNS_CTORS_DEFN(RunWaitTime);
 TA_BASEFUNS_CTORS_DEFN(RunWaitTime_List);
-TA_BASEFUNS_CTORS_DEFN(LeabraCycleThreadMgr);
+TA_BASEFUNS_CTORS_DEFN(LeabraThreadMgr);
 
 String RunWaitTime::ReportAvg(float rescale) {
   String rval;// = name;
@@ -58,7 +58,7 @@ void LeabraCycleTask::InitTimers(int tot_cyc) {
 }
 
 void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
   if(!mg->timers_on) return;
 
   send_netin_time.ResetUsed(st_ct_cyc, n_run_cyc);
@@ -72,7 +72,7 @@ void LeabraCycleTask::StartCycle(int st_ct_cyc, int n_run_cyc) {
 }
 
 void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
   const bool timers_on = mg->timers_on;
   if(timers_on) {
     time.EndRun();
@@ -104,7 +104,7 @@ void LeabraCycleTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
 }
 
 void LeabraCycleTask::EndCycle(int cur_net_cyc) {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
   if(!mg->timers_on) return;
   send_netin_time[cur_net_cyc]->IncrAvg();
   netin_integ_time[cur_net_cyc]->IncrAvg();
@@ -117,12 +117,12 @@ void LeabraCycleTask::EndCycle(int cur_net_cyc) {
 }
 
 void LeabraCycleTask::run() {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
 
 }
 
 void LeabraCycleTask::Cycle_Run() {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
   const bool timers_on = mg->timers_on;
@@ -278,7 +278,7 @@ void LeabraCycleTask::Cycle_Run() {
 }
 
 void LeabraCycleTask::Compute_dWt() {
-  LeabraCycleThreadMgr* mg = mgr();
+  LeabraThreadMgr* mg = mgr();
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
   const bool timers_on = mg->timers_on;
@@ -361,7 +361,7 @@ void LeabraCycleTask::ThreadReport(DataTable& dt) {
   }
 }
 
-void LeabraCycleThreadMgr::Initialize() {
+void LeabraThreadMgr::Initialize() {
   n_threads_act = 1;
   n_cycles = 10;
   unit_chunks = 2;
@@ -373,17 +373,17 @@ void LeabraCycleThreadMgr::Initialize() {
   InitStages();
 }
 
-void LeabraCycleThreadMgr::Destroy() {
+void LeabraThreadMgr::Destroy() {
 }
 
-void LeabraCycleThreadMgr::UpdateAfterEdit_impl() {
+void LeabraThreadMgr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(!taMisc::is_loading && n_threads != n_threads_prev) {
     network()->BuildUnits_Threads(); // calls InitAll where n_threads_prev is set..
   }
 }
 
-void LeabraCycleThreadMgr::InitAll() {
+void LeabraThreadMgr::InitAll() {
   if((threads.size == n_threads-1) && (tasks.size == n_threads)) {
     // same as before -- nothing to do?
   }
@@ -403,7 +403,7 @@ void LeabraCycleThreadMgr::InitAll() {
   }
 }
 
-bool LeabraCycleThreadMgr::CanRun() {
+bool LeabraThreadMgr::CanRun() {
   Network* net = network();
 
   bool other_reasons = (net->units_flat.size < min_units
@@ -417,7 +417,7 @@ bool LeabraCycleThreadMgr::CanRun() {
   return true;
 }
 
-void LeabraCycleThreadMgr::InitStages() {
+void LeabraThreadMgr::InitStages() {
   stage_net = 0;
   stage_net_int = 0;
 
@@ -427,7 +427,7 @@ void LeabraCycleThreadMgr::InitStages() {
   stage_cyc_stats = 0;
 }
 
-void LeabraCycleThreadMgr::Run() {
+void LeabraThreadMgr::Run() {
   using_threads = true;
   n_threads_act = tasks.size;
 
@@ -440,7 +440,7 @@ void LeabraCycleThreadMgr::Run() {
   SyncThreads();
 }
 
-void LeabraCycleThreadMgr::ThreadReport(DataTable* table) {
+void LeabraThreadMgr::ThreadReport(DataTable* table) {
   if(!table) return;
   table->StructUpdate(true);
   table->ResetData();

@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraCycleThreadMgr_h
-#define LeabraCycleThreadMgr_h 1
+#ifndef LeabraThreadMgr_h
+#define LeabraThreadMgr_h 1
 
 // declare all other types mentioned but not required to include:
 
@@ -27,7 +27,7 @@
 #include <NetworkRef>
 
 // declare all other types mentioned but not required to include:
-class LeabraCycleThreadMgr; //
+class LeabraThreadMgr; //
 class DataTable; //
 
 taTypeDef_Of(RunWaitTime);
@@ -150,7 +150,7 @@ public:
   void          ThreadReport(DataTable& dt);
   // report data to data table
 
-  LeabraCycleThreadMgr* mgr() { return (LeabraCycleThreadMgr*)owner->GetOwner(); }
+  LeabraThreadMgr* mgr() { return (LeabraThreadMgr*)owner->GetOwner(); }
 
   TA_SIMPLE_BASEFUNS(LeabraCycleTask);
 private:
@@ -158,9 +158,9 @@ private:
   void  Destroy();
 };
 
-eTypeDef_Of(LeabraCycleThreadMgr);
+eTypeDef_Of(LeabraThreadMgr);
 
-class E_API LeabraCycleThreadMgr : public taThreadMgr {
+class E_API LeabraThreadMgr : public taThreadMgr {
   // #INLINE thread manager for LeabraCycle tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
@@ -208,7 +208,7 @@ public:
   void   ThreadReport(DataTable* table);
   // run a report on thread stats, to data table (which is fully reset in the process)
 
-  TA_BASEFUNS_NOCOPY(LeabraCycleThreadMgr);
+  TA_BASEFUNS_NOCOPY(LeabraThreadMgr);
 protected:
   void  UpdateAfterEdit_impl();
 
@@ -223,4 +223,4 @@ private:
 #include <Network>
 #endif
 
-#endif // LeabraCycleThreadMgr_h
+#endif // LeabraThreadMgr_h

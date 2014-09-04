@@ -24,7 +24,7 @@
 #include <CtSRAvgVals>
 #include <LeabraLayer>
 #include <LeabraPrjn>
-#include <LeabraCycleThreadMgr>
+#include <LeabraThreadMgr>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
@@ -150,7 +150,7 @@ public:
   int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
-  LeabraCycleThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
+  LeabraThreadMgr cyc_threads; // #CAT_Threads parallel threading of entire cycles worth of network computation at a time
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
   int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process

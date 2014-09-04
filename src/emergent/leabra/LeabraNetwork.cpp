@@ -593,7 +593,7 @@ void LeabraNetwork::Cycle_Run() {
     ct_cycle = 0;
 
   if(cyc_threads.CanRun()) {
-    cyc_threads.Run(LeabraCycleThreadMgr::RUN_CYCLE);
+    cyc_threads.Run(LeabraThreadMgr::RUN_CYCLE);
   }
   else {
     Compute_SRAvg_State();
@@ -1014,7 +1014,7 @@ void LeabraNetwork::Compute_dWt() {
   Compute_dWt_Layer_pre();
 
   if(cyc_threads.CanRun()) {
-    cyc_threads.Run(LeabraCycleThreadMgr::RUN_DWT);
+    cyc_threads.Run(LeabraThreadMgr::RUN_DWT);
   }
   else {
     // non-threaded

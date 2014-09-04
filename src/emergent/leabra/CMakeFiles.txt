@@ -35,7 +35,7 @@ set(leabra_HEADS_MAKETA
   LeabraLayerSpec.h
 
   LeabraNetwork.h
-  LeabraCycleThreadMgr.h
+  LeabraThreadMgr.h
   LeabraProject.h
 
   LeabraWizard.h
@@ -193,7 +193,7 @@ set(leabra_SRCS
   LeabraLayer.cpp
 
   LeabraNetwork.cpp
-  LeabraCycleThreadMgr.cpp
+  LeabraThreadMgr.cpp
   LeabraProject.cpp
 
   LeabraWizard.cpp
