@@ -100,8 +100,11 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
 
   while(cur_cnt < trg) {
     // taManagedThread::usleep(1); // just slows down a tiny bit, no value..
-    //    cur_cnt = stage.loadAcquire();
-    cur_cnt = int(stage);       // should be ordered semantics??
+#if (QT_VERSION >= 0x050000)
+    cur_cnt = stage.loadAcquire();
+#else
+    cur_cnt = (int)stage;       // should be ordered semantics??
+#endif
   }
 
   if(timers_on) {
@@ -372,8 +375,11 @@ void LeabraTask::run() {
   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
   while(true) {
-    //    int run_st = mg->run_state.loadAcquire(); // find out where we're at
-    const int run_st = (const int)mg->run_state;
+#if (QT_VERSION >= 0x050000)
+    const int run_st = mg->run_state.loadAcquire(); // find out where we're at
+#else
+    const int run_st = (int)mg->run_state;
+#endif
     bool prog_stop = (Program::global_run_state != Program::RUN); // program has stopped!
 
     switch(run_st) {
@@ -515,7 +521,11 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
 
   // only task 0 gets to set run state, except for program stopping, where task 1 is it
 
-  const int cur_run_state = (const int)run_state;
+#if (QT_VERSION >= 0x050000)
+  const int cur_run_state = run_state.loadAcquire();
+#else
+  const int cur_run_state = (int)run_state;
+#endif
 
   if(!(cur_run_state == NOT_RUNNING || cur_run_state == ACTIVE_WAIT)) {
     taMisc::Error("threading programmer error: run state is not NOT_RUNNING or ACTIVE_WAIT at start of threaded call -- please report bug!", String(cur_run_state));
@@ -537,7 +547,11 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
   // all the run_state updating is handled in run()
 
   // finally, always need to sync at end to ensure that everyone is done!
-  const int end_run_state = (const int)run_state;
+#if (QT_VERSION >= 0x050000)
+  const int end_run_state = run_state.loadAcquire();
+#else
+  const int end_run_state = (int)run_state;
+#endif
   if(end_run_state == NOT_RUNNING) {
     SyncThreads();              // stop them all!
   }
