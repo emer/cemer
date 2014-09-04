@@ -373,7 +373,7 @@ void LeabraTask::run() {
 
   while(true) {
     //    int run_st = mg->run_state.loadAcquire(); // find out where we're at
-    int run_st = (int)mg->run_state;
+    const int run_st = (const int)mg->run_state;
     bool prog_stop = (Program::global_run_state != Program::RUN); // program has stopped!
 
     switch(run_st) {
@@ -515,7 +515,7 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
 
   // only task 0 gets to set run state, except for program stopping, where task 1 is it
 
-  int cur_run_state = (int)run_state;
+  const int cur_run_state = (const int)run_state;
 
   if(!(cur_run_state == NOT_RUNNING || cur_run_state == ACTIVE_WAIT)) {
     taMisc::Error("threading programmer error: run state is not NOT_RUNNING or ACTIVE_WAIT at start of threaded call -- please report bug!", String(cur_run_state));
@@ -537,7 +537,7 @@ void LeabraThreadMgr::Run(RunStates run_typ) {
   // all the run_state updating is handled in run()
 
   // finally, always need to sync at end to ensure that everyone is done!
-  int end_run_state = (int)run_state;
+  const int end_run_state = (const int)run_state;
   if(end_run_state == NOT_RUNNING) {
     SyncThreads();              // stop them all!
   }
