@@ -2014,6 +2014,10 @@ void LeabraUnitSpec::TI_ClearContext(LeabraUnit* u, LeabraNetwork* net) {
 //////////////////////////////////////////
 
 void LeabraUnitSpec::Compute_dWt(Unit* ru, Network* rnet, int thread_no) {
+  // int thno_arg = thread_no;
+  // if(thread_no < 0) {
+  //   thno_arg = 0;		// pass 0 as arg -- need to store in tmp vec
+  // }
   LeabraUnit* u = (LeabraUnit*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   for(int g = 0; g < u->send.size; g++) {

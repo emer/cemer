@@ -138,6 +138,7 @@ public:
     AVG_S,
     AVG_M,
     AVG_L,
+    THAL,
     N_VEC_VARS,
   };
 
@@ -242,6 +243,11 @@ public:
   // #NO_SAVE #IHIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
   float_Matrix  tmp_con_vars;
   // #NO_SAVE #IHIDDEN #CAT_Activation temporary connection variables, per thread, for splitting computation into vectorizable vs. not components -- dims:  [own_cons_max_size][N_CON_VARS][n_threads]
+
+
+  inline float*  UnVecVar(UnitVecVars var)
+  { return unit_vec_vars.el + var * units_flat.size; }
+  // #IGNORE get start of given unit vector variable array
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -427,6 +433,9 @@ public:
 
   virtual void	Compute_dWt_Layer_pre();
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
+
+  virtual void  Compute_dWt_vecvars();
+  // #CAT_Learning copy over the vectorized variables for learning
 
   void	Compute_dWt() override;
   // #CAT_Learning compute weight change after first plus phase has been encountered

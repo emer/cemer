@@ -989,12 +989,30 @@ void LeabraNetwork::Compute_dWt_Layer_pre() {
   }
 }
 
+void LeabraNetwork::Compute_dWt_vecvars() {
+  float* avg_s = UnVecVar(AVG_S);
+  float* avg_m = UnVecVar(AVG_M);
+  float* avg_l = UnVecVar(AVG_L);
+  float* thal =  UnVecVar(THAL);
+
+  // non-threaded for now..
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    avg_s[i] = un->avg_s;
+    avg_m[i] = un->avg_m;
+    avg_l[i] = un->avg_l;
+    thal[i] = un->thal;
+  }
+}
+
+
 void LeabraNetwork::Compute_dWt() {
   if(cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
     if(cos_err < cos_err_lrn_thr) return; // didn't make threshold
   }
 
   Compute_dWt_Layer_pre();
+  Compute_dWt_vecvars();
 
   if(lthreads.CanRun()) {
     lthreads.Run(LeabraThreadMgr::RUN_DWT); // does both dwt and dwt_norm

@@ -381,9 +381,11 @@ public:
                                          const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
+#ifdef USE_SSE8
   inline void 	Send_NetinDelta_sse8(LeabraSendCons* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
   // #IGNORE sse8 (SIMD) version
+#endif
   inline void 	Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                      const int thread_no, const float su_act_delta,
                                      const float* wts);
@@ -455,11 +457,10 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_trial(float& dwt, 
-                                                 const float clrate,
-                                      const float ru_avg_s, const float ru_avg_m,
-                                      const float ru_avg_l, const float su_avg_s,
-                                      const float su_avg_m, const float su_act_mult) 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_trial
+    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
+     const float ru_avg_l, const float su_avg_s,
+     const float su_avg_m, const float su_act_mult) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
@@ -470,12 +471,10 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(float& dwt, 
-                                                 const float clrate,
-                                      const float ru_avg_s, const float ru_avg_m,
-                                      const float ru_avg_l, const float su_avg_s,
-                                      const float su_avg_m, const float su_act_mult,
-                                                         const float effmmix) 
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff_trial
+    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
+     const float ru_avg_l, const float su_avg_s, const float su_avg_m,
+     const float su_act_mult, const float effmmix) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
@@ -485,6 +484,13 @@ public:
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
+
+#ifdef USE_SSE8
+  inline void Compute_dWt_CtLeabraXCAL_cosdiff_sse8
+    (LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net, float* dwts,
+     const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
+     const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
+#endif
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net);
