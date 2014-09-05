@@ -41,7 +41,7 @@ public:
   virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
   // set current act of deep unit to sending super unit activation
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
   { return false; }

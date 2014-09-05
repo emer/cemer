@@ -32,7 +32,7 @@ public:
   virtual void  Send_Thal(LeabraLayer* lay, LeabraNetwork* net);
   // send the act value as thal to sending projections: every cycle
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   // never learn
   bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }

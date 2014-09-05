@@ -58,7 +58,7 @@ public:
 
   // overrides:
   bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) override;
 

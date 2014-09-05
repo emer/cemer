@@ -143,7 +143,7 @@ public:
   // name the matrix units according to their functional role -- i = input, m = maint, o = output -- these names are used to support different learning rules for these different types
 
   void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void  Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override;
 
   bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override

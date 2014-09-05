@@ -523,10 +523,10 @@ void MatrixLayerSpec::Compute_LearnDaVal(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net) {
+void MatrixLayerSpec::Compute_CycleStats(LeabraLayer* lay,  LeabraNetwork* net, int thread_no) {
   Compute_GatingActs(lay, net);
   Compute_LearnDaVal(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
 void MatrixLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {

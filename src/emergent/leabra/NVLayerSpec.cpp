@@ -107,8 +107,8 @@ float NVLayerSpec::Compute_NVDa(LeabraLayer* lay, LeabraNetwork* net) {
   return nv.da_gain * nv_da;
 }
 
-void NVLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
+void NVLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_CycleStats(lay, net, thread_no);
   float nv_da = Compute_NVDa_raw(lay, net);
   net->pvlv_nv = nv_da;
 }

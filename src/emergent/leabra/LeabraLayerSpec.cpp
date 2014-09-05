@@ -676,7 +676,7 @@ void LeabraLayerSpec::Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 2: Inhibition, Basic computation
 
-void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   if(lay->hard_clamped) return; // say no more..
 
   Compute_NetinStats(lay, net); // for all cases, do this!
@@ -990,16 +990,11 @@ void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork*) {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats
 
-void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  // todo: for threading, need to remove this!
-  if((net->cycle >= 0) && lay->hard_clamped) {
-    Compute_OutputName(lay, net); // need to keep doing this because network clears it
-    return;
-  }
-
+void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, 
+                                         int thread_no) {
+  // note: Compute_OutputName now done in a network-level post step
   Compute_Acts_AvgMax(lay, net);
   Compute_MaxDa(lay, net);
-  Compute_OutputName(lay, net);
 
   if(lay->un_g_i.cmpt)
     Compute_UnitInhib_AvgMax(lay, net);

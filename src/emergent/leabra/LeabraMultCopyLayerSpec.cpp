@@ -82,7 +82,7 @@ void LeabraMultCopyLayerSpec::Compute_MultCopyAct(LeabraLayer* lay, LeabraNetwor
   }
 }
 
-void LeabraMultCopyLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraMultCopyLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_MultCopyAct(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }

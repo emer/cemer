@@ -239,8 +239,8 @@ void LVeLayerSpec::Update_LVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, Update_LVPrior_ugp(lay, acc_md, gpidx, er_avail); );
 }
 
-void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
+void LVeLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_CycleStats(lay, net, thread_no);
   // take the 1st guy as the overall general guy
   LeabraUnit* lvesu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_lve = lvesu->act_eq;
@@ -270,8 +270,8 @@ bool LVeLayerSpec::Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) {
 /////////////
 //     LViLayerSpec -- obsolete
 
-void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
+void LViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_CycleStats(lay, net, thread_no);
   // take the 1st guy as the overall general guy
   LeabraUnit* lvisu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_lvi = lvisu->act_eq;

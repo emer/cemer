@@ -68,7 +68,7 @@ public:
     // #IGNORE
 
   // overrides:
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
   bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
 

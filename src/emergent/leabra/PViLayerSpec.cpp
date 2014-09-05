@@ -177,8 +177,8 @@ void PViLayerSpec::Update_PVPrior(LeabraLayer* lay, LeabraNetwork* net) {
   UNIT_GP_ITR(lay, Update_PVPrior_ugp(lay, acc_md, gpidx, er_avail); );
 }
 
-void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
+void PViLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_CycleStats(lay, net, thread_no);
   // take the 1st guy as the overall general guy
   LeabraUnit* pvisu = (LeabraUnit*)lay->units.Leaf(0);
   net->pvlv_pvi = pvisu->act_eq;

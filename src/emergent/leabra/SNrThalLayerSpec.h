@@ -75,7 +75,7 @@ public:
   virtual void	ResetMntCount(LeabraLayer* lay, int gp_idx);
   // resets gpd->mnt_count to -1 for a single stripe -- called by PFCLayerSpec when maintenance count has been exceeded
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;

@@ -38,8 +38,8 @@ void ThalLayerSpec::Send_Thal(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void ThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void ThalLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Send_Thal(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 

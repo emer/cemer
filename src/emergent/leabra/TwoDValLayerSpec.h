@@ -163,7 +163,7 @@ public:
 						 LeabraNetwork* net);
     // #IGNORE
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
     virtual void PostSettle_ugp(TwoDValLeabraLayer* lay,
 				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);

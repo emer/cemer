@@ -180,8 +180,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  void	Compute_Inhib(LeabraNetwork* net) 	{ spec->Compute_Inhib(this, net); }
-  // #CAT_Activation compute the inhibition for layer
+  void	Compute_Inhib(LeabraNetwork* net, int thread_no=-1)
+  { spec->Compute_Inhib(this, net, thread_no); }
+  // #CAT_Activation compute the inhibition for layer -- called threaded
   void	Compute_LayInhibToGps(LeabraNetwork* net)
   { spec->Compute_LayInhibToGps(this, net); }
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups
@@ -195,9 +196,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  void	Compute_CycleStats(LeabraNetwork* net)
-  { return spec->Compute_CycleStats(this, net); }
+  void	Compute_CycleStats(LeabraNetwork* net, int thread_no=-1)
+  { spec->Compute_CycleStats(this, net, thread_no); }
   // #CAT_Statistic compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
+  void	Compute_OutputName(LeabraNetwork* net)
+  { spec->Compute_OutputName(this, net); }
+  // #CAT_Statistic compute output name based on most active unit name
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats -- optional non-default guys

@@ -26,12 +26,12 @@
 taTypeDef_Of(Average);
 
 class TA_API Average : public taOBase {
-  // encapsulates the sum and count values for computing an average value in an incremental fashion over time
+  // ##NO_TOKENS #NO_UPDATE_AFTER #INLINE #INLINE_DUMP ##CAT_Math encapsulates the sum and count values for computing an average value in an incremental fashion over time
 INHERITED(taOBase)
 public:
   float         avg;    // the computed average value that was last computed, as sum / n -- this may not reflect current sum, n values -- just depends on when GetAvg was computed -- see UpdtAvg versions of increment methods
-  float         sum;    // overall sum of values accumulated since last reset
-  int           n;      // the number of values accumulated since last reset
+  float         sum;    // #DMEM_AGG_SUM overall sum of values accumulated since last reset
+  int           n;      // #DMEM_AGG_SUM the number of values accumulated since last reset
 
 
   inline void   ResetSum()
@@ -44,6 +44,10 @@ public:
   inline float  GetAvg()
   { if(n > 0) avg = sum / (float)n; return avg; }
   // #CAT_Average compute the average as sum / n, update the avg member to store this value, and return it
+
+  inline float  GetAvg_Reset()
+  { float rval = GetAvg(); ResetSum(); return rval; }
+  // #CAT_Average compute the average as sum / n, update the avg member to store this value, and return it -- also reset sum, n counters for next time
 
   inline void   Increment(float val)
   { sum += val; n++; }

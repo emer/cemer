@@ -23,6 +23,7 @@
 #include <taDataProc>
 #include <DataTable>
 #include <NetMonitor>
+#include <Average>
 
 #include <taMisc>
 
@@ -466,7 +467,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     if (!md) return false;
 
     if(TestError(!md->type->IsActualTaBase(),"ScanObject_InObject",
-                 "can only monitor taBase objects, not: ", md->type->name, " var: ", var)) {
+          "can only monitor taBase objects, not: ", md->type->name, " var: ", var)) {
       return true; //no mon, but we did handle it
     }
     // we can only handle embedded objs and ptrs to objs
@@ -494,6 +495,13 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
   else {
     md = obj->FindMember(var);
     if (md) {
+      // special case for Average objects -- they automatically get their avg member
+      if(md->type->IsActualTaBase() && md->type->InheritsFrom(&TA_Average) &&
+         !md->type->IsAnyPtr()) {
+        taBase* ths = (taBase*) md->GetOff((void*)obj);
+        md = ths->FindMember("avg");
+        obj = ths;              // obj is now this..
+      }
       if(name_obj) {
         String valname = GetColName(name_obj, val_specs.size);
         ValType vt = ValTypeForType(md->type);

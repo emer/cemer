@@ -102,8 +102,8 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
   }
 }
 
-void LeabraTICtxtLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraTICtxtLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_ActFmSource(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 

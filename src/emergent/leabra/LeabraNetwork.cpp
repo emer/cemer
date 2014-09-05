@@ -78,15 +78,9 @@ void LeabraNetwork::Initialize() {
   cos_diff_auto = false;
 
   minus_cycles = 0.0f;
-  avg_cycles = 0.0f;
-  avg_cycles_sum = 0.0f;
-  avg_cycles_n = 0;
 
   send_pct = 0.0f;
   send_pct_n = send_pct_tot = 0;
-  avg_send_pct = 0.0f;
-  avg_send_pct_sum = 0.0f;
-  avg_send_pct_n = 0;
 
   maxda_stopcrit = -1.0f;
   maxda = 0.0f;
@@ -97,7 +91,7 @@ void LeabraNetwork::Initialize() {
   ext_rew = 0.0f;
   ext_rew_avail = false;
   norew_val = 0.5f;
-  avg_ext_rew = 0.0f;
+
   pvlv_pvi = 0.0f;
   pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
@@ -107,39 +101,21 @@ void LeabraNetwork::Initialize() {
   pvlv_tonic_da = 0.0f;
   pvlv_sev = 0.0f;
   pv_detected = false;
-  avg_ext_rew_sum = 0.0f;
-  avg_ext_rew_n = 0;
 
   on_errs = true;
   off_errs = true;
   unlearnable_trial = false;
 
   norm_err = 0.0f;
-  avg_norm_err = 1.0f;
-  avg_norm_err_sum = 0.0f;
-  avg_norm_err_n = 0;
 
   cos_err_lrn_thr = -1.0f;
   cos_err = 0.0f;
   cos_err_prv = 0.0f;
   cos_err_vs_prv = 0.0f;
-  avg_cos_err = 1.0f;
-  avg_cos_err_sum = 0.0f;
-  avg_cos_err_n = 0;
-  avg_cos_err_prv = 1.0f;
-  avg_cos_err_prv_sum = 0.0f;
-  avg_cos_err_vs_prv = 1.0f;
-  avg_cos_err_vs_prv_sum = 0.0f;
 
   cos_diff = 0.0f;
-  avg_cos_diff = 1.0f;
-  avg_cos_diff_sum = 0.0f;
-  avg_cos_diff_n = 0;
 
   trial_cos_diff = 0.0f;
-  avg_trial_cos_diff = 1.0f;
-  avg_trial_cos_diff_sum = 0.0f;
-  avg_trial_cos_diff_n = 0;
 
   inhib_cons_used = false;
   init_netins_cycle_stat = false;
@@ -211,22 +187,18 @@ void LeabraNetwork::Init_Stats() {
   trg_max_act = 0.0f;
 
   minus_cycles = 0.0f;
-  avg_cycles = 0.0f;
-  avg_cycles_sum = 0.0f;
-  avg_cycles_n = 0;
+  avg_cycles.ResetAvg();
 
   minus_output_name = "";
 
   send_pct_n = send_pct_tot = 0;
   send_pct = 0.0f;
-  avg_send_pct = 0.0f;
-  avg_send_pct_sum = 0.0f;
-  avg_send_pct_n = 0;
+  avg_send_pct.ResetAvg();
 
   ext_rew = 0.0f;
   ext_rew_avail = false;
   norew_val = 0.5f;
-  avg_ext_rew = 0.0f;
+  avg_ext_rew.ResetAvg();
   pvlv_pvi = 0.0f;
   pvlv_pvr = 0.0f;
   pvlv_lve = 0.0f;
@@ -236,34 +208,22 @@ void LeabraNetwork::Init_Stats() {
   pvlv_tonic_da = 0.0f;
   pvlv_sev = 0.0f;
   pv_detected = false;
-  avg_ext_rew_sum = 0.0f;
-  avg_ext_rew_n = 0;
 
   norm_err = 0.0f;
-  avg_norm_err = 1.0f;
-  avg_norm_err_sum = 0.0f;
-  avg_norm_err_n = 0;
+  avg_norm_err.ResetAvg();
 
   cos_err = 0.0f;
   cos_err_prv = 0.0f;
   cos_err_vs_prv = 0.0f;
-  avg_cos_err = 1.0f;
-  avg_cos_err_sum = 0.0f;
-  avg_cos_err_n = 0;
-  avg_cos_err_prv = 1.0f;
-  avg_cos_err_prv_sum = 0.0f;
-  avg_cos_err_vs_prv = 1.0f;
-  avg_cos_err_vs_prv_sum = 0.0f;
+  avg_cos_err.ResetAvg();
+  avg_cos_err_prv.ResetAvg();
+  avg_cos_err_vs_prv.ResetAvg();
 
   cos_diff = 0.0f;
-  avg_cos_diff = 1.0f;
-  avg_cos_diff_sum = 0.0f;
-  avg_cos_diff_n = 0;
+  avg_cos_diff.ResetAvg();
 
   trial_cos_diff = 0.0f;
-  avg_trial_cos_diff = 1.0f;
-  avg_trial_cos_diff_sum = 0.0f;
-  avg_trial_cos_diff_n = 0;
+  avg_trial_cos_diff.ResetAvg();
 }
 
 void LeabraNetwork::Init_Sequence() {
@@ -378,6 +338,11 @@ void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
       send_netin_tmp.SetGeom(2, units_flat.size, lthreads.n_threads);
     }
     send_netin_tmp.InitVals(0.0f);
+
+    unit_vec_vars.SetGeom(2, units_flat.size, N_VEC_VARS);
+    if(own_cons_max_size > 0) {
+      tmp_con_vars.SetGeom(3, own_cons_max_size, N_CON_VARS, lthreads.n_threads);
+    }
   }
 }
 
@@ -610,6 +575,7 @@ void LeabraNetwork::Cycle_Run() {
 
     Compute_CycleStats_Pre();
     Compute_CycleStats_Layer();
+    Compute_CycleStats_Post();
 
     Compute_CycSynDep();
     Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
@@ -635,8 +601,7 @@ void LeabraNetwork::Send_Netin() {
   }
   if(send_pct_tot > 0) {        // only avail for non-threaded calls
     send_pct = (float)send_pct_n / (float)send_pct_tot;
-    avg_send_pct_sum += send_pct;
-    avg_send_pct_n++;
+    avg_send_pct.Increment(send_pct);
   }
 }
 
@@ -797,7 +762,15 @@ void LeabraNetwork::Compute_CycleStats_Layer() {
     if(lay->lesioned()) continue;
     lay->Compute_CycleStats(this);
   }
-  // todo: eliminate this!
+}
+
+void LeabraNetwork::Compute_CycleStats_Post() {
+  // output name must be done separately, and after acts summary stats computed
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(lay->lesioned()) continue;
+    lay->Compute_OutputName(this);
+  }
+  // todo: eliminate this if possible -- just kinda hacky..
   if(init_netins_cycle_stat) {
     Init_Netins();
   }
@@ -1077,8 +1050,7 @@ void LeabraNetwork::Compute_ExtRew() {
   // assumes any ext rew computation has happened before this point, and set the
   // network ext_rew and ext_rew_avail flags appropriately
   if(ext_rew_avail) {
-    avg_ext_rew_sum += ext_rew;
-    avg_ext_rew_n++;
+    avg_ext_rew.Increment(ext_rew);
   }
 }
 
@@ -1099,8 +1071,7 @@ void LeabraNetwork::Compute_NormErr() {
     if(cos_err_lrn_thr > -1.0f) {
       if(cos_err < cos_err_lrn_thr) return; // didn't make threshold - don't add to global
     }
-    avg_norm_err_sum += norm_err;
-    avg_norm_err_n++;
+    avg_norm_err.Increment(norm_err);
   }
   else {
     norm_err = 0.0f;
@@ -1125,17 +1096,16 @@ float LeabraNetwork::Compute_CosErr() {
   if(n_lays > 0) {
     cosv /= (float)n_lays;
     cos_err = cosv;
-    avg_cos_err_sum += cos_err;
-    avg_cos_err_n++;
+    avg_cos_err.Increment(cos_err);
 
     if(ti_mode) {
       cosvp /= (float)n_lays;
       cos_err_prv = cosvp;
-      avg_cos_err_prv_sum += cos_err_prv;
+      avg_cos_err_prv.Increment(cos_err_prv);
 
       cosvsp /= (float)n_lays;
       cos_err_vs_prv = cosvsp;
-      avg_cos_err_vs_prv_sum += cos_err_vs_prv;
+      avg_cos_err_vs_prv.Increment(cos_err_vs_prv);
     }
   }
   else {
@@ -1161,8 +1131,7 @@ float LeabraNetwork::Compute_CosDiff() {
     cosv /= (float)n_lays;
 
     cos_diff = cosv;
-    avg_cos_diff_sum += cos_diff;
-    avg_cos_diff_n++;
+    avg_cos_diff.Increment(cos_diff);
   }
   else {
     cos_diff = 0.0f;
@@ -1185,8 +1154,7 @@ float LeabraNetwork::Compute_AvgActDiff() {
     adiff /= (float)n_lays;
 
     avg_act_diff = adiff;
-    avg_avg_act_diff_sum += avg_act_diff;
-    avg_avg_act_diff_n++;
+    avg_avg_act_diff.Increment(avg_act_diff);
   }
   else {
     avg_act_diff = 0.0f;
@@ -1209,8 +1177,7 @@ float LeabraNetwork::Compute_TrialCosDiff() {
     cosv /= (float)n_lays;
 
     trial_cos_diff = cosv;
-    avg_trial_cos_diff_sum += trial_cos_diff;
-    avg_trial_cos_diff_n++;
+    avg_trial_cos_diff.Increment(trial_cos_diff);
   }
   else {
     trial_cos_diff = 0.0f;
@@ -1220,8 +1187,7 @@ float LeabraNetwork::Compute_TrialCosDiff() {
 
 void LeabraNetwork::Compute_MinusCycles() {
   minus_cycles = cycle;
-  avg_cycles_sum += minus_cycles;
-  avg_cycles_n++;
+  avg_cycles.Increment(minus_cycles);
 }
 
 bool LeabraNetwork::Compute_TrialStats_Test() {
@@ -1326,80 +1292,40 @@ void LeabraNetwork::Compute_AvgAbsRelNetin() {
 }
 
 void LeabraNetwork::Compute_AvgCycles() {
-  if(avg_cycles_n > 0) {
-    avg_cycles = avg_cycles_sum / (float)avg_cycles_n;
-  }
-  avg_cycles_sum = 0.0f;
-  avg_cycles_n = 0;
+  avg_cycles.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgSendPct() {
-  if(avg_send_pct_n > 0) {
-    avg_send_pct = avg_send_pct_sum / (float)avg_send_pct_n;
-  }
-  avg_send_pct_sum = 0.0f;
-  avg_send_pct_n = 0;
+  avg_send_pct.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgExtRew() {
-  if(avg_ext_rew_n > 0) {
-    avg_ext_rew = avg_ext_rew_sum / (float)avg_ext_rew_n;
-  }
-  avg_ext_rew_sum = 0.0f;
-  avg_ext_rew_n = 0;
+  avg_ext_rew.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgNormErr() {
-  if(avg_norm_err_n > 0) {
-    avg_norm_err = avg_norm_err_sum / (float)avg_norm_err_n;
-  }
-  avg_norm_err_sum = 0.0f;
-  avg_norm_err_n = 0;
+  avg_norm_err.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgCosErr() {
-  if(avg_cos_err_n > 0) {
-    avg_cos_err = avg_cos_err_sum / (float)avg_cos_err_n;
-  }
-  avg_cos_err_sum = 0.0f;
+  avg_cos_err.GetAvg_Reset();
 
   if(ti_mode) {
-    if(avg_cos_err_n > 0) {
-      avg_cos_err_prv = avg_cos_err_prv_sum / (float)avg_cos_err_n;
-    }
-    avg_cos_err_prv_sum = 0.0f;
-
-    if(avg_cos_err_n > 0) {
-      avg_cos_err_vs_prv = avg_cos_err_vs_prv_sum / (float)avg_cos_err_n;
-    }
-    avg_cos_err_vs_prv_sum = 0.0f;
+    avg_cos_err_prv.GetAvg_Reset();
+    avg_cos_err_vs_prv.GetAvg_Reset();
   }
-
-  avg_cos_err_n = 0;
 }
 
 void LeabraNetwork::Compute_AvgCosDiff() {
-  if(avg_cos_diff_n > 0) {
-    avg_cos_diff = avg_cos_diff_sum / (float)avg_cos_diff_n;
-  }
-  avg_cos_diff_sum = 0.0f;
-  avg_cos_diff_n = 0;
+  avg_cos_diff.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgAvgActDiff() {
-  if(avg_avg_act_diff_n > 0) {
-    avg_avg_act_diff = avg_avg_act_diff_sum / (float)avg_avg_act_diff_n;
-  }
-  avg_avg_act_diff_sum = 0.0f;
-  avg_avg_act_diff_n = 0;
+  avg_avg_act_diff.GetAvg_Reset();
 }
 
 void LeabraNetwork::Compute_AvgTrialCosDiff() {
-  if(avg_trial_cos_diff_n > 0) {
-    avg_trial_cos_diff = avg_trial_cos_diff_sum / (float)avg_trial_cos_diff_n;
-  }
-  avg_trial_cos_diff_sum = 0.0f;
-  avg_trial_cos_diff_n = 0;
+  avg_trial_cos_diff.GetAvg_Reset();
 }
 
 

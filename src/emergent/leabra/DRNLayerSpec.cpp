@@ -170,10 +170,10 @@ void DRNLayerSpec::Send_Se(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void DRNLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void DRNLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_Se(lay, net);
   Send_Se(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
 void DRNLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {

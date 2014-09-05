@@ -91,8 +91,8 @@ public:
 
   void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override { };
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   // never learn
   bool Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }

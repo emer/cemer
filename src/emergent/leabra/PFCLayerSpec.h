@@ -81,7 +81,7 @@ public:
   // modulates how active a PFC (superficial) layer can get before being gated; special case, e.g., for output gating layer, can use to only allow activation for trial immediately after gating -- called in CycleStats
 
   void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
   void TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) override;
 

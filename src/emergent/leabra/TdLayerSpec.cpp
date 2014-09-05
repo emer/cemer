@@ -171,10 +171,10 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void TdLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void TdLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_Td(lay, net); // now get the td and clamp it to layer
   Send_Td(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
 void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

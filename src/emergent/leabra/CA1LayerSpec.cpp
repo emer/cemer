@@ -104,7 +104,7 @@ void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Settle_Init_Layer(lay, net);
 }
 
-void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   if(net->ct_cycle == auto_m_cycles)
     RecordActMid(lay,net);
   if(net->ct_cycle == auto_m_cycles+1) {
@@ -116,6 +116,6 @@ void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
 
     net->init_netins_cycle_stat = true; // call net->Init_Netins() when done..
   }
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 

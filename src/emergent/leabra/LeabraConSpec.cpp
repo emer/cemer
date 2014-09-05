@@ -293,7 +293,7 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
       cur_lrate = lrate_sched.default_val;
     }
     else {
-      int arval = (int)(100.0f * net->avg_ext_rew);
+      int arval = (int)(100.0f * net->avg_ext_rew.avg);
       cur_lrate = lrate * lrate_sched.GetVal(arval);
     }
   }

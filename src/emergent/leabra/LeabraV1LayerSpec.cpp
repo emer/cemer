@@ -118,8 +118,8 @@ void LeabraV1LayerSpec::Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group*
 }
 
 
-void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_Inhib(lay, net);
+void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_Inhib(lay, net, thread_no);
   if(!feat_inhib.on) {          // do the normal
     return;
   }

@@ -607,8 +607,8 @@ void ScalarValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net)
   HardClampExt(lay, net);
 }
 
-void ScalarValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_CycleStats(lay, net);
+void ScalarValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  inherited::Compute_CycleStats(lay, net, thread_no);
   ReadValue(lay, net);          // always read out the value
 }
 

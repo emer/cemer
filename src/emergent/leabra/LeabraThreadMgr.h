@@ -31,6 +31,7 @@ class LeabraThreadMgr; //
 class DataTable; //
 class LeabraUnit; //
 class LeabraNetwork; //
+class LeabraLayer; //
 
 // this is the standard unit function call taking a network pointer arg
 // and the thread number int value
@@ -40,6 +41,13 @@ typedef void* LeabraThreadUnitCall;
 #else
 typedef taTaskMethCall2<LeabraUnit, void, LeabraNetwork*, int> LeabraThreadUnitCall;
 typedef void (LeabraUnit::*LeabraThreadUnitMethod)(LeabraNetwork*, int);
+#endif
+
+#ifdef __MAKETA__
+typedef void* LeabraThreadLayerCall;
+#else
+typedef taTaskMethCall2<LeabraLayer, void, LeabraNetwork*, int> LeabraThreadLayerCall;
+typedef void (LeabraLayer::*LeabraThreadLayerMethod)(LeabraNetwork*, int);
 #endif
 
 
@@ -157,6 +165,12 @@ public:
                              RunWaitTime& time, bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndTime
 
+  void          RunLayers(LeabraThreadLayerCall& lay_call);
+  // #IGNORE run layers on given method 
+  void          RunLayersStep(LeabraThreadLayerCall& unit_call, QAtomicInt& stage,
+                              RunWaitTime& time, int cyc, bool reset_used = true);
+  // #IGNORE run layers on given method with StartTime, EndStep
+
   void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
   void          TI_Send_Netins();
   void          Compute_dWt();  // run compute_dwt
@@ -207,6 +221,7 @@ public:
   QAtomicInt    stage_inhib;     // #IGNORE 
 
   QAtomicInt    stage_act;       // #IGNORE 
+  QAtomicInt    stage_sr_cons;   // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
 
   QAtomicInt    stage_deep5b;    // #IGNORE 

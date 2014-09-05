@@ -267,10 +267,10 @@ void PFCLayerSpec::Compute_PreGatedAct(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void PFCLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_GateCycle(lay, net);
   Compute_PreGatedAct(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
 void PFCLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {

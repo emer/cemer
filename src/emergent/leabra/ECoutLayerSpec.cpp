@@ -97,7 +97,7 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   if(net->ct_cycle == auto_m_cycles)
     RecordActMid(lay,net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
@@ -105,5 +105,5 @@ void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
     if(net->cycle <= 1)
       Compute_AutoEncStats(lay, net);
   }
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }

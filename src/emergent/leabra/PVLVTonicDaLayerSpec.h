@@ -34,7 +34,7 @@ public:
 
   void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net) override { };
+  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override { };
   void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // never learn

@@ -71,7 +71,7 @@ public:
                                     bool er_avail);
     // #IGNORE
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
   bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
 
@@ -98,7 +98,7 @@ class E_API LViLayerSpec : public LVeLayerSpec {
   // inhibitory/slow version of LV layer spec: (just a marker for layer; same functionality as LVeLayerSpec)
 INHERITED(LVeLayerSpec)
 public:
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   TA_BASEFUNS_NOCOPY(LViLayerSpec);
 protected:

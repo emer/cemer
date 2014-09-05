@@ -40,46 +40,6 @@ inline void LeabraConSpec::Compute_StableWeights(LeabraSendCons* cg, LeabraUnit*
 
 #ifdef USE_SSE8
 
-#if 0
-inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
-                                                const float su_act_delta_eff,
-                                                float* send_netin_vec, const float* wts)
-{
-  Vec8f sa(su_act_delta_eff);
-  const int sz = cg->size;
-  const int parsz = 8 * (sz / 8);
-  for(int i=0; i<parsz; i+=8) {
-    Vec8f wt;  wt.load(wts+i);
-    Vec8f dp = wt * sa;
-
-    send_netin_vec[cg->unit_idxs[i+0]] += dp[0];
-    send_netin_vec[cg->unit_idxs[i+1]] += dp[1];
-    send_netin_vec[cg->unit_idxs[i+2]] += dp[2];
-    send_netin_vec[cg->unit_idxs[i+3]] += dp[3];
-    send_netin_vec[cg->unit_idxs[i+4]] += dp[4];
-    send_netin_vec[cg->unit_idxs[i+5]] += dp[5];
-    send_netin_vec[cg->unit_idxs[i+6]] += dp[6];
-    send_netin_vec[cg->unit_idxs[i+7]] += dp[7];
-  }
-
-  // then do the extra parts that didn't fit in mod 8 bit
-  if(parsz < sz)
-    send_netin_vec[cg->unit_idxs[parsz]] += wts[parsz] * su_act_delta_eff;
-  if(parsz+1 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+1]] += wts[parsz+1] * su_act_delta_eff;
-  if(parsz+2 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+2]] += wts[parsz+2] * su_act_delta_eff;
-  if(parsz+3 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+3]] += wts[parsz+3] * su_act_delta_eff;
-  if(parsz+4 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+4]] += wts[parsz+4] * su_act_delta_eff;
-  if(parsz+5 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+5]] += wts[parsz+5] * su_act_delta_eff;
-  if(parsz+6 < sz)
-    send_netin_vec[cg->unit_idxs[parsz+6]] += wts[parsz+6] * su_act_delta_eff;
-}
-#endif
-
 inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
                                                 const float su_act_delta_eff,
                                                 float* send_netin_vec, const float* wts)
@@ -206,76 +166,71 @@ inline void LeabraConSpec::Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraU
 //////////////////////////////////////////////////////////////////////////////////
 //     Computing dWt: CtLeabra_XCAL
 
-// this is not worth the cost and too hard to update with algo changes, such as thr_l_err:
+#if 0
+//#ifdef USE_SSE8
 
-// inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_sse8(LeabraSendCons* cg,
-//                                                          const float clrate,
-//                                                          LeabraUnit* su,
-//                                                          LeabraNetwork* net) {
-//   const float su_act_mult_s = xcal.thr_l_mix * su->avg_m;
+inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_sse8
+(LeabraSendCons* cg, const float clrate, LeabraUnit* su, LeabraNetwork* net,
+ const float effmmix, const int thread_no) {
 
-//   Vec8f su_avg_s(su->avg_s);
-//   Vec8f su_avg_m(su->avg_m);
-//   Vec8f su_act_mult(su_act_mult_s);
-//   Vec8f s_mix(xcal.s_mix);
-//   Vec8f m_mix(xcal.m_mix);
-//   Vec8f thr_m_mix(xcal.thr_m_mix);
-//   Vec8f clr(clrate);
-//   Vec8f d_thr(xcal.d_thr);
-//   Vec8f d_rev(xcal.d_rev);
-//   Vec8f d_rev_ratio(xcal.d_rev_ratio);
-//   Vec8f zeros(0.0f);
+  float* tcv1 = net->tmp_con_vars.el + own_cons_max_size * LeabraNetwork::N_CON_VARS * thread_no;
+  float* tcv2 = net->tmp_con_vars.el + own_cons_max_size +
+    own_cons_max_size * LeabraNetwork::N_CON_VARS * thread_no;
 
-//   float* dwts = cg->OwnCnVar(DWT);
+  float* avg_s = net->unit_vec_vars.el + LeabraNetwork::AVG_S * net->units_flat.size;
+  float* avg_m = net->unit_vec_vars.el + LeabraNetwork::AVG_M * net->units_flat.size;
+  float* avg_l = net->unit_vec_vars.el + LeabraNetwork::AVG_L * net->units_flat.size;
+ 
+  Vec4f su_avg_s(su->avg_s);
+  Vec4f su_avg_m(su->avg_m);
+  Vec4f effmmix_v(effmix);
+  Vec4f s_mix(xcal.s_mix);
+  Vec4f m_mix(xcal.m_mix);
 
-//   const int sz = cg->size;
-//   const int parsz = 8 * (cg->size / 8);
-//   int i;
-//   for(i=0; i<parsz; i+=8) {
-//     Vec8f dwt;  dwt.load(dwts+i);
+  float* dwts = cg->OwnCnVar(DWT);
 
-// NOTE: these can be vectorized when units become vectorized -- will be big improvement
+  const int sz = cg->size;
+  const int parsz = cg->vec_chunked_size;
+  int i;
+  for(i=0; i<parsz; i+=4) {
+    Vec4f ru_avg_s;     Vec4f ru_avg_m;      Vec4f ru_avg_l;
+    const int ru_idx = cg->UnIdx(i);
+    ru_avg_s.load(avg_s + ru_idx);
+    ru_avg_m.load(avg_m + ru_idx);
+    ru_avg_l.load(avg_l + ru_idx);
 
-//     float rus[8];    float rum[8];    float rul[8];
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+0,net);
-//       rus[0] = ru->avg_s;  rum[0] = ru->avg_m;  rul[0] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+1,net);
-//       rus[1] = ru->avg_s;  rum[1] = ru->avg_m;  rul[1] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+2,net);
-//       rus[2] = ru->avg_s;  rum[2] = ru->avg_m;  rul[2] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+3,net);
-//       rus[3] = ru->avg_s;  rum[3] = ru->avg_m;  rul[3] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+4,net);
-//       rus[4] = ru->avg_s;  rum[4] = ru->avg_m;  rul[4] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+5,net);
-//       rus[5] = ru->avg_s;  rum[5] = ru->avg_m;  rul[5] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+6,net);
-//       rus[6] = ru->avg_s;  rum[6] = ru->avg_m;  rul[6] = ru->avg_l; }
-//     { LeabraUnit* ru = (LeabraUnit*)cg->Un(i+7,net);
-//       rus[7] = ru->avg_s;  rum[7] = ru->avg_m;  rul[7] = ru->avg_l; }
-
-//     Vec8f ru_avg_s;     Vec8f ru_avg_m;      Vec8f ru_avg_l;
-//     ru_avg_s.load(rus); ru_avg_m.load(rum);  ru_avg_l.load(rul);
-
-//     Vec8f srs = ru_avg_s * su_avg_s;
-//     Vec8f srm = ru_avg_m * su_avg_m;
-//     Vec8f sm_mix = s_mix * srs + m_mix * srm;
-//     Vec8f lthr = su_act_mult * ru_avg_l;
-//     Vec8f effthr = thr_m_mix * srm + lthr;
-
-//     //    dwt += cur_lrate * xcal.dWtFun(sm_mix, effthr);
-//     Vec8f rval = select(sm_mix > effthr * d_rev, sm_mix - effthr, sm_mix * d_rev_ratio);
-//     rval = select(sm_mix < d_thr, zeros, rval);
+    Vec4f srs = ru_avg_s * su_avg_s;
+    Vec4f srm = ru_avg_m * su_avg_m;
+    Vec4f sm_mix = s_mix * srs + m_mix * srm;
     
-//     dwt += clr * rval;
-//     dwt.store(dwts+i);
-//   }
-//   for(;i<sz;i++) {              // get the remainder
-//     LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-//     C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], clrate, ru->avg_s, ru->avg_m, ru->avg_l,
-//                                      su->avg_s, su->avg_m, su_act_mult_s);
-//   }
-// }
+    Vec4f lthr = su_act_mult * ru_avg_l;
+    Vec4f effthr = effmmix_v * srm + lthr;
+    sm_mix.save(tcv1 + i);      // save and re-use..
+    effthr.save(tcv2 + i);
+  }
+  // evaluate function serially on tmp vectors -- more efficient than trying to vectorize
+  // the function
+  for(i=0; i<parsz; i++) {
+    float sm_mix = tcv1[i];
+    float effthr = tcv2[i];
+    LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+    if(cifer_on) {
+      clrate *= (bg_lrate + fg_lrate * ru->thal);
+    }
+    dwt += clrate * xcal.dWtFun(sm_mix, effthr);
+  }
+  for(;i<sz;i++) {              // get the remainder
+    LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+    if(cifer_on) {
+      clrate *= (bg_lrate + fg_lrate * ru->thal);
+    }
+    C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], clrate, ru->avg_s,
+                                             ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
+                                             su_act_mult, effmmix);
+  }
+}
+
+#endif
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                     LeabraNetwork* net) {
@@ -318,16 +273,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
       C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], clrate, ru->avg_s,
                                     ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
                                                su_act_mult, effmmix);
-    }
-  }
-  else if(xcal.l_mix == XCalLearnSpec::X_ERR) {
-    for(int i=0; i<sz; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      if(cifer_on) {
-        clrate *= (bg_lrate + fg_lrate * ru->thal);
-      }
-      C_Compute_dWt_CtLeabraXCAL_thrlerr_trial(dwts[i], clrate, ru->avg_s,
-                                  ru->avg_m, ru->avg_l, su_avg_s, su_avg_m);
     }
   }
   else {                        // L_MIX

@@ -62,7 +62,7 @@ public:
   virtual void  Update_NVPrior(LeabraLayer* lay, LeabraNetwork* net);
   // update the prior Nv value, stored in nv unit misc_1 values
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
   bool Compute_SRAvg_Test(LeabraLayer*, LeabraNetwork*) override { return false; }
   void Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) override;

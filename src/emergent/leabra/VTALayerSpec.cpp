@@ -213,10 +213,10 @@ void VTALayerSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
   }
 }
 
-void VTALayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void VTALayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_Da(lay, net);
   Send_Da(lay, net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
 void VTALayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {

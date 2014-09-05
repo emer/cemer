@@ -40,7 +40,7 @@ public:
   virtual void  Send_Da(LeabraLayer* lay, LeabraNetwork* net);
   // send the da value to sending projections: every cycle
 
-  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
   void  Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
 

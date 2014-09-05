@@ -21,7 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(DecodeTwoDValLayerSpec);
 void DecodeTwoDValLayerSpec::Initialize() {
 }
 
-void DecodeTwoDValLayerSpec::Compute_Inhib(LeabraLayer*, LeabraNetwork*) {
+void DecodeTwoDValLayerSpec::Compute_Inhib(LeabraLayer*, LeabraNetwork*, int thread_no) {
   return;                       // do nothing!
 }
 

@@ -18,8 +18,8 @@
 
 TA_BASEFUNS_CTORS_DEFN(ECinLayerSpec);
 
-void ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) {
+void ECinLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   if(net->ct_cycle == auto_m_cycles)
     RecordActMid(lay,net);
-  inherited::Compute_CycleStats(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }

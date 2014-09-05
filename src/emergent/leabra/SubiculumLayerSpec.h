@@ -78,7 +78,7 @@ public:
   virtual void 	Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net);
   // set the learning rate for conspec according to final novelty computed value -- called in PostSettle
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
   void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
 
