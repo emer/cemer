@@ -130,7 +130,7 @@ void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx) {
   const int un_mx = net->units_flat.size;
 
   while(true) {
-    const int nxt_uidx = lpidx.fetchAndAddAcquire(chk);
+    const int nxt_uidx = lpidx.fetchAndAddOrdered(chk);
     if(nxt_uidx >= un_mx)
       break;
     const int mx = MIN(un_mx, nxt_uidx + chk);
@@ -559,7 +559,7 @@ void LeabraThreadMgr::InitAll() {
 bool LeabraThreadMgr::CanRun() {
   Network* net = network();
 
-  int min_units = unit_chunks * tasks.size;
+  int min_units = (unit_chunks * tasks.size) / 2;
 
   bool other_reasons = (net->units_flat.size < min_units);
 
