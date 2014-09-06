@@ -64,12 +64,6 @@ inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg,
   }
 }
 
-#else 
-inline void LeabraConSpec::Send_NetinDelta_sse8(LeabraSendCons* cg, 
-                                                const float su_act_delta_eff,
-                                                float* send_netin_vec, const float* wts) {
-  // nop
-}
 #endif
 
 inline void LeabraConSpec::Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
