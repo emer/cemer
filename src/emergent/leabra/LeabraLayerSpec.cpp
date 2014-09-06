@@ -1663,8 +1663,13 @@ void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) 
       if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
       LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
       if(!cg) continue;
-      float netin = cg->Compute_Netin(u,net);
-      // todo: optimize this to use prjn-specific computation and do it automatically!
+      float netin;
+      if(net->NetinPerPrjn()) {
+        netin = cg->net_raw;
+      }
+      else {
+        netin = cg->Compute_Netin(u,net); // otherwise have to compute it
+      }
       cg->net = netin;
       prjn->netin_avg += netin;
       netin_avg_n++;

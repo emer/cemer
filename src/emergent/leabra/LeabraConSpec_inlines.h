@@ -221,9 +221,9 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_sse8
     if(cifer_on) {
       lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx]);
     }
-    C_Compute_dWt_CtLeabraXCAL_cosdiff_trial(dwts[i], lrate_eff, avg_s[i],
-                                             avg_m[i], avg_l[i], su_avg_s, su_avg_m,
-                                             su_act_mult, effmmix);
+    C_Compute_dWt_CtLeabraXCAL_cosdiff
+      (dwts[i], lrate_eff, avg_s[i], avg_m[i], avg_l[i], su_avg_s, su_avg_m,
+       su_act_mult, effmmix);
   }
 }
 
@@ -274,7 +274,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
       if(cifer_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
       }
-      C_Compute_dWt_CtLeabraXCAL_cosdiff_trial
+      C_Compute_dWt_CtLeabraXCAL_cosdiff
         (dwts[i], lrate_eff, ru->avg_s, ru->avg_m, ru->avg_l, su_avg_s, su_avg_m,
          su_act_mult, effmmix);
     }
@@ -288,8 +288,8 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
       if(cifer_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
       }
-      C_Compute_dWt_CtLeabraXCAL_trial(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, ru->avg_l,
-                                       su_avg_s, su_avg_m, su_act_mult);
+      C_Compute_dWt_CtLeabraXCAL(dwts[i], lrate_eff, ru->avg_s, ru->avg_m, ru->avg_l,
+                                 su_avg_s, su_avg_m, su_act_mult);
     }
   }
 }

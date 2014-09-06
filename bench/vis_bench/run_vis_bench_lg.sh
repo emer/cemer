@@ -28,6 +28,7 @@
 # ./run_vis_bench_lg.sh n_threads=2 tag=_mac_mbp2_702_th2
 
 # name of executable to run
+#set exe=emergent_701
 #set exe=emergent
 set exe=../../build/bin/emergent
 

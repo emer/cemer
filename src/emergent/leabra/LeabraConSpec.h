@@ -457,7 +457,7 @@ public:
   /////////////////////////////////////
   // CtLeabraXCAL code
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_trial
+  inline void 	C_Compute_dWt_CtLeabraXCAL
     (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
      const float ru_avg_l, const float su_avg_s,
      const float su_avg_m, const float su_act_mult) 
@@ -471,7 +471,7 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
 
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff_trial
+  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff
     (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
      const float ru_avg_l, const float su_avg_s, const float su_avg_m,
      const float su_act_mult, const float effmmix) 

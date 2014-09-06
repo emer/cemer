@@ -156,19 +156,21 @@ public:
   { time.EndRun(); }
   // use this one if there isn't a sync possibility -- just stop the timer
 
-  void          RunUnits(LeabraThreadUnitCall& unit_call);
-  // #IGNORE run units on given method 
-  void          RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& stage,
-                             RunWaitTime& time, int cyc, bool reset_used = true);
+  void          RunUnits(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx);
+  // #IGNORE run units on given method, using given looping index
+  void          RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx,
+                             QAtomicInt& stage, RunWaitTime& time, int cyc,
+                             bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndStep
-  void          RunUnitsTime(LeabraThreadUnitCall& unit_call, 
+  void          RunUnitsTime(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx,
                              RunWaitTime& time, bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndTime
 
-  void          RunLayers(LeabraThreadLayerCall& lay_call);
-  // #IGNORE run layers on given method 
-  void          RunLayersStep(LeabraThreadLayerCall& unit_call, QAtomicInt& stage,
-                              RunWaitTime& time, int cyc, bool reset_used = true);
+  void          RunLayers(LeabraThreadLayerCall& lay_call, QAtomicInt& lpidx);
+  // #IGNORE run layers on given method, using given looping index 
+  void          RunLayersStep(LeabraThreadLayerCall& unit_call, QAtomicInt& lpidx,
+                              QAtomicInt& stage, RunWaitTime& time, int cyc,
+                              bool reset_used = true);
   // #IGNORE run layers on given method with StartTime, EndStep
 
   void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
@@ -223,6 +225,7 @@ public:
   QAtomicInt    stage_act;       // #IGNORE 
   QAtomicInt    stage_sr_cons;   // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
+  QAtomicInt    stage_syndep; // #IGNORE 
 
   QAtomicInt    stage_deep5b;    // #IGNORE 
   QAtomicInt    stage_deep5b_p;  // #IGNORE post
@@ -233,7 +236,8 @@ public:
   QAtomicInt    stage_dwt_norm; // #IGNORE 
   QAtomicInt    stage_wt;       // #IGNORE 
 
-  QAtomicInt    cur_un_idx;     // #IGNORE current unit index avail for processing -- this is for the "nibble" based thread allocation strategy
+  QAtomicInt    loop_idx0;      // #IGNORE index for looping to deploy threads, 1st one
+  QAtomicInt    loop_idx1;      // #IGNORE index for looping to deploy threads, 2nd one
 
   Network*      network()       { return (Network*)owner; }
 
