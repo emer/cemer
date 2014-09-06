@@ -490,6 +490,7 @@ public:
     (LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net, float* dwts,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
+  // #IGNORE sse8 version
 #endif
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
