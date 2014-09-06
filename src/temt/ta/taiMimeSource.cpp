@@ -452,7 +452,7 @@ int taBase::ChildEditAction(const MemberDef* md, taBase* child,
     ms->setIndex(i);
     rval = ChildEditAction_impl(md, child, ms, ea);
     // keep looping as long as stuff ok
-    if (rval != iClipData::ER_OK)
+    if (!(rval == iClipData::ER_OK || rval == iClipData::ER_CLEAR))
       break;
   }
   if(multi && !multi_off) // didn't reach end
@@ -724,36 +724,43 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     //  Cut/Paste is a move
     ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_CUT))
   ) {
-    if (obj == lst_itm) return 1; // nop
+    if (obj == lst_itm)
+      return 1; // nop
     if(proj) {
       proj->undo_mgr.SaveUndo(obj, "Move", NULL, false, this);
       // list is save_undo_owner
     }
     if (obj_idx >= 0) { // in this list: just do a list move
       list->MoveBeforeIdx(obj_idx, itm_idx); // noop for self ops
-      return iClipData::ER_OK; // do nothing case of drop on self
-    } else { // not in this list, need to do a transfer
+      return iClipData::ER_CLEAR; // do nothing case of drop on self
+    }
+    else
+    { // not in this list, need to do a transfer
       if (list->Transfer(obj)) { // should always succeed -- only fails if we already own item
         // was added at end, fix up location, if necessary
         if (itm_idx >= 0) { // if <0, then means "at end" already
           // for fm>to, to will just be the dst, because fm pushes to down
           list->MoveIdx(list->size - 1, itm_idx);
         }
-	// special new delayed code to expand and select the new guy!
-	if(!taMisc::in_gui_multi_action && 
-	   !list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
-	  tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
-	}
-      } else return iClipData::ER_ERROR;
+        // special new delayed code to expand and select the new guy!
+        if(!taMisc::in_gui_multi_action &&
+           !list->HasOption("NO_EXPAND_ALL") && !obj->HasOption("NO_EXPAND_ALL")) {
+          tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe"); // select new guy in case new owner was not expaned yet and needs expansion!
+        }
+      }
+      else {
+        return iClipData::ER_ERROR;
+      }
     }
-    return iClipData::ER_OK;
+    return iClipData::ER_CLEAR;
   }
-
+  
   // Link ops
   if (ea &
-    (iClipData::EA_LINK2 | iClipData::EA_DROP_LINK2))
+      (iClipData::EA_LINK2 | iClipData::EA_DROP_LINK2))
   {
-    if (obj_idx >= 0) return -1; // in this list: link forbidden
+    if (obj_idx >= 0)
+      return -1; // in this list: link forbidden
     if(proj) {
       proj->undo_mgr.SaveUndo(obj, "Insert Link", NULL, false, this);
       // list is save_undo_owner

@@ -179,10 +179,11 @@ public:
   };
   
   enum EditResult { // passed as result in the various XxxEditAction routines
-    ER_ERROR		= -2, // indicates action was attempted but an error occurred
+    ER_ERROR      = -2, // indicates action was attempted but an error occurred
     ER_FORBIDDEN	= -1, // indicates action is not allowed (may not have been resolvable at EditActionsAllowed stage)
     ER_IGNORED 		=  0, // indicates no action was taken, may indicate need to call another handler
-    ER_OK		=  1  // indicates successful action taken
+    ER_OK         =  1,  // indicates successful action taken
+    ER_CLEAR      =  2  // indicates successful move action - clear the clipboard
   }; //
 
   // mime-type strings

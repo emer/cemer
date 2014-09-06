@@ -127,7 +127,7 @@ void ISelectableHost::DropEditAction(int ea) {
 }
 
 void ISelectableHost::EditAction(int ea,
-    ISelectable::GuiContext gc_typ)
+                                 ISelectable::GuiContext gc_typ)
 {
   ISelectable* ci = curItem();
   if (!ci) return;
@@ -142,7 +142,10 @@ void ISelectableHost::EditAction(int ea,
     QApplication::clipboard()->clear();
   } else {
     ISelectable_PtrList items(selItems());
-    ci->EditAction_(items, ea, gc_typ);
+    int rval = ci->EditAction_(items, ea, gc_typ);
+    if (rval == iClipData::ER_CLEAR) {
+      QApplication::clipboard()->clear();
+    }
   }
 }
 
