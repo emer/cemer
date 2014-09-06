@@ -1490,7 +1490,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
           RecvCons* cg = un->recv.FastEl(g);
           if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          memcpy(values + cidx, (char*)dwts, cg->size * sizeof(float));
+          memcpy(values.el + cidx, (char*)dwts, cg->size * sizeof(float));
           cidx += cg->size;
           // for(int i = 0;i<cg->size;i++) {
           //   values.FastEl(cidx++) = dwts[i];
@@ -1502,7 +1502,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
           SendCons* cg = un->send.FastEl(g);
           if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          memcpy(values + cidx, (char*)dwts, cg->size * sizeof(float));
+          memcpy(values.el + cidx, (char*)dwts, cg->size * sizeof(float));
           cidx += cg->size;
           // for(int i = 0;i<cg->size;i++) {
           //   values.FastEl(cidx++) = dwts[i];
@@ -1528,7 +1528,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
           RecvCons* cg = un->recv.FastEl(g);
           if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          memcpy(dwts, (char*)(results + cidx), cg->size * sizeof(float));
+          memcpy(dwts, (char*)(results.el + cidx), cg->size * sizeof(float));
           cidx += cg->size;
           // for(int i = 0;i<cg->size;i++) {
           //   dwts[i] = results.FastEl(cidx++);
@@ -1540,7 +1540,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
           SendCons* cg = un->send.FastEl(g);
           if(cg->NotActive()) continue;
           float* dwts = cg->OwnCnVar(BaseCons::DWT);
-          memcpy(dwts, (char*)(results + cidx), cg->size * sizeof(float));
+          memcpy(dwts, (char*)(results.el + cidx), cg->size * sizeof(float));
           cidx += cg->size;
           // for(int i = 0;i<cg->size;i++) {
           //   dwts[i] = results.FastEl(cidx++);
