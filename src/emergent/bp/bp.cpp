@@ -646,25 +646,12 @@ void BpNetwork::SetCurLrate() {
 
 void BpNetwork::Compute_NetinAct() {
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
-  threads.Run(&un_call, 0.7f, false, true); // backwards = false, layer_sync=true
+  threads.Run(&un_call, false, true); // backwards = false, layer_sync=true
 }
 
 void BpNetwork::Compute_dEdA_dEdNet() {
   ThreadUnitCall un_call((ThreadUnitMethod)(BpUnitMethod)&BpUnit::Compute_dEdA_dEdNet);
-  threads.Run(&un_call, 0.9f, true, true); // backwards = true, layer_sync=true
-
-// #ifdef DMEM_COMPILE
-//     // first compute dEdA from connections and share it
-//     FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units)
-//       u->Compute_dEdA();
-//     lay->dmem_share_units.Aggregate(3, MPI_SUM);
-
-//     // then compute error to add to dEdA, and dEdNet
-//     FOREACH_ELEM_IN_GROUP(BpUnit, u, lay->units) {
-//       u->Compute_Error();
-//       u->Compute_dEdNet();
-//     }
-// #else
+  threads.Run(&un_call, true, true); // backwards = true, layer_sync=true
 }
 
 void BpNetwork::Compute_Error() {
@@ -682,12 +669,12 @@ void BpNetwork::Compute_Error() {
 
 void BpNetwork::Compute_dWt() {
   ThreadUnitCall un_call(&Unit::Compute_dWt);
-  threads.Run(&un_call, 0.8f);
+  threads.Run(&un_call);
 }
 
 void BpNetwork::Compute_Weights_impl() {
   ThreadUnitCall un_call(&Unit::Compute_Weights);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 void BpNetwork::Trial_Run() {

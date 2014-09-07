@@ -203,7 +203,6 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
     int n_run = input_size.retina_size.Product();
 
     threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-    threads.min_units = 1;
     threads.nibble_chunk = 1;     // small chunks
 
     cur_img = cur_img_r;

@@ -28,12 +28,14 @@
 #include <tabMisc>
 #include <taRootBase>
 
+#include "ta_vector_ops.h"
+
 TA_BASEFUNS_CTORS_DEFN(BaseCons);
 
 using namespace std;
 
 float BaseCons::null_rval = 0.0f;
-int   BaseCons::vec_chunk_targ = 4;
+int   BaseCons::vec_chunk_targ = TA_VEC_SIZE;
 
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types

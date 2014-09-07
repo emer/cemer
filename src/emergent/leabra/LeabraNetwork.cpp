@@ -398,9 +398,12 @@ void LeabraNetwork::Trial_Init_Specs() {
 }
 
 void LeabraNetwork::Trial_Init_Unit() {
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Trial_Init_Unit);
-  // todo: add into main threads
-  threads.Run(&un_call, -1.0f); // -1 = always run localized
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Trial_Init_Unit(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Trial_Init_Unit);
+  // threads.Run(&un_call, -1.0f); // -1 = always run localized
 
   sravg_vals.InitVals();        // reset sravg vals, after Trial_Init_SRAvg!
 }
@@ -479,9 +482,12 @@ void LeabraNetwork::Compute_Active_K() {
 }
 
 void LeabraNetwork::Settle_Init_Unit() {
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_Init_Unit);
-  // todo: add into main threads
-  threads.Run(&un_call, -1.0f); // -1 = always run localized
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Settle_Init_Unit(this, -1);
+  }
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_Init_Unit);
+  // threads.Run(&un_call, -1.0f); // -1 = always run localized
 
   Settle_Init_Layer();
 
@@ -506,20 +512,26 @@ void LeabraNetwork::Settle_Init_TargFlags() {
 
 void LeabraNetwork::Settle_DecayState() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_DecayState);
-  threads.Run(&un_call, .1f);   // lowest number -- not for real use so doesn't matter
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Settle_DecayState(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_NetinScale() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinScale);
-  threads.Run(&un_call, .1f);   // lowest number -- not for real use so doesn't matter
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_NetinScale(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_NetinScale_Senders() {
   // NOTE: this IS called by default -- second phase of Settle_Init_Unit
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_NetinScale_Senders);
-  threads.Run(&un_call, .1f);   // lowest number -- minimal computation
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_NetinScale_Senders(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_HardClamp() {
@@ -783,8 +795,10 @@ void LeabraNetwork::Compute_CycSynDep() {
   if(!net_misc.cyc_syn_dep) return;
   if(ct_cycle % net_misc.syn_dep_int != 0) return;
 
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_CycSynDep);
-  threads.Run(&un_call, 0.6f); // todo: this # is an estimate -- not tested yet -- no flag for it
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_CycSynDep(this, -1);
+  }
 }
 
 void LeabraNetwork::Compute_MidMinus() {
@@ -1051,8 +1065,8 @@ void LeabraNetwork::Compute_Weights_impl() {
 
 void LeabraNetwork::Compute_StableWeights() {
   // todo: remove!!!!
-  ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_StableWeights);
-  threads.Run(&un_call, 1.0f);
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_StableWeights);
+  // threads.Run(&un_call, 1.0f);
 }
 
 

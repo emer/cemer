@@ -999,7 +999,8 @@ set(ta_HEADS_NOMAKETA_NOMOC
   ta_stdef.h
   ta_def.h
   ta_type_constr.h
-  
+
+  ta_vector_ops.h
   vectorclass.h
   vectormath.h
   instrset.h

@@ -708,26 +708,6 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("NThreads", "\
  -- Target number of threads to use in multi-threaded code -- should be <= max_cpus and it often is more efficient to use less than what is maximally available");
 
-  taMisc::AddArgName("--thread_alloc_pct", "ThreadAllocPct");
-  taMisc::AddArgName("thread_alloc_pct=", "ThreadAllocPct");
-  taMisc::AddArgNameDesc("ThreadAllocPct", "\
- -- proportion (0-1) of total to process by pre-allocating a set of computations to a given thread -- the remainder of the load is allocated dynamically through a nibbling mechanism, where each thread takes a nibble_chunk at a time until the job is done.  current experience is that this should be no greater than .2, unless the load is quite large, as there is a high degree of variability in thread start times, so the automatic load balancing of nibbling is important, and it has very little additional overhead.");
-
-  taMisc::AddArgName("--thread_nibble_chunk", "ThreadNibbleChunk");
-  taMisc::AddArgName("thread_nibble_chunk=", "ThreadNibbleChunk");
-  taMisc::AddArgNameDesc("ThreadNibbleChunk", "\
- -- how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.");
-
-  taMisc::AddArgName("--thread_compute_thr", "ThreadComputeThr");
-  taMisc::AddArgName("thread_compute_thr=", "ThreadComputeThr");
-  taMisc::AddArgNameDesc("ThreadComputeThr", "\
- -- threshold value for amount of computation in a given function to actually deploy on threads, as opposed to just running it on main thread -- value is normalized (0-1) with 1 being the most computationally intensive task, and 0 being the least -- as with min_units, it may not be worth it to parallelize very lightweight computations.  See Thread_Params page on emergent wiki for relevant comparison values.");
-
-  taMisc::AddArgName("--thread_min_units", "ThreadMinUnits");
-  taMisc::AddArgName("thread_min_units=", "ThreadMinUnits");
-  taMisc::AddArgNameDesc("ThreadMinUnits", "\
- -- minimum number of computational units (e.g., network units) to apply parallel threading to -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.");
-
   ////////////////////////////////////////////////////
   //    Server variables
 

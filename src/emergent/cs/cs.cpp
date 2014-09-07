@@ -620,9 +620,7 @@ void CsNetwork::Init_Stats() {
 ////////////////////////////////
 
 void CsNetwork::Compute_SyncAct() {
-  // same as the basic call: just add a diff cost
-  ThreadUnitCall un_call(&Unit::Compute_Act);
-  threads.Run(&un_call, .2f);   // todo: get new cost!
+  Network::Compute_Act();       // basic act computation
 }
 
 void CsNetwork::Compute_AsyncAct() {
@@ -651,7 +649,7 @@ void CsNetwork::Compute_MaxDa() {
 
 void CsNetwork::Aggregate_dWt() {
   ThreadUnitCall un_call((ThreadUnitMethod)(CsUnitMethod)&CsUnit::Aggregate_dWt);
-  threads.Run(&un_call, .5f);   // todo: update est
+  threads.Run(&un_call);
 }
 
 void CsNetwork::Cycle_Run() {

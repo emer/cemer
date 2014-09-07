@@ -348,7 +348,7 @@ void SoNetwork::Compute_NetinAct() {
   // dmem in general so this takes precidence.  See BpNetwork::UpdateAfterEdit_impl for
   // a warning message that should be included.
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
-  threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
+  threads.Run(&un_call, false, true); // backwards = false, layer_sync=true
 
   // Important note: the Compute_Act_post call will NOT obey the cascade dynamic
   // so anything relying on that (e.g., multilayer nets) will not work!  hmm.

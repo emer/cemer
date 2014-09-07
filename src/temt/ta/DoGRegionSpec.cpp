@@ -153,7 +153,6 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
   int n_run = dog_img_geom.Product();
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   ThreadImgProcCall ip_call((ThreadImgProcMethod)(DoGRegionMethod)&DoGRegionSpec::DoGFilterImage_thread);

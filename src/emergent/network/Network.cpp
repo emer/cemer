@@ -664,11 +664,11 @@ void Network::Connect_VecChunk() {
 
   if(RecvOwnsCons()) {
     ThreadUnitCall un_call(&Unit::Connect_VecChunk_RecvOwns);
-    threads.Run(&un_call, 1.0f);
+    threads.Run(&un_call);
   }
   else {
     ThreadUnitCall un_call(&Unit::Connect_VecChunk_SendOwns);
-    threads.Run(&un_call, 1.0f);
+    threads.Run(&un_call);
   }
 
   delete[] tmp_chunks;
@@ -919,7 +919,7 @@ void Network::Init_Acts(){
 
 void Network::Init_dWt(){
   ThreadUnitCall un_call(&Unit::Init_dWt);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 void Network::Init_Weights() {
@@ -933,7 +933,7 @@ void Network::Init_Weights() {
   // can't actually do this threaded because random number gen is not thread safe,
   // for the time being..
   // ThreadUnitCall un_call(&Unit::Init_Weights);
-  // threads.Run(&un_call, 1.0f);
+  // threads.Run(&un_call);
   // taMisc::Info("Starting Init_Weights...");
   const int nu = units_flat.size;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
@@ -962,13 +962,13 @@ void Network::Init_Weights() {
 void Network::Init_Weights_sym() {
   // this should be thread-safe
   ThreadUnitCall un_call(&Unit::Init_Weights_sym);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 void Network::Init_Weights_post() {
   // this should be thread-safe
   ThreadUnitCall un_call(&Unit::Init_Weights_post);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 
   // const int nu = units_flat.size;
   // for(int i=1;i<nu;i++) {     // 0 = dummy idx
@@ -1034,12 +1034,12 @@ void Network::Init_Timers() {
 
 void Network::Compute_Netin() {
   ThreadUnitCall un_call(&Unit::Compute_Netin);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 void Network::Send_Netin() {
   ThreadUnitCall un_call(&Unit::Send_Netin);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 
   // now need to roll up the netinput into unit vals
   const int nu = units_flat.size;
@@ -1098,18 +1098,24 @@ void Network::Send_Netin() {
 }
 
 void Network::Compute_Act() {
-  ThreadUnitCall un_call(&Unit::Compute_Act);
-  threads.Run(&un_call, .2f);
+  // ThreadUnitCall un_call(&Unit::Compute_Act);
+  // threads.Run(&un_call);
+  // this is generally not worth threading all by itself
+  const int nu = units_flat.size;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    un->Compute_Act(this, -1);
+  }
 }
 
 void Network::Compute_NetinAct() {
   ThreadUnitCall un_call(&Unit::Compute_NetinAct);
-  threads.Run(&un_call, 1.0f, false, true); // backwards = false, layer_sync=true
+  threads.Run(&un_call, false, true); // backwards = false, layer_sync=true
 }
 
 void Network::Compute_dWt() {
   ThreadUnitCall un_call(&Unit::Compute_dWt);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 bool Network::Compute_Weights_Test(int trial_no) {
@@ -1138,7 +1144,7 @@ void Network::Compute_Weights() {
 
 void Network::Compute_Weights_impl() {
   ThreadUnitCall un_call(&Unit::Compute_Weights);
-  threads.Run(&un_call, 1.0f);
+  threads.Run(&un_call);
 }
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {

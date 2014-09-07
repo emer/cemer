@@ -13,6 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "taThreadDefaults.h"
+#include "ta_vector_ops.h"
 
-// all methods are in taMisc to allow for linking on maketa, which doesn't include this
+TA_BASEFUNS_CTORS_DEFN(ta_vector_ops);
+

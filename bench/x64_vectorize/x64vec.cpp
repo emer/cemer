@@ -19,6 +19,10 @@
 #include <cstring>
 #include <stdlib.h>
 
+#define STRINGIFY(s) XSTRINGIFY(s)
+#define XSTRINGIFY(s) #s
+#pragma message ("INSTRSET: " STRINGIFY(INSTRSET))
+
 // todo: ifdef for gcc instead of clang
 // #include <random>
 

@@ -23,9 +23,6 @@ TA_BASEFUNS_CTORS_DEFN(UnitCallThreadMgr);
 TA_BASEFUNS_CTORS_DEFN(UnitCallTask);
 
 void UnitCallTask::Initialize() {
-  uidx_st = -1;
-  uidx_ed = -1;
-  uidx_inc = -1;
   unit_call = NULL;
 }
 
@@ -37,16 +34,16 @@ void UnitCallTask::Destroy() {
 void UnitCallTask::run() {
   UnitCallThreadMgr* mg = mgr();
   const int nib_stop = mg->nibble_stop;
+#if (QT_VERSION >= 0x050000)
+  const int nib_start = mg->nibble_i.loadAcquire();
+#else
+  const int nib_start = (int)mg->nibble_i;
+#endif
 
-  if(uidx_inc > 0) {            // a forward run
-    for(int i=uidx_st; i<uidx_ed; i+=uidx_inc) {
-      Unit* un = network->units_flat[i];
-      unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-      // debugging:
-//       un->name = (String)task_id;
-    }
 
-    // then auto-nibble until done!
+  if(nib_start == nib_stop) return; // all done!
+
+  if(nib_start < nib_stop) {            // a forward run
     const int nib_chnk = mg->nibble_chunk;
     while(true) {
       int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
@@ -55,21 +52,11 @@ void UnitCallTask::run() {
       for(int i=nxt_uidx; i <mx; i++) {
         Unit* un = network->units_flat[i];
         unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-        // debugging:
-//      un->name = "n" + (String)task_id;
       }
       if(mx == nib_stop) break;         // we're the last guy
     }
   }
   else {                        // backwards!
-    for(int i=uidx_st; i>=uidx_ed; i+=uidx_inc) {
-      Unit* un = network->units_flat[i];
-      unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-        // debugging:
-//      un->name = (String)task_id;
-    }
-
-    // then auto-nibble until done!
     const int nib_chnk = -mg->nibble_chunk;
     while(true) {
       int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
@@ -78,8 +65,6 @@ void UnitCallTask::run() {
       for(int i=nxt_uidx; i>=mx; i--) {
         Unit* un = network->units_flat[i];
         unit_call->call(un, network, task_id); // task id indicates threading, and which thread
-//      // debugging:
-//      un->name = "n"+(String)task_id;
       }
       if(mx == nib_stop) break;         // we're the last guy
     }
@@ -87,11 +72,8 @@ void UnitCallTask::run() {
 }
 
 void UnitCallThreadMgr::Initialize() {
-  alloc_pct = taMisc::thread_defaults.alloc_pct;
-  nibble_chunk = taMisc::thread_defaults.nibble_chunk;
-  compute_thr = taMisc::thread_defaults.compute_thr;
-  min_units = taMisc::thread_defaults.min_units;
-  interleave = true;
+  nibble_chunk = 8;
+  min_units = 3000;
   ignore_lay_sync = false;
   nibble_i = -1;
   nibble_stop = 0;
@@ -121,11 +103,11 @@ void UnitCallThreadMgr::InitAll() {
   }
 }
 
-void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
+void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call,
                             bool backwards, bool layer_sync) {
   Network* net = network();
 
-  bool other_reasons = (comp_level < compute_thr || net->units_flat.size < min_units
+  bool other_reasons = (net->units_flat.size < min_units
                         || net->units_flat.size < tasks.size);
 
   if(n_threads == 1 || other_reasons) {
@@ -143,12 +125,12 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call, float comp_level,
     }
   }
   else {
-//     { // debugging: clear names
-//       const int nu = net->units_flat.size;
-//       for(int i=1;i<nu;i++) {        // 0 = dummy idx
-//      net->units_flat[i]->name = "";
-//       }
-//     }
+    const int nt = tasks.size;
+    for(int i=0;i<nt;i++) {
+      UnitCallTask* uct = (UnitCallTask*)tasks[i];
+      uct->unit_call = unit_call;
+    }
+
     if(backwards) {
       if(layer_sync && !ignore_lay_sync)
         RunThreads_BkwdLaySync(unit_call);
@@ -186,45 +168,8 @@ void UnitCallThreadMgr::RunThreads_FwdNetSync(ThreadUnitCall* unit_call) {
   Network* net = network();
   const int nu = net->units_flat.size-1;        // 0 = dummy idx
   const int nt = tasks.size;
-  int n_chunked = (int)((float)nu * alloc_pct);
-  n_chunked = MAX(n_chunked, nt);
 
-  int chnks = n_chunked / nt;
-  n_chunked = chnks * nt; // must be even multiple of threads!
-  while(n_chunked > nu)
-    n_chunked -= nt;
-  chnks = n_chunked / nt;
-
-  if(interleave) {
-    // sample task allocation: chnks = 3, nt = 2, n_chunked=15
-    // un: 0123456789012345...
-    // th  st       ed    nc
-    // 0   0    5   10
-    // 1    1    6   11
-    // 2     2    7   12
-    // 3      3    8   13
-    // 4       4    9   14
-
-    int end_base = 2 + n_chunked - nt; // add 1 b/c uses < ed and not <= ed, and 1 for dummy idx
-    for(int i=0;i<nt;i++) {
-      UnitCallTask* uct = (UnitCallTask*)tasks[i];
-      uct->unit_call = unit_call;
-      uct->uidx_st = 1+i;
-      uct->uidx_ed = end_base + i;
-      uct->uidx_inc = nt;
-    }
-  }
-  else {
-    for(int i=0;i<nt;i++) {
-      UnitCallTask* uct = (UnitCallTask*)tasks[i];
-      uct->unit_call = unit_call;
-      uct->uidx_st = 1+i*chnks;
-      uct->uidx_ed = 1+(i+1)*chnks;
-      uct->uidx_inc = 1;
-    }
-  }
-
-  nibble_i = 1+n_chunked;
+  nibble_i = 1;
   nibble_stop = 1+nu;
 
   RunThreads();         // then run the subsidiary guys
@@ -242,26 +187,7 @@ void UnitCallThreadMgr::RunThreads_BkwdNetSync(ThreadUnitCall* unit_call) {
   Network* net = network();
   const int nu = net->units_flat.size-1;        // 0 = dummy idx
   const int nt = tasks.size;
-  int n_chunked = (int)((float)nu * alloc_pct);
-  n_chunked = MAX(n_chunked, nt);
-
-  int chnks = n_chunked / nt;
-  n_chunked = chnks * nt; // must be even multiple of threads!
-  while(n_chunked > nu)
-    n_chunked -= nt;
-  chnks = n_chunked / nt;
-
-  int st_base = nu;                          // starting index (-1 already taken above)
-  int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
-
-  for(int i=0;i<nt;i++) {
-    UnitCallTask* uct = (UnitCallTask*)tasks[i];
-    uct->unit_call = unit_call;
-    uct->uidx_st = st_base - i;
-    uct->uidx_ed = end_base - i;
-    uct->uidx_inc = -nt;
-  }
-  nibble_i = nu - n_chunked;    // where to start nibbling
+  nibble_i = nu;    // where to start nibbling
   nibble_stop = 1;      // 0 = dummy idx
 
   RunThreads();         // then run the subsidiary guys
@@ -294,24 +220,7 @@ void UnitCallThreadMgr::RunThreads_FwdLaySync(ThreadUnitCall* unit_call) {
       }
     }
     else {
-      int n_chunked = (int)((float)nu * alloc_pct);
-      n_chunked = MAX(n_chunked, nt);
-
-      int chnks = n_chunked / nt;
-      n_chunked = chnks * nt; // must be even multiple of threads!
-      while(n_chunked > nu)
-        n_chunked -= nt;
-
-      int end_base = st_idx + 1 + n_chunked - nt; // add 1 b/c uses < ed and not <= ed
-
-      for(int i=0;i<nt;i++) {
-        UnitCallTask* uct = (UnitCallTask*)tasks[i];
-        uct->unit_call = unit_call;
-        uct->uidx_st = st_idx + i;
-        uct->uidx_ed = end_base + i;
-        uct->uidx_inc = nt;
-      }
-      nibble_i = st_idx + n_chunked;
+      nibble_i = st_idx;
       nibble_stop = st_idx + nu;
 
       RunThreads();     // then run the subsidiary guys
@@ -348,25 +257,7 @@ void UnitCallThreadMgr::RunThreads_BkwdLaySync(ThreadUnitCall* unit_call) {
       }
     }
     else {
-      int n_chunked = (int)((float)nu * alloc_pct);
-      n_chunked = MAX(n_chunked, nt);
-
-      int chnks = n_chunked / nt;
-      n_chunked = chnks * nt; // must be even multiple of threads!
-      while(n_chunked > nu)
-        n_chunked -= nt;
-
-      int st_base = st_idx + nu-1;                           // starting index
-      int end_base = st_base - (n_chunked - nt); // no -1 b/c >= end_base
-
-      for(int i=0;i<nt;i++) {
-        UnitCallTask* uct = (UnitCallTask*)tasks[i];
-        uct->unit_call = unit_call;
-        uct->uidx_st = st_base - i;
-        uct->uidx_ed = end_base - i;
-        uct->uidx_inc = -nt;
-      }
-      nibble_i = st_idx + nu-1 - n_chunked;
+      nibble_i = st_idx + nu-1;
       nibble_stop = st_idx;
 
       RunThreads();     // then run the subsidiary guys

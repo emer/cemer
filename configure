@@ -23,12 +23,12 @@ echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., /usr/local/Qt5.2.0/5.2.0/clang_64)"
 echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must be explicitly set, just to be sure you got the right one"
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
-echo "  --sse8                       define USE_SSE8 to take advantage of 8-way parallel SIMD (SSE) ops -- only useful for clang compiler, where it is auto-enabled"
+echo "  --flags=\"your own flags\"     include your own custom flags"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
 echo " "
 
-cmake_cmd="cmake ../"
+cmake_cmd=""
 build_dir="build"
 extra_suffix=""
 not_native=""
@@ -36,7 +36,8 @@ qt_version=""
 
 while [ $# -gt 0 ]
 do
-  preq=${1%=*}			# get part before =
+  preq=${1%%=*}			# get part before =
+#  echo $preq
   case $preq
   in
     --help | -help | help)
@@ -122,13 +123,16 @@ do
       shift 1
     ;;
 
-    --sse8 | -sse8 | sse8)
-      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-DUSE_SSE8"
+    --c++11 | -c++11 | c++11)
+      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-std=c++11"
+      c11="c++11"
       shift 1
     ;;
 
-    --c++11 | -c++11 | c++11)
-      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=-std=c++11"
+    --flags | -flags | flags)
+      flgs="${1#*=}"		# get part after =
+#      echo $flgs
+      cmake_cmd="$cmake_cmd -DCMAKE_CXX_FLAGS=\"$flgs\""
       shift 1
     ;;
 
@@ -174,15 +178,18 @@ echo "  build-dir:    $build_dir"
 echo "  qt-version:   $qt_version"
 echo "  generator:    $generator"
 echo "  verbose:      $verbose_build"
+echo "  c11:          $c11"
+echo "  flags:        $flgs"
 echo " "
-echo "  cmake command: $cmake_cmd"
+echo "  cmake command: cmake ../ $cmake_cmd"
 echo " "
 
 if [[ $clean == "true" ]]; then
     echo "NOTE: Cleaning files now!"
     /bin/rm -rf *
 fi
-$cmake_cmd
+
+cmake ../ $cmake_cmd
 
 echo " "
 echo "####################################################"

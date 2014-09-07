@@ -71,10 +71,10 @@ else (WIN32) # assume gcc!!!
   endif (NOT NOT_NATIVE MATCHES "not-native")
 
   if("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
-    # only clang seems to be able to make the sse code go fast
-    # SSE8 seems as good or better than 4 in all modern platforms, so using that
     # -Wunsequenced is causing seemingly errouneous warnings for TA files
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_SSE8 -Wno-unsequenced")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unsequenced")
+  else("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fabi-version=6 ")
   endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
 

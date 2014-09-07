@@ -54,8 +54,7 @@ void ImgProcCallTask::run() {
 //              Mgr
 
 void ImgProcCallThreadMgr::Initialize() {
-  min_units = taMisc::thread_defaults.min_units;
-  nibble_chunk = taMisc::thread_defaults.nibble_chunk;
+  nibble_chunk = 1;
   task_type = &TA_ImgProcCallTask;
 }
 
@@ -68,7 +67,7 @@ void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_un) {
   n_cmp_units = n_cmp_un;
 
   ImgProcThreadBase* base = img_proc();
-  if(n_threads == 1 || n_cmp_units < min_units || n_cmp_units < tasks.size) {
+  if(n_threads == 1 || n_cmp_units <= 2 * tasks.size) {
     for(int i=0;i<n_cmp_units;i++) {
       img_proc_call->call(base, i, -1); // -1 indicates no threading
     }

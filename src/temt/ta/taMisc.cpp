@@ -26,11 +26,9 @@ taTypeDef_Of(EnumDef);
 
 // this gets around cmake's internal dependency checking mechanisms, to break
 // interdependency on svnrev.h
-#ifndef NO_TA_BASE
 # define CMAKE_DEPENDENCY_HACK(a) #a
 #  include CMAKE_DEPENDENCY_HACK(svnrev.h)
 # undef CMAKE_DEPENDENCY_HACK
-#endif
 
 #include <taBase> 
 #include <UserDataItemBase> 
@@ -54,6 +52,7 @@ taTypeDef_Of(EnumDef);
 #include <taiViewType>
 
 #include "ta_type_constr.h"
+#include "ta_vector_ops.h"
 
 #include <ViewColor_List> 
 #include <QFile>
@@ -159,13 +158,20 @@ const String             taMisc::build_str;
 # endif
 #endif
 
+// compiler info
+
+#if TA_VEC_USE
+#define STRINGIFY(s) XSTRINGIFY(s)
+#define XSTRINGIFY(s) #s
+#pragma message ("INSTRSET: " STRINGIFY(INSTRSET))
+#pragma message ("TA_VEC_SIZE: " STRINGIFY(TA_VEC_SIZE))
+#endif
+
+String taMisc::compile_info;
+
 taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
-  alloc_pct = 0.0f;
-  min_units = 3000;
-  compute_thr = 0.5f;
-  nibble_chunk = 8;
 }
 
 taThreadDefaults taMisc::thread_defaults;
@@ -1396,6 +1402,61 @@ void taMisc::Decode_Signal(int err) {
 
 void taMisc::Initialize() {
   not_constr = false;
+
+  String vec_info;
+#ifdef TA_VEC_USE
+  vec_info << " using SSE/AVX vectorizing, instrset: " << INSTRSET
+           << " vec size: " << TA_VEC_SIZE;
+#else
+  vec_info << " not using vectorizing";
+#endif
+
+#ifdef TA_OS_WIN
+  compile_info = "Windows Compiler: TODO need more info here!";
+#else
+  // linux or mac
+  compile_info 
+#ifdef __clang__
+               << "Clang Compiler version: " << __clang_version__
+#else
+               << "GCC Compiler version: " << __VERSION__
+#endif
+               << " arch:"
+#ifdef __x86_64__
+               << " x86_64 64bit"
+#endif
+#ifdef __corei7__
+               << " corei7"
+#endif
+#ifdef __nehalem__
+               << " nehalem"
+#endif
+#ifdef __westmere__
+               << " westmere"
+#endif
+#ifdef __sandybridge__
+               << " sandybridge"
+#endif
+#ifdef __ivybridge__
+               << " ivybridge"
+#endif
+#ifdef __haswell__
+               << " haswell"
+#endif
+#ifdef __broadwell__
+               << " broadwell"
+#endif
+#ifdef __athlon__
+               << " althlon"
+#endif
+#ifdef __opteron__
+               << " opteron"
+#endif
+#ifdef __barcelona__
+               << " barcelona"
+#endif
+               << vec_info;
+#endif // TA_OS_WIN
 }
 
 void taMisc::AddInitHook(init_proc_t init_proc) {
@@ -1462,30 +1523,6 @@ void taMisc::Init_Defaults_PostLoadConfig() {
   }
   if(thread_defaults.n_threads > thread_defaults.cpus)
     thread_defaults.n_threads = thread_defaults.cpus;
-
-  if(CheckArgByName("ThreadAllocPct")) {
-    float alc_pct = FindArgByName("ThreadAllocPct").toFloat();
-    thread_defaults.alloc_pct = alc_pct;
-    taMisc::Info("Set threads alloc_pct to:", String(alc_pct));
-  }
-
-  int nib_chk = FindArgByName("ThreadNibbleChunk").toInt(); // 0 if doesn't exist
-  if(nib_chk > 0) {
-    thread_defaults.nibble_chunk = nib_chk;
-    taMisc::Info("Set threads nibble_chunk to:", String(nib_chk));
-  }
-
-  if(CheckArgByName("ThreadComputeThr")) {
-    float cmp_thr = FindArgByName("ThreadComputeThr").toFloat();
-    thread_defaults.compute_thr = cmp_thr;
-    taMisc::Info("Set threads compute_thr to:", String(cmp_thr));
-  }
-
-  int min_un = FindArgByName("ThreadMinUnits").toInt(); // 0 if doesn't exist
-  if(min_un > 0) {
-    thread_defaults.min_units = min_un;
-    taMisc::Info("Set threads min_units to:", String(min_un));
-  }
 
   UpdateAfterEdit();
 }

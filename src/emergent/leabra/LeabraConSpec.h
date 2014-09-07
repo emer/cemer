@@ -27,6 +27,7 @@
 #include <FunLookup>
 #include <LeabraSRAvgCon>
 #include <RecvCons>
+#include "ta_vector_ops.h"
 
 // declare all other types mentioned but not required to include:
 class LeabraUnit; // 
@@ -381,10 +382,10 @@ public:
                                          const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
-#ifdef USE_SSE8
-  inline void 	Send_NetinDelta_sse8(LeabraSendCons* cg, const float su_act_delta_eff,
+#ifdef TA_VEC_USE
+  inline void 	Send_NetinDelta_vec(LeabraSendCons* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
-  // #IGNORE sse8 (SIMD) version
+  // #IGNORE vectorized version
 #endif
   inline void 	Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
                                      const int thread_no, const float su_act_delta,
@@ -485,12 +486,12 @@ public:
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
 
-#ifdef USE_SSE8
-  inline void Compute_dWt_CtLeabraXCAL_cosdiff_sse8
+#ifdef TA_VEC_USE
+  inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
     (LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net, float* dwts,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
-  // #IGNORE sse8 version
+  // #IGNORE vectorized version
 #endif
 
   inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,

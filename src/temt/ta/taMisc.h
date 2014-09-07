@@ -221,6 +221,8 @@ public:
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App build type, mostly for determining plugin subfolders to search
   static const String    build_str;
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App an extension string based on build type -- no extension for "release gui no-dmem" configuration -- this reflects the actual compile-time parameters, not the suffix -- see app_sufix for empirical parameters
+  static String          compile_info;
+  // #READ_ONLY #NO_SAVE #EXPERT #CAT_App various informative bits of information about how the program was compiled -- important for high-level optimization of the code for the particular type of processor
   static String          app_suffix;
   // #READ_ONLY #NO_SAVE #EXPERT #CAT_App actual empirical suffix on the exe_cmd -- this is the official key used for plugins and prefs and other things like that
   static bool            save_old_fmt;

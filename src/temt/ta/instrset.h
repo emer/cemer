@@ -1,22 +1,24 @@
 /****************************  instrset.h   **********************************
-| Author:        Agner Fog
-| Date created:  2012-05-30
-| Last modified: 2012-08-01
-| Version:       1.02 Beta
-| Project:       vector classes
-| Description:
-| Header file for various common tasks to vector class library:
-| > selects the supported instruction set
-| > defines integer types
-| > defines compiler version macro if GCC compiler used
-| > defines template class to represent compile-time integer constant
-| > defines template for compile-time error messages
-|
-| (c) Copyright 2012 GNU General Public License http://www.gnu.org/licenses
-\*****************************************************************************/
+* Author:        Agner Fog
+* Date created:  2012-05-30
+* Last modified: 2014-05-11
+* Version:       1.14
+* Project:       vector classes
+* Description:
+* Header file for various compiler-specific tasks and other common tasks to 
+* vector class library:
+* > selects the supported instruction set
+* > defines integer types
+* > defines compiler version macros
+* > undefines certain macros that prevent function overloading
+* > defines template class to represent compile-time integer constant
+* > defines template for compile-time error messages
+*
+* (c) Copyright 2012 - 2014 GNU General Public License www.gnu.org/licenses
+******************************************************************************/
 
 #ifndef INSTRSET_H
-#define INSTRSET_H
+#define INSTRSET_H 114
 
 // Detect 64 bit mode
 #if (defined(_M_AMD64) || defined(_M_X64) || defined(__amd64) ) && ! defined(__x86_64__)
@@ -24,9 +26,11 @@
 #endif
 
 // Find instruction set from compiler macros if INSTRSET not defined
-// Note: Not all compilers define these macros automatically
+// Note: Microsoft compilers do not define these macros automatically
 #ifndef INSTRSET
-#if defined ( __AVX2__ )
+#if defined ( __AVX512F__ ) || defined ( __AVX512__ ) // || defined ( __AVX512ER__ ) 
+#define INSTRSET 9
+#elif defined ( __AVX2__ )
 #define INSTRSET 8
 #elif defined ( __AVX__ )
 #define INSTRSET 7
@@ -51,7 +55,7 @@
 
 // Include the appropriate header file for intrinsic functions
 #if INSTRSET > 7                       // AVX2 and later
-#ifdef __GNUC__
+#if defined (__GNUC__) && ! defined (__INTEL_COMPILER)
 #include <x86intrin.h>                 // x86intrin.h includes header files for whatever instruction 
                                        // sets are specified on the compiler command line, such as:
                                        // xopintrin.h, fma4intrin.h
@@ -74,6 +78,11 @@
 #include <xmmintrin.h>                 // SSE
 #endif // INSTRSET
 
+#if INSTRSET >= 8 && !defined(__FMA__)
+// assume that all processors that have AVX2 also have FMA3
+#define __FMA__  1
+#endif
+
 // AMD  instruction sets
 #if defined (__XOP__) || defined (__FMA4__)
 #ifdef __GNUC__
@@ -86,29 +95,29 @@
 #endif // __XOP__ 
 
 // FMA3 instruction set
-#if defined (__FMA__)
+#if defined (__FMA__) && (defined(__GNUC__) || defined(__clang__))  && ! defined (__INTEL_COMPILER)
 #include <fmaintrin.h> 
 #endif // __FMA__ 
 
 // FMA4 instruction set
-#if defined (__FMA4__)
+#if defined (__FMA4__) && (defined(__GNUC__) || defined(__clang__))
 #include <fma4intrin.h> // must have both x86intrin.h and fma4intrin.h, don't know why
 #endif // __FMA4__ 
 
 
 // Define integer types with known size
-#if defined(__GNUC__) || (defined(_MSC_VER) && _MSC_VER >= 1600)
+#if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && _MSC_VER >= 1600)
   // Compilers supporting C99 or C++0x have stdint.h defining these integer types
   #include <stdint.h>
 #elif defined(_MSC_VER)
   // Older Microsoft compilers have their own definitions
-  typedef signed   __int8   int8_t;
+  typedef signed   __int8  int8_t;
   typedef unsigned __int8  uint8_t;
-  typedef signed   __int16  int16_t;
+  typedef signed   __int16 int16_t;
   typedef unsigned __int16 uint16_t;
-  typedef signed   __int32  int32_t;
+  typedef signed   __int32 int32_t;
   typedef unsigned __int32 uint32_t;
-  typedef signed   __int64  int64_t;
+  typedef signed   __int64 int64_t;
   typedef unsigned __int64 uint64_t;
   #ifndef _INTPTR_T_DEFINED
     #define _INTPTR_T_DEFINED
@@ -120,13 +129,13 @@
   #endif
 #else
   // This works with most compilers
-  typedef signed   char       int8_t;
+  typedef signed   char      int8_t;
   typedef unsigned char      uint8_t;
-  typedef signed   short int  int16_t;
+  typedef signed   short int int16_t;
   typedef unsigned short int uint16_t;
-  typedef signed   int        int32_t;
+  typedef signed   int       int32_t;
   typedef unsigned int       uint32_t;
-  typedef long long           int64_t;
+  typedef long long          int64_t;
   typedef unsigned long long uint64_t;
   #ifdef  __x86_64__
     typedef int64_t intptr_t;
@@ -148,8 +157,24 @@ bool hasFMA4(void);                              // true if FMA4 instructions su
 bool hasXOP (void);                              // true if XOP  instructions supported
 
 // GCC version
-#if defined(__GNUC__) && ! defined (GCC_VERSION)
+#if defined(__GNUC__) && !defined (GCC_VERSION) && !defined (__clang__)
 #define GCC_VERSION  ((__GNUC__) * 10000 + (__GNUC_MINOR__) * 100 + (__GNUC_PATCHLEVEL__))
+#endif
+
+// Clang version
+#if defined (__clang__)
+#define CLANG_VERSION  ((__clang_major__) * 10000 + (__clang_minor__) * 100 + (__clang_patchlevel__))
+#endif
+
+// Fix problem with macros named min and max in WinDef.h
+#ifdef _MSC_VER
+#if defined (_WINDEF_) && defined(min) && defined(max)
+#undef min
+#undef max
+#endif
+#ifndef NOMINMAX
+#define NOMINMAX
+#endif
 #endif
 
 // Template class to represent compile-time integer constant

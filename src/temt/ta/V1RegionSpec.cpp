@@ -1417,7 +1417,6 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   int n_run = v1s_img_geom.Product();
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
@@ -1547,7 +1546,6 @@ bool V1RegionSpec::V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matri
   int n_run = v1s_img_geom.Product();
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
@@ -1587,7 +1585,6 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
   int n_run = v1s_img_geom.Product();
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   ThreadImgProcCall ip_cp_hist((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
@@ -1723,7 +1720,6 @@ bool V1RegionSpec::V1BinocularFilter() {
   int n_run_c = v1c_img_geom.Product();
 
   threads.n_threads = MIN(n_run_s, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   // basic disparity matching computation -- MIN(Left, Right)
@@ -2024,7 +2020,6 @@ bool V1RegionSpec::V1ComplexFilter() {
   int n_run = v1c_img_geom.Product();
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   if(v1c_specs.sg4) {
@@ -2245,7 +2240,6 @@ bool V1RegionSpec::V2Filter() {
 //     cur_out = &v2tl_out;
 
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   if(v2_filters & V2_TL) {
@@ -2529,7 +2523,6 @@ bool V1RegionSpec::SpatIntegFilter() {
   int n_run_c = si_v1c_geom.Product();
 
   threads.n_threads = MIN(n_run_c, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   if(spat_integ & SI_V1S) {
@@ -2876,7 +2869,6 @@ void V1RegionSpec::SpatIntegFilter_V2BO_thread(int v1c_idx, int thread_no) {
 bool V1RegionSpec::V1OptionalFilter() {
   int n_run = v1s_img_geom.Product();
   threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.min_units = 1;
   threads.nibble_chunk = 1;     // small chunks
 
   if(opt_filters & ENERGY) {
