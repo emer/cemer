@@ -64,8 +64,8 @@ class E_API UnitCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for UnitCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  int           nibble_chunk;   // #MIN_1 #DEF_8 #NO_SAVE NOTE: not saved -- initialized from user prefs.  how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
-  int           min_units;      // #MIN_1 #DEF_3000 #NO_SAVE NOTE: not saved -- initialized from user prefs.  minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
+  int           nibble_chunk;   // #MIN_1 #DEF_8 how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
+  int           min_units;      // #MIN_1 #DEF_3000 minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
   bool          ignore_lay_sync;// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
   QAtomicInt    nibble_i;       // #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
   int           nibble_stop;    // #IGNORE nibble stopping value
