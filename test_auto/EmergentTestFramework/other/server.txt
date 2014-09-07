@@ -65,6 +65,7 @@ General RunState After Init
     Status OK Match Result     ${output}             0
     
 RunProgramAsync
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "RunProgramAsync", "program": "LeabraBatch"}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetRunState"}
@@ -78,22 +79,27 @@ RunProgramAsync
 #
     
 JSON Format Error
+    Ensure Emergent Free
     ${output} =              Run Command Wait      {NotValidJSON}
     Status Error Match       ${output}             1         JSON format error
 
 Unknown Command Error
+    Ensure Emergent Free
     ${output} =              Run Command Wait      {"command": "UnknownCommand"}
     Status Error Match       ${output}             2         Unknown command: UnknownCommand-- remember everything is case sensitive
 
 No Command Error
+    Ensure Emergent Free
     ${output} =              Run Command Wait      {}
     Status Error Match       ${output}             2         Unknown command: -- remember everything is case sensitive
 
 Unknown Parameter Error
+    Ensure Emergent Free
     ${output} =              Run Command Wait      {"command": "GetRunState", "irrelevant": "value"}
     Status Error Match       ${output}             4         Unknown parameter: irrelevant
 
 Program Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait    {"command": "RunProgram", "program": "DoesNotExist"}
     Status Error Match         ${output}           5         Program 'DoesNotExist' not found    
 
@@ -104,24 +110,28 @@ Program Not Found Error
 #
 
 SetVar Int
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "max_epoch", "var_value": 501}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "max_epoch" }
     Status OK Equal Result     ${output}             501
 
 SetVar String
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "SaveWeights", "var_name": "fname", "var_value": "test string"}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "SaveWeights", "var_name": "fname" }
     Status OK Match Result     ${output}             test string
 
 SetVar Real
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit", "var_value": 3.14}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "err_stopcrit" }
     Status OK Equal Result     ${output}             3.14
 
 SetVar Boolean Arg
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "no_prompts", "var_value": true}
     Status OK No Result        ${output}
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "no_prompts" }
@@ -136,22 +146,27 @@ SetVar Boolean Arg
 #
 
 SetVar Invalid Program Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "DoesNotExist", "var_name": "err_stopcrit", "var_value": 3.14}
     Status Error Match         ${output}             5         Program 'DoesNotExist' not found
 
 GetVar Invalid Program Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "DoesNotExist", "var_name": "err_stopcrit"}
     Status Error Match         ${output}             5         Program 'DoesNotExist' not found
 
 SetVar Invalid Variable Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "DoesNotExist", "var_value": 3.14}
     Status Error Match         ${output}             5         Var 'DoesNotExist' not found
 
 GetVar Invalid Variable Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetVar", "program": "LeabraTrain", "var_name": "DoesNotExist"}
     Status Error Match         ${output}             5         Var 'DoesNotExist' not found
 
 SetVar Missing Value Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetVar", "program": "LeabraTrain", "var_name": "err_stopcrit"}
     Status Error Match         ${output}             5         var_value missing
 
@@ -165,6 +180,7 @@ SetVar Missing Value Error
 #
 
 GetData Full Table
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData"}
     Status OK Has Result       ${output}
     Json String Should Match   ${output}             /result/columns/0/name    Name
@@ -189,6 +205,7 @@ GetData Full Table
     Json Value Should Equal    ${output}             /result/columns/1/values/2/1/0  0
 
 GetData Column
+    Ensure Emergent Free
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "column": "Name"}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name    Name
@@ -202,6 +219,7 @@ GetData Column
     Json Value Should Not Exist  ${output}           /result/columns/2
 
 GetData Row
+    Ensure Emergent Free
     ${output} =                  Run Command Wait    {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 2}
     Status OK Has Result         ${output}
     Json String Should Match     ${output}           /result/columns/0/name      Name
@@ -222,6 +240,7 @@ GetData Row
     Json Value Should Not Exist  ${output}           /result/columns/2/values/2
 
 GetData Cell
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Name"}
     Status OK Has Result       ${output}
     Json String Should Match   ${output}             /result/columns/0/name       Name
@@ -230,6 +249,7 @@ GetData Cell
     Json String Should Match   ${output}             /result/columns/0/values/0   rdiag
 
 GetDataMatrixCell
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
     Status OK Equal Result     ${output}             1
 
@@ -237,6 +257,7 @@ GetDataMatrixCell
 #   Note, these tests must be done in order, and require that the Program operations above be run
 
 SetData Row Specified
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "row_from": 3, "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "row_from": 3, "rows": 1}
@@ -248,6 +269,7 @@ SetData Row Specified
     Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
 
 RemoveData First Two Rows
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData", "rows": 2}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
@@ -257,6 +279,7 @@ RemoveData First Two Rows
     Json Value Should Equal      ${output}             /result/columns/2/values/2  4  # This is the old/previous value
 
 SetData No Row Specified
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [6] }, { "name": "trial_name", "values": ["letrial"] }, { "name": "sse", "values": [4.4] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData", "rows": 1}
@@ -268,6 +291,7 @@ SetData No Row Specified
     Json Value Should Equal      ${output}             /result/columns/7/values/0   4.4
 
 RemoveData All Rows                    
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "RemoveData", "table": "TrialOutputData"}
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
@@ -275,6 +299,7 @@ RemoveData All Rows
     Json Value Should Not Exist  ${output}             /result/columns/0/result/0
 
 AppendData
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "AppendData", "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] }, { "name": "trial_name", "values": ["mytrial"] }, { "name": "sse", "values": [10.2] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
@@ -285,6 +310,7 @@ AppendData
     Json Value Should Equal      ${output}             /result/columns/7/values/0   10.2
 
 SetData Add Column
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "SetData", "create": true, "table": "TrialOutputData", "data": { "columns": [ { "name": "batch", "values": [8] }, { "name": "epoch", "values": [10] }, { "name": "trial_name", "values": ["mytrial2"] }, { "name": "sse", "values": [10.3] }, { "name": "new_col", "values": ["new_col_value"] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetData", "table": "TrialOutputData"}
@@ -296,6 +322,7 @@ SetData Add Column
     Json String Should Match     ${output}             /result/columns/9/values/0   new_col_value
 
 SetData Matrix Cell
+    Ensure Emergent Free
     ${output} =                  Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1, "cell": 12, "data": { "columns": [ { "name": "Output", "values": [0] } ] } }
     Status OK No Result          ${output}
     ${output} =                  Run Command Wait      {"command": "GetDataMatrixCell", "table": "StdInputData", "row_from": 1, "rows": 1, "column": "Output", "cell": 12}
@@ -307,44 +334,54 @@ SetData Matrix Cell
 # Table not found
 
 GetData Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable"}
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 GetDataTableCell Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Name"}
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 GetDataMatrixCell Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetDataMatrixCell", "table": "NotATable", "row_from": 3, "rows": 1, "column": "Input", "cell": 12}
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 AppendData Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "AppendData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 SetData Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetData", "table": "NotATable", "data": { "columns": [ { "name": "batch", "values": [7] }, { "name": "epoch", "values": [9] } ] } }
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 RemoveData Table Not Found Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "NotATable"}
     Status Error Match         ${output}             5                  Table 'NotATable' not found
 
 # Row error
 
 GetDataTable Invalid Row Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
     Status Error Match         ${output}             7                  row out of range
 
 GetDataTableCell Invalid Row Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "GetData", "table": "StdInputData", "row_from": 1024, "rows": 1, "column": "Name"}
     Status Error Match         ${output}             7                  row out of range
 
 RemoveData Invalid Row Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "RemoveData", "table": "StdInputData", "row_from": 1024, "rows": 1}
     Status Error Match         ${output}             7                  row out of range
 
 SetData Invalid Row Error
+    Ensure Emergent Free
     ${output} =                Run Command Wait      {"command": "SetData", "table": "StdInputData", "row_from": 1024, "rows": 1}
     Status Error Match         ${output}             7                  row out of range
 
@@ -512,7 +549,7 @@ Print
 Initialize Emergent
     ${pid} =             Start Process      emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
     Set Suite Variable   ${pid}
-    Sleep                4 sec   # Could do a loop and use Is Process Running but not a big deal
+    Sleep                8 sec   # Could do a loop and use Is Process Running but not a big deal
     Open Connection      127.0.0.1    port=5360
 
 Shutdown Emergent
@@ -534,6 +571,30 @@ Run Command
     ${output} =        Read
     Print              [Received] ${output}    # this is temporary just so I can see what's happening
     [Return]           ${output}
+
+Restart Emergent
+    Log  "Emergent is still busy, restarting server"    WARN
+    Shutdown Emergent
+    Sleep    5
+    Initialize Emergent
+    Sleep      5
+    ${output} =       Read
+    Write Bare        {"command": "GetRunState"}
+    ${output} =       Read
+    Sleep     5
+    Print     "Emergent was reset"
+
+Ensure Emergent Free
+    ${output} =        Run Command Wait      {"command": "GetRunState"}
+    Print     "Checking Emergent is free"
+    ${stat}   ${status} =        Run Keyword And Ignore Error     Get Json String    ${output}    /status
+    ${stat}   ${result} =        Run Keyword And Ignore Error     Get Json String    ${output}    /result
+    Return from Keyword If      '${status}' == 'OK' and '${result}' == '4'
+    Restart Emergent
+
+
+    
+    
 
 # For reference - JSON keywords from HttpLibrary.HTTP
 # Get Json Value                string, pointer, ...
