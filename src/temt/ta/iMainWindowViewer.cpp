@@ -581,9 +581,9 @@ void iMainWindowViewer::Constr_EditMenu()
   editPasteAction->setIcon(QIcon(editpaste));
   editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str + "V"), "editPasteIntoAction"));
   editPasteIntoAction->setIcon(QIcon(editpaste));
-  editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(cmd_str + "V"), "editPasteAssignAction"));
+  editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(), "editPasteAssignAction"));
   editPasteAssignAction->setIcon(QIcon(editpaste));
-  editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(cmd_str + "V"), "editPasteAppendAction"));
+  editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
   editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), "editDeleteAction"));
   // editDeleteAction->setIcon(QIcon(editpaste));
@@ -2204,34 +2204,6 @@ void iMainWindowViewer::editMenu_aboutToShow() {
       editPasteIntoAction->setVisible(ea & iClipData::EA_PASTE_INTO);
       editPasteAssignAction->setVisible(ea & iClipData::EA_PASTE_ASSIGN);
       editPasteAppendAction->setVisible(ea & iClipData::EA_PASTE_APPEND);
-      
-      if (ea & iClipData::EA_PASTE_INTO) {
-        if (paste_cnt > 1) {
-          editPasteIntoAction->setText("Paste Into");
-          editPasteIntoAction->setShortcut(QKeySequence());
-        } else {
-          editPasteIntoAction->setText("&Paste Into");
-          editPasteIntoAction->setShortcut(QKeySequence(cmd_str + "V"));
-        }
-      }
-      if (ea & iClipData::EA_PASTE_ASSIGN)  {
-        if (paste_cnt > 1) {
-          editPasteAssignAction->setText("Paste Assign");
-          editPasteAssignAction->setShortcut(QKeySequence());
-        } else {
-          editPasteAssignAction->setText("&Paste Assign");
-          editPasteAssignAction->setShortcut(QKeySequence(cmd_str + "V"));
-        }
-      }
-      if (ea & iClipData::EA_PASTE_APPEND)  {
-        if (paste_cnt > 1) {
-          editPasteAppendAction->setText("Paste Append");
-          editPasteAppendAction->setShortcut(QKeySequence());
-        } else {
-          editPasteAppendAction->setText("&Paste Append");
-          editPasteAppendAction->setShortcut(QKeySequence(cmd_str + "V"));
-        }
-      }
     }
     emit SetActionsEnabled();
   }
