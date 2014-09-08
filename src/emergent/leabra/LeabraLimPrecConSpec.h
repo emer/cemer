@@ -62,12 +62,6 @@ public:
     Compute_LimPrecWts(cg, su, net);
   }
 
-  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) override {
-    inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
-    Compute_LimPrecWts(cg, su, net);
-  }
-
   // NOTE: bias weights typically not subject to limited precision!
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }

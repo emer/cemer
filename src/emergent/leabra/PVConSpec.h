@@ -72,41 +72,36 @@ public:
     Compute_dWt_CtLeabraXCAL(cg, su, net);
   }
 
-  inline void C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt, float& pdw,
-                                               float& lwt, const float swt) {
+  inline void C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt,
+                                             float& fwt, float& swt) {
+    // no support of fast weights!
     if(dwt != 0.0f) {
-      float lin_wt = LinFmSigWt(lwt);
       if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
-        if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-        else		dwt *= lin_wt;
+        if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+        else		dwt *= fwt;
       }
-      lwt = SigFmLinWt(lin_wt + dwt);
-      C_Compute_EffWt(wt, swt, lwt);
+      fwt += dwt;
+      swt = fwt;
+      wt = SigFmLinWt(fwt);
     }
-    pdw = dwt;
     dwt = 0.0f;
   }
   // #IGNORE
 
   inline void Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) override {
+                                           LeabraNetwork* net) override {
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
-    float* pdws = cg->OwnCnVar(PDW);
-    float* lwts = cg->OwnCnVar(LWT);
+    float* fwts = cg->OwnCnVar(FWT);
     float* swts = cg->OwnCnVar(SWT);
 
-    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], pdws[i], 
-                                                      lwts[i], swts[i]));
+    CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i],
+                                                      fwts[i], swts[i]));
     //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
   }
 
   inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                                  LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
-  }
-  inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                   LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 

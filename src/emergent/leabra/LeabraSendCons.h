@@ -63,9 +63,6 @@ public:
   void	Compute_dWt_CtLeabraCAL(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraCAL(this, su, net); }
   // #CAT_Learning compute weight changes: CtLeabra CAL version
-  void	Compute_Weights_CtLeabraCAL(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraCAL(this, su, net); }
-  // #CAT_Learning compute weights: CtLeabra CAL version
 
   void	Compute_CycSynDep(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, su, net); }

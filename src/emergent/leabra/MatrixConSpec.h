@@ -108,10 +108,6 @@ public:
                                         LeabraNetwork* net) override {
     Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
-  inline void Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                          LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
-  }
 
   TA_SIMPLE_BASEFUNS(MatrixConSpec);
 protected:

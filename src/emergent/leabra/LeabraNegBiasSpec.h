@@ -37,11 +37,9 @@ public:
     if(!learn) return;
     float& wt = bias->OwnCn(0,WT);
     float& dwt = bias->OwnCn(0,DWT);
-    float& pdw = bias->OwnCn(0,PDW);
     if(dwt > 0.0f)		// positive only
       dwt = 0.0f;
     dwt -= decay * wt;
-    pdw = dwt;
     wt += dwt;
     dwt = 0.0f;
     C_ApplyLimits(wt);

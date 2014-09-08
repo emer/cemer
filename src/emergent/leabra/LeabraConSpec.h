@@ -129,23 +129,21 @@ private:
   void	Defaults_init() { Initialize(); } // note: ConSpec defaults should modalize on learn_rule
 };
 
-eTypeDef_Of(StableMixSpec);
+eTypeDef_Of(FastWtsSpec);
 
-class E_API StableMixSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra stable weight mixing specs
+class E_API FastWtsSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra fast and slow weight specifications
 INHERITED(SpecMemberBase)
 public:
-  float		stable_pct;	// #DEF_0;0.8 #MIN_0 #MAX_1 [0 for off, else 0.8 std] proportion (0..1) of the stable weight value contributing to the overall weight value that is used for sending net inputs -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights if this value is > 0
+  bool          on;             // are fast weights enabled at all?  if not, then there is just one effective weight value at each synapse
+  float         decay;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 rate of decay for the fast weights -- on each weight update (Compute_Weights), fast weights get this much closer to the slow weights
+  float         slow_lrate;     // #CONDSHOW_ON_on #MIN_0 how quickly do the slow weights adapt from the weight changes applied to the fast weights -- this is a multiplier on top of the standard learning rate parameters
 
-  float         learn_pct;       // #READ_ONLY #SHOW proportion that learned weight contributes to the overall weight value -- automatically computed as 1 - stable_pct
-  bool          cos_diff_lrate;  // if true, use learning rate value computed on the recv layer based on cos_diff between act_p and act_m -- requires the layer specs to be turned on
-
-  inline float	EffWt(const float swt, const float lwt)
-  { return stable_pct * swt + learn_pct * lwt; }
+  float		decay_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in trials 1/decay) for decay -- roughly how many weight updates for fast weights to approach slow weights
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  TA_SIMPLE_BASEFUNS(StableMixSpec);
+  TA_SIMPLE_BASEFUNS(FastWtsSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -283,9 +281,8 @@ public:
   };
 
   enum LeabraConVars {
-    PDW = DWT+1,                // previous delta weight
-    LWT,                        // learning weight value -- adapts according to learning rules every trial in a dynamic online manner
-    SWT,                        // stable (protein-synthesis and potentially sleep dependent) weight value -- updated from lwt value periodically (e.g., at the end of an epoch) by Compute_StableWeight function
+    FWT = DWT+1,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
+    SWT,                        // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
     SRAVG_S,                    // for LeabraSRAvgCon -- short time-scale, most recent (plus phase) average of sender and receiver activation product over time
     SRAVG_M,                    // for LeabraSRAvgCon -- medium time-scale, trial-level average of sender and receiver activation product over time
   };
@@ -304,7 +301,7 @@ public:
   bool          ignore_unlearnable; // #CAT_Learning ignore unlearnable trials
 
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  StableMixSpec stable_mix;     // #CAT_Learning #CONDSHOW_ON_learn mixing parameters for stable (swt) vs. learning weight (lwt) to compute the overall effective weight value (wt) -- stable wt reflects protein-synthesis dependent consolidated weight -- IMPORTANT: must call network Compute_StableWeights every epoch or so to update these stable weights!
+  FastWtsSpec   fast_wts;       // #CAT_Learning fast weights specifications -- parameters for how fast and slowly adapting weights learning
   LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   SAvgCorSpec	savg_cor;	// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn for original CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
@@ -321,10 +318,8 @@ public:
 
   inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
     float* dwts = cg->OwnCnVar(DWT);
-    float* pdws = cg->OwnCnVar(PDW);
     for(int i=0; i<cg->size; i++) {
       C_Init_dWt(dwts[i]);
-      pdws[i] = 0.0f;
     }
   }
 
@@ -334,13 +329,11 @@ public:
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
-    float* pdws = cg->OwnCnVar(PDW);
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
         C_Init_Weight_Rnd(wts[i]);
         C_Init_dWt(dwts[i]);
-        pdws[i] = 0.0f;
       }
     }
   }
@@ -348,24 +341,12 @@ public:
   inline void Init_Weights_post(BaseCons* cg, Unit* un, Network* net) override {
     float* wts = cg->OwnCnVar(WT);
     float* swts = cg->OwnCnVar(SWT);
-    float* lwts = cg->OwnCnVar(LWT);
+    float* fwts = cg->OwnCnVar(FWT);
     for(int i=0; i<cg->size; i++) {
-      swts[i] = wts[i];
-      lwts[i] = wts[i];
+      swts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
+      fwts[i] = swts[i];
     }
   }
-
-  inline void C_Compute_EffWt(float& wt, const float swt, const float lwt)
-  { wt = stable_mix.EffWt(swt, lwt); }
-  // #IGNORE compute the effective weight from the stable and learned weights
-
-  inline void C_Compute_StableWeights(float& wt, float& swt, const float lwt)
-  {  wt = swt = lwt; } 
-  // #IGNORE
-
-  inline void Compute_StableWeights(LeabraSendCons* cg, LeabraUnit* su,
-                                    LeabraNetwork* net);
-  // #IGNORE compute the effective weight from the stable and learned weights -- simulates the effects of protein synthesis and potential sleep in consolidating the learned weight value
 
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
@@ -441,16 +422,25 @@ public:
                                               LeabraNetwork* net);
   // #IGNORE Leabra/CHL weight changes
 
-  inline void	C_Compute_Weights_LeabraCHL(float& wt, float& dwt, float& pdw,
-                                            float& lwt, const float swt)
+  inline void	C_Compute_Weights_LeabraCHL(float& wt, float& dwt,
+                                            float& fwt, float& swt)
   { if(dwt != 0.0f) {
-      lwt = SigFmLinWt(LinFmSigWt(lwt) + dwt);
-      C_Compute_EffWt(wt, swt, lwt);
+      fwt += dwt;
+      swt = fwt;                // keep sync'd -- not tech necc but do it anyway
+      wt = SigFmLinWt(fwt);     // re-sig
     }
-    pdw = dwt;
     dwt = 0.0f;
   }
-  // #IGNORE compute weights for LeabraCHL learning rule
+  // #IGNORE compute weights for LeabraCHL learning rule -- no fast weights
+  inline void	C_Compute_Weights_LeabraCHL_fast
+    (const float decay, const float slow_lrate,
+     float& wt, float& dwt, float& fwt, float& swt)
+  { fwt += dwt + decay * (swt - fwt); // always move fast toward slow -- for all cons
+    swt += slow_lrate * dwt;
+    wt = SigFmLinWt(fwt);     // re-sig
+    dwt = 0.0f;
+  }
+  // #IGNORE compute weights for LeabraCHL learning rule -- fast weights
   inline virtual void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
                                                   LeabraNetwork* net);
   // #IGNORE overall compute weights for LeabraCHL learning rule
@@ -489,6 +479,7 @@ public:
 #ifdef TA_VEC_USE
   inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
     (LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net, float* dwts,
+     float* avg_s, float* avg_m, float* avg_l, float* thal,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
   // #IGNORE vectorized version
@@ -498,19 +489,35 @@ public:
                                                  LeabraNetwork* net);
   // #IGNORE CtLeabraXCAL weight changes
 
-  inline void	C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt, float& pdw,
-                                               float& lwt, const float swt)
+  inline void	C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt,
+                                               float& fwt, float& swt)
   { if(dwt != 0.0f) {
-      float lin_wt = LinFmSigWt(lwt);
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-      lwt = SigFmLinWt(lin_wt + dwt);
-      C_Compute_EffWt(wt, swt, lwt);
+      if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+      else		dwt *= fwt;
+      fwt += dwt;
+      swt = fwt;                // keep sync'd -- not tech necc..
+      wt = SigFmLinWt(fwt);
     }
-    pdw = dwt;
     dwt = 0.0f;
   }
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
+
+  inline void	C_Compute_Weights_CtLeabraXCAL_fast
+    (const float decay, const float slow_lrate, float& wt, float& dwt, float& fwt, float& swt)
+  { 
+    if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+    else		dwt *= fwt;
+    fwt += dwt + decay * (swt - fwt);
+    swt += dwt * slow_lrate;
+    wt = SigFmLinWt(fwt);
+    dwt = 0.0f;
+  }
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts
+
+  inline void	Compute_Weights_CtLeabraXCAL_fast_vec
+    (LeabraSendCons* cg, const float decay, const float slow_lrate,
+     float* wts, float* dwts, float* fwts, float* swts);
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
 
   inline virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                      LeabraNetwork* net);
@@ -548,22 +555,7 @@ public:
                                         LeabraNetwork* net);
   // #IGNORE CtLeabraCAL weight changes
 
-  inline void	C_Compute_Weights_CtLeabraCAL(float& wt, float& dwt, float& pdw,
-                                               float& lwt, const float swt)
-  { if(dwt != 0.0f) {
-      float lin_wt = LinFmSigWt(lwt);
-      if(dwt > 0.0f)	dwt *= (1.0f - lin_wt);
-      else		dwt *= lin_wt;
-      lwt = SigFmLinWt(lin_wt + dwt);
-      C_Compute_EffWt(wt, swt, lwt);
-    }
-    pdw = dwt;
-    dwt = 0.0f;
-  }
-  // #IGNORE overall compute weights for CtLeabraCAL learning rule
-  virtual void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                            LeabraNetwork* net);
-  // #IGNORE overall compute weights for CtLeabraCAL learning rule
+  // CtLeabraCAL uses same Compute_Weights as XCAL
 
   /////////////////////////////////////
   // Master dWt, Weights functions
@@ -583,12 +575,11 @@ public:
 
   inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
     C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
-    cg->OwnCn(0, PDW) = 0.0f;
   }
 
   inline void   B_Init_Weights_post(RecvCons* cg, Unit* ru, Network* net) {
     float wt = cg->OwnCn(0, WT);
-    cg->OwnCn(0, SWT) = wt; cg->OwnCn(0, LWT) = wt;
+    cg->OwnCn(0, SWT) = wt; cg->OwnCn(0, FWT) = wt;
   }
 
   inline virtual void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru);

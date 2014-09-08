@@ -58,14 +58,6 @@ public:
       inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
   }
 
-  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) override {
-    if(use_chl)
-      inherited::Compute_Weights_LeabraCHL(cg, su, net);
-    else
-      inherited::Compute_Weights_CtLeabraCAL(cg, su, net);
-  }
-
   inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
                                                    LeabraLayer* rlay) override {
     if(use_chl)

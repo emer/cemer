@@ -67,7 +67,7 @@ public:
     Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
-    float* lwts = cg->OwnCnVar(LWT);
+    float* fwts = cg->OwnCnVar(FWT);
     float* dwts = cg->OwnCnVar(DWT);
     float su_act;
     if(send_act == ACT_M)
@@ -80,7 +80,7 @@ public:
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
-        const float lin_wt = LinFmSigWt(lwts[i]);
+        const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_NoDa(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act);
       }
     }
@@ -88,7 +88,7 @@ public:
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
-        const float lin_wt = LinFmSigWt(lwts[i]);
+        const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act, ru->dav);
       }
     }
@@ -96,7 +96,7 @@ public:
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
-        const float lin_wt = LinFmSigWt(lwts[i]);
+        const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act,
                                 fabsf(ru->dav));
       }

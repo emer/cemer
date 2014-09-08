@@ -54,8 +54,6 @@ set(leabra_HEADS_MAKETA
   CaiSynDepConSpec.h
   SRAvgCaiSynDepCon.h
   SRAvgCaiSynDepConSpec.h
-  FastWtCon.h
-  FastWtConSpec.h
   LeabraDeltaConSpec.h
   DaDeltaConSpec.h
   LeabraSpikeCon.h
@@ -212,8 +210,6 @@ set(leabra_SRCS
   CaiSynDepConSpec.cpp
   SRAvgCaiSynDepCon.cpp
   SRAvgCaiSynDepConSpec.cpp
-  FastWtCon.cpp
-  FastWtConSpec.cpp
   LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
   LeabraSpikeCon.cpp

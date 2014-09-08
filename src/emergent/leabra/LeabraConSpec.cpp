@@ -24,7 +24,7 @@ TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
-TA_BASEFUNS_CTORS_DEFN(StableMixSpec);
+TA_BASEFUNS_CTORS_DEFN(FastWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(LearnMixSpec);
 TA_BASEFUNS_CTORS_DEFN(SAvgCorSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
@@ -79,18 +79,23 @@ void WtSigSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void StableMixSpec::Initialize() {
-  stable_pct = 0.0f;  // it is too risky to use 0.8f b/c epoch call may not be there, and in fact it is not needed in many cases..
-  cos_diff_lrate = false;
-  learn_pct = 1.0f - stable_pct;
+void FastWtsSpec::Initialize() {
+  on = false;
+
+  decay = 0.05;
+  slow_lrate = 0.1f;
+  
+  if(decay > 0.0f)
+    decay_time = 1.0f / decay;
 }
 
-void StableMixSpec::Defaults_init() {
+void FastWtsSpec::Defaults_init() {
 }
 
-void StableMixSpec::UpdateAfterEdit_impl() {
+void FastWtsSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  learn_pct = 1.0f - stable_pct;
+  if(decay > 0.0f)
+    decay_time = 1.0f / decay;
 }
 
 void LearnMixSpec::Initialize() {
@@ -204,7 +209,7 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
 
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
-  stable_mix.UpdateAfterEdit_NoGui();
+  fast_wts.UpdateAfterEdit_NoGui();
   lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
@@ -267,8 +272,6 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
   if(wt_sig.dwt_norm) net->net_misc.dwt_norm_used = true;
-  if(stable_mix.cos_diff_lrate || xcal.l_mix == XCalLearnSpec::X_COS_DIFF)
-    net->cos_diff_auto = true;
 
   if(lrs_value == NO_LRS) return;
 

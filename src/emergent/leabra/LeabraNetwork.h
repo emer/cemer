@@ -44,17 +44,13 @@ public:
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
-  SIMPLE_COPY(LeabraNetMisc);
-  TA_BASEFUNS(LeabraNetMisc);
-// protected:
-//   void UpdateAfterEdit_impl();
-
+  TA_SIMPLE_BASEFUNS(LeabraNetMisc);
 private:
   void	Initialize();
   void 	Destroy()	{ };
 };
 
- eTypeDef_Of(CtTrialTiming);
+eTypeDef_Of(CtTrialTiming);
 
 class E_API CtTrialTiming : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
@@ -68,8 +64,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
-  SIMPLE_COPY(CtTrialTiming);
-  TA_BASEFUNS(CtTrialTiming);
+  TA_SIMPLE_BASEFUNS(CtTrialTiming);
 protected:
   void UpdateAfterEdit_impl();
 
@@ -93,16 +88,34 @@ public:
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
-  SIMPLE_COPY(CtSRAvgSpec);
-  TA_BASEFUNS(CtSRAvgSpec);
-  //protected:
-  //  void UpdateAfterEdit_impl();
-
+  TA_SIMPLE_BASEFUNS(CtSRAvgSpec);
 private:
   void	Initialize();
   void 	Destroy()	{ };
 };
 
+
+eTypeDef_Of(RelNetinSched);
+
+class E_API RelNetinSched : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
+INHERITED(taOBase)
+public:
+  bool		on;		// #DEF_true whether to compute relative netinput at all
+  int		trl_skip;	// #DEF_10 #MIN_1 #CONDSHOW_ON_on skip every this many trials for epochs where it is being computed -- typically do not need sample all the trials -- adjust this depending on how many trials are typical per epoch
+  int		epc_skip;	// #DEF_10 #MIN_1 #CONDSHOW_ON_on skip every this many epochs -- typically just need to see rel_netin stats for 1st epoch and then every so often thereafter
+
+  bool          ComputeNow(int net_epc, int net_trl)
+  { if((net_epc % epc_skip == 0) && (net_trl % trl_skip == 0)) return true;  return false; }
+  // should we compute relative netin now, based on network epoch and trial counters?
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(RelNetinSched);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
 
 eTypeDef_Of(LeabraNetwork);
 
@@ -169,14 +182,15 @@ public:
 
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
 
-  int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
+  int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_50;60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
   int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
-  int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_15:35 minimum number of cycles to settle for
-  int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_35 minimum number of cycles to settle for in second phase
+  int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_0:35 minimum number of cycles to settle for
+  int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_0;35 minimum number of cycles to settle for in second phase
 
   CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
   CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
-  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
+  CtSRAvgVals	 sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
+  RelNetinSched	 rel_netin;	// #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
 
   float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
   Average	avg_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average settling cycles in the minus phase (computed over previous epoch)
@@ -238,11 +252,9 @@ public:
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it
 
   int_Array     active_layer_idx;
-  // #NO_SAVE #IHIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
+  // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
   float_Matrix  unit_vec_vars;
-  // #NO_SAVE #IHIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
-  float_Matrix  tmp_con_vars;
-  // #NO_SAVE #IHIDDEN #CAT_Activation temporary connection variables, per thread, for splitting computation into vectorizable vs. not components -- dims:  [own_cons_max_size][N_CON_VARS][n_threads]
+  // #NO_SAVE #HIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
 
 
   inline float*  UnVecVar(UnitVecVars var)
@@ -444,8 +456,8 @@ public:
 
   void Compute_Weights_impl() override;
 
-  virtual void	Compute_StableWeights();
-  // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
+  void	Compute_StableWeights() { }
+  // #CAT_OBSOLETE this function is now obsolete and should be removed from your code -- it does nothing anymore, as this feature has been removed in favor of the new fast_wts functionality
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats
@@ -479,7 +491,9 @@ public:
   // #CAT_Statistic compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase
 
   virtual void	Compute_AbsRelNetin();
-  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network -- this should NOT be called from programs (although previously it was) -- it is automatically called in Trial_Final now, and is subjected to settings of rel_netin if NETIN_PER_PRJN flag is not set
+  virtual void	Compute_AbsRelNetin_impl();
+  // #CAT_Statistic actually compute the absolute layer-level and relative netinput from different projections into layers in network (no tests)
   virtual void	Compute_AvgAbsRelNetin();
   // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
   virtual void	Compute_AdaptRelNetin() { };

@@ -317,9 +317,6 @@ public:
   void 	Compute_dWt_Norm(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_dWt_Norm(this, net, thread_no); }
   // #CAT_Learning compute normalization of dwt values -- must be done as a separate stage after dwt
-  void 	Compute_StableWeights(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_StableWeights(this, net, thread_no); }
-  // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
 
 
   ///////////////////////////////////////////////////////////////////////

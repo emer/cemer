@@ -41,13 +41,13 @@ public:
     Compute_SAvgCor(cg, su, net);
     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
-    float* lwts = cg->OwnCnVar(LWT);
+    float* fwts = cg->OwnCnVar(FWT);
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-      const float lin_wt = LinFmSigWt(lwts[i]);
+      const float lin_wt = fwts[i];
       C_Compute_dWt_LeabraCHL(dwts[i],
 		    C_Compute_Hebb(cg->savg_cor, lin_wt, ru->act_p, su->act_p),
                               // only diff: replaces act_mid instead of act_m
@@ -66,10 +66,6 @@ public:
   }
   inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                      LeabraNetwork* net) override {
-    inherited::Compute_Weights_LeabraCHL(cg, su, net);
-  }
-  inline void	Compute_Weights_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                    LeabraNetwork* net) override {
     inherited::Compute_Weights_LeabraCHL(cg, su, net);
   }
 

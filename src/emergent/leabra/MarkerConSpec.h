@@ -41,7 +41,6 @@ public:
   void Trial_Init_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void	Compute_Weights(BaseCons*, Unit*, Network* net) override { };
   void	Compute_Weights_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
-  void	Compute_Weights_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
 
   TA_BASEFUNS_NOCOPY(MarkerConSpec);

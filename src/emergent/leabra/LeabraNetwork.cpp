@@ -18,6 +18,7 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
 TA_BASEFUNS_CTORS_DEFN(CtTrialTiming);
 TA_BASEFUNS_CTORS_DEFN(CtSRAvgSpec);
+TA_BASEFUNS_CTORS_DEFN(RelNetinSched);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
 
@@ -53,6 +54,12 @@ void CtSRAvgSpec::Initialize() {
   plus_s_st = 19;
   plus_s_only = false;
   force_con = false;
+}
+
+void RelNetinSched::Initialize() {
+  on = true;
+  trl_skip = 10;
+  epc_skip = 10;
 }
 
 void LeabraNetwork::Initialize() {
@@ -340,9 +347,6 @@ void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
     send_netin_tmp.InitVals(0.0f);
 
     unit_vec_vars.SetGeom(2, units_flat.size, N_VEC_VARS);
-    if(own_cons_max_size > 0) {
-      tmp_con_vars.SetGeom(3, own_cons_max_size, N_CON_VARS, lthreads.n_threads);
-    }
   }
 }
 
@@ -1063,13 +1067,6 @@ void LeabraNetwork::Compute_Weights_impl() {
   }
 }
 
-void LeabraNetwork::Compute_StableWeights() {
-  // todo: remove!!!!
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Compute_StableWeights);
-  // threads.Run(&un_call, 1.0f);
-}
-
-
 ///////////////////////////////////////////////////////////////////////
 //      Stats
 
@@ -1310,6 +1307,12 @@ void LeabraNetwork::Compute_PlusStats() {
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {
+  if(NetinPerPrjn() || rel_netin.ComputeNow(epoch, trial)) {
+    Compute_AbsRelNetin_impl();
+  }
+}
+    
+void LeabraNetwork::Compute_AbsRelNetin_impl() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Compute_AbsRelNetin(this);

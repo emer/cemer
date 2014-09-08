@@ -794,9 +794,6 @@ public:
 
   void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override;
 
-  virtual void	Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute the stable weights for connections that have separate stable weights (see LeabraStableConSpec) -- simulates synaptic consolidation to gene-expression-dependent long term plasticity -- typically done after every epoch or multiple thereof
-
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 

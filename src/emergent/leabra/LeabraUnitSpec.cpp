@@ -2060,24 +2060,6 @@ void LeabraUnitSpec::Compute_Weights(Unit* ru, Network* rnet, int thread_no) {
   bspc->B_Compute_Weights(&u->bias, u);
 }
 
-void LeabraUnitSpec::Compute_StableWeights(LeabraUnit* u, LeabraNetwork* net,
-                                           int thread_no) {
-  LeabraLayer* olay = u->own_lay();
-  if(olay->lesioned()) return;
-  for(int g = 0; g < u->send.size; g++) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-    if(send_gp->NotActive()) continue;
-    LeabraLayer* rlay = (LeabraLayer*)send_gp->prjn->layer;
-    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-    cs->Compute_StableWeights(send_gp, u, net);
-  }
-
-  LeabraConSpec* bspc = ((LeabraConSpec*)bias_spec.SPtr());
-  bspc->C_Compute_StableWeights(u->bias.OwnCn(0,LeabraConSpec::WT),
-                                u->bias.OwnCn(0,LeabraConSpec::SWT),
-                                u->bias.OwnCn(0,LeabraConSpec::LWT));
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      Stats
