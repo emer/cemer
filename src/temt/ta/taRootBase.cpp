@@ -2023,6 +2023,7 @@ void taRootBase::Cleanup_Main() {
 //     MPI_Finalize();
 // #endif
   taThreadMgr::TerminateAllThreads(); // don't leave any active threads lying around
+  sleep(1);
 
 #ifndef TA_OS_WIN
   // only if using readline-based console, reset tty state
