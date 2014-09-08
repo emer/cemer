@@ -33,8 +33,9 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
                                           bool make_new_instr) {
   String  row;  // reuse for each widget
   String  chs_str;
-  bool    show_type_chooser = (var_type_choice == ProgVar::T_UnDef);
   bool    showInstruction = (var_nm != "");  // if we don't know the var name ask for it
+  bool    show_type_chooser = (var_type_choice == ProgVar::T_UnDef);
+  bool    show_local_global_chooser = (local_global_choice == 2); // not local or global so show the chooser
 
   dlg.win_title = "Create Variable - Local or Global";
   dlg.width = 300;
@@ -83,7 +84,9 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
   }
 
   QComboBox* combo_local_global = new QComboBox;
-  {
+  QComboBox* combo_var_type = new QComboBox;
+
+  if (show_local_global_chooser) {
     taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
     if (!hboxEmer) {
       return false;
@@ -98,8 +101,6 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
     hbox->addWidget(combo_local_global);
       combo_local_global->setCurrentIndex(0);//
   }
-
-  QComboBox* combo_var_type = new QComboBox;
 
   if (show_type_chooser) {  // var type not chosen - give user the options
     String_Array var_types;

@@ -186,7 +186,7 @@ protected:
   String                m_this_sig; // the sig from most recent change
   String                m_prev_sig; // the sig last time it changed
 
-  virtual bool          CheckUndefType(const String& function_context) const;
+  virtual bool          CheckUndefType(const String& function_context, bool quiet = false) const;
   // #IGNORE check if var_type == T_UnDef and emit a warning if so -- returns true if undefined..
   void         UpdateAfterEdit_impl() override;
   virtual String        GetSchemaSig() const;

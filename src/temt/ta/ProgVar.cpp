@@ -26,6 +26,7 @@ taTypeDef_Of(taProject);
 
 #include <SigLinkSignal>
 #include <taMisc>
+#include <ProgElChoiceDlg>
 
 #include <css_machine.h>
 #include <css_ta.h>
@@ -174,11 +175,16 @@ void ProgVar::Copy_(const ProgVar& cp) {
   }
 }
 
-bool ProgVar::CheckUndefType(const String& function_context) const {
-  if(TestError(var_type == T_UnDef, function_context, "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold")) {
-    return true;
+bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
+  if (quiet) {
+    return (var_type == T_UnDef);
   }
-  return false;
+  else {
+    if(TestError(var_type == T_UnDef, function_context, "Program variable type is undefined -- you must pick an appropriate data type for the variable to hold the information it needs to hold")) {
+      return true;
+    }
+    return false;
+  }
 }
 
 void ProgVar::UpdateAfterEdit_impl() {
@@ -186,7 +192,22 @@ void ProgVar::UpdateAfterEdit_impl() {
   if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;
   }
-  CheckUndefType("UpdateAfterEdit");
+  if (CheckUndefType("UpdateAfterEdit", true)) {
+    String var_nm;
+    ProgElChoiceDlg dlg;
+    taBase::Ref(dlg);
+    int choice = 1;  // global
+    if (this->flags | LOCAL_VAR) {
+      choice = 0;
+    }
+    ProgVar::VarType var_type = ProgVar::T_UnDef;
+    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);  // get the name and the type
+    if (result == 1) {
+      this->SetName(var_nm);
+      this->var_type = var_type;
+    }
+  }
+  
   if(object_val.ptr() == this)  // this would be bad..
     object_val.set(NULL);
   // only send stale if the schema changed, not just the value
