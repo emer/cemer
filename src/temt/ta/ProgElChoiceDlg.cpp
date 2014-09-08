@@ -31,10 +31,10 @@ TA_BASEFUNS_CTORS_DEFN(ProgElChoiceDlg);
 int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choice,
   ProgVar::VarType& var_type_choice, LocalGlobalOption option,  
                                           bool make_new_instr) {
-  String row;  // reuse for each widget
-  String chs_str;
-
-  bool showInstruction = (var_nm != "");  // if we don't know the var name ask for it
+  String  row;  // reuse for each widget
+  String  chs_str;
+  bool    show_type_chooser = (var_type_choice == ProgVar::T_UnDef);
+  bool    showInstruction = (var_nm != "");  // if we don't know the var name ask for it
 
   dlg.win_title = "Create Variable - Local or Global";
   dlg.width = 300;
@@ -49,7 +49,7 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
     row = "instrRow";
     dlg.AddHBoxLayout(row, vbox);
     if(make_new_instr) {
-      chs_str = "Where Should New Variable   \'" + var_nm + "\'   Be Made?;";
+      chs_str = "Create \'" + var_nm + "\' as Local or Global?;";
     }
     else {
       chs_str = "Program Variable   \'" + var_nm + "\'   Not Found;";
@@ -99,37 +99,33 @@ int ProgElChoiceDlg::GetLocalGlobalChoice(String& var_nm, int& local_global_choi
       combo_local_global->setCurrentIndex(0);//
   }
 
-  String_Array var_types;
-  var_types.FmDelimString("Int Real String Bool Object* Enum DynEnum UnDef");
-
   QComboBox* combo_var_type = new QComboBox;
-  {
-    taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
-    if (!hboxEmer) {
-      return false;
+
+  if (show_type_chooser) {  // var type not chosen - give user the options
+    String_Array var_types;
+    var_types.FmDelimString("Int Real String Bool Object* Enum DynEnum UnDef");
+    {
+      taGuiLayout *hboxEmer = dlg.FindLayout(row);  // Get the hbox for this row so we can add our combobox to it.
+      if (!hboxEmer) {
+        return false;
+      }
+      QBoxLayout *hbox = hboxEmer->layout;
+      if (!hbox) {
+        return false;
+      }
+      for (int idx = 0; idx < var_types.size; ++idx) {
+        combo_var_type->addItem(var_types[idx]);
+      }
+      hbox->addWidget(combo_var_type);
+      combo_var_type->setCurrentIndex(var_type_choice);
     }
-    QBoxLayout *hbox = hboxEmer->layout;
-    if (!hbox) {
-      return false;
-    }
-    for (int idx = 0; idx < var_types.size; ++idx) {
-      combo_var_type->addItem(var_types[idx]);
-    }
-    hbox->addWidget(combo_var_type);
-    combo_var_type->setCurrentIndex(var_type_choice);
-    // if(var_type_choice == T_UnDef) {
-    //   int idx = combo_var_type->findText("UnDef");
-    //   if (idx >= 0) {
-    //     combo_var_type->setCurrentIndex(idx);  // default is UnDef
-    //   }
-    // }
-    // else {
-    //   combo_var_type->setCurrentIndex(
-    // }
   }
+  
   int result = dlg.PostDialog(true); // true is modal
   local_global_choice = combo_local_global->currentIndex();
-  var_type_choice = (ProgVar::VarType)combo_var_type->currentIndex();
+  if (show_type_chooser) {
+    var_type_choice = (ProgVar::VarType)combo_var_type->currentIndex();
+  }
 
   return result;
 }
