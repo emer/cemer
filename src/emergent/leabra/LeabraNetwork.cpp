@@ -981,6 +981,7 @@ void LeabraNetwork::Trial_UpdatePhase() {
 void LeabraNetwork::Trial_Final() {
   EncodeState();
   Compute_SelfReg_Trial();
+  Compute_AbsRelNetin();
 }
 
 void LeabraNetwork::EncodeState() {

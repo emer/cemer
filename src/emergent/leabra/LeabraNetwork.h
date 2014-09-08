@@ -106,7 +106,8 @@ public:
   int		epc_skip;	// #DEF_10 #MIN_1 #CONDSHOW_ON_on skip every this many epochs -- typically just need to see rel_netin stats for 1st epoch and then every so often thereafter
 
   bool          ComputeNow(int net_epc, int net_trl)
-  { if((net_epc % epc_skip == 0) && (net_trl % trl_skip == 0)) return true;  return false; }
+  { if(on && (net_epc % epc_skip == 0) && (net_trl % trl_skip == 0)) return true;
+    return false; }
   // should we compute relative netin now, based on network epoch and trial counters?
 
   String       GetTypeDecoKey() const override { return "Network"; }
