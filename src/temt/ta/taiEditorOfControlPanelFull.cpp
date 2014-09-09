@@ -156,7 +156,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
+      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
