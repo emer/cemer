@@ -31,7 +31,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraActFunExSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
-TA_BASEFUNS_CTORS_DEFN(DepressSpec);
+TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
@@ -159,30 +159,33 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
   dt_time = 1.0f / dt;
 }
 
-void DepressSpec::Initialize() {
+void ShortPlastSpec::Initialize() {
   on = false;
   phase_act = ACT_ND;
-  trials = false;
+  f_r_ratio = 0.02f;
+  p0 = 0.3f;
+  re = 0.002f;
+  act_hz = 100.0f;
   Defaults_init();
 }
 
-void DepressSpec::Defaults_init() {
-  rec = .2f;
-  asymp_act = .5f;
-  delay = 0;
-  interval = 10;
-  max_amp = 1.0f;
+void ShortPlastSpec::Defaults_init() {
+  t_rec = 200.0f;
+  fac = 0.3f;
+  t_kre = 100.0f;
 
-  depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
+  t_fac = f_r_ratio * t_rec;
+  dt_rec = 1.0f / t_rec;
+  dt_fac = 1.0f / t_fac;
+  dt_kre = 1.0f / t_kre;
 }
 
-void DepressSpec::UpdateAfterEdit_impl() {
+void ShortPlastSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(rec < .00001f) rec = .00001f;
-  if(asymp_act < .00001f) asymp_act = .00001f;
-  if(asymp_act > 1.0f) asymp_act = 1.0f;
-  depl = rec * (1.0f - asymp_act) / (asymp_act * .95f);
-  depl = MAX(depl, 0.0f);
+  t_fac = f_r_ratio * t_rec;
+  dt_rec = 1.0f / t_rec;
+  dt_fac = 1.0f / t_fac;
+  dt_kre = 1.0f / t_kre;
 }
 
 void SynDelaySpec::Initialize() {
@@ -431,7 +434,7 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
 
   clamp_range.UpdateAfterEdit_NoGui();
   vm_range.UpdateAfterEdit_NoGui();
-  depress.UpdateAfterEdit_NoGui();
+  stp.UpdateAfterEdit_NoGui();
   noise_sched.UpdateAfterEdit_NoGui();
   spike.UpdateAfterEdit_NoGui();
   spike_misc.UpdateAfterEdit_NoGui();
@@ -592,7 +595,7 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
 
   u->act_avg = act.avg_init;
   u->misc_1 = 0.0f;
-  u->spk_amp = depress.max_amp;
+  u->spk_amp = 1.0f;
   u->vcb.hyst = u->vcb.g_h = 0.0f;
   u->vcb.hyst_on = false;
   u->vcb.acc = u->vcb.g_a = 0.0f;
@@ -711,8 +714,7 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   u->noise = 0.0f;
 
   u->i_thr = 0.0f;
-  if(depress.on)
-    u->spk_amp = depress.max_amp;
+  u->spk_amp = 1.0f;
   u->spk_t = -1;
 
   Init_SpikeBuff(u);
@@ -754,8 +756,8 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
     u->vcb.hyst -= decay * u->vcb.hyst;
   if(acc.on && !acc.trl)
     u->vcb.acc -= decay * u->vcb.acc;
-  if(depress.on)
-    u->spk_amp += (depress.max_amp - u->spk_amp) * decay;
+  if(stp.on)
+    u->spk_amp += (1.0f - u->spk_amp) * decay;
 
   u->da = u->I_net = 0.0f;
 
@@ -1499,7 +1501,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   else {
     new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
   }
-  if(depress.on) {                   // synaptic depression
+  if(stp.on) {                   // short term plasticity
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
     new_act *= MIN(u->spk_amp, 1.0f);
   }
@@ -1510,7 +1512,7 @@ void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
   }
   u->act = act_range.Clip(new_act);
   u->act_eq = u->act;
-  if(!depress.on)
+  if(!stp.on)
     u->act_nd = u->act_eq;
 }
 
@@ -1568,7 +1570,7 @@ void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
   u->da = new_nd - u->act_nd;   // da is on equilibrium activation
   u->act_nd = new_nd;
 
-  if(depress.on) {
+  if(stp.on) {
     u->act *= MIN(u->spk_amp, 1.0f);    // after eq
     u->act_eq = u->spk_amp * u->act_nd; // act_eq is depressed rate code, nd is non-depressed!
   }
@@ -1620,52 +1622,26 @@ void LeabraUnitSpec::Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* n
   }
 }
 
-void LeabraUnitSpec::Compute_Depress_Cycle(LeabraUnit* u, LeabraNetwork* net) {
-  if(!depress.on) {
-    u->spk_amp = depress.max_amp;
+void LeabraUnitSpec::Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net) {
+  if(!stp.on) {
+    u->spk_amp = 1.0f;
   }
   else {
-    if(net->ct_cycle < depress.delay) {
-      if((net->ct_cycle+1) % depress.interval == 0) {
-        u->spk_amp += (depress.max_amp - u->spk_amp) * depress.rec; // recover only
-      }
-    }
-    else {
-      if(((net->ct_cycle-depress.delay)+1) % depress.interval == 0) {
-        u->spk_amp += -u->act * depress.depl +
-          (depress.max_amp - u->spk_amp) * depress.rec;
-      }
-    }
     if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
-    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
-  }
-}
-
-void LeabraUnitSpec::Compute_Depress_Trial(LeabraUnit* u, LeabraNetwork* net) {
-  if(!depress.on) {
-    u->spk_amp = depress.max_amp;
-  }
-  else {
-    if((net->trial+1) % depress.interval == 0) {
-      u->spk_amp += -u->act * depress.depl + (depress.max_amp - u->spk_amp) * depress.rec;
-    }
-    if(u->spk_amp < 0.0f)                       u->spk_amp = 0.0f;
-    else if(u->spk_amp > depress.max_amp)       u->spk_amp = depress.max_amp;
+    // note: with facilitation, there s no max!
   }
 }
 
 void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE) {
     Compute_ActAdapt_Cycle_spike(u, net);
-    Compute_Depress_Cycle(u, net);
+    Compute_ShortPlast_Cycle(u, net);
   }
   else {
     if(!adapt.trials) {
       Compute_ActAdapt_Cycle_rate(u, net);
     }
-    if(!depress.trials) {
-      Compute_Depress_Cycle(u, net);
-    }
+    Compute_ShortPlast_Cycle(u, net);
   }
 
   // fast time scale updated every cycle
@@ -1679,9 +1655,6 @@ void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun != SPIKE) {
     if(adapt.trials) {
       Compute_ActAdapt_Trial_rate(u, net);
-    }
-    if(depress.trials) {
-      Compute_Depress_Trial(u, net);
     }
   }
 
@@ -1850,9 +1823,9 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
   }
 
   float use_act;
-  if(depress.phase_act == DepressSpec::ACT_ND)
+  if(stp.phase_act == ShortPlastSpec::ACT_ND)
     use_act = u->act_nd;
-  else if(depress.phase_act == DepressSpec::ACT_EQ)
+  else if(stp.phase_act == ShortPlastSpec::ACT_EQ)
     use_act = u->act_eq;
   else                          // ACT_LRN
     use_act = u->act_lrn;

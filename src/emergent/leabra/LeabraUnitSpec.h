@@ -169,7 +169,7 @@ public:
   float		dt;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.007 rate constant of the adaptation dynamics -- for 1 ms normalized units, default is 1/144 msec = .007
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
   float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- for rate code activations, uses act value weighting and only computes every interval
-  int		interval;	// #CONDSHOW_ON_on how many time steps (cycles, in terms of a modulus on the ct_cycle counter, unless trials is clicked in which case the unit of time is the trial) between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
+  int		interval;	// #CONDSHOW_ON_on #DEF_10;0 how many time steps (cycles, in terms of a modulus on the ct_cycle counter, unless trials is clicked in which case the unit of time is the trial) between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
   bool          trials;         // #CONDSHOW_ON_on only update synaptic depression at the trial level, not at the cycle level -- this does NOT work for SPIKE mode (which is cycle-only) -- this can be useful for not affecting more complex within-trial settling dynamics (which also can affect learning in various ways), and producing longer-lasting effects across trials -- the interval still applies at the trials level, but a value of 1 is recommended
   float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
 
@@ -191,10 +191,10 @@ private:
 };
 
 
-eTypeDef_Of(DepressSpec);
+eTypeDef_Of(ShortPlastSpec);
 
-class E_API DepressSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation/spiking conveyed to other units is subject to synaptic depression: depletes a given amount per spike, and recovers with exponential recovery rate (also subject to trial/phase decay = recovery proportion)
+class E_API ShortPlastSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate
 INHERITED(SpecMemberBase)
 public:
   enum PhaseActVal { // activation value to use for minus and plus phase values (act_m, act_p)
@@ -205,17 +205,21 @@ public:
 
   PhaseActVal   phase_act;      // which activation variable should be used for the phase-level activation states (act_m or act_p)?
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
-  float		rec;		// #CONDSHOW_ON_on #DEF_0.2;0.015;0.005 #MIN_0 #MAX_1 rate of recovery of spike amplitude (determines overall time constant of depression function)
-  float		asymp_act;	// #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 #MAX_1 asymptotic activation value (as proportion of 1) for a fully active unit (determines depl value)
-  float		depl;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate of depletion of spike amplitude as a function of activation output (computed from rec, asymp_act)
-  int		delay;          // #CONDSHOW_ON_on&&!trials #MIN_0 only drive new synaptic depression after given number of cycles (based on ct_cycle) -- interval still applies to recovery of any existing depletion within delay period, and then applies thereafter -- this can offset depression until a full strength signal has had a chance to penetrate the network
-  int		interval;	// #CONDSHOW_ON_on #MIN_1 only update synaptic depression at given interval (in terms of cycles, using a modulus on the ct_cycle, unless trials is clicked in which case the unit of time is the trial) -- this can be beneficial in producing a more delayed overall effect, as is observed with discrete spiking
-  bool          trials;         // #CONDSHOW_ON_on only update synaptic depression at the trial level, not at the cycle level -- this can be useful for not affecting more complex within-trial settling dynamics (which also can affect learning in various ways), and producing longer-lasting effects across trials -- the interval still applies at the trials level, but a value of 1 is recommended
-  float		max_amp;	// #CONDSHOW_ON_on #MIN_0 maximum spike amplitude (spk_amp, which is the multiplier factor for activation values) -- values greater than 1 create an extra reservoir where depletion does not yet affect the sending activations, because spk_amp is capped at a maximum of 1 -- this can be useful for creating a more delayed effect of depletion, where an initial wave of activity can propagate unimpeded, followed by actual depression as spk_amp goes below 1
+  float         f_r_ratio;      // #CONDSHOW_ON_on #DEF_0.01:3 ratio of facilitating (t_fac) to depression recovery (t_rec) time constants -- influences overall nature of response balance (ratio = 1 is balanced, > 1 is facilitating, < 1 is depressing).  Wang et al 2006 found: ~2.5 for strongly facilitating PFC neurons (E1), ~0.02 for strongly depressing PFC and visual cortex (E2), and ~1.0 for balanced PFC (E3)
+  float		t_rec;		// #CONDSHOW_ON_on #DEF_100:1000 #MIN_1 time constant (milliseconds) for the constant form of the recovery of number of available vesicles to release at each action potential -- one factor influencing how strong and long-lasting depression is: nr += (1-nr)/t_rec.  Wang et al 2006 found: ~200ms for strongly depressing in visual cortex and facilitating PFC (E1), 600ms for depressing PFC (E2), and between 200-600 for balanced (E3)
+  float         t_fac;          // #CONDSHOW_ON_on #READ_ONLY #SHOW computed from f_r_ratio and t_rec: time constant (milliseconds) for the dynamics of facilitation of release probability: pr += (p0 - pr) / t_fac. Wang et al 2006 found: 6ms for visual cortex, 10-20ms strongly depressing PFC (E2), ~500ms for strongly facilitating (E1), and between 200-600 for balanced (E3)
+  float         p0;             // #CONDSHOW_ON_on #DEF_0.1:0.4 baseline probability of release -- lower values around .1 produce more strongly facilitating dynamics, while .4 makes depression dominant -- interacts with f_r_ratio time constants as well
+  float		fac;            // #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 strength of facilitation effect -- how much each action potential facilitates the probability of release toward a maximum of one: pr += fac (1-pr) -- typically right around 0.3 in Wang et al, 2006
+  float		t_kre;	        // #CONDSHOW_ON_on #DEF_100 time constant (milliseconds) on dynamic enhancement of time constant of recovery due to activation -- recovery time constant increases as a function of activity, helping to linearize response (reduce level of depression) at higher frequencies -- supported by multiple sources of biological data (Hennig, 2013)
+  float         re;             // #CONDSHOW_ON_on #DEF_0.002:0 how much the dynamic enhancement of recovery time constant increases for each action potential -- determines how strong this dynamic component is -- set to 0 to turn off this extra adaptation
+  float         act_hz;	        // #CONDSHOW_ON_on #DEF_100 factor for converting rate-coded activations into a firing rate, which is then used to simulate discrete spiking for purposes of updating these equations -- e.g, 100 hz = 10 cycle (msec) interval spiking for activation = 1
+  float		dt_rec;		// #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for recovery = 1/t_rec 
+  float         dt_fac;         // #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for facilitation = 1/t_fac
+  float         dt_kre;         // #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for recovery enhancement = 1/t_kre
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(DepressSpec);
+  TA_SIMPLE_BASEFUNS(ShortPlastSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -543,7 +547,7 @@ public:
   VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
   VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
-  DepressSpec	depress;	// #CAT_Activation depressing synapses specs -- multiplies activation value by a spike amplitude/probability value that depresses with use and recovers exponentially
+  ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   CIFERSpec	cifer;		// #CAT_Learning cortical information flow via extra range -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
@@ -718,10 +722,8 @@ public:
       // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential -- spike functions
       virtual void Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
-      virtual void Compute_Depress_Cycle(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute whole-neuron (presynaptic) synaptic depression at the cycle level, using the depress parameters -- updates the spk_amp variable
-      virtual void Compute_Depress_Trial(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute whole-neuron (presynaptic) synaptic depression at the trial level, using the depress parameters -- updates the spk_amp variable
+      virtual void Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the spk_amp variable
 
     virtual float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)

@@ -1375,4 +1375,5 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgTrialCosDiff();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
+  Compute_AvgAbsRelNetin();
 }
