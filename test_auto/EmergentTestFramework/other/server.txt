@@ -589,7 +589,7 @@ Ensure Emergent Free
     Print     "Checking Emergent is free"
     ${stat}   ${status} =        Run Keyword And Ignore Error     Get Json String    ${output}    /status
     ${stat}   ${result} =        Run Keyword And Ignore Error     Get Json String    ${output}    /result
-    Return from Keyword If      '${status}' == 'OK' and '${result}' == '4'
+    Return from Keyword If      '${status}' == 'OK' and ('${result}' == '4' or '${result}' == '0')
     Restart Emergent
 
 
