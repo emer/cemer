@@ -215,10 +215,10 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   }
 
   // todo: optimize these params..
-  basic_us->dt.vm = .04f;
+  //  basic_us->dt.vm_tau = ??
   basic_us->g_bar.i = 10.0f;
   inhib_us->SetUnique("dt", true);
-  inhib_us->dt.vm = .07f;
+  //  inhib_us->dt.vm_tau = ??
 
   inhib_cs->SetUnique("rnd", true);
   inhib_cs->rnd.mean = 1.0f;  inhib_cs->rnd.var = 0.0f;

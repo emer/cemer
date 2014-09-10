@@ -210,7 +210,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->g_i_syn += dt.net * (u->g_i_raw - u->g_i_syn);
+      u->g_i_syn += dt.net_dt * (u->g_i_raw - u->g_i_syn);
       u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
@@ -242,7 +242,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     Compute_NetinInteg_Spike_e(u, net);
   }
   else {
-    u->net += dt.net * (tot_net - u->net);
+    u->net += dt.net_dt * (tot_net - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 

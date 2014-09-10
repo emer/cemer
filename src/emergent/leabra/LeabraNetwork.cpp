@@ -15,6 +15,8 @@
 
 #include "LeabraNetwork.h"
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
 TA_BASEFUNS_CTORS_DEFN(CtTrialTiming);
 TA_BASEFUNS_CTORS_DEFN(CtSRAvgSpec);
@@ -77,7 +79,7 @@ void LeabraNetwork::Initialize() {
 
   ct_cycle = 0;
   tot_cycle = 0;
-  time_inc = 1.0f;              // just a simple counter by default
+  time_inc = 0.001f;            // msec
 
   cycle_max = 60;
   mid_minus_cycle = -1;
@@ -158,6 +160,11 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   else if(prv_learn_rule != learn_rule) {
     SetLearnRule();
     prv_learn_rule = learn_rule;
+  }
+
+  if(taMisc::is_loading) {
+    if(time_inc == 1.0f)          // previous default was not sensible
+      time_inc = 0.001f;
   }
 }
 

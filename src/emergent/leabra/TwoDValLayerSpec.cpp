@@ -250,7 +250,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       us->act.thr = .17f;
       us->act.gain = 220.0f;
       us->act.nvar = .01f;
-      us->dt.vm = .05f;
+      us->dt.vm_tau = 20.0f;
       bias_val.un = TwoDValBias::NO_UN; bias_val.wt = TwoDValBias::NO_WT;
       x_range.min = 0.0f; x_range.max = 1.0f;
       y_range.min = 0.0f; y_range.max = 1.0f;
@@ -276,7 +276,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       us->act.thr = .25f;
       us->act.gain = 600.0f;
       us->act.nvar = .005f;
-      us->dt.vm = .2f;
+      us->dt.vm_tau = 5.0f;
       bias_val.un = TwoDValBias::NO_UN;  bias_val.wt = TwoDValBias::NO_WT;
       x_range.min = -.5f; x_range.max = 1.5f;
       y_range.min = -.5f; y_range.max = 1.5f;

@@ -67,16 +67,16 @@ void LeabraActMiscSpec::Initialize() {
 void LeabraActMiscSpec::Defaults_init() {
   act_max_hz = 100.0f;
   time_unit = 1000.0f;
-  avg_time = 200.0f;
+  avg_tau = 200.0f;
   avg_init = 0.15f;
   rescale_ctxt = true;
 
-  avg_dt = 1.0f / avg_time;
+  avg_dt = 1.0f / avg_tau;
 }
 
 void LeabraActMiscSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  avg_dt = 1.0f / avg_time;
+  avg_dt = 1.0f / avg_tau;
 }  
 
 void SpikeFunSpec::Initialize() {
@@ -85,7 +85,7 @@ void SpikeFunSpec::Initialize() {
   decay = 5.0f;
   window = 3;
   eq_gain = 8.0f;
-  eq_time = 50.0f;
+  eq_tau = 50.0f;
 
   gg_decay = g_gain / decay;
   gg_decay_sq = g_gain / (decay * decay);
@@ -97,8 +97,8 @@ void SpikeFunSpec::Initialize() {
   else
     oneo_rise = 1.0f;
 
-  if(eq_time > 0.0f)
-    eq_dt = 1.0f / eq_time;
+  if(eq_tau > 0.0f)
+    eq_dt = 1.0f / eq_tau;
   else
     eq_dt = 0.0f;
 }
@@ -118,8 +118,8 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
     else
       oneo_rise = 1.0f;
   }
-  if(eq_time > 0.0f)
-    eq_dt = 1.0f / eq_time;
+  if(eq_tau > 0.0f)
+    eq_dt = 1.0f / eq_tau;
   else
     eq_dt = 0.0f;
 }
@@ -150,40 +150,40 @@ void LeabraDtSpec::Initialize() {
 
 void LeabraDtSpec::Defaults_init() {
   integ = 1.0f;
-  vm_time = 3.3f;
-  net_time = 1.4f;
+  vm_tau = 3.3f;
+  net_tau = 1.4f;
   midpoint = false;
 
-  vm = 1.0f / vm_time;
-  net = 1.0f / net_time;
+  vm_dt = 1.0f / vm_tau;
+  net_dt = 1.0f / net_tau;
 }
 
 void LeabraDtSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  vm = 1.0f / vm_time;
-  net = 1.0f / net_time;
+  vm_dt = 1.0f / vm_tau;
+  net_dt = 1.0f / net_tau;
 }
 
 void LeabraActAvgSpec::Initialize() {
   l_up_inc = 0.2f;
-  l_dn_time = 2.5f;
+  l_dn_tau = 2.5f;
   cascade = false;
-  ss_time = 1.0f;
-  s_time = 5.0f;
-  m_time = 10.0f;
+  ss_tau = 1.0f;
+  s_tau = 5.0f;
+  m_tau = 10.0f;
   
-  l_dn_dt = 1.0f / l_dn_time;
-  ss_dt = 1.0f / ss_time;
-  s_dt = 1.0f / s_time;
-  m_dt = 1.0f / m_time;
+  l_dn_dt = 1.0f / l_dn_tau;
+  ss_dt = 1.0f / ss_tau;
+  s_dt = 1.0f / s_tau;
+  m_dt = 1.0f / m_tau;
 }
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  l_dn_dt = 1.0f / l_dn_time;
-  ss_dt = 1.0f / ss_time;
-  s_dt = 1.0f / s_time;
-  m_dt = 1.0f / m_time;
+  l_dn_dt = 1.0f / l_dn_tau;
+  ss_dt = 1.0f / ss_tau;
+  s_dt = 1.0f / s_tau;
+  m_dt = 1.0f / m_tau;
 }
 
 void LeabraChannels::Initialize() {
@@ -202,16 +202,16 @@ void ActAdaptSpec::Initialize() {
 }
 
 void ActAdaptSpec::Defaults_init() {
-  time = 144;
+  tau = 144;
   vm_gain = 0.04f;
   spike_gain = 0.00805f;
 
-  dt = 1.0f / time;
+  dt = 1.0f / tau;
 }
 
 void ActAdaptSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  dt = 1.0f / time;
+  dt = 1.0f / tau;
 }
 
 void ShortPlastSpec::Initialize() {
@@ -219,27 +219,26 @@ void ShortPlastSpec::Initialize() {
   f_r_ratio = 0.02f;
   p0 = 0.3f;
   re = 0.002f;
-  act_hz = 100.0f;
   Defaults_init();
 }
 
 void ShortPlastSpec::Defaults_init() {
-  t_rec = 200.0f;
+  rec_tau = 200.0f;
   fac = 0.3f;
-  t_kre = 100.0f;
+  kre_tau = 100.0f;
 
-  t_fac = f_r_ratio * t_rec;
-  dt_rec = 1.0f / t_rec;
-  dt_fac = 1.0f / t_fac;
-  dt_kre = 1.0f / t_kre;
+  fac_tau = f_r_ratio * rec_tau;
+  rec_dt = 1.0f / rec_tau;
+  fac_dt = 1.0f / fac_tau;
+  kre_dt = 1.0f / kre_tau;
 }
 
 void ShortPlastSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  t_fac = f_r_ratio * t_rec;
-  dt_rec = 1.0f / t_rec;
-  dt_fac = 1.0f / t_fac;
-  dt_kre = 1.0f / t_kre;
+  fac_tau = f_r_ratio * rec_tau;
+  rec_dt = 1.0f / rec_tau;
+  fac_dt = 1.0f / fac_tau;
+  kre_dt = 1.0f / kre_tau;
 }
 
 void SynDelaySpec::Initialize() {
@@ -377,9 +376,14 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-//  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
-  // if(net) {
-  // }
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+  if(net) {
+    if(dt.integ != 1000.0f * net->time_inc) {
+      taMisc::Warning("unit time integration constant dt.integ of:", (String)dt.integ,
+                      "does not match network time_inc increment of:",
+                      (String)net->time_inc, "time_inc should be 0.001 * dt.integ");
+    }
+  }
 }
 
 bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
@@ -993,7 +997,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
       recv_gp->net_raw += g_nw_nt;
       // todo: not clear if we need this at this point..
-      // u->net += dt.integ * dt.net * (tot_net - u->net);
+      // u->net += dt.integ * dt.net_dt * (tot_net - u->net);
       // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
     }
     u->net_delta = nw_nt;
@@ -1015,7 +1019,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->g_i_syn += dt.integ * dt.net * (u->g_i_raw - u->g_i_syn);
+      u->g_i_syn += dt.integ * dt.net_dt * (u->g_i_raw - u->g_i_syn);
       u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
@@ -1052,7 +1056,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     Compute_NetinInteg_Spike_e(u, net);
   }
   else {
-    u->net += dt.integ * dt.net * (tot_net - u->net);
+    u->net += dt.integ * dt.net_dt * (tot_net - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 
@@ -1073,7 +1077,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
   int mx = MAX(spike.window, u->spike_e_buf->length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
-    // optimized fast recursive exp decay: note: does NOT use dt.net
+    // optimized fast recursive exp decay: note: does NOT use dt.net_dt
     for(int t=0;t<mx;t++) {
       sum += u->spike_e_buf->CircSafeEl(t);
     }
@@ -1088,7 +1092,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
       }
     }
     // from compute_netinavg
-    u->net += dt.integ * dt.net * (sum - u->net);
+    u->net += dt.integ * dt.net_dt * (sum - u->net);
   }
   u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
 }
@@ -1100,7 +1104,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
   int mx = MAX(spike.window, u->spike_i_buf->length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
-    // optimized fast recursive exp decay: note: does NOT use dt.net
+    // optimized fast recursive exp decay: note: does NOT use dt.net_dt
     for(int t=0;t<mx;t++) {
       sum += u->spike_i_buf->CircSafeEl(t);
     }
@@ -1114,7 +1118,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
     }
-    u->g_i_syn += dt.integ * dt.net * (sum - u->g_i_syn);
+    u->g_i_syn += dt.integ * dt.net_dt * (sum - u->g_i_syn);
   }
   u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
 }
@@ -1182,7 +1186,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
       float I_net_1 =
         (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
         (u->gc_i * (e_rev.i - v_m_eff));
-      v_m_eff += .5f * dt.vm * I_net_1; // go half way
+      v_m_eff += .5f * dt.vm_dt * I_net_1; // go half way
     }
     u->I_net =
       (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
@@ -1194,7 +1198,7 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
         expf((v_m_eff - act.thr) / spike_misc.exp_slope);
     }
 
-    u->v_m += dt.integ * dt.vm * (u->I_net - u->adapt);
+    u->v_m += dt.integ * dt.vm_dt * (u->I_net - u->adapt);
   }
 
   if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
@@ -1271,7 +1275,7 @@ void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
     new_act = Compute_ActFun_rate_impl((u->net * g_bar.e) - g_e_thr);
   }
   if(net->cycle >= dt.fast_cyc) {
-    new_act = u->act_nd + dt.integ * dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
+    new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
   }
   if(stp.on) {                   // short term plasticity
     u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
@@ -1791,13 +1795,13 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
           float C_pF, float gbar_l_nS, float gbar_e_nS, float gbar_i_nS,
           float erev_l_mV, float erev_e_mV, float erev_i_mV,
           float act_thr_mV, float spk_thr_mV, float exp_slope_mV,
-       float adapt_dt_time_ms, float adapt_vm_gain_nS, float adapt_spk_gain_nA)
+       float adapt_tau_ms, float adapt_vm_gain_nS, float adapt_spk_gain_nA)
 {
   // derived units
   float norm_siemens = norm_amp / norm_volt;
   float norm_farad = (norm_sec * norm_amp) / norm_volt;
 
-  dt.vm = 1.0f / ((C_pF * 1.0e-12f) / norm_farad);
+  dt.vm_tau = ((C_pF * 1.0e-12f) / norm_farad);
 
   g_bar.l = (gbar_l_nS * 1.0e-9f) / norm_siemens;
   g_bar.e = (gbar_e_nS * 1.0e-9f) / norm_siemens;
@@ -1812,7 +1816,7 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   spike_misc.exp_slope = ((exp_slope_mV * 1.0e-3f)) / norm_volt; // no off!
   spike_misc.vm_r = e_rev.l;                                     // go back to leak
 
-  adapt.dt = 1.0f / ((adapt_dt_time_ms * 1.0e-3f) / norm_sec);
+  adapt.tau = (adapt_tau_ms * 1.0e-3f) / norm_sec;
   adapt.vm_gain = (adapt_vm_gain_nS * 1.0e-9f) / norm_siemens;
   adapt.spike_gain = (adapt_spk_gain_nA * 1.0e-9f) / norm_amp;
 
@@ -1820,8 +1824,10 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
   vm_range.min = 0.0f;
   vm_range.max = 2.0f;
 
-  dt.vm = 0.3f;
-  act.gain = 100;
+  if(act_fun != SPIKE) {
+    dt.vm_tau = 3.3f;
+    act.gain = 100;
+  }
 
   UpdateAfterEdit();
 }

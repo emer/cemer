@@ -74,10 +74,10 @@ public:
 
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking, what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
   float         time_unit;      // #DEF_1000 for translating rate-code activations into discrete spiking, what is the time unit for computing intervals between spikes from a Hz firing rate?  default is 1000 msec -- computation also takes into account the dt.integ setting
-  float		avg_time;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
+  float		avg_tau;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
   bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
-  float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+  float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   inline int    ActToInterval(const float integ, const float act)
   { return (int) (time_unit / (integ * act * act_max_hz)); }
@@ -103,14 +103,14 @@ public:
   float		g_gain;		// #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
   float		eq_gain;	// #DEF_8 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
-  float		eq_time;	// #DEF_50 #MIN_0 if non-zero, compute act_eq as a continuous running average instead of explicit spikes / cycles -- this is the time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
+  float		eq_tau;	        // #DEF_50 #MIN_0 if non-zero, compute act_eq as a continuous running average instead of explicit spikes / cycles -- this is the time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
   float		gg_decay_rise; // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
   float		oneo_decay;	// #READ_ONLY #NO_SAVE 1.0/decay
   float		oneo_rise;	// #READ_ONLY #NO_SAVE 1.0/rise
-  float         eq_dt;          // #READ_ONLY #EXPERT rate = 1 / time
+  float         eq_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   float	ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
@@ -190,14 +190,14 @@ class E_API LeabraDtSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
 INHERITED(SpecMemberBase)
 public:
-  float		integ;		// #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary)
-  float		vm_time;	// #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
-  float		net_time;	// #DEF_1.4 #MIN_1 net input time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- this is important for damping oscillations -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
-  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a faster vm_time constant parameter to be used -- this is critical to use with SPIKE mode
+  float		integ;		// #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
+  float		vm_tau;	        // #AKA_vm_time #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
+  float		net_tau;	// #AKA_net_time #DEF_1.4 #MIN_1 net input time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- this is important for damping oscillations -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
+  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a faster vm_tau time constant parameter to be used -- this is critical to use with SPIKE mode and is automatically enabled there
   int		fast_cyc;	// #AKA_vm_eq_cyc #DEF_0 number of cycles at start of a trial to run units in a fast integration mode -- the rate-code activations have no effective time constant and change immediately to the new computed value (vm_time is ignored) and vm is computed as an equilibirium potential given current inputs: set to 1 to quickly activate soft-clamped input layers (primary use); set to 100 to always use this computation
 
-  float		vm;		// #READ_ONLY #SHOW rate = 1 / time
-  float		net;		// #READ_ONLY #SHOW rate = 1 / time
+  float		vm_dt;		// #READ_ONLY #SHOW rate = 1 / tau
+  float		net_dt;		// #READ_ONLY #SHOW rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -218,16 +218,16 @@ class E_API LeabraActAvgSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		l_up_inc;	// #AKA_l_up_dt #DEF_0.05:0.25 [0.2 std] amount to increment the long time-average activation (avg_l) at the trial level, after multiplying by the minus phase activation -- this is an additive increase for all units with act_m > opt_thresh.send -- larger values drive higher long time-average values, which acts as the threshold for XCAL self-organizing BCM-style learning, meaning that learning will shift to weight decreases more quickly as activity persists -- if weights are steadily decreasing too much, then lower values are needed -- typically works best with the highest value that does not result in excessive weight loss
-  float		l_dn_time;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/time) is multiplied by layer kwta.pct target activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer kwta.pct value accurate
+  float		l_dn_tau;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/tau) is multiplied by layer kwta.pct target activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer kwta.pct value accurate
   bool          cascade;        // use cascading, continuously updating running average computations -- each average builds upon the next, and everything is continuously updated regardless of phase or other sravg timing signals set at the network level -- this is the most biologically plausible version
-  float		ss_time;	// #CONDSHOW_ON_cascade #DEF_1;10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the super-short time-scale avg_ss value -- this is primarily of use for discrete spiking models to integrate over the discrete spikes before integrating into the avg_s short time scale, and should generally be set to 1 for rate-code activations
-  float		s_time;		// #CONDSHOW_ON_cascade #DEF_5;50 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
-  float		m_time;		// #CONDSHOW_ON_cascade #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
+  float		ss_tau;	        // #CONDSHOW_ON_cascade #DEF_1;10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the super-short time-scale avg_ss value -- this is primarily of use for discrete spiking models to integrate over the discrete spikes before integrating into the avg_s short time scale, and should generally be set to 1 for rate-code activations
+  float		s_tau;		// #CONDSHOW_ON_cascade #DEF_5;50 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
+  float		m_tau;		// #CONDSHOW_ON_cascade #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
 
-  float		l_dn_dt;	// #READ_ONLY #EXPERT rate = 1 / time
-  float		ss_dt;		// #READ_ONLY #EXPERT rate = 1 / time
-  float		s_dt;		// #READ_ONLY #EXPERT rate = 1 / time
-  float		m_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+  float		l_dn_dt;	// #READ_ONLY #EXPERT rate = 1 / tau
+  float		ss_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		s_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		m_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -267,10 +267,10 @@ class E_API ActAdaptSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// apply adaptation?
-  float		time;	        // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
+  float		tau;	        // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
   float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- for rate code activations, uses act value weighting and only computes every interval
-  float		dt;		// #READ_ONLY #EXPERT rate = 1 / time
+  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   float	Compute_dAdapt(float vm, float e_rev_l, float adapt)
   { return dt * (vm_gain * (vm - e_rev_l) - adapt); }
@@ -292,21 +292,21 @@ private:
 eTypeDef_Of(ShortPlastSpec);
 
 class E_API ShortPlastSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate -- rate code uses generated spike var to drive this
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
   float         f_r_ratio;      // #CONDSHOW_ON_on #DEF_0.01:3 ratio of facilitating (t_fac) to depression recovery (t_rec) time constants -- influences overall nature of response balance (ratio = 1 is balanced, > 1 is facilitating, < 1 is depressing).  Wang et al 2006 found: ~2.5 for strongly facilitating PFC neurons (E1), ~0.02 for strongly depressing PFC and visual cortex (E2), and ~1.0 for balanced PFC (E3)
-  float		t_rec;		// #CONDSHOW_ON_on #DEF_100:1000 #MIN_1 time constant (milliseconds) for the constant form of the recovery of number of available vesicles to release at each action potential -- one factor influencing how strong and long-lasting depression is: nr += (1-nr)/t_rec.  Wang et al 2006 found: ~200ms for strongly depressing in visual cortex and facilitating PFC (E1), 600ms for depressing PFC (E2), and between 200-600 for balanced (E3)
-  float         t_fac;          // #CONDSHOW_ON_on #READ_ONLY #SHOW computed from f_r_ratio and t_rec: time constant (milliseconds) for the dynamics of facilitation of release probability: pr += (p0 - pr) / t_fac. Wang et al 2006 found: 6ms for visual cortex, 10-20ms strongly depressing PFC (E2), ~500ms for strongly facilitating (E1), and between 200-600 for balanced (E3)
+  float		rec_tau;        // #CONDSHOW_ON_on #DEF_100:1000 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) for the constant form of the recovery of number of available vesicles to release at each action potential -- one factor influencing how strong and long-lasting depression is: nr += (1-nr)/rec_tau.  Wang et al 2006 found: ~200ms for strongly depressing in visual cortex and facilitating PFC (E1), 600ms for depressing PFC (E2), and between 200-600 for balanced (E3)
+  float         fac_tau;          // #CONDSHOW_ON_on #READ_ONLY #SHOW auto computed from f_r_ratio and rec_tau: time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) for the dynamics of facilitation of release probability: pr += (p0 - pr) / fac_tau. Wang et al 2006 found: 6ms for visual cortex, 10-20ms strongly depressing PFC (E2), ~500ms for strongly facilitating (E1), and between 200-600 for balanced (E3)
   float         p0;             // #CONDSHOW_ON_on #DEF_0.1:0.4 baseline probability of release -- lower values around .1 produce more strongly facilitating dynamics, while .4 makes depression dominant -- interacts with f_r_ratio time constants as well
   float		fac;            // #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 strength of facilitation effect -- how much each action potential facilitates the probability of release toward a maximum of one: pr += fac (1-pr) -- typically right around 0.3 in Wang et al, 2006
-  float		t_kre;	        // #CONDSHOW_ON_on #DEF_100 time constant (milliseconds) on dynamic enhancement of time constant of recovery due to activation -- recovery time constant increases as a function of activity, helping to linearize response (reduce level of depression) at higher frequencies -- supported by multiple sources of biological data (Hennig, 2013)
+  float		kre_tau;	// #CONDSHOW_ON_on #DEF_100 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) on dynamic enhancement of time constant of recovery due to activation -- recovery time constant increases as a function of activity, helping to linearize response (reduce level of depression) at higher frequencies -- supported by multiple sources of biological data (Hennig, 2013)
   float         re;             // #CONDSHOW_ON_on #DEF_0.002:0 how much the dynamic enhancement of recovery time constant increases for each action potential -- determines how strong this dynamic component is -- set to 0 to turn off this extra adaptation
-  float         act_hz;	        // #CONDSHOW_ON_on #DEF_100 factor for converting rate-coded activations into a firing rate, which is then used to simulate discrete spiking for purposes of updating these equations -- e.g, 100 hz = 10 cycle (msec) interval spiking for activation = 1
-  float		dt_rec;		// #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for recovery = 1/t_rec 
-  float         dt_fac;         // #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for facilitation = 1/t_fac
-  float         dt_kre;         // #CONDSHOW_ON_on #READ_ONLY #SHOW integration multiplier for recovery enhancement = 1/t_kre
+
+  float		rec_dt;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for recovery = 1 / rec_tau 
+  float         fac_dt;         // #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for facilitation =  1 / fac_tau
+  float         kre_dt;         // #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for recovery enhancement = 1 / kre_tau
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -705,7 +705,7 @@ public:
      float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,
      float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
      float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
-     float adapt_dt_time_ms=144.0f, float adapt_vm_gain_nS=4.0f,
+     float adapt_tau_ms=144.0f, float adapt_vm_gain_nS=4.0f,
      float adapt_spk_gain_nA=0.0805);
   // #BUTTON set parameters based on biologically-based values, using normalization scaling to convert into typical Leabra standard parameters.  norm_x are normalization values to convert from SI units to normalized values (defaults are 1ms = .001 s, 100mV with -100 mV offset to bring into 0-1 range between -100..0 mV, 1e-8 amps (makes g_bar, C, etc params nice).  other defaults are based on the AdEx model of Brette & Gurstner (2005), which the SPIKE mode implements exactly with these default parameters -- last bit of name indicates the units in which this value must be provided (mV = millivolts, ms = milliseconds, pF = picofarads, nS = nanosiemens, nA = nanoamps)
 
