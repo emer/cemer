@@ -67,9 +67,11 @@ public:
   int           nibble_chunk;   // #MIN_1 #DEF_8 how many units does each thread grab to process while nibbling?  Too small a value results in increased contention and inefficiency, while too large a value results in poor load balancing across processors.
   int           min_units;      // #MIN_1 #DEF_3000 minimum number of units required to use threads at all -- for feedforward algorithms requiring layer-level syncing, this applies to each layer -- if less than this number, all will be computed on the main thread to avoid threading overhead which may be more than what is saved through parallelism, if there are only a small number of things to compute.
   bool          ignore_lay_sync;// #DEF_false ignore need to sync at the layer level for feedforward algorithms that require this (e.g., backprop) -- results in faster but less accurate processing
+  bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
+
   QAtomicInt    nibble_i;       // #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
   int           nibble_stop;    // #IGNORE nibble stopping value
-  bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
+  bool          go_backwards;   // #IGNORE cache the backwards arg for threads
 
   Network*      network()       { return (Network*)owner; }
 
@@ -79,7 +81,7 @@ public:
            bool backwards=false, bool layer_sync=false);
   // #IGNORE run given function on all units, with specified level of computational load (0-1), and flags controlling order of processing and syncing: backwards = go through units in reverse order, and layer_sync = sync processing at each layer (else at network level) -- needed for feedforward network topologies (unfortunately)
 
-  void          RunThread0(ThreadUnitCall* unit_call, bool backwards=false);
+  void          RunThread0(ThreadUnitCall* unit_call);
   // #IGNORE run only on thread 0 (the main thread) -- calls method with arg thread_no = -1 -- order matters but layer_sync is irrelevant here
   void          RunThreads_FwdNetSync(ThreadUnitCall* unit_call);
   // #IGNORE run on all threads -- calls method with arg thread_no -- forward order and network-level sync

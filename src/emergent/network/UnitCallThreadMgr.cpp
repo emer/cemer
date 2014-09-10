@@ -39,11 +39,11 @@ void UnitCallTask::run() {
 #else
   const int nib_start = (int)mg->nibble_i;
 #endif
+  const bool go_backwards = mg->go_backwards;
 
 
-  if(nib_start == nib_stop) return; // all done!
-
-  if(nib_start < nib_stop) {            // a forward run
+  if(!go_backwards) {            // a forward run
+    if(nib_start >= nib_stop) return; // all done!
     const int nib_chnk = mg->nibble_chunk;
     while(true) {
       int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
@@ -57,6 +57,7 @@ void UnitCallTask::run() {
     }
   }
   else {                        // backwards!
+    if(nib_start < nib_stop) return; // all done!
     const int nib_chnk = -mg->nibble_chunk;
     while(true) {
       int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
@@ -75,9 +76,10 @@ void UnitCallThreadMgr::Initialize() {
   nibble_chunk = 8;
   min_units = 3000;
   ignore_lay_sync = false;
+  using_threads = false;
   nibble_i = -1;
   nibble_stop = 0;
-  using_threads = false;
+  go_backwards = false;
   n_threads_prev = n_threads;
   task_type = &TA_UnitCallTask;
 }
@@ -107,6 +109,8 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call,
                             bool backwards, bool layer_sync) {
   Network* net = network();
 
+  go_backwards = backwards;
+
   bool other_reasons = (net->units_flat.size < min_units
                         || net->units_flat.size < tasks.size);
 
@@ -117,7 +121,7 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call,
       run_time.StartTimer(false);               // don't reset
     }
 
-    RunThread0(unit_call, backwards);
+    RunThread0(unit_call);
 
     if(get_timing && n_threads == 1 && !other_reasons) { // only include if running in 1 thread only, and if n_threads was larger, it would not have been run in thread0
       total_time.EndTimer();
@@ -131,7 +135,7 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call,
       uct->unit_call = unit_call;
     }
 
-    if(backwards) {
+    if(go_backwards) {
       if(layer_sync && !ignore_lay_sync)
         RunThreads_BkwdLaySync(unit_call);
       else
@@ -146,11 +150,11 @@ void UnitCallThreadMgr::Run(ThreadUnitCall* unit_call,
   }
 }
 
-void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call, bool backwards) {
+void UnitCallThreadMgr::RunThread0(ThreadUnitCall* unit_call) {
   using_threads = false;
   Network* net = network();
   const int nu = net->units_flat.size;
-  if(backwards) {
+  if(go_backwards) {
     for(int i=nu-1;i>=1;i--) {  // 0 = dummy idx
       unit_call->call(net->units_flat[i], net, -1); // -1 indicates no threading
     }
