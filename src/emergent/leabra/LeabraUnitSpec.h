@@ -556,7 +556,7 @@ public:
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
 
     inline float Compute_IThresh(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
+    // #CAT_Activation #IGNORE called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
       inline float Compute_IThreshNetinOnly(float netin);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using only the provided net input value, along with the g_bar.l leak current in the unit spec
 
@@ -585,7 +585,7 @@ public:
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
     inline void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation Act Step 1: compute input conductance values in the gc variables
+    // #CAT_Activation #IGNORE Act Step 1: compute input conductance values in the gc variables
 
     virtual void Compute_Vm(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 2: compute the membrane potential from input conductances

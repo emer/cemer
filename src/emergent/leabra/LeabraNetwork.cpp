@@ -178,6 +178,7 @@ void LeabraNetwork::Init_Counters() {
   inherited::Init_Counters();
   phase = MINUS_PHASE;
   phase_no = 0;
+  tot_cycle = 0;
 }
 
 void LeabraNetwork::Init_Stats() {

@@ -1162,12 +1162,6 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   Compute_SRAvg(u, net, thread_no); // unit level only, not cons (must be separate)
 }
 
-void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  u->gc_i *= g_bar.i;
-  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
-  u->gc_l = g_bar.l;
-}
-
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
   if(act_fun == SPIKE && spike_misc.t_r > 0 && u->spk_t > 0) {
     int spkdel = net->tot_cycle - u->spk_t;

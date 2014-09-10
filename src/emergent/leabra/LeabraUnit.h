@@ -172,7 +172,7 @@ public:
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
   float Compute_IThresh(LeabraNetwork* net)
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
-  // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
+  // #CAT_Activation #IGNORE called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
   float Compute_EThresh()
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_EThresh(this); }
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold

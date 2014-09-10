@@ -62,6 +62,12 @@ inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
   return new_v_m;
 }
 
+inline void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
+  u->gc_i *= g_bar.i;
+  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
+  u->gc_l = g_bar.l;
+}
+
 inline LeabraInhib* LeabraUnitSpec::GetInhib(LeabraUnit* u) {
   LeabraLayer* lay = u->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
