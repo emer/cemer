@@ -547,7 +547,7 @@ Print
     Run Keyword If     ${verbose}                Log                ${text}    WARN
 
 Initialize Emergent
-    ${pid} =             Start Process      emergent -nogui -server -p ../test-projects/LeabraStd.proj    shell=True
+    ${pid} =             Start Process      emergent -nogui -server -p ../../../proj_templates/LeabraStd.proj    shell=True
     Set Suite Variable   ${pid}
     Sleep                8 sec   # Could do a loop and use Is Process Running but not a big deal
     Open Connection      127.0.0.1    port=5360
