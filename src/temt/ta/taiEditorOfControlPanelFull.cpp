@@ -157,7 +157,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
-        taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
+        taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
@@ -182,8 +182,8 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
       taiWidget* mb_dat = ms->widget_el.FastEl(i);
       MemberDef* md = ms->memb_el.SafeEl(i);
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
-      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL)) {
-        taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_impl(): unexpected md or mb_dat=NULL at i ", String(i));
+      if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
+        taMisc::DebugInfo("taiEditorOfControlPanelFull::GetValue_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
       }
       else {
         bool first_diff = true;
