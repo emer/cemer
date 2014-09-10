@@ -27,20 +27,19 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraChannels);
 TA_BASEFUNS_CTORS_DEFN(LeabraUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActFunSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraActFunExSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraActMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeFunSpec);
 TA_BASEFUNS_CTORS_DEFN(SpikeMiscSpec);
+TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
-TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
-TA_BASEFUNS_CTORS_DEFN(VChanSpec);
-TA_BASEFUNS_CTORS_DEFN(MaxDaSpec);
 TA_BASEFUNS_CTORS_DEFN(CIFERSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
+
 SMARTREF_OF_CPP(LeabraUnitSpec);
 
 
@@ -49,23 +48,9 @@ void LeabraActFunSpec::Initialize() {
 }
 
 void LeabraActFunSpec::Defaults_init() {
-  gelin = true;
-  if(taMisc::is_loading) {
-    taVersion v511(5, 1, 1);
-    if(taMisc::loading_version < v511) { // default prior to 511 is non-gelin
-      gelin = false;
-    }
-  }
-  if(gelin) {
-    thr = .5f;
-    gain = 100.0f;
-    nvar = .005f;
-  }
-  else {
-    thr = .25f;
-    gain = 600.0f;
-    nvar = .005f;
-  }
+  thr = 0.5f;
+  gain = 100.0f;
+  nvar = 0.005f;
 }
 
 void LeabraActFunSpec::UpdateAfterEdit_impl() {
@@ -74,16 +59,25 @@ void LeabraActFunSpec::UpdateAfterEdit_impl() {
 }
 
 
-void LeabraActFunExSpec::Initialize() {
-  i_thr = STD;
+void LeabraActMiscSpec::Initialize() {
+  act_lrn = ACT_EQ;
   Defaults_init();
 }
 
-void LeabraActFunExSpec::Defaults_init() {
-  avg_dt = .005f;
+void LeabraActMiscSpec::Defaults_init() {
+  act_max_hz = 100.0f;
+  time_unit = 1000.0f;
+  avg_time = 200.0f;
   avg_init = 0.15f;
   rescale_ctxt = true;
+
+  avg_dt = 1.0f / avg_time;
 }
+
+void LeabraActMiscSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  avg_dt = 1.0f / avg_time;
+}  
 
 void SpikeFunSpec::Initialize() {
   g_gain = 9.0f;
@@ -91,8 +85,7 @@ void SpikeFunSpec::Initialize() {
   decay = 5.0f;
   window = 3;
   eq_gain = 8.0f;
-  eq_dt = 0.02f;
-  // vm_dt of .1 should also be used; vm_noise var .002???
+  eq_time = 50.0f;
 
   gg_decay = g_gain / decay;
   gg_decay_sq = g_gain / (decay * decay);
@@ -103,6 +96,11 @@ void SpikeFunSpec::Initialize() {
     oneo_rise = 1.0f / rise;
   else
     oneo_rise = 1.0f;
+
+  if(eq_time > 0.0f)
+    eq_dt = 1.0f / eq_time;
+  else
+    eq_dt = 0.0f;
 }
 
 void SpikeFunSpec::UpdateAfterEdit_impl() {
@@ -120,23 +118,82 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
     else
       oneo_rise = 1.0f;
   }
+  if(eq_time > 0.0f)
+    eq_dt = 1.0f / eq_time;
+  else
+    eq_dt = 0.0f;
 }
 
 void SpikeMiscSpec::Initialize() {
   exp_slope = 0.02f;
   spk_thr = 1.2f;
-  vm_r = 0.30f;
-  t_r = 6;
-  vm_dend = 0.3f;
-  vm_dend_dt = 0.16f;
-  vm_dend_time = 1.0f / vm_dend_dt;
   clamp_max_p = 0.12f;
   clamp_type = REGULAR;
+  vm_r = 0.30f;
+  t_r = 6;
 }
 
 void SpikeMiscSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  vm_dend_time = 1.0f / vm_dend_dt;
+}
+
+void OptThreshSpec::Initialize() {
+  send = .1f;
+  delta = 0.005f;
+  xcal_lrn = 0.01f;
+}
+
+void LeabraDtSpec::Initialize() {
+  fast_cyc = 0;
+  Defaults_init();
+}
+
+void LeabraDtSpec::Defaults_init() {
+  integ = 1.0f;
+  vm_time = 3.3f;
+  net_time = 1.4f;
+  midpoint = false;
+
+  vm = 1.0f / vm_time;
+  net = 1.0f / net_time;
+}
+
+void LeabraDtSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  vm = 1.0f / vm_time;
+  net = 1.0f / net_time;
+}
+
+void LeabraActAvgSpec::Initialize() {
+  l_up_inc = 0.2f;
+  l_dn_time = 2.5f;
+  cascade = false;
+  ss_time = 1.0f;
+  s_time = 5.0f;
+  m_time = 10.0f;
+  
+  l_dn_dt = 1.0f / l_dn_time;
+  ss_dt = 1.0f / ss_time;
+  s_dt = 1.0f / s_time;
+  m_dt = 1.0f / m_time;
+}
+
+void LeabraActAvgSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  l_dn_dt = 1.0f / l_dn_time;
+  ss_dt = 1.0f / ss_time;
+  s_dt = 1.0f / s_time;
+  m_dt = 1.0f / m_time;
+}
+
+void LeabraChannels::Initialize() {
+  e = l = i = 0.0f;
+}
+
+void LeabraChannels::Copy_(const LeabraChannels& cp) {
+  e = cp.e;
+  l = cp.l;
+  i = cp.i;
 }
 
 void ActAdaptSpec::Initialize() {
@@ -145,23 +202,20 @@ void ActAdaptSpec::Initialize() {
 }
 
 void ActAdaptSpec::Defaults_init() {
-  dt = 0.007f;
+  time = 144;
   vm_gain = 0.04f;
   spike_gain = 0.00805f;
-  interval = 10;
-  trials = false;
 
-  dt_time = 1.0f / dt;
+  dt = 1.0f / time;
 }
 
 void ActAdaptSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  dt_time = 1.0f / dt;
+  dt = 1.0f / time;
 }
 
 void ShortPlastSpec::Initialize() {
   on = false;
-  phase_act = ACT_ND;
   f_r_ratio = 0.02f;
   p0 = 0.3f;
   re = 0.002f;
@@ -191,109 +245,6 @@ void ShortPlastSpec::UpdateAfterEdit_impl() {
 void SynDelaySpec::Initialize() {
   on = false;
   delay = 4;
-}
-
-void OptThreshSpec::Initialize() {
-  send = .1f;
-  delta = 0.005f;
-  phase_dif = 0.0f;             // .8 also useful
-  xcal_lrn = 0.01f;
-}
-
-void LeabraDtSpec::Initialize() {
-  vm_eq_cyc = 0;
-  Defaults_init();
-}
-
-void LeabraDtSpec::Defaults_init() {
-  integ = 1.0f;
-  vm = 0.3f;                    // best for gelin -- todo: may need to change
-  net = 0.7f;
-  d_vm_max = 100.0f;		// todo: may need to change
-  midpoint = false;
-  vm_eq_dt = 1.0f;
-  integ_time = 1.0f / integ;
-  vm_time = 1.0f / vm;
-  net_time = 1.0f / net;
-}
-
-void LeabraDtSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  integ_time = 1.0f / integ;
-  vm_time = 1.0f / vm;
-  net_time = 1.0f / net;
-}
-
-void LeabraActAvgSpec::Initialize() {
-  l_up_add = true;
-  l_dn_pct = true;
-  l_up_dt = 0.2f;
-  l_dn_dt = 0.4f;
-  m_dt = 0.1f;
-  s_dt = 0.2f;
-  ss_dt = 1.0f;
-  use_nd = false;
-
-  if(taMisc::is_loading) {
-    taVersion v634(6, 3, 4);
-    if(taMisc::loading_version < v634) { // default prior to 634 is off
-      l_up_add = false;
-      l_dn_pct = false;
-      l_up_dt = 0.6f;
-      l_dn_dt = 0.05f;
-    }
-  }
-
-  l_time = 1.0f / l_dn_dt;
-  m_time = 1.0f / m_dt;
-  s_time = 1.0f / s_dt;
-  ss_time = 1.0f / ss_dt;
-}
-
-void LeabraActAvgSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  l_time = 1.0f / l_dn_dt;
-  m_time = 1.0f / m_dt;
-  s_time = 1.0f / s_dt;
-  ss_time = 1.0f / ss_dt;
-}
-
-void LeabraChannels::Initialize() {
-  e = l = i = h = a = 0.0f;
-}
-
-void LeabraChannels::Copy_(const LeabraChannels& cp) {
-  e = cp.e;
-  l = cp.l;
-  i = cp.i;
-  h = cp.h;
-  a = cp.a;
-}
-
-void VChanSpec::Initialize() {
-  on = false;
-  b_inc_dt = .01f;
-  b_dec_dt = .01f;
-  a_thr = .5f;
-  d_thr = .1f;
-  g_dt = .1f;
-  init = false;
-  trl = false;
-}
-
-void VChanBasis::Initialize() {
-  hyst = acc = 0.0f;
-  hyst_on = acc_on = false;
-  g_h = g_a = 0.0f;
-}
-
-void VChanBasis::Copy_(const VChanBasis& cp) {
-  hyst = cp.hyst;
-  acc = cp.acc;
-  hyst_on = cp.hyst_on;
-  acc_on = cp.acc_on;
-  g_h = cp.g_h;
-  g_a = cp.g_a;
 }
 
 void CIFERSpec::Initialize() {
@@ -339,20 +290,12 @@ void NoiseAdaptSpec::UpdateAfterEdit_impl() {
   min_pct_c = 1.0f - min_pct;
 }
 
-void MaxDaSpec::Initialize() {
-  val = INET_DA;
-  inet_scale = 1.0;
-  lay_avg_thr = 0.01f;
-}
-
 void LeabraUnitSpec::Initialize() {
   min_obj_type = &TA_LeabraUnit;
   bias_con_type = &TA_LeabraCon;
   bias_spec.SetBaseType(&TA_LeabraBiasSpec);
 
   act_fun = NOISY_XX1;
-
-  act_lrn_on = false;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
@@ -361,7 +304,6 @@ void LeabraUnitSpec::Initialize() {
   Defaults_init();
 
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
-  CreateNXX1Fun(act_lrn, lrn_nxx1_fun, lrn_noise_conv);
 }
 
 void LeabraUnitSpec::Defaults_init() {
@@ -378,13 +320,9 @@ void LeabraUnitSpec::Defaults_init() {
   g_bar.e = 1.0f;
   g_bar.l = 0.1f;
   g_bar.i = 1.0f;
-  g_bar.h = 0.01f;
-  g_bar.a = 0.03f;
   e_rev.e = 1.0f;
   e_rev.l = 0.3f;
   e_rev.i = 0.25f;
-  e_rev.h = 1.0f;
-  e_rev.a = 0.0f;
 
   v_m_init.type = Random::NONE;
   v_m_init.mean = e_rev.l;
@@ -397,24 +335,9 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
-  e_rev_sub_thr.h = e_rev.h - act.thr;
-  e_rev_sub_thr.a = e_rev.a - act.thr;
   //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
-
-  e_rev_sub_thr_lrn.e = e_rev.e - act_lrn.thr;
-  e_rev_sub_thr_lrn.l = e_rev.l - act_lrn.thr;
-  e_rev_sub_thr_lrn.i = e_rev.i - act_lrn.thr;
-  e_rev_sub_thr_lrn.h = e_rev.h - act_lrn.thr;
-  e_rev_sub_thr_lrn.a = e_rev.a - act_lrn.thr;
-
-  lrn_thr_sub_e_rev_e = (act_lrn.thr - e_rev.e);
-
-  hyst.b_inc_dt = .05f;
-  hyst.b_dec_dt = .05f;
-  hyst.a_thr = .8f;
-  hyst.d_thr = .7f;
 }
 
 void LeabraUnitSpec::InitLinks() {
@@ -443,31 +366,17 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   act_avg.UpdateAfterEdit_NoGui();
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
-  CreateNXX1Fun(act_lrn, lrn_nxx1_fun, lrn_noise_conv);
+
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
-  e_rev_sub_thr.h = e_rev.h - act.thr;
-  e_rev_sub_thr.a = e_rev.a - act.thr;
   //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
-
-  e_rev_sub_thr_lrn.e = e_rev.e - act_lrn.thr;
-  e_rev_sub_thr_lrn.l = e_rev.l - act_lrn.thr;
-  e_rev_sub_thr_lrn.i = e_rev.i - act_lrn.thr;
-  e_rev_sub_thr_lrn.h = e_rev.h - act_lrn.thr;
-  e_rev_sub_thr_lrn.a = e_rev.a - act_lrn.thr;
-  lrn_thr_sub_e_rev_e = (act_lrn.thr - e_rev.e);
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(CheckError(da_mod.on && act.i_thr != LeabraActFunExSpec::NO_AH, quiet, rval,
-                "da_mod is on but act.i_thr != NO_AH -- this is generally required for da modulation to work properly as it operates through the a & h currents, and including them in i_thr computation leads to less clean modulation effects -- I set this for you in spec:", name)) {
-    SetUnique("act", true);
-    act.i_thr = LeabraActFunExSpec::NO_AH; // key for dopamine effects
-  }
 //  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
   // if(net) {
   // }
@@ -485,18 +394,10 @@ bool LeabraUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_fl, 
                                    FunLookup& noise_fl) {
   // first create the gaussian noise convolver
-  if(act_spec.gelin) {
-    nxx1_fl.x_range.min = -.1f;
-    nxx1_fl.x_range.max = 1.0f;
-    nxx1_fl.res = .001f;       // needs same fine res to get the noise transitions
-    nxx1_fl.UpdateAfterEdit_NoGui();
-  }
-  else {
-    nxx1_fl.x_range.min = -.03f;
-    nxx1_fl.x_range.max = .20f;
-    nxx1_fl.res = .001f;
-    nxx1_fl.UpdateAfterEdit_NoGui();
-  }
+  nxx1_fl.x_range.min = -.1f;
+  nxx1_fl.x_range.max = 1.0f;
+  nxx1_fl.res = .001f;       // needs same fine res to get the noise transitions
+  nxx1_fl.UpdateAfterEdit_NoGui();
 
   float ns_rng = 3.0f * act_spec.nvar;       // range factor based on noise level -- 3 sd
   ns_rng = MAX(ns_rng, nxx1_fl.res);
@@ -558,11 +459,6 @@ void LeabraUnitSpec::SetLearnRule(LeabraNetwork* net) {
     ((LeabraConSpec*)bias_spec.SPtr())->SetLearnRule(net);
 }
 
-int LeabraUnitSpec::CountCons(LeabraUnit* u, LeabraNetwork* net) {
-  int rval = u->Unit::CountCons(net);
-  return rval;
-}
-
 void LeabraUnitSpec::Init_dWt(Unit* ru, Network* rnet, int thread_no) {
   LeabraUnit* u = (LeabraUnit*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
@@ -593,13 +489,9 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
     bias_spec->B_Init_Weights(&u->bias, u, net);
   }
 
-  u->act_avg = act.avg_init;
+  u->act_avg = act_misc.avg_init;
   u->misc_1 = 0.0f;
   u->spk_amp = 1.0f;
-  u->vcb.hyst = u->vcb.g_h = 0.0f;
-  u->vcb.hyst_on = false;
-  u->vcb.acc = u->vcb.g_a = 0.0f;
-  u->vcb.acc_on = false;
 
   u->ClearLearnFlag();
 
@@ -639,8 +531,8 @@ void LeabraUnitSpec::Init_Weights_post(Unit* ru, Network* rnet, int thread_no) {
 
 
 void LeabraUnitSpec::Init_ActAvg(LeabraUnit* u, LeabraNetwork* net) {
-  u->act_avg = act.avg_init;
-  u->avg_l = act.avg_init;
+  u->act_avg = act_misc.avg_init;
+  u->avg_l = act_misc.avg_init;
 }
 
 void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
@@ -656,7 +548,7 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   //  u->net_ctxt = 0.0f;
 
   // u->net = 0.0f;
-  // u->gc.i = 0.0f;
+  // u->gc_i = 0.0f;
 
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -672,46 +564,41 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
 
   Init_Netins(u, net);
 
-  u->net = 0.0f;               // these are not done in netins -- need to nuke
-  u->g_i_syn = 0.0f;
-  u->g_i_self = 0.0f;
-  u->gc.i = 0.0f;
-
-  if(hyst.init) {
-    u->vcb.hyst = u->vcb.g_h = 0.0f;
-    u->vcb.hyst_on = false;
-  }
-  if(acc.init) {
-    u->vcb.acc = u->vcb.g_a = 0.0f;
-    u->vcb.acc_on = false;
-  }
-  u->gc.l = 0.0f;
-  u->gc.i = 0.0f;
-  u->gc.h = 0.0f;
-  u->gc.a = 0.0f;
-  u->I_net = 0.0f;
-  u->v_m = v_m_init.Gen();
-  u->vm_dend = 0.0f;
-  u->adapt = 0.0f;
-  u->da = 0.0f;
   u->act = act_init.Gen();
+  u->net = 0.0f;               // these are not done in netins -- need to nuke
+
   u->act_eq = u->act;
   u->act_nd = u->act_eq;
+  u->act_lrn = u->act_eq;
+  u->spike = 0.0f;
   u->act_p = u->act_m = u->act_dif = 0.0f;
   u->act_mid = 0.0f;
-  u->avg_ss = act.avg_init;
-  u->avg_s = act.avg_init;
-  u->avg_m = act.avg_init;
+
+  u->da = 0.0f;
+  u->avg_ss = act_misc.avg_init;
+  u->avg_s = act_misc.avg_init;
+  u->avg_m = act_misc.avg_init;
+  // not avg_l
+  // not act_avg
   u->thal = 0.0f;
   u->deep5b = 0.0f;
   u->deep5b_net = 0.0f;
   u->act_ctxt = 0.0f;
   u->net_ctxt = 0.0f;
   u->p_act_p = 0.0f;
-  u->davg = 0.0f;
+  u->gc_i = 0.0f;
+  u->gc_l = 0.0f;
+  u->I_net = 0.0f;
+  u->v_m = v_m_init.Gen();
+  u->adapt = 0.0f;
+  u->noise = 0.0f;
   u->dav = 0.0f;
   u->sev = 0.0f;
-  u->noise = 0.0f;
+
+  // not the scales
+  // init netin gets act_sent, net_raw, net_delta etc
+  u->g_i_syn = 0.0f;
+  u->g_i_self = 0.0f;
 
   u->i_thr = 0.0f;
   u->spk_amp = 1.0f;
@@ -731,35 +618,33 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
 
 
 void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) {
-  // todo: turn this on after next round of testing
   if(decay > 0.0f) {            // no need to reset netin if not decaying at all
     Init_Netins(u, net);
+    u->act -= decay * (u->act - act_init.mean);
+    u->net -= decay * u->net;
+    u->act_eq -= decay * (u->act_eq - act_init.mean);
+    u->act_nd -= decay * (u->act_nd - act_init.mean);
+    u->act_lrn -= decay * (u->act_lrn - act_init.mean);
+    u->p_act_p -= decay * (u->p_act_p - act_init.mean); // reset this for ti guys
+    u->gc_i -= decay * u->gc_i;
+    u->v_m -= decay * (u->v_m - v_m_init.mean);
+    u->adapt -= decay * u->adapt;
+
+    u->g_i_syn -= decay * u->g_i_syn;
+    u->g_i_self -= decay * u->g_i_self;
+
+    if(stp.on) {
+      u->spk_amp += (1.0f - u->spk_amp) * decay;
+    }
+    // note: this is causing a problem in learning with xcal:
+    //   u->avg_ss -= decay * (u->avg_ss - act_misc.avg_init);
+    //   u->avg_s -= decay * (u->avg_s - act_misc.avg_init);
+    //   u->avg_m -= decay * (u->avg_m - act_misc.avg_init);
+    // not avg_l, act_avg, thal, deep5b*, act_ctxt* 
   }
 
-  u->v_m -= decay * (u->v_m - v_m_init.mean);
-  u->vm_dend -= decay * u->vm_dend;
-  u->adapt -= decay * u->adapt;
-  u->act -= decay * (u->act - act_init.mean);
-  u->act_nd -= decay * (u->act_nd - act_init.mean);
-  u->act_eq -= decay * (u->act_eq - act_init.mean);
-  u->p_act_p -= decay * (u->p_act_p - act_init.mean); // reset this for ti guys
-  // note: this is causing a problem in learning with xcal:
-//   u->avg_ss -= decay * (u->avg_ss - act.avg_init);
-//   u->avg_s -= decay * (u->avg_s - act.avg_init);
-//   u->avg_m -= decay * (u->avg_m - act.avg_init);
-  u->net -= decay * u->net;
-  u->g_i_syn -= decay * u->g_i_syn;
-  u->g_i_self -= decay * u->g_i_self;
-  u->gc.i -= decay * u->gc.i;   // not really needed but visually..
-
-  if(hyst.on && !hyst.trl)
-    u->vcb.hyst -= decay * u->vcb.hyst;
-  if(acc.on && !acc.trl)
-    u->vcb.acc -= decay * u->vcb.acc;
-  if(stp.on)
-    u->spk_amp += (1.0f - u->spk_amp) * decay;
-
-  u->da = u->I_net = 0.0f;
+  u->da = 0.0f;
+  u->I_net = 0.0f;
 
   if(decay == 1.0f) {
     Init_SpikeBuff(u);
@@ -847,27 +732,12 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
 //  LeabraLayer* lay = u->own_lay();
 
   float lval = u->avg_m;
-  if(act_avg.l_up_add) {
-    if(lval > opt_thresh.send) {          // active, even just a bit
-      u->avg_l += lval * act_avg.l_up_dt; // additive up
-    }
-    else {
-      float eff_dt = act_avg.l_dn_dt;
-      if(act_avg.l_dn_pct)
-        eff_dt *= u->own_lay()->kwta.pct;
-      u->avg_l += eff_dt * (lval - u->avg_l); // mult down
-    }
+  if(lval > opt_thresh.send) {          // active, even just a bit
+    u->avg_l += lval * act_avg.l_up_inc; // additive up
   }
   else {
-    if(lval > u->avg_l) {
-      u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
-    }
-    else {
-      float eff_dt = act_avg.l_dn_dt;
-      if(act_avg.l_dn_pct)
-        eff_dt *= u->own_lay()->kwta.pct;
-      u->avg_l += eff_dt * (lval - u->avg_l);
-    }
+    float eff_dt = act_avg.l_dn_dt * u->own_lay()->kwta.pct;
+    u->avg_l += eff_dt * (lval - u->avg_l); // mult down
   }
 
   if(net->learn_rule == LeabraNetwork::CTLEABRA_CAL || net->ct_sravg.force_con)  {
@@ -971,7 +841,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     }
   }
 
-  if(act.rescale_ctxt && u->ctxt_scale > 0.0f && ctxt_rel_scale > 0.0f) {
+  if(act_misc.rescale_ctxt && u->ctxt_scale > 0.0f && ctxt_rel_scale > 0.0f) {
     // context is computed in plus phase, with plus phase scaling.  thus we need to do it 
     // both ways -- up and down -- in either case, always going toward current
     u->act_ctxt *= (ctxt_rel_scale / u->ctxt_scale);
@@ -1123,7 +993,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
 
       recv_gp->net_raw += g_nw_nt;
       // todo: not clear if we need this at this point..
-      // u->net += dt.net * (tot_net - u->net);
+      // u->net += dt.integ * dt.net * (tot_net - u->net);
       // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
     }
     u->net_delta = nw_nt;
@@ -1145,7 +1015,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->g_i_syn += dt.net * (u->g_i_raw - u->g_i_syn);
+      u->g_i_syn += dt.integ * dt.net * (u->g_i_raw - u->g_i_syn);
       u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
@@ -1182,7 +1052,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     Compute_NetinInteg_Spike_e(u, net);
   }
   else {
-    u->net += dt.net * (tot_net - u->net);
+    u->net += dt.integ * dt.net * (tot_net - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 
@@ -1218,7 +1088,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
       }
     }
     // from compute_netinavg
-    u->net += dt.net * (sum - u->net);
+    u->net += dt.integ * dt.net * (sum - u->net);
   }
   u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
 }
@@ -1226,7 +1096,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* ne
 void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_i_buf -- 0 time is the end
   Init_SpikeBuff(u);
-  u->spike_i_buf->CircAddLimit(u->gc.i, spike.window); // add current net to buffer
+  u->spike_i_buf->CircAddLimit(u->gc_i, spike.window); // add current net to buffer
   int mx = MAX(spike.window, u->spike_i_buf->length);
   float sum = 0.0f;
   if(spike.rise == 0.0f && spike.decay > 0.0f) {
@@ -1244,25 +1114,9 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
     }
-    u->g_i_syn += dt.net * (sum - u->g_i_syn);
+    u->g_i_syn += dt.integ * dt.net * (sum - u->g_i_syn);
   }
   u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
-}
-
-float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraNetwork* net) {
-  switch(act.i_thr) {
-  case LeabraActFunExSpec::STD:
-    return Compute_IThreshStd(u, net);
-  case LeabraActFunExSpec::NO_A:
-    return Compute_IThreshNoA(u, net);
-  case LeabraActFunExSpec::NO_H:
-    return Compute_IThreshNoH(u, net);
-  case LeabraActFunExSpec::NO_AH:
-    return Compute_IThreshNoAH(u, net);
-  case LeabraActFunExSpec::ALL:
-    return Compute_IThreshAll(u, net);
-  }
-  return 0.0f;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1280,9 +1134,12 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
-    if(lay->hard_clamped && act_fun == SPIKE) {
+    if(act_fun == SPIKE) {
       Compute_ClampSpike(u, net, u->ext * spike_misc.clamp_max_p);
       u->AddToActBuf(syn_delay);
+    }
+    else {
+      Compute_RateCodeSpike(u, net);
     }
     Compute_SRAvg(u, net, thread_no); // unit level -- needed even for clamped
     return; // don't re-compute
@@ -1297,12 +1154,184 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
 
   Compute_Conduct(u, net);
   Compute_Vm(u, net);
-  Compute_ActFmVm(u, net);
+  Compute_ActFun(u, net);
   Compute_SelfReg_Cycle(u, net);
 
   u->AddToActBuf(syn_delay);
 
   Compute_SRAvg(u, net, thread_no); // unit level only, not cons (must be separate)
+}
+
+void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
+  u->gc_i *= g_bar.i;
+  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
+  u->gc_l = g_bar.l;
+}
+
+void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
+  if(act_fun == SPIKE && spike_misc.t_r > 0 && u->spk_t > 0) {
+    int spkdel = net->tot_cycle - u->spk_t;
+    if(spkdel >= 0 && spkdel <= spike_misc.t_r)
+      return;                   // just bail -- leave vm as it is!
+  }
+
+  if(net->cycle < dt.fast_cyc) {
+    // directly go to equilibrium value
+    float new_v_m = Compute_EqVm(u);
+    u->I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
+    u->v_m += u->I_net;
+  }
+  else {
+    float v_m_eff = u->v_m;
+    float net_eff = u->net * g_bar.e;
+    if(dt.midpoint) {
+      float I_net_1 =
+        (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
+        (u->gc_i * (e_rev.i - v_m_eff));
+      v_m_eff += .5f * dt.vm * I_net_1; // go half way
+    }
+    u->I_net =
+      (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
+      (u->gc_i * (e_rev.i - v_m_eff));
+
+    // add spike current if relevant
+    if(act_fun == SPIKE && spike_misc.exp_slope > 0.0f) {
+      u->I_net += g_bar.l * spike_misc.exp_slope *
+        expf((v_m_eff - act.thr) / spike_misc.exp_slope);
+    }
+
+    u->v_m += dt.integ * dt.vm * (u->I_net - u->adapt);
+  }
+
+  if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    u->v_m += Compute_Noise(u, net);
+  }
+
+  u->v_m = vm_range.Clip(u->v_m);
+}
+
+void LeabraUnitSpec::Compute_ActFun(LeabraUnit* u, LeabraNetwork* net) {
+  if(act_fun == SPIKE) {
+    Compute_ActFun_spike(u, net);
+  }
+  else {
+    Compute_ActFun_rate(u, net);
+  }
+}
+
+float LeabraUnitSpec::Compute_ActFun_rate_impl(float val_sub_thr) {
+  float new_act = 0.0f;
+  switch(act_fun) {
+  case NOISY_XX1: {
+    if(val_sub_thr <= nxx1_fun.x_range.min)
+      new_act = 0.0f;
+    else if(val_sub_thr >= nxx1_fun.x_range.max) {
+      val_sub_thr *= act.gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
+    }
+    else {
+      new_act = nxx1_fun.Eval(val_sub_thr);
+    }
+    break;
+  }
+  case SPIKE:
+    break;                      // compiler food
+  case NOISY_LINEAR: {
+    if(val_sub_thr <= nxx1_fun.x_range.min)
+      new_act = 0.0f;
+    else if(val_sub_thr >= nxx1_fun.x_range.max) {
+      new_act = val_sub_thr * act.gain;
+    }
+    else {
+      new_act = nxx1_fun.Eval(val_sub_thr);
+    }
+    break;
+  }
+  case XX1: {
+    if(val_sub_thr < 0.0f)
+      new_act = 0.0f;
+    else {
+      val_sub_thr *= act.gain;
+      new_act = val_sub_thr / (val_sub_thr + 1.0f);
+    }
+    break;
+  }
+  case LINEAR: {
+    if(val_sub_thr < 0.0f)
+      new_act = 0.0f;
+    else
+      new_act = val_sub_thr * act.gain;
+  }
+  break;
+  }
+  return new_act;
+}
+
+void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
+  float new_act;
+  if(u->v_m <= act.thr) {
+    new_act = Compute_ActFun_rate_impl(u->v_m - act.thr);
+  }
+  else {
+    float g_e_thr = Compute_EThresh(u);
+    new_act = Compute_ActFun_rate_impl((u->net * g_bar.e) - g_e_thr);
+  }
+  if(net->cycle >= dt.fast_cyc) {
+    new_act = u->act_nd + dt.integ * dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
+  }
+  if(stp.on) {                   // short term plasticity
+    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
+    new_act *= MIN(u->spk_amp, 1.0f);
+  }
+
+  u->da = new_act - u->act;
+  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    new_act += Compute_Noise(u, net);
+  }
+  u->act = act_range.Clip(new_act);
+  u->act_eq = u->act;
+  if(!stp.on)
+    u->act_nd = u->act_eq;
+
+  if(act_misc.act_lrn == LeabraActMiscSpec::ACT_EQ) {
+    u->act_lrn = u->act_eq;
+  }
+  else {                        // ACT_ND
+    u->act_lrn = u->act_nd;
+  }
+  Compute_RateCodeSpike(u, net);
+}
+
+void LeabraUnitSpec::Compute_ActFun_spike(LeabraUnit* u, LeabraNetwork* net) {
+  if(u->v_m > spike_misc.spk_thr) {
+    u->act = 1.0f;
+    u->v_m = spike_misc.vm_r;
+    u->spk_t = net->tot_cycle;
+  }
+  else {
+    u->act = 0.0f;
+  }
+
+  float old_nd = u->act_nd / spike.eq_gain;
+  float new_nd;
+  if(spike.eq_dt > 0.0f) {
+    new_nd = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * old_nd + spike.eq_dt * u->act));
+  }
+  else {                        // increment by phase
+    if(net->cycle > 0)
+      old_nd *= (float)net->cycle;
+    new_nd = act_range.Clip(spike.eq_gain * (old_nd + u->act) / (float)(net->cycle+1));
+  }
+  u->da = new_nd - u->act_nd;   // da is on equilibrium activation
+  u->act_nd = new_nd;
+
+  if(stp.on) {
+    u->act *= MIN(u->spk_amp, 1.0f);    // after eq
+    u->act_eq = u->spk_amp * u->act_nd; // act_eq is depressed rate code, nd is non-depressed!
+  }
+  else {
+    u->act_eq = u->act_nd;      // eq = nd
+  }
 }
 
 void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p) {
@@ -1331,294 +1360,35 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
     u->v_m = e_rev.l;           // make it not fire
   }
 
-  Compute_ActFmVm_spike(u, net); // then do normal spiking computation
+  Compute_ActFun_spike(u, net); // then do normal spiking computation
 }
 
-void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* lay = u->own_lay();
-
-  if(da_mod.on && (da_mod.mod == DaModSpec::PLUS_CONT)) {
-    Compute_DaMod_PlusCont(u,net);
-  }
-
-  // total conductances
-  float g_bar_i_val = g_bar.i;
-  float g_bar_l_val = g_bar.l;
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->spec.SPtr();
-  u->gc.i *= g_bar_i_val;
-  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
-  u->gc.l = g_bar_l_val;
-  u->gc.h = g_bar.h * u->vcb.g_h;
-  u->gc.a = g_bar.a * u->vcb.g_a;
-}
-
-void LeabraUnitSpec::Compute_DaMod_PlusCont(LeabraUnit* u, LeabraNetwork* net) {
-  if(net->phase == LeabraNetwork::PLUS_PHASE) {
-    if(u->dav > 0.0f) {
-      u->vcb.g_a = 0.0f;
-      u->vcb.g_h = da_mod.gain * u->dav * u->act_m; // increase in proportion to participation in minus phase
-    }
-    else {
-      u->vcb.g_h = 0.0f;
-      u->vcb.g_a = -da_mod.gain * u->dav * u->act_m; // decrease in proportion to participation in minus phase
-    }
-  }
-  else {
-    u->vcb.g_h = 0.0f;
-    u->vcb.g_a = 0.0f;  // clear in minus phase!
-  }
-}
-
-void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
-  if(act_fun == SPIKE && spike_misc.t_r > 0 && u->spk_t > 0) {
-    int spkdel = net->ct_cycle - u->spk_t;
-    if(spkdel >= 0 && spkdel <= spike_misc.t_r)
-      return;                   // just bail
-  }
-
-  if(net->cycle < dt.vm_eq_cyc) {
-    // directly go to equilibrium value
-    float new_v_m = Compute_EqVm(u);
-    u->I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
-    u->v_m += dt.vm_eq_dt * u->I_net;
-  }
-  else {
-    float v_m_eff = u->v_m;
-    float net_eff = u->net * g_bar.e;
-    if(dt.midpoint) {
-      float I_net_1 =
-        (net_eff * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
-        (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
-        (u->gc.a * (e_rev.a - v_m_eff));
-      v_m_eff += .5f * dt.vm * I_net_1; // go half way
-    }
-    u->I_net =
-      (net_eff * (e_rev.e - v_m_eff)) + (u->gc.l * (e_rev.l - v_m_eff)) +
-      (u->gc.i * (e_rev.i - v_m_eff)) + (u->gc.h * (e_rev.h - v_m_eff)) +
-      (u->gc.a * (e_rev.a - v_m_eff));
-
-    // add spike current if relevant
-    if(act_fun == SPIKE && spike_misc.exp_slope > 0.0f) {
-      u->I_net += g_bar.l * spike_misc.exp_slope *
-        expf((v_m_eff - act.thr) / spike_misc.exp_slope);
-    }
-
-    float dvm = dt.vm * (u->I_net - u->adapt);
-    if(dvm > dt.d_vm_max) dvm = dt.d_vm_max;
-    else if(dvm < -dt.d_vm_max) dvm = -dt.d_vm_max;
-    u->v_m += dt.integ * dvm;
-  }
-
-  if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->v_m += Compute_Noise(u, net);
-  }
-
-  u->v_m = vm_range.Clip(u->v_m);
-
-  if(act_fun == SPIKE) {
-    // decay back to zero
-    u->vm_dend -= spike_misc.vm_dend_dt * u->vm_dend;
-  }
-}
-
-void LeabraUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
-  if(act_fun == SPIKE) {
-    Compute_ActFmVm_spike(u, net);
-    Compute_ActLrnFmVm_rate(u, net); // todo: use rate-coded learning here???
-  }
-  else {
-    Compute_ActFmVm_rate(u, net);
-    Compute_ActLrnFmVm_rate(u, net);
-  }
-}
-
-float LeabraUnitSpec::Compute_ActValFmVmVal_rate_impl(float val_sub_thr,
-                                 LeabraActFunSpec& act_spec, FunLookup& nxx1_fl) {
-  float new_act = 0.0f;
-  switch(act_fun) {
-  case NOISY_XX1: {
-    if(val_sub_thr <= nxx1_fl.x_range.min)
-      new_act = 0.0f;
-    else if(val_sub_thr >= nxx1_fl.x_range.max) {
-      val_sub_thr *= act_spec.gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    }
-    else {
-      new_act = nxx1_fl.Eval(val_sub_thr);
-    }
-    break;
-  }
-  case SPIKE:
-    break;                      // compiler food
-  case NOISY_LINEAR: {
-    if(val_sub_thr <= nxx1_fl.x_range.min)
-      new_act = 0.0f;
-    else if(val_sub_thr >= nxx1_fl.x_range.max) {
-      new_act = val_sub_thr * act_spec.gain;
-    }
-    else {
-      new_act = nxx1_fl.Eval(val_sub_thr);
-    }
-    break;
-  }
-  case XX1: {
-    if(val_sub_thr < 0.0f)
-      new_act = 0.0f;
-    else {
-      val_sub_thr *= act_spec.gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    }
-    break;
-  }
-  case LINEAR: {
-    if(val_sub_thr < 0.0f)
-      new_act = 0.0f;
-    else
-      new_act = val_sub_thr * act_spec.gain;
-  }
-  break;
-  }
-  return new_act;
-}
-
-void LeabraUnitSpec::Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  float new_act;
-  if(act.gelin) {
-    if(u->v_m <= act.thr) {
-      new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
-    }
-    else {
-      float g_e_thr = Compute_EThresh(u);
-      new_act = Compute_ActValFmVmVal_rate(u->net * g_bar.e - g_e_thr);
-    }
-    if(net->cycle < dt.vm_eq_cyc) {
-      new_act = u->act_nd + dt.vm_eq_dt * (new_act - u->act_nd); // eq dt
-    }
-    else {
-      new_act = u->act_nd + dt.vm * (new_act - u->act_nd); // time integral with dt.vm  -- use nd to avoid synd problems
-    }
-  }
-  else {
-    new_act = Compute_ActValFmVmVal_rate(u->v_m - act.thr);
-  }
-  if(stp.on) {                   // short term plasticity
-    u->act_nd = act_range.Clip(new_act); // nd is non-discounted activation!!! solves tons of probs
-    new_act *= MIN(u->spk_amp, 1.0f);
-  }
-
-  u->da = new_act - u->act;
-  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += Compute_Noise(u, net);
-  }
-  u->act = act_range.Clip(new_act);
-  u->act_eq = u->act;
-  if(!stp.on)
-    u->act_nd = u->act_eq;
-}
-
-void LeabraUnitSpec::Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net) {
-  if(!act_lrn_on) {
-    u->act_lrn = u->act_eq;
-    return;
-  }
-  float new_act_lrn;
-  if(act_lrn.gelin) {
-    if(u->v_m <= act_lrn.thr) {
-      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act_lrn.thr, act_lrn,
-                                                    lrn_nxx1_fun);
-    }
-    else {
-      float g_e_thr = Compute_EThreshLrn(u);
-      new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->net * g_bar.e - g_e_thr, act_lrn, 
-                                                    lrn_nxx1_fun);
-    }
-    if(net->cycle < dt.vm_eq_cyc) {
-      new_act_lrn = u->act_lrn + dt.vm_eq_dt * (new_act_lrn - u->act_lrn); // eq dt
-    }
-    else {
-      new_act_lrn = u->act_lrn + dt.vm * (new_act_lrn - u->act_lrn);
-    }
-  }
-  else {
-    new_act_lrn = Compute_ActValFmVmVal_rate_impl(u->v_m - act_lrn.thr, act_lrn,
-                                                  lrn_nxx1_fun);
-  }
-  u->act_lrn = act_range.Clip(new_act_lrn);
-}
-
-void LeabraUnitSpec::Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net) {
-  if(u->v_m > spike_misc.spk_thr) {
-    u->act = 1.0f;
-    u->v_m = spike_misc.vm_r;
-    u->vm_dend += spike_misc.vm_dend;
-    u->spk_t = net->ct_cycle;
-  }
-  else {
-    u->act = 0.0f;
-  }
-
-  float old_nd = u->act_nd / spike.eq_gain;
-  float new_nd;
-  if(spike.eq_dt > 0.0f) {
-    new_nd = act_range.Clip(spike.eq_gain * ((1.0f - spike.eq_dt) * old_nd + spike.eq_dt * u->act));
-  }
-  else {                        // increment by phase
-    if(net->cycle > 0)
-      old_nd *= (float)net->cycle;
-    new_nd = act_range.Clip(spike.eq_gain * (old_nd + u->act) / (float)(net->cycle+1));
-  }
-  u->da = new_nd - u->act_nd;   // da is on equilibrium activation
-  u->act_nd = new_nd;
-
-  if(stp.on) {
-    u->act *= MIN(u->spk_amp, 1.0f);    // after eq
-    u->act_eq = u->spk_amp * u->act_nd; // act_eq is depressed rate code, nd is non-depressed!
-  }
-  else {
-    u->act_eq = u->act_nd;      // eq = nd
+void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnit* u, LeabraNetwork* net) {
+  u->spike = 0.0f;
+  if(u->act <= 0.0f) return;
+  int interval = act_misc.ActToInterval(dt.integ, u->act);
+  int st_cyc = 0;
+  if(u->spk_t >= 0)
+    st_cyc = u->spk_t;
+  if(net->tot_cycle - st_cyc >= interval) {
+    u->spike = 1.0f;
+    u->spk_t = net->tot_cycle;
   }
 }
 
 ////////////////////////////////////////////////////////////////////
 //              Self reg / adapt / depress
 
-void LeabraUnitSpec::Compute_ActAdapt_Cycle_spike(LeabraUnit* u, LeabraNetwork* net) {
+void LeabraUnitSpec::Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net) {
   if(!adapt.on) {
     u->adapt = 0.0f;
   }
   else {
     float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt);
-    if(u->act > 0.0f) {                                               // spiked
+    if(u->spike > 0.0f) {       // spiked
       dad += adapt.spike_gain;
     }
     u->adapt += dad;
-  }
-}
-
-void LeabraUnitSpec::Compute_ActAdapt_Cycle_rate(LeabraUnit* u, LeabraNetwork* net) {
-  if(!adapt.on) {
-    u->adapt = 0.0f;
-  }
-  else {
-    float dad = dt.integ * adapt.Compute_dAdapt(0.0f, u->act, u->adapt);
-    // vm_gain is now driving based on (0 - act) -- the more active, the longer it is in refractory, and thus the longer the adapt goes down..
-    if(net->ct_cycle % adapt.interval == 0) {
-      dad += u->act * adapt.spike_gain; // rate code version of spiking
-    }
-    u->adapt += dad;
-  }
-}
-
-void LeabraUnitSpec::Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* net) {
-  if(!adapt.on) {
-    u->adapt = 0.0f;
-  }
-  else {
-    float dad = dt.integ * adapt.Compute_dAdapt(0.0f, u->act, u->adapt);
-    // vm_gain is now driving based on (0 - act) -- the more active, the longer it is in refractory, and thus the longer the adapt goes down..
-    if(net->trial % adapt.interval == 0) {
-      dad += u->act * adapt.spike_gain; // rate code version of spiking
-    }
   }
 }
 
@@ -1633,36 +1403,11 @@ void LeabraUnitSpec::Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net)
 }
 
 void LeabraUnitSpec::Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net) {
-  if(act_fun == SPIKE) {
-    Compute_ActAdapt_Cycle_spike(u, net);
-    Compute_ShortPlast_Cycle(u, net);
-  }
-  else {
-    if(!adapt.trials) {
-      Compute_ActAdapt_Cycle_rate(u, net);
-    }
-    Compute_ShortPlast_Cycle(u, net);
-  }
-
-  // fast time scale updated every cycle
-  if(hyst.on && !hyst.trl)
-    hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
-  if(acc.on && !acc.trl)
-    acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
+  Compute_ActAdapt_Cycle(u, net);
+  Compute_ShortPlast_Cycle(u, net);
 }
 
 void LeabraUnitSpec::Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net) {
-  if(act_fun != SPIKE) {
-    if(adapt.trials) {
-      Compute_ActAdapt_Trial_rate(u, net);
-    }
-  }
-
-  // slow time scale updated at end of trial
-  if(hyst.on && hyst.trl)
-    hyst.UpdateBasis(u->vcb.hyst, u->vcb.hyst_on, u->vcb.g_h, u->act_eq);
-  if(acc.on && acc.trl)
-    acc.UpdateBasis(u->vcb.acc, u->vcb.acc_on, u->vcb.g_a, u->act_eq);
 }
 
 float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
@@ -1698,60 +1443,40 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
   LeabraLayer* lay = u->own_lay();
   if(!lay) return;
-  if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
 
-  float ru_act; // activation to use for updating averages
-  if(act_avg.use_nd || net->learn_rule == LeabraNetwork::CTLEABRA_CAL || 
-     net->learn_rule == LeabraNetwork::LEABRA_CHL) {
-    ru_act = u->act_nd;
+  float ru_act = u->act_lrn; // activation to use for updating averages
+  if(act_fun == LeabraUnitSpec::SPIKE)
+    ru_act *= spike.eq_gain;
+
+  if(act_avg.cascade) {
+    u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
+    u->avg_s += act_avg.s_dt * (u->avg_ss - u->avg_s);
+    u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
   }
   else {
-    ru_act = u->act_lrn;        // note: using lrn here..
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(rus->act_fun == LeabraUnitSpec::SPIKE)
-      ru_act *= rus->spike.eq_gain;
-  }
+    if(lay->sravg_vals.state == CtSRAvgVals::NO_SRAVG) return; // don't
 
-  bool do_s = false;
-
-  // if(net->learn_rule == LeabraNetwork::CTLEABRA_XCAL_C) {
-  //   // note: this is cascade version -- each builds upon the other
-  //   u->avg_ss += act_avg.ss_dt * (ru_act - u->avg_ss);
-  //   float ds = act_avg.s_dt * (u->avg_ss - u->avg_s);
-  //   u->avg_s += ds;
-  //   u->davg += net->ct_lrn_trig.davg_dt * (ds - u->davg);
-
-  //   u->avg_m += act_avg.m_dt * (u->avg_s - u->avg_m);
-
-  //   float lval = u->avg_m; // note this is *avg_m* not act_m..
-  //   if(lval > u->avg_l)
-  //     u->avg_l += act_avg.l_up_dt * (lval - u->avg_l);
-  //   else
-  //     u->avg_l += act_avg.l_dn_dt * (lval - u->avg_l);
-  // }
-  // else {
-
-  // use continuous updating so these are always current -- no need for post-average step
-  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
-     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    if(lay->sravg_vals.m_sum == 1.0f) {
-      u->avg_m = ru_act;
+    // use continuous updating so these are always current -- no need for post-average step
+    if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_M ||
+       lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+      if(lay->sravg_vals.m_sum == 1.0f) {
+        u->avg_m = ru_act;
+      }
+      else {
+        u->avg_m = (ru_act + u->avg_m * (lay->sravg_vals.m_sum - 1.0f)) /
+          lay->sravg_vals.m_sum;
+      }
     }
-    else {
-      u->avg_m = (ru_act + u->avg_m * (lay->sravg_vals.m_sum - 1.0f)) /
-        lay->sravg_vals.m_sum;
-    }
-  }
 
-  if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
-     lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    do_s = true;
-    if(lay->sravg_vals.s_sum == 1.0f) {
-      u->avg_s = ru_act;
-    }
-    else {
-      u->avg_s = (ru_act + u->avg_s * (lay->sravg_vals.s_sum - 1.0f)) /
-        lay->sravg_vals.s_sum;
+    if(lay->sravg_vals.state == CtSRAvgVals::SRAVG_S ||
+       lay->sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
+      if(lay->sravg_vals.s_sum == 1.0f) {
+        u->avg_s = ru_act;
+      }
+      else {
+        u->avg_s = (ru_act + u->avg_s * (lay->sravg_vals.s_sum - 1.0f)) /
+          lay->sravg_vals.s_sum;
+      }
     }
   }
 }
@@ -1774,28 +1499,6 @@ void LeabraUnitSpec::Compute_SRAvg_Cons(LeabraUnit* u, LeabraNetwork* net, int t
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Stats
-
-float LeabraUnitSpec::Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraLayer* lay = u->own_lay();
-  float fda = 0.0f;
-  switch(maxda.val) {
-  case MaxDaSpec::NO_MAX_DA:
-    break;
-  case MaxDaSpec::DA_ONLY:
-    fda = fabsf(u->da);
-    break;
-  case MaxDaSpec::INET_ONLY:
-    fda = fabsf(maxda.inet_scale * u->I_net);
-    break;
-  case MaxDaSpec::INET_DA:
-    if(lay->acts.avg <= maxda.lay_avg_thr)
-      fda = fabsf(maxda.inet_scale * u->I_net);
-    else
-      fda = fabsf(u->da);
-    break;
-  }
-  return fda;
-}
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Optional Misc
@@ -1822,14 +1525,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     no_plus_testing = true;
   }
 
-  float use_act;
-  if(stp.phase_act == ShortPlastSpec::ACT_ND)
-    use_act = u->act_nd;
-  else if(stp.phase_act == ShortPlastSpec::ACT_EQ)
-    use_act = u->act_eq;
-  else                          // ACT_LRN
-    use_act = u->act_lrn;
-    
+  float use_act = u->act_lrn;
 
   switch(net->phase_order) {
   case LeabraNetwork::MINUS_PLUS:
@@ -1867,8 +1563,8 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net) {
-  if(act.avg_dt <= 0.0f) return;
-  u->act_avg += act.avg_dt * (u->act_eq - u->act_avg);
+  if(act_misc.avg_dt <= 0.0f) return;
+  u->act_avg += act_misc.avg_dt * (u->act_eq - u->act_avg);
 }
 
 void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
@@ -2097,7 +1793,7 @@ float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
 //       Misc Functions                 //
 //////////////////////////////////////////
 
-void LeabraUnitSpec::BioParams(bool gelin, float norm_sec, float norm_volt, float volt_off, float norm_amp,
+void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, float norm_amp,
           float C_pF, float gbar_l_nS, float gbar_e_nS, float gbar_i_nS,
           float erev_l_mV, float erev_e_mV, float erev_i_mV,
           float act_thr_mV, float spk_thr_mV, float exp_slope_mV,
@@ -2129,13 +1825,9 @@ void LeabraUnitSpec::BioParams(bool gelin, float norm_sec, float norm_volt, floa
   v_m_init.mean = e_rev.l;
   vm_range.min = 0.0f;
   vm_range.max = 2.0f;
-  dt.d_vm_max = 100.0f;         // no max
 
-  if(gelin) {
-    dt.vm = 0.3f;
-    act.gain = 100;
-    act.gelin = true;
-  }
+  dt.vm = 0.3f;
+  act.gain = 100;
 
   UpdateAfterEdit();
 }
@@ -2159,36 +1851,6 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
     graph_data->AddBlankRow();
     nt->SetValAsFloat(x, -1);
     vm->SetValAsFloat(y, -1);
-  }
-  graph_data->StructUpdate(false);
-  graph_data->FindMakeGraphView();
-}
-
-void LeabraUnitSpec::GraphActFmVmFun(DataTable* graph_data, float min, float max, float incr) {
-  if(TestError(act.gelin, "GraphActFmVmFun", "cannot graph act from vm when act.gelin = true, because act does not depend on vm in this case!  Use GraphActFmNetFun instead."))
-    return;
-
-  taProject* proj = GET_MY_OWNER(taProject);
-  if(!graph_data) {
-    graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmVmFun", true);
-  }
-  int idx;
-  graph_data->StructUpdate(true);
-  graph_data->ResetData();
-  DataCol* nt = graph_data->FindMakeColName("Vm", idx, VT_FLOAT);
-  DataCol* vm = graph_data->FindMakeColName("Act", idx, VT_FLOAT);
-
-  LeabraUnit un;
-  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
-
-  incr = MAX(0.001f, incr);	// must be pos
-  float x;
-  for(x = min; x <= max; x += incr) {
-    un.v_m = x;
-    Compute_ActFmVm(&un, net);
-    graph_data->AddBlankRow();
-    nt->SetValAsFloat(x, -1);
-    vm->SetValAsFloat(un.act, -1);
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
@@ -2219,14 +1881,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   float x;
   for(x = min; x <= max; x += incr) {
     float aval;
-    if(act.gelin) {
-      aval = Compute_ActValFmVmVal_rate(x - g_e_thr);
-    }
-    else {
-      float v_m = ((g_bar.e * x * e_rev.e) + (g_bar.i * g_i * e_rev.i) + (g_bar.l * e_rev.l)) /
-        ((g_bar.e * x) + (g_bar.i * g_i) + g_bar.l);
-      aval = Compute_ActValFmVmVal_rate(v_m - act.thr);
-    }
+    aval = Compute_ActFun_rate_impl(x - g_e_thr);
     float ln = x - g_e_thr;
     if(ln < 0.0f) ln = 0.0f;
     ln *= lin_gain;

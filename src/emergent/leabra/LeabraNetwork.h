@@ -179,6 +179,7 @@ public:
   int		phase_max;	// #CAT_Counter maximum number of phases to run (note: this is set by Trial_Init depending on phase_order)
 
   int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
+  int           tot_cycle;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total cycle count -- this increments from last Init_Weights and just keeps going up (unless otherwise reset) -- used for tracking things like spiking times continuously across time
   float		time_inc;	// how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset
 
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
@@ -202,9 +203,6 @@ public:
   int		send_pct_n;	// #NO_SAVE #READ_ONLY #CAT_Statistic number of units sending activation this cycle
   int		send_pct_tot;	// #NO_SAVE #READ_ONLY #CAT_Statistic total number of units that could send activation this cycle
   Average	avg_send_pct;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average proportion of units sending activation over an epoch
-
-  float		maxda_stopcrit;	// #DEF_0.005;-1 #CAT_Statistic stopping criterion for max da
-  float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW maximum change in activation (delta-activation) over network; used in stopping settling
 
   float		trg_max_act_stopcrit;	// #CAT_Statistic stopping criterion for target-layer maximum activation (can be used for stopping settling)
   float		trg_max_act;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic target-layer maximum activation (can be used for stopping settling)
@@ -286,7 +284,6 @@ public:
   void	BuildUnits_Threads() override;
   void  BuildUnits_Threads_send_netin_tmp() override;
   bool  RecvOwnsCons() override { return false; }
-  void  CountCons() override;
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
@@ -383,11 +380,11 @@ public:
   //	Cycle Stats
 
   virtual void	Compute_CycleStats_Pre();
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc -- network-level pre-step
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
   virtual void	Compute_CycleStats_Layer();
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa -- layer level computation
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- layer level computation
   virtual void	Compute_CycleStats_Post();
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc -- network-level post-step
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc

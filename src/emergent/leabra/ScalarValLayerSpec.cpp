@@ -178,7 +178,7 @@ void ScalarValLayerSpec::HelpConfig() {
  - Default UnitSpec and LayerSpec params with FF_FB_INHIB, gi = 2.2 generally works well\n\
  - For 0-1 range, GAUSSIAN: 12 or 22 units works well, LOCALIST: 4 units\n\
  - The bias_val settings allow you to specify a default initial and ongoing bias value\
- through a constant excitatory current (GC) or bias weights (BWT) to the unit, and initial\
+ through bias weights (BWT) to the unit, and initial\
  weight values.  These establish a distributed representation that represents the given .val\n\
  - A self connection using the ScalarValSelfPrjnSpec can be made, which provides a bias\
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
@@ -206,20 +206,6 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     if(scalar.rep == ScalarValSpec::LOCALIST) {
       kwta.k = 1;         // localist means 1 unit active!!
       gp_kwta.k = 1;
-    }
-  }
-
-  if(bias_val.un == ScalarValBias::GC) {
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    if(lay->CheckError(us->hyst.init, quiet, rval,
-                  "bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-      us->SetUnique("hyst", true);
-      us->hyst.init = false;
-    }
-    if(lay->CheckError(us->acc.init, quiet, rval,
-                  "bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-      us->SetUnique("acc", true);
-      us->acc.init = false;
     }
   }
 
@@ -291,9 +277,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode 
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * scalar.GetUnitAct(i);
-    if(bias_val.un == ScalarValBias::GC)
-      u->vcb.g_h = act;
-    else if(bias_val.un == ScalarValBias::BWT)
+    if(bias_val.un == ScalarValBias::BWT)
       u->bias.OwnCn(0,BaseCons::WT) = act;
   }
 }
@@ -307,9 +291,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMo
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    if(bias_val.un == ScalarValBias::GC)
-      u->vcb.g_a = val;
-    else if(bias_val.un == ScalarValBias::BWT)
+    if(bias_val.un == ScalarValBias::BWT)
       u->bias.OwnCn(0,BaseCons::WT) = -val;
     val += incr;
   }
@@ -324,9 +306,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMo
   for(int i=1;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    if(bias_val.un == ScalarValBias::GC)
-      u->vcb.g_h = val;
-    else if(bias_val.un == ScalarValBias::BWT)
+    if(bias_val.un == ScalarValBias::BWT)
       u->bias.OwnCn(0,BaseCons::WT) = val;
     val += incr;
   }
@@ -514,7 +494,7 @@ void ScalarValLayerSpec::ResetAfterClamp_ugp(LeabraLayer* lay,
   if(nunits > 2) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
     u->net = 0.0f;
-    u->gc.i = 0.0f;
+    u->gc_i = 0.0f;
     u->g_i_syn = 0.0f;
     u->act = 0.0f;              // must reset so it doesn't contribute!
     u->act_lrn = 0.0f;
@@ -562,7 +542,7 @@ void ScalarValLayerSpec::Settle_Init_Unit0_ugp(LeabraLayer* lay,
     // these are not cleared for the first unit anymore
     u->net = 0.0f;
     u->g_i_syn = 0.0f;
-    u->gc.i = 0.0f;
+    u->gc_i = 0.0f;
   }
 }
 

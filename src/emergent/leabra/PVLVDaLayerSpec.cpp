@@ -70,9 +70,6 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   // must have the appropriate ranges for unit specs..
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
-  us->SetUnique("maxda", true);
-  us->maxda.val = MaxDaSpec::NO_MAX_DA;
-
   if(lay->CheckError((us->act_range.max != 2.0f) || (us->act_range.min != -2.0f), quiet, rval,
                 "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
                 us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
@@ -88,12 +85,6 @@ bool PVLVDaLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     us->clamp_range.max = 2.0f;
     us->clamp_range.min = -2.0f;
     us->clamp_range.UpdateAfterEdit();
-  }
-  if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.0f;
   }
 
   // check recv connection

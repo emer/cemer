@@ -98,10 +98,10 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   lay->SetLayerFlag(Layer::NO_ADD_COMP_SSE);
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
+  if(lay->CheckError(us->act_misc.avg_dt != 0.0f, quiet, rval,
                 "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.0f;
+    us->SetUnique("act_misc", true);
+    us->act_misc.avg_dt = 0.0f;
   }
   us->UpdateAfterEdit();
 

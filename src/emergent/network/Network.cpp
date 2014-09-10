@@ -918,6 +918,7 @@ void Network::Init_Acts(){
 }
 
 void Network::Init_dWt(){
+  if(units_flat.size == 0) return;
   ThreadUnitCall un_call(&Unit::Init_dWt);
   threads.Run(&un_call);
 }
@@ -926,6 +927,8 @@ void Network::Init_Weights() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
   //NOTE: this will typically be nested inside a gui check
   if (!CheckConfig(false)) return;
+  if(units_flat.size == 0) return;
+
   taMisc::Busy();
 
   needs_wt_sym = false;          // will get set to true if needed

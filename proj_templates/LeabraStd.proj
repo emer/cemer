@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7516
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7522
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1462,9 +1462,9 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
-    UserDataItem @["maxda"] { };
     UserDataItem @["minus_output_name"] { };
     UserDataItem @["minus_cycles"] { };
+    UserDataItem @["tot_cycle"] { };
     UserDataItem @["ct_cycle"] { };
     UserDataItem @["phase_no"] { };
     UserDataItem @["phase"] { };
@@ -1479,6 +1479,7 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["maxda"] { };
    };
 
    BaseSpec_Group @.specs = [4] {
@@ -3452,7 +3453,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 0;0;0;0;0;0;      };
+      [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -3483,7 +3484,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 8;8;8;8;8;8;      };
+      [0]       };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -3514,7 +3515,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 0;1;2;3;4;5;      };
+      [0]       };
      };
      String_Data @["trial_name"] {
       UserDataItem_List @*(.user_data_) {
@@ -3540,7 +3541,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] "checks";"rdiag";"random";"ldiag";"mitvert";"midhoriz";      };
+      [0]       };
      };
      String_Data @["group_name"] {
       UserDataItem_List @*(.user_data_) {
@@ -3566,7 +3567,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] ;;;;;;      };
+      [0]       };
      };
      int_Data @["phase_no"] {
       UserDataItem_List @*(.user_data_) {
@@ -3597,7 +3598,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 2;2;2;2;2;2;      };
+      [0]       };
      };
      float_Data @["minus_cycles"] {
       UserDataItem_List @*(.user_data_) {
@@ -3623,7 +3624,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 50;50;50;50;50;50;      };
+      [0]       };
      };
      float_Data @["sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -3649,7 +3650,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 0;0;0;0;0;0;      };
+      [0]       };
      };
      float_Data @["ext_rew"] {
       UserDataItem_List @*(.user_data_) {
@@ -3675,7 +3676,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [6] 0;0;0;0;0;0;      };
+      [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3684,7 +3685,7 @@ LeabraProject .projects["LeabraStd"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [6] 0;1;2;3;4;5;    };
+    [0]     };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -3717,7 +3718,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 0;0;0;0;0;0;0;0;0;      };
+      [0]       };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -3743,7 +3744,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 0;1;2;3;4;5;6;7;8;      };
+      [0]       };
      };
      float_Data @["avg_sse"] {
       name="avg_sse";
@@ -3759,7 +3760,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 5.4954772;3.3317306;3.0140817;2.0059164;1.1810151;0.81613708;0.08565262;0;0;      };
+      [0]       };
      };
      float_Data @["cnt_err"] {
       name="cnt_err";
@@ -3775,7 +3776,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 6;6;6;6;6;6;2;0;0;      };
+      [0]       };
      };
      float_Data @["avg_ext_rew"] {
       name="avg_ext_rew";
@@ -3791,7 +3792,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 0;0;0;0;0;0;0;0;0;      };
+      [0]       };
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
@@ -3807,7 +3808,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 50;50;50;50;50;50;50;50;50;      };
+      [0]       };
      };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
@@ -3823,7 +3824,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 0.20999999;0.2;0.20999999;0.2;0.2;0.2;0.2;0.28;0.07;      };
+      [0]       };
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
@@ -3839,7 +3840,7 @@ LeabraProject .projects["LeabraStd"] {
       width=0;
       ar {
        name="ar";
-      [9] 0.13;0.12;0.13;0.12;0.12;0.12;0.13;0.20999999;0.039999999;      };
+      [0]       };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3848,7 +3849,7 @@ LeabraProject .projects["LeabraStd"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [9] 0;1;2;3;4;5;6;7;8;    };
+    [0]     };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -5251,7 +5252,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=9;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5325,7 +5326,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["n_under_cnt"] {
       name="n_under_cnt";
       var_type=T_Int;
-      int_val=2;
+      int_val=0;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6001,7 +6002,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=5;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6459,7 +6460,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["phase_no"] {
       name="phase_no";
       var_type=T_Int;
-      int_val=2;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6757,7 +6758,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["cycle"] {
       name="cycle";
       var_type=T_Int;
-      int_val=20;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6970,8 +6971,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=0;
 	orig_prog_code=;
 	cond {
-	 expr="(network.maxda < network.maxda_stopcrit) ||
- (network.trg_max_act > network.trg_max_act_stopcrit)";
+	 expr="(network.trg_max_act > network.trg_max_act_stopcrit)";
 	};
        };
       };
@@ -9236,7 +9236,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=8: };
+	  view_range {min=0: max=-1: };
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -9264,7 +9264,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=8: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -9303,7 +9303,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=5.495477: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9322,7 +9322,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=6: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10139,11 +10139,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["maxda"] {
-     name="maxda";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["minus_output_name"] {
      name="minus_output_name";
      value 1 0=1;
@@ -10151,6 +10146,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["minus_cycles"] {
      name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tot_cycle"] {
+     name="tot_cycle";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -10221,6 +10221,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["batch"] {
      name="batch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["maxda"] {
+     name="maxda";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -10309,10 +10314,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-     act_lrn_on=0;
-     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+     act {thr=0.5: gain=100: nvar=0.005: };
+     act_misc {act_lrn=ACT_EQ: act_max_hz=100: time_unit=1000: avg_time=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_time=50: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
       spk_thr=1.2;
@@ -10320,32 +10324,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       clamp_type=REGULAR;
       vm_r=0.3;
       t_r=6;
-      vm_dend=0.3;
-      vm_dend_dt=0.16;
-      vm_dend_time=6.25;
      };
-     opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+     opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="v_m_init": type=NONE: mean=0.300000011920929: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.2: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-     g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-     e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-     hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
-     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     dt {integ=1: vm_time=3.3: net_time=1.4: midpoint=0: fast_cyc=0: vm=0.3030303: net=0.7142857: };
+     act_avg {l_up_inc=0.2: l_dn_time=2.5: cascade=0: ss_time=1: s_time=5: m_time=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+     g_bar {e=1: l=0.1: i=1: };
+     e_rev {e=1: l=0.3: i=0.25: };
      adapt {
       on=0;
-      dt=0.007;
+      time=144;
       vm_gain=0.04;
       spike_gain=0.00805;
-      interval=10;
-      trials=0;
-      dt_time=142.8571;
+      dt=0.006944444;
      };
-     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=10: trials=0: max_amp=1: };
+     stp {on=0: f_r_ratio=0.02: t_rec=200: t_fac=4: p0=0.3: fac=0.3: t_kre=100: re=0.002: act_hz=100: dt_rec=0.005: dt_fac=0.25: dt_kre=0.01: };
      syn_delay {
       on=0;
       delay=4;
@@ -10760,7 +10756,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     plus_s_only=0;
     force_con=0;
    };
-   maxda_stopcrit=-1;
+   rel_netin {
+    on=1;
+    trl_skip=10;
+    epc_skip=10;
+   };
    trg_max_act_stopcrit=1;
    norew_val=0.5;
    off_errs=1;

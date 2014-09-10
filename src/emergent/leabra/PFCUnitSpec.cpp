@@ -26,8 +26,7 @@ void PFCUnitSpec::Initialize() {
 }
 
 void PFCUnitSpec::Defaults_init() {
-  g_bar.h = 0.0f;		// don't use it by default -- use mix
-  act_avg.l_up_dt = 0.1f;       // needs a slower upside due to longer maintenance window..
+  act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
 }
 
 ///////////////////////////////////////////////////////////

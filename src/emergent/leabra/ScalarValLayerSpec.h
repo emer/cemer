@@ -30,7 +30,7 @@
 // to do equivalent of "clamp_value" (e.g., LV units at end of settle), add a special
 // mode where asymptotic Vm is computed based on current params, and act from that, etc.
 
-// also possible: unit subgroups that all have the same gc.i value, but different random
+// also possible: unit subgroups that all have the same gc_i value, but different random
 // connectivity from inputs: sending units all send to a fixed # (permute) of these 
 // group units, producing a random sensory representation.  not really necc. for S2 
 // spikes, because of syndep..
@@ -90,7 +90,6 @@ INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
-    GC,				// bias value enters as a conductance in gc.h or gc.a
     BWT				// bias value enters as a bias.wt
   };
 

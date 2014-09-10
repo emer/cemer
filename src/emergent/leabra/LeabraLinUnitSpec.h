@@ -31,7 +31,7 @@ class E_API LeabraLinUnitSpec : public LeabraUnitSpec {
   // a pure linear unit (suitable for an AC unit spec unit)
 INHERITED(LeabraUnitSpec)
 public:
-  void 	Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
+  void 	Compute_ActFun(LeabraUnit* u, LeabraNetwork* net);
   
   TA_BASEFUNS(LeabraLinUnitSpec);
 protected:

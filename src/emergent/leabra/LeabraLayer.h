@@ -79,7 +79,6 @@ public:
 #endif
 
   void  CheckSpecs() override;
-  int   CountCons(Network* net) override;
   void	BuildUnits() override;
   void  BuildUnits_Threads(Network* net) override
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
@@ -198,7 +197,7 @@ public:
 
   void	Compute_CycleStats(LeabraNetwork* net, int thread_no=-1)
   { spec->Compute_CycleStats(this, net, thread_no); }
-  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
+  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, OutputName, etc
   void	Compute_OutputName(LeabraNetwork* net)
   { spec->Compute_OutputName(this, net); }
   // #CAT_Statistic compute output name based on most active unit name

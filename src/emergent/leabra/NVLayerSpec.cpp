@@ -33,7 +33,7 @@ void NVLayerSpec::Initialize() {
   // SetUnique("decay", true);
   decay.phase = 0.0f;
 
-  bias_val.un = ScalarValBias::GC;
+  bias_val.un = ScalarValBias::NO_UN;
   bias_val.val = 1.0f;          // this is the completely novel value
 }
 
@@ -70,16 +70,6 @@ bool NVLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   decay.phase = 0.0f;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(us->act.avg_dt != 0.0f, quiet, rval,
-                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act", true);
-    us->act.avg_dt = 0.0f;
-  }
-
-  us->SetUnique("maxda", true);
-  us->maxda.val = MaxDaSpec::NO_MAX_DA;
-
   us->UpdateAfterEdit();
 
   // note: increased flexibility here: we don't check for things we don't actually depend

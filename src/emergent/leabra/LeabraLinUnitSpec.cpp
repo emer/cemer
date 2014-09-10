@@ -33,14 +33,12 @@ void LeabraLinUnitSpec::Initialize() {
   act.gain = 2;
 }
 
-void LeabraLinUnitSpec::Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net) {
+void LeabraLinUnitSpec::Compute_ActFun(LeabraUnit* u, LeabraNetwork* net) {
   float new_act = u->net * act.gain; // use linear netin as act
 
   u->da = new_act - u->act;
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += Compute_Noise(u, net);
   }
-  u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
-  // note: keeping act_lrn based on sigmoidal function.. 
-  Compute_ActLrnFmVm_rate(u, net);
+  u->act_lrn = u->act = u->act_nd = u->act_eq = act_range.Clip(new_act);
 }

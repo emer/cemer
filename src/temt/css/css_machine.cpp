@@ -5552,6 +5552,9 @@ void cssCmdShell::StartupShellInit(istream& fhi, ostream& fho) {
   else if(taMisc::interactive) {
     cssMisc::TopShell->Shell_No_Console(prmpt);
   }
+  else {
+    cssMisc::TopShell->PushSrcProg(cssMisc::Top);
+  }
 }
 
 bool cssCmdShell::RunStartupScript() {

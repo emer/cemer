@@ -76,8 +76,6 @@ void LeabraInhib::Inhib_Initialize() {
   kwta.pct = .25;
   kwta.pct_c = .75;
   i_val.Init();
-  phase_dif_ratio = 1.0f;
-  maxda = 0.0f;
   un_g_i.cmpt = false;          // don't compute by default
 }
 
@@ -87,7 +85,6 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   netin.InitVals();
   acts.InitVals();
   un_g_i.InitVals();
-  maxda = 0.0f;
 }
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
@@ -98,7 +95,6 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts_m_avg = cp.acts_m_avg;
   acts_ctxt = cp.acts_ctxt;
   acts_mid = cp.acts_mid;
-  phase_dif_ratio = cp.phase_dif_ratio;
   kwta = cp.kwta;
   i_val = cp.i_val;
   un_g_i = cp.un_g_i;

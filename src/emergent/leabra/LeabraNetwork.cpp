@@ -76,6 +76,7 @@ void LeabraNetwork::Initialize() {
   phase_max = 2;
 
   ct_cycle = 0;
+  tot_cycle = 0;
   time_inc = 1.0f;              // just a simple counter by default
 
   cycle_max = 60;
@@ -88,9 +89,6 @@ void LeabraNetwork::Initialize() {
 
   send_pct = 0.0f;
   send_pct_n = send_pct_tot = 0;
-
-  maxda_stopcrit = -1.0f;
-  maxda = 0.0f;
 
   trg_max_act_stopcrit = 1.0f;  // disabled
   trg_max_act = 0.0f;
@@ -140,13 +138,7 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   if(learn_rule != LEABRA_CHL) {
     ct_time.use = true;		// has to be true for these guys
-    maxda_stopcrit = -1.0f;     // also has to be off
   }
-  else {
-    if(maxda_stopcrit == -1.0f) // restore defaults
-      maxda_stopcrit = 0.005f;
-  }
-
   ct_time.UpdateAfterEdit_NoGui();
 
   if(TestWarning(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
@@ -190,7 +182,6 @@ void LeabraNetwork::Init_Counters() {
 
 void LeabraNetwork::Init_Stats() {
   inherited::Init_Stats();
-  maxda = 0.0f;
   trg_max_act = 0.0f;
 
   minus_cycles = 0.0f;
@@ -273,11 +264,9 @@ void LeabraNetwork::SetLearnRule_ConSpecs(BaseSpec_Group* spgp) {
 
 void LeabraNetwork::SetLearnRule() {
   if(learn_rule == LEABRA_CHL) {
-    maxda_stopcrit = 0.005f;
     min_cycles = 15;
     min_cycles_phase2 = 35;
     cycle_max = 60;
-    ct_time.use = false;
   }
   else {
     if(learn_rule == CTLEABRA_CAL) {
@@ -287,7 +276,6 @@ void LeabraNetwork::SetLearnRule() {
       ct_sravg.interval = 1;
     }
 
-    maxda_stopcrit = -1;
     min_cycles = 0;
     min_cycles_phase2 = 0;
     ct_time.use = true;
@@ -307,10 +295,6 @@ void LeabraNetwork::CheckInhibCons() {
     if(!lay->lesioned())
       lay->CheckInhibCons(this);
   }
-}
-
-void LeabraNetwork::CountCons() {
-  inherited::CountCons();
 }
 
 void LeabraNetwork::BuildUnits_Threads() {
@@ -598,6 +582,7 @@ void LeabraNetwork::Cycle_Run() {
 
     cycle++;
     ct_cycle++;
+    tot_cycle++;
     time +=  time_inc; // always increment time..
   }
 }
@@ -768,7 +753,6 @@ void LeabraNetwork::Compute_SRAvg_Cons() {
 void LeabraNetwork::Compute_CycleStats_Pre() {
   // stats are never threadable due to updating at higher levels
   output_name = "";             // this will be updated by layer
-  maxda = 0.0f;         // initialize
   trg_max_act = 0.0f;
   init_netins_cycle_stat = false;
 }

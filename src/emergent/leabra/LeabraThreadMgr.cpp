@@ -302,6 +302,7 @@ void LeabraTask::Cycle_Run() {
     if(task_id == 0) {
       net->cycle++;
       net->ct_cycle++;
+      net->tot_cycle++;
       net->time += net->time_inc; // always increment time..
     }
   }

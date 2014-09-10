@@ -164,15 +164,6 @@ void LeabraLayer::BuildKwtaBuffs() {
   ungp_data.SetSize(gp_geom.n);
 }
 
-int LeabraLayer::CountCons(Network* net) {
-  int n_cons = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, units) {
-    if(u->lesioned()) continue;
-    n_cons += u->CountCons(net);
-  }
-  return n_cons;
-}
-
 void LeabraLayer::BuildUnits() {
   ResetSortBuf();
   inherited::BuildUnits();

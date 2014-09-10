@@ -165,7 +165,7 @@ void TwoDValLayerSpec::HelpConfig() {
  appropriate distributed representation in the rest of the units.\n\
  \nTwoDValLayerSpec Configuration:\n\
  - The bias_val settings allow you to specify a default initial and ongoing bias value\
- through a constant excitatory current (GC) or bias weights (BWT) to the unit, and initial\
+ through bias weights (BWT) to the unit, and initial\
  weight values.  These establish a distributed representation that represents the given .val\n\
  - A self connection using the TwoDValSelfPrjnSpec can be made, which provides a bias\
  for neighboring units to have similar values.  It should usually have a fairly small wt_scale.rel\
@@ -198,20 +198,6 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   if(twod.rep == TwoDValSpec::LOCALIST) {
     kwta.k = 1;         // localist means 1 unit active!!
     gp_kwta.k = 1;
-  }
-
-  if(bias_val.un == TwoDValBias::GC) {
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-    if(lay->CheckError(us->hyst.init, quiet, rval,
-                  "bias_val.un = GCH requires UnitSpec hyst.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-      us->SetUnique("hyst", true);
-      us->hyst.init = false;
-    }
-    if(lay->CheckError(us->acc.init, quiet, rval,
-                  "bias_val.un = GC requires UnitSpec acc.init = false, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-      us->SetUnique("acc", true);
-      us->acc.init = false;
-    }
   }
 
   // check for conspecs with correct params
@@ -260,13 +246,12 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       kwta.k = 1;
       inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
       inhib.kwta_pt = 0.9f;
-      us->g_bar.h = .03f; us->g_bar.a = .09f;
       us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
       us->act.thr = .17f;
       us->act.gain = 220.0f;
       us->act.nvar = .01f;
       us->dt.vm = .05f;
-      bias_val.un = TwoDValBias::GC; bias_val.wt = TwoDValBias::NO_WT;
+      bias_val.un = TwoDValBias::NO_UN; bias_val.wt = TwoDValBias::NO_WT;
       x_range.min = 0.0f; x_range.max = 1.0f;
       y_range.min = 0.0f; y_range.max = 1.0f;
 
@@ -287,13 +272,12 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
     else if(twod.rep == TwoDValSpec::GAUSSIAN) {
       inhib.type = LeabraInhibSpec::KWTA_INHIB;
       inhib.kwta_pt = 0.25f;
-      us->g_bar.h = .015f; us->g_bar.a = .045f;
       us->act_fun = LeabraUnitSpec::NOISY_XX1;
       us->act.thr = .25f;
       us->act.gain = 600.0f;
       us->act.nvar = .005f;
       us->dt.vm = .2f;
-      bias_val.un = TwoDValBias::GC;  bias_val.wt = TwoDValBias::NO_WT;
+      bias_val.un = TwoDValBias::NO_UN;  bias_val.wt = TwoDValBias::NO_WT;
       x_range.min = -.5f; x_range.max = 1.5f;
       y_range.min = -.5f; y_range.max = 1.5f;
 
@@ -354,9 +338,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode ac
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * twod.GetUnitAct(i);
-    if(bias_val.un == TwoDValBias::GC)
-      u->vcb.g_h = act;
-    else if(bias_val.un == TwoDValBias::BWT)
+    if(bias_val.un == TwoDValBias::BWT)
       u->bias.OwnCn(0,BaseCons::WT) = act;
   }
 }

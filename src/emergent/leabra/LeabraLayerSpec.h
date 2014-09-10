@@ -40,8 +40,8 @@ INHERITED(SpecMemberBase)
 public:
   enum InhibType {		// how to compute the inhibition
     FF_FB_INHIB,                // simulated interneuron-like feedforward (proportional to avg netin) and feedback (proportional to avg act) inhibition
-    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std for gelin, .25 otherwise)
-    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std for gelin, .6 otherwise)
+    KWTA_INHIB,			// between thresholds of k and k+1th most activated units (sets precise k value, should use i_kwta_pt = .2 std )
+    KWTA_AVG_INHIB,		// average of top k vs avg of rest (provides more flexibility in actual k value, should use i_kwta_pt = .5 std)
     UNIT_INHIB,			// unit-based inhibition (g_i from netinput -- requires connections with inhib flag set to provide inhibition)
   };
 
@@ -382,7 +382,7 @@ public:
   //	Cycle Stats
 
   virtual void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, MaxDa, OutputName, etc
+  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, OutputName, etc
   // this does all the indented functions below
 
     virtual int  LayerStatsStartUnitIdx() { return 0; }
@@ -397,12 +397,6 @@ public:
     // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
     virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute activation AvgMaxVals (acts)
-
-    virtual void Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation compute maximum delta-activation in layer (used for stopping criterion)
-      virtual void Compute_MaxDa_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				     LeabraInhib* thr, LeabraNetwork* net);
-      // #IGNORE unit group compute maximum delta-activation
 
     virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
@@ -448,8 +442,6 @@ public:
     // #CAT_Activation get minus phase act stats
     virtual void PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get plus phase act stats
-    virtual void PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation get phase dif ratio from minus to plus
 
   virtual void	Compute_ActM_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used

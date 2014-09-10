@@ -44,7 +44,7 @@ void LVeLayerSpec::Initialize() {
   // SetUnique("decay", true);
   decay.phase = 0.0f;
 
-  bias_val.un = ScalarValBias::GC;
+  bias_val.un = ScalarValBias::NO_UN;
   bias_val.val = 0.5f;
 }
 
@@ -78,9 +78,6 @@ bool LVeLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   decay.phase = 0.0f;
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-
-  us->SetUnique("maxda", true);
-  us->maxda.val = MaxDaSpec::NO_MAX_DA;
 
   us->UpdateAfterEdit();
 

@@ -128,21 +128,6 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
   }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-
-  us->SetUnique("g_bar", true);
-  if(lay->CheckError(us->hyst.init, quiet, rval,
-                "requires UnitSpec hyst.init = false, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("hyst", true);
-    us->hyst.init = false;
-  }
-  if(lay->CheckError(us->acc.init, quiet, rval,
-                "requires UnitSpec acc.init = false, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("acc", true);
-    us->acc.init = false;
-  }
-
   PFCLayerSpec* pfcls = (PFCLayerSpec*)lay->GetLayerSpec();
   if(lay->CheckError(gate.max_maint==0, quiet, rval,
   		"max_maint == 0 is forbidden! I just set it to 1 for you in spec:",

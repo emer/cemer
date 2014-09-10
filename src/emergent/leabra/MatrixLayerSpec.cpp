@@ -123,10 +123,6 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   us->SetUnique("g_bar", true);
-
-  us->SetUnique("maxda", true);
-  us->maxda.val = MaxDaSpec::NO_MAX_DA;
-
   us->UpdateAfterEdit();
 
   LeabraBiasSpec* bs = (LeabraBiasSpec*)us->bias_spec.SPtr();

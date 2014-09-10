@@ -29,16 +29,6 @@ void MatrixUnitSpec::Initialize() {
 }
 
 void MatrixUnitSpec::Defaults_init() {
-  SetUnique("act", true);
-  act.i_thr = LeabraActFunExSpec::NO_AH; // key for dopamine effects
-
-  SetUnique("g_bar", true);
-  g_bar.a = .03f;
-  g_bar.h = .01f;
-
-  SetUnique("maxda", true);
-  maxda.val = MaxDaSpec::NO_MAX_DA;
-
   // SetUnique("noise_type", true);
   noise_type = NO_NOISE;        // NETIN_NOISE
 

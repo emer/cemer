@@ -91,12 +91,10 @@ public:
   AvgMaxVals	acts_m_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation time-averaged minus-phase activation stats for the layer
   AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation TI act_ctxt activation stats for the layer
   AvgMaxVals	acts_mid;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation mid-minus phase activations -- only used in hippocampus at this point (possibly also in PBWM)
-  float		phase_dif_ratio; // #NO_SAVE #READ_ONLY #SHOW #CAT_Activation phase-difference ratio (acts_m.avg / acts_p.avg)
  
   KWTAVals	kwta;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
   InhibVals	i_val;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
-  float		maxda;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic maximum change in activation (delta-activation) over network; used in stopping settling
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }

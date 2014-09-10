@@ -32,7 +32,6 @@ public:
   void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
   void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val) { };
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override { };
-  float Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net) override { return 0.0f; }
 
   TA_SIMPLE_BASEFUNS(LayerActUnitSpec);
 protected:

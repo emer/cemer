@@ -994,7 +994,6 @@ void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net,
                                          int thread_no) {
   // note: Compute_OutputName now done in a network-level post step
   Compute_Acts_AvgMax(lay, net);
-  Compute_MaxDa(lay, net);
 
   if(lay->un_g_i.cmpt)
     Compute_UnitInhib_AvgMax(lay, net);
@@ -1059,34 +1058,6 @@ void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   }
   else {
     Compute_AvgMaxActs_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay);
-  }
-}
-
-void LeabraLayerSpec::Compute_MaxDa_ugp(LeabraLayer* lay,
-                                        Layer::AccessMode acc_md, int gpidx,
-                                        LeabraInhib* thr, LeabraNetwork* net) {
-  thr->maxda = 0.0f;
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  for(int i=0; i<nunits; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    float fda = u->Compute_MaxDa(net);
-    lay->maxda = MAX(fda, lay->maxda);
-    thr->maxda = MAX(fda, thr->maxda);
-    net->maxda = MAX(fda, net->maxda);
-  }
-}
-
-void LeabraLayerSpec::Compute_MaxDa(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->maxda = 0.0f;
-  if(lay->unit_groups) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_MaxDa_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
-    }
-  }
-  else {
-    Compute_MaxDa_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
   }
 }
 
@@ -1257,21 +1228,18 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
     if(no_plus_testing) {
       PostSettle_GetMinus(lay, net);
       PostSettle_GetPlus(lay, net);
-      lay->phase_dif_ratio = 1.0f;
     }
     else {
       if(net->phase == LeabraNetwork::MINUS_PHASE)
         PostSettle_GetMinus(lay, net);
       else {
         PostSettle_GetPlus(lay, net);
-        PostSettle_GetPhaseDifRatio(lay, net);
       }
     }
     break;
   case LeabraNetwork::PLUS_ONLY:
     PostSettle_GetMinus(lay, net);
     PostSettle_GetPlus(lay, net);
-    lay->phase_dif_ratio = 1.0f;
     break;
   }
 
@@ -1305,22 +1273,6 @@ void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->acts_p = gpd->acts;
       gpd->kwta.prv_phs_ffi = gpd->kwta.ffi;
       gpd->kwta.prv_trl_ffi = gpd->kwta.ffi;
-    }
-  }
-}
-
-void LeabraLayerSpec::PostSettle_GetPhaseDifRatio(LeabraLayer* lay, LeabraNetwork* net) {
-  if(lay->acts_p.avg > 0.0f)
-    lay->phase_dif_ratio = lay->acts_m.avg / lay->acts_p.avg;
-  else
-    lay->phase_dif_ratio = 1.0f;
-  if(lay->unit_groups) {
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      if(gpd->acts_p.avg > 0.0f)
-        gpd->phase_dif_ratio = gpd->acts_m.avg / gpd->acts_p.avg;
-      else
-        gpd->phase_dif_ratio = 1.0f;
     }
   }
 }

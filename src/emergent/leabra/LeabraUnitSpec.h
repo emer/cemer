@@ -40,11 +40,10 @@ class LeabraInhib; //
 eTypeDef_Of(LeabraActFunSpec);
 
 class E_API LeabraActFunSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
 INHERITED(SpecMemberBase)
 public:
-  bool		gelin;		// #DEF_true IMPORTANT: Use BioParams button with all default settings if turning this on in an old project to set other important params to match.  Computes rate-code activations directly off of the g_e excitatory conductance (i.e., net = netinput) compared to the g_e value that would put the unit right at its firing threshold (g_e_thr) -- this reproduces the empirical rate-code behavior of a discrete spiking network much better than computing from the v_m - thr value.  other conductances (g_i, g_l, g_a, g_h) enter via their effects on the effective threshold (g_e_thr).  the activation dynamics update over time using the dt.vm time constant, only after v_m itself is over threshold -- if v_m is under threshold, driving act is zero
-  float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button -- use this for gelin)
+  float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
 
@@ -60,26 +59,33 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(LeabraActFunExSpec);
+eTypeDef_Of(LeabraActMiscSpec);
 
-class E_API LeabraActFunExSpec : public LeabraActFunSpec {
-  // leabra activation function specifications with extra stuff
-INHERITED(LeabraActFunSpec)
+class E_API LeabraActMiscSpec : public SpecMemberBase {
+  //##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra miscellaneous activation computation parameters and specs
+INHERITED(SpecMemberBase)
 public:
-  enum IThrFun {	       
-    STD,			// include all currents (except bias weights) in inhibitory threshold computation
-    NO_A,			// exclude gc.a current: allows accommodation to knock out units from kwta active list, without other units coming in to take their place
-    NO_H,			// exclude gc.h current: prevent hysteresis current from affecting inhibitory threshold computation
-    NO_AH,			// exclude gc.a and gc.h currents: prevent both accommodation and hysteresis currents from affecting inhibitory threshold computation
-    ALL,			// include all currents INCLUDING bias weights
+  enum ActLrnVal {   // what activation value to use for learning, stored in act_lrn variable
+    ACT_EQ,          // use the rate-code equivalent activations, act_eq, which are subject to depression -- not recommeded for CHL-based learning rule, but can work otherwise, although the risk of significant differences between minus and plus phase could be problematic
+    ACT_ND,          // use the non-depressed activations, act_nd -- this is particularly useful when using CHL-style learning, which can be distorted by effects of depression, though it can also affect XCAL -- note that adaptation effects are always still included in act_nd
   };
 
-  float		avg_dt;		// #DEF_0.005 #MIN_0 time constant for integrating activation average (act_avg -- computed across trials) -- used mostly for visualization purposes
-  float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value
-  bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
-  IThrFun	i_thr;		// [STD or NO_AH for da mod units] how to compute the inhibitory threshold for kWTA functions -- IRRELEVANT for FFFB Inhibition -- determines what currents to include or exclude in computing amount of inhibition to keep the unit just at threshold firing -- for units with dopamine-like modulation using the a and h currents, NO_AH makes learning much more reliable because otherwise kwta partially compensates for the da modulation
+  ActLrnVal     act_lrn;        // which activation variable should be used for learning?  gets stored in unit act_lrn variable, and is then used for the phase activation states (act_m, act_p), which drive CHL learning, and for driving the time-averages (avg_s, avg_m) that drive XCAL learning
 
-  TA_SIMPLE_BASEFUNS(LeabraActFunExSpec);
+  float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking, what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
+  float         time_unit;      // #DEF_1000 for translating rate-code activations into discrete spiking, what is the time unit for computing intervals between spikes from a Hz firing rate?  default is 1000 msec -- computation also takes into account the dt.integ setting
+  float		avg_time;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
+  float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
+  bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
+  float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+
+  inline int    ActToInterval(const float integ, const float act)
+  { return (int) (time_unit / (integ * act * act_max_hz)); }
+
+  TA_SIMPLE_BASEFUNS(LeabraActMiscSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -97,13 +103,14 @@ public:
   float		g_gain;		// #DEF_9 #MIN_0 multiplier for the spike-generated conductances when using alpha function which is normalized by area under the curve -- needed to recalibrate the alpha-function currents relative to rate code net input which is overall larger -- in general making this the same as the decay constant works well, effectively neutralizing the area normalization (results in consistent peak current, but differential integrated current over time as a function of rise and decay)
   int		window;		// #DEF_3 #MIN_0 spike integration window -- when rise==0, this window is used to smooth out the spike impulses similar to a rise time -- each net contributes over the window in proportion to 1/window -- for rise > 0, this is used for computing the alpha function -- should be long enough to incorporate the bulk of the alpha function, but the longer the window, the greater the computational cost
   float		eq_gain;	// #DEF_8 #MIN_0 gain for computing act_eq relative to actual average: act_eq = eq_gain * (spikes/cycles)
-  float		eq_dt;		// #DEF_0.02 #MIN_0 #MAX_1 if non-zero, eq is computed as a running average with this time constant
+  float		eq_time;	// #DEF_50 #MIN_0 if non-zero, compute act_eq as a continuous running average instead of explicit spikes / cycles -- this is the time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
 
   float		gg_decay;	// #READ_ONLY #NO_SAVE g_gain/decay
   float		gg_decay_sq;	// #READ_ONLY #NO_SAVE g_gain/decay^2
   float		gg_decay_rise; // #READ_ONLY #NO_SAVE g_gain/(decay-rise)
   float		oneo_decay;	// #READ_ONLY #NO_SAVE 1.0/decay
   float		oneo_rise;	// #READ_ONLY #NO_SAVE 1.0/rise
+  float         eq_dt;          // #READ_ONLY #EXPERT rate = 1 / time
 
   float	ComputeAlpha(float t) {
     if(decay == 0.0f) return (t == 0.0f) ? g_gain : 0.0f; // delta function
@@ -143,9 +150,6 @@ public:
   ClampType	clamp_type;	// how to generate spikes when layer is hard clamped -- in many cases soft clamping may work better
   float		vm_r;		// #DEF_0;0.15;0.3 #AKA_v_m_r post-spiking membrane potential to reset to, produces refractory effect if lower than vm_init -- 0.30 is apropriate biologically-based value for AdEx (Brette & Gurstner, 2005) parameters
   int		t_r;		// #DEF_0;6 post-spiking explicit refractory period, in cycles -- prevents v_m updating for this number of cycles post firing
-  float		vm_dend;	// #DEF_0.3 how much to add to vm_dend value after every spike
-  float		vm_dend_dt;	// #DEF_0.16 rate constant for updating the vm_dend value (used for spike-based learning)
-  float		vm_dend_time;	// #READ_ONLY #SHOW time constant (in cycles, 1/vm_dend_dt) for updating the vm_dend value (used for spike-based learning)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -159,6 +163,103 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
+eTypeDef_Of(OptThreshSpec);
+
+class E_API OptThreshSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
+INHERITED(SpecMemberBase)
+public:
+  float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
+  float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
+  float         xcal_lrn;       // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(OptThreshSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
+};
+
+eTypeDef_Of(LeabraDtSpec);
+
+class E_API LeabraDtSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra time and rate constants for temporal derivatives in Leabra (Vm, net input)
+INHERITED(SpecMemberBase)
+public:
+  float		integ;		// #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary)
+  float		vm_time;	// #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
+  float		net_time;	// #DEF_1.4 #MIN_1 net input time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) -- this is important for damping oscillations -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
+  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a faster vm_time constant parameter to be used -- this is critical to use with SPIKE mode
+  int		fast_cyc;	// #AKA_vm_eq_cyc #DEF_0 number of cycles at start of a trial to run units in a fast integration mode -- the rate-code activations have no effective time constant and change immediately to the new computed value (vm_time is ignored) and vm is computed as an equilibirium potential given current inputs: set to 1 to quickly activate soft-clamped input layers (primary use); set to 100 to always use this computation
+
+  float		vm;		// #READ_ONLY #SHOW rate = 1 / time
+  float		net;		// #READ_ONLY #SHOW rate = 1 / time
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraDtSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraActAvgSpec);
+
+class E_API LeabraActAvgSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
+INHERITED(SpecMemberBase)
+public:
+  float		l_up_inc;	// #AKA_l_up_dt #DEF_0.05:0.25 [0.2 std] amount to increment the long time-average activation (avg_l) at the trial level, after multiplying by the minus phase activation -- this is an additive increase for all units with act_m > opt_thresh.send -- larger values drive higher long time-average values, which acts as the threshold for XCAL self-organizing BCM-style learning, meaning that learning will shift to weight decreases more quickly as activity persists -- if weights are steadily decreasing too much, then lower values are needed -- typically works best with the highest value that does not result in excessive weight loss
+  float		l_dn_time;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/time) is multiplied by layer kwta.pct target activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer kwta.pct value accurate
+  bool          cascade;        // use cascading, continuously updating running average computations -- each average builds upon the next, and everything is continuously updated regardless of phase or other sravg timing signals set at the network level -- this is the most biologically plausible version
+  float		ss_time;	// #CONDSHOW_ON_cascade #DEF_1;10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the super-short time-scale avg_ss value -- this is primarily of use for discrete spiking models to integrate over the discrete spikes before integrating into the avg_s short time scale, and should generally be set to 1 for rate-code activations
+  float		s_time;		// #CONDSHOW_ON_cascade #DEF_5;50 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
+  float		m_time;		// #CONDSHOW_ON_cascade #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
+
+  float		l_dn_dt;	// #READ_ONLY #EXPERT rate = 1 / time
+  float		ss_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+  float		s_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+  float		m_dt;		// #READ_ONLY #EXPERT rate = 1 / time
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init() { Initialize(); }
+};
+
+eTypeDef_Of(LeabraChannels);
+
+class E_API LeabraChannels : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
+INHERITED(taOBase)
+public:
+  float		e;		// excitatory (sodium (Na) channel), synaptic glutamate AMPA activated
+  float		l;		// constant leak (potassium, K+) channel 
+  float		i;		// inhibitory (chloride, Cl-) channel, synaptic GABA activated
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  void 	Copy_(const LeabraChannels& cp); // used in units, so optimized copy needed
+  TA_BASEFUNS(LeabraChannels);
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+};
+
 eTypeDef_Of(ActAdaptSpec);
 
 class E_API ActAdaptSpec : public SpecMemberBase {
@@ -166,16 +267,13 @@ class E_API ActAdaptSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool		on;		// apply adaptation?
-  float		dt;		// #CONDSHOW_ON_on #MIN_0 #DEF_0.007 rate constant of the adaptation dynamics -- for 1 ms normalized units, default is 1/144 msec = .007
+  float		time;	        // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly)
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
   float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- for rate code activations, uses act value weighting and only computes every interval
-  int		interval;	// #CONDSHOW_ON_on #DEF_10;0 how many time steps (cycles, in terms of a modulus on the ct_cycle counter, unless trials is clicked in which case the unit of time is the trial) between applying spike_gain for rate-coded activation function -- simulates the intrinsic delay obtained with spiking dynamics
-  bool          trials;         // #CONDSHOW_ON_on only update synaptic depression at the trial level, not at the cycle level -- this does NOT work for SPIKE mode (which is cycle-only) -- this can be useful for not affecting more complex within-trial settling dynamics (which also can affect learning in various ways), and producing longer-lasting effects across trials -- the interval still applies at the trials level, but a value of 1 is recommended
-  float		dt_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in cycles = 1/dt_rate) of the adaptation dynamics
+  float		dt;		// #READ_ONLY #EXPERT rate = 1 / time
 
-  float	Compute_dAdapt(float vm, float e_rev_l, float adapt) {
-    return dt * (vm_gain * (vm - e_rev_l) - adapt);
-  }
+  float	Compute_dAdapt(float vm, float e_rev_l, float adapt)
+  { return dt * (vm_gain * (vm - e_rev_l) - adapt); }
   // compute the change in adapt given vm, resting reversal potential (leak reversal), and adapt inputs
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -197,13 +295,6 @@ class E_API ShortPlastSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra short-term plasticity specifications -- uses standard equations summarized in Hennig, 2013 (eq 6) to capture both facilitation and depression dynamics as a function of presynaptic firing -- models interactions between number of vesicles available to release, and probability of release, and a time-varying recovery rate
 INHERITED(SpecMemberBase)
 public:
-  enum PhaseActVal { // activation value to use for minus and plus phase values (act_m, act_p)
-    ACT_ND,          // use the non-depressed activations -- this is useful when using CHL-style learning, which can be distorted by effects of depression
-    ACT_EQ,          // use the rate-code equivalent activations, which are subject to depression -- not recommeded for CHL-based learning rule, but fine otherwise
-    ACT_LRN,         // use learning-specific activations, which can have different activation parameters if act_lrn is on
-  };
-
-  PhaseActVal   phase_act;      // which activation variable should be used for the phase-level activation states (act_m or act_p)?
   bool		on;		// synaptic depression is in effect: multiplies normal activation computed by current activation function in effect
   float         f_r_ratio;      // #CONDSHOW_ON_on #DEF_0.01:3 ratio of facilitating (t_fac) to depression recovery (t_rec) time constants -- influences overall nature of response balance (ratio = 1 is balanced, > 1 is facilitating, < 1 is depressing).  Wang et al 2006 found: ~2.5 for strongly facilitating PFC neurons (E1), ~0.02 for strongly depressing PFC and visual cortex (E2), and ~1.0 for balanced PFC (E3)
   float		t_rec;		// #CONDSHOW_ON_on #DEF_100:1000 #MIN_1 time constant (milliseconds) for the constant form of the recovery of number of available vesicles to release at each action potential -- one factor influencing how strong and long-lasting depression is: nr += (1-nr)/t_rec.  Wang et al 2006 found: ~200ms for strongly depressing in visual cortex and facilitating PFC (E1), 600ms for depressing PFC (E2), and between 200-600 for balanced (E3)
@@ -247,177 +338,6 @@ private:
   void	Initialize();
   void	Destroy()	{ };
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
-};
-
-eTypeDef_Of(OptThreshSpec);
-
-class E_API OptThreshSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra optimization thresholds for faster processing
-INHERITED(SpecMemberBase)
-public:
-  float		send;		// #DEF_0.1 don't send activation when act <= send -- greatly speeds processing
-  float		delta;		// #DEF_0.005 don't send activation changes until they exceed this threshold: only for when LeabraNetwork::send_delta is on!
-  float		phase_dif;	// #DEF_0 don't learn when +/- phase difference ratio (- / +) < phase_dif (.8 when used, but off by default)
-  float         xcal_lrn;       // #DEF_0.01 xcal learning threshold -- don't learn when sending unit activation is below this value in both phases -- due to the nature of the learning function being 0 when the sr coproduct is 0, it should not affect learning in any substantial way
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(OptThreshSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
-eTypeDef_Of(LeabraDtSpec);
-
-class E_API LeabraDtSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra rate constants for temporal derivatives in Leabra (Vm, net input)
-INHERITED(SpecMemberBase)
-public:
-  float		integ;		// #DEF_1;0.5;0.001;0.0005 #MIN_0 overall rate constant for numerical integration -- affected by the timescale of the parameters and numerical stability issues -- typically 1 cycle = 1 ms, and if using ms normed units, this should be 1, otherwise 0.001 (1 ms in seconds) or possibly .5 or .0005 if there are stability issues
-  float		vm;		// #DEF_0.1:0.357 #MIN_0 membrane potential rate constant -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized = .356 rate constant
-  float		net;		// #DEF_0.7 #MIN_0 net input time constant -- how fast to update net input (damps oscillations) -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
-  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a larger dt.vm parameter to be used -- this is critical to use with SPIKE mode
-  float		d_vm_max;	// #DEF_100 #MIN_0 maximum change in vm at any timestep (limits blowup) -- this is a crude but effective safety valve for numerical integration problems (no longer necessary in gelin-based compuation)
-  int		vm_eq_cyc;	// #AKA_cyc0_vm_eq #DEF_0 number of cycles to compute the vm as equilibirium potential given current inputs: set to 1 to quickly activate input layers; set to 100 to always use this computation
-  float		vm_eq_dt;	// #DEF_1 #MIN_0 time constant for integrating the vm_eq values: how quickly to move toward the current eq value from previous vm value
-  float		integ_time;	// #READ_ONLY #SHOW 1/integ rate constant = time constant for each cycle of updating for numerical integration
-  float		vm_time;	// #READ_ONLY #SHOW 1/vm rate constant = time in cycles for vm to reach 1/e of asymptotic value
-  float		net_time;	// #READ_ONLY #SHOW 1/net rate constant = time in cycles for net to reach 1/e of asymptotic value
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraDtSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(LeabraActAvgSpec);
-
-class E_API LeabraActAvgSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- used in XCAL learning rules
-INHERITED(SpecMemberBase)
-public:
-  bool          l_up_add;       // #DEF_true l_up is an additive constant, added every time the activation is above opt_thresh.send (in proportion to activity) -- if false, then it is multiplicative rate of approaching act -- key difference is that additive has no upper bound, so over-active units will keep increasing until the effects on the xcal BCM learning component cause it to be turned off
-  bool          l_dn_pct;       // #DEF_true l_dn is multiplied by the layer's kwta.pct target activity level -- this means that lower expected activation layers decay less quickly, producing a rough normalization of the long-term running averages -- when using this, l_dn_dt defaults to .4 instead of .05
-  float		l_up_dt;	// #DEF_0.2;0.25;0.6;0.006 [.2 std for l_up_add, else .6] rate constant for increases in long time-average activation (avg_l) -- if l_up_add then this is an additive increase for all units with activity > opt_thresh.send (in proportion to act), else it is rate constant for approaching act -- see l_up_add for more info
-  float		l_dn_dt;	// #DEF_0.4;0.05;0.0005 [.4 std for l_dn_pct, else .05] rate constant for decreases in long time-average activation (avg_l) -- if l_dn_pct then this is multiplied by layer kwta.pct target activity (important to make that value accurate) 
-  float		m_dt;		// #DEF_0.1;0.017 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuous updating the medium time-scale avg_m value
-  float		s_dt;		// #DEF_0.2;0.02 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the short time-scale avg_s value
-  float		ss_dt;		// #DEF_1;0.1;0.08 #MIN_0 #MAX_1 (only used for CTLEABRA_XCAL_C) time constant (rate) for continuously updating the super-short time-scale avg_ss value
-  bool		use_nd;		// #DEF_false use the act_nd variables (non-depressed) for computing averages (else use raw act, which is raw spikes in spiking mode, and subject to depression if in place)
-
-  float		l_time;		// #READ_ONLY #SHOW time constant (in trials for XCAL, cycles for XCAL_C, 1/l_dn_dt) for continuously updating the long time-scale avg_l value -- only for the down time as up is typically quite rapid
-  float		m_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/m_dt) for continuously updating the medium time-scale avg_m value
-  float		s_time;		// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/s_dt) for continuously updating the short time-scale avg_s value
-  float		ss_time;	// #READ_ONLY #SHOW (only used for CTLEABRA_XCAL_C) time constant (in cycles, 1/ss_dt) for continuously updating the super-short time-scale avg_ss value
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
-eTypeDef_Of(LeabraChannels);
-
-class E_API LeabraChannels : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra channels used in Leabra
-INHERITED(taOBase)
-public:
-  float		e;		// Excitatory (glutamatergic synaptic sodium (Na) channel)
-  float		l;		// Constant leak (potassium, K+) channel 
-  float		i;		// inhibitory
-  float		h;		// hysteresis (Ca)
-  float		a;		// accomodation (k)
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  void 	Copy_(const LeabraChannels& cp); // used in units, so optimized copy needed
-  TA_BASEFUNS(LeabraChannels);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-eTypeDef_Of(VChanSpec);
-
-class E_API VChanSpec : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra voltage gated channel specs
-INHERITED(taOBase)
-public:
-  bool		on;		// #DEF_false true if channel is on
-  float		b_inc_dt;	// #CONDSHOW_ON_on #AKA_b_dt time constant for increases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
-  float		b_dec_dt;	// #CONDSHOW_ON_on time constant for decreases in basis variable (basis ~ intracellular calcium which builds up slowly as function of activation)
-  float		a_thr;		// #CONDSHOW_ON_on activation threshold of the channel: when basis > a_thr, conductance starts to build up (channels open)
-  float		d_thr;		// #CONDSHOW_ON_on deactivation threshold of the channel: when basis < d_thr, conductance diminshes (channels close)
-  float		g_dt;		// #CONDSHOW_ON_on time constant for changing conductance (activating or deactivating) -- if = 1, then gc is equal to the basis if channel is on
-  bool		init;		// #CONDSHOW_ON_on initialize variables when state is intialized between trials (else with weights)
-  bool		trl;		// #CONDSHOW_ON_on update after every trial instead of every cycle -- time constants need to be much larger in general
-
-  void	UpdateBasis(float& basis, bool& on_off, float& gc, float act) {
-    float del = act - basis;
-    if(del > 0.0f)
-      basis += b_inc_dt * del;
-    else
-      basis += b_dec_dt * del;
-    if(basis > a_thr)
-      on_off = true;
-    if(on_off && (basis < d_thr))
-      on_off = false;
-    if(g_dt == 1.0f)
-      gc = (on_off) ? basis : 0.0f;
-    else
-      gc += g_dt * ((float)on_off - gc);
-  }
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(VChanSpec);
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-};
-
-eTypeDef_Of(MaxDaSpec);
-
-class E_API MaxDaSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra how to compute the maxda value, which serves as a stopping criterion for settling
-INHERITED(SpecMemberBase)
-public:
-  enum dAValue {
-    NO_MAX_DA,			// these units do not contribute to maxda computation at all -- value always zero
-    DA_ONLY,			// just use da
-    INET_ONLY,			// just use inet
-    INET_DA			// use inet if no activity, then use da
-  };
-
-  dAValue	val;		// #DEF_INET_DA value to use for computing delta-activation (change in activation over cycles of settling).
-  float		inet_scale;	// #DEF_1 #MIN_0 how to scale the inet measure to be like da
-  float		lay_avg_thr;	// #DEF_0.01 #MIN_0 threshold for layer average activation to switch to da fm Inet
-
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(MaxDaSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
 };
 
 eTypeDef_Of(CIFERSpec);
@@ -529,23 +449,19 @@ public:
   };
 
   ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
-  LeabraActFunExSpec act;       // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
-  bool               act_lrn_on; // #CAT_Activation use different activation function parameters for the variables that enter into learning equations, compared to what is used for processing (enables act_lrn params on next line)
-  LeabraActFunSpec   act_lrn;   // #CONDSHOW_ON_act_lrn_on #CAT_Activation learning activations -- potentially different parameters for activations that drive learning vs. those that drive processing -- allows learning to be higher contrast while processing is lower processing -- more graded -- these act_lrn activations only participate in XCAL learning, not in CHL
+  LeabraActFunSpec act;         // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
+  LeabraActMiscSpec act_misc;   // #CAT_Activation miscellaneous activation parameters
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
   SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
-  MaxDaSpec	maxda;		// #CAT_Activation maximum change in activation (da) computation -- regulates settling
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-2 for normalized)
   RandomSpec	v_m_init;	// #CAT_Activation what to initialize the membrane potential to (mean = .3, var = 0 std)
   RandomSpec	act_init;	// #CAT_Activation what to initialize the activation to (mean = 0 var = 0 std)
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
-  LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1, .1, .5] maximal conductances for channels
-  LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25, 1, 0] reversal potentials for each channel
-  VChanSpec	hyst;		// #CAT_Activation [Defaults: .05, .8, .7, .1] hysteresis (excitatory) v-gated chan (Ca2+, NMDA)
-  VChanSpec	acc;		// #CAT_Activation [Defaults: .01, .5, .1, .1] accomodation (inhibitory) v-gated chan (K+)
+  LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
+  LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
@@ -558,8 +474,6 @@ public:
 
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
-  FunLookup	lrn_nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
-  FunLookup	lrn_noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -641,27 +555,13 @@ public:
     virtual void Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
 
-    virtual float Compute_IThresh(LeabraUnit* u, LeabraNetwork* net);
+    inline float Compute_IThresh(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
-      inline float Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents EXCEPT bias.wt
-      inline float Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding gc.a current
-      inline float Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding gc.a current
-      inline float Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents
-      inline float Compute_IThreshNoAHB(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, excluding any gc.a, gc.h currents, not subtracting bias weights
-      inline float Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using all currents INCLUDING bias.wt
       inline float Compute_IThreshNetinOnly(float netin);
       // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using only the provided net input value, along with the g_bar.l leak current in the unit spec
 
   inline float Compute_EThresh(LeabraUnit* u);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
-  inline float Compute_EThreshLrn(LeabraUnit* u);
-  // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold -- uses act_lrn.thr
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition: these are actually called by Compute_Act to integrate
@@ -684,44 +584,34 @@ public:
   // main function is basic Compute_Act which calls all the various sub-functions, including Compute_SRAvg
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
-    virtual void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
+    inline void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 1: compute input conductance values in the gc variables
-      virtual void Compute_DaMod_PlusCont(LeabraUnit* u, LeabraNetwork* net);
-      // #IGNORE called by Compute_Conduct compute da modulation as plus-phase continuous gc.h/.a
 
     virtual void Compute_Vm(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 2: compute the membrane potential from input conductances
       inline float Compute_EqVm(LeabraUnit* u);
       // #CAT_Activation #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
 
-    virtual void Compute_ActFmVm(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation Act Step 2: compute the activation from membrane potential (actually g_e in case of gelin)
-      virtual void Compute_ActFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation from membrane potential (actually g_e in case of gelin) -- rate code functions
-      virtual void Compute_ActLrnFmVm_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the act_lrn learning value from membrane potential (actually g_e in case of gelin) -- rate code functions
-      virtual float Compute_ActValFmVmVal_rate_impl(float val_sub_thr,
-                         LeabraActFunSpec& act_spec, FunLookup& nxx1_fl);
-        // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
-      inline float Compute_ActValFmVmVal_rate(float val_sub_thr) 
-      { return Compute_ActValFmVmVal_rate_impl(val_sub_thr, act, nxx1_fun); }
+    virtual void Compute_ActFun(LeabraUnit* u, LeabraNetwork* net);
+    // #CAT_Activation Act Step 2: compute the activation function
+      virtual void Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
+      virtual float Compute_ActFun_rate_impl(float val_sub_thr);
       // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
-      virtual void Compute_ActFmVm_spike(LeabraUnit* u, LeabraNetwork* net);
+      virtual void Compute_ActFun_spike(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation from membrane potential -- discrete spiking
       virtual void Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float spike_p);
-      // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFmVm_spike -- used for hard clamped inputs in spiking nets
+      // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFun_spike -- used for hard clamped inputs in spiking nets
+      virtual void Compute_RateCodeSpike(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute spiking activation (u->spike) based off of rate-code activation value
 
     virtual void Compute_SelfReg_Cycle(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation Act Step 3: compute self-regulatory currents (hysteresis, accommodation) -- at the cycle time scale
+    // #CAT_Activation Act Step 3: compute self-regulatory dynamics at the cycle time scale -- adapt, etc
     virtual void Compute_SelfReg_Trial(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation compute self-regulatory currents (hysteresis, accommodation) -- at the trial time scale
-      virtual void Compute_ActAdapt_Cycle_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
-      virtual void Compute_ActAdapt_Cycle_spike(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential -- spike functions
-      virtual void Compute_ActAdapt_Trial_rate(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute the activation-based adaptation value based on activation (spiking rate) and membrane potential -- rate code functions
+    // #CAT_Activation compute self-regulatory at the trial time scale
+      virtual void Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net);
+      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
       virtual void Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the spk_amp variable
 
@@ -736,8 +626,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  virtual float Compute_MaxDa(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Activation statistic function to compute the maximum delta-activation (change in activation); used to control settling -- not threadable as it is used to update net, layer, and Inhib values
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
@@ -811,30 +699,29 @@ public:
                               FunLookup& noise_fl);
   // #CAT_Activation create convolved gaussian and x/x+1 function lookup tables
 
-  virtual void 	BioParams(bool gelin=true, float norm_sec=0.001f, float norm_volt=0.1f, float volt_off=-0.1f, float norm_amp=1.0e-8f,
-	  float C_pF=281.0f, float gbar_l_nS=10.0f, float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,
-	  float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
-	  float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
-	  float adapt_dt_time_ms=144.0f, float adapt_vm_gain_nS=4.0f, float adapt_spk_gain_nA=0.0805);
-  // #BUTTON set parameters based on biologically-based values, using normalization scaling to convert into typical Leabra standard parameters.  gelin = configure for gelin rate-code activations instead of discrete spiking (dt = 0.3, gain = 80, gelin flags on), norm_x are normalization values to convert from SI units to normalized values (defaults are 1ms = .001 s, 100mV with -100 mV offset to bring into 0-1 range between -100..0 mV, 1e-8 amps (makes g_bar, C, etc params nice).  other defaults are based on the AdEx model of Brette & Gurstner (2005), which the SPIKE mode implements exactly with these default parameters -- last bit of name indicates the units in which this value must be provided (mV = millivolts, ms = milliseconds, pF = picofarads, nS = nanosiemens, nA = nanoamps)
+  virtual void 	BioParams
+    (float norm_sec=0.001f, float norm_volt=0.1f, float volt_off=-0.1f,
+     float norm_amp=1.0e-8f, float C_pF=281.0f, float gbar_l_nS=10.0f,
+     float gbar_e_nS=100.0f, float gbar_i_nS=100.0f,
+     float erev_l_mV=-70.0f, float erev_e_mV=0.0f, float erev_i_mV=-75.0f,
+     float act_thr_mV=-50.0f, float spk_thr_mV=20.0f, float exp_slope_mV=2.0f,
+     float adapt_dt_time_ms=144.0f, float adapt_vm_gain_nS=4.0f,
+     float adapt_spk_gain_nA=0.0805);
+  // #BUTTON set parameters based on biologically-based values, using normalization scaling to convert into typical Leabra standard parameters.  norm_x are normalization values to convert from SI units to normalized values (defaults are 1ms = .001 s, 100mV with -100 mV offset to bring into 0-1 range between -100..0 mV, 1e-8 amps (makes g_bar, C, etc params nice).  other defaults are based on the AdEx model of Brette & Gurstner (2005), which the SPIKE mode implements exactly with these default parameters -- last bit of name indicates the units in which this value must be provided (mV = millivolts, ms = milliseconds, pF = picofarads, nS = nanosiemens, nA = nanoamps)
 
-  virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0, float max = 1.0, float incr = .01);
+  virtual void	GraphVmFun(DataTable* graph_data, float g_i = .5, float min = 0.0,
+                           float max = 1.0, float incr = .01);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph membrane potential (v_m) as a function of excitatory net input (net) for given inhib conductance (g_i) (NULL = new graph data)
-  virtual void	GraphActFmVmFun(DataTable* graph_data, float min = .15, float max = .50, float incr = .001);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of membrane potential (v_m) (NULL = new graph data) -- note: only valid if act.gelin = false -- if act.gelin is true, then use GraphActFmNetFun instead
   virtual void	GraphActFmNetFun(DataTable* graph_data, float g_i = .5, float min = 0.0,
 				 float max = 1.0, float incr = .001, float g_e_thr = 0.5,
 				 float lin_gain = 10);
-  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input -- if act.gelin = true then this is the direct activation function, computed relative to the g_e_thr threshold value provided -- otherwise, the net input value is projected through membrane potential vm to get the net overall activation function -- a linear comparison with lin_gain slope is also provided for reference -- always computed as lin_gain * (net - g_e_thr) (NULL = new graph data)
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the activation function as a function of net input -- this is the direct activation function, computed relative to the g_e_thr threshold value provided -- a linear comparison with lin_gain slope is also provided for reference -- always computed as lin_gain * (net - g_e_thr) (NULL = new graph data)
   virtual void	GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha=false);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
 //   virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
 //   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
   virtual void TimeExp(int mode, int nreps=100000000);
-  // #MENU_BUTTON #MENU_ON_Graph ime how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
-
-  virtual int   CountCons(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Structure count total number of connections -- include cost-weighted estimates -- specific subtypes that involve more or less computation might want to override and set appropriately
+  // #EXPERT time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
 
@@ -847,10 +734,8 @@ protected:
   void 	CheckThisConfig_impl(bool quiet, bool& rval);
 
   LeabraChannels e_rev_sub_thr;	// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act.thr for each item -- used for compute_ithresh
-  LeabraChannels e_rev_sub_thr_lrn; // #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN e_rev - act_lrn.thr for each item -- used for compute_ithresh
   float		thr_sub_e_rev_i;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.i * (act.thr - e_rev.i) used for compute_ithresh
   float		thr_sub_e_rev_e;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act.thr - e_rev.e) used for compute_ethresh
-  float		lrn_thr_sub_e_rev_e;// #CAT_Activation #READ_ONLY #NO_SAVE #HIDDEN g_bar.e * (act_lrn.thr - e_rev.e) used for compute_ethreshlrn
 
 private:
   void 	Initialize();

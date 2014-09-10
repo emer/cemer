@@ -87,7 +87,6 @@ INHERITED(SpecMemberBase)
 public:
   enum UnitBias {		// bias on individual units
     NO_UN,			// no unit bias
-    GC,				// bias value enters as a conductance in gc.h or gc.a
     BWT,			// bias value enters as a bias.wt
   };
 

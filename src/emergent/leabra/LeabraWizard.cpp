@@ -608,10 +608,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   rewpred_cons->SetUnique("lmix", true);
   rewpred_cons->lmix.hebb = 0.0f;
 
-  rewpred_units->SetUnique("g_bar", true);
-  rewpred_units->g_bar.h = .015f;
-  rewpred_units->g_bar.a = .045f;
-
   if(output_lays.size > 0)
     ersp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
   else
@@ -795,8 +791,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   lve_cons->lrate = .01f;
   lvi_cons->lrate = .001f;
 
-  pv_units->SetUnique("g_bar", true);
-
   //vtaonetoone->send_start = 1; // this scheme compiled, but didn't get rid of error message so abandoning
 
   // default scalar val for all types
@@ -806,14 +800,13 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   laysp->Defaults();
   laysp->bias_val.wt = ScalarValBias::NO_WT;
   laysp->bias_val.val = 0.5f;
-  laysp->bias_val.un = ScalarValBias::GC;
+  laysp->bias_val.un = ScalarValBias::NO_UN;
 
   nvsp->SetUnique("bias_val", true);
-  nvsp->bias_val.un = ScalarValBias::GC;
+  nvsp->bias_val.un = ScalarValBias::BWT;
   nvsp->bias_val.wt = ScalarValBias::NO_WT;
   nvsp->bias_val.val = 1.0f;
 
-  lv_units->SetUnique("maxda", false);
   pv_units->Defaults();
 
   da_units->SetUnique("act_range", true);
@@ -824,10 +817,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   da_units->clamp_range.max = 2.0f;
   da_units->clamp_range.min = -2.0f;
   da_units->clamp_range.UpdateAfterEdit();
-  da_units->SetUnique("maxda", true);
-  da_units->maxda.val = MaxDaSpec::NO_MAX_DA;
-  da_units->SetUnique("act", true);
-  da_units->act.avg_dt = 0.0f;
 
   vtaonetoone->send_start = 1;  // key feature
 
@@ -1380,7 +1369,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   //////////////////////////////////////////////////////////////////////////////////
   // set default spec parameters
 
-  pfc_units->act_avg.l_up_dt = 0.1f;
+  pfc_units->act_avg.l_up_inc = 0.1f;
 
   // lr sched:
   topfc_cons->lrs_value = LeabraConSpec::NO_LRS;
@@ -1568,9 +1557,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   // pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
 
   // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
-
-  snrthal_units->SetUnique("maxda", true);
-  snrthal_units->maxda.val = MaxDaSpec::NO_MAX_DA;
 
   snrthalsp_out->SetUnique("kwta", true);
   snrthalsp_out->kwta.k = 2;

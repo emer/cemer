@@ -34,59 +34,16 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* l
                                                LeabraNetwork* net,
                                                float inhib_val) {
   Compute_SelfInhib(u, lspec, net);
-  u->gc.i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
+  u->gc_i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
 }
 
-inline float LeabraUnitSpec::Compute_IThreshStd(LeabraUnit* u, LeabraNetwork* net) {
+inline float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraNetwork* net) {
   float non_bias_net = u->net * g_bar.e;
   if(u->bias.size)		// subtract out bias weights so they can change k
     non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
   // including the ga and gh terms
-  return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
-	  thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshNoA(LeabraUnit* u, LeabraNetwork* net) {
-  float non_bias_net = u->net * g_bar.e;
-  if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
-  // NOT including the ga term
-  return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.h * e_rev_sub_thr.h) /
-	  thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshNoH(LeabraUnit* u, LeabraNetwork* net) {
-  float non_bias_net = u->net * g_bar.e;
-  if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
-  // NOT including the gh terms
-  return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a - u->adapt) /
-	  thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshNoAH(LeabraUnit* u, LeabraNetwork* net) {
-  float non_bias_net = u->net * g_bar.e;
-  if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
-  // NOT including the ga and gh terms
-  return ((non_bias_net * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
-	  thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshNoAHB(LeabraUnit* u, LeabraNetwork* net) {
-  // NOT including the ga and gh terms, NOT subtracting out bias -- just basic..
-  return ((u->net * g_bar.e * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l) /
-	  thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshAll(LeabraUnit* u, LeabraNetwork* net) {
-  // including the ga and gh terms and bias weights
-  return ((u->net * g_bar.e * e_rev_sub_thr.e + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
-	  thr_sub_e_rev_i);
+  return ((non_bias_net * e_rev_sub_thr.e + u->gc_l * e_rev_sub_thr.l
+	   - u->adapt) / thr_sub_e_rev_i);
 } 
 
 inline float LeabraUnitSpec::Compute_IThreshNetinOnly(float netin) {
@@ -95,23 +52,13 @@ inline float LeabraUnitSpec::Compute_IThreshNetinOnly(float netin) {
 } 
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
-  // including the ga and gh terms -- only way to affect anything
-  return ((u->gc.i * e_rev_sub_thr.i + u->gc.l * e_rev_sub_thr.l
-	   + u->gc.a * e_rev_sub_thr.a + u->gc.h * e_rev_sub_thr.h - u->adapt) /
+  return ((u->gc_i * e_rev_sub_thr.i + u->gc_l * e_rev_sub_thr.l - u->adapt) /
 	  thr_sub_e_rev_e);
 } 
 
-inline float LeabraUnitSpec::Compute_EThreshLrn(LeabraUnit* u) {
-  // including the ga and gh terms -- only way to affect anything
-  return ((u->gc.i * e_rev_sub_thr_lrn.i + u->gc.l * e_rev_sub_thr_lrn.l
-	   + u->gc.a * e_rev_sub_thr_lrn.a + u->gc.h * e_rev_sub_thr_lrn.h - u->adapt) /
-	  lrn_thr_sub_e_rev_e);
-} 
-
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
-  float new_v_m = (((u->net * e_rev.e) + (u->gc.l * e_rev.l) + (u->gc.i * e_rev.i) +
-		   (u->gc.h * e_rev.h) + (u->gc.a * e_rev.a) - u->adapt) / 
-		  (u->net + u->gc.l + u->gc.i + u->gc.h + u->gc.a));
+  float new_v_m = (((u->net * e_rev.e) + (u->gc_l * e_rev.l) + (u->gc_i * e_rev.i)
+                    - u->adapt) / (u->net + u->gc_l + u->gc_i));
   return new_v_m;
 }
 
