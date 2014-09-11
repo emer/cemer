@@ -44,6 +44,10 @@ void LeabraUnit::Initialize() {
   I_net = 0.0f;
   v_m = 0.0f;
   adapt = 0.0f;
+  syn_tr = 1.0f;
+  syn_nr = 1.0f;
+  syn_pr = 0.2f;
+  syn_kre = 0.0f;
   noise = 0.0f;
   dav = 0.0f;
   sev = 0.0f;
@@ -61,7 +65,6 @@ void LeabraUnit::Initialize() {
   g_i_self = 0.0f;
 
   i_thr = 0.0f;
-  spk_amp = 1.0f;
   misc_1 = 0.0f;
   spk_t = -1;
 
@@ -122,6 +125,10 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   I_net = cp.I_net;
   v_m = cp.v_m;
   adapt = cp.adapt;
+  syn_tr = cp.syn_tr;
+  syn_nr = cp.syn_nr;
+  syn_pr = cp.syn_pr;
+  syn_kre = cp.syn_kre;
   noise = cp.noise;
   dav = cp.dav;
   sev = cp.sev;
@@ -137,7 +144,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   g_i_syn = cp.g_i_syn;
   g_i_self = cp.g_i_self;
   i_thr = cp.i_thr;
-  spk_amp = cp.spk_amp;
   misc_1 = cp.misc_1;
   spk_t = cp.spk_t;
 }

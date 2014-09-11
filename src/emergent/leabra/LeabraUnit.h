@@ -37,34 +37,38 @@ class E_API LeabraUnit : public Unit {
   // #STEM_BASE ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:
-  float		act_eq;		// #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act for rate code)
-  float		act_nd;		// #VIEW_HOT #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
+  float		act_eq;	        // #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act for rate code)
+  float		act_nd;	        // #VIEW_HOT #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
   float         act_lrn;        // #CAT_Activation activation for learning -- can be optionally modulated in various ways to drive learning different from standard activations, and set to either act_eq or act_nd depending..
   float         spike;          // #CAT_Activation discrete spiking event -- for spike mode, is 1.0 when the neuron spikes -- for rate code, spikes are simulated according to act_max_hz translation of activation into firing rate
-  float		act_m;		// #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
-  float		act_p;		// #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
-  float		act_dif;	// #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
-  float		act_mid;	// #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) 
-  float		da;		// #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
-  float		avg_ss;		// #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
-  float		avg_s;		// #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
-  float		avg_m;		// #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
-  float		avg_l;		// #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
-  float		act_avg;	// #CAT_Activation average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
-  float 	thal;		// #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalamicLayerSpec -- used by thal params in LeabraUnitSpec and possibly other specs to respond to thalamic inputs
-  float         deep5b;         // #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information
-  float         deep5b_net;     // #CAT_Activation net input from deep layer 5b activation values
-  float         act_ctxt;       // #VIEW_HOT #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- this is equivalent to net_ctxt except for PFC units, where gating and other factors modulate it
-  float         net_ctxt;       // #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value
+  float		act_m;	        // #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
+  float		act_p;	        // #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
+  float		act_dif;        // #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
+  float		act_mid;        // #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) 
+  float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
+  float		avg_ss;	        // #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
+  float		avg_s;	        // #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
+  float		avg_m;	        // #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
+  float		avg_l;	        // #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
+  float		act_avg;        // #CAT_Activation average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
+  float 	thal;		// #NO_SAVE #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalamicLayerSpec -- used by thal params in LeabraUnitSpec and possibly other specs to respond to thalamic inputs
+  float         deep5b;         // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information
+  float         deep5b_net;     // #NO_SAVE #CAT_Activation net input from deep layer 5b activation values
+  float         act_ctxt;       // #NO_SAVE #VIEW_HOT #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- this is equivalent to net_ctxt except for PFC units, where gating and other factors modulate it
+  float         net_ctxt;       // #NO_SAVE #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network ti_mode is on -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value
   float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance
   float         gc_l;           // #NO_SAVE #CAT_Activation total leak conductance
-  float		I_net;		// #NO_SAVE #CAT_Activation net current produced by all channels
-  float		v_m;		// #NO_SAVE #CAT_Activation membrane potential
-  float		adapt;		// #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
+  float		I_net;	        // #NO_SAVE #CAT_Activation net current produced by all channels
+  float		v_m;	        // #NO_SAVE #CAT_Activation membrane potential
+  float		adapt;	        // #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
+  float		syn_tr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
+  float		syn_nr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)
+  float		syn_pr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: probability of vesicle release at next spike -- probability varies as a function of local calcium available to drive the release process -- this increases with recent synaptic activity (controlled by short-term-plasticity equations, stp)
+  float		syn_kre;        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: dynamic time constant for rate of recovery of number of vesicles ready to release -- this dynamic time constant increases with each action potential, and decays back down over time, and makes the response to higher-frequency spike trains more linear (controlled by short-term-plasticity equations, stp)
   float		noise;		// #NO_SAVE #CAT_Activation noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
-  float 	dav;		// #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
-  float 	sev;		// #CAT_Activation serotonin value 
+  float 	dav;		// #NO_SAVE #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
+  float 	sev;		// #NO_SAVE #CAT_Activation serotonin value 
 
   float		net_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
   float		bias_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
@@ -79,7 +83,6 @@ public:
   float         g_i_self;       // #NO_SAVE #CAT_Activation time-averaged self inhibition value -- needs to be separate variable to allow time-averaging to prevent severe oscillations
 
   float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
-  float		spk_amp;	// #CAT_Activation amplitude/probability of spiking output (for synaptic depression function if unit spec depress.on is on)
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 

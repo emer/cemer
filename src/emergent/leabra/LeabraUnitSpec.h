@@ -73,14 +73,14 @@ public:
   ActLrnVal     act_lrn;        // which activation variable should be used for learning?  gets stored in unit act_lrn variable, and is then used for the phase activation states (act_m, act_p), which drive CHL learning, and for driving the time-averages (avg_s, avg_m) that drive XCAL learning
 
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking, what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
-  float         time_unit;      // #DEF_1000 for translating rate-code activations into discrete spiking, what is the time unit for computing intervals between spikes from a Hz firing rate?  default is 1000 msec -- computation also takes into account the dt.integ setting
   float		avg_tau;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
   bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
   float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
-  inline int    ActToInterval(const float integ, const float act)
-  { return (int) (time_unit / (integ * act * act_max_hz)); }
+  inline int    ActToInterval(const float time_inc, const float integ, const float act)
+  { return (int) (1.0f / (time_inc * integ * act * act_max_hz)); }
+  // #CAT_ActMisc compute spiking interval based on network time_inc, dt.integ, and unit act -- note that network time_inc is usually .001 = 1 msec per cycle -- this depends on that being accurately set
 
   TA_SIMPLE_BASEFUNS(LeabraActMiscSpec);
 protected:
@@ -299,14 +299,16 @@ public:
   float         f_r_ratio;      // #CONDSHOW_ON_on #DEF_0.01:3 ratio of facilitating (t_fac) to depression recovery (t_rec) time constants -- influences overall nature of response balance (ratio = 1 is balanced, > 1 is facilitating, < 1 is depressing).  Wang et al 2006 found: ~2.5 for strongly facilitating PFC neurons (E1), ~0.02 for strongly depressing PFC and visual cortex (E2), and ~1.0 for balanced PFC (E3)
   float		rec_tau;        // #CONDSHOW_ON_on #DEF_100:1000 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) for the constant form of the recovery of number of available vesicles to release at each action potential -- one factor influencing how strong and long-lasting depression is: nr += (1-nr)/rec_tau.  Wang et al 2006 found: ~200ms for strongly depressing in visual cortex and facilitating PFC (E1), 600ms for depressing PFC (E2), and between 200-600 for balanced (E3)
   float         fac_tau;          // #CONDSHOW_ON_on #READ_ONLY #SHOW auto computed from f_r_ratio and rec_tau: time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) for the dynamics of facilitation of release probability: pr += (p0 - pr) / fac_tau. Wang et al 2006 found: 6ms for visual cortex, 10-20ms strongly depressing PFC (E2), ~500ms for strongly facilitating (E1), and between 200-600 for balanced (E3)
-  float         p0;             // #CONDSHOW_ON_on #DEF_0.1:0.4 baseline probability of release -- lower values around .1 produce more strongly facilitating dynamics, while .4 makes depression dominant -- interacts with f_r_ratio time constants as well
   float		fac;            // #CONDSHOW_ON_on #DEF_0.2:0.5 #MIN_0 strength of facilitation effect -- how much each action potential facilitates the probability of release toward a maximum of one: pr += fac (1-pr) -- typically right around 0.3 in Wang et al, 2006
-  float		kre_tau;	// #CONDSHOW_ON_on #DEF_100 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) on dynamic enhancement of time constant of recovery due to activation -- recovery time constant increases as a function of activity, helping to linearize response (reduce level of depression) at higher frequencies -- supported by multiple sources of biological data (Hennig, 2013)
-  float         re;             // #CONDSHOW_ON_on #DEF_0.002:0 how much the dynamic enhancement of recovery time constant increases for each action potential -- determines how strong this dynamic component is -- set to 0 to turn off this extra adaptation
+  float         p0;             // #CONDSHOW_ON_on #DEF_0.1:0.4 baseline probability of release -- lower values around .1 produce more strongly facilitating dynamics, while .4 makes depression dominant -- interacts with f_r_ratio time constants as well
+  float         p0_norm;        // #CONDSHOW_ON_on #DEF_0.1:1 baseline probability of release to use for normalizing the overall net synaptic transmitter release (syn_tr) -- for depressing synapses, this should be = p0, but for facilitating, it make sense to normalize at a somewhat higher level, so that the syn_tr starts out lower and rises to a max -- it maxes out at 1.0 so you don't want to lose dynamic range
+  float		kre_tau;        // #CONDSHOW_ON_on #DEF_100 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly) on dynamic enhancement of time constant of recovery due to activation -- recovery time constant increases as a function of activity, helping to linearize response (reduce level of depression) at higher frequencies -- supported by multiple sources of biological data (Hennig, 2013)
+  float         kre;            // #CONDSHOW_ON_on #DEF_0.002;0 how much the dynamic enhancement of recovery time constant increases for each action potential -- determines how strong this dynamic component is -- set to 0 to turn off this extra adaptation
 
-  float		rec_dt;		// #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for recovery = 1 / rec_tau 
-  float         fac_dt;         // #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for facilitation =  1 / fac_tau
-  float         kre_dt;         // #CONDSHOW_ON_on #READ_ONLY #SHOW rate constant for recovery enhancement = 1 / kre_tau
+  float		rec_dt;		// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant for recovery = 1 / rec_tau 
+  float         fac_dt;         // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant for facilitation =  1 / fac_tau
+  float         kre_dt;         // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant for recovery enhancement = 1 / kre_tau
+  float         oneo_p0_norm;   // #CONDSHOW_ON_on #READ_ONLY #EXPERT 1 / p0_norm
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -613,7 +615,7 @@ public:
       virtual void Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net);
       // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
       virtual void Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net);
-      // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the spk_amp variable
+      // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the syn_* unit variables
 
     virtual float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
