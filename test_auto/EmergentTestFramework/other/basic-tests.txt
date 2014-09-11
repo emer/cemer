@@ -2,8 +2,8 @@
 Resource           Emergent.txt
 
 *** Variables ***
-${emergent} =      emergent.bat
-${css-option} =    -s
+${emergent} =      emergent
+${css-option} =    --nogui -s
 
 *** Test Cases ***
 
@@ -18,7 +18,7 @@ Version
     Start Process      ${emergent}   --version
     ${result} =        Wait For Process   timeout=5 secs  
     Should Be Equal As Integers   ${result.rc}  0
-    Should Contain    ${result.stdout}  version: 6.3
+    Should Contain    ${result.stdout}  version: 7.0
 
 Missing CSS
     [Tags]             strict
