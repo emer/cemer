@@ -22,10 +22,6 @@ void PVConSpec::Initialize() {
   lrate = .01f;
   cur_lrate = .01f;
 
-  // SetUnique("lrate_sched", true); // not to have any lrate schedule!!
-  // SetUnique("lrs_value", true); // not to have any lrate schedule!!
-  lrs_value = NO_LRS;
-
   send_act = ACT_P;
 
   Defaults_init();

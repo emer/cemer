@@ -136,10 +136,14 @@ class E_API FastWtsSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // are fast weights enabled at all?  if not, then there is just one effective weight value at each synapse
-  float         decay;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 rate of decay for the fast weights -- on each weight update (Compute_Weights), fast weights get this much closer to the slow weights
-  float         slow_lrate;     // #CONDSHOW_ON_on #MIN_0 how quickly do the slow weights adapt from the weight changes applied to the fast weights -- this is a multiplier on top of the standard learning rate parameters
+  float         decay_tau;      // #CONDSHOW_ON_on #DEF_300:6000 time constant of fast weight decay in trials (computed at Compute_Weights -- fast weights decay back to slow weight values) -- the biological tau is ~10 min, so for 100 msec trials = 10 trials per second, then ~6,000 is proper value -- more coarse-grained simulations should set this value lower (e.g., 600 for 1 trial / sec)
+  float         wt_tau;         // #CONDSHOW_ON_on #DEF_10:300 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological tau is about 20 seconds, so for 100 msec trials = 10 trials per second, the proper value is ~200 -- for 1 trial / sec it is 20
+  float         fast_lrate;     // #CONDSHOW_ON_on #MIN_1 #DEF_10 how much more quickly do the fast weights change compared to the slow weights -- this is a multiplier on top of the standard learning rate parameter lrate -- it will show up in cur_lrate, and then gets undone for updating the slow weights
+  bool          fast_no_lrs;    // #CONDSHOW_ON_on do not apply the learning rate schedule (lrs) to the fast weights -- only apply it to the slow weight changes (lrs changes will not show up in cur_lrate, only in the computed slow_lrate in this spec)
 
-  float		decay_time;	// #CONDSHOW_ON_on #READ_ONLY #SHOW time constant (in trials 1/decay) for decay -- roughly how many weight updates for fast weights to approach slow weights
+  float		decay_dt;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
+  float         wt_dt;          // #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of wt adaptation = 1 / wt_tau
+  float		slow_lrate;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT 1 / fast_lrate (* lrs_mult if fast_no_lrs is in effect)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -296,8 +300,8 @@ public:
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] #CONDSHOW_ON_learn learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
-  LRSValue	lrs_value;	// #CAT_Learning #CONDSHOW_ON_learn what value to drive the learning rate schedule with (Important: affects values entered in start_ctr fields of schedule!)
-  Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs or as a function of performance, as determined by lrs_value (NOTE: these factors multiply lrate to give the cur_lrate value)
+  float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
+  Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (NOTE: these factors (lrs_mult) multiply lrate to give the cur_lrate value)
   bool          ignore_unlearnable; // #CAT_Learning ignore unlearnable trials
 
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
@@ -433,11 +437,12 @@ public:
   }
   // #IGNORE compute weights for LeabraCHL learning rule -- no fast weights
   inline void	C_Compute_Weights_LeabraCHL_fast
-    (const float decay, const float slow_lrate,
+    (const float decay_dt, const float wt_dt, const float slow_lrate,
      float& wt, float& dwt, float& fwt, float& swt)
-  { fwt += dwt + decay * (swt - fwt); // always move fast toward slow -- for all cons
+  { fwt += dwt + decay_dt * (swt - fwt); // always move fast toward slow -- for all cons
     swt += slow_lrate * dwt;
-    wt = SigFmLinWt(fwt);     // re-sig
+    float nwt = SigFmLinWt(fwt);
+    wt += wt_dt * (nwt - wt);
     dwt = 0.0f;
   }
   // #IGNORE compute weights for LeabraCHL learning rule -- fast weights
@@ -489,8 +494,8 @@ public:
                                                  LeabraNetwork* net);
   // #IGNORE CtLeabraXCAL weight changes
 
-  inline void	C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt,
-                                               float& fwt, float& swt)
+  inline void	C_Compute_Weights_CtLeabraXCAL
+    (float& wt, float& dwt, float& fwt, float& swt)
   { if(dwt != 0.0f) {
       if(dwt > 0.0f)	dwt *= (1.0f - fwt);
       else		dwt *= fwt;
@@ -503,21 +508,28 @@ public:
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
 
   inline void	C_Compute_Weights_CtLeabraXCAL_fast
-    (const float decay, const float slow_lrate, float& wt, float& dwt, float& fwt, float& swt)
+    (const float decay_dt, const float wt_dt, const float slow_lrate,
+     float& wt, float& dwt, float& fwt, float& swt)
   { 
     if(dwt > 0.0f)	dwt *= (1.0f - fwt);
     else		dwt *= fwt;
-    fwt += dwt + decay * (swt - fwt);
+    fwt += dwt + decay_dt * (swt - fwt);
     swt += dwt * slow_lrate;
-    wt = SigFmLinWt(fwt);
+    float nwt = SigFmLinWt(fwt);
+    wt += wt_dt * (nwt - wt);
     dwt = 0.0f;
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts
 
+#ifdef TA_VEC_USE
+  inline void	Compute_Weights_CtLeabraXCAL_vec
+    (LeabraSendCons* cg, float* wts, float* dwts, float* fwts, float* swts);
+  // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
   inline void	Compute_Weights_CtLeabraXCAL_fast_vec
-    (LeabraSendCons* cg, const float decay, const float slow_lrate,
+    (LeabraSendCons* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
      float* wts, float* dwts, float* fwts, float* swts);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
+#endif
 
   inline virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                      LeabraNetwork* net);

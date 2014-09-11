@@ -84,8 +84,6 @@ void LeabraNetwork::Initialize() {
   cycle_max = 60;
   mid_minus_cycle = -1;
   min_cycles = 15;
-  cos_diff_on = false;
-  cos_diff_auto = false;
 
   minus_cycles = 0.0f;
 
@@ -386,7 +384,6 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.kwta_used = false;
   net_misc.lay_gp_inhib = false;
   net_misc.cyc_syn_dep = false;
-  cos_diff_auto = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Trial_Init_Specs(this);
@@ -832,7 +829,7 @@ void LeabraNetwork::PostSettle() {
   if(ti_mode) {
     TI_CtxtUpdate();
   }
-  if((cos_diff_on || cos_diff_auto) && phase == LeabraNetwork::PLUS_PHASE) {
+  if(phase == LeabraNetwork::PLUS_PHASE) {
     Compute_CosDiff();
     Compute_AvgActDiff();
     Compute_TrialCosDiff();

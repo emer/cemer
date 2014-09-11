@@ -25,8 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(KWTASpec);
 TA_BASEFUNS_CTORS_DEFN(GpInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(ClampSpec);
-TA_BASEFUNS_CTORS_DEFN(DecaySpec);
-TA_BASEFUNS_CTORS_DEFN(CosDiffLrateSpec);
+TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 SMARTREF_OF_CPP(LeabraLayerSpec);
 
 eTypeDef_Of(MarkerConSpec);
@@ -122,51 +121,31 @@ void ClampSpec::Defaults_init() {
   minus_targ_gain = 0.0f;
 }
 
-void DecaySpec::Initialize() {
+void LayerDecaySpec::Initialize() {
   event = 1.0f;
   phase = 1.0f;
+
+  Defaults_init();
 }
 
-void CosDiffLrateSpec::Initialize() {
-  on = true;
-  lo_diff = 0.0f;
-  lo_lrate = 0.01f;
-  hi_diff = 1.0f;
-  hi_lrate = 0.01f;
-  avg_dt = 0.01f;
+void LayerDecaySpec::Defaults_init() {
+  cos_diff_avg_tau = 100.0f;
+
+  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
-void CosDiffLrateSpec::Defaults_init() {
+void LayerDecaySpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
-float CosDiffLrateSpec::LrateMod(const float diff_avg, const float cos_diff) {
-  if(cos_diff <= lo_diff) return lo_lrate;
-  if(cos_diff >= hi_diff) return hi_lrate;
-  if(cos_diff < diff_avg) {
-    float lrm = 1.0f - ((diff_avg - cos_diff) / (diff_avg - lo_diff));  // avg..lo -> 1..0
-    lrm = lo_lrate + (1.0f - lo_lrate) * lrm;
-    return lrm;
+void LayerDecaySpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
+  if(diff_avg == 0.0f) {        // first time -- set
+    diff_avg = cos_diff;
   }
   else {
-    float lrm = 1.0f - ((cos_diff - diff_avg) / (hi_diff - diff_avg));  // avg..hi -> 1..0
-    lrm = hi_lrate + (1.0f - hi_lrate) * lrm;
-    return lrm;
+    diff_avg += cos_diff_avg_dt * (cos_diff - diff_avg);
   }
-}
-
-void CosDiffLrateSpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
-  float eff_diff = cos_diff;
-  float drange = hi_diff - lo_diff;
-  float margin = 0.01f * drange;
-  if(cos_diff <= (lo_diff + margin)) eff_diff = (lo_diff + margin);
-  if(cos_diff >= (hi_diff - margin)) eff_diff = (hi_diff - margin);
-
-  if(diff_avg == 0.0f) {        // first time -- set
-    diff_avg = eff_diff;
-    return;
-  }
-  
-  diff_avg += avg_dt * (eff_diff - diff_avg);
 }
 
 
@@ -346,7 +325,6 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->cos_diff = 0.0f;
   lay->cos_diff_avg = 0.0f;
-  lay->cos_diff_lrate = 1.0f;
   lay->avg_act_diff = 0.0f;
   lay->trial_cos_diff = 0.0f;
 
@@ -413,9 +391,6 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
 
   if(lay_gp_inhib.on) 
     net->net_misc.lay_gp_inhib = true;
-
-  if(net->cos_diff_auto) cos_diff_lrate.on = true; // turn it on everywhere
-  else if(cos_diff_lrate.on) net->cos_diff_auto = true;
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
@@ -1553,10 +1528,7 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
     cosv /= dist;
   lay->cos_diff = cosv;
 
-  if(cos_diff_lrate.on) {
-    cos_diff_lrate.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
-    lay->cos_diff_lrate = cos_diff_lrate.LrateMod(lay->cos_diff_avg, lay->cos_diff);
-  }
+  decay.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
 
   return cosv;
 }

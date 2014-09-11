@@ -236,8 +236,6 @@ public:
   Average	avg_cos_err_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on prv (see cos_err_prv) (computed over previous epoch)
   Average	avg_cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on vs prv (see cos_err_vs_prv) (computed over previous epoch)
 
-  bool		cos_diff_on;      // #CAT_Learning manually enable Compute_CosDiff call at end of plus phase (if conspec cos_diff_lrate or X_COS_DIFF is set, then cos_diff will automatically be computed regardless)
-  bool		cos_diff_auto;    // #CAT_Learning #READ_ONLY enable Compute_CosDiff call at end of plus phase -- LeabraConSpec will auto set this flag if LeabraConSpec::cos_diff_lrate or X_COS_DIFF is set, and off if not -- updated in Trial_Init_Specs call
   float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
   Average	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) diff (computed over previous epoch)
 

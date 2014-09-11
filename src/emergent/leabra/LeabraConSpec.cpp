@@ -81,12 +81,14 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void FastWtsSpec::Initialize() {
   on = false;
+  decay_tau = 6000.0f;
+  wt_tau = 200.0f;
+  fast_lrate = 10.0f;
+  fast_no_lrs = false;
 
-  decay = 0.05;
-  slow_lrate = 0.1f;
-  
-  if(decay > 0.0f)
-    decay_time = 1.0f / decay;
+  decay_dt = 1.0f / decay_tau;
+  wt_dt = 1.0f / wt_tau;
+  slow_lrate = 1.0f / fast_lrate;
 }
 
 void FastWtsSpec::Defaults_init() {
@@ -94,8 +96,11 @@ void FastWtsSpec::Defaults_init() {
 
 void FastWtsSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(decay > 0.0f)
-    decay_time = 1.0f / decay;
+  decay_dt = 1.0f / decay_tau;
+  wt_dt = 1.0f / wt_tau;
+  if(!fast_no_lrs) {            // don't overwrite if using this..
+    slow_lrate = 1.0f / fast_lrate;
+  }
 }
 
 void LearnMixSpec::Initialize() {
@@ -172,7 +177,6 @@ void LeabraConSpec::Initialize() {
   wt_sig_fun_lst.off = -1.0f;   wt_sig_fun_lst.gain = -1.0f; // trigger an update
   wt_sig_fun_res = -1.0f;
 
-  lrs_value = EPOCH;
   lrate_sched.interpolate = false;
 
   Defaults_init();
@@ -188,6 +192,7 @@ void LeabraConSpec::Defaults_init() {
   rnd.var = .25f;
   lrate = .02f;
   cur_lrate = .02f;
+  lrs_mult = 1.0f;
 }
 
 void LeabraConSpec::InitLinks() {
@@ -271,37 +276,18 @@ void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
+  lrs_mult = 1.0f;
   if(wt_sig.dwt_norm) net->net_misc.dwt_norm_used = true;
-
-  if(lrs_value == NO_LRS) return;
-
-  if(lrs_value == EXT_REW_AVG) {
-    LeabraLayer* er_lay = LeabraLayerSpec::FindLayerFmSpecNet(net, &TA_ExtRewLayerSpec);
-    if(er_lay != NULL) {
-      LeabraUnit* un = (LeabraUnit*)er_lay->units.Leaf(0);
-      float avg_rew = un->act_avg;
-      int ar_pct = (int)(100.0f * avg_rew);
-      cur_lrate = lrate * lrate_sched.GetVal(ar_pct);
-      return;
-    }
-    else {
-      TestWarning(true, "Trial_Init_Specs", "appropriate ExtRew layer not found for EXT_REW_AVG, reverting to EPOCH!");
-      SetUnique("lrs_value", true);
-      lrs_value = EPOCH;
-      UpdateAfterEdit();
-    }
+  if(fast_wts.on) {
+    cur_lrate *= fast_wts.fast_lrate;
   }
-  if(lrs_value == EXT_REW_STAT) {
-    if(net->epoch < 1) {
-      cur_lrate = lrate_sched.default_val;
-    }
-    else {
-      int arval = (int)(100.0f * net->avg_ext_rew.avg);
-      cur_lrate = lrate * lrate_sched.GetVal(arval);
-    }
+
+  lrs_mult = lrate_sched.GetVal(net->epoch);
+  if(fast_wts.on && fast_wts.fast_no_lrs) {
+    fast_wts.slow_lrate = lrs_mult / fast_wts.fast_lrate;
   }
-  if(lrs_value == EPOCH) {
-    cur_lrate = lrate * lrate_sched.GetVal(net->epoch);
+  else {
+    cur_lrate *= lrs_mult;
   }
 }
 

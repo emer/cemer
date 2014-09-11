@@ -1277,13 +1277,15 @@ float LeabraUnitSpec::Compute_ActFun_rate_impl(float val_sub_thr) {
 
 void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
   float new_act;
-  // if(u->v_m <= act.thr) {
-  //   new_act = Compute_ActFun_rate_impl(u->v_m - act.thr);
-  // }
-  // else {
+  if(u->v_m <= act.thr) {
+    // note: this is actually quite important -- if you directly use the gelin
+    // the whole time, then units are active right away, and that is problematic
+    new_act = Compute_ActFun_rate_impl(u->v_m - act.thr);
+  }
+  else {
     float g_e_thr = Compute_EThresh(u);
     new_act = Compute_ActFun_rate_impl((u->net * g_bar.e) - g_e_thr);
-  // }
+  }
   if(net->cycle >= dt.fast_cyc) {
     new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
   }

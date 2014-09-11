@@ -1371,15 +1371,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   pfc_units->act_avg.l_up_inc = 0.1f;
 
-  // lr sched:
-  topfc_cons->lrs_value = LeabraConSpec::NO_LRS;
-  //learn_cons->lrate_sched.SetSize(2);
-  //SchedItem* si = (SchedItem*)learn_cons->lrate_sched.FastEl(0);
-  //si->start_val = 1.0f;
-  //si = (SchedItem*)learn_cons->lrate_sched.FastEl(1);
-  //si->start_ctr = 90;
-  //si->start_val = .1f;
-
   // slow learning rate on to pfc cons!
   topfc_cons->SetUnique("lrate", true);
   topfc_cons->learn = true;
@@ -1434,14 +1425,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
 
   matrix_cons->SetUnique("ignore_unlearnable", true);
   matrix_cons->ignore_unlearnable = false; 
-
-  matrix_cons->lrate_sched.SetSize(2);
-  matrix_cons->lrate_sched.default_val = 0.0f; // this is the value that happens prior to stats being collected
-  matrix_cons->lrate_sched[0]->start_ctr = 0;
-  matrix_cons->lrate_sched[0]->start_val = 0.0f;
-  matrix_cons->lrate_sched[1]->start_ctr = 10; // enough time for reps pretrain
-  matrix_cons->lrate_sched[1]->start_val = 1.0f;
-  matrix_cons->lrs_value = LeabraConSpec::NO_LRS;
 
   matrix_cons_topo->SetUnique("rnd", true);
   matrix_cons_topo->rnd.mean = 0.0f;

@@ -170,55 +170,33 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(DecaySpec);
+eTypeDef_Of(LayerDecaySpec);
 
-class E_API DecaySpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values
+class E_API LayerDecaySpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values and other layer-level time constants
 INHERITED(SpecMemberBase)
 public:
   float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
   float		phase;		// #MIN_0 #MAX_1 [1 for Leabra_CHL, 0 for CtLeabra_X/CAL] proportion decay of state vars between minus and plus phases 
+  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
+
+  float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua
+
+  void	        UpdtDiffAvg(float& diff_avg, const float cos_diff);
+  // update the running average diff value
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
-  TA_SIMPLE_BASEFUNS(DecaySpec);
+  TA_SIMPLE_BASEFUNS(LayerDecaySpec);
 protected:
   SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
-  void	Defaults_init() { };  // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
-};
-
-eTypeDef_Of(CosDiffLrateSpec);
-
-class E_API CosDiffLrateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra modulation of learning rate by the recv layer cos_diff between act_p and act_m (0..1 measure of how similar plus and minus phase are across layer) -- maximum learning in the zone of proximal development with mid-range cos_diff values, relative to a running-average cos_diff value, which gets a lrate multiplier of 1
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // #DEF_true enable (but don't necessarily engage -- settings determined in LeabraConSpec) cos_diff modulated learning as function of  normalized inner product (cosine) between act_p and act_m -- turning this on automatically turns on a network flag to call Compute_CosDiff at end of plus phase -- only avg_dt is used for l_mix = X_COS_DIFF in LeabraConSpec, rest is used if cos_diff_lrate is selected
-  float		lo_diff;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 low end of the learning rate modulation function -- below this cos_diff level, use the constant lo_lrate value
-  float		lo_lrate;	// #CONDSHOW_ON_on #MIN_0 learning rate multiplier in effect below the lo_diff cos_diff value
-  float         hi_diff;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 high end of the learning rate modulation function -- below this cos_diff level, use the constant hi_lrate value
-  float		hi_lrate;	// #CONDSHOW_ON_on #MIN_0 #MAX_1 learning rate mulitiplier in effect above the hi_diff cos_diff value
-  float		avg_dt;	        // #DEF_0.01 #CONDSHOW_ON_on #MIN_0 time constant for computing running average cos_diff value
-
-  float	        LrateMod(const float diff_avg, const float cos_diff);
-  // get the learning rate modulation factor based on running-average diff and current cos_diff
-  void	        UpdtDiffAvg(float& diff_avg, const float cos_diff);
-  // update the running average diff value -- guarantees lo_diff < diff_avg < hi_diff
-
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(CosDiffLrateSpec);
-protected:
-  SPEC_DEFAULTS;
-  // void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
   void	Defaults_init();
 };
+
 
 
 eTypeDef_Of(LeabraLayerSpec);
@@ -239,8 +217,7 @@ public:
   GpInhibSpec	lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
   GpInhibSpec	unit_gp_inhib;	// #CAT_Activation #CONDSHOW_ON_inhib_group:UNIT_GROUPS pooling of inhibition across unit groups within layers -- only applicable if the layer actually has unit groups -- each unit group's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given unit group is then a MAX of the individual unit group's original (unscaled) inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak unit groups to drop out
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
-  DecaySpec	decay;		// #CAT_Activation decay of activity state vars between events, -/+ phase, and 2nd set of phases (if appl)
-  CosDiffLrateSpec cos_diff_lrate;  // #CAT_Learning modulation of learning rate by the recv layer cos_diff between act_p and act_m -- maximum learning in the zone of proximal development
+  LayerDecaySpec decay;		// #CAT_Activation decay of activity state vars between trials and phases, also time constants..
 
   ///////////////////////////////////////////////////////////////////////
   //	Access, status functions

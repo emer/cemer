@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7487
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7536
 LeabraProject .projects["vis_bench_sm"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectDocs"] { 
@@ -1958,7 +1958,7 @@ LeabraProject .projects["vis_bench_sm"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [10] {
+    ProgEl_List @.prog_code = [8] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
        ProgVar @["report"] { };
@@ -1988,13 +1988,7 @@ LeabraProject .projects["vis_bench_sm"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MemberMethodCall @[5] { 
-      ProgArg_List @.meth_args = [1] {
-       ProgArg @[0] { };
-      };
-     };
-     PrintExpr @[6] { };
-     If @[7] { 
+     If @[5] { 
       ProgEl_List @.true_code = [1] {
        MethodCall @[0] { 
 	ProgArg_List @.meth_args = [0] {
@@ -2002,12 +1996,12 @@ LeabraProject .projects["vis_bench_sm"] {
        };
       };
      };
-     ProgramCall @[8] { 
+     ProgramCall @[6] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetUpdateView @[9] { };
+     NetUpdateView @[7] { };
     };
    };
    Program @["LeabraSettle"] { 
@@ -3311,9 +3305,9 @@ LeabraProject .projects["vis_bench_sm"] {
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
-    UserDataItem @["maxda"] { };
     UserDataItem @["minus_output_name"] { };
     UserDataItem @["minus_cycles"] { };
+    UserDataItem @["tot_cycle"] { };
     UserDataItem @["ct_cycle"] { };
     UserDataItem @["phase_no"] { };
     UserDataItem @["phase"] { };
@@ -3328,6 +3322,7 @@ LeabraProject .projects["vis_bench_sm"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["maxda"] { };
     UserDataItem @["avg_act_diff_sm"] { };
     UserDataItem @["pvlv_lve"] { };
     UserDataItem @["pvlv_pvi"] { };
@@ -4779,19 +4774,7 @@ To summarize, these generalization results demonstrate that the hierarchical ser
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/CompCogNeuro/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"Computational Cognitive Neuroscience Wiki Atom feed\" href=\"/CompCogNeuro/index.php?title=Special:RecentChanges&amp;feed=atom\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
-<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
-.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
-.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
-.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
-.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/CompCogNeuro/resources/mediawiki.action/images/green-checkmark.png?2014-04-01T18:51:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:1eda29f55be362459a1cbf2cf062586e */
-#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
-.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
-/* cache key: compcogneuro:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+<link rel=\"stylesheet\" href=\"/CompCogNeuro/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: compcogneuro:resourceloader:filter:minify-css:7:e574a44ae23fd78ac104b2dd7100973a */</style>
@@ -4982,8 +4965,8 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.280 seconds
-Real time usage: 0.308 seconds
+CPU time usage: 0.252 seconds
+Real time usage: 0.274 seconds
 Preprocessor visited node count: 390/1000000
 Preprocessor generated node count: 1371/1000000
 Post?expand include size: 14912/2097152 bytes
@@ -4992,7 +4975,7 @@ Highest expansion depth: 5/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20140904083156
+<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20140911075802
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\">https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616</a>\"				</div>
@@ -5005,14 +4988,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/CompCogNeuro/index.php?title=Special:UserLogin&amp;returnto=CCNBook%2FSims%2FPerception%2FObjrec\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/CompCogNeuro/index.php?title=Talk:CCNBook/Sims/Perception/Objrec&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -5031,12 +5014,12 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/CompCogNeuro/index.php/CCNBook/Sims/Perception/Objrec\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=edit\" title=\"This page is protected.
-You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 28.79400708047489px;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
+You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 90px;\"><span><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 17.346112739384083px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 1px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
 	<div class=\"menu\">
 		<ul>
 					</ul>
@@ -5046,45 +5029,45 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/CompCogNeuro/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search Computational Cognitive Neuroscience Wiki [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/CompCogNeuro/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\" class=\"collapsible-nav\">
+			<div id=\"mw-panel\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//CompCogNeuro/logo.png);\" href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/CompCogNeuro/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
 			<li id=\"n-CCN-Book\"><a href=\"/CompCogNeuro/index.php/CCNBook/Main\">CCN Book</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
-			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [ctrl-alt-x]\" accesskey=\"x\">Random page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/CompCogNeuro/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-randompage\"><a href=\"/CompCogNeuro/index.php/Special:Random\" title=\"Load a random page [x]\" accesskey=\"x\">Random page</a></li>
 			<li id=\"n-help\"><a href=\"https://www.mediawiki.org/wiki/Special:MyLanguage/Help:Contents\" rel=\"nofollow\" title=\"The place to find out\">Help</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
-	<div class=\"body\" style=\"display: block;\">
+<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\">Tools</h3>
+	<div class=\"body\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/CompCogNeuro/index.php/Special:WhatLinksHere/CCNBook/Sims/Perception/Objrec\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/CompCogNeuro/index.php/Special:RecentChangesLinked/CCNBook/Sims/Perception/Objrec\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/CompCogNeuro/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;action=info\">Page information</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
+<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=CCNBook%2FSims%2FPerception%2FObjrec\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/CompCogNeuro/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=CCNBook%2FSims%2FPerception%2FObjrec&amp;oldid=4616&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -5093,7 +5076,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 24 August 2014, at 21:58.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 6,612 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 6,641 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-privacy\"><a href=\"/CompCogNeuro/index.php/Project:Privacy_policy\" title=\"Project:Privacy policy\">Privacy policy</a></li>
@@ -5117,10 +5100,10 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.316 secs. -->
+<!-- Served in 0.355 secs. -->
 	
 
-<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
+</body></html>";
   };
  };
  wizards {
@@ -5229,7 +5212,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     };
     EditMbrItem @[4] {
      label="unit_chunks";
-     desc="[Default: 2]  how many units to bite off for each thread off of the list at a time";
+     desc="[Default: 32]  how many units to bite off for each thread off of the list at a time";
      cust_desc=0;
      base=$.projects["vis_bench_sm"].networks["ObjrecNet"].lthreads$;
      mbr=LeabraThreadMgr::unit_chunks;
@@ -16922,9 +16905,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       V1RegionSpec @["V1h"] {
        name="V1h";
        threads {
-	run_time {name="TimeUsedHR_6": s_used=0: n_used=0: avg_used=Average: };
-	sync_time {name="TimeUsedHR_7": s_used=0: n_used=0: avg_used=Average: };
-	total_time {name="TimeUsedHR_8": s_used=0: n_used=0: avg_used=Average: };
+	run_time {name="TimeUsedHR_6": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+	sync_time {name="TimeUsedHR_7": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+	total_time {name="TimeUsedHR_8": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
 	n_wake_in_sync=0;
 	run_time_pct=0;
 	sync_time_pct=0;
@@ -16984,9 +16967,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       V1RegionSpec @["V1m"] {
        name="V1m";
        threads {
-	run_time {name="TimeUsedHR_106": s_used=0: n_used=0: avg_used=Average: };
-	sync_time {name="TimeUsedHR_107": s_used=0: n_used=0: avg_used=Average: };
-	total_time {name="TimeUsedHR_108": s_used=0: n_used=0: avg_used=Average: };
+	run_time {name="TimeUsedHR_106": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+	sync_time {name="TimeUsedHR_107": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+	total_time {name="TimeUsedHR_108": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
 	n_wake_in_sync=0;
 	run_time_pct=0;
 	sync_time_pct=0;
@@ -18950,7 +18933,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       is_gauss_double_cached=0;
       cached_gauss_double=0;
      };
-     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=0: n_used=0: avg_used=Average: };
+     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
      TimeUsed @["build_time_used"] {name="build_time_used": start={usr=6203: sys=481: tot=140946026699: }: end={usr=8311: sys=735: tot=140946028882: }: used={usr=2108: sys=254: tot=2183: }: s_used=21.83: n_used=1: };
      TimeUsed @["init_wts_time_used"] {name="init_wts_time_used": start={usr=8318: sys=736: tot=140946028890: }: end={usr=9411: sys=737: tot=140946029575: }: used={usr=1093: sys=1: tot=685: }: s_used=6.85: n_used=1: };
     };
@@ -20300,7 +20283,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	var_type=T_String;
 	string_val=;
 	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	flags=SAVE_VAL|LOCAL_VAR|EDIT_VAL;
 	reference=0;
 	desc=;
 	init_from=NULL;
@@ -20409,41 +20392,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     MemberMethodCall @[5] {
-      desc=;
-      flags=OFF|CAN_REVERT_TO_CODE;
-      orig_prog_code="network.cyc_threads.ThreadReport()";
-      obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
-      path="cyc_threads";
-      result_var=.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrial"].prog_code[0].local_vars["report"]$$;
-      method=NULL;
-      meth_args {
-       name="meth_args";
-       el_typ=ProgArg;
-       el_def=0;
-       ProgArg @[0] {
-	arg_type=DataTable_ptr;
-	type="DataTable*";
-	name="table";
-	required=1;
-	def_val=;
-	expr {
-	 expr=;
-	};
-       };
-      };
-     };
-     PrintExpr @[6] {
-      desc=;
-      flags=OFF|CAN_REVERT_TO_CODE;
-      orig_prog_code="print report";
-      expr {
-       expr="report";
-      };
-      my_mask=NULL;
-      debug_level=NULL;
-     };
-     If @[7] {
+     If @[5] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
       orig_prog_code=;
@@ -20469,7 +20418,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     ProgramCall @[8] {
+     ProgramCall @[6] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
       orig_prog_code=;
@@ -20491,7 +20440,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       target=.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$$;
       targ_ld_init="*LeabraTrialMonitor*";
      };
-     NetUpdateView @[9] {
+     NetUpdateView @[7] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
       orig_prog_code=;
@@ -20755,8 +20704,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	flags=0;
 	orig_prog_code=;
 	cond {
-	 expr="(network.maxda < network.maxda_stopcrit) ||
- (network.trg_max_act > network.trg_max_act_stopcrit)";
+	 expr="(network.trg_max_act > network.trg_max_act_stopcrit)";
 	};
        };
       };
@@ -29006,11 +28954,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["maxda"] {
-     name="maxda";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["minus_output_name"] {
      name="minus_output_name";
      value 1 0=1;
@@ -29018,6 +28961,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["minus_cycles"] {
      name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tot_cycle"] {
+     name="tot_cycle";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -29091,6 +29039,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=0;
     };
+    UserDataItem @["maxda"] {
+     name="maxda";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["avg_act_diff_sm"] {
      name="avg_act_diff_sm";
      value 1 0=1;
@@ -29132,7 +29085,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn=1;
      lrate=0.02;
      cur_lrate=0.01;
-     lrs_value=EPOCH;
+     lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -29142,9 +29095,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      ignore_unlearnable=0;
      wt_sig {gain=6: off=1: dwt_norm=0: };
-     stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
+     fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
-     xcal {l_mix=X_ERR: thr_l_mix=0.5: thr_m_mix=0.5: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {l_mix=X_COS_DIFF: thr_l_mix=0.5: thr_m_mix=0.5: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
@@ -29161,10 +29114,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["LowVisSpecs"]["V1Bias"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-     act_lrn_on=0;
-     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+     act {thr=0.5: gain=100: nvar=0.005: };
+     act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
       spk_thr=1.2;
@@ -29172,32 +29124,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       clamp_type=REGULAR;
       vm_r=0.3;
       t_r=6;
-      vm_dend=0.3;
-      vm_dend_dt=0.16;
-      vm_dend_time=6.25;
      };
-     opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+     opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="v_m_init": type=UNIFORM: mean=0.3: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-     g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-     e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-     hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
-     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+     act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+     g_bar {e=1: l=0.1: i=1: };
+     e_rev {e=1: l=0.3: i=0.25: };
      adapt {
       on=0;
-      dt=0.007;
+      tau=144;
       vm_gain=0.04;
       spike_gain=0.00805;
-      interval=10;
-      trials=0;
-      dt_time=142.8571;
+      dt=0.006944444;
      };
-     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=1: trials=0: max_amp=1: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
@@ -29247,10 +29191,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       bias_spec {type=LeabraBiasSpec: spec=$.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["LowVisSpecs"]["V1Bias"]$: };
       sse_tol=0;
       act_fun=NOISY_XX1;
-      act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-      act_lrn_on=0;
-      act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_dt=0.02: };
+      act {thr=0.5: gain=100: nvar=0.005: };
+      act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_tau=50: eq_dt=0.02: };
       spike_misc {
        exp_slope=0.02;
        spk_thr=1.2;
@@ -29258,32 +29201,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp_type=REGULAR;
        vm_r=0.3;
        t_r=6;
-       vm_dend=0.3;
-       vm_dend_dt=0.16;
-       vm_dend_time=6.25;
       };
-      opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
       clamp_range {min=0: max=1: range=1: scale=1: };
       vm_range {min=0: max=2: range=2: scale=0.5: };
       v_m_init {name="v_m_init": type=UNIFORM: mean=0.4: var=0: par=1: };
       act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-      act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+      act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+      g_bar {e=1: l=0.1: i=1: };
+      e_rev {e=1: l=0.3: i=0.25: };
       adapt {
        on=0;
-       dt=0.00694444;
+       tau=144;
        vm_gain=0.04;
        spike_gain=0.00805;
-       interval=10;
-       trials=0;
-       dt_time=144.0001;
+       dt=0.006944444;
       };
-      depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=1: trials=0: max_amp=2: };
+      stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
       syn_delay {
        on=0;
        delay=4;
@@ -29315,10 +29250,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       bias_spec {type=LeabraBiasSpec: spec=$.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["LowVisSpecs"]["V1Bias"]$: };
       sse_tol=0;
       act_fun=NOISY_XX1;
-      act {gelin=1: thr=0.5: gain=100: nvar=0.01: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-      act_lrn_on=0;
-      act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_dt=0.02: };
+      act {thr=0.5: gain=100: nvar=0.01: };
+      act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_tau=50: eq_dt=0.02: };
       spike_misc {
        exp_slope=0.02;
        spk_thr=1.2;
@@ -29326,32 +29260,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp_type=REGULAR;
        vm_r=0.3;
        t_r=6;
-       vm_dend=0.3;
-       vm_dend_dt=0.16;
-       vm_dend_time=6.25;
       };
-      opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
       clamp_range {min=0: max=1: range=1: scale=1: };
       vm_range {min=0: max=2: range=2: scale=0.5: };
       v_m_init {name="v_m_init": type=UNIFORM: mean=0.4: var=0: par=1: };
       act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-      act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+      act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+      g_bar {e=1: l=0.1: i=1: };
+      e_rev {e=1: l=0.3: i=0.25: };
       adapt {
        on=0;
-       dt=0.007;
+       tau=144;
        vm_gain=0;
        spike_gain=0.01;
-       interval=70;
-       trials=0;
-       dt_time=142.8571;
+       dt=0.006944444;
       };
-      depress {phase_act=ACT_EQ: on=1: rec=0.2: asymp_act=1: depl=0: delay=0: interval=10: trials=0: max_amp=1: };
+      stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
       syn_delay {
        on=0;
        delay=4;
@@ -29383,10 +29309,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       bias_spec {type=LeabraBiasSpec: spec=$.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["LowVisSpecs"]["V1Bias"]$: };
       sse_tol=0;
       act_fun=NOISY_XX1;
-      act {gelin=1: thr=0.5: gain=100: nvar=0.01: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-      act_lrn_on=0;
-      act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_dt=0.02: };
+      act {thr=0.5: gain=100: nvar=0.01: };
+      act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+      spike {rise=1: decay=0.95: g_gain=4: window=20: eq_gain=10: eq_tau=50: eq_dt=0.02: };
       spike_misc {
        exp_slope=0.02;
        spk_thr=1.2;
@@ -29394,32 +29319,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp_type=REGULAR;
        vm_r=0.3;
        t_r=6;
-       vm_dend=0.3;
-       vm_dend_dt=0.16;
-       vm_dend_time=6.25;
       };
-      opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
       clamp_range {min=0: max=1: range=1: scale=1: };
       vm_range {min=0: max=2: range=2: scale=0.5: };
       v_m_init {name="v_m_init": type=UNIFORM: mean=0.4: var=0: par=1: };
       act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-      act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+      act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+      g_bar {e=1: l=0.1: i=1: };
+      e_rev {e=1: l=0.3: i=0.25: };
       adapt {
        on=0;
-       dt=0.007;
+       tau=144;
        vm_gain=0;
        spike_gain=0.01;
-       interval=70;
-       trials=0;
-       dt_time=142.8571;
+       dt=0.006944444;
       };
-      depress {phase_act=ACT_EQ: on=1: rec=0.2: asymp_act=0.2: depl=0.8421053: delay=0: interval=5: trials=0: max_amp=1: };
+      stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
       syn_delay {
        on=0;
        delay=4;
@@ -29474,8 +29391,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.6: self_g=1: diff_act_pct=1: act_pct_mult=0.3: pct_fm_frac=0: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2.5: gp_g=0.3: self_g=1: diff_act_pct=1: act_pct_mult=0.2: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	feat_inhib {
 	 on=0;
 	 n_angles=4;
@@ -29514,8 +29430,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.6: self_g=1: diff_act_pct=1: act_pct_mult=0.3: pct_fm_frac=0: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2.7: gp_g=0: self_g=1: diff_act_pct=1: act_pct_mult=0.2: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	feat_inhib {
 	 on=0;
 	 n_angles=4;
@@ -29554,8 +29469,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2.7: gp_g=0: self_g=1: diff_act_pct=1: act_pct_mult=0.4: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=1: max_plus=0: plus=0.05: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	feat_inhib {
 	 on=0;
 	 n_angles=4;
@@ -29594,8 +29508,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2.5: gp_g=0.3: self_g=1: diff_act_pct=1: act_pct_mult=0.4: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=1: max_plus=0: plus=0.05: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	feat_inhib {
 	 on=0;
 	 n_angles=4;
@@ -29634,8 +29547,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.6: self_g=1: diff_act_pct=1: act_pct_mult=0.3: pct_fm_frac=0: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2.3: gp_g=0.3: self_g=1: diff_act_pct=1: act_pct_mult=0.05: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	feat_inhib {
 	 on=0;
 	 n_angles=4;
@@ -29674,8 +29586,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.6: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2: gp_g=0.6: self_g=1: diff_act_pct=1: act_pct_mult=0.2: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["V2h"] {
 	name="V2h";
@@ -29706,8 +29617,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.6: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=2: gp_g=0.4: self_g=1: diff_act_pct=1: act_pct_mult=0.15: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["V3"] {
 	name="V3";
@@ -29738,8 +29648,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=1: act_pct_mult=0.333333: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["V2h_sum"] {
 	name="V2h_sum";
@@ -29778,8 +29687,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	  unit_gp_inhib {on=1: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=1: act_pct_mult=0.333333: pct_fm_frac=0: act_denom=3: };
 	  clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	  decay {event=0: phase=0: };
-	  cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	  decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
 	 };
 	};
 	inhib_group=ENTIRE_LAYER;
@@ -29802,8 +29710,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=1: act_pct_mult=0.333333: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=0: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
       };
       inhib_group=UNIT_GROUPS;
@@ -29826,8 +29733,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-      decay {event=0: phase=0: };
-      cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+      decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
      };
      LeabraLayerSpec @["V1_high_retina_r"] {
       name="V1_high_retina_r";
@@ -29858,8 +29764,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       lay_gp_inhib {on=1: fffb=1: lay_gi=2.3: gp_g=0.6: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       unit_gp_inhib {on=1: fffb=0: lay_gi=0.01: gp_g=0.1: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       clamp {hard=1: gain=0.5: max_plus=0: plus=0.05: min_clamp=0.5: minus_targ_gain=0: };
-      decay {event=0: phase=0: };
-      cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+      decay {event=0: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
      };
      LeabraConSpec @["LowVisCons"] {
       name="LowVisCons";
@@ -29904,7 +29809,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.01;
 	    cur_lrate=0.01;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -29956,7 +29861,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.001: err=0.999: err_sb=1: };
 	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.4: thresh=0.001: };
@@ -29972,7 +29877,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30024,7 +29929,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30048,7 +29953,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30100,7 +30005,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30132,7 +30037,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.01;
 	    cur_lrate=0.01;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -30184,7 +30089,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.001: err=0.999: err_sb=1: };
 	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.4: thresh=0.001: };
@@ -30200,7 +30105,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30252,7 +30157,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30276,7 +30181,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30328,7 +30233,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30352,7 +30257,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30404,7 +30309,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30428,7 +30333,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=0;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30480,7 +30385,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30504,7 +30409,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=0;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30556,7 +30461,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30572,7 +30477,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.02;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -30624,7 +30529,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.4: thresh=0.001: };
@@ -30656,7 +30561,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30708,7 +30613,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30732,7 +30637,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30784,7 +30689,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30808,7 +30713,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -30860,7 +30765,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -30892,7 +30797,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.01;
 	    cur_lrate=0.01;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -30944,9 +30849,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.001: err=0.999: err_sb=1: };
-	    xcal {l_mix=X_ERR: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.4: thresh=0.001: };
 	   };
 	  };
@@ -30960,7 +30865,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31012,7 +30917,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31036,7 +30941,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31088,7 +30993,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31104,7 +31009,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.02;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -31156,7 +31061,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.4: thresh=0.001: };
@@ -31188,7 +31093,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31240,7 +31145,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31264,7 +31169,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31316,7 +31221,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31348,7 +31253,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.01;
 	    cur_lrate=0.01;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -31400,7 +31305,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.001: err=0.999: err_sb=1: };
 	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.4: thresh=0.001: };
@@ -31416,7 +31321,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31468,7 +31373,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31492,7 +31397,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=0;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31544,7 +31449,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31568,7 +31473,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31620,7 +31525,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31644,7 +31549,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31696,7 +31601,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31712,7 +31617,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.02;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -31764,7 +31669,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.4: thresh=0.001: };
@@ -31796,7 +31701,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31848,7 +31753,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31872,7 +31777,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -31924,7 +31829,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -31948,7 +31853,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -32000,7 +31905,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -32024,7 +31929,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -32076,7 +31981,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -32108,7 +32013,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.01;
 	    cur_lrate=0.01;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -32160,7 +32065,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.001: err=0.999: err_sb=1: };
 	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.4: thresh=0.001: };
@@ -32176,7 +32081,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -32228,7 +32133,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.001: err=0.999: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.4: thresh=0.001: };
@@ -32244,7 +32149,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.02;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -32296,7 +32201,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.001: err=0.999: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.4: thresh=0.001: };
@@ -32312,7 +32217,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       learn=1;
       lrate=0.01;
       cur_lrate=0.01;
-      lrs_value=EPOCH;
+      lrs_mult=1;
       lrate_sched {
        name="lrate_sched";
        el_typ=SchedItem;
@@ -32364,7 +32269,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       ignore_unlearnable=1;
       wt_sig {gain=6: off=1: dwt_norm=0: };
-      stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+      fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
       lmix {hebb=0.001: err=0.999: err_sb=1: };
       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.1: thr_m_mix=0.9: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
       savg_cor {cor=0.4: thresh=0.001: };
@@ -32388,7 +32293,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       learn=0;
       lrate=0.02;
       cur_lrate=0.02;
-      lrs_value=EPOCH;
+      lrs_mult=1;
       lrate_sched {
        name="lrate_sched";
        el_typ=SchedItem;
@@ -32440,7 +32345,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       ignore_unlearnable=1;
       wt_sig {gain=6: off=1: dwt_norm=0: };
-      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
+      fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
       lmix {hebb=0.998: err=0.001999974: err_sb=1: };
       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
       savg_cor {cor=0.4: thresh=0.001: };
@@ -33213,10 +33118,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	bias_spec {type=LeabraBiasSpec: spec=.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["V4ITSpecs"]["V4ITCons"].children["V4ITBias"].children["OutputBias"]$$: };
 	sse_tol=0.5;
 	act_fun=NOISY_XX1;
-	act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-	act_lrn_on=0;
-	act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+	act {thr=0.5: gain=100: nvar=0.005: };
+	act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
 	spike_misc {
 	 exp_slope=0.02;
 	 spk_thr=1.2;
@@ -33224,32 +33128,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 clamp_type=REGULAR;
 	 vm_r=0.3;
 	 t_r=6;
-	 vm_dend=0.3;
-	 vm_dend_dt=0.16;
-	 vm_dend_time=6.25;
 	};
-	opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-	maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+	opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=2: range=2: scale=0.5: };
 	v_m_init {name="v_m_init": type=NONE: mean=0.3: var=0: par=1: };
 	act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-	dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-	act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-	g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-	e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+	dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+	act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+	g_bar {e=1: l=0.1: i=1: };
+	e_rev {e=1: l=0.3: i=0.25: };
 	adapt {
 	 on=0;
-	 dt=0.007;
+	 tau=144;
 	 vm_gain=0.04;
 	 spike_gain=0.00805;
-	 interval=10;
-	 trials=0;
-	 dt_time=142.8571;
+	 dt=0.006944444;
 	};
-	depress {phase_act=ACT_EQ: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=10: trials=0: max_amp=1: };
+	stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
 	syn_delay {
 	 on=0;
 	 delay=4;
@@ -33281,10 +33177,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	bias_spec {type=LeabraBiasSpec: spec=.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["V4ITSpecs"]["V4ITCons"].children["V4ITBias"]$$: };
 	sse_tol=0.5;
 	act_fun=NOISY_XX1;
-	act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-	act_lrn_on=0;
-	act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+	act {thr=0.5: gain=100: nvar=0.005: };
+	act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
 	spike_misc {
 	 exp_slope=0.02;
 	 spk_thr=1.2;
@@ -33292,32 +33187,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 clamp_type=REGULAR;
 	 vm_r=0.3;
 	 t_r=6;
-	 vm_dend=0.3;
-	 vm_dend_dt=0.16;
-	 vm_dend_time=6.25;
 	};
-	opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-	maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+	opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=2: range=2: scale=0.5: };
 	v_m_init {name="v_m_init": type=NONE: mean=0.3: var=0: par=1: };
 	act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-	dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-	act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-	g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-	e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+	dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+	act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+	g_bar {e=1: l=0.1: i=1: };
+	e_rev {e=1: l=0.3: i=0.25: };
 	adapt {
 	 on=0;
-	 dt=0.007;
+	 tau=144;
 	 vm_gain=0.04;
 	 spike_gain=0.00805;
-	 interval=10;
-	 trials=0;
-	 dt_time=142.8571;
+	 dt=0.006944444;
 	};
-	depress {phase_act=ACT_EQ: on=0: rec=0.2: asymp_act=0.9: depl=0.02339182: delay=0: interval=10: trials=0: max_amp=1: };
+	stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
 	syn_delay {
 	 on=0;
 	 delay=4;
@@ -33349,10 +33236,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	bias_spec {type=LeabraBiasSpec: spec=$.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["V4ITSpecs"]["V4ITCons"].children["V4ITBias"]$: };
 	sse_tol=0.5;
 	act_fun=NOISY_XX1;
-	act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-	act_lrn_on=0;
-	act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+	act {thr=0.5: gain=100: nvar=0.005: };
+	act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+	spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
 	spike_misc {
 	 exp_slope=0.02;
 	 spk_thr=1.2;
@@ -33360,32 +33246,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 clamp_type=REGULAR;
 	 vm_r=0.3;
 	 t_r=6;
-	 vm_dend=0.3;
-	 vm_dend_dt=0.16;
-	 vm_dend_time=6.25;
 	};
-	opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-	maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+	opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
 	clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
 	vm_range {min=0: max=2: range=2: scale=0.5: };
 	v_m_init {name="v_m_init": type=NONE: mean=0.3: var=0: par=1: };
 	act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-	dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-	act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-	g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-	e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-	hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-	acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+	dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+	act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+	g_bar {e=1: l=0.1: i=1: };
+	e_rev {e=1: l=0.3: i=0.25: };
 	adapt {
 	 on=0;
-	 dt=0.007;
+	 tau=144;
 	 vm_gain=0.04;
 	 spike_gain=0.00805;
-	 interval=10;
-	 trials=0;
-	 dt_time=142.8571;
+	 dt=0.006944444;
 	};
-	depress {phase_act=ACT_EQ: on=1: rec=0.2: asymp_act=1: depl=0: delay=0: interval=10: trials=0: max_amp=1: };
+	stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
 	syn_delay {
 	 on=0;
 	 delay=4;
@@ -33409,10 +33287,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       bias_spec {type=LeabraBiasSpec: spec=$.projects["vis_bench_sm"].networks["ObjrecNet"].specs.gp["V4ITSpecs"]["V4ITCons"].children["V4ITBias"]$: };
       sse_tol=0.5;
       act_fun=NOISY_XX1;
-      act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-      act_lrn_on=0;
-      act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+      act {thr=0.5: gain=100: nvar=0.005: };
+      act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
       spike_misc {
        exp_slope=0.02;
        spk_thr=1.2;
@@ -33420,32 +33297,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        clamp_type=REGULAR;
        vm_r=0.3;
        t_r=6;
-       vm_dend=0.3;
-       vm_dend_dt=0.16;
-       vm_dend_time=6.25;
       };
-      opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-      maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
       clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
       vm_range {min=0: max=2: range=2: scale=0.5: };
       v_m_init {name="v_m_init": type=NONE: mean=0.3: var=0: par=1: };
       act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-      dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-      act_avg {l_up_add=1: l_dn_pct=1: l_up_dt=0.25: l_dn_dt=0.4: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=2.5: m_time=10: s_time=5: ss_time=1: };
-      g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-      e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-      hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=1: trl=0: };
-      acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+      act_avg {l_up_inc=0.25: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+      g_bar {e=1: l=0.1: i=1: };
+      e_rev {e=1: l=0.3: i=0.25: };
       adapt {
        on=0;
-       dt=0.007;
+       tau=144;
        vm_gain=0.04;
        spike_gain=0.00805;
-       interval=10;
-       trials=0;
-       dt_time=142.8571;
+       dt=0.006944444;
       };
-      depress {phase_act=ACT_EQ: on=1: rec=0.2: asymp_act=1: depl=0: delay=0: interval=10: trials=0: max_amp=1: };
+      stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
       syn_delay {
        on=0;
        delay=4;
@@ -33500,8 +33369,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=1: fffb=1: lay_gi=1: gp_g=0.4: self_g=1: diff_act_pct=1: act_pct_mult=0.6: pct_fm_frac=0: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=1: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["IT"] {
 	name="IT";
@@ -33532,8 +33400,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=1: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["Semantics"] {
 	name="Semantics";
@@ -33564,8 +33431,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=1: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["FFA"] {
 	name="FFA";
@@ -33596,8 +33462,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=1: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
        LeabraLayerSpec @["Output"] {
 	name="Output";
@@ -33628,8 +33493,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	unit_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
 	clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-	decay {event=1: phase=0: };
-	cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+	decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
        };
       };
       inhib_group=ENTIRE_LAYER;
@@ -33652,8 +33516,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       lay_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       unit_gp_inhib {on=0: fffb=0: lay_gi=0.01: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
       clamp {hard=1: gain=0.2: max_plus=1: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-      decay {event=1: phase=0: };
-      cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+      decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
      };
      LeabraConSpec @["V4ITCons"] {
       name="V4ITCons";
@@ -33690,7 +33553,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -33742,7 +33605,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -33759,7 +33622,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.01;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -33811,7 +33674,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.8: thresh=0.001: };
@@ -33836,7 +33699,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=0;
 	lrate=0;
 	cur_lrate=0;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -33888,7 +33751,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.8: thresh=0.001: };
@@ -33921,7 +33784,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -33973,7 +33836,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -33997,7 +33860,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34049,7 +33912,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34073,7 +33936,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.01;
 	  cur_lrate=0.01;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34125,7 +33988,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34141,7 +34004,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.01;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -34193,7 +34056,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.8: thresh=0.001: };
@@ -34233,7 +34096,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    learn=1;
 	    lrate=0.001;
 	    cur_lrate=0.0004;
-	    lrs_value=EPOCH;
+	    lrs_mult=1;
 	    lrate_sched {
 	     name="lrate_sched";
 	     el_typ=SchedItem;
@@ -34285,7 +34148,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    };
 	    ignore_unlearnable=1;
 	    wt_sig {gain=6: off=1: dwt_norm=0: };
-	    stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	    fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	    lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	    xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	    savg_cor {cor=0.8: thresh=0.001: };
@@ -34301,7 +34164,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34353,7 +34216,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34377,7 +34240,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.02;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34429,7 +34292,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34453,7 +34316,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34505,9 +34368,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
-	  xcal {l_mix=X_ERR: thr_l_mix=0: thr_m_mix=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0: thr_m_mix=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
 	 };
 	 LeabraConSpec @["FFA_Out"] {
@@ -34529,7 +34392,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34581,7 +34444,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34605,7 +34468,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.0004;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34657,7 +34520,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34681,7 +34544,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34733,7 +34596,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34757,7 +34620,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34809,7 +34672,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34833,7 +34696,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34885,7 +34748,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34909,7 +34772,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.001;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -34961,7 +34824,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -34985,7 +34848,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  learn=1;
 	  lrate=0.001;
 	  cur_lrate=0.02;
-	  lrs_value=EPOCH;
+	  lrs_mult=1;
 	  lrate_sched {
 	   name="lrate_sched";
 	   el_typ=SchedItem;
@@ -35037,7 +34900,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  ignore_unlearnable=1;
 	  wt_sig {gain=6: off=1: dwt_norm=0: };
-	  stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	  fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	  lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	  xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	  savg_cor {cor=0.8: thresh=0.001: };
@@ -35053,7 +34916,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.001;
 	cur_lrate=0.02;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -35105,7 +34968,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.8: thresh=0.001: };
@@ -35129,7 +34992,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	learn=1;
 	lrate=0.01;
 	cur_lrate=0.01;
-	lrs_value=EPOCH;
+	lrs_mult=1;
 	lrate_sched {
 	 name="lrate_sched";
 	 el_typ=SchedItem;
@@ -35181,7 +35044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
 	ignore_unlearnable=1;
 	wt_sig {gain=6: off=1: dwt_norm=0: };
-	stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+	fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
 	lmix {hebb=0.998: err=0.001999974: err_sb=1: };
 	xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
 	savg_cor {cor=0.8: thresh=0.001: };
@@ -35197,7 +35060,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       learn=1;
       lrate=0.01;
       cur_lrate=0.02;
-      lrs_value=EPOCH;
+      lrs_mult=1;
       lrate_sched {
        name="lrate_sched";
        el_typ=SchedItem;
@@ -35249,7 +35112,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       ignore_unlearnable=1;
       wt_sig {gain=6: off=1: dwt_norm=0: };
-      stable_mix {stable_pct=0: learn_pct=1: cos_diff_lrate=0: };
+      fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
       lmix {hebb=0.998: err=0.001999974: err_sb=1: };
       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
       savg_cor {cor=0.8: thresh=0.001: };
@@ -35273,7 +35136,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       learn=0;
       lrate=0;
       cur_lrate=0;
-      lrs_value=EPOCH;
+      lrs_mult=1;
       lrate_sched {
        name="lrate_sched";
        el_typ=SchedItem;
@@ -35325,7 +35188,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       ignore_unlearnable=1;
       wt_sig {gain=6: off=1.1: dwt_norm=0: };
-      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
+      fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
       lmix {hebb=0.998: err=0.001999974: err_sb=1: };
       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0: d_rev_ratio=-9: };
       savg_cor {cor=0.5: thresh=0.001: };
@@ -35557,7 +35420,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       learn=0;
       lrate=0;
       cur_lrate=0;
-      lrs_value=EPOCH;
+      lrs_mult=1;
       lrate_sched {
        name="lrate_sched";
        el_typ=SchedItem;
@@ -35609,7 +35472,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       ignore_unlearnable=1;
       wt_sig {gain=6: off=1.1: dwt_norm=0: };
-      stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
+      fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
       lmix {hebb=0.998: err=0.001999974: err_sb=1: };
       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.005: thr_m_mix=0.995: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0: d_rev_ratio=-9: };
       savg_cor {cor=0.5: thresh=0.001: };
@@ -35648,8 +35511,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.5: pct_fm_frac=0: act_denom=3: };
       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.5: pct_fm_frac=0: act_denom=3: };
       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-      decay {event=1: phase=0: };
-      cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
+      decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
       twod {rep=GAUSSIAN: n_vals=1: un_width=0.12: norm_width=1: clamp_pat=0: min_sum_act=0.2: mn_dst=0.5: clip_val=1: };
       x_range {min=0: max=1: range=1: scale=1: };
       y_range {min=0: max=1: range=1: scale=1: };
@@ -36984,14 +36846,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    cnt_err_tol=0;
    compute_prerr=0;
    threads {
-    run_time {name="": s_used=6.022397999999986: n_used=11257: avg_used=Average: };
-    sync_time {name="": s_used=0.01451299999999984: n_used=11257: avg_used=Average: };
-    total_time {name="": s_used=6.072536000000015: n_used=11257: avg_used=Average: };
+    run_time {name="": s_used=6.022397999999986: n_used=11257: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0.01451299999999984: n_used=11257: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=6.072536000000015: n_used=11257: avg_used={avg=0: sum=0: n=0: }: };
     n_wake_in_sync=1;
     run_time_pct=0.9925027836059781;
     sync_time_pct=0.002309612694271162;
     wake_in_sync_pct=3.635041802980734e-5;
-    interleave=1;
+    nibble_chunk=8;
+    min_units=3000;
     ignore_lay_sync=0;
    };
    usr1_save_fmt=JUST_WEIGHTS;
@@ -37002,15 +36865,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_disp_size {x=80: y=76: z=3: };
    max_disp_size2d {x=266: y=578: };
    lthreads {
-    run_time {name="": s_used=0: n_used=0: avg_used=Average: };
-    sync_time {name="": s_used=0: n_used=0: avg_used=Average: };
-    total_time {name="": s_used=0: n_used=0: avg_used=Average: };
+    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     n_wake_in_sync=0;
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=1.262536567725354e-308;
     n_cycles=10;
-    unit_chunks=2;
+    unit_chunks=32;
     timers_on=0;
    };
    learn_rule=CTLEABRA_XCAL;
@@ -37019,7 +36882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    no_plus_test=0;
    sequence_init=DO_NOTHING;
    phase_max=2;
-   time_inc=1;
+   time_inc=0.001;
    net_misc {
     dwt_norm_used=0;
     kwta_used=0;
@@ -37045,14 +36908,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     plus_s_only=1;
     force_con=0;
    };
-   maxda_stopcrit=-1;
+   rel_netin {
+    on=1;
+    trl_skip=10;
+    epc_skip=10;
+   };
    trg_max_act_stopcrit=1;
    norew_val=0.5;
    off_errs=1;
    on_errs=1;
    cos_err_lrn_thr=0;
-   cos_diff_on=1;
-   cos_diff_auto=1;
   };
  };
 };
