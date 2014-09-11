@@ -158,6 +158,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetImage_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
+        sele->mbrs.RemoveIdx(itm_idx);
       }
       else {
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
@@ -184,6 +185,7 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
       EditMbrItem* item = sele->mbrs.Leaf(itm_idx);
       if ((item == NULL) || (item->base == NULL) || (md == NULL) || (mb_dat == NULL) || item->mbr == NULL) {
         taMisc::DebugInfo("taiEditorOfControlPanelFull::GetValue_Membs_def(): unexpected md or mb_dat=NULL at i ", String(i));
+        sele->mbrs.RemoveIdx(itm_idx);
       }
       else {
         bool first_diff = true;
