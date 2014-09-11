@@ -37,7 +37,7 @@ int Project_Group::Load(const String& fname, taBase** loaded_obj_ptr) {
   // chg working dir to that of project -- simplifies lots of stuff immensely
   QFileInfo fi(fname);
   QDir::setCurrent(fi.absolutePath());
-  int rval = inherited::Load(fname, loaded_obj_ptr);
+  int rval = inherited::Load(String(fi.absoluteFilePath().toUtf8().data()), loaded_obj_ptr);
   return rval;
 }
 
