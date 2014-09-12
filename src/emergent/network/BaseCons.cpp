@@ -1081,10 +1081,10 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   bool bias_con = false;
   if(!prjn && con_alloc == 1) {  // if prjn = NULL, then probably bias con -- just allocate cons
     bias_con = true;
-    if(alloc_size != 1)
-      AllocCons(con_alloc);
-    if(size != 1)
-      ConnectUnOwnCn(own_ru);
+    // if(alloc_size != 1)
+    //   AllocCons(con_alloc);
+    // if(size != 1)
+    //   ConnectUnOwnCn(own_ru);
   }
   else {
     if(alloc_size != con_alloc) {
@@ -1211,8 +1211,8 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
 
   if(prjn && prjn->con_spec.spec) {
     SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
-    if(!old_load)
-      Init_Weights_post(own_ru, net);        // update weights after loading
+    // if(!old_load)
+    //   Init_Weights_post(own_ru, net);        // update weights after loading
   }
 
   if(old_load) {

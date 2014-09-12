@@ -1297,12 +1297,8 @@ void LeabraNetwork::Compute_PlusStats() {
 }
 
 void LeabraNetwork::Compute_AbsRelNetin() {
-  if(NetinPerPrjn() || rel_netin.ComputeNow(epoch, trial)) {
-    Compute_AbsRelNetin_impl();
-  }
-}
-    
-void LeabraNetwork::Compute_AbsRelNetin_impl() {
+  // always get layer-level netin max / avg values
+  // decision of whether to run prjn-level is done by layers
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Compute_AbsRelNetin(this);

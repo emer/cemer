@@ -488,25 +488,19 @@ void Network::BuildPrjns() {
 
 void Network::Connect() {
   taMisc::Busy();
-  ++taMisc::no_auto_expand; // c'mon...!!! ;)
+  ++taMisc::no_auto_expand;
   StructUpdate(true);
 
-  // taMisc::Info("Starting Connect..");
   CheckSpecs();
   RemoveCons();
   SyncSendPrjns();
 
-  // taMisc::Info("Starting Connect_Sizes..");
   Connect_Sizes();
-  // taMisc::Info("Starting Connect_Alloc..");
   Connect_Alloc();
-  // taMisc::Info("Starting Connect_Cons..");
   Connect_Cons();
   UpdtAfterNetMod();            // this updates con active flags
 
-  // taMisc::Info("Starting Connect_VecChunk..");
   Connect_VecChunk(); 
-  // taMisc::Info("Done with Connect..");
 
   // Init_Weights(); // not doing -- slow for large nets -- this is separate now
 
@@ -546,20 +540,24 @@ void Network::Connect_Alloc_RecvOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
-      if(!rc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!rc->PrjnIsActive()) continue;
       own_cons_cnt += rc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, rc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, rc->NConVars());
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
-      if(!sc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!sc->PrjnIsActive()) continue;
       ptr_cons_cnt += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
       own_cons_cnt += un->bias.OwnMemReq();
     }
   }
+
+  if(own_cons_cnt == 0 || ptr_cons_cnt == 0) return; // something is wrong..
 
   // use posix_memalign to ensure that for this monster, we've got maximum possible alignment
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
@@ -572,13 +570,15 @@ void Network::Connect_Alloc_RecvOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
-      if(!rc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!rc->PrjnIsActive()) continue;
       rc->SetMemStart(own_cons_mem + own_cons_idx);
       own_cons_idx += rc->OwnMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
-      if(!sc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!sc->PrjnIsActive()) continue;
       sc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
       ptr_cons_idx += sc->PtrMemReq();
     }
@@ -599,14 +599,18 @@ void Network::Connect_Alloc_SendOwns() {
   own_cons_max_vars = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
+    if(taMisc::is_loading)      // need to allocate bias during first pass loading, but
+      un->AllocBias();          // unitspec is not set -- can't get con_type..
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
-      if(!rc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!rc->PrjnIsActive()) continue;
       ptr_cons_cnt += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
-      if(!sc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!sc->PrjnIsActive()) continue;
       own_cons_cnt += sc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, sc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
@@ -615,6 +619,8 @@ void Network::Connect_Alloc_SendOwns() {
       own_cons_cnt += un->bias.OwnMemReq();
     }
   }
+
+  if(own_cons_cnt == 0 || ptr_cons_cnt == 0) return; // something is wrong..
 
   // use posix_memalign to ensure that for this monster, we've got maximum possible alignment
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
@@ -627,13 +633,15 @@ void Network::Connect_Alloc_SendOwns() {
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
       RecvCons* rc = un->recv[p];
-      if(!rc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!rc->PrjnIsActive()) continue;
       rc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
       ptr_cons_idx += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
-      if(!sc->PrjnIsActive()) continue;
+      if(!taMisc::is_loading)
+        if(!sc->PrjnIsActive()) continue;
       sc->SetMemStart(own_cons_mem + own_cons_idx);
       own_cons_idx += sc->OwnMemReq();
     }

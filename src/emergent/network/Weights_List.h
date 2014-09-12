@@ -32,6 +32,8 @@ class E_API Weights_List : public taList<Weights> {
 INHERITED(taList<Weights>)
 public:
 
+  int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
+
   TA_BASEFUNS_NOCOPY(Weights_List);
 private:
   void Initialize()  { SetBaseType(&TA_Weights); };

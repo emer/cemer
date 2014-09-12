@@ -496,9 +496,7 @@ public:
   // #CAT_Statistic compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase
 
   virtual void	Compute_AbsRelNetin();
-  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network -- this should NOT be called from programs (although previously it was) -- it is automatically called in Trial_Final now, and is subjected to settings of rel_netin if NETIN_PER_PRJN flag is not set
-  virtual void	Compute_AbsRelNetin_impl();
-  // #CAT_Statistic actually compute the absolute layer-level and relative netinput from different projections into layers in network (no tests)
+  // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into layers in network -- this should NOT be called from programs (although previously it was) -- it is automatically called in Trial_Final now, and projection-level netin data is subjected to settings of rel_netin if NETIN_PER_PRJN flag is not set
   virtual void	Compute_AvgAbsRelNetin();
   // #CAT_Statistic compute time-average absolute layer-level and relative netinput from different projections into layers in network (e.g. over epoch timescale)
   virtual void	Compute_AdaptRelNetin() { };

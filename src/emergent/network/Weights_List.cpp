@@ -14,6 +14,27 @@
 //   GNU General Public License for more details.
 
 #include "Weights_List.h"
+#include <Network>
+
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Weights_List);
 
+int Weights_List::Dump_Load_Value(std::istream& strm, taBase* par) {
+  int rval = inherited::Dump_Load_Value(strm, par);
+  Network* net = GET_MY_OWNER(Network);
+  if(net) {
+    // we show up during loading after all the units have been processed, 
+    // so we are the trigger for allocating based on what has been specified
+    // so far!  rval == 2 is for first pass..
+    if(rval == 2) {
+      net->UpdtAfterNetMod();
+      net->Connect_Alloc();       // take the network
+    }
+    else {
+      net->Init_Weights_post();
+      net->Connect_VecChunk(); 
+    }      
+  }
+  return rval;
+}

@@ -1571,46 +1571,50 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
 void LeabraLayerSpec::Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->netin.max < 0.01f) return; // not getting enough activation to count!
 
+  // layer is automatic
   lay->avg_netin_sum.avg += lay->netin.avg;
   lay->avg_netin_sum.max += lay->netin.max;
   lay->avg_netin_n++;
 
-  float sum_net = 0.0f;
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(prjn->NotActive()) continue;
-    prjn->netin_avg = 0.0f;
-    int netin_avg_n = 0;
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-      if(u->lesioned()) continue;
-      LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-      if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
-      LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
-      if(!cg) continue;
-      float netin;
-      if(net->NetinPerPrjn()) {
-        netin = cg->net_raw;
+  // but projection level is not
+  if(net->NetinPerPrjn() || net->rel_netin.ComputeNow(net->epoch, net->trial)) {
+    float sum_net = 0.0f;
+    for(int i=0;i<lay->projections.size;i++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+      if(prjn->NotActive()) continue;
+      prjn->netin_avg = 0.0f;
+      int netin_avg_n = 0;
+      FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+        if(u->lesioned()) continue;
+        LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+        if(u->act_eq < us->opt_thresh.send) continue; // ignore if not above sending thr
+        LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(prjn->recv_idx);
+        if(!cg) continue;
+        float netin;
+        if(net->NetinPerPrjn()) {
+          netin = cg->net_raw;
+        }
+        else {
+          netin = cg->Compute_Netin(u,net); // otherwise have to compute it
+        }
+        cg->net = netin;
+        prjn->netin_avg += netin;
+        netin_avg_n++;
       }
-      else {
-        netin = cg->Compute_Netin(u,net); // otherwise have to compute it
-      }
-      cg->net = netin;
-      prjn->netin_avg += netin;
-      netin_avg_n++;
+      if(netin_avg_n > 0)
+        prjn->netin_avg /= (float)netin_avg_n;
+      sum_net += prjn->netin_avg;
     }
-    if(netin_avg_n > 0)
-      prjn->netin_avg /= (float)netin_avg_n;
-    sum_net += prjn->netin_avg;
-  }
 
-  for(int i=0;i<lay->projections.size;i++) {
-    LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
-    if(sum_net > 0.0f)
-      prjn->netin_rel = prjn->netin_avg / sum_net;
-    // increment epoch-level
-    prjn->avg_netin_avg_sum += prjn->netin_avg;
-    prjn->avg_netin_rel_sum += prjn->netin_rel;
-    prjn->avg_netin_n++;
+    for(int i=0;i<lay->projections.size;i++) {
+      LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
+      if(sum_net > 0.0f)
+        prjn->netin_rel = prjn->netin_avg / sum_net;
+      // increment epoch-level
+      prjn->avg_netin_avg_sum += prjn->netin_avg;
+      prjn->avg_netin_rel_sum += prjn->netin_rel;
+      prjn->avg_netin_n++;
+    }
   }
 }
 
