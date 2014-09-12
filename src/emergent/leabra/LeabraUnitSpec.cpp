@@ -326,7 +326,7 @@ void LeabraUnitSpec::Defaults_init() {
   e_rev.i = 0.25f;
 
   v_m_init.type = Random::NONE;
-  v_m_init.mean = e_rev.l;
+  v_m_init.mean = 0.4f; // e_rev.l;  // 0.4f works sig better in many cases..
   v_m_init.var = 0.0f;
 
   act_init.type = Random::NONE;

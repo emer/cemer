@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7522
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7536
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -760,7 +760,7 @@ LeabraProject .projects["LeabraStd"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [11] {
+    ProgEl_List @.prog_code = [10] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -807,31 +807,11 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[8] { 
-      ProgEl_List @.true_code = [2] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-       If @[1] { 
-	ProgEl_List @.true_code = [2] {
-	 MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	 };
-	 MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	 };
-	};
-       };
-      };
-     };
-     MethodCall @[9] { 
+     MethodCall @[8] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[10] { 
+     ProgramCall @[9] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
@@ -864,7 +844,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [8] {
+    ProgEl_List @.prog_code = [7] {
      NetCounterInit @[0] { };
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
@@ -897,20 +877,12 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     If @[5] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     ProgramCall @[6] { 
+     ProgramCall @[5] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetUpdateView @[7] { };
+     NetUpdateView @[6] { };
     };
    };
    Program @["LeabraSettle"] { 
@@ -6306,72 +6278,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
       };
      };
-     If @[8] {
-      desc=;
-      flags=0;
-      orig_prog_code=;
-      cond {
-       expr="compute_rel_netin";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc=;
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	method=LeabraNetwork::Compute_AvgAbsRelNetin;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-       If @[1] {
-	desc=;
-	flags=0;
-	orig_prog_code=;
-	cond {
-	 expr="adapt_rel_abs_netin";
-	};
-	true_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	 MethodCall @[0] {
-	  desc=;
-	  flags=0;
-	  orig_prog_code=;
-	  result_var=NULL;
-	  obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	  method=LeabraNetwork::Compute_AdaptRelNetin;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	  };
-	 };
-	 MethodCall @[1] {
-	  desc=;
-	  flags=0;
-	  orig_prog_code=;
-	  result_var=NULL;
-	  obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	  method=LeabraNetwork::Compute_AdaptAbsNetin;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	  };
-	 };
-	};
-       };
-      };
-     };
-     MethodCall @[9] {
+     MethodCall @[8] {
       desc="done with the computation in the epoch -- record time it took";
       flags=0;
       orig_prog_code=;
@@ -6384,7 +6291,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
       };
      };
-     ProgramCall @[10] {
+     ProgramCall @[9] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=0;
       orig_prog_code=;
@@ -6624,32 +6531,6 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
      If @[4] {
-      desc=;
-      flags=NEW_EL;
-      orig_prog_code=;
-      cond {
-       expr="compute_rel_netin";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="special for adapting netin";
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
-	method=LeabraNetwork::Compute_AbsRelNetin;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-      };
-     };
-     If @[5] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
       orig_prog_code=;
@@ -6675,7 +6556,7 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     ProgramCall @[6] {
+     ProgramCall @[5] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
       orig_prog_code=;
@@ -6697,7 +6578,7 @@ LeabraProject .projects["LeabraStd"] {
       target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$$;
       targ_ld_init="*LeabraTrialMonitor*";
      };
-     NetUpdateView @[7] {
+     NetUpdateView @[6] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
       orig_prog_code=;
@@ -8836,7 +8717,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9984025359153748;
+     value 6 0=0.9978712201118469;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -10067,7 +9948,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04046858474612236;
+       value 6 0=0.04044704511761665;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -10273,8 +10154,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
        clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-       decay {event=1: phase=0: };
-       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+       decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
       };
      };
      inhib_group=ENTIRE_LAYER;
@@ -10297,8 +10177,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
      clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-     decay {event=1: phase=0: };
-     cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
+     decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -10315,8 +10194,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
-     act_misc {act_lrn=ACT_EQ: act_max_hz=100: time_unit=1000: avg_time=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_time=50: eq_dt=0.02: };
+     act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
       spk_thr=1.2;
@@ -10330,18 +10209,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="v_m_init": type=NONE: mean=0.300000011920929: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm_time=3.3: net_time=1.4: midpoint=0: fast_cyc=0: vm=0.3030303: net=0.7142857: };
-     act_avg {l_up_inc=0.2: l_dn_time=2.5: cascade=0: ss_time=1: s_time=5: m_time=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
+     dt {integ=1: vm_tau=3.3: net_tau=1.4: midpoint=0: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+     act_avg {l_up_inc=0.2: l_dn_tau=2.5: cascade=0: ss_tau=1: s_tau=5: m_tau=10: l_dn_dt=0.4: ss_dt=1: s_dt=0.2: m_dt=0.1: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      adapt {
       on=0;
-      time=144;
+      tau=144;
       vm_gain=0.04;
       spike_gain=0.00805;
       dt=0.006944444;
      };
-     stp {on=0: f_r_ratio=0.02: t_rec=200: t_fac=4: p0=0.3: fac=0.3: t_kre=100: re=0.002: act_hz=100: dt_rec=0.005: dt_fac=0.25: dt_kre=0.01: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
@@ -10386,7 +10265,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=1;
        lrate=0.02;
        cur_lrate=0.02;
-       lrs_value=EPOCH;
+       lrs_mult=1;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -10396,7 +10275,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        ignore_unlearnable=1;
        wt_sig {gain=6: off=1: dwt_norm=0: };
-       fast_wts {on=0: decay=0.05: slow_lrate=0.1: decay_time=20: };
+       fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
@@ -10421,7 +10300,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=1;
        lrate=0.02;
        cur_lrate=0.02;
-       lrs_value=EPOCH;
+       lrs_mult=1;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -10431,7 +10310,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        ignore_unlearnable=1;
        wt_sig {gain=6: off=1: dwt_norm=0: };
-       fast_wts {on=0: decay=0.05: slow_lrate=0.1: decay_time=20: };
+       fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
        lmix {hebb=0.001: err=0.999: err_sb=1: };
        xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        savg_cor {cor=0.4: thresh=0.001: };
@@ -10447,7 +10326,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn=1;
      lrate=0.02;
      cur_lrate=0.02;
-     lrs_value=EPOCH;
+     lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -10457,7 +10336,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      ignore_unlearnable=1;
      wt_sig {gain=6: off=1: dwt_norm=0: };
-     fast_wts {on=0: decay=0.05: slow_lrate=0.1: decay_time=20: };
+     fast_wts {on=0: decay_tau=6000: wt_tau=200: fast_lrate=10: fast_no_lrs=0: decay_dt=0.0001666667: wt_dt=0.005: slow_lrate=0.1: };
      lmix {hebb=0.001: err=0.999: err_sb=1: };
      xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      savg_cor {cor=0.4: thresh=0.001: };
@@ -10730,7 +10609,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    no_plus_test=1;
    sequence_init=DO_NOTHING;
    phase_max=2;
-   time_inc=1;
+   time_inc=0.001;
    net_misc {
     dwt_norm_used=0;
     kwta_used=1;
@@ -10766,8 +10645,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    off_errs=1;
    on_errs=1;
    cos_err_lrn_thr=-1;
-   cos_diff_on=0;
-   cos_diff_auto=1;
   };
  };
 };

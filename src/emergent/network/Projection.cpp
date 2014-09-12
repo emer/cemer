@@ -494,39 +494,6 @@ void Projection::Copy_Weights(const Projection* src) {
   }
 }
 
-void Projection::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    u->SaveWeights_strm(strm, this, fmt);
-  }
-}
-
-int Projection::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
-  int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    rval = u->LoadWeights_strm(strm, this, fmt, quiet);
-    if(rval != taMisc::TAG_END) break;
-  }
-  return rval;
-}
-
-void Projection::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, fmt);
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
-
-int Projection::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
-  int rval = false;
-  if(flr->istrm)
-    rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
-  flr->Close();
-  taRefN::unRefDone(flr);
-  return rval;
-}
-
 void Projection::TransformWeights(const SimpleMathSpec& trans) {
   FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->TransformWeights(trans, this);

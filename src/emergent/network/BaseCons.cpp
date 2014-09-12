@@ -35,7 +35,11 @@ TA_BASEFUNS_CTORS_DEFN(BaseCons);
 using namespace std;
 
 float BaseCons::null_rval = 0.0f;
-int   BaseCons::vec_chunk_targ = TA_VEC_SIZE;
+//int   BaseCons::vec_chunk_targ = TA_VEC_SIZE;
+
+// NOTE: this must be a constant for everyone because otherwise the weight files
+// will not be portable across different platforms, builds, etc
+int   BaseCons::vec_chunk_targ = 8;
 
 void BaseCons::Initialize() {
   // derived classes need to set new basic con types
@@ -942,8 +946,6 @@ int BaseCons::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     }
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
-
-  Init_Weights_post(ru,net);        // update weights after loading
   return stat;                  // should be tag end!
 }
 
@@ -970,26 +972,6 @@ int BaseCons::SkipWeights_strm(istream& strm, BaseCons::WtSaveFormat fmt, bool q
   }
   BaseCons::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);
   return stat;
-}
-
-void BaseCons::SaveWeights(const String& fname, Unit* ru, Network* net,
-                           BaseCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, ru, net, fmt);
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
-
-int BaseCons::LoadWeights(const String& fname, Unit* ru, Network* net,
-                          BaseCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
-  int rval = 0;
-  if(flr->istrm)
-    rval = LoadWeights_strm(*flr->istrm, ru, net, fmt, quiet);
-  flr->Close();
-  taRefN::unRefDone(flr);
-  return rval;
 }
 
 int BaseCons::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {

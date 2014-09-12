@@ -345,13 +345,6 @@ public:
                                  bool quiet = false);
   // #IGNORE skip over saved weights (to keep the file in sync) -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
-  virtual void  SaveWeights(const String& fname, Unit* ru, Network* net,
-                            BaseCons::WtSaveFormat fmt = BaseCons::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int   LoadWeights(const String& fname, Unit* ru, Network* net,
-                  BaseCons::WtSaveFormat fmt = BaseCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File  #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary format) (leave fname empty to pull up file chooser)
-
   virtual void  Copy_Weights(const BaseCons* src, Network* net);
   // #CAT_ObjectMgmt copies weights from other con_group
 

@@ -159,11 +159,6 @@ public: //
                                  bool quiet = false);
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
-  virtual void  SaveWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
-  // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-  virtual int   LoadWeights(const String& fname="", Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
-  // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
-
   void          SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
   // #CAT_Activation set ext flag for what type of input data we receive
   void          UnSetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag & ~flg); }

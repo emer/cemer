@@ -340,9 +340,18 @@ public:
 
   ////////////////////////////////////////////////////////////////
   //	Cycle_Run
+  
+  inline  int   CycleMax_Minus()
+  { if(lthreads.CanRun()) return ct_time.minus / lthreads.n_cycles;  
+    return ct_time.minus; }
+  // #CAT_Settle max number of cycles to run in the minus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= ct_time.minus / lthreads.n_cycles)
+  inline  int   CycleMax_Plus()
+  { if(lthreads.CanRun()) return ct_time.plus / lthreads.n_cycles;  
+    return ct_time.plus; }
+  // #CAT_Settle max number of cycles to run in the plus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= ct_time.plus / lthreads.n_cycles)
 
   virtual void	Cycle_Run();
-  // #CAT_Cycle compute one cycle of updating: netinput, inhibition, activations
+  // #CAT_Cycle compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act
 
   ///////////////////////////////////////////////////////
   //	Cycle Stage 1: netinput

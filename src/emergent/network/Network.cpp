@@ -1643,6 +1643,12 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     RecvCons::LoadWeights_EndTag(strm, "Lay", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
+
+  if(needs_wt_sym) {
+    Init_Weights_sym();
+  }
+  Init_Weights_post();
+  
   // could try to read end tag but what is the point?
   rval = true;
   UpdateAllViews();

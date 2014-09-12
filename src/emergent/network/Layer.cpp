@@ -972,24 +972,6 @@ int Layer::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quie
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
 
-void Layer::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, fmt);
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
-
-int Layer::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
-  int rval = false;
-  if(flr->istrm)
-    rval = LoadWeights_strm(*flr->istrm, fmt, quiet);
-  flr->Close();
-  taRefN::unRefDone(flr);
-  return rval;
-}
-
 void Layer::PropagateInputDistance() {
   int new_dist = dist.fm_input + 1;
   FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {

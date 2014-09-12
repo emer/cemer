@@ -722,24 +722,6 @@ int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet
   return stat;
 }
 
-void Unit::SaveWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt) {
-  taFiler* flr = GetSaveFiler(fname, ".wts", true);
-  if(flr->ostrm)
-    SaveWeights_strm(*flr->ostrm, prjn, fmt);
-  flr->Close();
-  taRefN::unRefDone(flr);
-}
-
-int Unit::LoadWeights(const String& fname, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
-  taFiler* flr = GetLoadFiler(fname, ".wts", true);
-  int rval = false;
-  if(flr->istrm)
-    rval = LoadWeights_strm(*flr->istrm, prjn, fmt, quiet);
-  flr->Close();
-  taRefN::unRefDone(flr);
-  return rval;
-}
-
 void Unit::GetLocalistName() {
   if(name.nonempty()) return;   // only if not otherwise named!
   Network* net = own_net();
