@@ -68,6 +68,15 @@ void ControlPanel::UpdateAfterEdit_impl() {
       SetUserData("user_pinned", true);
       auto_edit = false;
     }
+    
+    // check that this item is still supported - types are occassionally removed
+    for (int i=mbrs.size-1; i>=0; i--) {
+      EditMbrItem* item = mbrs.Leaf(i);
+      if (item == NULL || item->base == NULL || item->mbr == NULL) {
+        mbrs.RemoveIdx(i);
+      }
+    }
+    
     // add all the bases, since they weren't available during load
     FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
       BaseAdded(sei);
