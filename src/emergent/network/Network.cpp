@@ -1644,10 +1644,8 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     if(stat != taMisc::TAG_END) break;
   }
 
-  if(needs_wt_sym) {
-    Init_Weights_sym();
-  }
   Init_Weights_post();
+  Connect_VecChunk();           // re-chunk just to be sure, in case they moved around
   
   // could try to read end tag but what is the point?
   rval = true;
