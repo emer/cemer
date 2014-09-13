@@ -73,6 +73,7 @@ void ControlPanel::UpdateAfterEdit_impl() {
     for (int i=mbrs.size-1; i>=0; i--) {
       EditMbrItem* item = mbrs.Leaf(i);
       if (item == NULL || item->base == NULL || item->mbr == NULL) {
+        taMisc::DebugInfo("ControlPanel::UpdateAfterEdit_impl: could not find item: ", item->label);
         mbrs.RemoveIdx(i);
       }
     }
