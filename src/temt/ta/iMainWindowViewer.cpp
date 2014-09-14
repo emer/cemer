@@ -634,6 +634,22 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
   connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
+  
+  editUndoAction->setEnabled(false);
+  editRedoAction->setEnabled(false);
+  editCutAction->setEnabled(false);
+  editCopyAction->setEnabled(false);
+  editPasteAction->setEnabled(false);
+  editPasteIntoAction->setEnabled(false);
+  editPasteAssignAction->setEnabled(false);
+  editPasteAppendAction->setEnabled(false);
+  editDeleteAction->setEnabled(false);
+  editDupeAction->setEnabled(false);
+  
+  // don't show on startup - and only later when sensible
+  editPasteIntoAction->setVisible(false);
+  editPasteAssignAction->setVisible(false);
+  editPasteAppendAction->setVisible(false);
 }
 
 void iMainWindowViewer::Constr_ViewMenu()
@@ -2183,8 +2199,6 @@ void iMainWindowViewer::editMenu_aboutToShow() {
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
   }
   else {
-    editUndoAction->setEnabled(false);
-    editRedoAction->setEnabled(false);
   }
   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
   QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
