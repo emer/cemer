@@ -25,8 +25,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(FastWtsSpec);
-TA_BASEFUNS_CTORS_DEFN(LearnMixSpec);
-TA_BASEFUNS_CTORS_DEFN(SAvgCorSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
@@ -103,17 +101,6 @@ void FastWtsSpec::UpdateAfterEdit_impl() {
   }
 }
 
-void LearnMixSpec::Initialize() {
-  hebb = .001f;
-  err = 1.0f - hebb;
-  err_sb = true;
-}
-
-void LearnMixSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  err = 1.0f - hebb;
-}
-
 void XCalLearnSpec::Initialize() {
   l_mix = X_COS_DIFF;
   thr_l_mix = 0.05f;
@@ -146,14 +133,8 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
   if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
-void SAvgCorSpec::Initialize() {
-  cor = .4f;
-  thresh = .001f;
-}
-
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
-  learn_rule = CTLEABRA_XCAL;
   inhib = false;
 
   diff_scale_p = false;
@@ -201,11 +182,7 @@ void LeabraConSpec::InitLinks() {
   children.SetBaseType(&TA_LeabraConSpec);
   children.el_typ = GetTypeDef(); // but make the default to be me!
   CreateWtSigFun();
-  if(taMisc::is_loading || taMisc::is_duplicating) return;
-  LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
-  if(mynet) {
-    SetLearnRule(mynet);                // get current learning rule.
-  }
+  // if(taMisc::is_loading || taMisc::is_duplicating) return;
 }
 
 void LeabraConSpec::UpdateAfterEdit_impl() {
@@ -215,63 +192,26 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   lrate_sched.UpdateAfterEdit_NoGui();
   fast_wts.UpdateAfterEdit_NoGui();
-  lmix.UpdateAfterEdit_NoGui();
   xcal.UpdateAfterEdit_NoGui(); // this calls owner
   CreateWtSigFun();
-  LeabraNetwork* mynet = GET_MY_OWNER(LeabraNetwork);
-  if(mynet) {
-    SetLearnRule(mynet);                // get current learning rule, just in case..
-  }
 
   ClearBaseFlag(BF_MISC2);      // done..
 }
 
 bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
   bool rval = true;
-  if(learn_rule == CTLEABRA_CAL) {
-    if(cg->prjn) {
-      if(cg->prjn->CheckError(!cg->prjn->con_type->InheritsFrom(&TA_LeabraSRAvgCon), quiet, rval,
-                              "does not have con_type = LeabraSRAvgCon -- required for CTLEABRA_CAL learning to hold the sravg connection-level values -- I just fixed this for you in this projection, but must do Build to get it to take effect")) {
-        cg->prjn->con_type = &TA_LeabraSRAvgCon;
-      }
-    }
-  }
   return rval;
 }
 
 void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from, 
                                        bool plus_phase) {
-  float savg = from->kwta.pct;
+  float savg = from->acts_m_avg;
   float from_sz = (float)from->units.leaves;
   float n_cons = (float)recv_gp->size;
   if(plus_phase && diff_scale_p)
     recv_gp->scale_eff = wt_scale_p.FullScale(savg, from_sz, n_cons);
   else
     recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
-}
-
-void LeabraConSpec::SetLearnRule(LeabraNetwork* net) {
-  if((int)net->learn_rule == (int)learn_rule) return;
-  learn_rule = (LeabraConSpec::LearnRule)net->learn_rule;
-  // todo: could set come conflicting params..
-  if(learn_rule != LEABRA_CHL) {
-    if(wt_sig.off == 1.25f)
-      wt_sig.off = 1.0f;        // this is key
-    if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
-      if(lrate == 0.01f)
-        lrate = 0.02f;          // also important
-    }
-    // wt_sig.dwt_norm = true;	// definitely default for xcal
-  }
-  else {
-    if(wt_sig.off == 1.0f)
-      wt_sig.off = 1.25f;
-    if(GetTypeDef() == &TA_LeabraConSpec) { // only for generic conspecs -- not derived ones!
-      if(lrate == 0.02f)
-        lrate = 0.01f;          // also important
-    }
-  }
-  UpdateAfterEdit();            // pick up flags
 }
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {

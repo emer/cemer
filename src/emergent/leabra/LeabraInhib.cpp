@@ -15,88 +15,57 @@
 
 #include "LeabraInhib.h"
 
-TA_BASEFUNS_CTORS_DEFN(KWTAVals);
-TA_BASEFUNS_CTORS_DEFN(InhibVals);
+TA_BASEFUNS_CTORS_DEFN(LeabraInhibVals);
 
-void KWTAVals::Initialize() {
-  k = 12;
-  pct = .25f;
-  pct_c = .75f;
-
+void LeabraInhibVals::Initialize() {
   InitVals();
 }
 
-void KWTAVals::InitVals() {
-  k_ithr = 0.0f;
-  k1_ithr = 0.0f;
-  ithr_diff = 0.0f;
+void LeabraInhibVals::InitVals() {
   ffi = 0.0f;
   fbi = 0.0f;
   prv_trl_ffi = 0.0f;
   prv_phs_ffi = 0.0f;
+
+  g_i = 0.0f;
+  g_i_orig = 0.0f;
+  lay_g_i = 0.0f;
+  laygp_g_i = 0.0f;
 }
 
-void KWTAVals::Copy_(const KWTAVals& cp) {
-  k = cp.k;
-  pct = cp.pct;
-  pct_c = cp.pct_c;
-  k_ithr = cp.k_ithr;
-  k1_ithr = cp.k1_ithr;
-  ithr_diff = cp.ithr_diff;
+void LeabraInhibVals::Copy_(const LeabraInhibVals& cp) {
   ffi = cp.ffi;
   fbi = cp.fbi;
   prv_trl_ffi = cp.prv_trl_ffi;
   prv_phs_ffi = cp.prv_phs_ffi;
-}
-
-void KWTAVals::Compute_Pct(int n_units) {
-  if(n_units > 0)
-    pct = (float)k / (float)n_units;
-  else
-    pct = 0.0f;
-  pct_c = 1.0f - pct;
-}
-
-void InhibVals::Initialize() {
-  kwta = 0.0f;
-  g_i = 0.0f;
-  gp_g_i = 0.0f;
-  g_i_orig = 0.0f;
-}
-
-void InhibVals::Copy_(const InhibVals& cp) {
-  kwta = cp.kwta;
   g_i = cp.g_i;
-  gp_g_i = cp.gp_g_i;
   g_i_orig = cp.g_i_orig;
+  lay_g_i = cp.lay_g_i;
+  laygp_g_i = cp.laygp_g_i;
 }
-
+ 
 void LeabraInhib::Inhib_Initialize() {
-  kwta.k = 1;
-  kwta.pct = .25;
-  kwta.pct_c = .75;
-  i_val.Init();
+  i_val.InitVals();
   un_g_i.cmpt = false;          // don't compute by default
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
-  kwta.InitVals();
-  i_val.Init();
+  i_val.InitVals();
   netin.InitVals();
   acts.InitVals();
   un_g_i.InitVals();
 }
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
+  acts_m_avg = cp.acts_m_avg;
+  acts_p_avg = cp.acts_p_avg;
+  i_val = cp.i_val;
   netin = cp.netin;
   acts = cp.acts;
-  acts_p = cp.acts_p;
   acts_m = cp.acts_m;
-  acts_m_avg = cp.acts_m_avg;
+  acts_p = cp.acts_p;
   acts_ctxt = cp.acts_ctxt;
   acts_mid = cp.acts_mid;
-  kwta = cp.kwta;
-  i_val = cp.i_val;
   un_g_i = cp.un_g_i;
 }
 

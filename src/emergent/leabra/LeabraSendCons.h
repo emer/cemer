@@ -40,33 +40,12 @@ public:
   { ((LeabraConSpec*)GetConSpec())->Send_NetinDelta(this, net, thread_no, su_act_delta); }
   // #CAT_Activation send delta-netin
 
-  void	Compute_dWt_LeabraCHL(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_LeabraCHL(this, su, net); }
-  // #CAT_Learning compute weight changes: Leabra CHL version
-  void	Compute_Weights_LeabraCHL(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_Weights_LeabraCHL(this, su, net); }
-  // #CAT_Learning compute weights: Leabra CHL version
-
   void	Compute_dWt_CtLeabraXCAL(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraXCAL(this, su, net); }
   // #CAT_Learning compute weight changes: CtLeabra XCAL version
   void	Compute_Weights_CtLeabraXCAL(LeabraUnit* su, LeabraNetwork* net)
   { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraXCAL(this, su, net); }
   // #CAT_Learning compute weights: CtLeabra XCAL version
-
-  void	Trial_Init_SRAvg(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Trial_Init_SRAvg(this, su, net); }
-  // #CAT_Learning initialize send-recv average coproduct
-  void	Compute_SRAvg(LeabraUnit* su, LeabraNetwork* net, bool do_s)
-  { ((LeabraConSpec*)GetConSpec())->Compute_SRAvg(this, su, net, do_s); }
-  // #CAT_Learning compute send-recv average coproduct
-  void	Compute_dWt_CtLeabraCAL(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_dWt_CtLeabraCAL(this, su, net); }
-  // #CAT_Learning compute weight changes: CtLeabra CAL version
-
-  void	Compute_CycSynDep(LeabraUnit* su, LeabraNetwork* net)
-  { ((LeabraConSpec*)GetConSpec())->Compute_CycSynDep(this, su, net); }
-  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   void	Copy_(const LeabraSendCons& cp);
   TA_BASEFUNS(LeabraSendCons);

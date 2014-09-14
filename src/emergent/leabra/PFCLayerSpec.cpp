@@ -47,8 +47,8 @@ void PFCLayerSpec::Initialize() {
 void PFCLayerSpec::Defaults_init() {
   //  SetUnique("inhib", true);
   // inhib.type = LeabraInhibSpec::FF_FB_INHIB;
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; // works better it seems
-  inhib.kwta_pt = .5f;
+  // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB; // works better it seems
+  // inhib.kwta_pt = .5f;
 
   // ff_fb params:
   inhib.gi = 2.1f;
@@ -58,14 +58,14 @@ void PFCLayerSpec::Defaults_init() {
 
   // SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
-  gp_kwta.pct = 0.15f;
+  // gp_kwta.pct = 0.15f;
 
   unit_gp_inhib.on = false;
   unit_gp_inhib.gp_g = 0.5f;
-  unit_gp_inhib.diff_act_pct = true;
-  unit_gp_inhib.pct_fm_frac = true;
-  unit_gp_inhib.act_denom = 3.0f;
-  unit_gp_inhib.UpdateAfterEdit_NoGui();
+  // unit_gp_inhib.diff_act_pct = true;
+  // unit_gp_inhib.pct_fm_frac = true;
+  // unit_gp_inhib.act_denom = 3.0f;
+  // unit_gp_inhib.UpdateAfterEdit_NoGui();
 
   // SetUnique("decay", true);
   decay.event = 0.0f;
@@ -117,10 +117,10 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     net->no_plus_test = false;
   }
 
-  if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
-                "requires LeabraNetwork min_minus_cycle > 5, I just set it to 40 for you")) {
-    net->mid_minus_cycle = 40;
-  }
+  // if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
+  //               "requires LeabraNetwork min_minus_cycle > 5, I just set it to 40 for you")) {
+  //   net->mid_minus_cycle = 40;
+  // }
 
   if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
                 "requires network sequence_init = DO_NOTHING, I just set it for you")) {

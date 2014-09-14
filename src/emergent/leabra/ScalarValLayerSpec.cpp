@@ -114,10 +114,10 @@ void ScalarValLayerSpec::Initialize() {
 
 void ScalarValLayerSpec::Defaults_init() {
   if(scalar.rep == ScalarValSpec::GAUSSIAN) {
-    kwta.k_from = KWTASpec::USE_K;
-    kwta.k = 3;
-    gp_kwta.k_from = KWTASpec::USE_K;
-    gp_kwta.k = 3;
+    // kwta.k_from = KWTASpec::USE_K;
+    // kwta.k = 3;
+    // gp_kwta.k_from = KWTASpec::USE_K;
+    // gp_kwta.k = 3;
     inhib.gi = 2.2f;
 
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
@@ -125,10 +125,10 @@ void ScalarValLayerSpec::Defaults_init() {
     val_range.max = unit_range.max - (.5f * scalar.un_width_eff);
   }
   else if(scalar.rep == ScalarValSpec::LOCALIST) {
-    kwta.k_from = KWTASpec::USE_K;
-    kwta.k = 1;
-    gp_kwta.k_from = KWTASpec::USE_K;
-    gp_kwta.k = 1;
+    // kwta.k_from = KWTASpec::USE_K;
+    // kwta.k = 1;
+    // gp_kwta.k_from = KWTASpec::USE_K;
+    // gp_kwta.k = 1;
     inhib.gi = 2.2f;
 
     val_range.min = unit_range.min;
@@ -204,8 +204,8 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
 
     if(scalar.rep == ScalarValSpec::LOCALIST) {
-      kwta.k = 1;         // localist means 1 unit active!!
-      gp_kwta.k = 1;
+      // kwta.k = 1;         // localist means 1 unit active!!
+      // gp_kwta.k = 1;
     }
   }
 

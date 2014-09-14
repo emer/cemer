@@ -125,7 +125,7 @@ void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int 
   }
   if((net->cycle >= 0) && lay->hard_clamped)
     return;                     // don't do this during normal processing
-  if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
+  // if(inhib.type == LeabraInhibSpec::UNIT_INHIB) return; // otherwise overwrites!
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
 
@@ -161,13 +161,7 @@ void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int 
           float ogi = feat_inhib.inhib_g * oth_netin; // note: directly on ithr!
           feat_inhib_max = MAX(feat_inhib_max, ogi);
         }
-        float eig;
-        if(inhib.type == LeabraInhibSpec::FF_FB_INHIB) {
-          eig = inhib.gi * inhib.FFInhib(feat_inhib_max);
-        }
-        else {
-          eig = us->Compute_IThreshNetinOnly(us->g_bar.e * feat_inhib_max);
-        }
+        float eig = inhib.gi * inhib.FFInhib(feat_inhib_max);
         float gi_eff = MAX(inhib_val, eig);
         LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx((int)uidx, gpidx);
         u->Compute_ApplyInhib(this, net, gi_eff);

@@ -105,16 +105,16 @@ void TwoDValBias::Initialize() {
 void TwoDValLayerSpec::Initialize() {
   min_obj_type = &TA_TwoDValLeabraLayer;
 
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 9;
-  gp_kwta.k_from = KWTASpec::USE_K;
-  gp_kwta.k = 9;
+  // SetUnique("kwta", true);
+  // kwta.k_from = KWTASpec::USE_K;
+  // kwta.k = 9;
+  // gp_kwta.k_from = KWTASpec::USE_K;
+  // gp_kwta.k = 9;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = .6f;
+  // SetUnique("inhib", true);
+  // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  // inhib.kwta_pt = .6f;
 
   if(twod.rep == TwoDValSpec::GAUSSIAN) {
     x_range.min = -0.5f;   x_range.max = 1.5f; x_range.UpdateAfterEdit_NoGui();
@@ -196,8 +196,8 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   }
 
   if(twod.rep == TwoDValSpec::LOCALIST) {
-    kwta.k = 1;         // localist means 1 unit active!!
-    gp_kwta.k = 1;
+    // kwta.k = 1;         // localist means 1 unit active!!
+    // gp_kwta.k = 1;
   }
 
   // check for conspecs with correct params
@@ -243,9 +243,9 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
 
     if(twod.rep == TwoDValSpec::LOCALIST) {
       twod.min_sum_act = .2f;
-      kwta.k = 1;
-      inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-      inhib.kwta_pt = 0.9f;
+      // kwta.k = 1;
+      // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+      // inhib.kwta_pt = 0.9f;
       us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
       us->act.thr = .17f;
       us->act.gain = 220.0f;
@@ -263,15 +263,15 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
            cs->InheritsFrom(TA_MarkerConSpec)) {
           continue;
         }
-        cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
+        // cs->lmix.err_sb = false; // false: this is critical for linear mapping of vals..
         cs->rnd.mean = 0.1f;
         cs->rnd.var = 0.0f;
         cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;
       }
     }
     else if(twod.rep == TwoDValSpec::GAUSSIAN) {
-      inhib.type = LeabraInhibSpec::KWTA_INHIB;
-      inhib.kwta_pt = 0.25f;
+      // inhib.type = LeabraInhibSpec::KWTA_INHIB;
+      // inhib.kwta_pt = 0.25f;
       us->act_fun = LeabraUnitSpec::NOISY_XX1;
       us->act.thr = .25f;
       us->act.gain = 600.0f;
@@ -289,7 +289,7 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
            cs->InheritsFrom(TA_MarkerConSpec)) {
           continue;
         }
-        cs->lmix.err_sb = true;
+        // cs->lmix.err_sb = true;
         cs->rnd.mean = 0.1f;
         cs->rnd.var = 0.0f;
         cs->wt_sig.gain = 1.0; cs->wt_sig.off = 1.0;

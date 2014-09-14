@@ -37,14 +37,8 @@ void DRN5htSpec::Initialize() {
 }
 
 void DRNLayerSpec::Initialize() {
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .25;
 }
 
 void DRNLayerSpec::HelpConfig() {
@@ -142,7 +136,7 @@ void DRNLayerSpec::Compute_Se(LeabraLayer* lay, LeabraNetwork* net) {
   lay->sev += negpvd + negstated;
   if(lay->sev < se.se_base) lay->sev = se.se_base;
 
-  net->pvlv_sev = lay->sev;
+  // net->pvlv_sev = lay->sev;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     u->sev = lay->sev;

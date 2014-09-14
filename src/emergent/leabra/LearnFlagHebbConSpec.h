@@ -41,9 +41,9 @@ public:
     ACT_P,                      // plus phase activation
   };
 
-#ifdef __MAKETA__
-  SAvgCorSpec	savg_cor;	// #CAT_Learning for CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
-#endif
+// #ifdef __MAKETA__
+//   SAvgCorSpec	savg_cor;	// #CAT_Learning for CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
+// #endif
   DaModType     da_mod;         // how does receiving unit dopamine modulate learning (or not)?
   SendAct       send_act;       // what variable to use on the sending unit for activation to enter into the delta rule learning equation
 
@@ -64,8 +64,8 @@ public:
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                        LeabraNetwork* net) override {
-    Compute_SAvgCor(cg, su, net);
-    if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+    // Compute_SAvgCor(cg, su, net);
+    // if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
 
     float* fwts = cg->OwnCnVar(FWT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -81,7 +81,7 @@ public:
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
-        C_Compute_dWt_Hebb_NoDa(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act);
+        C_Compute_dWt_Hebb_NoDa(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act);
       }
     }
     else if(da_mod == DA_MOD) {
@@ -89,7 +89,7 @@ public:
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
-        C_Compute_dWt_Hebb_Da(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act, ru->dav);
+        C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act, ru->dav);
       }
     }
     else {                      // DA_MOD_ABS
@@ -97,25 +97,10 @@ public:
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
         if(!ru->HasLearnFlag()) continue; // must have this flag to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
-        C_Compute_dWt_Hebb_Da(dwts[i], cg->savg_cor, lin_wt, ru->act_p, su_act,
+        C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act,
                                 fabsf(ru->dav));
       }
     }
-  }
-
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
   }
 
   TA_SIMPLE_BASEFUNS(LearnFlagHebbConSpec);

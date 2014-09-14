@@ -27,8 +27,8 @@ void ECoutLayerSpec::Defaults_init() {
   SetUnique("inhib_group", true);
   inhib_group = UNIT_GROUPS;
   SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = 0.25f;
+  // inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  // inhib.kwta_pt = 0.25f;
   SetUnique("clamp", true);
   clamp.max_plus = true;
 }
@@ -40,18 +40,6 @@ bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool rval = true;
 
   LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-  if(net) {
-    if(TestWarning(net->min_cycles < auto_m_cycles + 20, "CheckConfig",
-                   "ECoutLayerSpec: setting network min_cycles to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
-      net->min_cycles = auto_m_cycles + 20;
-    }
-    if(TestWarning((net->learn_rule != LeabraNetwork::LEABRA_CHL) &&
-                   (net->ct_time.minus < auto_m_cycles + 20), "CheckConfig",
-                   "ECoutLayerSpec: setting network ct_time.minus to be auto_m_cycles + 20 to ensure minimum amount of time to settle")) {
-      net->ct_time.minus = auto_m_cycles + 20;
-    }
-  }
-
   int in_prjn_idx;
   LeabraLayer* in_lay = FindLayerFmSpec(lay, in_prjn_idx, &TA_ECinLayerSpec);
   if(!in_lay) return true;		// just hope it works out

@@ -45,8 +45,6 @@ public:
 
   virtual void	Trial_Init_Specs(LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on epoch
-  virtual void	SetLearnRule(LeabraNetwork* net);
-  // #CAT_Learning set current learning rule from the network
   virtual void	CheckInhibCons(LeabraNetwork* net);
   // #CAT_Structure check for inhibitory connections -- sets flag on network
 

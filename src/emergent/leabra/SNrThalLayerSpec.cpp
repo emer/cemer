@@ -45,16 +45,14 @@ void SNrThalLayerSpec::Defaults_init() {
   inhib_group = ENTIRE_LAYER;
 
   // SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::FF_FB_INHIB;
   inhib.gi = 2.1f;
   inhib.ff = 1.0f;
   inhib.fb = 0.5f;
   inhib.self_fb = 0.0f;
-  inhib.kwta_pt = .7f;
 
   // SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 3;
+  // kwta.k_from = KWTASpec::USE_K;
+  // kwta.k = 3;
 }
 
 void SNrThalLayerSpec::HelpConfig() {

@@ -23,12 +23,8 @@
 // member includes:
 #include <LeabraUnit_Group>
 #include <LeabraLayerSpec>
-#include <LeabraSort>
 #include <AvgMaxVals>
-#include <CtSRAvgVals>
 #include <LeabraUnGpData_List>
-#include <int_Array>
-#include <KwtaSortBuff_List>
 #include <DMemAggVars>
 
 // NOTE: this is a multiple-inheritence class -- if Layer is ever affected
@@ -42,33 +38,25 @@ class LeabraNetwork; //
 eTypeDef_Of(LeabraLayer);
 
 class E_API LeabraLayer : public Layer, public LeabraInhib {
-  // #STEM_BASE ##CAT_Leabra layer that implements the Leabra algorithms
+  // #STEM_BASE ##CAT_Leabra a Leabra Layer, which defines the primary scope of inhibitory competition among the units and unit groups that it contains
 INHERITED(Layer)
 public:
   LeabraLayerSpec_SPtr	spec;	// #CAT_Structure the spec for this layer: controls all functions of layer
   bool		hard_clamped;	// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation if true, indicates that this layer was actually hard clamped -- this is normally set by the Compute_HardClamp function called by Settle_Init() or NewInputData_Init() -- see LayerSpec clamp.hard parameter to determine whether layer is hard clamped or not -- this flag is not to be manipulated directly
-  CtSRAvgVals	sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average activation accumulation values -- for normalizing averages and state field provides ultimate determination of when and how sravg is computed
-  float		avg_l_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation layer-wise average of avg_l values in the layers
   float		dav;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning dopamine-like modulatory value (where applicable)
   float		sev;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning serotonin-like modulatory value (where applicable)
   AvgMaxVals	avg_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer, averaged over an epoch-level timescale
-  AvgMaxVals	avg_netin_sum;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
-  int		avg_netin_n;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
+  AvgMaxVals	avg_netin_sum;	// #NO_SAVE #READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM sum of net input values for the layer, for computing average over an epoch-level timescale
+  int		avg_netin_n;	// #NO_SAVE #READ_ONLY #HIDDEN #CAT_Activation #DMEM_AGG_SUM number of times sum is updated for computing average
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic normalized binary error value for this layer, computed subject to the parameters on the network
   float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer
   float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) activation difference between act_p and act_m on this trial for this layer -- computed by Compute_CosDiff -- must be called after SettleFinal in plus phase to get act_p values
-  float		cos_diff_avg;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic running average cosine (normalized dot product) difference between act_p and act_m -- computed by CosDiffLrateSpec
-  float		cos_diff_lrate;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic learning rate multiplier computed by CosDiffLrateSpec based on cos_diff and cos_diff_avg
+  float		cos_diff_avg;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic running average cosine (normalized dot product) difference between act_p and act_m -- computed by 
   float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) error on this trial for this layer, for activations on previous trial (p_act_p) -- computed automatically during ti_mode
   float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for ti_mode
   float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average act_diff (act_p - act_m) for this layer -- this is an important statistic to track overall 'main effect' differences across phases 
   float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) trial-level activation difference between act_p and p_act_p on this trial for this layer -- computed by Compute_TrialCosDiff -- must be called after SettleFinal in plus phase to get act_p values
-  int		da_updt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Learning true if da triggered an update (either + to store or - reset)
-  LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for kwta computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
-  int_Array	unit_idxs;	// #NO_SAVE #HIDDEN #CAT_Activation -- set of unit indexes typically used for permuted selection of units (e.g., k_pos_noise) -- can be used by other functions too
-
-  KwtaSortBuff_List lay_kbuffs;	// #NO_SAVE #HIDDEN #NO_COPY #CAT_Activation layer-wide kwta computation buffers
-  KwtaSortBuff_List gp_kbuffs;	// #NO_SAVE #HIDDEN #NO_COPY #CAT_Activation subgroup-specific computation buffers
+  LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -82,19 +70,7 @@ public:
   void	BuildUnits() override;
   void  BuildUnits_Threads(Network* net) override
   { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
-  virtual  void	BuildKwtaBuffs();
-  // #IGNORE build kwta buffers etc -- needs to be done at load and build time
 
-  KwtaSortBuff* 	SortBuff(AccessMode acc_md, KwtaSortBuff_List::StdSortBuffs buff) {
-    if(acc_md == ACC_GP) return gp_kbuffs.FastEl(buff);
-    return lay_kbuffs.FastEl(buff);
-  }
-  // #CAT_Activation #IGNORE get kwta sort buffer for given access mode (gp or layer) and buffer type
-  KwtaSortBuff_List* 	SortBuffList(AccessMode acc_md) {
-    if(acc_md == ACC_GP) return &gp_kbuffs;
-    return &lay_kbuffs;
-  }
-  // #CAT_Activation get kwta sort buffer list for given access mode (gp or layer)
   LeabraUnGpData* 	UnGpData(int gpidx)
   { return ungp_data.SafeEl(gpidx); }
   // #CAT_Structure get unit group data structure for given unit group index
@@ -104,9 +80,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
-
-  void	SetLearnRule(LeabraNetwork* net) 	{ if(spec) spec->SetLearnRule(this, net); }
-  // #CAT_Learning set current learning rule from the network
 
   void	Init_Weights_Layer(Network* net) override
   { if(spec) spec->Init_Weights_Layer(this, (LeabraNetwork*)net); }
@@ -139,18 +112,12 @@ public:
     void	Trial_DecayState(LeabraNetwork* net)
     { spec->Trial_DecayState(this, net); }
     // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
-    void	Trial_NoiseInit(LeabraNetwork* net)
-    { spec->Trial_NoiseInit(this, net); }
-    // #CAT_Activation NOT CALLED DURING STD PROCESSING initialize various noise factors at start of trial
     void 	Trial_Init_SRAvg(LeabraNetwork* net)
     { spec->Trial_Init_SRAvg(this, net); }
     // #CAT_Learning NOT CALLED DURING STD PROCESSING initialize sending-receiving activation product averages (CtLeabra_X/CAL)
 
   ///////////////////////////////////////////////////////////////////////
   //	SettleInit -- at start of settling
-
-  void	Compute_Active_K(LeabraNetwork* net)	{ spec->Compute_Active_K(this, net); }
-  // #CAT_Activation prior to settling: compute actual activity levels based on spec, inputs, etc
 
   void	Settle_Init_Layer(LeabraNetwork* net)	{ spec->Settle_Init_Layer(this, net); }
   // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Settle_Init_Units call
@@ -174,7 +141,7 @@ public:
   // main computation is direct Send_NetinDelta call on units through threading mechanism
 
   void	Compute_NetinStats(LeabraNetwork* net)  { spec->Compute_NetinStats(this, net); }
-  // #CAT_Activation compute AvgMax stats on netin and i_thr values computed during netin computation -- used for various regulatory and monitoring functions
+  // #CAT_Activation compute AvgMax stats on netin values computed during netin computation -- used for various regulatory and monitoring functions
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -205,10 +172,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats -- optional non-default guys
 
-  float	Compute_TopKAvgAct(LeabraNetwork* net)  { return spec->Compute_TopKAvgAct(this, net); }
-  // #CAT_Statistic compute the average activation of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
-  float	Compute_TopKAvgNetin(LeabraNetwork* net)  { return spec->Compute_TopKAvgNetin(this, net); }
-  // #CAT_Statistic compute the average netinput of the top k most active units (useful as a measure of recognition) -- requires a kwta inhibition function to be in use, and operates on current act_eq values
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
@@ -254,16 +217,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
-
-  void	Compute_SRAvg_State(LeabraNetwork* net)
-  { spec->Compute_SRAvg_State(this, net); }
-  // #CAT_Learning compute state flag setting for sending-receiving activation averages (CtLeabra_X/CAL) -- called at the Cycle_Run level by network Compute_SRAvg_State -- unless manual_sravg flag is on, it just copies the network-level sravg_vals.state setting
-  void	Compute_SRAvg_Layer(LeabraNetwork* net)
-  { spec->Compute_SRAvg_Layer(this, net); }
-  // #CAT_Learning compute layer-level sravg values -- called in advance of the unit level call -- updates the sravg_vals for this layer based on the sravg_vals.state flag
-  bool	Compute_SRAvg_Test(LeabraNetwork* net)
-  { return spec->Compute_SRAvg_Test(this, net); }
-  // #CAT_Learning test whether to compute sravg values -- default is true, but some layers might opt out for various reasons
 
   void	Compute_dWt_Layer_pre(LeabraNetwork* net)  { spec->Compute_dWt_Layer_pre(this, net); }
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
@@ -313,7 +266,6 @@ public:
   ////////////////////////////////////////////
   //	Misc structural routines
 
-  virtual void	ResetSortBuf();
   void	TriggerContextUpdate() override;
 
   bool		SetLayerSpec(LayerSpec* sp);

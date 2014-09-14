@@ -22,10 +22,11 @@
 // member includes:
 #include <taMath_float>
 #include <Average>
-#include <CtSRAvgVals>
+#include <LeabraUnit>
 #include <LeabraLayer>
 #include <LeabraPrjn>
 #include <LeabraThreadMgr>
+#include <int_Array>
 
 // declare all other types mentioned but not required to include:
 class DataTable; // 
@@ -37,10 +38,7 @@ class E_API LeabraNetMisc : public taOBase {
 INHERITED(taOBase)
 public:
   bool		dwt_norm_used; // #READ_ONLY #SHOW dwt_norm is used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
-  bool          kwta_used;        // #READ_ONLY #SHOW do any layers use kwta for computing inhibition (otherwise FF_FB which is the default and is more computationally efficient)?  set automatically in Trial_Init_Specs, based on LayerSpec.inhib settings
   bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation
-  bool		cyc_syn_dep;	// #READ_ONLY #SHOW if true, enable synaptic depression calculations at the synapse level (also need conspecs to implement this -- this just enables computation) -- automatically set if needed in Trial_Init_Specs call
-  int		syn_dep_int;	// [20] #CONDSHOW_ON_cyc_syn_dep synaptic depression interval -- how frequently to actually perform synaptic depression within a trial (uses ct_cycle variable which counts up continously through trial)
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -50,13 +48,12 @@ private:
   void 	Destroy()	{ };
 };
 
-eTypeDef_Of(CtTrialTiming);
+eTypeDef_Of(LeabraTrialTiming);
 
-class E_API CtTrialTiming : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for a single stimulus input trial of ct learning algorithm
+class E_API LeabraTrialTiming : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra timing parameters for how long the minus and plus phases are within a trial
 INHERITED(taOBase)
 public:
-  bool		use;		// whether to use these parameters to determine trial timing -- on by default for all Ct (continuous time) algorithms, and off for CHL by default
   int		minus;		// #DEF_50:200 #CONDSHOW_ON_use number of cycles to run in the minus phase with only inputs and no targets (used by CtLeabraSettle program), sets cycle_max -- can be 0
   int		plus;		// #DEF_20:200 #CONDSHOW_ON_use number of cycles to run in the plus phase with input and target activations (used by CtLeabraSettle program), sets cycle_max -- must be > 0
 
@@ -64,7 +61,7 @@ public:
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
-  TA_SIMPLE_BASEFUNS(CtTrialTiming);
+  TA_SIMPLE_BASEFUNS(LeabraTrialTiming);
 protected:
   void UpdateAfterEdit_impl();
 
@@ -72,28 +69,6 @@ private:
   void	Initialize();
   void 	Destroy()	{ };
 };
-
-eTypeDef_Of(CtSRAvgSpec);
-
-class E_API CtSRAvgSpec : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra how to compute the sravg value as a function of cycles 
-INHERITED(taOBase)
-public:
-  bool		manual;		// the determination of when to compute sravg is made externally (e.g., by a program) -- sravg_vals.state flag must be set prior to calling Network::Cycle_Run() to take effect -- by default layers will copy network sravg_vals.state flag setting, so you only need to set it globally for the network (see layer-level manual_sravg flag if you want to set everything manually)
-  int		start;		// #CONDSHOW_OFF_manual #DEF_30:60 number of cycles from the start of a new pattern to start computing sravg value -- avoid transitional states that are too far away from attractor state
-  int		interval;	// #CONDSHOW_OFF_manual #DEF_1;5 #MIN_1 (1 for XCAL, 5 for CAL) how frequently to compute sravg -- in XCAL this is not expensive so do it every cycle, but for CAL more infrequent updating saves computational costs as sravg is expensive
-  int		plus_s_st;	// #CONDSHOW_OFF_manual [10 for spiking, else plus-1, typically 19] how many cycles into the plus phase should the short time scale sravg computation start (only for TRIAL sravg computation)
-  bool		plus_s_only;	// #CONDSHOW_OFF_manual plus increments short-term only, not short and medium term activations
-  bool		force_con;	// #DEF_false force connection-level SRAvg computation -- only use for experimental algorithms that need this -- otherwise needlessly slows computation
-
-  String       GetTypeDecoKey() const override { return "Network"; }
-
-  TA_SIMPLE_BASEFUNS(CtSRAvgSpec);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
 
 eTypeDef_Of(RelNetinSched);
 
@@ -125,13 +100,6 @@ class E_API LeabraNetwork : public Network {
 INHERITED(Network)
 public:
 
-  // IMPORTANT programming note: this enum must be same as in LeabraConSpec
-  enum LearnRule {
-    CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
-    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
-  };
-
   enum StateInit {		// ways of initializing the state of the network
     DO_NOTHING,			// do nothing
     INIT_STATE,			// initialize state
@@ -156,19 +124,11 @@ public:
     N_VEC_VARS,
   };
 
-  enum TmpConVars {             // temporary connection variables
-    TCV1,
-    TCV2,
-    N_CON_VARS,
-  };
-  
-
 #ifdef __MAKETA__
   UnitCallThreadMgr threads;    // #HIDDEN unit-call threading mechanism -- lthreads used instead
 #endif
 
   LeabraThreadMgr lthreads;     // #CAT_Threads parallel threading for leabra algorithm -- handles majority of computation within threads that are kept active and ready to go
-  LearnRule	learn_rule;	// The variant of Leabra learning rule to use 
   bool          ti_mode;        // turn on LeabraTI (temporal integration) processing and learning mechanisms -- if used, requires LeabraTICtxtConSpec SELF prjns in layers to perform optimized single-layer TI context activation at end of plus phase -- must have this flag on for TI to work!
   PhaseOrder	phase_order;	// [Default: MINUS_PLUS] #CAT_Counter number and order of phases to present
   bool		no_plus_test;	// #DEF_true #CAT_Counter don't run the plus phase when testing
@@ -183,15 +143,7 @@ public:
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants etc
 
   LeabraNetMisc	net_misc;	// misc network level parameters for leabra
-
-  int		cycle_max;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_50;60 maximum number of cycles to settle for: note for CtLeabra_X/CAL this is overridden by phase specific settings by the settle process
-  int		mid_minus_cycle; // #CAT_Counter #DEF_-1:30 cycle number for computations that take place roughly mid-way through the minus phase -- used for PBWM algorithm -- effective min_cycles for minus phase will be this value + min_cycles -- set to -1 to disable
-  int		min_cycles;	// #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_0:35 minimum number of cycles to settle for
-  int		min_cycles_phase2; // #CAT_Counter #CONDEDIT_ON_learn_rule:LEABRA_CHL #DEF_0;35 minimum number of cycles to settle for in second phase
-
-  CtTrialTiming	 ct_time;	// #CAT_Learning timing parameters for ct leabra trial: Settle_Init sets the cycle_max based on these values
-  CtSRAvgSpec	 ct_sravg;	// #CAT_Learning #CONDSHOW_OFF_learn_rule:LEABRA_CHL parameters controlling computation of sravg value as a function of cycles
-  CtSRAvgVals	 sravg_vals;	// #NO_SAVE #CAT_Learning sender-receiver average computation values, e.g., for normalizing sravg values
+  LeabraTrialTiming trial_time;	// #AKA_ct_time #CAT_Learning timing parameters for leabra trial -- how long is each phase, etc
   RelNetinSched	 rel_netin;	// #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
 
   float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
@@ -211,15 +163,6 @@ public:
   bool		ext_rew_avail; 	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic actual external reward value is available (on this trial) -- only computed if ExtRewLayerSpec or similar exists in network -- if false then no feedback was provided on this trial
   float		norew_val; 	// #GUI_READ_ONLY #CAT_Statistic no-reward value (serves as a baseline against which ext_rew can be compared against -- if greater, then positive reward, if less, then negative reward -- typically 0.5 but can vary
   Average	avg_ext_rew;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average external reward value (computed over previous epoch)
-  float		pvlv_pvi;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward prediction value PVi for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_pvr;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV primary reward availability prediction value PVr for the current trial -- updated on a cycle-by-cycle basis
-  float		pvlv_lve;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVe (excitatory, rapidly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_lvi;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV learned reward prediction value LVi (inhibitory, slowly adapting) for the current trial -- updated on a cycle-by-cycle basis -- used for noise modulation among perhaps other things
-  float		pvlv_nv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV novelty value for the current trial -- updated on a cycle-by-cycle basis
-  float		pvlv_dav;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV phasic dopamine value for the current trial -- updated on a cycle-by-cycle basis
-  float		pvlv_tonic_da;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV tonic dopamine level for the current trial -- updated on a cycle-by-cycle basis
-  float		pvlv_sev;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV serotonin (5HT) value for the current trial -- updated on a cycle-by-cycle basis
-  bool		pv_detected;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic PVLV detected a situation where primary reward value is expected to be available, based on learned encoding of similar such situations in the past -- computed by the PVrLayerSpec continuously in the minus phase
 
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
@@ -273,11 +216,6 @@ public:
   virtual void	DecayState(float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
 
-  virtual void	SetLearnRule_ConSpecs(BaseSpec_Group* spgp);
-  // #IGNORE set the current learning rule into all conspecs in given spec group (recursive)
-  virtual void	SetLearnRule();
-  // #CAT_ObjectMgmt set the current learning rule into the conspecs on this network (done by network UAE only when rule changed)
-
   virtual void	CheckInhibCons();
   void	BuildUnits_Threads() override;
   void  BuildUnits_Threads_send_netin_tmp() override;
@@ -309,10 +247,6 @@ public:
 
   virtual void  Settle_Init();
   // #CAT_SettleInit initialize network for settle-level processing (decay, active k, hard clamp, netscale)
-    virtual void Settle_Init_CtTimes();
-    // #CAT_SettleInit initialize cycles based on network phases for CtLeabra_X/CAL
-    virtual void Compute_Active_K();
-    // #CAT_SettleInit determine the active k values for each layer based on pcts, etc (called by Settle_Init) -- must have hard clamp called first 
     virtual void Settle_Init_Unit();
     // #CAT_TrialInit settle unit-level initialization functions: Init_TargFlags, DecayState, NetinScale
     virtual void Settle_Init_Layer();
@@ -342,13 +276,13 @@ public:
   //	Cycle_Run
   
   inline  int   CycleMax_Minus()
-  { if(lthreads.CanRun()) return ct_time.minus / lthreads.n_cycles;  
-    return ct_time.minus; }
-  // #CAT_Settle max number of cycles to run in the minus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= ct_time.minus / lthreads.n_cycles)
+  { if(lthreads.CanRun()) return trial_time.minus / lthreads.n_cycles;  
+    return trial_time.minus; }
+  // #CAT_Settle max number of cycles to run in the minus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= trial_time.minus / lthreads.n_cycles)
   inline  int   CycleMax_Plus()
-  { if(lthreads.CanRun()) return ct_time.plus / lthreads.n_cycles;  
-    return ct_time.plus; }
-  // #CAT_Settle max number of cycles to run in the plus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= ct_time.plus / lthreads.n_cycles)
+  { if(lthreads.CanRun()) return trial_time.plus / lthreads.n_cycles;  
+    return trial_time.plus; }
+  // #CAT_Settle max number of cycles to run in the plus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= trial_time.plus / lthreads.n_cycles)
 
   virtual void	Cycle_Run();
   // #CAT_Cycle compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act
@@ -376,13 +310,6 @@ public:
   void	Compute_Act() override;
   // #CAT_Cycle compute activations
 
-  virtual void 	Compute_SRAvg_State();
-  // #CAT_Learning compute state flag setting for sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- called at the Cycle_Run level -- just updates the sravg_vals.state flag for network and layers -- called at start of cycle
-  virtual bool 	Compute_SRAvg_Cons_Test();
-  // #CAT_Learning test if sravg cons level should be run -- not used for XCAL typically -- just for CtLeabra_CAL -- not for testing
-  virtual void 	Compute_SRAvg_Cons();
-  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
-
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
@@ -396,8 +323,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Optional Misc
 
-  virtual void 	Compute_CycSynDep();
-  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on -- threaded direct to units
   virtual void	Compute_MidMinus();
   // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycles parameter, if > 0 -- currently used for the PBWM algorithm
 
@@ -528,7 +453,6 @@ public:
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:
-  int	prv_learn_rule;		// previous learning rule for triggering updates
   void 	UpdateAfterEdit_impl();
 private:
   void	Initialize();

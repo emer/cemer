@@ -18,8 +18,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
-TA_BASEFUNS_CTORS_DEFN(CtTrialTiming);
-TA_BASEFUNS_CTORS_DEFN(CtSRAvgSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraTrialTiming);
 TA_BASEFUNS_CTORS_DEFN(RelNetinSched);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
@@ -30,32 +29,19 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 
 void LeabraNetMisc::Initialize() {
   dwt_norm_used = false;
-  kwta_used = false;
   lay_gp_inhib = false;
-  cyc_syn_dep = false;
-  syn_dep_int = 20;
 }
 
-void CtTrialTiming::Initialize() {
-  use = false;			// has to be false for old projects, to get CHL default right -- Ct learn rules will automatically turn on anyway
+void LeabraTrialTiming::Initialize() {
   minus = 50;
   plus = 20;
 
   total_cycles = minus + plus;
 }
 
-void CtTrialTiming::UpdateAfterEdit_impl() {
+void LeabraTrialTiming::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   total_cycles = minus + plus;
-}
-
-void CtSRAvgSpec::Initialize() {
-  manual = false;
-  start = 30;
-  interval = 1;
-  plus_s_st = 19;
-  plus_s_only = false;
-  force_con = false;
 }
 
 void RelNetinSched::Initialize() {
@@ -67,9 +53,7 @@ void RelNetinSched::Initialize() {
 void LeabraNetwork::Initialize() {
   layers.SetBaseType(&TA_LeabraLayer);
 
-  learn_rule = CTLEABRA_XCAL;
   ti_mode = false;
-  prv_learn_rule = -1;
   phase_order = MINUS_PLUS;
   no_plus_test = true;
   sequence_init = DO_NOTHING;
@@ -80,10 +64,6 @@ void LeabraNetwork::Initialize() {
   ct_cycle = 0;
   tot_cycle = 0;
   time_inc = 0.001f;            // msec
-
-  cycle_max = 60;
-  mid_minus_cycle = -1;
-  min_cycles = 15;
 
   minus_cycles = 0.0f;
 
@@ -96,16 +76,6 @@ void LeabraNetwork::Initialize() {
   ext_rew = 0.0f;
   ext_rew_avail = false;
   norew_val = 0.5f;
-
-  pvlv_pvi = 0.0f;
-  pvlv_pvr = 0.0f;
-  pvlv_lve = 0.0f;
-  pvlv_lvi = 0.0f;
-  pvlv_nv = 0.0f;
-  pvlv_dav = 0.0f;
-  pvlv_tonic_da = 0.0f;
-  pvlv_sev = 0.0f;
-  pv_detected = false;
 
   on_errs = true;
   off_errs = true;
@@ -136,28 +106,11 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(learn_rule != LEABRA_CHL) {
-    ct_time.use = true;		// has to be true for these guys
-  }
-  ct_time.UpdateAfterEdit_NoGui();
-
-  if(TestWarning(ct_sravg.plus_s_st >= ct_time.plus, "UAE",
-               "ct_sravg.plus_s_st is higher than ct_time.plus (# of cycles in plus phase)"
-               "just set it to plus-2")) {
-    ct_sravg.plus_s_st = ct_time.plus -2;
-  }
+  trial_time.UpdateAfterEdit_NoGui();
 
   if(TestWarning(!off_errs && !on_errs, "UAE", "can't have both off_errs and on_errs be off (no err would be computed at all) -- turned both back on")) {
     on_errs = true;
     off_errs = true;
-  }
-
-  if(prv_learn_rule == -1) {
-    prv_learn_rule = learn_rule;
-  }
-  else if(prv_learn_rule != learn_rule) {
-    SetLearnRule();
-    prv_learn_rule = learn_rule;
   }
 
   if(taMisc::is_loading) {
@@ -203,15 +156,6 @@ void LeabraNetwork::Init_Stats() {
   ext_rew_avail = false;
   norew_val = 0.5f;
   avg_ext_rew.ResetAvg();
-  pvlv_pvi = 0.0f;
-  pvlv_pvr = 0.0f;
-  pvlv_lve = 0.0f;
-  pvlv_lvi = 0.0f;
-  pvlv_nv = 0.0f;
-  pvlv_dav = 0.0f;
-  pvlv_tonic_da = 0.0f;
-  pvlv_sev = 0.0f;
-  pv_detected = false;
 
   norm_err = 0.0f;
   avg_norm_err.ResetAvg();
@@ -242,7 +186,6 @@ void LeabraNetwork::Init_Sequence() {
 
 void LeabraNetwork::Init_Weights() {
   inherited::Init_Weights();
-  sravg_vals.InitVals();
 }
 
 void LeabraNetwork::Init_Netins() {
@@ -256,42 +199,6 @@ void LeabraNetwork::DecayState(float decay) {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->DecayState(this, decay);
-  }
-}
-
-void LeabraNetwork::SetLearnRule_ConSpecs(BaseSpec_Group* spgp) {
-  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *spgp) {
-    if(bs->InheritsFrom(&TA_LeabraConSpec)) {
-      ((LeabraConSpec*)bs)->SetLearnRule(this);
-    }
-    SetLearnRule_ConSpecs(&bs->children); // recurse
-  }
-}
-
-void LeabraNetwork::SetLearnRule() {
-  if(learn_rule == LEABRA_CHL) {
-    min_cycles = 15;
-    min_cycles_phase2 = 35;
-    cycle_max = 60;
-  }
-  else {
-    if(learn_rule == CTLEABRA_CAL) {
-      ct_sravg.interval = 5;
-    }
-    else {
-      ct_sravg.interval = 1;
-    }
-
-    min_cycles = 0;
-    min_cycles_phase2 = 0;
-    ct_time.use = true;
-  }
-
-  SetLearnRule_ConSpecs(&specs);
-  // set all my specs -- otherwise it looks weird in hierarchy for unused parent specs
-
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    lay->SetLearnRule(this);
   }
 }
 
@@ -381,9 +288,7 @@ void LeabraNetwork::Trial_Init_Phases() {
 
 void LeabraNetwork::Trial_Init_Specs() {
   net_misc.dwt_norm_used = false;
-  net_misc.kwta_used = false;
   net_misc.lay_gp_inhib = false;
-  net_misc.cyc_syn_dep = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Trial_Init_Specs(this);
@@ -397,15 +302,13 @@ void LeabraNetwork::Trial_Init_Unit() {
   }
   // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Trial_Init_Unit);
   // threads.Run(&un_call, -1.0f); // -1 = always run localized
-
-  sravg_vals.InitVals();        // reset sravg vals, after Trial_Init_SRAvg!
 }
 
 void LeabraNetwork::Trial_NoiseInit() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Trial_NoiseInit(this);
-  }
+  // FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+  //   if(lay->lesioned()) continue;
+  //   lay->Trial_NoiseInit(this);
+  // }
 }
 
 void LeabraNetwork::Trial_DecayState() {
@@ -420,7 +323,6 @@ void LeabraNetwork::Trial_Init_SRAvg() {
     if(lay->lesioned()) continue;
     lay->Trial_Init_SRAvg(this);
   }
-  sravg_vals.InitVals();        // reset sravg vals, after Trial_Init_SRAvg!
 }
 
 void LeabraNetwork::Trial_Init_Layer() {
@@ -438,9 +340,6 @@ void LeabraNetwork::Settle_Init() {
   int tmp_cycle = cycle;
   cycle = -2;                   // special signal for settle init
 
-  Settle_Init_CtTimes();
-  Compute_Active_K();           // compute here because could depend on pat_n
-
   Settle_Init_Unit();           // do chunk of following unit-level functions:
 
 //   Settle_Init_TargFlags();
@@ -452,26 +351,6 @@ void LeabraNetwork::Settle_Init() {
 
   Compute_HardClamp();          // clamp all hard-clamped input acts: not easily threadable
   cycle = tmp_cycle;
-}
-
-void LeabraNetwork::Settle_Init_CtTimes() {
-  if(!ct_time.use) return;
-
-  switch(phase_no) {
-  case 0:
-    cycle_max = ct_time.minus;
-    break;
-  case 1:
-    cycle_max = ct_time.plus;
-    break;
-  }
-}
-
-void LeabraNetwork::Compute_Active_K() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Compute_Active_K(this);        // this gets done at the outset..
-  }
 }
 
 void LeabraNetwork::Settle_Init_Unit() {
@@ -566,23 +445,17 @@ void LeabraNetwork::Cycle_Run() {
     lthreads.Run(LeabraThreadMgr::RUN_CYCLE);
   }
   else {
-    Compute_SRAvg_State();
-
     Send_Netin();
     Compute_NetinInteg();
 
     Compute_Inhib();
 
     Compute_Act();
-    if(Compute_SRAvg_Cons_Test()) {
-      Compute_SRAvg_Cons(); 
-    }
 
     Compute_CycleStats_Pre();
     Compute_CycleStats_Layer();
     Compute_CycleStats_Post();
 
-    Compute_CycSynDep();
     Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
 
     cycle++;
@@ -648,8 +521,8 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
         LeabraLayer* lay = (LeabraLayer*)lg->FastEl(li);
         LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
         if(lay->lesioned() || !laysp->lay_gp_inhib.on) continue;
-        lay->i_val.gp_g_i = lay_gp_g_i;
-        lay->i_val.g_i = MAX(lay->i_val.gp_g_i, lay->i_val.g_i);
+        lay->i_val.laygp_g_i = lay_gp_g_i;
+        lay->i_val.g_i = MAX(lay->i_val.laygp_g_i, lay->i_val.g_i);
 
         if(lay->unit_groups) {
           lay->Compute_LayInhibToGps(this);
@@ -667,88 +540,6 @@ void LeabraNetwork::Compute_Act() {
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_Act(this, -1);
-  }
-}
-
-void LeabraNetwork::Compute_SRAvg_State() {
-  if(!ct_sravg.manual) {
-    sravg_vals.state = CtSRAvgVals::NO_SRAVG;
-    int eff_int = ct_sravg.interval;
-
-    if(ct_sravg.plus_s_only) {
-      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-	  eff_int = 1;              // make sure you get short-time/plus phase info!
-	}
-	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_S; // s-only
-	}
-      }
-      else if(phase == LeabraNetwork::MINUS_PHASE) { // m only in minus phase
-	if((ct_cycle >= ct_sravg.start) &&
-	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
-	}
-      }
-    }
-    else {
-      if(phase == LeabraNetwork::PLUS_PHASE && cycle >= ct_sravg.plus_s_st) {
-	if((ct_time.plus - ct_sravg.plus_s_st) < eff_int) {
-	  eff_int = 1;              // make sure you get short-time/plus phase info!
-	}
-	if((ct_cycle - ct_sravg.start) % eff_int == 0) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_SM; // always do M by default
-	}
-      }
-      else {
-	if((ct_cycle >= ct_sravg.start) &&
-	   ((ct_cycle - ct_sravg.start) % eff_int == 0)) {
-	  sravg_vals.state = CtSRAvgVals::SRAVG_M;
-	}
-      }
-    }
-  }
-  
-  // now go through layers and let them update their own state values -- usu just
-  // copy from network..
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_SRAvg_State(this);
-  }
-
-  // update the network-level sravg_vals, even though these should not generally be used
-  if(sravg_vals.state == CtSRAvgVals::SRAVG_M ||
-     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    sravg_vals.m_sum += 1.0f;
-    sravg_vals.m_nrm = 1.0f / sravg_vals.m_sum;
-  }
-
-  if(sravg_vals.state == CtSRAvgVals::SRAVG_S ||
-     sravg_vals.state == CtSRAvgVals::SRAVG_SM) {
-    sravg_vals.s_sum += 1.0f;
-    sravg_vals.s_nrm = 1.0f / sravg_vals.s_sum;
-  }
-
-  // first go through layers and let them update
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_SRAvg_Layer(this);
-  }
-}
-
-bool LeabraNetwork::Compute_SRAvg_Cons_Test() {
-  if(!(learn_rule == CTLEABRA_CAL || ct_sravg.force_con))
-    return false;
-  if(train_mode == TEST)
-    return false; // expensive con-level only for training
-  return true;
-}
-
-void LeabraNetwork::Compute_SRAvg_Cons() {
-  // non-threaded
-  for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Compute_SRAvg_Cons(this, -1);
   }
 }
 
@@ -784,24 +575,14 @@ void LeabraNetwork::Compute_CycleStats_Post() {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Optional Misc
 
-void LeabraNetwork::Compute_CycSynDep() {
-  if(!net_misc.cyc_syn_dep) return;
-  if(ct_cycle % net_misc.syn_dep_int != 0) return;
-
-  for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Compute_CycSynDep(this, -1);
-  }
-}
-
 void LeabraNetwork::Compute_MidMinus() {
-  if(mid_minus_cycle <= 0) return;
-  if(ct_cycle == mid_minus_cycle) {
-    FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-      if(lay->lesioned())       continue;
-      lay->Compute_MidMinus(this);
-    }
-  }
+  // if(mid_minus_cycle <= 0) return;
+  // if(ct_cycle == mid_minus_cycle) {
+  //   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+  //     if(lay->lesioned())       continue;
+  //     lay->Compute_MidMinus(this);
+  //   }
+  // }
 }
 
 ///////////////////////////////////////////////////////////////////////

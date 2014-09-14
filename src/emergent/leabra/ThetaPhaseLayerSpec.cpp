@@ -24,8 +24,8 @@ void ThetaPhaseLayerSpec::Initialize() {
 }
 
 void ThetaPhaseLayerSpec::Defaults_init() {
-  inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  inhib.kwta_pt = 0.7f;
+  // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
+  // inhib.kwta_pt = 0.7f;
 }
 
 void ThetaPhaseLayerSpec::RecordActMid(LeabraLayer* lay, LeabraNetwork* net) {
@@ -75,11 +75,12 @@ void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* 
       if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
     }
   }
+  int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
   int ntot = 0;
   if(net->on_errs && net->off_errs)
-    ntot = 2 * lay->kwta.k;
+    ntot = 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
   else
-    ntot = lay->kwta.k;
+    ntot = (int)(lay->acts_m_avg * (float)lay_nunits);
   if(ntot > 0)
     norm_err = norm_err / (float)ntot;
   if(norm_err > 1.0f)

@@ -29,49 +29,49 @@ class E_API XCalCHLConSpec : public LeabraConSpec {
   // does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..
 INHERITED(LeabraConSpec)
 public:
-#ifdef __MAKETA__
-  LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
-#endif
+// #ifdef __MAKETA__
+//   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
+// #endif
   bool		use_chl;	// use LeabraCHL learning instead of XCAL or CAL learning, even when rest of network is using those other algorithms
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                         LeabraNetwork* net) override {
-    if(use_chl)
-      inherited::Compute_dWt_LeabraCHL(cg, su, net);
-    else
-      inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
+  // inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  //                                        LeabraNetwork* net) override {
+  //   if(use_chl)
+  //     inherited::Compute_dWt_LeabraCHL(cg, su, net);
+  //   else
+  //     inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
+  // }
 
-  inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net) override {
-    if(use_chl)
-      inherited::Compute_Weights_LeabraCHL(cg, su, net);
-    else
-      inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
-  }
+  // inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  //                                                    LeabraNetwork* net) override {
+  //   if(use_chl)
+  //     inherited::Compute_Weights_LeabraCHL(cg, su, net);
+  //   else
+  //     inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
+  // }
 
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
-    if(use_chl)
-      inherited::Compute_dWt_LeabraCHL(cg, su, net);
-    else
-      inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
-  }
+  // inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+  //                                              LeabraNetwork* net) override {
+  //   if(use_chl)
+  //     inherited::Compute_dWt_LeabraCHL(cg, su, net);
+  //   else
+  //     inherited::Compute_dWt_CtLeabraCAL(cg, su, net);
+  // }
 
-  inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
-                                                   LeabraLayer* rlay) override {
-    if(use_chl)
-      inherited::B_Compute_dWt_LeabraCHL(bias, ru);
-    else
-      inherited::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
-  }
-  inline void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
-                                                  LeabraLayer* rlay) override {
-    if(use_chl)
-      inherited::B_Compute_dWt_LeabraCHL(bias, ru);
-    else
-      inherited::B_Compute_dWt_CtLeabraCAL(bias, ru, rlay);
-  }
+  // inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
+  //                                                  LeabraLayer* rlay) override {
+  //   if(use_chl)
+  //     inherited::B_Compute_dWt_LeabraCHL(bias, ru);
+  //   else
+  //     inherited::B_Compute_dWt_CtLeabraXCAL(bias, ru, rlay);
+  // }
+  // inline void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
+  //                                                 LeabraLayer* rlay) override {
+  //   if(use_chl)
+  //     inherited::B_Compute_dWt_LeabraCHL(bias, ru);
+  //   else
+  //     inherited::B_Compute_dWt_CtLeabraCAL(bias, ru, rlay);
+  // }
 
   TA_SIMPLE_BASEFUNS(XCalCHLConSpec);
 protected:

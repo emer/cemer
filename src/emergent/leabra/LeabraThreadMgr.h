@@ -136,10 +136,6 @@ public:
   RunWaitTime   act_time;         // #NO_SAVE unit-level act computation
   RunWaitTime   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
 
-  // optional ones
-  RunWaitTime   sravg_cons_time; // #NO_SAVE connection-level sravg
-  RunWaitTime   cycsyndep_time;  // #NO_SAVE connection-level syn dep
-
   RunWaitTime   ti_netin_time;     // #NO_SAVE TI netins
 
   RunWaitTime   dwt_time;          // #NO_SAVE weight change

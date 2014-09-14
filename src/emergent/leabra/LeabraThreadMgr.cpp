@@ -231,11 +231,6 @@ void LeabraTask::Cycle_Run() {
     int cur_net_cyc = st_ct_cyc + cyc;
     // this replicates LeabraNetwork::Cycle()
 
-    // Compute_SRAvg_State();
-    if(task_id == 0) {        // first thread does this -- very fast -- get it done early
-      net->Compute_SRAvg_State();
-    }
-
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
     { // Send_NetinDelta
       LeabraThreadUnitCall un_call(&LeabraUnit::Send_NetinDelta);
@@ -274,27 +269,16 @@ void LeabraTask::Cycle_Run() {
     }
 
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
-    if(net->Compute_SRAvg_Cons_Test()) {
-      LeabraThreadUnitCall un_call(&LeabraUnit::Compute_SRAvg_Cons);
-      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_sr_cons, sravg_cons_time, cyc);
-    }
-
-    if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
     { // Compute_CycleStats();
       LeabraThreadLayerCall lay_call(&LeabraLayer::Compute_CycleStats);
-      RunLayersStep(lay_call, mg->loop_idx1, mg->stage_cyc_stats, cycstats_time, cyc);
+      RunLayersStep(lay_call, mg->loop_idx0, mg->stage_cyc_stats, cycstats_time, cyc);
 
       if(task_id == 0) {        // first thread does this..
         net->Compute_CycleStats_Post(); // output name
       }
     }
 
-    // Compute_CycSynDep();
-    if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
-    if(net->net_misc.cyc_syn_dep && (net->ct_cycle % net->net_misc.syn_dep_int == 0)) {
-      LeabraThreadUnitCall un_call(&LeabraUnit::Compute_CycSynDep);
-      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_syndep, cycsyndep_time, cyc);
-    }
+    if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
 
     // Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
     // todo: figure this one out!
@@ -548,7 +532,6 @@ void LeabraThreadMgr::InitAll() {
   }
   LeabraNetwork* net = (LeabraNetwork*)network();
   if(net->n_cons == 0 || net->units_flat.size == 0) return; // nothing to do..
-  int tot_cyc = net->ct_time.total_cycles * 2;              // buffer
 
   int un_idx = 1;
   for(int i=0;i<tasks.size;i++) {
@@ -584,9 +567,7 @@ void LeabraThreadMgr::InitStages() {
   stage_inhib = 0;
 
   stage_act = 0;
-  stage_sr_cons = 0;
   stage_cyc_stats = 0;
-  stage_syndep = 0;
 
   stage_deep5b = 0;
   stage_deep5b_p = 0;

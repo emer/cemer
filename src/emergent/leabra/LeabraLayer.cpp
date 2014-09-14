@@ -37,10 +37,8 @@ void LeabraLayer::Initialize() {
   cos_err_vs_prv = 0.0f;
   cos_diff = 0.0f;
   cos_diff_avg = 0.0f;
-  cos_diff_lrate = 1.0f;
   avg_act_diff = 0.0f;
   trial_cos_diff = 0.0f;
-  da_updt = false;
 
   avg_netin_n = 0;
 #ifdef DMEM_COMPILE
@@ -56,27 +54,15 @@ void LeabraLayer::InitLinks() {
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);
-  taBase::Own(acts_m_avg, this);
   taBase::Own(acts_ctxt, this);
   taBase::Own(acts_mid, this);
 
-  taBase::Own(kwta, this);
   taBase::Own(i_val, this);
 
   taBase::Own(avg_netin, this);
   taBase::Own(avg_netin_sum, this);
 
-  taBase::Own(sravg_vals, this);
-
   taBase::Own(ungp_data, this);
-
-  taBase::Own(unit_idxs, this);
-
-  taBase::Own(lay_kbuffs, this);
-  taBase::Own(gp_kbuffs, this);
-
-  lay_kbuffs.CreateStdBuffs();
-  gp_kbuffs.CreateStdBuffs();
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
@@ -89,9 +75,6 @@ void LeabraLayer::InitLinks() {
 void LeabraLayer::CutLinks() {
   inherited::CutLinks();
   spec.CutLinks();
-
-  lay_kbuffs.CutLinks();
-  gp_kbuffs.CutLinks();
 }
 
 void LeabraLayer::Copy_(const LeabraLayer& cp) {
@@ -106,7 +89,6 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   cos_err_vs_prv = cp.cos_err_vs_prv;
   cos_diff = cp.cos_diff;
   cos_diff_avg = cp.cos_diff_avg;
-  cos_diff_lrate = cp.cos_diff_lrate;
   avg_act_diff = cp.avg_act_diff;
   trial_cos_diff = cp.trial_cos_diff;
 
@@ -130,14 +112,8 @@ void LeabraLayer::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-void LeabraLayer::ResetSortBuf() {
-  lay_kbuffs.ResetAllBuffs();
-  gp_kbuffs.ResetAllBuffs();
-}
-
 void LeabraLayer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ResetSortBuf();
 }
 
 void LeabraLayer::Init_InputData(Network* net) {
@@ -154,20 +130,11 @@ bool LeabraLayer::SetLayerSpec(LayerSpec* sp) {
   return true;
 }
 
-void LeabraLayer::BuildKwtaBuffs() {
-  ResetSortBuf();
-  lay_kbuffs.AllocAllBuffs(flat_geom.n, 1);
-  gp_kbuffs.AllocAllBuffs(un_geom.n, gp_geom.n);
-
+void LeabraLayer::BuildUnits() {
+  inherited::BuildUnits();
   ungp_data.Reset();
   ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
-}
-
-void LeabraLayer::BuildUnits() {
-  ResetSortBuf();
-  inherited::BuildUnits();
-  BuildKwtaBuffs();
 }
 
 // void LeabraLayer::TriggerContextUpdate() -- in leabra_extra.cpp

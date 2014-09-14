@@ -62,24 +62,14 @@ public:
     }
   }
 
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
   inline void C_Compute_Weights_CtLeabraXCAL(float& wt, float& dwt,
                                              float& fwt, float& swt) {
     // no support of fast weights!
     if(dwt != 0.0f) {
-      if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
-        if(dwt > 0.0f)	dwt *= (1.0f - fwt);
-        else		dwt *= fwt;
-      }
+      // if(lmix.err_sb) {         // check for soft-bounding -- typically not enabled for pv
+      //   if(dwt > 0.0f)	dwt *= (1.0f - fwt);
+      //   else		dwt *= fwt;
+      // }
       fwt += dwt;
       swt = fwt;
       wt = SigFmLinWt(fwt);
@@ -98,11 +88,6 @@ public:
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i],
                                                       fwts[i], swts[i]));
     //  ApplyLimits(cg, ru, net); limits are automatically enforced anyway
-  }
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
   }
 
   TA_SIMPLE_BASEFUNS(PVConSpec);

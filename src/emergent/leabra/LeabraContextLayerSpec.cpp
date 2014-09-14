@@ -106,7 +106,7 @@ void LeabraContextLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* 
   }
   if (!do_update) return;
 
-  lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
+  // lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;

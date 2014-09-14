@@ -19,15 +19,13 @@
 #include <MatrixUnitSpec>
 #include <MatrixConSpec>
 #include <MarkerConSpec>
-#include <PVLVDaLayerSpec>
+// #include <PVLVDaLayerSpec>
 #include <PFCLayerSpec>
 
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(MatrixMiscSpec);
-
 TA_BASEFUNS_CTORS_DEFN(MatrixGoNogoGainSpec);
-
 TA_BASEFUNS_CTORS_DEFN(MatrixLayerSpec);
 
 void MatrixGoNogoGainSpec::Initialize() {
@@ -60,13 +58,11 @@ void MatrixLayerSpec::Defaults_init() {
   matrix.nogo_deep_gain = 0.5f;
 
   //  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::FF_FB_INHIB;
   inhib.gi = 2.0f;
   inhib.ff = 1.0f;
   inhib.fb = 0.0f;
   inhib.self_fb = 0.4f;
   inhib.ff0 = 0.05f;
-  inhib.kwta_pt = .6f;
 
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
@@ -76,8 +72,8 @@ void MatrixLayerSpec::Defaults_init() {
 
   // new default..
   //  SetUnique("gp_kwta", true);
-  gp_kwta.k_from = KWTASpec::USE_PCT;
-  gp_kwta.pct = 0.15f;
+  // gp_kwta.k_from = KWTASpec::USE_PCT;
+  // gp_kwta.pct = 0.15f;
   unit_gp_inhib.on = false;     // no!
   unit_gp_inhib.gp_g = 1.0f;
   lay_gp_inhib.on = false;      // off now by default!
@@ -143,7 +139,7 @@ bool MatrixLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
       continue;
     if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
       LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-      if(fmlay->spec.SPtr()->InheritsFrom(TA_PVLVDaLayerSpec)) da_lay = fmlay;
+      // if(fmlay->spec.SPtr()->InheritsFrom(TA_PVLVDaLayerSpec)) da_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_SNrThalLayerSpec)) snr_lay = fmlay;
       if(fmlay->spec.SPtr()->InheritsFrom(TA_MatrixLayerSpec)) nogo_lay = fmlay;
       continue;
@@ -303,7 +299,6 @@ void MatrixLayerSpec::Compute_GoNetinMods(LeabraLayer* lay, LeabraNetwork* net) 
         LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
         if(u->lesioned()) continue;
         u->net *= mult_fact;
-        u->i_thr = u->Compute_IThresh(net);
       }
     }
   }
@@ -344,7 +339,6 @@ void MatrixLayerSpec::Compute_NoGoNetinMods(LeabraLayer* lay, LeabraNetwork* net
         LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, j, gi);
         if(u->lesioned()) continue;
         u->net *= mult_fact;
-        u->i_thr = u->Compute_IThresh(net);
       }
     }
   }

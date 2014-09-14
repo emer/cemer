@@ -46,14 +46,14 @@ void LVBlockSpec::Initialize() {
 }
 
 void VTALayerSpec::Initialize() {
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
+  // SetUnique("kwta", true);
+  // kwta.k_from = KWTASpec::USE_K;
+  // kwta.k = 1;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
   SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .25;
+  // inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  // inhib.kwta_pt = .25;
 }
 
 void VTALayerSpec::HelpConfig() {
@@ -177,14 +177,14 @@ void VTALayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
 
   net->ext_rew_avail = true;    // always record pv values
   net->ext_rew = pospv;
-  if(pv_over_thr || vsp_over_thr) {
-    net->pv_detected = true;
-  }
-  else {
-    net->pv_detected = false;
-  }
+  // if(pv_over_thr || vsp_over_thr) {
+  //   net->pv_detected = true;
+  // }
+  // else {
+  //   net->pv_detected = false;
+  // }
 
-  net->pvlv_dav = net_da;
+  // net->pvlv_dav = net_da;
   lay->dav = net_da;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;

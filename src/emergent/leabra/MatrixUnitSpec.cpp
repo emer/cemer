@@ -37,7 +37,6 @@ void MatrixUnitSpec::Defaults_init() {
   // SetUnique("noise_adapt", true);
   noise_adapt.mode = NoiseAdaptSpec::FIXED_NOISE;
   noise_adapt.trial_fixed = true;
-  noise_adapt.k_pos_noise = true;
 }
 
 void MatrixUnitSpec::InitLinks() {

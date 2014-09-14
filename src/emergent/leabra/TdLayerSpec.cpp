@@ -27,14 +27,14 @@ TA_BASEFUNS_CTORS_DEFN(TdLayerSpec);
 
 
 void TdLayerSpec::Initialize() {
-  SetUnique("kwta", true);
-  kwta.k_from = KWTASpec::USE_K;
-  kwta.k = 1;
+  // SetUnique("kwta", true);
+  // kwta.k_from = KWTASpec::USE_K;
+  // kwta.k = 1;
   SetUnique("inhib_group", true);
   inhib_group = ENTIRE_LAYER;
-  SetUnique("inhib", true);
-  inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inhib.kwta_pt = .25;
+  // SetUnique("inhib", true);
+  // inhib.type = LeabraInhibSpec::KWTA_INHIB;
+  // inhib.kwta_pt = .25;
 }
 
 void TdLayerSpec::HelpConfig() {
@@ -181,7 +181,7 @@ void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase_no == 0) {
     lay->hard_clamped = true;
     lay->SetExtFlag(Unit::EXT);
-    lay->Inhib_SetVals(inhib.kwta_pt); // assume 0 - 1 clamped inputs
+    lay->Inhib_SetVals(0.5f); // assume 0 - 1 clamped inputs
     Compute_ZeroAct(lay, net);  // can't do anything during settle anyway -- just zero it
   }
   else {

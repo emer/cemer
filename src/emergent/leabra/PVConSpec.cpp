@@ -28,11 +28,6 @@ void PVConSpec::Initialize() {
 }
 
 void PVConSpec::Defaults_init() {
-  // SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-  lmix.err_sb = false;
-
   // SetUnique("rnd", true);
   rnd.mean = 0.1f;
   rnd.var = 0.0f;
@@ -47,11 +42,6 @@ void PVConSpec::Defaults_init() {
 
 void PVConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  // these are enforced absolutely because the code does not use them:
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-  // actually now allowing sb!!
-//   lmix.err_sb = false;
   wt_sig.dwt_norm = false;      // bad news for pvlv
 }
 

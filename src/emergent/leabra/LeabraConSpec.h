@@ -25,8 +25,8 @@
 // member includes:
 #include <Schedule>
 #include <FunLookup>
-#include <LeabraSRAvgCon>
 #include <RecvCons>
+#include <LeabraCon>
 #include "ta_vector_ops.h"
 
 // declare all other types mentioned but not required to include:
@@ -126,7 +126,7 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); } // note: ConSpec defaults should modalize on learn_rule
+  void	Defaults_init() { Initialize(); }
 };
 
 eTypeDef_Of(FastWtsSpec);
@@ -155,28 +155,6 @@ private:
   void	Initialize();
   void	Destroy()	{ };
   void	Defaults_init();
-};
-
-eTypeDef_Of(LearnMixSpec);
-
-class E_API LearnMixSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra Leabra CHL mixture of learning factors (hebbian vs. error-driven) specification
-INHERITED(SpecMemberBase)
-public:
-  float		hebb;		// [Default: .001] #MIN_0 amount of hebbian learning (should be relatively small, can be effective at .0001)
-  float		err;		// #READ_ONLY #SHOW [Default: .999] amount of error driven learning, automatically computed to be 1-hebb
-  bool		err_sb;		// #DEF_true apply exponential soft-bounding to the error learning component (applied in dWt)
-
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LearnMixSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { };	// note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
 eTypeDef_Of(XCalLearnSpec);
@@ -243,55 +221,17 @@ private:
   void	Defaults_init() { Initialize(); }
 };
 
-eTypeDef_Of(SAvgCorSpec);
-
-class E_API SAvgCorSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra sending average activation correction specifications: only affects original CPCA hebbian learning
-INHERITED(SpecMemberBase)
-public:
-  float		cor;		// #DEF_0.4:0.8 #MIN_0 #MAX_1 proportion of correction to apply (0=none, 1=all, .5=half, etc)
-  float		thresh;		// #DEF_0.001 #MIN_0 threshold of sending average activation below which learning does not occur (prevents learning when there is no input)
-
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(SAvgCorSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
 eTypeDef_Of(LeabraConSpec);
 
 class E_API LeabraConSpec : public ConSpec {
   // #STEM_BASE ##CAT_Leabra Leabra connection specs
 INHERITED(ConSpec)
 public:
-  // IMPORTANT programming note: this enum must be same as in LeabraNetwork
-
-  enum LearnRule {
-    CTLEABRA_XCAL,		// Continuous-Time Leabra temporally eXtended Contrastive Attractor Learning rule, trial-based version, which has two time scales of contrasts: short-vs-medium (svm) and medium-vs-long (mvl): (<sr>_s - <sr>_m) + (<sr>_m - <r>_l) -- s=sender, r=recv, <> = avg over short (plus phase), medium (trial), long (epoch) time scales.  svm is basically error-driven learning, and mvl is BCM-style self-organizing learning.
-    LEABRA_CHL,			// standard Leabra Contrastive Hebbian Learning rule with hebbian self-organizing factor: (s+r+) - (s-r-) + r+(s+ - w) -- s=sender,r=recv +=plus phase, -=minus phase, w= weight
-    CTLEABRA_CAL,		// Continuous-Time Leabra Contrastive Attractor Learning rule: <sr>_s - <sr>_m -- s=sender, r=recv, <> = avg over short (plus phase) and medium (trial) time scales -- purely error-driven but inhibitory oscillations can drive self-organizing component -- requires LeabraSRAvgCon connections
-  };
-
-  enum	LRSValue {		// what value to drive the learning rate schedule with
-    NO_LRS,			// don't use a learning rate schedule
-    EPOCH,			// current epoch counter
-    EXT_REW_STAT,		// avg_ext_rew value on network (computed over an "epoch" of training): value is * 100 (0..100) 
-    EXT_REW_AVG	= 0x0F,		// uses average reward computed by ExtRew layer (if present): value is units[0].act_avg (avg_rew) * 100 (0..100) 
-  };
-
   enum LeabraConVars {
     FWT = DWT+1,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                        // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
-    SRAVG_S,                    // for LeabraSRAvgCon -- short time-scale, most recent (plus phase) average of sender and receiver activation product over time
-    SRAVG_M,                    // for LeabraSRAvgCon -- medium time-scale, trial-level average of sender and receiver activation product over time
   };
 
-  LearnRule	learn_rule;	// #READ_ONLY #SHOW the learning rule, set by the overall network parameter and copied here -- determines what type of learning to perform
   bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   bool          diff_scale_p;   // #CAT_Activation use a different wt_scale setting for the plus phase compared to the std wt_scale which is used only for the minus phase if this is checked
@@ -306,9 +246,7 @@ public:
 
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   FastWtsSpec   fast_wts;       // #CAT_Learning fast weights specifications -- parameters for how fast and slowly adapting weights learning
-  LearnMixSpec	lmix;		// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn mixture of hebbian & err-driven learning (note: no hebbian for CTLEABRA_XCAL)
-  XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn_rule:CTLEABRA_XCAL&&learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
-  SAvgCorSpec	savg_cor;	// #CAT_Learning #CONDSHOW_ON_learn_rule:LEABRA_CHL&&learn for original CPCA Hebbian learning: correction for sending average act levels (i.e., renormalization)
+  XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
@@ -389,66 +327,6 @@ public:
 
   ///////////////////////////////////////////////////////////////
   //	Learning
-
-  /////////////////////////////////////
-  // LeabraCHL code
-
-  inline void 	Compute_SAvgCor(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net);
-  // #IGNORE compute hebb correction scaling term for sending average act (cg->savg_cor) based on layer target activity percent
-
-  inline float	C_Compute_Hebb(const float cg_savg_cor, const float lin_wt,
-			       const float ru_act, const float su_act) 
-  { return ru_act * (su_act * (cg_savg_cor - lin_wt) - (1.0f - su_act) * lin_wt); }
-  // #IGNORE compute Hebbian associative learning
-
-  inline float 	C_Compute_Err_LeabraCHL(const float lin_wt,
-					const float ru_act_p, const float ru_act_m,
-					const float su_act_p, const float su_act_m)
-  { float err = (ru_act_p * su_act_p) - (ru_act_m * su_act_m);
-    if(lmix.err_sb) {
-      if(err > 0.0f)	err *= (1.0f - lin_wt);
-      else		err *= lin_wt;
-    }
-    return err;
-  }
-  // #IGNORE compute generec error term, sigmoid case
-
-  inline void 	C_Compute_dWt_LeabraCHL(float& dwt, const float heb, const float err)
-  {  dwt += cur_lrate * (lmix.err * err + lmix.hebb * heb); }
-  // #IGNORE combine associative and error-driven weight change, actually update dwt
-
-  inline void 	C_Compute_dWt_NoHebb(float& dwt, const float err)
-  {  dwt += cur_lrate * err; }
-  // #IGNORE only hebbian
-
-  // #IGNORE just error-driven weight change, actually update dwt
-  inline virtual void 	Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                              LeabraNetwork* net);
-  // #IGNORE Leabra/CHL weight changes
-
-  inline void	C_Compute_Weights_LeabraCHL(float& wt, float& dwt,
-                                            float& fwt, float& swt)
-  { if(dwt != 0.0f) {
-      fwt += dwt;
-      swt = fwt;                // keep sync'd -- not tech necc but do it anyway
-      wt = SigFmLinWt(fwt);     // re-sig
-    }
-    dwt = 0.0f;
-  }
-  // #IGNORE compute weights for LeabraCHL learning rule -- no fast weights
-  inline void	C_Compute_Weights_LeabraCHL_fast
-    (const float decay_dt, const float wt_dt, const float slow_lrate,
-     float& wt, float& dwt, float& fwt, float& swt)
-  { fwt += dwt + decay_dt * (swt - fwt); // always move fast toward slow -- for all cons
-    swt += slow_lrate * dwt;
-    float nwt = SigFmLinWt(fwt);
-    wt += wt_dt * (nwt - wt);
-    dwt = 0.0f;
-  }
-  // #IGNORE compute weights for LeabraCHL learning rule -- fast weights
-  inline virtual void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                  LeabraNetwork* net);
-  // #IGNORE overall compute weights for LeabraCHL learning rule
 
   /////////////////////////////////////
   // CtLeabraXCAL code
@@ -535,48 +413,14 @@ public:
                                                      LeabraNetwork* net);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule
 
-
-  /////////////////////////////////////
-  // CtLeabraCAL code
-
-  inline void C_Compute_SRAvg_m(float& sravg_m, const float ru_act, const float su_act) 
-  { sravg_m += ru_act * su_act; }
-  // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) time scale
-
-  inline void C_Compute_SRAvg_ms(float& sravg_m, float& sravg_s, const float ru_act,
-                                 const float su_act)
-  { const float sr = ru_act * su_act;  sravg_m += sr;  sravg_s += sr; }
-  // #IGNORE accumulate sender-receiver activation product average -- medium (trial-level) and short (plus phase) time scales
-  inline virtual void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net,
-                                    const bool do_s);
-  // #IGNORE accumulate sender-receiver activation product average -- only for CtLeabraCAL
-
-  inline void C_Trial_Init_SRAvg(float& sravg_m, float& sravg_s)
-  { sravg_m = 0.0f; sravg_s = 0.0f; }
-  // #IGNORE initialize sender-receiver activation product averages for trial and below 
-  inline virtual void Trial_Init_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                       LeabraNetwork* net);
-  // #IGNORE initialize sender-receiver activation product average (only for trial-wise mode, else just in init weights) -- called at start of trial
-
-  inline void 	C_Compute_dWt_CtLeabraCAL(float& dwt, const float sravg_s,
-                                     const float sravg_m, const float sravg_s_nrm,
-                                          const float sravg_m_nrm)
-  { dwt += cur_lrate * (sravg_s_nrm * sravg_s - sravg_m_nrm * sravg_m); }
-  // #IGNORE compute Contrastive Attractor Learning (CAL)
-  virtual void 	Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net);
-  // #IGNORE CtLeabraCAL weight changes
-
-  // CtLeabraCAL uses same Compute_Weights as XCAL
-
   /////////////////////////////////////
   // Master dWt, Weights functions
 
   inline void	Compute_dWt(BaseCons* cg, Unit* su, Network* net) override;
-  // #IGNORE overall compute delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #IGNORE overall compute delta-weights for Leabra 
 
   inline void	Compute_Weights(BaseCons* cg, Unit* su, Network* net) override;
-  // #IGNORE overall compute weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #IGNORE overall compute weights for Leabra
 
   inline virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru,
                                          LeabraNetwork* net);
@@ -594,15 +438,9 @@ public:
     cg->OwnCn(0, SWT) = wt; cg->OwnCn(0, FWT) = wt;
   }
 
-  inline virtual void	B_Compute_dWt_LeabraCHL(RecvCons* bias, LeabraUnit* ru);
-  // #IGNORE compute bias weight change for netin model of bias weight
-
   inline virtual void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
                                                    LeabraLayer* rlay);
   // #IGNORE compute bias weight change for XCAL rule
-  inline virtual void	B_Compute_dWt_CtLeabraCAL(RecvCons* bias, LeabraUnit* ru,
-                                                  LeabraLayer* rlay);
-  // #IGNORE compute bias weight change for CAL rule
 
   inline void	B_Compute_dWt(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay);
   // #IGNORE overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
@@ -613,18 +451,12 @@ public:
   /////////////////////////////////////
   // General 
 
-  virtual void Compute_CycSynDep(LeabraSendCons* cg, LeabraUnit* su,
-                                 LeabraNetwork* net) { };
-  // #IGNORE compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
-
   inline void Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg,
                                   LeabraNetwork* net);
   // #IGNORE copy weights from src_cg to cg -- typically used to compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
   virtual void	Trial_Init_Specs(LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags -- e.g., set current learning rate based on schedule given epoch (or error value)
-  virtual void	SetLearnRule(LeabraNetwork* net);
-  // #CAT_Learning set current learning rule from the network
 
   virtual void	CreateWtSigFun();
   // #CAT_Learning create the wt_sig_fun and wt_sig_fun_inv

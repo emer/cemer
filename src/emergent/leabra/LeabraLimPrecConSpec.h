@@ -50,12 +50,6 @@ public:
   }
   // #IGNORE
 
-  inline void	Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                  LeabraNetwork* net) override {
-    inherited::Compute_Weights_LeabraCHL(cg, su, net);
-    Compute_LimPrecWts(cg, su, net);
-  }
-
   inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                      LeabraNetwork* net) override {
     inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);

@@ -18,59 +18,36 @@
 
 // parent includes:
 
-// member includes:
-#include <LeabraSort>
+// member includes
 #include <AvgMaxVals>
 
 // declare all other types mentioned but not required to include:
 class LeabraLayerSpec; // 
 
-eTypeDef_Of(KWTAVals);
+eTypeDef_Of(LeabraInhibVals);
 
-class E_API KWTAVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for kwta stuff
+class E_API LeabraInhibVals : public taOBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for computed inhibition
 INHERITED(taOBase)
 public:
-  int		k;       	// target number of active units for this collection
-  float		pct;		// actual percent activity in group
-  float		pct_c;		// #HIDDEN complement of (1.0 - ) actual percent activity in group
-  float		k_ithr;		// inhib threshold for k unit (top k for kwta_avg)
-  float		k1_ithr;	// inhib threshold for k+1 unit (other units for kwta_avg)
-  float		ithr_diff;	// normalized difference ratio for k vs k+1 ithr values: (k_ithr - k1_ithr) / k_ithr
-  float         ffi;            // for FF_FB_INHIB, the amount of feedforward inhibition
-  float         fbi;            // for FF_FB_INHIB, the amount of feedback inhibition (total)
-  float         prv_trl_ffi;    // for FF_FB_INHIB, the amount of feedforward inhibition on the previous trial
-  float         prv_phs_ffi;    // for FF_FB_INHIB, the amount of feedforward inhibition on the previous phase
+  float         ffi;            // computed feedforward inhibition
+  float         fbi;            // computed feedback inhibition (total)
+  float         prv_trl_ffi;    // feedforward inhibition on the previous trial -- used for prv_trl_ff inhibition factor to produce a temporal derivitive-like effect
+  float         prv_phs_ffi;    // feedforward inhibition on the previous phase -- used for prv_phs_ff inhibition factor to produce a temporal derivitive-like effect
 
-  void		Compute_Pct(int n_units);
-  void          InitVals();
-  // initialize various state vals
-
-  String       GetTypeDecoKey() const override { return "Layer"; }
-
-  void	Copy_(const KWTAVals& cp);
-  TA_BASEFUNS(KWTAVals);
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-};
-
-eTypeDef_Of(InhibVals);
-
-class E_API InhibVals : public taOBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds values for inhibition
-INHERITED(taOBase)
-public:
-  float		kwta;		// inhibition due to kwta function
-  float		g_i;		// overall value of the inhibition
-  float		gp_g_i;		// g_i from the layer or unit group, if applicable
+  float		g_i;		// overall value of the inhibition -- this is what is added into the unit g_i inhibition level (along with any synaptic unit-driven inhibition)
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
+  float		lay_g_i;	// for unit groups, this is the layer-level inhibition that is MAX'd with the unit-group level inhibition to produce the net inhibition, if unit_gp_inhib is on
+  float		laygp_g_i;	// for layers, this is the layer-group-level inhibition that is MAX'd with the layer-level inhibition to produce the net layer-level inhibition, if lay_gp_inhib is on
+
+  void          InitVals();
+  // initialize the inhibition values
 
   String       GetTypeDecoKey() const override { return "Layer"; }
 
   void	Init() 	{ Initialize(); }
-  void	Copy_(const InhibVals& cp);
-  TA_BASEFUNS(InhibVals);
+  void	Copy_(const LeabraInhibVals& cp);
+  TA_BASEFUNS(LeabraInhibVals);
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -79,25 +56,21 @@ private:
 eTypeDef_Of(LeabraInhib);
 
 class E_API LeabraInhib {
-  // ##CAT_Leabra holds threshold-computation values, used as a parent class for layers, etc
+  // ##CAT_Leabra holds inhibition computation values, used as a parent class for layers and UnitGr etc
 public:
-  LeabraSort 	active_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of active units
-  LeabraSort 	inact_buf;	// #NO_SAVE #HIDDEN #CAT_Activation list of inactive units
-
+  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged minus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling and should match reasonably well with act_avg.init value
+  float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
+  LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
-  AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
-  AvgMaxVals	acts_m_avg;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation time-averaged minus-phase activation stats for the layer
+  AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
   AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation TI act_ctxt activation stats for the layer
   AvgMaxVals	acts_mid;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation mid-minus phase activations -- only used in hippocampus at this point (possibly also in PBWM)
- 
-  KWTAVals	kwta;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation values for kwta -- activity levels, etc NOTE THIS IS A COMPUTED VALUE: k IS SET IN LayerSpec!
-  InhibVals	i_val;		// #NO_SAVE #READ_ONLY #SHOW #CAT_Activation inhibitory values computed by kwta
-  AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit inhib values (optionally computed)
+  AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
-  void	Inhib_ResetSortBuf() 		{ active_buf.size = 0; inact_buf.size = 0; }
+  // set computed inhibition values -- sets original too
   void	Inhib_Init_Acts(LeabraLayerSpec* lay);
   void	Inhib_Initialize();
   void	Inhib_Copy_(const LeabraInhib& cp);

@@ -18,10 +18,6 @@
 TA_BASEFUNS_CTORS_DEFN(TDRewPredConSpec);
 
 void TDRewPredConSpec::Initialize() {
-  SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-
   SetUnique("rnd", true);
   rnd.mean = 0.0f;
   rnd.var = 0.0f;

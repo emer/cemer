@@ -42,15 +42,6 @@
 #include <TDRewIntegLayerSpec>
 #include <TdLayerSpec>
 
-#include <PVConSpec>
-#include <PVrConSpec>
-#include <NVConSpec>
-#include <PViLayerSpec>
-#include <PVrLayerSpec>
-#include <LVeLayerSpec>
-#include <NVLayerSpec>
-#include <PVLVDaLayerSpec>
-
 #include <SNrThalLayerSpec>
 #include <MatrixUnitSpec>
 #include <MatrixLayerSpec>
@@ -144,13 +135,6 @@ bool LeabraWizard::StdLeabraSpecs(LeabraNetwork* net) {
   LeabraLayerSpec* inout;
   inout = (LeabraLayerSpec*)hid->children.FindMakeSpec("Input_Output",
                                                        &TA_LeabraLayerSpec);
-  // hid->inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  // hid->inhib.kwta_pt = .6f;
-  inout->SetUnique("inhib", true);
-  inout->SetUnique("kwta", true);
-  inout->inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  inout->inhib.kwta_pt = .25f;
-  inout->kwta.k_from = KWTASpec::USE_PAT_K;
 
   // move the bias spec under the con spec
   LeabraBiasSpec* bs;
@@ -238,12 +222,6 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
   ff_inhib_cs->SetUnique("wt_scale", true);
   ff_inhib_cs->wt_scale.abs = .4f;
 
-  basic_ls->inhib.type = LeabraInhibSpec::UNIT_INHIB;
-
-  inhib_ls->SetUnique("kwta", true);
-  inhib_ls->kwta.k_from = KWTASpec::USE_PCT;
-  inhib_ls->kwta.pct = .34f;
-
   basic_us->UpdateAfterEdit();
   basic_cs->UpdateAfterEdit();
   basic_ls->UpdateAfterEdit();
@@ -296,8 +274,6 @@ bool LeabraWizard::UnitInhib(LeabraNetwork* net, int n_inhib_units) {
 //   winbMisc::DelayedMenuUpdate(net);
 
   // set settle cycles to 300
-  net->cycle_max = 300;
-  net->min_cycles = 150;
 
   ControlPanel* edit = proj->FindMakeControlPanel("UnitInhib");
   if(edit != NULL) {
@@ -403,8 +379,6 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
 
-  net->learn_rule = LeabraNetwork::CTLEABRA_XCAL; // make sure
-  net->UpdateAfterEdit();	// trigger update
   net->ti_mode = true;
 
   ti_ctxt->SetUnique("wt_scale", true);
@@ -590,7 +564,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
 
   onetoone->send_start = 1;     // needed for new index based connections
 
-  learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
+  // learn_cons->lmix.hebb = .01f; // .01 hebb on learn cons
 //   learn_cons->not_used_ok = true;
   learn_cons->UpdateAfterEdit();
   bg_bias->SetUnique("lrate", true);
@@ -605,8 +579,8 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   rewpred_cons->rnd.mean = 0.1f; rewpred_cons->rnd.var = 0.0f;
   rewpred_cons->SetUnique("wt_sig", true);
   rewpred_cons->wt_sig.gain = 1.0f;  rewpred_cons->wt_sig.off = 1.0f;
-  rewpred_cons->SetUnique("lmix", true);
-  rewpred_cons->lmix.hebb = 0.0f;
+  // rewpred_cons->SetUnique("lmix", true);
+  // rewpred_cons->lmix.hebb = 0.0f;
 
   if(output_lays.size > 0)
     ersp->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
@@ -619,9 +593,9 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     ScalarValLayerSpec* lsp = valspecs[i];
     lsp->scalar.rep = ScalarValSpec::GAUSSIAN;
     lsp->scalar.min_sum_act = .2f;
-    lsp->inhib.type = LeabraInhibSpec::KWTA_INHIB; lsp->inhib.kwta_pt = 0.25f;
-    lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 3;
-    lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 3;
+    // lsp->inhib.type = LeabraInhibSpec::KWTA_INHIB; lsp->inhib.kwta_pt = 0.25f;
+    // lsp->kwta.k_from = KWTASpec::USE_K;    lsp->kwta.k = 3;
+    // lsp->gp_kwta.k_from = KWTASpec::USE_K; lsp->gp_kwta.k = 3;
     lsp->unit_range.min = -0.5f;  lsp->unit_range.max = 3.5f;
     lsp->unit_range.UpdateAfterEdit();
     lsp->val_range = lsp->unit_range;
@@ -733,134 +707,134 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
       return false;
   }
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
-  if(!pvlvspgp) return false;
+//   String pvlvprefix = "PVLV";
+//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+//   if(!pvlvspgp) return false;
 
-  FMSpec(LeabraUnitSpec, pv_units, pvlvspgp, "PVUnits");
-  FMChild(LeabraUnitSpec, lv_units, pv_units, "LVUnits");
-  FMSpec(LeabraUnitSpec, da_units, pvlvspgp, "DaUnits");
+//   FMSpec(LeabraUnitSpec, pv_units, pvlvspgp, "PVUnits");
+//   FMChild(LeabraUnitSpec, lv_units, pv_units, "LVUnits");
+//   FMSpec(LeabraUnitSpec, da_units, pvlvspgp, "DaUnits");
 
-  FMSpec(PVConSpec, pvi_cons, pvlvspgp, "PViCons");
-  FMChild(PVrConSpec, pvr_cons, pvi_cons, "PVrCons");
-  FMChild(PVConSpec, lve_cons, pvi_cons, "LVeCons");
-  FMChild(PVConSpec, lvi_cons, lve_cons, "LViCons");
-  FMChild(NVConSpec, nv_cons, pvi_cons, "NVCons");
-  FMSpec(LeabraBiasSpec, bg_bias, pvlvspgp, "BgBias");
-  FMSpec(MarkerConSpec, marker_cons, pvlvspgp, "PvlvMarker");
+//   FMSpec(PVConSpec, pvi_cons, pvlvspgp, "PViCons");
+//   FMChild(PVrConSpec, pvr_cons, pvi_cons, "PVrCons");
+//   FMChild(PVConSpec, lve_cons, pvi_cons, "LVeCons");
+//   FMChild(PVConSpec, lvi_cons, lve_cons, "LViCons");
+//   FMChild(NVConSpec, nv_cons, pvi_cons, "NVCons");
+//   FMSpec(LeabraBiasSpec, bg_bias, pvlvspgp, "BgBias");
+//   FMSpec(MarkerConSpec, marker_cons, pvlvspgp, "PvlvMarker");
 
-  FMSpec(ScalarValLayerSpec, laysp, pvlvspgp, "PvlvLayer");
-  FMChild(LeabraLayerSpec, rewtargsp, laysp, "RewTargLayer");
-  FMChild(ExtRewLayerSpec, pvesp, laysp, "PVeLayer");
-  FMChild(PVrLayerSpec, pvrsp, laysp, "PVrLayer");
-  FMChild(PViLayerSpec, pvisp, laysp, "PViLayer");
-  FMChild(LVeLayerSpec, lvesp, laysp, "LVeLayer");
-  FMChild(NVLayerSpec, nvsp, laysp, "NVLayer");
-  FMChild(PVLVDaLayerSpec, dasp, laysp, "VTALayer");
+//   FMSpec(ScalarValLayerSpec, laysp, pvlvspgp, "PvlvLayer");
+//   FMChild(LeabraLayerSpec, rewtargsp, laysp, "RewTargLayer");
+//   FMChild(ExtRewLayerSpec, pvesp, laysp, "PVeLayer");
+//   FMChild(PVrLayerSpec, pvrsp, laysp, "PVrLayer");
+//   FMChild(PViLayerSpec, pvisp, laysp, "PViLayer");
+//   FMChild(LVeLayerSpec, lvesp, laysp, "LVeLayer");
+//   FMChild(NVLayerSpec, nvsp, laysp, "NVLayer");
+//   FMChild(PVLVDaLayerSpec, dasp, laysp, "VTALayer");
 
-  FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PvlvFullPrjn");
-  FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PvlvOneToOne");
-  FMSpec(OneToOnePrjnSpec, vtaonetoone, pvlvspgp, "VTAOneToOnePrjn");
+//   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PvlvFullPrjn");
+//   FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PvlvOneToOne");
+//   FMSpec(OneToOnePrjnSpec, vtaonetoone, pvlvspgp, "VTAOneToOnePrjn");
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // set default spec parameters
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // set default spec parameters
 
-  pvlvspgp->Defaults();
+//   pvlvspgp->Defaults();
 
-  pvi_cons->UpdateAfterEdit();
-  bg_bias->SetUnique("lrate", true);
-  bg_bias->lrate = 0.0f;
-  bg_bias->SetUnique("learn", true);
-  bg_bias->learn = false;
+//   pvi_cons->UpdateAfterEdit();
+//   bg_bias->SetUnique("lrate", true);
+//   bg_bias->lrate = 0.0f;
+//   bg_bias->SetUnique("learn", true);
+//   bg_bias->learn = false;
 
-  pvr_cons->SetUnique("lrate", true);
-  pvi_cons->SetUnique("lrate", true);
-  nv_cons->SetUnique("lrate", true);
-  lve_cons->SetUnique("lrate", true);
-  lvi_cons->SetUnique("lrate", true);
+//   pvr_cons->SetUnique("lrate", true);
+//   pvi_cons->SetUnique("lrate", true);
+//   nv_cons->SetUnique("lrate", true);
+//   lve_cons->SetUnique("lrate", true);
+//   lvi_cons->SetUnique("lrate", true);
 
-  pvi_cons->SetUnique("lmix", true);
-  pvi_cons->lmix.err_sb = false;
-  pvi_cons->SetUnique("rnd", true);
-  pvi_cons->rnd.mean = 0.1f;
-  pvi_cons->rnd.var = 0.0f;
+//   pvi_cons->SetUnique("lmix", true);
+//   pvi_cons->lmix.err_sb = false;
+//   pvi_cons->SetUnique("rnd", true);
+//   pvi_cons->rnd.mean = 0.1f;
+//   pvi_cons->rnd.var = 0.0f;
 
-  pvi_cons->lrate = .01f;
-  pvr_cons->lrate = .1f;
-  nv_cons->lrate = .0005f;
-  lve_cons->lrate = .01f;
-  lvi_cons->lrate = .001f;
+//   pvi_cons->lrate = .01f;
+//   pvr_cons->lrate = .1f;
+//   nv_cons->lrate = .0005f;
+//   lve_cons->lrate = .01f;
+//   lvi_cons->lrate = .001f;
 
-  //vtaonetoone->send_start = 1; // this scheme compiled, but didn't get rid of error message so abandoning
+//   //vtaonetoone->send_start = 1; // this scheme compiled, but didn't get rid of error message so abandoning
 
-  // default scalar val for all types
-  laysp->scalar.rep = ScalarValSpec::LOCALIST;
-  laysp->unit_range.min = 0.0f;  laysp->unit_range.max = 1.0f;
-  laysp->unit_range.UpdateAfterEdit();
-  laysp->Defaults();
-  laysp->bias_val.wt = ScalarValBias::NO_WT;
-  laysp->bias_val.val = 0.5f;
-  laysp->bias_val.un = ScalarValBias::NO_UN;
+//   // default scalar val for all types
+//   laysp->scalar.rep = ScalarValSpec::LOCALIST;
+//   laysp->unit_range.min = 0.0f;  laysp->unit_range.max = 1.0f;
+//   laysp->unit_range.UpdateAfterEdit();
+//   laysp->Defaults();
+//   laysp->bias_val.wt = ScalarValBias::NO_WT;
+//   laysp->bias_val.val = 0.5f;
+//   laysp->bias_val.un = ScalarValBias::NO_UN;
 
-  nvsp->SetUnique("bias_val", true);
-  nvsp->bias_val.un = ScalarValBias::BWT;
-  nvsp->bias_val.wt = ScalarValBias::NO_WT;
-  nvsp->bias_val.val = 1.0f;
+//   nvsp->SetUnique("bias_val", true);
+//   nvsp->bias_val.un = ScalarValBias::BWT;
+//   nvsp->bias_val.wt = ScalarValBias::NO_WT;
+//   nvsp->bias_val.val = 1.0f;
 
-  pv_units->Defaults();
+//   pv_units->Defaults();
 
-  da_units->SetUnique("act_range", true);
-  da_units->act_range.max = 2.0f;
-  da_units->act_range.min = -2.0f;
-  da_units->act_range.UpdateAfterEdit();
-  da_units->SetUnique("clamp_range", true);
-  da_units->clamp_range.max = 2.0f;
-  da_units->clamp_range.min = -2.0f;
-  da_units->clamp_range.UpdateAfterEdit();
+//   da_units->SetUnique("act_range", true);
+//   da_units->act_range.max = 2.0f;
+//   da_units->act_range.min = -2.0f;
+//   da_units->act_range.UpdateAfterEdit();
+//   da_units->SetUnique("clamp_range", true);
+//   da_units->clamp_range.max = 2.0f;
+//   da_units->clamp_range.min = -2.0f;
+//   da_units->clamp_range.UpdateAfterEdit();
 
-  vtaonetoone->send_start = 1;  // key feature
+//   vtaonetoone->send_start = 1;  // key feature
 
-  //////////////////
-  // Update Everyone
+//   //////////////////
+//   // Update Everyone
 
-  pvesp->UpdateAfterEdit();
-  pvisp->UpdateAfterEdit();
-  lvesp->UpdateAfterEdit();
-  // lvisp->UpdateAfterEdit();
-  pvrsp->UpdateAfterEdit();
-  nvsp->UpdateAfterEdit();
+//   pvesp->UpdateAfterEdit();
+//   pvisp->UpdateAfterEdit();
+//   lvesp->UpdateAfterEdit();
+//   // lvisp->UpdateAfterEdit();
+//   pvrsp->UpdateAfterEdit();
+//   nvsp->UpdateAfterEdit();
 
-  for(int j=0;j<pvlvspgp->leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)pvlvspgp->Leaf(j);
-    sp->UpdateAfterEdit();
-  }
+//   for(int j=0;j<pvlvspgp->leaves;j++) {
+//     BaseSpec* sp = (BaseSpec*)pvlvspgp->Leaf(j);
+//     sp->UpdateAfterEdit();
+//   }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // control panel
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // control panel
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  ControlPanel* cp = proj->FindMakeControlPanel("PVLV");
-  if(cp) {
-    cp->SetUserData("user_pinned", true);
+//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+//   ControlPanel* cp = proj->FindMakeControlPanel("PVLV");
+//   if(cp) {
+//     cp->SetUserData("user_pinned", true);
 
-    pvr_cons->AddToControlPanelNm("lrate", cp, "pvr");
-    pvi_cons->AddToControlPanelNm("lrate", cp, "pvi");
-    lve_cons->AddToControlPanelNm("lrate", cp, "lve");
-    // lvi_cons->AddToControlPanelNm("lrate", cp, "lvi");
-    nv_cons->AddToControlPanelNm("lrate", cp, "nv");
-    pvesp->AddToControlPanelNm("rew", cp, "pve");
-    pvisp->AddToControlPanelNm("pv", cp, "pvi");
-    lvesp->AddToControlPanelNm("lv", cp, "lve");
-    pvrsp->AddToControlPanelNm("pv_detect", cp, "pvr");
-    nvsp->AddToControlPanelNm("nv", cp, "nv");
-//     pvisp->AddToControlPanelNm("scalar", cp, "pvi");
-//     lvesp->AddToControlPanelNm("scalar", cp, "lve");
-//     pvisp->AddToControlPanelNm("bias_val", cp, "pvi");
-//     lvesp->AddToControlPanelNm("bias_val", cp, "lve");
-//    dasp->AddToControlPanelNm("avg_da", cp, "vta");
-    dasp->AddToControlPanelNm("da", cp, "vta");
-    cp->EditPanel(true, true);
-  }
+//     pvr_cons->AddToControlPanelNm("lrate", cp, "pvr");
+//     pvi_cons->AddToControlPanelNm("lrate", cp, "pvi");
+//     lve_cons->AddToControlPanelNm("lrate", cp, "lve");
+//     // lvi_cons->AddToControlPanelNm("lrate", cp, "lvi");
+//     nv_cons->AddToControlPanelNm("lrate", cp, "nv");
+//     pvesp->AddToControlPanelNm("rew", cp, "pve");
+//     pvisp->AddToControlPanelNm("pv", cp, "pvi");
+//     lvesp->AddToControlPanelNm("lv", cp, "lve");
+//     pvrsp->AddToControlPanelNm("pv_detect", cp, "pvr");
+//     nvsp->AddToControlPanelNm("nv", cp, "nv");
+// //     pvisp->AddToControlPanelNm("scalar", cp, "pvi");
+// //     lvesp->AddToControlPanelNm("scalar", cp, "lve");
+// //     pvisp->AddToControlPanelNm("bias_val", cp, "pvi");
+// //     lvesp->AddToControlPanelNm("bias_val", cp, "lve");
+// //    dasp->AddToControlPanelNm("avg_da", cp, "vta");
+//     dasp->AddToControlPanelNm("da", cp, "vta");
+//     cp->EditPanel(true, true);
+//   }
 
   return true;
 }
@@ -879,323 +853,323 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV before -- actually saves network specifically");
   }
 
-  String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
- There is one thing you will need to check manually after this automatic configuration\
- process completes (this note will be repeated when things complete --- there may be some\
- messages in the interim):\n\n";
+//   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
+//  There is one thing you will need to check manually after this automatic configuration\
+//  process completes (this note will be repeated when things complete --- there may be some\
+//  messages in the interim):\n\n";
 
-  String man_msg = "1. Check that connection(s) were made from all appropriate output layers\
- to the PVe (ExtRewLayerSpec) layer, using the MarkerConSpec (MarkerCons) Con spec.\
- This will provide the error signal to the system based on output error performance.\n\n";
+//   String man_msg = "1. Check that connection(s) were made from all appropriate output layers\
+//  to the PVe (ExtRewLayerSpec) layer, using the MarkerConSpec (MarkerCons) Con spec.\
+//  This will provide the error signal to the system based on output error performance.\n\n";
 
-  msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
- will be set.  If there are any actual errors which must be corrected before\
- the network will run, you will see a message to that effect --- you will then need to\
- re-run this configuration process to make sure everything is OK.  When you press\
- Re/New/Init on the control process these same checks will be performed, so you\
- can be sure everything is ok.";
-  taMisc::Confirm(msg);
+//   msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
+//  will be set.  If there are any actual errors which must be corrected before\
+//  the network will run, you will see a message to that effect --- you will then need to\
+//  re-run this configuration process to make sure everything is OK.  When you press\
+//  Re/New/Init on the control process these same checks will be performed, so you\
+//  can be sure everything is ok.";
+//   taMisc::Confirm(msg);
 
-  net->RemoveUnits();
+//   net->RemoveUnits();
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // make layers
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // make layers
 
-  bool  lve_new = false;
-  bool  pvr_new = false;
-  bool  nv_new = false;
-  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
-  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-  String vtanm = "VTA";
+//   bool  lve_new = false;
+//   bool  pvr_new = false;
+//   bool  nv_new = false;
+//   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
+//   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+//   String vtanm = "VTA";
 
-  bool new_laygp = false;
-  Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
+//   bool new_laygp = false;
+//   Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
 
-  LeabraLayer* rew_targ_lay;
-  LeabraLayer* pve;  LeabraLayer* pvr; LeabraLayer* pvi; LeabraLayer* lve;
-  LeabraLayer* lvi = NULL;
-  LeabraLayer* nv;   LeabraLayer* vta;
+//   LeabraLayer* rew_targ_lay;
+//   LeabraLayer* pve;  LeabraLayer* pvr; LeabraLayer* pvi; LeabraLayer* lve;
+//   LeabraLayer* lvi = NULL;
+//   LeabraLayer* nv;   LeabraLayer* vta;
 
-  bool dumbo;
-  rew_targ_lay = (LeabraLayer*)laygp->FindMakeLayer("RewTarg");
-  pve = (LeabraLayer*)laygp->FindMakeLayer(pvenm, NULL, dumbo);
-  pvr = (LeabraLayer*)laygp->FindMakeLayer(pvrnm, NULL, pvr_new);
-  pvi = (LeabraLayer*)laygp->FindMakeLayer(pvinm, NULL, dumbo);
-  lve = (LeabraLayer*)laygp->FindMakeLayer(lvenm, NULL, lve_new);
-  // lvi = (LeabraLayer*)laygp->FindMakeLayer(lvinm, NULL, dumbo);
-  nv =  (LeabraLayer*)laygp->FindMakeLayer(nvnm, NULL, nv_new);
-  vta = (LeabraLayer*)laygp->FindMakeLayer(vtanm, NULL, dumbo, "DA");
-  if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return false;
+//   bool dumbo;
+//   rew_targ_lay = (LeabraLayer*)laygp->FindMakeLayer("RewTarg");
+//   pve = (LeabraLayer*)laygp->FindMakeLayer(pvenm, NULL, dumbo);
+//   pvr = (LeabraLayer*)laygp->FindMakeLayer(pvrnm, NULL, pvr_new);
+//   pvi = (LeabraLayer*)laygp->FindMakeLayer(pvinm, NULL, dumbo);
+//   lve = (LeabraLayer*)laygp->FindMakeLayer(lvenm, NULL, lve_new);
+//   // lvi = (LeabraLayer*)laygp->FindMakeLayer(lvinm, NULL, dumbo);
+//   nv =  (LeabraLayer*)laygp->FindMakeLayer(nvnm, NULL, nv_new);
+//   vta = (LeabraLayer*)laygp->FindMakeLayer(vtanm, NULL, dumbo, "DA");
+//   if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return false;
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // collect layer groups
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // collect layer groups
 
-  Layer_Group other_lays;
-  Layer_Group hidden_lays;
-  Layer_Group output_lays;
-  Layer_Group input_lays;
-  int i;
-  for(i=0;i<net->layers.leaves;i++) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-    // todo: add any new bg layer exclusions here!
-    if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
-       lay != lvi && lay != nv && lay != vta
-       && !laysp->InheritsFrom(&TA_PFCLayerSpec)
-       && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
-       && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
-      other_lays.Link(lay);
-      if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
-      if(lay->layer_type == Layer::HIDDEN)
-        hidden_lays.Link(lay);
-      else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
-        input_lays.Link(lay);
-      else if(lay->name.contains("Out"))
-        output_lays.Link(lay);
-      else
-        input_lays.Link(lay);   // default to input -- many are now TARGET in TI
-    }
-  }
+//   Layer_Group other_lays;
+//   Layer_Group hidden_lays;
+//   Layer_Group output_lays;
+//   Layer_Group input_lays;
+//   int i;
+//   for(i=0;i<net->layers.leaves;i++) {
+//     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+//     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+//     // todo: add any new bg layer exclusions here!
+//     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
+//        lay != lvi && lay != nv && lay != vta
+//        && !laysp->InheritsFrom(&TA_PFCLayerSpec)
+//        && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
+//        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
+//       other_lays.Link(lay);
+//       if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
+//       if(lay->layer_type == Layer::HIDDEN)
+//         hidden_lays.Link(lay);
+//       else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
+//         input_lays.Link(lay);
+//       else if(lay->name.contains("Out"))
+//         output_lays.Link(lay);
+//       else
+//         input_lays.Link(lay);   // default to input -- many are now TARGET in TI
+//     }
+//   }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // make specs
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // make specs
 
-  if(!PVLV_Specs(net)) return false;
+//   if(!PVLV_Specs(net)) return false;
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+//   String pvlvprefix = "PVLV";
+//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
-  if(output_lays.size > 0)
-    PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
-  else
-    PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::EXT_REW;
+//   if(output_lays.size > 0)
+//     PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
+//   else
+//     PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::EXT_REW;
 
-  int n_lv_u;           // number of pvlv-type units
-  if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::LOCALIST)
-    n_lv_u = 4;
-  else if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::GAUSSIAN)
-    n_lv_u = 12;
-  else
-    n_lv_u = 21;
+//   int n_lv_u;           // number of pvlv-type units
+//   if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::LOCALIST)
+//     n_lv_u = 4;
+//   else if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::GAUSSIAN)
+//     n_lv_u = 12;
+//   else
+//     n_lv_u = 21;
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // set positions & geometries
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // set positions & geometries
 
-  pve->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
-  pvi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
-  pvr->brain_area = ".*/.*/.*/.*/Caudate Head";
-  lve->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
-  // lvi->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
-  vta->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
+//   pve->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
+//   pvi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+//   pvr->brain_area = ".*/.*/.*/.*/Caudate Head";
+//   lve->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
+//   // lvi->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
+//   vta->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
 
-  if(new_laygp) {
-    laygp->pos.z = 0;
-  }
+//   if(new_laygp) {
+//     laygp->pos.z = 0;
+//   }
 
-  if(pvr_new) {
-    pvr->pos.SetXYZ(0,10,0);
-  }
-  if(nv_new) {
-    nv->pos.SetXYZ(8,10,0);
-  }
+//   if(pvr_new) {
+//     pvr->pos.SetXYZ(0,10,0);
+//   }
+//   if(nv_new) {
+//     nv->pos.SetXYZ(8,10,0);
+//   }
 
-  if(lve_new) {
-    pve->pos.SetXYZ(0,0,0);
-    pvi->pos.SetXYZ(0,5,0);
+//   if(lve_new) {
+//     pve->pos.SetXYZ(0,0,0);
+//     pvi->pos.SetXYZ(0,5,0);
 
-    lve->pos.SetXYZ(8,0,0);
-    // lvi->pos.SetXYZ(8,5,0);
+//     lve->pos.SetXYZ(8,0,0);
+//     // lvi->pos.SetXYZ(8,5,0);
 
-    vta->pos.SetXYZ(15,0,0);
-    rew_targ_lay->pos.SetXYZ(15,5,0);
-  }
+//     vta->pos.SetXYZ(15,0,0);
+//     rew_targ_lay->pos.SetXYZ(15,5,0);
+//   }
 
-  if(pvi->un_geom.n != n_lv_u) {
-    pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
-  if(lve->un_geom.n != n_lv_u) {
-    lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
-  // if(lvi->un_geom.n != n_lv_u) {
-  //   lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
-  if(pve->un_geom.n != n_lv_u) {
-    pve->un_geom.n = n_lv_u; pve->un_geom.x = n_lv_u; pve->un_geom.y = 1; }
-  if(pvr->un_geom.n != n_lv_u) {
-    pvr->un_geom.n = n_lv_u; pvr->un_geom.x = n_lv_u; pvr->un_geom.y = 1; }
-  if(nv->un_geom.n != n_lv_u) {
-    nv->un_geom.n = n_lv_u; nv->un_geom.x = n_lv_u; nv->un_geom.y = 1; }
-  vta->un_geom.n = 1;
-  rew_targ_lay->un_geom.n = 1;
-  rew_targ_lay->layer_type = Layer::INPUT;
+//   if(pvi->un_geom.n != n_lv_u) {
+//     pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
+//   if(lve->un_geom.n != n_lv_u) {
+//     lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
+//   // if(lvi->un_geom.n != n_lv_u) {
+//   //   lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
+//   if(pve->un_geom.n != n_lv_u) {
+//     pve->un_geom.n = n_lv_u; pve->un_geom.x = n_lv_u; pve->un_geom.y = 1; }
+//   if(pvr->un_geom.n != n_lv_u) {
+//     pvr->un_geom.n = n_lv_u; pvr->un_geom.x = n_lv_u; pvr->un_geom.y = 1; }
+//   if(nv->un_geom.n != n_lv_u) {
+//     nv->un_geom.n = n_lv_u; nv->un_geom.x = n_lv_u; nv->un_geom.y = 1; }
+//   vta->un_geom.n = 1;
+//   rew_targ_lay->un_geom.n = 1;
+//   rew_targ_lay->layer_type = Layer::INPUT;
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // apply specs to objects
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // apply specs to objects
 
-  LeabraUnitSpec* pv_units = PvlvSp("PVUnits",LeabraUnitSpec);
+//   LeabraUnitSpec* pv_units = PvlvSp("PVUnits",LeabraUnitSpec);
 
-  rew_targ_lay->SetLayerSpec(PvlvSp("RewTargLayer",LeabraLayerSpec));
-  pve->SetLayerSpec(PvlvSp("PVeLayer",ExtRewLayerSpec));
-  pve->SetUnitSpec(pv_units);
-  pvi->SetLayerSpec(PvlvSp("PViLayer", PViLayerSpec));
-  pvi->SetUnitSpec(pv_units);
-  lve->SetLayerSpec(PvlvSp("LVeLayer", LVeLayerSpec));
-  lve->SetUnitSpec(PvlvSp("LVUnits",LeabraUnitSpec));
-  vta->SetLayerSpec(PvlvSp("VTALayer", PVLVDaLayerSpec));
-  vta->SetUnitSpec(PvlvSp("DaUnits",LeabraUnitSpec));
-  pvr->SetLayerSpec(PvlvSp("PVrLayer", PVrLayerSpec));
-  pvr->SetUnitSpec(pv_units);
-  nv->SetLayerSpec(PvlvSp("NVLayer", NVLayerSpec));
-  nv->SetUnitSpec(pv_units);
+//   rew_targ_lay->SetLayerSpec(PvlvSp("RewTargLayer",LeabraLayerSpec));
+//   pve->SetLayerSpec(PvlvSp("PVeLayer",ExtRewLayerSpec));
+//   pve->SetUnitSpec(pv_units);
+//   pvi->SetLayerSpec(PvlvSp("PViLayer", PViLayerSpec));
+//   pvi->SetUnitSpec(pv_units);
+//   lve->SetLayerSpec(PvlvSp("LVeLayer", LVeLayerSpec));
+//   lve->SetUnitSpec(PvlvSp("LVUnits",LeabraUnitSpec));
+//   vta->SetLayerSpec(PvlvSp("VTALayer", PVLVDaLayerSpec));
+//   vta->SetUnitSpec(PvlvSp("DaUnits",LeabraUnitSpec));
+//   pvr->SetLayerSpec(PvlvSp("PVrLayer", PVrLayerSpec));
+//   pvr->SetUnitSpec(pv_units);
+//   nv->SetLayerSpec(PvlvSp("NVLayer", NVLayerSpec));
+//   nv->SetUnitSpec(pv_units);
 
-  LeabraBiasSpec* bg_bias = PvlvSp("BgBias", LeabraBiasSpec);
-  pv_units->bias_spec.SetSpec(bg_bias);
-  PvlvSp("LVUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
-  PvlvSp("DaUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
+//   LeabraBiasSpec* bg_bias = PvlvSp("BgBias", LeabraBiasSpec);
+//   pv_units->bias_spec.SetSpec(bg_bias);
+//   PvlvSp("LVUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
+//   PvlvSp("DaUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // make projections
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // make projections
 
-  MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
-  OneToOnePrjnSpec* onetoone = PvlvSp("PvlvOneToOne", OneToOnePrjnSpec);
-  FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
+//   MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
+//   OneToOnePrjnSpec* onetoone = PvlvSp("PvlvOneToOne", OneToOnePrjnSpec);
+//   FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
 
-  // FindMakePrjn(Layer* recv, Layer* send,
-  net->FindMakePrjn(pve, rew_targ_lay, onetoone, marker_cons);
-  net->FindMakePrjn(pvr, pve, onetoone, marker_cons);
-  net->FindMakePrjn(pvi, pve, onetoone, marker_cons);
+//   // FindMakePrjn(Layer* recv, Layer* send,
+//   net->FindMakePrjn(pve, rew_targ_lay, onetoone, marker_cons);
+//   net->FindMakePrjn(pvr, pve, onetoone, marker_cons);
+//   net->FindMakePrjn(pvi, pve, onetoone, marker_cons);
 
-  net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
-  // net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
+//   net->FindMakePrjn(lve, pvr, onetoone, marker_cons);
+//   // net->FindMakePrjn(lvi, pvr, onetoone, marker_cons);
 
-  OneToOnePrjnSpec* vtaonetoone = PvlvSp("VTAOneToOnePrjn", OneToOnePrjnSpec);
+//   OneToOnePrjnSpec* vtaonetoone = PvlvSp("VTAOneToOnePrjn", OneToOnePrjnSpec);
 
-  net->FindMakePrjn(vta, pvi, vtaonetoone, marker_cons);
-  net->FindMakePrjn(vta, lve, vtaonetoone, marker_cons);
-  // net->FindMakePrjn(vta, lvi, vtaonetoone, marker_cons);
-  net->FindMakePrjn(vta, pvr, vtaonetoone, marker_cons);
-  net->FindMakePrjn(vta, nv,  vtaonetoone, marker_cons);
+//   net->FindMakePrjn(vta, pvi, vtaonetoone, marker_cons);
+//   net->FindMakePrjn(vta, lve, vtaonetoone, marker_cons);
+//   // net->FindMakePrjn(vta, lvi, vtaonetoone, marker_cons);
+//   net->FindMakePrjn(vta, pvr, vtaonetoone, marker_cons);
+//   net->FindMakePrjn(vta, nv,  vtaonetoone, marker_cons);
 
-  if(lve_new) {
-    for(i=0;i<input_lays.size;i++) {
-      Layer* il = (Layer*)input_lays[i];
-      net->FindMakePrjn(pvr, il, fullprjn, PvlvSp("PVrCons", PVrConSpec));
-      net->FindMakePrjn(pvi, il, fullprjn, PvlvSp("PViCons", PVConSpec));
-      net->FindMakePrjn(lve, il, fullprjn, PvlvSp("LVeCons", PVConSpec));
-      // net->FindMakePrjn(lvi, il, fullprjn, lvi_cons);
-      net->FindMakePrjn(nv,  il, fullprjn, PvlvSp("NVCons", PVConSpec));
-    }
-  }
+//   if(lve_new) {
+//     for(i=0;i<input_lays.size;i++) {
+//       Layer* il = (Layer*)input_lays[i];
+//       net->FindMakePrjn(pvr, il, fullprjn, PvlvSp("PVrCons", PVrConSpec));
+//       net->FindMakePrjn(pvi, il, fullprjn, PvlvSp("PViCons", PVConSpec));
+//       net->FindMakePrjn(lve, il, fullprjn, PvlvSp("LVeCons", PVConSpec));
+//       // net->FindMakePrjn(lvi, il, fullprjn, lvi_cons);
+//       net->FindMakePrjn(nv,  il, fullprjn, PvlvSp("NVCons", PVConSpec));
+//     }
+//   }
 
-  if(da_mod_all) {
-    for(i=0;i<other_lays.size;i++) {
-      Layer* ol = (Layer*)other_lays[i];
-      net->FindMakePrjn(ol, vta, fullprjn, marker_cons);
-      //net->FindMakePrjn(ol, vta, vtaonetoone, marker_cons);
-    }
-  }
+//   if(da_mod_all) {
+//     for(i=0;i<other_lays.size;i++) {
+//       Layer* ol = (Layer*)other_lays[i];
+//       net->FindMakePrjn(ol, vta, fullprjn, marker_cons);
+//       //net->FindMakePrjn(ol, vta, vtaonetoone, marker_cons);
+//     }
+//   }
 
-  for(i=0;i<output_lays.size;i++) {
-    Layer* ol = (Layer*)output_lays[i];
-    net->FindMakePrjn(pve, ol, onetoone, marker_cons);
-  }
+//   for(i=0;i<output_lays.size;i++) {
+//     Layer* ol = (Layer*)output_lays[i];
+//     net->FindMakePrjn(pve, ol, onetoone, marker_cons);
+//   }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // build and check
+//   //////////////////////////////////////////////////////////////////////////////////
+//   // build and check
 
-  net->Build();
-  net->LayerPos_Cleanup();
+//   net->Build();
+//   net->LayerPos_Cleanup();
 
-  if(new_laygp) {
-    laygp->pos.z = 0;           // move back!
-    net->RebuildAllViews();     // trigger update
-  }
+//   if(new_laygp) {
+//     laygp->pos.z = 0;           // move back!
+//     net->RebuildAllViews();     // trigger update
+//   }
 
-  taMisc::CheckConfigStart(false, false);
+//   taMisc::CheckConfigStart(false, false);
 
-  bool ok = PvlvSp("PViLayer",PViLayerSpec)->CheckConfig_Layer(pvi, false);
-  ok &= PvlvSp("LVeLayer",LVeLayerSpec)->CheckConfig_Layer(lve, false);
-  // ok &= lvisp->CheckConfig_Layer(lve, false);
-  ok &= PvlvSp("VTALayer",PVLVDaLayerSpec)->CheckConfig_Layer(vta, false);
-  ok &= PvlvSp("PVeLayer",ExtRewLayerSpec)->CheckConfig_Layer(pve, false);
-  ok &= PvlvSp("PVrLayer",PVrLayerSpec)->CheckConfig_Layer(pvr, false);
-  ok &= PvlvSp("NVLayer",NVLayerSpec)->CheckConfig_Layer(nv, false);
+//   bool ok = PvlvSp("PViLayer",PViLayerSpec)->CheckConfig_Layer(pvi, false);
+//   ok &= PvlvSp("LVeLayer",LVeLayerSpec)->CheckConfig_Layer(lve, false);
+//   // ok &= lvisp->CheckConfig_Layer(lve, false);
+//   ok &= PvlvSp("VTALayer",PVLVDaLayerSpec)->CheckConfig_Layer(vta, false);
+//   ok &= PvlvSp("PVeLayer",ExtRewLayerSpec)->CheckConfig_Layer(pve, false);
+//   ok &= PvlvSp("PVrLayer",PVrLayerSpec)->CheckConfig_Layer(pvr, false);
+//   ok &= PvlvSp("NVLayer",NVLayerSpec)->CheckConfig_Layer(nv, false);
 
-  taMisc::CheckConfigEnd(ok);
+//   taMisc::CheckConfigEnd(ok);
 
-  if(!ok) {
-    msg =
-      "PVLV: An error in the configuration has occurred (it should be the last message\
- you received prior to this one).  The network will not run until this is fixed.\
- In addition, the configuration process may not be complete, so you should run this\
- function again after you have corrected the source of the error.";
-  }
-  else {
-    msg =
-    "PVLV configuration is now complete.  Do not forget the one remaining thing\
- you need to do manually:\n\n" + man_msg;
-  }
-  taMisc::Confirm(msg);
+//   if(!ok) {
+//     msg =
+//       "PVLV: An error in the configuration has occurred (it should be the last message\
+//  you received prior to this one).  The network will not run until this is fixed.\
+//  In addition, the configuration process may not be complete, so you should run this\
+//  function again after you have corrected the source of the error.";
+//   }
+//   else {
+//     msg =
+//     "PVLV configuration is now complete.  Do not forget the one remaining thing\
+//  you need to do manually:\n\n" + man_msg;
+//   }
+//   taMisc::Confirm(msg);
 
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV after -- actually saves network specifically");
-  }
+//   if(proj) {
+//     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV after -- actually saves network specifically");
+//   }
   return true;
 }
 
 bool LeabraWizard::PVLV_ConnectLayer(LeabraNetwork* net, LeabraLayer* sending_layer,
-                                     bool disconnect) {
-  if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
+                                      bool disconnect) {
+//   if(TestError(!net || !sending_layer, "PVLV_ConnectLayer", "must specify a network and a sending layer!")) return false;
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
-  }
+//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+//   if(proj) {
+//     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
+//   }
 
-  // String pvenm = "PVe";
-  String pvinm = "PVi";  String pvrnm = "PVr";
-  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+//   // String pvenm = "PVe";
+//   String pvinm = "PVi";  String pvrnm = "PVr";
+//   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
 
-//   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
-  LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
-  LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
-  LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
-  LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
-  LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
+// //   LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+//   LeabraLayer* pvr = (LeabraLayer*)net->FindLayer(pvrnm);
+//   LeabraLayer* pvi = (LeabraLayer*)net->FindLayer(pvinm);
+//   LeabraLayer* lve = (LeabraLayer*)net->FindLayer(lvenm);
+//   LeabraLayer* lvi = (LeabraLayer*)net->FindLayer(lvinm);
+//   LeabraLayer* nv =  (LeabraLayer*)net->FindLayer(nvnm);
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+//   String pvlvprefix = "PVLV";
+//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
-  FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
-  if(TestError(!fullprjn, "PVLV_ConnectLayer",
-               "fullprjn not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
-    return false;
-  }
+//   FullPrjnSpec* fullprjn = PvlvSp("PvlvFullPrjn", FullPrjnSpec);
+//   if(TestError(!fullprjn, "PVLV_ConnectLayer",
+//                "fullprjn not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
+//     return false;
+//   }
 
-  if(disconnect) {
-    if(pvr)
-      net->RemovePrjn(pvr, sending_layer);
-    if(pvi)
-      net->RemovePrjn(pvi, sending_layer);
-    if(lve)
-      net->RemovePrjn(lve, sending_layer);
-    if(lvi)
-      net->RemovePrjn(lvi, sending_layer);
-    if(nv)
-      net->RemovePrjn(nv,  sending_layer);
-  }
-  else {
-    if(pvr)
-      net->FindMakePrjn(pvr, sending_layer, fullprjn, PvlvSp("PVrCons", PVrConSpec));
-    if(pvi)
-      net->FindMakePrjn(pvi, sending_layer, fullprjn, PvlvSp("PViCons", PVConSpec));
-    if(lve)
-      net->FindMakePrjn(lve, sending_layer, fullprjn, PvlvSp("LVeCons", PVConSpec));
-    // if(lvi && lvi_cons)
-    //   net->FindMakePrjn(lvi, sending_layer, fullprjn, lvi_cons);
-    if(nv)
-      net->FindMakePrjn(nv,  sending_layer, fullprjn, PvlvSp("NVCons", PVConSpec));
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
-  }
+//   if(disconnect) {
+//     if(pvr)
+//       net->RemovePrjn(pvr, sending_layer);
+//     if(pvi)
+//       net->RemovePrjn(pvi, sending_layer);
+//     if(lve)
+//       net->RemovePrjn(lve, sending_layer);
+//     if(lvi)
+//       net->RemovePrjn(lvi, sending_layer);
+//     if(nv)
+//       net->RemovePrjn(nv,  sending_layer);
+//   }
+//   else {
+//     if(pvr)
+//       net->FindMakePrjn(pvr, sending_layer, fullprjn, PvlvSp("PVrCons", PVrConSpec));
+//     if(pvi)
+//       net->FindMakePrjn(pvi, sending_layer, fullprjn, PvlvSp("PViCons", PVConSpec));
+//     if(lve)
+//       net->FindMakePrjn(lve, sending_layer, fullprjn, PvlvSp("LVeCons", PVConSpec));
+//     // if(lvi && lvi_cons)
+//     //   net->FindMakePrjn(lvi, sending_layer, fullprjn, lvi_cons);
+//     if(nv)
+//       net->FindMakePrjn(nv,  sending_layer, fullprjn, PvlvSp("NVCons", PVConSpec));
+//   }
+//   if(proj) {
+//     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_ConnectLayer before -- actually saves network specifically");
+//   }
   return true;
 }
 
@@ -1208,28 +1182,28 @@ bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe before -- actually saves network specifically");
   }
 
-  String pvenm = "PVe";
-  LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
+  // String pvenm = "PVe";
+  // LeabraLayer* pve = (LeabraLayer*)net->FindLayer(pvenm);
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  // String pvlvprefix = "PVLV";
+  // BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
-  MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
-  OneToOnePrjnSpec* onetoone = PvlvSp("PvlvOneToOne", OneToOnePrjnSpec);
-  if(TestError(!marker_cons, "PVLV_OutToPVe",
-               "marker_cons not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
-    return false;
-  }
+  // MarkerConSpec* marker_cons = PvlvSp("PvlvMarker", MarkerConSpec);
+  // OneToOnePrjnSpec* onetoone = PvlvSp("PvlvOneToOne", OneToOnePrjnSpec);
+  // if(TestError(!marker_cons, "PVLV_OutToPVe",
+  //              "marker_cons not found -- PVLV was not properly configured -- everything has been updated since version 6.4.0, so you need to reconfigure using the PVLV wizard")) {
+  //   return false;
+  // }
 
-  if(disconnect) {
-    net->RemovePrjn(pve, output_layer);
-  }
-  else {
-    net->FindMakePrjn(pve, output_layer, onetoone, marker_cons);
-  }
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe after -- actually saves network specifically");
-  }
+  // if(disconnect) {
+  //   net->RemovePrjn(pve, output_layer);
+  // }
+  // else {
+  //   net->FindMakePrjn(pve, output_layer, onetoone, marker_cons);
+  // }
+  // if(proj) {
+  //   proj->undo_mgr.SaveUndo(net, "Wizard::PVLV_OutToPVe after -- actually saves network specifically");
+  // }
   return true;
 }
 
@@ -1258,407 +1232,407 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
       return false;
   }
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
-  BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
-  if(!pbwmspgp) return false;
+  // String pvlvprefix = "PVLV";
+  // BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
+  // BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
+  // if(!pbwmspgp) return false;
 
-  net->ti_mode = true;
+  // net->ti_mode = true;
 
-  ////////////	UnitSpecs
+  // ////////////	UnitSpecs
 
-  FMSpec(PFCUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
-  FMChild(LayerActUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
-  FMSpec(MatrixUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
-  FMChild(MatrixUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
-  FMSpec(LeabraUnitSpec, snrthal_units, pbwmspgp, "SNrThalUnits");
+  // FMSpec(PFCUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
+  // FMChild(LayerActUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
+  // FMSpec(MatrixUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
+  // FMChild(MatrixUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
+  // FMSpec(LeabraUnitSpec, snrthal_units, pbwmspgp, "SNrThalUnits");
 
-  ////////////	ConSpecs
+  // ////////////	ConSpecs
 
-  FMSpec(PFCConSpec, topfc_cons, pbwmspgp, "ToPFC");
-  FMChild(LeabraBiasSpec, pfc_bias, topfc_cons, "PFCBias");
-  FMChild(LeabraBiasSpec, fixed_bias, topfc_cons, "FixedBias");
+  // FMSpec(PFCConSpec, topfc_cons, pbwmspgp, "ToPFC");
+  // FMChild(LeabraBiasSpec, pfc_bias, topfc_cons, "PFCBias");
+  // FMChild(LeabraBiasSpec, fixed_bias, topfc_cons, "FixedBias");
 
-  FMChild(LeabraTICtxtConSpec, pfc_ctxt_cons, topfc_cons, "PfcTICtxt");
+  // FMChild(LeabraTICtxtConSpec, pfc_ctxt_cons, topfc_cons, "PfcTICtxt");
 
-  FMChild(PFCConSpec, pfctopfc_cons, topfc_cons, "PFCtoPFC");
+  // FMChild(PFCConSpec, pfctopfc_cons, topfc_cons, "PFCtoPFC");
 
-  FMChild(PFCConSpec, topfcfmin_cons, topfc_cons, "ToPFCFmInput");
-  FMChild(PFCConSpec, topfcfmout_cons, topfc_cons, "ToPFCFmOutput");
+  // FMChild(PFCConSpec, topfcfmin_cons, topfc_cons, "ToPFCFmInput");
+  // FMChild(PFCConSpec, topfcfmout_cons, topfc_cons, "ToPFCFmOutput");
 
-  FMSpec(MatrixConSpec, matrix_cons, pbwmspgp, "MatrixCons");
-  FMChild(MatrixBiasSpec, matrix_bias, matrix_cons, "MatrixBias");
-  FMChild(MatrixConSpec, matrix_cons_topo, matrix_cons, "MatrixConsTopo");
-  FMChild(MatrixConSpec, matrix_cons_topo_weak, matrix_cons_topo, "MatrixConsTopoWeak");
-  FMChild(MatrixConSpec, matrix_cons_topo_strong, matrix_cons_topo, "MatrixConsTopoStrong");
-  FMChild(MatrixConSpec, matrix_cons_nogo, matrix_cons, "MatrixConsNoGo");
-  FMChild(MatrixConSpec, matrix_cons_nogofmgo, matrix_cons_nogo, "MatrixConsNoGoFmGo");
-  FMChild(MatrixConSpec, matrix_cons_out, matrix_cons, "MatrixConsOut");
+  // FMSpec(MatrixConSpec, matrix_cons, pbwmspgp, "MatrixCons");
+  // FMChild(MatrixBiasSpec, matrix_bias, matrix_cons, "MatrixBias");
+  // FMChild(MatrixConSpec, matrix_cons_topo, matrix_cons, "MatrixConsTopo");
+  // FMChild(MatrixConSpec, matrix_cons_topo_weak, matrix_cons_topo, "MatrixConsTopoWeak");
+  // FMChild(MatrixConSpec, matrix_cons_topo_strong, matrix_cons_topo, "MatrixConsTopoStrong");
+  // FMChild(MatrixConSpec, matrix_cons_nogo, matrix_cons, "MatrixConsNoGo");
+  // FMChild(MatrixConSpec, matrix_cons_nogofmgo, matrix_cons_nogo, "MatrixConsNoGoFmGo");
+  // FMChild(MatrixConSpec, matrix_cons_out, matrix_cons, "MatrixConsOut");
 
-  FMSpec(LeabraConSpec, fmpfc_out, pbwmspgp, "FmPFC_out");
+  // FMSpec(LeabraConSpec, fmpfc_out, pbwmspgp, "FmPFC_out");
 
-  FMSpec(MarkerConSpec, marker_cons, pbwmspgp, "PbwmMarker");
-  FMSpec(LeabraConSpec, matrix_to_snrthal, pbwmspgp, "MatrixToSNrThal");
-  // matrix nogo to snrthal just a marker con
-
-  ////////////	LayerSpecs
-
-  FMSpec(PFCLayerSpec, pfc_mnt_sp, pbwmspgp, "PFC_mnt");
-  FMChild(PFCLayerSpec, pfc_in_sp, pfc_mnt_sp, "PFC_in");
-  FMChild(PFCLayerSpec, pfc_out_sp, pfc_mnt_sp, "PFC_out");
-  FMChild(LeabraTICtxtLayerSpec, pfc_deep_sp, pfc_mnt_sp, "PFC_deep");
-
-  MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
-  MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
-
-  MatrixLayerSpec* matrix_nogo_mnt_out_sp = NULL;
-  MatrixLayerSpec* matrix_nogo_out_mnt_sp = NULL;
-
-  FMSpec(MatrixLayerSpec, matrix_go_mnt_sp, pbwmspgp, "Matrix_Go_mnt");
-
-  FMChild(MatrixLayerSpec, matrix_go_in_sp, matrix_go_mnt_sp, "Matrix_Go_in");
-  FMChild(MatrixLayerSpec, matrix_go_out_sp, matrix_go_mnt_sp, "Matrix_Go_out");
-  if(topo_prjns) {
-    FMChildPD(MatrixLayerSpec, matrix_go_mnt_out_sp, matrix_go_mnt_sp,
-              "Matrix_Go_mnt_out");
-    FMChildPD(MatrixLayerSpec, matrix_go_out_mnt_sp, matrix_go_mnt_sp,
-              "Matrix_Go_out_mnt");  
-  }
-
-  FMChild(MatrixLayerSpec, matrix_nogo_mnt_sp, matrix_go_mnt_sp, "Matrix_NoGo_mnt");
-  FMChild(MatrixLayerSpec, matrix_nogo_in_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_in");
-  FMChild(MatrixLayerSpec, matrix_nogo_out_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_out");
-  if(topo_prjns) {
-    FMChildPD(MatrixLayerSpec, matrix_nogo_mnt_out_sp, matrix_nogo_mnt_sp,
-              "Matrix_NoGo_mnt_out");
-    FMChildPD(MatrixLayerSpec, matrix_nogo_out_mnt_sp, matrix_nogo_mnt_sp,
-              "Matrix_NoGo_out_mnt");
-  }
-
-  FMSpec(SNrThalLayerSpec, snrthalsp, pbwmspgp, "SNrThalLayer");
-  FMChild(SNrThalLayerSpec, snrthalsp_out, snrthalsp, "SNrThalLayer_out");
-
-  ////////////	PrjnSpecs
-
-  FMSpec(FullPrjnSpec, fullprjn, pbwmspgp, "PbwmFullPrjn");
-  FMSpec(OneToOnePrjnSpec, onetoone, pbwmspgp, "PbwmOneToOne");
-  FMSpec(GpOneToOnePrjnSpec, gponetoone, pbwmspgp, "PbwmGpOneToOne");
-  FMSpec(MarkerGpOneToOnePrjnSpec, markergponetoone, pbwmspgp, "MarkerGpOneToOne");
-
-  FMSpec(SNrPrjnSpec, snr_prjn, pbwmspgp, "SNrPrjn");
-
-  FMSpec(TopoWtsPrjnSpec, topomaster, pbwmspgp, "TopoMaster");
-  FMChild(TopoWtsPrjnSpec, topofminput, topomaster, "TopoFmInput");
-  FMChild(TopoWtsPrjnSpec, intrapfctopo, topomaster, "TopoIntraPFC");
-  FMChild(TopoWtsPrjnSpec, topomatrixpfc_self, topomaster, "TopoMatrixPFC_Self");
-  FMChild(TopoWtsPrjnSpec, topomatrixpfc_other, topomaster, "TopoMatrixPFC_Other");
-
-  FMSpec(TesselPrjnSpec, input_pfc, pbwmspgp, "Input_PFC");
-  input_pfc->send_offs.SetSize(1); // this is all it takes!
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // first: all the basic defaults from specs
-
-  if(net->mid_minus_cycle < 5) {
-    net->mid_minus_cycle = 40;
-    net->min_cycles = net->mid_minus_cycle + 15;
-  }
-
-  pbwmspgp->Defaults();
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // set default spec parameters
-
-  pfc_units->act_avg.l_up_inc = 0.1f;
-
-  // slow learning rate on to pfc cons!
-  topfc_cons->SetUnique("lrate", true);
-  topfc_cons->learn = true;
-  topfc_cons->lrate = .005f;
-  topfc_cons->SetUnique("rnd", false);
-  topfc_cons->rnd.var = 0.25f;
-
-  topfc_cons->SetUnique("lmix", true);
-  topfc_cons->lmix.hebb = .001f;
-
-  pfc_ctxt_cons->SetUnique("wt_scale", true);
-  pfc_ctxt_cons->wt_scale.rel = 1.5f;
-
-  if(topo_prjns) {
-    pfctopfc_cons->SetUnique("rnd", true);
-    pfctopfc_cons->rnd.mean = 0.0f;
-    pfctopfc_cons->rnd.var = 0.25f;
-  }
-  else {
-    pfctopfc_cons->SetUnique("rnd", false);
-  }
-
-  pfctopfc_cons->SetUnique("wt_scale", true);
-  pfctopfc_cons->wt_scale.rel = 0.5f;
-
-  if(topo_prjns) {
-    topfcfmin_cons->SetUnique("rnd", true);
-    topfcfmin_cons->rnd.mean = 0.0f;
-    topfcfmin_cons->rnd.var = 0.25f;
-    // todo: wt_scale??
-  }
-  else {
-    topfcfmin_cons->SetUnique("rnd", false);
-  }
-
-  topfcfmout_cons->SetUnique("wt_scale", true);
-  topfcfmout_cons->wt_scale.rel = 0.5f;
-
-  if(topo_prjns) {
-    matrix_cons->SetUnique("rnd", true);
-    matrix_cons->rnd.mean = 0.5f; 
-    matrix_cons->rnd.var = .25f; 
-  }
-  else {
-    matrix_cons->SetUnique("rnd", false);
-  }
-  matrix_cons->SetUnique("lrate", true);
-  matrix_cons->lrate = .005f;
-  matrix_cons->SetUnique("wt_sig", true);
-  matrix_cons->wt_sig.gain = 6.0f;
-  matrix_cons->wt_sig.off = 1.0f;
-
-  matrix_cons->SetUnique("ignore_unlearnable", true);
-  matrix_cons->ignore_unlearnable = false; 
-
-  matrix_cons_topo->SetUnique("rnd", true);
-  matrix_cons_topo->rnd.mean = 0.0f;
-  matrix_cons_topo->rnd.var = .25f;
-  matrix_cons_topo->SetUnique("wt_sig", false);
-  matrix_cons_topo->SetUnique("lmix", false);
-
-  if(topo_prjns) {
-    matrix_cons_nogo->SetUnique("rnd", true);
-    matrix_cons_nogo->rnd.mean = 0.0f;
-    matrix_cons_nogo->rnd.var = .25f;
-  }
-  else {
-    matrix_cons_nogo->SetUnique("rnd", false);
-  }
-  matrix_cons_nogo->SetUnique("wt_scale", true);
-  matrix_cons_nogo->wt_scale.abs = 1.0f;
-  matrix_cons_nogo->SetUnique("wt_sig", false);
-  matrix_cons_nogo->SetUnique("lmix", false);
-
-  matrix_cons_nogofmgo->SetUnique("wt_scale", true);
-  matrix_cons_nogofmgo->wt_scale.rel = 0.2f;
-
-  matrix_cons_topo_weak->SetUnique("wt_scale", true);
-  matrix_cons_topo_weak->wt_scale.rel = .2f;
-
-  matrix_cons_topo_strong->SetUnique("wt_scale", true);
-  matrix_cons_topo_strong->wt_scale.rel = 2.0f;
-
-  matrix_cons_out->SetUnique("immed_trace", true);
-  matrix_cons_out->immed_trace = true;
-  matrix_cons_out->SetUnique("mnt_decay", true);
-  matrix_cons_out->mnt_decay = 1.0f;
-  matrix_cons_out->SetUnique("no_mnt_decay", true);
-  matrix_cons_out->no_mnt_decay = 1.0f;
-
-  matrix_to_snrthal->SetUnique("rnd", true);
-  matrix_to_snrthal->rnd.mean = 0.7f;
-  matrix_to_snrthal->rnd.var = 0.0f;
-  matrix_to_snrthal->SetUnique("learn", true);
-  matrix_to_snrthal->learn = false;
-  matrix_to_snrthal->SetUnique("lrate", true);
-  matrix_to_snrthal->lrate = 0.0f;
-
-  matrix_bias->SetUnique("lrate", true);
-  matrix_bias->lrate = 0.0f;            // default is no bias learning
-  matrix_bias->SetUnique("learn", true);
-  matrix_bias->learn = false;
-
-  fixed_bias->SetUnique("lrate", true);
-  fixed_bias->lrate = 0.0f;
-  fixed_bias->SetUnique("learn", true);
-  fixed_bias->learn = false;
-
-  matrix_go_mnt_sp->go_nogo = MatrixLayerSpec::GO;
-  matrix_go_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
-  matrix_go_in_sp->SetUnique("gating_type",true);
-  matrix_go_in_sp->gating_type = SNrThalLayerSpec::INPUT;
-  matrix_go_out_sp->SetUnique("gating_type",true);
-  matrix_go_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
-  if(matrix_go_mnt_out_sp) {
-    matrix_go_mnt_out_sp->SetUnique("gating_type",true);
-    matrix_go_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;
-  }
-  if(matrix_go_out_mnt_sp) {
-    matrix_go_out_mnt_sp->SetUnique("gating_type",true);
-    matrix_go_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
-  }
-
-  matrix_nogo_mnt_sp->SetUnique("go_nogo",true);
-  matrix_nogo_mnt_sp->go_nogo = MatrixLayerSpec::NOGO;
-  matrix_nogo_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
-  matrix_nogo_in_sp->SetUnique("gating_type",true);
-  matrix_nogo_in_sp->gating_type = SNrThalLayerSpec::INPUT;
-  matrix_nogo_out_sp->SetUnique("gating_type",true);
-  matrix_nogo_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
-  if(matrix_nogo_mnt_out_sp) {
-    matrix_nogo_mnt_out_sp->SetUnique("gating_type",true);
-    matrix_nogo_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;  
-  }
-  if(matrix_nogo_out_mnt_sp) {
-    matrix_nogo_out_mnt_sp->SetUnique("gating_type",true);
-    matrix_nogo_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
-  }
-
-  pfc_mnt_sp->pfc_type = SNrThalLayerSpec::MNT;
-  pfc_mnt_sp->gate.pregate_gain = 1.0f;
-
-  pfc_in_sp->SetUnique("pfc_type",true);
-  pfc_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
-  pfc_in_sp->SetUnique("gate",true);
-  pfc_in_sp->gate.pregate_gain = 1.0f;
-  pfc_in_sp->gate.max_maint = 1;
-
-  pfc_out_sp->SetUnique("pfc_type",true);
-  pfc_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
-  pfc_out_sp->SetUnique("gate",true);
-  pfc_out_sp->gate.pregate_gain = 0.0f;
-  pfc_out_sp->gate.max_maint = 1;
-
-  pfc_out_sp->SetUnique("gp_kwta",true);
-  pfc_out_sp->gp_kwta.diff_act_pct = true;
-  pfc_out_sp->gp_kwta.act_pct = 0.05f;
-
-  // pfc_mnt_out_sp->SetUnique("pfc_type",true);
-  // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
-  // pfc_mnt_out_sp->SetUnique("gate",true);
-  // pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
-
-  // pfc_out_mnt_sp->SetUnique("pfc_type",true);
-  // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
-  // pfc_out_mnt_sp->SetUnique("gate",true);
-  // pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
-
-  // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
-
-  snrthalsp_out->SetUnique("kwta", true);
-  snrthalsp_out->kwta.k = 2;
-  snrthalsp_out->SetUnique("snrthal", true);
-  snrthalsp_out->snrthal.go_thr = 0.1f;
-  snrthalsp_out->snrthal.min_cycle = 15;
-  snrthalsp_out->snrthal.max_cycle = 40;
-
-  fullprjn->self_con = true;
-
-  //////////	Prjns
-
-  topomaster->wt_range.min = 0.1f;
-  topomaster->wt_range.max = 0.5f;
-  topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
-  topomaster->gauss_sig = 0.1f;
-  topomaster->index_by_gps_recv.on = false;
-  topomaster->index_by_gps_send.on = false;
-
-  if(!set_defs) {
-    topofminput->SetUnique("topo_pattern", true);
-    topofminput->topo_pattern = TopoWtsPrjnSpec::Y2X;
-    topofminput->SetUnique("wrap_reflect", true);
-    topofminput->wrap_reflect = TopoWtsPrjnSpec::NONE;
-    topofminput->SetUnique("index_by_gps_recv", true);
-    topofminput->index_by_gps_recv.on = true;
-    topofminput->SetUnique("index_by_gps_send", true);
-    topofminput->index_by_gps_send.on = false;
-    topofminput->SetUnique("custom_send_range", true);
-    topofminput->custom_send_range = true;
-    topofminput->SetUnique("send_range_start", true);
-    topofminput->send_range_start.x = 0;
-    topofminput->send_range_start.y = 0;
-    topofminput->SetUnique("send_range_end", true);
-    topofminput->send_range_end.x = -1;
-    topofminput->SetUnique("custom_recv_range", true);
-    topofminput->custom_recv_range = false;
-
-    topomatrixpfc_self->SetUnique("topo_pattern", true);
-    topomatrixpfc_self->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
-    topomatrixpfc_self->SetUnique("wrap_reflect", true);
-    topomatrixpfc_self->wrap_reflect = TopoWtsPrjnSpec::NONE;
-    topomatrixpfc_self->SetUnique("index_by_gps_recv", true);
-    topomatrixpfc_self->index_by_gps_recv.on = true;
-    topomatrixpfc_self->SetUnique("index_by_gps_send", true);
-    topomatrixpfc_self->index_by_gps_send.on = true;
-    topomatrixpfc_self->SetUnique("custom_send_range", true);
-    topomatrixpfc_self->custom_send_range = false;
-    topomatrixpfc_self->SetUnique("custom_recv_range", true);
-    topomatrixpfc_self->custom_recv_range = false;
-
-    topomatrixpfc_other->SetUnique("topo_pattern", true);
-    topomatrixpfc_other->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
-    topomatrixpfc_other->SetUnique("wrap_reflect", true);
-    topomatrixpfc_other->wrap_reflect = TopoWtsPrjnSpec::NONE;
-    topomatrixpfc_other->SetUnique("index_by_gps_recv", true);
-    topomatrixpfc_other->index_by_gps_recv.on = true;
-    topomatrixpfc_other->SetUnique("index_by_gps_send", true);
-    topomatrixpfc_other->index_by_gps_send.on = true;
-    topomatrixpfc_other->SetUnique("custom_send_range", true);
-    topomatrixpfc_other->custom_send_range = false;
-    topomatrixpfc_other->SetUnique("custom_recv_range", true);
-    topomatrixpfc_other->custom_recv_range = false;
-
-    intrapfctopo->SetUnique("topo_pattern", true);
-    intrapfctopo->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
-    intrapfctopo->SetUnique("wrap_reflect", true);
-    intrapfctopo->wrap_reflect = TopoWtsPrjnSpec::NONE;
-    intrapfctopo->SetUnique("index_by_gps_recv", true);
-    intrapfctopo->index_by_gps_recv.on = true;
-    intrapfctopo->SetUnique("index_by_gps_send", true);
-    intrapfctopo->index_by_gps_send.on = true;
-    intrapfctopo->SetUnique("custom_send_range", true);
-    intrapfctopo->custom_send_range = false;
-    intrapfctopo->SetUnique("custom_recv_range", true);
-    intrapfctopo->custom_recv_range = false;
-  }
-
-  for(int j=0;j<pbwmspgp->leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
-    sp->UpdateAfterEdit();
-  }
-
-  //////////////////////////////////////////////////////////////////////////////////
-  // control panel
-
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  ControlPanel* cp = proj->FindMakeControlPanel("PBWM");
-  if(cp != NULL) {
-    cp->SetUserData("user_pinned", true);
-
-    String subgp;
-    subgp = "PFC";
-    pfc_mnt_sp->AddToControlPanelNm("gate", cp, "pfc_mnt", subgp);
-    pfc_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "pfc_mnt", subgp,
-      "pfc kwta parameters -- pct is main param for pfc dynamics, and act_pct for balancing excitation to other layers");
-    topfc_cons->AddToControlPanelNm("lrate", cp, "to_pfc", subgp,
-        "PFC requires a slower learning rate in general, around .002");
-
-    subgp = "Matrix";
-    matrix_go_mnt_sp->AddToControlPanelNm("matrix", cp, "matrix", subgp);
-    matrix_go_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "matrix", subgp,
-      "matrix kwta parameters -- pct, gp_g are main for matrix dynamics (gp_g = 1 almost always best)");
-
-    matrix_units->AddToControlPanelNm("noise", cp, "matrix", subgp,
-      "matrix noise -- variance around .001 seems best overall");
-    matrix_units->AddToControlPanelNm("noise_adapt", cp, "matrix", subgp);
-    matrix_cons->AddToControlPanelNm("lrate", cp, "matrix", subgp,
-     "Default Matrix lrate is .002");
-
-    subgp = "SNrThal";
-    snrthalsp->AddToControlPanelNm("kwta", cp, "snrthal", subgp,
-      "snrthal kwta parameter -- how many stripes can gate at once");
-    snrthalsp->AddToControlPanelNm("inhib", cp, "snrthal", subgp,
-      "Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
-    snrthalsp->AddToControlPanelNm("snrthal", cp, "snrthal", subgp);
+  // FMSpec(MarkerConSpec, marker_cons, pbwmspgp, "PbwmMarker");
+  // FMSpec(LeabraConSpec, matrix_to_snrthal, pbwmspgp, "MatrixToSNrThal");
+  // // matrix nogo to snrthal just a marker con
+
+  // ////////////	LayerSpecs
+
+  // FMSpec(PFCLayerSpec, pfc_mnt_sp, pbwmspgp, "PFC_mnt");
+  // FMChild(PFCLayerSpec, pfc_in_sp, pfc_mnt_sp, "PFC_in");
+  // FMChild(PFCLayerSpec, pfc_out_sp, pfc_mnt_sp, "PFC_out");
+  // FMChild(LeabraTICtxtLayerSpec, pfc_deep_sp, pfc_mnt_sp, "PFC_deep");
+
+  // MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
+  // MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
+
+  // MatrixLayerSpec* matrix_nogo_mnt_out_sp = NULL;
+  // MatrixLayerSpec* matrix_nogo_out_mnt_sp = NULL;
+
+  // FMSpec(MatrixLayerSpec, matrix_go_mnt_sp, pbwmspgp, "Matrix_Go_mnt");
+
+  // FMChild(MatrixLayerSpec, matrix_go_in_sp, matrix_go_mnt_sp, "Matrix_Go_in");
+  // FMChild(MatrixLayerSpec, matrix_go_out_sp, matrix_go_mnt_sp, "Matrix_Go_out");
+  // if(topo_prjns) {
+  //   FMChildPD(MatrixLayerSpec, matrix_go_mnt_out_sp, matrix_go_mnt_sp,
+  //             "Matrix_Go_mnt_out");
+  //   FMChildPD(MatrixLayerSpec, matrix_go_out_mnt_sp, matrix_go_mnt_sp,
+  //             "Matrix_Go_out_mnt");  
+  // }
+
+  // FMChild(MatrixLayerSpec, matrix_nogo_mnt_sp, matrix_go_mnt_sp, "Matrix_NoGo_mnt");
+  // FMChild(MatrixLayerSpec, matrix_nogo_in_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_in");
+  // FMChild(MatrixLayerSpec, matrix_nogo_out_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_out");
+  // if(topo_prjns) {
+  //   FMChildPD(MatrixLayerSpec, matrix_nogo_mnt_out_sp, matrix_nogo_mnt_sp,
+  //             "Matrix_NoGo_mnt_out");
+  //   FMChildPD(MatrixLayerSpec, matrix_nogo_out_mnt_sp, matrix_nogo_mnt_sp,
+  //             "Matrix_NoGo_out_mnt");
+  // }
+
+  // FMSpec(SNrThalLayerSpec, snrthalsp, pbwmspgp, "SNrThalLayer");
+  // FMChild(SNrThalLayerSpec, snrthalsp_out, snrthalsp, "SNrThalLayer_out");
+
+  // ////////////	PrjnSpecs
+
+  // FMSpec(FullPrjnSpec, fullprjn, pbwmspgp, "PbwmFullPrjn");
+  // FMSpec(OneToOnePrjnSpec, onetoone, pbwmspgp, "PbwmOneToOne");
+  // FMSpec(GpOneToOnePrjnSpec, gponetoone, pbwmspgp, "PbwmGpOneToOne");
+  // FMSpec(MarkerGpOneToOnePrjnSpec, markergponetoone, pbwmspgp, "MarkerGpOneToOne");
+
+  // FMSpec(SNrPrjnSpec, snr_prjn, pbwmspgp, "SNrPrjn");
+
+  // FMSpec(TopoWtsPrjnSpec, topomaster, pbwmspgp, "TopoMaster");
+  // FMChild(TopoWtsPrjnSpec, topofminput, topomaster, "TopoFmInput");
+  // FMChild(TopoWtsPrjnSpec, intrapfctopo, topomaster, "TopoIntraPFC");
+  // FMChild(TopoWtsPrjnSpec, topomatrixpfc_self, topomaster, "TopoMatrixPFC_Self");
+  // FMChild(TopoWtsPrjnSpec, topomatrixpfc_other, topomaster, "TopoMatrixPFC_Other");
+
+  // FMSpec(TesselPrjnSpec, input_pfc, pbwmspgp, "Input_PFC");
+  // input_pfc->send_offs.SetSize(1); // this is all it takes!
+
+  // //////////////////////////////////////////////////////////////////////////////////
+  // // first: all the basic defaults from specs
+
+  // if(net->mid_minus_cycle < 5) {
+  //   net->mid_minus_cycle = 40;
+  //   net->min_cycles = net->mid_minus_cycle + 15;
+  // }
+
+  // pbwmspgp->Defaults();
+
+  // //////////////////////////////////////////////////////////////////////////////////
+  // // set default spec parameters
+
+  // pfc_units->act_avg.l_up_inc = 0.1f;
+
+  // // slow learning rate on to pfc cons!
+  // topfc_cons->SetUnique("lrate", true);
+  // topfc_cons->learn = true;
+  // topfc_cons->lrate = .005f;
+  // topfc_cons->SetUnique("rnd", false);
+  // topfc_cons->rnd.var = 0.25f;
+
+  // topfc_cons->SetUnique("lmix", true);
+  // topfc_cons->lmix.hebb = .001f;
+
+  // pfc_ctxt_cons->SetUnique("wt_scale", true);
+  // pfc_ctxt_cons->wt_scale.rel = 1.5f;
+
+  // if(topo_prjns) {
+  //   pfctopfc_cons->SetUnique("rnd", true);
+  //   pfctopfc_cons->rnd.mean = 0.0f;
+  //   pfctopfc_cons->rnd.var = 0.25f;
+  // }
+  // else {
+  //   pfctopfc_cons->SetUnique("rnd", false);
+  // }
+
+  // pfctopfc_cons->SetUnique("wt_scale", true);
+  // pfctopfc_cons->wt_scale.rel = 0.5f;
+
+  // if(topo_prjns) {
+  //   topfcfmin_cons->SetUnique("rnd", true);
+  //   topfcfmin_cons->rnd.mean = 0.0f;
+  //   topfcfmin_cons->rnd.var = 0.25f;
+  //   // todo: wt_scale??
+  // }
+  // else {
+  //   topfcfmin_cons->SetUnique("rnd", false);
+  // }
+
+  // topfcfmout_cons->SetUnique("wt_scale", true);
+  // topfcfmout_cons->wt_scale.rel = 0.5f;
+
+  // if(topo_prjns) {
+  //   matrix_cons->SetUnique("rnd", true);
+  //   matrix_cons->rnd.mean = 0.5f; 
+  //   matrix_cons->rnd.var = .25f; 
+  // }
+  // else {
+  //   matrix_cons->SetUnique("rnd", false);
+  // }
+  // matrix_cons->SetUnique("lrate", true);
+  // matrix_cons->lrate = .005f;
+  // matrix_cons->SetUnique("wt_sig", true);
+  // matrix_cons->wt_sig.gain = 6.0f;
+  // matrix_cons->wt_sig.off = 1.0f;
+
+  // matrix_cons->SetUnique("ignore_unlearnable", true);
+  // matrix_cons->ignore_unlearnable = false; 
+
+  // matrix_cons_topo->SetUnique("rnd", true);
+  // matrix_cons_topo->rnd.mean = 0.0f;
+  // matrix_cons_topo->rnd.var = .25f;
+  // matrix_cons_topo->SetUnique("wt_sig", false);
+  // matrix_cons_topo->SetUnique("lmix", false);
+
+  // if(topo_prjns) {
+  //   matrix_cons_nogo->SetUnique("rnd", true);
+  //   matrix_cons_nogo->rnd.mean = 0.0f;
+  //   matrix_cons_nogo->rnd.var = .25f;
+  // }
+  // else {
+  //   matrix_cons_nogo->SetUnique("rnd", false);
+  // }
+  // matrix_cons_nogo->SetUnique("wt_scale", true);
+  // matrix_cons_nogo->wt_scale.abs = 1.0f;
+  // matrix_cons_nogo->SetUnique("wt_sig", false);
+  // matrix_cons_nogo->SetUnique("lmix", false);
+
+  // matrix_cons_nogofmgo->SetUnique("wt_scale", true);
+  // matrix_cons_nogofmgo->wt_scale.rel = 0.2f;
+
+  // matrix_cons_topo_weak->SetUnique("wt_scale", true);
+  // matrix_cons_topo_weak->wt_scale.rel = .2f;
+
+  // matrix_cons_topo_strong->SetUnique("wt_scale", true);
+  // matrix_cons_topo_strong->wt_scale.rel = 2.0f;
+
+  // matrix_cons_out->SetUnique("immed_trace", true);
+  // matrix_cons_out->immed_trace = true;
+  // matrix_cons_out->SetUnique("mnt_decay", true);
+  // matrix_cons_out->mnt_decay = 1.0f;
+  // matrix_cons_out->SetUnique("no_mnt_decay", true);
+  // matrix_cons_out->no_mnt_decay = 1.0f;
+
+  // matrix_to_snrthal->SetUnique("rnd", true);
+  // matrix_to_snrthal->rnd.mean = 0.7f;
+  // matrix_to_snrthal->rnd.var = 0.0f;
+  // matrix_to_snrthal->SetUnique("learn", true);
+  // matrix_to_snrthal->learn = false;
+  // matrix_to_snrthal->SetUnique("lrate", true);
+  // matrix_to_snrthal->lrate = 0.0f;
+
+  // matrix_bias->SetUnique("lrate", true);
+  // matrix_bias->lrate = 0.0f;            // default is no bias learning
+  // matrix_bias->SetUnique("learn", true);
+  // matrix_bias->learn = false;
+
+  // fixed_bias->SetUnique("lrate", true);
+  // fixed_bias->lrate = 0.0f;
+  // fixed_bias->SetUnique("learn", true);
+  // fixed_bias->learn = false;
+
+  // matrix_go_mnt_sp->go_nogo = MatrixLayerSpec::GO;
+  // matrix_go_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
+  // matrix_go_in_sp->SetUnique("gating_type",true);
+  // matrix_go_in_sp->gating_type = SNrThalLayerSpec::INPUT;
+  // matrix_go_out_sp->SetUnique("gating_type",true);
+  // matrix_go_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
+  // if(matrix_go_mnt_out_sp) {
+  //   matrix_go_mnt_out_sp->SetUnique("gating_type",true);
+  //   matrix_go_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;
+  // }
+  // if(matrix_go_out_mnt_sp) {
+  //   matrix_go_out_mnt_sp->SetUnique("gating_type",true);
+  //   matrix_go_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  // }
+
+  // matrix_nogo_mnt_sp->SetUnique("go_nogo",true);
+  // matrix_nogo_mnt_sp->go_nogo = MatrixLayerSpec::NOGO;
+  // matrix_nogo_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
+  // matrix_nogo_in_sp->SetUnique("gating_type",true);
+  // matrix_nogo_in_sp->gating_type = SNrThalLayerSpec::INPUT;
+  // matrix_nogo_out_sp->SetUnique("gating_type",true);
+  // matrix_nogo_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
+  // if(matrix_nogo_mnt_out_sp) {
+  //   matrix_nogo_mnt_out_sp->SetUnique("gating_type",true);
+  //   matrix_nogo_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;  
+  // }
+  // if(matrix_nogo_out_mnt_sp) {
+  //   matrix_nogo_out_mnt_sp->SetUnique("gating_type",true);
+  //   matrix_nogo_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  // }
+
+  // pfc_mnt_sp->pfc_type = SNrThalLayerSpec::MNT;
+  // pfc_mnt_sp->gate.pregate_gain = 1.0f;
+
+  // pfc_in_sp->SetUnique("pfc_type",true);
+  // pfc_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
+  // pfc_in_sp->SetUnique("gate",true);
+  // pfc_in_sp->gate.pregate_gain = 1.0f;
+  // pfc_in_sp->gate.max_maint = 1;
+
+  // pfc_out_sp->SetUnique("pfc_type",true);
+  // pfc_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
+  // pfc_out_sp->SetUnique("gate",true);
+  // pfc_out_sp->gate.pregate_gain = 0.0f;
+  // pfc_out_sp->gate.max_maint = 1;
+
+  // pfc_out_sp->SetUnique("gp_kwta",true);
+  // pfc_out_sp->gp_kwta.diff_act_pct = true;
+  // pfc_out_sp->gp_kwta.act_pct = 0.05f;
+
+  // // pfc_mnt_out_sp->SetUnique("pfc_type",true);
+  // // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
+  // // pfc_mnt_out_sp->SetUnique("gate",true);
+  // // pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
+
+  // // pfc_out_mnt_sp->SetUnique("pfc_type",true);
+  // // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
+  // // pfc_out_mnt_sp->SetUnique("gate",true);
+  // // pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
+
+  // // unit_gp_inhib.act_denom params set in basic config b/c depends on n stripes
+
+  // snrthalsp_out->SetUnique("kwta", true);
+  // snrthalsp_out->kwta.k = 2;
+  // snrthalsp_out->SetUnique("snrthal", true);
+  // snrthalsp_out->snrthal.go_thr = 0.1f;
+  // snrthalsp_out->snrthal.min_cycle = 15;
+  // snrthalsp_out->snrthal.max_cycle = 40;
+
+  // fullprjn->self_con = true;
+
+  // //////////	Prjns
+
+  // topomaster->wt_range.min = 0.1f;
+  // topomaster->wt_range.max = 0.5f;
+  // topomaster->grad_type = TopoWtsPrjnSpec::GAUSSIAN;
+  // topomaster->gauss_sig = 0.1f;
+  // topomaster->index_by_gps_recv.on = false;
+  // topomaster->index_by_gps_send.on = false;
+
+  // if(!set_defs) {
+  //   topofminput->SetUnique("topo_pattern", true);
+  //   topofminput->topo_pattern = TopoWtsPrjnSpec::Y2X;
+  //   topofminput->SetUnique("wrap_reflect", true);
+  //   topofminput->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  //   topofminput->SetUnique("index_by_gps_recv", true);
+  //   topofminput->index_by_gps_recv.on = true;
+  //   topofminput->SetUnique("index_by_gps_send", true);
+  //   topofminput->index_by_gps_send.on = false;
+  //   topofminput->SetUnique("custom_send_range", true);
+  //   topofminput->custom_send_range = true;
+  //   topofminput->SetUnique("send_range_start", true);
+  //   topofminput->send_range_start.x = 0;
+  //   topofminput->send_range_start.y = 0;
+  //   topofminput->SetUnique("send_range_end", true);
+  //   topofminput->send_range_end.x = -1;
+  //   topofminput->SetUnique("custom_recv_range", true);
+  //   topofminput->custom_recv_range = false;
+
+  //   topomatrixpfc_self->SetUnique("topo_pattern", true);
+  //   topomatrixpfc_self->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  //   topomatrixpfc_self->SetUnique("wrap_reflect", true);
+  //   topomatrixpfc_self->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  //   topomatrixpfc_self->SetUnique("index_by_gps_recv", true);
+  //   topomatrixpfc_self->index_by_gps_recv.on = true;
+  //   topomatrixpfc_self->SetUnique("index_by_gps_send", true);
+  //   topomatrixpfc_self->index_by_gps_send.on = true;
+  //   topomatrixpfc_self->SetUnique("custom_send_range", true);
+  //   topomatrixpfc_self->custom_send_range = false;
+  //   topomatrixpfc_self->SetUnique("custom_recv_range", true);
+  //   topomatrixpfc_self->custom_recv_range = false;
+
+  //   topomatrixpfc_other->SetUnique("topo_pattern", true);
+  //   topomatrixpfc_other->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  //   topomatrixpfc_other->SetUnique("wrap_reflect", true);
+  //   topomatrixpfc_other->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  //   topomatrixpfc_other->SetUnique("index_by_gps_recv", true);
+  //   topomatrixpfc_other->index_by_gps_recv.on = true;
+  //   topomatrixpfc_other->SetUnique("index_by_gps_send", true);
+  //   topomatrixpfc_other->index_by_gps_send.on = true;
+  //   topomatrixpfc_other->SetUnique("custom_send_range", true);
+  //   topomatrixpfc_other->custom_send_range = false;
+  //   topomatrixpfc_other->SetUnique("custom_recv_range", true);
+  //   topomatrixpfc_other->custom_recv_range = false;
+
+  //   intrapfctopo->SetUnique("topo_pattern", true);
+  //   intrapfctopo->topo_pattern = TopoWtsPrjnSpec::X2X_Y2Y;
+  //   intrapfctopo->SetUnique("wrap_reflect", true);
+  //   intrapfctopo->wrap_reflect = TopoWtsPrjnSpec::NONE;
+  //   intrapfctopo->SetUnique("index_by_gps_recv", true);
+  //   intrapfctopo->index_by_gps_recv.on = true;
+  //   intrapfctopo->SetUnique("index_by_gps_send", true);
+  //   intrapfctopo->index_by_gps_send.on = true;
+  //   intrapfctopo->SetUnique("custom_send_range", true);
+  //   intrapfctopo->custom_send_range = false;
+  //   intrapfctopo->SetUnique("custom_recv_range", true);
+  //   intrapfctopo->custom_recv_range = false;
+  // }
+
+  // for(int j=0;j<pbwmspgp->leaves;j++) {
+  //   BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
+  //   sp->UpdateAfterEdit();
+  // }
+
+  // //////////////////////////////////////////////////////////////////////////////////
+  // // control panel
+
+  // LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  // ControlPanel* cp = proj->FindMakeControlPanel("PBWM");
+  // if(cp != NULL) {
+  //   cp->SetUserData("user_pinned", true);
+
+  //   String subgp;
+  //   subgp = "PFC";
+  //   pfc_mnt_sp->AddToControlPanelNm("gate", cp, "pfc_mnt", subgp);
+  //   pfc_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "pfc_mnt", subgp,
+  //     "pfc kwta parameters -- pct is main param for pfc dynamics, and act_pct for balancing excitation to other layers");
+  //   topfc_cons->AddToControlPanelNm("lrate", cp, "to_pfc", subgp,
+  //       "PFC requires a slower learning rate in general, around .002");
+
+  //   subgp = "Matrix";
+  //   matrix_go_mnt_sp->AddToControlPanelNm("matrix", cp, "matrix", subgp);
+  //   matrix_go_mnt_sp->AddToControlPanelNm("gp_kwta", cp, "matrix", subgp,
+  //     "matrix kwta parameters -- pct, gp_g are main for matrix dynamics (gp_g = 1 almost always best)");
+
+  //   matrix_units->AddToControlPanelNm("noise", cp, "matrix", subgp,
+  //     "matrix noise -- variance around .001 seems best overall");
+  //   matrix_units->AddToControlPanelNm("noise_adapt", cp, "matrix", subgp);
+  //   matrix_cons->AddToControlPanelNm("lrate", cp, "matrix", subgp,
+  //    "Default Matrix lrate is .002");
+
+  //   subgp = "SNrThal";
+  //   snrthalsp->AddToControlPanelNm("kwta", cp, "snrthal", subgp,
+  //     "snrthal kwta parameter -- how many stripes can gate at once");
+  //   snrthalsp->AddToControlPanelNm("inhib", cp, "snrthal", subgp,
+  //     "Default is KWTA_AVG_INHIB with kwta_pt = .7 -- more competition but with some flexibility from avg-based computation");
+  //   snrthalsp->AddToControlPanelNm("snrthal", cp, "snrthal", subgp);
     
-    cp->EditPanel(true, true);
-  }
+  //   cp->EditPanel(true, true);
+  // }
   return true;
 }
 
@@ -1789,869 +1763,869 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(TestError(!PVLV(net, false), "PBWM", "could not make PVLV")) return false;
   }
 
-  String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory) Layers:\n\n\
- There is one thing you will need to check manually after this automatic configuration\
- process completes (this note will be repeated when things complete --- there may be some\
- messages in the interim):\n\n";
+ //  String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory) Layers:\n\n\
+ // There is one thing you will need to check manually after this automatic configuration\
+ // process completes (this note will be repeated when things complete --- there may be some\
+ // messages in the interim):\n\n";
 
-  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate layers.\
- Except for special intra-PFC connections, the conspecs INTO ALL superficial PFC layers should be ToPFC conspecs; those out from PFC layers should be regular learning conspecs.";
+ //  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate layers.\
+ // Except for special intra-PFC connections, the conspecs INTO ALL superficial PFC layers should be ToPFC conspecs; those out from PFC layers should be regular learning conspecs.";
 
-  msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
- will be set.  If there are any actual errors which must be corrected before\
- the network will run, you will see a message to that effect --- you will then need to\
- re-run this configuration process to make sure everything is OK.  When you press\
- Re/New/Init on the control process these same checks will be performed, so you\
- can be sure everything is ok.";
-  taMisc::Confirm(msg);
+ //  msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
+ // will be set.  If there are any actual errors which must be corrected before\
+ // the network will run, you will see a message to that effect --- you will then need to\
+ // re-run this configuration process to make sure everything is OK.  When you press\
+ // Re/New/Init on the control process these same checks will be performed, so you\
+ // can be sure everything is ok.";
+ //  taMisc::Confirm(msg);
 
-  net->ti_mode = true;
-  net->RemoveUnits();
+ //  net->ti_mode = true;
+ //  net->RemoveUnits();
 
-  // TODO: Note below gets rid of LeabraWizard PBWM CHECK ERROR message -- works and seems safe to do
-  net->no_plus_test = false;
+ //  // TODO: Note below gets rid of LeabraWizard PBWM CHECK ERROR message -- works and seems safe to do
+ //  net->no_plus_test = false;
 
-  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
-  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-  String vtanm = "VTA";
+ //  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
+ //  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
+ //  String vtanm = "VTA";
 
-  String pfcnm = "PFC";
-  String mtxnm = "Matrix";
-  String snrnm = "SNrThal";
-  if(prefix != "PBWM") {
-    pfcnm = prefix;
-    mtxnm = prefix + "_Matrix";
-    snrnm = prefix + "_SNrThal";
-  }
+ //  String pfcnm = "PFC";
+ //  String mtxnm = "Matrix";
+ //  String snrnm = "SNrThal";
+ //  if(prefix != "PBWM") {
+ //    pfcnm = prefix;
+ //    mtxnm = prefix + "_Matrix";
+ //    snrnm = prefix + "_SNrThal";
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // make layers
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // make layers
 
-  // Harvest from the PVLV function..
-  Layer_Group* pvlv_laygp = (Layer_Group*)net->layers.gp.FindName("PVLV");
+ //  // Harvest from the PVLV function..
+ //  Layer_Group* pvlv_laygp = (Layer_Group*)net->layers.gp.FindName("PVLV");
 
-  LeabraLayer* rew_targ_lay = NULL;
-  LeabraLayer* pve = NULL;  LeabraLayer* pvr = NULL;
-  LeabraLayer* pvi = NULL;  LeabraLayer* lve = NULL;
-  LeabraLayer* nv =  NULL;  LeabraLayer* vta = NULL;
+ //  LeabraLayer* rew_targ_lay = NULL;
+ //  LeabraLayer* pve = NULL;  LeabraLayer* pvr = NULL;
+ //  LeabraLayer* pvi = NULL;  LeabraLayer* lve = NULL;
+ //  LeabraLayer* nv =  NULL;  LeabraLayer* vta = NULL;
 
-  if(pvlv_laygp) {
-    rew_targ_lay = (LeabraLayer*)pvlv_laygp->FindName("RewTarg");
-    pve = (LeabraLayer*)pvlv_laygp->FindName(pvenm);
-    pvr = (LeabraLayer*)pvlv_laygp->FindName(pvrnm);
-    pvi = (LeabraLayer*)pvlv_laygp->FindName(pvinm);
-    lve = (LeabraLayer*)pvlv_laygp->FindName(lvenm);
-    nv =  (LeabraLayer*)pvlv_laygp->FindName(nvnm);
-    vta = (LeabraLayer*)pvlv_laygp->FindName(vtanm);
-    if(!vta)
-      vta = (LeabraLayer*)pvlv_laygp->FindName("DA");
-  }
-  else {
-    vta = (LeabraLayer*)net->layers.FindLeafName("VTA"); // look for alternative (gdPVLV) VTA
-  }
+ //  if(pvlv_laygp) {
+ //    rew_targ_lay = (LeabraLayer*)pvlv_laygp->FindName("RewTarg");
+ //    pve = (LeabraLayer*)pvlv_laygp->FindName(pvenm);
+ //    pvr = (LeabraLayer*)pvlv_laygp->FindName(pvrnm);
+ //    pvi = (LeabraLayer*)pvlv_laygp->FindName(pvinm);
+ //    lve = (LeabraLayer*)pvlv_laygp->FindName(lvenm);
+ //    nv =  (LeabraLayer*)pvlv_laygp->FindName(nvnm);
+ //    vta = (LeabraLayer*)pvlv_laygp->FindName(vtanm);
+ //    if(!vta)
+ //      vta = (LeabraLayer*)pvlv_laygp->FindName("DA");
+ //  }
+ //  else {
+ //    vta = (LeabraLayer*)net->layers.FindLeafName("VTA"); // look for alternative (gdPVLV) VTA
+ //  }
 
-  bool new_pbwm_laygp = false;
-  Layer_Group* pbwm_laygp_go = net->FindMakeLayerGroup
-    (prefix + "_Go", NULL,     new_pbwm_laygp);
-  Layer_Group* pbwm_laygp_nogo = net->FindMakeLayerGroup
-    (prefix + "_NoGo", NULL, new_pbwm_laygp);
-  Layer_Group* pbwm_laygp_pfc = net->FindMakeLayerGroup
-    (prefix + "_PFC", NULL, new_pbwm_laygp);
+ //  bool new_pbwm_laygp = false;
+ //  Layer_Group* pbwm_laygp_go = net->FindMakeLayerGroup
+ //    (prefix + "_Go", NULL,     new_pbwm_laygp);
+ //  Layer_Group* pbwm_laygp_nogo = net->FindMakeLayerGroup
+ //    (prefix + "_NoGo", NULL, new_pbwm_laygp);
+ //  Layer_Group* pbwm_laygp_pfc = net->FindMakeLayerGroup
+ //    (prefix + "_PFC", NULL, new_pbwm_laygp);
 
-  // new gets full update, otherwise more just params
-  bool matrix_new =   false; 
-  bool pfc_new = false; 
-  bool pfcd_new = false; 
-  bool snrthal_new = false; 
-  bool snrthal_out_new = false; 
+ //  // new gets full update, otherwise more just params
+ //  bool matrix_new =   false; 
+ //  bool pfc_new = false; 
+ //  bool pfcd_new = false; 
+ //  bool snrthal_new = false; 
+ //  bool snrthal_out_new = false; 
 
-  LeabraLayer* pfc_mnt = NULL;
-  LeabraLayer* pfc_out = NULL;
-  LeabraLayer* pfc_in = NULL;
-  LeabraLayer* pfc_mnt_d = NULL;
-  LeabraLayer* pfc_out_d = NULL;
-  LeabraLayer* pfc_in_d = NULL;
+ //  LeabraLayer* pfc_mnt = NULL;
+ //  LeabraLayer* pfc_out = NULL;
+ //  LeabraLayer* pfc_in = NULL;
+ //  LeabraLayer* pfc_mnt_d = NULL;
+ //  LeabraLayer* pfc_out_d = NULL;
+ //  LeabraLayer* pfc_in_d = NULL;
 
-  LeabraLayer* matrix_go_in = NULL;
-  LeabraLayer* matrix_go_mnt = NULL;
-  LeabraLayer* matrix_go_out = NULL;
-  LeabraLayer* matrix_nogo_in = NULL;
-  LeabraLayer* matrix_nogo_mnt = NULL;
-  LeabraLayer* matrix_nogo_out = NULL;
-  LeabraLayer* snrthal = NULL;
-  LeabraLayer* snrthal_out = NULL;
+ //  LeabraLayer* matrix_go_in = NULL;
+ //  LeabraLayer* matrix_go_mnt = NULL;
+ //  LeabraLayer* matrix_go_out = NULL;
+ //  LeabraLayer* matrix_nogo_in = NULL;
+ //  LeabraLayer* matrix_nogo_mnt = NULL;
+ //  LeabraLayer* matrix_nogo_out = NULL;
+ //  LeabraLayer* snrthal = NULL;
+ //  LeabraLayer* snrthal_out = NULL;
 
-  // stick this in go -- must be first!
-  snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(snrnm, NULL, snrthal_new);
-  if(!one_snr && out_stripes > 0) {
-    snrthal_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(snrnm + "_out", NULL,
-                                                             snrthal_out_new);
-  }
+ //  // stick this in go -- must be first!
+ //  snrthal = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(snrnm, NULL, snrthal_new);
+ //  if(!one_snr && out_stripes > 0) {
+ //    snrthal_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(snrnm + "_out", NULL,
+ //                                                             snrthal_out_new);
+ //  }
 
-  if(in_stripes > 0) {
-    matrix_go_in = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_in", NULL,
-							      matrix_new);
-    matrix_nogo_in = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_in", NULL,
-								  matrix_new);
-    pfc_in =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_in",  NULL, pfc_new);
-    pfc_in_d =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "d_in",  NULL, pfcd_new);
-  }
+ //  if(in_stripes > 0) {
+ //    matrix_go_in = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_in", NULL,
+ //        						      matrix_new);
+ //    matrix_nogo_in = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_in", NULL,
+ //        							  matrix_new);
+ //    pfc_in =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_in",  NULL, pfc_new);
+ //    pfc_in_d =  (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "d_in",  NULL, pfcd_new);
+ //  }
 
-  if(mnt_stripes > 0) {
-    matrix_go_mnt = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_mnt", NULL,
-							      matrix_new, "Matrix");
-    matrix_nogo_mnt = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_mnt", NULL,
-								  matrix_new);
-    pfc_mnt = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_mnt", NULL, pfc_new);
-    pfc_mnt_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "d_mnt", NULL, pfcd_new);
-  }
+ //  if(mnt_stripes > 0) {
+ //    matrix_go_mnt = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_mnt", NULL,
+ //        						      matrix_new, "Matrix");
+ //    matrix_nogo_mnt = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_mnt", NULL,
+ //        							  matrix_new);
+ //    pfc_mnt = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_mnt", NULL, pfc_new);
+ //    pfc_mnt_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "d_mnt", NULL, pfcd_new);
+ //  }
 
-  if(out_stripes > 0) {
-    matrix_go_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_out", NULL,
-							      matrix_new, "Matrix");
-    matrix_nogo_out = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_out", NULL,
-								  matrix_new);
-    pfc_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_out", NULL, pfc_new);
-    // if(make_deep_pfc) {
-    //   pfc_out_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_out", NULL, pfcd_new);
-    // }
-  }
+ //  if(out_stripes > 0) {
+ //    matrix_go_out = (LeabraLayer*)pbwm_laygp_go->FindMakeLayer(mtxnm + "_Go_out", NULL,
+ //        						      matrix_new, "Matrix");
+ //    matrix_nogo_out = (LeabraLayer*)pbwm_laygp_nogo->FindMakeLayer(mtxnm + "_NoGo_out", NULL,
+ //        							  matrix_new);
+ //    pfc_out = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer(pfcnm + "_out", NULL, pfc_new);
+ //    // if(make_deep_pfc) {
+ //    //   pfc_out_d = (LeabraLayer*)pbwm_laygp_pfc->FindMakeLayer("PFCd_out", NULL, pfcd_new);
+ //    // }
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // collect layer groups
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // collect layer groups
 
-  int mx_z1 = 0;         // max x coordinate on layer z=1
-  int mx_z2 = 0;         // z=2
-  Layer_Group other_lays;   Layer_Group hidden_lays;
-  Layer_Group output_lays;  Layer_Group input_lays;
-  taVector3i lpos;
-  int i;
-  for(i=0;i<net->layers.leaves;i++) {
-    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-    if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
-       && lay != lve && lay != nv && lay != vta
-       && lay != snrthal && lay != snrthal_out 
-       && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
-       && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
-       && lay != pfc_mnt && lay != pfc_out && lay != pfc_in
-       && lay != pfc_mnt_d && lay != pfc_in_d && lay != pfc_out_d) {
-      other_lays.Link(lay);
-      lay->GetAbsPos(lpos);
-      if(!add_on && lpos.z == 0) {
-        if(!(lay->name.contains("Matrix") || lay->name.contains("PFC") ||
-             lay->name.contains("SNr")))
-          lay->pos.z+=2; // only for non-pbwm: nobody allowed in 0!
-      }
-      int xm = lpos.x + lay->scaled_disp_geom.x + 1;
-      if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
-      if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
-      if(lay->layer_type == Layer::HIDDEN)
-        hidden_lays.Link(lay);
-      else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
-        input_lays.Link(lay);
-      else if(lay->name.contains("Out"))
-        output_lays.Link(lay);
-      else
-        input_lays.Link(lay);   // default to input -- many are now TARGET in TI
-    }
-  }
+ //  int mx_z1 = 0;         // max x coordinate on layer z=1
+ //  int mx_z2 = 0;         // z=2
+ //  Layer_Group other_lays;   Layer_Group hidden_lays;
+ //  Layer_Group output_lays;  Layer_Group input_lays;
+ //  taVector3i lpos;
+ //  int i;
+ //  for(i=0;i<net->layers.leaves;i++) {
+ //    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+ //    if(lay != rew_targ_lay && lay != pve && lay != pvr && lay != pvi
+ //       && lay != lve && lay != nv && lay != vta
+ //       && lay != snrthal && lay != snrthal_out 
+ //       && lay != matrix_go_in && lay != matrix_go_mnt && lay != matrix_go_out
+ //       && lay != matrix_nogo_in && lay != matrix_nogo_mnt && lay != matrix_nogo_out
+ //       && lay != pfc_mnt && lay != pfc_out && lay != pfc_in
+ //       && lay != pfc_mnt_d && lay != pfc_in_d && lay != pfc_out_d) {
+ //      other_lays.Link(lay);
+ //      lay->GetAbsPos(lpos);
+ //      if(!add_on && lpos.z == 0) {
+ //        if(!(lay->name.contains("Matrix") || lay->name.contains("PFC") ||
+ //             lay->name.contains("SNr")))
+ //          lay->pos.z+=2; // only for non-pbwm: nobody allowed in 0!
+ //      }
+ //      int xm = lpos.x + lay->scaled_disp_geom.x + 1;
+ //      if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
+ //      if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
+ //      if(lay->layer_type == Layer::HIDDEN)
+ //        hidden_lays.Link(lay);
+ //      else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
+ //        input_lays.Link(lay);
+ //      else if(lay->name.contains("Out"))
+ //        output_lays.Link(lay);
+ //      else
+ //        input_lays.Link(lay);   // default to input -- many are now TARGET in TI
+ //    }
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // get specs
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // get specs
 
-  String pvlvprefix = "PVLV";
-  BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
+ //  String pvlvprefix = "PVLV";
+ //  BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
 
-  BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
-  if(!pbwmspgp) return false;
+ //  BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
+ //  if(!pbwmspgp) return false;
 
-  if(!PBWM_Specs(net, topo_prjns, prefix)) return false;
+ //  if(!PBWM_Specs(net, topo_prjns, prefix)) return false;
 
-  // different PVLV defaults -- not relevant anyway
-  if(pvlvspgp) {
-    PvlvSp("LVeLayer",LVeLayerSpec)->lv.min_lvi = 0.4f;
+ //  // different PVLV defaults -- not relevant anyway
+ //  if(pvlvspgp) {
+ //    PvlvSp("LVeLayer",LVeLayerSpec)->lv.min_lvi = 0.4f;
 
-    PvlvSp("NVLayer",NVLayerSpec)->nv.da_gain = 0.0f;      // no nv by default
-    PvlvSp("VTALayer",PVLVDaLayerSpec)->da.da_gain = 1.0f;
-    PvlvSp("VTALayer",PVLVDaLayerSpec)->da.pv_gain = 0.1f;
-  }
+ //    PvlvSp("NVLayer",NVLayerSpec)->nv.da_gain = 0.0f;      // no nv by default
+ //    PvlvSp("VTALayer",PVLVDaLayerSpec)->da.da_gain = 1.0f;
+ //    PvlvSp("VTALayer",PVLVDaLayerSpec)->da.pv_gain = 0.1f;
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // apply specs to objects
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // apply specs to objects
 
-  LeabraUnitSpec* pfc_units = PbwmSp("PFCUnits",PFCUnitSpec);
-  LeabraUnitSpec* pfcd_units = PbwmSp("PFCDeepUnits",LayerActUnitSpec);
-  LeabraUnitSpec* matrix_units = PbwmSp("MatrixUnits",LeabraUnitSpec);
-  LeabraUnitSpec* matrix_nogo_units = PbwmSp("MatrixNoGo",LeabraUnitSpec);
-  LeabraTICtxtLayerSpec* pfc_deep_sp = PbwmSp("PFC_deep", LeabraTICtxtLayerSpec);
+ //  LeabraUnitSpec* pfc_units = PbwmSp("PFCUnits",PFCUnitSpec);
+ //  LeabraUnitSpec* pfcd_units = PbwmSp("PFCDeepUnits",LayerActUnitSpec);
+ //  LeabraUnitSpec* matrix_units = PbwmSp("MatrixUnits",LeabraUnitSpec);
+ //  LeabraUnitSpec* matrix_nogo_units = PbwmSp("MatrixNoGo",LeabraUnitSpec);
+ //  LeabraTICtxtLayerSpec* pfc_deep_sp = PbwmSp("PFC_deep", LeabraTICtxtLayerSpec);
 
-  // set bias specs for unit specs
-  pfc_units->bias_spec.SetSpec(PbwmSp("PFCBias",LeabraBiasSpec));
-  matrix_units->bias_spec.SetSpec(PbwmSp("MatrixBias", MatrixBiasSpec));
-  matrix_nogo_units->bias_spec.SetSpec(PbwmSp("MatrixBias", MatrixBiasSpec));
-  PbwmSp("SNrThalUnits",LeabraUnitSpec)->bias_spec.SetSpec(PbwmSp("FixedBias",
-                                                                  LeabraBiasSpec));
+ //  // set bias specs for unit specs
+ //  pfc_units->bias_spec.SetSpec(PbwmSp("PFCBias",LeabraBiasSpec));
+ //  matrix_units->bias_spec.SetSpec(PbwmSp("MatrixBias", MatrixBiasSpec));
+ //  matrix_nogo_units->bias_spec.SetSpec(PbwmSp("MatrixBias", MatrixBiasSpec));
+ //  PbwmSp("SNrThalUnits",LeabraUnitSpec)->bias_spec.SetSpec(PbwmSp("FixedBias",
+ //                                                                  LeabraBiasSpec));
 
-  snrthal->SetLayerSpec(PbwmSp("SNrThalLayer",SNrThalLayerSpec));
-  snrthal->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
+ //  snrthal->SetLayerSpec(PbwmSp("SNrThalLayer",SNrThalLayerSpec));
+ //  snrthal->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
 
-  if(in_stripes > 0) {
-    matrix_go_in->SetLayerSpec(PbwmSp("Matrix_Go_in",MatrixLayerSpec));
-    matrix_go_in->SetUnitSpec(matrix_units);
-    matrix_nogo_in->SetLayerSpec(PbwmSp("Matrix_NoGo_in",MatrixLayerSpec)); 
-    matrix_nogo_in->SetUnitSpec(matrix_nogo_units);
+ //  if(in_stripes > 0) {
+ //    matrix_go_in->SetLayerSpec(PbwmSp("Matrix_Go_in",MatrixLayerSpec));
+ //    matrix_go_in->SetUnitSpec(matrix_units);
+ //    matrix_nogo_in->SetLayerSpec(PbwmSp("Matrix_NoGo_in",MatrixLayerSpec)); 
+ //    matrix_nogo_in->SetUnitSpec(matrix_nogo_units);
 
-    pfc_in->SetLayerSpec(PbwmSp("PFC_in",PFCLayerSpec));
-    pfc_in->SetUnitSpec(pfc_units);
-    if(pfc_in_d) {
-      pfc_in_d->SetLayerSpec(pfc_deep_sp);
-      pfc_in_d->SetUnitSpec(pfcd_units);
-    }
-  }
-  if(mnt_stripes > 0) {
-    matrix_go_mnt->SetLayerSpec(PbwmSp("Matrix_Go_mnt", MatrixLayerSpec));
-    matrix_go_mnt->SetUnitSpec(matrix_units);
-    matrix_nogo_mnt->SetLayerSpec(PbwmSp("Matrix_NoGo_mnt", MatrixLayerSpec)); 
-    matrix_nogo_mnt->SetUnitSpec(matrix_nogo_units);
+ //    pfc_in->SetLayerSpec(PbwmSp("PFC_in",PFCLayerSpec));
+ //    pfc_in->SetUnitSpec(pfc_units);
+ //    if(pfc_in_d) {
+ //      pfc_in_d->SetLayerSpec(pfc_deep_sp);
+ //      pfc_in_d->SetUnitSpec(pfcd_units);
+ //    }
+ //  }
+ //  if(mnt_stripes > 0) {
+ //    matrix_go_mnt->SetLayerSpec(PbwmSp("Matrix_Go_mnt", MatrixLayerSpec));
+ //    matrix_go_mnt->SetUnitSpec(matrix_units);
+ //    matrix_nogo_mnt->SetLayerSpec(PbwmSp("Matrix_NoGo_mnt", MatrixLayerSpec)); 
+ //    matrix_nogo_mnt->SetUnitSpec(matrix_nogo_units);
 
-    pfc_mnt->SetLayerSpec(PbwmSp("PFC_mnt",PFCLayerSpec));
-    pfc_mnt->SetUnitSpec(pfc_units);
-    if(pfc_mnt_d) {
-      pfc_mnt_d->SetLayerSpec(pfc_deep_sp);
-      pfc_mnt_d->SetUnitSpec(pfcd_units);
-    }
-  }
-  if(out_stripes > 0) {
-    matrix_go_out->SetLayerSpec(PbwmSp("Matrix_Go_out",MatrixLayerSpec));
-    matrix_go_out->SetUnitSpec(matrix_units);
-    matrix_nogo_out->SetLayerSpec(PbwmSp("Matrix_NoGo_out",MatrixLayerSpec)); 
-    matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
+ //    pfc_mnt->SetLayerSpec(PbwmSp("PFC_mnt",PFCLayerSpec));
+ //    pfc_mnt->SetUnitSpec(pfc_units);
+ //    if(pfc_mnt_d) {
+ //      pfc_mnt_d->SetLayerSpec(pfc_deep_sp);
+ //      pfc_mnt_d->SetUnitSpec(pfcd_units);
+ //    }
+ //  }
+ //  if(out_stripes > 0) {
+ //    matrix_go_out->SetLayerSpec(PbwmSp("Matrix_Go_out",MatrixLayerSpec));
+ //    matrix_go_out->SetUnitSpec(matrix_units);
+ //    matrix_nogo_out->SetLayerSpec(PbwmSp("Matrix_NoGo_out",MatrixLayerSpec)); 
+ //    matrix_nogo_out->SetUnitSpec(matrix_nogo_units);
 
-    pfc_out->SetLayerSpec(PbwmSp("PFC_out",PFCLayerSpec));
-    pfc_out->SetUnitSpec(pfc_units);
-    if(pfc_out_d) {
-      pfc_out_d->SetLayerSpec(pfc_deep_sp);
-      pfc_out_d->SetUnitSpec(pfcd_units);
-    }
-    if(snrthal_out) {
-      snrthal_out->SetLayerSpec(PbwmSp("SNrThalLayer_out",SNrThalLayerSpec));
-      snrthal_out->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
-    }
-  }
+ //    pfc_out->SetLayerSpec(PbwmSp("PFC_out",PFCLayerSpec));
+ //    pfc_out->SetUnitSpec(pfc_units);
+ //    if(pfc_out_d) {
+ //      pfc_out_d->SetLayerSpec(pfc_deep_sp);
+ //      pfc_out_d->SetUnitSpec(pfcd_units);
+ //    }
+ //    if(snrthal_out) {
+ //      snrthal_out->SetLayerSpec(PbwmSp("SNrThalLayer_out",SNrThalLayerSpec));
+ //      snrthal_out->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
+ //    }
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // make projections
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // make projections
 
-  Projection* prjn = NULL;
+ //  Projection* prjn = NULL;
 
 
-  MarkerConSpec* marker_cons = PbwmSp("PbwmMarker", MarkerConSpec);
-  OneToOnePrjnSpec* onetoone = PbwmSp("PbwmOneToOne", OneToOnePrjnSpec);
-  FullPrjnSpec* fullprjn = PbwmSp("PbwmFullPrjn", FullPrjnSpec);
-  GpOneToOnePrjnSpec* gponetoone = PbwmSp("PbwmGpOneToOne",GpOneToOnePrjnSpec);
-  MarkerGpOneToOnePrjnSpec* markergponetoone =
-    PbwmSp("MarkerGpOneToOne",MarkerGpOneToOnePrjnSpec);
-  SNrPrjnSpec* snr_prjn = PbwmSp("SNrPrjn",SNrPrjnSpec);
+ //  MarkerConSpec* marker_cons = PbwmSp("PbwmMarker", MarkerConSpec);
+ //  OneToOnePrjnSpec* onetoone = PbwmSp("PbwmOneToOne", OneToOnePrjnSpec);
+ //  FullPrjnSpec* fullprjn = PbwmSp("PbwmFullPrjn", FullPrjnSpec);
+ //  GpOneToOnePrjnSpec* gponetoone = PbwmSp("PbwmGpOneToOne",GpOneToOnePrjnSpec);
+ //  MarkerGpOneToOnePrjnSpec* markergponetoone =
+ //    PbwmSp("MarkerGpOneToOne",MarkerGpOneToOnePrjnSpec);
+ //  SNrPrjnSpec* snr_prjn = PbwmSp("SNrPrjn",SNrPrjnSpec);
   
-  LeabraConSpec* matrix_to_snrthal = PbwmSp("MatrixToSNrThal",LeabraConSpec);
-  MatrixConSpec* matrix_cons_nogofmgo = PbwmSp("MatrixConsNoGoFmGo", MatrixConSpec);
+ //  LeabraConSpec* matrix_to_snrthal = PbwmSp("MatrixToSNrThal",LeabraConSpec);
+ //  MatrixConSpec* matrix_cons_nogofmgo = PbwmSp("MatrixConsNoGoFmGo", MatrixConSpec);
 
-  //	  	 	   to		 from		prjn_spec	con_spec
+ //  //	  	 	   to		 from		prjn_spec	con_spec
 
-  // matrix <-> snrthal
-  if(in_stripes > 0) {
-    net->FindMakePrjn(snrthal, matrix_go_in, snr_prjn, matrix_to_snrthal);
-    net->FindMakePrjn(matrix_go_in, matrix_nogo_in, markergponetoone, marker_cons);
-    net->FindMakePrjn(matrix_go_in, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(matrix_go_in, vta, fullprjn, marker_cons);
+ //  // matrix <-> snrthal
+ //  if(in_stripes > 0) {
+ //    net->FindMakePrjn(snrthal, matrix_go_in, snr_prjn, matrix_to_snrthal);
+ //    net->FindMakePrjn(matrix_go_in, matrix_nogo_in, markergponetoone, marker_cons);
+ //    net->FindMakePrjn(matrix_go_in, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(matrix_go_in, vta, fullprjn, marker_cons);
 
-    net->FindMakePrjn(matrix_nogo_in, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_in, vta, fullprjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_in, matrix_go_in, gponetoone, matrix_cons_nogofmgo);
-  }
-  if(mnt_stripes > 0) {
-    net->FindMakePrjn(snrthal, matrix_go_mnt, snr_prjn, matrix_to_snrthal);
-    net->FindMakePrjn(matrix_go_mnt, matrix_nogo_mnt, markergponetoone, marker_cons);
-    net->FindMakePrjn(matrix_go_mnt, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(matrix_go_mnt, vta, fullprjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_in, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_in, vta, fullprjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_in, matrix_go_in, gponetoone, matrix_cons_nogofmgo);
+ //  }
+ //  if(mnt_stripes > 0) {
+ //    net->FindMakePrjn(snrthal, matrix_go_mnt, snr_prjn, matrix_to_snrthal);
+ //    net->FindMakePrjn(matrix_go_mnt, matrix_nogo_mnt, markergponetoone, marker_cons);
+ //    net->FindMakePrjn(matrix_go_mnt, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(matrix_go_mnt, vta, fullprjn, marker_cons);
 
-    net->FindMakePrjn(matrix_nogo_mnt, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_mnt, vta, fullprjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_mnt, matrix_go_mnt, gponetoone,
-		      matrix_cons_nogofmgo);
-  }
-  if(out_stripes > 0) {
-    if(snrthal_out) {
-      net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
-      net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
-      net->FindMakePrjn(matrix_nogo_out, snrthal_out, snr_prjn, marker_cons);
-    }
-    else {
-      net->FindMakePrjn(snrthal, matrix_go_out, snr_prjn, matrix_to_snrthal);
-      net->FindMakePrjn(matrix_go_out, snrthal, snr_prjn, marker_cons);
-      net->FindMakePrjn(matrix_nogo_out, snrthal, snr_prjn, marker_cons);
-    }
-    net->FindMakePrjn(matrix_go_out, matrix_nogo_out, markergponetoone, marker_cons);
-    net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_mnt, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_mnt, vta, fullprjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_mnt, matrix_go_mnt, gponetoone,
+ //        	      matrix_cons_nogofmgo);
+ //  }
+ //  if(out_stripes > 0) {
+ //    if(snrthal_out) {
+ //      net->FindMakePrjn(snrthal_out, matrix_go_out, snr_prjn, matrix_to_snrthal);
+ //      net->FindMakePrjn(matrix_go_out, snrthal_out, snr_prjn, marker_cons);
+ //      net->FindMakePrjn(matrix_nogo_out, snrthal_out, snr_prjn, marker_cons);
+ //    }
+ //    else {
+ //      net->FindMakePrjn(snrthal, matrix_go_out, snr_prjn, matrix_to_snrthal);
+ //      net->FindMakePrjn(matrix_go_out, snrthal, snr_prjn, marker_cons);
+ //      net->FindMakePrjn(matrix_nogo_out, snrthal, snr_prjn, marker_cons);
+ //    }
+ //    net->FindMakePrjn(matrix_go_out, matrix_nogo_out, markergponetoone, marker_cons);
+ //    net->FindMakePrjn(matrix_go_out, vta, fullprjn, marker_cons);
 
-    net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
-    net->FindMakePrjn(matrix_nogo_out, matrix_go_out, gponetoone, matrix_cons_nogofmgo);
-  }
+ //    net->FindMakePrjn(matrix_nogo_out, vta, fullprjn, marker_cons);
+ //    net->FindMakePrjn(matrix_nogo_out, matrix_go_out, gponetoone, matrix_cons_nogofmgo);
+ //  }
 
-  // matrix <-> pfc and pfc <-> pfc
+ //  // matrix <-> pfc and pfc <-> pfc
 
-  LeabraTICtxtConSpec* pfc_ctxt_cons = PbwmSp("PfcTICtxt", LeabraTICtxtConSpec);
-  TopoWtsPrjnSpec* topomatrixpfc_self = PbwmSp("TopoMatrixPFC_Self",TopoWtsPrjnSpec);
-  TopoWtsPrjnSpec* intrapfctopo = PbwmSp("TopoIntraPFC", TopoWtsPrjnSpec);
-  PFCConSpec* topfc_cons = PbwmSp("ToPFC", PFCConSpec);
-  MatrixConSpec* matrix_cons = PbwmSp("MatrixCons", MatrixConSpec);
-  MatrixConSpec* matrix_cons_out = PbwmSp("MatrixConsOut", MatrixConSpec);
-  MatrixConSpec* matrix_cons_nogo = PbwmSp("MatrixConsNoGo", MatrixConSpec);
+ //  LeabraTICtxtConSpec* pfc_ctxt_cons = PbwmSp("PfcTICtxt", LeabraTICtxtConSpec);
+ //  TopoWtsPrjnSpec* topomatrixpfc_self = PbwmSp("TopoMatrixPFC_Self",TopoWtsPrjnSpec);
+ //  TopoWtsPrjnSpec* intrapfctopo = PbwmSp("TopoIntraPFC", TopoWtsPrjnSpec);
+ //  PFCConSpec* topfc_cons = PbwmSp("ToPFC", PFCConSpec);
+ //  MatrixConSpec* matrix_cons = PbwmSp("MatrixCons", MatrixConSpec);
+ //  MatrixConSpec* matrix_cons_out = PbwmSp("MatrixConsOut", MatrixConSpec);
+ //  MatrixConSpec* matrix_cons_nogo = PbwmSp("MatrixConsNoGo", MatrixConSpec);
 
-  if(in_stripes > 0) {
-    if(topo_prjns) {
-      net->FindMakePrjn(matrix_go_in, pfc_in, topomatrixpfc_self,
-                        PbwmSp("MatrixConsTopo",MatrixConSpec));
-      net->FindMakePrjn(matrix_nogo_in, pfc_in, topomatrixpfc_self,
-                        matrix_cons_nogo);
-    }
-    else {
-      net->FindMakePrjn(matrix_go_in, pfc_in, gponetoone, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_in, pfc_in, gponetoone,
-                        matrix_cons_nogo);
-    }
-    net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_in, pfc_in, onetoone, pfc_ctxt_cons);
+ //  if(in_stripes > 0) {
+ //    if(topo_prjns) {
+ //      net->FindMakePrjn(matrix_go_in, pfc_in, topomatrixpfc_self,
+ //                        PbwmSp("MatrixConsTopo",MatrixConSpec));
+ //      net->FindMakePrjn(matrix_nogo_in, pfc_in, topomatrixpfc_self,
+ //                        matrix_cons_nogo);
+ //    }
+ //    else {
+ //      net->FindMakePrjn(matrix_go_in, pfc_in, gponetoone, matrix_cons);
+ //      net->FindMakePrjn(matrix_nogo_in, pfc_in, gponetoone,
+ //                        matrix_cons_nogo);
+ //    }
+ //    net->FindMakePrjn(pfc_in, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(pfc_in, pfc_in, onetoone, pfc_ctxt_cons);
 
-    if(pfc_in_d) {
-      net->FindMakePrjn(pfc_in_d, pfc_in, onetoone, marker_cons);
-    }
-  }
+ //    if(pfc_in_d) {
+ //      net->FindMakePrjn(pfc_in_d, pfc_in, onetoone, marker_cons);
+ //    }
+ //  }
 
-  if(mnt_stripes > 0) {
-    if(topo_prjns) {
-      net->FindMakePrjn(matrix_go_mnt, pfc_mnt, topomatrixpfc_self,
-                        PbwmSp("MatrixConsTopoWeak",MatrixConSpec));
-      net->FindMakePrjn(matrix_nogo_mnt, pfc_mnt, topomatrixpfc_self,
-                        matrix_cons_nogo);
-    }
-    else {
-      net->FindMakePrjn(matrix_go_mnt, pfc_mnt, gponetoone, matrix_cons);
-      net->FindMakePrjn(matrix_nogo_mnt, pfc_mnt, markergponetoone,
-                        marker_cons);
-    }
-    net->FindMakePrjn(pfc_mnt, snrthal, snr_prjn, marker_cons);
-    net->FindMakePrjn(pfc_mnt, pfc_mnt, onetoone, pfc_ctxt_cons);
+ //  if(mnt_stripes > 0) {
+ //    if(topo_prjns) {
+ //      net->FindMakePrjn(matrix_go_mnt, pfc_mnt, topomatrixpfc_self,
+ //                        PbwmSp("MatrixConsTopoWeak",MatrixConSpec));
+ //      net->FindMakePrjn(matrix_nogo_mnt, pfc_mnt, topomatrixpfc_self,
+ //                        matrix_cons_nogo);
+ //    }
+ //    else {
+ //      net->FindMakePrjn(matrix_go_mnt, pfc_mnt, gponetoone, matrix_cons);
+ //      net->FindMakePrjn(matrix_nogo_mnt, pfc_mnt, markergponetoone,
+ //                        marker_cons);
+ //    }
+ //    net->FindMakePrjn(pfc_mnt, snrthal, snr_prjn, marker_cons);
+ //    net->FindMakePrjn(pfc_mnt, pfc_mnt, onetoone, pfc_ctxt_cons);
 
-    if(pfc_mnt_d) {
-      net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
-    }
+ //    if(pfc_mnt_d) {
+ //      net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
+ //    }
 
-    if(in_stripes > 0) {
-      if(topo_prjns) {
-        net->FindMakePrjn(pfc_mnt, pfc_in, intrapfctopo, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_mnt, pfc_in, topomatrixpfc_other,
-        //                   matrix_cons_nogo);
-      }
-      else {
-        net->FindMakePrjn(pfc_mnt, pfc_in, fullprjn, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_mnt, pfc_in, fullprjn,
-        //                   matrix_cons_nogo); // why is this prjn here?
-      }
-    }
-    if(out_stripes > 0) {
-      if(topo_prjns) {
-        prjn = net->FindMakePrjn(pfc_mnt, pfc_out, intrapfctopo,
-                                 PbwmSp("PFCtoPFC",PFCConSpec));
-      }
-      else {
-        prjn = net->FindMakePrjn(pfc_mnt, pfc_out, fullprjn, 
-                                 PbwmSp("PFCtoPFC",PFCConSpec));
-      }
-    }
-  }
+ //    if(in_stripes > 0) {
+ //      if(topo_prjns) {
+ //        net->FindMakePrjn(pfc_mnt, pfc_in, intrapfctopo, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_mnt, pfc_in, topomatrixpfc_other,
+ //        //                   matrix_cons_nogo);
+ //      }
+ //      else {
+ //        net->FindMakePrjn(pfc_mnt, pfc_in, fullprjn, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_mnt, pfc_in, fullprjn,
+ //        //                   matrix_cons_nogo); // why is this prjn here?
+ //      }
+ //    }
+ //    if(out_stripes > 0) {
+ //      if(topo_prjns) {
+ //        prjn = net->FindMakePrjn(pfc_mnt, pfc_out, intrapfctopo,
+ //                                 PbwmSp("PFCtoPFC",PFCConSpec));
+ //      }
+ //      else {
+ //        prjn = net->FindMakePrjn(pfc_mnt, pfc_out, fullprjn, 
+ //                                 PbwmSp("PFCtoPFC",PFCConSpec));
+ //      }
+ //    }
+ //  }
 
-  if(out_stripes > 0) {
-    if(snrthal_out) {
-      net->FindMakePrjn(pfc_out, snrthal_out, snr_prjn, marker_cons);
-    }
-    else {
-      net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
-    }
+ //  if(out_stripes > 0) {
+ //    if(snrthal_out) {
+ //      net->FindMakePrjn(pfc_out, snrthal_out, snr_prjn, marker_cons);
+ //    }
+ //    else {
+ //      net->FindMakePrjn(pfc_out, snrthal, snr_prjn, marker_cons);
+ //    }
 
-    if(in_stripes > 0) {
-      if(topo_prjns) {
-        net->FindMakePrjn(pfc_out, pfc_in, intrapfctopo, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_out, pfc_in, topomatrixpfc_other,
-        //                   matrix_cons_nogo);
-      }
-      else {
-        net->FindMakePrjn(pfc_out, pfc_in, fullprjn, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_out, pfc_in, fullprjn,
-        //                   matrix_cons_nogo);
-      }
-    }
-    if(mnt_stripes > 0) {
-      if(topo_prjns) {
-        net->FindMakePrjn(pfc_out, pfc_mnt, intrapfctopo, topfc_cons);
-        net->FindMakePrjn(pfc_out, pfc_mnt_d, intrapfctopo, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, topomatrixpfc_other,
-        //                   matrix_cons_nogo);
-      }
-      else {
-        net->FindMakePrjn(pfc_out, pfc_mnt, fullprjn, topfc_cons);
-        net->FindMakePrjn(pfc_out, pfc_mnt_d, fullprjn, topfc_cons);
-        // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, fullprjn,
-        //                   matrix_cons_nogo);
-      }
-    }
-  }
+ //    if(in_stripes > 0) {
+ //      if(topo_prjns) {
+ //        net->FindMakePrjn(pfc_out, pfc_in, intrapfctopo, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_out, pfc_in, topomatrixpfc_other,
+ //        //                   matrix_cons_nogo);
+ //      }
+ //      else {
+ //        net->FindMakePrjn(pfc_out, pfc_in, fullprjn, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_out, pfc_in, fullprjn,
+ //        //                   matrix_cons_nogo);
+ //      }
+ //    }
+ //    if(mnt_stripes > 0) {
+ //      if(topo_prjns) {
+ //        net->FindMakePrjn(pfc_out, pfc_mnt, intrapfctopo, topfc_cons);
+ //        net->FindMakePrjn(pfc_out, pfc_mnt_d, intrapfctopo, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, topomatrixpfc_other,
+ //        //                   matrix_cons_nogo);
+ //      }
+ //      else {
+ //        net->FindMakePrjn(pfc_out, pfc_mnt, fullprjn, topfc_cons);
+ //        net->FindMakePrjn(pfc_out, pfc_mnt_d, fullprjn, topfc_cons);
+ //        // net->FindMakePrjn(matrix_nogo_out, pfc_mnt, fullprjn,
+ //        //                   matrix_cons_nogo);
+ //      }
+ //    }
+ //  }
 
-  // connections from PFC to pvlv seem to actually be bad when dealing with distributed
-  // TI-like representations, as compared to the more symbolic kind -- parameterize
-  if(pvlvspgp) {
-    if(pvi) {
-      if(in_stripes > 0) {
-        net->FindMakePrjn(pvi, pfc_in, fullprjn, PvlvSp("PViCons",PVConSpec));
-        // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
-        // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
-      }
-      if(mnt_stripes > 0) {
-        net->FindMakePrjn(pvi, pfc_mnt_d, fullprjn, PvlvSp("PViCons",PVConSpec));
-        if(lve) {
-          net->FindMakePrjn(lve, pfc_mnt_d, fullprjn, PvlvSp("LVeCons",PVConSpec));
-        }
-        // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
-      }
-    }
-    if(pvr) {
-      // if(in_stripes > 0) {
-      //   net->FindMakePrjn(pvi, pfc_in, fullprjn, PvlvSp("PViCons",PVConSpec));
-      //   // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
-      //   // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
-      // }
-      if(mnt_stripes > 0) {
-        net->FindMakePrjn(pvr, pfc_mnt_d, fullprjn, PvlvSp("PVrCons",PVrConSpec));
-        // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
-      }
-    }
-  }
+ //  // connections from PFC to pvlv seem to actually be bad when dealing with distributed
+ //  // TI-like representations, as compared to the more symbolic kind -- parameterize
+ //  if(pvlvspgp) {
+ //    if(pvi) {
+ //      if(in_stripes > 0) {
+ //        net->FindMakePrjn(pvi, pfc_in, fullprjn, PvlvSp("PViCons",PVConSpec));
+ //        // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
+ //        // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
+ //      }
+ //      if(mnt_stripes > 0) {
+ //        net->FindMakePrjn(pvi, pfc_mnt_d, fullprjn, PvlvSp("PViCons",PVConSpec));
+ //        if(lve) {
+ //          net->FindMakePrjn(lve, pfc_mnt_d, fullprjn, PvlvSp("LVeCons",PVConSpec));
+ //        }
+ //        // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
+ //      }
+ //    }
+ //    if(pvr) {
+ //      // if(in_stripes > 0) {
+ //      //   net->FindMakePrjn(pvi, pfc_in, fullprjn, PvlvSp("PViCons",PVConSpec));
+ //      //   // net->FindMakePrjn(lve, pfc_in, fullprjn, lve_cons);
+ //      //   // net->FindMakePrjn(nv,  pfc_in, fullprjn, nv_cons);
+ //      // }
+ //      if(mnt_stripes > 0) {
+ //        net->FindMakePrjn(pvr, pfc_mnt_d, fullprjn, PvlvSp("PVrCons",PVrConSpec));
+ //        // net->FindMakePrjn(nv,  pfc_mnt, fullprjn, nv_cons);
+ //      }
+ //    }
+ //  }
 
-  TopoWtsPrjnSpec* topofminput = PbwmSp("TopoFmInput", TopoWtsPrjnSpec);
-  MatrixConSpec* matrix_cons_topo = PbwmSp("MatrixConsTopo", MatrixConSpec);
-  LeabraConSpec* fmpfc_out = PbwmSp("FmPFC_out", LeabraConSpec);
+ //  TopoWtsPrjnSpec* topofminput = PbwmSp("TopoFmInput", TopoWtsPrjnSpec);
+ //  MatrixConSpec* matrix_cons_topo = PbwmSp("MatrixConsTopo", MatrixConSpec);
+ //  LeabraConSpec* fmpfc_out = PbwmSp("FmPFC_out", LeabraConSpec);
 
-  for(i=0;i<input_lays.size;i++) {
-    Layer* il = (Layer*)input_lays[i];
+ //  for(i=0;i<input_lays.size;i++) {
+ //    Layer* il = (Layer*)input_lays[i];
 
-    if(matrix_new) {  // posterior cortex presumably also projects from superficial..
-      if(in_stripes > 0) {
-        if(topo_prjns) {
-          net->FindMakePrjn(matrix_go_in, il, topofminput, matrix_cons_topo);
-          net->FindMakePrjn(matrix_nogo_in, il, topofminput, matrix_cons_nogo);
-        }
-        else {
-          net->FindMakePrjn(matrix_go_in, il, fullprjn, matrix_cons);
-          net->FindMakePrjn(matrix_nogo_in, il, fullprjn, matrix_cons_nogo);
-        }
-      }
-      if(mnt_stripes > 0) {
-        if(topo_prjns) {
-          net->FindMakePrjn(matrix_go_mnt, il, topofminput, matrix_cons_topo);
-          net->FindMakePrjn(matrix_nogo_mnt, il, topofminput, matrix_cons_nogo);
-        }
-        else {
-          net->FindMakePrjn(matrix_go_mnt, il, fullprjn, matrix_cons);
-          net->FindMakePrjn(matrix_nogo_mnt, il, fullprjn, matrix_cons_nogo);
-        }
-      }
-      if(out_stripes > 0) {
-        if(topo_prjns) {
-          net->FindMakePrjn(matrix_go_out, il, topofminput, matrix_cons_out); // not right but..
-          net->FindMakePrjn(matrix_nogo_out, il, topofminput, matrix_cons_out);
-        }
-        else {
-          net->FindMakePrjn(matrix_go_out, il, fullprjn, matrix_cons_out);
-          net->FindMakePrjn(matrix_nogo_out, il, fullprjn, matrix_cons_out); // out trumps nogo
-        }
-      }
-    }
+ //    if(matrix_new) {  // posterior cortex presumably also projects from superficial..
+ //      if(in_stripes > 0) {
+ //        if(topo_prjns) {
+ //          net->FindMakePrjn(matrix_go_in, il, topofminput, matrix_cons_topo);
+ //          net->FindMakePrjn(matrix_nogo_in, il, topofminput, matrix_cons_nogo);
+ //        }
+ //        else {
+ //          net->FindMakePrjn(matrix_go_in, il, fullprjn, matrix_cons);
+ //          net->FindMakePrjn(matrix_nogo_in, il, fullprjn, matrix_cons_nogo);
+ //        }
+ //      }
+ //      if(mnt_stripes > 0) {
+ //        if(topo_prjns) {
+ //          net->FindMakePrjn(matrix_go_mnt, il, topofminput, matrix_cons_topo);
+ //          net->FindMakePrjn(matrix_nogo_mnt, il, topofminput, matrix_cons_nogo);
+ //        }
+ //        else {
+ //          net->FindMakePrjn(matrix_go_mnt, il, fullprjn, matrix_cons);
+ //          net->FindMakePrjn(matrix_nogo_mnt, il, fullprjn, matrix_cons_nogo);
+ //        }
+ //      }
+ //      if(out_stripes > 0) {
+ //        if(topo_prjns) {
+ //          net->FindMakePrjn(matrix_go_out, il, topofminput, matrix_cons_out); // not right but..
+ //          net->FindMakePrjn(matrix_nogo_out, il, topofminput, matrix_cons_out);
+ //        }
+ //        else {
+ //          net->FindMakePrjn(matrix_go_out, il, fullprjn, matrix_cons_out);
+ //          net->FindMakePrjn(matrix_nogo_out, il, fullprjn, matrix_cons_out); // out trumps nogo
+ //        }
+ //      }
+ //    }
 
-    if(pfc_new) {
-      TopoWtsPrjnSpec* topofminput = PbwmSp("TopoFmInput", TopoWtsPrjnSpec);
-      PFCConSpec * topfcfmin_cons = PbwmSp("ToPFCFmInput", PFCConSpec);
-      if(in_stripes > 0) {
-        if(topo_prjns) {
-          net->FindMakePrjn(pfc_in, il, topofminput, topfcfmin_cons);
-        }
-        else {
-          net->FindMakePrjn(pfc_in, il, fullprjn, topfcfmin_cons);
-        }
-        if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
-          net->FindMakePrjn(il, pfc_in, fullprjn, fmpfc_out);
-        }
-      }
-      else if(mnt_stripes > 0) { // only maint if no input
-        if(topo_prjns) {
-          net->FindMakePrjn(pfc_mnt, il, topofminput, topfcfmin_cons);
-        }
-        else {
-          net->FindMakePrjn(pfc_mnt, il, fullprjn, topfcfmin_cons);
-        }
-        if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
-          net->FindMakePrjn(il, pfc_mnt, fullprjn, fmpfc_out);
-        }
-      }
-    }
-  }
+ //    if(pfc_new) {
+ //      TopoWtsPrjnSpec* topofminput = PbwmSp("TopoFmInput", TopoWtsPrjnSpec);
+ //      PFCConSpec * topfcfmin_cons = PbwmSp("ToPFCFmInput", PFCConSpec);
+ //      if(in_stripes > 0) {
+ //        if(topo_prjns) {
+ //          net->FindMakePrjn(pfc_in, il, topofminput, topfcfmin_cons);
+ //        }
+ //        else {
+ //          net->FindMakePrjn(pfc_in, il, fullprjn, topfcfmin_cons);
+ //        }
+ //        if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
+ //          net->FindMakePrjn(il, pfc_in, fullprjn, fmpfc_out);
+ //        }
+ //      }
+ //      else if(mnt_stripes > 0) { // only maint if no input
+ //        if(topo_prjns) {
+ //          net->FindMakePrjn(pfc_mnt, il, topofminput, topfcfmin_cons);
+ //        }
+ //        else {
+ //          net->FindMakePrjn(pfc_mnt, il, fullprjn, topfcfmin_cons);
+ //        }
+ //        if(il->layer_type == Layer::TARGET || il->layer_type == Layer::OUTPUT) {
+ //          net->FindMakePrjn(il, pfc_mnt, fullprjn, fmpfc_out);
+ //        }
+ //      }
+ //    }
+ //  }
 
-  PFCConSpec* topfcfmout_cons = PbwmSp("ToPFCFmOutput", PFCConSpec);
-  for(i=0;i<output_lays.size;i++) {
-    Layer* ol = (Layer*)output_lays[i];
+ //  PFCConSpec* topfcfmout_cons = PbwmSp("ToPFCFmOutput", PFCConSpec);
+ //  for(i=0;i<output_lays.size;i++) {
+ //    Layer* ol = (Layer*)output_lays[i];
 
-    if(pfc_new) {
-      if(in_stripes > 0) {
-        net->FindMakePrjn(pfc_in, ol, fullprjn, topfcfmout_cons);
-      }
-      if(out_stripes > 0) {
-	net->FindMakePrjn(ol, pfc_out, fullprjn, fmpfc_out);
-        net->FindMakePrjn(pfc_out, ol, fullprjn, topfcfmout_cons);
-      }
-      if(mnt_stripes > 0) {
-	if(out_stripes == 0) {
-	  net->FindMakePrjn(ol, pfc_mnt, fullprjn, fmpfc_out);
-          if(pfc_mnt_d) {
-            net->FindMakePrjn(ol, pfc_mnt_d, fullprjn, fmpfc_out);
-          }
-	}
-        net->FindMakePrjn(pfc_mnt, ol, fullprjn, topfcfmout_cons);
-      }
-    }
-  }
+ //    if(pfc_new) {
+ //      if(in_stripes > 0) {
+ //        net->FindMakePrjn(pfc_in, ol, fullprjn, topfcfmout_cons);
+ //      }
+ //      if(out_stripes > 0) {
+ //        net->FindMakePrjn(ol, pfc_out, fullprjn, fmpfc_out);
+ //        net->FindMakePrjn(pfc_out, ol, fullprjn, topfcfmout_cons);
+ //      }
+ //      if(mnt_stripes > 0) {
+ //        if(out_stripes == 0) {
+ //          net->FindMakePrjn(ol, pfc_mnt, fullprjn, fmpfc_out);
+ //          if(pfc_mnt_d) {
+ //            net->FindMakePrjn(ol, pfc_mnt_d, fullprjn, fmpfc_out);
+ //          }
+ //        }
+ //        net->FindMakePrjn(pfc_mnt, ol, fullprjn, topfcfmout_cons);
+ //      }
+ //    }
+ //  }
 
-  for(i=0;i<hidden_lays.size;i++) {
-    Layer* hl = (Layer*)hidden_lays[i];
+ //  for(i=0;i<hidden_lays.size;i++) {
+ //    Layer* hl = (Layer*)hidden_lays[i];
 
-    if(pfc_new) {
-      if(out_stripes > 0) {
-	net->FindMakePrjn(hl, pfc_out, fullprjn, fmpfc_out);
-      }
-      if(mnt_stripes > 0) {
-	if(out_stripes == 0) {
-	  net->FindMakePrjn(hl, pfc_mnt, fullprjn, fmpfc_out);
-          if(pfc_mnt_d) {
-            net->FindMakePrjn(hl, pfc_mnt_d, fullprjn, fmpfc_out);
-          }
-	}
-      }
-    }
-  }
+ //    if(pfc_new) {
+ //      if(out_stripes > 0) {
+ //        net->FindMakePrjn(hl, pfc_out, fullprjn, fmpfc_out);
+ //      }
+ //      if(mnt_stripes > 0) {
+ //        if(out_stripes == 0) {
+ //          net->FindMakePrjn(hl, pfc_mnt, fullprjn, fmpfc_out);
+ //          if(pfc_mnt_d) {
+ //            net->FindMakePrjn(hl, pfc_mnt_d, fullprjn, fmpfc_out);
+ //          }
+ //        }
+ //      }
+ //    }
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // set positions & geometries
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // set positions & geometries
 
-  snrthal->brain_area = ".*/.*/.*/.*/Substantia Nigra";
-  if(snrthal_out)
-    snrthal_out->brain_area = ".*/.*/.*/.*/Substantia Nigra";
-  // these are just random suggestions:
-  if(in_stripes > 0) {
-    if(matrix_go_in->brain_area.empty()) 
-      matrix_go_in->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(matrix_nogo_in->brain_area.empty()) 
-      matrix_nogo_in->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(pfc_in->brain_area.empty()) {
-      pfc_in->brain_area = ".*/.*/.*/.*/BA45";
-    }
-    if(pfc_in_d && pfc_in_d->brain_area.empty()) {
-      pfc_in_d->brain_area = ".*/.*/.*/.*/BA45";
-    }
-  }
-  if(mnt_stripes > 0) {
-    if(matrix_go_mnt->brain_area.empty()) 
-      matrix_go_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(matrix_nogo_mnt->brain_area.empty()) 
-      matrix_nogo_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(pfc_mnt->brain_area.empty()) {
-      pfc_mnt->brain_area = ".*/.*/.*/.*/BA9";
-    }
-    if(pfc_mnt_d && pfc_mnt_d->brain_area.empty()) {
-      pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
-    }
-  }
-  if(out_stripes > 0) {
-    if(matrix_go_out->brain_area.empty()) 
-      matrix_go_out->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(matrix_nogo_out->brain_area.empty()) 
-      matrix_nogo_out->brain_area = ".*/.*/.*/.*/Caudate Body";
-    if(pfc_out->brain_area.empty()) {
-      pfc_out->brain_area = ".*/.*/.*/.*/BA44";
-    }
-    if(pfc_out_d && pfc_out_d->brain_area.empty()) {
-    	pfc_out_d->brain_area = ".*/.*/.*/.*/BA44";
-    }
-  }
+ //  snrthal->brain_area = ".*/.*/.*/.*/Substantia Nigra";
+ //  if(snrthal_out)
+ //    snrthal_out->brain_area = ".*/.*/.*/.*/Substantia Nigra";
+ //  // these are just random suggestions:
+ //  if(in_stripes > 0) {
+ //    if(matrix_go_in->brain_area.empty()) 
+ //      matrix_go_in->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(matrix_nogo_in->brain_area.empty()) 
+ //      matrix_nogo_in->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(pfc_in->brain_area.empty()) {
+ //      pfc_in->brain_area = ".*/.*/.*/.*/BA45";
+ //    }
+ //    if(pfc_in_d && pfc_in_d->brain_area.empty()) {
+ //      pfc_in_d->brain_area = ".*/.*/.*/.*/BA45";
+ //    }
+ //  }
+ //  if(mnt_stripes > 0) {
+ //    if(matrix_go_mnt->brain_area.empty()) 
+ //      matrix_go_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(matrix_nogo_mnt->brain_area.empty()) 
+ //      matrix_nogo_mnt->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(pfc_mnt->brain_area.empty()) {
+ //      pfc_mnt->brain_area = ".*/.*/.*/.*/BA9";
+ //    }
+ //    if(pfc_mnt_d && pfc_mnt_d->brain_area.empty()) {
+ //      pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
+ //    }
+ //  }
+ //  if(out_stripes > 0) {
+ //    if(matrix_go_out->brain_area.empty()) 
+ //      matrix_go_out->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(matrix_nogo_out->brain_area.empty()) 
+ //      matrix_nogo_out->brain_area = ".*/.*/.*/.*/Caudate Body";
+ //    if(pfc_out->brain_area.empty()) {
+ //      pfc_out->brain_area = ".*/.*/.*/.*/BA44";
+ //    }
+ //    if(pfc_out_d && pfc_out_d->brain_area.empty()) {
+ //    	pfc_out_d->brain_area = ".*/.*/.*/.*/BA44";
+ //    }
+ //  }
 
-  int lay_spc = 2;
+ //  int lay_spc = 2;
 
-  int n_lv_u;           // number of pvlv-type units
-  // if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
-    n_lv_u = 4;
-  // else if(lvesp->scalar.rep == ScalarValSpec::GAUSSIAN)
-  //   n_lv_u = 12;
-  // else
-  //   n_lv_u = 21;
+ //  int n_lv_u;           // number of pvlv-type units
+ //  // if(lvesp->scalar.rep == ScalarValSpec::LOCALIST)
+ //    n_lv_u = 4;
+ //  // else if(lvesp->scalar.rep == ScalarValSpec::GAUSSIAN)
+ //  //   n_lv_u = 12;
+ //  // else
+ //  //   n_lv_u = 21;
 
 
-  if(new_pbwm_laygp) {
-    pbwm_laygp_go->pos.z = 0;
-    pbwm_laygp_go->pos.x = 20;
-    pbwm_laygp_go->pos.y = 0;
-    pbwm_laygp_nogo->pos.z = 0;
-    pbwm_laygp_nogo->pos.x = 20;
-    pbwm_laygp_nogo->pos.y = 50;
-    pbwm_laygp_pfc->pos.z = 1;
-    pbwm_laygp_pfc->pos.x = 20;
-    pbwm_laygp_pfc->pos.y = 0;
-  }
+ //  if(new_pbwm_laygp) {
+ //    pbwm_laygp_go->pos.z = 0;
+ //    pbwm_laygp_go->pos.x = 20;
+ //    pbwm_laygp_go->pos.y = 0;
+ //    pbwm_laygp_nogo->pos.z = 0;
+ //    pbwm_laygp_nogo->pos.x = 20;
+ //    pbwm_laygp_nogo->pos.y = 50;
+ //    pbwm_laygp_pfc->pos.z = 1;
+ //    pbwm_laygp_pfc->pos.x = 20;
+ //    pbwm_laygp_pfc->pos.y = 0;
+ //  }
 
-  ///////////////	Matrix Layout
+ //  ///////////////	Matrix Layout
 
-  int mtx_st_x = 0;
-  int mtx_st_y = 0;
-  int mtx_nogo_y = mtx_st_y + 3 * lay_spc;
-  if(matrix_go_mnt)
-    mtx_nogo_y += matrix_go_mnt->disp_geom.y;
-  int mtx_go_y = 3 * lay_spc;
-  int mtx_z = 0;
-  int mtx_x_sz = 7;
-  int mtx_y_sz = 4;
-  int mtx_n = mtx_x_sz * mtx_y_sz;
+ //  int mtx_st_x = 0;
+ //  int mtx_st_y = 0;
+ //  int mtx_nogo_y = mtx_st_y + 3 * lay_spc;
+ //  if(matrix_go_mnt)
+ //    mtx_nogo_y += matrix_go_mnt->disp_geom.y;
+ //  int mtx_go_y = 3 * lay_spc;
+ //  int mtx_z = 0;
+ //  int mtx_x_sz = 7;
+ //  int mtx_y_sz = 4;
+ //  int mtx_n = mtx_x_sz * mtx_y_sz;
 
-  if(in_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_in->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
-      matrix_nogo_in->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+ //  if(in_stripes > 0) {
+ //    if(matrix_new) {
+ //      matrix_go_in->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+ //      matrix_nogo_in->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
 
-      matrix_go_in->un_geom.n = mtx_n; matrix_go_in->un_geom.x = mtx_x_sz;
-      matrix_go_in->un_geom.y = mtx_y_sz;
-      matrix_nogo_in->un_geom.n = mtx_n; matrix_nogo_in->un_geom.x = mtx_x_sz;
-      matrix_nogo_in->un_geom.y = mtx_y_sz;
-    }
-    lay_set_geom(matrix_go_in, in_stripes);
-    lay_set_geom(matrix_nogo_in, in_stripes);
+ //      matrix_go_in->un_geom.n = mtx_n; matrix_go_in->un_geom.x = mtx_x_sz;
+ //      matrix_go_in->un_geom.y = mtx_y_sz;
+ //      matrix_nogo_in->un_geom.n = mtx_n; matrix_nogo_in->un_geom.x = mtx_x_sz;
+ //      matrix_nogo_in->un_geom.y = mtx_y_sz;
+ //    }
+ //    lay_set_geom(matrix_go_in, in_stripes);
+ //    lay_set_geom(matrix_nogo_in, in_stripes);
 
-    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_in->disp_geom.y + 3 * lay_spc);
-    mtx_st_x += matrix_go_in->disp_geom.x + lay_spc; // move over..
-  }
-  if(mnt_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
-      matrix_nogo_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+ //    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_in->disp_geom.y + 3 * lay_spc);
+ //    mtx_st_x += matrix_go_in->disp_geom.x + lay_spc; // move over..
+ //  }
+ //  if(mnt_stripes > 0) {
+ //    if(matrix_new) {
+ //      matrix_go_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+ //      matrix_nogo_mnt->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
 
-      matrix_go_mnt->un_geom.n = mtx_n; matrix_go_mnt->un_geom.x = mtx_x_sz;
-      matrix_go_mnt->un_geom.y = mtx_y_sz;
-      matrix_nogo_mnt->un_geom.n = mtx_n; matrix_nogo_mnt->un_geom.x = mtx_x_sz;
-      matrix_nogo_mnt->un_geom.y = mtx_y_sz;
-    }
-    lay_set_geom(matrix_go_mnt, mnt_stripes);
-    lay_set_geom(matrix_nogo_mnt, mnt_stripes);
+ //      matrix_go_mnt->un_geom.n = mtx_n; matrix_go_mnt->un_geom.x = mtx_x_sz;
+ //      matrix_go_mnt->un_geom.y = mtx_y_sz;
+ //      matrix_nogo_mnt->un_geom.n = mtx_n; matrix_nogo_mnt->un_geom.x = mtx_x_sz;
+ //      matrix_nogo_mnt->un_geom.y = mtx_y_sz;
+ //    }
+ //    lay_set_geom(matrix_go_mnt, mnt_stripes);
+ //    lay_set_geom(matrix_nogo_mnt, mnt_stripes);
 
-    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_mnt->disp_geom.y + 3 * lay_spc);
-    mtx_st_x += matrix_go_mnt->disp_geom.x + lay_spc; // move over..
-  }
-  if(out_stripes > 0) {
-    if(matrix_new) {
-      matrix_go_out->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
-      matrix_nogo_out->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
+ //    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_mnt->disp_geom.y + 3 * lay_spc);
+ //    mtx_st_x += matrix_go_mnt->disp_geom.x + lay_spc; // move over..
+ //  }
+ //  if(out_stripes > 0) {
+ //    if(matrix_new) {
+ //      matrix_go_out->pos.SetXYZ(mtx_st_x, mtx_st_y + mtx_go_y, mtx_z);
+ //      matrix_nogo_out->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
 
-      matrix_go_out->un_geom.n = mtx_n; matrix_go_out->un_geom.x = mtx_x_sz;
-      matrix_go_out->un_geom.y = mtx_y_sz;
-      matrix_nogo_out->un_geom.n = mtx_n; matrix_nogo_out->un_geom.x = mtx_x_sz;
-      matrix_nogo_out->un_geom.y = mtx_y_sz;
-    }
-    lay_set_geom(matrix_go_out, out_stripes);
-    lay_set_geom(matrix_nogo_out, out_stripes);
+ //      matrix_go_out->un_geom.n = mtx_n; matrix_go_out->un_geom.x = mtx_x_sz;
+ //      matrix_go_out->un_geom.y = mtx_y_sz;
+ //      matrix_nogo_out->un_geom.n = mtx_n; matrix_nogo_out->un_geom.x = mtx_x_sz;
+ //      matrix_nogo_out->un_geom.y = mtx_y_sz;
+ //    }
+ //    lay_set_geom(matrix_go_out, out_stripes);
+ //    lay_set_geom(matrix_nogo_out, out_stripes);
 
-    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_out->disp_geom.y + 3 * lay_spc);
-    mtx_st_x += matrix_go_out->disp_geom.x + lay_spc; // move over..
-  }
+ //    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go_out->disp_geom.y + 3 * lay_spc);
+ //    mtx_st_x += matrix_go_out->disp_geom.x + lay_spc; // move over..
+ //  }
 
-  if(new_pbwm_laygp) {
-    pbwm_laygp_nogo->pos.y = mtx_nogo_y; // move over!
-  }
+ //  if(new_pbwm_laygp) {
+ //    pbwm_laygp_nogo->pos.y = mtx_nogo_y; // move over!
+ //  }
 
-  ///////////////	PFC Layout first -- get into z = 1
+ //  ///////////////	PFC Layout first -- get into z = 1
 
-  int pfcu_n = 49; int pfcu_x = 7; int pfcu_y = 7;
-  int pfc_st_x = 0;
-  int pfc_st_y = 0;
-  int pfc_z = 0;
-  if(in_stripes > 0) {
-    if(pfc_new) {
-      pfc_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_in->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    }
-    lay_set_geom(pfc_in, in_stripes);
+ //  int pfcu_n = 49; int pfcu_x = 7; int pfcu_y = 7;
+ //  int pfc_st_x = 0;
+ //  int pfc_st_y = 0;
+ //  int pfc_z = 0;
+ //  if(in_stripes > 0) {
+ //    if(pfc_new) {
+ //      pfc_in->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+ //      pfc_in->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //    }
+ //    lay_set_geom(pfc_in, in_stripes);
 
-    if(pfc_in_d) {
-      if(pfcd_new) {
-        pfc_in_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_in->disp_geom.y + lay_spc, pfc_z);
-        pfc_in_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-      }
-      lay_set_geom(pfc_in_d, in_stripes);
-    }
-    pfc_st_x += pfc_in->disp_geom.x + lay_spc; // move starting x over for next type
-  }
+ //    if(pfc_in_d) {
+ //      if(pfcd_new) {
+ //        pfc_in_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_in->disp_geom.y + lay_spc, pfc_z);
+ //        pfc_in_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //      }
+ //      lay_set_geom(pfc_in_d, in_stripes);
+ //    }
+ //    pfc_st_x += pfc_in->disp_geom.x + lay_spc; // move starting x over for next type
+ //  }
 
-  if(mnt_stripes > 0) {
-    if(pfc_new) {
-      pfc_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_mnt->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    }
-    lay_set_geom(pfc_mnt, mnt_stripes);
+ //  if(mnt_stripes > 0) {
+ //    if(pfc_new) {
+ //      pfc_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+ //      pfc_mnt->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //    }
+ //    lay_set_geom(pfc_mnt, mnt_stripes);
 
-    if(pfc_mnt_d) {
-      if(pfcd_new) {
-        pfc_mnt_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_mnt->disp_geom.y + lay_spc, pfc_z);
-        pfc_mnt_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-      }
-      lay_set_geom(pfc_mnt_d, mnt_stripes);
-    }
-    pfc_st_x += pfc_mnt->disp_geom.x + lay_spc;
-  }
+ //    if(pfc_mnt_d) {
+ //      if(pfcd_new) {
+ //        pfc_mnt_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_mnt->disp_geom.y + lay_spc, pfc_z);
+ //        pfc_mnt_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //      }
+ //      lay_set_geom(pfc_mnt_d, mnt_stripes);
+ //    }
+ //    pfc_st_x += pfc_mnt->disp_geom.x + lay_spc;
+ //  }
 
-  if(out_stripes > 0) {
-    if(pfc_new) {
-      pfc_out->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-      pfc_out->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    }
-    lay_set_geom(pfc_out, out_stripes);
-  }
-  if(pfc_out_d) {
-    if(pfcd_new) {
-      pfc_out_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_out->disp_geom.y + lay_spc, pfc_z);
-      pfc_out_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    }
-    lay_set_geom(pfc_out_d, out_stripes);
-  }
-  pfc_st_x += pfc_out->disp_geom.x + lay_spc;
+ //  if(out_stripes > 0) {
+ //    if(pfc_new) {
+ //      pfc_out->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+ //      pfc_out->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //    }
+ //    lay_set_geom(pfc_out, out_stripes);
+ //  }
+ //  if(pfc_out_d) {
+ //    if(pfcd_new) {
+ //      pfc_out_d->pos.SetXYZ(pfc_st_x, pfc_st_y + pfc_out->disp_geom.y + lay_spc, pfc_z);
+ //      pfc_out_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+ //    }
+ //    lay_set_geom(pfc_out_d, out_stripes);
+ //  }
+ //  pfc_st_x += pfc_out->disp_geom.x + lay_spc;
 
-  ///////////////	Now SNrThal
+ //  ///////////////	Now SNrThal
 
-  int snr_stripes = in_stripes + mnt_stripes;
-  if(snrthal_out) {
-    lay_set_geom(snrthal_out, out_stripes, 1);
-  }
-  else {
-    snr_stripes += out_stripes;
-  }
-  lay_set_geom(snrthal, snr_stripes, 1);
+ //  int snr_stripes = in_stripes + mnt_stripes;
+ //  if(snrthal_out) {
+ //    lay_set_geom(snrthal_out, out_stripes, 1);
+ //  }
+ //  else {
+ //    snr_stripes += out_stripes;
+ //  }
+ //  lay_set_geom(snrthal, snr_stripes, 1);
 
-  if(snrthal_new) { // put at front of go
-    snrthal->pos.SetXYZ(0, 0, mtx_z);
-  }
-  if(snrthal_out && snrthal_out_new) {
-    snrthal_out->pos.SetXYZ(snr_stripes*2 + lay_spc, 0, mtx_z);
-  }
+ //  if(snrthal_new) { // put at front of go
+ //    snrthal->pos.SetXYZ(0, 0, mtx_z);
+ //  }
+ //  if(snrthal_out && snrthal_out_new) {
+ //    snrthal_out->pos.SetXYZ(snr_stripes*2 + lay_spc, 0, mtx_z);
+ //  }
 
-  // here to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes, one_snr);
+ //  // here to allow it to get disp_geom for laying out the pfc and matrix guys!
+ //  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes, one_snr);
 
-  if(new_pbwm_laygp) {
-    pbwm_laygp_go->pos.z = 0;
-    pbwm_laygp_go->pos.x = 20;
-    pbwm_laygp_go->pos.y = 0;
-    pbwm_laygp_nogo->pos.z = 0;
-    pbwm_laygp_nogo->pos.x = 20;
-    pbwm_laygp_nogo->pos.y = mtx_nogo_y;
-    pbwm_laygp_pfc->pos.z = 1;
-    pbwm_laygp_pfc->pos.x = 20;
-    pbwm_laygp_pfc->pos.y = 0;
-  }
+ //  if(new_pbwm_laygp) {
+ //    pbwm_laygp_go->pos.z = 0;
+ //    pbwm_laygp_go->pos.x = 20;
+ //    pbwm_laygp_go->pos.y = 0;
+ //    pbwm_laygp_nogo->pos.z = 0;
+ //    pbwm_laygp_nogo->pos.x = 20;
+ //    pbwm_laygp_nogo->pos.y = mtx_nogo_y;
+ //    pbwm_laygp_pfc->pos.z = 1;
+ //    pbwm_laygp_pfc->pos.x = 20;
+ //    pbwm_laygp_pfc->pos.y = 0;
+ //  }
 
-  //////////////////////////////////////////////////////////////////////////////////
-  // build and check
+ //  //////////////////////////////////////////////////////////////////////////////////
+ //  // build and check
 
-  // Need to update act_denoms based on stripe counts
+ //  // Need to update act_denoms based on stripe counts
 
-  PFCLayerSpec* pfc_in_sp = PbwmSp("PFC_in",PFCLayerSpec);
-  PFCLayerSpec* pfc_mnt_sp = PbwmSp("PFC_mnt",PFCLayerSpec);
-  PFCLayerSpec* pfc_out_sp = PbwmSp("PFC_out",PFCLayerSpec);
+ //  PFCLayerSpec* pfc_in_sp = PbwmSp("PFC_in",PFCLayerSpec);
+ //  PFCLayerSpec* pfc_mnt_sp = PbwmSp("PFC_mnt",PFCLayerSpec);
+ //  PFCLayerSpec* pfc_out_sp = PbwmSp("PFC_out",PFCLayerSpec);
 
-  if(in_stripes > 0)
-    pfc_mnt_sp->unit_gp_inhib.act_denom = in_stripes;
-  else if(mnt_stripes > 0)
-    pfc_mnt_sp->unit_gp_inhib.act_denom = mnt_stripes;
-  else if(out_stripes > 0)
-    pfc_mnt_sp->unit_gp_inhib.act_denom = out_stripes;
+ //  if(in_stripes > 0)
+ //    pfc_mnt_sp->unit_gp_inhib.act_denom = in_stripes;
+ //  else if(mnt_stripes > 0)
+ //    pfc_mnt_sp->unit_gp_inhib.act_denom = mnt_stripes;
+ //  else if(out_stripes > 0)
+ //    pfc_mnt_sp->unit_gp_inhib.act_denom = out_stripes;
 
-  pfc_mnt_sp->UpdateAfterEdit(); // update
+ //  pfc_mnt_sp->UpdateAfterEdit(); // update
   
-  pfc_out_sp->SetUnique("unit_gp_inhib",true);
-  if(out_stripes > 0)
-    pfc_out_sp->unit_gp_inhib.act_denom = out_stripes;
-  else if(in_stripes > 0)
-    pfc_out_sp->unit_gp_inhib.act_denom = in_stripes;
-  else if(mnt_stripes > 0)
-    pfc_out_sp->unit_gp_inhib.act_denom = mnt_stripes;
-  // pfc_out_sp->unit_gp_inhib.gp_g = 0.8f; // special case
-  pfc_out_sp->UpdateAfterEdit(); // update
+ //  pfc_out_sp->SetUnique("unit_gp_inhib",true);
+ //  if(out_stripes > 0)
+ //    pfc_out_sp->unit_gp_inhib.act_denom = out_stripes;
+ //  else if(in_stripes > 0)
+ //    pfc_out_sp->unit_gp_inhib.act_denom = in_stripes;
+ //  else if(mnt_stripes > 0)
+ //    pfc_out_sp->unit_gp_inhib.act_denom = mnt_stripes;
+ //  // pfc_out_sp->unit_gp_inhib.gp_g = 0.8f; // special case
+ //  pfc_out_sp->UpdateAfterEdit(); // update
 
-  net->LayerPos_Cleanup();
+ //  net->LayerPos_Cleanup();
 
-  net->Build();			// rebuild after defaults in place
+ //  net->Build();			// rebuild after defaults in place
 
-  // move back!
-  if(new_pbwm_laygp) {
-    pbwm_laygp_go->pos.z = 0;
-    net->RebuildAllViews();     // trigger update
-  }
+ //  // move back!
+ //  if(new_pbwm_laygp) {
+ //    pbwm_laygp_go->pos.z = 0;
+ //    net->RebuildAllViews();     // trigger update
+ //  }
 
-  taMisc::CheckConfigStart(false, false);
+ //  taMisc::CheckConfigStart(false, false);
 
-  bool ok = false;
-  ok = PbwmSp("SNrThalLayer",SNrThalLayerSpec)->CheckConfig_Layer(snrthal, false);
-  if(in_stripes > 0) {
-    ok &= pfc_in_sp->CheckConfig_Layer(pfc_in, false);
-    ok &= PbwmSp("Matrix_Go_in",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_in, false);
-    ok &= PbwmSp("Matrix_NoGo_in",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_in, false);
-  }
-  if(mnt_stripes > 0) {
-    ok &= pfc_mnt_sp->CheckConfig_Layer(pfc_mnt, false);
-    ok &= PbwmSp("Matrix_Go_mnt",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_mnt, false);
-    ok &= PbwmSp("Matrix_NoGo_mnt",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_mnt, false);
-  }
-  if(out_stripes > 0) {
-    ok &= pfc_out_sp->CheckConfig_Layer(pfc_out, false);
-    ok &= PbwmSp("Matrix_Go_out",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_out, false);
-    ok &= PbwmSp("Matrix_NoGo_out",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_out, false);
-  }
+ //  bool ok = false;
+ //  ok = PbwmSp("SNrThalLayer",SNrThalLayerSpec)->CheckConfig_Layer(snrthal, false);
+ //  if(in_stripes > 0) {
+ //    ok &= pfc_in_sp->CheckConfig_Layer(pfc_in, false);
+ //    ok &= PbwmSp("Matrix_Go_in",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_in, false);
+ //    ok &= PbwmSp("Matrix_NoGo_in",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_in, false);
+ //  }
+ //  if(mnt_stripes > 0) {
+ //    ok &= pfc_mnt_sp->CheckConfig_Layer(pfc_mnt, false);
+ //    ok &= PbwmSp("Matrix_Go_mnt",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_mnt, false);
+ //    ok &= PbwmSp("Matrix_NoGo_mnt",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_mnt, false);
+ //  }
+ //  if(out_stripes > 0) {
+ //    ok &= pfc_out_sp->CheckConfig_Layer(pfc_out, false);
+ //    ok &= PbwmSp("Matrix_Go_out",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_out, false);
+ //    ok &= PbwmSp("Matrix_NoGo_out",MatrixLayerSpec)->CheckConfig_Layer(matrix_nogo_out, false);
+ //  }
 
-  taMisc::CheckConfigEnd(ok);
+ //  taMisc::CheckConfigEnd(ok);
 
-  if(!ok) {
-    msg =
-      "BG/PFC: An error in the configuration has occurred (it should be the last message\
- you received prior to this one).  The network will not run until this is fixed.\
- In addition, the configuration process may not be complete, so you should run this\
- function again after you have corrected the source of the error.";
-  }
-  else {
-    msg =
-    "BG/PFC configuration is now complete.  Do not forget the one remaining thing\
- you need to do manually:\n\n" + man_msg;
-  }
-  taMisc::Confirm(msg);
+ //  if(!ok) {
+ //    msg =
+ //      "BG/PFC: An error in the configuration has occurred (it should be the last message\
+ // you received prior to this one).  The network will not run until this is fixed.\
+ // In addition, the configuration process may not be complete, so you should run this\
+ // function again after you have corrected the source of the error.";
+ //  }
+ //  else {
+ //    msg =
+ //    "BG/PFC configuration is now complete.  Do not forget the one remaining thing\
+ // you need to do manually:\n\n" + man_msg;
+ //  }
+ //  taMisc::Confirm(msg);
 
-  for(int j=0;j<net->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
-    sp->UpdateAfterEdit();
-  }
+ //  for(int j=0;j<net->specs.leaves;j++) {
+ //    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
+ //    sp->UpdateAfterEdit();
+ //  }
 
-  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-  if(proj) {
-    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM -- actually saves network specifically");
-  }
+ //  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+ //  if(proj) {
+ //    proj->undo_mgr.SaveUndo(net, "Wizard::PBWM -- actually saves network specifically");
+ //  }
   return true;
 }
 
@@ -2883,8 +2857,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // HippoConSpecs, lrate = .2, hebb = 0.05
   hip_cons->SetUnique("lrate", true);
   hip_cons->lrate = 0.2f;
-  hip_cons->SetUnique("lmix", true);
-  hip_cons->lmix.hebb = 0.05f;
+  // hip_cons->SetUnique("lmix", true);
+  // hip_cons->lmix.hebb = 0.05f;
   
   // mossy mean = 0.9 var = 0.01, rel = 8 , lrate = 0
   mossy_cons->SetUnique("rnd", true);
@@ -2894,33 +2868,33 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   mossy_cons->wt_scale.rel = 8.0f;
   mossy_cons->SetUnique("lrate", true);
   mossy_cons->lrate = 0.0f;
-  mossy_cons->SetUnique("savg_cor", true);
-  mossy_cons->savg_cor.cor = 1.0f;
+  // mossy_cons->SetUnique("savg_cor", true);
+  // mossy_cons->savg_cor.cor = 1.0f;
   
   // ca3_ca3 rel = 2, 
   ca3ca3_cons->SetUnique("wt_scale", true);
   ca3ca3_cons->wt_scale.rel = 2.0f;
-  ca3ca3_cons->SetUnique("savg_cor", true);
-  ca3ca3_cons->savg_cor.cor = 1.0f;
+  // ca3ca3_cons->SetUnique("savg_cor", true);
+  // ca3ca3_cons->savg_cor.cor = 1.0f;
 
   // ca3_ca1 lrate = 0.05
   ca3ca1_cons->SetUnique("lrate", true);
   ca3ca1_cons->lrate = 0.05f;
-  ca3ca1_cons->SetUnique("lmix", true);
-  ca3ca1_cons->lmix.hebb = 0.005f;
+  // ca3ca1_cons->SetUnique("lmix", true);
+  // ca3ca1_cons->lmix.hebb = 0.005f;
 
   // sparse hippocampal layers!
 
-  dg_laysp->SetUnique("kwta", true);
-  dg_laysp->kwta.pct = 0.01f;
+  // dg_laysp->SetUnique("kwta", true);
+  // dg_laysp->kwta.pct = 0.01f;
 
-  ca3_laysp->SetUnique("kwta", true);
-  ca3_laysp->kwta.pct = 0.02f;
+  // ca3_laysp->SetUnique("kwta", true);
+  // ca3_laysp->kwta.pct = 0.02f;
 
   ca1_laysp->SetUnique("inhib_group", true);
   ca1_laysp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-  ca1_laysp->SetUnique("gp_kwta", true);
-  ca1_laysp->gp_kwta.pct = 0.1f;
+  // ca1_laysp->SetUnique("gp_kwta", true);
+  // ca1_laysp->gp_kwta.pct = 0.1f;
  
 
   subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);

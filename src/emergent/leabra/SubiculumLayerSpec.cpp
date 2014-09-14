@@ -45,8 +45,8 @@ void SubiculumLayerSpec::Defaults_init() {
   scalar.rep = ScalarValSpec::GAUSSIAN;
   unit_range.min = -0.5f;
   unit_range.max = 1.5f;
-  inhib.kwta_pt = 0.5f;
-  kwta.k = 3;
+  // inhib.kwta_pt = 0.5f;
+  // kwta.k = 3;
 }
 
 bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -135,21 +135,23 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
     LeabraLayerSpec* lsout = (LeabraLayerSpec*)lout->GetLayerSpec();
 
     if(lsin->HasUnitGpInhib(lin)) {
+      int gp_nunits = lin->UnitAccess_NUnits(Layer::ACC_GP);
       for(int g=0; g < lin->gp_geom.n; g++) {
         LeabraUnGpData* gpdin = lin->ungp_data.FastEl(g);
         nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_GP, g, net);
         if(net->on_errs && net->off_errs)
-          ntot += 2 * gpdin->kwta.k;
+          ntot += 2 * (int)(gpdin->acts_m_avg * (float)gp_nunits);
         else
-          ntot += gpdin->kwta.k;
+          ntot += (int)(gpdin->acts_m_avg * (float)gp_nunits);
       }
     }
     else {
+      int lay_nunits = lin->UnitAccess_NUnits(Layer::ACC_LAY);
       nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_LAY, 0, net);
       if(net->on_errs && net->off_errs)
-        ntot += 2 * lin->kwta.k;
+        ntot += 2 * (int)(lin->acts_m_avg * (float)lay_nunits);
       else
-        ntot += lin->kwta.k;
+        ntot += (int)(lin->acts_m_avg * (float)lay_nunits);
     }
   }
 

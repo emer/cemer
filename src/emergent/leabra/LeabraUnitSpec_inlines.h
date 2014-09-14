@@ -24,10 +24,8 @@
 
 inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                               LeabraNetwork* net) {
-  if(lspec->inhib.type == LeabraInhibSpec::FF_FB_INHIB) {
-    float nw_fbi = lspec->inhib.self_fb * u->act_eq;
-    u->g_i_self = lspec->inhib.dt * nw_fbi + (1.0f - lspec->inhib.dt) * u->g_i_self;
-  }
+  float nw_fbi = lspec->inhib.self_fb * u->act_eq;
+  u->g_i_self = lspec->inhib.fb_dt * nw_fbi + (1.0f - lspec->inhib.fb_dt) * u->g_i_self;
 }
 
 inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
@@ -36,20 +34,6 @@ inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* l
   Compute_SelfInhib(u, lspec, net);
   u->gc_i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
 }
-
-inline float LeabraUnitSpec::Compute_IThresh(LeabraUnit* u, LeabraNetwork* net) {
-  float non_bias_net = u->net * g_bar.e;
-  if(u->bias.size)		// subtract out bias weights so they can change k
-    non_bias_net -= u->bias_scale * u->bias.OwnCn(0,BaseCons::WT);
-  // including the ga and gh terms
-  return ((non_bias_net * e_rev_sub_thr.e + u->gc_l * e_rev_sub_thr.l
-	   - u->adapt) / thr_sub_e_rev_i);
-} 
-
-inline float LeabraUnitSpec::Compute_IThreshNetinOnly(float netin) {
-  return ((netin * g_bar.e * e_rev_sub_thr.e + g_bar.l * e_rev_sub_thr.l) /
-	  thr_sub_e_rev_i);
-} 
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
   return ((u->gc_i * e_rev_sub_thr.i + u->gc_l * e_rev_sub_thr.l - u->adapt) /

@@ -36,10 +36,9 @@ void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
   inherited::Compute_NetinInteg(u, net, thread_no);
   int time_since_thr = (int)u->net_ctxt;
   if(time_since_thr > cereb.inhib_start_time) {
-    // by turning net input and i_thr off here, we allow other gran
-    // cells to win the kwta competition, which is based on i_thr
+    // by turning net input off here, we allow other gran
+    // cells to win the competition
     u->net = 0.0f;
-    u->i_thr = 0.0f;
   }
 }
 

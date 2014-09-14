@@ -79,10 +79,9 @@ public:
   float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta net input received from sending units -- only used for non-threaded case
   float		g_i_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
   float		g_i_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta inhibitory net input received from sending units
-  float		g_i_syn;	// #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of g_i_raw -- this is added with layer-level inhibition (fffb, kwta) to get the full inhibition in gc.i
+  float		g_i_syn;	// #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of g_i_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
   float         g_i_self;       // #NO_SAVE #CAT_Activation time-averaged self inhibition value -- needs to be separate variable to allow time-averaging to prevent severe oscillations
 
-  float		i_thr;		// #NO_SAVE #CAT_Activation inhibitory threshold value for computing kWTA
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
 
@@ -173,9 +172,6 @@ public:
   void	Compute_NetinInteg(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinInteg(this, net, thread_no); }
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
-  float Compute_IThresh(LeabraNetwork* net)
-  { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_IThresh(this, net); }
-  // #CAT_Activation #IGNORE called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
   float Compute_EThresh()
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_EThresh(this); }
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
@@ -185,7 +181,7 @@ public:
 
   void	Compute_ApplyInhib(LeabraLayerSpec* lspec, LeabraNetwork* net, float inhib_val)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lspec, net, inhib_val); }
-  // #CAT_Activation #IGNORE apply computed inhibitory value (kwta) to unit inhibitory conductance
+  // #CAT_Activation #IGNORE apply computed inhibitory value to unit inhibitory conductance
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
@@ -208,10 +204,6 @@ public:
   void	Compute_MidMinus(LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MidMinus(this, net); }
   // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and hippocampus -- stores act_mid
-
-  void	Compute_CycSynDep(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_CycSynDep(this, net, thread_no); }
-  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on.
 
   ///////////////////////////////////////////////////////////////////////
   //	Settle Final
@@ -259,10 +251,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
-
-  void	Compute_SRAvg_Cons(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SRAvg_Cons(this, net, thread_no); }
-  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
 
   void  Compute_dWt_l(LeabraNetwork* net, int thread_no=-1)
   { GetUnitSpec()->Compute_dWt(this, (Network*)net, thread_no); }

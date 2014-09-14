@@ -53,11 +53,6 @@ void LeabraPrjn::Trial_Init_Specs(LeabraNetwork* net) {
     ((LeabraConSpec*)con_spec.SPtr())->Trial_Init_Specs(net);
 }
 
-void LeabraPrjn::SetLearnRule(LeabraNetwork* net) {
-  if(con_spec.SPtr())
-    ((LeabraConSpec*)con_spec.SPtr())->SetLearnRule(net);
-}
-
 void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
   LeabraLayer* fmlay = (LeabraLayer*)from.ptr();
   if(!fmlay || fmlay->lesioned()) return;

@@ -18,11 +18,6 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraDeltaConSpec);
 
 void LeabraDeltaConSpec::Initialize() {
-  SetUnique("lmix", true);
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
-//   lmix.err_sb = false;
-
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
@@ -35,8 +30,5 @@ void LeabraDeltaConSpec::Initialize() {
 
 void LeabraDeltaConSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  // these are enforced absolutely because the code does not use them:
-  lmix.hebb = 0.0f;
-  lmix.err = 1.0f;
 }
 

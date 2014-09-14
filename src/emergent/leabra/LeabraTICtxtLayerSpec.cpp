@@ -65,7 +65,7 @@ bool LeabraTICtxtLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 }
 
 void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
+  lay->Inhib_SetVals(0.5f);            // assume 0 - 1 clamped inputs
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);

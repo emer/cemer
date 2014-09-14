@@ -218,11 +218,10 @@ class E_API LeabraActAvgSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		l_up_inc;	// #AKA_l_up_dt #DEF_0.05:0.25 [0.2 std] amount to increment the long time-average activation (avg_l) at the trial level, after multiplying by the minus phase activation -- this is an additive increase for all units with act_m > opt_thresh.send -- larger values drive higher long time-average values, which acts as the threshold for XCAL self-organizing BCM-style learning, meaning that learning will shift to weight decreases more quickly as activity persists -- if weights are steadily decreasing too much, then lower values are needed -- typically works best with the highest value that does not result in excessive weight loss
-  float		l_dn_tau;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/tau) is multiplied by layer kwta.pct target activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer kwta.pct value accurate
-  bool          cascade;        // use cascading, continuously updating running average computations -- each average builds upon the next, and everything is continuously updated regardless of phase or other sravg timing signals set at the network level -- this is the most biologically plausible version
-  float		ss_tau;	        // #CONDSHOW_ON_cascade #DEF_1;10 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is primarily of use for discrete spiking models to integrate over the discrete spikes before integrating into the avg_s short time scale, and should generally be set to 1 for rate-code activations
-  float		s_tau;		// #CONDSHOW_ON_cascade #DEF_5;50 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
-  float		m_tau;		// #CONDSHOW_ON_cascade #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
+  float		l_dn_tau;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/tau) is multiplied by layer acts_m_avg layer activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer avg_act.init value accurate
+  float		ss_tau;	        // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale
+  float		s_tau;		// #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
+  float		m_tau;		// #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
 
   float		l_dn_dt;	// #READ_ONLY #EXPERT rate = 1 / tau
   float		ss_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
@@ -405,16 +404,10 @@ public:
     FIXED_NOISE,		// no adaptation of noise: remains fixed at the noise.var value in the unit spec
     SCHED_CYCLES,		// use noise_sched over cycles of settling
     SCHED_EPOCHS,		// use noise_sched over epochs of learning
-    PVLV_PVI,			// use PVLV PVi reward prediction values -- predicts primary value (PV) and inhibits it (i) -- only if a PVLV config is in place -- appropriate for output-oriented layers that are important for generating responses associated with rewards
-    PVLV_LVE,			// use PVLV LVe reward prediction values -- learned value excitatory reward associations -- this can be active outside the time when primary rewards are expected, and is appropriate for working memory or other internal or sensory-oriented processing
-    PVLV_MIN,			// use the minimum of PVi and LVe values -- an overall worst case appraisal of the state of the system
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
-  bool		k_pos_noise;	// #CONDSHOW_ON_trial_fixed a special kind of trial_fixed noise, where k units (according to computed kwta function) chosen at random (permuted list) are given a positive noise.var value of noise, while the remainder get nothing -- approximates a k-softmax in some respects
   AdaptMode 	mode;		// how to adapt noise variance over time
-  float		min_pct;	// #CONDSHOW_OFF_mode:FIXED_NOISE,SCHED_CYCLES,SCHED_EPOCHS #DEF_0.5 minimum noise as a percentage (proportion) of overall maximum noise value (which is noise.var in unit spec)
-  float		min_pct_c;	// #READ_ONLY 1-min_pct
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -479,9 +472,6 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
-
-  virtual void	SetLearnRule(LeabraNetwork* net);
-  // #CAT_Learning set current learning rule from the network
 
   void  Init_dWt(Unit* u, Network* net, int thread_no=-1) override;
   void  Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
@@ -557,11 +547,6 @@ public:
     virtual void Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
 
-    inline float Compute_IThresh(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation #IGNORE called by Compute_NetinInteg: compute inhibitory value that would place unit directly at threshold
-      inline float Compute_IThreshNetinOnly(float netin);
-      // #IGNORE called by Compute_IThresh: compute inhibitory value that would place unit directly at threshold, using only the provided net input value, along with the g_bar.l leak current in the unit spec
-
   inline float Compute_EThresh(LeabraUnit* u);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
 
@@ -622,8 +607,6 @@ public:
 
   virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Learning compute sending-receiving activation product averages -- unit level only, used for XCAL
-  virtual void 	Compute_SRAvg_Cons(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute sending-receiving activation coproduct averages for the connections -- not used for XCAL typically -- just for CtLeabra_CAL
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
@@ -634,9 +617,6 @@ public:
 
   virtual void	Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net);
   // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and ff weighting -- stores act_mid
-
-  virtual void 	Compute_CycSynDep(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Activation compute cycle-level synaptic depression (must be defined by appropriate conspec subclass) -- called at end of each cycle of computation if net_misc.cyc_syn_dep is on -- threaded direct to units
 
   ///////////////////////////////////////////////////////////////////////
   //	Settle Final
