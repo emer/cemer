@@ -70,6 +70,8 @@
 #include <QApplication>
 #include <QPalette>
 #include <QLineEdit>
+#include <QTextEdit>
+#include <QTextCursor>
 #include <QClipboard>
 #include <QWebView>
 
@@ -2153,23 +2155,35 @@ void iMainWindowViewer::editCut() {
     lineEdit->cut();
     return;
   }
-  
   QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Cut);
+    return;
+  }
+  QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
+  if (textEdit) {
+    textEdit->cut();
   }
 }
 
 void iMainWindowViewer::editCopy() {
+  QWidget* widg = focusWidget();
+  
   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
   if (lineEdit) // if text
   {
     lineEdit->copy();
+    return;
   }
-  
   QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Copy);
+    return;
+  }
+  QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
+  if (textEdit) {
+    textEdit->copy();
+    return;
   }
   else {  // else object
     emit_EditAction(iClipData::EA_COPY);
@@ -2181,11 +2195,17 @@ void iMainWindowViewer::editPaste() {
   if (lineEdit)  // if text
   {
     lineEdit->paste();
+    return;
   }
-
   QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
   if (webViewEdit) {
     webViewEdit->page()->triggerAction(QWebPage::Paste);
+    return;
+  }
+  QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
+  if (textEdit) {
+    textEdit->paste();
+    return;
   }
   else {  // else object
     emit_EditAction(iClipData::EA_PASTE);
@@ -2199,44 +2219,45 @@ void iMainWindowViewer::editMenu_aboutToShow() {
     editRedoAction->setEnabled(proj->undo_mgr.RedosAvail() > 0);
   }
   else {
+    editUndoAction->setEnabled(false);
+    editRedoAction->setEnabled(false);
   }
-  QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
-  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
   
-  bool edit_text = lineEdit != NULL;
-  if (edit_text) {
-    editCutAction->setEnabled(edit_text && lineEdit->hasSelectedText());
-    editCopyAction->setEnabled(edit_text && lineEdit->hasSelectedText());
+  // these aren't for text
+  editDupeAction->setEnabled(false);
+  editDeleteAction->setEnabled(false);
+  // these are not always visible
+  editPasteIntoAction->setVisible(false);
+  editPasteAssignAction->setVisible(false);
+  editPasteAppendAction->setVisible(false);
+
+  QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
+  QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
+  QWebView*  webViewEdit = dynamic_cast<QWebView*>(focusWidget());
+
+  if (lineEdit != NULL) {
+    editCutAction->setEnabled(lineEdit->hasSelectedText());
+    editCopyAction->setEnabled(lineEdit->hasSelectedText());
     
     QClipboard *clipboard = QApplication::clipboard();
     QString clip_text = clipboard->text();
-    editPasteAction->setEnabled(edit_text && !clip_text.isEmpty());
-    
-    // these aren't for text
-    editDupeAction->setEnabled(false);
-    editDeleteAction->setEnabled(false);
-    
-    // these are not always visible
-    editPasteIntoAction->setVisible(false);
-    editPasteAssignAction->setVisible(false);
-    editPasteAppendAction->setVisible(false);
+    editPasteAction->setEnabled(!clip_text.isEmpty());
   }
-  else if (webViewEdit) {
-    editCutAction->setEnabled(webViewEdit && webViewEdit->selectedText().size() != 0);
-    editCopyAction->setEnabled(webViewEdit && webViewEdit->selectedText().size() != 0);
+  else if (textEdit != NULL) {
+    editCutAction->setEnabled(textEdit->textCursor().hasSelection());
+    editCopyAction->setEnabled(textEdit->textCursor().hasSelection());
     
     QClipboard *clipboard = QApplication::clipboard();
     QString clip_text = clipboard->text();
-    editPasteAction->setEnabled(webViewEdit && !clip_text.isEmpty());
+    editPasteAction->setEnabled(!clip_text.isEmpty());
+  }
+  else if (webViewEdit != NULL) {
+    editCutAction->setEnabled(webViewEdit->selectedText().size() != 0);
+    editCopyAction->setEnabled(webViewEdit->selectedText().size() != 0);
     
-    // these aren't for text
-    editDupeAction->setEnabled(false);
-    editDeleteAction->setEnabled(false);
-    
-    // these are not always visible
-    editPasteIntoAction->setVisible(false);
-    editPasteAssignAction->setVisible(false);
-    editPasteAppendAction->setVisible(false);
+    QClipboard *clipboard = QApplication::clipboard();
+    QString clip_text = clipboard->text();
+    editPasteAction->setEnabled(!clip_text.isEmpty());
   }
   else {  // focus is not in text field
     editCutAction->setEnabled(false);
