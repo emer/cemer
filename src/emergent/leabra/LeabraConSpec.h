@@ -443,7 +443,7 @@ public:
   // #IGNORE compute bias weight change for XCAL rule
 
   inline void	B_Compute_dWt(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay);
-  // #IGNORE overall compute bias delta-weights for Leabra -- just a switch on learn rule to select above algorithm-specific variant
+  // #IGNORE overall compute bias delta-weights for Leabra
 
   inline virtual void	B_Compute_Weights(RecvCons* bias, LeabraUnit* ru);
   // #IGNORE update weights for bias connection (same for all algos)

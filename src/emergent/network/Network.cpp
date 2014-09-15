@@ -151,6 +151,9 @@ void Network::InitLinks() {
   taBase::Own(max_disp_size, this);
   taBase::Own(max_disp_size2d, this);
 
+  taBase::Own(stats, this);
+  taBase::Own(threads, this);
+
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
   taBase::Own(epc_prerr, this);
@@ -165,7 +168,6 @@ void Network::InitLinks() {
   taBase::Own(misc_time, this);  //misc_time.name = "misc_time";
 
   taBase::Own(send_netin_tmp, this);
-  taBase::Own(threads, this);
 
   brain_atlas = brain_atlases->FindNameContains("Talairach"); // default
   

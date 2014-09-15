@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.1.0 rev7438
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7547
 LeabraProject .projects["leabra_bench"] { 
  Doc_Group @.docs = [0] {
  };
@@ -771,14 +771,12 @@ LeabraProject .projects["leabra_bench"] {
      ProgVar @["input_data"] { };
     };
 
-    ProgVar_List @.vars = [7] {
+    ProgVar_List @.vars = [5] {
      ProgVar @["data_loop_order"] { };
      ProgVar @["trial"] { };
      ProgVar @["trial_mon_data"] { };
      ProgVar @["epoch_timer"] { };
      ProgVar @["data_loop_index"] { };
-     ProgVar @["compute_rel_netin"] { };
-     ProgVar @["adapt_rel_abs_netin"] { };
     };
 
     Function_List @.functions = [0] {
@@ -789,7 +787,7 @@ LeabraProject .projects["leabra_bench"] {
      AssignExpr @[1] { };
     };
 
-    ProgEl_List @.prog_code = [11] {
+    ProgEl_List @.prog_code = [9] {
      NetCounterInit @[0] { };
      AssignExpr @[1] { };
      MethodCall @[2] { 
@@ -827,31 +825,7 @@ LeabraProject .projects["leabra_bench"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[8] { 
-      ProgEl_List @.true_code = [2] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-       If @[1] { 
-	ProgEl_List @.true_code = [2] {
-	 MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	 };
-	 MethodCall @[1] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	 };
-	};
-       };
-      };
-     };
-     MethodCall @[9] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ProgramCall @[10] { 
+     ProgramCall @[8] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
@@ -870,11 +844,9 @@ LeabraProject .projects["leabra_bench"] {
      ProgVar @["input_data"] { };
     };
 
-    ProgVar_List @.vars = [4] {
+    ProgVar_List @.vars = [2] {
      ProgVar @["phase_no"] { };
      ProgVar @["update_net_view"] { };
-     ProgVar @["trial"] { };
-     ProgVar @["compute_rel_netin"] { };
     };
 
     Function_List @.functions = [0] {
@@ -884,7 +856,7 @@ LeabraProject .projects["leabra_bench"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [8] {
+    ProgEl_List @.prog_code = [7] {
      NetCounterInit @[0] { };
      MethodCall @[1] { 
       ProgArg_List @.meth_args = [0] {
@@ -917,20 +889,12 @@ LeabraProject .projects["leabra_bench"] {
        };
       };
      };
-     If @[5] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     ProgramCall @[6] { 
+     ProgramCall @[5] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetUpdateView @[7] { };
+     NetUpdateView @[6] { };
     };
    };
    Program @["LeabraSettle"] { 
@@ -945,9 +909,8 @@ LeabraProject .projects["leabra_bench"] {
      ProgVar @["input_data"] { };
     };
 
-    ProgVar_List @.vars = [3] {
+    ProgVar_List @.vars = [2] {
      ProgVar @["cycle"] { };
-     ProgVar @["min_cycles"] { };
      ProgVar @["update_net_view"] { };
     };
 
@@ -958,65 +921,51 @@ LeabraProject .projects["leabra_bench"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [11] {
-     NetCounterInit @[0] { };
-     MethodCall @[1] { 
+    ProgEl_List @.prog_code = [10] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["cycle_max"] { };
+       ProgVar @["cyc"] { };
+      };
+     };
+     NetCounterInit @[1] { };
+     MethodCall @[2] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[2] { 
+     ProgramCall @[3] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     MethodCall @[3] { 
+     MethodCall @[4] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[4] { 
-      ProgEl_List @.true_code = [1] {
-       AssignExpr @[0] { };
+     MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
       };
      };
-     Else @[5] { 
-      ProgEl_List @.else_code = [1] {
-       AssignExpr @[0] { };
-      };
-     };
-     WhileLoop @[6] { 
-      ProgEl_List @.loop_code = [4] {
+     ForLoop @[6] { 
+      ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
 	 ProgArg @[0] { };
 	};
        };
-       NetCounterIncr @[1] { };
-       IfContinue @[2] { };
-       IfBreak @[3] { };
+       AssignExpr @[1] { };
       };
      };
      MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[8] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
+     MethodCall @[8] { 
+      ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[9] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     NetUpdateView @[10] { };
+     NetUpdateView @[9] { };
     };
    };
    Program @["LeabraCycle"] { 
@@ -1504,9 +1453,9 @@ LeabraProject .projects["leabra_bench"] {
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
-    UserDataItem @["maxda"] { };
     UserDataItem @["minus_output_name"] { };
     UserDataItem @["minus_cycles"] { };
+    UserDataItem @["tot_cycle"] { };
     UserDataItem @["ct_cycle"] { };
     UserDataItem @["phase_no"] { };
     UserDataItem @["phase"] { };
@@ -1521,6 +1470,7 @@ LeabraProject .projects["leabra_bench"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["maxda"] { };
     UserDataItem @["pvlv_lve"] { };
     UserDataItem @["pvlv_pvi"] { };
    };
@@ -1701,7 +1651,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1715,7 +1665,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1729,7 +1679,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1743,7 +1693,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1757,7 +1707,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1771,7 +1721,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1785,7 +1735,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1799,7 +1749,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1813,7 +1763,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1827,7 +1777,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1841,7 +1791,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1855,7 +1805,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1869,7 +1819,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1893,7 +1843,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1907,7 +1857,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1921,7 +1871,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1935,7 +1885,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1949,7 +1899,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1963,7 +1913,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1987,7 +1937,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2011,7 +1961,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2035,7 +1985,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2059,7 +2009,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2083,7 +2033,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2097,7 +2047,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2111,7 +2061,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2121,7 +2071,7 @@ LeabraProject .projects["leabra_bench"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -2141,7 +2091,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2155,7 +2105,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2169,7 +2119,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2183,7 +2133,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2197,7 +2147,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2211,7 +2161,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2225,7 +2175,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2239,7 +2189,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2253,7 +2203,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2267,7 +2217,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2281,7 +2231,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2295,7 +2245,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2309,7 +2259,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2333,7 +2283,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2347,7 +2297,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2361,7 +2311,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2375,7 +2325,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2389,7 +2339,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2403,7 +2353,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2427,7 +2377,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2451,7 +2401,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2475,7 +2425,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2499,7 +2449,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2523,7 +2473,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2537,7 +2487,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2551,7 +2501,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2561,7 +2511,7 @@ LeabraProject .projects["leabra_bench"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -2581,7 +2531,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2595,7 +2545,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2609,7 +2559,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2623,7 +2573,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2637,7 +2587,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2651,7 +2601,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2665,7 +2615,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2679,7 +2629,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2693,7 +2643,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2707,7 +2657,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2721,7 +2671,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2735,7 +2685,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2749,7 +2699,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2773,7 +2723,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2787,7 +2737,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2801,7 +2751,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2815,7 +2765,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2829,7 +2779,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2843,7 +2793,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2867,7 +2817,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2891,7 +2841,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2915,7 +2865,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2939,7 +2889,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2963,7 +2913,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2977,7 +2927,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2991,7 +2941,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3001,7 +2951,7 @@ LeabraProject .projects["leabra_bench"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -3021,7 +2971,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3035,7 +2985,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3049,7 +2999,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3063,7 +3013,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3077,7 +3027,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3091,7 +3041,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3105,7 +3055,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3119,7 +3069,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3133,7 +3083,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3143,7 +3093,7 @@ LeabraProject .projects["leabra_bench"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -3163,7 +3113,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3177,7 +3127,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3191,7 +3141,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3205,7 +3155,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3219,7 +3169,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3233,7 +3183,7 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -3243,7 +3193,7 @@ LeabraProject .projects["leabra_bench"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
@@ -5459,7 +5409,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       is_gauss_double_cached=0;
       cached_gauss_double=0;
      };
-     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=18.064782: n_used=1: };
+     TimeUsedHR @["batch_TimeUsedHR"] {name="batch_TimeUsedHR": s_used=18.064782: n_used=1: avg_used={avg=0: sum=0: n=0: }: };
     };
     types {
      name="types";
@@ -5914,7 +5864,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=0;
       orig_prog_code=;
       obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
-      path="threads";
+      path="lthreads";
       result_var=NULL;
       method=taThreadMgr::StartTimers;
       meth_args {
@@ -6013,7 +5963,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=0;
       orig_prog_code=;
       obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
-      path="threads";
+      path="lthreads";
       result_var=NULL;
       method=taThreadMgr::EndTimers;
       meth_args {
@@ -6220,26 +6170,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
       init_from=NULL;
      };
-     ProgVar @["compute_rel_netin"] {
-      name="compute_rel_netin";
-      var_type=T_Bool;
-      bool_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="call Compute_AvgAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
-      init_from=NULL;
-     };
-     ProgVar @["adapt_rel_abs_netin"] {
-      name="adapt_rel_abs_netin";
-      var_type=T_Bool;
-      bool_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
-      init_from=NULL;
-     };
     };
     functions {
      name="functions";
@@ -6409,19 +6339,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
      };
      MethodCall @[6] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="network.Compute_StableWeights()";
-      result_var=NULL;
-      obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-      method=LeabraNetwork::Compute_StableWeights;
-      meth_args {
-       name="ProgArg_List_0";
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     MethodCall @[7] {
       desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
       flags=0;
       orig_prog_code=;
@@ -6434,72 +6351,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     If @[8] {
-      desc=;
-      flags=NEW_EL;
-      orig_prog_code=;
-      cond {
-       expr="compute_rel_netin";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc=;
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	method=LeabraNetwork::Compute_AvgAbsRelNetin;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-       If @[1] {
-	desc=;
-	flags=0;
-	orig_prog_code=;
-	cond {
-	 expr="adapt_rel_abs_netin";
-	};
-	true_code {
-	 name=;
-	 el_typ=ProgCode;
-	 el_def=0;
-	 MethodCall @[0] {
-	  desc=;
-	  flags=0;
-	  orig_prog_code=;
-	  result_var=NULL;
-	  obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	  method=LeabraNetwork::Compute_AdaptRelNetin;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	  };
-	 };
-	 MethodCall @[1] {
-	  desc=;
-	  flags=0;
-	  orig_prog_code=;
-	  result_var=NULL;
-	  obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraEpoch"].args["network"]$;
-	  method=LeabraNetwork::Compute_AdaptAbsNetin;
-	  meth_args {
-	   name=;
-	   el_typ=ProgArg;
-	   el_def=0;
-	  };
-	 };
-	};
-       };
-      };
-     };
-     MethodCall @[9] {
+     MethodCall @[7] {
       desc="done with the computation in the epoch -- record time it took";
       flags=0;
       orig_prog_code=;
@@ -6512,7 +6364,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_def=0;
       };
      };
-     ProgramCall @[10] {
+     ProgramCall @[8] {
       desc="run program that records data from network and possibly other sources about the epoch";
       flags=0;
       orig_prog_code=;
@@ -6603,26 +6455,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
       desc="determines whether to update any network view displays after trial is completed";
-      init_from=NULL;
-     };
-     ProgVar @["trial"] {
-      name="trial";
-      var_type=T_Int;
-      int_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|EDIT_VAL;
-      reference=0;
-      desc="current trial (event) within the epoch -- increments automatically";
-      init_from=NULL;
-     };
-     ProgVar @["compute_rel_netin"] {
-      name="compute_rel_netin";
-      var_type=T_Bool;
-      bool_val=0;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
       init_from=NULL;
      };
     };
@@ -6752,32 +6584,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       };
      };
      If @[4] {
-      desc=;
-      flags=NEW_EL;
-      orig_prog_code=;
-      cond {
-       expr="compute_rel_netin";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="special for adapting netin";
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
-	method=LeabraNetwork::Compute_AbsRelNetin;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-      };
-     };
-     If @[5] {
       desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
       orig_prog_code=;
@@ -6803,7 +6609,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        };
       };
      };
-     ProgramCall @[6] {
+     ProgramCall @[5] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
       orig_prog_code=;
@@ -6825,7 +6631,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       target=.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$$;
       targ_ld_init="*LeabraTrialMonitor*";
      };
-     NetUpdateView @[7] {
+     NetUpdateView @[6] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
       orig_prog_code=;
@@ -6893,17 +6699,6 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       desc="current cycle of settling (local loop counter)";
       init_from=NULL;
      };
-     ProgVar @["min_cycles"] {
-      name="min_cycles";
-      var_type=T_Int;
-      int_val=0;
-      objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="IMPORTANT: this value is obtained from the network min_cycles and min_cycles_phase2 -- change the value on the network object, not here in this program!
-sets the minimum number of cycles to settle for, regardless of network state changes, etc";
-      init_from=NULL;
-     };
      ProgVar @["update_net_view"] {
       name="update_net_view";
       var_type=T_Bool;
@@ -6938,7 +6733,37 @@ sets the minimum number of cycles to settle for, regardless of network state cha
      name="prog_code";
      el_typ=ProgCode;
      el_def=0;
-     NetCounterInit @[0] {
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["cycle_max"] {
+	name="cycle_max";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["cyc"] {
+	name="cyc";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     NetCounterInit @[1] {
       desc="initialize local cycle counter and corresponding counter on network";
       flags=0;
       orig_prog_code=;
@@ -6947,7 +6772,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
       counter=Network::cycle;
       update_after=0;
      };
-     MethodCall @[1] {
+     MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
       orig_prog_code=;
@@ -6960,7 +6785,7 @@ sets the minimum number of cycles to settle for, regardless of network state cha
        el_def=0;
       };
      };
-     ProgramCall @[2] {
+     ProgramCall @[3] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
       flags=0;
@@ -6993,7 +6818,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       target=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["ApplyInputs"]$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[3] {
+     MethodCall @[4] {
       desc="initializes various counters at start of settling";
       flags=0;
       orig_prog_code=;
@@ -7006,61 +6831,33 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
       };
      };
-     If @[4] {
-      desc="get appropriate min_cycles value depending on which phase we're in";
-      flags=0;
-      orig_prog_code=;
-      cond {
-       expr="network.phase_no <= 1";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       AssignExpr @[0] {
-	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
-	flags=0;
-	orig_prog_code=;
-	result_var=.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["min_cycles"]$$;
-	expr {
-	 expr="network.min_cycles";
-	};
-       };
-      };
-     };
-     Else @[5] {
+     MethodCall @[5] {
       desc=;
-      flags=0;
-      orig_prog_code=;
-      else_code {
-       name="else_code";
-       el_typ=ProgCode;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="cycle_max = network.CycleRunMax()";
+      result_var=.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].prog_code[0].local_vars["cycle_max"]$$;
+      obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
+      method=LeabraNetwork::CycleRunMax;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
        el_def=0;
-       AssignExpr @[0] {
-	desc="get minimum number of cycles from parameter on network (which is where you should change this value!)";
-	flags=0;
-	orig_prog_code=;
-	result_var=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["min_cycles"]$;
-	expr {
-	 expr="network.min_cycles_phase2";
-	};
-       };
       };
      };
-     WhileLoop @[6] {
-      desc="the main loop over cycles of updating";
+     ForLoop @[6] {
+      desc="// the main loop over cycles of updating";
       flags=0;
-      orig_prog_code=;
+      orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
       loop_code {
-       name=;
+       name="loop_code";
        el_typ=ProgCode;
        el_def=0;
        ProgramCall @[0] {
-	desc="run the cycle program, which computes one cycle of activations";
+	desc="run the cycle program -- can run multiple cycles at a time due to threading";
 	flags=0;
 	orig_prog_code=;
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -7077,35 +6874,24 @@ this program can be extended to do arbitrary things to generate data and apply i
 	target=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraCycle"]$;
 	targ_ld_init="*LeabraCycle*";
        };
-       NetCounterIncr @[1] {
-	desc="increment cycle counter (also on network)";
-	flags=0;
-	orig_prog_code=;
-	network_var=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
-	local_ctr_var=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["cycle"]$;
-	counter=Network::cycle;
-	update_after=0;
-       };
-       IfContinue @[2] {
-	desc="avoid subsequent stopping criteria if below min_cycles";
-	flags=0;
-	orig_prog_code=;
-	cond {
-	 expr="cycle < min_cycles";
-	};
-       };
-       IfBreak @[3] {
-	desc="stopping criterion for settling: based either on maximum change in activation (maxda) or on the maximum activation value in the network getting over threshold (which ever comes first).  Set either parmeter to values that are always false (e.g., trg_max_act_stopcrit = -1) to eliminate associated source of criterion for stopping settling.";
-	flags=0;
-	orig_prog_code=;
-	cond {
-	 expr="(network.maxda < network.maxda_stopcrit) ||
- (network.trg_max_act > network.trg_max_act_stopcrit)";
+       AssignExpr @[1] {
+	desc="grab the updated cycle count";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="cycle = network.cycle";
+	result_var=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].vars["cycle"]$;
+	expr {
+	 expr="network.cycle";
 	};
        };
       };
+      init {
+       expr="cyc=0";
+      };
       test {
-       expr="cycle < network.cycle_max";
+       expr="cyc<cycle_max";
+      };
+      iter {
+       expr="cyc++";
       };
      };
      MethodCall @[7] {
@@ -7121,60 +6907,20 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_def=0;
       };
      };
-     If @[8] {
-      desc="only run trial-level statistics in minus phase (otherwise network may have correct answer clamped on!).  IMPORTANT: this assumes that you've got target activation values for output layers already
-presented in the minus phase -- if this is not the case (values are computed on the fly), you may want to run this instead at the start of the plus phase, after ApplyInputs";
+     MethodCall @[8] {
+      desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
       flags=0;
       orig_prog_code=;
-      cond {
-       expr="network.Compute_TrialStats_Test()";
-      };
-      true_code {
+      result_var=NULL;
+      obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
+      method=LeabraNetwork::Compute_PhaseStats;
+      meth_args {
        name=;
-       el_typ=ProgCode;
+       el_typ=ProgArg;
        el_def=0;
-       MethodCall @[0] {
-	desc="compute trial-level statistics";
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
-	method=LeabraNetwork::Compute_TrialStats;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
       };
      };
-     If @[9] {
-      desc="this stat must be called in plus phase when reward information is avail";
-      flags=0;
-      orig_prog_code=;
-      cond {
-       expr="network.phase_no == 1";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="get external reward information";
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["leabra_bench"].programs.gp["LeabraAll_Std"]["LeabraSettle"].args["network"]$;
-	method=LeabraNetwork::Compute_ExtRew;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-      };
-     };
-     NetUpdateView @[10] {
+     NetUpdateView @[9] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
@@ -10313,17 +10059,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.02376909926533699;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04042553156614304;
+       value 6 0=0.04046858474612236;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7215619683265686;
+       value 6 0=0.7359932065010071;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -10390,11 +10136,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["maxda"] {
-     name="maxda";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["minus_output_name"] {
      name="minus_output_name";
      value 1 0=1;
@@ -10402,6 +10143,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["minus_cycles"] {
      name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tot_cycle"] {
+     name="tot_cycle";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -10475,6 +10221,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=0;
     };
+    UserDataItem @["maxda"] {
+     name="maxda";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["pvlv_lve"] {
      name="pvlv_lve";
      value 1 0=1;
@@ -10506,43 +10257,34 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-     act_lrn_on=0;
-     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-     spike {rise=0: decay=5: g_gain=5: window=3: eq_gain=10: eq_dt=0.02: };
+     act {thr=0.5: gain=100: nvar=0.005: };
+     act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
       spk_thr=1.2;
-      clamp_max_p=0.11;
+      clamp_max_p=0.12;
       clamp_type=REGULAR;
       vm_r=0.3;
       t_r=6;
-      vm_dend=0.3;
-      vm_dend_dt=0.16;
-      vm_dend_time=6.25;
      };
-     opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+     opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
-     v_m_init {name="v_m_init": type=NONE: mean=0.300000011920929: var=0: par=1: };
+     v_m_init {name="v_m_init": type=NONE: mean=0.4000000059604645: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
-     g_bar {e=0.9999999: l=0.1: i=0.9999999: h=0.1: a=0.1: };
-     e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-     hyst {on=0: b_inc_dt=0.01: b_dec_dt=0.05: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
-     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=1: trl=0: };
+     dt {integ=1: vm_tau=3.3: net_tau=1.4: midpoint=0: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+     act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     g_bar {e=1: l=0.1: i=1: };
+     e_rev {e=1: l=0.3: i=0.25: };
      adapt {
       on=0;
-      dt=0.006944444;
+      tau=144;
       vm_gain=0.04;
-      spike_gain=0.008049999;
-      interval=10;
-      trials=0;
-      dt_time=144;
+      spike_gain=0.00805;
+      dt=0.006944444;
      };
-     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=1: trials=0: max_amp=2: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
@@ -10551,7 +10293,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.002: par=1: };
-     noise_adapt {trial_fixed=0: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=0: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -10579,16 +10321,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-5: max=5: sym=0: };
-       learn_rule=CTLEABRA_XCAL;
        inhib=0;
        wt_scale {abs=1: rel=0.02: sem_extra=2: };
        diff_scale_p=0;
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
-       wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
        lrate=0.02;
        cur_lrate=0.02;
-       lrs_value=EPOCH;
+       lrs_mult=1;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -10598,35 +10338,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        ignore_unlearnable=1;
        wt_sig {gain=6: off=1: dwt_norm=0: };
-       stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
-       lmix {hebb=0.01: err=0.99: err_sb=1: };
-       xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       savg_cor {cor=0.4: thresh=0.001: };
-       rel_net_adapt {
-	on=0;
-	trg_fm_input=0.85;
-	trg_fm_output=0.15;
-	trg_lateral=0;
-	trg_sum=1;
-	tol_lg=0.05;
-	tol_sm=0.2;
-	rel_lrate=0.1;
-       };
+       fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        dwt_thresh=0.1;
       };
      };
-     rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.4: par=1: };
+     rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
-     learn_rule=CTLEABRA_XCAL;
      inhib=0;
      wt_scale {abs=1: rel=1: sem_extra=2: };
      diff_scale_p=0;
      wt_scale_p {abs=1: rel=1: sem_extra=2: };
-     wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
      lrate=0.02;
      cur_lrate=0.02;
-     lrs_value=EPOCH;
+     lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -10636,20 +10362,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      ignore_unlearnable=1;
      wt_sig {gain=6: off=1: dwt_norm=0: };
-     stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
-     lmix {hebb=0.01: err=0.99: err_sb=1: };
-     xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     savg_cor {cor=0.4: thresh=0.001: };
-     rel_net_adapt {
-      on=0;
-      trg_fm_input=0.85;
-      trg_fm_output=0.15;
-      trg_lateral=0;
-      trg_sum=1;
-      tol_lg=0.05;
-      tol_sm=0.2;
-      rel_lrate=0.1;
-     };
+     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
     };
     LeabraLayerSpec @["HiddenLayer"] {
      name="HiddenLayer";
@@ -10670,84 +10384,46 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        inhib_group=ENTIRE_LAYER;
        inhib {
-	type=KWTA_INHIB;
-	kwta_pt=0.2;
 	gi=2;
 	ff=1;
 	fb=0.5;
 	self_fb=0;
+	fb_tau=1.4;
+	ff0=0.1;
+	fb_dt=0.7142857;
+       };
+       inhib_misc {
 	prv_trl_ff=0;
 	prv_phs_ff=0;
-	dt=0.7;
 	up_immed=0;
-	ff0=0.1;
-	min_i=0;
        };
-       kwta {k_from=USE_PAT_K: k=75: pct=0.25: pat_q=0.5: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-       decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
-       ct_inhib_mod {
-	manual_sravg=0;
-	sravg_delay=0;
-	use_sin=0;
-	burst_i=0.02;
-	trough_i=0.02;
-	use_fin=0;
-	inhib_i=0;
-       };
-       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-       adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-       abs_net_adapt {
-	on=0;
-	trg_net=0.5;
-	tol=0.1;
-	abs_lrate=0.1;
-       };
+       avg_act {init=0.2: tau=100: adjust=1: dt=0.01: };
+       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: };
+       lay_gp_inhib {on=0: gp_g=0.5: };
+       clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
+       decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
       };
      };
      inhib_group=ENTIRE_LAYER;
      inhib {
-      type=KWTA_AVG_INHIB;
-      kwta_pt=0.5;
       gi=2;
       ff=1;
       fb=0.5;
       self_fb=0;
+      fb_tau=1.4;
+      ff0=0.1;
+      fb_dt=0.7142857;
+     };
+     inhib_misc {
       prv_trl_ff=0;
       prv_phs_ff=0;
-      dt=0.7;
       up_immed=0;
-      ff0=0.1;
-      min_i=0;
      };
-     kwta {k_from=USE_PCT: k=75: pct=0.25: pat_q=0.5: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.23: pat_q=0.5: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-     decay {event=1: phase=0: phase2=0: };
-     cos_diff_lrate {on=1: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.01: };
-     ct_inhib_mod {
-      manual_sravg=0;
-      sravg_delay=0;
-      use_sin=0;
-      burst_i=0.02;
-      trough_i=0.02;
-      use_fin=0;
-      inhib_i=0;
-     };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-     adapt_i {type=NONE: tol=0.05: p_dt=0: mx_d=0.2: l=0.2: a_dt=0.005: };
-     abs_net_adapt {
-      on=0;
-      trg_net=0.5;
-      tol=0.1;
-      abs_lrate=0.1;
-     };
+     avg_act {init=0.2: tau=100: adjust=1: dt=0.01: };
+     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: };
+     lay_gp_inhib {on=0: gp_g=0.5: };
+     clamp {hard=1: gain=0.5: max_plus=0: plus=0.01: min_clamp=0.5: };
+     decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -10807,7 +10483,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraUnitSpec_0"]$$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -10816,6 +10491,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=0;
+     acts_p_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects["leabra_bench"].networks["BenchNet_5lay"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
     LeabraLayer @["Hidden_0"] {
@@ -10856,7 +10533,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Hidden_1"] {
        name="Fm_Hidden_1";
@@ -10876,7 +10552,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -10893,7 +10568,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -10902,6 +10576,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=1.523546e+26;
+     acts_p_avg=2.433526e-39;
      spec {type=LeabraLayerSpec: spec=.projects["leabra_bench"].networks["BenchNet_5lay"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Hidden_1"] {
@@ -10942,7 +10618,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Hidden_2"] {
        name="Fm_Hidden_2";
@@ -10962,7 +10637,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -10980,7 +10654,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -10989,6 +10662,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=3.211776e-42;
+     acts_p_avg=1.943601e-42;
      spec {type=LeabraLayerSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["HiddenLayer"]$: };
     };
     LeabraLayer @["Hidden_2"] {
@@ -11029,7 +10704,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Output"] {
        name="Fm_Output";
@@ -11049,7 +10723,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -11067,7 +10740,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -11076,6 +10748,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=3.211776e-42;
+     acts_p_avg=2.080928e-42;
      spec {type=LeabraLayerSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["HiddenLayer"]$: };
     };
     LeabraLayer @["Output"] {
@@ -11116,7 +10790,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -11133,7 +10806,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -11142,6 +10814,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=0;
+     acts_p_avg=0;
      spec {type=LeabraLayerSpec: spec=$.projects["leabra_bench"].networks["BenchNet_5lay"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
    };
@@ -11156,23 +10830,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
-   sse_unit_avg=0;
-   sse_sqrt=0;
-   cnt_err_tol=0;
-   compute_prerr=0;
+   stats {
+    sse_unit_avg=0;
+    sse_sqrt=0;
+    cnt_err_tol=0;
+    prerr=0;
+   };
    threads {
-    run_time {name="": s_used=10.94238799999994: n_used=21410: };
-    sync_time {name="": s_used=0.01162499999999982: n_used=21410: };
-    total_time {name="": s_used=11.03108499999992: n_used=21410: };
+    run_time {name="": s_used=10.94238799999994: n_used=21410: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0.01162499999999982: n_used=21410: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=11.03108499999992: n_used=21410: avg_used={avg=0: sum=0: n=0: }: };
     n_wake_in_sync=1;
     run_time_pct=0.9919593584855907;
     sync_time_pct=0.001053840125427363;
     wake_in_sync_pct=4.670714619336758e-5;
-    interleave=1;
+    nibble_chunk=8;
+    min_units=3000;
     ignore_lay_sync=0;
    };
-   dmem_sync_level=DMEM_SYNC_NETWORK;
-   dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=5120;
@@ -11180,95 +10855,43 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=32: y=32: z=5: };
    max_disp_size2d {x=84: y=134: };
-   learn_rule=CTLEABRA_XCAL;
-   ti_mode=0;
-   phase_order=MINUS_PLUS;
-   no_plus_test=1;
-   sequence_init=DO_NOTHING;
-   phase_max=2;
-   time_inc=1;
-   cycle_max=20;
-   mid_minus_cycle=-1;
-   min_cycles=0;
-   min_cycles_phase2=0;
-   dwt_norm_enabled=1;
-   ct_time {
-    use=1;
+   lthreads {
+    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=1.751378773260958e+190;
+    n_cycles=10;
+    unit_chunks=32;
+    timers_on=0;
+   };
+   phases {
     minus=50;
     plus=20;
-    inhib=1;
-    n_avg_only_epcs=0;
-    total_cycles=71;
-    inhib_start=70;
+    no_plus_test=0;
+    time_inc=0.001;
+    total_cycles=70;
    };
-   ct_sravg {
-    manual=0;
-    start=30;
-    end=1;
-    interval=1;
-    plus_s_st=19;
-    plus_s_only=0;
-    force_con=0;
-   };
-   ct_sin_i {
-    start=30;
-    duration=20;
-    n_pi=2;
-    burst_i=0;
-    trough_i=0;
-   };
-   ct_fin_i {
-    start=20;
-    end=25;
-    inhib_i=0;
-   };
-   ct_lrn_trig {
-    plus_lrn_cyc=-1;
-    davg_dt=0.1;
-    davg_s_dt=0.05;
-    davg_m_dt=0.03;
-    davg_l_dt=0.0005;
-    thr_min=0;
-    thr_max=0.5;
-    loc_max_cyc=8;
-    loc_max_dec=0.01;
-    lrn_delay=40;
-    lrn_refract=100;
-    davg_l_init=0;
-    davg_max_init=0.001;
-    davg_time=10;
-    davg_s_time=20;
-    davg_m_time=33.33334;
-    davg_l_time=2000;
-    lrn_delay_inc=0.025;
-    lrn_refract_inc=0.01;
-   };
-   lrn_trig {
-    davg=0;
-    davg_s=0;
-    davg_m=0;
-    davg_smd=0;
-    davg_l=0;
-    davg_max=0.001;
-    cyc_fm_inc=0;
-    cyc_fm_dec=0;
-    loc_max=0;
-    lrn_max=0;
-    lrn_trig=0;
-    lrn=0;
+   lstats {
+    trg_max_act_crit=0.5;
+    off_errs=1;
+    on_errs=1;
    };
    net_misc {
-    cyc_syn_dep=0;
-    syn_dep_int=20;
+    ti=0;
+    dwt_norm=0;
+    lay_gp_inhib=0;
+    inhib_cons=0;
    };
-   maxda_stopcrit=-1;
-   trg_max_act_stopcrit=1;
-   norew_val=0.5;
-   off_errs=1;
-   on_errs=1;
+   rel_netin {
+    on=1;
+    trl_skip=10;
+    epc_skip=10;
+   };
+   phase_max=2;
    cos_err_lrn_thr=-1;
-   cos_diff_on=0;
-   cos_diff_auto=0;
   };
  };
 };

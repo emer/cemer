@@ -64,7 +64,7 @@ void LeabraInhibMisc::Defaults_init() {
 }
 
 void LayerAvgActSpec::Initialize() {
-  init = 0.10f;
+  init = 0.20f;
   
   Defaults_init();
 }
@@ -932,6 +932,13 @@ void LeabraLayerSpec::SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net) {
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial-level Stats
+
+void LeabraLayerSpec::LayerAvgAct(DataTable* report_table) {
+  LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
+  if(!net) return;
+  net->LayerAvgAct(report_table, this);
+}
+
 
 float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
                                    int& n_vals, bool unit_avg, bool sqrt) {

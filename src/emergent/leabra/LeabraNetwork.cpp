@@ -15,7 +15,10 @@
 
 #include "LeabraNetwork.h"
 
+#include <taProject>
+#include <DataTable>
 #include <taMisc>
+#include <tabMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraPhases);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
@@ -46,6 +49,7 @@ void LeabraNetStats::Initialize() {
   trg_max_act_crit = 0.5f;
   off_errs = true;
   on_errs = true;
+  cos_err_lrn_thr = -1.0f;
 }
 
 void LeabraNetMisc::Initialize() {
@@ -85,7 +89,6 @@ void LeabraNetwork::Initialize() {
 
   norm_err = 0.0f;
 
-  cos_err_lrn_thr = -1.0f;
   cos_err = 0.0f;
   cos_err_prv = 0.0f;
   cos_err_vs_prv = 0.0f;
@@ -794,8 +797,8 @@ void LeabraNetwork::Compute_dWt_vecvars() {
 
 
 void LeabraNetwork::Compute_dWt() {
-  if(cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
-    if(cos_err < cos_err_lrn_thr) return; // didn't make threshold
+  if(lstats.cos_err_lrn_thr > -1.0f) {		  // note: requires computing err before calling this!
+    if(cos_err < lstats.cos_err_lrn_thr) return; // didn't make threshold
   }
 
   Compute_dWt_Layer_pre();
@@ -839,6 +842,37 @@ void LeabraNetwork::Compute_Weights_impl() {
 ///////////////////////////////////////////////////////////////////////
 //      Stats
 
+void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_spec) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!report_table) {
+    report_table = proj->GetNewAnalysisDataTable(name + "_LayerAvgAct", true);
+  }
+  int idx;
+  report_table->StructUpdate(true);
+  report_table->ResetData();
+  DataCol* ln = report_table->FindMakeColName("layer", idx, VT_STRING);
+  DataCol* lsn = report_table->FindMakeColName("layer_spec", idx, VT_STRING);
+  DataCol* actm = report_table->FindMakeColName("acts_m_avg", idx, VT_FLOAT);
+  DataCol* actp = report_table->FindMakeColName("acts_p_avg", idx, VT_FLOAT);
+  DataCol* init = report_table->FindMakeColName("avg_act.init", idx, VT_FLOAT);
+
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(lay->lesioned()) continue;
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    if(lay_spec != NULL) {
+      if(ls != lay_spec) continue;
+    }
+    report_table->AddBlankRow();
+    ln->SetValAsString(lay->name, -1);
+    lsn->SetValAsString(ls->name, -1);
+    actm->SetValAsFloat(lay->acts_m_avg, -1);
+    actp->SetValAsFloat(lay->acts_p_avg, -1);
+    init->SetValAsFloat(ls->avg_act.init, -1);
+  }
+  report_table->StructUpdate(false);
+  tabMisc::DelayedFunCall_gui(report_table, "BrowserSelectMe");
+}
+
 void LeabraNetwork::Set_ExtRew(bool avail, float ext_rew_val) {
   ext_rew_avail = avail;
   ext_rew = ext_rew_val;
@@ -866,8 +900,8 @@ void LeabraNetwork::Compute_NormErr() {
   if(nerr_avail > 0.0f) {
     norm_err = nerr_sum / nerr_avail; // normalize contribution across layers
 
-    if(cos_err_lrn_thr > -1.0f) {
-      if(cos_err < cos_err_lrn_thr) return; // didn't make threshold - don't add to global
+    if(lstats.cos_err_lrn_thr > -1.0f) {
+      if(cos_err < lstats.cos_err_lrn_thr) return; // didn't make threshold - don't add to global
     }
     avg_norm_err.Increment(norm_err);
   }

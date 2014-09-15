@@ -99,7 +99,7 @@ class E_API LayerAvgActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
 INHERITED(SpecMemberBase)
 public:
-  float		init;	    // #AKA_pct #MIN_0 initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init_avg be relatively accurate -- good idea to update from recorded acts_m_avg levels (see network LayerAvgAct button) -- see also avg_adjust
+  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init_avg be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also avg_adjust
   float         tau;        // #DEF_100 #MIN_0 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
   float         adjust;     // #DEF_1 adjustment multiplier on the computed acts_m_avg value that is used for netinput rescaling -- if based on connectivity patterns or other factors the computed value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
   
@@ -426,6 +426,9 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
+
+  virtual void  LayerAvgAct(DataTable* report_table = NULL);
+  // #BUTTON #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
   virtual float	Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
 			    int& n_vals, bool unit_avg = false, bool sqrt = false);

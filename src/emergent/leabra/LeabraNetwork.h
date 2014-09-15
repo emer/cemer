@@ -64,6 +64,7 @@ public:
   float		trg_max_act_crit; // #CAT_Statistic criterion for target-layer maximum activation (trg_max_act) -- minus_cycles is recorded when trg_max_act first exceeds this criterion (in the minus phase)
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
+  float		cos_err_lrn_thr; // #CAT_Learning learning threshold for cos_err -- if cos err is below this value, then no learning occurs -- prevents learning when things are too far away from expectations -- esp useful for leabra ti (see also unlearnable_trial flag)
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
@@ -170,7 +171,6 @@ public:
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see lstats.off_errs, on_errs to exclude each component separately)
   Average	avg_norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average normalized binary error value (computed over previous epoch)
 
-  float		cos_err_lrn_thr; // #CAT_Learning learning threshold for cos_err -- if cos err is below this value, then no learning occurs -- prevents learning when things are too far away from expectations -- esp useful for leabra ti (see also unlearnable_trial flag)
   float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) error on this trial -- cosine between act_m and act_p target values
   float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cosine (normalized dot product) error on this trial, for activations on previous trial (p_act_p) -- computed automatically during TI
   float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for TI
@@ -402,6 +402,10 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats
+
+  virtual void  LayerAvgAct(DataTable* report_table = NULL,
+                            LeabraLayerSpec* lay_spec = NULL);
+  // #BUTTON #ARGC_1 #NULL_OK #NULL_TEXT_NewReportData create a data table with the current layer average activations (acts_m_avg) and the values specified in the layerspec avg_act.init -- this is useful for setting the .init values accurately based on actual levels 
 
   virtual void	Set_ExtRew(bool avail, float ext_rew_val);
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
