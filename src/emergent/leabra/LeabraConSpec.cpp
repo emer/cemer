@@ -79,26 +79,26 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void FastWtsSpec::Initialize() {
   on = false;
-  decay_tau = 6000.0f;
-  wt_tau = 200.0f;
-  fast_lrate = 10.0f;
-  fast_no_lrs = false;
+  decay_tau = 600.0f;
+  wt_tau = 20.0f;
+  fast_lrate = 5.0f;
 
   decay_dt = 1.0f / decay_tau;
   wt_dt = 1.0f / wt_tau;
   slow_lrate = 1.0f / fast_lrate;
+
+  Defaults_init();
 }
 
 void FastWtsSpec::Defaults_init() {
+  nofast_lrate = 2.0f;
 }
 
 void FastWtsSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   decay_dt = 1.0f / decay_tau;
   wt_dt = 1.0f / wt_tau;
-  if(!fast_no_lrs) {            // don't overwrite if using this..
-    slow_lrate = 1.0f / fast_lrate;
-  }
+  slow_lrate = 1.0f / fast_lrate;
 }
 
 void XCalLearnSpec::Initialize() {
@@ -217,18 +217,18 @@ void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* fro
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
-  if(wt_sig.dwt_norm) net->net_misc.dwt_norm_used = true;
+  if(wt_sig.dwt_norm) {
+    net->net_misc.dwt_norm = true;
+  }
   if(fast_wts.on) {
     cur_lrate *= fast_wts.fast_lrate;
   }
+  else {
+    cur_lrate *= fast_wts.nofast_lrate;
+  }
 
   lrs_mult = lrate_sched.GetVal(net->epoch);
-  if(fast_wts.on && fast_wts.fast_no_lrs) {
-    fast_wts.slow_lrate = lrs_mult / fast_wts.fast_lrate;
-  }
-  else {
-    cur_lrate *= lrs_mult;
-  }
+  cur_lrate *= lrs_mult;
 }
 
 void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {

@@ -246,7 +246,6 @@ void ExtRewLayerSpec::Compute_OutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
 
   net->ext_rew = er;
   net->ext_rew_avail = true;
-  net->norew_val = rew.norew_val;
 }
 
 void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
@@ -281,7 +280,6 @@ void ExtRewLayerSpec::Compute_ExtRew(LeabraLayer* lay, LeabraNetwork* net) {
     net->ext_rew = -1.1f;       // indicates no rew
     net->ext_rew_avail = false;
   }
-  net->norew_val = rew.norew_val;
 }
 
 void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
@@ -311,7 +309,6 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
     net->ext_rew = -1.1f;       // indicates no rew
     net->ext_rew_avail = false;
   }
-  net->norew_val = rew.norew_val;
 }
 
 void ExtRewLayerSpec::Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
@@ -326,7 +323,6 @@ void ExtRewLayerSpec::Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md,
 void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
   net->ext_rew = -1.1f; // indicates no rew
   net->ext_rew_avail = false;
-  net->norew_val = rew.norew_val;
 
   UNIT_GP_ITR
     (lay,

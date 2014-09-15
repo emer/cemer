@@ -379,7 +379,7 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
 
-  net->ti_mode = true;
+  net->net_misc.ti = true;
 
   ti_ctxt->SetUnique("wt_scale", true);
   ti_ctxt->wt_scale.rel = 1.0f;
@@ -1237,7 +1237,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   // BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
   // if(!pbwmspgp) return false;
 
-  // net->ti_mode = true;
+  // net->net_misc.ti = true;
 
   // ////////////	UnitSpecs
 
@@ -1779,11 +1779,11 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
  // can be sure everything is ok.";
  //  taMisc::Confirm(msg);
 
- //  net->ti_mode = true;
+ //  net->net_misc.ti = true;
  //  net->RemoveUnits();
 
  //  // TODO: Note below gets rid of LeabraWizard PBWM CHECK ERROR message -- works and seems safe to do
- //  net->no_plus_test = false;
+ //  net->phases.no_plus_test = false;
 
  //  String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
  //  String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";

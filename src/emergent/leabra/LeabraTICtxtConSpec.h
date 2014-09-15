@@ -32,7 +32,8 @@ INHERITED(LeabraConSpec)
 public:
   // special!
   bool  IsTICtxtCon() override { return true; }
-
+  void  Trial_Init_Specs(LeabraNetwork* net) override;
+ 
   inline void Send_CtxtNetin(LeabraSendCons* cg, LeabraNetwork* net,
                              const int thread_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;

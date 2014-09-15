@@ -68,16 +68,16 @@ void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* 
     sse *= sse;
     sse_err += sse;
 
-    if(net->on_errs) {
+    if(net->lstats.on_errs) {
       if(u->act_mid > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
     }
-    if(net->off_errs) {
+    if(net->lstats.off_errs) {
       if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
     }
   }
   int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
   int ntot = 0;
-  if(net->on_errs && net->off_errs)
+  if(net->lstats.on_errs && net->lstats.off_errs)
     ntot = 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
   else
     ntot = (int)(lay->acts_m_avg * (float)lay_nunits);

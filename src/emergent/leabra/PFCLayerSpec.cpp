@@ -112,20 +112,15 @@ bool PFCLayerSpec::CheckConfig_Layer(Layer* ly,  bool quiet) {
     return false;
   }
 
-  if(lay->CheckError(net->no_plus_test, quiet, rval,
-                "requires LeabraNetwork no_plus_test = false, I just set it for you")) {
-    net->no_plus_test = false;
+  if(lay->CheckError(net->phases.no_plus_test, quiet, rval,
+                "requires LeabraNetwork phases.no_plus_test = false, I just set it for you")) {
+    net->phases.no_plus_test = false;
   }
 
   // if(lay->CheckError(net->mid_minus_cycle < 5, quiet, rval,
   //               "requires LeabraNetwork min_minus_cycle > 5, I just set it to 40 for you")) {
   //   net->mid_minus_cycle = 40;
   // }
-
-  if(lay->CheckError(net->sequence_init != LeabraNetwork::DO_NOTHING, quiet, rval,
-                "requires network sequence_init = DO_NOTHING, I just set it for you")) {
-    net->sequence_init = LeabraNetwork::DO_NOTHING;
-  }
 
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
   PFCLayerSpec* pfcls = (PFCLayerSpec*)lay->GetLayerSpec();

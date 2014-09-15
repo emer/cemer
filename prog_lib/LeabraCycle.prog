@@ -1,54 +1,51 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
 Program .projects[0].programs.gp[0][5] { 
-  ProgObjList @.objs = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.args = [1] {
-    ProgVar @[0] { };
-  };
+ ProgVar_List @.args = [1] {
+  ProgVar @[0] { };
+ };
 
-  ProgVar_List @.vars = [1] {
-    ProgVar @[0] { };
-  };
+ ProgVar_List @.vars = [1] {
+  ProgVar @[0] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ ProgEl_List @.init_code = [0] {
+ };
 
-  ProgEl_List @.init_code = [0] {
+ ProgEl_List @.prog_code = [2] {
+  MethodCall @[0] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
-
-  ProgEl_List @.prog_code = [2] {
-    MethodCall @[0] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    NetUpdateView @[1] { };
-  };
+  NetUpdateView @[1] { };
+ };
 };
 Program .projects[0].programs.gp[0][5] {
  name="LeabraCycle";
  short_nm="Cycle";
  tags="Leabra, Std";
  desc="runs one cycle of leabra processing (updating net inputs and activations)";
- flags=;
+ flags=0;
  objs {
-  name=;
-  el_typ=taOBase;
+  name="objs";
+  el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -57,14 +54,14 @@ Program .projects[0].programs.gp[0][5] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc=;
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -72,34 +69,30 @@ Program .projects[0].programs.gp[0][5] {
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether network views will be updated on a cycle-by-cycle basis (slow, but often quite useful for seeing how processing is proceeding)";
    init_from=NULL;
   };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=ProgEl;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
  };
  prog_code {
-  name=;
-  el_typ=MethodCall;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
   MethodCall @[0] {
-   desc="this does all the standard leabra processing for one cycle of activation updating";
-   flags=;
+   desc="this does all the standard leabra processing lthreads.n_cycles cycles of activation updating";
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=.projects[0].programs.gp[0][5].args[0]$$;
    method=LeabraNetwork::Cycle_Run;
@@ -111,7 +104,8 @@ Program .projects[0].programs.gp[0][5] {
   };
   NetUpdateView @[1] {
    desc="update network views if update_net_view == true";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][5].args[0]$;
    update_var=.projects[0].programs.gp[0][5].vars[0]$$;
   };

@@ -275,6 +275,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
 
   lay->cos_diff = 0.0f;
   lay->cos_diff_avg = 0.0f;
+  lay->cos_diff_avg_lmix = 0.0f;
   lay->avg_act_diff = 0.0f;
   lay->trial_cos_diff = 0.0f;
 
@@ -737,13 +738,9 @@ void LeabraLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
 //      SettleFinal
 
 void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  bool no_plus_testing = false;
-  if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
-    no_plus_testing = true;
-  }
+  bool no_plus_testing = net->IsNoPlusTesting();
 
-  switch(net->phase_order) {
-  case LeabraNetwork::MINUS_PLUS:
+  if(net->phases.minus > 0) {
     if(no_plus_testing) {
       PostSettle_GetMinus(lay, net);
       PostSettle_GetPlus(lay, net);
@@ -755,11 +752,10 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
         PostSettle_GetPlus(lay, net);
       }
     }
-    break;
-  case LeabraNetwork::PLUS_ONLY:
+  }
+  else {                        // plus only
     PostSettle_GetMinus(lay, net);
     PostSettle_GetPlus(lay, net);
-    break;
   }
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
@@ -967,7 +963,7 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       nerr += Compute_NormErr_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
-      if(net->on_errs && net->off_errs)
+      if(net->lstats.on_errs && net->lstats.off_errs)
         ntot += 2 * (int)(gpd->acts_m_avg * (float)gp_nunits);
       else
         ntot += (int)(gpd->acts_m_avg * (float)gp_nunits);
@@ -976,7 +972,7 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   else {
     int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
     nerr += Compute_NormErr_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
-    if(net->on_errs && net->off_errs)
+    if(net->lstats.on_errs && net->lstats.off_errs)
       ntot += 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
     else
       ntot += (int)(lay->acts_m_avg * (float)lay_nunits);
@@ -1016,7 +1012,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
     cosv += u->targ * u->act_m;
     ssm += u->act_m * u->act_m;
     sst += u->targ * u->targ;
-    if(net->ti_mode) {
+    if(net->net_misc.ti) {
       cosvp += u->targ * u->p_act_p;
       ssp += u->p_act_p * u->p_act_p;
     }
@@ -1026,7 +1022,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   if(dist != 0.0f)
     cosv /= dist;
   lay->cos_err = cosv;
-  if(net->ti_mode) {
+  if(net->net_misc.ti) {
     float pdist = sqrtf(ssp * sst);
     if(pdist != 0.0f) {
       cosvp /= pdist;
@@ -1054,6 +1050,12 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = cosv;
 
   decay.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
+  if(lay->layer_type == Layer::HIDDEN) {
+    lay->cos_diff_avg_lmix = 1.0f - lay->cos_diff_avg;
+  }
+  else {
+    lay->cos_diff_avg_lmix = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
+  }
 
   return cosv;
 }

@@ -196,8 +196,8 @@ public:
   bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a faster vm_tau time constant parameter to be used -- this is critical to use with SPIKE mode and is automatically enabled there
   int		fast_cyc;	// #AKA_vm_eq_cyc #DEF_0 number of cycles at start of a trial to run units in a fast integration mode -- the rate-code activations have no effective time constant and change immediately to the new computed value (vm_time is ignored) and vm is computed as an equilibirium potential given current inputs: set to 1 to quickly activate soft-clamped input layers (primary use); set to 100 to always use this computation
 
-  float		vm_dt;		// #READ_ONLY #SHOW rate = 1 / tau
-  float		net_dt;		// #READ_ONLY #SHOW rate = 1 / tau
+  float		vm_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		net_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -237,7 +237,7 @@ protected:
 private:
   void	Initialize();
   void 	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
+  void	Defaults_init();
 };
 
 eTypeDef_Of(LeabraChannels);
@@ -438,8 +438,8 @@ public:
 
   enum NoiseType {
     NO_NOISE,			// no noise added to processing
-    VM_NOISE,			// noise in the value of v_m (membrane potential)
-    NETIN_NOISE,		// noise in the net input (g_e)
+    VM_NOISE,			// noise in the value of v_m (membrane potential) -- IMPORTANT: this should NOT be used for rate-code (NXX1) activations, because they do not depend directly on the vm -- this then has no effect
+    NETIN_NOISE,		// noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
     ACT_NOISE,			// noise in the activations
   };
 
@@ -672,7 +672,7 @@ public:
   float Compute_SSE(Unit* u, Network* net, bool& has_targ) override;
   bool	 Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) override;
   virtual float  Compute_NormErr(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0
+  // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0
 
   ///////////////////////////////////////////////////////////////////////
   //	Misc Housekeeping, non Compute functions

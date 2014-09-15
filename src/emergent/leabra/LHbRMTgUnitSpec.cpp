@@ -203,7 +203,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
 
   // the rest of this should all be standard..
 
-  if(net->inhib_cons_used) {
+  if(net->net_misc.inhib_cons) {
     u->g_i_raw += u->g_i_delta;
     if(act_fun == SPIKE) {
       u->g_i_syn = MAX(u->g_i_syn, 0.0f);
@@ -226,7 +226,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
     tot_net += u->ext * ls->clamp.gain;
   }
 
-  if(net->ti_mode) {
+  if(net->net_misc.ti) {
     tot_net += u->act_ctxt;
   }
 

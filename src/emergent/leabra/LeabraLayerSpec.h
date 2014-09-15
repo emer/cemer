@@ -45,7 +45,7 @@ public:
   float         fb_tau;         // #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
   float         ff0;            // #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
 
-  float		fb_dt;		// #READ_ONLY #SHOW rate = 1 / tau
+  float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   inline float    FFInhib(const float avg_netin) {
     float ffi = 0.0f;
@@ -434,9 +434,9 @@ public:
   virtual float	Compute_NormErr_ugp(LeabraLayer* lay, 
 				    Layer::AccessMode acc_md, int gpidx,
 				    LeabraInhib* thr, LeabraNetwork* net);
-  // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group -- sum += per unit: if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0
+  // #CAT_Statistic compute normalized binary error for given unit group -- just gets the raw sum over unit group -- sum += per unit: if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0
   virtual float	Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute normalized binary error of unit targ vs. act_m -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse -- per unit: if (net->on_errs && act_m > .5 && targ < .5) return 1; if (net->off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is based on k value per layer: total possible err for both on and off errs is 2 * k (on or off alone is just k)
+  // #CAT_Statistic compute normalized binary error of unit targ vs. act_m -- layer-level value is already normalized, and network just averages across the layers (each layer contributes equally to overal normalized value, instead of contributing in proportion to number of units) -- returns -1 if not an err target defined in same way as sse -- per unit: if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is based on k value per layer: total possible err for both on and off errs is 2 * k (on or off alone is just k)
 
   virtual float  Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net, int& n_vals);
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing

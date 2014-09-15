@@ -1,100 +1,87 @@
-// ta_Dump File v3.0 -- code v5.0.2.0
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
 Program .projects[0].programs.gp[0][3] { 
-  ProgObjList @.objs = [0] {
-  };
+ ProgObjList @.objs = [0] {
+ };
 
-  ProgType_List @.types = [0] {
-  };
+ ProgType_List @.types = [0] {
+ };
 
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-  };
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  ProgVar_List @.vars = [4] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
-  };
+ ProgVar_List @.vars = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
 
-  Function_List @.functions = [0] {
-  };
+ Function_List @.functions = [0] {
+ };
 
-  ProgEl_List @.load_code = [0] {
-  };
+ ProgEl_List @.init_code = [1] {
+  NetCounterInit @[0] { };
+ };
 
-  ProgEl_List @.init_code = [1] {
-    NetCounterInit @[0] { };
+ ProgEl_List @.prog_code = [7] {
+  NetCounterInit @[0] { };
+  MethodCall @[1] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
-
-  ProgEl_List @.prog_code = [8] {
-    NetCounterInit @[0] { };
-    MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
+  WhileLoop @[2] { 
+   ProgEl_List @.loop_code = [3] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
     };
-    WhileLoop @[2] { 
-      ProgEl_List @.loop_code = [3] {
-	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	NetCounterIncr @[1] { };
-	MethodCall @[2] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
+    NetCounterIncr @[1] { };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [0] {
+     };
     };
-    MethodCall @[3] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    If @[4] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    If @[5] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-    };
-    ProgramCall @[6] { 
-      ProgArg_List @.prog_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    NetUpdateView @[7] { };
+   };
   };
+  MethodCall @[3] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  If @[4] { 
+   ProgEl_List @.true_code = [1] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+  ProgramCall @[5] { 
+   ProgArg_List @.prog_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+  NetUpdateView @[6] { };
+ };
 };
 Program .projects[0].programs.gp[0][3] {
  name="LeabraTrial";
  short_nm="Trial";
  tags="Leabra, Std";
  desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
- flags=;
+ flags=0;
  objs {
-  name=;
-  el_typ=taOBase;
+  name="objs";
+  el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -103,7 +90,7 @@ Program .projects[0].programs.gp[0][3] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="network to operate on -- typically set by higher-level calling programs";
    init_from=NULL;
@@ -112,16 +99,16 @@ Program .projects[0].programs.gp[0][3] {
    name="input_data";
    var_type=T_Object;
    object_type=DataTable;
-   object_val=.projects[0].data.gp[0][0]$$<DataTable,Inputs>;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=NULL_CHECK|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="datatable containing training input/output patterns";
    init_from=NULL;
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -129,7 +116,7 @@ Program .projects[0].programs.gp[0][3] {
    var_type=T_Int;
    int_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
    init_from=NULL;
@@ -139,49 +126,25 @@ Program .projects[0].programs.gp[0][3] {
    var_type=T_Bool;
    bool_val=0;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
    desc="determines whether to update any network view displays after trial is completed";
    init_from=NULL;
   };
-  ProgVar @[2] {
-   name="trial";
-   var_type=T_Int;
-   int_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|EDIT_VAL;
-   reference=0;
-   desc="current trial (event) within the epoch -- increments automatically";
-   init_from=NULL;
-  };
-  ProgVar @[3] {
-   name="compute_rel_netin";
-   var_type=T_Bool;
-   bool_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|USED|EDIT_VAL;
-   reference=0;
-   desc="call ComputeAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
-   init_from=NULL;
-  };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
- load_code {
-  name=;
-  el_typ=ProgEl;
-  el_def=0;
- };
  init_code {
-  name=;
-  el_typ=NetCounterInit;
+  name="init_code";
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=.projects[0].programs.gp[0][3].args[0]$$;
    local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$$;
    counter=LeabraNetwork::phase_no;
@@ -189,12 +152,13 @@ Program .projects[0].programs.gp[0][3] {
   };
  };
  prog_code {
-  name=;
-  el_typ=MethodCall;
+  name="prog_code";
+  el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
    desc="initialize the local phase_no counter, and corresponding network one";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
    local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
    counter=LeabraNetwork::phase_no;
@@ -202,7 +166,8 @@ Program .projects[0].programs.gp[0][3] {
   };
   MethodCall @[1] {
    desc="initializes various counters at start of trial";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Init;
@@ -214,14 +179,16 @@ Program .projects[0].programs.gp[0][3] {
   };
   WhileLoop @[2] {
    desc="loop over phases of settling in the network";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    loop_code {
     name=;
-    el_typ=ProgramCall;
+    el_typ=ProgCode;
     el_def=0;
     ProgramCall @[0] {
      desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      prog_args {
       name=;
       el_typ=ProgArg;
@@ -252,7 +219,8 @@ Program .projects[0].programs.gp[0][3] {
     };
     NetCounterIncr @[1] {
      desc="increment the phase number (also on network)";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      network_var=$.projects[0].programs.gp[0][3].args[0]$;
      local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
      counter=LeabraNetwork::phase_no;
@@ -260,7 +228,8 @@ Program .projects[0].programs.gp[0][3] {
     };
     MethodCall @[2] {
      desc="increments other phase state information to prepare for the next phase of settling";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=LeabraNetwork::Trial_UpdatePhase;
@@ -277,7 +246,8 @@ Program .projects[0].programs.gp[0][3] {
   };
   MethodCall @[3] {
    desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    result_var=NULL;
    obj=$.projects[0].programs.gp[0][3].args[0]$;
    method=LeabraNetwork::Trial_Final;
@@ -288,42 +258,20 @@ Program .projects[0].programs.gp[0][3] {
    };
   };
   If @[4] {
-   desc=;
-   flags=NEW_EL;
-   cond {
-    expr="compute_rel_netin";
-   };
-   true_code {
-    name=;
-    el_typ=ProgEl;
-    el_def=0;
-    MethodCall @[0] {
-     desc="special for adapting netin";
-     flags=;
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[0][3].args[0]$;
-     method=LeabraNetwork::Compute_AbsRelNetin;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-   };
-  };
-  If @[5] {
    desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    cond {
     expr="network.Compute_Weights_Test(network.trial+1)";
    };
    true_code {
     name=;
-    el_typ=ProgEl;
+    el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
      desc="update the weight values based on changes computed by trial program";
-     flags=;
+     flags=0;
+     orig_prog_code=;
      result_var=NULL;
      obj=$.projects[0].programs.gp[0][3].args[0]$;
      method=Network::Compute_Weights;
@@ -335,9 +283,10 @@ Program .projects[0].programs.gp[0][3] {
     };
    };
   };
-  ProgramCall @[6] {
+  ProgramCall @[5] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    prog_args {
     name=;
     el_typ=ProgArg;
@@ -356,9 +305,10 @@ Program .projects[0].programs.gp[0][3] {
    target=.projects[0].programs.gp[0][7]$$<Program,LeabraTrialMonitor>;
    targ_ld_init="*LeabraTrialMonitor*";
   };
-  NetUpdateView @[7] {
+  NetUpdateView @[6] {
    desc="update the network view(s) (only if update_net_view is true)";
-   flags=;
+   flags=0;
+   orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
    update_var=.projects[0].programs.gp[0][3].vars[1]$$;
   };

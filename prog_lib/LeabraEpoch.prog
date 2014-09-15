@@ -1,128 +1,82 @@
-// ta_Dump File v3.0 -- code v6.2.0.0 rev6236
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
 Program .projects[0].programs.gp[0][2] { 
-  ProgObjList @.objs = [0] {
+ ProgObjList @.objs = [0] {
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ ProgVar_List @.vars = [6] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+  ProgVar @[5] { };
+ };
+
+ Function_List @.functions = [0] {
+ };
+
+ ProgEl_List @.init_code = [2] {
+  NetCounterInit @[0] { };
+  AssignExpr @[1] { };
+ };
+
+ ProgEl_List @.prog_code = [9] {
+  NetCounterInit @[0] { };
+  AssignExpr @[1] { };
+  MethodCall @[2] { 
+   ProgArg_List @.meth_args = [1] {
+    ProgArg @[0] { };
+   };
   };
-
-  ProgType_List @.types = [0] {
+  MethodCall @[3] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
-
-  ProgVar_List @.args = [2] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
+  NetDataLoop @[4] { 
+   ProgEl_List @.loop_code = [2] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    If @[1] { 
+     ProgEl_List @.true_code = [1] {
+      StopStepPoint @[0] { };
+     };
+    };
+   };
   };
-
-  ProgVar_List @.vars = [9] {
-    ProgVar @[0] { };
-    ProgVar @[1] { };
-    ProgVar @[2] { };
-    ProgVar @[3] { };
-    ProgVar @[4] { };
-    ProgVar @[5] { };
-    ProgVar @[6] { };
-    ProgVar @[7] { };
-    ProgVar @[8] { };
+  If @[5] { 
+   ProgEl_List @.true_code = [1] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
   };
-
-  Function_List @.functions = [0] {
+  MethodCall @[6] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
-
-  ProgEl_List @.init_code = [2] {
-    NetCounterInit @[0] { };
-    AssignExpr @[1] { };
+  MethodCall @[7] { 
+   ProgArg_List @.meth_args = [0] {
+   };
   };
-
-  ProgEl_List @.prog_code = [11] {
-    NetCounterInit @[0] { };
-    AssignExpr @[1] { };
-    MethodCall @[2] { 
-      ProgArg_List @.meth_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
-    MethodCall @[3] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    NetDataLoop @[4] { 
-      ProgEl_List @.loop_code = [2] {
-	ProgramCall @[0] { 
-	  ProgArg_List @.prog_args = [2] {
-	    ProgArg @[0] { };
-	    ProgArg @[1] { };
-	  };
-	};
-	IfElse @[1] { 
-	  ProgEl_List @.true_code = [1] {
-	    StopStepPoint @[0] { };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-      };
-    };
-    IfElse @[5] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-
-      ProgEl_List @.false_code = [0] {
-      };
-    };
-    IfElse @[6] { 
-      ProgEl_List @.true_code = [1] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-      };
-
-      ProgEl_List @.false_code = [0] {
-      };
-    };
-    MethodCall @[7] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    IfElse @[8] { 
-      ProgEl_List @.true_code = [2] {
-	MethodCall @[0] { 
-	  ProgArg_List @.meth_args = [0] {
-	  };
-	};
-	IfElse @[1] { 
-	  ProgEl_List @.true_code = [2] {
-	    MethodCall @[0] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	    MethodCall @[1] { 
-	      ProgArg_List @.meth_args = [0] {
-	      };
-	    };
-	  };
-
-	  ProgEl_List @.false_code = [0] {
-	  };
-	};
-      };
-
-      ProgEl_List @.false_code = [0] {
-      };
-    };
-    MethodCall @[9] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-    };
-    ProgramCall @[10] { 
-      ProgArg_List @.prog_args = [1] {
-	ProgArg @[0] { };
-      };
-    };
+  ProgramCall @[8] { 
+   ProgArg_List @.prog_args = [1] {
+    ProgArg @[0] { };
+   };
   };
+ };
 };
 Program .projects[0].programs.gp[0][2] {
  name="LeabraEpoch";
@@ -131,17 +85,17 @@ Program .projects[0].programs.gp[0][2] {
  desc="iterates over all of the items in a data table and calls LeabraTrial process on them";
  flags=2;
  objs {
-  name=;
+  name="objs";
   el_typ=taNBase;
   el_def=0;
  };
  types {
-  name=;
-  el_typ=ProgType;
+  name="types";
+  el_typ=DynEnumType;
   el_def=0;
  };
  args {
-  name=;
+  name="args";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -168,7 +122,7 @@ Program .projects[0].programs.gp[0][2] {
   };
  };
  vars {
-  name=;
+  name="vars";
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
@@ -207,7 +161,7 @@ Program .projects[0].programs.gp[0][2] {
   ProgVar @[3] {
    name="step_on_err";
    var_type=T_Bool;
-   bool_val=1;
+   bool_val=0;
    objs_ptr=0;
    flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -218,7 +172,7 @@ Program .projects[0].programs.gp[0][2] {
    name="epoch_timer";
    var_type=T_Object;
    object_type=TimeUsed;
-   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,>;
+   object_val=.projects[0].networks[0].epoch_time$$<TimeUsed,epoch_time>;
    objs_ptr=0;
    flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
    reference=0;
@@ -235,44 +189,14 @@ Program .projects[0].programs.gp[0][2] {
    desc="index counter for the looping over items in the input_data datatable (not always the same as trial counter, depending on distributed memory computation)";
    init_from=NULL;
   };
-  ProgVar @[6] {
-   name="compute_rel_netin";
-   var_type=T_Bool;
-   bool_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc="call Compute_AvgAbsRelNetin() function to collect relative net input information telling how much each layer receives from each of its receiving projections";
-   init_from=NULL;
-  };
-  ProgVar @[7] {
-   name="adapt_rel_abs_netin";
-   var_type=T_Bool;
-   bool_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc="use the computed rel and abs netin values to adapt the wt_scale.abs and wt_scale.rel params of network conspecs to match target values that are set on the projections -- see conspec rel_net_adapt and layerspec abs_net_adapt parmeters and comments for more information";
-   init_from=NULL;
-  };
-  ProgVar @[8] {
-   name="stable_wt_update_interval";
-   var_type=T_Int;
-   int_val=1;
-   objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc="how frequently in terms of epochs to update the stable weights -- should always be >= 1";
-   init_from=NULL;
-  };
  };
  functions {
-  name=;
+  name="functions";
   el_typ=Function;
   el_def=0;
  };
  init_code {
-  name=;
+  name="init_code";
   el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
@@ -295,7 +219,7 @@ Program .projects[0].programs.gp[0][2] {
   };
  };
  prog_code {
-  name=;
+  name="prog_code";
   el_typ=ProgCode;
   el_def=0;
   NetCounterInit @[0] {
@@ -392,14 +316,13 @@ Program .projects[0].programs.gp[0][2] {
      target=.projects[0].programs.gp[0][3]$$<Program,LeabraTrial>;
      targ_ld_init="*LeabraTrial*";
     };
-    IfElse @[1] {
+    If @[1] {
      desc=;
      flags=0;
      orig_prog_code=;
      cond {
       expr="step_on_err && network.sse > 0.0";
      };
-     show_false_code=0;
      true_code {
       name="ProgEl_List_100";
       el_typ=ProgCode;
@@ -409,11 +332,6 @@ Program .projects[0].programs.gp[0][2] {
        flags=0;
        orig_prog_code=;
       };
-     };
-     false_code {
-      name="ProgEl_List_101";
-      el_typ=ProgCode;
-      el_def=0;
      };
     };
    };
@@ -431,14 +349,13 @@ Program .projects[0].programs.gp[0][2] {
    group_order=PERMUTED;
    group_idx_list{    };
   };
-  IfElse @[5] {
+  If @[5] {
    desc="if full batch mode, update only at end of epoch";
    flags=0;
    orig_prog_code=;
    cond {
     expr="network.wt_update == Network::BATCH";
    };
-   show_false_code=0;
    true_code {
     name=;
     el_typ=ProgCode;
@@ -457,45 +374,8 @@ Program .projects[0].programs.gp[0][2] {
      };
     };
    };
-   false_code {
-    name=;
-    el_typ=ProgCode;
-    el_def=0;
-   };
   };
-  IfElse @[6] {
-   desc=;
-   flags=NEW_EL;
-   orig_prog_code="if(network.epoch % stable_wt_update_interval == 0)";
-   cond {
-    expr="network.epoch % stable_wt_update_interval == 0";
-   };
-   show_false_code=1;
-   true_code {
-    name="ProgEl_List_124";
-    el_typ=ProgCode;
-    el_def=0;
-    MethodCall @[0] {
-     desc=;
-     flags=NEW_EL|CAN_REVERT_TO_CODE;
-     orig_prog_code="network.Compute_StableWeights()";
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[0][2].args[0]$;
-     method=LeabraNetwork::Compute_StableWeights;
-     meth_args {
-      name="ProgArg_List_0";
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-   };
-   false_code {
-    name="ProgEl_List_125";
-    el_typ=ProgCode;
-    el_def=0;
-   };
-  };
-  MethodCall @[7] {
+  MethodCall @[6] {
    desc="network accumulates some core statistics over the epoch -- this finalizes that process and computes summary stats";
    flags=0;
    orig_prog_code=;
@@ -508,84 +388,7 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  IfElse @[8] {
-   desc=;
-   flags=0;
-   orig_prog_code=;
-   cond {
-    expr="compute_rel_netin";
-   };
-   show_false_code=0;
-   true_code {
-    name=;
-    el_typ=ProgCode;
-    el_def=0;
-    MethodCall @[0] {
-     desc=;
-     flags=0;
-     orig_prog_code=;
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[0][2].args[0]$;
-     method=LeabraNetwork::Compute_AvgAbsRelNetin;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
-    };
-    IfElse @[1] {
-     desc=;
-     flags=0;
-     orig_prog_code=;
-     cond {
-      expr="adapt_rel_abs_netin";
-     };
-     show_false_code=0;
-     true_code {
-      name=;
-      el_typ=ProgCode;
-      el_def=0;
-      MethodCall @[0] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects[0].programs.gp[0][2].args[0]$;
-       method=LeabraNetwork::Compute_AdaptRelNetin;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-      MethodCall @[1] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       result_var=NULL;
-       obj=$.projects[0].programs.gp[0][2].args[0]$;
-       method=LeabraNetwork::Compute_AdaptAbsNetin;
-       meth_args {
-	name=;
-	el_typ=ProgArg;
-	el_def=0;
-       };
-      };
-     };
-     false_code {
-      name=;
-      el_typ=ProgCode;
-      el_def=0;
-     };
-    };
-   };
-   false_code {
-    name=;
-    el_typ=ProgCode;
-    el_def=0;
-   };
-  };
-  MethodCall @[9] {
+  MethodCall @[7] {
    desc="done with the computation in the epoch -- record time it took";
    flags=0;
    orig_prog_code=;
@@ -598,7 +401,7 @@ Program .projects[0].programs.gp[0][2] {
     el_def=0;
    };
   };
-  ProgramCall @[10] {
+  ProgramCall @[8] {
    desc="run program that records data from network and possibly other sources about the epoch";
    flags=0;
    orig_prog_code=;

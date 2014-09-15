@@ -58,7 +58,7 @@ void LeabraPrjn::CheckInhibCons(LeabraNetwork* net) {
   if(!fmlay || fmlay->lesioned()) return;
   if(con_spec.SPtr()) {
     if(((LeabraConSpec*)con_spec.SPtr())->inhib)
-      net->inhib_cons_used = true;
+      net->net_misc.inhib_cons = true;
   }
 }
 

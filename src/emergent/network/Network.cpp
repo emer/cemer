@@ -36,9 +36,17 @@ eTypeDef_Of(CustomPrjnSpec);
 
 #include <sstream>
 
+TA_BASEFUNS_CTORS_DEFN(NetStatsSpecs);
 TA_BASEFUNS_CTORS_DEFN(Network);
 
 using namespace std;
+
+void NetStatsSpecs::Initialize() {
+  sse_unit_avg = false;
+  sse_sqrt = false;
+  cnt_err_tol = 0.0f;
+  prerr = false;
+}
 
 
 taBrainAtlas_List* Network::brain_atlases = NULL;
@@ -70,8 +78,6 @@ void Network::Initialize() {
   // trial_name = ??
   // output_name = ??
 
-  sse_unit_avg = false;
-  sse_sqrt = false;
   sse = 0.0f;
   sum_sse = 0.0f;
   avg_sse = 0.0f;
@@ -79,13 +85,9 @@ void Network::Initialize() {
   pct_err = 0.0f;
   pct_cor = 0.0f;
 
-  cnt_err_tol = 0.0f;
-
   cur_sum_sse = 0.0f;
   avg_sse_n = 0;
   cur_cnt_err = 0.0f;
-
-  compute_prerr = false;
 
   // prerr = ??
   // sum_prerr = ??
@@ -216,6 +218,7 @@ void Network::Copy_(const Network& cp) {
   wt_update = cp.wt_update;
   small_batch_n = cp.small_batch_n;
   small_batch_n_eff = cp.small_batch_n_eff;
+  stats = cp.stats;
 
   batch = cp.batch;
   epoch = cp.epoch;
@@ -228,12 +231,9 @@ void Network::Copy_(const Network& cp) {
   trial_name = cp.trial_name;
   output_name = cp.output_name;
 
-  sse_unit_avg = cp.sse_unit_avg;
-  sse_sqrt = cp.sse_sqrt;
   sse = cp.sse;
   sum_sse = cp.sum_sse;
   avg_sse = cp.avg_sse;
-  cnt_err_tol = cp.cnt_err_tol;
   cnt_err = cp.cnt_err;
   pct_err = cp.pct_err;
   pct_cor = cp.pct_cor;
@@ -242,7 +242,6 @@ void Network::Copy_(const Network& cp) {
   avg_sse_n = cp.avg_sse_n;
   cur_cnt_err = cp.cur_cnt_err;
 
-  compute_prerr = cp.compute_prerr;
   prerr = cp.prerr;
   sum_prerr = cp.sum_prerr;
   epc_prerr = cp.epc_prerr;
@@ -1173,7 +1172,7 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
     sse = sqrtf(sse);
   cur_sum_sse += sse;
   avg_sse_n++;
-  if(sse > cnt_err_tol)
+  if(sse > stats.cnt_err_tol)
     cur_cnt_err += 1.0;
 }
 
@@ -1196,8 +1195,8 @@ void Network::Compute_PRerr() {
 }
 
 void Network::Compute_TrialStats() {
-  Compute_SSE(sse_unit_avg, sse_sqrt);
-  if(compute_prerr)
+  Compute_SSE(stats.sse_unit_avg, stats.sse_sqrt);
+  if(stats.prerr)
     Compute_PRerr();
 }
 
@@ -1232,7 +1231,7 @@ void Network::Compute_EpochStats() {
   DMem_ComputeAggs(dmem_trl_comm.comm);
 #endif
   Compute_EpochSSE();
-  if(compute_prerr)
+  if(stats.prerr)
     Compute_EpochPRerr();
 }
 

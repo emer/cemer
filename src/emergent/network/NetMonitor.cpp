@@ -128,7 +128,7 @@ NetMonItem* NetMonitor::AddNetRel() {
 }
 
 NetMonItem* NetMonitor::AddLayActAvg() {
-  NetMonItem* nmi = AddObject(network, "acts_m_avg.avg");
+  NetMonItem* nmi = AddObject(network, "acts_m_avg");
   nmi->var_label = "avg_act";
   nmi->UpdateAfterEdit();
   return nmi;

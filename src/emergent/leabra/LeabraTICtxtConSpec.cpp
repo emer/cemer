@@ -25,3 +25,8 @@ void LeabraTICtxtConSpec::Initialize() {
 void LeabraTICtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
   nm = "Ctxt_" + nm;
 }
+
+void LeabraTICtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  inherited::Trial_Init_Specs(net);
+  net->net_misc.ti = true;
+}

@@ -164,10 +164,14 @@ void LeabraDtSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraActAvgSpec::Initialize() {
+  Defaults_init();
+}
+
+void LeabraActAvgSpec::Defaults_init() {
   l_up_inc = 0.2f;
   l_dn_tau = 2.5f;
-  ss_tau = 1.0f;
-  s_tau = 5.0f;
+  ss_tau = 2.0f;
+  s_tau = 2.0f;
   m_tau = 10.0f;
   
   l_dn_dt = 1.0f / l_dn_tau;
@@ -175,6 +179,7 @@ void LeabraActAvgSpec::Initialize() {
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
 }
+
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
@@ -350,6 +355,10 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   if(act_fun == SPIKE) {
     dt.midpoint = true;         // must use midpoint for spiking
   }
+  if(noise_type == VM_NOISE && act_fun != SPIKE) {
+    taMisc::Warning("Cannot use noise_type = VM_NOISE with rate-code (non-spiking) activation function -- changing noise_type to NETIN_NOISE");
+    noise_type = NETIN_NOISE;
+  }
 
   act_misc.UpdateAfterEdit_NoGui();
   spike.UpdateAfterEdit_NoGui();
@@ -376,10 +385,10 @@ void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
   if(net) {
-    if(dt.integ != 1000.0f * net->time_inc) {
+    if(dt.integ != 1000.0f * net->phases.time_inc) {
       taMisc::Warning("unit time integration constant dt.integ of:", (String)dt.integ,
-                      "does not match network time_inc increment of:",
-                      (String)net->time_inc, "time_inc should be 0.001 * dt.integ");
+                      "does not match network phases.time_inc increment of:",
+                      (String)net->phases.time_inc, "time_inc should be 0.001 * dt.integ");
     }
   }
 }
@@ -707,6 +716,9 @@ void LeabraUnitSpec::Init_ActBuff(LeabraUnit* u) {
 void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
+  if(cifer.on) {
+    net->net_misc.ti = true;
+  }
 }
 
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1001,7 +1013,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     u->net_delta = nw_nt;
   }
 
-  if(net->inhib_cons_used) {
+  if(net->net_misc.inhib_cons) {
     u->g_i_raw += u->g_i_delta;
     if(act_fun == SPIKE) {
       u->g_i_syn = MAX(u->g_i_syn, 0.0f);
@@ -1025,7 +1037,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     tot_net += u->ext * ls->clamp.gain;
   }
 
-  if(net->ti_mode) {
+  if(net->net_misc.ti) {
     tot_net += u->act_ctxt + u->deep5b_net;
   }
 
@@ -1359,7 +1371,7 @@ void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnit* u, LeabraNetwork* net) {
     u->spk_t = net->tot_cycle;
     return;
   }
-  int interval = act_misc.ActToInterval(net->time_inc, dt.integ, u->act_nd);
+  int interval = act_misc.ActToInterval(net->phases.time_inc, dt.integ, u->act_nd);
   if((net->tot_cycle - u->spk_t) >= interval) {
     u->spike = 1.0f;
     u->spk_t = net->tot_cycle;
@@ -1469,15 +1481,11 @@ void LeabraUnitSpec::Compute_MidMinus(LeabraUnit* u, LeabraNetwork* net) {
 //      Phase and Trial Activation Updating
 
 void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
-  bool no_plus_testing = false;
-  if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
-    no_plus_testing = true;
-  }
+  bool no_plus_testing = net->IsNoPlusTesting();
 
   float use_act = u->act_lrn;
 
-  switch(net->phase_order) {
-  case LeabraNetwork::MINUS_PLUS:
+  if(net->phases.minus > 0) {
     if(no_plus_testing) {
       u->net_ctxt = 0.0f;
       u->deep5b_net = 0.0f;
@@ -1499,15 +1507,14 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
         Compute_ActTimeAvg(u, net);
       }
     }
-    break;
-  case LeabraNetwork::PLUS_ONLY:
+  }
+  else { // plus only
     u->net_ctxt = 0.0f;
     u->deep5b_net = 0.0f;
     u->p_act_p = u->act_p;
     u->act_m = u->act_p = use_act;
     u->act_dif = 0.0f;
     Compute_ActTimeAvg(u, net);
-    break;
   }
 }
 
@@ -1729,10 +1736,10 @@ bool LeabraUnitSpec::Compute_PRerr(Unit* ru, Network* rnet, float& true_pos,
 float LeabraUnitSpec::Compute_NormErr(LeabraUnit* u, LeabraNetwork* net) {
   if(!u->HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
 
-  if(net->on_errs) {
+  if(net->lstats.on_errs) {
     if(u->act_m > 0.5f && u->targ < 0.5f) return 1.0f;
   }
-  if(net->off_errs) {
+  if(net->lstats.off_errs) {
     if(u->act_m < 0.5f && u->targ > 0.5f) return 1.0f;
   }
   return 0.0f;

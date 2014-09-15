@@ -234,6 +234,7 @@ public:
 
   QAtomicInt    loop_idx0;      // #IGNORE index for looping to deploy threads, 1st one
   QAtomicInt    loop_idx1;      // #IGNORE index for looping to deploy threads, 2nd one
+  QAtomicInt    loop_idx2;      // #IGNORE index for looping to deploy threads, 3rd one..
 
   Network*      network()       { return (Network*)owner; }
 

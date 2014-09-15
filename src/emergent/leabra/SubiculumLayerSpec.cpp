@@ -117,8 +117,8 @@ float SubiculumLayerSpec::Compute_ECNormErr_ugp(LeabraLayer* lin, LeabraLayer* l
     if(uout->lesioned()) continue;
     float outval = uout->act_eq;
     if(net->phase == LeabraNetwork::PLUS_PHASE) outval = uout->act_m; // use minus
-    if(net->on_errs) { if(outval > 0.5f && uin->act_eq < 0.5f) nerr += 1.0f; }
-    if(net->off_errs) { if(outval < 0.5f && uin->act_eq > 0.5f) nerr += 1.0f; }
+    if(net->lstats.on_errs) { if(outval > 0.5f && uin->act_eq < 0.5f) nerr += 1.0f; }
+    if(net->lstats.off_errs) { if(outval < 0.5f && uin->act_eq > 0.5f) nerr += 1.0f; }
   }
   return nerr;
 }
@@ -139,7 +139,7 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
       for(int g=0; g < lin->gp_geom.n; g++) {
         LeabraUnGpData* gpdin = lin->ungp_data.FastEl(g);
         nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_GP, g, net);
-        if(net->on_errs && net->off_errs)
+        if(net->lstats.on_errs && net->lstats.off_errs)
           ntot += 2 * (int)(gpdin->acts_m_avg * (float)gp_nunits);
         else
           ntot += (int)(gpdin->acts_m_avg * (float)gp_nunits);
@@ -148,7 +148,7 @@ void SubiculumLayerSpec::Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net)
     else {
       int lay_nunits = lin->UnitAccess_NUnits(Layer::ACC_LAY);
       nerr += Compute_ECNormErr_ugp(lin, lout, Layer::ACC_LAY, 0, net);
-      if(net->on_errs && net->off_errs)
+      if(net->lstats.on_errs && net->lstats.off_errs)
         ntot += 2 * (int)(lin->acts_m_avg * (float)lay_nunits);
       else
         ntot += (int)(lin->acts_m_avg * (float)lay_nunits);

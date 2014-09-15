@@ -581,10 +581,7 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
                                       LeabraNetwork* net) {
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
 
-  bool no_plus_testing = false;
-  if(net->no_plus_test && (net->train_mode == LeabraNetwork::TEST)) {
-    no_plus_testing = true;
-  }
+  bool no_plus_testing = net->IsNoPlusTesting();
 
   for(int k=0;k<twod.n_vals;k++) {
     float x_val, y_val, x_m, y_m, x_p, y_p;
@@ -595,8 +592,7 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
     lay->GetTwoDVals(x_p, y_p, TwoDValLeabraLayer::TWOD_ACT_P,
                      k, gp_geom_pos.x, gp_geom_pos.y);
 
-    switch(net->phase_order) {
-    case LeabraNetwork::MINUS_PLUS:
+    if(net->phases.minus > 0) {
       if(no_plus_testing) {
         lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
                          k, gp_geom_pos.x, gp_geom_pos.y);
@@ -615,15 +611,14 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
                           k, gp_geom_pos.x, gp_geom_pos.y);
         }
       }
-      break;
-    case LeabraNetwork::PLUS_ONLY:
+    }
+    else { // plus only
       lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
                       k, gp_geom_pos.x, gp_geom_pos.y);
       lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
                       k, gp_geom_pos.x, gp_geom_pos.y);
       lay->SetTwoDVals(0.0f, 0.0f, TwoDValLeabraLayer::TWOD_ACT_DIF,
                       k, gp_geom_pos.x, gp_geom_pos.y);
-      break;
     }
   }
 }

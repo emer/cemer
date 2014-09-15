@@ -262,32 +262,28 @@ void LeabraTask::Cycle_Run() {
       net->Compute_CycleStats_Pre();
     }
 
-    if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
+    if(task_id == 0) { mg->loop_idx2 = 1; mg->loop_idx0 = 1; }        // next guy..
     { // Compute_Act();
       LeabraThreadUnitCall un_call(&LeabraUnit::Compute_Act_l);
       RunUnitsStep(un_call, mg->loop_idx1, mg->stage_act, act_time, cyc);
     }
 
+    // this last guy uses idx2 so that idx0 is fresh for the top of the loop
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
     { // Compute_CycleStats();
       LeabraThreadLayerCall lay_call(&LeabraLayer::Compute_CycleStats);
-      RunLayersStep(lay_call, mg->loop_idx0, mg->stage_cyc_stats, cycstats_time, cyc);
+      RunLayersStep(lay_call, mg->loop_idx2, mg->stage_cyc_stats, cycstats_time, cyc);
 
       if(task_id == 0) {        // first thread does this..
         net->Compute_CycleStats_Post(); // output name
       }
     }
 
-    if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
-
     // Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
     // todo: figure this one out!
 
     if(task_id == 0) {
-      net->cycle++;
-      net->ct_cycle++;
-      net->tot_cycle++;
-      net->time += net->time_inc; // always increment time..
+      net->Cycle_IncrCounters();
     }
   }
 }
@@ -331,7 +327,7 @@ void LeabraTask::Compute_dWt() {
   }
 
   if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
-  if(net->net_misc.dwt_norm_used) {
+  if(net->net_misc.dwt_norm) {
     LeabraThreadUnitCall un_call(&LeabraUnit::Compute_dWt_Norm);
     RunUnitsStep(un_call, mg->loop_idx1, mg->stage_dwt_norm, dwt_norm_time, 0, true); // cyc = 0, reset
   }
@@ -558,6 +554,7 @@ bool LeabraThreadMgr::CanRun() {
 void LeabraThreadMgr::InitStages() {
   loop_idx0 = 1;
   loop_idx1 = 1;
+  loop_idx2 = 1;
 
   done_run = 0;
 

@@ -66,6 +66,25 @@ class T3Panel; //
 // it does have structural functions in the spec..
 
 
+eTypeDef_Of(NetStatsSpecs);
+
+class E_API NetStatsSpecs : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Network parameters for how stats are computed
+INHERITED(taOBase)
+public:
+  bool          sse_unit_avg;   // #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
+  bool          sse_sqrt;       // #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
+  float         cnt_err_tol;    // #CAT_Statistic tolerance for computing the count of number of errors over current epoch
+  bool          prerr;          // #CAT_Statistic compute precision and recall error values over units, at same time as computing sum squared error (SSE)
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetStatsSpecs);
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+};
+
 eTypeDef_Of(Network);
 
 class E_API Network : public taFBase {
@@ -136,6 +155,8 @@ public:
   WtUpdate      wt_update;      // #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
   int           small_batch_n;  // #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
+  NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
+  UnitCallThreadMgr threads;    // #CAT_Threads parallel threading of network computation
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
@@ -148,12 +169,9 @@ public:
   String        trial_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
   String        output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)
 
-  bool          sse_unit_avg;   // #CAT_Statistic compute sse as average sse over units (i.e., divide by total number of target units in layer)
-  bool          sse_sqrt;       // #CAT_Statistic take the square root of the SSE, producing a Euclidian distance instead of raw sse (note this cannot technically be added across trials in a linear fashion, as raw sse can)
   float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
   float         avg_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
-  float         cnt_err_tol;    // #CAT_Statistic tolerance for computing the count of number of errors over current epoch
   float         cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
   float         pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
   float         pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
@@ -162,10 +180,9 @@ public:
   int           avg_sse_n;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
   float         cur_cnt_err;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
 
-  bool          compute_prerr;  // #CAT_Statistic compute precision and recall error values over units, at same time as computing sum squared error (SSE)
-  PRerrVals     prerr;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
+  PRerrVals     prerr;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
   PRerrVals     sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
-  PRerrVals     epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
+  PRerrVals     epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns
 
   TimeUsed      train_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing entire training (across epochs) (managed entirely by programs -- not always used)
   TimeUsed      epoch_time;     // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for computing an epoch (managed entirely by programs -- not always used)
@@ -176,7 +193,6 @@ public:
   TimeUsed      wt_sync_time;   // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network)
   TimeUsed      misc_time;      // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
-  UnitCallThreadMgr threads;    // #CAT_Threads parallel threading of network computation
   UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads and for connection indexes -- first (0 index) is a null unit that is skipped over and should never be computed on
   Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
   float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
@@ -193,11 +209,11 @@ public:
   int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
   float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory
 
-  Usr1SaveFmt   usr1_save_fmt;  // #CAT_File save network for -USR1 signal: full net or weights
-  WtSaveFormat  wt_save_fmt;    // #CAT_File format to save weights in if saving weights
+  Usr1SaveFmt   usr1_save_fmt;  // #CAT_File #EXPERT save network for -USR1 signal: full net or weights
+  WtSaveFormat  wt_save_fmt;    // #CAT_File #EXPERT format to save weights in if saving weights
 
-  int           n_units;        // #READ_ONLY #EXPERT #CAT_Structure total number of units in the network
-  int           n_cons;         // #READ_ONLY #EXPERT #CAT_Structure total number of connections in the network
+  int           n_units;        // #READ_ONLY #SHOW #CAT_Structure total number of units in the network
+  int           n_cons;         // #READ_ONLY #SHOW #CAT_Structure total number of connections in the network
   int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
   PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
   PosVector2i   max_disp_size2d; // #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net -- for 2D display

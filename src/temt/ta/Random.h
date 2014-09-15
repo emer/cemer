@@ -43,8 +43,8 @@ public:
 
   Type          type;           // type of random variable to generate
   double        mean;           // mean of random distribution
-  double        var;            // #CONDEDIT_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
-  double        par;            // #CONDEDIT_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)
+  double        var;            // #CONDSHOW_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
+  double        par;            // #CONDSHOW_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)
 
   double        Gen() const;
   // generate a random variable according to current parameters

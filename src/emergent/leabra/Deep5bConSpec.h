@@ -32,6 +32,7 @@ INHERITED(LeabraConSpec)
 public:
   // special!
   bool  IsDeep5bCon() override { return true; }
+  void  Trial_Init_Specs(LeabraNetwork* net) override;
 
   inline void Send_Deep5bNetin(LeabraSendCons* cg, LeabraNetwork* net,
                                const int thread_no, const float su_act) {
