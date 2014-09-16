@@ -1,0 +1,156 @@
+*** Settings ***
+Resource           Emergent.txt
+Resource           Server_lib.txt
+
+Suite Setup      Initialize Emergent    ../../demo/programs/program_examples.proj
+Suite Teardown   Shutdown Emergent
+
+
+*** Variables ***
+${debug} =       false
+
+*** Test Cases ***
+
+Initialize
+    Set Suite Variable     ${verbose}       ${false}
+    Run Keyword If         '${debug}' == 'true'       Set Suite Variable   ${verbose}  ${true}
+
+Connection
+    Sleep                  1 sec
+    ${output} =            Read
+    Print                  ${output}
+    Should Contain         ${output}    Emergent Server v7.
+
+Test For
+    ${output} =                Run Command           {"command": "RunProgram", "program": "For"}   5 sec
+    Status OK No Result        ${output}
+
+Test Foreach
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Foreach"}   5 sec
+    Status OK No Result        ${output}
+
+Test Switch
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Switch"}   5 sec
+    Status OK No Result        ${output}
+
+Test If_Else
+    ${output} =                Run Command           {"command": "RunProgram", "program": "If_Else"}   5 sec
+    Status OK No Result        ${output}
+
+Test Conditional_Printing
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Conditional_Printing"}   5 sec
+    Status OK No Result        ${output}
+
+Test Strings
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Strings"}   5 sec
+    Status OK No Result        ${output}
+
+Test DynEnum
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DynEnum"}   5 sec
+    Status OK No Result        ${output}
+
+Test Matrix
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Matrix"}   5 sec
+    Status OK No Result        ${output}
+
+Test Global_vs_Local
+    ${output} =                Run Command           {"command": "RunProgram", "program": "Global_vs_Local"}   5 sec
+    Status OK No Result        ${output}
+
+Test ReadAndPrintAllRows
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ReadAndPrintAllRows"}   5 sec
+    Status OK No Result        ${output}
+
+Test ReadRowBySpecifyingByNumber
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ReadRowBySpecifyingByNumber"}   5 sec
+    Status OK No Result        ${output}
+
+Test ReadRowBySpecifyingValue
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ReadRowBySpecifyingValue"}   5 sec
+    Status OK No Result        ${output}
+
+Test AddRowsAndWriteToTable
+    ${output} =                Run Command           {"command": "RunProgram", "program": "AddRowsAndWriteToTable"}   5 sec
+    Status OK No Result        ${output}
+
+Test ReadFromManyColumns
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ReadFromManyColumns"}   5 sec
+    Status OK No Result        ${output}
+
+Test UseLocalVarWhenAccessingMatrices
+    ${output} =                Run Command           {"command": "RunProgram", "program": "UseLocalVarWhenAccessingMatrices"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataTable_css
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataTable_css"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataLoop
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataLoop"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataCalcLoop
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataCalcLoop"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataSelect
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataSelect"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataGroup
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataGroup"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataSort
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataSort"}   5 sec
+    Status OK No Result        ${output}
+
+Test DataJoin
+    ${output} =                Run Command           {"command": "RunProgram", "program": "DataJoin"}   5 sec
+    Status OK No Result        ${output}
+
+Test RandomInteger
+    ${output} =                Run Command           {"command": "RunProgram", "program": "RandomInteger"}   5 sec
+    Status OK No Result        ${output}
+
+Test RandomFloats
+    ${output} =                Run Command           {"command": "RunProgram", "program": "RandomFloats"}   5 sec
+    Status OK No Result        ${output}
+
+Test MiscMath
+    ${output} =                Run Command           {"command": "RunProgram", "program": "MiscMath"}   5 sec
+    Status OK No Result        ${output}
+
+Test CallFunctionReturnValue
+    ${output} =                Run Command           {"command": "RunProgram", "program": "CallFunctionReturnValue"}   5 sec
+    Status OK No Result        ${output}
+
+Test CallFunctionNoReturn
+    ${output} =                Run Command           {"command": "RunProgram", "program": "CallFunctionNoReturn"}   5 sec
+    Status OK No Result        ${output}
+
+Test CallingProgram
+    ${output} =                Run Command           {"command": "RunProgram", "program": "CallingProgram"}   5 sec
+    Status OK No Result        ${output}
+
+Test ProgramSeekingValue
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ProgramSeekingValue"}   5 sec
+    Status OK No Result        ${output}
+
+Test ProgramWithValue
+    ${output} =                Run Command           {"command": "RunProgram", "program": "ProgramWithValue"}   5 sec
+    Status OK No Result        ${output}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
