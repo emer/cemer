@@ -1,0 +1,146 @@
+*** Settings ***
+
+Library          Telnet
+Library          HttpLibrary.HTTP
+Library          Process
+Library          OperatingSystem
+
+*** Variables ***
+${project} =  ../../proj_templates/LeabraStd.proj
+
+*** Keywords ***
+
+Status OK No Result
+    [Arguments]                   ${output}
+    Status OK                     ${output}
+    Json Value Should Not Exist   ${output}          /result
+
+Status OK Has Result
+    [Arguments]                   ${output}
+    Status OK                     ${output}
+    Get Json Value                ${output}          /result
+
+Status OK Match Result
+    [Arguments]                   ${output}          ${expected}
+    Status OK                     ${output}
+    Json String Should Match      ${output}          /result            ${expected}
+
+Status OK Equal Result
+    [Arguments]                   ${output}          ${expected}
+    Status OK                     ${output}
+    Json Value Should Equal       ${output}          /result            ${expected}    
+
+Status OK
+    [Arguments]                   ${output}
+    Should Be Valid Json          ${output}
+    Json String Should Match      ${output}          /status            OK
+    Json Value Should Not Exist   ${output}          /message
+    Json Value Should Not Exist   ${output}          /error
+
+Status Error Match
+    [Arguments]                   ${output}    ${error}   ${message}
+    Status Error                  ${output}
+    Json Value Should Equal       ${output}          /error             ${error}
+    Json String Should Match      ${output}          /message           ${message}
+    
+Status Error
+    [Arguments]                   ${output}
+    Should Be Valid Json          ${output}
+    Json String Should Match      ${output}          /status            ERROR
+    Json Value Should Not Exist   ${output}          /result
+
+Message Should Match
+    [Arguments]        ${output}    ${expected}
+    ${match}           ${message} =
+    ...                Should Match Regexp    ${output}    OK (.*)
+    Should Be Equal    ${expected}   ${message}
+
+# Use 'Json Value Should Equal' for numbers
+#Json Value Should Match
+#    [Arguments]        ${json}    ${pointer}    ${expected}
+#    ${value} =         Get Json Value    ${json}    ${pointer}
+#    Should Match       ${value}    ${expected}
+
+Json Value Should Not Exist
+    [Arguments]        ${json}    ${pointer}
+    Run Keyword And Expect Error  JsonPointerException*  Get Json Value  ${json}  ${pointer}
+
+Json String Should Match
+    [Arguments]        ${json}    ${pointer}    ${expected}
+    ${value} =         Get Json String    ${json}    ${pointer}
+    Should Match       ${value}    ${expected}
+
+Get Json String
+    [Arguments]        ${json}                   ${pointer}
+    ${value} =         Get Json Value            ${json}        ${pointer}
+    ${match}           ${output} =
+    ...                Should Match Regexp       ${value}       "(.*)"
+    [return]           ${output}
+
+Print
+    [Arguments]        ${text}
+    Run Keyword If     ${verbose}                Log                ${text}    WARN
+
+Initialize Emergent
+    [Arguments]          ${project_arg}
+    Set Suite Variable   ${project}       ${project_arg}
+    Log       ${project}                  WARN
+    Log       ${project_arg}                  WARN
+    ${pid} =             Start Process      emergent -nogui -server -p ${project}    shell=True
+    Set Suite Variable   ${pid}
+    Sleep                8 sec   # Could do a loop and use Is Process Running but not a big deal
+    Open Connection      127.0.0.1    port=5360
+
+Shutdown Emergent
+    Close All Connections
+    Sleep                2 sec
+    ${output} =          Terminate Process    ${pid}       kill=true
+    Sleep                5 sec
+
+Run Command Wait
+    [Arguments]        ${command}
+    ${output} =        Run Command    ${command}   500ms
+    [Return]           ${output}
+
+Run Command
+    [Arguments]        ${command}    ${wait}
+    Print              [Sending] ${command}    # temporary
+    Write Bare         ${command}\n
+    Sleep              ${wait}
+    ${output} =        Read
+    Print              [Received] ${output}    # this is temporary just so I can see what's happening
+    [Return]           ${output}
+
+Restart Emergent
+    Log  "Emergent is still busy, restarting server"    WARN
+    Shutdown Emergent
+    Sleep    5
+    Initialize Emergent ${project}
+    Sleep      5
+    ${output} =       Read
+    Write Bare        {"command": "GetRunState"}
+    ${output} =       Read
+    Sleep     5
+    Print     "Emergent was reset"
+
+Ensure Emergent Free
+    ${output} =        Run Command Wait      {"command": "GetRunState"}
+    Print     "Checking Emergent is free"
+    ${stat}   ${status} =        Run Keyword And Ignore Error     Get Json String    ${output}    /status
+    ${stat}   ${result} =        Run Keyword And Ignore Error     Get Json String    ${output}    /result
+    Return from Keyword If      '${status}' == 'OK' and ('${result}' == '4' or '${result}' == '0')
+    Restart Emergent
+
+
+    
+    
+
+# For reference - JSON keywords from HttpLibrary.HTTP
+# Get Json Value                string, pointer, ...
+# Json Value Should Equal       string, pointer, expected
+# Json Value Should Not Equal   string, pointer, expected
+# Log Json                      string, (args)
+# Parse Json                    string
+# Set Json Value                string, pointer, value
+# Should Be Valid Json          string
+
