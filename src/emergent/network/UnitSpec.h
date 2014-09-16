@@ -63,6 +63,8 @@ public:
   // #CAT_Learning initialize the weight change variables
   virtual void  Init_Weights(Unit* u, Network* net, int thread_no=-1);
   // #CAT_Learning init weight state variables
+    virtual void  Init_Weights_Prjn(Unit* u, Network* net, int thread_no=-1);
+    // #CAT_Structure initialize weights for projections that have init_wts set
     virtual void  Init_Weights_sym(Unit* u, Network* net, int thread_no=-1);
     // #CAT_Structure symmetrize weights if needed after weight init -- threaded for speed
     virtual void  Init_Weights_post(Unit* u, Network* net, int thread_no=-1);

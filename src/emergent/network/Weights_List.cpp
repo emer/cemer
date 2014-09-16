@@ -32,8 +32,9 @@ int Weights_List::Dump_Load_Value(std::istream& strm, taBase* par) {
       net->Connect_Alloc();       // take the network
     }
     else {
-      net->Init_Weights_post();
-      net->Connect_VecChunk(); 
+      // maybe not quite ready for this yet.. try UAE?
+      // net->Init_Weights_post();
+      // net->Connect_VecChunk(); 
     }      
   }
   return rval;

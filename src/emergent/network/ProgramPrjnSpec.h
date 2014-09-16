@@ -27,14 +27,13 @@
 eTypeDef_Of(ProgramPrjnSpec);
 
 class E_API ProgramPrjnSpec : public ProjectionSpec {
-  // Program-controlled connectivity: points to a program that will generate appropriate connections -- MUST have 'prjn' and 'make_cons' arg variables program, which will be set prior to calling to relevant projection -- recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls for !make_cons -- for make_cons, use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
+  // Program-controlled connectivity: points to a program that will generate appropriate connections -- MUST have 'prjn', 'make_cons', and 'do_init_wts' arg variables program, which will be set prior to calling to relevant projection -- recv layer is prjn->layer, send layer is prjn->from; must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls for !make_cons -- for make_cons, use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
 INHERITED(ProjectionSpec)
 public:
   ProgramRef	prog;		// program to call to connect layers -- prjn arg value (must exist) is set to current projection and then it is called
 
   void	Connect_impl(Projection* prj, bool make_cons) override;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override {}
-    // NOTE: if you allow init_wts you must set wts in your script
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
 
   TA_SIMPLE_BASEFUNS(ProgramPrjnSpec);
 protected:

@@ -35,8 +35,8 @@ TA_BASEFUNS_CTORS_DEFN(BaseCons);
 using namespace std;
 
 float BaseCons::null_rval = 0.0f;
-//int   BaseCons::vec_chunk_targ = TA_VEC_SIZE;
 
+//int   BaseCons::vec_chunk_targ = TA_VEC_SIZE;
 // NOTE: this must be a constant for everyone because otherwise the weight files
 // will not be portable across different platforms, builds, etc
 int   BaseCons::vec_chunk_targ = 8;
@@ -265,6 +265,10 @@ void BaseCons::ConnectAllocInc(int inc_n) {
 
 void BaseCons::AllocConsFmSize() {
   AllocCons(size);              // this sets size back to zero and does full alloc
+}
+
+TypeDef* BaseCons::DefaultConType() {
+  return &TA_Connection;
 }
 
 bool BaseCons::SetConType(TypeDef* cn_tp) {
@@ -980,7 +984,8 @@ int BaseCons::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
 
   if(this == par) {                // hack signal to just save as a sub-guy
     strm << "\n";
-    taMisc::indent(strm, indent+1, 1) << "[" << size << "]"; // just add the size here
+    taMisc::indent(strm, indent+1, 1) << "[" << size << ":" << 
+      con_type->name << "]"; // need type to allocate properly
   }
   return true;
 }
@@ -1006,9 +1011,15 @@ int BaseCons::Dump_Load_Value(istream& strm, taBase* par) {
   c = taMisc::read_word(strm);
   if(c == '[') {
     c = taMisc::read_word(strm);
-    if(c == ']') {
+    if(c == ':') {
       int sz = atoi(taMisc::LexBuf);
-      FreeCons();               // need to explicitly nuke old guys!
+      c = taMisc::read_word(strm);
+      con_type = taMisc::FindTypeName(taMisc::LexBuf);
+      AllocCons(sz);
+    }
+    else {
+      int sz = atoi(taMisc::LexBuf);
+      con_type = DefaultConType(); // fall back on default
       AllocCons(sz);
     }
   }
@@ -1081,10 +1092,11 @@ int BaseCons::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
   bool bias_con = false;
   if(!prjn && con_alloc == 1) {  // if prjn = NULL, then probably bias con -- just allocate cons
     bias_con = true;
-    // if(alloc_size != 1)
-    //   AllocCons(con_alloc);
-    // if(size != 1)
-    //   ConnectUnOwnCn(own_ru);
+    TestWarning
+      (alloc_size != 1, "Dump_Load_Cons",
+       "bias connection allocation size != 1 -- internal programmer error -- please report");
+    if(size != 1)
+      ConnectUnOwnCn(own_ru);
   }
   else {
     if(alloc_size != con_alloc) {

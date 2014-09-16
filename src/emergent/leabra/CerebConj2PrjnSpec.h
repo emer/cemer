@@ -46,7 +46,7 @@ public:
   // outer connect: unit_group position determines sender location
 
   void Connect_impl(Projection* prjn, bool make_cons) override;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
 
   virtual bool	TrgRecvFmSend(int send_x, int send_y);
   // #BUTTON compute target recv layer geometry based on given sending layer geometry -- updates trg_recv_geom and trg_send_geom members, including fixing send to be an appropriate even multiple of rf_move -- returns true if send values provided result are same "good" ones that come out the end

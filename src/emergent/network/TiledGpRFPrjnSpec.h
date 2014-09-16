@@ -41,7 +41,8 @@ public:
   taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
   taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+
   void Connect_impl(Projection* prjn, bool make_cons) override;
   virtual void 	Connect_Reciprocal(Projection* prjn, bool make_cons);
   int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);

@@ -375,7 +375,7 @@ class E_API DaModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum ModType {
-    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner
+    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner, by adding dav * gain to the net input 
     PLUS_POST,			// da modulates plus-phase activations (only), at the end of the plus phase
   };
 

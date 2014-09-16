@@ -37,9 +37,9 @@ public:
 
   virtual void	Connect_UnitGroup(Layer* lay, Layer::AccessMode acc_md, int gpidx,
 				  Projection* prjn, bool make_cons);
-  void		Connect_impl(Projection* prjn, bool make_cons);
-  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
-  // uses weight values as specified in the tesselel's
+  void	Connect_impl(Projection* prjn, bool make_cons);
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+
 
   TA_SIMPLE_BASEFUNS(ScalarValSelfPrjnSpec);
 protected:

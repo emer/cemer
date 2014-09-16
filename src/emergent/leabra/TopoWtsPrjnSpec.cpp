@@ -58,8 +58,7 @@ void TopoWtsPrjnSpec::Initialize() {
 
 void TopoWtsPrjnSpec::Defaults_init() {
   init_wts = true;
-  add_rnd_wts = true;
-  add_rnd_wts_scale = 1.0f;
+  add_rnd_var = true;
 }
 
 bool TopoWtsPrjnSpec::TestWarning(bool test, const char* fun_name,
@@ -140,7 +139,9 @@ void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void TopoWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
+void TopoWtsPrjnSpec::Init_Weights_Prjn
+(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) {
+
   if(TestError(((send_range_end.x != -1 && send_range_end.x < send_range_start.x) || (send_range_end.y != -1 && send_range_end.y < send_range_start.y)), "TopoWtsPrjnSpec::C_InitWeights ", " either send_range_end.x or send_range_end.y is less than start_idx. Please correct -- aborting!"))
     return;
   if(TestError(((recv_range_end.x != -1 && recv_range_end.x < recv_range_start.x) || (recv_range_end.y != -1 && recv_range_end.y < recv_range_start.y)), "TopoWtsPrjnSpec::C_InitWeights ", " either recv_range_end.x or recv_range_end.y is less than start_idx. Please correct -- aborting!"))
@@ -158,20 +159,19 @@ void TopoWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
 
   if(index_by_gps_send.on && (index_by_gps_send.x || index_by_gps_send.y)) { 	// need SendGps
     if (index_by_gps_recv.on && (index_by_gps_recv.x || index_by_gps_recv.y))	// need RecvGps
-      InitWeights_SendGpsRecvGps(prjn, cg, ru);
+      InitWeights_SendGpsRecvGps(prjn, cg, ru, net);
     else // don't need RecvGps
-      InitWeights_SendGpsRecvFlat(prjn, cg, ru);
+      InitWeights_SendGpsRecvFlat(prjn, cg, ru, net);
   }
   else // don't need SendGps
     if (index_by_gps_recv.on && (index_by_gps_recv.x || index_by_gps_recv.y))
-      InitWeights_SendFlatRecvGps(prjn, cg, ru);
+      InitWeights_SendFlatRecvGps(prjn, cg, ru, net);
     else // don't need RecvGps either
-      InitWeights_SendFlatRecvFlat(prjn, cg, ru);
+      InitWeights_SendFlatRecvFlat(prjn, cg, ru, net);
 }
 
-void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
-				  int cg_idx, bool dbl_add) {
-  Network* net = prjn->layer->own_net;
+void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
+                                  Network* net, float dist, int cg_idx, bool dbl_add) {
   float wt_val = wt_range.min;
   float wt_add = 0.0f; // how much are we adding over baseline minimum?
   if(grad_type == LINEAR) {
@@ -189,7 +189,7 @@ void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, floa
   }
   wt_add = wt_val - wt_range.min; // how much did we just add over baseline minimum?
   if(dbl_add) { wt_val += wt_add; } // add that amount again to make up for mirror-image partner that got clipped!
-  cg->Cn(cg_idx,BaseCons::WT,net) = wt_val;
+  SetCnWt(cg, cg_idx, net, wt_val);
 }
 
 bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru, int i, taVector2i ri_pos,
@@ -509,28 +509,28 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
   }
 
   else { // index_by_gps_send.on == false - not using gps in either dimension!
-  	if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
-  		Unit* su = cg->Un(i,net);
-  		send_lay->UnitLogPos(su, su_pos);
-  		si_geom = send_lay->un_geom;
-  	}
-  	else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
-  		Unit* su = cg->Un(i,net);
-  		int sunidx = 0;
-  		int sgpidx = 0;
-  		send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
+    if(!send_lay->unit_groups) { // send layer does NOT have unit groups -- nothing to worry about!
+      Unit* su = cg->Un(i,net);
+      send_lay->UnitLogPos(su, su_pos);
+      si_geom = send_lay->un_geom;
+    }
+    else { // send_lay *DOES* have unit groups, but ignore for mapping -- need to compute flat x,y coords
+      Unit* su = cg->Un(i,net);
+      int sunidx = 0;
+      int sgpidx = 0;
+      send_lay->UnGpIdxFmUnitIdx(su->idx, sunidx, sgpidx); // idx is 1-D index for unit within containing unit group, which for virt_groups is just the one Unit_Group* units object for that layer; i.e., just the flat idx within the whole layer; returns unidx (index of unit within un_gp), gpidx (index of gp) su_pos.x = sunidx % send_lay->un_geom.x;
 
-  		su_pos.x = sunidx % send_lay->un_geom.x;
-  		su_pos.y = sunidx / send_lay->un_geom.x;
-  		taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
+      su_pos.x = sunidx % send_lay->un_geom.x;
+      su_pos.y = sunidx / send_lay->un_geom.x;
+      taVector2i sgp_pos = send_lay->UnitGpPosFmIdx(sgpidx); // group position relative to gp geom
 
-  		// convert to planar x, y across whole layer
-  		//su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
-  		su_pos.x += send_lay->un_geom.x * sgp_pos.x;
-  		su_pos.y += send_lay->un_geom.y * sgp_pos.y;
-  		si_geom = send_lay->un_geom * send_lay->gp_geom;
-  	}
-  	si_pos = su_pos;
+      // convert to planar x, y across whole layer
+      //su_pos.x = su_pos.x + (send_lay->un_geom.x * sgp_pos.x);
+      su_pos.x += send_lay->un_geom.x * sgp_pos.x;
+      su_pos.y += send_lay->un_geom.y * sgp_pos.y;
+      si_geom = send_lay->un_geom * send_lay->gp_geom;
+    }
+    si_pos = su_pos;
   } // END else { // index_by_gps_send.on == false - not using gps in either dimension!
 
   /////////////////////////////////////////////////////////////////
@@ -768,10 +768,10 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
 //      -4      -3      -2      -1   wrp_x < .5  int
 //      -1.33   -1      -.66    -.33 wrp_x < .5  flt
 
-void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
+                                                 Unit* ru, Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
-  Network* net = prjn->layer->own_net;
 
   taVector2i srs = send_range_start; // actual send range start
   taVector2i sre = send_range_end;   // actual send range end
@@ -918,7 +918,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
   if(ri_pos.x < rrs.x || ri_pos.x > rre.x || ri_pos.y < rrs.y || ri_pos.y > rre.y) {
     for(int i=0; i<cg->size; i++) {
       dbl_add = false;
-      SetWtFmDist(prjn, cg, ru, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      SetWtFmDist(prjn, cg, ru, net, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
     }
     return; // done -- get a new cg/ru
   }
@@ -943,15 +943,15 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
       dbl_add = ReflectClippedWt(prjn, cg, ru, i, ri_pos, srs, sre, rrs, rre, ri_x, ri_y);
     }
 
-    SetWtFmDist(prjn, cg, ru, dist, i, dbl_add);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, dbl_add);
     dbl_add = false; // reset for next iteration
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg,
+                                                  Unit* ru, Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
-  Network* net = prjn->layer->own_net;
 
   taVector2i srs = send_range_start; // actual send range start
   taVector2i sre = send_range_end;   // actual send range end
@@ -1051,7 +1051,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg
   if(ri_pos.x < rrs.x || ri_pos.x > rre.x || ri_pos.y < rrs.y || ri_pos.y > rre.y) {
     for(int i=0; i<cg->size; i++) {
       dbl_add = false;
-      SetWtFmDist(prjn, cg, ru, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      SetWtFmDist(prjn, cg, ru, net, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
     }
     return; // done -- get a new cg/ru
   }
@@ -1075,12 +1075,13 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg
       dbl_add = ReflectClippedWt(prjn, cg, ru, i, ri_pos, srs, sre, rrs, rre, ri_x, ri_y);
     }
 
-    SetWtFmDist(prjn, cg, ru, dist, i, dbl_add);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, dbl_add);
     dbl_add = false; // reset for next iteration
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg, Unit* ru) {
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg,
+                                                  Unit* ru, Network* net) {
 
   //	if(!index_by_gps_recv.x && !index_by_gps_recv.y) { 	// ignoring recv gps in both x- and y-dimensions - just do flat!
   //		InitWeights_SendFlatRecvFlat(prjn, cg, ru); // in case user selects for exploration (or by mistake)
@@ -1090,13 +1091,12 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   if(TestWarning((!index_by_gps_recv.x && !index_by_gps_recv.y),
 		 "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
 		 "index_by_gps_recv.x and *.y both OFF -- calling InitWeights_SendFlatRecvFlat instead!")) {
-    InitWeights_SendFlatRecvFlat(prjn, cg, ru);
+    InitWeights_SendFlatRecvFlat(prjn, cg, ru, net);
     return;
   }
 
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
-  Network* net = prjn->layer->own_net;
 
   taVector2i srs = send_range_start; // actual send range start
   taVector2i sre = send_range_end;   // actual send range end
@@ -1191,7 +1191,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
       if(TestWarning((!index_by_gps_recv.x && !index_by_gps_recv.y),
 		     "TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps ",
 		     "index_by_gps_recv.x and *.y both OFF -- calling InitWeights_SendFlatRecvFlat instead!")) {
-	InitWeights_SendFlatRecvFlat(prjn, cg, ru);
+	InitWeights_SendFlatRecvFlat(prjn, cg, ru, net);
 	return;
       }
     }
@@ -1222,7 +1222,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   if(ri_pos.x < rrs.x || ri_pos.x > rre.x || ri_pos.y < rrs.y || ri_pos.y > rre.y) {
     for(int i=0; i<cg->size; i++) {
       dbl_add = false;
-      SetWtFmDist(prjn, cg, ru, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      SetWtFmDist(prjn, cg, ru, net, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
     }
     return; // done -- get a new cg/ru
   }
@@ -1246,16 +1246,16 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
       dbl_add = ReflectClippedWt(prjn, cg, ru, i, ri_pos, srs, sre, rrs, rre, ri_x, ri_y);
     }
 
-    SetWtFmDist(prjn, cg, ru, dist, i, dbl_add);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, dbl_add);
     dbl_add = false; // reset for next iteration
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg, Unit* ru) {
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg,
+                                                   Unit* ru, Network* net) {
 
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
-  Network* net = prjn->layer->own_net;
 
   taVector2i srs = send_range_start; // actual send range start
   taVector2i sre = send_range_end;   // actual send range end
@@ -1319,7 +1319,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
     if(ru_pos.x < rrs.x || ru_pos.x > rre.x || ru_pos.y < rrs.y || ru_pos.y > rre.y) {
       for(int i=0; i<cg->size; i++) {
       	dbl_add = false;
-      	SetWtFmDist(prjn, cg, ru, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+      	SetWtFmDist(prjn, cg, ru, net, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
       }
       return; // done -- get a new cg/ru
     }
@@ -1354,7 +1354,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
     if(ru_pos.x < rrs.x || ru_pos.x > rre.x || ru_pos.y < rrs.y || ru_pos.y > rre.y) {
       for(int i=0; i<cg->size; i++) {
 	dbl_add = false;
-	SetWtFmDist(prjn, cg, ru, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
+	SetWtFmDist(prjn, cg, ru, net, 1.0f, i, dbl_add); // i = one of entries in the cg (congroup) list -- corresponds to a su (not a sgp!)
       }
       return; // done -- get a new cg/ru
     }
@@ -1384,7 +1384,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* c
       dbl_add = ReflectClippedWt(prjn, cg, ru, i, ri_pos, srs, sre, rrs, rre, ri_x, ri_y);
     }
 
-    SetWtFmDist(prjn, cg, ru, dist, i, dbl_add);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, dbl_add);
     dbl_add = false; // reset for next iteration
   }
 }

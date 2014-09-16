@@ -307,10 +307,8 @@ void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, fl
   cg->Cn(cg_idx,BaseCons::WT,net) = wt_val;
 }
 
-void TiledGpRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  inherited::C_Init_Weights(prjn, cg, ru);
-
-  //  Network* net = prjn->layer->own_net;
+void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                          Network* net) {
   // Layer* recv_lay = (Layer*)prjn->layer;
   // Layer* send_lay = (Layer*)prjn->from.ptr();
 
@@ -321,7 +319,6 @@ void TiledGpRFPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru)
   //   float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
   //   float wt = expf(-0.5 * dst / sig_sq);
 
-  //   cg->Cn(i,BaseCons::WT,net) = wt;
+  //   SetCnWt(cg, i, net, wt_val);
   // }
-
 }

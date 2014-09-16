@@ -175,6 +175,9 @@ public:
   { ((CsConSpec*)GetConSpec())->Aggregate_dWt(this, ru, net, phase); }
   // compute weight change
 
+  TypeDef*      DefaultConType() override
+  { return &TA_CsCon; }
+
   TA_BASEFUNS_NOCOPY(CsRecvCons);
 private:
   void 	Initialize();
@@ -187,6 +190,10 @@ class E_API CsSendCons : public SendCons {
   // #STEM_BASE ##CAT_Cs group of constraint-satisfaction sending connections
 INHERITED(SendCons)
 public:
+
+  TypeDef*      DefaultConType() override
+  { return &TA_CsCon; }
+
   TA_BASEFUNS_NOCOPY(CsSendCons);
 private:
   void	Initialize();

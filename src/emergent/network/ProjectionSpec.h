@@ -31,6 +31,7 @@ class Projection; //
 class RecvCons; //
 class Unit; //
 class Layer; //
+class Network; //
 
 eTypeDef_Of(ProjectionSpec);
 
@@ -43,8 +44,7 @@ INHERITED(BaseSpec)
 public:
   bool          self_con;          // #CAT_Structure whether to create self-connections or not (if applicable)
   bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
-  bool          add_rnd_wts;  	   // #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspect to add random values to the weights set by the projection spec -- NOTE: this typically will work best by setting the rnd.mean value to 0
-  float		add_rnd_wts_scale; // #CONDSHOW_ON_init_wts scales added random weight values by the projection spec -- don't need a custom spec!
+  bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
 
   virtual void  Connect_Sizes(Projection* prjn);
   // #CAT_Structure first-pass connects the network, doing PreConnect, Connect_impl(false), ending up with target allocation sizes
@@ -60,19 +60,15 @@ public:
     virtual int ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
     // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
+  virtual void  SetCnWt(RecvCons* cg, int cn_idx, Network* net, float wt_val);
+  // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
 
-  virtual void  Init_dWt(Projection* prjn);
-  // #CAT_Weights initializes the weight change variables
-  virtual void  Init_Weights(Projection* prjn);
-  // #CAT_Weights initializes the weiht values
-  virtual void  Init_Weights_post(Projection* prjn);
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+  virtual void  Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                  Network* net);
+  // #CAT_Weights #IGNORE when init_wts flag is set, the projection spec sets weights for the entire set of connections, from a recv perspective (always use safe access for Cn that does not depend on who owns it) -- overload in subclasses that set weights
 
   virtual bool  CheckConnect(Projection* prjn, bool quiet=false);
   // #CAT_ObjectMgmt check if projection is connected
-
-  virtual void  C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
-  // #CAT_Weights custom initialize weights in this con group for given receiving unit ru -- any derived version MUST call the base inherited version so that other init weights variables are also initialized
 
   String       GetTypeDecoKey() const override { return "ProjectionSpec"; }
 

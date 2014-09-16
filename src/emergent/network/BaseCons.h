@@ -234,6 +234,9 @@ public:
   virtual void           AllocConsFmSize();
   // #CAT_Structure allocate storage for given number of connections (and Unit pointers) based on the size value, and reset size to 0 -- for dynamic allocation with ConnectAllocInc
 
+  virtual TypeDef*      DefaultConType();
+  // #CAT_Structure return the default connection type for this algorithm's specific connections -- used for old projects that did not save the con_type value in the dump file -- specific algorithms should overwrite
+
   virtual bool          SetConType(TypeDef* cn_tp);
   // #CAT_Structure set new connection type -- will fail (err msg, return false) if connections are already allocated -- can only set prior to allocation
   virtual void          AllocCons(int n);

@@ -40,7 +40,6 @@ inline void ConSpec::Init_Weights_symflag(Network* net) {
 
 inline void ConSpec::Init_Weights(BaseCons* cg, Unit* un, Network* net) {
   Init_Weights_symflag(net);
-  if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);

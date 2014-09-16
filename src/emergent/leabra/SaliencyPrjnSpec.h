@@ -42,8 +42,8 @@ public:
 
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   
-  void 		Connect_impl(Projection* prjn, bool make_cons);
-  void		C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru);
+  void 	Connect_impl(Projection* prjn, bool make_cons);
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
 
   virtual void 	Connect_feat_only(Projection* prjn, bool make_cons);
   virtual void 	Connect_full_dog(Projection* prjn, bool make_cons);
@@ -56,6 +56,7 @@ public:
   TA_SIMPLE_BASEFUNS(SaliencyPrjnSpec);
 protected:
   SPEC_DEFAULTS;
+  void UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()		{ };

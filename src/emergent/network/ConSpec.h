@@ -117,9 +117,8 @@ public:
     C_ApplyLimits(wt);
   }
   // #CAT_Learning initialize the weight according to the random number specs, and apply weight limits (not symmetry)
-  inline void   C_Init_Weight_AddRnd(float& wt) {
-    wt += rnd.Gen();
-    C_ApplyLimits(wt);
+  inline void   C_Init_Weight_AddRndVar(float& wt) {
+    wt += rnd.Gen() - rnd.mean; // subtract mean
   }
   // #CAT_Learning initialize the weight by adding number according to the random number specs, and apply weight limits (not symmetry)
   inline void   C_Init_dWt(float& dwt)

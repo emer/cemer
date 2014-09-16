@@ -211,13 +211,10 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void PolarRndPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
-
-  Network* net = prjn->layer->own_net;
-  
+void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                         Network* net) {
   for(int i=0; i<cg->size; i++) {
-    cg->Cn(i,BaseCons::WT,net) = GetDistProb(prjn, ru, cg->Un(i,net));
+    SetCnWt(cg, i, net, GetDistProb(prjn, ru, cg->Un(i,net)));
   }
 }
 

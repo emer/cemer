@@ -50,8 +50,7 @@ public:
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
-  // uses weight values equal to the distance probability
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
 			 const taVector2i& ru, const taVector2i& su);

@@ -33,11 +33,13 @@ INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn
   bool          make_cons;      // #READ_ONLY #NO_SAVE this holds the argument to the make_cons
+  bool          do_init_wts;    // #READ_ONLY #NO_SAVE this is true when Init_Weights_Prjn is called
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
   void	Connect_impl(Projection* prj, bool make_cns) override;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override {}
-    // NOTE: if you allow init_wts you must set wts in your script
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  // NOTE: if you allow init_wts you must set wts in your script
+
 
   TypeDef*	GetThisTypeDef() const	{ return GetTypeDef(); }
   void*		GetThisPtr()		{ return (void*)this; }

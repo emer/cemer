@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(ScriptPrjnSpec);
 void ScriptPrjnSpec::Initialize() {
   prjn = NULL;
   make_cons = false;
+  do_init_wts = false;
 }
 
 void ScriptPrjnSpec::Destroy() {
@@ -55,9 +56,21 @@ void ScriptPrjnSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
 void ScriptPrjnSpec::Connect_impl(Projection* prj, bool make_cns) {
   prjn = prj;                   // set the arg for the script
   make_cons = make_cns;
+  do_init_wts = false;
   RunScript();
   prjn = NULL;
 }
+
+void ScriptPrjnSpec::Init_Weights_Prjn(Projection* prj, RecvCons* cg, Unit* ru,
+                                       Network* net) {
+  prjn = prj;                   // set the arg for the script
+  make_cons = false;
+  do_init_wts = true;
+  RunScript();
+  prjn = NULL;
+  do_init_wts = false;
+}
+
 
 void ScriptPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();

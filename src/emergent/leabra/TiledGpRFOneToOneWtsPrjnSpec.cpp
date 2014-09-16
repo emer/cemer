@@ -25,12 +25,10 @@ void TiledGpRFOneToOneWtsPrjnSpec::Initialize() {
   init_wts = true;
 }
 
-void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  inherited::C_Init_Weights(prjn, cg, ru); // always do regular init
+void TiledGpRFOneToOneWtsPrjnSpec::Init_Weights_Prjn
+(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-
-  Network* net = prjn->layer->own_net;
 
   int rgpidx;
   int rui;
@@ -40,10 +38,10 @@ void TiledGpRFOneToOneWtsPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg
     int sgpidx;
     int sui;
     send_lay->UnGpIdxFmUnitIdx(su->idx, sui, sgpidx);
+    float wt = other_wt;
     if(sui == rui)
-      cg->Cn(i,BaseCons::WT,net) = one_to_one_wt;
-    else
-      cg->Cn(i,BaseCons::WT,net) = other_wt;
+      wt = one_to_one_wt;
+    SetCnWt(cg, i, net, wt);
   }
 }
 

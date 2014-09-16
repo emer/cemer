@@ -71,8 +71,7 @@ public:
   String	last_weights_cmd; // #READ_ONLY #SHOW shows the last Weights.. command that was run (if blank, none or it was done prior to the addition of this feature in version 4.1.0) -- useful for modifying later
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) override;
-  // uses weight values as specified in the tesselel's
+  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
 
   virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
   // get center of sender coords from receiving coords

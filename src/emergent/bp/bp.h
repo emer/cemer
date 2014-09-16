@@ -194,6 +194,9 @@ public:
 
   void	SetCurLrate(int epoch) { ((BpConSpec*)GetConSpec())->SetCurLrate(epoch); }
 
+  TypeDef*      DefaultConType() override
+  { return &TA_BpCon; }
+
   TA_BASEFUNS_NOCOPY(BpRecvCons);
 private:
   void	Initialize();
@@ -210,6 +213,9 @@ public:
 
   float Compute_dEdA(BpUnit* su, Network* net)
   { return ((BpConSpec*)GetConSpec())->Compute_dEdA(this, su, net); }
+
+  TypeDef*      DefaultConType() override
+  { return &TA_BpCon; }
 
   TA_BASEFUNS_NOCOPY(BpSendCons);
 private:

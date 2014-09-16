@@ -113,14 +113,9 @@ public:
   int   ProbAddCons(float p_add_con, float init_wt = 0.0)
   { return spec->ProbAddCons(this, p_add_con, init_wt); }
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
-  void  Init_dWt()              { spec->Init_dWt(this); }
-  // #MENU #MENU_SEP_BEFORE #CAT_Weights Initialize weight changes for this projection
-  void  Init_Weights()          { spec->Init_Weights(this); }
-  // #BUTTON #CONFIRM #CAT_Weights Initialize weight state for this projection
-  void  Init_Weights_post()     { spec->Init_Weights_post(this); }
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
 
-  void  C_Init_Weights(RecvCons* cg, Unit* ru)  { spec->C_Init_Weights(this, cg, ru); }
+  void  Init_Weights_Prjn(RecvCons* cg, Unit* ru, Network* net)
+  { spec->Init_Weights_Prjn(this, cg, ru, net); }
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);

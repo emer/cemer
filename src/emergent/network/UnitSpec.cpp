@@ -133,12 +133,23 @@ void UnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
   for(int g = 0; g < u->recv.size; g++) {
     RecvCons* recv_gp = u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
+    if(recv_gp->prjn->spec->init_wts) continue; // skip over 
     recv_gp->Init_Weights(u, net);
   }
 
   if(u->bias.size > 0) {
-    bias_spec->B_Init_Weights(&u->bias, u, net);
-    // this is a virtual fun
+    bias_spec->B_Init_Weights(&u->bias, u, net); // this is a virtual fun
+  }
+  
+  Init_Weights_Prjn(u, net, thread_no);
+}
+
+void UnitSpec::Init_Weights_Prjn(Unit* u, Network* net, int thread_no) {
+  for(int g = 0; g < u->recv.size; g++) {
+    RecvCons* recv_gp = u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
+    if(!recv_gp->prjn->spec->init_wts) continue; // only prjn guys
+    recv_gp->prjn->Init_Weights_Prjn(recv_gp, u, net);
   }
 }
 

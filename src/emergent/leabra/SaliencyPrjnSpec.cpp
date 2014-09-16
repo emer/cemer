@@ -34,6 +34,15 @@ void SaliencyPrjnSpec::Initialize() {
   units_per_feat_gp = 4;
 }
 
+void SaliencyPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(TestWarning(feat_only && init_wts, "UAE",
+                 "can't have init_wts and feat_only active together -- turning off init_wts")) {
+    init_wts = false;
+  }
+}
+
+
 void SaliencyPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
@@ -180,14 +189,13 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
   }
 }
 
-void SaliencyPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  if(feat_only) {               // just use regular..
-    inherited::C_Init_Weights(prjn, cg, ru);
+void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                       Network* net) {
+  if(feat_only) {               // just use regular -- shouldn't happen
     return;
   }
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
-  Network* net = recv_lay->own_net;
 
   int fltwd = dog_wts.filter_width; // no convergence.
   int fltsz = dog_wts.filter_size * convergence;

@@ -121,6 +121,9 @@ public:
   { ((SoConSpec*)GetConSpec())->Compute_AvgInAct(this, ru, net); }
   // compute the average (and sum) input activation
 
+  TypeDef*      DefaultConType() override
+  { return &TA_SoCon; }
+
   void	Copy_(const SoRecvCons& cp);
   TA_BASEFUNS(SoRecvCons);
 private:
@@ -134,6 +137,10 @@ class E_API SoSendCons : public SendCons {
   // #STEM_BASE ##CAT_So group of self-organizing sending connections
 INHERITED(SendCons)
 public:
+
+  TypeDef*      DefaultConType() override
+  { return &TA_SoCon; }
+
   TA_BASEFUNS_NOCOPY(SoSendCons);
 private:
   void	Initialize();

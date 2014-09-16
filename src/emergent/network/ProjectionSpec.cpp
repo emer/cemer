@@ -25,8 +25,7 @@ void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;
   self_con = false;
   init_wts = false;
-  add_rnd_wts = false;
-  add_rnd_wts_scale = 1.0f;
+  add_rnd_var = false;
 }
 
 void ProjectionSpec::InitLinks() {
@@ -89,46 +88,20 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
   return rval;
 }
 
-void ProjectionSpec::Init_Weights(Projection* prjn) {
-  if(prjn->off) return;
-  Network* net = prjn->layer->own_net;
-  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
-    for(int g=0; g < u->recv.size; g++) {
-      RecvCons* cg = u->recv.FastEl(g);
-      if(cg->prjn == prjn)
-        cg->Init_Weights(u, net);
-    }
+void ProjectionSpec::SetCnWt(RecvCons* cg, int cn_idx, Network* net, float wt_val) {
+  ConSpec* cs = cg->GetConSpec();
+  if(add_rnd_var) {
+    cs->C_Init_Weight_AddRndVar(wt_val);
   }
+  cs->C_ApplyLimits(wt_val);
+  cg->Cn(cn_idx,BaseCons::WT,net) = wt_val;
 }
 
-void ProjectionSpec::Init_Weights_post(Projection* prjn) {
-  if(prjn->off) return;
-  Network* net = prjn->layer->own_net;
-  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
-    for(int g=0; g < u->recv.size; g++) {
-      RecvCons* cg = u->recv.FastEl(g);
-      if(cg->prjn == prjn)
-        cg->Init_Weights_post(u, net);
-    }
-  }
-}
-
-void ProjectionSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  // default is just to do same thing as the conspec would have done..
-  Network* net = prjn->layer->own_net;
-  // CON_GROUP_LOOP(cg, cg->C_Init_Weights(i, ru, cg->Un(i,net), net));
-}
-
-void ProjectionSpec::Init_dWt(Projection* prjn) {
-  Network* net = prjn->layer->own_net;
-  FOREACH_ELEM_IN_GROUP(Unit, u, prjn->layer->units) {
-    int g;
-    for(g=0; g < u->recv.size; g++) {
-      RecvCons* cg = u->recv.FastEl(g);
-      if(cg->prjn == prjn)
-        cg->Init_dWt(u,net);
-    }
-  }
+void ProjectionSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                       Network* net) {
+  if(!init_wts) return;         // shouldn't happen
+  ConSpec* cs = prjn->GetConSpec();
+  cs->Init_Weights(cg, ru, net); // just do what con spec does, by default..
 }
 
 bool ProjectionSpec::CheckConnect(Projection* prjn, bool quiet) {

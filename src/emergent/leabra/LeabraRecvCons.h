@@ -40,6 +40,9 @@ public:
   { ((LeabraConSpec*)GetConSpec())->Compute_dWt_Norm(this, ru, net); }
   // #CAT_Learning compute dwt normalization
 
+  TypeDef*      DefaultConType() override
+  { return &TA_LeabraCon; }
+
   void	Copy_(const LeabraRecvCons& cp);
   TA_BASEFUNS(LeabraRecvCons);
 private:

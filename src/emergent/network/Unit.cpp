@@ -208,19 +208,23 @@ void Unit::BuildUnits() {
 }
 
 void Unit::AllocBias() {
-  if(!GetUnitSpec())
-    return;
-  TypeDef* bstd = GetUnitSpec()->bias_con_type;
   bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
-  if(bstd == NULL) {
-    bias.Reset();
-    bias.SetConSpec(NULL);
+  if(GetUnitSpec()) {
+    TypeDef* bstd = GetUnitSpec()->bias_con_type;
+    if(bstd == NULL) {
+      bias.Reset();
+      bias.SetConSpec(NULL);
+    }
+    else {
+      bias.SetConType(bstd);
+      bias.FreeCons();
+      bias.AllocCons(1);
+      bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
+    }
   }
   else {
-    bias.SetConType(bstd);
     bias.FreeCons();
     bias.AllocCons(1);
-    bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
   }
 }
 

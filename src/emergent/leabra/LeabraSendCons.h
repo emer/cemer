@@ -47,6 +47,9 @@ public:
   { ((LeabraConSpec*)GetConSpec())->Compute_Weights_CtLeabraXCAL(this, su, net); }
   // #CAT_Learning compute weights: CtLeabra XCAL version
 
+  TypeDef*      DefaultConType() override
+  { return &TA_LeabraCon; }
+
   void	Copy_(const LeabraSendCons& cp);
   TA_BASEFUNS(LeabraSendCons);
 private:

@@ -65,8 +65,8 @@ void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   UNIT_GP_ITR(lay, Connect_UnitGroup(lay, acc_md, gpidx, prjn, make_cons); );
 }
 
-void ScalarValSelfPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit* ru) {
-  Network* net = prjn->layer->own_net;
+void ScalarValSelfPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
+                                              Network* net) {
   float neigh1 = 1.0f / wt_width;
   float val1 = expf(-(neigh1 * neigh1));
   float scale_val = wt_max / val1;
@@ -78,7 +78,7 @@ void ScalarValSelfPrjnSpec::C_Init_Weights(Projection* prjn, RecvCons* cg, Unit*
     int su_idx = su->idx;
     float dist = (float)(ru_idx - su_idx) / wt_width;
     float wtval = scale_val * expf(-(dist * dist));
-    cg->PtrCn(i,BaseCons::WT,net) = wtval;
+    SetCnWt(cg, i, net, wtval);
   }
 }
 

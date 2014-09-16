@@ -488,6 +488,7 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
+    if(send_gp->prjn->spec->init_wts) continue;
     send_gp->Init_Weights(u, (LeabraNetwork*)net);
   }
 
@@ -495,8 +496,11 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
     bias_spec->B_Init_Weights(&u->bias, u, net);
   }
 
+  Init_Weights_Prjn(u, rnet, thread_no); // get projection-based weights
+
   u->act_avg = act_misc.avg_init;
   u->misc_1 = 0.0f;
+  u->snap = 0.0f;
 
   u->ClearLearnFlag();
 
@@ -1033,16 +1037,19 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   u->net_raw += u->net_delta;
   float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
 
+  // here are all the extra netin terms:
   if(u->HasExtFlag(Unit::EXT)) {
     tot_net += u->ext * ls->clamp.gain;
   }
-
   if(net->net_misc.ti) {
     tot_net += u->act_ctxt + u->deep5b_net;
   }
-
   if(cifer.on) {
     tot_net += cifer.super_gain * u->thal * tot_net;
+  }
+  if(da_mod.on && da_mod.mod == DaModSpec::PLUS_CONT &&
+     net->phase == LeabraNetwork::PLUS_PHASE) {
+    tot_net += da_mod.gain * u->dav;
   }
 
   u->net_delta = 0.0f;  // clear for next use

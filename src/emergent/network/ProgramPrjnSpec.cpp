@@ -39,6 +39,20 @@ void ProgramPrjnSpec::Connect_impl(Projection* prj, bool make_cons) {
   if(!did_it) return;
   bool did_it2 = prog->SetVar("make_cons", make_cons);
   if(!did_it2) return;
+  bool did_it3 = prog->SetVar("do_init_wts", false);
+  if(!did_it3) return;
+  prog->Run();
+}
+
+void ProgramPrjnSpec::Init_Weights_Prjn(Projection* prj, RecvCons* cg, Unit* ru,
+                                       Network* net) {
+  if(!prog) return;
+  bool did_it = prog->SetVar("prjn", prj);
+  if(!did_it) return;
+  bool did_it2 = prog->SetVar("make_cons", false);
+  if(!did_it2) return;
+  bool did_it3 = prog->SetVar("do_init_wts", true);
+  if(!did_it3) return;
   prog->Run();
 }
 
