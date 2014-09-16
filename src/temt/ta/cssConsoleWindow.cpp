@@ -145,7 +145,8 @@ void cssConsoleWindow::StartSelfResize() {
 bool cssConsoleWindow::CheckSelfResize() {
   QDateTime tm = QDateTime::currentDateTime();
   int64_t cur_ts = tm.toTime_t();
-  if(cur_ts - self_resize_timestamp < 10) // 10 seconds to resize..
+  // 9/15/14 - changed to 1 second
+  if(cur_ts - self_resize_timestamp < 1) // 10 seconds to resize..
     return true;
   return false;
 }
@@ -189,10 +190,10 @@ void cssConsoleWindow::LockedNewGeom(int left, int top, int width, int height) {
 void cssConsoleWindow::resizeEvent(QResizeEvent* e) {
   inherited::resizeEvent(e);
   if(CheckSelfResize()) return;
-
+  
   taProject* proj = tabMisc::root->projects.DefaultEl();
   if(!proj) return;             // only functions if there is a project
-
+  
   if(!lock_to_proj) {
     SaveGeom();
   }
