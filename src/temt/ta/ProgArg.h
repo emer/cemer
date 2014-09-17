@@ -38,6 +38,7 @@ public:
   String                name; // #SHOW #READ_ONLY the name of the argument (automatically set from the target function)
   bool                  required; // #SHOW #READ_ONLY if a value is required (i.e., it is not a default argument)
   String                def_val; // #SHOW #READ_ONLY for default arguments, what will get passed by default -- this is for reference only (leave expr blank for default)
+  String                prev_expr; // #SHOW #READ_ONLY shows the previous expression used for this argument, prior to a change in the number or names of arguments -- can be handy to refer to after such changes (e.g., if just the arg name changed, then the same expression can be used)
   ProgExpr              expr; // #BROWSER_EDIT_LOOKUP the expression to compute and pass as the argument -- enter <no_arg> to specify a null or empty argument for program calls -- does not set this arg value
 
   virtual void          SetVarAsExpr(ProgVar* prog_var);

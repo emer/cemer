@@ -33,11 +33,16 @@ class TA_API ProgArg_List : public taList<ProgArg> {
   // ##NO_TOKENS ##NO_UPDATE_AFTER ##CHILDREN_INLINE #FIXED_SIZE ##CAT_Program list of arguments
 INHERITED(taList<ProgArg>)
 public:
+  String_Array  saved_exprs;    // #HIDDEN #NO_SAVE saved arg exprs across changes
 
   virtual bool  UpdateFromVarList(ProgVar_List& targ);
   // update our list of args based on target variable list -- returns true if updated
   virtual bool  UpdateFromMethod(MethodDef* md);
   // update our list of args based on method def arguments -- returns true if updated
+  virtual void  SaveExprs();
+  // save expressions to saved_exprs
+  virtual void  SetPrevExprs();
+  // set prev_expr fm saved_exprs
 
   String GetTypeDecoKey() const override { return "ProgArg"; }
   virtual const String  GenCssArgs();

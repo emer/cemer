@@ -63,7 +63,24 @@ const String ProgArg_List::GenCssArgs() {
   return rval;
 }
 
+void ProgArg_List::SaveExprs() {
+  saved_exprs.SetSize(size);
+  for (int i = 0; i < size; ++ i) {
+    ProgArg* pa = FastEl(i);
+    saved_exprs[i] = pa->expr.GetFullExpr();
+  }
+}
+
+void ProgArg_List::SetPrevExprs() {
+  int mx = MIN(size, saved_exprs.size);
+  for (int i = 0; i < mx; ++ i) {
+    ProgArg* pa = FastEl(i);
+    pa->prev_expr = saved_exprs[i];
+  }
+}
+
 bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
+  SaveExprs();
   bool any_changes = false;
   int i;  int ti;
   ProgArg* pa;
@@ -94,10 +111,14 @@ bool ProgArg_List::UpdateFromVarList(ProgVar_List& targ) {
       any_changes = true;
     }
   }
+  if(any_changes) {
+    SetPrevExprs();             // restore when changes occur
+  }
   return any_changes;
 }
 
 bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
+  SaveExprs();
   //NOTE: safe to call during loading
   bool any_changes = false;
   int i;  int ti;
@@ -165,6 +186,9 @@ bool ProgArg_List::UpdateFromMethod(MethodDef* md) {
         }
       }
     }
+  }
+  if(any_changes) {
+    SetPrevExprs();             // restore when changes occur
   }
   return any_changes;
 }

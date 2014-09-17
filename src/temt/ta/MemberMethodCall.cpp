@@ -36,6 +36,7 @@ void MemberMethodCall::UpdateAfterEdit_impl() {
         tabMisc::DelayedFunCall_gui(this, "BrowserExpandAll");
       }
     }
+    meth_sig = method->prototype();
   }
 }
 

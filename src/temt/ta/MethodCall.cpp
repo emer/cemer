@@ -45,10 +45,11 @@ void MethodCall::UpdateAfterEdit_impl() {
     meth_sig = method->prototype();
     meth_desc = method->desc;
   }
-  else {
-    meth_sig = _nilString;
-    meth_desc = _nilString;
-  }
+  // keep this around for future reference!
+  // else {
+  //   meth_sig = _nilString;
+  //   meth_desc = _nilString;
+  // }
 }
 
 void MethodCall::CheckThisConfig_impl(bool quiet, bool& rval) {
