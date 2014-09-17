@@ -37,6 +37,7 @@ void MemberMethodCall::UpdateAfterEdit_impl() {
       }
     }
     meth_sig = method->prototype();
+    meth_desc = method->desc;
   }
 }
 

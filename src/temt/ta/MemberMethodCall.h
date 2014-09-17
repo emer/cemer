@@ -38,10 +38,12 @@ public:
   // #ITEM_FILTER_StdProgVarFilter #CUST_CHOOSER_NewProgVarCustChooser where to store the result of the method call (optional -- can be NULL)
   MethodDef*		method;
   // #TYPE_ON_obj_type the method to call on the member object that is at obj->path
-  String		meth_sig;
-  // #READ_ONLY #NO_SAVE #SHOW signature of the method, for reference
   ProgArg_List		meth_args;
   // #SHOW_TREE arguments to be passed to the method
+  String		meth_sig;
+  // #READ_ONLY #SHOW signature of the method, for reference
+  String		meth_desc;
+  // #READ_ONLY #SHOW description of the method, for reference
 
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
