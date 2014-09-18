@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.1.0 rev7395
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7557
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -1111,7 +1111,7 @@ LeabraProject .projects["program_examples"] {
      ProgEl_List @.init_code = [0] {
      };
 
-     ProgEl_List @.prog_code = [6] {
+     ProgEl_List @.prog_code = [5] {
       Comment @[0] { };
       LocalVars @[1] { 
        ProgVar_List @.local_vars = [1] {
@@ -1121,7 +1121,6 @@ LeabraProject .projects["program_examples"] {
       Comment @[2] { };
       DataVarRead @[3] { };
       PrintVar @[4] { };
-      ProgCode @[5] { };
      };
     };
     Program @["AddRowsAndWriteToTable"] { 
@@ -2569,9 +2568,9 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
-    UserDataItem @["maxda"] { };
     UserDataItem @["minus_output_name"] { };
     UserDataItem @["minus_cycles"] { };
+    UserDataItem @["tot_cycle"] { };
     UserDataItem @["ct_cycle"] { };
     UserDataItem @["phase_no"] { };
     UserDataItem @["phase"] { };
@@ -2586,6 +2585,7 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["maxda"] { };
    };
 
    BaseSpec_Group @.specs = [4] {
@@ -6822,6 +6822,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="n";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="5";
 	};
@@ -7054,6 +7055,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="min";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="0";
 	};
@@ -7064,6 +7066,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="max";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="9";
 	};
@@ -7157,12 +7160,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     desc="Print debug statements based on current debug_level";
     flags=NO_STOP_STEP;
     objs {
-     name="ProgObjList_35";
+     name="objs";
      el_typ=taNBase;
      el_def=0;
     };
     types {
-     name="ProgType_List_0";
+     name="types";
      el_typ=DynEnumType;
      el_def=0;
      DynEnumType @["debug_level"] {
@@ -7187,12 +7190,12 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     args {
-     name="ProgVar_List_0";
+     name="args";
      el_typ=ProgVar;
      el_def=0;
     };
     vars {
-     name="ProgVar_List_0";
+     name="vars";
      el_typ=ProgVar;
      el_def=0;
      ProgVar @["debug_level_1"] {
@@ -7236,17 +7239,17 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     functions {
-     name="Function_List_35";
+     name="functions";
      el_typ=Function;
      el_def=0;
     };
     init_code {
-     name="ProgEl_List_208";
+     name="init_code";
      el_typ=ProgCode;
      el_def=0;
     };
     prog_code {
-     name="ProgEl_List_209";
+     name="prog_code";
      el_typ=ProgCode;
      el_def=0;
      LocalVars @[0] {
@@ -7556,6 +7559,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="taString_ref upcase()";
+      meth_desc=" convert all letters to upper case of this string (NOTE: modifies this string, and also returns the resulting string value)";
      };
      PrintExpr @[16] {
       desc="this string is upcase'd";
@@ -7579,6 +7584,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="taString_ref downcase()";
+      meth_desc=" convert all letters to lower case of this string (NOTE: modifies this string, and also returns the resulting string value)";
      };
      PrintExpr @[18] {
       desc="this string is back downcase'd";
@@ -7602,6 +7609,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="taString_ref capitalize()";
+      meth_desc=" capitalize the first letter of each word of this string (NOTE: modifies this string, and also returns the resulting string value)";
      };
      PrintExpr @[20] {
       desc="this string is capitalize'd";
@@ -7630,6 +7639,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="pat";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\"d\"";
 	};
@@ -7640,11 +7650,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="repl";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\"delicious\"";
 	};
        };
       };
+      meth_sig="int gsub(taString& pat, taString& repl)";
+      meth_desc=" global substitution: substitute all occurrences of pat with repl";
      };
      PrintExpr @[22] {
       desc=;
@@ -7706,11 +7719,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="delim";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\"\"";
 	};
        };
       };
+      meth_sig="String_Array_ptr split(taString& delim)";
+      meth_desc=" return a string array with the sub-strings split by given delimeter";
      };
      PrintVar @[26] {
       desc=;
@@ -7743,11 +7759,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="delim";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
+      meth_sig="taString Join(taString& delim)";
+      meth_desc=" generates a string of all the items on the list, using given delimiter between items (same as ToDelimString)";
      };
      PrintVar @[28] {
       desc=;
@@ -8444,6 +8463,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="n";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="N_UnitNames";
 	    };
@@ -8467,11 +8487,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="n_rows";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="1";
 	    };
 	   };
 	  };
+	  meth_sig="void EnforceRows(int n_rows)";
+	  meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
 	 };
 	 MemberMethodCall @[3] {
 	  desc="initialize the values so we can write to them";
@@ -8491,11 +8514,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="init_val";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="0.0";
 	    };
 	   };
 	  };
+	  meth_sig="bool InitVals(Variant& init_val)";
+	  meth_desc=" initialize all values in this column to given value";
 	 };
 	 CssExpr @[4] {
 	  desc="key advantage of enum: you can use them as a number (here as an index)";
@@ -8563,6 +8589,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="vals";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="TestOrders[\"EnumVals\"].ar";
 	    };
@@ -8573,11 +8600,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="names";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="TestOrders[\"EnumNames\"].ar";
 	    };
 	   };
 	  };
+	  meth_sig="void NameToNumber_Matrix(int_Matrix& vals, String_Matrix& names)";
+	  meth_desc=" translate an matrix of enum names into corresponding enum numbers in matrix -- if the vals matrix does not have enough room to hold all the names, SetSize is called on it to set it to size of names";
 	 };
 	 Comment @[4] {
 	  desc="we are now going to create InputData entries that follow the sequence prescribed in one of the rows in the TestOrders table";
@@ -8601,6 +8631,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="n";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="TestOrders.rows";
 	    };
@@ -8633,6 +8664,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
+	  meth_sig="void ResetData()";
+	  meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
 	 };
 	 ForeachLoop @[8] {
 	  desc="iterate over all the items listed in the cell";
@@ -8654,6 +8687,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
+	    meth_sig="int AddBlankRow()";
+	    meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
 	   };
 	   CssExpr @[1] {
 	    desc="see RUN case above -- note we need ; at end when doing [ ] expressions on left-hand-side of =";
@@ -8693,6 +8728,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	     el_typ=ProgArg;
 	     el_def=0;
 	    };
+	    meth_sig="void WriteClose()";
+	    meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
 	   };
 	  };
 	  el_var=.projects["program_examples"].programs.gp["Variables"]["DynEnum"].prog_code[0].local_vars["i"]$$;
@@ -9369,6 +9406,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="v";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="b";
 	};
@@ -9379,6 +9417,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="temp";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="2.0";
 	};
@@ -10222,14 +10261,6 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        my_mask=NULL;
        debug_level=NULL;
       };
-      ProgCode @[5] {
-       desc=;
-       flags=0;
-       orig_prog_code=;
-       code {
-	expr=;
-       };
-      };
      };
      step_prog=NULL;
      step_n=1;
@@ -10426,11 +10457,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 name="modal";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool EditDialog(bool modal = false)";
+       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
       };
      };
      step_prog=NULL;
@@ -11454,6 +11488,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="col_name";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"MatrixVal\"";
 	   };
@@ -11464,6 +11499,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="row";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="i";
 	   };
@@ -11474,11 +11510,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="quiet";
 	   required=0;
 	   def_val="false";
+	   prev_expr=;
 	   expr {
 	    expr=;
 	   };
 	  };
 	 };
+	 meth_sig="taMatrix_ptr GetValAsMatrixColName(taString& col_name, int row, bool quiet = false)";
+	 meth_desc=" get data of matrix type (multi-dimensional data within a given cell), in Matrix form, for given column, row; for Program usage, assign to a LocalVars Matrix* variable, NOT a global vars variable, at the appropriate scope where the matrix will be used, (e.g., if within a loop, put variable in the loop_code of the loop), so that the local variable will be deleted automatically, to free the memory associated with the Matrix when it is no longer needed";
 	};
 	MathCall @[1] {
 	 desc="calculate the mean value of the matrix currently referred to by cell_mat";
@@ -11497,6 +11536,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="vec";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="cell_mat";
 	   };
@@ -11520,6 +11560,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="val";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="cell_avg";
 	   };
@@ -11530,6 +11571,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="col";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Means\"";
 	   };
@@ -11540,11 +11582,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="row";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="i";
 	   };
 	  };
 	 };
+	 meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+	 meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
 	};
        };
        init {
@@ -12146,6 +12191,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="col";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Name\"";
 	   };
@@ -12156,11 +12202,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="row";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="data_loop_index";
 	   };
 	  };
 	 };
+	 meth_sig="const_Variant GetVal(Variant& col, int row)";
+	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	MethodCall @[1] {
 	 desc=;
@@ -12179,6 +12228,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="col";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="\"Value\"";
 	   };
@@ -12189,11 +12239,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	   name="row";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="data_loop_index";
 	   };
 	  };
 	 };
+	 meth_sig="const_Variant GetVal(Variant& col, int row)";
+	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
 	};
 	PrintVar @[2] {
 	 desc=;
@@ -12622,11 +12675,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 name="modal";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool EditDialog(bool modal = false)";
+       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
       };
      };
      step_prog=NULL;
@@ -14216,6 +14272,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="n";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="DemoData.rows";
 	};
@@ -14283,6 +14340,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="min";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1";
 	};
@@ -14293,6 +14351,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="max";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="4";
 	};
@@ -14431,6 +14490,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="min";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="-1.0";
 	};
@@ -14441,6 +14501,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="max";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1.0";
 	};
@@ -14478,6 +14539,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="stdev";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1.0";
 	};
@@ -14515,6 +14577,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="n";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="10";
 	};
@@ -14525,6 +14588,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="p";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr=".5";
 	};
@@ -14671,6 +14735,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="x1";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr=".5";
 	};
@@ -14681,6 +14746,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="y1";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr=".2";
 	};
@@ -14691,6 +14757,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="x2";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="2.5";
 	};
@@ -14701,6 +14768,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="y2";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="3.0";
 	};
@@ -14738,6 +14806,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="Y";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1.0";
 	};
@@ -14748,6 +14817,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="X";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1.0";
 	};
@@ -14790,6 +14860,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="size";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="1";
 	};
@@ -14800,6 +14871,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d0";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="data_n";
 	};
@@ -14810,6 +14882,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d1";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -14820,6 +14893,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d2";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -14830,6 +14904,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d3";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -14840,6 +14915,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d4";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -14850,6 +14926,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d5";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -14860,11 +14937,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="d6";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="bool SetGeom(int size, int d0, int d1 = 0, int d2 = 0, int d3 = 0, int d4 = 0, int d5 = 0, int d6 = 0)";
+      meth_desc=" set geom for matrix -- if matches current size, it is non-destructive";
      };
      ForLoop @[7] {
       desc="just make some random data";
@@ -14910,6 +14990,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="vec";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="float_mat_data";
 	};
@@ -14947,6 +15028,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="vec";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="float_mat_data";
 	};
@@ -14957,6 +15039,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="mean";
 	required=0;
 	def_val="0";
+	prev_expr=;
 	expr {
 	 expr="rval";
 	};
@@ -14967,6 +15050,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="use_mean";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
@@ -14977,6 +15061,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="use_est";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
@@ -15273,6 +15358,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void currentDateTime()";
+	meth_desc=;
        };
        MethodCall @[2] {
 	desc="get the current year";
@@ -15286,6 +15373,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="int year()";
+	meth_desc=;
        };
        PrintVar @[3] {
 	desc=;
@@ -15694,22 +15783,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.01838810555636883;
+     value 6 0=0.004312668461352587;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.066995769739151;
+     value 6 0=0.05681818351149559;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9906103014945984;
+     value 6 0=1.001078128814697;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7954866290092468;
+     value 6 0=0.8409090638160706;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -15726,7 +15815,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    name="Browser2";
    m_data=.projects["program_examples"]$$;
    visible=1;
-   win_name=".projects[\"program_examples\"] - program_examples.proj";
+   win_name=".projects[\"program_examples\"] - program_examples.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -16889,22 +16978,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 6 0=-0.03504043072462082;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.007757404819130898;
+       value 6 0=0.02462121285498142;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03208137676119804;
+       value 6 0=0.04366576671600342;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7425951957702637;
+       value 6 0=0.7272727489471436;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -16971,11 +17060,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["maxda"] {
-     name="maxda";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["minus_output_name"] {
      name="minus_output_name";
      value 1 0=1;
@@ -16983,6 +17067,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["minus_cycles"] {
      name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["tot_cycle"] {
+     name="tot_cycle";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -17056,6 +17145,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["maxda"] {
+     name="maxda";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
    };
    name="Network_0";
    desc=;
@@ -17080,82 +17174,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       inhib_group=ENTIRE_LAYER;
-       inhib {
-	type=KWTA_INHIB;
-	kwta_pt=0.25;
-	gi=2;
-	ff=1;
-	fb=0.5;
-	self_fb=0;
-	dt=0.7;
-	up_immed=0;
-	ff0=0.1;
-	min_i=0;
-       };
-       kwta {k_from=USE_PAT_K: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-       lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-       decay {event=1: phase=0: phase2=0: };
-       cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
-       ct_inhib_mod {
-	manual_sravg=0;
-	sravg_delay=0;
-	use_sin=0;
-	burst_i=0.02;
-	trough_i=0.02;
-	use_fin=0;
-	inhib_i=0;
-       };
-       tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-       adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-       abs_net_adapt {
-	on=0;
-	trg_net=0.5;
-	tol=0.1;
-	abs_lrate=0.2;
-       };
+       lay_inhib {gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: fb_dt_c=0.2857143: };
+       unit_gp_inhib {gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: fb_dt_c=0.2857143: };
+       inhib_misc {self_fb=0: prv_trl_ff=0: prv_phs_ff=0: up_immed=0: };
+       avg_act {init=0.2: tau=100: adjust=1: dt=0.01: };
+       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
+       decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+       lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
-     inhib_group=ENTIRE_LAYER;
-     inhib {
-      type=KWTA_AVG_INHIB;
-      kwta_pt=0.5;
-      gi=2;
-      ff=1;
-      fb=0.5;
-      self_fb=0;
-      dt=0.7;
-      up_immed=0;
-      ff0=0.1;
-      min_i=0;
-     };
-     kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     gp_kwta {k_from=USE_PCT: k=12: pct=0.25: pat_q=0.2: avg_dt=0.005: diff_act_pct=0: act_pct=0.1: };
-     lay_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: self_g=1: diff_act_pct=0: act_pct_mult=0.3333333: pct_fm_frac=1: act_denom=3: };
-     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: minus_targ_gain=0: };
-     decay {event=1: phase=0: phase2=0: };
-     cos_diff_lrate {on=0: lo_diff=0: lo_lrate=0.01: hi_diff=1: hi_lrate=0.01: avg_dt=0.002: };
-     ct_inhib_mod {
-      manual_sravg=0;
-      sravg_delay=0;
-      use_sin=0;
-      burst_i=0.02;
-      trough_i=0.02;
-      use_fin=0;
-      inhib_i=0;
-     };
-     tie_brk {on=0: k_thr=1: diff_thr=0.2: thr_gain=0.005: loser_gain=1: };
-     adapt_i {type=NONE: tol=0.02: p_dt=0.1: mx_d=0.9: l=0.2: a_dt=0.005: };
-     abs_net_adapt {
-      on=0;
-      trg_net=0.5;
-      tol=0.1;
-      abs_lrate=0.2;
-     };
+     lay_inhib {gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: fb_dt_c=0.2857143: };
+     unit_gp_inhib {gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: fb_dt_c=0.2857143: };
+     inhib_misc {self_fb=0: prv_trl_ff=0: prv_phs_ff=0: up_immed=0: };
+     avg_act {init=0.2: tau=100: adjust=1: dt=0.01: };
+     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
+     decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+     lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -17171,10 +17205,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      bias_spec {type=LeabraBiasSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
-     act {gelin=1: thr=0.5: gain=100: nvar=0.005: avg_dt=0.005: avg_init=0.15: rescale_ctxt=1: i_thr=STD: };
-     act_lrn_on=0;
-     act_lrn {gelin=1: thr=0.5: gain=100: nvar=0.005: };
-     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_dt=0.02: };
+     act {thr=0.5: gain=100: nvar=0.005: };
+     act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       exp_slope=0.02;
       spk_thr=1.2;
@@ -17182,40 +17215,33 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       clamp_type=REGULAR;
       vm_r=0.3;
       t_r=6;
-      vm_dend=0.3;
-      vm_dend_dt=0.16;
-      vm_dend_time=6.25;
      };
-     opt_thresh {send=0.1: delta=0.005: phase_dif=0: xcal_lrn=0.01: };
-     maxda {val=INET_DA: inet_scale=1: lay_avg_thr=0.01: };
+     opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="v_m_init": type=UNIFORM: mean=0.3: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm=0.3: net=0.7: midpoint=0: d_vm_max=100: vm_eq_cyc=0: vm_eq_dt=1: integ_time=1: vm_time=3.333333: net_time=1.428571: };
-     act_avg {l_up_add=0: l_dn_pct=0: l_up_dt=0.6: l_dn_dt=0.05: m_dt=0.1: s_dt=0.2: ss_dt=1: use_nd=0: l_time=20: m_time=10: s_time=5: ss_time=1: };
-     g_bar {e=1: l=0.1: i=1: h=0.01: a=0.03: };
-     e_rev {e=1: l=0.3: i=0.25: h=1: a=0: };
-     hyst {on=0: b_inc_dt=0.05: b_dec_dt=0.05: a_thr=0.8: d_thr=0.7: g_dt=0.1: init=0: trl=0: };
-     acc {on=0: b_inc_dt=0.01: b_dec_dt=0.01: a_thr=0.5: d_thr=0.1: g_dt=0.1: init=0: trl=0: };
+     dt {integ=1: vm_tau=3.333333: net_tau=1.428571: midpoint=0: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
+     act_avg {l_up_inc=0.6: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     g_bar {e=1: l=0.1: i=1: };
+     e_rev {e=1: l=0.3: i=0.25: };
      adapt {
       on=0;
-      dt=0.007;
+      tau=144;
       vm_gain=0.04;
       spike_gain=0.00805;
-      interval=10;
-      trials=0;
-      dt_time=142.8571;
+      dt=0.006944444;
      };
-     depress {phase_act=ACT_ND: on=0: rec=0.2: asymp_act=0.5: depl=0.2105263: delay=0: interval=1: trials=0: max_amp=1: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
      };
+     cifer {on=0: phase_updt=0: super_gain=0.05: thal_5b_thr=0.5: act_5b_thr=0.5: binary5b=0: ti_5b=0.5: bg_lrate=1: fg_lrate=0: };
      da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
-     noise_adapt {trial_fixed=1: k_pos_noise=0: mode=FIXED_NOISE: min_pct=0.5: min_pct_c=0.5: };
+     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -17243,16 +17269,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
-       learn_rule=CTLEABRA_XCAL;
        inhib=0;
        wt_scale {abs=1: rel=1: sem_extra=2: };
        diff_scale_p=0;
        wt_scale_p {abs=1: rel=1: sem_extra=2: };
-       wt_scale_init {init=0: abs=1: rel=1: };
        learn=1;
        lrate=0.02;
        cur_lrate=0.02;
-       lrs_value=EPOCH;
+       lrs_mult=1;
        lrate_sched {
 	name="lrate_sched";
 	el_typ=SchedItem;
@@ -17262,35 +17286,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        ignore_unlearnable=1;
        wt_sig {gain=6: off=1: dwt_norm=1: };
-       stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
-       lmix {hebb=0.001: err=0.999: err_sb=1: };
+       fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
        xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-       savg_cor {cor=0.4: thresh=0.001: };
-       rel_net_adapt {
-	on=0;
-	trg_fm_input=0.85;
-	trg_fm_output=0.15;
-	trg_lateral=0;
-	trg_sum=1;
-	tol_lg=0.05;
-	tol_sm=0.2;
-	rel_lrate=0.2;
-       };
        dwt_thresh=0.1;
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
-     learn_rule=CTLEABRA_XCAL;
      inhib=0;
      wt_scale {abs=1: rel=1: sem_extra=2: };
      diff_scale_p=0;
      wt_scale_p {abs=1: rel=1: sem_extra=2: };
-     wt_scale_init {init=0: abs=1: rel=1: };
      learn=1;
      lrate=0.02;
      cur_lrate=0.02;
-     lrs_value=EPOCH;
+     lrs_mult=1;
      lrate_sched {
       name="lrate_sched";
       el_typ=SchedItem;
@@ -17300,20 +17310,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      ignore_unlearnable=1;
      wt_sig {gain=6: off=1: dwt_norm=1: };
-     stable_mix {stable_pct=0.8: learn_pct=0.2: cos_diff_lrate=0: };
-     lmix {hebb=0.001: err=0.999: err_sb=1: };
+     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
      xcal {l_mix=L_MIX: thr_l_mix=0.01: thr_m_mix=0.99: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
-     savg_cor {cor=0.4: thresh=0.001: };
-     rel_net_adapt {
-      on=0;
-      trg_fm_input=0.85;
-      trg_fm_output=0.15;
-      trg_lateral=0;
-      trg_sum=1;
-      tol_lg=0.05;
-      tol_sm=0.2;
-      rel_lrate=0.2;
-     };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -17326,8 +17324,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      self_con=0;
      init_wts=0;
-     add_rnd_wts=0;
-     add_rnd_wts_scale=1;
+     add_rnd_var=0;
     };
    };
    layers {
@@ -17373,7 +17370,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -17382,6 +17378,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=0;
+     acts_p_avg=0;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
     LeabraLayer @["Hidden"] {
@@ -17422,7 +17420,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
       LeabraPrjn @["Fm_Output"] {
        name="Fm_Output";
@@ -17442,7 +17439,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -17459,7 +17455,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -17468,6 +17463,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=0;
+     acts_p_avg=nan;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Output"] {
@@ -17508,7 +17505,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        projected=1;
        direction=DIR_UNKNOWN;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
-       trg_netin_rel=-1;
       };
      };
      send_prjns {
@@ -17525,7 +17521,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       output_name=;
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -17534,6 +17529,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
+     acts_m_avg=0;
+     acts_p_avg=0;
      spec {type=LeabraLayerSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
    };
@@ -17548,23 +17545,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
-   sse_unit_avg=0;
-   sse_sqrt=0;
-   cnt_err_tol=0;
-   compute_prerr=0;
+   stats {
+    sse_unit_avg=0;
+    sse_sqrt=0;
+    cnt_err_tol=0;
+    prerr=0;
+   };
    threads {
-    run_time {name="TimeUsedHR_3": s_used=0: n_used=0: };
-    sync_time {name="TimeUsedHR_4": s_used=0: n_used=0: };
-    total_time {name="TimeUsedHR_5": s_used=0: n_used=0: };
+    run_time {name="TimeUsedHR_3": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="TimeUsedHR_4": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="TimeUsedHR_5": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     n_wake_in_sync=0;
     run_time_pct=0;
     sync_time_pct=0;
-    wake_in_sync_pct=2.298735696848069e-314;
-    interleave=1;
+    wake_in_sync_pct=0;
+    nibble_chunk=8;
+    min_units=3000;
     ignore_lay_sync=0;
    };
-   dmem_sync_level=DMEM_SYNC_NETWORK;
-   dmem_nprocs=1;
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=75;
@@ -17572,95 +17570,43 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   learn_rule=CTLEABRA_XCAL;
-   ti_mode=0;
-   phase_order=MINUS_PLUS;
-   no_plus_test=1;
-   sequence_init=DO_NOTHING;
-   phase_max=2;
-   time_inc=1;
-   cycle_max=20;
-   mid_minus_cycle=-1;
-   min_cycles=0;
-   min_cycles_phase2=0;
-   dwt_norm_enabled=1;
-   ct_time {
-    use=1;
+   lthreads {
+    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    n_wake_in_sync=0;
+    run_time_pct=0;
+    sync_time_pct=0;
+    wake_in_sync_pct=1.780695116337334e-315;
+    n_cycles=10;
+    unit_chunks=32;
+    timers_on=0;
+   };
+   phases {
     minus=50;
     plus=20;
-    inhib=1;
-    n_avg_only_epcs=0;
-    total_cycles=71;
-    inhib_start=70;
+    no_plus_test=0;
+    time_inc=0.001;
+    total_cycles=70;
    };
-   ct_sravg {
-    manual=0;
-    start=30;
-    end=1;
-    interval=1;
-    plus_s_st=19;
-    plus_s_only=0;
-    force_con=0;
-   };
-   ct_sin_i {
-    start=30;
-    duration=20;
-    n_pi=2;
-    burst_i=0;
-    trough_i=0;
-   };
-   ct_fin_i {
-    start=20;
-    end=25;
-    inhib_i=0;
-   };
-   ct_lrn_trig {
-    plus_lrn_cyc=-1;
-    davg_dt=0.1;
-    davg_s_dt=0.05;
-    davg_m_dt=0.03;
-    davg_l_dt=0.0005;
-    thr_min=0;
-    thr_max=0.5;
-    loc_max_cyc=8;
-    loc_max_dec=0.01;
-    lrn_delay=40;
-    lrn_refract=100;
-    davg_l_init=0;
-    davg_max_init=0.001;
-    davg_time=10;
-    davg_s_time=20;
-    davg_m_time=33.33334;
-    davg_l_time=2000;
-    lrn_delay_inc=0.025;
-    lrn_refract_inc=0.01;
-   };
-   lrn_trig {
-    davg=0;
-    davg_s=0;
-    davg_m=0;
-    davg_smd=0;
-    davg_l=0;
-    davg_max=0.001;
-    cyc_fm_inc=0;
-    cyc_fm_dec=0;
-    loc_max=0;
-    lrn_max=0;
-    lrn_trig=0;
-    lrn=0;
+   lstats {
+    trg_max_act_crit=0.5;
+    off_errs=1;
+    on_errs=1;
+    cos_err_lrn_thr=-1;
    };
    net_misc {
-    cyc_syn_dep=0;
-    syn_dep_int=20;
+    ti=0;
+    dwt_norm=0;
+    lay_gp_inhib=0;
+    inhib_cons=0;
    };
-   maxda_stopcrit=-1;
-   trg_max_act_stopcrit=1;
-   norew_val=0.5;
-   off_errs=1;
-   on_errs=1;
-   cos_err_lrn_thr=-1;
-   cos_diff_on=0;
-   cos_diff_auto=0;
+   rel_netin {
+    on=1;
+    trl_skip=10;
+    epc_skip=10;
+   };
+   phase_max=2;
   };
  };
 };
