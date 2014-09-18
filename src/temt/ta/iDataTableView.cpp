@@ -25,6 +25,8 @@
 #include <taProject>
 #include <taiSigLink>
 #include <taiWidgetMenu>
+#include <taiEditorOfString>
+
 #include <taMisc>
 
 #include <QHeaderView>
@@ -113,8 +115,13 @@ void iDataTableView::ViewAction(int ea) {
       }
     }
   }
-  // todo: could do more
-  taMisc::Confirm("contents of cell(s):\n", str);
+  tab->cell_view = str;
+  TypeDef* td = &TA_DataTable;
+  MemberDef* md = td->members.FindName("cell_view");
+  taiEditorOfString* host_ = new taiEditorOfString(md, tab, td, true, false, NULL, false, false);
+  // args are: read_only, modal, parent, line_nos, rich_text
+  host_->Constr("Contents of selected cell(s) in DataTable: " + tab->name);
+  host_->Edit(false);
 }
 
 void iDataTableView::GetEditActionsEnabled(int& ea) {

@@ -35,17 +35,17 @@ eTypeDef_Of(LeabraUnGpData);
 eTypeDef_Of(LeabraInhibSpec);
 
 class E_API LeabraInhibSpec : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is computed in Leabra system -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed
 INHERITED(SpecMemberBase)
 public:
-  float         gi;             // #MIN_0 [1.5-2.3 typical, can go much lower or higher as needed] overall inhibition gain -- this is main paramter to adjust to change overall activation levels -- it scales both the the ff and fb factors uniformly
-  float		ff;		// #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- just multiplies average netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge
-  float		fb;		// #MIN_0 #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- just multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turnign up when the 'heat' in the layer is to high)
-  float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers (use .02 max)
-  float         fb_tau;         // #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
-  float         ff0;            // #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
+  float         gi;             // #MIN_0 #AKA_lay_gi [1.5-2.3 typical, can go much lower or higher as needed] overall inhibition gain -- this is main paramter to adjust to change overall activation levels -- it scales both the the ff and fb factors uniformly
+  float		ff;		// #CONDSHOW_OFF_gi:0 #MIN_0 #DEF_1 overall inhibitory contribution from feedforward inhibition -- just multiplies average netinput (i.e., synaptic drive into layer) -- this anticipates upcoming changes in excitation, but if set too high, it can make activity slow to emerge
+  float		fb;		// #CONDSHOW_OFF_gi:0 #MIN_0 #DEF_0.5;1 overall inhibitory contribution from feedback inhibition -- just multiplies average activation -- this reacts to layer activation levels and works more like a thermostat (turnign up when the 'heat' in the layer is to high)
+  float         fb_tau;         // #CONDSHOW_OFF_gi:0 #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
+  float         ff0;            // #CONDSHOW_OFF_gi:0 #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
 
   float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		fb_dt_c;	// #READ_ONLY #EXPERT 1.0 - fb_dt
 
   inline float    FFInhib(const float avg_netin) {
     float ffi = 0.0f;
@@ -75,9 +75,10 @@ private:
 eTypeDef_Of(LeabraInhibMisc);
 
 class E_API LeabraInhibMisc : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system 
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system 
 INHERITED(SpecMemberBase)
 public:
+  float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers (use .02 max)
   float         prv_trl_ff;     // #MIN_0 amount of previous trial's final ff inhibition to carry forward to the current trial -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the trial level
   float         prv_phs_ff;     // #MIN_0 amount of previous phase's final ff inhibition to carry forward to the current phase -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the phase level
   bool          up_immed;       // feedback inhibition rises immediately, and fb_tau only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units
@@ -111,28 +112,6 @@ public:
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(UnitGpInhibSpec);
-
-class E_API UnitGpInhibSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra when inhibition is operating primarily within unit groups in a layer, this specifies an additional layer-level inhibition factor, which can be either a separate layer-level FFFB computation, with a different gi factor, or a MAX inhibition value computed across the unit-group inhibition levels multiplied by gp_g (typically < 1, which discounts group contributions to global layer level inhibition) -- the final unit group inhibition value is then a MAX of the original inhibition and the layer-level inhibition
-INHERITED(SpecMemberBase)
-public:
-  bool		on;	       // compute layer-level inhibition factor to apply to unit groups (otherwise, computed FFFB inhibition is just independently applied within each unit group)
-  bool          fffb;          // #CONDSHOW_ON_on compute layer-level FFFB inhibition and apply that as a MAX relative to the unit-group level inhibition -- lay_gi is the layer-level inhibitory gain value, replacing the inhib.gi value used for the within-unit group competition
-  float         lay_gi;         // #CONDSHOW_ON_on&&fffb overall gain value for layer-level FFFB inhibition -- often this works best when less than the unit-group inhib.gi (to have weaker layer-level inhibition), the same gi value also is often a good choice -- need to experiment
-  float		gp_g;		// #CONDSHOW_ON_on&&!fffb #MIN_0 how much each unit group's computed inhibition factor contributes to the layer-level inhibition values -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the layer, with 1 being a maximal amount of pooled inhibition
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(UnitGpInhibSpec);
-protected:
-  SPEC_DEFAULTS;
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -218,29 +197,23 @@ class E_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:
-  enum InhibGroup {
-    ENTIRE_LAYER,		// treat entire layer as one inhibitory group (even if subgroups exist)
-    UNIT_GROUPS,		// treat sub unit groups as separate inhibitory groups -- only works if layer actually has unit groups -- layer-level inhibition contributes according to the unit_gp_inhib parameters if set
-  };
-
-  InhibGroup	inhib_group;	// #CAT_Activation what to consider the inhibitory group (layer or unit subgroups, or both)
-  LeabraInhibSpec inhib;	// #CAT_Activation how to compute inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any unit-level inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed
+  LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed -- if unit groups are present and unit_gp inhib.gi > 0, net inhibition is MAX of layer and unit-group level
+  LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- set gi = 0 to exclude any group-level inhibition -- net inhibition is MAX of layer and unit group) -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed 
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
-  UnitGpInhibSpec unit_gp_inhib;	// #CAT_Activation #CONDSHOW_ON_inhib_group:UNIT_GROUPS pooling of inhibition across unit groups within layers -- only applicable if the layer actually has unit groups -- specifies an additional layer-level inhibition factor, which can be either a separate layer-level FFFB computation, with a different gi factor, or a MAX inhibition value computed across the unit-group inhibition levels multiplied by gp_g (typically < 1, which discounts group contributions to global layer level inhibition) -- the final unit group inhibition value is then a MAX of the original inhibition and the layer-level inhibition
-  LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
   ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec decay;		// #CAT_Activation decay of activity state vars between trials and phases, also time constants..
+  LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////
   //	Access, status functions
 
   inline bool   HasUnitGpInhib(Layer* lay)
-  { return (inhib_group == UNIT_GROUPS) && lay->unit_groups; }
+  { return ((unit_gp_inhib.gi > 0.0f) && lay->unit_groups); }
   // does this layer have unit-group level inhibition?
   inline bool   HasLayerInhib(Layer* lay)
-  { return !HasUnitGpInhib(lay); }
-  // does this layer have unit-group level inhibition
+  { return (lay_inhib.gi > 0.0f); }
+  // does this layer have layer level inhibition
 
 
   ///////////////////////////////////////////////////////////////////////
@@ -317,14 +290,14 @@ public:
 
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
-    virtual void Compute_Inhib_impl(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx, 
-			 LeabraInhib* thr, LeabraNetwork* net);
+    virtual void Compute_Inhib_impl
+      (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx, 
+       LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of inhibition computation for either layer or unit group
 
-    virtual void Compute_Inhib_FfFb(LeabraLayer* lay,
-			 Layer::AccessMode acc_md, int gpidx,
-			   LeabraInhib* thr, LeabraNetwork* net);
+    virtual void Compute_Inhib_FfFb
+      (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+       LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of feed-forward, feed-back inhibition computation
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);

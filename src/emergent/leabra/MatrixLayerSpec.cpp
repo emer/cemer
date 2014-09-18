@@ -58,24 +58,27 @@ void MatrixLayerSpec::Defaults_init() {
   matrix.nogo_deep_gain = 0.5f;
 
   //  SetUnique("inhib", true);
-  inhib.gi = 2.0f;
-  inhib.ff = 1.0f;
-  inhib.fb = 0.0f;
-  inhib.self_fb = 0.4f;
-  inhib.ff0 = 0.05f;
+  lay_inhib.gi = 0.0f;          // turn off layer level
+
+  unit_gp_inhib.gi = 2.0f;
+  unit_gp_inhib.ff = 1.0f;
+  unit_gp_inhib.fb = 0.0f;
+  unit_gp_inhib.ff0 = 0.05f;
+
+  inhib_misc.self_fb = 0.4f;
 
   //  SetUnique("decay", true);
   decay.phase = 0.0f;
 
   //  SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
+  // inhib_group = UNIT_GROUPS;
 
   // new default..
   //  SetUnique("gp_kwta", true);
   // gp_kwta.k_from = KWTASpec::USE_PCT;
   // gp_kwta.pct = 0.15f;
-  unit_gp_inhib.on = false;     // no!
-  unit_gp_inhib.gp_g = 1.0f;
+  // unit_gp_inhib.on = false;     // no!
+  // unit_gp_inhib.gp_g = 1.0f;
   lay_gp_inhib.on = false;      // off now by default!
   lay_gp_inhib.gp_g = 1.0f;
 }

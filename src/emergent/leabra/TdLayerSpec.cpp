@@ -30,8 +30,8 @@ void TdLayerSpec::Initialize() {
   // SetUnique("kwta", true);
   // kwta.k_from = KWTASpec::USE_K;
   // kwta.k = 1;
-  SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
+  // SetUnique("inhib_group", true);
+  // inhib_group = ENTIRE_LAYER;
   // SetUnique("inhib", true);
   // inhib.type = LeabraInhibSpec::KWTA_INHIB;
   // inhib.kwta_pt = .25;

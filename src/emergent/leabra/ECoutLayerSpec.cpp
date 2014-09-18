@@ -24,9 +24,9 @@ void ECoutLayerSpec::Initialize() {
 }
 
 void ECoutLayerSpec::Defaults_init() {
-  SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
-  SetUnique("inhib", true);
+  // SetUnique("inhib_group", true);
+  // inhib_group = UNIT_GROUPS;
+  // SetUnique("inhib", true);
   // inhib.type = LeabraInhibSpec::KWTA_INHIB;
   // inhib.kwta_pt = 0.25f;
   SetUnique("clamp", true);

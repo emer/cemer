@@ -42,13 +42,13 @@ void SNrThalLayerSpec::Defaults_init() {
   SetUnique("gating_types", true); // always unique
 
   // SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
+  // inhib_group = ENTIRE_LAYER;
 
   // SetUnique("inhib", true);
-  inhib.gi = 2.1f;
-  inhib.ff = 1.0f;
-  inhib.fb = 0.5f;
-  inhib.self_fb = 0.0f;
+  lay_inhib.gi = 2.1f;
+  lay_inhib.ff = 1.0f;
+  lay_inhib.fb = 0.5f;
+  inhib_misc.self_fb = 0.0f;
 
   // SetUnique("kwta", true);
   // kwta.k_from = KWTASpec::USE_K;

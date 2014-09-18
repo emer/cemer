@@ -128,6 +128,8 @@ public:
   // #HIDDEN #NO_SAVE When comparing cell values this is the list of rows compared against base_diff_row
   String                error_msg;
   // #HIDDEN #NO_SAVE Holds last error message so client can check message if error returned
+  String                cell_view;
+  // #HIDDEN #NO_SAVE contents of a given cell, for viewing purposes (View menu action)
 
   /////////////////////////////////////////////
   // Flags

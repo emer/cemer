@@ -2891,8 +2891,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // ca3_laysp->SetUnique("kwta", true);
   // ca3_laysp->kwta.pct = 0.02f;
 
-  ca1_laysp->SetUnique("inhib_group", true);
-  ca1_laysp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
+  // ca1_laysp->SetUnique("inhib_group", true);
+  // ca1_laysp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
   // ca1_laysp->SetUnique("gp_kwta", true);
   // ca1_laysp->gp_kwta.pct = 0.1f;
  

@@ -118,7 +118,8 @@ void ScalarValLayerSpec::Defaults_init() {
     // kwta.k = 3;
     // gp_kwta.k_from = KWTASpec::USE_K;
     // gp_kwta.k = 3;
-    inhib.gi = 2.2f;
+    lay_inhib.gi = 2.2f;
+    unit_gp_inhib.gi = 2.2f;
 
     scalar.InitRange(unit_range.min, unit_range.range); // needed for un_width_eff
     val_range.min = unit_range.min + (.5f * scalar.un_width_eff);
@@ -129,7 +130,8 @@ void ScalarValLayerSpec::Defaults_init() {
     // kwta.k = 1;
     // gp_kwta.k_from = KWTASpec::USE_K;
     // gp_kwta.k = 1;
-    inhib.gi = 2.2f;
+    lay_inhib.gi = 2.2f;
+    unit_gp_inhib.gi = 2.2f;
 
     val_range.min = unit_range.min;
     val_range.max = unit_range.max;

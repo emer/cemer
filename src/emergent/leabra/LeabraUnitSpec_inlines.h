@@ -24,8 +24,9 @@
 
 inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                               LeabraNetwork* net) {
-  float nw_fbi = lspec->inhib.self_fb * u->act_eq;
-  u->g_i_self = lspec->inhib.fb_dt * nw_fbi + (1.0f - lspec->inhib.fb_dt) * u->g_i_self;
+  float nw_fbi = lspec->inhib_misc.self_fb * u->act_eq;
+  u->g_i_self = lspec->lay_inhib.fb_dt * nw_fbi +
+    lspec->lay_inhib.fb_dt_c * u->g_i_self;
 }
 
 inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,

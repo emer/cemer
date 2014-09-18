@@ -110,8 +110,8 @@ void TwoDValLayerSpec::Initialize() {
   // kwta.k = 9;
   // gp_kwta.k_from = KWTASpec::USE_K;
   // gp_kwta.k = 9;
-  SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
+  // SetUnique("inhib_group", true);
+  // inhib_group = ENTIRE_LAYER;
   // SetUnique("inhib", true);
   // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
   // inhib.kwta_pt = .6f;

@@ -37,8 +37,8 @@ void DRN5htSpec::Initialize() {
 }
 
 void DRNLayerSpec::Initialize() {
-  SetUnique("inhib_group", true);
-  inhib_group = ENTIRE_LAYER;
+  // SetUnique("inhib_group", true);
+  // inhib_group = ENTIRE_LAYER;
 }
 
 void DRNLayerSpec::HelpConfig() {

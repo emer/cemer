@@ -42,10 +42,10 @@ void LeabraV1LayerSpec::Initialize() {
 void LeabraV1LayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdateStencils();
-  if(feat_inhib.on) {
-    if(inhib_group != UNIT_GROUPS)
-      inhib_group = UNIT_GROUPS; // must be!
-  }
+  // if(feat_inhib.on) {
+  //   if(inhib_group != UNIT_GROUPS)
+  //     inhib_group = UNIT_GROUPS; // must be!
+  // }
 }
 
 bool LeabraV1LayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -161,7 +161,7 @@ void LeabraV1LayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int 
           float ogi = feat_inhib.inhib_g * oth_netin; // note: directly on ithr!
           feat_inhib_max = MAX(feat_inhib_max, ogi);
         }
-        float eig = inhib.gi * inhib.FFInhib(feat_inhib_max);
+        float eig = unit_gp_inhib.gi * unit_gp_inhib.FFInhib(feat_inhib_max);
         float gi_eff = MAX(inhib_val, eig);
         LeabraUnit* u = (LeabraUnit*)lay->UnitAtUnGpIdx((int)uidx, gpidx);
         u->Compute_ApplyInhib(this, net, gi_eff);

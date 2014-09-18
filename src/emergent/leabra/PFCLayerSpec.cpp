@@ -51,17 +51,20 @@ void PFCLayerSpec::Defaults_init() {
   // inhib.kwta_pt = .5f;
 
   // ff_fb params:
-  inhib.gi = 2.1f;
-  inhib.ff = 1.0f;
-  inhib.fb = 0.5f;
-  inhib.self_fb = 0.0f;
+  unit_gp_inhib.gi = 2.1f;
+  unit_gp_inhib.ff = 1.0f;
+  unit_gp_inhib.fb = 0.5f;
+
+  inhib_misc.self_fb = 0.0f;
+
+  lay_inhib.gi = 0.0f; // todo: could be non-zero!
 
   // SetUnique("inhib_group", true);
-  inhib_group = UNIT_GROUPS;
+  // inhib_group = UNIT_GROUPS;
   // gp_kwta.pct = 0.15f;
 
-  unit_gp_inhib.on = false;
-  unit_gp_inhib.gp_g = 0.5f;
+  // unit_gp_inhib.on = false;
+  // unit_gp_inhib.gp_g = 0.5f;
   // unit_gp_inhib.diff_act_pct = true;
   // unit_gp_inhib.pct_fm_frac = true;
   // unit_gp_inhib.act_denom = 3.0f;
