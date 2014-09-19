@@ -24,8 +24,8 @@ void LeabraInhibVals::Initialize() {
 void LeabraInhibVals::InitVals() {
   ffi = 0.0f;
   fbi = 0.0f;
-  prv_trl_ffi = 0.0f;
-  prv_phs_ffi = 0.0f;
+  prv_trl_g_i = 0.0f;
+  prv_phs_g_i = 0.0f;
 
   g_i = 0.0f;
   g_i_orig = 0.0f;
@@ -36,8 +36,8 @@ void LeabraInhibVals::InitVals() {
 void LeabraInhibVals::Copy_(const LeabraInhibVals& cp) {
   ffi = cp.ffi;
   fbi = cp.fbi;
-  prv_trl_ffi = cp.prv_trl_ffi;
-  prv_phs_ffi = cp.prv_phs_ffi;
+  prv_trl_g_i = cp.prv_trl_g_i;
+  prv_phs_g_i = cp.prv_phs_g_i;
   g_i = cp.g_i;
   g_i_orig = cp.g_i_orig;
   lay_g_i = cp.lay_g_i;
@@ -46,6 +46,9 @@ void LeabraInhibVals::Copy_(const LeabraInhibVals& cp) {
  
 void LeabraInhib::Inhib_Initialize() {
   i_val.InitVals();
+  acts_m_avg = .1f;
+  acts_p_avg = .1f;
+  acts_m_avg_eff = 1.f;
   un_g_i.cmpt = false;          // don't compute by default
 }
 
@@ -58,6 +61,7 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   acts_m_avg = cp.acts_m_avg;
+  acts_m_avg_eff = cp.acts_m_avg_eff;
   acts_p_avg = cp.acts_p_avg;
   i_val = cp.i_val;
   netin = cp.netin;

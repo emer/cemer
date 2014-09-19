@@ -112,6 +112,7 @@ void iDataTableView::ViewAction(int ea) {
     for (int row = sel.row_fr; row <= sel.row_to; ++row) {
       for (int cell = 0; cell < cell_size; ++cell) {
         str += tab->GetValAsStringM(col, row, cell);
+        str += "\n";
       }
     }
   }

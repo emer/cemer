@@ -205,7 +205,7 @@ bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
 
 void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from, 
                                        bool plus_phase) {
-  float savg = from->acts_m_avg;
+  float savg = from->acts_m_avg_eff;
   float from_sz = (float)from->units.leaves;
   float n_cons = (float)recv_gp->size;
   if(plus_phase && diff_scale_p)

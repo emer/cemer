@@ -75,12 +75,12 @@ private:
 eTypeDef_Of(LeabraInhibMisc);
 
 class E_API LeabraInhibMisc : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system 
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system -- these apply across layer and unit group levels
 INHERITED(SpecMemberBase)
 public:
   float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers (use .02 max)
-  float         prv_trl_ff;     // #MIN_0 amount of previous trial's final ff inhibition to carry forward to the current trial -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the trial level
-  float         prv_phs_ff;     // #MIN_0 amount of previous phase's final ff inhibition to carry forward to the current phase -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the phase level
+  float         prv_trl;        // #MIN_0 amount of previous trial's final inhibition to carry forward to the current trial -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the trial level
+  float         prv_phs;        // #MIN_0 amount of previous phase's final inhibition to carry forward to the current phase -- this produces a temporal-derivative-like effect to suppress responses to sustained inputs, at the phase level
   bool          up_immed;       // feedback inhibition rises immediately, and fb_tau only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
@@ -100,9 +100,9 @@ class E_API LayerAvgActSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
 INHERITED(SpecMemberBase)
 public:
-  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init_avg be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also avg_adjust
+  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
   float         tau;        // #DEF_100 #MIN_0 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
-  float         adjust;     // #DEF_1 adjustment multiplier on the computed acts_m_avg value that is used for netinput rescaling -- if based on connectivity patterns or other factors the computed value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
+  float         adjust;     // #DEF_1 adjustment multiplier on the computed acts_m_avg value that is used to compute acts_m_avg_eff, which is actually used for netinput rescaling -- if based on connectivity patterns or other factors the actual running-average value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
   
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 

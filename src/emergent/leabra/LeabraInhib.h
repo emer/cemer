@@ -32,8 +32,8 @@ INHERITED(taOBase)
 public:
   float         ffi;            // computed feedforward inhibition
   float         fbi;            // computed feedback inhibition (total)
-  float         prv_trl_ffi;    // feedforward inhibition on the previous trial -- used for prv_trl_ff inhibition factor to produce a temporal derivitive-like effect
-  float         prv_phs_ffi;    // feedforward inhibition on the previous phase -- used for prv_phs_ff inhibition factor to produce a temporal derivitive-like effect
+  float         prv_trl_g_i;    // final inhibition on the previous trial -- used for prv_trl inhibition factor to produce a temporal derivative-like effect
+  float         prv_phs_g_i;    // final inhibition on the previous phase -- used for prv_phs inhibition factor to produce a temporal derivitive-like effect
 
   float		g_i;		// overall value of the inhibition -- this is what is added into the unit g_i inhibition level (along with any synaptic unit-driven inhibition)
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
@@ -58,7 +58,8 @@ eTypeDef_Of(LeabraInhib);
 class E_API LeabraInhib {
   // ##CAT_Leabra holds inhibition computation values, used as a parent class for layers and UnitGr etc
 public:
-  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged minus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling and should match reasonably well with act_avg.init value
+  float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged minus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value
+  float 	acts_m_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_m_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
   float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer

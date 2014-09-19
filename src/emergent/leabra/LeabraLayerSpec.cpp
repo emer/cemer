@@ -54,8 +54,8 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
 
 void LeabraInhibMisc::Initialize() {
   self_fb = 0.0f;
-  prv_trl_ff = 0.0f;
-  prv_phs_ff = 0.0f;
+  prv_trl = 0.0f;
+  prv_phs = 0.0f;
   up_immed = false;
 
   Defaults_init();
@@ -231,12 +231,14 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
 
 void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m_avg = avg_act.init;
+  lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
   lay->acts_p_avg = avg_act.init;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->Init_State();
       gpd->acts_m_avg = avg_act.init;
+      gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
       gpd->acts_p_avg = avg_act.init;
     }
   }
@@ -491,10 +493,10 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
 
   thr->i_val.ffi = nw_ffi;
 
-  // add this after the fact, so that it isn't constantly compounded -- in reality it
-  // should just be based on netin, but probably simpler to use ffi
-  nw_ffi += inhib_misc.prv_trl_ff * thr->i_val.prv_trl_ffi +
-    inhib_misc.prv_phs_ff * thr->i_val.prv_phs_ffi;
+  // extra term based on residual inhibtion lying around from last time
+  // add to ff because it is constant and not subject to fb time dynamics
+  nw_ffi += inhib_misc.prv_trl * thr->i_val.prv_trl_g_i +
+    inhib_misc.prv_phs * thr->i_val.prv_phs_g_i;
 
   // dt only on fbi part
   if(inhib_misc.up_immed) {
@@ -725,30 +727,32 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 
 void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts;
-  lay->acts_m_avg += avg_act.dt * (avg_act.adjust * lay->acts_m.avg - lay->acts_m_avg);
-  lay->i_val.prv_phs_ffi = lay->i_val.ffi;
+  lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
+  lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
+  lay->i_val.prv_phs_g_i = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts;
-      gpd->acts_m_avg += avg_act.dt * (avg_act.adjust * gpd->acts_m.avg - gpd->acts_m_avg);
-      gpd->i_val.prv_phs_ffi = gpd->i_val.ffi;
+      gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
+      gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
+      gpd->i_val.prv_phs_g_i = gpd->i_val.g_i;
     }
   }
 }
 
 void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts;
-  lay->acts_p_avg += avg_act.dt * (avg_act.adjust * lay->acts_p.avg - lay->acts_p_avg);
-  lay->i_val.prv_phs_ffi = lay->i_val.ffi;
-  lay->i_val.prv_trl_ffi = lay->i_val.ffi;
+  lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
+  lay->i_val.prv_phs_g_i = lay->i_val.g_i;
+  lay->i_val.prv_trl_g_i = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts;
-      gpd->acts_p_avg += avg_act.dt * (avg_act.adjust * gpd->acts_p.avg - gpd->acts_p_avg);
-      gpd->i_val.prv_phs_ffi = gpd->i_val.ffi;
-      gpd->i_val.prv_trl_ffi = gpd->i_val.ffi;
+      gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
+      gpd->i_val.prv_phs_g_i = gpd->i_val.g_i;
+      gpd->i_val.prv_trl_g_i = gpd->i_val.g_i;
     }
   }
 }
