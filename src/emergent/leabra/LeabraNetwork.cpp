@@ -854,7 +854,7 @@ void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_sp
   DataCol* lsn = report_table->FindMakeColName("layer_spec", idx, VT_STRING);
   DataCol* actm = report_table->FindMakeColName("acts_m_avg", idx, VT_FLOAT);
   DataCol* actp = report_table->FindMakeColName("acts_p_avg", idx, VT_FLOAT);
-  DataCol* init = report_table->FindMakeColName("avg_act.init", idx, VT_FLOAT);
+  DataCol* init = report_table->FindMakeColName("avg_act_init", idx, VT_FLOAT);
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;

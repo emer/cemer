@@ -658,6 +658,11 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
     //   u->avg_m -= decay * (u->avg_m - act_misc.avg_init);
     // not avg_l, act_avg, thal, deep5b*, act_ctxt* 
   }
+  else {
+    if(net->phase_no == 0) {
+      Init_Netins(u, net);      // need to init at start of trial regardless, it seems
+    }
+  }
 
   u->da = 0.0f;
   u->I_net = 0.0f;

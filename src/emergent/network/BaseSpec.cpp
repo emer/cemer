@@ -60,6 +60,20 @@ void BaseSpec::CutLinks() {
 
 void BaseSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    TypeDef* td = GetTypeDef();
+    for(int i=TA_BaseSpec.members.size; i< td->members.size; i++) {
+      MemberDef* md = td->members.FastEl(i);
+      String aka = md->OptionAfter("AKA_");
+      if(aka.empty()) continue;
+      for(int j=0; j<unique.size; j++) {
+        String& unq = unique.FastEl(j);
+        if(unq == aka) {
+          unq = md->name;       // translate
+        }
+      }
+    }
+  }
   UpdateSpec();
 }
 
