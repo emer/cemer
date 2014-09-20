@@ -282,8 +282,17 @@ bool MainWindowViewer::GetWinState() {
   // relative sizes of panels
   iSplitter* spl = widget()->body;
   SetUserData("view_splitter_state",
-    String(spl->saveState().toBase64().constData()));
+              String(spl->saveState().toBase64().constData()));
   return true;
+}
+
+void MainWindowViewer::ResetSplitterState() {
+  String str = taiMisc::DEFAULT_PROJ_SPLITTERS;
+  if (str.nonempty()) {
+    QByteArray ba = QByteArray::fromBase64(QByteArray(str.chars()));
+    iSplitter* spl = widget()->body;
+    spl->restoreState(ba);
+  }
 }
 
 bool MainWindowViewer::SetWinState() {
@@ -311,7 +320,6 @@ bool MainWindowViewer::SetWinState() {
       }
     }
   }
-
   return true;
 }
 

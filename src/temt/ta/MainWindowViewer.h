@@ -135,6 +135,7 @@ public:
   void         FrameSizeToSize(iSize& sz) override;
   bool         GetWinState() override;
   bool         SetWinState() override;
+  void         ResetSplitterState();
   void         ResolveChanges(CancelOp& cancel_op) override;
 
   void  UpdateAfterEdit();

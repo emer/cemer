@@ -76,6 +76,8 @@ TA_API taiMisc* taiM_ = NULL;
 const int taiMisc::FONT_MED = 1;
 const int taiMisc::FONT_SM = 2;
 
+const String taiMisc::DEFAULT_PROJ_SPLITTERS = "AAAA/wAAAAEAAAADAAABAAAAAfwAAAKMAQAAAAcBAAAAAQE=";
+
 taiDialogEditor_List      taiMisc::active_dialogs;
 taiEditorOfClass_List    taiMisc::active_edits;
 taiEditorOfClass_List    taiMisc::css_active_edits;

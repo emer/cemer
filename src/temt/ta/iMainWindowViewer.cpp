@@ -693,6 +693,9 @@ void iMainWindowViewer::Constr_ViewMenu()
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
 
   viewMenu->insertSeparator();
+  viewResetViewAction = AddAction(new iAction("Reset Frames", QKeySequence(), "viewResetViewAction"));
+  viewMenu->AddAction(viewResetViewAction);
+
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_SaveView(iAction*)));
   if (curProject() != NULL)
@@ -710,6 +713,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   connect(brow_hist, SIGNAL(select_item(taiSigLink*)),
       this, SLOT(slot_AssertBrowserItem(taiSigLink*)));
 
+  connect(viewResetViewAction, SIGNAL(Action()), this, SLOT(ViewReset()));
   connect(viewRefreshAction, SIGNAL(Action()), this, SLOT(viewRefresh()));
 
   signalMapperForViews = new QSignalMapper (this) ;
@@ -2388,6 +2392,11 @@ void iMainWindowViewer::Refresh_impl() {
   }
 }
 
+void iMainWindowViewer::ViewReset() {
+  ShowHideFrames(7);
+  viewer()->ResetSplitterState();
+}
+
 void iMainWindowViewer::ResolveChanges_impl(CancelOp& cancel_op) {
   if (!isProjShower()) return; // changes only applied for proj showers
 
@@ -2796,6 +2805,7 @@ void iMainWindowViewer::UpdateUi() {
   }
 
   viewSetSaveViewAction->setEnabled(curProject() != NULL);
+  viewResetViewAction->setEnabled(curProject() != NULL);
 
   if (curProject()) {
     fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());

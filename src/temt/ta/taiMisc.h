@@ -110,6 +110,8 @@ public:
     dlgOrient_mask      = 0x010
 
   };
+  
+  static const String   DEFAULT_PROJ_SPLITTERS;
 
   static const int      FONT_MED; // #DEF_1 pts to subtract from BIG
   static const int      FONT_SM;  // #DEF_2 pts to subtract frm BIG
