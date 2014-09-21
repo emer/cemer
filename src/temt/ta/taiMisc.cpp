@@ -848,13 +848,15 @@ bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
 
 bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   bool ctrl_pressed = false;
-  if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+  //  if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+  if (e->modifiers() & Qt::ControlModifier) { // regular modifiers() is safer for generated events..
     ctrl_pressed = true;
   }
 
 #ifdef TA_OS_MAC
   // actual ctrl = meta on apple -- enable this
-  if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
+  // if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
+  if (e->modifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
 
@@ -863,7 +865,8 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
 
   // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  if ((QApplication::keyboardModifiers() & Qt::ControlModifier)
+  //  if ((QApplication::keyboardModifiers() & Qt::ControlModifier)
+  if ((e->modifiers() & Qt::ControlModifier)
       && (e->key() == Qt::Key_V)) {
     ctrl_pressed = false;
   }
