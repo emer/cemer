@@ -30,6 +30,7 @@
 #include <iLineEdit>
 #include <QTextEdit>
 #include <QCoreApplication>
+#include <QApplication>
 
 #include <iostream>
 using namespace std;
@@ -378,6 +379,9 @@ QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const 
 }
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
+
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
+
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   
   QTreeWidgetItem* cur_item = currentItem();
@@ -398,7 +402,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     }
   }
   
-  if ((e->modifiers() & Qt::ShiftModifier) && (e->key() == Qt::Key_Up ||
+  if ((QApplication::keyboardModifiers() & Qt::ShiftModifier) && (e->key() == Qt::Key_Up ||
                                                e->key() == Qt::Key_Down)) {
     if (ext_select_on == false) {
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
@@ -438,25 +442,25 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         e->accept();
         break;
       case Qt::Key_N:
-        newCurrent = moveCursor(MoveDown, e->modifiers());
+        newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
         e->accept();
         break;
       case Qt::Key_P:
-        newCurrent = moveCursor(MoveUp, e->modifiers());
+        newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
         e->accept();
         break;
       case Qt::Key_U:
       case Qt::Key_Up:
-        newCurrent = moveCursor(MovePageUp, e->modifiers());
+        newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
         e->accept();
         break;
       case Qt::Key_Down:
-        newCurrent = moveCursor(MovePageDown, e->modifiers());
+        newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
         e->accept();
         break;
       case Qt::Key_V:
         if(taMisc::emacs_mode) {
-          newCurrent = moveCursor(MovePageDown, e->modifiers());
+          newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
           e->accept();
         }
         else {
@@ -468,12 +472,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
         //   editItem(cur_item);     // todo: get column
         // }
         // else {
-        newCurrent = moveCursor(MoveRight, e->modifiers());
+        newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
         // }
         e->accept();
         break;
       case Qt::Key_B:
-        newCurrent = moveCursor(MoveLeft, e->modifiers());
+        newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
         e->accept();
         break;
       case Qt::Key_Enter:

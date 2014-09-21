@@ -567,6 +567,9 @@ QStringList iTreeView::mimeTypes () const {
 }
 
 void iTreeView::keyPressEvent(QKeyEvent* e) {
+
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
+
   taProject* proj = myProject();
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 
@@ -654,12 +657,12 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  // if((e->modifiers() & Qt::AltModifier)) {
+  // if((QApplication::keyboardModifiers() & Qt::AltModifier)) {
   //   String ky;
   //   ky.convert(e->key(), "%X");
   //   taMisc::Info("alt", ky);
   // } 
-  if((e->modifiers() & Qt::AltModifier) && (e->key() == Qt::Key_F
+  if((QApplication::keyboardModifiers() & Qt::AltModifier) && (e->key() == Qt::Key_F
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
                                             // freaky new key for Alt+F
                                             || e->key() == 0x191
@@ -674,7 +677,7 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
     e->accept();
     return;
   }
-  if((e->modifiers() & Qt::AltModifier) && (e->key() == Qt::Key_R
+  if((QApplication::keyboardModifiers() & Qt::AltModifier) && (e->key() == Qt::Key_R
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
                                             // freaky new key for Alt+R
                                             || e->key() == 0xAE

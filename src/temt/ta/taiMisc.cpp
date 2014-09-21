@@ -796,17 +796,65 @@ iColor taiMisc::ivBrightness_to_Qt_lightdark(const QColor& qtColor, float ivBrig
   }
 }
 
+iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
+  QObject* tobj = obj;
+  while(tobj) {
+    if(tobj->inherits("iMainWindowViewer")) {
+      return qobject_cast<iMainWindowViewer*>(tobj);
+    }
+    tobj = tobj->parent();
+  }
+  return NULL;
+}
 
-bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e)
-{
+
+bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
+  iMainWindowViewer* imwv = FindMainWinParent(obj);
+  if(!imwv) {
+    taMisc::DebugInfo("no imwv!");
+    return false;
+  }
+
+  // trying all possible ways to look for ctrl pressed, b/c sometimes they don't work!
   bool ctrl_pressed = false;
-  if (e->modifiers() & Qt::ControlModifier) {
+  if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+  else if (e->modifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+  else if (QApplication::queryKeyboardModifiers() & Qt::ControlModifier) {
+    ctrl_pressed = true;
+  }
+#ifdef TA_OS_MAC
+  // actual ctrl = meta on apple -- enable this
+  else if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+  else if (e->modifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+  else if (QApplication::queryKeyboardModifiers() & Qt::MetaModifier) {
+    ctrl_pressed = true;
+  }
+#endif
+
+  if(ctrl_pressed) {
+    imwv->UpdateUi();
+    // taMisc::DebugInfo("ui");
+  }
+  return ctrl_pressed;
+}
+
+bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
+  bool ctrl_pressed = false;
+  if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
     ctrl_pressed = true;
   }
 
 #ifdef TA_OS_MAC
   // actual ctrl = meta on apple -- enable this
-  if (e->modifiers() & Qt::MetaModifier) {
+  if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
 
@@ -815,7 +863,8 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e)
   // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
 
   // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  if ((e->modifiers() & Qt::ControlModifier) && (e->key() == Qt::Key_V)) {
+  if ((QApplication::keyboardModifiers() & Qt::ControlModifier)
+      && (e->key() == Qt::Key_V)) {
     ctrl_pressed = false;
   }
 #endif
@@ -824,6 +873,8 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e)
 }
 
 bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
+  taiMisc::UpdateUiOnCtrlPressed(obj, e);
+
   bool ctrl_pressed = KeyEventCtrlPressed(e);
   if(!ctrl_pressed) return false;
   QCoreApplication* app = QCoreApplication::instance();
@@ -908,6 +959,7 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
 }
 
 bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
+  taiMisc::UpdateUiOnCtrlPressed(obj, e);
   bool ctrl_pressed = KeyEventCtrlPressed(e);
   QCoreApplication* app = QCoreApplication::instance();
   if(ctrl_pressed) {

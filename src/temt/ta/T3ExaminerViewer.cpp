@@ -33,6 +33,7 @@
 #include <QPrintDialog>
 #include <QKeyEvent>
 #include <QPainter>
+#include <QApplication>
 
 #include <taMisc>
 #include <taiMisc>
@@ -725,7 +726,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     return;
   }
   else if(e->key() == Qt::Key_Left && !interactionModeOn()) {
-    if(e->modifiers() & Qt::ShiftModifier) {
+    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
       horizPanView(-fixed_pan_distance);
     }
     else {
@@ -735,7 +736,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     return;
   }
   else if(e->key() == Qt::Key_Right && !interactionModeOn()) {
-    if(e->modifiers() & Qt::ShiftModifier) {
+    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
       horizPanView(fixed_pan_distance);
     }
     else {
@@ -745,7 +746,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     return;
   }
   else if(e->key() == Qt::Key_Up && !interactionModeOn()) {
-    if(e->modifiers() & Qt::ShiftModifier) {
+    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
       vertPanView(-fixed_pan_distance);
     }
     else {
@@ -755,7 +756,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
     return;
   }
   else if(e->key() == Qt::Key_Down && !interactionModeOn()) {
-    if(e->modifiers() & Qt::ShiftModifier) {
+    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
       vertPanView(fixed_pan_distance);
     }
     else {

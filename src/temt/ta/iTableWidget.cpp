@@ -20,6 +20,7 @@
 
 #include <QKeyEvent>
 #include <iLineEdit>
+#include <QApplication>
 
 iTableWidget::iTableWidget(QWidget* parent)
 :inherited(parent)
@@ -40,25 +41,25 @@ void iTableWidget::keyPressEvent(QKeyEvent* e) {
     QPersistentModelIndex newCurrent;
     switch (e->key()) {
     case Qt::Key_N:
-      newCurrent = moveCursor(MoveDown, e->modifiers());
+      newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
       break;
     case Qt::Key_P:
-      newCurrent = moveCursor(MoveUp, e->modifiers());
+      newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
       break;
     case Qt::Key_U:
-      newCurrent = moveCursor(MovePageUp, e->modifiers());
+      newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
       break;
 #ifdef TA_OS_MAC
       // this is a conflict with paste -- only works on mac where cmd and ctrl are diff!
     case Qt::Key_V:
-      newCurrent = moveCursor(MovePageDown, e->modifiers());
+      newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       break;
 #endif
     case Qt::Key_F:
-      newCurrent = moveCursor(MoveRight, e->modifiers());
+      newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
       break;
     case Qt::Key_B:
-      newCurrent = moveCursor(MoveLeft, e->modifiers());
+      newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
       break;
     case Qt::Key_A:
       edit_start_pos = 0;

@@ -66,6 +66,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QColor>
+#include <QApplication>
 
 #include <math.h>
 
@@ -387,14 +388,14 @@ void iThumbWheel::mouseMoveEvent(QMouseEvent *e)
 void iThumbWheel::wheelEvent(QWheelEvent *e)
 {
   bool ctrl_pressed = false;
-  if(e->modifiers() & Qt::ControlModifier)
+  if(QApplication::keyboardModifiers() & Qt::ControlModifier)
     ctrl_pressed = true;
 #ifdef TA_OS_MAC
   // ctrl = meta on apple
-  if(e->modifiers() & Qt::MetaModifier)
+  if(QApplication::keyboardModifiers() & Qt::MetaModifier)
     ctrl_pressed = true;
 #endif
-  if(e->modifiers() & Qt::ShiftModifier)
+  if(QApplication::keyboardModifiers() & Qt::ShiftModifier)
     ctrl_pressed = true;
   int step = (ctrl_pressed) ? singleStep() : pageStep();
   setValue(value() - (e->delta()*step/ 120));

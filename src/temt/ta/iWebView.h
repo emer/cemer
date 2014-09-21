@@ -36,6 +36,7 @@ signals:
     QWebView*& window);
 protected:
   QWebView* createWindow(QWebPage::WebWindowType type) override;
+  void keyPressEvent(QKeyEvent* e) override;
 };
 
 #endif // iWebView_h

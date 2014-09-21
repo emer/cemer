@@ -25,6 +25,7 @@
 #include <QMessageBox>
 #include <QInputDialog>
 #include <QCoreApplication>
+#include <QApplication>
 
 iTextEdit::iTextEdit(QWidget* parent)
 :inherited(parent)
@@ -49,6 +50,8 @@ void iTextEdit::clearExtSelection() {
 
 void iTextEdit::keyPressEvent(QKeyEvent* e) {
   QTextCursor cursor(textCursor());
+
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
 
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 
@@ -171,7 +174,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* e) {
       return;
     }
   }
-  else if(e->modifiers() & Qt::AltModifier) {
+  else if(QApplication::keyboardModifiers() & Qt::AltModifier) {
     if(e->key() == Qt::Key_W
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
         || e->key() == 0x2211   // weird mac key

@@ -25,6 +25,7 @@
 
 #include <QHeaderView>
 #include <QCoreApplication>
+#include <QApplication>
 #include <QScrollBar>
 #include <QKeyEvent>
 
@@ -95,6 +96,8 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     return;
   }
 
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
+
   if(e->key() == Qt::Key_Delete) {
     RowColOp(OP_ROW | OP_DELETE);
     e->accept();
@@ -119,19 +122,19 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
       e->accept();
       break;
     case Qt::Key_Up:
-      newCurrent = moveCursor(MovePageUp, e->modifiers());
+      newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Down:
-      newCurrent = moveCursor(MovePageDown, e->modifiers());
+      newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Left:
-      newCurrent = moveCursor(MoveHome, e->modifiers());
+      newCurrent = moveCursor(MoveHome, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Right:
-      newCurrent = moveCursor(MoveEnd, e->modifiers());
+      newCurrent = moveCursor(MoveEnd, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_I:
@@ -174,19 +177,19 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     // deal with these here to manage the ext select
     switch (e->key()) {
     case Qt::Key_Down:
-      newCurrent = moveCursor(MoveDown, e->modifiers());
+      newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Up:
-      newCurrent = moveCursor(MoveUp, e->modifiers());
+      newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Right:
-      newCurrent = moveCursor(MoveRight, e->modifiers());
+      newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
       e->accept();
       break;
     case Qt::Key_Left:
-      newCurrent = moveCursor(MoveLeft, e->modifiers());
+      newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
       e->accept();
       break;
     }

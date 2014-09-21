@@ -162,6 +162,9 @@ public:
   // find an active (non-modal) edit dialog with same read_only state for the object
   static taiEditorOfClass* FindEditPanel(void* base, bool read_only,
     iMainWindowViewer* not_in_win = NULL);
+  static iMainWindowViewer* FindMainWinParent(QObject* obj);
+  // find the iMainWindowViewer parent of a given gui object, if it can be found through successive parent() calls -- otherwise NULL
+
 
   static void   Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
 
@@ -172,6 +175,8 @@ public:
   void Busy_(bool busy) override;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
   void CheckConfigResult_(bool ok) override;
 
+  static bool   UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);
+  // call UpdateUi on iMainWindowViewer associated with given object if the given keyboard event or the global keyboardModifiers status indicates that a ctrl key is pressed -- this enables just-in-time updating of the global cut/copy/paste edit action shortcuts -- should be called in keyboard event processing routines for objects that have such routines and depend on shortcuts..
 
   static bool   KeyEventCtrlPressed(QKeyEvent* e);
   // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..

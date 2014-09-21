@@ -177,6 +177,8 @@ bool iLineEdit::event(QEvent* e)
 void iLineEdit::keyPressEvent(QKeyEvent* e)
 {
   // std::cerr << "keypress" << std::endl;
+
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
   
   // emacs keys!!
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
@@ -251,7 +253,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
         return;
     }
   }
-  else if (e->modifiers() & Qt::AltModifier) {  // mac option key
+  else if (QApplication::keyboardModifiers() & Qt::AltModifier) {  // mac option key
     if (e->key() == Qt::Key_W
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
         || e->key() == 0x2211   // weird mac key

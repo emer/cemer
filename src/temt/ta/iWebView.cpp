@@ -15,6 +15,7 @@
 
 #include "iWebView.h"
 
+#include <taiMisc>
 
 QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
   QWebView* rval = NULL;
@@ -23,3 +24,9 @@ QWebView* iWebView::createWindow(QWebPage::WebWindowType type) {
     rval = inherited::createWindow(type);
   return rval;
 }
+
+void iWebView::keyPressEvent(QKeyEvent* e) {
+  taiMisc::UpdateUiOnCtrlPressed(this, e);
+  inherited::keyPressEvent(e);
+}
+
