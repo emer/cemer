@@ -2736,9 +2736,8 @@ void iMainWindowViewer::UpdateUi() {
     editPasteAction->setEnabled(!clip_text.isEmpty());
   }
   else {  // focus is not in text field
-    editCutAction->setEnabled(false);
-    
     editCopyAction->setEnabled(ea & iClipData::EA_COPY);
+    editCutAction->setEnabled(ea & iClipData::EA_CUT);
     editDupeAction->setEnabled(ea & iClipData::EA_DUPE);
     editDeleteAction->setEnabled(ea & iClipData::EA_DELETE);
     
