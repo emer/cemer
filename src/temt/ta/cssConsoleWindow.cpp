@@ -57,6 +57,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   unpinned = new QIcon(":/images/tab_unpushed.png");
   pinned = new QIcon(":/images/tab_locked.png");
   clear_icon = new QIcon(":/images/clear.png");
+  select_all_icon = new QIcon(":/images/select_all.png");
 
   pin_act = new iAction("&pin", QKeySequence(), "pin");
   pin_act->setIcon(*pinned);
@@ -91,7 +92,13 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   clear_act->setToolTip("Clear the console window");
   tb->addAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
-
+    
+  select_all_act = new iAction("&Select All", QKeySequence("Ctrl+."), "select_all_act");
+  select_all_act->setIcon(*select_all_icon);
+  select_all_act->setToolTip("Select all contents of console window");
+  tb->addAction(select_all_act);
+  connect(select_all_act, SIGNAL(Action()), css_con, SLOT(selectAll()));
+    
   setWindowTitle("css Console");
 }
 
@@ -100,6 +107,7 @@ cssConsoleWindow::~cssConsoleWindow() {
   delete unpinned;
   delete pin_act;
   delete clear_act;
+  delete select_all_act;
 }
 
 void cssConsoleWindow::UpdateFmLock() {

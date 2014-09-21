@@ -39,8 +39,10 @@ public:
   QIcon*        pinned;
   QIcon*        unpinned;
   QIcon*        clear_icon;
+  QIcon*        select_all_icon;
   iAction*      pin_act;
   iAction*      clear_act;
+  iAction*      select_all_act;
 
   virtual void  UpdateFmLock();
   // update based on current lock status

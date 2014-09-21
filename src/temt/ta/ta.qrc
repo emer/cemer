@@ -32,5 +32,6 @@
   <file>images/previous_icon.png</file>
   <file>images/next_icon.png</file>
   <file>images/clear.png</file>
+  <file>images/select_all.png</file>
 </qresource>
 </RCC>
