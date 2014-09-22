@@ -2443,12 +2443,9 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
       connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
     if (update_ui_signal)
       connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
-    /*//TEMP
-    taMisc::Warning("SetClipHandler to: type, name", handler_obj->metaObject()->className(),
-      handler_obj->objectName());
-} else {
-    taMisc::Warning("SetClipHandler cleared");
-// /TEMP */
+    taMisc::Info("SetClipHandler to: type, name",
+                 handler_obj->metaObject()->className(),
+                 handler_obj->objectName().toLatin1());
   }
   last_clip_handler = handler_obj; // whether NULL or not
   UpdateUi();

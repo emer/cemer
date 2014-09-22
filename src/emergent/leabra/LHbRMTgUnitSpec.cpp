@@ -204,20 +204,20 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
   // the rest of this should all be standard..
 
   if(net->net_misc.inhib_cons) {
-    u->g_i_raw += u->g_i_delta;
+    u->gi_raw += u->gi_delta;
     if(act_fun == SPIKE) {
-      u->g_i_syn = MAX(u->g_i_syn, 0.0f);
+      u->gi_syn = MAX(u->gi_syn, 0.0f);
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->g_i_syn += dt.net_dt * (u->g_i_raw - u->g_i_syn);
-      u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
+      u->gi_syn += dt.net_dt * (u->gi_raw - u->gi_syn);
+      u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
   else {
     // clear so automatic inhibition can add to these values!
-    u->g_i_syn = 0.0f;
-    u->g_i_raw = 0.0f;
+    u->gi_syn = 0.0f;
+    u->gi_raw = 0.0f;
   }
   
   float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
@@ -231,7 +231,7 @@ void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int 
   }
 
   u->net_delta = 0.0f;  // clear for next use
-  u->g_i_delta = 0.0f;  // clear for next use
+  u->gi_delta = 0.0f;  // clear for next use
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking

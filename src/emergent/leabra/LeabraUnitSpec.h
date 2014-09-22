@@ -557,10 +557,10 @@ public:
   inline LeabraInhib* GetInhib(LeabraUnit* u);
   // #CAT_Activation #IGNORE get the inhib that applies to this unit (either unit group or entire layer, depending on layer spec setting)
 
-  inline void	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+  inline float	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
                                    LeabraNetwork* net);
-  // #CAT_Activation #IGNORE compute self inhibition value, for fffb g_i_self inhib val
-  inline void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+  // #CAT_Activation #IGNORE compute self inhibition value
+  virtual void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
                                    LeabraNetwork* net, float inhib_val);
   // #CAT_Activation #IGNORE apply computed inhibition value to unit inhibitory conductance
 

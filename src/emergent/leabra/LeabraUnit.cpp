@@ -59,10 +59,14 @@ void LeabraUnit::Initialize() {
   act_sent = 0.0f;
   net_raw = 0.0f;
   net_delta = 0.0f;
-  g_i_raw = 0.0f;
-  g_i_delta = 0.0f;
-  g_i_syn = 0.0f;
-  g_i_self = 0.0f;
+
+  gi_raw = 0.0f;
+  gi_delta = 0.0f;
+  gi_syn = 0.0f;
+  gi_as = 0.0f;
+  gi_am = 0.0f;
+  gi_al = 0.0f;
+  gi_b = 0.0f;
 
   misc_1 = 0.0f;
   spk_t = -1;
@@ -138,10 +142,15 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_sent = cp.act_sent;
   net_raw = cp.net_raw;
   net_delta = cp.net_delta;
-  g_i_raw = cp.g_i_raw;
-  g_i_delta = cp.g_i_delta;
-  g_i_syn = cp.g_i_syn;
-  g_i_self = cp.g_i_self;
-    misc_1 = cp.misc_1;
+  gi_raw = cp.gi_raw;
+  gi_delta = cp.gi_delta;
+  gi_syn = cp.gi_syn;
+  gi_as = cp.gi_as;
+  gi_am = cp.gi_am;
+  gi_al = cp.gi_al;
+  gi_b = cp.gi_b;
+
+
+  misc_1 = cp.misc_1;
   spk_t = cp.spk_t;
 }

@@ -497,7 +497,7 @@ void ScalarValLayerSpec::ResetAfterClamp_ugp(LeabraLayer* lay,
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
     u->net = 0.0f;
     u->gc_i = 0.0f;
-    u->g_i_syn = 0.0f;
+    u->gi_syn = 0.0f;
     u->act = 0.0f;              // must reset so it doesn't contribute!
     u->act_lrn = 0.0f;
     u->act_eq = u->act_nd = u->ext;     // avoid clamp_range!
@@ -543,7 +543,7 @@ void ScalarValLayerSpec::Settle_Init_Unit0_ugp(LeabraLayer* lay,
     u->Settle_Init_Unit(net);
     // these are not cleared for the first unit anymore
     u->net = 0.0f;
-    u->g_i_syn = 0.0f;
+    u->gi_syn = 0.0f;
     u->gc_i = 0.0f;
   }
 }

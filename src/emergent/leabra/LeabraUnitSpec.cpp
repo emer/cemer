@@ -35,6 +35,7 @@ TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraInhibTaus);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(CIFERSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
@@ -551,9 +552,9 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->net_delta = 0.0f;
-  u->g_i_raw = 0.0f;
-  u->g_i_delta = 0.0f;
-  // u->g_i_syn = 0.0f;
+  u->gi_raw = 0.0f;
+  u->gi_delta = 0.0f;
+  // u->gi_syn = 0.0f;
   //  u->net_ctxt = 0.0f;
 
   // u->net = 0.0f;
@@ -610,8 +611,11 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
 
   // not the scales
   // init netin gets act_sent, net_raw, net_delta etc
-  u->g_i_syn = 0.0f;
-  u->g_i_self = 0.0f;
+  u->gi_syn = 0.0f;
+  u->gi_as = 0.0f;
+  u->gi_am = 0.0f;
+  u->gi_al = 0.0f;
+  u->gi_b = 0.0f;
 
   u->spk_t = -1;
 
@@ -649,8 +653,11 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
       u->syn_kre -= decay * u->syn_kre;
     }
 
-    u->g_i_syn -= decay * u->g_i_syn;
-    u->g_i_self -= decay * u->g_i_self;
+    u->gi_syn -= decay * u->gi_syn;
+    u->gi_as -= decay * u->gi_as;
+    u->gi_am -= decay * u->gi_am;
+    u->gi_al -= decay * u->gi_al;
+    u->gi_b -= decay * u->gi_b;
 
     // note: this is causing a problem in learning with xcal:
     //   u->avg_ss -= decay * (u->avg_ss - act_misc.avg_init);
@@ -1011,7 +1018,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
       // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
     }
     u->net_delta = nw_nt;
-    u->g_i_delta = nw_inhb;
+    u->gi_delta = nw_inhb;
   }
   else {
     for(int j=0;j<nt;j++) {
@@ -1023,20 +1030,20 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   if(net->net_misc.inhib_cons) {
-    u->g_i_raw += u->g_i_delta;
+    u->gi_raw += u->gi_delta;
     if(act_fun == SPIKE) {
-      u->g_i_syn = MAX(u->g_i_syn, 0.0f);
+      u->gi_syn = MAX(u->gi_syn, 0.0f);
       Compute_NetinInteg_Spike_i(u, net);
     }
     else {
-      u->g_i_syn += dt.integ * dt.net_dt * (u->g_i_raw - u->g_i_syn);
-      u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
+      u->gi_syn += dt.integ * dt.net_dt * (u->gi_raw - u->gi_syn);
+      u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
     }
   }
   else {
     // clear so automatic inhibition can add to these values!
-    u->g_i_syn = 0.0f;
-    u->g_i_raw = 0.0f;
+    u->gi_syn = 0.0f;
+    u->gi_raw = 0.0f;
   }
   
   u->net_raw += u->net_delta;
@@ -1058,7 +1065,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   u->net_delta = 0.0f;  // clear for next use
-  u->g_i_delta = 0.0f;  // clear for next use
+  u->gi_delta = 0.0f;  // clear for next use
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
@@ -1115,7 +1122,7 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
       sum += u->spike_i_buf->CircSafeEl(t);
     }
     sum /= (float)spike.window; // normalize over window
-    u->g_i_syn += dt.integ * (spike.gg_decay * sum - (u->g_i_syn * spike.oneo_decay));
+    u->gi_syn += dt.integ * (spike.gg_decay * sum - (u->gi_syn * spike.oneo_decay));
   }
   else {
     for(int t=0;t<mx;t++) {
@@ -1124,13 +1131,28 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
         sum += spkin * spike.ComputeAlpha(mx-t-1);
       }
     }
-    u->g_i_syn += dt.integ * dt.net_dt * (sum - u->g_i_syn);
+    u->gi_syn += dt.integ * dt.net_dt * (sum - u->gi_syn);
   }
-  u->g_i_syn = MAX(u->g_i_syn, 0.0f); // negative netin doesn't make any sense
+  u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
 }
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 2: inhibition
+
+void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
+                                        LeabraNetwork* net, float inhib_val) {
+  float self = Compute_SelfInhib(u, lspec, net);
+  float tot_i = inhib_val + u->gi_syn + self; // add synaptic and imposed inhibition
+  lspec->inhib_tau.UpdtInhib(u->gi_as, tot_i, lspec->inhib_tau.as_dt,
+                             lspec->inhib_misc.as_pct);
+  lspec->inhib_tau.UpdtInhib(u->gi_am, tot_i, lspec->inhib_tau.am_dt,
+                             lspec->inhib_misc.am_pct);
+  lspec->inhib_tau.UpdtInhib(u->gi_al, tot_i, lspec->inhib_tau.al_dt,
+                             lspec->inhib_misc.al_pct);
+  lspec->inhib_tau.UpdtInhib(u->gi_b, tot_i, lspec->inhib_tau.b_dt,
+                             lspec->inhib_misc.b_pct);
+  u->gc_i = u->gi_as + u->gi_am + u->gi_al + u->gi_b; // sum it all up..
+}
 
 
 ///////////////////////////////////////////////////////////////////////

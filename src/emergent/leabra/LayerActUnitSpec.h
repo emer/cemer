@@ -30,7 +30,8 @@ class E_API LayerActUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraNetwork* net, float inhib_val) { };
+  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                           LeabraNetwork* net, float inhib_val) override { };
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override { };
 
   TA_SIMPLE_BASEFUNS(LayerActUnitSpec);

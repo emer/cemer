@@ -52,16 +52,55 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
   fb_dt_c = 1.0f - fb_dt;
 }
 
+void LeabraInhibTaus::Initialize() {
+  Defaults_init();
+}
+
+void LeabraInhibTaus::Defaults_init() {
+  as_tau = 10.0f;
+  am_tau = 60.0f;
+  al_tau = 160.0f;
+  b_tau = 300.0f;
+  down0 = false;
+
+  as_dt = 1.0f / as_tau;
+  am_dt = 1.0f / am_tau;
+  al_dt = 1.0f / al_tau;
+  b_dt = 1.0f / b_tau;
+}
+
+void LeabraInhibTaus::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  as_dt = 1.0f / as_tau;
+  am_dt = 1.0f / am_tau;
+  al_dt = 1.0f / al_tau;
+  b_dt = 1.0f / b_tau;
+}
+
 void LeabraInhibMisc::Initialize() {
   self_fb = 0.0f;
-  prv_trl = 0.0f;
-  prv_phs = 0.0f;
   up_immed = false;
 
   Defaults_init();
 }
 
 void LeabraInhibMisc::Defaults_init() {
+  as_pct = 1.0f;
+  am_pct = 0.00f;
+  al_pct = 0.00f;
+  b_pct = 0.00f;
+  // as_pct = 0.20f;
+  // am_pct = 0.40f;
+  // al_pct = 0.20f;
+  // b_pct = 0.20f;
+}
+
+void LeabraInhibMisc::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  float sum_pct = as_pct + am_pct + al_pct + b_pct;
+  TestWarning(sum_pct != 1.0f, "UAE",
+              "sum across all percents of inhibitory subtypes != 1 -- is:",
+              String(sum_pct));
 }
 
 void LayerAvgActSpec::Initialize() {
@@ -328,6 +367,17 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(decay.event > 0.0f) {
+    lay->i_val.ffi -= decay.event * lay->i_val.ffi;
+    lay->i_val.fbi -= decay.event * lay->i_val.fbi;
+    if(lay->unit_groups) {
+      for(int g=0; g < lay->gp_geom.n; g++) {
+        LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+        gpd->i_val.ffi -= decay.event * gpd->i_val.ffi;
+        gpd->i_val.fbi -= decay.event * gpd->i_val.fbi;
+      }
+    }
+  }
 }
 
 // NOTE: the following are not typically used, as the Trial_Init_Units calls directly
@@ -493,22 +543,17 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
 
   thr->i_val.ffi = nw_ffi;
 
-  // extra term based on residual inhibtion lying around from last time
-  // add to ff because it is constant and not subject to fb time dynamics
-  nw_ffi += inhib_misc.prv_trl * thr->i_val.prv_trl_g_i +
-    inhib_misc.prv_phs * thr->i_val.prv_phs_g_i;
-
   // dt only on fbi part
   if(inhib_misc.up_immed) {
     if(nw_fbi > thr->i_val.fbi) {
       thr->i_val.fbi = nw_fbi;
     }
     else {
-      thr->i_val.fbi = ispec.fb_dt * nw_fbi + ispec.fb_dt_c * thr->i_val.fbi;
+      thr->i_val.fbi += ispec.fb_dt * (nw_fbi - thr->i_val.fbi);
     }
   }
   else {
-    thr->i_val.fbi = ispec.fb_dt * nw_fbi + ispec.fb_dt_c * thr->i_val.fbi;
+    thr->i_val.fbi += ispec.fb_dt * (nw_fbi - thr->i_val.fbi);
   }
 
   thr->i_val.g_i = ispec.gi * (nw_ffi + thr->i_val.fbi); // combine
@@ -729,14 +774,12 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
   lay->acts_m = lay->acts;
   lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
   lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
-  lay->i_val.prv_phs_g_i = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts;
       gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
       gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
-      gpd->i_val.prv_phs_g_i = gpd->i_val.g_i;
     }
   }
 }
@@ -744,15 +787,11 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
 void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
-  lay->i_val.prv_phs_g_i = lay->i_val.g_i;
-  lay->i_val.prv_trl_g_i = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts;
       gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
-      gpd->i_val.prv_phs_g_i = gpd->i_val.g_i;
-      gpd->i_val.prv_trl_g_i = gpd->i_val.g_i;
     }
   }
 }

@@ -32,9 +32,6 @@ INHERITED(taOBase)
 public:
   float         ffi;            // computed feedforward inhibition
   float         fbi;            // computed feedback inhibition (total)
-  float         prv_trl_g_i;    // final inhibition on the previous trial -- used for prv_trl inhibition factor to produce a temporal derivative-like effect
-  float         prv_phs_g_i;    // final inhibition on the previous phase -- used for prv_phs inhibition factor to produce a temporal derivitive-like effect
-
   float		g_i;		// overall value of the inhibition -- this is what is added into the unit g_i inhibition level (along with any synaptic unit-driven inhibition)
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
   float		lay_g_i;	// for unit groups, this is the layer-level inhibition that is MAX'd with the unit-group level inhibition to produce the net inhibition, if unit_gp_inhib is on

@@ -22,18 +22,9 @@
 
 // declare all other types mentioned but not required to include:
 
-inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
+inline float LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                               LeabraNetwork* net) {
-  float nw_fbi = lspec->inhib_misc.self_fb * u->act_eq;
-  u->g_i_self = lspec->lay_inhib.fb_dt * nw_fbi +
-    lspec->lay_inhib.fb_dt_c * u->g_i_self;
-}
-
-inline void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
-                                               LeabraNetwork* net,
-                                               float inhib_val) {
-  Compute_SelfInhib(u, lspec, net);
-  u->gc_i = inhib_val + u->g_i_syn + u->g_i_self; // add synaptic and imposed inhibition
+  return lspec->inhib_misc.self_fb * u->act_eq;
 }
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
