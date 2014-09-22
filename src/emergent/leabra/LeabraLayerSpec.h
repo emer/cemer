@@ -78,10 +78,12 @@ class E_API LeabraInhibTaus : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra inhibition time constants -- rate of inhibitory decay -- data shows 3 rate constants for GABA_A: short, medium, long, and a longer GABA_B time constant
 INHERITED(SpecMemberBase)
 public:
-  float		as_tau;		// #DEF_10 #MIN_0 GABA_A short time constant for decay of inhibition
-  float		am_tau;		// #DEF_60 #MIN_0 GABA_A medium time constant for decay of inhibition
-  float		al_tau;		// #DEF_160 #MIN_0 GABA_A long time constant for decay of inhibition
-  float         b_tau;          // #DEF_300 #MIN_0 GABA_B time constant for decay of inhibition -- generally longer lasting than the GABA_A dynamics
+  float         Ei_up_tau;      // #MIN_0 rise time constant for increases in inhibitory reversal potential -- active neurons decrease their inhibitory reversal potential, giving them an advantage over inactive neurons
+  float         Ei_dn_tau;      // #MIN_0 decay time constant for decreases in inhibitory reversal potential -- active neurons decrease their inhibitory reversal potential, giving them an advantage over inactive neurons
+  float		as_tau;		// #DEF_10 #MIN_1 GABA_A short time constant for decay of inhibition
+  float		am_tau;		// #DEF_60 #MIN_1 GABA_A medium time constant for decay of inhibition
+  float		al_tau;		// #DEF_160 #MIN_1 GABA_A long time constant for decay of inhibition
+  float         b_tau;          // #DEF_300 #MIN_1 GABA_B time constant for decay of inhibition -- generally longer lasting than the GABA_A dynamics
   bool          down0;          // decay down to zero instead of to the new inhibition value
 
   float		as_dt;		// #READ_ONLY #EXPERT rate = 1 / tau

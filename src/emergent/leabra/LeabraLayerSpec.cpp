@@ -57,6 +57,8 @@ void LeabraInhibTaus::Initialize() {
 }
 
 void LeabraInhibTaus::Defaults_init() {
+  Ei_up_tau = 50.0f;
+  Ei_dn_tau = 500.0f;
   as_tau = 10.0f;
   am_tau = 60.0f;
   al_tau = 160.0f;
