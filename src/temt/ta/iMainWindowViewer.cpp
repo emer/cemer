@@ -2149,7 +2149,6 @@ void iMainWindowViewer::viewSaveView() {
   viewer()->GetWinState();
 }
 
-// cut is only for text - delete is for objects
 void iMainWindowViewer::editCut() {
   QLineEdit* lineEdit = dynamic_cast<QLineEdit*>(focusWidget());
   if (lineEdit) {
@@ -2164,6 +2163,9 @@ void iMainWindowViewer::editCut() {
   QTextEdit*  textEdit = dynamic_cast<QTextEdit*>(focusWidget());
   if (textEdit) {
     textEdit->cut();
+  }
+  else {  // else object
+    emit_EditAction(iClipData::EA_CUT);
   }
 }
 
