@@ -93,7 +93,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   tb->addAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
     
-  select_all_act = new iAction("&Select All", QKeySequence("Ctrl+."), "select_all_act");
+  select_all_act = new iAction("&Select All", QKeySequence(), "select_all_act");
   select_all_act->setIcon(*select_all_icon);
   select_all_act->setToolTip("Select all contents of console window");
   tb->addAction(select_all_act);
