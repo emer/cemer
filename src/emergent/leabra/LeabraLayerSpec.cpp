@@ -55,15 +55,15 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraGabaTaus::Initialize() {
-  down0 = false;
-
   Defaults_init();
 }
 
 void LeabraGabaTaus::Defaults_init() {
+  dk_drv = 0.0f;
+
   as_tau = 10.0f;
-  am_tau = 60.0f;
-  al_tau = 160.0f;
+  am_tau = 50.0f;
+  al_tau = 150.0f;
   b_tau = 300.0f;
 
   as_dt = 1.0f / as_tau;
@@ -85,8 +85,8 @@ void LeabraGabaPcts::Initialize() {
 }
 
 void LeabraGabaPcts::Defaults_init() {
-  as_pct = 1.0f;
-  am_pct = 0.00f;
+  as_pct = 0.5f;
+  am_pct = 0.50f;
   al_pct = 0.00f;
   b_pct = 0.00f;
   // as_pct = 0.20f;
@@ -105,14 +105,13 @@ void LeabraGabaPcts::UpdateAfterEdit_impl() {
 
 void LeabraInhibMisc::Initialize() {
   self_fb = 0.0f;
-  up_immed = false;
 
   Defaults_init();
 }
 
 void LeabraInhibMisc::Defaults_init() {
-  Ei_gain = 0.1f;
-  Ei_tau = 200.0f;
+  Ei_gain = 0.001f;
+  Ei_tau = 20.0f;
 
   Ei_dt = 1.0f / Ei_tau;
 }
@@ -563,13 +562,8 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
   thr->i_val.ffi = nw_ffi;
 
   // dt only on fbi part
-  if(inhib_misc.up_immed) {
-    if(nw_fbi > thr->i_val.fbi) {
-      thr->i_val.fbi = nw_fbi;
-    }
-    else {
-      thr->i_val.fbi += ispec.fb_dt * (nw_fbi - thr->i_val.fbi);
-    }
+  if(nw_fbi > thr->i_val.fbi) { // up_immed case --- useful for all
+    thr->i_val.fbi = nw_fbi;
   }
   else {
     thr->i_val.fbi += ispec.fb_dt * (nw_fbi - thr->i_val.fbi);

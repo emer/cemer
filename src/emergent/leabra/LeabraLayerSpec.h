@@ -79,10 +79,10 @@ class E_API LeabraGabaTaus : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		as_tau;		// #DEF_10 #MIN_1 GABA_A short time constant for decay of inhibition
-  float		am_tau;		// #DEF_60 #MIN_1 GABA_A medium time constant for decay of inhibition
-  float		al_tau;		// #DEF_160 #MIN_1 GABA_A long time constant for decay of inhibition
+  float		am_tau;		// #DEF_50 #MIN_1 GABA_A medium time constant for decay of inhibition
+  float		al_tau;		// #DEF_150 #MIN_1 GABA_A long time constant for decay of inhibition
   float         b_tau;          // #DEF_300 #MIN_1 GABA_B time constant for decay of inhibition -- generally longer lasting than the GABA_A dynamics
-  bool          down0;          // decay down to zero instead of to the new inhibition value
+  float         dk_drv;         // #MIN_0 #MAX_1 decay down to this proportion of the new inhibition value -- use 1 to decay to new value, and 0 to decay all the way to zero -- or something in-between -- having a lower number is important for keeping actual inhib closer to computed levels, and maintaining the proper kwta-like behavior
 
   float		as_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
   float		am_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
@@ -93,9 +93,9 @@ public:
                           const float pct) {
     float nwi = tot_i * pct;
     if(nwi > gi) gi = nwi;      // instant up
-    else         {
-      if(down0) { gi += -dt * gi; gi = MAX(nwi, gi); }
-      else      gi += dt * (nwi - gi);
+    else {
+      gi += dt * (dk_drv * nwi - gi);
+      gi = MAX(nwi, gi);
     }
   }
   // update a given inhibitory subtype according to pct and dt parameters
@@ -119,10 +119,10 @@ class E_API LeabraGabaPcts : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra proportions of the different GABA time constants contributing to the overall GABA inhibition -- see gaba_tau for associated time constants
 INHERITED(SpecMemberBase)
 public:
-  float         as_pct;         // #DEF_0.2 #MIN_0 proportion of total inhibitory response carried by the GABA_A short time constant subtype
-  float         am_pct;         // #DEF_0.4 #MIN_0 proportion of total inhibitory response carried by the GABA_A medium time constant subtype
-  float         al_pct;         // #DEF_0.2 #MIN_0 proportion of total inhibitory response carried by the GABA_A long time constant subtype
-  float         b_pct;          // #DEF_0.2 #MIN_0 proportion of total inhibitory response carried by the GABA_B type
+  float         as_pct;         // #DEF_0.2;0.5 #MIN_0 proportion of total inhibitory response carried by the GABA_A short time constant subtype
+  float         am_pct;         // #DEF_0.4;0.5 #MIN_0 proportion of total inhibitory response carried by the GABA_A medium time constant subtype
+  float         al_pct;         // #DEF_0.2;0 #MIN_0 proportion of total inhibitory response carried by the GABA_A long time constant subtype
+  float         b_pct;          // #DEF_0.2;0 #MIN_0 proportion of total inhibitory response carried by the GABA_B type
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
@@ -143,9 +143,8 @@ class E_API LeabraInhibMisc : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers (use .02 max)
-  float         Ei_gain;        // #MIN_0 multiplier on rate of Cl- ion entry into postsynaptic cell, driving increases in E_i reversal potential for Cl- -- this factor multiplies the inhibitory channel conductance, and determines how strong the e_rev change effect is -- active neurons increase the most, protecting the early winners against subsequent competition, especially important for adaptation and depression functions
-  float         Ei_tau;         // #MIN_1 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
-  bool          up_immed;       // feedback inhibition rises immediately, and fb_tau only applies to decay -- this is important for spiking units, but should otherwise generally be off for rate-coded units
+  float         Ei_gain;        // #MIN_0 #DEF_0.001:0.01 multiplier on rate of Cl- ion entry into postsynaptic cell, driving increases in E_i reversal potential for Cl- -- this factor multiplies the inhibitory channel conductance, and determines how strong the e_rev change effect is -- active neurons increase the most, protecting the early winners against subsequent competition, especially important for adaptation and depression functions
+  float         Ei_tau;         // #MIN_1 #DEF_10:300 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
 
   float		Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 

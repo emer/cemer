@@ -60,12 +60,12 @@ void LeabraActFunSpec::UpdateAfterEdit_impl() {
 
 
 void LeabraActMiscSpec::Initialize() {
-  act_lrn = ACT_EQ;
-  lrn_sravg = true;
   Defaults_init();
 }
 
 void LeabraActMiscSpec::Defaults_init() {
+  act_lrn = ACT_ND;
+  lrn_sravg = false;
   act_max_hz = 100.0f;
   avg_tau = 200.0f;
   avg_init = 0.15f;
