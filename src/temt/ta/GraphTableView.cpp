@@ -1288,20 +1288,31 @@ void GraphTableView::RenderLegend() {
 
   float ylen = plots[0]->axis_length;
 
+  int tot_plots = main_y_plots.size + alt_y_plots.size;
+  if(tot_plots == 0) return;    // nothing..
+  int n_down = 2;
+  int n_across = (int)(((float)tot_plots / (float)n_down) + 0.5f);
+  if(n_across < 1) n_across = 1;
+  while(n_across > 5) {         // keep it reasonable..
+    n_down++;
+    n_across = tot_plots / n_down;
+  }
+
   SoSeparator* leg = node_so->legend();
   leg->removeAllChildren();
   // move to top
   SoTranslation* tr;
   tr = new SoTranslation();  leg->addChild(tr);
-  tr->translation.setValue(0.0f, ylen + 2.5f * axis_font_size, 0.0f);
+  tr->translation.setValue(0.0f, ylen + (0.3f + (float)n_down * 1.1f) * axis_font_size,
+                           0.0f);
 
   if(render_svg) {
     svg_str << taSvg::GroupTranslate(0.0f, -(ylen + 2.5f * axis_font_size));
   }
 
-  float over_amt = .33f * x_axis.axis_length;
+  float over_amt = (1.0f / (float)n_across) * .9f * x_axis.axis_length;
   float dn_amt = -1.1f * axis_font_size;
-  bool mv_dn = true;            // else over
+  int mv_dn = n_down;
 
   taVector2f cur_tr;
   
@@ -1311,15 +1322,16 @@ void GraphTableView::RenderLegend() {
     T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(*pl, ln, cur_tr);
     tr = new SoTranslation();  leg->addChild(tr);
-    if(mv_dn) {
+    if(mv_dn > 1) {
       tr->translation.setValue(0.0f, dn_amt, 0.0f);
       cur_tr.y += dn_amt;
+      mv_dn--;
     }
     else {
-      tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-      cur_tr.x += over_amt; cur_tr.y -= dn_amt;
+      tr->translation.setValue(over_amt, -dn_amt * (n_down-1), 0.0f);
+      cur_tr.x += over_amt; cur_tr.y -= dn_amt * (n_down-1);
+      mv_dn = n_down;
     }
-    mv_dn = !mv_dn;             // flip
   }
 
   for(int i=0;i<alt_y_plots.size;i++) {
@@ -1327,15 +1339,16 @@ void GraphTableView::RenderLegend() {
     T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
     RenderLegend_Ln(*pl, ln, cur_tr);
     tr = new SoTranslation();  leg->addChild(tr);
-    if(mv_dn) {
+    if(mv_dn > 1) {
       tr->translation.setValue(0.0f, dn_amt, 0.0f);
       cur_tr.y += dn_amt;
+      mv_dn--;
     }
     else {
-      tr->translation.setValue(over_amt, -dn_amt, 0.0f);
-      cur_tr.x += over_amt; cur_tr.y -= dn_amt;
+      tr->translation.setValue(over_amt, -dn_amt * (n_down-1), 0.0f);
+      cur_tr.x += over_amt; cur_tr.y -= dn_amt * (n_down-1);
+      mv_dn = n_down;
     }
-    mv_dn = !mv_dn;             // flip
   }
 
   if(render_svg) {

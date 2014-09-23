@@ -43,7 +43,14 @@ void LeabraUnit::Initialize() {
   gc_l = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
+  v_m_eq = 0.0f;
   adapt = 0.0f;
+  gi_syn = 0.0f;
+  gi_as = 0.0f;
+  gi_am = 0.0f;
+  gi_al = 0.0f;
+  gi_b = 0.0f;
+  E_i = 0.25f;
   syn_tr = 1.0f;
   syn_nr = 1.0f;
   syn_pr = 0.2f;
@@ -59,14 +66,8 @@ void LeabraUnit::Initialize() {
   act_sent = 0.0f;
   net_raw = 0.0f;
   net_delta = 0.0f;
-
   gi_raw = 0.0f;
   gi_delta = 0.0f;
-  gi_syn = 0.0f;
-  gi_as = 0.0f;
-  gi_am = 0.0f;
-  gi_al = 0.0f;
-  gi_b = 0.0f;
 
   misc_1 = 0.0f;
   spk_t = -1;
@@ -127,7 +128,14 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   gc_l = cp.gc_l;
   I_net = cp.I_net;
   v_m = cp.v_m;
+  v_m_eq = cp.v_m_eq;
   adapt = cp.adapt;
+  gi_syn = cp.gi_syn;
+  gi_as = cp.gi_as;
+  gi_am = cp.gi_am;
+  gi_al = cp.gi_al;
+  gi_b = cp.gi_b;
+  E_i = cp.E_i;
   syn_tr = cp.syn_tr;
   syn_nr = cp.syn_nr;
   syn_pr = cp.syn_pr;
@@ -144,12 +152,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   net_delta = cp.net_delta;
   gi_raw = cp.gi_raw;
   gi_delta = cp.gi_delta;
-  gi_syn = cp.gi_syn;
-  gi_as = cp.gi_as;
-  gi_am = cp.gi_am;
-  gi_al = cp.gi_al;
-  gi_b = cp.gi_b;
-
 
   misc_1 = cp.misc_1;
   spk_t = cp.spk_t;

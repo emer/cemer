@@ -66,11 +66,12 @@ class E_API LeabraActMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum ActLrnVal {   // what activation value to use for learning, stored in act_lrn variable
-    ACT_EQ,          // use the rate-code equivalent activations, act_eq, which are subject to depression -- not recommeded for CHL-based learning rule, but can work otherwise, although the risk of significant differences between minus and plus phase could be problematic
+    ACT_EQ,          // use the rate-code equivalent activations, act_eq, which are subject to depression -- not recommeded for CHL-based learning, but can work otherwise, although the risk of significant differences between minus and plus phase could be problematic
     ACT_ND,          // use the non-depressed activations, act_nd -- this is particularly useful when using CHL-style learning, which can be distorted by effects of depression, though it can also affect XCAL -- note that adaptation effects are always still included in act_nd
   };
 
-  ActLrnVal     act_lrn;        // which activation variable should be used for learning?  gets stored in unit act_lrn variable, and is then used for the phase activation states (act_m, act_p), which drive CHL learning, and for driving the time-averages (avg_s, avg_m) that drive XCAL learning
+  ActLrnVal     act_lrn;        // which activation variable should be used for learning?  gets stored in unit act_lrn variable, and is then used for the phase activation states (act_m, act_p), which drive CHL learning, and for driving the time-averages (avg_s, avg_m) that drive XCAL learning (see lrn_sravg)
+  bool          lrn_sravg;      // Apply the act_lrn to the time-averages used in XCAL learning mechanism (otherwise use act_eq) -- this allows non-discounted activations to drive statistics and learning that depends on act_m and act_p, while still using act_eq for XCAL learning
 
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking, what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
   float		avg_tau;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
@@ -193,7 +194,6 @@ public:
   float		integ;		// #DEF_1;0.5 #MIN_0 overall rate constant for numerical integration, for all equations at the unit level -- all time constants are specified in millisecond units, with one cycle = 1 msec -- if you instead want to make one cycle = 2 msec, you can do this globaly by setting this integ value to 2 (etc).  However, stability issues will likely arise if you go too high.  For improved numerical stability, you may even need to reduce this value to 0.5 or possibly even lower (typically however this is not necessary).  MUST also coordinate this with network.time_inc variable to ensure that global network.time reflects simulated time accurately
   float		vm_tau;	        // #AKA_vm_time #DEF_2.81:10 [3.3 std for rate code, 2.81 for spiking] #MIN_1 membrane potential and rate-code activation time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) -- reflects the capacitance of the neuron in principle -- biological default for AeEx spiking model C = 281 pF = 2.81 normalized -- for rate-code activation, this also determines how fast to integrate computed activation values over time
   float		net_tau;	// #AKA_net_time #DEF_1.4 #MIN_1 net input time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) -- this is important for damping oscillations -- generally reflects time constants associated with synaptic channels which are not modeled in the most abstract rate code models (set to 1 for detailed spiking models with more realistic synaptic currents)
-  bool		midpoint;	// use the midpoint method in computing the vm value -- better avoids oscillations and allows a faster vm_tau time constant parameter to be used -- this is critical to use with SPIKE mode and is automatically enabled there
   int		fast_cyc;	// #AKA_vm_eq_cyc #DEF_0 number of cycles at start of a trial to run units in a fast integration mode -- the rate-code activations have no effective time constant and change immediately to the new computed value (vm_time is ignored) and vm is computed as an equilibirium potential given current inputs: set to 1 to quickly activate soft-clamped input layers (primary use); set to 100 to always use this computation
 
   float		vm_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
@@ -447,7 +447,7 @@ public:
   LeabraActFunSpec act;         // #CAT_Activation activation function parameters -- very important for determining the shape of the selected act_fun
   LeabraActMiscSpec act_misc;   // #CAT_Activation miscellaneous activation parameters
   SpikeFunSpec	spike;		// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation spiking function specs (only for act_fun = SPIKE)
-  SpikeMiscSpec	spike_misc;	// #CONDSHOW_ON_act_fun:SPIKE #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
+  SpikeMiscSpec	spike_misc;	// #CAT_Activation misc extra spiking function specs (only for act_fun = SPIKE)
   OptThreshSpec	opt_thresh;	// #CAT_Learning optimization thresholds for speeding up processing when units are basically inactive
   MinMaxRange	clamp_range;	// #CAT_Activation range of clamped activation values (min, max, 0, .95 std), don't clamp to 1 because acts can't reach, so .95 instead
   MinMaxRange	vm_range;	// #CAT_Activation membrane potential range (min, max, 0-2 for normalized)

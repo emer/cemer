@@ -20,6 +20,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraGabaTaus);
+TA_BASEFUNS_CTORS_DEFN(LeabraGabaPcts);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
 TA_BASEFUNS_CTORS_DEFN(ClampSpec);
@@ -52,18 +54,17 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
   fb_dt_c = 1.0f - fb_dt;
 }
 
-void LeabraInhibTaus::Initialize() {
+void LeabraGabaTaus::Initialize() {
+  down0 = false;
+
   Defaults_init();
 }
 
-void LeabraInhibTaus::Defaults_init() {
-  Ei_up_tau = 50.0f;
-  Ei_dn_tau = 500.0f;
+void LeabraGabaTaus::Defaults_init() {
   as_tau = 10.0f;
   am_tau = 60.0f;
   al_tau = 160.0f;
   b_tau = 300.0f;
-  down0 = false;
 
   as_dt = 1.0f / as_tau;
   am_dt = 1.0f / am_tau;
@@ -71,7 +72,7 @@ void LeabraInhibTaus::Defaults_init() {
   b_dt = 1.0f / b_tau;
 }
 
-void LeabraInhibTaus::UpdateAfterEdit_impl() {
+void LeabraGabaTaus::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   as_dt = 1.0f / as_tau;
   am_dt = 1.0f / am_tau;
@@ -79,14 +80,11 @@ void LeabraInhibTaus::UpdateAfterEdit_impl() {
   b_dt = 1.0f / b_tau;
 }
 
-void LeabraInhibMisc::Initialize() {
-  self_fb = 0.0f;
-  up_immed = false;
-
+void LeabraGabaPcts::Initialize() {
   Defaults_init();
 }
 
-void LeabraInhibMisc::Defaults_init() {
+void LeabraGabaPcts::Defaults_init() {
   as_pct = 1.0f;
   am_pct = 0.00f;
   al_pct = 0.00f;
@@ -97,12 +95,31 @@ void LeabraInhibMisc::Defaults_init() {
   // b_pct = 0.20f;
 }
 
-void LeabraInhibMisc::UpdateAfterEdit_impl() {
+void LeabraGabaPcts::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   float sum_pct = as_pct + am_pct + al_pct + b_pct;
   TestWarning(sum_pct != 1.0f, "UAE",
               "sum across all percents of inhibitory subtypes != 1 -- is:",
               String(sum_pct));
+}
+
+void LeabraInhibMisc::Initialize() {
+  self_fb = 0.0f;
+  up_immed = false;
+
+  Defaults_init();
+}
+
+void LeabraInhibMisc::Defaults_init() {
+  Ei_gain = 0.1f;
+  Ei_tau = 200.0f;
+
+  Ei_dt = 1.0f / Ei_tau;
+}
+
+void LeabraInhibMisc::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  Ei_dt = 1.0f / Ei_tau;
 }
 
 void LayerAvgActSpec::Initialize() {

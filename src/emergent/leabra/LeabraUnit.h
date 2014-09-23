@@ -60,8 +60,15 @@ public:
   float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance
   float         gc_l;           // #NO_SAVE #CAT_Activation total leak conductance
   float		I_net;	        // #NO_SAVE #CAT_Activation net current produced by all channels
-  float		v_m;	        // #NO_SAVE #CAT_Activation membrane potential
+  float		v_m;	        // #NO_SAVE #CAT_Activation membrane potential -- integrates I_net current over time -- is reset by spiking (even when using rate code activations -- see v_m_eq)
+  float		v_m_eq;	        // #NO_SAVE #CAT_Activation equilibrium membrane potential -- this is NOT reset by spiking, so it reaches equilibrium values asymptotically -- it is used for rate code activation in sub-threshold range (whenever v_m_eq < act.thr) -- the gelin activation function does not otherwise provide useful dynamics in this subthreshold range
   float		adapt;	        // #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
+  float		gi_syn;	        // #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
+  float         gi_as;          // #NO_SAVE #CAT_Activation GABA_A short time scale inhibitory current
+  float         gi_am;          // #NO_SAVE #CAT_Activation GABA_A medium time scale inhibitory current
+  float         gi_al;          // #NO_SAVE #CAT_Activation GABA_A long time scale inhibitory current
+  float         gi_b;           // #NO_SAVE #CAT_Activation GABA_B longer time scale inhibitory current
+  float         E_i;            // #NO_SAVE #CAT_Activation inhibitory reversal potential -- this adapts with activity, producing advantage for active neurons
   float		syn_tr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
   float		syn_nr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)
   float		syn_pr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: probability of vesicle release at next spike -- probability varies as a function of local calcium available to drive the release process -- this increases with recent synaptic activity (controlled by short-term-plasticity equations, stp)
@@ -79,11 +86,6 @@ public:
   float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta net input received from sending units -- only used for non-threaded case
   float		gi_raw;	        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
   float		gi_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta inhibitory net input received from sending units
-  float		gi_syn;	        // #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
-  float         gi_as;          // #NO_SAVE #CAT_Activation GABA_A short time scale inhibitory current
-  float         gi_am;          // #NO_SAVE #CAT_Activation GABA_A medium time scale inhibitory current
-  float         gi_al;          // #NO_SAVE #CAT_Activation GABA_A long time scale inhibitory current
-  float         gi_b;          // #NO_SAVE #CAT_Activation GABA_B longer time scale inhibitory current
 
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)

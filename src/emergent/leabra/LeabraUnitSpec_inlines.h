@@ -28,12 +28,12 @@ inline float LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* l
 }
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
-  return ((u->gc_i * e_rev_sub_thr.i + u->gc_l * e_rev_sub_thr.l - u->adapt) /
+  return ((u->gc_i * (u->E_i - act.thr) + u->gc_l * e_rev_sub_thr.l - u->adapt) /
 	  thr_sub_e_rev_e);
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
-  float new_v_m = (((u->net * e_rev.e) + (u->gc_l * e_rev.l) + (u->gc_i * e_rev.i)
+  float new_v_m = (((u->net * e_rev.e) + (u->gc_l * e_rev.l) + (u->gc_i * u->E_i)
                     - u->adapt) / (u->net + u->gc_l + u->gc_i));
   return new_v_m;
 }
