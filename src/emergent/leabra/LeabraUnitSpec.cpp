@@ -125,12 +125,19 @@ void SpikeFunSpec::UpdateAfterEdit_impl() {
 }
 
 void SpikeMiscSpec::Initialize() {
+  Defaults_init();
+}
+
+void SpikeMiscSpec::Defaults_init() {
+  ex = false;
   exp_slope = 0.02f;
   spk_thr = 1.2f;
   clamp_max_p = 0.12f;
   clamp_type = REGULAR;
   vm_r = 0.30f;
-  t_r = 6;
+  t_r = 3;
+
+  eff_spk_thr = 0.5f;           // ex = off
 }
 
 void SpikeMiscSpec::UpdateAfterEdit_impl() {
@@ -356,6 +363,11 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
     taMisc::Warning("Cannot use noise_type = VM_NOISE with rate-code (non-spiking) activation function -- changing noise_type to NETIN_NOISE");
     noise_type = NETIN_NOISE;
   }
+
+  if(spike_misc.ex)
+    spike_misc.eff_spk_thr = spike_misc.spk_thr;
+  else
+    spike_misc.eff_spk_thr = act.thr;
 
   act_misc.UpdateAfterEdit_NoGui();
   spike.UpdateAfterEdit_NoGui();
@@ -767,7 +779,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
     u->avg_l += lval * act_avg.l_up_inc; // additive up
   }
   else {
-    float eff_dt = act_avg.l_dn_dt * u->own_lay()->acts_m_avg;
+    float eff_dt = act_avg.l_dn_dt * u->own_lay()->acts_m_avg_eff;
     u->avg_l += eff_dt * (lval - u->avg_l); // mult down
   }
 }
@@ -1147,15 +1159,20 @@ void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                         LeabraNetwork* net, float inhib_val) {
   float self = Compute_SelfInhib(u, lspec, net);
   float tot_i = inhib_val + u->gi_syn + self; // add synaptic and imposed inhibition
-  lspec->gaba_tau.UpdtGaba(u->gi_as, tot_i, dt.integ * lspec->gaba_tau.as_dt,
+  if(lspec->gaba_tau.on) {
+    lspec->gaba_tau.UpdtGaba(u->gi_as, tot_i, dt.integ * lspec->gaba_tau.as_dt,
                              lspec->gaba_pct.as_pct);
-  lspec->gaba_tau.UpdtGaba(u->gi_am, tot_i, dt.integ * lspec->gaba_tau.am_dt,
+    lspec->gaba_tau.UpdtGaba(u->gi_am, tot_i, dt.integ * lspec->gaba_tau.am_dt,
                              lspec->gaba_pct.am_pct);
-  lspec->gaba_tau.UpdtGaba(u->gi_al, tot_i, dt.integ * lspec->gaba_tau.al_dt,
+    lspec->gaba_tau.UpdtGaba(u->gi_al, tot_i, dt.integ * lspec->gaba_tau.al_dt,
                              lspec->gaba_pct.al_pct);
-  lspec->gaba_tau.UpdtGaba(u->gi_b, tot_i, dt.integ * lspec->gaba_tau.b_dt,
+    lspec->gaba_tau.UpdtGaba(u->gi_b, tot_i, dt.integ * lspec->gaba_tau.b_dt,
                              lspec->gaba_pct.b_pct);
-  u->gc_i = u->gi_as + u->gi_am + u->gi_al + u->gi_b; // sum it all up..
+    u->gc_i = u->gi_as + u->gi_am + u->gi_al + u->gi_b; // sum it all up..
+  }
+  else {
+    u->gc_i = tot_i;
+  }
 }
 
 
@@ -1213,34 +1230,40 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
     u->v_m_eq = u->v_m;
   }
   else {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
+
     // first compute v_m, using midpoint method:
     float v_m_eff = u->v_m;
     float net_eff = u->net * g_bar.e;
-    float E_i = u->E_i;
+    float E_i;
+    if(ls->inhib_misc.Ei_dyn) {
+      // update the E_i reversal potential as function of inhibitory current
+      // key to assume that this is driven by backpropagating AP's
+      E_i = u->E_i;
+      u->E_i += ls->inhib_misc.Ei_gain * u->act_eq
+        + ls->inhib_misc.Ei_dt * (e_rev.i - u->E_i);
+    }
+    else {
+      E_i = e_rev.i;
+    }
     // midpoint method: take a half-step:
     float I_net_1 =
       (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
       (u->gc_i * (E_i - v_m_eff));
     v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
-    float g_cl = u->gc_i * (E_i - v_m_eff);
-    u->I_net = (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +  g_cl;
-    
+    u->I_net = (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff))
+      + (u->gc_i * (E_i - v_m_eff));
     // add spike current if relevant
-    if(spike_misc.exp_slope > 0.0f) {
+    if(spike_misc.ex) {
       u->I_net += g_bar.l * spike_misc.exp_slope *
-        expf((v_m_eff - act.thr) / spike_misc.exp_slope);
+        taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
     }
-
     u->v_m += dt.integ * dt.vm_dt * (u->I_net - u->adapt);
 
     // next compute v_m_eq with simple integration
     float I_net_r = (net_eff * (e_rev.e - u->v_m_eq)) 
       + (u->gc_l * (e_rev.l - u->v_m_eq)) +  (u->gc_i * (E_i - u->v_m_eq));
     u->v_m_eq += dt.integ * dt.vm_dt * (I_net_r - u->adapt);
-
-    // then update the E_i reversal potential as function of inhibitory current
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
-    u->E_i += -ls->inhib_misc.Ei_gain * g_cl + ls->inhib_misc.Ei_dt * (e_rev.i - u->E_i);
   }
 
   if((noise_type == VM_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
@@ -1259,6 +1282,13 @@ void LeabraUnitSpec::Compute_ActFun(LeabraUnit* u, LeabraNetwork* net) {
   }
   else {
     Compute_ActFun_rate(u, net);
+  }
+
+  if(act_misc.act_lrn == LeabraActMiscSpec::ACT_EQ) {
+    u->act_lrn = u->act_eq;
+  }
+  else {                        // ACT_ND
+    u->act_lrn = u->act_nd;
   }
 }
 
@@ -1339,16 +1369,9 @@ void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
   if(!stp.on)
     u->act_nd = u->act_eq;
 
-  if(act_misc.act_lrn == LeabraActMiscSpec::ACT_EQ) {
-    u->act_lrn = u->act_eq;
-  }
-  else {                        // ACT_ND
-    u->act_lrn = u->act_nd;
-  }
-
   // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
   // note that v_m_eq is NOT reset here:
-  if(u->v_m > spike_misc.spk_thr) {
+  if(u->v_m > spike_misc.eff_spk_thr) {
     u->spike = 1.0f;
     u->v_m = spike_misc.vm_r;
     u->spk_t = net->tot_cycle;
@@ -1359,7 +1382,7 @@ void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
 }
 
 void LeabraUnitSpec::Compute_ActFun_spike(LeabraUnit* u, LeabraNetwork* net) {
-  if(u->v_m > spike_misc.spk_thr) {
+  if(u->v_m > spike_misc.eff_spk_thr) {
     u->act = 1.0f;
     u->spike = 1.0f;
     u->v_m = spike_misc.vm_r;
@@ -1413,7 +1436,7 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnit* u, LeabraNetwork* net, float
     return;                     // do nothing further
   }
   if(fire_now) {
-    u->v_m = spike_misc.spk_thr + 0.1f; // make it fire
+    u->v_m = spike_misc.eff_spk_thr + 0.1f; // make it fire
   }
   else {
     u->v_m = e_rev.l;           // make it not fire
@@ -1518,8 +1541,6 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread
   if(!act_misc.lrn_sravg) {
     ru_act = u->act_eq;
   }
-  if(act_fun == LeabraUnitSpec::SPIKE)
-    ru_act *= spike.eq_gain;
 
   u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
   u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);

@@ -34,6 +34,7 @@ SMARTREF_OF_CPP(LeabraLayerSpec);
 eTypeDef_Of(MarkerConSpec);
 
 void LeabraInhibSpec::Initialize() {
+  on = true;
   gi = 2.0f;
   Defaults_init();
 }
@@ -55,6 +56,7 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraGabaTaus::Initialize() {
+  on = false;
   Defaults_init();
 }
 
@@ -105,13 +107,14 @@ void LeabraGabaPcts::UpdateAfterEdit_impl() {
 
 void LeabraInhibMisc::Initialize() {
   self_fb = 0.0f;
+  Ei_dyn = false;
 
   Defaults_init();
 }
 
 void LeabraInhibMisc::Defaults_init() {
   Ei_gain = 0.001f;
-  Ei_tau = 20.0f;
+  Ei_tau = 50.0f;
 
   Ei_dt = 1.0f / Ei_tau;
 }
@@ -128,6 +131,7 @@ void LayerAvgActSpec::Initialize() {
 }
 
 void LayerAvgActSpec::Defaults_init() {
+  fixed = false;
   tau = 100.0f;
   adjust = 1.0f;
   dt = 1.0f / tau;
@@ -189,6 +193,7 @@ void LayerDecaySpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
 
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
+  unit_gp_inhib.on = false;
 }
 
 void LeabraLayerSpec::Defaults_init() {
@@ -288,15 +293,25 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
 
 void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m_avg = avg_act.init;
-  lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
   lay->acts_p_avg = avg_act.init;
+  if(avg_act.fixed) {
+    lay->acts_m_avg_eff = avg_act.init;
+  }
+  else {
+    lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
+  }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->Init_State();
       gpd->acts_m_avg = avg_act.init;
-      gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
       gpd->acts_p_avg = avg_act.init;
+      if(avg_act.fixed) {
+        gpd->acts_m_avg_eff = avg_act.init;
+      }
+      else {
+        gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
+      }
     }
   }
   Init_Inhib(lay, net);         // initialize inhibition at start..
@@ -556,6 +571,14 @@ void LeabraLayerSpec::Compute_Inhib_impl
 void LeabraLayerSpec::Compute_Inhib_FfFb
 (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
  LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
+
+  if(!ispec.on) {
+    thr->i_val.ffi = 0.0f;
+    thr->i_val.fbi = 0.0f;
+    thr->i_val.g_i = 0.0f;
+    return;
+  }
+
   float nw_ffi = ispec.FFInhib(thr->netin.avg);
   float nw_fbi = ispec.FBInhib(thr->acts.avg);
 
@@ -786,13 +809,23 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts;
   lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
-  lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
+  if(avg_act.fixed) {
+    lay->acts_m_avg_eff = avg_act.init;
+  }
+  else {
+    lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
+  }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts;
       gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
-      gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
+      if(avg_act.fixed) {
+        gpd->acts_m_avg_eff = avg_act.fixed;
+      }
+      else {
+        gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
+      }
     }
   }
 }

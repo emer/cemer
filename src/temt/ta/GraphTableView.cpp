@@ -1293,7 +1293,7 @@ void GraphTableView::RenderLegend() {
   int n_down = 2;
   int n_across = (int)(((float)tot_plots / (float)n_down) + 0.5f);
   if(n_across < 1) n_across = 1;
-  while(n_across > 5) {         // keep it reasonable..
+  while(n_across > 3) {         // keep it reasonable..
     n_down++;
     n_across = tot_plots / n_down;
   }
