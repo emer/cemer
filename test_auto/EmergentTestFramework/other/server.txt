@@ -55,7 +55,7 @@ Program RunState
     Status OK Match Result     ${output}             4
     
 RunProgram
-    ${output} =                Run Command           {"command": "RunProgram", "program": "LeabraBatch"}   20 sec
+    ${output} =                Run Command Completion          {"command": "RunProgram", "program": "LeabraBatch"}   300 sec
     Status OK No Result        ${output}
 
 Program RunState After Init
@@ -68,13 +68,7 @@ General RunState After Init
     
 RunProgramAsync
     Ensure Emergent Free
-    ${output} =                Run Command Wait      {"command": "RunProgramAsync", "program": "LeabraBatch"}
-    Status OK No Result        ${output}
-    ${output} =                Run Command Wait      {"command": "GetRunState"}
-    Status OK Match Result     ${output}             2
-    Sleep                      20 sec
-    ${output} =                Run Command Wait      {"command": "GetRunState", "program": "LeabraBatch"}
-    Status OK Match Result     ${output}             0
+    Run Emergent Program       LeabraBatch
 
 #
 # General and RunProgram error tests
