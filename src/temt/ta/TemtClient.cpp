@@ -1555,11 +1555,19 @@ void TemtClient::cmdSetImage() {
       return;
     }
     
-    taImage* img = dynamic_cast<taImage*>(prog->objs.FindName(var_name));
-    QString image_data = name_params.GetVal("image_data").toString();
-    QByteArray ba;
-    ba.append(image_data);
-    bool good_result = img->LoadImageFromBase64(ba);
+    bool good_result = false;
+    taImage* img = NULL;
+    ProgVar* var = prog->vars.FindName(var_name);
+    if (var && var->object_type->DerivesFrom(&TA_taImage)) {
+      img = dynamic_cast<taImage*>(var->object_val.ptr());
+      if (img) {
+        QString image_data = name_params.GetVal("image_data").toString();
+        QByteArray ba;
+        ba.append(image_data);
+        good_result = img->LoadImageFromBase64(ba);
+      }
+    }
+    
     if (good_result) {
       SendOk();
     }
