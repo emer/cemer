@@ -111,6 +111,36 @@ Run Command
     Print              [Received] ${output}    # this is temporary just so I can see what's happening
     [Return]           ${output}
 
+Run Command Completion
+    [Arguments]        ${command}    ${wait}
+    Print              [Sending] ${command}    # temporary
+    Write Bare         ${command}\n
+    Sleep              500ms
+    Set Timeout        ${wait}
+    ${output} =        Read Until       }
+    Print              [Received] ${output}    # this is temporary just so I can see what's happening
+    [Return]           ${output}
+    
+
+Run Emergent Program
+    [Arguments]        ${program}
+    ${command} =       Set Variable     {"command": "RunProgramAsync", "program": "${program}"}
+    Print              [Sending] ${command}
+    Write Bare         ${command}\n
+    Sleep              1500ms
+    ${output} =        Read
+    Print              [Received] ${output}
+    Status OK No Result        ${output}
+    :FOR   ${i}  IN RANGE      600
+    \       ${command} =   Set Variable         {"command": "GetRunState", "program": "${program}"}
+    \       Write Bare         ${command}\n
+    \       Sleep              500ms
+    \       ${output} =        Read
+    \       ${runstate} =      Get Json Value   ${output}       /result
+    \       Exit For Loop If                 ${runstate} == "0"
+    Should Be Equal  ${runstate}             "0"
+    Print              Completed running program in ${i} seconds
+
 Restart Emergent
     Log  "Emergent is still busy, restarting server"    WARN
     Shutdown Emergent
