@@ -111,6 +111,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
   VECF su_act_mult_v(su_act_mult);
   VECF s_mix(xcal.s_mix);
   VECF m_mix(xcal.m_mix);
+  VECF ones(1.0f);
 
   const int sz = cg->size;
   const int parsz = cg->vec_chunked_size;
@@ -128,6 +129,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
     
     VECF lthr = su_act_mult_v * ru_avg_l;
     VECF effthr = effmmix_v * srm + lthr;
+    effthr = min(ones, effthr); // ru_avg_l can be > 1 -- do this here b/c mult by su_act_mult 
 
     for(int j=0; j< TA_VEC_SIZE; j++) {
       const float sm_mix_j = sm_mix[j];

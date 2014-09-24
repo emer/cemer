@@ -340,7 +340,7 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float lthr = su_act_mult * ru_avg_l;
     float effthr = xcal.thr_m_mix * srm + lthr;
-    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
+    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 -- do this here b/c mult by su_act_mult 
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
@@ -354,7 +354,7 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float lthr = su_act_mult * ru_avg_l;
     float effthr = effmmix * srm + lthr;
-    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 in l_up_add
+    effthr = MIN(effthr, 1.0f); // ru_avg_l can be > 1 -- do this here b/c mult by su_act_mult 
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
