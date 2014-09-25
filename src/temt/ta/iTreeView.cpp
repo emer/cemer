@@ -622,25 +622,12 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
             }
           }
         }
-        // this commented out code was responsible for bug 1865 - broken at least back to 6.3.2 (6447)
-        // the code above completely replaces it - I'll remove this code soon
-        //        ISelectable* si = curItem();
-        //        if(si && si->link()) {
-        //          taBase* sb = si->link()->taData();
-        //          if(sb) {
-        //            if(proj) {
-        //              proj->undo_mgr.SaveUndo(sb, "Duplicate", NULL, false, sb->GetOwner()); // global save
-        //            }
-        //            sb->DuplicateMe();
-        //          }
-        //        }
         e->accept();
         return;
       }
     }
-    if((ctrl_pressed && e->key() == Qt::Key_W) ||
-       (ctrl_pressed && e->key() == Qt::Key_D) || (e->key() == Qt::Key_Delete)
-       || (e->key() == Qt::Key_Backspace))
+      if((ctrl_pressed && e->key() == Qt::Key_W) ||
+         (ctrl_pressed && e->key() == Qt::Key_D))
     {
       ext_select_on = false;
       if (ISelectable *si = curItem()) {
