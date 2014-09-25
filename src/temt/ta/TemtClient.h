@@ -111,6 +111,10 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void 		cmdSetDataMatrixCell();
   virtual void		cmdSetVar();
   virtual void    cmdSetImage();
+  virtual void    cmdCollectConsoleOutput();
+  virtual void    cmdGetConsoleOutput();
+  virtual void    cmdClearConsoleOutput();
+  
   
 public: // slot forwardees
   void 			sock_readyRead();

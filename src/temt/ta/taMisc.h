@@ -498,7 +498,9 @@ public:
   static String         log_fname;  // #READ_ONLY #NO_SAVE current log file output name
 
   static String         console_chars; // #NO_SAVE #HIDDEN buffer of current console chars output -- when this gets longer than a display line, it is output
-
+  static String         console_hold; // #NO_SAVE #HIDDEN buffer of all console output since console_hold_on set to true  -- used by server api to get console output
+  static bool           console_hold_on; // #NO_SAVE #HIDDEN setting to true will start collection of console output - console_hold is the store
+  
 #if (defined(TA_GUI) && !(defined(__MAKETA__) || defined(NO_TA_BASE)))
   static QPointer<cssConsoleWindow>  console_win;    // #IGNORE the console window
 #endif
@@ -617,7 +619,12 @@ public:
   // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
   static bool   ConsoleOutputChars(const String& str, bool err = false, bool pager = false);
   // #CAT_Utility send the string one line at a time to console, optionaly using paging control to output only one page at a time to the user.  err means send to cerr or mark in red on gui console. returns true if full output was sent, false if user hit quit on pager
-
+  static void   SetConsoleHoldState(bool state);
+  // #CAT_Utility turn on or off the collection of console output - call GetConsoleOutput to get the collected output
+  static String GetConsoleHold();
+  // #CAT_Utility returns the console output collected since the hold state was set to true (default is off)
+  static void   ClearConsoleHold();
+  // #CAT_Utility set the console hold to the empty string - note this does not stop collection - use SetConsoleHoldState for that
   static int    ProcessEvents();
   // #CAT_GlobalState run any pending qt events that might need processed
   static int    RunPending();

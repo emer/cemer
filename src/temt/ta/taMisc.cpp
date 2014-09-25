@@ -446,10 +446,12 @@ bool    taMisc::do_wait_proc = false;
 void (*taMisc::ScriptRecordingGui_Hook)(bool) = NULL; // gui callback when script starts/stops; var is 'start'
 
 String  taMisc::console_chars;
+String  taMisc::console_hold;
+bool    taMisc::console_hold_on = true;
 String  taMisc::LexBuf;
-int taMisc::err_cnt;
+int     taMisc::err_cnt;
 fstream taMisc::log_stream;
-String taMisc::log_fname;
+String  taMisc::log_fname;
 
 /////////////////////////////////////////////////////////////////
 //              taMisc funs
@@ -1140,6 +1142,10 @@ static bool ConsoleOutputLine(const String& oneln, bool err, bool& pager, int& p
 }
 
 bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
+  if (console_hold_on) {
+    console_hold << str;
+  }
+  
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
   String rmdr;
@@ -1229,6 +1235,18 @@ bool taMisc::ConsoleOutputChars(const String& str, bool err, bool pager) {
     return true;
   }
   return false;
+}
+
+void taMisc::SetConsoleHoldState(bool state) {
+  console_hold_on = state;
+}
+
+String taMisc::GetConsoleHold() {
+  return console_hold;
+}
+
+void taMisc::ClearConsoleHold() {
+  console_hold = "";
 }
 
 int taMisc::ProcessEvents() {

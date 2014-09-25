@@ -1150,6 +1150,9 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "image_data") {
         name_params.SetVal("image_data", i->as_string().c_str());  // ok to create new columns - default is no
       }
+      else if (node_name == "enable") {
+        name_params.SetVal("enable", i->as_bool());  // enable or disable
+      }
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
@@ -1208,6 +1211,15 @@ void TemtClient::RunCommand(const String& cmd) {
   }
   else if (cmd == "SetImage") {
     cmdSetImage();
+  }
+  else if (cmd == "GetConsoleOutput") {
+    cmdGetConsoleOutput();
+  }
+  else if (cmd == "CollectConsoleOutput") {
+    cmdCollectConsoleOutput();
+  }
+  else if (cmd == "ClearConsoleOutput") {
+    cmdClearConsoleOutput();
   }
   else
   {
@@ -1575,4 +1587,25 @@ void TemtClient::cmdSetImage() {
       SendError("SetImage: failed to create image", TemtClient::RUNTIME);
     }
   }
+}
+
+void TemtClient::cmdGetConsoleOutput() {
+  SendOk(taMisc::GetConsoleHold());
+}
+
+void TemtClient::cmdCollectConsoleOutput() {
+  bool enable = false;  // don't collect is the default
+  if (!name_params.GetVal("enable").isNull()) {
+    enable = name_params.GetVal("enable").toBool();
+    taMisc::SetConsoleHoldState(enable);
+    SendOk();
+  }
+  else {
+    SendErrorJSON("enable param not found", TemtClient::MISSING_PARAM);
+  }
+}
+
+void TemtClient::cmdClearConsoleOutput() {
+  taMisc::ClearConsoleHold();
+  SendOk();
 }
