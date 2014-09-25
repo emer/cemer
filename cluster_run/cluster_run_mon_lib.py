@@ -93,11 +93,11 @@ debug = False
 time_format = "%Y_%m_%d_%H_%M_%S"
 
 # how many total lines to get from job_out file:
-job_out_lines_total = 40
+job_out_lines_total = 500
 # how many to get from the top of the file:
-job_out_lines_top = 20
+job_out_lines_top = 250
 # how many total bytes to get in job_out file:
-job_out_bytes_total = 4096
+job_out_bytes_total = 30000
 
 # status docs:
 # The client sets this field in the jobs_submit table to:
