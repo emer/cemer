@@ -1532,7 +1532,7 @@ void taMisc::Init_Defaults_PostLoadConfig() {
     thread_defaults.cpus = taMisc::CpuCount();
 
   if(thread_defaults.n_threads == -1)
-    thread_defaults.n_threads = thread_defaults.cpus;
+    thread_defaults.n_threads = MIN(thread_defaults.cpus, 4); // max of 4 by default
 
   int n_threads = FindArgByName("NThreads").toInt(); // 0 if doesn't exist
   if(n_threads > 0) {
