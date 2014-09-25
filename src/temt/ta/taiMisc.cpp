@@ -823,9 +823,11 @@ bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
   else if (e->modifiers() & Qt::ControlModifier) {
     ctrl_pressed = true;
   }
+#if (QT_VERSION >= 0x040800)
   else if (QApplication::queryKeyboardModifiers() & Qt::ControlModifier) {
     ctrl_pressed = true;
   }
+#endif
 #ifdef TA_OS_MAC
   // actual ctrl = meta on apple -- enable this
   else if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
@@ -834,9 +836,11 @@ bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
   else if (e->modifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
+#if (QT_VERSION >= 0x040800)
   else if (QApplication::queryKeyboardModifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
+#endif
 #endif
 
   if(ctrl_pressed) {
