@@ -153,7 +153,7 @@ void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* ne
     else if(fls->InheritsFrom(&TA_ExtRewLayerSpec)) {
       LeabraUnit* eru = (LeabraUnit*)flay->units.Leaf(0);
       ext_rew_val = eru->act_eq;
-      if(flay->acts.max < .1f)  // indication of no reward available!
+      if(flay->acts_eq.max < .1f)  // indication of no reward available!
         ext_rew_avail = false;
     }
   }

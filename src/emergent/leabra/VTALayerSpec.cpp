@@ -156,10 +156,10 @@ void VTALayerSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   GetRecvLayers(lay, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
 
   // use avg act over layer..
-  float burst_da = pptg_lay->acts.avg;
-  float dip_da = lhb_lay->acts.avg;
-  float pospv = pospv_lay->acts.avg;
-  float vspvi = vspatch_lay->acts.avg;
+  float burst_da = pptg_lay->acts_eq.avg;
+  float dip_da = lhb_lay->acts_eq.avg;
+  float pospv = pospv_lay->acts_eq.avg;
+  float vspvi = vspatch_lay->acts_eq.avg;
 
   float pospv_da = pospv - vspvi;
   pospv_da = MAX(pospv_da, 0.0f); // can't dip through this!

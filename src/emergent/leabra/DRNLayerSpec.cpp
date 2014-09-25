@@ -97,7 +97,7 @@ void DRNLayerSpec::Compute_Se(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*)recv_gp->prjn->from.ptr();
-    const float act_avg = from->acts.avg;
+    const float act_avg = from->acts_eq.avg;
     if(from->name.contains("Pos")) {
       if(from->name.contains("State")) {
         posstate += act_avg;

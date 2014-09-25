@@ -632,11 +632,11 @@ void LeabraLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net,
     Compute_UnitInhib_AvgMax(lay, net);
 
   if(lay->HasExtFlag(Unit::TARG)) {
-    net->trg_max_act = MAX(net->trg_max_act, lay->acts.max);
+    net->trg_max_act = MAX(net->trg_max_act, lay->acts_eq.max);
   }
 
   if(lay->Iconified()) {
-    lay->icon_value = lay->acts.avg;
+    lay->icon_value = lay->acts_eq.avg;
   }
 }
 
@@ -659,19 +659,22 @@ void LeabraLayerSpec::Compute_AvgMaxActs_ugp(LeabraLayer* lay,
                                              Layer::AccessMode acc_md, int gpidx,
                                              LeabraInhib* thr) {
   thr->acts.InitVals();
+  thr->acts_eq.InitVals();
   int nunits = lay->UnitAccess_NUnits(acc_md);
   int sti = LayerStatsStartUnitIdx();
   for(int i=sti; i<nunits; i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    //    thr->acts.UpdtVals(u->act_eq, i);
     thr->acts.UpdtVals(u->act, i);
+    thr->acts_eq.UpdtVals(u->act_eq, i);
   }
   thr->acts.CalcAvg(nunits-sti);
+  thr->acts_eq.CalcAvg(nunits-sti);
 }
 
 void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
   AvgMaxVals& vals = lay->acts;
+  AvgMaxVals& vals_eq = lay->acts_eq;
 //   static ta_memb_ptr mb_off = 0;
 //   if(mb_off == 0) {
 //     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
@@ -679,15 +682,18 @@ void LeabraLayerSpec::Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
 //   }
   if(lay->unit_groups) {
     vals.InitVals();
+    vals_eq.InitVals();
     int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
     int sti = LayerStatsStartUnitIdx();
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       Compute_AvgMaxActs_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd);
       vals.UpdtFmAvgMax(gpd->acts, nunits-sti, g);
+      vals_eq.UpdtFmAvgMax(gpd->acts_eq, nunits-sti, g);
     }
     int lvs_eff = lay->units.leaves-sti*lay->gp_geom.n;
     vals.CalcAvg(lvs_eff);
+    vals_eq.CalcAvg(lvs_eff);
   }
   else {
     Compute_AvgMaxActs_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay);
@@ -703,11 +709,11 @@ void LeabraLayerSpec::Compute_OutputName_ugp(LeabraLayer* lay,
   else
     onm = &(lay->output_name);
 
-  if(thr->acts.max_i < 0) {
+  if(thr->acts_eq.max_i < 0) {
     *onm = "n/a";
     return;
   }
-  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, thr->acts.max_i, gpidx);
+  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, thr->acts_eq.max_i, gpidx);
   if(!u || u->lesioned()) {
     *onm = "n/a";
     return;
@@ -807,7 +813,7 @@ void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->acts_m = lay->acts;
+  lay->acts_m = lay->acts_eq;
   lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
   if(avg_act.fixed) {
     lay->acts_m_avg_eff = avg_act.init;
@@ -818,7 +824,7 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->acts_m = gpd->acts;
+      gpd->acts_m = gpd->acts_eq;
       gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
       if(avg_act.fixed) {
         gpd->acts_m_avg_eff = avg_act.fixed;
@@ -831,12 +837,12 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
 }
 
 void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->acts_p = lay->acts;
+  lay->acts_p = lay->acts_eq;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      gpd->acts_p = gpd->acts;
+      gpd->acts_p = gpd->acts_eq;
       gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
     }
   }

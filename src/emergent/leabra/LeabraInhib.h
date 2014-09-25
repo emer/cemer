@@ -59,13 +59,14 @@ public:
   float 	acts_m_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_m_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
   float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
-  AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation net input values for the layer
-  AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation activation values for the layer
-  AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation minus-phase activation stats for the layer
-  AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation plus-phase activation stats for the layer
-  AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation TI act_ctxt activation stats for the layer
-  AvgMaxVals	acts_mid;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation mid-minus phase activations -- only used in hippocampus at this point (possibly also in PBWM)
-  AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
+  AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum net input values for the layer
+  AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum activation values for the layer
+  AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
+  AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
+  AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
+  AvgMaxVals	acts_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum TI act_ctxt activation stats for the layer
+  AvgMaxVals	acts_mid;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum mid-minus phase activations -- only used in hippocampus at this point (possibly also in PBWM)
+  AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   // set computed inhibition values -- sets original too

@@ -258,7 +258,7 @@ float MatrixLayerSpec::Compute_NoGoInhibGo_ugp(LeabraLayer* lay,
   LeabraLayer* nogo_lay = FindLayerFmSpec(lay, nogo_prjn_idx, &TA_MatrixLayerSpec);
   if(nogo_lay) {                // optional
     PBWMUnGpData* nogo_gpd = (PBWMUnGpData*)nogo_lay->ungp_data.FastEl(gpidx);
-    float nogo_i = matrix.nogo_inhib * nogo_gpd->acts.avg;
+    float nogo_i = matrix.nogo_inhib * nogo_gpd->acts_eq.avg;
     if(nogo_i > 1.0f) nogo_i = 1.0f;
     return nogo_i;
   }
