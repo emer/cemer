@@ -340,6 +340,11 @@ int taBase::EditActionS_impl(int ea) {
 int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
   //TODO: decode AssignTo
   if (ea & (iClipData::EA_PASTE_ASSIGN | iClipData::EA_DROP_ASSIGN)) {
+    // don't show var choice dialogs during assign
+    taProject* proj = (taProject*)GetThisOrOwner(&TA_taProject);
+    if (proj) {
+      proj->no_dialogs = true;  // don't forget to set back to false!!
+    }
     String saved_name = this->GetName();  // save name to restore after the copy
     taBase* obj = ms->tabObject();
     bool ok; // dummy
@@ -348,6 +353,9 @@ int taBase::EditActionD_impl(taiMimeSource* ms, int ea) {
       return iClipData::ER_ERROR;
     this->Copy(obj);
     this->SetName(saved_name);  // restore the name
+    if (proj) {
+      proj->no_dialogs = false;
+    }
     UpdateAfterEdit();
   }
 

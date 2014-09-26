@@ -27,6 +27,7 @@ taTypeDef_Of(taProject);
 #include <SigLinkSignal>
 #include <taMisc>
 #include <ProgElChoiceDlg>
+#include <taProject>
 
 #include <css_machine.h>
 #include <css_ta.h>
@@ -189,22 +190,29 @@ bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
 
 void ProgVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl(); // this will make it a legal C name
+  
   if(Program::IsForbiddenName(this, name)) {
     name = "My" + name;
   }
-  if (CheckUndefType("UpdateAfterEdit", true)) {
-    String var_nm;
-    ProgElChoiceDlg dlg;
-    taBase::Ref(dlg);
-    int choice = 1;  // global
-    if (this->flags | LOCAL_VAR) {
-      choice = 0;
-    }
-    ProgVar::VarType var_type = ProgVar::T_UnDef;
-    int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);  // get the name and the type
-    if (result == 1) {
-      this->SetName(var_nm);
-      this->var_type = var_type;
+  
+  // in cases like AssignTo we don't pop the choice dialog
+  Program* pgrm = GET_MY_OWNER(Program);
+  taProject* proj = GET_OWNER(pgrm, taProject);
+  if (proj->no_dialogs) {
+    if (CheckUndefType("UpdateAfterEdit", true)) {
+      String var_nm;
+      ProgElChoiceDlg dlg;
+      taBase::Ref(dlg);
+      int choice = 1;  // global
+      if (this->flags | LOCAL_VAR) {
+        choice = 0;
+      }
+      ProgVar::VarType var_type = ProgVar::T_UnDef;
+      int result = dlg.GetLocalGlobalChoice(var_nm, choice, var_type);  // get the name and the type
+      if (result == 1) {
+        this->SetName(var_nm);
+        this->var_type = var_type;
+      }
     }
   }
   

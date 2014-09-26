@@ -615,13 +615,25 @@ ProgVar* ProgEl::MakeLocalVar(const String& var_nm) {
 
 ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   Program* prg = GET_MY_OWNER(Program);
-  if(!prg) return NULL;
-
+  if(!prg)
+    return NULL;
+  
   ProgVar* rval = FindVarNameInScope_impl(var_nm);
+  if (rval)
+    return rval;
   
   if (!rval && this->GetTypeDef()->DerivesFromName("PrintExpr")) {
     return NULL;
   }
+  
+  // in cases like AssignTo we don't pop the choice dialog
+  if(prg) {
+    taProject* proj = GET_OWNER(prg, taProject);
+    if(proj && proj->no_dialogs) {
+      return NULL;
+    }
+  }
+
   if(!rval && else_make) {
     ProgElChoiceDlg dlg;
     taBase::Ref(dlg);
