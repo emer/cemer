@@ -29,8 +29,8 @@ void ECoutLayerSpec::Defaults_init() {
   // SetUnique("inhib", true);
   // inhib.type = LeabraInhibSpec::KWTA_INHIB;
   // inhib.kwta_pt = 0.25f;
-  SetUnique("clamp", true);
-  clamp.max_plus = true;
+  // SetUnique("clamp", true);
+  // clamp.max_plus = true;
 }
 
 bool ECoutLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
@@ -72,12 +72,6 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* ru = (LeabraUnit*)lay->units.Leaf(i);
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
     float inval = inu->act_eq;
-    if(clamp.max_plus) {
-      float min_max = MAX(lay->acts_m.max, lay->acts_mid.max); // consider auto enc max too -- esp if doing pretraining on encoder only, this is important
-      float clmp = min_max + clamp.plus;
-      clmp = MAX(clmp, clamp.min_clamp);
-      inval *= clmp;            // downscale
-    }
     ru->act = rus->clamp_range.Clip(inval);
     ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;              // I'm fully settled!

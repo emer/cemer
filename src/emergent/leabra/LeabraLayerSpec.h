@@ -209,21 +209,18 @@ private:
 };
 
 
-eTypeDef_Of(ClampSpec);
+eTypeDef_Of(LeabraClampSpec);
 
-class E_API ClampSpec : public SpecMemberBase {
+class E_API LeabraClampSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping external inputs on INPUT or TARGET layers
 INHERITED(SpecMemberBase)
 public:
   bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
   float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
-  bool		max_plus;	// #CONDSHOW_ON_hard when hard clamping target activation values, the clamped activations are set to the maximum activation in the minus phase plus some fixed offset
-  float		plus;		// #CONDSHOW_ON_hard&&max_plus #DEF_0.01 the amount to add to max minus phase activation in clamping the plus phase
-  float		min_clamp;	// #CONDSHOW_ON_hard&&max_plus #DEF_0.5 the minimum clamp value allowed in the max_plus clamping system
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
-  TA_SIMPLE_BASEFUNS(ClampSpec);
+  TA_SIMPLE_BASEFUNS(LeabraClampSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -270,7 +267,7 @@ public:
   LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed -- if unit groups are present and unit_gp inhib.gi > 0, net inhibition is MAX of layer and unit-group level
   LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- set gi = 0 to exclude any group-level inhibition -- net inhibition is MAX of layer and unit group) -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed 
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
-  ClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
+  LeabraClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec decay;		// #CAT_Activation decay of activity state vars between trials and phases, also time constants..
   LeabraGabaTaus  gaba_tau;	// #CAT_Activation GABA inhibition time constants -- rate of inhibitory decay -- data shows 3 rate constants for GABA_A: short, medium, long, and a longer GABA_B constant
   LeabraGabaPcts  gaba_pct;	// #CONDSHOW_ON_gaba_tau.on #CAT_Activation proportions of the different GABA time constants contributing to the overall GABA inhibition -- see gaba_tau for associated time constants

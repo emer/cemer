@@ -24,7 +24,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraGabaTaus);
 TA_BASEFUNS_CTORS_DEFN(LeabraGabaPcts);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
-TA_BASEFUNS_CTORS_DEFN(ClampSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LayGpInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
@@ -151,15 +151,12 @@ void LayGpInhibSpec::Defaults_init() {
   
 }
 
-void ClampSpec::Initialize() {
+void LeabraClampSpec::Initialize() {
   hard = true;
   Defaults_init();
 }
 
-void ClampSpec::Defaults_init() {
-  max_plus = false;
-  plus = 0.01f;
-  min_clamp = 0.5f;
+void LeabraClampSpec::Defaults_init() {
   gain = .2f;
 }
 
@@ -462,18 +459,6 @@ void LeabraLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
   }
   lay->hard_clamped = true;     // cache this flag
   lay->Inhib_SetVals(0.5f);            // assume 0 - 1 clamped inputs
-
-  if(clamp.max_plus && net->phase == LeabraNetwork::PLUS_PHASE && net->phase_no > 0 &&
-     lay->HasExtFlag(Unit::TARG)) {
-    float min_max = lay->acts_m.max;
-    float clmp = min_max + clamp.plus;
-    clmp = MAX(clmp, clamp.min_clamp);
-
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-      if(u->lesioned()) continue;
-      u->ext *= clmp;           // modify!
-    }
-  }
 
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
