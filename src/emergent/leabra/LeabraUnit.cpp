@@ -46,10 +46,8 @@ void LeabraUnit::Initialize() {
   v_m_eq = 0.0f;
   adapt = 0.0f;
   gi_syn = 0.0f;
-  gi_as = 0.0f;
-  gi_am = 0.0f;
-  gi_al = 0.0f;
-  gi_b = 0.0f;
+  gi_self = 0.0f;
+  gi_ex = 0.0f;
   E_i = 0.25f;
   syn_tr = 1.0f;
   syn_nr = 1.0f;
@@ -131,10 +129,8 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   v_m_eq = cp.v_m_eq;
   adapt = cp.adapt;
   gi_syn = cp.gi_syn;
-  gi_as = cp.gi_as;
-  gi_am = cp.gi_am;
-  gi_al = cp.gi_al;
-  gi_b = cp.gi_b;
+  gi_self = cp.gi_self;
+  gi_ex = cp.gi_ex;
   E_i = cp.E_i;
   syn_tr = cp.syn_tr;
   syn_nr = cp.syn_nr;

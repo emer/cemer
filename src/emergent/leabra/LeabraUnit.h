@@ -64,10 +64,8 @@ public:
   float		v_m_eq;	        // #NO_SAVE #CAT_Activation equilibrium membrane potential -- this is NOT reset by spiking, so it reaches equilibrium values asymptotically -- it is used for rate code activation in sub-threshold range (whenever v_m_eq < act.thr) -- the gelin activation function does not otherwise provide useful dynamics in this subthreshold range
   float		adapt;	        // #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   float		gi_syn;	        // #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
-  float         gi_as;          // #NO_SAVE #CAT_Activation GABA_A short time scale inhibitory current
-  float         gi_am;          // #NO_SAVE #CAT_Activation GABA_A medium time scale inhibitory current
-  float         gi_al;          // #NO_SAVE #CAT_Activation GABA_A long time scale inhibitory current
-  float         gi_b;           // #NO_SAVE #CAT_Activation GABA_B longer time scale inhibitory current
+  float         gi_self;        // #NO_SAVE #CAT_Activation self inhibitory current -- requires temporal integration dynamics and thus its own variable
+  float         gi_ex;          // #NO_SAVE #CAT_Activation extra inhibitory current, e.g., from previous trial or phase
   float         E_i;            // #NO_SAVE #CAT_Activation inhibitory reversal potential -- this adapts with activity, producing advantage for active neurons
   float		syn_tr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
   float		syn_nr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)
@@ -184,8 +182,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  void	Compute_ApplyInhib(LeabraLayerSpec* lspec, LeabraNetwork* net, float inhib_val)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lspec, net, inhib_val); }
+  void	Compute_ApplyInhib(LeabraLayerSpec* lspec, LeabraNetwork* net, LeabraInhib* thr,
+                           float ival)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_ApplyInhib(this, lspec, net, thr, ival); }
   // #CAT_Activation #IGNORE apply computed inhibitory value to unit inhibitory conductance
 
   ///////////////////////////////////////////////////////////////////////

@@ -271,7 +271,7 @@ public:
   bool		on;		// apply adaptation?
   float		tau;	        // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
-  float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values
+  float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805;0.004;0.002 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- weaker levels often work better (e.g., 0.004)
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   float	Compute_dAdapt(float vm, float e_rev_l, float adapt)
@@ -560,11 +560,11 @@ public:
   inline LeabraInhib* GetInhib(LeabraUnit* u);
   // #CAT_Activation #IGNORE get the inhib that applies to this unit (either unit group or entire layer, depending on layer spec setting)
 
-  inline float	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+  inline void	Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
                                    LeabraNetwork* net);
   // #CAT_Activation #IGNORE compute self inhibition value
   virtual void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                                   LeabraNetwork* net, float inhib_val);
+                                   LeabraNetwork* net, LeabraInhib* thr, float ival);
   // #CAT_Activation #IGNORE apply computed inhibition value to unit inhibitory conductance
 
 

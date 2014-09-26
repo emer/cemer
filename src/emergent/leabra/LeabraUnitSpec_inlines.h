@@ -22,9 +22,10 @@
 
 // declare all other types mentioned but not required to include:
 
-inline float LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
+inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                               LeabraNetwork* net) {
-  return lspec->inhib_misc.self_fb * u->act_eq;
+  float self = lspec->inhib_misc.self_fb * u->act_eq;
+  u->gi_self += lspec->inhib_misc.self_dt * (self - u->gi_self);
 }
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {

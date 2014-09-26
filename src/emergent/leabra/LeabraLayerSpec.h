@@ -46,7 +46,6 @@ public:
   float         ff0;            // #CONDSHOW_ON_on #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases (and helps FF_FB produce k-winner-take-all dynamics), but if average netinputs are lower than typical, you may need to lower it
 
   float		fb_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-  float		fb_dt_c;	// #READ_ONLY #EXPERT 1.0 - fb_dt
 
   inline float    FFInhib(const float avg_netin) {
     float ffi = 0.0f;
@@ -73,62 +72,19 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(LeabraGabaTaus);
+eTypeDef_Of(LeabraDelInhib);
 
-class E_API LeabraGabaTaus : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra GABA inhibition time constants -- rate of inhibitory decay -- data shows 3 rate constants for GABA_A: short, medium, long, and a longer GABA_B time constant
+class E_API LeabraDelInhib : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delayed inhibition, as a function of inhibition computed on prior trial or phase -- produces temporal derivative effects
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable GABA decay dynamics according to following time constants and the parameters in the gaba_pct field -- if not enabled, then gc_i tracks immediate computed inhibition levels directly
-  float		as_tau;		// #CONDSHOW_ON_on #DEF_10 #MIN_1 GABA_A short time constant for decay of inhibition
-  float		am_tau;		// #CONDSHOW_ON_on #DEF_50 #MIN_1 GABA_A medium time constant for decay of inhibition
-  float		al_tau;		// #CONDSHOW_ON_on #DEF_150 #MIN_1 GABA_A long time constant for decay of inhibition
-  float         b_tau;          // #CONDSHOW_ON_on #DEF_300 #MIN_1 GABA_B time constant for decay of inhibition -- generally longer lasting than the GABA_A dynamics
-  float         dk_drv;         // #CONDSHOW_ON_on #MIN_0 #MAX_1 decay down to this proportion of the new inhibition value -- use 1 to decay to new value, and 0 to decay all the way to zero -- or something in-between -- having a lower number is important for keeping actual inhib closer to computed levels, and maintaining the proper kwta-like behavior
-
-  float		as_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-  float		am_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-  float		al_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-  float		b_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-
-  inline void   UpdtGaba(float& gi, const float tot_i, const float dt,
-                          const float pct) {
-    float nwi = tot_i * pct;
-    if(nwi > gi) gi = nwi;      // instant up
-    else {
-      gi += dt * (dk_drv * nwi - gi);
-      gi = MAX(nwi, gi);
-    }
-  }
-  // update a given inhibitory subtype according to pct and dt parameters
-
+  bool          on;             // enable delayed inhibition 
+  float		prv_trl;	// #CONDSHOW_ON_on proportion of inhibition computed on previous trial to apply on this trial
+  float		prv_phs;	// #CONDSHOW_ON_on proportion of inhibition computed on previous phase to apply on this phase
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
-  TA_SIMPLE_BASEFUNS(LeabraGabaTaus);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(LeabraGabaPcts);
-
-class E_API LeabraGabaPcts : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra proportions of the different GABA time constants contributing to the overall GABA inhibition -- see gaba_tau for associated time constants
-INHERITED(SpecMemberBase)
-public:
-  float         as_pct;         // #DEF_0.2;0.5 #MIN_0 proportion of total inhibitory response carried by the GABA_A short time constant subtype
-  float         am_pct;         // #DEF_0.4;0.5 #MIN_0 proportion of total inhibitory response carried by the GABA_A medium time constant subtype
-  float         al_pct;         // #DEF_0.2;0 #MIN_0 proportion of total inhibitory response carried by the GABA_A long time constant subtype
-  float         b_pct;          // #DEF_0.2;0 #MIN_0 proportion of total inhibitory response carried by the GABA_B type
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraGabaPcts);
+  TA_SIMPLE_BASEFUNS(LeabraDelInhib);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -144,11 +100,14 @@ class E_API LeabraInhibMisc : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra extra specifications for how inhibition is computed in Leabra system -- these apply across layer and unit group levels
 INHERITED(SpecMemberBase)
 public:
-  float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers (use .02 max)
+  float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers
+ float          self_tau;       // #CONDSHOW_OFF_self_fb:0 #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating unit self feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
   bool          Ei_dyn;         // does the inhibitory reversal potential (E_i) update dynamically over time in response to activation of the receiving neuron (backpropagating action potentials), or is it static -- dynamics are important when using adaptation, as this compensates for adaptation and allows active neurons to remain so
   float         Ei_gain;        // #CONDSHOW_ON_Ei_dyn #MIN_0 #DEF_0.001 multiplier on postsynaptic cell activation (act_eq), driving increases in E_i reversal potential for Cl- -- this factor determines how strong the e_rev change effect is
   float         Ei_tau;         // #CONDSHOW_ON_Ei_dyn #MIN_1 #DEF_50 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
+  bool          fb_up_immed;    // should the feedback inhibition rise immediately to the driving value, and then decay with fb_tau time constant?  this is important for spiking activation function.  otherwise, all feedback component changes are goverened by fb_tau, which works better for rate-code case
 
+  float		self_dt;        // #READ_ONLY #EXPERT rate = 1 / tau
   float		Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
@@ -267,11 +226,10 @@ public:
   LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed -- if unit groups are present and unit_gp inhib.gi > 0, net inhibition is MAX of layer and unit-group level
   LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- set gi = 0 to exclude any group-level inhibition -- net inhibition is MAX of layer and unit group) -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed 
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
-  LeabraClampSpec	clamp;		// #CAT_Activation how to clamp external inputs to units (hard vs. soft)
-  LayerDecaySpec decay;		// #CAT_Activation decay of activity state vars between trials and phases, also time constants..
-  LeabraGabaTaus  gaba_tau;	// #CAT_Activation GABA inhibition time constants -- rate of inhibitory decay -- data shows 3 rate constants for GABA_A: short, medium, long, and a longer GABA_B constant
-  LeabraGabaPcts  gaba_pct;	// #CONDSHOW_ON_gaba_tau.on #CAT_Activation proportions of the different GABA time constants contributing to the overall GABA inhibition -- see gaba_tau for associated time constants
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
+  LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
+  LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials and phases, also time constants..
+  LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of inhibition computed on prior trial or phase -- produces temporal derivative effects
   LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////

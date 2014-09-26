@@ -611,10 +611,8 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   u->v_m_eq = u->v_m;
   u->adapt = 0.0f;
   u->gi_syn = 0.0f;
-  u->gi_as = 0.0f;
-  u->gi_am = 0.0f;
-  u->gi_al = 0.0f;
-  u->gi_b = 0.0f;
+  u->gi_self = 0.0f;
+  u->gi_ex = 0.0f;
   u->E_i = e_rev.i;
   u->syn_tr = 1.0f;
   u->syn_nr = 1.0f;
@@ -659,10 +657,8 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
     }
 
     u->gi_syn -= decay * u->gi_syn;
-    u->gi_as -= decay * u->gi_as;
-    u->gi_am -= decay * u->gi_am;
-    u->gi_al -= decay * u->gi_al;
-    u->gi_b -= decay * u->gi_b;
+    u->gi_self -= decay * u->gi_self;
+    u->gi_ex -= decay * u->gi_ex;
     u->E_i -= decay * (u->E_i - e_rev.i);
 
     if(stp.on) {
@@ -1156,23 +1152,16 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
 //      Cycle Step 2: inhibition
 
 void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
-                                        LeabraNetwork* net, float inhib_val) {
-  float self = Compute_SelfInhib(u, lspec, net);
-  float tot_i = inhib_val + u->gi_syn + self; // add synaptic and imposed inhibition
-  if(lspec->gaba_tau.on) {
-    lspec->gaba_tau.UpdtGaba(u->gi_as, tot_i, dt.integ * lspec->gaba_tau.as_dt,
-                             lspec->gaba_pct.as_pct);
-    lspec->gaba_tau.UpdtGaba(u->gi_am, tot_i, dt.integ * lspec->gaba_tau.am_dt,
-                             lspec->gaba_pct.am_pct);
-    lspec->gaba_tau.UpdtGaba(u->gi_al, tot_i, dt.integ * lspec->gaba_tau.al_dt,
-                             lspec->gaba_pct.al_pct);
-    lspec->gaba_tau.UpdtGaba(u->gi_b, tot_i, dt.integ * lspec->gaba_tau.b_dt,
-                             lspec->gaba_pct.b_pct);
-    u->gc_i = u->gi_as + u->gi_am + u->gi_al + u->gi_b; // sum it all up..
+                                        LeabraNetwork* net, LeabraInhib* thr, float ival) {
+  Compute_SelfInhib(u, lspec, net);
+  if(lspec->del_inhib.on) {
+    u->gi_ex = lspec->del_inhib.prv_trl * thr->i_val.prv_trl_gi + 
+      lspec->del_inhib.prv_phs * thr->i_val.prv_phs_gi;
   }
   else {
-    u->gc_i = tot_i;
+    u->gi_ex = 0.0f;
   }
+  u->gc_i = ival + u->gi_syn + u->gi_self + u->gi_ex;
 }
 
 
@@ -1202,7 +1191,7 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   LeabraInhib* thr = GetInhib(u);
   if(thr) {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-    Compute_ApplyInhib(u, ls, net, thr->i_val.g_i);
+    Compute_ApplyInhib(u, ls, net, thr, thr->i_val.g_i);
   }
 
   Compute_Conduct(u, net);

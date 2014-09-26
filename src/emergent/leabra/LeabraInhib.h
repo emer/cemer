@@ -36,6 +36,8 @@ public:
   float		g_i_orig; 	// original value of the inhibition (before any layer group effects set in)
   float		lay_g_i;	// for unit groups, this is the layer-level inhibition that is MAX'd with the unit-group level inhibition to produce the net inhibition, if unit_gp_inhib is on
   float		laygp_g_i;	// for layers, this is the layer-group-level inhibition that is MAX'd with the layer-level inhibition to produce the net layer-level inhibition, if lay_gp_inhib is on
+  float         prv_trl_gi;     // overall inhibition (g_i) for previous trial
+  float         prv_phs_gi;     // overall inhibition (g_i) for previous phase
 
   void          InitVals();
   // initialize the inhibition values
