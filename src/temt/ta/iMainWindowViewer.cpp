@@ -2395,7 +2395,11 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
   switch (op) {
   case ISelectableHost::OP_GOT_FOCUS: {
     // spec says that this automatically also makes the guy the cliphandler
-    if (last_sel_server == src_host) break; // nothing to do
+    // if (last_sel_server == src_host) break; // nothing to do
+    // there are other paths to SetClipboardHandler that do not set 
+    // last_sel_server, so this prevents proper restoration of 
+    // clipboardhandler.  Not sure what SelectableHostNotifyingSignal does really,
+    // but probably it is good to redo that too?
     last_sel_server = src_host;
     QObject* handler_obj = src_host->clipHandlerObj();
     SetClipboardHandler(handler_obj, ISelectableHost::edit_enabled_slot,
@@ -2445,9 +2449,9 @@ void iMainWindowViewer::SetClipboardHandler(QObject* handler_obj,
       connect(this, SIGNAL(SetActionsEnabled()), handler_obj, actions_enabled_slot );
     if (update_ui_signal)
       connect(handler_obj, update_ui_signal, this, SLOT(UpdateUi()) );
-    taMisc::Info("SetClipHandler to: type, name",
-                 handler_obj->metaObject()->className(),
-                 handler_obj->objectName().toLatin1());
+    // taMisc::Info("SetClipHandler to: type, name",
+    //              handler_obj->metaObject()->className(),
+    //              handler_obj->objectName().toLatin1());
   }
   last_clip_handler = handler_obj; // whether NULL or not
   UpdateUi();
