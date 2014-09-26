@@ -1047,6 +1047,11 @@ void LeabraNetwork::Compute_MinusStats() {
   if(minus_cycles < 0) // never reached target
     minus_cycles = cycle;       // set to current cyc -- better for integrating
   avg_cycles.Increment(minus_cycles);
+
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->minus_output_name = lay->output_name;
+  }
 }
 
 void LeabraNetwork::Compute_PlusStats() {

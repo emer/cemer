@@ -104,14 +104,13 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
  float* avg_s, float* avg_m, float* avg_l, float* thal,
  const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
  const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult) {
-
   VECF su_avg_s_v(su_avg_s);
   VECF su_avg_m_v(su_avg_m);
   VECF effmmix_v(effmmix);
   VECF su_act_mult_v(su_act_mult);
   VECF s_mix(xcal.s_mix);
   VECF m_mix(xcal.m_mix);
-  VECF ones(1.0f);
+  VECF thr_max(xcal.thr_max);
 
   const int sz = cg->size;
   const int parsz = cg->vec_chunked_size;
@@ -129,7 +128,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
     
     VECF lthr = su_act_mult_v * ru_avg_l;
     VECF effthr = effmmix_v * srm + lthr;
-    effthr = min(ones, effthr); // ru_avg_l can be > 1 -- do this here b/c mult by su_act_mult 
+    effthr = min(thr_max, effthr);
 
     for(int j=0; j< TA_VEC_SIZE; j++) {
       const float sm_mix_j = sm_mix[j];
@@ -184,7 +183,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 
   const int sz = cg->size;
 
-  if(xcal.l_mix == XCalLearnSpec::X_COS_DIFF) {
+  if(!xcal.raw_l_mix) {
     const float efflmix = xcal.thr_l_mix * rlay->cos_diff_avg_lmix;
     const float effmmix = 1.0f - efflmix;
     const float su_act_mult = efflmix * su_avg_m;

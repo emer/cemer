@@ -102,17 +102,13 @@ void FastWtsSpec::UpdateAfterEdit_impl() {
 }
 
 void XCalLearnSpec::Initialize() {
-  l_mix = X_COS_DIFF;
+  Defaults_init();
+}
+
+void XCalLearnSpec::Defaults_init() {
+  raw_l_mix = false;
   thr_l_mix = 0.05f;
-
-  if(taMisc::is_loading) {
-    taVersion v634(6, 3, 4);
-    if(taMisc::loading_version < v634) { // default prior to 634 is off
-      l_mix = L_MIX;
-      thr_l_mix = 0.01f;
-    }
-  }
-
+  thr_max = 1.2f;
   s_mix = 0.9f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
@@ -130,7 +126,6 @@ void XCalLearnSpec::UpdateAfterEdit_impl() {
     d_rev_ratio = -(1.0f - d_rev) / d_rev;
   else
     d_rev_ratio = -1.0f;
-  if(owner) owner->UpdateAfterEdit(); // update our conspec so it can recompute lookup function!
 }
 
 void LeabraConSpec::Initialize() {

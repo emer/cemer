@@ -322,6 +322,7 @@ void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->minus_output_name = "";
   lay->avg_netin.avg = 0.0f;
   lay->avg_netin.max = 0.0f;
 
