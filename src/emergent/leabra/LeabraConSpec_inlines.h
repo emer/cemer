@@ -128,7 +128,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
     
     VECF lthr = su_act_mult_v * ru_avg_l;
     VECF effthr = effmmix_v * srm + lthr;
-    effthr = min(thr_max, effthr);
+    // effthr = min(thr_max, effthr);
 
     for(int j=0; j< TA_VEC_SIZE; j++) {
       const float sm_mix_j = sm_mix[j];
@@ -183,7 +183,20 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
 
   const int sz = cg->size;
 
-  if(!xcal.raw_l_mix) {
+  if(xcal.raw_l_mix) {
+    const float su_act_mult = xcal.thr_l_mix * su_avg_m;
+    for(int i=0; i<sz; i++) {
+      const int ru_idx = cg->UnIdx(i);
+      float lrate_eff = clrate;
+      if(cifer_on) {
+        lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx]);
+      }
+      C_Compute_dWt_CtLeabraXCAL(dwts[i], lrate_eff,
+                                 avg_s[ru_idx], avg_m[ru_idx], avg_l[ru_idx],
+                                 su_avg_s, su_avg_m, su_act_mult);
+    }
+  }
+  else {                        // X_COS_DIFF
     const float efflmix = xcal.thr_l_mix * rlay->cos_diff_avg_lmix;
     const float effmmix = 1.0f - efflmix;
     const float su_act_mult = efflmix * su_avg_m;
@@ -204,21 +217,8 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
         (dwts[i], lrate_eff, avg_s[ru_idx], avg_m[ru_idx], avg_l[ru_idx],
          su_avg_s, su_avg_m, su_act_mult, effmmix);
     }
+  }
 #endif
-  }
-  else {                        // L_MIX
-    const float su_act_mult = xcal.thr_l_mix * su_avg_m;
-    for(int i=0; i<sz; i++) {
-      const int ru_idx = cg->UnIdx(i);
-      float lrate_eff = clrate;
-      if(cifer_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx]);
-      }
-      C_Compute_dWt_CtLeabraXCAL(dwts[i], lrate_eff,
-                                 avg_s[ru_idx], avg_m[ru_idx], avg_l[ru_idx],
-                                 su_avg_s, su_avg_m, su_act_mult);
-    }
-  }
 }
 
 /////////////////////////////////////

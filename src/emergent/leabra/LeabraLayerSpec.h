@@ -72,25 +72,28 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(LeabraDelInhib);
+eTypeDef_Of(LayerAvgActSpec);
 
-class E_API LeabraDelInhib : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delayed inhibition, as a function of inhibition computed on prior trial or phase -- produces temporal derivative effects
+class E_API LayerAvgActSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable delayed inhibition 
-  float		prv_trl;	// #CONDSHOW_ON_on proportion of inhibition computed on previous trial to apply on this trial
-  float		prv_phs;	// #CONDSHOW_ON_on proportion of inhibition computed on previous phase to apply on this phase
+  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
+  bool          fixed;      // #DEF_false if true, then the init value is used as a constant for acts_m_avg_eff (the effective value used for netinput rescaling), instead of using the actual running average activation
+  float         tau;        // #CONDSHOW_OFF_fixed #DEF_100 #MIN_1 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
+  float         adjust;     // #CONDSHOW_OFF_fixed #DEF_1 adjustment multiplier on the computed acts_m_avg value that is used to compute acts_m_avg_eff, which is actually used for netinput rescaling -- if based on connectivity patterns or other factors the actual running-average value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
+  
+  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+  String        GetTypeDecoKey() const override { return "LayerSpec"; }
 
-  TA_SIMPLE_BASEFUNS(LeabraDelInhib);
+  TA_SIMPLE_BASEFUNS(LayerAvgActSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
-  void	Destroy()	{ };
+  void 	Destroy()	{ };
   void	Defaults_init();
 };
 
@@ -121,52 +124,6 @@ private:
   void 	Destroy()	{ };
   void	Defaults_init();
 };
-
-eTypeDef_Of(LayerAvgActSpec);
-
-class E_API LayerAvgActSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
-INHERITED(SpecMemberBase)
-public:
-  float		init;	    // #AKA_pct #MIN_0 [typically 0.1 - 0.2] initial estimated average activity level in the layer -- this is used as a starting point for running average actual activity level (acts_m_avg and acts_p_avg) -- acts_m_avg is used primarily for automatic netinput scaling, to balance out layers that have different activity levels -- thus it is important that init be relatively accurate -- good idea to update from recorded acts_m_avg levels (see LayerAvgAct button, here and on network) -- see also adjust parameter
-  bool          fixed;      // #DEF_false if true, then the init value is used as a constant for acts_m_avg_eff (the effective value used for netinput rescaling), instead of using the actual running average activation
-  float         tau;        // #CONDSHOW_OFF_fixed #DEF_100 #MIN_1 time constant in trials for integrating time-average values at the layer level -- used for computing acts_m_avg and acts_p_avg
-  float         adjust;     // #CONDSHOW_OFF_fixed #DEF_1 adjustment multiplier on the computed acts_m_avg value that is used to compute acts_m_avg_eff, which is actually used for netinput rescaling -- if based on connectivity patterns or other factors the actual running-average value is resulting in netinputs that are too high or low, then this can be used to adjust the effective average activity value -- reducing the average activity with a factor < 1 will increase netinput scaling (stronger net inputs from layers that receive from this layer), and vice-versa for increasing (decreases net inputs)
-  
-  float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
-
-  String        GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LayerAvgActSpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(LayGpInhibSpec);
-
-class E_API LayGpInhibSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among layers within a layer group -- a MAX inhibition value is computed across the layer inhibition levels multiplied by gp_g (typically < 1, which discounts layer contributions to global layer-group level inhibition) -- the final layer inhibition value is then a MAX of the original inhibition and the layer-group level inhibition
-INHERITED(SpecMemberBase)
-public:
-  bool		on;            // compute layer-group level inhibition, only applicable if the layer is within a layer group with other layers having this feature enabled
-  float		gp_g;		// #CONDSHOW_ON_on&&!fffb #MIN_0 how much this layer's computed inhibition level contributes to the pooled layer-group-level inhibition MAX value -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LayGpInhibSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
 
 eTypeDef_Of(LeabraClampSpec);
 
@@ -215,6 +172,47 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(LeabraDelInhib);
+
+class E_API LeabraDelInhib : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable delayed inhibition 
+  float		prv_trl;	// #CONDSHOW_ON_on proportion of per-unit net input on previous trial to add in as inhibition on this trial
+  float		prv_phs;	// #CONDSHOW_ON_on proportion of per-unit net input on previous phase to add in as inhibition on this phase
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraDelInhib);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LayGpInhibSpec);
+
+class E_API LayGpInhibSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how inhibition is communicated among layers within a layer group -- a MAX inhibition value is computed across the layer inhibition levels multiplied by gp_g (typically < 1, which discounts layer contributions to global layer-group level inhibition) -- the final layer inhibition value is then a MAX of the original inhibition and the layer-group level inhibition
+INHERITED(SpecMemberBase)
+public:
+  bool		on;            // compute layer-group level inhibition, only applicable if the layer is within a layer group with other layers having this feature enabled
+  float		gp_g;		// #CONDSHOW_ON_on&&!fffb #MIN_0 how much this layer's computed inhibition level contributes to the pooled layer-group-level inhibition MAX value -- the higher the value (closer to 1) the stronger the overall pooled inhibition effect within the group, with 1 being a maximal amount of pooled inhibition
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LayGpInhibSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
 
 
 eTypeDef_Of(LeabraLayerSpec);
@@ -229,7 +227,7 @@ public:
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials and phases, also time constants..
-  LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of inhibition computed on prior trial or phase -- produces temporal derivative effects
+  LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
   LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////

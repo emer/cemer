@@ -44,6 +44,8 @@ public:
   float		act_m;	        // #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
   float		act_p;	        // #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
   float		act_dif;        // #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
+  float         net_prv_phs;    // #CAT_Activation net input from the previous phase of settling -- this is used for delayed inhibition as specified in del_inhib on layer spec
+  float         net_prv_trl;    // #CAT_Activation net input from the previous trial -- this is used for delayed inhibition as specified in del_inhib on layer spec
   float		act_mid;        // #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) 
   float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
   float		avg_ss;	        // #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation

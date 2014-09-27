@@ -507,6 +507,8 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
 
   Init_Weights_Prjn(u, rnet, thread_no); // get projection-based weights
 
+  u->net_prv_phs = 0.0f;
+  u->net_prv_trl = 0.0f;
   u->act_avg = act_misc.avg_init;
   u->misc_1 = 0.0f;
   u->snap = 0.0f;
@@ -590,6 +592,8 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   u->act_lrn = u->act_eq;
   u->spike = 0.0f;
   u->act_p = u->act_m = u->act_dif = 0.0f;
+  u->net_prv_phs = 0.0f;        // note: init acts clears this kind of history..
+  u->net_prv_trl = 0.0f;
   u->act_mid = 0.0f;
 
   u->da = 0.0f;
@@ -674,6 +678,7 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
     //   u->avg_s -= decay * (u->avg_s - act_misc.avg_init);
     //   u->avg_m -= decay * (u->avg_m - act_misc.avg_init);
     // not avg_l, act_avg, thal, deep5b*, act_ctxt* 
+    // or net_prv*
   }
   else {
     if(net->phase_no == 0) {
@@ -1155,8 +1160,8 @@ void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                         LeabraNetwork* net, LeabraInhib* thr, float ival) {
   Compute_SelfInhib(u, lspec, net);
   if(lspec->del_inhib.on) {
-    u->gi_ex = lspec->del_inhib.prv_trl * thr->i_val.prv_trl_gi + 
-      lspec->del_inhib.prv_phs * thr->i_val.prv_phs_gi;
+    u->gi_ex = lspec->del_inhib.prv_trl * u->net_prv_trl + 
+      lspec->del_inhib.prv_phs * u->net_prv_phs;
   }
   else {
     u->gi_ex = 0.0f;
@@ -1573,6 +1578,7 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
         u->p_act_p = u->act_p;
         u->act_p = use_act;
         u->act_dif = u->act_p - u->act_m;
+        u->net_prv_trl = u->net; // only at end of plus
         Compute_DaMod_PlusPost(u, net);
         Compute_ActTimeAvg(u, net);
       }
@@ -1584,8 +1590,11 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
     u->p_act_p = u->act_p;
     u->act_m = u->act_p = use_act;
     u->act_dif = 0.0f;
+    u->net_prv_trl = u->net;
     Compute_ActTimeAvg(u, net);
   }
+
+  u->net_prv_phs = u->net;      // always update this
 }
 
 void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net) {

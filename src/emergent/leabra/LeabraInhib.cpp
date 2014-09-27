@@ -28,8 +28,6 @@ void LeabraInhibVals::InitVals() {
   g_i_orig = 0.0f;
   lay_g_i = 0.0f;
   laygp_g_i = 0.0f;
-  prv_trl_gi = 0.0f;
-  prv_phs_gi = 0.0f;
 }
 
 void LeabraInhibVals::Copy_(const LeabraInhibVals& cp) {
@@ -39,8 +37,6 @@ void LeabraInhibVals::Copy_(const LeabraInhibVals& cp) {
   g_i_orig = cp.g_i_orig;
   lay_g_i = cp.lay_g_i;
   laygp_g_i = cp.laygp_g_i;
-  prv_trl_gi = cp.prv_trl_gi;
-  prv_phs_gi = cp.prv_phs_gi;
 }
  
 void LeabraInhib::Inhib_Initialize() {

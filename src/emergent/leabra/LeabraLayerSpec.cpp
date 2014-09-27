@@ -131,8 +131,8 @@ void LayerDecaySpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
 
 void LeabraDelInhib::Initialize() {
   on = false;
-  prv_trl = 0.1f;
-  prv_phs = 0.1f;
+  prv_trl = 0.0f;
+  prv_phs = 0.0f;
 
   Defaults_init();
 }
@@ -781,7 +781,6 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
   else {
     lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
   }
-  lay->i_val.prv_phs_gi = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
@@ -793,7 +792,6 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
       else {
         gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
       }
-      gpd->i_val.prv_phs_gi = gpd->i_val.g_i;
     }
   }
 }
@@ -801,15 +799,11 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
 void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
-  lay->i_val.prv_phs_gi = lay->i_val.g_i;
-  lay->i_val.prv_trl_gi = lay->i_val.g_i;
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts_eq;
       gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
-      gpd->i_val.prv_phs_gi = gpd->i_val.g_i;
-      gpd->i_val.prv_trl_gi = gpd->i_val.g_i;
     }
   }
 }

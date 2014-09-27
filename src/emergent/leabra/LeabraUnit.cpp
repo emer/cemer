@@ -26,6 +26,8 @@ void LeabraUnit::Initialize() {
   act_lrn = 0.0f;
   spike = 0.0f;
   act_p = act_m = act_dif = 0.0f;
+  net_prv_phs = 0.0f;
+  net_prv_trl = 0.0f;
   act_mid = 0.0f;
   da = 0.0f;
   avg_ss = 0.15f;
@@ -109,6 +111,8 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   act_m = cp.act_m;
   act_p = cp.act_p;
   act_dif = cp.act_dif;
+  net_prv_phs = cp.net_prv_phs;
+  net_prv_trl = cp.net_prv_trl;
   act_mid = cp.act_mid;
   da = cp.da;
   avg_ss = cp.avg_ss;
