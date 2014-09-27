@@ -627,7 +627,8 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       }
     }
       if((ctrl_pressed && e->key() == Qt::Key_W) ||
-         (ctrl_pressed && e->key() == Qt::Key_D))
+         (ctrl_pressed && e->key() == Qt::Key_D) ||
+         (ctrl_pressed && e->key() == Qt::Key_Backspace))
     {
       ext_select_on = false;
       if (ISelectable *si = curItem()) {
