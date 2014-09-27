@@ -56,6 +56,7 @@ public:
     FUN_ARG             = 0x0080, // #NO_SHOW this is a function argument variable
     USED                = 0x0100, // #NO_SHOW whether this variable is currently being used in the program (set automatically)
     EDIT_VAL            = 0x0200, // #NO_SHOW allow value to be edited -- only if !LOCAL_VAR && !init_from
+    PGRM_ARG            = 0x0400, // #NO_SHOW this is a program argument variable
   };
 
   VarType       var_type;       // type of variable -- determines which xxx_val(s) is/are used
@@ -71,7 +72,7 @@ public:
   VarFlags      flags;          // flags controlling various things about how the variable appears and is used
   bool          reference;      // #CONDSHOW_ON_flags:FUN_ARG make this a reference variable (only for function arguments) which allows the function to modify the argument value, making it in effect a return value from the function when you need multiple return values
   String        desc;           // #EDIT_DIALOG Description of what this variable is for
-  ProgramRef    init_from;      // #CONDSHOW_OFF_flags:LOCAL_VAR initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs
+  ProgramRef    init_from;      // #CONDSHOW_OFF_flags:LOCAL_VAR,PGRM_ARG initialize this variable from one with the same name in another program -- value is initialized at the start of the Init and Run functions -- useful to maintain a set of global parameter variables that are used in various sub programs
   int           css_idx;        // #IGNORE index within script->prog_vars for this variable, valid once it has been created -- used for updating prog var when gui value changes
 
   cssEl*        parse_css_el;   // #IGNORE css el for parsing

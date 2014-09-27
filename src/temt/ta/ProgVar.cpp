@@ -85,10 +85,14 @@ void ProgVar::SetFlagsByOwnership() {
                     "Matrix pointers should be located in LocalVars within the code, not in the global vars/args section, in order to properly manage the reference counting of matrix objects returned from various functions.");
       }
     }
+    Program* myprg = (Program*)GetOwner(&TA_Program);
+    if(myprg->args.FindName(this->GetName()))
+      SetVarFlag(PGRM_ARG);
   }
   else {
     objs_ptr = false;           // this is incompatible with being local
     SetVarFlag(LOCAL_VAR);
+    ClearVarFlag(PGRM_ARG);
     ClearVarFlag(CTRL_PANEL);
     ClearVarFlag(CTRL_READ_ONLY);
     ClearVarFlag(NULL_CHECK);
