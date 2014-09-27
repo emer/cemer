@@ -217,8 +217,8 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
         (dwts[i], lrate_eff, avg_s[ru_idx], avg_m[ru_idx], avg_l[ru_idx],
          su_avg_s, su_avg_m, su_act_mult, effmmix);
     }
-  }
 #endif
+  }
 }
 
 /////////////////////////////////////
