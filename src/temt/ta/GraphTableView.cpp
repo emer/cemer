@@ -1277,7 +1277,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
             << "L " << taSvg::Coords(ed)
             << taSvg::PathEnd();
     svg_str << taSvg::Text(label, ed.x + TICK_OFFSET, ed.y - (.5f * label_font_size),
-                           ed.z, plv.color.color(), 0.05f, taSvg::LEFT)
+                           ed.z, plv.color.color(), label_font_size, taSvg::LEFT)
             << taSvg::GroupEnd();
   }
 }
@@ -1303,15 +1303,15 @@ void GraphTableView::RenderLegend() {
   // move to top
   SoTranslation* tr;
   tr = new SoTranslation();  leg->addChild(tr);
-  tr->translation.setValue(0.0f, ylen + (0.3f + (float)n_down * 1.1f) * axis_font_size,
+  tr->translation.setValue(0.0f, ylen + (0.3f + (float)n_down * 1.1f) * label_font_size,
                            0.0f);
 
   if(render_svg) {
-    svg_str << taSvg::GroupTranslate(0.0f, -(ylen + 2.5f * axis_font_size));
+    svg_str << taSvg::GroupTranslate(0.0f, -(ylen + 2.5f * label_font_size));
   }
 
   float over_amt = (1.0f / (float)n_across) * .9f * x_axis.axis_length;
-  float dn_amt = -1.1f * axis_font_size;
+  float dn_amt = -1.1f * label_font_size;
   int mv_dn = n_down;
 
   taVector2f cur_tr;
@@ -1319,7 +1319,7 @@ void GraphTableView::RenderLegend() {
   // keep in same order as plotting: main then alt
   for(int i=0;i<main_y_plots.size;i++) {
     GraphPlotView* pl = plots[main_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); leg->addChild(ln);
     RenderLegend_Ln(*pl, ln, cur_tr);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn > 1) {
@@ -1336,7 +1336,7 @@ void GraphTableView::RenderLegend() {
 
   for(int i=0;i<alt_y_plots.size;i++) {
     GraphPlotView* pl = plots[alt_y_plots[i]];
-    T3GraphLine* ln = new T3GraphLine(pl, axis_font_size); leg->addChild(ln);
+    T3GraphLine* ln = new T3GraphLine(pl, label_font_size); leg->addChild(ln);
     RenderLegend_Ln(*pl, ln, cur_tr);
     tr = new SoTranslation();  leg->addChild(tr);
     if(mv_dn > 1) {

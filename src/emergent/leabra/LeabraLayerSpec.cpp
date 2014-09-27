@@ -367,17 +367,17 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  // if(decay.event > 0.0f) {
-  //   lay->i_val.ffi -= decay.event * lay->i_val.ffi;
-  //   lay->i_val.fbi -= decay.event * lay->i_val.fbi;
-  //   if(lay->unit_groups) {
-  //     for(int g=0; g < lay->gp_geom.n; g++) {
-  //       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-  //       gpd->i_val.ffi -= decay.event * gpd->i_val.ffi;
-  //       gpd->i_val.fbi -= decay.event * gpd->i_val.fbi;
-  //     }
-  //   }
-  // }
+  if(decay.event > 0.0f) {
+    lay->i_val.ffi -= decay.event * lay->i_val.ffi;
+    lay->i_val.fbi -= decay.event * lay->i_val.fbi;
+    if(lay->unit_groups) {
+      for(int g=0; g < lay->gp_geom.n; g++) {
+        LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+        gpd->i_val.ffi -= decay.event * gpd->i_val.ffi;
+        gpd->i_val.fbi -= decay.event * gpd->i_val.fbi;
+      }
+    }
+  }
 }
 
 // NOTE: the following are not typically used, as the Trial_Init_Units calls directly

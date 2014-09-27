@@ -1210,10 +1210,11 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
 }
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
+  bool updt_spk_vm = true;
   if(spike_misc.t_r > 0 && u->spk_t > 0) {
     int spkdel = net->tot_cycle - u->spk_t;
     if(spkdel >= 0 && spkdel <= spike_misc.t_r)
-      return;                   // just bail -- leave vm as it is!
+      updt_spk_vm = false;    // don't update the spiking vm during refract
   }
 
   if(net->cycle < dt.fast_cyc) {
@@ -1226,8 +1227,6 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
   else {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
 
-    // first compute v_m, using midpoint method:
-    float v_m_eff = u->v_m;
     float net_eff = u->net * g_bar.e;
     float E_i;
     if(ls->inhib_misc.Ei_dyn) {
@@ -1240,21 +1239,26 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
     else {
       E_i = e_rev.i;
     }
-    // midpoint method: take a half-step:
-    float I_net_1 =
-      (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
-      (u->gc_i * (E_i - v_m_eff));
-    v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
-    u->I_net = (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff))
-      + (u->gc_i * (E_i - v_m_eff));
-    // add spike current if relevant
-    if(spike_misc.ex) {
-      u->I_net += g_bar.l * spike_misc.exp_slope *
-        taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
-    }
-    u->v_m += dt.integ * dt.vm_dt * (u->I_net - u->adapt);
 
-    // next compute v_m_eq with simple integration
+    if(updt_spk_vm) {
+      // first compute v_m, using midpoint method:
+      float v_m_eff = u->v_m;
+      // midpoint method: take a half-step:
+      float I_net_1 =
+        (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
+        (u->gc_i * (E_i - v_m_eff));
+      v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
+      u->I_net = (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff))
+        + (u->gc_i * (E_i - v_m_eff));
+      // add spike current if relevant
+      if(spike_misc.ex) {
+        u->I_net += g_bar.l * spike_misc.exp_slope *
+          taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
+      }
+      u->v_m += dt.integ * dt.vm_dt * (u->I_net - u->adapt);
+    }
+
+    // always compute v_m_eq with simple integration -- used for rate code subthreshold
     float I_net_r = (net_eff * (e_rev.e - u->v_m_eq)) 
       + (u->gc_l * (e_rev.l - u->v_m_eq)) +  (u->gc_i * (E_i - u->v_m_eq));
     u->v_m_eq += dt.integ * dt.vm_dt * (I_net_r - u->adapt);
