@@ -16,14 +16,14 @@
 #include "PFCUnitSpec.h"
 #include <LeabraNetwork>
 
-TA_BASEFUNS_CTORS_DEFN(PFMaintSpec);
+TA_BASEFUNS_CTORS_DEFN(PFCMaintSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMaintSpec::Initialize() {
   deep5b_gain = 0.2f;
 }
 
-void PFCUnitSpec::Defaults_init() {
+void PFCMaintSpec::Defaults_init() {
 }
 
 void PFCUnitSpec::Initialize() {
