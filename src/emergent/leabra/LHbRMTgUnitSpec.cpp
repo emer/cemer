@@ -122,130 +122,78 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
+void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  int nt = net->lthreads.n_threads_act;
 
-void LHbRMTgUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
+  float patch_dir = 0.0f;
+  float patch_ind = 0.0f;
+  float matrix_dir = 0.0f;
+  float matrix_ind = 0.0f;
+  float pv_pos = 0.0f;
+  float pv_neg = 0.0f;
+  for(int g=0; g<u->recv.size; g++) {
+    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    if(recv_gp->NotActive()) continue;
+    LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
-  int nt = net->lthreads.tasks.size;
-  if(!net->lthreads.using_threads)
-    nt = 1;
-  float nw_nt = 0.0f;
-
-  if(net->NetinPerPrjn()) {     // this is set to be true automatically
-    float patch_dir = 0.0f;
-    float patch_ind = 0.0f;
-    float matrix_dir = 0.0f;
-    float matrix_ind = 0.0f;
-    float pv_pos = 0.0f;
-    float pv_neg = 0.0f;
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->NotActive()) continue;
-      LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
-
-      float g_nw_nt = 0.0f;
-      for(int j=0;j<nt;j++) {
-        float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
-	g_nw_nt += ndval;
-        ndval = 0.0f;           // zero immediately upon use -- for threads
-      }
-
-      recv_gp->net_raw += g_nw_nt;
-
-      if(from->name.contains("Patch")) {
-        if(from->name.contains("Ind")) {
-          patch_ind += recv_gp->net_raw;
-        }
-        else {
-          patch_dir += recv_gp->net_raw;
-        }
-      }
-      else if(from->name.contains("Matrix")) {
-        if(from->name.contains("Ind") || from->name.contains("NoGo")) {
-          matrix_ind += recv_gp->net_raw;
-        }
-        else {
-          matrix_dir += recv_gp->net_raw;
-        }
-      }
-      else if(from->name.contains("PosPV")) {
-        pv_pos += recv_gp->net_raw;
-      }
-      else if(from->name.contains("NegPV")) {
-        pv_neg += recv_gp->net_raw;
-      }
+    float g_nw_nt = 0.0f;
+    for(int j=0;j<nt;j++) {
+      float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
+      g_nw_nt += ndval;
+      ndval = 0.0f;           // zero immediately upon use -- for threads
     }
 
-    // todo: do shunting separately in the VTA layer itself, with direct prjns
+    recv_gp->net_raw += g_nw_nt;
 
-    // now do the proper subtractions, and individually rectify each term
-    // this individual rectification is important so that system is not 
-    // sensitive to overshoot of predictor relative to its comparison value
-    float matrix_net = 0.0f;
-    if(gains.matrix_td) {
-      matrix_net = gains.matrix * (u->misc_1 - matrix_ind); // misc_1 holds prior -- looking for dips so sign is reversed!
+    if(from->name.contains("Patch")) {
+      if(from->name.contains("Ind")) {
+        patch_ind += recv_gp->net_raw;
+      }
+      else {
+        patch_dir += recv_gp->net_raw;
+      }
     }
-    else {
-      matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
+    else if(from->name.contains("Matrix")) {
+      if(from->name.contains("Ind") || from->name.contains("NoGo")) {
+        matrix_ind += recv_gp->net_raw;
+      }
+      else {
+        matrix_dir += recv_gp->net_raw;
+      }
     }
-    matrix_net = MAX(0.0f, matrix_net);
-
-    float pv_neg_net = gains.patch_dir * (pv_neg - patch_dir); // dir cancels neg
-    pv_neg_net = MAX(0.0f, pv_neg_net);
-
-    float pv_pos_net = gains.patch_ind * (patch_ind - pv_pos); // ind cancels pos
-    pv_pos_net = MAX(0.0f, pv_pos_net);
-
-    u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
+    else if(from->name.contains("PosPV")) {
+      pv_pos += recv_gp->net_raw;
+    }
+    else if(from->name.contains("NegPV")) {
+      pv_neg += recv_gp->net_raw;
+    }
   }
 
-  // the rest of this should all be standard..
+  // todo? do shunting separately in the VTA layer itself, with direct prjns
 
-  if(net->net_misc.inhib_cons) {
-    u->gi_raw += u->gi_delta;
-    if(act_fun == SPIKE) {
-      u->gi_syn = MAX(u->gi_syn, 0.0f);
-      Compute_NetinInteg_Spike_i(u, net);
-    }
-    else {
-      u->gi_syn += dt.net_dt * (u->gi_raw - u->gi_syn);
-      u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
-    }
+  // now do the proper subtractions, and individually rectify each term
+  // this individual rectification is important so that system is not 
+  // sensitive to overshoot of predictor relative to its comparison value
+  float matrix_net = 0.0f;
+  if(gains.matrix_td) {
+    matrix_net = gains.matrix * (u->misc_1 - matrix_ind); // misc_1 holds prior -- looking for dips so sign is reversed!
   }
   else {
-    // clear so automatic inhibition can add to these values!
-    u->gi_syn = 0.0f;
-    u->gi_raw = 0.0f;
+    matrix_net = gains.matrix * (matrix_ind - matrix_dir); // net positive dipping action from matrix
   }
-  
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
+  matrix_net = MAX(0.0f, matrix_net);
 
-  if(u->HasExtFlag(Unit::EXT)) {
-    tot_net += u->ext * ls->clamp.gain;
-  }
+  float pv_neg_net = gains.patch_dir * (pv_neg - patch_dir); // dir cancels neg
+  pv_neg_net = MAX(0.0f, pv_neg_net);
 
-  if(net->net_misc.ti) {
-    tot_net += u->act_ctxt;
-  }
+  float pv_pos_net = gains.patch_ind * (patch_ind - pv_pos); // ind cancels pos
+  pv_pos_net = MAX(0.0f, pv_pos_net);
+
+  u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
 
   u->net_delta = 0.0f;  // clear for next use
   u->gi_delta = 0.0f;  // clear for next use
-
-  if(act_fun == SPIKE) {
-    // todo: need a mech for inhib spiking
-    u->net = MAX(tot_net, 0.0f); // store directly for integration
-    Compute_NetinInteg_Spike_e(u, net);
-  }
-  else {
-    u->net += dt.net_dt * (tot_net - u->net);
-    u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
-  }
-
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    u->net += Compute_Noise(u, net);
-  }
 }
 
 void LHbRMTgUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {

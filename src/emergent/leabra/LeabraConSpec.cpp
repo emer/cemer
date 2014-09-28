@@ -20,11 +20,12 @@
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
-TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
+TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(FastWtsSpec);
+TA_BASEFUNS_CTORS_DEFN(CIFERLrateSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
@@ -58,18 +59,37 @@ float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const floa
   return rval;
 }
 
+void XCalLearnSpec::Initialize() {
+  Defaults_init();
+}
+
+void XCalLearnSpec::Defaults_init() {
+  raw_l_mix = false;
+  thr_l_mix = 0.05f;
+  thr_max = 1.0f;
+  s_mix = 0.9f;
+  d_rev = 0.10f;
+  d_thr = 0.0001f;
+  m_mix = 1.0f - s_mix;
+  thr_m_mix = 1.0f - thr_l_mix;
+  d_rev_ratio = -(1.0f - d_rev) / d_rev;
+}
+
+void XCalLearnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  m_mix = 1.0f - s_mix;
+  thr_m_mix = 1.0f - thr_l_mix;
+  d_rev_ratio = (1.0f - d_rev) / d_rev;
+  if(d_rev > 0.0f)
+    d_rev_ratio = -(1.0f - d_rev) / d_rev;
+  else
+    d_rev_ratio = -1.0f;
+}
+
 void WtSigSpec::Initialize() {
   gain = 6.0f;
   off = 1.0f;
   dwt_norm = false;
-
-  // todo: need to turn this back on if we decide dwt_norm needs to happen again
-  // if(taMisc::is_loading) {
-  //   taVersion v533(5, 3, 3);
-  //   if(taMisc::loading_version < v533) { // default prior to 533 is off
-  //     dwt_norm = false;
-  //   }
-  // }
 }
 
 void WtSigSpec::UpdateAfterEdit_impl() {
@@ -101,32 +121,18 @@ void FastWtsSpec::UpdateAfterEdit_impl() {
   slow_lrate = 1.0f / fast_lrate;
 }
 
-void XCalLearnSpec::Initialize() {
+void CIFERLrateSpec::Initialize() {
+  on = false;
+  bg_lrate = 1.0f;
+  fg_lrate = 0.0f;
   Defaults_init();
 }
 
-void XCalLearnSpec::Defaults_init() {
-  raw_l_mix = false;
-  thr_l_mix = 0.05f;
-  thr_max = 1.2f;
-  s_mix = 0.9f;
-  d_rev = 0.10f;
-  d_thr = 0.0001f;
-  m_mix = 1.0f - s_mix;
-  thr_m_mix = 1.0f - thr_l_mix;
-  d_rev_ratio = -(1.0f - d_rev) / d_rev;
+void CIFERLrateSpec::Defaults_init() {
 }
 
-void XCalLearnSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  m_mix = 1.0f - s_mix;
-  thr_m_mix = 1.0f - thr_l_mix;
-  d_rev_ratio = (1.0f - d_rev) / d_rev;
-  if(d_rev > 0.0f)
-    d_rev_ratio = -(1.0f - d_rev) / d_rev;
-  else
-    d_rev_ratio = -1.0f;
-}
+
+////////////////////////////////////////////////////////////////////
 
 void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;

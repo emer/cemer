@@ -261,14 +261,12 @@ void SynDelaySpec::Initialize() {
 
 void CIFERSpec::Initialize() {
   on = false;
-  phase_updt = false;
-  super_gain = .05f;
+  phase = false;
+  super_gain = .1f;
   thal_5b_thr = 0.5f;
   act_5b_thr = 0.5f;
   binary5b = false;
   ti_5b = 0.5f;
-  bg_lrate = 1.0f;
-  fg_lrate = 0.0f;
   Defaults_init();
 }
 
@@ -999,15 +997,10 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
   }
 }
 
-void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  // this integrates from SendDelta and then does further integration
+void LeabraUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  // this integrates from SendDelta into net_raw and gi_syn
   int nt = net->lthreads.n_threads_act;
   float nw_nt = 0.0f;
-
-  LeabraLayer* lay = u->own_lay();
-  if(lay->hard_clamped) return;
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
-
   if(net->NetinPerPrjn()) {
     float nw_inhb = 0.0f;
     for(int g=0; g<u->recv.size; g++) {
@@ -1018,21 +1011,15 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
         float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
 	g_nw_nt += ndval;
         ndval = 0.0f;           // zero immediately upon use -- for threads
-        // note: if another thread in async mode is still in SendDelta, it could
-        // theoretically be writing to this value at the same time we're zeroing
-        // causing data corruption -- these are the risks..
       }
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-      // todo: incorporate finer-grained inhib here..
+      // todo? incorporate finer-grained inhib here?
       if(cs->inhib)
 	nw_inhb += g_nw_nt;
       else
 	nw_nt += g_nw_nt;
 
-      recv_gp->net_raw += g_nw_nt;
-      // todo: not clear if we need this at this point..
-      // u->net += dt.integ * dt.net_dt * (tot_net - u->net);
-      // u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
+      recv_gp->net_raw += g_nw_nt; // note: direct assignment to raw, no time integ
     }
     u->net_delta = nw_nt;
     u->gi_delta = nw_inhb;
@@ -1064,33 +1051,29 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
   
   u->net_raw += u->net_delta;
-  float tot_net = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT)) + u->net_raw;
-
-  // here are all the extra netin terms:
-  if(u->HasExtFlag(Unit::EXT)) {
-    tot_net += u->ext * ls->clamp.gain;
-  }
-  if(net->net_misc.ti) {
-    tot_net += u->act_ctxt + u->deep5b_net;
-  }
-  if(cifer.on) {
-    tot_net += cifer.super_gain * u->thal * tot_net;
-  }
-  if(da_mod.on && da_mod.mod == DaModSpec::PLUS_CONT &&
-     net->phase == LeabraNetwork::PLUS_PHASE) {
-    tot_net += da_mod.gain * u->dav;
-  }
-
   u->net_delta = 0.0f;  // clear for next use
   u->gi_delta = 0.0f;  // clear for next use
+}
+
+void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  LeabraLayer* lay = u->own_lay();
+  if(lay->hard_clamped) return;
+
+  Compute_NetinRaw(u, net, thread_no);
+  // u->net_raw and u->gi_syn now have proper values integrated from deltas
+
+  float net_syn = u->net_raw;
+  float net_ex = Compute_NetinExtras(net_syn, u, net, thread_no);
+  // this could modify net_syn if it wants..
+  float net_tot = net_syn + net_ex;
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
-    u->net = MAX(tot_net, 0.0f); // store directly for integration
+    u->net = MAX(net_tot, 0.0f); // store directly for integration
     Compute_NetinInteg_Spike_e(u, net);
   }
   else {
-    u->net += dt.integ * dt.net_dt * (tot_net - u->net);
+    u->net += dt.integ * dt.net_dt * (net_tot - u->net);
     u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
   }
 
@@ -1099,6 +1082,28 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
     u->net += Compute_Noise(u, net);
   }
 }
+
+float LeabraUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
+                                          LeabraNetwork* net, int thread_no) {
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
+
+  float net_ex = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT));
+  if(u->HasExtFlag(Unit::EXT)) {
+    net_ex += u->ext * ls->clamp.gain;
+  }
+  if(net->net_misc.ti) {
+    net_ex += u->act_ctxt + u->deep5b_net;
+  }
+  if(cifer.on) {
+    net_ex += cifer.super_gain * u->thal * net_syn;
+  }
+  if(da_mod.on && da_mod.mod == DaModSpec::PLUS_CONT &&
+     net->phase == LeabraNetwork::PLUS_PHASE) {
+    net_ex += da_mod.gain * u->dav * net_syn;
+  }
+  return net_ex;
+}
+
 
 void LeabraUnitSpec::Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net) {
   // netin gets added at the end of the spike_buf -- 0 time is the end
@@ -1623,7 +1628,7 @@ void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
   if(cifer.on) {
-    if(!cifer.phase_updt && net->phase_no == 0) return;
+    if(!cifer.phase && net->phase_no == 0) return;
     if(u->thal >= cifer.thal_5b_thr && u->act_eq >= cifer.act_5b_thr) {
       if(cifer.binary5b) {
         u->deep5b = 1.0f;

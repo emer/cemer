@@ -160,16 +160,15 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUn
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->GetUnitSpec();
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
-  const bool cifer_on = us->cifer.on; // should be global for send, recv..
+  const bool cifer_on = cifer.on;
   LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   float clrate = cur_lrate;
 
   float bg_lrate;
   float fg_lrate;
   if(cifer_on) {
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)rlay->unit_spec.SPtr();
-    bg_lrate = rus->cifer.bg_lrate;
-    fg_lrate = rus->cifer.fg_lrate;
+    bg_lrate = cifer.bg_lrate;
+    fg_lrate = cifer.fg_lrate;
   }
 
   const float su_avg_s = su->avg_s;

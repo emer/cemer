@@ -68,6 +68,66 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(XCalLearnSpec);
+
+class E_API XCalLearnSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
+INHERITED(SpecMemberBase)
+public:
+  bool          raw_l_mix;      // #DEF_false does thr_l_mix specify the actual amount that the long-term average activation  (self organizing, BCM-style) contributes to the floating threshold, or instead should the default COS_DIFF model be used, where we  multiply thr_l_mix by 1 - layer.cos_diff_avg (only for HIDDEN layers -- TARGET layers automatically get l_mix = 0 -- all error-driven learning under this mechanism -- actual val is in layer.cos_diff_avg_lmix) -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), so the effective lmix value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this mix tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
+  float		thr_l_mix;	// #DEF_0.001:1.0 [0.05 max std, .01 for raw_l_mix] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning -- if units should have highly non-uniform distributions of activity, then this value should be set lower to reduce the homeostatic forces
+  float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
+  float         thr_max;        // #DEF_1 #MIN_1 maximum for the final computed floating threshold value that use used in the XCAL equation -- given that activations can only go to 1, the threshold should not go much higher than that -- but some amount higher can be useful for driving the weights down for units that are persistently over-active
+  float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
+  float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
+  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
+  float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
+  float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
+
+  inline float  dWtFun(const float srval, const float thr_p) {
+    float rval;
+    if(srval < d_thr)
+      rval = 0.0f;
+    else if(srval > thr_p * d_rev)
+      rval = (srval - thr_p);
+    else
+      rval = srval * d_rev_ratio;
+    return rval;
+  }
+  // XCAL function for weight change -- the "check mark" function 
+
+  inline float  dWtFun_dgain(const float srval, const float thr_p, const float d_gain) {
+    float rval;
+    if(srval < d_thr)
+      rval = 0.0f;
+    else if(srval >= thr_p)
+      rval = srval - thr_p;
+    else if(srval > thr_p * d_rev)
+      rval = d_gain * (srval - thr_p);
+    else
+      rval = d_gain * srval * d_rev_ratio;
+    return rval;
+  }
+  // version that supports a differential d_gain term -- no longer included in base case
+
+  inline float  SymSbFun(const float wt_val) {
+    return 2.0f * wt_val * (1.0f - wt_val);
+  }
+  // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
+
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  SIMPLE_COPY(XCalLearnSpec);
+  TA_BASEFUNS(XCalLearnSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(WtSigSpec);
 
 class E_API WtSigSpec : public SpecMemberBase {
@@ -157,65 +217,28 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(XCalLearnSpec);
+eTypeDef_Of(CIFERLrateSpec);
 
-class E_API XCalLearnSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
+class E_API CIFERLrateSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 INHERITED(SpecMemberBase)
 public:
-  bool          raw_l_mix;      // #DEF_false does thr_l_mix specify the actual amount that the long-term average activation  (self organizing, BCM-style) contributes to the floating threshold, or instead should the default COS_DIFF model be used, where we  multiply thr_l_mix by 1 - layer.cos_diff_avg (only for HIDDEN layers -- TARGET layers automatically get l_mix = 0 -- all error-driven learning under this mechanism -- actual val is in layer.cos_diff_avg_lmix) -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), so the effective lmix value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this mix tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
-  float		thr_l_mix;	// #DEF_0.001:1.0 [0.05 max std, .01 for raw_l_mix] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning -- if units should have highly non-uniform distributions of activity, then this value should be set lower to reduce the homeostatic forces
-  float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
-  float         thr_max;        // #DEF_1.2 #MIN_1 maximum for the final computed floating threshold value that use used in the XCAL equation -- given that activations can only go to 1, the threshold should not go much higher than that -- but some amount higher can be useful for driving the weights down for units that are persistently over-active
-  float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
-  float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
-  float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
-  float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
-  float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
-
-  inline float  dWtFun(const float srval, const float thr_p) {
-    float rval;
-    if(srval < d_thr)
-      rval = 0.0f;
-    else if(srval > thr_p * d_rev)
-      rval = (srval - thr_p);
-    else
-      rval = srval * d_rev_ratio;
-    return rval;
-  }
-  // XCAL function for weight change -- the "check mark" function 
-
-  inline float  dWtFun_dgain(const float srval, const float thr_p, const float d_gain) {
-    float rval;
-    if(srval < d_thr)
-      rval = 0.0f;
-    else if(srval >= thr_p)
-      rval = srval - thr_p;
-    else if(srval > thr_p * d_rev)
-      rval = d_gain * (srval - thr_p);
-    else
-      rval = d_gain * srval * d_rev_ratio;
-    return rval;
-  }
-  // version that supports a differential d_gain term -- no longer included in base case
-
-  inline float  SymSbFun(const float wt_val) {
-    return 2.0f * wt_val * (1.0f - wt_val);
-  }
-  // symmetric soft bounding function -- factor of 2 to equate with asymmetric sb for overall lrate at a weight value of .5 (= .5)
+  bool          on;             // enable the CIFER differentia learning rates based on thalamic modulation signal
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations -- this is the baseline learning rate prior to adding in contribution of thalamic term: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground activations, as a function of thalamic activation level: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  SIMPLE_COPY(XCalLearnSpec);
-  TA_BASEFUNS(XCalLearnSpec);
+  TA_SIMPLE_BASEFUNS(CIFERLrateSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
   void	Defaults_init();
 };
+
+
 
 eTypeDef_Of(LeabraConSpec);
 
@@ -235,14 +258,15 @@ public:
 
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] #CONDSHOW_ON_learn learning rate -- how fast do the weights change per experience
-  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
+  float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (NOTE: these factors (lrs_mult) multiply lrate to give the cur_lrate value)
-  bool          ignore_unlearnable; // #CAT_Learning ignore unlearnable trials
+  bool          ignore_unlearnable; // #CAT_Learning #CONDSHOW_ON_learn ignore unlearnable trials
 
-  WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
-  FastWtsSpec   fast_wts;       // #CAT_Learning fast weights specifications -- parameters for how fast and slowly adapting weights learning
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
+  WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
+  FastWtsSpec   fast_wts;       // #CAT_Learning #CONDSHOW_ON_learn fast weights specifications -- parameters for how fast and slowly adapting weights learning
+  CIFERLrateSpec cifer;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun

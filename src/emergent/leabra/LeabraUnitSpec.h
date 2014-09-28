@@ -351,14 +351,12 @@ class E_API CIFERSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the CIFER mechanisms (otherwise, deep5b == act and thal is ignored)
-  bool          phase_updt;     // #CONDSHOW_ON_on TI context and deep layer activations update at the end of every phase (e.g., for PFC) -- otherwise update is at the end of every trial (posterior cortex)
   float         super_gain;     // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin -- thal only increases netin otherwise recv'd: netin = (1 + gain * thal) * netin_raw
   float	        thal_5b_thr;    // #CONDSHOW_ON_on #MIN_0 threshold on thal value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
   float	        act_5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
-  bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
-  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
-  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground deep activations: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
+  bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
+  bool          phase;          // #CONDSHOW_ON_on TI context and deep layer activations update at the end of every phase (e.g., for PFC) -- otherwise update is at the end of every trial (posterior cortex)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -378,7 +376,7 @@ class E_API DaModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum ModType {
-    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner, by adding dav * gain to the net input 
+    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner, by adding dav * gain * synaptic_netin to the net input 
     PLUS_POST,			// da modulates plus-phase activations (only), at the end of the plus phase
   };
 
@@ -545,6 +543,11 @@ public:
   // #CAT_Activation send netinput; sender based and only when act changes above a threshold -- only this delta form is supported
   virtual void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
   // #CAT_Activation integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
+    virtual void  Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+    // #IGNORE called by Compute_NetinInteg -- roll up the deltas into net_raw and gi_syn values (or compute net_raw by some other means for special algorithms)
+    virtual float Compute_NetinExtras(float& net_syn, LeabraUnit* u, LeabraNetwork* net,
+                                      int thread_no=-1);
+    // #IGNORE called by Compute_NetinInteg -- get extra excitatory net input factors to add on top of regular synapticaly-generated net inputs, passed as net_syn -- standard items include: bias weights, external soft-clamp input, TI extras (act_ctxt, deep5b_net), CIFER extras: thal (which multiplies syn_net), and da_mod (which multiplies syn_net) -- specialized algorithms can even overwrite net_syn if they need too..
     virtual void Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual excitatory netin conductance value for spiking units by integrating over spike
     virtual void Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net);

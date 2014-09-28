@@ -22,24 +22,37 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class PBWMUnGpData; //
-class PFCLayerSpec; //
+
+eTypeDef_Of(PFCMaintSpec);
+
+class E_API PFCMaintSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
+INHERITED(SpecMemberBase)
+public:
+  float         deep5b_gain;    // how much the deep5b activation drives extra net input to support maintenance in PFC neurons
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(PFCMaintSpec);
+protected:
+  SPEC_DEFAULTS;
+  // void  UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
 
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- works with PFCLayerSpec to implement gated deep-layer context updating dynamics -- p_act_p contains gating time activation state, and misc_1 is 1 if network gated last trial
+  // PFC unit spec -- just adds extra maintenance net input in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance
 INHERITED(LeabraUnitSpec)
 public:
+  PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
 
-  virtual PBWMUnGpData*  PFCUnGpData(LeabraUnit* u, LeabraNetwork* net, 
-                                     PFCLayerSpec*& pfcls);
-  // returns true if my stripe gated this trial -- this is only valid in PostSettle for phase_no == 1 or thereafter (TI_ComputeCtxtAct)
-
-  void  Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) override;
-  void	Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override;
-  void	TI_Compute_CtxtAct(LeabraUnit* u, LeabraNetwork* net) override;
-  void  PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
+  float Compute_NetinExtras(float& net_syn, LeabraUnit* u, LeabraNetwork* net,
+                            int thread_no=-1) override;
 
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);
 protected:
