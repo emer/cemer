@@ -17,7 +17,6 @@
 #include <Network>
 #include <LeabraLayer>
 #include <SNrThalLayerSpec>
-#include <PFCLayerSpec>
 #include <MatrixLayerSpec>
 
 TA_BASEFUNS_CTORS_DEFN(PVrToMatrixGoPrjnSpec);

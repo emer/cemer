@@ -394,7 +394,7 @@ public:
 
   virtual bool  TI_UpdateContextTest(LeabraLayer* lay, LeabraNetwork* net)
   { return true; }
-  // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  // #CAT_TI test whether TI context should be updated for this layer or not
   virtual void  TI_Compute_Deep5bAct(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TI compute CIFER deep 5b activation from thal and act_p
   virtual void  TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);

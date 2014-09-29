@@ -16,14 +16,11 @@
 #include "LeabraTICtxtLayerSpec.h"
 #include <LeabraNetwork>
 #include <LayerActUnitSpec>
-#include <PFCLayerSpec>
-#include <PBWMUnGpData>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtLayerSpec);
 
 void LeabraTICtxtLayerSpec::Initialize() {
   act_val = P_ACT_P;
-  pfc_gate_dynamic_updt = false;
   Defaults_init();
 }
 
@@ -52,14 +49,6 @@ bool LeabraTICtxtLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                      "Requires one unit in recv projection!")) {
     return false;
   }
-  if(pfc_gate_dynamic_updt) {
-    LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
-    if(lay->CheckError(!fmlay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec),
-                       quiet, rval,
-                       "pfc_gate_dynamic_updt only works if it is receiving from a pfc layer spec layer -- not the case now -- turning that option off for now")) {
-      pfc_gate_dynamic_updt = false;
-    }
-  }
 
   return rval;
 }
@@ -86,15 +75,6 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
     }
     else {
       u->act = su->act_ctxt;
-    }
-    if(pfc_gate_dynamic_updt) {
-      int rgpidx = u->UnitGpIdx();
-      if(rgpidx >= 0) {
-        PBWMUnGpData* gpd = (PBWMUnGpData*)fmlay->ungp_data.FastEl(rgpidx);
-        if(gpd->go_fired_trial) {
-          u->act = su->act;
-        }
-      }
     }
     u->act_lrn = u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;            // I'm fully settled!

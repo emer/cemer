@@ -17,7 +17,6 @@
 #include <LeabraNetwork>
 #include <MatrixLayerSpec>
 #include <PBWMUnGpData>
-#include <PFCLayerSpec>
 
 #include <taMisc>
 

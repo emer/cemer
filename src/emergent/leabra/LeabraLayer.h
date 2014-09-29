@@ -197,7 +197,7 @@ public:
 
   bool	TI_UpdateContextTest(LeabraNetwork* net)
   { return spec->TI_UpdateContextTest(this, net); }
-  // #CAT_TI test whether TI context should be updated for this layer or not -- for gated layers (e.g., PFCLayerSpec), this is modulated by gating signal
+  // #CAT_TI test whether TI context should be updated for this layer or not
   void	TI_Compute_Deep5bAct(LeabraNetwork* net)
   { spec->TI_Compute_Deep5bAct(this, net); }
   // #CAT_TI compute deep 5b activations from thal and act_eq

@@ -85,13 +85,10 @@ set(leabra_HEADS_MAKETA
   SNrThalLayerSpec.h
   MatrixCon.h
   MatrixConSpec.h
-  MatrixBiasSpec.h
-  MatrixUnitSpec.h
+    MatrixUnitSpec.h
   MatrixLayerSpec.h
-  PFCDeepGatedConSpec.h
-  PFCUnitSpec.h
-  PFCLayerSpec.h
-
+    PFCUnitSpec.h
+  
   GpCustomPrjnSpecBase.h
   PFCLVPrjnSpec.h
   SNrPrjnSpec.h
@@ -106,8 +103,7 @@ set(leabra_HEADS_MAKETA
   SubiculumLayerSpec.h
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
-  PFCConSpec.h
-  CerebGranuleUnitSpec.h
+    CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   ClampDaLayerSpec.h
 )
@@ -212,13 +208,10 @@ set(leabra_SRCS
   SNrThalLayerSpec.cpp
   MatrixCon.cpp
   MatrixConSpec.cpp
-  MatrixBiasSpec.cpp
-  MatrixUnitSpec.cpp
+    MatrixUnitSpec.cpp
   MatrixLayerSpec.cpp
-  PFCDeepGatedConSpec.cpp
-  PFCUnitSpec.cpp
-  PFCLayerSpec.cpp
-
+    PFCUnitSpec.cpp
+  
   GpCustomPrjnSpecBase.cpp
   PFCLVPrjnSpec.cpp
   SNrPrjnSpec.cpp
@@ -233,8 +226,7 @@ set(leabra_SRCS
   SubiculumLayerSpec.cpp
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
-  PFCConSpec.cpp
-  CerebGranuleUnitSpec.cpp
+    CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   ClampDaLayerSpec.cpp
 )

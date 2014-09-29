@@ -275,12 +275,12 @@ void CIFERSpec::Defaults_init() {
 
 void DaModSpec::Initialize() {
   on = false;
-  gain = .1f;
+  minus = 0.0f;
+  plus = 0.01f;
   Defaults_init();
 }
 
 void DaModSpec::Defaults_init() {
-  mod = PLUS_CONT;
 }
 
 void NoiseAdaptSpec::Initialize() {
@@ -1097,9 +1097,13 @@ float LeabraUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
   if(cifer.on) {
     net_ex += cifer.super_gain * u->thal * net_syn;
   }
-  if(da_mod.on && da_mod.mod == DaModSpec::PLUS_CONT &&
-     net->phase == LeabraNetwork::PLUS_PHASE) {
-    net_ex += da_mod.gain * u->dav * net_syn;
+  if(da_mod.on) {
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      net_ex += da_mod.plus * u->dav * net_syn;
+    }
+    else {                      // MINUS_PHASE
+      net_ex += da_mod.minus * u->dav * net_syn;
+    }
   }
   return net_ex;
 }
@@ -1588,7 +1592,6 @@ void LeabraUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
         u->act_p = use_act;
         u->act_dif = u->act_p - u->act_m;
         u->net_prv_trl = u->net; // only at end of plus
-        Compute_DaMod_PlusPost(u, net);
         Compute_ActTimeAvg(u, net);
       }
     }
@@ -1611,17 +1614,6 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net) {
   u->act_avg += act_misc.avg_dt * (u->act_eq - u->act_avg);
 }
 
-void LeabraUnitSpec::Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net) {
-  if(!da_mod.on || (da_mod.mod != DaModSpec::PLUS_POST)) return;
-  float dact = da_mod.gain * u->dav * u->act_m; // delta activation
-  if(dact > 0.0f) {
-    dact *= 1.0f - u->act_p;
-  }
-  else {
-    dact *= u->act_p;
-  }
-  u->act_p = act_range.Clip(u->act_p + dact);
-}
 
 /////////////////////////////////////////////////
 //              Leabra TI

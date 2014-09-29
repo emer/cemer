@@ -17,7 +17,6 @@
 #include <Network>
 #include <LeabraLayer>
 #include <SNrThalLayerSpec>
-#include <PFCLayerSpec>
 #include <MatrixLayerSpec>
 
 TA_BASEFUNS_CTORS_DEFN(SNrPrjnSpec);
@@ -32,11 +31,12 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   int snr_st_idx = -1;
   if(to_lay->GetLayerSpec()->InheritsFrom(&TA_SNrThalLayerSpec)) {
     SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)to_lay->GetLayerSpec();
-    if(fm_lay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) {
-      PFCLayerSpec* pfcls = (PFCLayerSpec*)fm_lay->GetLayerSpec();
-      snr_st_idx = snr_ls->SNrThalStartIdx(to_lay, pfcls->pfc_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
-    }
-    else if(fm_lay->GetLayerSpec()->InheritsFrom(&TA_MatrixLayerSpec)) {
+    // if(fm_lay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) {
+    //   PFCLayerSpec* pfcls = (PFCLayerSpec*)fm_lay->GetLayerSpec();
+    //   snr_st_idx = snr_ls->SNrThalStartIdx(to_lay, pfcls->pfc_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
+    // }
+    //else
+    if(fm_lay->GetLayerSpec()->InheritsFrom(&TA_MatrixLayerSpec)) {
       MatrixLayerSpec* mtxls = (MatrixLayerSpec*)fm_lay->GetLayerSpec();
       snr_st_idx = snr_ls->SNrThalStartIdx(to_lay, mtxls->gating_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
     }
@@ -48,11 +48,12 @@ void SNrPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
   else if(fm_lay->GetLayerSpec()->InheritsFrom(&TA_SNrThalLayerSpec)) {
     SNrThalLayerSpec* snr_ls = (SNrThalLayerSpec*)fm_lay->GetLayerSpec();
-    if(to_lay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) {
-      PFCLayerSpec* pfcls = (PFCLayerSpec*)to_lay->GetLayerSpec();
-      snr_st_idx = snr_ls->SNrThalStartIdx(fm_lay, pfcls->pfc_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
-    }
-    else if(to_lay->GetLayerSpec()->InheritsFrom(&TA_MatrixLayerSpec)) {
+    // if(to_lay->GetLayerSpec()->InheritsFrom(&TA_PFCLayerSpec)) {
+    //   PFCLayerSpec* pfcls = (PFCLayerSpec*)to_lay->GetLayerSpec();
+    //   snr_st_idx = snr_ls->SNrThalStartIdx(fm_lay, pfcls->pfc_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
+    // }
+    // else
+    if(to_lay->GetLayerSpec()->InheritsFrom(&TA_MatrixLayerSpec)) {
       MatrixLayerSpec* mtxls = (MatrixLayerSpec*)to_lay->GetLayerSpec();
       snr_st_idx = snr_ls->SNrThalStartIdx(fm_lay, mtxls->gating_type, n_in, n_mnt, n_mnt_out, n_out, n_out_mnt);
     }

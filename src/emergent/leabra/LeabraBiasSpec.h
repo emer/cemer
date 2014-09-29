@@ -32,7 +32,7 @@ class E_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
 public:
-  float		dwt_thresh;  // #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
+  float		dwt_thresh;  // #CONDSHOW_ON_learn #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
                                            LeabraLayer* rlay) override;

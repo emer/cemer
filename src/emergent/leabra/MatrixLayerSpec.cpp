@@ -20,7 +20,6 @@
 #include <MatrixConSpec>
 #include <MarkerConSpec>
 // #include <PVLVDaLayerSpec>
-#include <PFCLayerSpec>
 
 #include <taMisc>
 
@@ -313,8 +312,8 @@ float MatrixLayerSpec::Compute_NoGoDeepGain_ugp(LeabraLayer* lay,
   if(matrix.nogo_deep_gain == 0.0f) return 0.0f;
 
   int pfc_prjn_idx = 0; // actual arg value doesn't matter
-  LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
-  if(!pfc_lay) return 0.0f;
+  // LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
+  // if(!pfc_lay) return 0.0f;
   Projection* prjn = lay->projections.SafeEl(pfc_prjn_idx);
   if(!prjn) return 0.0f;
   if(!prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) return 0.0f;

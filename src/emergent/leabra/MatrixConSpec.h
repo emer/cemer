@@ -94,21 +94,6 @@ public:
     }
   }
 
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                    LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
-  }
-
   TA_SIMPLE_BASEFUNS(MatrixConSpec);
 protected:
   SPEC_DEFAULTS;

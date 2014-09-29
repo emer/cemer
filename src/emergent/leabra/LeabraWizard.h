@@ -56,8 +56,9 @@ public:
   virtual bool 	TD(LeabraNetwork* net, bool bio_labels = false, bool td_mod_all = false);
   // #MENU_BUTTON #MENU_SEP_BEFORE configure standard TD reinforcement learning layers; bio_labels = use biologically-based labels for layers, else functional; td_mod_all = have td value modulate all the regular units in the network
 
-  virtual bool 	PVLV(LeabraNetwork* net, bool da_mod_all = false);
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system); da_mod_all = have da value modulate all the regular units in the network
+  virtual bool 	PVLV(LeabraNetwork* net, int n_pos_pv=1, int n_neg_pv=1,
+                     bool da_mod_all = false);
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure PVLV (pavlovian primary value and learned value) learning layers in a network -- provides a simulated dopamine signal that reflects unexpected primary rewards through interaction of PV (primary value) and LV (learned value) systems -- this is the goal-driven version; n_pos_pv = number of positive PV states (positive outcomes); n_neg_pv = number of negative PV states (negative outcomes); da_mod_all = have vta dopamine value modulate all the regular units in the network
 
   virtual bool 	PVLV_Specs(LeabraNetwork* net);
   // create and configure PVLV (pavlovian primary value and learned value) specs -- these are always created in a group called PVLV

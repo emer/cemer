@@ -42,15 +42,22 @@
 #include <TDRewIntegLayerSpec>
 #include <TdLayerSpec>
 
+#include <PPTgUnitSpec>
+#include <LHbRMTgUnitSpec>
+#include <LearnDriverLayerSpec>
+#include <VTALayerSpec>
+#include <DRNLayerSpec>
+#include <VSPatchLayerSpec>
+#include <LeabraDeltaConSpec>
+#include <LearnFlagDeltaConSpec>
+#include <LearnFlagHebbConSpec>
+
+
 #include <SNrThalLayerSpec>
-#include <MatrixUnitSpec>
-#include <MatrixLayerSpec>
+//#include <MatrixUnitSpec>
+//#include <MatrixLayerSpec>
 #include <MatrixConSpec>
-#include <MatrixBiasSpec>
 #include <PFCUnitSpec>
-#include <PFCLayerSpec>
-#include <PFCConSpec>
-#include <PFCDeepGatedConSpec>
 #include <LeabraTICtxtLayerSpec>
 
 #include <SNrPrjnSpec>
@@ -511,8 +518,6 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     lay->SetUnitType(&TA_LeabraTdUnit);
     // todo: add any new bg layer exclusions here!
     if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda
-       && !laysp->InheritsFrom(&TA_PFCLayerSpec)
-       && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
       other_lays.Link(lay);
       if(lay->layer_type == Layer::HIDDEN)
@@ -707,141 +712,157 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
       return false;
   }
 
-//   String pvlvprefix = "PVLV";
-//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
-//   if(!pvlvspgp) return false;
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  if(!pvlvspgp) return false;
 
-//   FMSpec(LeabraUnitSpec, pv_units, pvlvspgp, "PVUnits");
-//   FMChild(LeabraUnitSpec, lv_units, pv_units, "LVUnits");
-//   FMSpec(LeabraUnitSpec, da_units, pvlvspgp, "DaUnits");
+  FMSpec(LeabraUnitSpec, pvlv_units, pvlvspgp, "PVLVUnits");
+  FMChild(LHbRMTgUnitSpec, lhbrmtg_units, pvlv_units, "LHbRMTgUnits");
+  FMChild(PPTgUnitSpec, pptg_units, pvlv_units, "PPTgUnits");
+  FMChild(LeabraUnitSpec, vta_units, pvlv_units, "VTAUnits");
+  FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
+  FMChild(LeabraUnitSpec, bla_units, pvlv_units, "BLAUnits");
+  FMChild(LeabraUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
+  FMChild(LeabraUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
+  FMChild(LeabraUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
+  FMChild(LeabraUnitSpec, vsmi_units, pvlv_units, "VSMatrixIndirUnits");
 
-//   FMSpec(PVConSpec, pvi_cons, pvlvspgp, "PViCons");
-//   FMChild(PVrConSpec, pvr_cons, pvi_cons, "PVrCons");
-//   FMChild(PVConSpec, lve_cons, pvi_cons, "LVeCons");
-//   FMChild(PVConSpec, lvi_cons, lve_cons, "LViCons");
-//   FMChild(NVConSpec, nv_cons, pvi_cons, "NVCons");
-//   FMSpec(LeabraBiasSpec, bg_bias, pvlvspgp, "BgBias");
-//   FMSpec(MarkerConSpec, marker_cons, pvlvspgp, "PvlvMarker");
+  FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
+  FMChild(LeabraBiasSpec, lrnbias_cons, pvlv_cons, "PVLVLearnBias");
+  FMChild(LearnFlagDeltaConSpec, lrnfmpv_cons, pvlv_cons, "LearnFromPV");
+  FMChild(LearnFlagHebbConSpec, lrnfmpv_hebb_cons, pvlv_cons, "LearnFromPVHebb");
+  FMChild(LeabraDeltaConSpec, vspatch_cons, pvlv_cons, "VSPatchCons");
+  FMChild(LeabraDeltaConSpec, vsmatrix_cons, pvlv_cons, "VSMatrixCons");
 
-//   FMSpec(ScalarValLayerSpec, laysp, pvlvspgp, "PvlvLayer");
-//   FMChild(LeabraLayerSpec, rewtargsp, laysp, "RewTargLayer");
-//   FMChild(ExtRewLayerSpec, pvesp, laysp, "PVeLayer");
-//   FMChild(PVrLayerSpec, pvrsp, laysp, "PVrLayer");
-//   FMChild(PViLayerSpec, pvisp, laysp, "PViLayer");
-//   FMChild(LVeLayerSpec, lvesp, laysp, "LVeLayer");
-//   FMChild(NVLayerSpec, nvsp, laysp, "NVLayer");
-//   FMChild(PVLVDaLayerSpec, dasp, laysp, "VTALayer");
+  FMSpec(LeabraConSpec, fix_cons, pvlvspgp, "PVLVFixedCons");
+  FMChild(LeabraBiasSpec, fix_bias, fix_cons, "PVLVFixedBias");
+  FMChild(LeabraConSpec, fix_strong, fix_cons, "PVLVFixedStrong");
 
-//   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PvlvFullPrjn");
-//   FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PvlvOneToOne");
-//   FMSpec(OneToOnePrjnSpec, vtaonetoone, pvlvspgp, "VTAOneToOnePrjn");
+  FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
+
+  FMSpec(LeabraLayerSpec, laysp, pvlvspgp, "PVLVLayers");
+  FMChild(LearnDriverLayerSpec, pvsp, laysp, "PV");
+  FMChild(LeabraLayerSpec, pptrmtgsp, laysp, "PPTgRMTg");
+  FMChild(VTALayerSpec, vtasp, laysp, "VTA");
+  FMChild(DRNLayerSpec, drnsp, laysp, "DRN");
+  FMChild(LeabraLayerSpec, amgysp, laysp, "Amyg");
+  FMChild(VSPatchLayerSpec, vspsp, laysp, "VSPatch");
+  FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrix");
+
+  FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PVLVFullPrjn");
+  FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PVLVOneToOne");
+  FMSpec(GpOneToOnePrjnSpec, gponetoone, pvlvspgp, "PVLVGpOneToOne");
 
 //   //////////////////////////////////////////////////////////////////////////////////
 //   // set default spec parameters
 
-//   pvlvspgp->Defaults();
+  pvlvspgp->Defaults();
 
-//   pvi_cons->UpdateAfterEdit();
-//   bg_bias->SetUnique("lrate", true);
-//   bg_bias->lrate = 0.0f;
-//   bg_bias->SetUnique("learn", true);
-//   bg_bias->learn = false;
+  //////  Units
+  pvlv_units->UpdateAfterEdit();
+  pvlv_units->bias_spec.SetSpec(fix_bias);
 
-//   pvr_cons->SetUnique("lrate", true);
-//   pvi_cons->SetUnique("lrate", true);
-//   nv_cons->SetUnique("lrate", true);
-//   lve_cons->SetUnique("lrate", true);
-//   lvi_cons->SetUnique("lrate", true);
+  vta_units->SetUnique("act_range", true);
+  vta_units->act_range.max = 2.0f;
+  vta_units->act_range.min = -2.0f;
+  vta_units->act_range.UpdateAfterEdit();
+  vta_units->SetUnique("clamp_range", true);
+  vta_units->clamp_range.max = 2.0f;
+  vta_units->clamp_range.min = -2.0f;
+  vta_units->clamp_range.UpdateAfterEdit();
 
-//   pvi_cons->SetUnique("lmix", true);
-//   pvi_cons->lmix.err_sb = false;
-//   pvi_cons->SetUnique("rnd", true);
-//   pvi_cons->rnd.mean = 0.1f;
-//   pvi_cons->rnd.var = 0.0f;
+  cem_units->SetUnique("da_mod", true);
+  cem_units->da_mod.on = true;
+  cem_units->da_mod.minus = 0.0f;
+  cem_units->da_mod.plus = 0.0f; // todo: could add da modulation..
 
-//   pvi_cons->lrate = .01f;
-//   pvr_cons->lrate = .1f;
-//   nv_cons->lrate = .0005f;
-//   lve_cons->lrate = .01f;
-//   lvi_cons->lrate = .001f;
+  bla_units->SetUnique("da_mod", true);
+  bla_units->da_mod.on = true;
+  bla_units->da_mod.minus = 0.0f;
+  bla_units->da_mod.plus = 0.0f; // todo: could add da modulation..
 
-//   //vtaonetoone->send_start = 1; // this scheme compiled, but didn't get rid of error message so abandoning
+  // todo: could add vspatch da mod
 
-//   // default scalar val for all types
-//   laysp->scalar.rep = ScalarValSpec::LOCALIST;
-//   laysp->unit_range.min = 0.0f;  laysp->unit_range.max = 1.0f;
-//   laysp->unit_range.UpdateAfterEdit();
-//   laysp->Defaults();
-//   laysp->bias_val.wt = ScalarValBias::NO_WT;
-//   laysp->bias_val.val = 0.5f;
-//   laysp->bias_val.un = ScalarValBias::NO_UN;
+  vsmd_units->SetUnique("da_mod", true);
+  vsmd_units->da_mod.on = true;
+  vsmd_units->da_mod.minus = 0.0f;
+  vsmd_units->da_mod.plus = 0.01f;
 
-//   nvsp->SetUnique("bias_val", true);
-//   nvsp->bias_val.un = ScalarValBias::BWT;
-//   nvsp->bias_val.wt = ScalarValBias::NO_WT;
-//   nvsp->bias_val.val = 1.0f;
+  vsmi_units->SetUnique("da_mod", true);
+  vsmi_units->da_mod.on = true;
+  vsmi_units->da_mod.minus = 0.0f;
+  vsmi_units->da_mod.plus = -0.01f; // nogo / opposite sign
 
-//   pv_units->Defaults();
+  //////  Cons
+  pvlv_cons->UpdateAfterEdit();
+  pvlv_cons->xcal.raw_l_mix = true;
+  pvlv_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
+  pvlv_cons->rnd.mean = 0.01f;
+  pvlv_cons->rnd.var = 0.0f;
 
-//   da_units->SetUnique("act_range", true);
-//   da_units->act_range.max = 2.0f;
-//   da_units->act_range.min = -2.0f;
-//   da_units->act_range.UpdateAfterEdit();
-//   da_units->SetUnique("clamp_range", true);
-//   da_units->clamp_range.max = 2.0f;
-//   da_units->clamp_range.min = -2.0f;
-//   da_units->clamp_range.UpdateAfterEdit();
+  fix_cons->UpdateAfterEdit();
+  fix_cons->xcal.raw_l_mix = true;
+  fix_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
+  fix_cons->learn = false;
+  fix_cons->rnd.mean = 0.9f;
+  fix_cons->rnd.var = 0.0f;
 
-//   vtaonetoone->send_start = 1;  // key feature
+  fix_strong->SetUnique("wt_scale", true);
+  fix_strong->wt_scale.abs = 3.0f;
 
-//   //////////////////
-//   // Update Everyone
+  laysp->UpdateAfterEdit();
+  laysp->lay_inhib.gi = 1.0f;
+  laysp->lay_inhib.ff = 0.8f;
+  laysp->lay_inhib.fb = 0.0f;
+  laysp->avg_act.init = 0.25f;
+  laysp->avg_act.fixed = true;
+  laysp->inhib_misc.self_fb = 0.3f;
+  laysp->decay.event = 0.0f;
 
-//   pvesp->UpdateAfterEdit();
-//   pvisp->UpdateAfterEdit();
-//   lvesp->UpdateAfterEdit();
-//   // lvisp->UpdateAfterEdit();
-//   pvrsp->UpdateAfterEdit();
-//   nvsp->UpdateAfterEdit();
+  pvsp->SetUnique("decay", true);
+  pvsp->decay.event = 1.0f;
 
-//   for(int j=0;j<pvlvspgp->leaves;j++) {
-//     BaseSpec* sp = (BaseSpec*)pvlvspgp->Leaf(j);
-//     sp->UpdateAfterEdit();
-//   }
+  vtasp->SetUnique("decay", true);
+  vtasp->decay.event = 1.0f;
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // control panel
+  vsmsp->SetUnique("del_inhib", true);
+  vsmsp->del_inhib.on = true;
+  vsmsp->del_inhib.prv_trl = 4.0f;
+  vsmsp->del_inhib.prv_phs = 0.0f;
 
-//   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
-//   ControlPanel* cp = proj->FindMakeControlPanel("PVLV");
-//   if(cp) {
-//     cp->SetUserData("user_pinned", true);
+  //////////////////
+  // Update Everyone
 
-//     pvr_cons->AddToControlPanelNm("lrate", cp, "pvr");
-//     pvi_cons->AddToControlPanelNm("lrate", cp, "pvi");
-//     lve_cons->AddToControlPanelNm("lrate", cp, "lve");
-//     // lvi_cons->AddToControlPanelNm("lrate", cp, "lvi");
-//     nv_cons->AddToControlPanelNm("lrate", cp, "nv");
-//     pvesp->AddToControlPanelNm("rew", cp, "pve");
-//     pvisp->AddToControlPanelNm("pv", cp, "pvi");
-//     lvesp->AddToControlPanelNm("lv", cp, "lve");
-//     pvrsp->AddToControlPanelNm("pv_detect", cp, "pvr");
-//     nvsp->AddToControlPanelNm("nv", cp, "nv");
-// //     pvisp->AddToControlPanelNm("scalar", cp, "pvi");
-// //     lvesp->AddToControlPanelNm("scalar", cp, "lve");
-// //     pvisp->AddToControlPanelNm("bias_val", cp, "pvi");
-// //     lvesp->AddToControlPanelNm("bias_val", cp, "lve");
-// //    dasp->AddToControlPanelNm("avg_da", cp, "vta");
-//     dasp->AddToControlPanelNm("da", cp, "vta");
-//     cp->EditPanel(true, true);
-//   }
+  pvlv_units->UpdateAfterEdit();
+  pvlv_cons->UpdateAfterEdit();
+  laysp->UpdateAfterEdit();
+
+  for(int j=0;j<pvlvspgp->leaves;j++) {
+    BaseSpec* sp = (BaseSpec*)pvlvspgp->Leaf(j);
+    sp->UpdateAfterEdit();
+  }
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // control panel
+
+  LeabraProject* proj = GET_MY_OWNER(LeabraProject);
+  ControlPanel* cp = proj->FindMakeControlPanel("PVLV");
+  if(cp) {
+     // cp->SetUserData("user_pinned", true);
+
+    pvlv_cons->AddToControlPanelNm("lrate", cp, "pvlv");
+    vsmd_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_dir");
+    vsmi_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_ind");
+    
+    cp->EditPanel(true, true);
+  }
 
   return true;
 }
 
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
-bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
+bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_mod_all) {
   LeabraProject* proj = GET_MY_OWNER(LeabraProject);
   if(!net) {
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -853,176 +874,225 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, bool da_mod_all) {
     proj->undo_mgr.SaveUndo(net, "Wizard::PVLV before -- actually saves network specifically");
   }
 
-//   String msg = "Configuring Pavlov (PVLV) Layers:\n\n\
-//  There is one thing you will need to check manually after this automatic configuration\
-//  process completes (this note will be repeated when things complete --- there may be some\
-//  messages in the interim):\n\n";
+  String msg = "Configuring Pavlov (PVLV) Layers:\n\n";
+ // There is one thing you will need to check manually after this automatic configuration\
+ // process completes (this note will be repeated when things complete --- there may be some\
+ // messages in the interim):\n\n";
 
-//   String man_msg = "1. Check that connection(s) were made from all appropriate output layers\
-//  to the PVe (ExtRewLayerSpec) layer, using the MarkerConSpec (MarkerCons) Con spec.\
-//  This will provide the error signal to the system based on output error performance.\n\n";
+ //  String man_msg = "1. Check that connection(s) were made from all appropriate output layers\
+ // to the PVe (ExtRewLayerSpec) layer, using the MarkerConSpec (MarkerCons) Con spec.\
+ // This will provide the error signal to the system based on output error performance.\n\n";
 
-//   msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
-//  will be set.  If there are any actual errors which must be corrected before\
-//  the network will run, you will see a message to that effect --- you will then need to\
-//  re-run this configuration process to make sure everything is OK.  When you press\
-//  Re/New/Init on the control process these same checks will be performed, so you\
-//  can be sure everything is ok.";
-//   taMisc::Confirm(msg);
+  msg += "\n\nThe configuration will now be checked and a number of default parameters\
+ will be set.  If there are any actual errors which must be corrected before\
+ the network will run, you will see a message to that effect --- you will then need to\
+ re-run this configuration process to make sure everything is OK.  When you press\
+ Re/New/Init on the control process these same checks will be performed, so you\
+ can be sure everything is ok.";
+  taMisc::Confirm(msg);
 
-//   net->RemoveUnits();
+  net->RemoveUnits();
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // make layers
+  //////////////////////////////////////////////////////////////////////////////////
+  // make layers
 
-//   bool  lve_new = false;
-//   bool  pvr_new = false;
-//   bool  nv_new = false;
-//   String pvenm = "PVe";  String pvinm = "PVi";  String pvrnm = "PVr";
-//   String lvenm = "LVe";  String lvinm = "LVi";  String nvnm = "NV";
-//   String vtanm = "VTA";
+  bool new_laygp = false;
+  Layer_Group* pv_gp = net->FindMakeLayerGroup("PVLV_PV", NULL, new_laygp);
+  Layer_Group* amyg_gp = net->FindMakeLayerGroup("PVLV_Amyg", NULL, new_laygp);
+  Layer_Group* vs_gp = net->FindMakeLayerGroup("PVLV_VS", NULL, new_laygp);
+  Layer_Group* da_gp = net->FindMakeLayerGroup("PVLV_DA", NULL, new_laygp);
 
-//   bool new_laygp = false;
-//   Layer_Group* laygp = net->FindMakeLayerGroup("PVLV", NULL, new_laygp);
+  LeabraLayer* pos_pv = (LeabraLayer*)pv_gp->FindMakeLayer("PosPV");
+  LeabraLayer* neg_pv = (LeabraLayer*)pv_gp->FindMakeLayer("NegPV");
+  LeabraLayer* pos_bs = (LeabraLayer*)pv_gp->FindMakeLayer("PosBodyState");
+  LeabraLayer* neg_bs = (LeabraLayer*)pv_gp->FindMakeLayer("NegBodyState");
 
-//   LeabraLayer* rew_targ_lay;
-//   LeabraLayer* pve;  LeabraLayer* pvr; LeabraLayer* pvi; LeabraLayer* lve;
-//   LeabraLayer* lvi = NULL;
-//   LeabraLayer* nv;   LeabraLayer* vta;
+  LeabraLayer* poslv_cem = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_CeM");
+  LeabraLayer* poslv_bla = (LeabraLayer*)amyg_gp->FindMakeLayer("PosLV_BLA");
+  LeabraLayer* neglv_bla = (LeabraLayer*)amyg_gp->FindMakeLayer("NegLV_BLA");
 
-//   bool dumbo;
-//   rew_targ_lay = (LeabraLayer*)laygp->FindMakeLayer("RewTarg");
-//   pve = (LeabraLayer*)laygp->FindMakeLayer(pvenm, NULL, dumbo);
-//   pvr = (LeabraLayer*)laygp->FindMakeLayer(pvrnm, NULL, pvr_new);
-//   pvi = (LeabraLayer*)laygp->FindMakeLayer(pvinm, NULL, dumbo);
-//   lve = (LeabraLayer*)laygp->FindMakeLayer(lvenm, NULL, lve_new);
-//   // lvi = (LeabraLayer*)laygp->FindMakeLayer(lvinm, NULL, dumbo);
-//   nv =  (LeabraLayer*)laygp->FindMakeLayer(nvnm, NULL, nv_new);
-//   vta = (LeabraLayer*)laygp->FindMakeLayer(vtanm, NULL, dumbo, "DA");
-//   if(rew_targ_lay == NULL || lve == NULL || pve == NULL || pvi == NULL || vta == NULL) return false;
+  LeabraLayer* vspd = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchDirect_Neg");
+  LeabraLayer* vspi = (LeabraLayer*)vs_gp->FindMakeLayer("VSPatchIndir_Pos");
+  LeabraLayer* vsmd = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixDirect_Pos");
+  LeabraLayer* vsmi = (LeabraLayer*)vs_gp->FindMakeLayer("VSMatrixIndir_Neg");
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // collect layer groups
+  LeabraLayer* pptg = (LeabraLayer*)da_gp->FindMakeLayer("PPTg");
+  LeabraLayer* lhb = (LeabraLayer*)da_gp->FindMakeLayer("LHbRMTg");
+  LeabraLayer* vta = (LeabraLayer*)da_gp->FindMakeLayer("VTA");
+  LeabraLayer* drn = (LeabraLayer*)da_gp->FindMakeLayer("DRN");
+ 
+  //////////////////////////////////////////////////////////////////////////////////
+  // collect layer groups
 
-//   Layer_Group other_lays;
-//   Layer_Group hidden_lays;
-//   Layer_Group output_lays;
-//   Layer_Group input_lays;
-//   int i;
-//   for(i=0;i<net->layers.leaves;i++) {
-//     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
-//     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
-//     // todo: add any new bg layer exclusions here!
-//     if(lay != rew_targ_lay && lay != lve && lay != pve && lay != pvr && lay != pvi &&
-//        lay != lvi && lay != nv && lay != vta
-//        && !laysp->InheritsFrom(&TA_PFCLayerSpec)
-//        && !laysp->InheritsFrom(&TA_MatrixLayerSpec)
-//        && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
-//       other_lays.Link(lay);
-//       if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
-//       if(lay->layer_type == Layer::HIDDEN)
-//         hidden_lays.Link(lay);
-//       else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
-//         input_lays.Link(lay);
-//       else if(lay->name.contains("Out"))
-//         output_lays.Link(lay);
-//       else
-//         input_lays.Link(lay);   // default to input -- many are now TARGET in TI
-//     }
-//   }
+  Layer_Group other_lays;
+  Layer_Group hidden_lays;
+  Layer_Group output_lays;
+  Layer_Group input_lays;
+  int i;
+  for(i=0;i<net->layers.leaves;i++) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(i);
+    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+    if(lay->owner == pv_gp || lay->owner == amyg_gp || lay->owner == vs_gp
+       || lay->owner == da_gp)
+      continue;
+    other_lays.Link(lay);
+    if(lay->pos.z == 0) lay->pos.z = 2; // nobody allowed in 0!
+    if(lay->layer_type == Layer::HIDDEN)
+      hidden_lays.Link(lay);
+    else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
+      input_lays.Link(lay);
+    else if(lay->name.contains("Out"))
+      output_lays.Link(lay);
+    else
+      input_lays.Link(lay);   // default to input -- many are now TARGET in TI
+  }
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // make specs
+  //////////////////////////////////////////////////////////////////////////////////
+  // make specs
 
-//   if(!PVLV_Specs(net)) return false;
+  if(!PVLV_Specs(net)) return false;
 
-//   String pvlvprefix = "PVLV";
-//   BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = net->FindMakeSpecGp(pvlvprefix);
 
 //   if(output_lays.size > 0)
 //     PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::OUT_ERR_REW;
 //   else
 //     PvlvSp("PVeLayer",ExtRewLayerSpec)->rew_type = ExtRewLayerSpec::EXT_REW;
 
-//   int n_lv_u;           // number of pvlv-type units
-//   if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::LOCALIST)
-//     n_lv_u = 4;
-//   else if(PvlvSp("PViLayer",PViLayerSpec)->scalar.rep == ScalarValSpec::GAUSSIAN)
-//     n_lv_u = 12;
-//   else
-//     n_lv_u = 21;
+  //////////////////////////////////////////////////////////////////////////////////
+  // set positions & geometries
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // set positions & geometries
+  // todo: see about better options here..
+  pos_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
+  neg_pv->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
+  pos_bs->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
+  neg_bs->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
 
-//   pve->brain_area = ".*/.*/.*/.*/Lateral Hypothalamic area LHA";
-//   pvi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
-//   pvr->brain_area = ".*/.*/.*/.*/Caudate Head";
-//   lve->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
-//   // lvi->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
-//   vta->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
+  poslv_cem->brain_area = ".*/.*/.*/.*/Amygdala Central Nucleus CNA";
+  poslv_bla->brain_area = ".*/.*/.*/.*/Amygdala";
+  neglv_bla->brain_area = ".*/.*/.*/.*/Amygdala";
 
-//   if(new_laygp) {
-//     laygp->pos.z = 0;
-//   }
+  vspd->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vspi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vsmd->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
+  vsmi->brain_area = ".*/.*/.*/.*/Nucleus Accumbens NAc";
 
-//   if(pvr_new) {
-//     pvr->pos.SetXYZ(0,10,0);
-//   }
-//   if(nv_new) {
-//     nv->pos.SetXYZ(8,10,0);
-//   }
+  pptg->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA"; // todo
+  lhb->brain_area = ".*/.*/.*/.*/Lateral Habenula LHB";
+  vta->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA";
+  drn->brain_area = ".*/.*/.*/.*/Ventral Tegmental Area VTA"; // todo
 
-//   if(lve_new) {
-//     pve->pos.SetXYZ(0,0,0);
-//     pvi->pos.SetXYZ(0,5,0);
+  int sp = 2;
+  int neg_st = n_pos_pv * 2 + sp;
+  int da_st = neg_st + n_neg_pv * 2 + sp;
+  
+  pv_gp->pos.z = 0;
+  pos_pv->pos.SetXYZ(0,0,0);
+  neg_pv->pos.SetXYZ(neg_st,0,0);
 
-//     lve->pos.SetXYZ(8,0,0);
-//     // lvi->pos.SetXYZ(8,5,0);
+  poslv_cem->pos.SetXYZ(0,sp,0);
+  poslv_bla->pos.SetXYZ(0,2*sp,0);
+  neglv_bla->pos.SetXYZ(neg_st,2*sp,0);
 
-//     vta->pos.SetXYZ(15,0,0);
-//     rew_targ_lay->pos.SetXYZ(15,5,0);
-//   }
+  pos_bs->pos.SetXYZ(0,3*sp,0);
+  neg_bs->pos.SetXYZ(neg_st,3*sp,0);
 
-//   if(pvi->un_geom.n != n_lv_u) {
-//     pvi->un_geom.n = n_lv_u; pvi->un_geom.x = n_lv_u; pvi->un_geom.y = 1; }
-//   if(lve->un_geom.n != n_lv_u) {
-//     lve->un_geom.n = n_lv_u; lve->un_geom.x = n_lv_u; lve->un_geom.y = 1; }
-//   // if(lvi->un_geom.n != n_lv_u) {
-//   //   lvi->un_geom.n = n_lv_u; lvi->un_geom.x = n_lv_u; lvi->un_geom.y = 1; }
-//   if(pve->un_geom.n != n_lv_u) {
-//     pve->un_geom.n = n_lv_u; pve->un_geom.x = n_lv_u; pve->un_geom.y = 1; }
-//   if(pvr->un_geom.n != n_lv_u) {
-//     pvr->un_geom.n = n_lv_u; pvr->un_geom.x = n_lv_u; pvr->un_geom.y = 1; }
-//   if(nv->un_geom.n != n_lv_u) {
-//     nv->un_geom.n = n_lv_u; nv->un_geom.x = n_lv_u; nv->un_geom.y = 1; }
-//   vta->un_geom.n = 1;
-//   rew_targ_lay->un_geom.n = 1;
-//   rew_targ_lay->layer_type = Layer::INPUT;
+  vspi->pos.SetXYZ(da_st, 2*sp, 0);
+  vspd->pos.SetXYZ(da_st, 3*sp, 0);
 
-//   //////////////////////////////////////////////////////////////////////////////////
-//   // apply specs to objects
+  vsmd->pos.SetXYZ(da_st + neg_st, 2*sp, 0);
+  vsmi->pos.SetXYZ(da_st + neg_st, 3*sp, 0);
 
-//   LeabraUnitSpec* pv_units = PvlvSp("PVUnits",LeabraUnitSpec);
+  pptg->pos.SetXYZ(da_st, 0, 0);
+  vta->pos.SetXYZ(da_st + 1 + sp, 0, 0);
+  lhb->pos.SetXYZ(da_st + 2*(sp+1), 0, 0);
+  drn->pos.SetXYZ(da_st + 3*(sp+1), 0, 0);
 
-//   rew_targ_lay->SetLayerSpec(PvlvSp("RewTargLayer",LeabraLayerSpec));
-//   pve->SetLayerSpec(PvlvSp("PVeLayer",ExtRewLayerSpec));
-//   pve->SetUnitSpec(pv_units);
-//   pvi->SetLayerSpec(PvlvSp("PViLayer", PViLayerSpec));
-//   pvi->SetUnitSpec(pv_units);
-//   lve->SetLayerSpec(PvlvSp("LVeLayer", LVeLayerSpec));
-//   lve->SetUnitSpec(PvlvSp("LVUnits",LeabraUnitSpec));
-//   vta->SetLayerSpec(PvlvSp("VTALayer", PVLVDaLayerSpec));
-//   vta->SetUnitSpec(PvlvSp("DaUnits",LeabraUnitSpec));
-//   pvr->SetLayerSpec(PvlvSp("PVrLayer", PVrLayerSpec));
-//   pvr->SetUnitSpec(pv_units);
-//   nv->SetLayerSpec(PvlvSp("NVLayer", NVLayerSpec));
-//   nv->SetUnitSpec(pv_units);
+  pos_pv->un_geom.SetXYN(1,1,1);
+  pos_pv->gp_geom.SetXY(n_pos_pv, 1);  pos_pv->unit_groups = true;
 
-//   LeabraBiasSpec* bg_bias = PvlvSp("BgBias", LeabraBiasSpec);
-//   pv_units->bias_spec.SetSpec(bg_bias);
-//   PvlvSp("LVUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
-//   PvlvSp("DaUnits",LeabraUnitSpec)->bias_spec.SetSpec(bg_bias);
+  neg_pv->un_geom.SetXYN(1,1,1);
+  neg_pv->gp_geom.SetXY(n_neg_pv, 1);  neg_pv->unit_groups = true;
+
+  pos_bs->un_geom.SetXYN(1,1,1);
+  pos_bs->gp_geom.SetXY(n_pos_pv, 1);  pos_bs->unit_groups = true;
+
+  neg_bs->un_geom.SetXYN(1,1,1);
+  neg_bs->gp_geom.SetXY(n_neg_pv, 1);  neg_bs->unit_groups = true;
+
+  poslv_cem->un_geom.SetXYN(1,1,1);
+  poslv_cem->gp_geom.SetXY(n_pos_pv, 1);  poslv_cem->unit_groups = true;
+
+  poslv_bla->un_geom.SetXYN(1,1,1);
+  poslv_bla->gp_geom.SetXY(n_pos_pv, 1);  poslv_bla->unit_groups = true;
+
+  neglv_bla->un_geom.SetXYN(1,1,1);
+  neglv_bla->gp_geom.SetXY(n_neg_pv, 1);  neglv_bla->unit_groups = true;
+
+  vspi->un_geom.SetXYN(1,1,1);
+  vspi->gp_geom.SetXY(n_pos_pv, 1);  vspi->unit_groups = true;
+
+  vsmd->un_geom.SetXYN(1,1,1);
+  vsmd->gp_geom.SetXY(n_pos_pv, 1);  vsmd->unit_groups = true;
+
+  vspd->un_geom.SetXYN(1,1,1);
+  vspd->gp_geom.SetXY(n_neg_pv, 1);  vspd->unit_groups = true;
+
+  vsmi->un_geom.SetXYN(1,1,1);
+  vsmi->gp_geom.SetXY(n_neg_pv, 1);  vsmi->unit_groups = true;
+
+  pptg->un_geom.SetXYN(1,1,1);
+  lhb->un_geom.SetXYN(1,1,1);
+  vta->un_geom.SetXYN(1,1,1);
+  drn->un_geom.SetXYN(1,1,1);
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // apply specs to objects
+
+  LeabraUnitSpec* pvlv_units = PvlvSp("PVLVUnits",LeabraUnitSpec);
+  pos_pv->SetUnitSpec(pvlv_units);
+  neg_pv->SetUnitSpec(pvlv_units);
+  pos_bs->SetUnitSpec(pvlv_units);
+  neg_bs->SetUnitSpec(pvlv_units);
+
+  LearnDriverLayerSpec* pvsp = PvlvSp("PV", LearnDriverLayerSpec);
+  LeabraLayerSpec* bssp = PvlvSp("PVLVLayers", LeabraLayerSpec);
+  pos_pv->SetLayerSpec(pvsp);
+  neg_pv->SetLayerSpec(pvsp);
+  pos_bs->SetLayerSpec(bssp);
+  neg_bs->SetLayerSpec(bssp);
+
+  poslv_cem->SetUnitSpec(PvlvSp("CeMUnits", LeabraUnitSpec));
+  poslv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
+  neglv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
+
+  LeabraLayerSpec* amygsp = PvlvSp("Amyg", LeabraLayerSpec);
+  poslv_cem->SetLayerSpec(amygsp);
+  poslv_bla->SetLayerSpec(amygsp);
+  neglv_bla->SetLayerSpec(amygsp);
+
+  vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", LeabraUnitSpec));
+  vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
+  vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", LeabraUnitSpec));
+  vsmd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
+
+  vspi->SetLayerSpec(PvlvSp("VSPatch", VSPatchLayerSpec));
+  vspd->SetLayerSpec(PvlvSp("VSPatch", VSPatchLayerSpec));
+  vsmi->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
+  vsmd->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
+
+  pptg->SetUnitSpec(PvlvSp("PPTgUnits", PPTgUnitSpec));
+  pptg->SetLayerSpec(PvlvSp("PPTgRMTg", LeabraLayerSpec));
+
+  lhb->SetUnitSpec(PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec));
+  lhb->SetLayerSpec(PvlvSp("PPTgRMTg", LeabraLayerSpec));
+
+  vta->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
+  vta->SetLayerSpec(PvlvSp("VTA", VTALayerSpec));
+
+  drn->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
+  drn->SetLayerSpec(PvlvSp("DRN", DRNLayerSpec));
 
 //   //////////////////////////////////////////////////////////////////////////////////
 //   // make projections

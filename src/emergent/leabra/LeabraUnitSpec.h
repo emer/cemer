@@ -375,14 +375,9 @@ class E_API DaModSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for effects of da-based modulation: plus-phase = learning effects
 INHERITED(SpecMemberBase)
 public:
-  enum ModType {
-    PLUS_CONT,			// da modulates plus-phase activations (only) in a continuous manner, by adding dav * gain * synaptic_netin to the net input 
-    PLUS_POST,			// da modulates plus-phase activations (only), at the end of the plus phase
-  };
-
-  bool		on;		// whether to actually modulate activations by da values
-  ModType	mod;		// #CONDSHOW_ON_on #DEF_PLUS_CONT how to apply DA modulation
-  float		gain;		// #CONDSHOW_ON_on #MIN_0 gain multiplier of da values
+  bool		on;		// whether to add dopamine factor to net input
+  float         minus;          // #CONDSHOW_ON_on how much to multiply dav in the minus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
+  float		plus;		// #CONDSHOW_ON_on #AKA_gain how much to multiply dav in the plus phase to add to netinput -- use negative values for NoGo/indirect pathway/D2 type neurons
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -628,11 +623,9 @@ public:
   //	Settle Final
 
   virtual void	PostSettle(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_Activation set stuff after settling is over (act_m, act_p, etc), ActTimeAvg, DaMod_PlusPost
+  // #CAT_Activation set stuff after settling is over (act_m, act_p, etc), ActTimeAvg
     virtual void Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in PostSettle function
-    virtual void Compute_DaMod_PlusPost(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation post-plus dav modulation
 
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI / CIFER thalmocortical computations
