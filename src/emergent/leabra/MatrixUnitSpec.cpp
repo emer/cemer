@@ -16,15 +16,11 @@
 #include "MatrixUnitSpec.h"
 #include <LeabraNetwork>
 #include <MatrixConSpec>
-#include <MatrixBiasSpec>
 
 TA_BASEFUNS_CTORS_DEFN(MatrixUnitSpec);
 
 
 void MatrixUnitSpec::Initialize() {
-  SetUnique("bias_spec", true);
-  bias_spec.type = &TA_MatrixBiasSpec;
-
   Defaults_init();
 }
 
@@ -41,6 +37,5 @@ void MatrixUnitSpec::Defaults_init() {
 
 void MatrixUnitSpec::InitLinks() {
   inherited::InitLinks();
-  bias_spec.type = &TA_MatrixBiasSpec;
 }
 

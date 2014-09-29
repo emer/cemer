@@ -314,12 +314,13 @@ float MatrixLayerSpec::Compute_NoGoDeepGain_ugp(LeabraLayer* lay,
   int pfc_prjn_idx = 0; // actual arg value doesn't matter
   // LeabraLayer* pfc_lay = FindLayerFmSpec(lay, pfc_prjn_idx, &TA_PFCLayerSpec);
   // if(!pfc_lay) return 0.0f;
-  Projection* prjn = lay->projections.SafeEl(pfc_prjn_idx);
-  if(!prjn) return 0.0f;
-  if(!prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) return 0.0f;
-  PBWMUnGpData* pfc_gpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(gpidx);
-  float nogo_deep = matrix.nogo_deep_gain * pfc_gpd->acts_ctxt.avg;
-  return nogo_deep;
+  // Projection* prjn = lay->projections.SafeEl(pfc_prjn_idx);
+  // if(!prjn) return 0.0f;
+  // if(!prjn->con_spec->InheritsFrom(&TA_MarkerConSpec)) return 0.0f;
+  // PBWMUnGpData* pfc_gpd = (PBWMUnGpData*)pfc_lay->ungp_data.FastEl(gpidx);
+  // float nogo_deep = matrix.nogo_deep_gain * pfc_gpd->acts_ctxt.avg;
+  // return nogo_deep;
+  return 0.0f;
 }
 
 void MatrixLayerSpec::Compute_NoGoNetinMods(LeabraLayer* lay, LeabraNetwork* net) {
