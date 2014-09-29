@@ -123,13 +123,15 @@ Run Command Completion
 
 Run Emergent Program
     [Arguments]        ${program}
-    ${command} =       Set Variable     {"command": "RunProgramAsync", "program": "${program}"}
-    Print              [Sending] ${command}
-    Write Bare         ${command}\n
-    Sleep              1500ms
-    ${output} =        Read
-    Print              [Received] ${output}
+    ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": true}     500ms
     Status OK No Result        ${output}
+    ${output} =        Run Command      {"command": "ClearConsoleOutput"}       500ms
+    Status OK No Result        ${output}
+
+    ${command} =       Set Variable     {"command": "RunProgramAsync", "program": "${program}"}    
+    ${output} =        Run Command      ${command}       1500ms
+    Status OK No Result        ${output}
+
     :FOR   ${i}  IN RANGE      600
     \       ${command} =   Set Variable         {"command": "GetRunState"}
     \       Write Bare         ${command}\n
@@ -139,6 +141,16 @@ Run Emergent Program
     \       Exit For Loop If                 ${runstate} == "0"
     Should Be Equal  ${runstate}             "0"
     Print              Completed running program in ${i} seconds
+    ${output} =        Run Command      {"command": "GetConsoleOutput"}         500ms
+    Status OK Has Result   ${output}
+    ${console} =      Get Json Value   ${output}       /result
+    Print     ${output}
+    ${output} =        Run Command      {"command": "CollectConsoleOutput", "enable": false}    500ms
+    Status OK No Result        ${output}
+    ${output} =        Run Command      {"command": "ClearConsoleOutput"}       500ms
+    Status OK No Result        ${output}
+    
+    [Return]    ${console}
 
 Restart Emergent
     Log  "Emergent is still busy, restarting server"    WARN
