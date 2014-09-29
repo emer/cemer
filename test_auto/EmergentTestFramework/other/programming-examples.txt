@@ -22,12 +22,13 @@ Connection
     Should Contain         ${output}    Emergent Server v7.
 
 Test For
-    ${output} =                Run Command           {"command": "RunProgram", "program": "For"}   5 sec
-    Status OK No Result        ${output}
+    ${output} =                Run Emergent Program           For
+    ${expected result} =       Set Variable   "\ \ i = 0\\n\ \ i = 1\\n\ \ i = 2\\n\ \ i = 3\\n\ \ i = 4\\n\ \ i = 5\\n\ \ i = 6\\n\ \ i = 7\\n\ \ i = 8\\n\ \ i = 9\\n"
+    Should Match             ${output}      ${expected_result}
 
 Test Foreach
-    ${output} =                Run Command           {"command": "RunProgram", "program": "Foreach"}   5 sec
-    Status OK No Result        ${output}
+    ${output} =                Run Emergent Program           Foreach
+    Should Contain             ${output}    "0\\n1\\n2\\n3\\n4\\n5\\n6\\n7\\n8\\n9\\n9\\n8\\n7\\n6\\n5\\n4\\n3\\n2\\n1\\n0\\n"
 
 Test Switch
     ${output} =                Run Command           {"command": "RunProgram", "program": "Switch"}   5 sec
