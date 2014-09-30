@@ -295,12 +295,12 @@ String  taMisc::exe_cmd;
 String  taMisc::exe_path;
 
 // note: app should set all these url's in its main or other app-specific code
-String  taMisc::web_home = "http://grey.colorado.edu/emergent/index.php/Main_Page";
+String  taMisc::web_home = "https://grey.colorado.edu/emergent/index.php/Main_Page";
 String  taMisc::web_help_wiki = "emergent";
-String  taMisc::web_help_general = "http://grey.colorado.edu/emergent/index.php/User_hub";
+String  taMisc::web_help_general = "https://grey.colorado.edu/emergent/index.php/User_hub";
 
-NamedURL        taMisc::wiki1_url("emergent", "http://grey.colorado.edu/emergent");
-NamedURL        taMisc::wiki2_url("CCN", "http://grey.colorado.edu/CompCogNeuro");
+NamedURL        taMisc::wiki1_url("emergent", "https://grey.colorado.edu/emergent");
+NamedURL        taMisc::wiki2_url("CCN", "https://grey.colorado.edu/CompCogNeuro");
 NamedURL        taMisc::wiki3_url;
 NamedURL        taMisc::wiki4_url;
 NamedURL        taMisc::wiki5_url;
@@ -2918,6 +2918,9 @@ String taMisc::FixURL(const String& urltxt) {
   //   nwurl = String("http://") + urltxt; // assume http as default
   // }
   if(nwurl.startsWith("http://")) { // now fixup http links..
+    if(!nwurl.contains('.')) nwurl += ".com"; // assume .com
+  }
+  if(nwurl.startsWith("https://")) { // now fixup http links..
     if(!nwurl.contains('.')) nwurl += ".com"; // assume .com
   }
   return nwurl;
