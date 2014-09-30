@@ -34,13 +34,8 @@ public:
 				float su_act_delta_eff) override { };
   float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override { return 0.0f; }
   void Compute_dWt(BaseCons*, Unit*, Network* net) override { };
-  void Compute_dWt_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
-  void Compute_dWt_CtLeabraCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void Compute_dWt_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
-  void Compute_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net, bool do_s) override { };
-  void Trial_Init_SRAvg(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void	Compute_Weights(BaseCons*, Unit*, Network* net) override { };
-  void	Compute_Weights_LeabraCHL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
   void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
 
   TA_BASEFUNS_NOCOPY(MarkerConSpec);

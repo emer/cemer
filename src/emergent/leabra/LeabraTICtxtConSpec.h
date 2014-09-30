@@ -57,8 +57,8 @@ public:
   { dwt += cur_lrate * (ru_act_p - ru_act_m) * su_p_act_p; }
   // #IGNORE
 
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                      LeabraNetwork* net) override {
+  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+                                       LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
@@ -69,20 +69,6 @@ public:
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
       C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_p_act_p);  
     }
-  }
-
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) override
-  { Compute_dWt_LeabraCHL(cg, su, net); }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override
-  { Compute_dWt_LeabraCHL(cg, su, net); }
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net);
-    // CHL uses XCAL with aggregate soft weight bounding, b/c no hebbian term
   }
 
   void  GetPrjnName(Projection& prjn, String& nm) override;

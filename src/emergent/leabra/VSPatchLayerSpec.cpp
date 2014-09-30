@@ -51,12 +51,14 @@ bool VSPatchLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
-    if(!pv_lay && recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-      LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-      pv_lay = flay;
+    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
+    if(cs->InheritsFrom(TA_MarkerConSpec)) {
+      if(!pv_lay) {
+        LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
+        pv_lay = flay;
+      }
       continue;
     }
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(lay->CheckError(!cs->InheritsFrom(TA_LeabraDeltaConSpec), quiet, rval,
                   "requires recv connections to be of type LeabraDeltaConSpec")) {
       return false;

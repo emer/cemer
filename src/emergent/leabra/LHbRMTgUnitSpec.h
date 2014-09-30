@@ -29,11 +29,11 @@ class E_API LHbRMTgGains : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra gains for LHbRMTg inputs
 INHERITED(SpecMemberBase)
 public:
-  float         all;            // #MIN_0 final overall gain on everything
-  float         patch_dir;      // #MIN_0 VS patch direct pathway versus negative PV outcomes
-  float         patch_ind;      // #MIN_0 VS patch indirect pathway versus positive PV outcomes
-  float         matrix;         // #MIN_0 VS gain on matrix pathway 
-  bool          matrix_td;      // compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
+  float         all;            // #MIN_0 #DEF_4 final overall gain on everything
+  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus negative PV outcomes
+  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus positive PV outcomes
+  float         matrix;         // #MIN_0 #DEF_1 VS gain on matrix pathway 
+  bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

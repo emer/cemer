@@ -2400,11 +2400,13 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
     // last_sel_server, so this prevents proper restoration of 
     // clipboardhandler.  Not sure what SelectableHostNotifyingSignal does really,
     // but probably it is good to redo that too?
-    last_sel_server = src_host;
     QObject* handler_obj = src_host->clipHandlerObj();
     SetClipboardHandler(handler_obj, ISelectableHost::edit_enabled_slot,
         ISelectableHost::edit_action_slot);
-    SelectableHostNotifying_impl(src_host, op); // break out for clarity
+    // if(last_sel_server != src_host) {
+      SelectableHostNotifying_impl(src_host, op); // break out for clarity
+    // }
+    last_sel_server = src_host;
   } break;
   case ISelectableHost::OP_SELECTION_CHANGED: {
     // if no handler, then this guy becomes handler implicitly, otherwise ignore

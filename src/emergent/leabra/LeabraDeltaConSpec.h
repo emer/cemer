@@ -43,7 +43,7 @@ public:
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) override {
+                                       LeabraNetwork* net) override {
     const float su_act = su->act_m; // note: using act_m
     float* dwts = cg->OwnCnVar(DWT);
 
@@ -54,20 +54,6 @@ public:
     }
   }
 
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net) override {
-    Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
-  }
 
   TA_SIMPLE_BASEFUNS(LeabraDeltaConSpec);
 protected:

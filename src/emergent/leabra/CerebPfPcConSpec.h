@@ -56,24 +56,6 @@ public:
   }
   // #IGNORE 
 
-  inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                             LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-  // #IGNORE 
-
-  inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                               LeabraNetwork* net) override {
-    Compute_dWt_CtLeabraXCAL(cg, su, net);
-  }
-  // #IGNORE 
-
-  inline void Compute_Weights_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
-                                        LeabraNetwork* net) {
-    Compute_Weights_CtLeabraXCAL(cg, su, net); // do soft bound here
-  }
-  // #IGNORE 
-
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);
 private:
   void Initialize();

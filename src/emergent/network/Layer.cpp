@@ -90,6 +90,8 @@ void Layer::InitLinks() {
   taBase::Own(prerr, this);
   taBase::Own(unit_names, this);
 
+  AutoNameMyMembers();
+
   own_net = GET_MY_OWNER(Network);
   if(pos == 0)
     SetDefaultPos();

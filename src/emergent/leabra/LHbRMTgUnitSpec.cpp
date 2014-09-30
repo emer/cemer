@@ -24,11 +24,11 @@ TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgGains);
 
 void LHbRMTgGains::Initialize() {
-  all = 1.0f;
+  all = 4.0f;
   patch_dir = 1.0f;
   patch_ind = 1.0f;
-  matrix = 0.0f;
-  matrix_td = true;
+  matrix = 1.0f;
+  matrix_td = false;
 }
 
 void LHbRMTgGains::Defaults_init() {

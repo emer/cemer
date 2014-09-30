@@ -41,8 +41,8 @@ void gdPVLVDaSpec::Initialize() {
 }
 
 void LVBlockSpec::Initialize() {
-  pos_pv = 1.0f;
-  dip = 1.0f;
+  pos_pv = 2.0f;
+  dip = 2.0f;
 }
 
 void VTALayerSpec::Initialize() {

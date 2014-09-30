@@ -71,6 +71,8 @@ void LeabraLayer::InitLinks() {
 #endif
   spec.SetDefaultSpec(this);
   units.gp.SetBaseType(&TA_LeabraUnit_Group);
+
+  AutoNameMyMembers();
 }
 
 void LeabraLayer::CutLinks() {

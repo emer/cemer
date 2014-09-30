@@ -21,7 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(PPTgUnitSpec);
 
 void PPTgUnitSpec::Initialize() {
   d_net_gain = 1.0f;
-  clamp_act = false;
+  clamp_act = true;
 }
 
 void PPTgUnitSpec::Defaults_init() {

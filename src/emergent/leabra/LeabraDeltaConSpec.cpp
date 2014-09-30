@@ -21,11 +21,8 @@ void LeabraDeltaConSpec::Initialize() {
   SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
-  SetUnique("wt_sig", true);
-  wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
-
-//   SetUnique("xcalm", true);
-//   xcalm.use_sb = false;
+  // SetUnique("wt_sig", true);
+  // wt_sig.gain = 1.0f;  wt_sig.off = 1.0f;
 }
 
 void LeabraDeltaConSpec::UpdateAfterEdit_impl() {
