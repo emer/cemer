@@ -402,7 +402,7 @@ void taRootBase::About() {
   info += "This is the TEMT software package, version: ";
   info += taMisc::version;
   info += "\n\n";
-  info += "WWW Page: http://grey.colorado.edu/temt\n";
+  info += "WWW Page: https://grey.colorado.edu/temt\n";
   info += "\n\n";
 
   info += "Copyright (c) 1995-2010, Regents of the University of Colorado,\n\
@@ -1235,7 +1235,7 @@ bool taRootBase::Startup_InitTA_AppFolders() {
     // inability to find the app is fatal in 4.0.19
     taMisc::Error(
       "The application install directory could not be found. Please see:\n"
-      "http://grey.colorado.edu/emergent/index.php/User_Guide\n"
+      "https://grey.colorado.edu/emergent/index.php/User_Guide\n"
       "for instructions on setting command line switches and/or environment\n"
       "variables for non-standard installations of the application.\n");
 
