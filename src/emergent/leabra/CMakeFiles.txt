@@ -11,22 +11,22 @@
 # all headers that need maketa run on them
 set(leabra_HEADS_MAKETA
   LeabraCon.h
-    LeabraConSpec.h
+  LeabraConSpec.h
   LeabraBiasSpec.h
   LeabraRecvCons.h
   LeabraSendCons.h
 
-    LeabraUnitSpec.h
+  LeabraUnitSpec.h
   LeabraUnit.h
   LeabraUnit_Group.h
 
   LeabraPrjn.h
 
   AvgMaxVals.h
-    LeabraInhib.h
+  LeabraInhib.h
   LeabraUnGpData.h
   LeabraUnGpData_List.h
-        LeabraLayerSpec.h
+  LeabraLayerSpec.h
 
   LeabraNetwork.h
   LeabraThreadMgr.h
@@ -39,15 +39,14 @@ set(leabra_HEADS_MAKETA
   Deep5bConSpec.h
 
   MarkerConSpec.h
-                    LeabraDeltaConSpec.h
+  LeabraDeltaConSpec.h
   DaDeltaConSpec.h
-    LeabraLimPrecConSpec.h
-  
+  LeabraLimPrecConSpec.h
   
   LayerActUnitSpec.h
     
   LeabraContextLayerSpec.h
-    ScalarValLayerSpec.h
+  ScalarValLayerSpec.h
   MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
   TwoDValLayerSpec.h
@@ -60,7 +59,7 @@ set(leabra_HEADS_MAKETA
   TiledGpRFOneToOneWtsPrjnSpec.h
   CerebConj2PrjnSpec.h
 
-      LeabraTdUnit.h
+  LeabraTdUnit.h
   LeabraTdUnitSpec.h
   ExtRewLayerSpec.h
   TDRewPredConSpec.h
@@ -68,9 +67,6 @@ set(leabra_HEADS_MAKETA
   TDRewIntegLayerSpec.h
   TdLayerSpec.h
 
-  PVLVLayerSpec.h
-  PVConSpec.h
-                
   ThalLayerSpec.h
   LearnDriverLayerSpec.h
   LearnFlagDeltaConSpec.h
@@ -82,17 +78,14 @@ set(leabra_HEADS_MAKETA
   VSPatchLayerSpec.h
 
   PBWMUnGpData.h
-  SNrThalLayerSpec.h
   MatrixCon.h
   MatrixConSpec.h
-    MatrixUnitSpec.h
-  MatrixLayerSpec.h
-    PFCUnitSpec.h
+  GPiUnitSpec.h
+  InvertLayerSpec.h
+  PFCUnitSpec.h
   
   GpCustomPrjnSpecBase.h
   PFCLVPrjnSpec.h
-  SNrPrjnSpec.h
-  PVrToMatrixGoPrjnSpec.h
   TopoWtsPrjnSpec.h
 
   ThetaPhaseLayerSpec.h
@@ -103,7 +96,7 @@ set(leabra_HEADS_MAKETA
   SubiculumLayerSpec.h
   HippoEncoderConSpec.h
   XCalCHLConSpec.h
-    CerebGranuleUnitSpec.h
+  CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
   ClampDaLayerSpec.h
 )
@@ -133,22 +126,22 @@ set(leabra_HEADS
 # all source files to compile: NOTE: do NOT include TA_ or .moc files -- auto generated
 set(leabra_SRCS
   LeabraCon.cpp
-    LeabraConSpec.cpp
+  LeabraConSpec.cpp
   LeabraBiasSpec.cpp
   LeabraRecvCons.cpp
   LeabraSendCons.cpp
 
-    LeabraUnitSpec.cpp
+  LeabraUnitSpec.cpp
   LeabraUnit.cpp
   LeabraUnit_Group.cpp
 
   LeabraPrjn.cpp
 
   AvgMaxVals.cpp
-    LeabraInhib.cpp
+  LeabraInhib.cpp
   LeabraUnGpData.cpp
   LeabraUnGpData_List.cpp
-        LeabraLayerSpec.cpp
+  LeabraLayerSpec.cpp
   LeabraLayer.cpp
 
   LeabraNetwork.cpp
@@ -162,15 +155,14 @@ set(leabra_SRCS
   Deep5bConSpec.cpp
 
   MarkerConSpec.cpp
-                    LeabraDeltaConSpec.cpp
+  LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
-    LeabraLimPrecConSpec.cpp
-  
+  LeabraLimPrecConSpec.cpp
   
   LayerActUnitSpec.cpp
     
   LeabraContextLayerSpec.cpp
-    ScalarValLayerSpec.cpp
+  ScalarValLayerSpec.cpp
   MotorForceLayerSpec.cpp
   TwoDValLeabraLayer.cpp
   TwoDValLayerSpec.cpp
@@ -183,17 +175,14 @@ set(leabra_SRCS
   TiledGpRFOneToOneWtsPrjnSpec.cpp
   CerebConj2PrjnSpec.cpp
 
-      LeabraTdUnit.cpp
+  LeabraTdUnit.cpp
   LeabraTdUnitSpec.cpp
   ExtRewLayerSpec.cpp
   TDRewPredConSpec.cpp
   TDRewPredLayerSpec.cpp
   TDRewIntegLayerSpec.cpp
   TdLayerSpec.cpp
-
-  PVLVLayerSpec.cpp
-  PVConSpec.cpp
-                
+                   
   ThalLayerSpec.cpp
   LearnDriverLayerSpec.cpp
   LearnFlagDeltaConSpec.cpp
@@ -205,17 +194,14 @@ set(leabra_SRCS
   VSPatchLayerSpec.cpp
 
   PBWMUnGpData.cpp
-  SNrThalLayerSpec.cpp
   MatrixCon.cpp
   MatrixConSpec.cpp
-    MatrixUnitSpec.cpp
-  MatrixLayerSpec.cpp
-    PFCUnitSpec.cpp
+  GPiUnitSpec.cpp
+  InvertLayerSpec.cpp
+  PFCUnitSpec.cpp
   
   GpCustomPrjnSpecBase.cpp
   PFCLVPrjnSpec.cpp
-  SNrPrjnSpec.cpp
-  PVrToMatrixGoPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp
 
   ThetaPhaseLayerSpec.cpp
@@ -226,7 +212,7 @@ set(leabra_SRCS
   SubiculumLayerSpec.cpp
   HippoEncoderConSpec.cpp
   XCalCHLConSpec.cpp
-    CerebGranuleUnitSpec.cpp
+  CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
   ClampDaLayerSpec.cpp
 )

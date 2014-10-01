@@ -20,7 +20,6 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgUnitSpec);
-
 TA_BASEFUNS_CTORS_DEFN(LHbRMTgGains);
 
 void LHbRMTgGains::Initialize() {

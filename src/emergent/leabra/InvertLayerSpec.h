@@ -13,32 +13,37 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef MatrixUnitSpec_h
-#define MatrixUnitSpec_h 1
+#ifndef InvertLayerSpec_h
+#define InvertLayerSpec_h 1
 
 // parent includes:
-#include <LeabraUnitSpec>
+#include <LeabraLayerSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(MatrixUnitSpec);
+eTypeDef_Of(InvertLayerSpec);
 
-class E_API MatrixUnitSpec : public LeabraUnitSpec {
-  // basal ganglia matrix units: fire actions or WM updates. modulated by da signals
-INHERITED(LeabraUnitSpec)
+class E_API InvertLayerSpec : public LeabraLayerSpec {
+  // a layer that continuously copies activations from input layer (use one to one prjns, weights dont' matter) and sets our activations to 1.0 - input->act
+INHERITED(LeabraLayerSpec)
 public:
+  virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
+  // set current act 
 
-  void	InitLinks();
-  SIMPLE_COPY(MatrixUnitSpec);
-  TA_BASEFUNS(MatrixUnitSpec);
-protected:
-  SPEC_DEFAULTS;
+  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+
+  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
+  { return false; }
+
+  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+
+  TA_SIMPLE_BASEFUNS(InvertLayerSpec);
 private:
-  void	Initialize();
-  void	Destroy()		{ };
+  void  Initialize();
+  void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // MatrixUnitSpec_h
+#endif // InvertLayerSpec_h

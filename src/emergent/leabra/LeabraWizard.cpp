@@ -53,16 +53,11 @@
 #include <LearnFlagHebbConSpec>
 
 
-#include <SNrThalLayerSpec>
-//#include <MatrixUnitSpec>
-//#include <MatrixLayerSpec>
 #include <MatrixConSpec>
 #include <PFCUnitSpec>
 #include <LeabraTICtxtLayerSpec>
 
-#include <SNrPrjnSpec>
 #include <TopoWtsPrjnSpec>
-#include <PVrToMatrixGoPrjnSpec>
 
 #include <HippoEncoderConSpec>
 #include <XCalCHLConSpec>
@@ -518,8 +513,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
     lay->SetUnitType(&TA_LeabraTdUnit);
     // todo: add any new bg layer exclusions here!
-    if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda
-       && !laysp->InheritsFrom(&TA_SNrThalLayerSpec)) {
+    if(lay != rew_targ_lay && lay != tdrp && lay != extrew && lay != tdint && lay != tdda) {
       other_lays.Link(lay);
       if(lay->layer_type == Layer::HIDDEN)
         hidden_lays.Link(lay);
