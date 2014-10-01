@@ -120,6 +120,7 @@ bool LeabraWizard::StdNetwork() {
   if(!std_net_dlg) {
     taBase::SetPointer((taBase**)&std_net_dlg, new StdNetWizDlg);
   }
+  taBase::Own(std_net_dlg, this);
   bool rval = std_net_dlg->DoDialog();
   if(std_net_dlg && std_net_dlg->network)
     StdLeabraSpecs((LeabraNetwork*)std_net_dlg->network.ptr()); // re-run to organize things better now that stuff has happened
