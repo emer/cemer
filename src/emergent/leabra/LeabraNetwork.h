@@ -127,13 +127,16 @@ public:
     PLUS_PHASE = 1,		// plus phase
   };
 
-  enum UnitVecVars {            // unit variables that have special vectorized storage
+  enum UnitVecVars {            // unit variables that have special vectorized storage, encoded at end of trial, in time for compute_dwt function
     AVG_S,
     AVG_M,
     AVG_L,
     THAL,
     N_VEC_VARS,
   };
+  // ACT_M, // note: could add these to unit vec vars if needed
+  // ACT_P,
+
 
 #ifdef __MAKETA__
   UnitCallThreadMgr threads;    // #HIDDEN unit-call threading mechanism -- lthreads used instead

@@ -984,19 +984,21 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       nerr += Compute_NormErr_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
+      int nact = (int)(gpd->acts_m_avg * (float)gp_nunits + 0.5f);
+      nact = MAX(1, nact);      // must have at least 1
+      ntot += nact;
       if(net->lstats.on_errs && net->lstats.off_errs)
-        ntot += 2 * (int)(gpd->acts_m_avg * (float)gp_nunits);
-      else
-        ntot += (int)(gpd->acts_m_avg * (float)gp_nunits);
+        ntot += nact;           // another
     }
   }
   else {
     int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
     nerr += Compute_NormErr_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
+    int nact = (int)(lay->acts_m_avg * (float)lay_nunits + 0.5f);
+    nact = MAX(1, nact);      // must have at least 1
+    ntot += nact;
     if(net->lstats.on_errs && net->lstats.off_errs)
-      ntot += 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
-    else
-      ntot += (int)(lay->acts_m_avg * (float)lay_nunits);
+      ntot += nact;
   }
   if(ntot == 0) return -1.0f;
 

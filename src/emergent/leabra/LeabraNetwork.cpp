@@ -784,6 +784,8 @@ void LeabraNetwork::Compute_dWt_vecvars() {
   float* avg_m = UnVecVar(AVG_M);
   float* avg_l = UnVecVar(AVG_L);
   float* thal =  UnVecVar(THAL);
+  // float* act_m = UnVecVar(ACT_M);
+  // float* act_p = UnVecVar(ACT_P);
 
   // non-threaded for now..
   for(int i=1; i<units_flat.size; i++) {
@@ -792,6 +794,8 @@ void LeabraNetwork::Compute_dWt_vecvars() {
     avg_m[i] = un->avg_m;
     avg_l[i] = un->avg_l;
     thal[i] = un->thal;
+    // act_m[i] = un->act_m;
+    // act_p[i] = un->act_p;
   }
 }
 

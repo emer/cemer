@@ -15,14 +15,27 @@
 
 #include "MatrixConSpec.h"
 
+TA_BASEFUNS_CTORS_DEFN(MatrixLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(MatrixConSpec);
+
+void MatrixLearnSpec::Initialize() {
+  Defaults_init();
+}
+
+void MatrixLearnSpec::Defaults_init() {
+  tr_decay_tau = 1.0f;
+  
+  tr_decay_dt = 1.0f / tr_decay_tau;
+}
+
+void MatrixLearnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  tr_decay_dt = 1.0f / tr_decay_tau;
+}
 
 void MatrixConSpec::Initialize() {
   min_obj_type = &TA_MatrixCon;
-
-  immed_trace = false;
-  mnt_decay = 1.0f;
-  no_mnt_decay = 1.0f;
+  nogo = false;
 
   Defaults_init();
 }
@@ -31,11 +44,6 @@ void MatrixConSpec::Defaults_init() {
   // SetUnique("wt_limits", true);
   wt_limits.sym = false;
 
-  // SetUnique("wt_sig", true);
-  wt_sig.gain = 6.0f;
-  wt_sig.off = 1.0f;
-  wt_sig.dwt_norm = false;
-  
   ignore_unlearnable = false;
 }
 

@@ -25,47 +25,66 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(MatrixLearnSpec);
+
+class E_API MatrixLearnSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
+INHERITED(SpecMemberBase)
+public:
+  float         tr_decay_tau;   // #MIN_1 time constant in trials (or phases if phase updating used) for decay of the gating activation trace -- values longer than 1 allow a gating event to obtain dopamine learning credit for multiple trials after gating event
+
+  float         tr_decay_dt;    // #READ_ONLY #EXPERT 1 / tr_decay_tau
+
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(MatrixLearnSpec);
+protected:
+  SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // Learning of matrix input connections based on dopamine value and sender * receiver activation product (using act_mid acts at time of gating), only for units with LEARN flag set (credit assignment gating flag) -- for both Matrix_Go and NoGo connections
+  // Learning of matrix input connections based on dopamine value and sender * receiver activation product -- dwt = dav * thal * su * ru -- due to delay in gating effects and general effects of actions, dav is delayed at least one trial, so we have thal * su * ru trace encoded on current trial, with dav applied on subsequent trials
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
-    NTR = SWT+1,           // new trace -- drives updates to trace value -- su * ru at time of gating
+    NTR = SWT+1,           // new trace -- drives updates to trace value -- thal * ru * su
     TR,                    // current ongoing trace that drives learning -- adds ntr and decays after learning on current values
   };
+  bool                  nogo;    // are these nogo con specs -- if so, flip the sign of the dopamine signal
+  MatrixLearnSpec       matrix;  // parameters for special matrix learning dynamics
 
-  bool          immed_trace;    // trace is updated immediately on the same trial, instead of being delayed for one time step (i.e., updated after the current weight change is computed) -- this is appropriate for output gating connections where PV reward is available on the same trial as gating occurs
-  float         mnt_decay;      // #DEF_1 rate of decay of the synaptic trace for units that have ongoing continued maintenance (signalled by the LEARN flag on ru) -- no evidence yet of benefit to extending the trace
-  float         no_mnt_decay;    // #DEF_1 rate of decay of the synaptic trace for units that do NOT have ongoing continued maintenance (signalled by the LEARN flag on ru) -- no evidence yet of benefit to extending the trace
+  inline void Init_Weights(BaseCons* cg, Unit* ru, Network* net) override {
+    Init_Weights_symflag(net);
+    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
-  inline void Compute_NTr(LeabraRecvCons* cg, LeabraUnit* ru, LeabraNetwork* net) {
-    const int sz = cg->size;
-    for(int i=0; i<sz; i++) {
-      LeabraUnit* su = (LeabraUnit*)cg->Un(i,net);
-      cg->PtrCn(i, NTR, net) = su->act_eq * ru->act_eq;
+    float* wts = cg->OwnCnVar(WT);
+    float* dwts = cg->OwnCnVar(DWT);
+    float* ntrs = cg->OwnCnVar(NTR);
+    float* trs = cg->OwnCnVar(TR);
+
+    if(rnd.type != Random::NONE) {
+      for(int i=0; i<cg->size; i++) {
+        C_Init_Weight_Rnd(wts[i]);
+        C_Init_dWt(dwts[i]);
+        trs[i] = 0.0f;
+        ntrs[i] = 0.0f;
+      }
     }
   }
-  // #IGNORE RECV-based save current sender activation states to sact_lrn for subsequent learning -- call this at time of gating
 
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                            LeabraNetwork* net, const bool do_s) override {
-    // do NOT do this under any circumstances!!
-  }
-
-  inline void C_Compute_dWt_Matrix_Tr(float& dwt, const float mtx_da, const float decay,
-                                      float& tr, float& ntr) {
+  inline void C_Compute_dWt_Matrix_Tr
+    (float& dwt, float& tr, float& ntr, const float decay_dt, const float mtx_da,
+     const float ru_thal, const float ru_act, const float su_act) {
     dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace (from prior trial)
-    tr += ntr - decay * tr;         // then update trace to include new vals
-    ntr = 0.0f;                     // clear new -- any new trace needs to be computed
-  }
-  // #IGNORE
-  inline void C_Compute_dWt_Matrix_ImTr(float& dwt, const float mtx_da, const float decay,
-                                      float& tr, float& ntr) {
-    tr += ntr - decay * tr;         // immediate update of trace to include new vals
-    dwt += cur_lrate * mtx_da * tr; // then learn based on cur trace (from this trial)
-    ntr = 0.0f;                     // clear new -- any new trace needs to be computed
+    ntr = ru_thal * ru_act * su_act; // new trace increment
+    tr += ntr - decay_dt * tr;       // then update trace to include new vals
   }
   // #IGNORE
 
@@ -76,20 +95,23 @@ public:
     float* dwts = cg->OwnCnVar(DWT);
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
-
+    
+    const float decay_dt = matrix.tr_decay_dt;
+    
     const int sz = cg->size;
-    if(immed_trace) {
+    if(nogo) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        const float decay = ru->HasLearnFlag() ? mnt_decay : no_mnt_decay;
-        C_Compute_dWt_Matrix_ImTr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
+        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i], decay_dt,
+                                -ru->dav, ru->thal, ru->act_eq, su->act_eq);
+        // only diff is -dav for nogo
       }
     }
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        const float decay = ru->HasLearnFlag() ? mnt_decay : no_mnt_decay;
-        C_Compute_dWt_Matrix_Tr(dwts[i], ru->dav, decay, trs[i], ntrs[i]);
+        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i], decay_dt,
+                                ru->dav, ru->thal, ru->act_eq, su->act_eq);
       }
     }
   }

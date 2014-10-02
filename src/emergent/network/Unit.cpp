@@ -229,10 +229,12 @@ void Unit::AllocBias() {
 }
 
 void Unit::ConnectBias() {
+  bias.UpdtIsActive();          // should be inactive
   if(!GetUnitSpec())
     return;
   TypeDef* bstd = GetUnitSpec()->bias_con_type;
   if(!bstd) return;
+  if(!bias.mem_start) return;             // we were not allocated.. don't bother..
   bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
   bias.UpdtIsActive();
 }
@@ -268,9 +270,9 @@ bool Unit::CheckBuild(bool quiet) {
     }
   }
   else {
-    if(CheckError((!bias.size || (bias.con_type != us->bias_con_type)),
+    if(CheckError((bias.IsActive() && (bias.con_type != us->bias_con_type)),
                   quiet, rval,
-                  "Unit CheckBuild: bias weight null or not same type as specified in UnitSpec:", us->name)) {
+                  "Unit CheckBuild: bias not same type as specified in UnitSpec:", us->name)) {
       return false;
     }
   }
@@ -621,7 +623,9 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
   Network* net = own_net();
   strm << "<Un>\n";
   float bwt = 0.0;
-  if(bias.size > 0) bwt = bias.OwnCn(0, BaseCons::WT);
+  if(bias.IsActive()) {
+    bwt = bias.OwnCn(0, BaseCons::WT);
+  }
   // always write this for a consistent format
   switch(fmt) {
   case RecvCons::TEXT:
@@ -661,7 +665,7 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     strm.get();         // get the /n
     break;
   }
-  if(bias.size > 0) {
+  if(bias.IsActive()) {
     bias.OwnCn(0, BaseCons::WT) = bwt;
   }
 

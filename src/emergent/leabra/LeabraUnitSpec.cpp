@@ -483,7 +483,7 @@ void LeabraUnitSpec::Init_dWt(Unit* ru, Network* rnet, int thread_no) {
     send_gp->Init_dWt(u, (LeabraNetwork*)net);
   }
 
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_dWt(&u->bias, u, net);
   }
 }
@@ -499,7 +499,7 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
     send_gp->Init_Weights(u, (LeabraNetwork*)net);
   }
 
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_Weights(&u->bias, u, net);
   }
 
@@ -542,7 +542,7 @@ void LeabraUnitSpec::Init_Weights_post(Unit* ru, Network* rnet, int thread_no) {
     send_gp->Init_Weights_post(u, (LeabraNetwork*)net);
   }
 
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_Weights_post(&u->bias, u, net);
   }
 }
@@ -846,7 +846,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
     }
   }
   // add the bias weight into the netinput, scaled by 1/n
-  if(u->bias.size) {
+  if(u->bias.IsActive()) {
     LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
     u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
     if(u->n_recv_cons > 0)
@@ -1087,7 +1087,10 @@ float LeabraUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
                                           LeabraNetwork* net, int thread_no) {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
 
-  float net_ex = (u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT));
+  float net_ex = 0.0f;
+  if(u->bias.IsActive()) {
+    net_ex += u->bias_scale * u->bias.OwnCn(0,LeabraConSpec::WT);
+  }
   if(u->HasExtFlag(Unit::EXT)) {
     net_ex += u->ext * ls->clamp.gain;
   }

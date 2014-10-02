@@ -38,11 +38,6 @@ public:
 
   DaModType     da_mod;         // how does receiving unit dopamine modulate learning (or not)?
 
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                     LeabraNetwork* net, bool do_s) override {
-    // do NOT do this under any circumstances!!
-  }
-
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta_NoDa(float& dwt, const float ru_act_p, 
                                        const float ru_act_m, const float su_act) {

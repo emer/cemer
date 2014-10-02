@@ -20,18 +20,21 @@ TA_BASEFUNS_CTORS_DEFN(PFCMaintSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMaintSpec::Initialize() {
-  deep5b_gain = 0.2f;
+  Defaults_init();
 }
 
 void PFCMaintSpec::Defaults_init() {
+  deep5b_gain = 0.8f;
 }
 
 void PFCUnitSpec::Initialize() {
+  Defaults_init();
 }
 
 void PFCUnitSpec::Defaults_init() {
   act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   cifer.on = true;
+  cifer.thal_5b_thr = 0.1f;
   //  cifer.phase = true; // not yet..
   // todo: other cifer defaults
 }

@@ -54,7 +54,6 @@ public:
   void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // never learn
-  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
   bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec

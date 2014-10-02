@@ -40,7 +40,6 @@ public:
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
   // never learn
-  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
   bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec

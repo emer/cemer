@@ -2403,9 +2403,9 @@ void iMainWindowViewer::SelectableHostNotifySlot(ISelectableHost* src_host, int 
     QObject* handler_obj = src_host->clipHandlerObj();
     SetClipboardHandler(handler_obj, ISelectableHost::edit_enabled_slot,
         ISelectableHost::edit_action_slot);
-    // if(last_sel_server != src_host) {
+    if(last_sel_server != src_host) {
       SelectableHostNotifying_impl(src_host, op); // break out for clarity
-    // }
+    }
     last_sel_server = src_host;
   } break;
   case ISelectableHost::OP_SELECTION_CHANGED: {

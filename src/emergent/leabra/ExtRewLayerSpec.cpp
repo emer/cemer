@@ -19,19 +19,10 @@
 
 #include <taMisc>
 
+TA_BASEFUNS_CTORS_DEFN(ExtRewSpec);
+TA_BASEFUNS_CTORS_DEFN(OutErrSpec);
 TA_BASEFUNS_CTORS_DEFN(ExtRewLayerSpec);
 
-TA_BASEFUNS_CTORS_DEFN(ExtRewSpec);
-
-TA_BASEFUNS_CTORS_DEFN(OutErrSpec);
-
-TA_BASEFUNS_CTORS_DEFN(AvgExtRewSpec);
-
-
-void AvgExtRewSpec::Initialize() {
-  sub_avg = false;
-  avg_dt = .005f;
-}
 
 void OutErrSpec::Initialize() {
   err_tol = 0.5f;
@@ -63,7 +54,6 @@ void ExtRewLayerSpec::Initialize() {
 void ExtRewLayerSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   rew.UpdateAfterEdit_NoGui();
-  avg_rew.UpdateAfterEdit_NoGui();
   out_err.UpdateAfterEdit_NoGui();
 }
 
@@ -97,19 +87,11 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   lay->SetLayerFlag(Layer::NO_ADD_SSE);
   lay->SetLayerFlag(Layer::NO_ADD_COMP_SSE);
 
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  if(lay->CheckError(us->act_misc.avg_dt != 0.0f, quiet, rval,
-                "requires UnitSpec act.avg_dt = 0, I just set it for you in spec:", us->name, "(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act_misc", true);
-    us->act_misc.avg_dt = 0.0f;
-  }
-  us->UpdateAfterEdit();
-
   // check for conspecs with correct params
   bool got_marker = false;
   LeabraLayer* rew_targ_lay = NULL;
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  if(lay->units.leaves < 2) return false;
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking *2nd* unit as rep
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
@@ -145,15 +127,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return rval;
 }
 
-void ExtRewLayerSpec::BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) {
-  // that's it: don't do any processing on this layer: set all idx to 0
-  lay->units_flat_idx = 0;
-  FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
-    if(un->lesioned()) continue;
-    un->flat_idx = 0;
-  }
-}
-
 void ExtRewLayerSpec::Compute_Rew(LeabraLayer* lay, LeabraNetwork* net) {
   if(rew_type == OUT_ERR_REW)
     Compute_OutErrRew(lay, net);
@@ -165,7 +138,7 @@ void ExtRewLayerSpec::Compute_Rew(LeabraLayer* lay, LeabraNetwork* net) {
 
 bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   bool got_some = false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking 2nd unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
@@ -183,7 +156,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
 }
 
 float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
+  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking 2nd unit as representative
 
   // first pass: find the layers: use COMP if no TARG is found
   int   n_targs = 0;            // number of target layers
@@ -314,9 +287,7 @@ void ExtRewLayerSpec::Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net) {
 void ExtRewLayerSpec::Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
                                      float er, LeabraUnit* u, LeabraNetwork* net) {
   u->dav = er;
-  if(avg_rew.sub_avg) u->dav -= u->act_avg;
   u->ext = u->dav;
-  u->act_avg += avg_rew.avg_dt * (er - u->act_avg);
   ClampValue_ugp(lay, acc_md, gpidx, net);
 }
 

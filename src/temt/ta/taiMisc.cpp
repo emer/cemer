@@ -811,7 +811,7 @@ iMainWindowViewer* taiMisc::FindMainWinParent(QObject* obj) {
 bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
   iMainWindowViewer* imwv = FindMainWinParent(obj);
   if(!imwv) {
-    taMisc::DebugInfo("no imwv!");
+    // taMisc::DebugInfo("no imwv!");
     return false;
   }
 

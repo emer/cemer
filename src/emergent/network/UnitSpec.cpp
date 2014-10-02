@@ -122,7 +122,7 @@ void UnitSpec::Init_dWt(Unit* u, Network* net, int thread_no) {
     if(recv_gp->NotActive()) continue;
     recv_gp->Init_dWt(u, net);
   }
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_dWt(&u->bias, u, net);
   }
 }
@@ -137,7 +137,7 @@ void UnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
     recv_gp->Init_Weights(u, net);
   }
 
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_Weights(&u->bias, u, net); // this is a virtual fun
   }
   
@@ -170,7 +170,7 @@ void UnitSpec::Init_Weights_post(Unit* u, Network* net, int thread_no) {
     if(recv_gp->NotActive()) continue;
     recv_gp->Init_Weights_post(u, net);
   }
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     bias_spec->B_Init_Weights_post(&u->bias, u, net); // this is a virtual fun
   }
 }
@@ -182,7 +182,7 @@ void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
     if(recv_gp->NotActive()) continue;
     u->net += recv_gp->Compute_Netin(u, net);
   }
-  if(u->bias.size > 0) {
+  if(u->bias.IsActive()) {
     u->net += u->bias.OwnCn(0,BaseCons::WT);
   }
 }
@@ -214,7 +214,7 @@ void UnitSpec::Compute_SentNetin(Unit* u, Network* net, float sent_netin) {
   // called by network-level Send_Netin function to integrate sent netin value
   // with current net input value -- default is just to set to net val + bias wt if avail
   u->net = sent_netin;
-  if(u->bias.size) {
+  if(u->bias.IsActive()) {
     u->net += u->bias.OwnCn(0,BaseCons::WT);
   }
 }

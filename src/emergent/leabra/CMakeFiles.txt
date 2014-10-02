@@ -37,6 +37,7 @@ set(leabra_HEADS_MAKETA
   LeabraTICtxtLayerSpec.h
   LeabraTICtxtConSpec.h
   Deep5bConSpec.h
+  ThalLayerSpec.h
 
   MarkerConSpec.h
   LeabraDeltaConSpec.h
@@ -67,7 +68,6 @@ set(leabra_HEADS_MAKETA
   TDRewIntegLayerSpec.h
   TdLayerSpec.h
 
-  ThalLayerSpec.h
   LearnDriverLayerSpec.h
   LearnFlagDeltaConSpec.h
   LearnFlagHebbConSpec.h
@@ -76,6 +76,7 @@ set(leabra_HEADS_MAKETA
   VTALayerSpec.h
   DRNLayerSpec.h
   VSPatchLayerSpec.h
+  ClampDaLayerSpec.h
 
   PBWMUnGpData.h
   MatrixCon.h
@@ -85,7 +86,6 @@ set(leabra_HEADS_MAKETA
   PFCUnitSpec.h
   
   GpCustomPrjnSpecBase.h
-  PFCLVPrjnSpec.h
   TopoWtsPrjnSpec.h
 
   ThetaPhaseLayerSpec.h
@@ -98,7 +98,6 @@ set(leabra_HEADS_MAKETA
   XCalCHLConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
-  ClampDaLayerSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -153,6 +152,7 @@ set(leabra_SRCS
   LeabraTICtxtLayerSpec.cpp
   LeabraTICtxtConSpec.cpp
   Deep5bConSpec.cpp
+  ThalLayerSpec.cpp
 
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
@@ -183,7 +183,6 @@ set(leabra_SRCS
   TDRewIntegLayerSpec.cpp
   TdLayerSpec.cpp
                    
-  ThalLayerSpec.cpp
   LearnDriverLayerSpec.cpp
   LearnFlagDeltaConSpec.cpp
   LearnFlagHebbConSpec.cpp
@@ -192,6 +191,7 @@ set(leabra_SRCS
   VTALayerSpec.cpp
   DRNLayerSpec.cpp
   VSPatchLayerSpec.cpp
+  ClampDaLayerSpec.cpp
 
   PBWMUnGpData.cpp
   MatrixCon.cpp
@@ -201,7 +201,6 @@ set(leabra_SRCS
   PFCUnitSpec.cpp
   
   GpCustomPrjnSpecBase.cpp
-  PFCLVPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp
 
   ThetaPhaseLayerSpec.cpp
@@ -214,5 +213,4 @@ set(leabra_SRCS
   XCalCHLConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
-  ClampDaLayerSpec.cpp
 )

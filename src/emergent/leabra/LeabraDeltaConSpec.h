@@ -30,11 +30,6 @@ class E_API LeabraDeltaConSpec : public LeabraConSpec {
   // basic delta-rule learning (plus - minus) * sender, with sender in the minus phase -- soft bounding as specified in spec -- no hebbian or anything else
 INHERITED(LeabraConSpec)
 public:
-  inline void Compute_SRAvg(LeabraSendCons* cg, LeabraUnit* su,
-                                     LeabraNetwork* net, bool do_s) override {
-    // do NOT do this under any circumstances!!
-  }
-
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, 
                                   const float ru_act_m, const float su_act) {

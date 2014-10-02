@@ -23,26 +23,6 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(AvgExtRewSpec);
-
-class E_API AvgExtRewSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing average external rewards
-INHERITED(SpecMemberBase)
-public:
-  bool		sub_avg;	// #DEF_false subtract average reward value in computing rewards
-  float		avg_dt;		// #DEF_0.005 time constant for integrating average reward value
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(AvgExtRewSpec);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init() { Initialize(); }
-};
-
 eTypeDef_Of(OutErrSpec);
 
 class E_API OutErrSpec : public SpecMemberBase {
@@ -99,7 +79,6 @@ public:
   };
 
   RewardType	rew_type;	// how do we get the reward values?
-  AvgExtRewSpec	avg_rew;	// average reward computation specifications
   OutErrSpec	out_err;	// #CONDEDIT_ON_rew_type:OUT_ERR_REW how to compute external rewards based on output performance
   ExtRewSpec	rew;		// misc reward computation specifications
 
@@ -125,10 +104,8 @@ public:
 
   // overrides:
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
-  void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net) override;
 
   // don't do any learning:
-  bool	Compute_SRAvg_Test(LeabraLayer* lay, LeabraNetwork* net)  override { return false; }
   bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
