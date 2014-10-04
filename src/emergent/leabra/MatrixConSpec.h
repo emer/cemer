@@ -78,7 +78,7 @@ public:
   }
 
   inline void C_Compute_dWt_Matrix_Tr
-    (float& dwt, float& tr, float& ntr, const float decay_dt, const float mtx_da,
+    (float& dwt, float& tr, float& ntr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
     if(fabs(mtx_da) >= matrix.da_learn_thr) {
       dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace
@@ -97,13 +97,11 @@ public:
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
     
-    const float decay_dt = matrix.tr_decay_dt;
-    
     const int sz = cg->size;
     if(nogo) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i], decay_dt,
+        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i],
                                 -ru->dav, ru->thal, ru->act_eq, su->act_eq);
         // only diff is -dav for nogo
       }
@@ -111,7 +109,7 @@ public:
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i], decay_dt,
+        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i],
                                 ru->dav, ru->thal, ru->act_eq, su->act_eq);
       }
     }

@@ -23,14 +23,11 @@ void MatrixLearnSpec::Initialize() {
 }
 
 void MatrixLearnSpec::Defaults_init() {
-  tr_decay_tau = 1.0f;
-  
-  tr_decay_dt = 1.0f / tr_decay_tau;
+  da_learn_thr = 0.1f;
 }
 
 void MatrixLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  tr_decay_dt = 1.0f / tr_decay_tau;
 }
 
 void MatrixConSpec::Initialize() {
