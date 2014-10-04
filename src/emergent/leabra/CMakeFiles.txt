@@ -78,8 +78,7 @@ set(leabra_HEADS_MAKETA
   VSPatchLayerSpec.h
   ClampDaLayerSpec.h
 
-  PBWMUnGpData.h
-  MatrixCon.h
+    MatrixCon.h
   MatrixConSpec.h
   GPiUnitSpec.h
   InvertLayerSpec.h
@@ -98,6 +97,8 @@ set(leabra_HEADS_MAKETA
   XCalCHLConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
+  FromGpRowsPrjnSpec.h
+  ToGpRowsPrjnSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -193,8 +194,7 @@ set(leabra_SRCS
   VSPatchLayerSpec.cpp
   ClampDaLayerSpec.cpp
 
-  PBWMUnGpData.cpp
-  MatrixCon.cpp
+    MatrixCon.cpp
   MatrixConSpec.cpp
   GPiUnitSpec.cpp
   InvertLayerSpec.cpp
@@ -213,4 +213,6 @@ set(leabra_SRCS
   XCalCHLConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
+  FromGpRowsPrjnSpec.cpp
+  ToGpRowsPrjnSpec.cpp
 )

@@ -28,12 +28,10 @@
 eTypeDef_Of(MatrixLearnSpec);
 
 class E_API MatrixLearnSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for learning in the matrix 
 INHERITED(SpecMemberBase)
 public:
-  float         tr_decay_tau;   // #MIN_1 time constant in trials (or phases if phase updating used) for decay of the gating activation trace -- values longer than 1 allow a gating event to obtain dopamine learning credit for multiple trials after gating event
-
-  float         tr_decay_dt;    // #READ_ONLY #EXPERT 1 / tr_decay_tau
+  float         da_learn_thr;   // Threshold on dopamine magnitude required to drive learning of matrix weights, and consequent clearing of the accumulated trace of gating activations -- set this high enough that it filters out small random DA fluctuations, but not the significant learning events
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -50,7 +48,7 @@ private:
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // Learning of matrix input connections based on dopamine value and sender * receiver activation product -- dwt = dav * thal * su * ru -- due to delay in gating effects and general effects of actions, dav is delayed at least one trial, so we have thal * su * ru trace encoded on current trial, with dav applied on subsequent trials
+  // Learning of matrix input connections based on sender * receiver activation product and thal gating activation signal, which accumulate in an ongoing synaptic trace over time, until they are multiplied by a later dopamine dav value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = dav * thal * su * ru -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
@@ -82,9 +80,12 @@ public:
   inline void C_Compute_dWt_Matrix_Tr
     (float& dwt, float& tr, float& ntr, const float decay_dt, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
-    dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace (from prior trial)
-    ntr = ru_thal * ru_act * su_act; // new trace increment
-    tr += ntr - decay_dt * tr;       // then update trace to include new vals
+    if(fabs(mtx_da) >= matrix.da_learn_thr) {
+      dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace
+      tr = 0.0f;                      // and reset trace
+    }
+    ntr = ru_thal * ru_act * su_act; // then add in any new trace increment
+    tr += ntr;                       // just keep accumulating..
   }
   // #IGNORE
 
