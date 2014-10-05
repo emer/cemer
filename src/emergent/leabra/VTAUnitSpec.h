@@ -17,11 +17,12 @@
 #define VTAUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class LeabraLayer; //
 
 eTypeDef_Of(gdPVLVDaSpec);
 
@@ -37,7 +38,7 @@ public:
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
 
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(gdPVLVDaSpec);
 protected:
@@ -58,7 +59,7 @@ public:
   float         pos_pv;         // #DEF_2 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
   float         dip;            // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
 
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LVBlockSpec);
 protected:
@@ -72,33 +73,34 @@ private:
 
 eTypeDef_Of(VTAUnitSpec);
 
-class E_API VTAUnitSpec : public LeabraLayerSpec {
+class E_API VTAUnitSpec : public LeabraUnitSpec {
   // Models the Ventral Tegmental Area: computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect
-INHERITED(LeabraLayerSpec)
+INHERITED(LeabraUnitSpec)
 public:
   gdPVLVDaSpec    da;             // parameters for the pvlv da computation
   LVBlockSpec     lv_block;       // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
-  virtual void  Send_Da(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void  Send_Da(LeabraUnit* u, LeabraNetwork* net);
   // send the da value to sending projections: every cycle
-  virtual void  Compute_Da(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void  Compute_Da(LeabraUnit* u, LeabraNetwork* net);
   // compute the da value based on recv projections from PPTg and LHbRMTg
 
-  virtual bool  GetRecvLayers(LeabraLayer* lay,
+  virtual bool  GetRecvLayers(LeabraUnit* u,
                               LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
   // get the recv layers..
 
-  void Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override { };
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
-  // never learn
-  bool Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
+  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  bool  CheckConfig_Unit(Unit* u, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(VTAUnitSpec);
 protected:

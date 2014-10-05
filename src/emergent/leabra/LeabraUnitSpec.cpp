@@ -263,8 +263,8 @@ void CIFERSpec::Initialize() {
   on = false;
   phase = false;
   super_gain = .1f;
-  thal_5b_thr = 0.5f;
-  act_5b_thr = 0.5f;
+  thal_thr = 0.5f;
+  act5b_thr = 0.5f;
   binary5b = false;
   ti_5b = 0.5f;
   Defaults_init();
@@ -511,8 +511,6 @@ void LeabraUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
   u->misc_1 = 0.0f;
   u->snap = 0.0f;
 
-  u->ClearLearnFlag();
-
   Init_ActAvg(u, net);
 }
 
@@ -602,6 +600,7 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   // not act_avg
   u->thal = 0.0f;
   u->deep5b = 0.0f;
+  u->lrnmod = 0.0f;
   u->deep5b_net = 0.0f;
   u->act_ctxt = 0.0f;
   u->net_ctxt = 0.0f;
@@ -622,7 +621,7 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   u->syn_kre = 0.0f;
   u->noise = 0.0f;
   u->dav = 0.0f;
-  u->sev = 0.0f;
+  // u->sev = 0.0f; // longer time-course
 
   // not the scales
   // init netin gets act_sent, net_raw, net_delta etc
@@ -761,8 +760,8 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
   DecayState(u, net, ls->decay.event);
   u->dav = 0.0f;
-  u->sev = 0.0f;
-  u->ClearLearnFlag();
+  //  u->sev = 0.0f; // longer time-course
+  u->lrnmod = 0.0f;
 }
 
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {
@@ -1200,7 +1199,6 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
     else {
       Compute_RateCodeSpike(u, net);
     }
-    Compute_SRAvg(u, net, thread_no); // unit level -- needed even for clamped
     return; // don't re-compute
   }
 
@@ -1217,8 +1215,6 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   Compute_SelfReg_Cycle(u, net);
 
   u->AddToActBuf(syn_delay);
-
-  Compute_SRAvg(u, net, thread_no); // unit level only, not cons (must be separate)
 }
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
@@ -1543,10 +1539,18 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnit* u, LeabraNetwork* net) {
   return rval;
 }
 
-void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  LeabraLayer* lay = u->own_lay();
-  if(!lay) return;
+void LeabraUnitSpec::Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  Compute_Act_CIFER(u, net);
+  Compute_SRAvg(u, net);
+}
 
+void LeabraUnitSpec::Compute_Act_CIFER(LeabraUnit* u, LeabraNetwork* net) {
+  if(!cifer.on) return;
+  if(u->thal < cifer.thal_thr)
+    u->thal = 0.0f;
+}
+
+void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
   float ru_act = u->act_lrn; // activation to use for updating averages
   if(!act_misc.lrn_sravg) {
     ru_act = u->act_eq;
@@ -1624,16 +1628,13 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net) {
 void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
   if(cifer.on) {
     if(!cifer.phase && net->phase_no == 0) return;
-    if(u->thal >= cifer.thal_5b_thr && u->act_eq >= cifer.act_5b_thr) {
-      if(cifer.binary5b) {
-        u->deep5b = 1.0f;
-      }
-      else {
-        u->deep5b = u->thal * u->act_eq;
-      }
+    float act5b = u->act_eq;
+    if(act5b < cifer.act5b_thr) {
+      act5b = 0.0f;
     }
-    else {
-      u->deep5b = 0.0f;
+    u->deep5b = u->thal * act5b; // thal already thresholded
+    if(cifer.binary5b && u->deep5b > 0.0f) {
+      u->deep5b = 1.0f;
     }
   }
   else {

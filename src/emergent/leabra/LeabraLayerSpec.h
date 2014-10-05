@@ -419,9 +419,6 @@ public:
   virtual bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning test whether to compute weight changes -- layers can opt out of learning entirely if they automatically don't learn
 
-  virtual void	SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning set the LEARN flags for all units in the layer
-
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 

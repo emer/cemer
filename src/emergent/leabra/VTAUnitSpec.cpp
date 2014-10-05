@@ -21,6 +21,7 @@
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
 #include <LearnModUnitSpec>
+#include <VSPatchUnitSpec>
 
 #include <taMisc>
 
@@ -44,14 +45,14 @@ void LVBlockSpec::Initialize() {
 }
 
 void VTAUnitSpec::Initialize() {
-  // SetUnique("kwta", true);
-  // kwta.k_from = KWTASpec::USE_K;
-  // kwta.k = 1;
-  // SetUnique("inhib_group", true);
-  // inhib_group = ENTIRE_LAYER;
-  // SetUnique("inhib", true);
-  // inhib.type = LeabraInhibSpec::KWTA_INHIB;
-  // inhib.kwta_pt = .25;
+  SetUnique("act_range", true);
+  act_range.max = 2.0f;
+  act_range.min = -2.0f;
+  act_range.UpdateAfterEdit();
+  SetUnique("clamp_range", true);
+  clamp_range.max = 2.0f;
+  clamp_range.min = -2.0f;
+  clamp_range.UpdateAfterEdit();
 }
 
 void VTAUnitSpec::HelpConfig() {
@@ -66,54 +67,49 @@ void VTAUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-bool VTAUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-  LeabraLayer* lay = (LeabraLayer*)ly;
-  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
+bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+  LeabraUnit* u = (LeabraUnit*)un;
 
-//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
   bool rval = true;
 
-  // must have the appropriate ranges for unit specs..
-  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-
-  if(lay->CheckError((us->act_range.max != 2.0f) || (us->act_range.min != -2.0f), quiet, rval,
+  if(un->CheckError((act_range.max != 2.0f) || (act_range.min != -2.0f), quiet, rval,
                 "requires UnitSpec act_range.max = 2, min = -2, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("act_range", true);
-    us->act_range.max = 2.0f;
-    us->act_range.min = -2.0f;
-    us->act_range.UpdateAfterEdit();
+                name,"(make sure this is appropriate for all layers that use this spec!)")) {
+    SetUnique("act_range", true);
+    act_range.max = 2.0f;
+    act_range.min = -2.0f;
+    act_range.UpdateAfterEdit();
   }
-  if(lay->CheckError((us->clamp_range.max != 2.0f) || (us->clamp_range.min != -2.0f), quiet, rval,
+  if(un->CheckError((clamp_range.max != 2.0f) || (clamp_range.min != -2.0f), quiet, rval,
                 "requires UnitSpec clamp_range.max = 2, min = -2, I just set it for you in spec:",
-                us->name,"(make sure this is appropriate for all layers that use this spec!)")) {
-    us->SetUnique("clamp_range", true);
-    us->clamp_range.max = 2.0f;
-    us->clamp_range.min = -2.0f;
-    us->clamp_range.UpdateAfterEdit();
+                name,"(make sure this is appropriate for all layers that use this spec!)")) {
+    SetUnique("clamp_range", true);
+    clamp_range.max = 2.0f;
+    clamp_range.min = -2.0f;
+    clamp_range.UpdateAfterEdit();
   }
 
   // check recv connection
-  if(lay->units.leaves == 0) return false;
   LeabraLayer* pptg_lay = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
   LeabraLayer* vspatch_lay = NULL;
-  GetRecvLayers(lay, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
+  GetRecvLayers(u, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
 
-  if(lay->CheckError(!pptg_lay, quiet, rval,
+  if(u->CheckError(!pptg_lay, quiet, rval,
                 "did not find PPTg layer to get Da bursts from (looks for PPTgUnitSpec)")) {
     rval = false;
   }
-  if(lay->CheckError(!lhb_lay, quiet, rval,
+  if(u->CheckError(!lhb_lay, quiet, rval,
                 "did not find LHbRMTg layer to get Da dips from (looks for LHbRMTgUnitSpec)")) {
     rval = false;
   }
-  if(lay->CheckError(!pospv_lay, quiet, rval,
+  if(u->CheckError(!pospv_lay, quiet, rval,
                 "did not find PosPV layer to get positive PV from -- looks for LearnModUnitSpec")) {
     rval = false;
   }
-  if(lay->CheckError(!vspatch_lay, quiet, rval,
+  if(u->CheckError(!vspatch_lay, quiet, rval,
                 "did not find VS Patch Indir layer to get pos PV shunting (cancelling) signal from (looks for layer with Patch in name)")) {
     rval = false;
   }
@@ -121,37 +117,36 @@ bool VTAUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return rval;
 }
 
-bool VTAUnitSpec::GetRecvLayers(LeabraLayer* lay,
+bool VTAUnitSpec::GetRecvLayers(LeabraUnit* u,
                                  LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
                                  LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay) {
   pptg_lay = NULL;
   lhb_lay = NULL;
   pospv_lay = NULL;
   vspatch_lay = NULL;
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
     LeabraLayerSpec* fls = (LeabraLayerSpec*)fmlay->spec.SPtr();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)fmlay->GetUnitSpec();
     if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      if(fmlay->GetUnitSpec()->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay = fmlay;
-      else if(fmlay->GetUnitSpec()->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
-      else if(fls->InheritsFrom(TA_LearnModUnitSpec)) pospv_lay = fmlay;
-      else if(fmlay->name.contains("Patch")) vspatch_lay = fmlay;
+      if(us->InheritsFrom(TA_PPTgUnitSpec)) pptg_lay = fmlay;
+      else if(us->InheritsFrom(TA_LHbRMTgUnitSpec)) lhb_lay = fmlay;
+      else if(us->InheritsFrom(TA_LearnModUnitSpec)) pospv_lay = fmlay;
+      else if(us->InheritsFrom(TA_VSPatchUnitSpec)) vspatch_lay = fmlay;
     }
   }
   return true;
 }
 
-void VTAUnitSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
+void VTAUnitSpec::Compute_Da(LeabraUnit* u, LeabraNetwork* net) {
   LeabraLayer* pptg_lay = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
   LeabraLayer* vspatch_lay = NULL;
-  GetRecvLayers(lay, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
+  GetRecvLayers(u, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
 
   // use avg act over layer..
   float burst_da = pptg_lay->acts_eq.avg;
@@ -183,40 +178,29 @@ void VTAUnitSpec::Compute_Da(LeabraLayer* lay, LeabraNetwork* net) {
   // }
 
   // net->pvlv_dav = net_da;
-  lay->dav = net_da;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->dav = net_da;
-    u->ext = da.tonic_da + u->dav;
-    u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
-    u->da = 0.0f;
-  }
+  //  lay->dav = net_da;
+  u->dav = net_da;
+  u->ext = da.tonic_da + u->dav;
+  u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
+  u->da = 0.0f;
 }
 
-void VTAUnitSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    const float snd_val = u->act;
-    for(int g=0; g<u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      for(int j=0;j<send_gp->size; j++) {
-        ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
-      }
+void VTAUnitSpec::Send_Da(LeabraUnit* u, LeabraNetwork* net) {
+  const float snd_val = u->act;
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    if(send_gp->NotActive()) continue;
+    for(int j=0;j<send_gp->size; j++) {
+      ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
     }
   }
 }
 
-void VTAUnitSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
-  Compute_Da(lay, net);
-  Send_Da(lay, net);
-  inherited::Compute_CycleStats(lay, net, thread_no);
+void VTAUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
+  LeabraUnit* u = (LeabraUnit*)ru;
+  LeabraNetwork* net = (LeabraNetwork*)rnet;
+  Compute_Da(u, net);
+  Send_Da(u, net);
 }
 
-void VTAUnitSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->hard_clamped = false;
-  lay->UnSetExtFlag(Unit::EXT);
-  inherited::Compute_HardClamp(lay, net);
-}
 

@@ -16,10 +16,8 @@
 #include "InvertUnitSpec.h"
 
 #include <LeabraNetwork>
-#include <LayerActUnitSpec>
 
 TA_BASEFUNS_CTORS_DEFN(InvertUnitSpec);
-
 
 void InvertUnitSpec::Initialize() {
   Defaults_init();
@@ -28,55 +26,45 @@ void InvertUnitSpec::Initialize() {
 void InvertUnitSpec::Defaults_init() {
 }
 
-bool InvertUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-  LeabraLayer* lay = (LeabraLayer*)ly;
-  bool rval = inherited::CheckConfig_Layer(lay, quiet);
+bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+  LeabraUnit* u = (LeabraUnit*)un;
+  bool rval = inherited::CheckConfig_Unit(un, quiet);
 
-  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
+  LeabraNetwork* net = (LeabraNetwork*)un->own_net();
 
-  if(lay->CheckError(!lay->GetUnitSpec()->InheritsFrom(&TA_LayerActUnitSpec), 
-                     quiet, rval,
-                     "Should use LayerActUnitSpec unit specs to optimize computational costs")) {
-    // todo: could try to fix this..
-  }
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
-  if(lay->CheckError(!cg, quiet, rval,
-                     "Requires one recv projection!")) {
+  if(u->CheckError(!cg, quiet, rval,
+                   "Requires one recv projection!")) {
     return false;
   }
   LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
-  if(lay->CheckError(!su, quiet, rval, 
-                     "Requires one unit in recv projection!")) {
+  if(u->CheckError(!su, quiet, rval, 
+                   "Requires one unit in recv projection!")) {
     return false;
   }
 
   return rval;
 }
 
-void InvertUnitSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->Inhib_SetVals(0.5f);            // assume 0 - 1 clamped inputs
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
-    if(!cg) return;
-    LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
-    if(!su) return;
-    LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
-    if(fmlay->lesioned()) {
-      u->act = 1.0f;
-      return;
-    }
-    LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    u->act = 1.0f - su->act;
-    u->act_lrn = u->act_eq = u->act_nd = u->act;
-    u->da = 0.0f;            // I'm fully settled!
-    u->AddToActBuf(rus->syn_delay);
+void InvertUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
+  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+  if(!cg) return;
+  LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
+  if(!su) return;
+  LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
+  if(fmlay->lesioned()) {
+    u->act = 1.0f;
+    return;
   }
+  u->act = 1.0f - su->act;
+  u->act_lrn = u->act_eq = u->act_nd = u->act;
+  u->da = 0.0f;            // I'm fully settled!
+  u->AddToActBuf(syn_delay);
 }
 
-void InvertUnitSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
-  Compute_ActFmSource(lay, net);
-  inherited::Compute_CycleStats(lay, net, thread_no);
+void InvertUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
+  LeabraUnit* u = (LeabraUnit*)ru;
+  LeabraNetwork* net = (LeabraNetwork*)rnet;
+  Compute_ActFmSource(u, net);
 }
 

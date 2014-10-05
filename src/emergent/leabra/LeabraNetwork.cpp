@@ -453,12 +453,11 @@ void LeabraNetwork::Cycle_Run() {
     Compute_Inhib();
 
     Compute_Act();
+    Compute_Act_Post();
 
     Compute_CycleStats_Pre();
     Compute_CycleStats_Layer();
     Compute_CycleStats_Post();
-
-    Compute_MidMinus();           // check for mid-minus and run if so (PBWM)
 
     Cycle_IncrCounters();
   }
@@ -546,6 +545,14 @@ void LeabraNetwork::Compute_Act() {
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_Act(this, -1);
+  }
+}
+
+void LeabraNetwork::Compute_Act_Post() {
+  // non-threaded
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Compute_Act_Post(this, -1);
   }
 }
 

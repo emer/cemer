@@ -55,7 +55,6 @@ public: //
   enum UnitFlags { // #BITS misc flags for units
     UF_NONE             = 0,    // #NO_BIT no flags
     LESIONED            = 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
-    LEARN               = 0x0002, // this unit is enabled to learn -- used by algorithms that have specific learning enabling conditions
   };
 
   UnitFlags     flags;
@@ -113,13 +112,6 @@ public: //
 
   inline bool   lesioned() const { return HasUnitFlag(LESIONED); }
   // check if this unit is lesioned -- must check for all processing functions (threaded calls automatically exclude lesioned units)
-
-  inline void           SetLearnFlag() { SetUnitFlag(LEARN); }
-  // set the LEARN flag for this unit
-  inline bool           HasLearnFlag() const { return HasUnitFlag(LEARN); }
-  // is the LEARN flag set for this unit
-  inline void           ClearLearnFlag() { ClearUnitFlag(LEARN); }
-  // clearn the LEARN flag for this unit
 
   virtual void  Lesion();
   // #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on unit -- removes it from all processing operations

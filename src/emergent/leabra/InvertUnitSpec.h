@@ -17,7 +17,7 @@
 #define InvertUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -25,19 +25,23 @@
 
 eTypeDef_Of(InvertUnitSpec);
 
-class E_API InvertUnitSpec : public LeabraLayerSpec {
-  // a layer that continuously copies activations from input layer (use one to one prjns, weights don't matter) and sets our activations to 1.0 - input->act
-INHERITED(LeabraLayerSpec)
+class E_API InvertUnitSpec : public LeabraUnitSpec {
+  // a unit that continuously copies activations from input (use one to one prjns, weights don't matter) and sets our activations to 1.0 - input->act
+INHERITED(LeabraUnitSpec)
 public:
-  virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void Compute_ActFmSource(LeabraUnit* lay, LeabraNetwork* net);
   // set current act 
 
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
+  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
 
-  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
+  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
+  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
 
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
+  bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 
   TA_SIMPLE_BASEFUNS(InvertUnitSpec);
 private:

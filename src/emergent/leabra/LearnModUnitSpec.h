@@ -17,7 +17,7 @@
 #define LearnModUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -25,16 +25,16 @@
 
 eTypeDef_Of(LearnModUnitSpec);
 
-class E_API LearnModUnitSpec : public LeabraLayerSpec {
-  // activity on this layer drives learning in the connections that it projects to -- used for Primary Value layers in gdPVLV architecture, to drive learning at time of PV in other layers
-INHERITED(LeabraLayerSpec)
+class E_API LearnModUnitSpec : public LeabraUnitSpec {
+  // activity on this unit drives special lrnmod value in the units of connections that it projects to (subject to threshold) -- used for Primary Value layers in gdPVLV architecture, to drive learning at time of PV in other layers
+INHERITED(LeabraUnitSpec)
 public:
   float         learn_thr;      // #DEF_0.1 Threshold value of unit activation to set the learning flag on
 
-  virtual void  Send_LearnFlags(LeabraLayer* lay, LeabraNetwork* net);
-  // send the unit LEARN flags to all units that we project to, based on unit activation thresholds -- called in PostSettle
+  virtual void  Send_LearnMod(LeabraUnit* u, LeabraNetwork* net);
+  // send the unit lrnmod value to all units that we project to, based on unit activation thresholds
 
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
 
   TA_SIMPLE_BASEFUNS(LearnModUnitSpec);
 protected:

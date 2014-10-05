@@ -134,6 +134,7 @@ public:
   RunWaitTime   netin_integ_time; // #NO_SAVE unit-level netin integration computation
   RunWaitTime   inhib_time;       // #NO_SAVE layer-level inhibition computation
   RunWaitTime   act_time;         // #NO_SAVE unit-level act computation
+  RunWaitTime   act_post_time;    // #NO_SAVE unit-level act_post computation
   RunWaitTime   cycstats_time;    // #NO_SAVE layer-level cyclestats computation
 
   RunWaitTime   ti_netin_time;     // #NO_SAVE TI netins
@@ -217,11 +218,11 @@ public:
   QAtomicInt    stage_net_int;   // #IGNORE 
 
   QAtomicInt    stage_inhib;     // #IGNORE 
+  QAtomicInt    stage_lay_gp;    // #IGNORE 
 
   QAtomicInt    stage_act;       // #IGNORE 
-  QAtomicInt    stage_sr_cons;   // #IGNORE 
+  QAtomicInt    stage_act_post;  // #IGNORE 
   QAtomicInt    stage_cyc_stats; // #IGNORE 
-  QAtomicInt    stage_syndep; // #IGNORE 
 
   QAtomicInt    stage_deep5b;    // #IGNORE 
   QAtomicInt    stage_deep5b_p;  // #IGNORE post

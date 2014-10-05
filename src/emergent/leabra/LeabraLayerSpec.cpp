@@ -936,13 +936,6 @@ bool LeabraLayerSpec::Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) {
   return true;
 }
 
-void LeabraLayerSpec::SetUnitLearnFlags(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->SetLearnFlag();
-  }
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      Trial-level Stats

@@ -202,6 +202,10 @@ public:
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_ActFun_rate_impl(val_sub_thr); }
   // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
+  void  Compute_Act_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_Act_Post(this, net, thread_no); }
+  // #CAT_Activation post-processing step after activations are computed -- calls Compute_CIFER (applies threshold to the thal variable), and Compute_SRAvg by default
+
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 

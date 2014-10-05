@@ -17,7 +17,7 @@
 #define DRNUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -35,7 +35,7 @@ public:
   float         se_state_dt;    // #MIN_0 #MAX_1 time constant for integrating bodily state values over time -- typically much slower
   bool          sub_pos;        // subtract positive values (otherwise just use negative values)
 
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DRN5htSpec);
 protected:
@@ -49,27 +49,30 @@ private:
 
 eTypeDef_Of(DRNUnitSpec);
 
-class E_API DRNUnitSpec : public LeabraLayerSpec {
+class E_API DRNUnitSpec : public LeabraUnitSpec {
   // Models the Dorsal Raphe Nucleus which drives serotonin (se, 5HT) as a long-term running average of bad primary value outcomes and bodily state variables (optionally as a the balance between good and bad)
-INHERITED(LeabraLayerSpec)
+INHERITED(LeabraUnitSpec)
 public:
   DRN5htSpec      se;             // parameters for computing serotonin values
 
-  virtual void  Send_Se(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void  Send_Se(LeabraUnit* u, LeabraNetwork* net);
   // send the se value to sending projections: every cycle
-  virtual void  Compute_Se(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void  Compute_Se(LeabraUnit* u, LeabraNetwork* net);
   // compute the se value based on recv projections from PV and bodily state layers
 
-  void Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net) override { };
-  void Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override { };
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  void  Init_Weights(Unit* ru, Network* rnet, int thread_no) override;
 
-  // never learn
-  bool Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
+  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+
+  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
+  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  // bool  CheckConfig_Unit(Unit* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(DRNUnitSpec);
 protected:

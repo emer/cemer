@@ -321,6 +321,8 @@ public:
 
   void	Compute_Act() override;
   // #CAT_Cycle compute activations
+  virtual void	Compute_Act_Post();
+  // #CAT_Cycle post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats

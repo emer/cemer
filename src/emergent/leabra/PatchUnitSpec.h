@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef ThalUnitSpec_h
-#define ThalUnitSpec_h 1
+#ifndef PatchUnitSpec_h
+#define PatchUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,23 +23,23 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(ThalUnitSpec);
+eTypeDef_Of(PatchUnitSpec);
 
-class E_API ThalUnitSpec  : public LeabraUnitSpec {
-  // Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to
+class E_API PatchUnitSpec  : public LeabraUnitSpec {
+  // Dorsal striatum patch neurons, which shunt dopamine values in all neurons that they project to (shortcut for shunting SNc dopamine which then projects to other target striatum neurons) -- typically driven by PFC maintenance inputs, blocking learning for anything with ongoing maintenance -- threshold for shunting is opt_thresh.send threshold
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void  Send_Thal(LeabraUnit* u, LeabraNetwork* net);
-  // send the act value as thal to sending projections: every cycle
+  virtual void  Send_DAShunt(LeabraUnit* u, LeabraNetwork* net);
+  // if activation is over opt_thresh.send threshold, we shunt dav in sending targets
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thread_no = -1) override;
 
-  // no learning in this one..
+  // no learning in this one -- just a readout of PFC activation
   void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
   void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
   void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
 
-  TA_SIMPLE_BASEFUNS(ThalUnitSpec);
+  TA_SIMPLE_BASEFUNS(PatchUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -48,4 +48,5 @@ private:
   void  Defaults_init();
 };
 
-#endif // ThalUnitSpec_h
+
+#endif // PatchUnitSpec_h

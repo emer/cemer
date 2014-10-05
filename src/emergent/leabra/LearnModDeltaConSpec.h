@@ -39,6 +39,7 @@ public:
   enum SendAct {                // what var to use for sending activation
     ACT_M,                      // minus phase activation
     ACT_P,                      // plus phase activation
+    ACT_EQ,                     // current activation
   };
 
   DaModType     da_mod;         // how does receiving unit dopamine modulate learning (or not)?
@@ -61,29 +62,31 @@ public:
     float su_act;
     if(send_act == ACT_M)
       su_act = su->act_m;
-    else
+    else if(send_act == ACT_P)
       su_act = su->act_p;
+    else                        // ACT_EQ
+      su_act = su->act_eq;
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         C_Compute_dWt_Delta_NoDa(dwts[i], ru->act_p, ru->act_m, su_act);
       }
     }
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, ru->dav);
       }
     }
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, fabsf(ru->dav));
       }
     }

@@ -712,13 +712,15 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   if(!pvlvspgp) return false;
 
   FMSpec(LeabraUnitSpec, pvlv_units, pvlvspgp, "PVLVUnits");
+  FMChild(LearnModUnitSpec, pv_units, pvlv_units, "PVUnits");
   FMChild(LHbRMTgUnitSpec, lhbrmtg_units, pvlv_units, "LHbRMTgUnits");
   FMChild(PPTgUnitSpec, pptg_units, pvlv_units, "PPTgUnits");
-  FMChild(LeabraUnitSpec, vta_units, pvlv_units, "VTAUnits");
+  FMChild(VTAUnitSpec, vta_units, pvlv_units, "VTAUnits");
+  FMChild(DRNUnitSpec, drn_units, pvlv_units, "DRNUnits");
   FMChild(LeabraUnitSpec, cem_units, pvlv_units, "CeMUnits");
   FMChild(LeabraUnitSpec, bla_units, pvlv_units, "BLAUnits");
-  FMChild(LeabraUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
-  FMChild(LeabraUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
+  FMChild(VSPatchUnitSpec, vspd_units, pvlv_units, "VSPatchDirectUnits");
+  FMChild(VSPatchUnitSpec, vspi_units, pvlv_units, "VSPatchIndirUnits");
   FMChild(LeabraUnitSpec, vsmd_units, pvlv_units, "VSMatrixDirectUnits");
   FMChild(LeabraUnitSpec, vsmi_units, pvlv_units, "VSMatrixIndirUnits");
 
@@ -736,12 +738,9 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
 
   FMSpec(LeabraLayerSpec, laysp, pvlvspgp, "PVLVLayers");
-  FMChild(LearnModUnitSpec, pvsp, laysp, "PV");
-  FMChild(LeabraLayerSpec, pptrmtgsp, laysp, "PPTgRMTg");
-  FMChild(VTAUnitSpec, vtasp, laysp, "VTA");
-  FMChild(DRNUnitSpec, drnsp, laysp, "DRN");
+  FMChild(LeabraLayerSpec, dasp, laysp, "DALayers");
   FMChild(LeabraLayerSpec, amgysp, laysp, "Amyg");
-  FMChild(VSPatchUnitSpec, vspsp, laysp, "VSPatch");
+  FMChild(LeabraLayerSpec, vspsp, laysp, "VSPatch");
   FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrix");
 
   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PVLVFullPrjn");
@@ -756,15 +755,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   //////  Units
   pvlv_units->UpdateAfterEdit();
   pvlv_units->bias_spec.SetSpec(fix_bias);
-
-  vta_units->SetUnique("act_range", true);
-  vta_units->act_range.max = 2.0f;
-  vta_units->act_range.min = -2.0f;
-  vta_units->act_range.UpdateAfterEdit();
-  vta_units->SetUnique("clamp_range", true);
-  vta_units->clamp_range.max = 2.0f;
-  vta_units->clamp_range.min = -2.0f;
-  vta_units->clamp_range.UpdateAfterEdit();
 
   cem_units->SetUnique("da_mod", true);
   cem_units->da_mod.on = true;
@@ -822,12 +812,6 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   laysp->avg_act.fixed = true;
   laysp->inhib_misc.self_fb = 0.3f;
   laysp->decay.event = 0.0f;
-
-  pvsp->SetUnique("decay", true);
-  pvsp->decay.event = 1.0f;
-
-  vtasp->SetUnique("decay", true);
-  vtasp->decay.event = 1.0f;
 
   vsmsp->SetUnique("del_inhib", true);
   vsmsp->del_inhib.on = true;
@@ -1074,15 +1058,15 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   // apply specs to objects
 
   LeabraUnitSpec* pvlv_units = PvlvSp("PVLVUnits",LeabraUnitSpec);
-  pos_pv->SetUnitSpec(pvlv_units);
-  neg_pv->SetUnitSpec(pvlv_units);
-  pos_bs->SetUnitSpec(pvlv_units);
-  neg_bs->SetUnitSpec(pvlv_units);
+  LearnModUnitSpec* pv_units = PvlvSp("PVUnits",LearnModUnitSpec);
+  pos_pv->SetUnitSpec(pv_units);
+  neg_pv->SetUnitSpec(pv_units);
+  pos_bs->SetUnitSpec(pv_units);
+  neg_bs->SetUnitSpec(pv_units);
 
-  LearnModUnitSpec* pvsp = PvlvSp("PV", LearnModUnitSpec);
   LeabraLayerSpec* bssp = PvlvSp("PVLVLayers", LeabraLayerSpec);
-  pos_pv->SetLayerSpec(pvsp);
-  neg_pv->SetLayerSpec(pvsp);
+  pos_pv->SetLayerSpec(bssp);
+  neg_pv->SetLayerSpec(bssp);
   pos_bs->SetLayerSpec(bssp);
   neg_bs->SetLayerSpec(bssp);
 
@@ -1095,27 +1079,28 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   poslv_bla->SetLayerSpec(amygsp);
   neglv_bla->SetLayerSpec(amygsp);
 
-  vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", LeabraUnitSpec));
-  vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
+  vspi->SetUnitSpec(PvlvSp("VSPatchIndirUnits", VSPatchUnitSpec));
+  vspd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", VSPatchUnitSpec));
   vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", LeabraUnitSpec));
   vsmd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
 
-  vspi->SetLayerSpec(PvlvSp("VSPatch", VSPatchUnitSpec));
-  vspd->SetLayerSpec(PvlvSp("VSPatch", VSPatchUnitSpec));
+  vspi->SetLayerSpec(PvlvSp("VSPatch", LeabraLayerSpec));
+  vspd->SetLayerSpec(PvlvSp("VSPatch", LeabraLayerSpec));
   vsmi->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
   vsmd->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
 
+  LeabraLayerSpec* dasp = PvlvSp("DALayers", LeabraLayerSpec);
   pptg->SetUnitSpec(PvlvSp("PPTgUnits", PPTgUnitSpec));
-  pptg->SetLayerSpec(PvlvSp("PPTgRMTg", LeabraLayerSpec));
+  pptg->SetLayerSpec(dasp);
 
   lhb->SetUnitSpec(PvlvSp("LHbRMTgUnits", LHbRMTgUnitSpec));
-  lhb->SetLayerSpec(PvlvSp("PPTgRMTg", LeabraLayerSpec));
+  lhb->SetLayerSpec(dasp);
 
-  vta->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
-  vta->SetLayerSpec(PvlvSp("VTA", VTAUnitSpec));
+  vta->SetUnitSpec(PvlvSp("VTAUnits", VTAUnitSpec));
+  vta->SetLayerSpec(dasp);
 
-  drn->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
-  drn->SetLayerSpec(PvlvSp("DRN", DRNUnitSpec));
+  drn->SetUnitSpec(PvlvSp("DRNUnits", DRNUnitSpec));
+  drn->SetLayerSpec(dasp);
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections

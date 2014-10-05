@@ -26,23 +26,19 @@ void LearnModUnitSpec::Initialize() {
 void LearnModUnitSpec::Defaults_init() {
 }
 
-void LearnModUnitSpec::Send_LearnFlags(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    const bool lrn_on = (u->act_eq > learn_thr);
-    for(int g=0; g<u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      for(int j=0;j<send_gp->size; j++) {
-        send_gp->Un(j,net)->SetUnitFlagState(Unit::LEARN, lrn_on);
-      }
+void LearnModUnitSpec::Send_LearnMod(LeabraUnit* u, LeabraNetwork* net) {
+  float lrnmod = (u->act_eq > learn_thr) ? u->act_eq : 0.0f;
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    if(send_gp->NotActive()) continue;
+    for(int j=0;j<send_gp->size; j++) {
+      ((LeabraUnit*)send_gp->Un(j,net))->lrnmod = lrnmod;
     }
   }
 }
 
-void LearnModUnitSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-  Send_LearnFlags(lay, net);
+void LearnModUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
+  inherited::Compute_Act(u, net, thread_no);
+  Send_LearnMod((LeabraUnit*)u, (LeabraNetwork*)net);
 }
 

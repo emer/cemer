@@ -23,39 +23,33 @@ void ClampDaUnitSpec::Initialize() {
   send_da = CYCLE;
 }
 
-
-void ClampDaUnitSpec::Send_Da(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    const float snd_val = u->act;
-    for(int g=0; g<u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      for(int j=0;j<send_gp->size; j++) {
-        ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
-      }
+void ClampDaUnitSpec::Send_Da(LeabraUnit* u, LeabraNetwork* net) {
+  const float snd_val = u->act;
+  for(int g=0; g<u->send.size; g++) {
+    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    if(send_gp->NotActive()) continue;
+    for(int j=0;j<send_gp->size; j++) {
+      ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
     }
   }
 }
 
-void ClampDaUnitSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+void ClampDaUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
+  inherited::Compute_Act(ru, rnet, thread_no);
+  LeabraUnit* u = (LeabraUnit*)ru;
+  LeabraNetwork* net = (LeabraNetwork*)rnet;
   if(send_da == CYCLE) {
-    Send_Da(lay, net);
+    Send_Da(u, net);
   }
-  inherited::Compute_CycleStats(lay, net, thread_no);
+  else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
+    Send_Da(u, net);
+  }
 }
 
-void ClampDaUnitSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
+void ClampDaUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::PostSettle(u, net);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(lay, net);
+    Send_Da(u, net);
   }
 }
 
-void ClampDaUnitSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_HardClamp(lay, net);
-  if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(lay, net);
-  }
-}

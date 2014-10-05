@@ -34,7 +34,7 @@ void PFCUnitSpec::Initialize() {
 void PFCUnitSpec::Defaults_init() {
   act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   cifer.on = true;
-  cifer.thal_5b_thr = 0.1f;
+  cifer.thal_thr = 0.1f;
   //  cifer.phase = true; // not yet..
   // todo: other cifer defaults
 }

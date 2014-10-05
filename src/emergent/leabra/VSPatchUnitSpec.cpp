@@ -16,10 +16,6 @@
 #include "VSPatchUnitSpec.h"
 
 #include <LeabraNetwork>
-#include <MarkerConSpec>
-#include <LeabraDeltaConSpec>
-
-#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(VSPatchUnitSpec);
 
@@ -29,68 +25,14 @@ void VSPatchUnitSpec::Initialize() {
 void VSPatchUnitSpec::Defaults_init() {
 }
 
-void VSPatchUnitSpec::HelpConfig() {
-  String help = "VSPatchUnitSpec (PV driven VS units) Computation:\n\
- - Learns from PV values clamped in plus phase.\n\
- \nVSPatchUnitSpec Configuration:\n\
- - Use the Wizard gdPVLV button to automatically configure layers.\n\
- - Recv cons from PV marked with a MarkerConSpec";
-  taMisc::Confirm(help);
-}
-
-bool VSPatchUnitSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
-  LeabraLayer* lay = (LeabraLayer*)ly;
-  if(!inherited::CheckConfig_Layer(lay, quiet)) return false;
-
-//  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-  bool rval = true;
-
-  LeabraLayer* pv_lay = NULL;
-  if(lay->units.leaves == 0) return false;
-  LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->InheritsFrom(TA_MarkerConSpec)) {
-      if(!pv_lay) {
-        LeabraLayer* flay = (LeabraLayer*)recv_gp->prjn->from.ptr();
-        pv_lay = flay;
-      }
-      continue;
-    }
-    if(lay->CheckError(!cs->InheritsFrom(TA_LeabraDeltaConSpec), quiet, rval,
-                  "requires recv connections to be of type LeabraDeltaConSpec")) {
-      return false;
-    }
-  }
-  if(lay->CheckError(!pv_lay, quiet, rval,
-                "did not find MarkerConSpec con from PV driver layer")) {
-    rval = false;
-  }
-  return rval;
-}
-
-void VSPatchUnitSpec::Compute_PVPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    float pv_val = 0.0f;
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-      if(recv_gp->NotActive()) continue;
-      if(recv_gp->GetConSpec()->InheritsFrom(TA_MarkerConSpec)) {
-        pv_val = recv_gp->Un(0,net)->act;
-        break;
-      }
-    }
-    u->act_p = pv_val;
-  }
-}
-
-void VSPatchUnitSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
+void VSPatchUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
+  LeabraUnit* u = (LeabraUnit*)ru;
+  LeabraNetwork* net = (LeabraNetwork*)rnet;
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
-    Compute_PVPlus(lay, net);
+    u->act = u->act_eq = u->act_nd = u->act_lrn = u->lrnmod;
+  }
+  else {
+    inherited::Compute_Act(ru, rnet, thread_no);
   }
 }
 

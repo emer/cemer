@@ -352,8 +352,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the CIFER mechanisms (otherwise, deep5b == act and thal is ignored)
   float         super_gain;     // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin -- thal only increases netin otherwise recv'd: netin = (1 + gain * thal) * netin_raw
-  float	        thal_5b_thr;    // #CONDSHOW_ON_on #MIN_0 threshold on thal value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
-  float	        act_5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
+  float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
+  float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
   bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
   bool          phase;          // #CONDSHOW_ON_on TI context and deep layer activations update at the end of every phase (e.g., for PFC) -- otherwise update is at the end of every trial (posterior cortex)
@@ -569,7 +569,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
 
-  // main function is basic Compute_Act which calls all the various sub-functions, including Compute_SRAvg
+  // main function is basic Compute_Act which calls all the various sub-functions below
+  // derived types that send activation directly to special unit variables (e.g., VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post 
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
 
     inline void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
@@ -606,8 +607,16 @@ public:
     virtual float Compute_Noise(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)
 
-  virtual void 	Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
-  // #CAT_Learning compute sending-receiving activation product averages -- unit level only, used for XCAL
+  ///////////////////////////////////////////////////////////////////////
+  //	Post Activation Step
+
+  virtual void 	Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1);
+  // #CAT_Activation post-processing step after activations are computed -- calls Compute_CIFER (applies threshold to the thal variable), and Compute_SRAvg by default
+    virtual void Compute_Act_CIFER(LeabraUnit* u, LeabraNetwork* net);
+    // #CAT_Activation update CIFER post activation updating step -- apply threshold to thal variable at this point
+    virtual void Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net);
+    // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
+
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats

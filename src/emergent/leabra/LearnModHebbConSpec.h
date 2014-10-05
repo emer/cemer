@@ -39,6 +39,7 @@ public:
   enum SendAct {                // what var to use for sending activation
     ACT_M,                      // minus phase activation
     ACT_P,                      // plus phase activation
+    ACT_EQ,                     // current activation
   };
 
 // #ifdef __MAKETA__
@@ -72,14 +73,16 @@ public:
     float su_act;
     if(send_act == ACT_M)
       su_act = su->act_m;
-    else
+    else if(send_act == ACT_P)
       su_act = su->act_p;
+    else                        // ACT_EQ
+      su_act = su->act_eq;
 
     const int sz = cg->size;
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_NoDa(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act);
       }
@@ -87,7 +90,7 @@ public:
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act, ru->dav);
       }
@@ -95,7 +98,7 @@ public:
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        if(!ru->HasLearnFlag()) continue; // must have this flag to learn
+        if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act,
                                 fabsf(ru->dav));

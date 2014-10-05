@@ -17,7 +17,7 @@
 #define ClampDaUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -25,24 +25,23 @@
 
 eTypeDef_Of(ClampDaUnitSpec);
 
-class E_API ClampDaUnitSpec : public LeabraLayerSpec {
-  // a dopamine layer that you can just clamp to any value and it will send it to other layer's dav values
-INHERITED(LeabraLayerSpec)
+class E_API ClampDaUnitSpec : public LeabraUnitSpec {
+  // a dopamine unit that you can just clamp to any value and it will send it to other layer's dav values
+INHERITED(LeabraUnitSpec)
 public:
   enum  SendDaMode {            // when to send da values to other layers
     CYCLE,                      // send every cycle
-    PLUS_START,                 // send at start of plus phase
-    PLUS_END,                   // send at end of plus phase
+    PLUS_START,                 // start sending at start of plus phase
+    PLUS_END,                   // send only at the end of plus phase
   };
 
   SendDaMode    send_da;        // when to send da values
 
-  virtual void  Send_Da(LeabraLayer* lay, LeabraNetwork* net);
-  // send the da value to sending projections: every cycle
+  virtual void  Send_Da(LeabraUnit* u, LeabraNetwork* net);
+  // send the da value to sending projections
 
-  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
-  void  Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(ClampDaUnitSpec);
 protected:

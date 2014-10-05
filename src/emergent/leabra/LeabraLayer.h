@@ -227,10 +227,6 @@ public:
   { return spec->Compute_dWt_Test(this, net); }
   // #CAT_Learning test whether to compute weight change on this layer -- layers can opt-out of weight changes if they automatically don't learn
 
-  void	SetUnitLearnFlags(LeabraNetwork* net)
-  { spec->SetUnitLearnFlags(this, net); }
-  // #CAT_Learning set the LEARN flags for all units in the layer
-
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
 

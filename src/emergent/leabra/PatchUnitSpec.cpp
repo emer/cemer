@@ -13,33 +13,30 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "ThalUnitSpec.h"
+#include "PatchUnitSpec.h"
 
 #include <LeabraNetwork>
 
-TA_BASEFUNS_CTORS_DEFN(ThalUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(PatchUnitSpec);
 
-void ThalUnitSpec::Initialize() {
+void PatchUnitSpec::Initialize() {
 }
 
-void ThalUnitSpec::Defaults_init() {
+void PatchUnitSpec::Defaults_init() {
 }
 
-void ThalUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
-  const float snd_val = u->act;
+void PatchUnitSpec::Send_DAShunt(LeabraUnit* u, LeabraNetwork* net) {
+  if(u->act_eq < opt_thresh.send) return;
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->thal = snd_val;
+      ((LeabraUnit*)send_gp->Un(j,net))->dav = 0.0f; // shunt!
     }
   }
 }
 
-void ThalUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  inherited::Compute_Act(ru, rnet, thread_no);
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Send_Thal(u, net);
+void PatchUnitSpec::Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+  Send_DAShunt(u, net);
+  inherited::Compute_Act_Post(u, net, thread_no);
 }
-

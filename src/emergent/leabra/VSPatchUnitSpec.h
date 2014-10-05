@@ -17,7 +17,7 @@
 #define VSPatchUnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -25,18 +25,12 @@
 
 eTypeDef_Of(VSPatchUnitSpec);
 
-class E_API VSPatchUnitSpec : public LeabraLayerSpec {
-  // simulates the ventral striatum patch units, both direct (recv from negative valence) and indirect (positive valence) -- get a MarkerConSpec from PV layer units which drive plus phase clamped value at all times -- other connections from sensory and BLA can learn to predict -- use LeabraDeltaConSpec
-INHERITED(LeabraLayerSpec)
+class E_API VSPatchUnitSpec : public LeabraUnitSpec {
+  // simulates the ventral striatum patch units, both direct (recv from negative valence) and indirect (positive valence) -- should recv a MarkerConSpec projection PV layer units that send the lrnmod variable -- use this to set the plus phase clamped activation -- other connections from sensory and BLA can learn to predict -- use LeabraDeltaConSpec
+INHERITED(LeabraUnitSpec)
 public:
 
-  virtual void  Compute_PVPlus(LeabraLayer* lay, LeabraNetwork* net);
-  // compute the PV-driven plus phase activations
-
-  void PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
-
-  void  HelpConfig();   // #BUTTON get help message for configuring this spec
-  bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
+  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
 
   TA_SIMPLE_BASEFUNS(VSPatchUnitSpec);
 protected:
