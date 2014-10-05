@@ -44,13 +44,13 @@
 
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
-#include <LearnDriverLayerSpec>
-#include <VTALayerSpec>
-#include <DRNLayerSpec>
-#include <VSPatchLayerSpec>
+#include <LearnModUnitSpec>
+#include <VTAUnitSpec>
+#include <DRNUnitSpec>
+#include <VSPatchUnitSpec>
 #include <LeabraDeltaConSpec>
-#include <LearnFlagDeltaConSpec>
-#include <LearnFlagHebbConSpec>
+#include <LearnModDeltaConSpec>
+#include <LearnModHebbConSpec>
 
 
 #include <MatrixConSpec>
@@ -724,8 +724,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   FMSpec(LeabraConSpec, pvlv_cons, pvlvspgp, "PVLVLrnCons");
   FMChild(LeabraBiasSpec, lrnbias_cons, pvlv_cons, "PVLVLearnBias");
-  FMChild(LearnFlagDeltaConSpec, lrnfmpv_cons, pvlv_cons, "LearnFromPV");
-  FMChild(LearnFlagHebbConSpec, lrnfmpv_hebb_cons, pvlv_cons, "LearnFromPVHebb");
+  FMChild(LearnModDeltaConSpec, lrnfmpv_cons, pvlv_cons, "LearnFromPV");
+  FMChild(LearnModHebbConSpec, lrnfmpv_hebb_cons, pvlv_cons, "LearnFromPVHebb");
   FMChild(LeabraDeltaConSpec, vspatch_cons, pvlv_cons, "VSPatchCons");
   FMChild(LeabraDeltaConSpec, vsmatrix_cons, pvlv_cons, "VSMatrixCons");
 
@@ -736,12 +736,12 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
 
   FMSpec(LeabraLayerSpec, laysp, pvlvspgp, "PVLVLayers");
-  FMChild(LearnDriverLayerSpec, pvsp, laysp, "PV");
+  FMChild(LearnModUnitSpec, pvsp, laysp, "PV");
   FMChild(LeabraLayerSpec, pptrmtgsp, laysp, "PPTgRMTg");
-  FMChild(VTALayerSpec, vtasp, laysp, "VTA");
-  FMChild(DRNLayerSpec, drnsp, laysp, "DRN");
+  FMChild(VTAUnitSpec, vtasp, laysp, "VTA");
+  FMChild(DRNUnitSpec, drnsp, laysp, "DRN");
   FMChild(LeabraLayerSpec, amgysp, laysp, "Amyg");
-  FMChild(VSPatchLayerSpec, vspsp, laysp, "VSPatch");
+  FMChild(VSPatchUnitSpec, vspsp, laysp, "VSPatch");
   FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrix");
 
   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PVLVFullPrjn");
@@ -1079,7 +1079,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   pos_bs->SetUnitSpec(pvlv_units);
   neg_bs->SetUnitSpec(pvlv_units);
 
-  LearnDriverLayerSpec* pvsp = PvlvSp("PV", LearnDriverLayerSpec);
+  LearnModUnitSpec* pvsp = PvlvSp("PV", LearnModUnitSpec);
   LeabraLayerSpec* bssp = PvlvSp("PVLVLayers", LeabraLayerSpec);
   pos_pv->SetLayerSpec(pvsp);
   neg_pv->SetLayerSpec(pvsp);
@@ -1100,8 +1100,8 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", LeabraUnitSpec));
   vsmd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
 
-  vspi->SetLayerSpec(PvlvSp("VSPatch", VSPatchLayerSpec));
-  vspd->SetLayerSpec(PvlvSp("VSPatch", VSPatchLayerSpec));
+  vspi->SetLayerSpec(PvlvSp("VSPatch", VSPatchUnitSpec));
+  vspd->SetLayerSpec(PvlvSp("VSPatch", VSPatchUnitSpec));
   vsmi->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
   vsmd->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
 
@@ -1112,10 +1112,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   lhb->SetLayerSpec(PvlvSp("PPTgRMTg", LeabraLayerSpec));
 
   vta->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
-  vta->SetLayerSpec(PvlvSp("VTA", VTALayerSpec));
+  vta->SetLayerSpec(PvlvSp("VTA", VTAUnitSpec));
 
   drn->SetUnitSpec(PvlvSp("VTAUnits", LeabraUnitSpec));
-  drn->SetLayerSpec(PvlvSp("DRN", DRNLayerSpec));
+  drn->SetLayerSpec(PvlvSp("DRN", DRNUnitSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
@@ -1149,7 +1149,7 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   net->FindMakePrjn(vsmd, vta, fullprjn, marker_cons);
   net->FindMakePrjn(vsmi, vta, fullprjn, marker_cons);
 
-  LearnFlagDeltaConSpec* lfmpv_cons = PvlvSp("LearnFromPV", LearnFlagDeltaConSpec);
+  LearnModDeltaConSpec* lfmpv_cons = PvlvSp("LearnFromPV", LearnModDeltaConSpec);
   LeabraDeltaConSpec* vsm_cons = PvlvSp("VSMatrixCons", LeabraDeltaConSpec);
   for(i=0;i<input_lays.size;i++) {
     Layer* il = (Layer*)input_lays[i];
@@ -1423,8 +1423,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   //             "Matrix_NoGo_out_mnt");
   // }
 
-  // FMSpec(SNrThalLayerSpec, snrthalsp, pbwmspgp, "SNrThalLayer");
-  // FMChild(SNrThalLayerSpec, snrthalsp_out, snrthalsp, "SNrThalLayer_out");
+  // FMSpec(SNrThalUnitSpec, snrthalsp, pbwmspgp, "SNrThalLayer");
+  // FMChild(SNrThalUnitSpec, snrthalsp_out, snrthalsp, "SNrThalLayer_out");
 
   // ////////////	PrjnSpecs
 
@@ -1568,47 +1568,47 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   // fixed_bias->learn = false;
 
   // matrix_go_mnt_sp->go_nogo = MatrixLayerSpec::GO;
-  // matrix_go_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
+  // matrix_go_mnt_sp->gating_type = SNrThalUnitSpec::MNT;
   // matrix_go_in_sp->SetUnique("gating_type",true);
-  // matrix_go_in_sp->gating_type = SNrThalLayerSpec::INPUT;
+  // matrix_go_in_sp->gating_type = SNrThalUnitSpec::INPUT;
   // matrix_go_out_sp->SetUnique("gating_type",true);
-  // matrix_go_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
+  // matrix_go_out_sp->gating_type = SNrThalUnitSpec::OUTPUT;
   // if(matrix_go_mnt_out_sp) {
   //   matrix_go_mnt_out_sp->SetUnique("gating_type",true);
-  //   matrix_go_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;
+  //   matrix_go_mnt_out_sp->gating_type = SNrThalUnitSpec::MNT_OUT;
   // }
   // if(matrix_go_out_mnt_sp) {
   //   matrix_go_out_mnt_sp->SetUnique("gating_type",true);
-  //   matrix_go_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  //   matrix_go_out_mnt_sp->gating_type = SNrThalUnitSpec::OUT_MNT;  
   // }
 
   // matrix_nogo_mnt_sp->SetUnique("go_nogo",true);
   // matrix_nogo_mnt_sp->go_nogo = MatrixLayerSpec::NOGO;
-  // matrix_nogo_mnt_sp->gating_type = SNrThalLayerSpec::MNT;
+  // matrix_nogo_mnt_sp->gating_type = SNrThalUnitSpec::MNT;
   // matrix_nogo_in_sp->SetUnique("gating_type",true);
-  // matrix_nogo_in_sp->gating_type = SNrThalLayerSpec::INPUT;
+  // matrix_nogo_in_sp->gating_type = SNrThalUnitSpec::INPUT;
   // matrix_nogo_out_sp->SetUnique("gating_type",true);
-  // matrix_nogo_out_sp->gating_type = SNrThalLayerSpec::OUTPUT;
+  // matrix_nogo_out_sp->gating_type = SNrThalUnitSpec::OUTPUT;
   // if(matrix_nogo_mnt_out_sp) {
   //   matrix_nogo_mnt_out_sp->SetUnique("gating_type",true);
-  //   matrix_nogo_mnt_out_sp->gating_type = SNrThalLayerSpec::MNT_OUT;  
+  //   matrix_nogo_mnt_out_sp->gating_type = SNrThalUnitSpec::MNT_OUT;  
   // }
   // if(matrix_nogo_out_mnt_sp) {
   //   matrix_nogo_out_mnt_sp->SetUnique("gating_type",true);
-  //   matrix_nogo_out_mnt_sp->gating_type = SNrThalLayerSpec::OUT_MNT;  
+  //   matrix_nogo_out_mnt_sp->gating_type = SNrThalUnitSpec::OUT_MNT;  
   // }
 
-  // pfc_mnt_sp->pfc_type = SNrThalLayerSpec::MNT;
+  // pfc_mnt_sp->pfc_type = SNrThalUnitSpec::MNT;
   // pfc_mnt_sp->gate.pregate_gain = 1.0f;
 
   // pfc_in_sp->SetUnique("pfc_type",true);
-  // pfc_in_sp->pfc_type = SNrThalLayerSpec::INPUT;
+  // pfc_in_sp->pfc_type = SNrThalUnitSpec::INPUT;
   // pfc_in_sp->SetUnique("gate",true);
   // pfc_in_sp->gate.pregate_gain = 1.0f;
   // pfc_in_sp->gate.max_maint = 1;
 
   // pfc_out_sp->SetUnique("pfc_type",true);
-  // pfc_out_sp->pfc_type = SNrThalLayerSpec::OUTPUT;
+  // pfc_out_sp->pfc_type = SNrThalUnitSpec::OUTPUT;
   // pfc_out_sp->SetUnique("gate",true);
   // pfc_out_sp->gate.pregate_gain = 0.0f;
   // pfc_out_sp->gate.max_maint = 1;
@@ -1618,12 +1618,12 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
   // pfc_out_sp->gp_kwta.act_pct = 0.05f;
 
   // // pfc_mnt_out_sp->SetUnique("pfc_type",true);
-  // // pfc_mnt_out_sp->pfc_type = SNrThalLayerSpec::MNT_OUT;
+  // // pfc_mnt_out_sp->pfc_type = SNrThalUnitSpec::MNT_OUT;
   // // pfc_mnt_out_sp->SetUnique("gate",true);
   // // pfc_mnt_out_sp->gate.pregate_gain = 1.0f;
 
   // // pfc_out_mnt_sp->SetUnique("pfc_type",true);
-  // // pfc_out_mnt_sp->pfc_type = SNrThalLayerSpec::OUT_MNT;
+  // // pfc_out_mnt_sp->pfc_type = SNrThalUnitSpec::OUT_MNT;
   // // pfc_out_mnt_sp->SetUnique("gate",true);
   // // pfc_out_mnt_sp->gate.pregate_gain = 1.0f;
 
@@ -2080,7 +2080,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
  //  PbwmSp("SNrThalUnits",LeabraUnitSpec)->bias_spec.SetSpec(PbwmSp("FixedBias",
  //                                                                  LeabraBiasSpec));
 
- //  snrthal->SetLayerSpec(PbwmSp("SNrThalLayer",SNrThalLayerSpec));
+ //  snrthal->SetLayerSpec(PbwmSp("SNrThalLayer",SNrThalUnitSpec));
  //  snrthal->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
 
  //  if(in_stripes > 0) {
@@ -2122,7 +2122,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
  //      pfc_out_d->SetUnitSpec(pfcd_units);
  //    }
  //    if(snrthal_out) {
- //      snrthal_out->SetLayerSpec(PbwmSp("SNrThalLayer_out",SNrThalLayerSpec));
+ //      snrthal_out->SetLayerSpec(PbwmSp("SNrThalLayer_out",SNrThalUnitSpec));
  //      snrthal_out->SetUnitSpec(PbwmSp("SNrThalUnits",LeabraUnitSpec));
  //    }
  //  }
@@ -2698,7 +2698,7 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
  //  taMisc::CheckConfigStart(false, false);
 
  //  bool ok = false;
- //  ok = PbwmSp("SNrThalLayer",SNrThalLayerSpec)->CheckConfig_Layer(snrthal, false);
+ //  ok = PbwmSp("SNrThalLayer",SNrThalUnitSpec)->CheckConfig_Layer(snrthal, false);
  //  if(in_stripes > 0) {
  //    ok &= pfc_in_sp->CheckConfig_Layer(pfc_in, false);
  //    ok &= PbwmSp("Matrix_Go_in",MatrixLayerSpec)->CheckConfig_Layer(matrix_go_in, false);

@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(LHbRMTgUnitSpec);
 
 class E_API LHbRMTgUnitSpec : public LeabraUnitSpec {
-  // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTALayerSpec
+  // combined lateral habenula and RMTg units -- receives from Patch and Matrix Direct and Indirect pathways, along with primary value (PV) positive and negative valence drivers, and computes dopamine dip signals, represented as positive activations in these units, which are then translated into dips through a projection to the VTAUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
   LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs

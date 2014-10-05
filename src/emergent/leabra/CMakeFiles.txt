@@ -37,7 +37,7 @@ set(leabra_HEADS_MAKETA
   LeabraTICtxtLayerSpec.h
   LeabraTICtxtConSpec.h
   Deep5bConSpec.h
-  ThalLayerSpec.h
+  ThalUnitSpec.h
 
   MarkerConSpec.h
   LeabraDeltaConSpec.h
@@ -68,20 +68,20 @@ set(leabra_HEADS_MAKETA
   TDRewIntegLayerSpec.h
   TdLayerSpec.h
 
-  LearnDriverLayerSpec.h
-  LearnFlagDeltaConSpec.h
-  LearnFlagHebbConSpec.h
+  LearnModUnitSpec.h
+  LearnModDeltaConSpec.h
+  LearnModHebbConSpec.h
   PPTgUnitSpec.h
   LHbRMTgUnitSpec.h
-  VTALayerSpec.h
-  DRNLayerSpec.h
-  VSPatchLayerSpec.h
-  ClampDaLayerSpec.h
+  VTAUnitSpec.h
+  DRNUnitSpec.h
+  VSPatchUnitSpec.h
+  ClampDaUnitSpec.h
 
   MatrixCon.h
   MatrixConSpec.h
   GPiUnitSpec.h
-  InvertLayerSpec.h
+  InvertUnitSpec.h
   PFCUnitSpec.h
   
   GpCustomPrjnSpecBase.h
@@ -153,7 +153,7 @@ set(leabra_SRCS
   LeabraTICtxtLayerSpec.cpp
   LeabraTICtxtConSpec.cpp
   Deep5bConSpec.cpp
-  ThalLayerSpec.cpp
+  ThalUnitSpec.cpp
 
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
@@ -184,20 +184,20 @@ set(leabra_SRCS
   TDRewIntegLayerSpec.cpp
   TdLayerSpec.cpp
                    
-  LearnDriverLayerSpec.cpp
-  LearnFlagDeltaConSpec.cpp
-  LearnFlagHebbConSpec.cpp
+  LearnModUnitSpec.cpp
+  LearnModDeltaConSpec.cpp
+  LearnModHebbConSpec.cpp
   PPTgUnitSpec.cpp
   LHbRMTgUnitSpec.cpp
-  VTALayerSpec.cpp
-  DRNLayerSpec.cpp
-  VSPatchLayerSpec.cpp
-  ClampDaLayerSpec.cpp
+  VTAUnitSpec.cpp
+  DRNUnitSpec.cpp
+  VSPatchUnitSpec.cpp
+  ClampDaUnitSpec.cpp
 
   MatrixCon.cpp
   MatrixConSpec.cpp
   GPiUnitSpec.cpp
-  InvertLayerSpec.cpp
+  InvertUnitSpec.cpp
   PFCUnitSpec.cpp
   
   GpCustomPrjnSpecBase.cpp

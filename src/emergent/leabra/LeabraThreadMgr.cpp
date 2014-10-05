@@ -27,11 +27,11 @@ TA_BASEFUNS_CTORS_DEFN(RunWaitTime_List);
 TA_BASEFUNS_CTORS_DEFN(LeabraThreadMgr);
 
 #ifndef Q_ATOMIC_INT_FETCH_AND_ADD_IS_ALWAYS_NATIVE
-#error "fetch add not native!"
+#warning "thread optimization warning: int fetch add is not native!"
 #endif
 
 #ifndef Q_ATOMIC_INT_FETCH_AND_ADD_IS_WAIT_FREE
-#error "fetch add not wait free!"
+#warning "thread optimization warning: int fetch add is not wait free!"
 #endif
 
 
