@@ -30,7 +30,7 @@ class E_API VSPatchUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(VSPatchUnitSpec);
 protected:

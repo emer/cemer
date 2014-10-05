@@ -25,14 +25,10 @@ void VSPatchUnitSpec::Initialize() {
 void VSPatchUnitSpec::Defaults_init() {
 }
 
-void VSPatchUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
+void VSPatchUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::PostSettle(u, net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
-    u->act = u->act_eq = u->act_nd = u->act_lrn = u->lrnmod;
-  }
-  else {
-    inherited::Compute_Act(ru, rnet, thread_no);
+    u->act_p = u->lrnmod;
   }
 }
 
