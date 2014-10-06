@@ -138,8 +138,9 @@ public:
   // programmers: extend this as needed -- ConSpec::GetPrjnName sets custom names, and this value is decoded in UnitGroupView::UpdateUnitViewBase_Con_impl
   enum ConType {                // where there are multiple types of connections between units, this allows selection of which type to display
     ANY_CON,                    // #LABEL_Any just show the first connection shown -- don't select by name at all
-    STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with FM_
-    CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with CTXT_
+    STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with Fm_
+    CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with Ctxt_
+    DEEP5B_CON,                 // #LABEL_Deep5b only show deep5b connections -- projection names start with Deep5b_
   };
 
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer

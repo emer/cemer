@@ -86,8 +86,7 @@ set(leabra_HEADS_MAKETA
   PFCUnitSpec.h
   
   GpCustomPrjnSpecBase.h
-  GpRowColPrjnSpec.h
-  ToGpRowColPrjnSpec.h
+  RowColPrjnSpec.h
   TopoWtsPrjnSpec.h
 
   ThetaPhaseLayerSpec.h
@@ -203,8 +202,7 @@ set(leabra_SRCS
   PFCUnitSpec.cpp
   
   GpCustomPrjnSpecBase.cpp
-  GpRowColPrjnSpec.cpp
-  ToGpRowColPrjnSpec.cpp
+  RowColPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp
 
   ThetaPhaseLayerSpec.cpp
