@@ -29,14 +29,17 @@ class E_API PFCMaintSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
 INHERITED(SpecMemberBase)
 public:
-  float         deep5b_gain;    // how much the deep5b activation drives extra net input to support maintenance in PFC neurons
+  float        deep5b_gain;    // how much the deep5b activation drives extra net input to support maintenance in PFC neurons
+  float        d5b_updt_tau;   // time constant for updating deep5b activations (at every phase or trial, depending on cifer.phase) for continuing maintenance (i.e., thal_prv was also above threshold) -- set to a large number to preserve initial gating information, and to a low number to allow rapid updating / drift of representations based on current superficial layer activation
 
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+  float         d5b_updt_dt;    // #READ_ONLY #EXPERT rate = 1 / tau
+
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(PFCMaintSpec);
 protected:
   SPEC_DEFAULTS;
-  // void  UpdateAfterEdit_impl();
+  void  UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void	Destroy()	{ };
@@ -53,6 +56,8 @@ public:
 
   float Compute_NetinExtras(float& net_syn, LeabraUnit* u, LeabraNetwork* net,
                             int thread_no=-1) override;
+
+  void TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);
 protected:

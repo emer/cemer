@@ -266,7 +266,7 @@ void CIFERSpec::Initialize() {
   thal_thr = 0.2f;
   act5b_thr = 0.2f;
   binary5b = false;
-  ti_5b = 0.5f;
+  ti_5b = 0.0f;
   Defaults_init();
 }
 
@@ -599,6 +599,7 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   // not avg_l
   // not act_avg
   u->thal = 0.0f;
+  u->thal_prv = 0.0f;
   u->deep5b = 0.0f;
   u->lrnmod = 0.0f;
   u->deep5b_net = 0.0f;
@@ -668,14 +669,6 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
       u->syn_pr -= decay * (u->syn_tr - stp.p0);
       u->syn_kre -= decay * u->syn_kre;
     }
-
-
-    // note: this is causing a problem in learning with xcal:
-    //   u->avg_ss -= decay * (u->avg_ss - act_misc.avg_init);
-    //   u->avg_s -= decay * (u->avg_s - act_misc.avg_init);
-    //   u->avg_m -= decay * (u->avg_m - act_misc.avg_init);
-    // not avg_l, act_avg, thal, deep5b*, act_ctxt* 
-    // or net_prv*
   }
   else {
     if(net->phase_no == 0) {
@@ -1626,21 +1619,17 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnit* u, LeabraNetwork* net) {
 //              Leabra TI
 
 void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
-  if(cifer.on) {
-    if(!cifer.phase && net->phase_no == 0) return;
-    float act5b = u->act_eq;
-    if(act5b < cifer.act5b_thr) {
-      act5b = 0.0f;
-    }
-    u->deep5b = u->thal * act5b; // thal already thresholded
-    if(cifer.binary5b && u->deep5b > 0.0f) {
-      u->deep5b = 1.0f;
-    }
+  if(!cifer.on) return;
+  if(!cifer.phase && net->phase_no == 0) return;
+  float act5b = u->act_eq;
+  if(act5b < cifer.act5b_thr) {
+    act5b = 0.0f;
   }
-  else {
-    if(net->phase_no == 0) return; // never in minus for regular TI
-    u->deep5b = u->act_eq;         // compatible with std TI
+  u->deep5b = u->thal * act5b; // thal already thresholded
+  if(cifer.binary5b && u->deep5b > 0.0f) {
+    u->deep5b = 1.0f;
   }
+  u->thal_prv = u->thal;        // this is point of update
 }
 
 void LeabraUnitSpec::TI_Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
