@@ -34,6 +34,7 @@
 #include <Doc_Group>
 #include <Wizard_Group>
 #include <ControlPanel_Group>
+#include <ParamSet_Group>
 #include <DataTable_Group>
 #include <Program_TopGroup>
 #include <taViewer_List>
@@ -82,6 +83,7 @@ String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for th
   Doc_Group             docs; // documents, typically linked to other objects
   Wizard_Group          wizards; // Wizards for automatically configuring simulation objects
   ControlPanel_Group    ctrl_panels;  // #AKA_edits special edit dialogs for selected elements
+  ParamSet_Group        param_sets;  // sets of variables with values that can be used to restore a particular set of parameters
   DataTable_Group       data;   // data, such as patterns for network input
   taBase_Group          data_proc; // #HIDDEN_TREE #NO_SAVE objects that perform data processing operations (functions collected on objects for different kinds of operations)
   Program_TopGroup      programs; // Gui-based programs to run simulations and other processing

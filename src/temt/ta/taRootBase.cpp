@@ -1531,6 +1531,8 @@ bool taRootBase::Startup_InitViewColors() {
                                          true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("ControlPanel", "ControlPanel -- editor for selected variables across different objects",
                                          true, "azure4", true, "azure1");
+  taMisc::view_colors->FindMakeViewColor("ParamSet", "ParamSet -- collection of selected variables and saved values across different objects",
+                                         true, "azure4", true, "azure1");
   taMisc::view_colors->FindMakeViewColor("Doc", "Documentation object",
                                          true, "azure4", true, "azure1");
   return true;

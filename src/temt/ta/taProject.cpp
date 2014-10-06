@@ -102,6 +102,7 @@ void taProject::InitLinks_impl() {
   taBase::Own(docs, this);
   taBase::Own(wizards, this);
   taBase::Own(ctrl_panels, this);
+  taBase::Own(param_sets, this);
   taBase::Own(data, this);
   taBase::Own(data_proc, this);
   taBase::Own(programs, this);
@@ -146,6 +147,7 @@ void taProject::CutLinks_impl() {
   data_proc.CutLinks();
   data.CutLinks();
   ctrl_panels.CutLinks();
+  param_sets.CutLinks();
   wizards.CutLinks();
   docs.CutLinks();
 }
