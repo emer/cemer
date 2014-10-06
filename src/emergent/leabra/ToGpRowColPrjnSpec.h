@@ -26,7 +26,7 @@
 eTypeDef_Of(ToGpRowColPrjnSpec);
 
 class E_API ToGpRowColPrjnSpec  : public GpCustomPrjnSpecBase {
-  // send projection to a range of rows or columns of unit groups within receiving layer -- projects to entire receiving layer
+  // send projection to a range of rows or columns of unit groups within receiving layer -- projects from entire receiving layer
 INHERITED(GpCustomPrjnSpecBase)
 public:
   enum RowCol {

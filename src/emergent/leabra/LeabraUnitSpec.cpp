@@ -263,8 +263,8 @@ void CIFERSpec::Initialize() {
   on = false;
   phase = false;
   super_gain = .1f;
-  thal_thr = 0.5f;
-  act5b_thr = 0.5f;
+  thal_thr = 0.2f;
+  act5b_thr = 0.2f;
   binary5b = false;
   ti_5b = 0.5f;
   Defaults_init();
