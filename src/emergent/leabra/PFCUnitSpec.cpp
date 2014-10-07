@@ -43,6 +43,7 @@ void PFCUnitSpec::Defaults_init() {
   act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   cifer.on = true;
   cifer.thal_thr = 0.1f;
+  cifer.thal_bin = true;
   //  cifer.phase = true; // not yet..
   // todo: other cifer defaults
 }
@@ -62,13 +63,10 @@ void PFCUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
     act5b = 0.0f;
   }
   act5b *= u->thal;
-  if(cifer.binary5b && act5b > 0.0f) {
-    act5b = 1.0f;
-  }
   if(u->thal_prv > 0.0f && u->thal > 0.0f) { // ongoing maintenance
     u->deep5b += pfc_maint.d5b_updt_dt * (act5b - u->deep5b);
   }
-  else {                        // first update
+  else {                        // first update or off..
     u->deep5b = act5b; // thal already thresholded
   }
   u->thal_prv = u->thal;        // this is point of update

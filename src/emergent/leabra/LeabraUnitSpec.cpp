@@ -265,7 +265,7 @@ void CIFERSpec::Initialize() {
   super_gain = .1f;
   thal_thr = 0.2f;
   act5b_thr = 0.2f;
-  binary5b = false;
+  thal_bin = true;
   ti_5b = 0.0f;
   Defaults_init();
 }
@@ -1541,6 +1541,8 @@ void LeabraUnitSpec::Compute_Act_CIFER(LeabraUnit* u, LeabraNetwork* net) {
   if(!cifer.on) return;
   if(u->thal < cifer.thal_thr)
     u->thal = 0.0f;
+  if(cifer.thal_bin && u->thal > 0.0f)
+    u->thal = 1.0f;
 }
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
@@ -1626,9 +1628,6 @@ void LeabraUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
     act5b = 0.0f;
   }
   u->deep5b = u->thal * act5b; // thal already thresholded
-  if(cifer.binary5b && u->deep5b > 0.0f) {
-    u->deep5b = 1.0f;
-  }
   u->thal_prv = u->thal;        // this is point of update
 }
 

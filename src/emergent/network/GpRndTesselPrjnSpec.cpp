@@ -33,7 +33,7 @@ void GpRndTesselPrjnSpec::Initialize() {
   send_gp_scale = 1.0f;
 
   wrap = true;
-  def_p_con = .25f;
+  def_p_con = 1.0f;
   sym_self = true;
   same_seed = false;
   rndm_seed.GetCurrent();

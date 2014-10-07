@@ -42,6 +42,7 @@ void gdPVLVDaSpec::Initialize() {
 void LVBlockSpec::Initialize() {
   pos_pv = 2.0f;
   dip = 2.0f;
+  rec_data = false;
 }
 
 void VTAUnitSpec::Initialize() {
@@ -157,12 +158,23 @@ void VTAUnitSpec::Compute_Da(LeabraUnit* u, LeabraNetwork* net) {
   float pospv_da = pospv - vspvi;
   pospv_da = MAX(pospv_da, 0.0f); // can't dip through this!
 
-  float net_block = (1.0f - (lv_block.pos_pv * pospv_da + lv_block.dip * dip_da));
+  float net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.dip * dip_da));
   net_block = MAX(0.0f, net_block);
 
   float net_da = da.pv_gain * pospv_da + net_block * da.burst_gain * burst_da -
     da.dip_gain * dip_da;
   net_da *= da.da_gain;
+
+  if(lv_block.rec_data) {
+    LeabraLayer* lay = u->own_lay();
+    lay->SetUserData("burst_da", burst_da);
+    lay->SetUserData("dip_da", dip_da);
+    lay->SetUserData("pos_pv", pospv);
+    lay->SetUserData("vs_patch_indir_pos", vspvi);
+    lay->SetUserData("pospv_da", pospv_da);
+    lay->SetUserData("net_block", net_block);
+    lay->SetUserData("net_da", net_da);
+  }
 
   // also set the network ext rew pv settings
   bool pv_over_thr = (pospv >= da.pv_thr);

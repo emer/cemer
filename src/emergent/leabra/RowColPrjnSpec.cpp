@@ -28,7 +28,7 @@ void RowColPrjnSpec::Initialize() {
   send_gp = false;
   send_start = 0;
   send_end = -1;
-  // one_to_one = false;
+  one_to_one = false;
 }
 
 void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
@@ -126,11 +126,18 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
   if(send_gp)
     send_n_tot_u *= send_lay->UnitAccess_NUnits(Layer::ACC_GP);
 
-  // if(one_to_one) {
-  // }
-  // else {                                         // all to all
-  for(int rrc = recv_st; rrc <= recv_ed; rrc++) { // relevant coord
-    for(int roc=0; roc < recv_oth_n; roc++) {     // other coord
+  if(one_to_one) {
+    if(TestWarning(send_n_tot != recv_n_tot, "Connect_impl",
+                   "for one-to-one connections, send and recv total number of connections are not the same -- will use the min")) {
+    }
+
+    int n_tot = MIN(send_n_tot, recv_n_tot);
+    for(int nc=0; nc < n_tot; nc++) {
+      int rrc = nc / recv_oth_n + recv_st;
+      int roc = nc % recv_oth_n;
+      int src = nc / send_oth_n + send_st;
+      int soc = nc % send_oth_n;
+
       int rgpidx = -1;
       int rnu = 1;
       Unit* ru = NULL;
@@ -156,38 +163,92 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
           ru->RecvConsPreAlloc(send_n_tot_u, prjn);
         }
 
-        // now for the sender!
-        for(int src = send_st; src <= send_ed; src++) { // relevant coord
-          for(int soc=0; soc < send_oth_n; soc++) {     // other coord
-            int sgpidx = -1;
-            int snu = 1;
-            Unit* su = NULL;
-            if(send_row_col != ALL && send_gp) {
-              if(send_row_col == COLS)
-                sgpidx = soc * send_oth_n + src;
-              else
-                sgpidx = src * send_max + soc;
-              snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
-            }
-            else {
-              if(send_row_col == COLS)
-                su = send_lay->UnitAtCoord(src, soc);
-              else
-                su = send_lay->UnitAtCoord(soc, src);
-            }
-            for(int j=0;j<snu;j++) {
-              if(sgpidx >= 0)
-                su = send_lay->UnitAccess(Layer::ACC_GP, j, sgpidx);
-              if(!su) continue;
-              if(self_con || (ru != su))
-                ru->ConnectFrom(su, prjn, !make_cons);
+        int sgpidx = -1;
+        int snu = 1;
+        Unit* su = NULL;
+        if(send_row_col != ALL && send_gp) {
+          if(send_row_col == COLS)
+            sgpidx = soc * send_oth_n + src;
+          else
+            sgpidx = src * send_max + soc;
+          snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
+        }
+        else {
+          if(send_row_col == COLS)
+            su = send_lay->UnitAtCoord(src, soc);
+          else
+            su = send_lay->UnitAtCoord(soc, src);
+        }
+        for(int j=0;j<snu;j++) {
+          if(sgpidx >= 0)
+            su = send_lay->UnitAccess(Layer::ACC_GP, j, sgpidx);
+          if(!su) continue;
+          if(self_con || (ru != su))
+            ru->ConnectFrom(su, prjn, !make_cons);
+        }
+      }
+    }
+  }
+  else {                                         // all to all
+    for(int rrc = recv_st; rrc <= recv_ed; rrc++) { // relevant coord
+      for(int roc=0; roc < recv_oth_n; roc++) {     // other coord
+        int rgpidx = -1;
+        int rnu = 1;
+        Unit* ru = NULL;
+        if(recv_row_col != ALL && recv_gp) {
+          if(recv_row_col == COLS)
+            rgpidx = roc * recv_oth_n + rrc;
+          else
+            rgpidx = rrc * recv_max + roc;
+          rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_GP);
+        }
+        else {
+          if(recv_row_col == COLS)
+            ru = recv_lay->UnitAtCoord(rrc, roc);
+          else
+            ru = recv_lay->UnitAtCoord(roc, rrc);
+        }
+        for(int i=0;i<rnu;i++) {
+          if(rgpidx >= 0)
+            ru = recv_lay->UnitAccess(Layer::ACC_GP, i, rgpidx);
+          if(!ru) continue;
+
+          if(!make_cons) {
+            ru->RecvConsPreAlloc(send_n_tot_u, prjn);
+          }
+
+          // now for the sender!
+          for(int src = send_st; src <= send_ed; src++) { // relevant coord
+            for(int soc=0; soc < send_oth_n; soc++) {     // other coord
+              int sgpidx = -1;
+              int snu = 1;
+              Unit* su = NULL;
+              if(send_row_col != ALL && send_gp) {
+                if(send_row_col == COLS)
+                  sgpidx = soc * send_oth_n + src;
+                else
+                  sgpidx = src * send_max + soc;
+                snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
+              }
+              else {
+                if(send_row_col == COLS)
+                  su = send_lay->UnitAtCoord(src, soc);
+                else
+                  su = send_lay->UnitAtCoord(soc, src);
+              }
+              for(int j=0;j<snu;j++) {
+                if(sgpidx >= 0)
+                  su = send_lay->UnitAccess(Layer::ACC_GP, j, sgpidx);
+                if(!su) continue;
+                if(self_con || (ru != su))
+                  ru->ConnectFrom(su, prjn, !make_cons);
+              }
             }
           }
         }
       }
     }
   }
-  // }
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
     prjn->from->SendConsPostAlloc(prjn);
   }

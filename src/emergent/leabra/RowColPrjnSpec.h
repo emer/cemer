@@ -46,7 +46,7 @@ public:
   int           send_start;     // #CONDSHOW_OFF_send_row_col:ALL starting row or column for sending laeyr (0..n-1) -- can use negative numbers to start from the back (e.g., -1 is last one, -2 is second-to-last, etc)
   int           send_end;       // #CONDSHOW_OFF_send_row_col:ALL ending row or column for sending layer (0..n-1) -- to just do one, should be same as start -- can use negative numbers to start from the back (e.g., -1 is last one, -2 is second-to-last, etc)
 
-  // bool          one_to_one;     // if true, then the same total number of units or groups must be selected for recv and send sides, and they are connected in a one-to-one fashion -- otherwise, the connection is all-to-all for all of the selected recv and sending units
+  bool          one_to_one;     // if true, then the same total number of units or groups must be selected for recv and send sides, and they are connected in a one-to-one fashion -- otherwise, the connection is all-to-all for all of the selected recv and sending units
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
 

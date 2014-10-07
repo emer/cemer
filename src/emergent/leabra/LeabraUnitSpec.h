@@ -355,7 +355,7 @@ public:
   float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
   float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
-  bool          binary5b;       // #CONDSHOW_ON_on make deep5b binary (1.0 or 0.0) -- otherwise it is thal * act
+  bool          thal_bin;       // #CONDSHOW_ON_on make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
   bool          phase;          // #CONDSHOW_ON_on TI context and deep layer activations update at the end of every phase (e.g., for PFC) -- otherwise update is at the end of every trial (posterior cortex)
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }

@@ -86,7 +86,7 @@ void GPiUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread
   }
 
   float gpi_net = 0.0f;
-  gpi_net = go_in - go_nogo.nogo * nogo_in;
+  gpi_net = (1.0f + go_nogo.nogo) * (go_in - go_nogo.nogo * nogo_in);
   gpi_net = MAX(gpi_net, 0.0f);
   u->net_raw = gpi_net;
 
