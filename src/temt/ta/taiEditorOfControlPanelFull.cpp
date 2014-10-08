@@ -99,6 +99,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         if (psmd) {
           added_search = true;
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+          mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
