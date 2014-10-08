@@ -38,6 +38,8 @@ public:
   void	Compute_Weights(BaseCons*, Unit*, Network* net) override { };
   void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
 
+  void  GetPrjnName(Projection& prjn, String& nm) override;
+
   TA_BASEFUNS_NOCOPY(MarkerConSpec);
 protected:
   SPEC_DEFAULTS;

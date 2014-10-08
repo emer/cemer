@@ -35,3 +35,7 @@ void MarkerConSpec::Defaults_init() {
   learn = false;
 }
 
+void MarkerConSpec::GetPrjnName(Projection& prjn, String& nm) {
+  nm = "Marker_" + nm;
+}
+

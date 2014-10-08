@@ -141,6 +141,7 @@ public:
     STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with Fm_
     CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with Ctxt_
     DEEP5B_CON,                 // #LABEL_Deep5b only show deep5b connections -- projection names start with Deep5b_
+    MARKER_CON,                 // #LABEL_Marker only show MarkerConSpec connections -- projection names start with Marker_
   };
 
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer

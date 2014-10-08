@@ -206,6 +206,9 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
   case NetView::DEEP5B_CON:
     prjn_starts_with = "Deep5b_";
     break;
+  case NetView::MARKER_CON:
+    prjn_starts_with = "Marker_";
+    break;
   }
   bool check_prjn = (prjn_starts_with.nonempty());
     

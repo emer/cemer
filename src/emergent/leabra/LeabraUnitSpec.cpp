@@ -817,10 +817,12 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   float inhib_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
-  // possible dependence on recv_gp->size is why this cannot be computed in Projection
+  // important: count all projections so it is uniform across all units
+  // in the layer!  if a unit does not have a connection in a given projection,
+  // then it counts as a zero, but it counts in overall normalization!
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
+    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
@@ -849,7 +851,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   // now renormalize, each one separately..
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
+    if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     Projection* prjn = (Projection*) recv_gp->prjn;
     LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();

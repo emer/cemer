@@ -33,15 +33,15 @@ eTypeDef_Of(ExtRewLayerSpec);
 void WtScaleSpec::Initialize() {
   rel = 1.0f;
   abs = 1.0f;
-  sem_extra = 2;
 }
 
 void WtScaleSpec::Defaults_init() {
-  sem_extra = 2;
 }
 
 
 float WtScaleSpec::SLayActScale(const float savg, const float lay_sz, const float n_cons) {
+  const float sem_extra = 2.0f;    // nobody ever modifies this, so keep it const
+
   int slay_act_n = (int)(savg * lay_sz + .5f); // sending layer actual # active
   slay_act_n = MAX(slay_act_n, 1);
   float rval = 1.0f;

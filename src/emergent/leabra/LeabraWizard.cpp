@@ -738,10 +738,11 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   FMSpec(MarkerConSpec, marker_con, pvlvspgp, "PVLVMarkerCons");
 
   FMSpec(LeabraLayerSpec, laysp, pvlvspgp, "PVLVLayers");
+  FMChild(LeabraLayerSpec, pvsp, laysp, "PVLayers");
   FMChild(LeabraLayerSpec, dasp, laysp, "DALayers");
-  FMChild(LeabraLayerSpec, amgysp, laysp, "Amyg");
-  FMChild(LeabraLayerSpec, vspsp, laysp, "VSPatch");
-  FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrix");
+  FMChild(LeabraLayerSpec, amgysp, laysp, "AmygLayer");
+  FMChild(LeabraLayerSpec, vspsp, laysp, "VSPatchLayer");
+  FMChild(LeabraLayerSpec, vsmsp, laysp, "VSMatrixLayer");
 
   FMSpec(FullPrjnSpec, fullprjn, pvlvspgp, "PVLVFullPrjn");
   FMSpec(OneToOnePrjnSpec, onetoone, pvlvspgp, "PVLVOneToOne");
@@ -1064,17 +1065,17 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   pos_bs->SetUnitSpec(pv_units);
   neg_bs->SetUnitSpec(pv_units);
 
-  LeabraLayerSpec* bssp = PvlvSp("PVLVLayers", LeabraLayerSpec);
-  pos_pv->SetLayerSpec(bssp);
-  neg_pv->SetLayerSpec(bssp);
-  pos_bs->SetLayerSpec(bssp);
-  neg_bs->SetLayerSpec(bssp);
+  LeabraLayerSpec* pvsp = PvlvSp("PVLayers", LeabraLayerSpec);
+  pos_pv->SetLayerSpec(pvsp);
+  neg_pv->SetLayerSpec(pvsp);
+  pos_bs->SetLayerSpec(pvsp);
+  neg_bs->SetLayerSpec(pvsp);
 
   poslv_cem->SetUnitSpec(PvlvSp("CeMUnits", LeabraUnitSpec));
   poslv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
   neglv_bla->SetUnitSpec(PvlvSp("BLAUnits", LeabraUnitSpec));
 
-  LeabraLayerSpec* amygsp = PvlvSp("Amyg", LeabraLayerSpec);
+  LeabraLayerSpec* amygsp = PvlvSp("AmygLayer", LeabraLayerSpec);
   poslv_cem->SetLayerSpec(amygsp);
   poslv_bla->SetLayerSpec(amygsp);
   neglv_bla->SetLayerSpec(amygsp);
@@ -1084,10 +1085,10 @@ bool LeabraWizard::PVLV(LeabraNetwork* net, int n_pos_pv, int n_neg_pv, bool da_
   vsmi->SetUnitSpec(PvlvSp("VSMatrixIndirUnits", LeabraUnitSpec));
   vsmd->SetUnitSpec(PvlvSp("VSPatchDirectUnits", LeabraUnitSpec));
 
-  vspi->SetLayerSpec(PvlvSp("VSPatch", LeabraLayerSpec));
-  vspd->SetLayerSpec(PvlvSp("VSPatch", LeabraLayerSpec));
-  vsmi->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
-  vsmd->SetLayerSpec(PvlvSp("VSMatrix", LeabraLayerSpec));
+  vspi->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
+  vspd->SetLayerSpec(PvlvSp("VSPatchLayer", LeabraLayerSpec));
+  vsmi->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
+  vsmd->SetLayerSpec(PvlvSp("VSMatrixLayer", LeabraLayerSpec));
 
   LeabraLayerSpec* dasp = PvlvSp("DALayers", LeabraLayerSpec);
   pptg->SetUnitSpec(PvlvSp("PPTgUnits", PPTgUnitSpec));

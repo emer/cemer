@@ -46,12 +46,11 @@ INHERITED(SpecMemberBase)
 public:
   float		abs;		// #DEF_1 #MIN_0 absolute scaling (not subject to normalization: directly multiplies weight values)
   float		rel;		// [Default: 1] #MIN_0 relative scaling that shifts balance between different projections (subject to normalization across all other projections into unit)
-  int		sem_extra;	// #CONDSHOW_OFF_old #DEF_2 #MIN_0 standard-error-of-the-mean (SEM) extra value to add to the average expected number of active connections to receive, for purposes of computing scaling factors with partial connectivity -- for 25% layer activity, binomial SEM = sqrt(p(1-p)) = .43, so 3x = 1.3 so 2 is a reasonable default, but can use different value to make scaling work better
 
   inline float	NetScale() 	{ return abs * rel; }
 
   float	SLayActScale(const float savg, const float lay_sz, const float n_cons);
-  // compute scaling factor (new version) based on sending layer activity level (savg) and number of connections and overall layer size
+  // compute scaling factor (new version) based on sending layer activity level (savg) and number of connections and overall layer size -- uses a fixed sem_extra standard-error-of-the-mean (SEM) extra value of 2 to add to the average expected number of active connections to receive, for purposes of computing scaling factors with partial connectivity -- for 25% layer activity, binomial SEM = sqrt(p(1-p)) = .43, so 3x = 1.3 so 2 is a reasonable default
 
   inline float	FullScale(const float savg, const float lay_sz, const float n_cons)
   { return NetScale() * SLayActScale(savg, lay_sz, n_cons); }
