@@ -35,7 +35,8 @@ public:
   bool                  is_numeric;   // #READ_ONLY is this a single numeric type (float, double, int)
   bool                  is_single;   // #READ_ONLY is this a single item, not a composite item
   EditParamSearch       param_search; // #CONDSHOW_ON_is_single specifications for parameter searching, only for numeric items
-
+  
+  String                param_set_value;  // #READ_ONLY if the panel is a param set panel display the saved value
   ///////////////////////////////////
   //        Param Search
 

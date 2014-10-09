@@ -14,5 +14,13 @@
 //   Lesser General Public License for more details.
 
 #include "ParamSetItem.h"
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ParamSetItem);
+
+void ParamSetItem::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  taMisc::DebugInfo(this->GetValStr());
+  
+}
+

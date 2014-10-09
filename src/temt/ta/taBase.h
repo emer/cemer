@@ -37,8 +37,9 @@ class MemberDef; //
 class taBase_PtrList; // 
 class taObjDiff_List; // 
 class taDoc; // 
-class ControlPanel; // 
-class MethodDef; // 
+class ControlPanel; //
+class ParamSet; //
+class MethodDef; //
 class UserDataItem_List; // 
 class UserDataItemBase; // 
 class UserDataItem; // 
@@ -1403,6 +1404,9 @@ public:
            const String& extra_label = _nilString, const String& sub_gp_nm = _nilString,
            const String& desc = _nilString);
   // #CAT_Display select a method (by name) for use in a control_panel that is a collection of selected members and methods from different objects (if ctrl_panel is NULL, a new one is created in .crtl_panels)  returns false if method was already selected.   extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group (new one will be made if it does not yet exist)  desc is a custom description -- will show up as tooltip for user (default is info from member)
+  virtual bool          AddToParamSet(MemberDef* member, ParamSet* ctrl_panel,
+                                          const String& extra_label = "", const String& sub_gp_nm = "");
+  // #MENU #MENU_ON_ParamSet #MENU #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
   virtual void          GetSelectText(MemberDef* mbr, String extra_label,
     String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
 

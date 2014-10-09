@@ -16,6 +16,7 @@
 #include "taiEditorWidgets.h"
 #include <taProject>
 #include <ControlPanel>
+#include <ParamSet>
 #include <iLabel>
 #include <taiWidget>
 #include <iFlowLayout>
@@ -38,7 +39,7 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id, taBase* rbase, MemberDef* md, QWidget* menu_par,
   QObject* slot_obj, const char* slot)
 {
-  // have to be a taBase to use SelEdit
+// have to be a taBase to use SelEdit
   if (!rbase || !md) return;
 //obs  if (!(membs.GetFlatDataItem(sel_item_idx, &md) && md))
 //    return;
@@ -72,6 +73,38 @@ void taiEditorWidgets::DoFillLabelContextMenu_SelEdit(QMenu* menu,
     act->setData(i); // sets data, which is what is used in signal, to i
     // determine if already on that seledit, and disable if it isn't
     if (se->FindMbrBase(rbase, md) < 0)
+      act->setEnabled(false);
+  }
+  if (sub->actions().count() == 0)
+    sub->setEnabled(false); // show item for usability, but disable
+
+  sub = menu->addMenu("Add to ParamSet");
+  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
+  sub->setFont(menu->font());
+  act = NULL; // we need to track last one
+  for (int i = 0; i < proj->param_sets.leaves; ++i) {
+    ParamSet* ps = proj->param_sets.Leaf(i);
+    act = sub->addAction(ps->GetName()/*, slot_obj, slot*/); //
+    // values above 100 for param set edit items - figure out how to change the slot! - that would be much cleaner
+    act->setData(100+i); // sets data, which is what is used in signal, to i
+    // determine if already on that seledit, and disable if it is (we do this to maintain constant positionality in menu)
+    if (ps->FindMbrBase(rbase, md) >= 0)
+      act->setEnabled(false);
+  }
+  if (sub->actions().count() == 0)
+    sub->setEnabled(false); // show item for usability, but disable
+
+  // TODO: if any edits, populate menu for removing, for all seledits already on
+  sub = menu->addMenu("Remove from ParamSet");
+  connect(sub, SIGNAL(triggered(QAction*)), slot_obj, slot);
+  sub->setFont(menu->font());
+  for (int i = 0; i < proj->param_sets.leaves; ++i) {
+    ParamSet* ps = proj->param_sets.Leaf(i);
+    act = sub->addAction(ps->GetName()/*, slot_obj, slot*/);
+    // values above 100 for param set edit items - figure out how to change the slot! - that would be much cleaner
+    act->setData(100+i); // sets data, which is what is used in signal, to i
+    // determine if already on that seledit, and disable if it isn't
+    if (ps->FindMbrBase(rbase, md) < 0)
       act->setEnabled(false);
   }
   if (sub->actions().count() == 0)

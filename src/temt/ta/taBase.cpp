@@ -22,6 +22,7 @@
 #include <taProject>
 #include <taDoc>
 #include <ControlPanel>
+#include <ParamSet>
 #include <MethodDef>
 #include <UserDataItem_List>
 #include <UserDataItemBase>
@@ -3580,6 +3581,17 @@ bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_p
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
   return ctrl_panel->SelectMethodNm(this, function, extra_label, desc, sub_gp_nm);
+}
+
+bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set, const String& extra_label,
+                               const String& sub_gp_nm) {
+  if(TestError(!member,"AddToParamSet", "member is null")) return false;
+  if(!param_set) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
+    param_set = (ParamSet*)proj->param_sets.New(1);
+  }
+  return param_set->SelectMember(this, member, extra_label, "", sub_gp_nm);
 }
 
 void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,

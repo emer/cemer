@@ -28,6 +28,7 @@
 #include <taiWidgetPoly>
 #include <taProject>
 #include <ControlPanel>
+#include <ParamSet>
 #include <BuiltinTypeDefs>
 
 #include <SigLinkSignal>
@@ -682,7 +683,17 @@ void iProgramEditor::DoAddToControlPanel(QAction* act) {
   if (!proj) return;
 
   int param = act->data().toInt();
-  ControlPanel* se = proj->ctrl_panels.Leaf(param);
+  ControlPanel* se;
+  // this is a terrible hack but will work until I figure out a better way - rohrlich 10/8/14
+  if (param < 100) {
+    se = proj->ctrl_panels.Leaf(param);
+  }
+  else if (param < 200) {
+    se = dynamic_cast<ControlPanel*>(proj->param_sets.Leaf(param - 100));
+  }
+  else {
+    taMisc::Error("Programmer Error - taiEditorOfClass::DoAddToControlPanel, param value out of range");
+  }
 
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;

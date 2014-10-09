@@ -15,6 +15,7 @@
 
 #include "taiEditorOfControlPanelFull.h"
 #include <ClusterRun>
+#include <ParamSet>
 #include <iLabel>
 #include <iFlowLayout>
 #include <taiMember>
@@ -65,7 +66,7 @@ void taiEditorOfControlPanelFull::ClearBody_impl() {
 }
 
 void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
-  // delete all previous sele members
+  // delete all previous sele members (sele presumably stands for "SelectEdit" the old name for ControlPanel)
   membs.ResetItems();
   dat_cnt = 0;
   // mark place
@@ -115,7 +116,30 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         }
       }
 
-      if(!added_search) {
+      // if this panel is a param set panel
+      bool added_param_set = false;
+      if(sele->InheritsFrom(&TA_ParamSet)) {
+        MemberDef* psmd = TA_EditMbrItem.members.FindName("param_set_value");
+        if (psmd) {
+          added_param_set = true;
+          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+          mash_widg->SetMemberDef(md);
+          mash_widg->add_labels = false;
+          mash_widg->InitLayout();
+          mash_widg->AddChildMember(md);
+          mash_widg->AddChildMember(psmd);
+          mash_widg->EndLayout();
+          
+          memb_set->widget_el.Add(mash_widg);
+          QWidget* data = mash_widg->GetRep();
+          help_text = item->GetDesc();
+          String new_lbl = item->caption();
+          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
+          ++dat_cnt;
+        }
+      }
+
+      if(!added_search && !added_param_set) {
         taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
         memb_set->widget_el.Add(mb_dat);
         QWidget* data = mb_dat->GetRep();
@@ -144,9 +168,15 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
   int sel_item_index = membs.GetFlatWidgetIndex(sel_item_mbr, sel_item_base);
-  if (sel_item_index < 0) return;
-  //QAction* act =
-  menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
+  if (sel_item_index < 0)
+    return;
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    menu->addAction("Remove from ParamSet", this, SLOT(DoRemoveSelEdit()));
+  }
+  else {
+    menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
+  }
+  
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {

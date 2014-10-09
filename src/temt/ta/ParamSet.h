@@ -31,11 +31,15 @@ class TA_API ParamSet : public ControlPanel {
   INHERITED(ControlPanel)
   
 public:
-  ParamSetItem_Group      params;  // the parameters in this set
-  EditMbrItem_Group       mbrs;    // #HIDDEN don't show this member of the parent class
+//  ParamSetItem_Group      params;  // the parameters in this set
+  EditMbrItem_Group       mbrs;    // reuse mbrs - but with the addition of read-only String (see EditMbrItem)
   EditMthItem_Group       mths;    // #HIDDEN don't show this member of the parent class
 
   TA_SIMPLE_BASEFUNS(ParamSet);
+  
+protected:
+  void UpdateAfterEdit_impl() override;
+
 private:
   void Initialize()  { };
   void Destroy()     { };

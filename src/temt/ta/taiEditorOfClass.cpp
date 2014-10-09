@@ -24,6 +24,7 @@
 #include <iFlowLayout>
 #include <taProject>
 #include <ControlPanel>
+#include <ParamSet>
 #include <iDialogEditor>
 #include <iFormLayout>
 #include <taiWidgetToolBar>
@@ -387,18 +388,29 @@ void taiEditorOfClass::DoRaise_Panel() {
 }
 
 void taiEditorOfClass::DoAddToControlPanel(QAction* act){
-//note: this routine is duplicated in the ProgEditor
+  //note: this routine is duplicated in the ProgramEditor
   taProject* proj = dynamic_cast<taProject*>(((taBase*)root)->GetThisOrOwner(&TA_taProject));
-  if (!proj) return;
-
+  if (!proj)
+    return;
+  
   int param = act->data().toInt();
-  ControlPanel* se = proj->ctrl_panels.Leaf(param);
-
+  ControlPanel* se;
+  // this is a terrible hack but will work until I figure out a better way - rohrlich 10/8/14
+  if (param < 100) {
+    se = proj->ctrl_panels.Leaf(param);
+  }
+  else if (param < 200) {
+    se = dynamic_cast<ControlPanel*>(proj->param_sets.Leaf(param - 100));
+  }
+  else {
+    taMisc::Error("Programmer Error - taiEditorOfClass::DoAddToControlPanel, param value out of range");
+  }
+  
   if (!sel_item_base) return; // shouldn't happen!
   taBase* rbase = sel_item_base;
   MemberDef* md = sel_item_mbr;
   if (!md || !se || !rbase) return; //shouldn't happen...
-
+  
   //NOTE: this handler adds if not on, or removes if already on
   int idx = se->FindMbrBase(rbase, md);
   if (idx >= 0) {

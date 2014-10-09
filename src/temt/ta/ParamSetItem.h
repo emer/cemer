@@ -32,6 +32,8 @@ public:
   // use item_nm, label, description from base class
   String            value;  // the value for this parameter when this param set is invoked
   
+  void              UpdateAfterEdit_impl();
+
   TA_BASEFUNS(ParamSetItem);
 private:
   void  Initialize()  { };
