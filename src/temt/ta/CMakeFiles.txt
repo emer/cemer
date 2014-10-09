@@ -449,8 +449,6 @@ set(ta_HEADS_MAKETA_NOMOC
   EditMthItem.h
   EditMbrItem_Group.h
   EditMthItem_Group.h
-  ParamSetItem.h
-  ParamSetItem_Group.h
   ControlPanelConfig.h
   ControlPanel_Group.h
 
@@ -458,7 +456,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ParamSearchAlgo_List.h
   GridSearch.h
   ClusterRun.h
-  ParamSet.h
 
   Subversion.h
   taMediaWiki.h
@@ -1583,8 +1580,6 @@ set(ta_SRCS_MAKETA
   EditMthItem.cpp
   EditMbrItem_Group.cpp
   EditMthItem_Group.cpp
-  ParamSetItem.cpp
-  ParamSetItem_Group.cpp
   ControlPanelConfig.cpp
   ControlPanel.cpp
   ControlPanel_Group.cpp
@@ -1593,7 +1588,6 @@ set(ta_SRCS_MAKETA
   ParamSearchAlgo_List.cpp
   GridSearch.cpp
   ClusterRun.cpp
-  ParamSet.cpp
 
   Subversion.cpp
   taMediaWiki.cpp

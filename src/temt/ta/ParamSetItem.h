@@ -17,7 +17,7 @@
 #define ParamSetItem_h 1
 
 // parent includes:
-#include <ControlPanelItem>
+#include <taOBase>
 
 // member includes:
 
@@ -25,20 +25,19 @@
 
 taTypeDef_Of(ParamSetItem);
 
-class TA_API ParamSetItem : public ControlPanelItem {
-  // A single ParamSet name, value, pointer (location) triad
-INHERITED(ControlPanelItem)
+class TA_API ParamSetItem : public taOBase {
+// #INLINE a saved value for a control panel item
+  INHERITED(taOBase)
 public:
-  // use item_nm, label, description from base class
-  String            value;  // the value for this parameter when this param set is invoked
+  String            saved_value;  // #READ_ONLY #SHOW the value for this parameter when this param set is invoked
   
+  TA_SIMPLE_BASEFUNS(ParamSetItem);
+protected:
   void              UpdateAfterEdit_impl();
 
-  TA_BASEFUNS(ParamSetItem);
 private:
   void  Initialize()  { };
   void  Destroy()     { };
-  void  Copy_(const ParamSetItem& cp) {};
 };
 
 #endif // ParamSetItem_h
