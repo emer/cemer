@@ -32,6 +32,7 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         da_learn_thr;   // Threshold on dopamine magnitude required to drive learning of matrix weights, and consequent clearing of the accumulated trace of gating activations -- set this high enough that it filters out small random DA fluctuations, but not the significant learning events
+ float         otr_lrate;       // learning rate associated with other non-gated activations -- should generally be less in proportion to average number gating / total stripes
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -53,7 +54,8 @@ INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
     NTR = SWT+1,           // new trace -- drives updates to trace value -- thal * ru * su
-    TR,                    // current ongoing trace that drives learning -- adds ntr and decays after learning on current values
+    GTR,                   // current ongoing trace of gating activations, which drive learning -- adds ntr and clears after learning on current values
+    OTR,                   // current ongoing trace of other, non-gating activations, which drive learning in an opposite direction -- adds ntr and clears after learning on current values
   };
   bool                  nogo;    // are these nogo con specs -- if so, flip the sign of the dopamine signal
   MatrixLearnSpec       matrix;  // parameters for special matrix learning dynamics
@@ -65,27 +67,38 @@ public:
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
     float* ntrs = cg->OwnCnVar(NTR);
-    float* trs = cg->OwnCnVar(TR);
+    float* gtrs = cg->OwnCnVar(GTR);
+    float* otrs = cg->OwnCnVar(OTR);
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
         C_Init_Weight_Rnd(wts[i]);
         C_Init_dWt(dwts[i]);
-        trs[i] = 0.0f;
         ntrs[i] = 0.0f;
+        gtrs[i] = 0.0f;
+        otrs[i] = 0.0f;
       }
     }
   }
 
   inline void C_Compute_dWt_Matrix_Tr
-    (float& dwt, float& tr, float& ntr, const float mtx_da,
+    (float& dwt, float& ntr, float& gtr, float& otr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
     if(fabs(mtx_da) >= matrix.da_learn_thr) {
-      dwt += cur_lrate * mtx_da * tr; // first learn based on cur trace
-      tr = 0.0f;                      // and reset trace
+      dwt += cur_lrate * mtx_da * (gtr - matrix.otr_lrate * otr);
+      gtr = 0.0f;                      // and reset trace
+      otr = 0.0f;
     }
-    ntr = ru_thal * ru_act * su_act; // then add in any new trace increment
-    tr += ntr;                       // just keep accumulating..
+    else {
+      if(ru_thal > 0.0f) {
+        ntr = ru_thal * ru_act * su_act; // then add in any new trace increment
+        gtr += ntr;                       // just keep accumulating..
+      }
+      else {
+        ntr = ru_act * su_act;    // then add in any new trace increment
+        otr += ntr;               // just keep accumulating..
+      }
+    }
   }
   // #IGNORE
 
@@ -95,13 +108,14 @@ public:
 
     float* dwts = cg->OwnCnVar(DWT);
     float* ntrs = cg->OwnCnVar(NTR);
-    float* trs = cg->OwnCnVar(TR);
+    float* gtrs = cg->OwnCnVar(GTR);
+    float* otrs = cg->OwnCnVar(OTR);
     
     const int sz = cg->size;
     if(nogo) {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i],
+        C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], gtrs[i], otrs[i],
                                 -ru->dav, ru->thal, ru->act_eq, su->act_eq);
         // only diff is -dav for nogo
       }
@@ -109,7 +123,7 @@ public:
     else {
       for(int i=0; i<sz; i++) {
         LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], trs[i], ntrs[i],
+        C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], gtrs[i], otrs[i],
                                 ru->dav, ru->thal, ru->act_eq, su->act_eq);
       }
     }

@@ -56,7 +56,7 @@ void InvertUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
     u->act = 1.0f;
     return;
   }
-  u->act = 1.0f - su->act;
+  u->act = 1.0f - su->act_eq;
   u->act_lrn = u->act_eq = u->act_nd = u->act;
   u->da = 0.0f;            // I'm fully settled!
   u->AddToActBuf(syn_delay);

@@ -23,19 +23,25 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(GPiGoNogoSpec);
+eTypeDef_Of(GPiMiscSpec);
 
-class E_API GPiGoNogoSpec : public SpecMemberBase {
+class E_API GPiMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra weighting of Go vs. NoGo inputs
 INHERITED(SpecMemberBase)
 public:
-  float        nogo;            // #MIN_0 how much to weight NoGo inputs
+  float         net_gain;        // extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)
+  float         nogo;            // #MIN_0 how much to weight NoGo inputs relative to Go inputs (which have an implied weight of 1.0)
+  float         gate_thr;        // threshold applied to activation to drive gating -- when any unit activation gets above this threshold, it sends the activation through sending projections to the thal field in Matrix units, otherwise it sends a 0
+  bool          thr_act;         // apply threshold to unit act_eq activations -- this is what is sent to the InvertUnitSpec, so we effectively threshold the gating output
 
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+  float         tot_gain;        // #HIDDEN #EXPERT net_gain + nogo
+  
+  String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(GPiGoNogoSpec);
+  TA_SIMPLE_BASEFUNS(GPiMiscSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl();
 private:
   void  Initialize();
   void  Destroy()       { };
@@ -45,12 +51,22 @@ private:
 eTypeDef_Of(GPiUnitSpec);
 
 class E_API GPiUnitSpec : public LeabraUnitSpec {
-  // GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates 
+  // GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates Go and NoGo inputs, computing netin = Go - go_nogo.nogo * NoGo -- also sends act to thal field on Matrix layers that it sends to, to drive credit assignment learning in Matrix
 INHERITED(LeabraUnitSpec)
 public:
-  GPiGoNogoSpec   go_nogo;      // how to weight the Go vs. NoGo pathway inputs
+  GPiMiscSpec    gpi;      // parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold
 
   void	Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override;
+
+  virtual void  Send_Thal(LeabraUnit* u, LeabraNetwork* net);
+  // send the act value as thal to sending projections: every cycle
+
+  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+
+  // no learning in this one..
+  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
+  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
+  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec

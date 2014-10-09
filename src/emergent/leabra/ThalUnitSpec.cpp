@@ -26,7 +26,7 @@ void ThalUnitSpec::Defaults_init() {
 }
 
 void ThalUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
-  const float snd_val = u->act;
+  const float snd_val = u->act_eq;
   for(int g=0; g<u->send.size; g++) {
     LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;

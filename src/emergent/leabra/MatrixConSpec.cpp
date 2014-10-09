@@ -24,6 +24,7 @@ void MatrixLearnSpec::Initialize() {
 
 void MatrixLearnSpec::Defaults_init() {
   da_learn_thr = 0.1f;
+  otr_lrate = 0.25f;
 }
 
 void MatrixLearnSpec::UpdateAfterEdit_impl() {
