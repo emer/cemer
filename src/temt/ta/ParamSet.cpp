@@ -15,13 +15,10 @@
 
 #include "ParamSet.h"
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(ParamSet);
 
 void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  
-  // add all the bases, since they weren't available during load
-  FOREACH_ELEM_IN_GROUP(EditMbrItem, sei, mbrs) {
-    BaseAdded(sei);
-  }
 }
