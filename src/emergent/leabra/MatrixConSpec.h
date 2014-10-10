@@ -32,7 +32,7 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         da_learn_thr;   // Threshold on dopamine magnitude required to drive learning of matrix weights, and consequent clearing of the accumulated trace of gating activations -- set this high enough that it filters out small random DA fluctuations, but not the significant learning events
- float         otr_lrate;       // learning rate associated with other non-gated activations -- should generally be less in proportion to average number gating / total stripes
+ float         otr_lrate;       // #DEF_0.5 learning rate associated with other non-gated activations -- should generally be less in proportion to average number gating / total stripes
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

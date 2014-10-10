@@ -30,9 +30,9 @@ class E_API GPiMiscSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         net_gain;        // extra netinput gain factor to compensate for reduction in netinput from subtracting away nogo -- this is IN ADDITION to adding the nogo factor as an extra gain: net = (net_gain + nogo) * (go_in - nogo * nogo_in)
-  float         nogo;            // #MIN_0 how much to weight NoGo inputs relative to Go inputs (which have an implied weight of 1.0)
+  float         nogo;            // #MIN_0 #DEF_0.01 how much to weight NoGo inputs relative to Go inputs (which have an implied weight of 1.0)
   float         gate_thr;        // threshold applied to activation to drive gating -- when any unit activation gets above this threshold, it sends the activation through sending projections to the thal field in Matrix units, otherwise it sends a 0
-  bool          thr_act;         // apply threshold to unit act_eq activations -- this is what is sent to the InvertUnitSpec, so we effectively threshold the gating output
+  bool          thr_act;         // #DEF_true apply threshold to unit act_eq activations -- this is what is sent to the InvertUnitSpec, so we effectively threshold the gating output
 
   float         tot_gain;        // #HIDDEN #EXPERT net_gain + nogo
   

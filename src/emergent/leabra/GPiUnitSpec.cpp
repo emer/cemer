@@ -23,12 +23,12 @@ TA_BASEFUNS_CTORS_DEFN(GPiUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(GPiMiscSpec);
 
 void GPiMiscSpec::Initialize() {
-  nogo = 0.5f;
-  thr_act = true;
   Defaults_init();
 }
 
 void GPiMiscSpec::Defaults_init() {
+  nogo = 0.01f;
+  thr_act = true;
   gate_thr = 0.5f;
   net_gain = 2.0f;
   tot_gain = net_gain + nogo;

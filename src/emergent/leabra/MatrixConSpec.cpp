@@ -24,7 +24,7 @@ void MatrixLearnSpec::Initialize() {
 
 void MatrixLearnSpec::Defaults_init() {
   da_learn_thr = 0.1f;
-  otr_lrate = 0.25f;
+  otr_lrate = 0.5f;
 }
 
 void MatrixLearnSpec::UpdateAfterEdit_impl() {
@@ -39,8 +39,11 @@ void MatrixConSpec::Initialize() {
 }
 
 void MatrixConSpec::Defaults_init() {
-  // SetUnique("wt_limits", true);
+  SetUnique("wt_limits", true);
   wt_limits.sym = false;
+
+  // SetUnique("lrate", true);
+  lrate = 0.001f;
 
   ignore_unlearnable = false;
 }
