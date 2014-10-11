@@ -27,6 +27,8 @@
 #include <MarkerGpOneToOnePrjnSpec>
 #include <TesselPrjnSpec>
 #include <UniformRndPrjnSpec>
+#include <RowColPrjnSpec>
+#include <GpRndTesselPrjnSpec>
 
 #include <TwoDValLayerSpec>
 #include <LeabraTICtxtConSpec>
@@ -52,10 +54,14 @@
 #include <LearnModDeltaConSpec>
 #include <LearnModHebbConSpec>
 
-
-#include <MatrixConSpec>
+#include <PatchUnitSpec>
+#include <GPiUnitSpec>
+#include <InvertUnitSpec>
+#include <ThalUnitSpec>
 #include <PFCUnitSpec>
 #include <LeabraTICtxtLayerSpec>
+#include <MatrixConSpec>
+#include <Deep5bConSpec>
 
 #include <TopoWtsPrjnSpec>
 
@@ -1312,123 +1318,82 @@ bool LeabraWizard::PVLV_OutToPVe(LeabraNetwork* net, LeabraLayer* output_layer,
 //                      PBWM
 ///////////////////////////////////////////////////////////////
 
-bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, bool topo_prjns,
-                                 const String& prefix) {
+bool LeabraWizard::PBWM_Defaults(LeabraNetwork* net, const String& prefix) {
   if(!net) {
     if(TestError(!net, "PBWM", "network is NULL -- must be passed and already PBWM configured -- aborting!"))
       return false;
   }
 
-  return PBWM_Specs(net, topo_prjns, prefix, true); // true = set defaults
+  return PBWM_Specs(net, prefix, true); // true = set defaults
 }
 
 // this is how to access a pvlv spec of a given type, by name:
 #define PbwmSp(pth,T) ((T*)pbwmspgp->ElemPath(pth, T::StatTypeDef(0), true))
 
-bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, bool topo_prjns,
-                              const String& prefix, bool set_defs) {
+bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set_defs) {
   if(!net) {
     if(TestError(!net, "PBWM_Specs", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
       return false;
   }
 
-  // String pvlvprefix = "PVLV";
-  // BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
-  // BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
-  // if(!pbwmspgp) return false;
+  String pvlvprefix = "PVLV";
+  BaseSpec_Group* pvlvspgp = (BaseSpec_Group*)net->specs.gp.FindName(pvlvprefix);
+  BaseSpec_Group* pbwmspgp = net->FindMakeSpecGp(prefix);
+  if(!pbwmspgp) return false;
 
-  // net->net_misc.ti = true;
+  ////////////	UnitSpecs
 
-  // ////////////	UnitSpecs
+  FMSpec(LeabraUnitSpec, pbwm_units, pbwmspgp, prefix + "Units");
+  FMChild(LeabraUnitSpec, matrix_units, pbwm_units, "MatrixUnits");
+  FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
+  FMChild(GPiUnitSpec, gpi_units, pbwm_units, "GPiUnits");
+  FMChild(InvertUnitSpec, gpinv_units, pbwm_units, "GPInvert");
+  FMChild(ThalUnitSpec, thal_units, pbwm_units, "ThalUnits");
+  FMChild(PFCUnitSpec, pfc_units, pbwm_units, "PFCUnits");
+  FMChild(LayerActUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
 
-  // FMSpec(PFCUnitSpec, pfc_units, pbwmspgp, "PFCUnits");
-  // FMChild(LayerActUnitSpec, pfcd_units, pfc_units, "PFCDeepUnits");
-  // FMSpec(MatrixUnitSpec, matrix_units, pbwmspgp, "MatrixUnits");
-  // FMChild(MatrixUnitSpec, matrix_nogo_units, matrix_units, "MatrixNoGo");
-  // FMSpec(LeabraUnitSpec, snrthal_units, pbwmspgp, "SNrThalUnits");
+  ////////////	LayerSpecs
 
-  // ////////////	ConSpecs
+  FMSpec(LeabraLayerSpec, pbwm_sp, pbwmspgp, prefix + "Layers");
+  FMChild(LeabraLayerSpec, matrix_sp, pbwm_sp, "MatrixLayer");
+  FMChild(LeabraLayerSpec, patch_sp, pbwm_sp, "PatchLayer");
+  FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
+  FMChild(LeabraLayerSpec, thal_sp, pbwm_sp, "ThalLayer");
+  FMChild(LeabraLayerSpec, pfc_sp, pbwm_sp, "PFCLayer");
+  FMChild(LeabraTICtxtLayerSpec, pfcd_sp, pfc_sp, "PFCdLayer");
 
-  // FMSpec(PFCConSpec, topfc_cons, pbwmspgp, "ToPFC");
-  // FMChild(LeabraBiasSpec, pfc_bias, topfc_cons, "PFCBias");
-  // FMChild(LeabraBiasSpec, fixed_bias, topfc_cons, "FixedBias");
+  ////////////	ConSpecs
 
-  // FMChild(LeabraTICtxtConSpec, pfc_ctxt_cons, topfc_cons, "PfcTICtxt");
+  FMSpec(LeabraConSpec, lrn_cons, pbwmspgp, prefix + "LrnCons");
+  FMChild(MatrixConSpec, mtx_cons_go, lrn_cons, "MatrixConsGo");
+  FMChild(MatrixConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
+  FMChild(Deep5bConSpec, d5b_lrn_cons, lrn_cons, "Deep5bLrn");
 
-  // FMChild(PFCConSpec, pfctopfc_cons, topfc_cons, "PFCtoPFC");
-
-  // FMChild(PFCConSpec, topfcfmin_cons, topfc_cons, "ToPFCFmInput");
-  // FMChild(PFCConSpec, topfcfmout_cons, topfc_cons, "ToPFCFmOutput");
-
-  // FMSpec(MatrixConSpec, matrix_cons, pbwmspgp, "MatrixCons");
-  // FMChild(MatrixBiasSpec, matrix_bias, matrix_cons, "MatrixBias");
-  // FMChild(MatrixConSpec, matrix_cons_topo, matrix_cons, "MatrixConsTopo");
-  // FMChild(MatrixConSpec, matrix_cons_topo_weak, matrix_cons_topo, "MatrixConsTopoWeak");
-  // FMChild(MatrixConSpec, matrix_cons_topo_strong, matrix_cons_topo, "MatrixConsTopoStrong");
-  // FMChild(MatrixConSpec, matrix_cons_nogo, matrix_cons, "MatrixConsNoGo");
-  // FMChild(MatrixConSpec, matrix_cons_nogofmgo, matrix_cons_nogo, "MatrixConsNoGoFmGo");
-  // FMChild(MatrixConSpec, matrix_cons_out, matrix_cons, "MatrixConsOut");
-
-  // FMSpec(LeabraConSpec, fmpfc_out, pbwmspgp, "FmPFC_out");
-
-  // FMSpec(MarkerConSpec, marker_cons, pbwmspgp, "PbwmMarker");
-  // FMSpec(LeabraConSpec, matrix_to_snrthal, pbwmspgp, "MatrixToSNrThal");
-  // // matrix nogo to snrthal just a marker con
-
-  // ////////////	LayerSpecs
-
-  // FMSpec(PFCLayerSpec, pfc_mnt_sp, pbwmspgp, "PFC_mnt");
-  // FMChild(PFCLayerSpec, pfc_in_sp, pfc_mnt_sp, "PFC_in");
-  // FMChild(PFCLayerSpec, pfc_out_sp, pfc_mnt_sp, "PFC_out");
-  // FMChild(LeabraTICtxtLayerSpec, pfc_deep_sp, pfc_mnt_sp, "PFC_deep");
-
-  // MatrixLayerSpec* matrix_go_mnt_out_sp = NULL;
-  // MatrixLayerSpec* matrix_go_out_mnt_sp = NULL;
-
-  // MatrixLayerSpec* matrix_nogo_mnt_out_sp = NULL;
-  // MatrixLayerSpec* matrix_nogo_out_mnt_sp = NULL;
-
-  // FMSpec(MatrixLayerSpec, matrix_go_mnt_sp, pbwmspgp, "Matrix_Go_mnt");
-
-  // FMChild(MatrixLayerSpec, matrix_go_in_sp, matrix_go_mnt_sp, "Matrix_Go_in");
-  // FMChild(MatrixLayerSpec, matrix_go_out_sp, matrix_go_mnt_sp, "Matrix_Go_out");
-  // if(topo_prjns) {
-  //   FMChildPD(MatrixLayerSpec, matrix_go_mnt_out_sp, matrix_go_mnt_sp,
-  //             "Matrix_Go_mnt_out");
-  //   FMChildPD(MatrixLayerSpec, matrix_go_out_mnt_sp, matrix_go_mnt_sp,
-  //             "Matrix_Go_out_mnt");  
-  // }
-
-  // FMChild(MatrixLayerSpec, matrix_nogo_mnt_sp, matrix_go_mnt_sp, "Matrix_NoGo_mnt");
-  // FMChild(MatrixLayerSpec, matrix_nogo_in_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_in");
-  // FMChild(MatrixLayerSpec, matrix_nogo_out_sp, matrix_nogo_mnt_sp, "Matrix_NoGo_out");
-  // if(topo_prjns) {
-  //   FMChildPD(MatrixLayerSpec, matrix_nogo_mnt_out_sp, matrix_nogo_mnt_sp,
-  //             "Matrix_NoGo_mnt_out");
-  //   FMChildPD(MatrixLayerSpec, matrix_nogo_out_mnt_sp, matrix_nogo_mnt_sp,
-  //             "Matrix_NoGo_out_mnt");
-  // }
-
-  // FMSpec(SNrThalUnitSpec, snrthalsp, pbwmspgp, "SNrThalLayer");
-  // FMChild(SNrThalUnitSpec, snrthalsp_out, snrthalsp, "SNrThalLayer_out");
+  FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
+  FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
+  FMChild(MarkerConSpec, marker_cons, fix_cons, prefix + "MarkerCons");
+  FMChild(LeabraConSpec, in_to_mtx, fix_cons, "InputToMatrixBias");
+  FMChild(LeabraConSpec, pfc_to_mtx, fix_cons, "PFCToMatrix");
+  FMChild(Deep5bConSpec, pfcd_out_bias_mtx, fix_cons, "PFCdOutBiasMtx");
+  FMChild(LeabraConSpec, in_to_thal, fix_cons, "InputToThal");
+  FMChild(LeabraConSpec, gp_inhib_to_thal, fix_cons, "GPinhibToThal");
+  FMChild(LeabraConSpec, pfc_to_thal, fix_cons, "PFCToThal");
+  FMChild(Deep5bConSpec, pfcd_mnt_bias_thal, fix_cons, "PFCdMntBiasThal");
+  FMChild(Deep5bConSpec, pfcd_out_bias_thal, fix_cons, "PFCdOutBiasThal");
+  FMChild(Deep5bConSpec, pfcd_patch, fix_cons, "PFCdPatch");
 
   // ////////////	PrjnSpecs
 
-  // FMSpec(FullPrjnSpec, fullprjn, pbwmspgp, "PbwmFullPrjn");
-  // FMSpec(OneToOnePrjnSpec, onetoone, pbwmspgp, "PbwmOneToOne");
-  // FMSpec(GpOneToOnePrjnSpec, gponetoone, pbwmspgp, "PbwmGpOneToOne");
-  // FMSpec(MarkerGpOneToOnePrjnSpec, markergponetoone, pbwmspgp, "MarkerGpOneToOne");
-
-  // FMSpec(SNrPrjnSpec, snr_prjn, pbwmspgp, "SNrPrjn");
-
-  // FMSpec(TopoWtsPrjnSpec, topomaster, pbwmspgp, "TopoMaster");
-  // FMChild(TopoWtsPrjnSpec, topofminput, topomaster, "TopoFmInput");
-  // FMChild(TopoWtsPrjnSpec, intrapfctopo, topomaster, "TopoIntraPFC");
-  // FMChild(TopoWtsPrjnSpec, topomatrixpfc_self, topomaster, "TopoMatrixPFC_Self");
-  // FMChild(TopoWtsPrjnSpec, topomatrixpfc_other, topomaster, "TopoMatrixPFC_Other");
-
-  // FMSpec(TesselPrjnSpec, input_pfc, pbwmspgp, "Input_PFC");
-  // input_pfc->send_offs.SetSize(1); // this is all it takes!
+  FMSpec(FullPrjnSpec, fullprjn, pbwmspgp, prefix + "FullPrjn");
+  FMSpec(OneToOnePrjnSpec, onetoone, pbwmspgp, prefix + "OneToOne");
+  FMSpec(GpOneToOnePrjnSpec, gponetoone, pbwmspgp, prefix + "GpOneToOne");
+  FMSpec(RowColPrjnSpec, input_to_pfc_in_prjn, pbwmspgp, "InputToPFCin");
+  FMSpec(RowColPrjnSpec, input_to_thal_in_prjn, pbwmspgp, "InputToThalIn");
+  FMSpec(GpRndTesselPrjnSpec, patch_to_matrix_prjn, pbwmspgp, "PatchToMatrix");
+  FMSpec(RowColPrjnSpec, pfc_out_to_out_prjn, pbwmspgp, "PFCoutToOut");
+  FMSpec(RowColPrjnSpec, pfc_mnt_to_patch_prjn, pbwmspgp, "PFCMntToPatch");
+  FMSpec(RowColPrjnSpec, pfcd_mnt_to_out_prjn, pbwmspgp, "PFCMntToOut");
+  FMSpec(RowColPrjnSpec, pfcd_mnt_to_out_thal_prjn, pbwmspgp, "PFCMntToOut_thal");
 
   // //////////////////////////////////////////////////////////////////////////////////
   // // first: all the basic defaults from specs
@@ -1784,7 +1749,7 @@ static void set_n_stripes(LeabraNetwork* net, const String& gpnm, const String& 
 }
 
 bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-				    int out_stripes, bool one_snr, int n_matrix_units,
+				    int out_stripes, int n_channels, int n_matrix_units,
 				    int n_pfc_units, const String& prefix) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
@@ -1819,28 +1784,28 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
   set_n_stripes(net, prefix + "_NoGo", mtxnm + "_NoGo_out",out_stripes, n_matrix_units, true);
 
   int snr_stripes = in_stripes + mnt_stripes;
-  if(!one_snr) {
-    if(out_stripes > 0) {
-      set_n_stripes(net, prefix + "_Go", snrnm + "_out", out_stripes, 1, true);
-    }
-  }
-  else {
-    snr_stripes += out_stripes;
-  }
-  if(snr_stripes > in_stripes && snr_stripes > mnt_stripes &&
-     (!one_snr || snr_stripes > out_stripes)) {
-    set_n_stripes(net, prefix + "_Go", snrnm, snr_stripes, 1, true, snr_stripes, 1);
-  }
-  else {
-    set_n_stripes(net, prefix + "_Go", snrnm, snr_stripes, 1, true);
-  }
+  // if(!one_snr) {
+  //   if(out_stripes > 0) {
+  //     set_n_stripes(net, prefix + "_Go", snrnm + "_out", out_stripes, 1, true);
+  //   }
+  // }
+  // else {
+  //   snr_stripes += out_stripes;
+  // }
+  // if(snr_stripes > in_stripes && snr_stripes > mnt_stripes &&
+  //    (!one_snr || snr_stripes > out_stripes)) {
+  //   set_n_stripes(net, prefix + "_Go", snrnm, snr_stripes, 1, true, snr_stripes, 1);
+  // }
+  // else {
+  //   set_n_stripes(net, prefix + "_Go", snrnm, snr_stripes, 1, true);
+  // }
 
   net->Build();
   return true;
 }
 
 bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-			int out_stripes, bool one_snr, bool topo_prjns,
+			int out_stripes, int n_channels,
                         bool add_on, const String& prefix) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
@@ -1848,14 +1813,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
     if(TestError(!net, "PBWM", "network is NULL and could not make a new one -- aborting!"))
       return false;
     if(!StdNetwork()) return false;
-  }
-
-  if(!one_snr) {
-    // if only one type of stripes, then only one snr
-    int tot_stripes = in_stripes + mnt_stripes + out_stripes;
-    if((in_stripes == tot_stripes) || (mnt_stripes == tot_stripes) ||
-       (out_stripes == tot_stripes))
-      one_snr = true;
   }
 
   // first configure PVLV system..
