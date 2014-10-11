@@ -259,7 +259,7 @@ void taiEditor::Constr_Prompt() {
 void taiEditor::Constr_Buttons() {
   QWidget* par = widButtons;
 
-  if(!isDialog()) {
+  if(!isDialog() && help_but == NULL) {  // derived class may have created this button already
     help_but = new iHiLightButton("&Help", par);
     layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
     connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
@@ -294,24 +294,25 @@ void taiEditor::Constr_Buttons() {
   if (modal) {
     apply_but = NULL;
     revert_but = NULL;
-  } else {
-     // dont' put apply/revert buttons on a readonly dialog!
+  }
+  else {
+    // don't put apply/revert buttons on a readonly dialog!
     if (!read_only) {
-      layButtons->addSpacing(20);
-      apply_but = new iHiLightButton("&Apply", par);
-      layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
-      connect(apply_but, SIGNAL(clicked()),
-          this, SLOT(Apply()) );
-      revert_but = new iHiLightButton("&Revert", par);
-      layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
-      connect(revert_but, SIGNAL(clicked()),
-          this, SLOT(Revert()) );
+      if (apply_but == NULL) { // derived class may have created this button already
+        layButtons->addSpacing(20);
+        apply_but = new iHiLightButton("&Apply", par);
+        layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
+        connect(apply_but, SIGNAL(clicked()), this, SLOT(Apply()) );
+      }
+      if (revert_but == NULL) {
+        revert_but = new iHiLightButton("&Revert", par);
+        layButtons->addWidget(revert_but, 0, (Qt::AlignVCenter));
+        connect(revert_but, SIGNAL(clicked()), this, SLOT(Revert()) );
+      }
     }
     Unchanged();
   }
-//nuke  layButtons->addSpacing(10); // don't flush hard right
 }
-
 
 void taiEditor::SigLinkDestroying(taSigLink* dl) {
 // TENT, TODO: confirm this is right...

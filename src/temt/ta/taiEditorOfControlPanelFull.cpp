@@ -21,6 +21,7 @@
 #include <taiMember>
 #include <taiWidgetMenuBar>
 #include <taiWidgetMashup>
+#include <iHiLightButton>
 
 #include <taMisc>
 #include <taiMisc>
@@ -37,6 +38,11 @@ taiEditorOfControlPanelFull::~taiEditorOfControlPanelFull() {
 
 void taiEditorOfControlPanelFull::Initialize()
 {
+  help_but = NULL;
+  apply_but = NULL;
+  revert_but = NULL;
+  saved_to_active_but = NULL;
+  save_active_but = NULL;
 }
 
 void taiEditorOfControlPanelFull::ClearBody_impl() {
@@ -234,3 +240,56 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
   }
 }
 
+void taiEditorOfControlPanelFull::Constr_Buttons() {
+  QWidget* par = widButtons;
+  
+  if(sele->InheritsFrom(&TA_ParamSet)) {
+    if (help_but == NULL) { // derived class may have created this button already
+      help_but = new iHiLightButton("&Help", par);
+      layButtons->addWidget(help_but, 0, (Qt::AlignVCenter));
+      connect(help_but, SIGNAL(clicked()), this, SLOT(Help()) );
+    }
+    
+    layButtons->addStretch();
+
+    if (save_active_but == NULL) {
+      save_active_but = new iHiLightButton("&Active --> Saved", par);
+      save_active_but->setMinimumWidth(160);
+      layButtons->addWidget(save_active_but, 0, (Qt::AlignVCenter));
+      connect(save_active_but, SIGNAL(clicked()), this, SLOT(CopyActiveToSaved()) );
+    }
+    if (saved_to_active_but == NULL) {
+      saved_to_active_but = new iHiLightButton("&Saved --> Active", par);
+      saved_to_active_but->setMinimumWidth(160);
+      layButtons->addWidget(saved_to_active_but, 0, (Qt::AlignVCenter));
+      connect(saved_to_active_but, SIGNAL(clicked()), this, SLOT(CopySavedToActive()) );
+    }
+    if (apply_but == NULL) {
+      apply_but = new iHiLightButton("&Apply", par);
+      layButtons->addWidget(apply_but, 0, (Qt::AlignVCenter));
+      connect(apply_but, SIGNAL(clicked()), this, SLOT(Apply()) );
+    }
+    if (revert_but == NULL) {
+      revert_but = new iHiLightButton("&Revert", par);
+      layButtons->addWidget(revert_but, 0, (Qt::AlignRight));
+      connect(revert_but, SIGNAL(clicked()), this, SLOT(Revert()) );
+    }
+  }
+  inherited::Constr_Buttons();
+}
+
+void taiEditorOfControlPanelFull::CopySavedToActive() {
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    ParamSet* ps = dynamic_cast<ParamSet*>(sele);
+    ps->CopySavedToActive();
+    Refresh();
+  }
+}
+
+void taiEditorOfControlPanelFull::CopyActiveToSaved() {
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    ParamSet* ps = dynamic_cast<ParamSet*>(sele);
+    ps->CopyActiveToSaved();
+    Refresh();
+  }
+}

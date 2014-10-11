@@ -16,9 +16,27 @@
 #include "ParamSet.h"
 
 #include <taMisc>
+#include <EditMbrItem>
+#include <ParamSetItem>
 
 TA_BASEFUNS_CTORS_DEFN(ParamSet);
 
 void ParamSet::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void ParamSet::CopyActiveToSaved() {
+  FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
+    EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
+    taBase* bs = sei->base;
+    edit_mbr->param_set_value.saved_value = edit_mbr->mbr->GetValStr(bs);
+  }
+}
+
+void ParamSet::CopySavedToActive() {
+  FOREACH_ELEM_IN_GROUP(ControlPanelItem, sei, mbrs) {
+    EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
+    taBase* bs = sei->base;
+    edit_mbr->mbr->SetValStr(edit_mbr->param_set_value.saved_value, bs);
+  }
 }

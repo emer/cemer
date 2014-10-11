@@ -33,19 +33,26 @@ public:
   taiEditorOfControlPanelFull() { Initialize();};
   ~taiEditorOfControlPanelFull();
 
+  iHiLightButton*  saved_to_active_but;    // copy the values of the saved param set to the active values
+  iHiLightButton*  save_active_but;        // save active values to param set
+  
+public slots:
+  void          CopyActiveToSaved();
+  void          CopySavedToActive();
+  
 protected slots:
-  void         DoRemoveSelEdit() override;
+  void          DoRemoveSelEdit() override;
 
 protected:
-  void         ClearBody_impl() override;       // we also clear all the methods, and then rebuild them
-
-  void         Constr_Widget_Labels() override;
-  void         FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) override;
-  void         GetImage_Membs_def() override;
-  void         GetValue_Membs_def() override;
-
+  void          ClearBody_impl() override;       // we also clear all the methods, and then rebuild them
+  void          Constr_Widget_Labels() override;
+  void          FillLabelContextMenu_SelEdit(QMenu* menu, int& last_id) override;
+  void          GetImage_Membs_def() override;
+  void          GetValue_Membs_def() override;
+  void          Constr_Buttons() override;
+  
 private:
-  void  Initialize();
+  void          Initialize();
 };
 
 #endif // taiEditorOfControlPanelFull_h
