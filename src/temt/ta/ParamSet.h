@@ -18,7 +18,6 @@
 
 // parent includes:
 #include <ControlPanel>
-#include <ParamSetItem_Group>
 
 // member includes:
 
@@ -27,7 +26,7 @@
 taTypeDef_Of(ParamSet);
 
 class TA_API ParamSet : public ControlPanel {
-  // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project. Sets are saved and can be recalled to set all members in the set to the saved values. You can modify the current values, test your model and then click "Save Current" to store the values for later recall.
+  // ##EXT_prm ##CAT_Display A set of member/value pairs from one or more objects in a project. Sets are saved and can be recalled to set all members in the set to the saved values. You can modify the current values, test your model and then click "Active --> Saved" to store the values for later recall.
   INHERITED(ControlPanel)
   
 public:
