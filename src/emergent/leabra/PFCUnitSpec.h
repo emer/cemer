@@ -49,7 +49,7 @@ private:
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- just adds extra maintenance net input in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance
+  // PFC unit spec -- adds extra maintenance net input in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance -- also has special logic for updating deep5b activations, where repeated thalamic activation causes deep5b to update with the d5b_updt_tau time constant, capturing intrinsic maintenance properties of these neurons
 INHERITED(LeabraUnitSpec)
 public:
   PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
