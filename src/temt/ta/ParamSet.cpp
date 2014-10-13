@@ -30,6 +30,7 @@ void ParamSet::CopyActiveToSaved() {
     EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
     taBase* bs = sei->base;
     edit_mbr->param_set_value.saved_value = edit_mbr->mbr->GetValStr(bs);
+    edit_mbr->UpdateAfterEdit();
   }
 }
 
@@ -38,5 +39,6 @@ void ParamSet::CopySavedToActive() {
     EditMbrItem* edit_mbr = dynamic_cast<EditMbrItem*>(sei);
     taBase* bs = sei->base;
     edit_mbr->mbr->SetValStr(edit_mbr->param_set_value.saved_value, bs);
+    edit_mbr->UpdateAfterEdit();
   }
 }

@@ -32,8 +32,8 @@ class TA_API ParamSet : public ControlPanel {
 public:
   TA_SIMPLE_BASEFUNS(ParamSet);
 
-  virtual void          CopyActiveToSaved();
-  virtual void          CopySavedToActive();
+  virtual void          CopyActiveToSaved();  // #BUTTON
+  virtual void          CopySavedToActive();  // #BUTTON
 
 protected:
   void                  UpdateAfterEdit_impl() override;
