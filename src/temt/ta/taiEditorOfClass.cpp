@@ -92,6 +92,7 @@ taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
   InitGuiFields(false);
   ta_menu_buttons.own_items = true; // so they get destroyed
   //note: don't register for notification until constr starts
+  backdoor_edit = false;
 }
 
 taiEditorOfClass::~taiEditorOfClass() {
@@ -535,7 +536,12 @@ void taiEditorOfClass::GetImage(bool force) {
   if (state > DEFERRED1) {
     GetImage_Membs();
   }
-  Unchanged();
+  if (!backdoor_edit) {
+    Unchanged();
+  }
+  else {
+    backdoor_edit = false; // do the reset here because the call is made async so the caller can't reset
+  }
   StartEndLayout(false);
   --updating;
 }

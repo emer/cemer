@@ -59,6 +59,8 @@ public:
     MS_CNT      = 3 // number of default members
   };
 
+  bool                  backdoor_edit; // used to prevent unchanged() call when copying param value from saved value into widget
+  
   taiWidgetActions_List ta_menus;       // menu representations (from methods, non-menubuttons only)
   taiWidgetActions_List ta_menu_buttons;        // menu representations (from methods -- menubuttons only)
   taiWidgetActions*     cur_menu;       // current menu to add to (if not otherwise spec'd)

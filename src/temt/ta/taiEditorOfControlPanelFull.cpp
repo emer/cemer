@@ -281,7 +281,10 @@ void taiEditorOfControlPanelFull::Constr_Buttons() {
 void taiEditorOfControlPanelFull::CopySavedToActive() {
   if (sele->InheritsFrom(&TA_ParamSet)) {
     ParamSet* ps = dynamic_cast<ParamSet*>(sele);
-    ps->CopySavedToActive();
+    Revert();  // revert any pending changes
+    ps->CopySavedToActive();  // move the values
+    backdoor_edit = true;  // keep unchanged from being called because this will disable the apply/revert buttons
+    Changed();
     Refresh();
   }
 }
