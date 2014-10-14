@@ -80,28 +80,28 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   String name;
   String help_text;
   
-//  if (sele->InheritsFrom(&TA_ParamSet)) {
-//    // ui ok but crashes in taiEditorOfClass::GetButtonImage( on Apply()
-//    MemberSpace& ms = sele->GetTypeDef()->members;
-//    for (int i = 0; i < ms.size; ++i) {
-//      MemberDef* md = ms.FastEl(i);
-//      if ((md->name == "name") || (md->name == "desc")) {
-//        // Create data widget
-//        taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    // ui ok but crashes in taiEditorOfClass::GetButtonImage( on Apply()
+    MemberSpace& ms = sele->GetTypeDef()->members;
+    for (int i = 0; i < ms.size; ++i) {
+      MemberDef* md = ms.FastEl(i);
+      if ((md->name == "name") || (md->name == "desc")) {
+        // Create data widget
+        taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
 //        meth_el.Add(mb_dat);
-//        QWidget* rep = mb_dat->GetRep();
-//        bool fill_hor = mb_dat->fillHor();
-//        // create label
-//        GetName(md, name, help_text);
-//        AddNameWidget(-1, name, help_text, rep, mb_dat, md, fill_hor);
-//        ++dat_cnt;
-//      }
-//    }
-//    
-//    iLabel* lbl = NULL;
-//    lbl = new iLabel("Parameters", body);
-//    AddSectionLabel(-1, lbl, "");
-//  }
+        QWidget* rep = mb_dat->GetRep();
+        bool fill_hor = mb_dat->fillHor();
+        // create label
+        GetName(md, name, help_text);
+        AddNameWidget(-1, name, help_text, rep, mb_dat, md, fill_hor);
+        ++dat_cnt;
+      }
+    }
+    
+    iLabel* lbl = NULL;
+    lbl = new iLabel("Parameters", body);
+    AddSectionLabel(-1, lbl, "");
+  }
   
   int set_idx = 0;
 
