@@ -24,8 +24,10 @@ void PFCMaintSpec::Initialize() {
 }
 
 void PFCMaintSpec::Defaults_init() {
-  deep5b_gain = 1.0f;
-  d5b_updt_tau = 100.0f;
+  maint_last_row = -1;
+  maint_d5b_gain = 0.8f;
+  out_d5b_gain = 0.5f;
+  d5b_updt_tau = 10.0f;
   
   d5b_updt_dt = 1.0f / d5b_updt_tau;
 }
@@ -48,10 +50,25 @@ void PFCUnitSpec::Defaults_init() {
   // todo: other cifer defaults
 }
 
+bool  PFCUnitSpec::ActiveMaint(LeabraUnit* u) {
+  LeabraLayer* lay = (LeabraLayer*)u->own_lay();
+  taVector2i ugpos = lay->UnitGpPosFmIdx(u->UnitGpIdx());
+  int lst_row = pfc_maint.maint_last_row;
+  if(lst_row < 0)
+    lst_row = lay->gp_geom.y + lst_row;
+  return (ugpos.y <= lst_row);
+}
+
 float PFCUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
                                        LeabraNetwork* net, int thread_no) {
   float net_ex = inherited::Compute_NetinExtras(net_syn, u, net, thread_no);
-  net_ex += pfc_maint.deep5b_gain * u->deep5b;
+  bool act_mnt = ActiveMaint(u);
+  if(act_mnt) {
+    net_ex += pfc_maint.maint_d5b_gain * u->deep5b;
+  }
+  else {
+    net_ex += pfc_maint.out_d5b_gain * u->deep5b;
+  }
   return net_ex;
 }
 
@@ -63,12 +80,15 @@ void PFCUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
     act5b = 0.0f;
   }
   act5b *= u->thal;
-  if(u->thal_prv > 0.0f && u->thal > 0.0f) { // ongoing maintenance
+
+  bool act_mnt = ActiveMaint(u);
+  if(act_mnt && u->thal_prv > 0.0f && u->thal > 0.0f) { // ongoing maintenance
     u->deep5b += pfc_maint.d5b_updt_dt * (act5b - u->deep5b);
   }
   else {                        // first update or off..
-    u->deep5b = act5b; // thal already thresholded
+    u->deep5b = act5b;
   }
+
   u->thal_prv = u->thal;        // this is point of update
 }
 

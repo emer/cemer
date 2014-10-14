@@ -143,9 +143,9 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
       Unit* ru = NULL;
       if(recv_row_col != ALL && recv_gp) {
         if(recv_row_col == COLS)
-          rgpidx = roc * recv_oth_n + rrc;
+          rgpidx = roc * recv_max + rrc;
         else
-          rgpidx = rrc * recv_max + roc;
+          rgpidx = rrc * recv_oth_n + roc;
         rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_GP);
       }
       else {
@@ -168,9 +168,9 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
         Unit* su = NULL;
         if(send_row_col != ALL && send_gp) {
           if(send_row_col == COLS)
-            sgpidx = soc * send_oth_n + src;
+            sgpidx = soc * send_max + src;
           else
-            sgpidx = src * send_max + soc;
+            sgpidx = src * send_oth_n + soc;
           snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
         }
         else {
@@ -197,9 +197,9 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
         Unit* ru = NULL;
         if(recv_row_col != ALL && recv_gp) {
           if(recv_row_col == COLS)
-            rgpidx = roc * recv_oth_n + rrc;
+            rgpidx = roc * recv_max + rrc;
           else
-            rgpidx = rrc * recv_max + roc;
+            rgpidx = rrc * recv_oth_n + roc;
           rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_GP);
         }
         else {
@@ -225,9 +225,9 @@ void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
               Unit* su = NULL;
               if(send_row_col != ALL && send_gp) {
                 if(send_row_col == COLS)
-                  sgpidx = soc * send_oth_n + src;
+                  sgpidx = soc * send_max + src;
                 else
-                  sgpidx = src * send_max + soc;
+                  sgpidx = src * send_oth_n + soc;
                 snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
               }
               else {

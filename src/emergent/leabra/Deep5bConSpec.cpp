@@ -18,8 +18,6 @@
 TA_BASEFUNS_CTORS_DEFN(Deep5bConSpec);
 
 void Deep5bConSpec::Initialize() {
-  SetUnique("wt_scale", true);
-  wt_scale.rel = 3.0;           // good default
 }
 
 void Deep5bConSpec::GetPrjnName(Projection& prjn, String& nm) {
