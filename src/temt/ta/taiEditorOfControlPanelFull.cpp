@@ -41,8 +41,6 @@ void taiEditorOfControlPanelFull::Initialize()
   help_but = NULL;
   apply_but = NULL;
   revert_but = NULL;
-//  saved_to_active_but = NULL;
-//  save_active_but = NULL;
 }
 
 void taiEditorOfControlPanelFull::ClearBody_impl() {
@@ -73,38 +71,38 @@ void taiEditorOfControlPanelFull::ClearBody_impl() {
 
 void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   // delete all previous sele members (sele presumably stands for "SelectEdit" the old name for ControlPanel)
-  dat_cnt = 0;
-  membs.ResetItems();
-  taiMemberWidgets* memb_set = NULL;
-
   String name;
   String help_text;
   
+  dat_cnt = 0;  // keeps track of control count
   if (sele->InheritsFrom(&TA_ParamSet)) {
-    // ui ok but crashes in taiEditorOfClass::GetButtonImage( on Apply()
     MemberSpace& ms = sele->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
       if ((md->name == "name") || (md->name == "desc")) {
+        prop_membs.memb_el.Add(md);
         // Create data widget
         taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
-//        meth_el.Add(mb_dat);
+        prop_membs.widget_el.Add(mb_dat);
         QWidget* rep = mb_dat->GetRep();
-        bool fill_hor = mb_dat->fillHor();
         // create label
         GetName(md, name, help_text);
-        AddNameWidget(-1, name, help_text, rep, mb_dat, md, fill_hor);
+        AddNameWidget(-1, name, help_text, rep, mb_dat, md);
         ++dat_cnt;
       }
     }
-    
+  }
+  
+  if (dat_cnt > 0) {  // no increment of data_cnt
     iLabel* lbl = NULL;
     lbl = new iLabel("Parameters", body);
     AddSectionLabel(-1, lbl, "");
   }
   
   int set_idx = 0;
-
+  membs.ResetItems();
+  taiMemberWidgets* memb_set = NULL;
+  
   // note: iterates non-empty groups only
   FOREACH_SUBGROUP(EditMbrItem_Group, grp, sele->mbrs) {
     bool def_grp = (grp == &(sele->mbrs));// root group
@@ -114,16 +112,14 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     if (!def_grp) {
       iLabel* lbl = new iLabel(grp->GetName(), body);
       AddSectionLabel(-1, lbl,
-        "");
+                      "");
     }
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
       MemberDef* md = item->mbr;
       if (!md || (md->im == NULL))
         continue; // should only happen if created manually (Bad!)
-
       memb_set->memb_el.Add(md);
-
       bool added_search = false;
       if(item->is_single && sele->InheritsFrom(&TA_ClusterRun)) {
         MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
@@ -136,7 +132,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           mash_widg->AddChildMember(md);
           mash_widg->AddChildMember(psmd);
           mash_widg->EndLayout();
-
+          
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
           help_text = item->GetDesc();
@@ -145,7 +141,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           ++dat_cnt;
         }
       }
-
+      
       // if this panel is a param set panel
       bool added_param_set = false;
       if(sele->InheritsFrom(&TA_ParamSet)) {
@@ -168,7 +164,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           ++dat_cnt;
         }
       }
-
+      
       if(!added_search && !added_param_set) {
         taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
         memb_set->widget_el.Add(mb_dat);
@@ -210,6 +206,16 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    for (int i = 0; i < prop_membs.widget_el.size; ++i) {
+      taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
+      MemberDef* md = prop_membs.memb_el.SafeEl(i);
+      if (md) {
+        md->im->taiType::GetImage(mb_dat, mb_dat->Base());
+      }
+    }
+  }
+
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
@@ -236,6 +242,18 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
 }
 
 void taiEditorOfControlPanelFull::GetValue_Membs_def() {
+  if (sele->InheritsFrom(&TA_ParamSet)) {
+    for (int i = 0; i < prop_membs.widget_el.size; ++i) {
+      taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
+      MemberDef* md = prop_membs.memb_el.SafeEl(i);
+      if (md) {
+        bool first_diff = true;
+        md->im->GetMbrValue(mb_dat, mb_dat->Base(), first_diff);
+        mb_dat->Base()->UpdateAfterEdit();
+      }
+    }
+  }
+
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);

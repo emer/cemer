@@ -33,6 +33,8 @@ public:
   taiEditorOfControlPanelFull() { Initialize();};
   ~taiEditorOfControlPanelFull();
   
+  taiMemberWidgets    prop_membs;  // the true properties of the control panel not the added param mbrs
+  
 protected slots:
   void          DoRemoveSelEdit() override;
 
