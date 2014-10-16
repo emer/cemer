@@ -32,6 +32,12 @@ class TA_API taMediaWiki : public taNBase {
   INHERITED(taNBase)
 
 public:
+  /////////////////////////////////////////////////////
+  //            Wiki formatting operations
+
+  //static String CamelCase(const String& input_str);
+  // #CAT_Wiki converts the given input string into CamelCase format -- remove all whitespace/underscores, capitalize first letter of each word/abbreviation, lowercase all other letters
+  
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki gets the url for the wiki api
 

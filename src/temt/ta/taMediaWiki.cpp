@@ -19,6 +19,7 @@
 #include <DataTable>
 #include <Program>
 #include <iSynchronousNetRequest>
+#include <algorithm>
 
 #include <taMisc>
 
@@ -28,6 +29,7 @@
 #include <QXmlStreamReader>
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
+#include <QEventLoop>
 #endif
 
 TA_BASEFUNS_CTORS_DEFN(taMediaWiki);
@@ -51,7 +53,44 @@ namespace { // anonymous
 
 void taMediaWiki::Initialize()
 {
+
+  // STUB
+
 }
+
+/////////////////////////////////////////////////////
+//            Wiki formatting operations
+
+// String taMediaWiki::CamelCase(const String& input_str)
+// {
+//   String temp_str = "";
+//   String output_str = input_str;
+
+//   temp_str = output_str.substr(0, 1);
+//   transform(temp_str.begin(), temp_str.end(), temp_str.begin(), toupper);
+//   output_str.erase(0, 1);
+//   output_str.insert(0, temp_str);
+
+//   for(int i = 0; i < output_str.length(); i++)
+//   {
+//     if(output_str[i] == ' ' || output_str[i] == '_')
+//     {
+//       temp_str = output_str.substr(i + 1, 1);
+//       transform(temp_str.begin(), temp_str.end(), temp_str.begin(), toupper);
+//       output_str.erase(i, 2);
+//       output_str.insert(i, temp_str);
+//     }
+//     else // else if?  Need to make sure we aren't transforming first chars of each word...
+//     {
+//       // TODO: transform all other chars to lowercase
+
+//       // STUB
+
+//     }
+//   }
+
+//   return output_str;
+// }
 
 String taMediaWiki::GetApiURL(const String& wiki_name)
 {
@@ -210,6 +249,9 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
 bool taMediaWiki::Logout(const String &wiki_name)
 {
   // #CAT_Account Logout from the wiki.
+
+  // STUB
+
   return false;
 }
 
@@ -236,7 +278,6 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
   url.addQueryItem("format", "xml");
   url.addQueryItem("titles", page_name);
 #endif
-
   // Make the network request.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
@@ -327,16 +368,96 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   // Create given page on the wiki and populate it with given content.
 
   // First, get edit token.
-  //api.php ? action=tokens & type=edit
+  // api.php ? action=tokens & type=edit
 
-  return false;
+  /*  Questions:
+   1. POST requests require write permission -- should we require a user
+      check first, or generate an error if the POST request fails?
+   2. How do we retrieve the actual content from the `page_content` string?
+      Is it the local file path?  Or just a markdown text file converted to a string?
+      `page_content` should be in markdown format, convert to html with taDoc::WikiParse method
+  */
+
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+  QNetworkAccessManager mgr;
+  QEventLoop eventLoop;
+  QUrlQuery urq;
+  QByteArray data;
+
+  QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)),
+                   &eventLoop, SLOT(quit()));
+  urq.addQueryItem("action", "tokens");
+  urq.addQueryItem("type", "edit");
+  urq.addQueryItem("format", "xml");
+  data.append(urq.toString());
+  QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
+  eventLoop.exec();
+
+  if (reply->error() == QNetworkReply::NoError) {
+    // TODO: Develop 'success' code
+    qDebug() << "Success:\n" << reply->readAll();
+    delete reply;
+    return true;
+  }
+  else {
+    qDebug() << "Failure:\n" << reply->errorString();
+    delete reply;
+    return false;
+  }
+
+  // urq.addQueryItem("action", "edit");
+  // urq.addQueryItem("title", page_name);
+  // urq.addQueryItem("text", page_content);
+  // urq.addQueryItem("format", "xml");
+  // urq.addQueryItem("token", reply);
+  // data.clear();
+  // data.append(urq.toString());
+  // QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
+  /*
+  QUrlQuery urq;
+  urq.addQueryItem("action", "tokens");
+  urq.addQueryItem("type", "edit");
+  urq.addQueryItem("format", "xml");
+  url.setQuery(urq);
+  */
+  // `url` becomes https://grey.colorado.edu/emergent/api.php?action=tokens&type=edit&format=xml
+  // Navigating to this URL in a web browser results in a warning (Action 'edit' is not allowed
+  // for the current user) -- apparently I don't have write permission.
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Default the normalized name to the provided page name;
+    // will be changed if normalization was performed by the server.
+    String normalizedName = page_name;
+
+    QXmlStreamReader reader(reply);
+
+    // STUB
+  
+  }
 }
 
 bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
                                const String& page_content)
 {
   // #CAT_Page find or create given page on the wiki and populate it with given content if non-empty -- return true on success
-  return false;
+
+  // Given page exists on wiki.
+  //if(PageExists(wiki_name, page_name)) {
+    // TODO: Determine if page is non-empty; if non-empty, populate with content & return true; if empty, return false.
+    
+    // STUB
+  
+  //}
+  // Given page does not exist on wiki.
+  //else {
+    // Create page and populate it with given content.
+    return CreatePage(wiki_name, page_name, page_content);
+  //}
 }
 
 /////////////////////////////////////////////////////
@@ -346,6 +467,11 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& file_name,
                              const String& wiki_file_name)
 {
   // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
+  // if(wiki_file_name == "") {
+  //   wiki_file_name = file_name;
+  // }
+  
+  // STUB
 
   return false;
 }
@@ -354,6 +480,12 @@ bool taMediaWiki::DownloadFile(const String& wiki_name, const String& file_name,
                                const String& local_file_name)
 {
   // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki
+  // if(local_file_name == "") {
+  //   local_file_name = file_name;
+  // }
+  
+  // STUB
+
   return false;
 }
 
@@ -367,6 +499,9 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
                              int max_results)
 {
   // #CAT_Query fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number
+  
+  // STUB
+
   return false;
 }
 
@@ -376,6 +511,9 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
                                        int max_results)
 {
   // #CAT_Query fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number
+  
+  // STUB
+
   return false;
 }
 
@@ -385,6 +523,9 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
                              int max_results)
 {
   // #CAT_Query fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all), string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type
+  
+  // STUB
+
   return false;
 }
 
