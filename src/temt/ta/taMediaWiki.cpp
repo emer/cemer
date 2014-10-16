@@ -27,9 +27,9 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
+#include <QEventLoop>
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
-#include <QEventLoop>
 #endif
 
 TA_BASEFUNS_CTORS_DEFN(taMediaWiki);
@@ -384,15 +384,25 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   QUrl url(wikiUrl);
   QNetworkAccessManager mgr;
   QEventLoop eventLoop;
-  QUrlQuery urq;
   QByteArray data;
 
   QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)),
                    &eventLoop, SLOT(quit()));
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
   urq.addQueryItem("action", "tokens");
   urq.addQueryItem("type", "edit");
   urq.addQueryItem("format", "xml");
   data.append(urq.toString());
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "tokens");
+  url.addQueryItem("type", "edit");
+  url.addQueryItem("format", "xml");
+  data.append(url.toString());
+#endif
+  
+  
   QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
   eventLoop.exec();
 
@@ -417,6 +427,7 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   // data.append(urq.toString());
   // QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
   /*
+   
   QUrlQuery urq;
   urq.addQueryItem("action", "tokens");
   urq.addQueryItem("type", "edit");
