@@ -309,7 +309,7 @@ void LeabraUnitSpec::Initialize() {
   act_fun = NOISY_XX1;
 
   learn_qtr = Q4;
-  deep5b_qtr = Q3;
+  deep5b_qtr = Q4;
   ti_ctxt_qtr = Q4;
 
   noise_type = NO_NOISE;

@@ -59,7 +59,7 @@
 #include <InvertUnitSpec>
 #include <ThalUnitSpec>
 #include <PFCUnitSpec>
-#include <Deep5bLayerSpec>
+#include <Deep5bUnitSpec>
 #include <MatrixConSpec>
 #include <Deep5bConSpec>
 
@@ -1374,7 +1374,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(InvertUnitSpec, gpinv_units, pbwm_units, "GPInvert");
   FMChild(ThalUnitSpec, thal_units, pbwm_units, "ThalUnits");
   FMChild(PFCUnitSpec, pfc_units, pbwm_units, "PFCUnits");
-  FMChild(LayerActUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
+  FMChild(Deep5bUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
 
   ////////////	ConSpecs
 
@@ -1406,7 +1406,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
   FMChild(LeabraLayerSpec, thal_sp, pbwm_sp, "ThalLayer");
   FMChild(LeabraLayerSpec, pfc_sp, pbwm_sp, "PFCLayer");
-  FMChild(Deep5bLayerSpec, pfcd_sp, pfc_sp, "PFCdLayer");
 
   ////////////	PrjnSpecs
 
@@ -1871,8 +1870,8 @@ can be sure everything is ok.";
   pfc->SetUnitSpec(PbwmSp("PFCUnits",PFCUnitSpec));
   pfc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfcd->SetUnitSpec(PbwmSp("PFCdUnits",LayerActUnitSpec));
-  pfcd->SetLayerSpec(PbwmSp("PFCdLayer",Deep5bLayerSpec));
+  pfcd->SetUnitSpec(PbwmSp("PFCdUnits",Deep5bUnitSpec));
+  pfcd->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
