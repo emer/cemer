@@ -33,10 +33,6 @@ public:
 	                 LeabraNetwork* net) override;
   void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
-  // don't do any learning:
-  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-
   TA_BASEFUNS_NOCOPY(DecodeTwoDValLayerSpec);
 private:
   void 	Initialize();

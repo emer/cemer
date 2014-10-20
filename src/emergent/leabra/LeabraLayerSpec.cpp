@@ -109,7 +109,6 @@ void LayerDecaySpec::Initialize() {
 }
 
 void LayerDecaySpec::Defaults_init() {
-  phase = 0.0f;
   cos_diff_avg_tau = 100.0f;
 
   cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
@@ -132,7 +131,7 @@ void LayerDecaySpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
 void LeabraDelInhib::Initialize() {
   on = false;
   prv_trl = 0.0f;
-  prv_phs = 0.0f;
+  prv_q = 0.0f;
 
   Defaults_init();
 }
@@ -399,22 +398,22 @@ void LeabraLayerSpec::Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 ///////////////////////////////////////////////////////////////////////
-//      SettleInit -- at start of settling
+//      QuarterInit -- at start of settling
 
-void LeabraLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  Settle_Init_TargFlags_Layer(lay, net);
+void LeabraLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  Quarter_Init_TargFlags_Layer(lay, net);
 }
 
-void LeabraLayerSpec::Settle_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Quarter_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    u->Settle_Init_TargFlags(net);
+    u->Quarter_Init_TargFlags(net);
   }
 
-  Settle_Init_TargFlags_Layer(lay, net);
+  Quarter_Init_TargFlags_Layer(lay, net);
 }
 
-void LeabraLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->HasExtFlag(Unit::TARG)) {     // only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE)
       lay->SetExtFlag(Unit::EXT);
@@ -732,47 +731,17 @@ void LeabraLayerSpec::Compute_UnitInhib_AvgMax(LeabraLayer* lay, LeabraNetwork* 
 }
 
 ///////////////////////////////////////////////////////////////////////
-//      Cycle Optional Misc
+//      Quarter_Final
 
-void LeabraLayerSpec::Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  // just snapshot the activation state
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->Compute_MidMinus(net);
+void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  if(net->phase == LeabraNetwork::MINUS_PHASE)
+    Quarter_Final_GetMinus(lay, net);
+  else {
+    Quarter_Final_GetPlus(lay, net);
   }
 }
 
-///////////////////////////////////////////////////////////////////////
-//      SettleFinal
-
-void LeabraLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  bool no_plus_testing = net->IsNoPlusTesting();
-
-  if(net->phases.minus > 0) {
-    if(no_plus_testing) {
-      PostSettle_GetMinus(lay, net);
-      PostSettle_GetPlus(lay, net);
-    }
-    else {
-      if(net->phase == LeabraNetwork::MINUS_PHASE)
-        PostSettle_GetMinus(lay, net);
-      else {
-        PostSettle_GetPlus(lay, net);
-      }
-    }
-  }
-  else {                        // plus only
-    PostSettle_GetMinus(lay, net);
-    PostSettle_GetPlus(lay, net);
-  }
-
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->PostSettle(net);
-  }
-}
-
-void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts_eq;
   lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
   if(avg_act.fixed) {
@@ -796,7 +765,7 @@ void LeabraLayerSpec::PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
-void LeabraLayerSpec::PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
   if(lay->unit_groups) {
@@ -859,12 +828,12 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
-void LeabraLayerSpec::Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
-  AvgMaxVals& vals = lay->acts_ctxt;
+void LeabraLayerSpec::Compute_NetCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
+  AvgMaxVals& vals = lay->nets_ctxt;
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_ctxt");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "net_ctxt");
   }
   if(lay->unit_groups) {
     vals.InitVals();
@@ -872,8 +841,8 @@ void LeabraLayerSpec::Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* ne
     int sti = LayerStatsStartUnitIdx();
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_ctxt, mb_off);
-      vals.UpdtFmAvgMax(gpd->acts_ctxt, nunits-sti, g);
+      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->nets_ctxt, mb_off);
+      vals.UpdtFmAvgMax(gpd->nets_ctxt, nunits-sti, g);
     }
     int lvs_eff = lay->units.leaves-sti*lay->gp_geom.n;
     vals.CalcAvg(lvs_eff);
@@ -881,59 +850,6 @@ void LeabraLayerSpec::Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* ne
   else {
     Compute_AvgMaxVals_ugp(lay, Layer::ACC_LAY, 0, vals, mb_off);
   }
-}
-
-///////////////////////////////////////////////////////////////////////
-//      TI
-
-void LeabraLayerSpec::TI_Compute_Deep5bAct(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->TI_Compute_Deep5bAct(net);
-  }
-  //  Compute_Deep_AvgMax(lay, net);
-}
-
-void LeabraLayerSpec::TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->TI_Compute_CtxtAct(net);
-  }
-  Compute_ActCtxt_AvgMax(lay, net);
-}
-
-void LeabraLayerSpec::TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->TI_ClearContext(net);
-  }
-}
-
-///////////////////////////////////////////////////////////////////////
-//      TrialFinal
-
-// todo: could probably package these at unit level...
-
-void LeabraLayerSpec::EncodeState(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->EncodeState(net);
-  }
-}
-
-void LeabraLayerSpec::Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net) {
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    u->Compute_SelfReg_Trial(net);
-  }
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//      Learning
-
-bool LeabraLayerSpec::Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) {
-  return true;
 }
 
 
@@ -1029,8 +945,8 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
     ssm += u->act_m * u->act_m;
     sst += u->targ * u->targ;
     if(net->net_misc.ti) {
-      cosvp += u->targ * u->p_act_p;
-      ssp += u->p_act_p * u->p_act_p;
+      cosvp += u->targ * u->act_q0;
+      ssp += u->act_q0 * u->act_q0;
     }
   }
   if(n_vals == 0) return 0.0f;
@@ -1098,8 +1014,8 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   float sst = 0.0f;
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    cosv += u->act_p * u->p_act_p;
-    ssm += u->p_act_p * u->p_act_p;
+    cosv += u->act_p * u->act_q0;
+    ssm += u->act_q0 * u->act_q0;
     sst += u->act_p * u->act_p;
   }
   float dist = sqrtf(ssm * sst);

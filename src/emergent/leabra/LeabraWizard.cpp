@@ -59,7 +59,7 @@
 #include <InvertUnitSpec>
 #include <ThalUnitSpec>
 #include <PFCUnitSpec>
-#include <LeabraTICtxtLayerSpec>
+#include <Deep5bLayerSpec>
 #include <MatrixConSpec>
 #include <Deep5bConSpec>
 
@@ -826,7 +826,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmsp->SetUnique("del_inhib", true);
   vsmsp->del_inhib.on = true;
   vsmsp->del_inhib.prv_trl = 4.0f;
-  vsmsp->del_inhib.prv_phs = 0.0f;
+  vsmsp->del_inhib.prv_q = 0.0f;
 
   ersp->unit_range.min = 0.0f;
   ersp->unit_range.max = 1.0f;
@@ -1406,7 +1406,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
   FMChild(LeabraLayerSpec, thal_sp, pbwm_sp, "ThalLayer");
   FMChild(LeabraLayerSpec, pfc_sp, pbwm_sp, "PFCLayer");
-  FMChild(LeabraTICtxtLayerSpec, pfcd_sp, pfc_sp, "PFCdLayer");
+  FMChild(Deep5bLayerSpec, pfcd_sp, pfc_sp, "PFCdLayer");
 
   ////////////	PrjnSpecs
 
@@ -1570,8 +1570,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_sp->avg_act.fixed = true; // use fixed..
   pfc_sp->SetUnique("decay", true);
   pfc_sp->decay.event = 0.0f;
-
-  pfcd_sp->act_val = LeabraTICtxtLayerSpec::DEEP_5B;
 
   ////////////	PrjnSpecs
 
@@ -1874,7 +1872,7 @@ can be sure everything is ok.";
   pfc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   pfcd->SetUnitSpec(PbwmSp("PFCdUnits",LayerActUnitSpec));
-  pfcd->SetLayerSpec(PbwmSp("PFCdLayer",LeabraTICtxtLayerSpec));
+  pfcd->SetLayerSpec(PbwmSp("PFCdLayer",Deep5bLayerSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections

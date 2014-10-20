@@ -20,7 +20,7 @@
 #include <taMisc>
 #include <tabMisc>
 
-TA_BASEFUNS_CTORS_DEFN(LeabraPhases);
+TA_BASEFUNS_CTORS_DEFN(LeabraTimes);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
 TA_BASEFUNS_CTORS_DEFN(RelNetinSched);
@@ -31,17 +31,19 @@ TA_BASEFUNS_CTORS_DEFN(LeabraNetwork);
 //      Network         //
 //////////////////////////
 
-void LeabraPhases::Initialize() {
-  minus = 50;
-  plus = 20;
-  no_plus_test = false;
+void LeabraTimes::Initialize() {
+  quarter = 25;
   time_inc = 0.001f;
 
+  minus = 3 * quarter;
+  plus = quarter;
   total_cycles = minus + plus;
 }
 
-void LeabraPhases::UpdateAfterEdit_impl() {
+void LeabraTimes::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  minus = 3 * quarter;
+  plus = quarter;
   total_cycles = minus + plus;
 }
 
@@ -70,14 +72,12 @@ void LeabraNetwork::Initialize() {
 
   unlearnable_trial = false;
 
+  quarter = 0;
   phase = MINUS_PHASE;
-  phase_no = 0;
-  phase_max = 2;
 
-  ct_cycle = 0;
   tot_cycle = 0;
 
-  minus_cycles = 0.0f;
+  rt_cycles = 0.0f;
 
   send_pct = 0.0f;
   send_pct_n = send_pct_tot = 0;
@@ -110,27 +110,11 @@ void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
 
 void LeabraNetwork::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  phases.UpdateAfterEdit_NoGui();
-
-  if(TestWarning(phases.plus <= 0, "UAE",
-                 "can't have phases.plus <= 0 -- must have at least some plus phase cycles -- see no_plus_test option for not running plus during testing -- setting plus to default 20 cycles")) {
-    phases.plus = 20;
-  }
+  times.UpdateAfterEdit_NoGui();
 
   if(TestWarning(!lstats.off_errs && !lstats.on_errs, "UAE", "can't have both lstats.off_errs and lstats.on_errs be off (no err would be computed at all) -- turned both back on")) {
     lstats.on_errs = true;
     lstats.off_errs = true;
-  }
-
-  if(net_misc.ti) {
-    if(TestWarning(phases.no_plus_test, "UAE", 
-                   "can't have no_plus_test in TI mode -- turning it off")) {
-      phases.no_plus_test = false;
-    }
-    if(TestWarning(phases.minus <= 0, "UAE", 
-                   "must have minus phase cycles in TI mode -- setting minus = 50")) {
-      phases.minus = 50;
-    }
   }
 }
 
@@ -149,8 +133,8 @@ void LeabraNetwork::Init_Acts() {
 
 void LeabraNetwork::Init_Counters() {
   inherited::Init_Counters();
+  quarter = 0;
   phase = MINUS_PHASE;
-  phase_no = 0;
   tot_cycle = 0;
 }
 
@@ -158,7 +142,7 @@ void LeabraNetwork::Init_Stats() {
   inherited::Init_Stats();
   trg_max_act = 0.0f;
 
-  minus_cycles = 0.0f;
+  rt_cycles = 0.0f;
   avg_cycles.ResetAvg();
 
   minus_output_name = "";
@@ -256,33 +240,21 @@ void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
 
 void LeabraNetwork::Trial_Init() {
   unlearnable_trial = false;
-  cycle = -1;
-  Trial_Init_Phases();
+  Trial_Init_Counters();
   Trial_Init_Specs();
 
   Trial_Init_Unit(); // performs following at unit-level
-//   Trial_DecayState();
-  Trial_NoiseInit();            // run for kpos case
   //  Trial_Init_SRAvg();
+  //  Trial_DecayState();
+  //  Trial_NoiseInit(); 
   Trial_Init_Layer();
 }
 
-void LeabraNetwork::Trial_Init_Phases() {
+void LeabraNetwork::Trial_Init_Counters() {
+  cycle = 0;
+  quarter = 0;
   phase = MINUS_PHASE;
-  phase_no = 0;
-
-  bool no_plus_testing = IsNoPlusTesting();
-
-  if(phases.minus > 0) {
-    if(no_plus_testing)
-      phase_max=1;
-    else
-      phase_max=2;
-  }
-  else {
-    phase_max=1;
-    phase = PLUS_PHASE;
-  }
+  rt_cycles = -1;          // signal that nothing has been recorded
 }
 
 void LeabraNetwork::Trial_Init_Specs() {
@@ -304,27 +276,6 @@ void LeabraNetwork::Trial_Init_Unit() {
   // threads.Run(&un_call, -1.0f); // -1 = always run localized
 }
 
-void LeabraNetwork::Trial_NoiseInit() {
-  // FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-  //   if(lay->lesioned()) continue;
-  //   lay->Trial_NoiseInit(this);
-  // }
-}
-
-void LeabraNetwork::Trial_DecayState() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Trial_DecayState(this);
-  }
-}
-
-void LeabraNetwork::Trial_Init_SRAvg() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
-    lay->Trial_Init_SRAvg(this);
-  }
-}
-
 void LeabraNetwork::Trial_Init_Layer() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
@@ -332,63 +283,45 @@ void LeabraNetwork::Trial_Init_Layer() {
   }
 }
 
-
 ///////////////////////////////////////////////////////////////////////
-//      SettleInit -- at start of settling
+//      QuarterInit -- at start of settling
 
-void LeabraNetwork::Settle_Init() {
-  int tmp_cycle = cycle;
-  cycle = -2;                   // special signal for settle init
-  if(phase == MINUS_PHASE)
-    minus_cycles = -1;          // signal that nothing has been recorded
-
-  Settle_Init_Unit();           // do chunk of following unit-level functions:
-
-//   Settle_Init_TargFlags();
-//   Settle_DecayState();
+void LeabraNetwork::Quarter_Init() {
+  Quarter_Init_Unit();           // do chunk of following unit-level functions:
+//   Quarter_Init_TargFlags();
 //   Compute_NetinScale();              // compute net scaling
+  Quarter_Init_Layer();
+
+  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
+  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
 
   // these could have accumulated netin deltas for clamped layers..
   send_netin_tmp.InitVals(0.0f); // reset for next time around
 
   Compute_HardClamp();          // clamp all hard-clamped input acts: not easily threadable
-  cycle = tmp_cycle;
 }
 
-void LeabraNetwork::Settle_Init_Unit() {
+void LeabraNetwork::Quarter_Init_Unit() {
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Settle_Init_Unit(this, -1);
+    un->Quarter_Init_Unit(this, -1);
   }
-  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Settle_Init_Unit);
+  // ThreadUnitCall un_call((ThreadUnitMethod)(LeabraUnitMethod)&LeabraUnit::Quarter_Init_Unit);
   // threads.Run(&un_call, -1.0f); // -1 = always run localized
-
-  Settle_Init_Layer();
-
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Settle_Init_Layer to allow for mods to netin scale in that guy..
 }
 
-void LeabraNetwork::Settle_Init_Layer() {
+void LeabraNetwork::Quarter_Init_Layer() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
-      lay->Settle_Init_Layer(this);
+      lay->Quarter_Init_Layer(this);
   }
 }
 
-void LeabraNetwork::Settle_Init_TargFlags() {
+void LeabraNetwork::Quarter_Init_TargFlags() {
   // NOTE: this is not called by default!  Unit and Layer take care of it
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
-      lay->Settle_Init_TargFlags(this);
-  }
-}
-
-void LeabraNetwork::Settle_DecayState() {
-  // NOTE: this is not called by default!  Unit and Layer take care of it
-  for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->Settle_DecayState(this, -1);
+      lay->Quarter_Init_TargFlags(this);
   }
 }
 
@@ -401,7 +334,7 @@ void LeabraNetwork::Compute_NetinScale() {
 }
 
 void LeabraNetwork::Compute_NetinScale_Senders() {
-  // NOTE: this IS called by default -- second phase of Settle_Init_Unit
+  // NOTE: this IS called by default -- second phase of Quarter_Init_Unit
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     un->Compute_NetinScale_Senders(this, -1);
@@ -430,8 +363,8 @@ void LeabraNetwork::TargExtToComp() {
 }
 
 void LeabraNetwork::NewInputData_Init() {
-  Settle_Init_Layer();
-  Settle_Init_TargFlags();
+  Quarter_Init_Layer();
+  Quarter_Init_TargFlags();
   Compute_HardClamp();
 }
 
@@ -439,10 +372,6 @@ void LeabraNetwork::NewInputData_Init() {
 //      Cycle_Run
 
 void LeabraNetwork::Cycle_Run() {
-  // ct_cycle is pretty useful anyway
-  if(phase_no == 0 && cycle == 0) // detect start of trial
-    ct_cycle = 0;
-
   if(lthreads.CanRun()) {
     lthreads.Run(LeabraThreadMgr::RUN_CYCLE);
   }
@@ -465,9 +394,8 @@ void LeabraNetwork::Cycle_Run() {
 
 void LeabraNetwork::Cycle_IncrCounters() {
   cycle++;
-  ct_cycle++;
   tot_cycle++;
-  time += phases.time_inc;
+  time += times.time_inc;
 }
 
 ///////////////////////////////////////////////////////
@@ -574,7 +502,7 @@ void LeabraNetwork::Compute_CycleStats_Layer() {
 
 void LeabraNetwork::Compute_CycleStats_Post() {
   Compute_OutputName();
-  Compute_MinusCycles();
+  Compute_RTCycles();
   // todo: eliminate this if possible -- just kinda hacky..
   if(init_netins_cycle_stat) {
     Init_Netins();
@@ -589,152 +517,104 @@ void LeabraNetwork::Compute_OutputName() {
   }
 }
 
-void LeabraNetwork::Compute_MinusCycles() {
+void LeabraNetwork::Compute_RTCycles() {
   if(phase != MINUS_PHASE) return;
-  if(minus_cycles > 0) return;  // already set
+  if(rt_cycles > 0) return;  // already set
   if(trg_max_act > lstats.trg_max_act_crit)
-    minus_cycles = cycle;
-}
-
-
-///////////////////////////////////////////////////////////////////////
-//      Cycle Optional Misc
-
-void LeabraNetwork::Compute_MidMinus() {
-  // if(mid_minus_cycle <= 0) return;
-  // if(ct_cycle == mid_minus_cycle) {
-  //   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-  //     if(lay->lesioned())       continue;
-  //     lay->Compute_MidMinus(this);
-  //   }
-  // }
+    rt_cycles = cycle;
 }
 
 ///////////////////////////////////////////////////////////////////////
-//      Settle Final
+//      Quarter Final
 
-void LeabraNetwork::Settle_Final() {
-  // all weight changes take place here for consistency!
-  PostSettle_Pre();
-  PostSettle();
-  Settle_Compute_dWt();
+void LeabraNetwork::Quarter_Final() {
+  Quarter_Final_Pre();
+  Quarter_Final_Unit();
+  Quarter_Final_Layer();
+  Quarter_Compute_dWt();
+  Quarter_Final_Counters();
 }
 
-void LeabraNetwork::PostSettle_Pre() {
+void LeabraNetwork::Quarter_Final_Pre() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
-      lay->PostSettle_Pre(this);
+      lay->Quarter_Final_Pre(this);
   }
 }
 
-void LeabraNetwork::PostSettle() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->PostSettle(this);
-  }
+void LeabraNetwork::Quarter_Final_Unit() {
   if(net_misc.ti) {
-    TI_CtxtUpdate();
+    TICtxtUpdate();
   }
-  if(phase == LeabraNetwork::PLUS_PHASE) {
+  // non-threaded -- todo: could thread, but probably not worth it..
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    un->Quarter_Final(this);
+  }
+}
+
+void LeabraNetwork::Quarter_Final_Layer() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Quarter_Final_Layer(this);
+  }
+  if(quarter == 3) {            // last quarter
     Compute_CosDiff();
     Compute_AvgActDiff();
     Compute_TrialCosDiff();
   }
 }
 
-void LeabraNetwork::Settle_Compute_dWt() {
+void LeabraNetwork::Quarter_Compute_dWt() {
   if(train_mode == TEST)
     return;
 
-  if(phases.minus > 0) {
-    if(phase_no == 1) {
-      Compute_dWt();
-    }
-  }
-  else {                        // plus only
-    Compute_dWt();
-  }
+  Compute_dWt();                // always call -- let units sort it out..
 }
 
+void LeabraNetwork::Quarter_Final_Counters() {
+  quarter++;                    // goes 0-3 and then wraps back around, C-style
+  if(quarter >= 4) {
+    quarter = 0;
+  }
+  if(quarter <= 2)
+    phase = MINUS_PHASE;
+  else
+    phase = PLUS_PHASE;
+}
 
 ///////////////////////////////////////////////////////////////////////
-//      LeabraTI final plus phase context updating
+//      LeabraTI context updating
 
-void LeabraNetwork::TI_CtxtUpdate() {
-  bool do_updt = (phase_no == 1); // only do in plus phase
-
-  // todo: only doing deep act at end of every phase -- if need to update TI context
-  // then need to delegate entirely to unit level..
-  TI_Compute_Deep5bAct();
-
-  if(do_updt) {
-    TI_Send_Netins();
-    TI_Compute_CtxtAct();
-  }
+void LeabraNetwork::TICtxtUpdate() {
+  Send_TICtxtNetin();       
 }
 
-void LeabraNetwork::TI_Compute_Deep5bAct() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->TI_Compute_Deep5bAct(this);
-  }
-}
-
-void LeabraNetwork::TI_Send_Netins() {
+void LeabraNetwork::Send_TICtxtNetin() {
   if(lthreads.CanRun()) {
     lthreads.Run(LeabraThreadMgr::RUN_TI_NETS);
   }
   else {
-    TI_Send_Deep5bNetin();
-    TI_Send_CtxtNetin();
+    // non-threaded
+    const int nu = units_flat.size;
+    for(int i=1; i<nu; i++) {
+      LeabraUnit* un = (LeabraUnit*)units_flat[i];
+      un->Send_TICtxtNetin(this, -1);
+    }
+    // always need to roll up the netinput into unit vals
+    for(int i=1;i<nu;i++) {   // 0 = dummy idx
+      LeabraUnit* u = (LeabraUnit*)units_flat[i];
+      u->Send_TICtxtNetin_Post(this);
+    }
   }
 }
 
-void LeabraNetwork::TI_Send_Deep5bNetin() {
-  send_pct_n = send_pct_tot = 0;
-
-  // non-threaded
-  const int nu = units_flat.size;
-  for(int i=1; i<nu; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->TI_Send_Deep5bNetin(this, -1);
-  }
-
-  // always need to roll up the netinput into unit vals -- thread or not
-  for(int i=1;i<nu;i++) {   // 0 = dummy idx
-    LeabraUnit* u = (LeabraUnit*)units_flat[i];
-    u->TI_Send_Deep5bNetin_Post(this);
-  }
-}
-
-void LeabraNetwork::TI_Send_CtxtNetin() {
-  send_pct_n = send_pct_tot = 0;
-
-  // non-threaded
-  const int nu = units_flat.size;
-  for(int i=1; i<nu; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    un->TI_Send_CtxtNetin(this, -1);
-  }
-  // always need to roll up the netinput into unit vals
-  for(int i=1;i<nu;i++) {   // 0 = dummy idx
-    LeabraUnit* u = (LeabraUnit*)units_flat[i];
-    u->TI_Send_CtxtNetin_Post(this);
-  }
-}
-
-void LeabraNetwork::TI_Compute_CtxtAct() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->TI_Compute_CtxtAct(this);
-  }
-}
-
-void LeabraNetwork::TI_ClearContext() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->TI_ClearContext(this);
-  }
+void LeabraNetwork::Init_TICtxt() {
+  // todo..
+  // FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+  //   if(!lay->lesioned())
+  //     lay->ClearContext(this);
+  // }
 }
 
 
@@ -742,38 +622,8 @@ void LeabraNetwork::TI_ClearContext() {
 ///////////////////////////////////////////////////////////////////////
 //      Trial Update and Final
 
-void LeabraNetwork::Trial_UpdatePhase() {
-  if(phase_no == phase_max) return; // done!
-
-  // this assumes that phase_no > 0 -- called after updating phase_no
-  bool no_plus_testing = IsNoPlusTesting();
-
-  if(phases.minus > 0) {
-    phase = PLUS_PHASE;
-  }
-  else { // plus only
-    // nop -- should be done!
-  }
-}
-
 void LeabraNetwork::Trial_Final() {
-  EncodeState();
-  Compute_SelfReg_Trial();
   Compute_AbsRelNetin();
-}
-
-void LeabraNetwork::EncodeState() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->EncodeState(this);
-  }
-}
-
-void LeabraNetwork::Compute_SelfReg_Trial() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_SelfReg_Trial(this);
-  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1033,31 +883,17 @@ void LeabraNetwork::Compute_TrialStats() {
 }
 
 void LeabraNetwork::Compute_PhaseStats() {
-  bool no_plus_testing = IsNoPlusTesting();
-
-  if(phases.minus > 0) {
-    if(no_plus_testing) {
-      Compute_MinusStats();
-      Compute_PlusStats();
-    }
-    else {
-      if(phase_no == 0)
-        Compute_MinusStats();
-      else
-        Compute_PlusStats();
-    }
-  }
-  else {                        // plus only
+  if(quarter == 2)
     Compute_MinusStats();
+  else if(quarter == 3)
     Compute_PlusStats();
-  }
 }
 
 void LeabraNetwork::Compute_MinusStats() {
   minus_output_name = output_name; // grab and hold..
-  if(minus_cycles < 0) // never reached target
-    minus_cycles = cycle;       // set to current cyc -- better for integrating
-  avg_cycles.Increment(minus_cycles);
+  if(rt_cycles < 0) // never reached target
+    rt_cycles = cycle;       // set to current cyc -- better for integrating
+  avg_cycles.Increment(rt_cycles);
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())

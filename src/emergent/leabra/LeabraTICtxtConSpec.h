@@ -34,8 +34,8 @@ public:
   bool  IsTICtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
-  inline void Send_CtxtNetin(LeabraSendCons* cg, LeabraNetwork* net,
-                             const int thread_no, const float su_act) {
+  inline void Send_TICtxtNetin(LeabraSendCons* cg, LeabraNetwork* net,
+                               const int thread_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
     float* send_netin_vec = net->send_netin_tmp.el
@@ -53,8 +53,8 @@ public:
 
   // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, const float ru_act_m,
-                                  const float su_p_act_p)
-  { dwt += cur_lrate * (ru_act_p - ru_act_m) * su_p_act_p; }
+                                  const float su_act_q0)
+  { dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act_q0; }
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
@@ -62,12 +62,12 @@ public:
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_p_act_p = su->p_act_p;
+    const float su_act_q0 = su->act_q0;
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_p_act_p);  
+      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_act_q0);  
     }
   }
 

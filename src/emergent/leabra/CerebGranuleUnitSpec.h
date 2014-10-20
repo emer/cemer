@@ -49,7 +49,8 @@ private:
 // notes on use of LeabraUnit variables for the Granule unit:
 // act_lrn = time-lagged learning activation value -- this is what Purkinje cells use to learn from
 // net_ctxt = start time when unit crosses act_thr threshold activation
-// act_ctxt = max activation of unit within activity window
+// act_ctxt = max activation of unit within activity window 
+// TODO: act_ctxt no longer exists!
 
 // UnitSpec functions:
 // in Compute_NetinInteg or Compute_IThresh -- negate net input for inhiitory competition during "inhibitory refractory period"

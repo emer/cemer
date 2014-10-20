@@ -18,14 +18,10 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraTdUnit);
 
 void LeabraTdUnit::Initialize() {
-  p_act_m = -.01f;
-  p_act_p = -.01f;
   trace = 0.0f;
 }
 
 void LeabraTdUnit::Copy_(const LeabraTdUnit& cp) {
-  p_act_p = cp.p_act_p;
-  p_act_m = cp.p_act_m;
   trace = cp.trace;
 }
 

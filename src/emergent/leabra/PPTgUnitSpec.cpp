@@ -35,14 +35,14 @@ void PPTgUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
   // note: positive rectification means that trial after PV, which is often neg, will be nullified
   inherited::Compute_Act(u, net, thread_no);
   if(clamp_act) {
-    lu->act_lrn = lu->act_eq = lu->act_nd = lu->act = lu->net;
+    lu->act_eq = lu->act_nd = lu->act = lu->net;
     lu->da = 0.0f;
   }
   lu->net = net_save;           // restore
 }
 
-void PPTgUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::PostSettle(u, net);
+void PPTgUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::Quarter_Final(u, net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->misc_1 = u->net;       // save for next time -- this is the raw net..
   }

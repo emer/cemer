@@ -41,7 +41,7 @@ public:
   // send the da value to sending projections
 
   void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
-  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
+  void	Quarter_Final(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(ClampDaUnitSpec);
 protected:

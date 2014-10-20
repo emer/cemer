@@ -34,7 +34,7 @@ public:
 
   // following are main hook into code:
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
-  void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override { };
   // no mid minus -- could overwrite!
 

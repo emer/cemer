@@ -41,10 +41,10 @@ public:
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) override
-  { if(su->act_lrn == 0.0f) return; // if sender is not active, bail
+  { // if(su->act_lrn == 0.0f) return; // if sender is not active, bail
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
-    const float gran_act = su->act_lrn;
+    const float gran_act = su->act_eq; // todo: need to fix this! su->act_lrn;
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;

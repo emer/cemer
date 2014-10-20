@@ -73,14 +73,14 @@ void ECoutLayerSpec::ClampFromECin(LeabraLayer* lay, LeabraNetwork* net) {
     LeabraUnit* inu = (LeabraUnit*)in_lay->units.Leaf(i);
     float inval = inu->act_eq;
     ru->act = rus->clamp_range.Clip(inval);
-    ru->act_lrn = ru->act_eq = ru->act_nd = ru->act;
+    ru->act_eq = ru->act_nd = ru->act;
     ru->da = 0.0f;              // I'm fully settled!
     ru->AddToActBuf(rus->syn_delay);
   }
 }
 
 void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
-  if(net->ct_cycle == auto_m_cycles)
+  if(net->cycle == auto_m_cycles)
     RecordActMid(lay,net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     ClampFromECin(lay, net);

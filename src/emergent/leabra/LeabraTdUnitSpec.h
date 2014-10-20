@@ -33,7 +33,8 @@ public:
 
   void	Init_Acts(Unit* u, Network* net) override;
   void  Init_Weights(Unit* u, Network* net, int thread_no=-1) override;
-  void  EncodeState(LeabraUnit* u, LeabraNetwork* net) override;
+
+  void  Trial_Init_PrvVals(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(LeabraTdUnitSpec);
 protected:

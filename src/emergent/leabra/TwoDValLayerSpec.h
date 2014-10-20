@@ -155,16 +155,16 @@ public:
     // #IGNORE
 
   void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
+  void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+    void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+    virtual void Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraNetwork* net);
     // #IGNORE
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void PostSettle_ugp(TwoDValLeabraLayer* lay,
+  void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+    virtual void Quarter_Final_ugp(TwoDValLeabraLayer* lay,
 				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: update variables based on phase
 

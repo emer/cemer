@@ -37,30 +37,31 @@ class E_API LeabraUnit : public Unit {
   // #STEM_BASE ##CAT_Leabra Leabra unit, point-neuron approximation
 INHERITED(Unit)
 public:
-  float		act_eq;	        // #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act for rate code)
-  float		act_nd;	        // #VIEW_HOT #CAT_Activation non-depressed rate-code equivalent activity value (time-averaged spikes or just act) -- used for final phase-based variables used in learning and stats
-  float         act_lrn;        // #CAT_Activation activation for learning -- can be optionally modulated in various ways to drive learning different from standard activations, and set to either act_eq or act_nd depending..
-  float         spike;          // #CAT_Activation discrete spiking event -- for spike mode, is 1.0 when the neuron spikes -- for rate code, spikes are simulated according to act_max_hz translation of activation into firing rate
-  float		act_m;	        // #VIEW_HOT #CAT_Activation minus_phase activation (act_nd), set after settling, used for learning and performance stats 
-  float		act_p;	        // #VIEW_HOT #CAT_Activation plus_phase activation (act_nd), set after settling, used for learning and performance stats
-  float		act_dif;        // #VIEW_HOT #CAT_Activation difference between plus and minus phase acts, gives unit err contribution
-  float         net_prv_phs;    // #CAT_Activation net input from the previous phase of settling -- this is used for delayed inhibition as specified in del_inhib on layer spec
+  float		act_eq;	        // #VIEW_HOT #CAT_Activation rate-code equivalent activity value (time-averaged spikes or just act for rate code equation, NXX1) -- this includes any short-term plasticity in synaptic efficacy (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters)
+  float		act_nd;	        // #VIEW_HOT #CAT_Activation non-depressed rate-code equivalent activity value (act_eq) -- this is the rate code prior to any short-term plasticity effects (e.g., depression or enhancement -- see LeabraUnitSpec::stp parameters) -- this reflects the rate of actual action potentials fired by the neuron, but not the net effect of these AP's on postsynaptic receiving neurons
+  float         spike;          // #CAT_Activation discrete spiking event, is 1.0 when the neuron spikes and 0.0 otherwise, and corresponds to act for spike activation -- for rate code equation (NXX1), spikes are triggered identically to spiking mode based on the vm membrane potential dynamics, even though act* is computed through the rate code equation
+  float		act_q0;	        // #VIEW_HOT #CAT_Activation records the activation state at the very start of the current alpha-cycle (100 msec / 10 Hz) trial, prior to any trial-level decay -- is either act_eq or act_nd depending on act_misc.rec_nd setting -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection -- this is equivalent to old p_act_p variable -- the activation in the previous plus phase
+  float		act_q1;	        // #VIEW_HOT #CAT_Activation records the activation state after the first gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_q2;	        // #VIEW_HOT #CAT_Activation records the activation state after the second gamma-frequency (25 msec / 40Hz) quarter (first half) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_q3;	        // #VIEW_HOT #CAT_Activation records the activation state after the third gamma-frequency (25 msec / 40Hz) quarter of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_q4;	        // #VIEW_HOT #CAT_Activation records the activation state after the fourth gamma-frequency (25 msec / 40Hz) quarter (end) of the current alpha-cycle (100 msec / 10 Hz) trial -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_m;	        // #VIEW_HOT #CAT_Activation records the traditional posterior-cortical minus phase activation, as act_q3 activation after third quarter of current alpha cycle -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_p;	        // #VIEW_HOT #CAT_Activation records the traditional posterior-cortical plus_phase activation, as act_q4 activation at end of current alpha cycle -- is either act_eq or act_nd depending on act_misc.rec_nd setting
+  float		act_dif;        // #VIEW_HOT #CAT_Activation act_p - act_m -- difference between plus and minus phase acts, -- reflects the individual error gradient for this neuron in standard error-driven learning terms
+  float         net_prv_q;      // #CAT_Activation net input from the previous quarter -- this is used for delayed inhibition as specified in del_inhib on layer spec
   float         net_prv_trl;    // #CAT_Activation net input from the previous trial -- this is used for delayed inhibition as specified in del_inhib on layer spec
-  float		act_mid;        // #CAT_Activation mid minus_phase -- roughly half-way through minus phase -- used in hippocampal ThetaPhase (for auto-encoder CA1 training) 
-  float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act from one cycle to next, used to stop settling
-  float		avg_ss;	        // #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration, important specifically for spiking networks using the XCAL_C algorithm -- otherwise ss_dt = 1 and this is just the current activation
-  float		avg_s;	        // #CAT_Activation short time-scale activation average -- tracks the most recent activation states, and represents the plus phase for learning in XCAL algorithms
-  float		avg_m;	        // #CAT_Activation medium time-scale activation average -- integrates over entire trial of activation, and represents the minus phase for learning in XCAL algorithms
+  float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act_nd from one cycle to next -- can be useful to track where changes are taking place
+  float		avg_ss;	        // #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration -- for spiking this integrates over spikes before subsequent averaging, and it is also useful for rate-code to provide a longer time integral overall
+  float		avg_s;	        // #CAT_Activation short time-scale activation average -- tracks the most recent activation states (integrates over avg_ss values), and represents the plus phase for learning in XCAL algorithms
+  float		avg_m;	        // #CAT_Activation medium time-scale activation average -- integrates over avg_s values, and represents the minus phase for learning in XCAL algorithms
   float		avg_l;	        // #CAT_Activation long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
   float		act_avg;        // #CAT_Activation average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
   float 	thal;		// #NO_SAVE #VIEW_HOT #CAT_Activation thalamic activation value, driven by a ThalUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   float 	thal_prv;       // #NO_SAVE #CAT_Activation previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   float         deep5b;         // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information -- see cifer params in LeabraUnitSpec
   float         lrnmod;         // #NO_SAVE #CAT_Activation learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
-  float         deep5b_net;     // #NO_SAVE #CAT_Activation net input from deep layer 5b activation values
-  float         act_ctxt;       // #NO_SAVE #VIEW_HOT #CAT_Activation leabra TI context activation value -- computed from LeabraTICtxtConspec connection when network TI is on -- this is equivalent to net_ctxt except for PFC units, where gating and other factors modulate it
+  float         d5b_net;        // #NO_SAVE #CAT_Activation net input from deep layer 5b activation values
   float         net_ctxt;       // #NO_SAVE #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network TI is on -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value
-  float         p_act_p;        // #CAT_Activation prior trial act_p value -- needed for leabra TI context weight learning in the LeabraTICtxtConspec connection
   float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance
   float         gc_l;           // #NO_SAVE #CAT_Activation total leak conductance
   float		I_net;	        // #NO_SAVE #CAT_Activation net current produced by all channels
@@ -81,13 +82,12 @@ public:
 
   float		net_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
   float		bias_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
-  float		ctxt_scale;	// #NO_SAVE #EXPERT #CAT_Activation total context netinput weight scaling factor -- computed from TI context projections, and used for auto-rescaling of act_ctxt in plus phase to keep proportions the same
+  float		ctxt_scale;	// #NO_SAVE #EXPERT #CAT_Activation total context netinput weight scaling factor -- computed from TI context projections, and used for auto-rescaling of net_ctxt in plus phase to keep proportions the same
 
   float		act_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
   float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
-  float		net_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta net input received from sending units -- only used for non-threaded case
   float		gi_raw;	        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
-  float		gi_delta;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation delta inhibitory net input received from sending units
+  float		d5b_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep5b activation value sent (only send when diff is over threshold)
 
   float		misc_1;		// #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int		spk_t;		// #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)
@@ -136,32 +136,29 @@ public:
     // #CAT_Learning reset the sender-receiver coproduct average -- do at start of trial
 
   ///////////////////////////////////////////////////////////////////////
-  //	SettleInit -- at start of settling
+  //	Quarter_Init -- at start of settling
 
-  void	Settle_Init_Unit(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Settle_Init_Unit(this, net, thread_no); }
-  // #CAT_Activation settle unit-level initialization functions: Init_TargFlags, DecayState, NetinScale
+  void	Quarter_Init_Unit(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Quarter_Init_Unit(this, net, thread_no); }
+  // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, DecayState, NetinScale
 
-    void Settle_Init_TargFlags(LeabraNetwork* net)
-    { ((LeabraUnitSpec*)GetUnitSpec())->Settle_Init_TargFlags(this, net); }
+    void Quarter_Init_TargFlags(LeabraNetwork* net)
+    { ((LeabraUnitSpec*)GetUnitSpec())->Quarter_Init_TargFlags(this, net); }
     // #CAT_Activation initialize external input flags based on phase
-    void Settle_DecayState(LeabraNetwork* net, int)
-    { ((LeabraUnitSpec*)GetUnitSpec())->Settle_DecayState(this, net); }
-    // #CAT_Activation decay activation states towards initial values: at phase-level boundary at start of settling
     void Compute_NetinScale(LeabraNetwork* net, int)
     { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale(this, net); }
     // #CAT_Activation compute net input scaling values
 
   void Compute_NetinScale_Senders(LeabraNetwork* net, int)
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_NetinScale_Senders(this, net); }
-  // #CAT_Activation compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Settle_Init_Unit stage after all the recv ones are computed
+  // #CAT_Activation compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
 
   void Compute_HardClamp(LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_HardClamp(this, net); }
     // #CAT_Activation force units to external values provided by environment: also optimizes settling by only computing netinput once
   void	Compute_HardClampNoClip(LeabraNetwork* net) 
   { ((LeabraUnitSpec*)GetUnitSpec())->Compute_HardClampNoClip(this, net); }
-  // #CAT_Activation hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to settled values)
+  // #CAT_Activation hard-clamp units without clipping values to clamp_range (use for second plus phase clamping to quarterd values)
 
   void	ExtToComp(LeabraNetwork* net)
   { ((LeabraUnitSpec*)GetUnitSpec())->ExtToComp(this, net); }
@@ -210,56 +207,36 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  ///////////////////////////////////////////////////////////////////////
-  //	Cycle Optional Misc
-
-  void	Compute_MidMinus(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_MidMinus(this, net); }
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM algorithm and hippocampus -- stores act_mid
 
   ///////////////////////////////////////////////////////////////////////
-  //	Settle Final
+  //	Quarter_Final
 
-  void	PostSettle(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->PostSettle(this, net); }
+  void	Quarter_Final(LeabraNetwork* net)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Quarter_Final(this, net); }
   // #CAT_Activation set stuff after settling is over (act_m, act_p etc)
 
 
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  void	TI_Compute_Deep5bAct(LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_Deep5bAct(this, net); }
-  // #CAT_TI compute deep 5b activations
-  void	TI_Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin(this, net, thread_no); }
+  void	Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin(this, net, thread_no); }
   // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
-  void	TI_Send_Deep5bNetin_Post(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_Deep5bNetin_Post(this, net, thread_no); }
+  void	Send_Deep5bNetin_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin_Post(this, net, thread_no); }
   // #CAT_TI send deep5b netinputs through Deep5bConSpec connections -- post processing rollup
-  void	TI_Send_CtxtNetin(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin(this, net, thread_no); }
+  void	Send_TICtxtNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_TICtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
-  void	TI_Send_CtxtNetin_Post(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Send_CtxtNetin_Post(this, net, thread_no); }
+  void	Send_TICtxtNetin_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_TICtxtNetin_Post(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  void	TI_Compute_CtxtAct(LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_Compute_CtxtAct(this, net); }
-  // #CAT_TI compute context activations
-  void	TI_ClearContext(LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->TI_ClearContext(this, net); }
-  // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience
+  void	ClearContext(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->ClearContext(this, net); }
+  // #CAT_TI clear the net_ctxt context variables -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Final
-
-  void 	EncodeState(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->EncodeState(this, net); }
-  // #CAT_Learning encode current state information at end of trial (hook for time-based learning)
-  void 	Compute_SelfReg_Trial(LeabraNetwork* net)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Compute_SelfReg_Trial(this, net); }
-  // #CAT_Activation compute self-regulation (accommodation, hysteresis) at end of trial
-
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning

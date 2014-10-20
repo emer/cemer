@@ -44,36 +44,36 @@ void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
 
 void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnit* u, LeabraNetwork* net,
                                                 int thread_no) {
-  int time_since_thr = (int)u->net_ctxt;
-  if(time_since_thr == 0) {
-    u->act_lrn = 0.0f;
-    if(u->act > cereb.act_thr) {
-      time_since_thr = 1;
-      u->act_ctxt = u->act;     // current act max
-    }
-    else {
-      u->act_ctxt = 0.0f;       // reset max always
-    }
-  }
-  else {      // if we get here, we've crossed threshold
-    time_since_thr++;
-    if(time_since_thr < cereb.inhib_start_time) {
-      u->act_ctxt = MAX(u->act_ctxt, u->act); // get max within time window
-      u->act_lrn = 0.0f;        // no learning yet
-    }
-    else if(time_since_thr < cereb.lrn_start_time) {
-      u->act_lrn = 0.0f;        // no learning yet
-    }
-    else if(time_since_thr <= cereb.lrn_end_time) {
-      u->act_lrn = u->act_ctxt; // set learning to previous max
-    }
-    else {                      // at end of time window
-      time_since_thr = 0;       // reset everything
-      u->act_ctxt = 0.0f;
-      u->act_lrn = 0.0f;
-    }
-  }
-  u->net_ctxt = time_since_thr; // update counter
+  // int time_since_thr = (int)u->net_ctxt;
+  // if(time_since_thr == 0) {
+  //   u->act_lrn = 0.0f;
+  //   if(u->act > cereb.act_thr) {
+  //     time_since_thr = 1;
+  //     u->act_ctxt = u->act;     // current act max
+  //   }
+  //   else {
+  //     u->act_ctxt = 0.0f;       // reset max always
+  //   }
+  // }
+  // else {      // if we get here, we've crossed threshold
+  //   time_since_thr++;
+  //   if(time_since_thr < cereb.inhib_start_time) {
+  //     u->act_ctxt = MAX(u->act_ctxt, u->act); // get max within time window
+  //     u->act_lrn = 0.0f;        // no learning yet
+  //   }
+  //   else if(time_since_thr < cereb.lrn_start_time) {
+  //     u->act_lrn = 0.0f;        // no learning yet
+  //   }
+  //   else if(time_since_thr <= cereb.lrn_end_time) {
+  //     u->act_lrn = u->act_ctxt; // set learning to previous max
+  //   }
+  //   else {                      // at end of time window
+  //     time_since_thr = 0;       // reset everything
+  //     u->act_ctxt = 0.0f;
+  //     u->act_lrn = 0.0f;
+  //   }
+  // }
+  // u->net_ctxt = time_since_thr; // update counter
 }
 
 void CerebGranuleUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {

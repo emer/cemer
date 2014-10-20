@@ -38,9 +38,6 @@ void ExtRewSpec::Initialize() {
 }
 
 void ExtRewLayerSpec::Initialize() {
-  SetUnique("decay", true);
-  decay.phase = 0.0f;
-
   rew_type = OUT_ERR_REW;
 
 //   kwta.k = 1;
@@ -79,9 +76,6 @@ bool ExtRewLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
 //  LeabraNetwork* net = (LeabraNetwork*)lay->own_net;
-
-  SetUnique("decay", true);
-  decay.phase = 0.0f;
 
   // sometimes this is used as a target layer for ext rew and it should NEVER drive sse
   lay->SetLayerFlag(Layer::NO_ADD_SSE);
@@ -304,18 +298,14 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0) {
+  if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->SetExtFlag(Unit::EXT);
     Compute_NoRewAct(lay, net); // no reward in minus
     HardClampExt(lay, net);
   }
-  else if(net->phase_no == 1) {
+  else {
     lay->SetExtFlag(Unit::EXT);
     Compute_Rew(lay, net);
-    HardClampExt(lay, net);
-  }
-  else {
-    // clamp to prior act_p value: will happen automatically
     HardClampExt(lay, net);
   }
 }

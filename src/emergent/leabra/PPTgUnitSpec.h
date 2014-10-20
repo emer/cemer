@@ -33,7 +33,7 @@ public:
   bool          clamp_act;      // clamp the activation directly instead of driving net input -- still applies d_net_gain -- provides a purely linear y-dot reference signal
 
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
-  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
+  void	Quarter_Final(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(PPTgUnitSpec);
 protected:

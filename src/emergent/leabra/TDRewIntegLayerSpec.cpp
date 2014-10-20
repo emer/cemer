@@ -159,7 +159,7 @@ void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* ne
   }
 
   float new_val;
-  if(net->phase_no == 0) {
+  if(net->phase == LeabraNetwork::MINUS_PHASE) {
     new_val = rew_pred_val; // no discount in minus phase!!!  should only reflect previous V^(t)
   }
   else {

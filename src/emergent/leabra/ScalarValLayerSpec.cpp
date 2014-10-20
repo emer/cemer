@@ -440,7 +440,6 @@ float ScalarValLayerSpec::ReadValue_ugp(LeabraLayer* lay, Layer::AccessMode acc_
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   u->act_eq = u->act_nd = avg;
-  u->act_lrn = 0.0f;          // no learning
   u->act = 0.0f;                // very important to clamp act to 0: don't send!
   u->da = 0.0f;                 // don't contribute to change in act
   return u->act_eq;
@@ -499,7 +498,6 @@ void ScalarValLayerSpec::ResetAfterClamp_ugp(LeabraLayer* lay,
     u->gc_i = 0.0f;
     u->gi_syn = 0.0f;
     u->act = 0.0f;              // must reset so it doesn't contribute!
-    u->act_lrn = 0.0f;
     u->act_eq = u->act_nd = u->ext;     // avoid clamp_range!
   }
 }
@@ -534,13 +532,13 @@ void ScalarValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
   }
 }
 
-void ScalarValLayerSpec::Settle_Init_Unit0_ugp(LeabraLayer* lay,
+void ScalarValLayerSpec::Quarter_Init_Unit0_ugp(LeabraLayer* lay,
                                                Layer::AccessMode acc_md, int gpidx,
                                                LeabraNetwork* net) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
   if(nunits > 2) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-    u->Settle_Init_Unit(net);
+    u->Quarter_Init_Unit(net);
     // these are not cleared for the first unit anymore
     u->net = 0.0f;
     u->gi_syn = 0.0f;
@@ -548,17 +546,17 @@ void ScalarValLayerSpec::Settle_Init_Unit0_ugp(LeabraLayer* lay,
   }
 }
 
-void ScalarValLayerSpec::Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net) {
+void ScalarValLayerSpec::Quarter_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net) {
   // very important: unit 0 in each layer is used for the netin scale parameter and
   // it is otherwise not computed on this unit b/c it is excluded from units_flat!
   // also the targflags need to be updated
-  UNIT_GP_ITR(lay, Settle_Init_Unit0_ugp(lay, acc_md, gpidx, net); );
+  UNIT_GP_ITR(lay, Quarter_Init_Unit0_ugp(lay, acc_md, gpidx, net); );
 }
 
-void ScalarValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_Layer(lay, net);
+void ScalarValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Init_Layer(lay, net);
 
-  Settle_Init_Unit0(lay, net);
+  Quarter_Init_Unit0(lay, net);
 
   if(bias_val.un == ScalarValBias::BWT) {
     // if using bias-weight bias, keep a constant scaling (independent of layer size)

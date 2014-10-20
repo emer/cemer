@@ -171,7 +171,7 @@ public:
   // #IGNORE run layers on given method with StartTime, EndStep
 
   void          Cycle_Run();    // run n cycles of basic Leabra cycle update loop
-  void          TI_Send_Netins();
+  void          Send_TICtxtNetins();
   void          Compute_dWt();  // run compute_dwt
   void          Compute_Weights(); // run compute_weights
 
@@ -205,7 +205,7 @@ public:
   };
 
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
-  int           n_cycles;       // #MIN_1 #DEF_10 how many cycles to run at a time -- more efficient to run multiple cycles per Run
+  bool          quarter;        // #DEF_true run an entire quarter-trial of cycles per each Cycle thread call 
   int           unit_chunks;    // #MIN_1 #DEF_32 how many units to bite off for each thread off of the list at a time
   bool          timers_on;      // Accumulate timing information for each step of processing -- including at the cycle level for each different type of operation -- for debugging / optimizing threading
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used

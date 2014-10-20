@@ -135,9 +135,9 @@ public:
   MinMaxRange    avg_act_range; // #CONDSHOW_ON_scalar.rep:AVG_ACT range of variability of the average layer activity, used for AVG_ACT type to renormalize acts.avg before projecting it into the unit_range of values
   MinMaxRange	 val_range;	// #READ_ONLY #NO_INHERIT actual range of values (scalar.min/max taking into account un_range)
 
-  virtual void	Settle_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_ScalarVal call Settle_Init_Unit on first unit in each group (the value unit) -- this is necessary b/c it is excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
-    virtual void Settle_Init_Unit0_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
+  virtual void	Quarter_Init_Unit0(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_ScalarVal call Quarter_Init_Unit on first unit in each group (the value unit) -- this is necessary b/c it is excluded from units_flat list and thus Compute_NetinScale, which is used for the global netin scale for the entire projection in Send_NetinDelta, and Init_TargFlags
+    virtual void Quarter_Init_Unit0_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 				       LeabraNetwork* net);
     // #IGNORE
 
@@ -190,7 +190,7 @@ public:
     virtual void BuildUnits_Threads_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 					LeabraNetwork* net);
   void  Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   int   LayerStatsStartUnitIdx() override { return 1; } // skip first unit

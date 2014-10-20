@@ -43,7 +43,7 @@ public:
 
   void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

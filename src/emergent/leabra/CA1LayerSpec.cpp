@@ -96,18 +96,18 @@ void CA1LayerSpec::ModulateECinPrjn(LeabraLayer* lay, LeabraNetwork* net, bool e
   }
 }
 
-void CA1LayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+void CA1LayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   // always off at start of minus and plus phase
   ModulateCA3Prjn(lay, net, false); // turn off ca3 in minus phase until further notice
   if(net->phase == LeabraNetwork::PLUS_PHASE)
     lay->DecayState(net, recall_decay); // decay at start of plus phase too
-  inherited::Settle_Init_Layer(lay, net);
+  inherited::Quarter_Init_Layer(lay, net);
 }
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
-  if(net->ct_cycle == auto_m_cycles)
+  if(net->cycle == auto_m_cycles)
     RecordActMid(lay,net);
-  if(net->ct_cycle == auto_m_cycles+1) {
+  if(net->cycle == auto_m_cycles+1) {
     if(!(use_test_mode && net->train_mode == Network::TEST))
       lay->DecayState(net, recall_decay); // specifically CA1 activations at recall
     ModulateCA3Prjn(lay, net, true);    // turn on ca3 -- calls netinscale

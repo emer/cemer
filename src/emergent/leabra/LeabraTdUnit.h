@@ -29,8 +29,6 @@ class E_API LeabraTdUnit : public LeabraUnit {
   // Leabra unit with dopamine-like modulation of minus phase activation for learning
 INHERITED(LeabraUnit)
 public:
-  float 	p_act_m;	// previous minus phase activation 
-  float		p_act_p;	// previous plus phase activation
   float		trace;		// the trace of activation states that is used for learning
 
   void	Copy_(const LeabraTdUnit& cp);

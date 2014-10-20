@@ -85,10 +85,6 @@ public:
   // clamp from act_p values of sending layer
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
-  // don't do any learning:
-  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-
   void TriggerUpdate(LeabraLayer* lay); // manually trigger an update of the context layer -- generally called at end of a Trial -- can always be called even if not on MANUAL
   
 #ifndef __MAKETA__

@@ -74,7 +74,6 @@ float PFCUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
 
 void PFCUnitSpec::TI_Compute_Deep5bAct(LeabraUnit* u, LeabraNetwork* net) {
   if(!cifer.on) return;
-  if(!cifer.phase && net->phase_no == 0) return;
   float act5b = u->act_eq;
   if(act5b < cifer.act5b_thr) {
     act5b = 0.0f;

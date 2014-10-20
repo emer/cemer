@@ -13,21 +13,20 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraTICtxtLayerSpec.h"
+#include "Deep5bLayerSpec.h"
 #include <LeabraNetwork>
 #include <LayerActUnitSpec>
 
-TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtLayerSpec);
+TA_BASEFUNS_CTORS_DEFN(Deep5bLayerSpec);
 
-void LeabraTICtxtLayerSpec::Initialize() {
-  act_val = P_ACT_P;
+void Deep5bLayerSpec::Initialize() {
   Defaults_init();
 }
 
-void LeabraTICtxtLayerSpec::Defaults_init() {
+void Deep5bLayerSpec::Defaults_init() {
 }
 
-bool LeabraTICtxtLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
+bool Deep5bLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   LeabraLayer* lay = (LeabraLayer*)ly;
   bool rval = inherited::CheckConfig_Layer(lay, quiet);
 
@@ -53,7 +52,7 @@ bool LeabraTICtxtLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
   return rval;
 }
 
-void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net) {
+void Deep5bLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net) {
   lay->Inhib_SetVals(0.5f);            // assume 0 - 1 clamped inputs
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
@@ -67,22 +66,14 @@ void LeabraTICtxtLayerSpec::Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork*
       return;
     }
     LeabraUnitSpec* rus = (LeabraUnitSpec*)u->GetUnitSpec();
-    if(act_val == DEEP_5B) {
-      u->act = su->deep5b;
-    }
-    else if(act_val == P_ACT_P) {
-      u->act = su->p_act_p;
-    }
-    else {
-      u->act = su->act_ctxt;
-    }
-    u->act_lrn = u->act_eq = u->act_nd = u->act;
+    u->act = su->deep5b;
+    u->act_eq = u->act_nd = u->act;
     u->da = 0.0f;            // I'm fully settled!
     u->AddToActBuf(rus->syn_delay);
   }
 }
 
-void LeabraTICtxtLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+void Deep5bLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
   Compute_ActFmSource(lay, net);
   inherited::Compute_CycleStats(lay, net, thread_no);
 }

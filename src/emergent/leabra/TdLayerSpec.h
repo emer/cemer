@@ -39,9 +39,6 @@ public:
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
-  // never learn
-  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override { return false; }
-
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);
 

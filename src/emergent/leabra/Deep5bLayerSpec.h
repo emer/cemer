@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraTICtxtLayerSpec_h
-#define LeabraTICtxtLayerSpec_h 1
+#ifndef Deep5bLayerSpec_h
+#define Deep5bLayerSpec_h 1
 
 // parent includes:
 #include <LeabraLayerSpec>
@@ -23,35 +23,26 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(LeabraTICtxtLayerSpec);
+// todo: actually change this to Deep5bUnitSpec!
 
-class E_API LeabraTICtxtLayerSpec : public LeabraLayerSpec {
-  // a layer that continuously copies context values from associated layer that is using the TI algorithm to compute context activations -- this makes it possible to connect those context values to other layers in more flexible ways -- must receive one-to-one prjn from source layer and have same configuration
+eTypeDef_Of(Deep5bLayerSpec);
+
+class E_API Deep5bLayerSpec : public LeabraLayerSpec {
+  // a layer that continuously copies deep5b activation values from associated layer -- should typically just be used for visualization convenience -- use Deep5bConSpec to send deep5b activations to the d5b_net of other layers -- this must receive one-to-one prjn from source layer and have same configuration
 INHERITED(LeabraLayerSpec)
 public:
-  enum TIActVal {
-    DEEP_5B,			// copy the deep5b value from the source network -- this is the driver of the context values for that unit / microcolumn
-    P_ACT_P,			// copy the p_act_p value from the source network -- this is the activation at the time of gating (e.g., for PFCLayers)
-    ACT_CTXT,			// copy the act_ctxt value from the source network -- this is the already-mixed and normalized context netinput value
-  };
-
-  TIActVal	act_val;	// which activation value to get from the source layer?
-
   virtual void Compute_ActFmSource(LeabraLayer* lay, LeabraNetwork* net);
   // set current act of deep unit to sending super unit activation
 
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
 
-  bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net) override
-  { return false; }
-
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
-  TA_SIMPLE_BASEFUNS(LeabraTICtxtLayerSpec);
+  TA_SIMPLE_BASEFUNS(Deep5bLayerSpec);
 private:
   void  Initialize();
   void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // LeabraTICtxtLayerSpec_h
+#endif // Deep5bLayerSpec_h

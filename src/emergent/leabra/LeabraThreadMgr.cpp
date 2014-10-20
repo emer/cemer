@@ -223,12 +223,12 @@ void LeabraTask::Cycle_Run() {
 
   const bool timers_on = mg->timers_on;
 
-  const int st_ct_cyc = net->ct_cycle;  // our starting cycle
-  const int n_cyc = mg->n_cycles;
+  const int st_cyc = net->cycle;  // our starting cycle
+  const int n_cyc = (mg->quarter ? net->times.quarter : 1);
   const int n_task = mg->tasks.size;
 
   for(int cyc=0; cyc < n_cyc; cyc++) {
-    int cur_net_cyc = st_ct_cyc + cyc;
+    int cur_net_cyc = st_cyc + cyc;
     // this replicates LeabraNetwork::Cycle()
 
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
@@ -290,30 +290,18 @@ void LeabraTask::Cycle_Run() {
   }
 }
 
-void LeabraTask::TI_Send_Netins() {
+void LeabraTask::Send_TICtxtNetins() {
   LeabraThreadMgr* mg = mgr();
 
   if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
   {
-    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_Deep5bNetin);
-    RunUnitsStep(un_call, mg->loop_idx0, mg->stage_deep5b, ti_netin_time, 0); // cyc = 0
-  }
-
-  if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
-  { 
-    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_Deep5bNetin_Post);
-    RunUnitsStep(un_call, mg->loop_idx1, mg->stage_deep5b_p, ti_netin_time, 0, false); // cyc = 0, no reset
-  }
-
-  if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
-  {
-    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_CtxtNetin);
+    LeabraThreadUnitCall un_call(&LeabraUnit::Send_TICtxtNetin);
     RunUnitsStep(un_call, mg->loop_idx0, mg->stage_ctxt, ti_netin_time, 0, false); // cyc = 0, no reset
   }
 
   if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
   { 
-    LeabraThreadUnitCall un_call(&LeabraUnit::TI_Send_CtxtNetin_Post);
+    LeabraThreadUnitCall un_call(&LeabraUnit::Send_TICtxtNetin_Post);
     RunUnitsStep(un_call, mg->loop_idx1, mg->stage_ctxt_p, ti_netin_time, 0, false); // cyc = 0, no reset
   }
 }
@@ -477,7 +465,7 @@ void LeabraTask::run() {
       }
       return;                   // this is the final step for testing
     case LeabraThreadMgr::RUN_TI_NETS:
-      TI_Send_Netins();
+      Send_TICtxtNetins();
       if(task_id == 0) {
         mg->run_state = LeabraThreadMgr::NOT_RUNNING; // stopped!
       }
@@ -509,7 +497,7 @@ void LeabraTask::run() {
 void LeabraThreadMgr::Initialize() {
   run_state = NOT_RUNNING;
   n_threads_act = 1;
-  n_cycles = 10;
+  quarter = true;
   unit_chunks = 32;
   timers_on = false;
   using_threads = false;

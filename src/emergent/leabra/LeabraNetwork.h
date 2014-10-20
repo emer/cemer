@@ -31,22 +31,22 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
-eTypeDef_Of(LeabraPhases);
+eTypeDef_Of(LeabraTimes);
 
-class E_API LeabraPhases : public taOBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra phase parameters for what phases are run and how long the minus and plus phases are within a trial
+class E_API LeabraTimes : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra phase parameters for what phases are run and how long the 
 INHERITED(taOBase)
 public:
-  int		minus;		// #DEF_50:200 number of cycles to run in the minus phase, which has only inputs and no targets -- use CycleRunMax_Minus to get proper value of this to use in programs, which takes into account lthreads.n_cycles -- can set to 0 to only run the plus phase (not generally recommended -- this makes minus and plus phase synonymous, negating error-driven learning)
-  int		plus;		// #DEF_20:200 number of cycles to run in the plus phase, which has input and target activations -- use CycleRunMax_Minus to get proper value of this to use in programs, which takes into account lthreads.n_cycles
-  bool		no_plus_test;	// #DEF_false don't run the plus phase when testing -- this cannot be set for many networks that depend on the full timing dynamics of minus and plus phases, but simple input/output mapping networks can get away with it, to speed things up during testing
+  int		quarter;	// #DEF_25 number of cycles to run per each quarter of a trial -- typically, a trial is one alpha cycle of 100 msec (10 Hz), and we run at 1 cycle = 1 msec, so that is 25 cycles per quarter, which gives the ubiquitous gamma frequency power of 40 Hz -- a traditional minus phase takes the first 3 quarters, and the last quarter is the plus phase -- use CycleRunMax_Minus and CycleRunMax_Plus to get proper minus and plus phase cycles values to use in programs, taking into account lthreads.quarter setting
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
 
+  int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
+  int		plus;	        // #READ_ONLY computed total number of cycles per plus phase = quarter
   int		total_cycles;	// #READ_ONLY computed total number of cycles per trial
 
   String       GetTypeDecoKey() const override { return "Network"; }
 
-  TA_SIMPLE_BASEFUNS(LeabraPhases);
+  TA_SIMPLE_BASEFUNS(LeabraTimes);
 protected:
   void UpdateAfterEdit_impl();
 
@@ -61,7 +61,7 @@ class E_API LeabraNetStats : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra network-level statistics parameters
 INHERITED(taOBase)
 public:
-  float		trg_max_act_crit; // #CAT_Statistic criterion for target-layer maximum activation (trg_max_act) -- minus_cycles is recorded when trg_max_act first exceeds this criterion (in the minus phase)
+  float		trg_max_act_crit; // #CAT_Statistic criterion for target-layer maximum activation (trg_max_act) -- rt_cycles is recorded when trg_max_act first exceeds this criterion
   bool		off_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly off (should have been on but were actually off) -- either 1 or both of off_errs and on_errs must be set
   bool		on_errs;	// #DEF_true #CAT_Statistic include in norm_err computation units that were incorrectly on (should have been off but were actually on) -- either 1 or both of off_errs and on_errs must be set
   float		cos_err_lrn_thr; // #CAT_Learning learning threshold for cos_err -- if cos err is below this value, then no learning occurs -- prevents learning when things are too far away from expectations -- esp useful for leabra ti (see also unlearnable_trial flag)
@@ -143,7 +143,7 @@ public:
 #endif
 
   LeabraThreadMgr lthreads;     // #CAT_Threads parallel threading for leabra algorithm -- handles majority of computation within threads that are kept active and ready to go
-  LeabraPhases    phases;       // #AKA_ct_time #CAT_Learning parameters for how long each phase is, and which phases to run (set to 0 to turn off a phase)
+  LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters
   LeabraNetMisc	  net_misc;	// misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
   RelNetinSched	  rel_netin;	// #CAT_Learning #CONDSHOW_OFF_flags:NETIN_PER_PRJN schedule for computing relative netinput values for each projection -- this is very important data for tuning the network to ensure that each layer has the relative impact it should on other layers -- however it is expensive (only if not using NETIN_PER_PRJN, otherwise it is automatic and these options are disabled), so this schedules it to happen just enough to get the results you want
@@ -151,16 +151,18 @@ public:
 
   ////////////  everything below here should be a counter or statistic -- no params!
 
-  Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase
-  int		phase_no;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW phase as an ordinal number (regular phase is Phase enum)
-  int		phase_max;	// #CAT_Counter #GUI_READ_ONLY #HIDDEN maximum number of phases to run -- generally 2 (minus, plus), but can be 1 for no_plus_test or minus = 0
-  int		ct_cycle;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW continuous time cycle counter: counts up from start of trial 
+#ifdef __MAKETA__
+  int           cycle;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current alpha-cycle (100 msec / 10 Hz) trial -- this counts time sequentially through the entire trial, typically from 0 to 99 cycles (equivalent to the old ct_cycle, not cycle within a phase as cycle used to be prior to version 7.1.0)
+#endif
+
+  int		quarter;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW current gamma-frequency (25 msec / 40 Hz) quarter of alpha-cycle (100 msec / 10 Hz) trial being processed
+  Phase		phase;		// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW type of settling phase (MINUS or PLUS) -- minus is first 3 quarters, plus is last quarter
   int           tot_cycle;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total cycle count -- this increments from last Init_Weights and just keeps going up (unless otherwise reset) -- used for tracking things like spiking times continuously across time
 
-  float		minus_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to settle in the minus phase -- this is the typical settling time statistic to record
+  float		rt_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cycles to generate an output response (reaction time = RT) -- typically lstats.trg_max_act_crit is used as an activation criterion over the trg_max_act value recorded from target output layer(s) to determine this
   Average	avg_cycles;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average settling cycles in the minus phase (computed over previous epoch)
   String	minus_output_name; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW output_name in the minus phase -- for recording in logs as network's response (output_name in plus phase is clamped target value)
-  float		trg_max_act;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic maximum activation of any unit in a target layer -- compared against phases.trg_max_act_crit to compute minus_cycles
+  float		trg_max_act;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic maximum activation of any unit in a target layer -- compared against lstats.trg_max_act_crit to compute rt_cycles
 
   float		send_pct;	// #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic proportion of sending units that actually sent activations on this cycle -- only available for non-threading case
   int		send_pct_n;	// #NO_SAVE #READ_ONLY #CAT_Statistic number of units sending activation this cycle
@@ -174,8 +176,8 @@ public:
   float		norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW normalized binary (Hamming) error on this trial: number of units that were incorrectly activated or incorrectly inactivated (see lstats.off_errs, on_errs to exclude each component separately)
   Average	avg_norm_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average normalized binary error value (computed over previous epoch)
 
-  float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) error on this trial -- cosine between act_m and act_p target values
-  float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cosine (normalized dot product) error on this trial, for activations on previous trial (p_act_p) -- computed automatically during TI
+  float		cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) error on this trial, comparing targ vs. act_m
+  float		cos_err_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cosine (normalized dot product) error on this trial, comparing targ on this trial against activations on previous trial (act_q0) -- computed automatically during TI
   float		cos_err_vs_prv;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic cos_err - cos_err_prv -- how much better is cosine error on this trial relative to just saying the same thing as was output last time -- for TI
   Average	avg_cos_err;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error (computed over previous epoch)
   Average	avg_cos_err_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on prv (see cos_err_prv) (computed over previous epoch)
@@ -187,7 +189,7 @@ public:
   float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW average act_diff (act_p - act_m) -- this is an important statistic to track overall 'main effect' differences across phases -- excludes input layers
   Average	avg_avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average avg_act_diff (computed over previous epoch)
 
-  float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) activation difference across trials between act_p and p_act_p activations on this trial -- excludes input layers which are represented in the cos_err measure
+  float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) activation difference across trials between act_q4 and act_q0 activations on this trial -- excludes input layers which are represented in the cos_err measure
   Average	avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
 
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it - todo: can we eliminate this please??
@@ -221,77 +223,55 @@ public:
   void  BuildUnits_Threads_send_netin_tmp() override;
   bool  RecvOwnsCons() override { return false; }
 
-
-  inline bool   IsNoPlusTesting()
-  { return (phases.no_plus_test && train_mode == TEST); }
-  // #CAT_Activation is the no_plus_test case active now (flag set and actually in TEST mode)
-
-
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
 
   virtual void 	Trial_Init();
-  // #CAT_TrialInit initialize at start of trial (init specs, set phase_max, Decay state)
-    virtual void Trial_Init_Phases();
-    // #CAT_TrialInit init phase_max and current phase based on phase parameters -- network only
+  // #CAT_TrialInit initialize at start of trial (init specs, Decay state)
+    virtual void Trial_Init_Counters();
+    // #CAT_TrialInit init counters -- network only
     virtual void Trial_Init_Specs();
     // #CAT_TrialInit initialize specs and specs update network flags
 
     virtual void Trial_Init_Unit();
-    // #CAT_TrialInit trial unit-level initialization functions: DecayState, NoiseInit, Trial_Init_SRAvg -- replaces those functions
-      virtual void Trial_DecayState();
-      // #CAT_TrialInit decay the state in between trials (params in LayerSpec) -- goes to units via layers -- not typically used, Trial_Init_Unit instead
-      virtual void Trial_NoiseInit();
-      // #CAT_TrialInit initialize various noise factors at start of trial -- goes to units via layers
-      virtual void Trial_Init_SRAvg();
-      // #CAT_Learning initialize sending-receiving activation coproduct averages (CtLeabra_X/CAL) -- goes to connections via units, layers
+    // #CAT_TrialInit trial unit-level initialization functions: Trial_Init_SRAvg, DecayState, NoiseInit
     virtual void Trial_Init_Layer();
     // #CAT_TrialInit layer-level trial init (used in base code to init layer-level sravg, can be overloaded)
 
   ///////////////////////////////////////////////////////////////////////
-  //	SettleInit -- at start of settling
+  //	QuarterInit -- at start of a given quarter trial of processing
 
-  virtual void  Settle_Init();
-  // #CAT_SettleInit initialize network for settle-level processing (decay, active k, hard clamp, netscale)
-    virtual void Settle_Init_Unit();
-    // #CAT_TrialInit settle unit-level initialization functions: Init_TargFlags, DecayState, NetinScale
-    virtual void Settle_Init_Layer();
-    // #CAT_TrialInit settle layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
-      virtual void Settle_Init_TargFlags();
-      // #CAT_SettleInit initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
-      virtual void Settle_DecayState();
-      // #CAT_SettleInit logic for performing decay and updating external input settings as a function of phase
+  virtual void  Quarter_Init();
+  // #CAT_QuarterInit initialize network for quarter-level processing (hard clamp, netscale)
+    virtual void Quarter_Init_Unit();
+    // #CAT_QuarterInit quarter unit-level initialization functions: Init_TargFlags, NetinScale
+    virtual void Quarter_Init_Layer();
+    // #CAT_QuarterInit quarter layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
+      virtual void Quarter_Init_TargFlags();
+      // #CAT_QuarterInit initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
       virtual void Compute_NetinScale();
-      // #CAT_SettleInit compute netinput scaling values by projection
+      // #CAT_QuarterInit compute netinput scaling values by projection -- not called by default -- direct to unit-level function
 
     virtual void Compute_NetinScale_Senders();
-    // #CAT_SettleInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Settle_Init_Unit stage after all the recv ones are computed
+    // #CAT_QuarterInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
 
     virtual void Compute_HardClamp();
-    // #CAT_SettleInit compute hard clamping from external inputs
+    // #CAT_QuarterInit compute hard clamping from external inputs
 
     virtual void ExtToComp();
-    // #CAT_SettleInit move external input values to comparison values (not currently used)
+    // #CAT_QuarterInit move external input values to comparison values (not currently used)
     virtual void TargExtToComp();
-    // #CAT_SettleInit move target and external input values to comparison
+    // #CAT_QuarterInit move target and external input values to comparison
 
   virtual void  NewInputData_Init();
-  // #CAT_SettleInit perform initialization stuff needed to update external input data signals so they actually show up as activations in the network: Settle_Init_Layer, Settle_Init_TrgFlags, Compute_HardClamp
+  // #CAT_QuarterInit perform initialization stuff needed to update external input data signals so they actually show up as activations in the network: Quarter_Init_Layer, Quarter_Init_TrgFlags, Compute_HardClamp
 
   ////////////////////////////////////////////////////////////////
   //	Cycle_Run
   
-  inline  int   CycleRunMax_Minus()
-  { if(lthreads.CanRun()) return phases.minus / lthreads.n_cycles;  
-    return phases.minus; }
-  // #CAT_Settle max loop counter for running cycles in the minus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= phases.minus / lthreads.n_cycles)
-  inline  int   CycleRunMax_Plus()
-  { if(lthreads.CanRun()) return phases.plus / lthreads.n_cycles;  
-    return phases.plus; }
-  // #CAT_Settle max loop counter for running cycles in the minus phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= phases.plus / lthreads.n_cycles)
   inline  int   CycleRunMax()
-  { if(phase == MINUS_PHASE) return CycleRunMax_Minus(); return CycleRunMax_Plus(); }
-  // #CAT_Settle max loop counter for running cycles in the current phase, taking into account the fact that threading can run multiple cycles per Cycle_Run call (= phases.plus / lthreads.n_cycles)
+  { if(lthreads.CanRun() && lthreads.quarter) return 1; return times.quarter; }
+  // #CAT_Quarter max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set
 
   virtual void	Cycle_Run();
   // #CAT_Cycle compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act
@@ -303,7 +283,7 @@ public:
   //	Cycle Stage 1: netinput
 
   void	Send_Netin() override;
-  // #CAT_Cycle compute netinputs (sender-delta based -- only send when sender activations change) -- new values go in net_delta or g_i_delta (summed up from tmp array for threaded case)
+  // #CAT_Cycle compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
   virtual void Compute_NetinInteg();
   // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 
@@ -336,58 +316,43 @@ public:
 
     virtual void  Compute_OutputName();
     // #CAT_Statistic compute the output name for layers and the network, based on the unit names of the most-active units in each target layer -- only works if you provide names to the units -- called automatically in Compute_CycleStats_Post()
-    virtual void  Compute_MinusCycles();
-    // #CAT_Statistic compute the minus_cycles statistic based on trg_max_act and trg_max_act_crit criterion, only in the minus phase -- this is a good measure for computing the reaction time (RT) of the network, as in a psychological experiment -- called automatically in Compute_CycleStats_Post()
+    virtual void  Compute_RTCycles();
+    // #CAT_Statistic compute the rt_cycles statistic based on trg_max_act and trg_max_act_crit criterion, only in the minus phase -- this is a good measure for computing the reaction time (RT) of the network, as in a psychological experiment -- called automatically in Compute_CycleStats_Post()
+
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Optional Misc
+  //	Quarter Final
 
-  virtual void	Compute_MidMinus();
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycles parameter, if > 0 -- currently used for the PBWM algorithm
+  virtual void	 Quarter_Final();
+  // #CAT_QuarterFinal do final processing after each quarter: 
+    virtual void Quarter_Final_Pre();
+    // #CAT_QuarterFinal perform computations in layers at end of quarter -- this is a pre-stage that occurs prior to final Quarter_Final_impl -- use this for anything that needs to happen prior to the standard Quarter_Final across units and layers (called by Quarter_Final)
+    virtual void Quarter_Final_Unit();
+    // #CAT_QuarterFinal perform Quarter_Final computations in units at end of quarter (called by Quarter_Final)
+    virtual void Quarter_Final_Layer();
+    // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
+    virtual void Quarter_Compute_dWt();
+    // #CAT_QuarterFinal compute weight changes at end of each quarter -- units decide when this actually happens
+    virtual void Quarter_Final_Counters();
+    // #CAT_QuarterFinal update counters at end of quarter
 
-  ///////////////////////////////////////////////////////////////////////
-  //	Settle Final
-
-  virtual void	Settle_Final();
-  // #CAT_SettleFinal do final processing after settling (postsettle, Compute_dWt if needed)
-    virtual void PostSettle_Pre();
-    // #CAT_SettleFinal perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final PostSettle -- use this for anything that needs to happen prior to the standard PostSettle across layers (called by Settle_Final)
-    virtual void PostSettle();
-    // #CAT_SettleFinal perform computations in layers at end of settling  (called by Settle_Final)
-    virtual void Settle_Compute_dWt();
-    // #CAT_SettleFinal compute weight changes at end of settling as needed depending on phase order -- all weight changes are computed here for consistency
 
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI Special code
 
-  virtual void TI_CtxtUpdate();
-  // #CAT_TI called if TI is active -- updates context activation at end of plus phase (called from PostSettle())
-    virtual void TI_Compute_Deep5bAct();
-    // #CAT_TI compute deep 5b activations from thal and act_eq
-    virtual void TI_Send_Netins();
-    // #CAT_TI send deep5b and context netinputs
-    virtual void TI_Send_Deep5bNetin();
-    // #CAT_TI send deep 5b netinput
-    virtual void TI_Send_CtxtNetin();
-    // #CAT_TI send context netinput
-    virtual void TI_Compute_CtxtAct();
-    // #CAT_TI compute context activations from context netinput
+  virtual void TICtxtUpdate();
+  // #CAT_TI updates context activation at end of plus phase (called from Quarter_Final())
+    virtual void Send_TICtxtNetin();
+    // #CAT_TI send TI context netinput -- calls corresponding functions at unit level, first basic send, then _Post that rolls-up send
 
-  virtual void TI_ClearContext();
+  virtual void Init_TICtxt();
   // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final
 
-  virtual void Trial_UpdatePhase();
-  // #CAT_TrialInit update phase based on phase_no -- typically called by program in Trial loop over settling
-
   virtual void	Trial_Final();
-  // #CAT_TrialFinal do final processing after trial (Compute_dWt, EncodeState)
-    virtual void EncodeState();
-    // #CAT_TrialFinal encode final state information at end of trial for time-based learning across trials
-    virtual void Compute_SelfReg_Trial();
-    // #CAT_TrialFinal update self-regulation (accommodation, hysteresis) at end of trial
+  // #CAT_TrialFinal do final processing after trial: Compute_AbsRelNetin
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
@@ -415,17 +380,17 @@ public:
   virtual void	Set_ExtRew(bool avail, float ext_rew_val);
   // #CAT_Statistic set ext_rew_avail and ext_rew value -- for script access to these values
   virtual void	Compute_ExtRew();
-  // #CAT_Statistic compute external reward information: Must be called in plus phase (phase_no == 1)
+  // #CAT_Statistic compute external reward information: called in plus phase stats
   virtual void	Compute_NormErr();
   // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats -- per unit: if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is per layer based on k value: total possible err for both on and off errs is 2 * k (on or off alone is just k)
   virtual float	Compute_CosErr();
   // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
   virtual float	Compute_CosDiff();
-  // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostQuarter (QuarterFinal) for plus phase to get the act_p values
   virtual float	Compute_AvgActDiff();
-  // #CAT_Statistic compute average act_diff (act_p - act_m) -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
+  // #CAT_Statistic compute average act_diff (act_p - act_m) -- must be called after PostQuarter (QuarterFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float	Compute_TrialCosDiff();
-  // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between p_act_p and act_p unit values -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between act_q0 and act_q4 unit values -- must be called after Quarter_Final for plus phase to get the act_q4 values
   void	Compute_TrialStats() override;
   // #CAT_Statistic #OBSOLETE do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time
 

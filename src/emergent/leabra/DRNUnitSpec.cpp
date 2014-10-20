@@ -103,7 +103,7 @@ void DRNUnitSpec::Compute_Se(LeabraUnit* u, LeabraNetwork* net) {
   if(u->sev < se.se_base) u->sev = se.se_base;
 
   u->ext = u->sev;
-  u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
+  u->act_eq = u->act_nd = u->act = u->net = u->ext;
   u->da = 0.0f;
 }
 

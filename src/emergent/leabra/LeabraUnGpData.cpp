@@ -28,8 +28,7 @@ void LeabraUnGpData::InitLinks() {
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);
-  taBase::Own(acts_ctxt, this);
-  taBase::Own(acts_mid, this);
+  taBase::Own(nets_ctxt, this);
 
   taBase::Own(i_val, this);
 }

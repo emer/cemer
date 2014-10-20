@@ -131,7 +131,7 @@ class E_API LeabraClampSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for clamping external inputs on INPUT or TARGET layers
 INHERITED(SpecMemberBase)
 public:
-  bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of settle) or do soft clamping where ext is added into net input (net += gain * ext)
+  bool		hard;		// #DEF_true whether to hard clamp inputs where activation is directly set to external input value (act = ext, computed once at start of quarter) or do soft clamping where ext is added into net input (net += gain * ext)
   float		gain;		// #CONDSHOW_OFF_hard #DEF_0.02:0.5 soft clamp gain factor (net += gain * ext)
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
@@ -152,7 +152,6 @@ class E_API LayerDecaySpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
-  float		phase;		// #MIN_0 #MAX_1 #DEF_0 proportion decay of state vars between minus and plus phases 
   float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
 
   float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua
@@ -179,8 +178,8 @@ class E_API LeabraDelInhib : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable delayed inhibition 
-  float		prv_trl;	// #CONDSHOW_ON_on proportion of per-unit net input on previous trial to add in as inhibition on this trial
-  float		prv_phs;	// #CONDSHOW_ON_on proportion of per-unit net input on previous phase to add in as inhibition on this phase
+  float		prv_trl;	// #CONDSHOW_ON_on proportion of per-unit net input on previous trial to add in as inhibition 
+  float		prv_q;	        // #CONDSHOW_ON_on proportion of per-unit net input on previous gamma-frequency quarter to add in as inhibition 
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
@@ -265,7 +264,7 @@ public:
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
 
   ///////////////////////////////////////////////////////////////////////
-  //	TrialInit -- at start of trial
+  //	Trial_Init -- at start of trial
 
   virtual void	Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning initialize specs and specs update network flags
@@ -278,14 +277,14 @@ public:
     // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL) -- calls unit-level function of same name
 
   ///////////////////////////////////////////////////////////////////////
-  //	SettleInit -- at start of settling
+  //	Quarter_Init -- at start of settling
 
-  virtual void	Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Settle_Init_Units call
+  virtual void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Quarter_Init_Units call
 
-  virtual void	Settle_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Quarter_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
-    virtual void Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
     // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
   virtual void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation prior to settling: hard-clamp inputs
@@ -365,59 +364,29 @@ public:
     // #CAT_Statistic compute unit inhibition AvgMaxVals (un_g_i)
 
   ///////////////////////////////////////////////////////////////////////
-  //	Cycle Optional Misc
+  //	Quarter_Final
 
-  virtual void	Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation do special processing midway through the minus phase, as determined by the mid_minus_cycle parameter, if > 0 -- currently used for the PBWM and Hippocampus algorithms -- stores act_mid
-
-  ///////////////////////////////////////////////////////////////////////
-  //	SettleFinal
-
-  virtual void	PostSettle_Pre(LeabraLayer* lay, LeabraNetwork* net) { };
-  // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final PostSettle -- use this for anything that needs to happen prior to the standard PostSettle across layers (called by Settle_Final)
-  virtual void	PostSettle(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Quarter_Final_Pre(LeabraLayer* lay, LeabraNetwork* net) { };
+  // #CAT_Activation perform computations in layers at end of settling -- this is a pre-stage that occurs prior to final Quarter_Final -- use this for anything that needs to happen prior to the standard Quarter_Final across layers (called by network Quarter_Final)
+  virtual void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation after settling, keep track of phase variables, etc.
-    virtual void PostSettle_GetMinus(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get minus phase act stats
-    virtual void PostSettle_GetPlus(LeabraLayer* lay, LeabraNetwork* net);
+    virtual void Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get plus phase act stats
 
   virtual void	Compute_ActM_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used
   virtual void	Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_p AvgMaxVals from act_p -- not currently used
-  virtual void	Compute_ActCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute acts_ctxt AvgMaxVals from act_ctxt
-
-  ///////////////////////////////////////////////////////////////////////
-  //	LeabraTI
-
-  virtual bool  TI_UpdateContextTest(LeabraLayer* lay, LeabraNetwork* net)
-  { return true; }
-  // #CAT_TI test whether TI context should be updated for this layer or not
-  virtual void  TI_Compute_Deep5bAct(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_TI compute CIFER deep 5b activation from thal and act_p
-  virtual void  TI_Compute_CtxtAct(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_TI compute TI context activation -- act_ctxt from net_ctxt
-  virtual void  TI_ClearContext(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_TI clear the act_ctxt and net_ctxt context variables -- can be useful to do at clear discontinuities of experience
-
-  ///////////////////////////////////////////////////////////////////////
-  //	TrialFinal
-
-  virtual void	EncodeState(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning encode final state information at end of trial for time-based learning across trials
-  virtual void	Compute_SelfReg_Trial(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation update self-regulation (accommodation, hysteresis) at end of trial
+  virtual void	Compute_NetCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute nets_ctxt AvgMaxVals from net_ctxt
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
 
   virtual void	Compute_dWt_Layer_pre(LeabraLayer* lay, LeabraNetwork* net) { };
   // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
-
-  virtual bool	Compute_dWt_Test(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Learning test whether to compute weight changes -- layers can opt out of learning entirely if they automatically don't learn
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial-level Stats
@@ -440,11 +409,11 @@ public:
   // #CAT_Statistic compute cosine (normalized dot product) of target compared to act_m over the layer -- n_vals is number of units contributing
 
   virtual float  Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  // #CAT_Statistic compute cosine (normalized dot product) of phase activation difference in this layer: act_p compared to act_m -- must be called after Quarter_Final for plus phase to get the act_p values
   virtual float  Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
+  // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Statistic compute cosine (normalized dot product) of trail activation difference in this layer: act_p compared to p_act_p -- must be called after PostSettle (SettleFinal) for plus phase to get the act_p values
+  // #CAT_Statistic compute cosine (normalized dot product) of trial activation difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
 
   virtual void	Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer

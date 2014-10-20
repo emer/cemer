@@ -1,0 +1,374 @@
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7644
+Program .projects[0].programs.gp[0][4] { 
+ ProgObjList @.objs = [0] {
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ ProgVar_List @.vars = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ Function_List @.functions = [0] {
+ };
+
+ ProgEl_List @.init_code = [1] {
+  NetCounterInit @[0] { };
+ };
+
+ ProgEl_List @.prog_code = [10] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [2] {
+    ProgVar @[0] { };
+    ProgVar @[1] { };
+   };
+  };
+  NetCounterInit @[1] { };
+  MethodCall @[2] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  ProgramCall @[3] { 
+   ProgArg_List @.prog_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+  MethodCall @[4] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  MethodCall @[5] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  ForLoop @[6] { 
+   ProgEl_List @.loop_code = [2] {
+    ProgramCall @[0] { 
+     ProgArg_List @.prog_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    AssignExpr @[1] { };
+   };
+  };
+  MethodCall @[7] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  MethodCall @[8] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  NetUpdateView @[9] { };
+ };
+};
+Program .projects[0].programs.gp[0][4] {
+ name="LeabraQuarter";
+ short_nm="Quarter";
+ tags="Leabra, Std";
+ desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+ flags=0;
+ objs {
+  name="objs";
+  el_typ=taNBase;
+  el_def=0;
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="network";
+   var_type=T_Object;
+   object_type=LeabraNetwork;
+   object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
+   objs_ptr=0;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="input_data";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
+   objs_ptr=0;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="cycle";
+   var_type=T_Int;
+   int_val=25;
+   objs_ptr=0;
+   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="current cycle of settling (local loop counter)";
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="update_net_view";
+   var_type=T_Bool;
+   bool_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc="if true, will update network views at end of settling";
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+  NetCounterInit @[0] {
+   desc="initialize local cycle counter and corresponding counter on network";
+   flags=0;
+   orig_prog_code=;
+   network_var=.projects[0].programs.gp[0][4].args[0]$$;
+   local_ctr_var=.projects[0].programs.gp[0][4].vars[0]$$;
+   counter=Network::cycle;
+   update_after=0;
+  };
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=0;
+   orig_prog_code=;
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="cycle_max";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @[1] {
+     name="cyc";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+  };
+  NetCounterInit @[1] {
+   desc="initialize local cycle counter and corresponding counter on network";
+   flags=0;
+   orig_prog_code=;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
+   counter=Network::cycle;
+   update_after=0;
+  };
+  MethodCall @[2] {
+   desc="resets input data, before getting new external inputs data from apply inputs call";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=Network::Init_InputData;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Init_InputData()";
+   meth_desc=" Initializes external and target inputs";
+  };
+  ProgramCall @[3] {
+   desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+   flags=0;
+   orig_prog_code=;
+   prog_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Network;
+     type="LeabraNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="network";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type="DataTable*";
+     name="input_data";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="input_data";
+     };
+    };
+   };
+   target=.projects[0].programs.gp[0][6]$$<Program,ApplyInputs>;
+   targ_ld_init="*ApplyInputs*";
+  };
+  MethodCall @[4] {
+   desc="initializes various counters at start of settling";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=LeabraNetwork::Quarter_Init;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Quarter_Init()";
+   meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
+  };
+  MethodCall @[5] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   orig_prog_code="cycle_max = network.CycleRunMax()";
+   result_var=.projects[0].programs.gp[0][4].prog_code[0].local_vars[0]$$;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=LeabraNetwork::CycleRunMax;
+   meth_args {
+    name="meth_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="int CycleRunMax()";
+   meth_desc=" max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set";
+  };
+  ForLoop @[6] {
+   desc="// the main loop over cycles of updating";
+   flags=0;
+   orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
+   loop_code {
+    name="loop_code";
+    el_typ=ProgCode;
+    el_def=0;
+    ProgramCall @[0] {
+     desc="run the cycle program -- can run multiple cycles at a time due to threading";
+     flags=0;
+     orig_prog_code=;
+     prog_args {
+      name="prog_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="network";
+       };
+      };
+     };
+     target=.projects[0].programs.gp[0][5]$$<Program,LeabraCycle>;
+     targ_ld_init="*LeabraCycle*";
+    };
+    AssignExpr @[1] {
+     desc="grab the updated cycle count";
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="cycle = network.cycle";
+     result_var=$.projects[0].programs.gp[0][4].vars[0]$;
+     expr {
+      expr="network.cycle";
+     };
+    };
+   };
+   init {
+    expr="cyc=0";
+   };
+   test {
+    expr="cyc<cycle_max";
+   };
+   iter {
+    expr="cyc++";
+   };
+  };
+  MethodCall @[7] {
+   desc="perform final operations at end of settling (storing final activations, etc)";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=LeabraNetwork::Quarter_Final;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Quarter_Final()";
+   meth_desc=" do final processing after each quarter: ";
+  };
+  MethodCall @[8] {
+   desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][4].args[0]$;
+   method=LeabraNetwork::Compute_PhaseStats;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Compute_PhaseStats()";
+   meth_desc=" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case";
+  };
+  NetUpdateView @[9] {
+   desc="update network views, if update_net_view == true";
+   flags=0;
+   orig_prog_code=;
+   network_var=$.projects[0].programs.gp[0][4].args[0]$;
+   update_var=.projects[0].programs.gp[0][4].vars[1]$$;
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};

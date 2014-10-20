@@ -504,7 +504,7 @@ void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_HardClamp(lay, net);
 }
 
-void TwoDValLayerSpec::Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
                                                        Layer::AccessMode acc_md, int gpidx,
                                                        LeabraNetwork* net) {
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
@@ -518,20 +518,20 @@ void TwoDValLayerSpec::Settle_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
 }
 
 
-void TwoDValLayerSpec::Settle_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_TargFlags_Layer(lay, net);
+void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Init_TargFlags_Layer(lay, net);
   // need to actually copy over targ to ext vals!
   TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
   if(lay->HasExtFlag(Unit::TARG)) {     // only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      UNIT_GP_ITR(lay, Settle_Init_TargFlags_Layer_ugp(tdlay, acc_md, gpidx, net); );
+      UNIT_GP_ITR(lay, Quarter_Init_TargFlags_Layer_ugp(tdlay, acc_md, gpidx, net); );
     }
   }
 }
 
 
-void TwoDValLayerSpec::Settle_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Settle_Init_Layer(lay, net);
+void TwoDValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Init_Layer(lay, net);
 
   TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
   tdlay->UpdateTwoDValsGeom();  // quick, make sure no mismatch
@@ -570,18 +570,16 @@ void TwoDValLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, 
   ReadValue((TwoDValLeabraLayer*)lay, net);             // always read out the value
 }
 
-void TwoDValLayerSpec::PostSettle(LeabraLayer* ly, LeabraNetwork* net) {
-  inherited::PostSettle(ly, net);
+void TwoDValLayerSpec::Quarter_Final_Layer(LeabraLayer* ly, LeabraNetwork* net) {
+  inherited::Quarter_Final_Layer(ly, net);
   TwoDValLeabraLayer* lay = (TwoDValLeabraLayer*)ly;
-  UNIT_GP_ITR(lay, PostSettle_ugp(lay, acc_md, gpidx, net); );
+  UNIT_GP_ITR(lay, Quarter_Final_ugp(lay, acc_md, gpidx, net); );
 }
 
-void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
+void TwoDValLayerSpec::Quarter_Final_ugp(TwoDValLeabraLayer* lay,
                                       Layer::AccessMode acc_md, int gpidx,
                                       LeabraNetwork* net) {
   taVector2i gp_geom_pos = lay->UnitGpPosFmIdx(gpidx);
-
-  bool no_plus_testing = net->IsNoPlusTesting();
 
   for(int k=0;k<twod.n_vals;k++) {
     float x_val, y_val, x_m, y_m, x_p, y_p;
@@ -592,33 +590,16 @@ void TwoDValLayerSpec::PostSettle_ugp(TwoDValLeabraLayer* lay,
     lay->GetTwoDVals(x_p, y_p, TwoDValLeabraLayer::TWOD_ACT_P,
                      k, gp_geom_pos.x, gp_geom_pos.y);
 
-    if(net->phases.minus > 0) {
-      if(no_plus_testing) {
-        lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
-                         k, gp_geom_pos.x, gp_geom_pos.y);
-        lay->SetTwoDVals(0.0f, 0.0f, TwoDValLeabraLayer::TWOD_ACT_DIF,
-                        k, gp_geom_pos.x, gp_geom_pos.y);
-      }
-      else {
-        if(net->phase == LeabraNetwork::MINUS_PHASE) {
-          lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
-                          k, gp_geom_pos.x, gp_geom_pos.y);
-        }
-        else {
-          lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
-                          k, gp_geom_pos.x, gp_geom_pos.y);
-          lay->SetTwoDVals(x_val - x_m, y_val - y_m, TwoDValLeabraLayer::TWOD_ACT_DIF,
-                          k, gp_geom_pos.x, gp_geom_pos.y);
-        }
-      }
-    }
-    else { // plus only
+    // todo: fix this!
+    if(net->phase == LeabraNetwork::MINUS_PHASE) {
       lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_M,
-                      k, gp_geom_pos.x, gp_geom_pos.y);
+                       k, gp_geom_pos.x, gp_geom_pos.y);
+    }
+    else {
       lay->SetTwoDVals(x_val, y_val, TwoDValLeabraLayer::TWOD_ACT_P,
-                      k, gp_geom_pos.x, gp_geom_pos.y);
-      lay->SetTwoDVals(0.0f, 0.0f, TwoDValLeabraLayer::TWOD_ACT_DIF,
-                      k, gp_geom_pos.x, gp_geom_pos.y);
+                       k, gp_geom_pos.x, gp_geom_pos.y);
+      lay->SetTwoDVals(x_val - x_m, y_val - y_m, TwoDValLeabraLayer::TWOD_ACT_DIF,
+                       k, gp_geom_pos.x, gp_geom_pos.y);
     }
   }
 }

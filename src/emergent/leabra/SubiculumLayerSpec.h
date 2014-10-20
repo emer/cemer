@@ -76,11 +76,11 @@ public:
   virtual void 	Compute_ECNovelty(LeabraLayer* lay, LeabraNetwork* net);
   // compute novelty based on EC_in vs. out discrepancy -- sets USER_DATA values on layer to reflect norm_err, novelty value, and lrate, and activation in layer is always clamped scalar val to reflect novelty
   virtual void 	Compute_SetLrate(LeabraLayer* lay, LeabraNetwork* net);
-  // set the learning rate for conspec according to final novelty computed value -- called in PostSettle
+  // set the learning rate for conspec according to final novelty computed value -- called in Quarter_Final
 
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
-  void	PostSettle(LeabraLayer* lay, LeabraNetwork* net) override;
+  void Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(SubiculumLayerSpec);
 protected:

@@ -30,7 +30,7 @@ class E_API VSPatchUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
 
-  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
+  void	Quarter_Final(LeabraUnit* u, LeabraNetwork* net) override;
 
   TA_SIMPLE_BASEFUNS(VSPatchUnitSpec);
 protected:

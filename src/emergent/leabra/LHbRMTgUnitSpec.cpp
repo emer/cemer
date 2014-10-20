@@ -190,13 +190,10 @@ void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int th
   pv_pos_net = MAX(0.0f, pv_pos_net);
 
   u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
-
-  u->net_delta = 0.0f;  // clear for next use
-  u->gi_delta = 0.0f;  // clear for next use
 }
 
-void LHbRMTgUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::PostSettle(u, net);
+void LHbRMTgUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::Quarter_Final(u, net);
   if(gains.matrix_td) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       float matrix_ind = 0.0f;

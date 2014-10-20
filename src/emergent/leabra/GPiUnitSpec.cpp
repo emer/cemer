@@ -101,9 +101,6 @@ void GPiUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread
   gpi_net = gpi.tot_gain * (go_in - gpi.nogo * nogo_in);
   gpi_net = MAX(gpi_net, 0.0f);
   u->net_raw = gpi_net;
-
-  u->net_delta = 0.0f;  // clear for next use
-  u->gi_delta = 0.0f;  // clear for next use
 }
 
 void GPiUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {

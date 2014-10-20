@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7644
 Program .projects[0].programs.gp[0][3] { 
  ProgObjList @.objs = [0] {
  };
@@ -11,49 +11,46 @@ Program .projects[0].programs.gp[0][3] {
   ProgVar @[1] { };
  };
 
- ProgVar_List @.vars = [2] {
+ ProgVar_List @.vars = [1] {
   ProgVar @[0] { };
-  ProgVar @[1] { };
  };
 
  Function_List @.functions = [0] {
  };
 
- ProgEl_List @.init_code = [1] {
-  NetCounterInit @[0] { };
+ ProgEl_List @.init_code = [0] {
  };
 
  ProgEl_List @.prog_code = [7] {
-  NetCounterInit @[0] { };
-  MethodCall @[1] { 
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [1] {
+    ProgVar @[0] { };
+   };
+  };
+  If @[1] { 
+   ProgEl_List @.true_code = [1] {
+    MethodCall @[0] { 
+     ProgArg_List @.meth_args = [0] {
+     };
+    };
+   };
+  };
+  MethodCall @[2] { 
    ProgArg_List @.meth_args = [0] {
    };
   };
-  WhileLoop @[2] { 
-   ProgEl_List @.loop_code = [3] {
+  ForLoop @[3] { 
+   ProgEl_List @.loop_code = [1] {
     ProgramCall @[0] { 
      ProgArg_List @.prog_args = [2] {
       ProgArg @[0] { };
       ProgArg @[1] { };
      };
     };
-    NetCounterIncr @[1] { };
-    MethodCall @[2] { 
-     ProgArg_List @.meth_args = [0] {
-     };
-    };
    };
   };
-  MethodCall @[3] { 
+  MethodCall @[4] { 
    ProgArg_List @.meth_args = [0] {
-   };
-  };
-  If @[4] { 
-   ProgEl_List @.true_code = [1] {
-    MethodCall @[0] { 
-     ProgArg_List @.meth_args = [0] {
-     };
-    };
    };
   };
   ProgramCall @[5] { 
@@ -68,7 +65,7 @@ Program .projects[0].programs.gp[0][3] {
  name="LeabraTrial";
  short_nm="Trial";
  tags="Leabra, Std";
- desc="Leabra processing of a single input/toutput event or external information: typically runs a minus and a plus phase, then learns (unless testing)";
+ desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
  flags=0;
  objs {
   name="objs";
@@ -90,7 +87,7 @@ Program .projects[0].programs.gp[0][3] {
    object_type=LeabraNetwork;
    object_val=.projects[0].networks[0]$$<LeabraNetwork,Network_0>;
    objs_ptr=0;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to operate on -- typically set by higher-level calling programs";
    init_from=NULL;
@@ -101,7 +98,7 @@ Program .projects[0].programs.gp[0][3] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="datatable containing training input/output patterns";
    init_from=NULL;
@@ -112,16 +109,6 @@ Program .projects[0].programs.gp[0][3] {
   el_typ=ProgVar;
   el_def=0;
   ProgVar @[0] {
-   name="phase_no";
-   var_type=T_Int;
-   int_val=0;
-   objs_ptr=0;
-   flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-   reference=0;
-   desc="local phase counting variable (0 is typically minus phase, 1 is typically plus -- depends on network settings)";
-   init_from=NULL;
-  };
-  ProgVar @[1] {
    name="update_net_view";
    var_type=T_Bool;
    bool_val=0;
@@ -141,123 +128,32 @@ Program .projects[0].programs.gp[0][3] {
   name="init_code";
   el_typ=ProgCode;
   el_def=0;
-  NetCounterInit @[0] {
-   desc="initialize the local phase_no counter, and corresponding network one";
-   flags=0;
-   orig_prog_code=;
-   network_var=.projects[0].programs.gp[0][3].args[0]$$;
-   local_ctr_var=.projects[0].programs.gp[0][3].vars[0]$$;
-   counter=LeabraNetwork::phase_no;
-   update_after=0;
-  };
  };
  prog_code {
   name="prog_code";
   el_typ=ProgCode;
   el_def=0;
-  NetCounterInit @[0] {
-   desc="initialize the local phase_no counter, and corresponding network one";
+  LocalVars @[0] {
+   desc=;
    flags=0;
    orig_prog_code=;
-   network_var=$.projects[0].programs.gp[0][3].args[0]$;
-   local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
-   counter=LeabraNetwork::phase_no;
-   update_after=0;
-  };
-  MethodCall @[1] {
-   desc="initializes various counters at start of trial";
-   flags=0;
-   orig_prog_code=;
-   result_var=NULL;
-   obj=$.projects[0].programs.gp[0][3].args[0]$;
-   method=LeabraNetwork::Trial_Init;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
+   local_vars {
+    name="local_vars";
+    el_typ=ProgVar;
     el_def=0;
-   };
-  };
-  WhileLoop @[2] {
-   desc="loop over phases of settling in the network";
-   flags=0;
-   orig_prog_code=;
-   loop_code {
-    name=;
-    el_typ=ProgCode;
-    el_def=0;
-    ProgramCall @[0] {
-     desc="run the settle program (which iterates over cyles of network activation updating) for each phase";
-     flags=0;
-     orig_prog_code=;
-     prog_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=LeabraNetwork;
-       type="LeabraNetwork*";
-       name="network";
-       required=1;
-       def_val=;
-       expr {
-	expr="network";
-       };
-      };
-      ProgArg @[1] {
-       arg_type=DataTable;
-       type="DataTable*";
-       name="input_data";
-       required=1;
-       def_val=;
-       expr {
-	expr="input_data";
-       };
-      };
-     };
-     target=.projects[0].programs.gp[0][4]$$<Program,LeabraSettle>;
-     targ_ld_init="*LeabraSettle*";
-    };
-    NetCounterIncr @[1] {
-     desc="increment the phase number (also on network)";
-     flags=0;
-     orig_prog_code=;
-     network_var=$.projects[0].programs.gp[0][3].args[0]$;
-     local_ctr_var=$.projects[0].programs.gp[0][3].vars[0]$;
-     counter=LeabraNetwork::phase_no;
-     update_after=0;
-    };
-    MethodCall @[2] {
-     desc="increments other phase state information to prepare for the next phase of settling";
-     flags=0;
-     orig_prog_code=;
-     result_var=NULL;
-     obj=$.projects[0].programs.gp[0][3].args[0]$;
-     method=LeabraNetwork::Trial_UpdatePhase;
-     meth_args {
-      name=;
-      el_typ=ProgArg;
-      el_def=0;
-     };
+    ProgVar @[0] {
+     name="qtr";
+     var_type=T_Int;
+     int_val=0;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
     };
    };
-   test {
-    expr="phase_no < network.phase_max";
-   };
   };
-  MethodCall @[3] {
-   desc="after the trial is over, do final computations: Compute_dWt (learn weights), compute stats";
-   flags=0;
-   orig_prog_code=;
-   result_var=NULL;
-   obj=$.projects[0].programs.gp[0][3].args[0]$;
-   method=LeabraNetwork::Trial_Final;
-   meth_args {
-    name=;
-    el_typ=ProgArg;
-    el_def=0;
-   };
-  };
-  If @[4] {
+  If @[1] {
    desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
    flags=0;
    orig_prog_code=;
@@ -269,19 +165,104 @@ Program .projects[0].programs.gp[0][3] {
     el_typ=ProgCode;
     el_def=0;
     MethodCall @[0] {
-     desc="update the weight values based on changes computed by trial program";
+     desc="update weights -- do this at start instead of end, so that dwt is valid";
      flags=0;
      orig_prog_code=;
      result_var=NULL;
-     obj=$.projects[0].programs.gp[0][3].args[0]$;
+     obj=.projects[0].programs.gp[0][3].args[0]$$;
      method=Network::Compute_Weights;
      meth_args {
       name=;
       el_typ=ProgArg;
       el_def=0;
      };
+     meth_sig="void Compute_Weights()";
+     meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
     };
    };
+  };
+  MethodCall @[2] {
+   desc="initializes various counters at start of trial";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
+   method=LeabraNetwork::Trial_Init;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Trial_Init()";
+   meth_desc=" initialize at start of trial (init specs, Decay state)";
+  };
+  ForLoop @[3] {
+   desc=;
+   flags=0;
+   orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
+   loop_code {
+    name="loop_code";
+    el_typ=ProgCode;
+    el_def=0;
+    ProgramCall @[0] {
+     desc="run the quarter program (which iterates over cyles of network activation updating) for each quarter";
+     flags=0;
+     orig_prog_code=;
+     prog_args {
+      name="prog_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=LeabraNetwork;
+       type="LeabraNetwork*";
+       name="network";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="network";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=DataTable;
+       type="DataTable*";
+       name="input_data";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="input_data";
+       };
+      };
+     };
+     target=.projects[0].programs.gp[0][4]$$<Program,LeabraQuarter>;
+     targ_ld_init="*LeabraQuarter*";
+    };
+   };
+   init {
+    expr="qtr = 0";
+   };
+   test {
+    expr="qtr < 4";
+   };
+   iter {
+    expr="qtr++";
+   };
+  };
+  MethodCall @[4] {
+   desc="after the trial is over, do final computations";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
+   method=LeabraNetwork::Trial_Final;
+   meth_args {
+    name=;
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Trial_Final()";
+   meth_desc=" do final processing after trial: Compute_AbsRelNetin";
   };
   ProgramCall @[5] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
@@ -297,6 +278,7 @@ Program .projects[0].programs.gp[0][3] {
      name="network";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="network";
      };
@@ -310,9 +292,9 @@ Program .projects[0].programs.gp[0][3] {
    flags=0;
    orig_prog_code=;
    network_var=$.projects[0].programs.gp[0][3].args[0]$;
-   update_var=.projects[0].programs.gp[0][3].vars[1]$$;
+   update_var=.projects[0].programs.gp[0][3].vars[0]$$;
   };
  };
- step_prog=NULL;
+ step_prog=.projects[0].programs.gp[0][5]$$<Program,LeabraCycle>;
  step_n=1;
 };

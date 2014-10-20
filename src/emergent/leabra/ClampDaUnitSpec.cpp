@@ -46,8 +46,8 @@ void ClampDaUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   }
 }
 
-void ClampDaUnitSpec::PostSettle(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::PostSettle(u, net);
+void ClampDaUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::Quarter_Final(u, net);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
     Send_Da(u, net);
   }

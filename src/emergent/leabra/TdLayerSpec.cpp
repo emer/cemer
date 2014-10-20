@@ -151,7 +151,7 @@ void TdLayerSpec::Compute_Td(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraTdUnit, u, lay->units) {
     u->dav = su->act_eq - su->act_m; // subtract current minus previous!
     u->ext = u->dav;
-    u->act_lrn = u->act_eq = u->act_nd = u->act = u->net = u->ext;
+    u->act_eq = u->act_nd = u->act = u->net = u->ext;
     lay->dav += u->dav;
   }
   if(lay->units.leaves > 0) lay->dav /= (float)lay->units.leaves;
@@ -178,7 +178,7 @@ void TdLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int t
 }
 
 void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0) {
+  if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->hard_clamped = true;
     lay->SetExtFlag(Unit::EXT);
     lay->Inhib_SetVals(0.5f); // assume 0 - 1 clamped inputs

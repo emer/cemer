@@ -34,7 +34,7 @@ set(leabra_HEADS_MAKETA
 
   LeabraWizard.h
 
-  LeabraTICtxtLayerSpec.h
+  Deep5bLayerSpec.h
   LeabraTICtxtConSpec.h
   Deep5bConSpec.h
   ThalUnitSpec.h
@@ -150,7 +150,7 @@ set(leabra_SRCS
 
   LeabraWizard.cpp
 
-  LeabraTICtxtLayerSpec.cpp
+  Deep5bLayerSpec.cpp
   LeabraTICtxtConSpec.cpp
   Deep5bConSpec.cpp
   ThalUnitSpec.cpp

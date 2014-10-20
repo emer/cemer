@@ -42,7 +42,7 @@ void TDRewPredLayerSpec::HelpConfig() {
  Computes expected rewards according to the TD algorithm: predicts V(t+1) at time t. \n\
  - Minus phase = previous expected reward V^(t) clamped\
  - Plus phase = free-running expected reward computed (over settlng, fm recv wts)\n\
- - Learning is (act_p - act_m) * p_act_p: delta on recv units times sender activations at (t-1).\n\
+ - Learning is (act_p - act_m) * act_q0: delta on recv units times sender activations at (t-1).\n\
  \nTDRewPredLayerSpec Configuration:\n\
  - All units I recv from must be LeabraTdUnit/Spec units (to hold t-1 act vals)\n\
  - Sending connection to a TDRewIntegLayerSpec to integrate predictions with external rewards";
@@ -147,15 +147,15 @@ void TDRewPredLayerSpec::Compute_TdPlusPhase(LeabraLayer* lay, LeabraNetwork* ne
   UNIT_GP_ITR(lay, Compute_TdPlusPhase_ugp(lay, acc_md, gpidx, net); );
 }
 
-void TDRewPredLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
-  if(net->phase_no < net->phase_max-1)
+void TDRewPredLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Final_Layer(lay, net);
+  if(net->quarter < 3)
     return; // only at very last phase, do this!  see note on Compute_dWt as to why..
   Compute_TdPlusPhase(lay, net);
 }
 
 void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase_no == 0) {
+  if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->SetExtFlag(Unit::EXT);
     Compute_ClampPrev(lay, net);
     HardClampExt(lay, net);

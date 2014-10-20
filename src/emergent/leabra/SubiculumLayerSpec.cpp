@@ -196,8 +196,8 @@ void SubiculumLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net
   inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
-void SubiculumLayerSpec::PostSettle(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::PostSettle(lay, net);
+void SubiculumLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) {
+  inherited::Quarter_Final_Layer(lay, net);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     Compute_SetLrate(lay, net);
   }

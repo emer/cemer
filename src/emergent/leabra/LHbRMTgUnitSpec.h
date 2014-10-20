@@ -56,7 +56,7 @@ public:
   LHbRMTgGains   gains;         // gain parameters (multiplicative constants) for various sources of inputs
 
   void	Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override;
-  void	PostSettle(LeabraUnit* u, LeabraNetwork* net) override;
+  void	Quarter_Final(LeabraUnit* u, LeabraNetwork* net) override;
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec

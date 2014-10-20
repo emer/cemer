@@ -26,8 +26,7 @@ void LeabraTdUnitSpec::Initialize() {
 void LeabraTdUnitSpec::Init_Acts(Unit* u, Network* net) {
   inherited::Init_Acts(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
-  lu->p_act_m = -.01f;
-  lu->p_act_p = -.01f;
+  lu->act_q0 = -.01f;
 }
 
 void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
@@ -35,10 +34,8 @@ void LeabraTdUnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
   ((LeabraTdUnit*)u)->trace = 0.0f;
 }
 
-void LeabraTdUnitSpec::EncodeState(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::EncodeState(u, net);
+void LeabraTdUnitSpec::Trial_Init_PrvVals(LeabraUnit* u, LeabraNetwork* net) {
+  inherited::Trial_Init_PrvVals(u, net);
   LeabraTdUnit* lu = (LeabraTdUnit*)u;
-  lu->p_act_p = lu->act_p;
-  lu->p_act_m = lu->act_m;
-  lu->trace = lambda * lu->trace + lu->p_act_p;
+  lu->trace = lambda * lu->trace + lu->act_q0;
 }
