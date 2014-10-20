@@ -216,6 +216,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
     }
   }
 
+  //  cur_row = 0;
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
@@ -237,6 +238,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
         }
       }
       ++itm_idx;
+//      cur_row++;
     }
   }
 }
@@ -253,7 +255,7 @@ void taiEditorOfControlPanelFull::GetValue_Membs_def() {
       }
     }
   }
-
+  
   int itm_idx = 0;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);

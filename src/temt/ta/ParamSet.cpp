@@ -42,3 +42,15 @@ void ParamSet::CopySavedToActive() {
     edit_mbr->UpdateAfterEdit();
   }
 }
+
+bool ParamSet::ActiveEqualsSaved(String member_name) {
+  bool rval = false;
+  EditMbrItem* emi = mbrs.FindName(member_name);
+  if (emi) {
+    String active_value = emi->mbr->GetValStr(emi->base);
+    String saved_value = emi->param_set_value.saved_value;
+    if (active_value == saved_value)
+      rval = true;
+  }
+  return rval;
+}
