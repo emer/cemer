@@ -23,34 +23,33 @@ Program .projects[0].programs.gp[0][4] {
   NetCounterInit @[0] { };
  };
 
- ProgEl_List @.prog_code = [11] {
+ ProgEl_List @.prog_code = [10] {
   LocalVars @[0] { 
    ProgVar_List @.local_vars = [2] {
     ProgVar @[0] { };
     ProgVar @[1] { };
    };
   };
-  NetCounterInit @[1] { };
-  Comment @[2] { };
-  MethodCall @[3] { 
+  Comment @[1] { };
+  MethodCall @[2] { 
    ProgArg_List @.meth_args = [0] {
    };
   };
-  ProgramCall @[4] { 
+  ProgramCall @[3] { 
    ProgArg_List @.prog_args = [2] {
     ProgArg @[0] { };
     ProgArg @[1] { };
+   };
+  };
+  MethodCall @[4] { 
+   ProgArg_List @.meth_args = [0] {
    };
   };
   MethodCall @[5] { 
    ProgArg_List @.meth_args = [0] {
    };
   };
-  MethodCall @[6] { 
-   ProgArg_List @.meth_args = [0] {
-   };
-  };
-  ForLoop @[7] { 
+  ForLoop @[6] { 
    ProgEl_List @.loop_code = [2] {
     ProgramCall @[0] { 
      ProgArg_List @.prog_args = [1] {
@@ -60,15 +59,15 @@ Program .projects[0].programs.gp[0][4] {
     AssignExpr @[1] { };
    };
   };
+  MethodCall @[7] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
   MethodCall @[8] { 
    ProgArg_List @.meth_args = [0] {
    };
   };
-  MethodCall @[9] { 
-   ProgArg_List @.meth_args = [0] {
-   };
-  };
-  NetUpdateView @[10] { };
+  NetUpdateView @[9] { };
  };
 };
 Program .projects[0].programs.gp[0][4] {
@@ -108,7 +107,7 @@ Program .projects[0].programs.gp[0][4] {
    object_type=DataTable;
    object_val=.projects[0].data.gp[0][0]$$<DataTable,StdInputData>;
    objs_ptr=0;
-   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   flags=NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc=;
    init_from=NULL;
@@ -192,21 +191,12 @@ Program .projects[0].programs.gp[0][4] {
     };
    };
   };
-  NetCounterInit @[1] {
-   desc="initialize local cycle counter and corresponding counter on network";
-   flags=0;
-   orig_prog_code=;
-   network_var=$.projects[0].programs.gp[0][4].args[0]$;
-   local_ctr_var=$.projects[0].programs.gp[0][4].vars[0]$;
-   counter=Network::cycle;
-   update_after=0;
-  };
-  Comment @[2] {
+  Comment @[1] {
    desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
    flags=CAN_REVERT_TO_CODE;
    orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
   };
-  MethodCall @[3] {
+  MethodCall @[2] {
    desc="resets input data, before getting new external inputs data from apply inputs call";
    flags=OFF;
    orig_prog_code=;
@@ -221,7 +211,7 @@ Program .projects[0].programs.gp[0][4] {
    meth_sig="void Init_InputData()";
    meth_desc=" Initializes external and target inputs";
   };
-  ProgramCall @[4] {
+  ProgramCall @[3] {
    desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
    flags=OFF;
@@ -256,7 +246,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    target=.projects[0].programs.gp[0][6]$$<Program,ApplyInputs>;
    targ_ld_init="*ApplyInputs*";
   };
-  MethodCall @[5] {
+  MethodCall @[4] {
    desc="initializes various counters at start of settling";
    flags=0;
    orig_prog_code=;
@@ -271,7 +261,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_sig="void Quarter_Init()";
    meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
   };
-  MethodCall @[6] {
+  MethodCall @[5] {
    desc=;
    flags=CAN_REVERT_TO_CODE;
    orig_prog_code="cycle_max = network.CycleRunMax()";
@@ -286,7 +276,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_sig="int CycleRunMax()";
    meth_desc=" max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set";
   };
-  ForLoop @[7] {
+  ForLoop @[6] {
    desc="// the main loop over cycles of updating";
    flags=0;
    orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
@@ -337,7 +327,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     expr="cyc++";
    };
   };
-  MethodCall @[8] {
+  MethodCall @[7] {
    desc="perform final operations at end of settling (storing final activations, etc)";
    flags=0;
    orig_prog_code=;
@@ -352,7 +342,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_sig="void Quarter_Final()";
    meth_desc=" do final processing after each quarter: ";
   };
-  MethodCall @[9] {
+  MethodCall @[8] {
    desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
    flags=0;
    orig_prog_code=;
@@ -367,7 +357,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    meth_sig="void Compute_PhaseStats()";
    meth_desc=" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case";
   };
-  NetUpdateView @[10] {
+  NetUpdateView @[9] {
    desc="update network views, if update_net_view == true";
    flags=0;
    orig_prog_code=;
