@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7644
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   ProgObjList @.objs = [0] {
@@ -361,7 +361,7 @@ Program_Group .projects[0].programs.gp[0] {
   ProgEl_List @.init_code = [0] {
   };
 
-  ProgEl_List @.prog_code = [7] {
+  ProgEl_List @.prog_code = [10] {
    LocalVars @[0] { 
     ProgVar_List @.local_vars = [1] {
      ProgVar @[0] { };
@@ -379,7 +379,18 @@ Program_Group .projects[0].programs.gp[0] {
     ProgArg_List @.meth_args = [0] {
     };
    };
-   ForLoop @[3] { 
+   Comment @[3] { };
+   MethodCall @[4] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ProgramCall @[5] { 
+    ProgArg_List @.prog_args = [2] {
+     ProgArg @[0] { };
+     ProgArg @[1] { };
+    };
+   };
+   ForLoop @[6] { 
     ProgEl_List @.loop_code = [1] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [2] {
@@ -389,16 +400,16 @@ Program_Group .projects[0].programs.gp[0] {
      };
     };
    };
-   MethodCall @[4] { 
+   MethodCall @[7] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   ProgramCall @[5] { 
+   ProgramCall @[8] { 
     ProgArg_List @.prog_args = [1] {
      ProgArg @[0] { };
     };
    };
-   NetUpdateView @[6] { };
+   NetUpdateView @[9] { };
   };
  };
  Program @[4] { 
@@ -425,7 +436,7 @@ Program_Group .projects[0].programs.gp[0] {
    NetCounterInit @[0] { };
   };
 
-  ProgEl_List @.prog_code = [10] {
+  ProgEl_List @.prog_code = [11] {
    LocalVars @[0] { 
     ProgVar_List @.local_vars = [2] {
      ProgVar @[0] { };
@@ -433,25 +444,26 @@ Program_Group .projects[0].programs.gp[0] {
     };
    };
    NetCounterInit @[1] { };
-   MethodCall @[2] { 
+   Comment @[2] { };
+   MethodCall @[3] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   ProgramCall @[3] { 
+   ProgramCall @[4] { 
     ProgArg_List @.prog_args = [2] {
      ProgArg @[0] { };
      ProgArg @[1] { };
-    };
-   };
-   MethodCall @[4] { 
-    ProgArg_List @.meth_args = [0] {
     };
    };
    MethodCall @[5] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   ForLoop @[6] { 
+   MethodCall @[6] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   ForLoop @[7] { 
     ProgEl_List @.loop_code = [2] {
      ProgramCall @[0] { 
       ProgArg_List @.prog_args = [1] {
@@ -461,15 +473,15 @@ Program_Group .projects[0].programs.gp[0] {
      AssignExpr @[1] { };
     };
    };
-   MethodCall @[7] { 
-    ProgArg_List @.meth_args = [0] {
-    };
-   };
    MethodCall @[8] { 
     ProgArg_List @.meth_args = [0] {
     };
    };
-   NetUpdateView @[9] { };
+   MethodCall @[9] { 
+    ProgArg_List @.meth_args = [0] {
+    };
+   };
+   NetUpdateView @[10] { };
   };
  };
  Program @[5] { 
@@ -562,7 +574,7 @@ Program_Group .projects[0].programs.gp[0] {
  Program @[7] { 
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
-    NetMonItem_List @.items = [9] {
+    NetMonItem_List @.items = [8] {
      NetMonItem @[0] { };
      NetMonItem @[1] { };
      NetMonItem @[2] { };
@@ -571,7 +583,6 @@ Program_Group .projects[0].programs.gp[0] {
      NetMonItem @[5] { };
      NetMonItem @[6] { };
      NetMonItem @[7] { };
-     NetMonItem @[8] { };
     };
    };
   };
@@ -1283,7 +1294,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[1] {
     name="epoch";
     var_type=T_Int;
-    int_val=0;
+    int_val=18;
     objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -1357,7 +1368,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[8] {
     name="n_under_cnt";
     var_type=T_Int;
-    int_val=0;
+    int_val=2;
     objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -2058,7 +2069,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[1] {
     name="trial";
     var_type=T_Int;
-    int_val=0;
+    int_val=5;
     objs_ptr=0;
     flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -2100,7 +2111,7 @@ Program_Group .projects[0].programs.gp[0] {
    ProgVar @[5] {
     name="data_loop_index";
     var_type=T_Int;
-    int_val=0;
+    int_val=6;
     objs_ptr=0;
     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
     reference=0;
@@ -2494,7 +2505,62 @@ Program_Group .projects[0].programs.gp[0] {
     meth_sig="void Trial_Init()";
     meth_desc=" initialize at start of trial (init specs, Decay state)";
    };
-   ForLoop @[3] {
+   Comment @[3] {
+    desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    flags=CAN_REVERT_TO_CODE;
+    orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   };
+   MethodCall @[4] {
+    desc="resets input data, before getting new external inputs data from apply inputs call";
+    flags=0;
+    orig_prog_code=;
+    result_var=NULL;
+    obj=$.projects[0].programs.gp[0][3].args[0]$;
+    method=Network::Init_InputData;
+    meth_args {
+     name="meth_args";
+     el_typ=ProgArg;
+     el_def=0;
+    };
+    meth_sig="void Init_InputData()";
+    meth_desc=" Initializes external and target inputs";
+   };
+   ProgramCall @[5] {
+    desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+    flags=0;
+    orig_prog_code=;
+    prog_args {
+     name="prog_args";
+     el_typ=ProgArg;
+     el_def=0;
+     ProgArg @[0] {
+      arg_type=Network;
+      type="LeabraNetwork*";
+      name="network";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr="network";
+      };
+     };
+     ProgArg @[1] {
+      arg_type=DataTable;
+      type="DataTable*";
+      name="input_data";
+      required=1;
+      def_val=;
+      prev_expr=;
+      expr {
+       expr="input_data";
+      };
+     };
+    };
+    target=.projects[0].programs.gp[0][6]$$;
+    targ_ld_init="*ApplyInputs*";
+   };
+   ForLoop @[6] {
     desc=;
     flags=0;
     orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
@@ -2547,7 +2613,7 @@ Program_Group .projects[0].programs.gp[0] {
      expr="qtr++";
     };
    };
-   MethodCall @[4] {
+   MethodCall @[7] {
     desc="after the trial is over, do final computations";
     flags=0;
     orig_prog_code=;
@@ -2562,7 +2628,7 @@ Program_Group .projects[0].programs.gp[0] {
     meth_sig="void Trial_Final()";
     meth_desc=" do final processing after trial: Compute_AbsRelNetin";
    };
-   ProgramCall @[5] {
+   ProgramCall @[8] {
     desc="records data about the trial-level processing to a datatable for graphing/processing";
     flags=0;
     orig_prog_code=;
@@ -2585,7 +2651,7 @@ Program_Group .projects[0].programs.gp[0] {
     target=.projects[0].programs.gp[0][7]$$;
     targ_ld_init="*LeabraTrialMonitor*";
    };
-   NetUpdateView @[6] {
+   NetUpdateView @[9] {
     desc="update the network view(s) (only if update_net_view is true)";
     flags=0;
     orig_prog_code=;
@@ -2726,9 +2792,14 @@ Program_Group .projects[0].programs.gp[0] {
     counter=Network::cycle;
     update_after=0;
    };
-   MethodCall @[2] {
+   Comment @[2] {
+    desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+    flags=CAN_REVERT_TO_CODE;
+    orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   };
+   MethodCall @[3] {
     desc="resets input data, before getting new external inputs data from apply inputs call";
-    flags=0;
+    flags=OFF;
     orig_prog_code=;
     result_var=NULL;
     obj=$.projects[0].programs.gp[0][4].args[0]$;
@@ -2741,10 +2812,10 @@ Program_Group .projects[0].programs.gp[0] {
     meth_sig="void Init_InputData()";
     meth_desc=" Initializes external and target inputs";
    };
-   ProgramCall @[3] {
+   ProgramCall @[4] {
     desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-    flags=0;
+    flags=OFF;
     orig_prog_code=;
     prog_args {
      name=;
@@ -2773,10 +2844,10 @@ this program can be extended to do arbitrary things to generate data and apply i
       };
      };
     };
-    target=.projects[0].programs.gp[0][6]$$;
+    target=$.projects[0].programs.gp[0][6]$;
     targ_ld_init="*ApplyInputs*";
    };
-   MethodCall @[4] {
+   MethodCall @[5] {
     desc="initializes various counters at start of settling";
     flags=0;
     orig_prog_code=;
@@ -2791,7 +2862,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     meth_sig="void Quarter_Init()";
     meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
    };
-   MethodCall @[5] {
+   MethodCall @[6] {
     desc=;
     flags=CAN_REVERT_TO_CODE;
     orig_prog_code="cycle_max = network.CycleRunMax()";
@@ -2806,7 +2877,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     meth_sig="int CycleRunMax()";
     meth_desc=" max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set";
    };
-   ForLoop @[6] {
+   ForLoop @[7] {
     desc="// the main loop over cycles of updating";
     flags=0;
     orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
@@ -2857,7 +2928,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      expr="cyc++";
     };
    };
-   MethodCall @[7] {
+   MethodCall @[8] {
     desc="perform final operations at end of settling (storing final activations, etc)";
     flags=0;
     orig_prog_code=;
@@ -2872,7 +2943,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     meth_sig="void Quarter_Final()";
     meth_desc=" do final processing after each quarter: ";
    };
-   MethodCall @[8] {
+   MethodCall @[9] {
     desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
     flags=0;
     orig_prog_code=;
@@ -2887,7 +2958,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     meth_sig="void Compute_PhaseStats()";
     meth_desc=" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case";
    };
-   NetUpdateView @[9] {
+   NetUpdateView @[10] {
     desc="update network views, if update_net_view == true";
     flags=0;
     orig_prog_code=;
@@ -3428,11 +3499,11 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
      NetMonItem @[5] {
-      name="phase_no";
+      name="rt_cycles";
       computed=0;
       object_type=LeabraNetwork;
       object=$.projects[0].networks[0]$;
-      variable="phase_no";
+      variable="rt_cycles";
       var_label=;
       name_style=AUTO_NAME;
       max_name_len=6;
@@ -3461,39 +3532,6 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
      NetMonItem @[6] {
-      name="minus_cycles";
-      computed=0;
-      object_type=LeabraNetwork;
-      object=$.projects[0].networks[0]$;
-      variable="minus_cycles";
-      var_label=;
-      name_style=AUTO_NAME;
-      max_name_len=6;
-      val_type=VT_FLOAT;
-      matrix=0;
-      matrix_geom{       };
-      data_agg=0;
-      data_src=NULL;
-      agg_col {
-       col_name="agg_col";
-      };
-      agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-      select_rows=0;
-      select_spec {
-       col_name="select_spec";
-       name="select_spec_EQUAL_";
-       on=1;
-       rel=EQUAL;
-       use_var=0;
-       cmp 0 1;
-       var=NULL;
-       enable_var=NULL;
-      };
-      pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
-      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
-     };
-     NetMonItem @[7] {
       name="sse";
       computed=0;
       object_type=LeabraNetwork;
@@ -3526,7 +3564,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[8] {
+     NetMonItem @[7] {
       name="ext_rew";
       computed=0;
       object_type=LeabraNetwork;

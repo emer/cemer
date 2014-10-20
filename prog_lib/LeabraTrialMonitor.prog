@@ -1,8 +1,8 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
 Program .projects[0].programs.gp[0][7] { 
  ProgObjList @.objs = [1] {
   NetMonitor @[0] { 
-   NetMonItem_List @.items = [9] {
+   NetMonItem_List @.items = [8] {
     NetMonItem @[0] { };
     NetMonItem @[1] { };
     NetMonItem @[2] { };
@@ -11,7 +11,6 @@ Program .projects[0].programs.gp[0][7] {
     NetMonItem @[5] { };
     NetMonItem @[6] { };
     NetMonItem @[7] { };
-    NetMonItem @[8] { };
    };
   };
  };
@@ -253,11 +252,11 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[5] {
-     name="phase_no";
+     name="rt_cycles";
      computed=0;
      object_type=LeabraNetwork;
      object=$.projects[0].networks[0]$;
-     variable="phase_no";
+     variable="rt_cycles";
      var_label=;
      name_style=AUTO_NAME;
      max_name_len=6;
@@ -286,39 +285,6 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[6] {
-     name="minus_cycles";
-     computed=0;
-     object_type=LeabraNetwork;
-     object=$.projects[0].networks[0]$;
-     variable="minus_cycles";
-     var_label=;
-     name_style=AUTO_NAME;
-     max_name_len=6;
-     val_type=VT_FLOAT;
-     matrix=0;
-     matrix_geom{      };
-     data_agg=0;
-     data_src=NULL;
-     agg_col {
-      col_name="agg_col";
-     };
-     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-     select_rows=0;
-     select_spec {
-      col_name="select_spec";
-      name="select_spec_EQUAL_";
-      on=1;
-      rel=EQUAL;
-      use_var=0;
-      cmp 0 1;
-      var=NULL;
-      enable_var=NULL;
-     };
-     pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
-    };
-    NetMonItem @[7] {
      name="sse";
      computed=0;
      object_type=LeabraNetwork;
@@ -351,7 +317,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[8] {
+    NetMonItem @[7] {
      name="ext_rew";
      computed=0;
      object_type=LeabraNetwork;
@@ -405,7 +371,7 @@ Program .projects[0].programs.gp[0][7] {
    object_type=Network;
    object_val=$.projects[0].networks[0]$;
    objs_ptr=0;
-   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
    reference=0;
    desc="network to record data from";
    init_from=NULL;
@@ -464,6 +430,7 @@ Program .projects[0].programs.gp[0][7] {
      name="dt";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="trial_mon_data";
      };
@@ -474,11 +441,14 @@ Program .projects[0].programs.gp[0][7] {
      name="net";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="network";
      };
     };
    };
+   meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+   meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
   };
   MethodCall @[1] {
    desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
@@ -497,11 +467,14 @@ Program .projects[0].programs.gp[0][7] {
      name="quiet";
      required=0;
      def_val="false";
+     prev_expr=;
      expr {
       expr="false";
      };
     };
    };
+   meth_sig="bool CheckConfig(bool quiet = false)";
+   meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
   };
   MethodCall @[2] {
    desc="update the monitor items and data schema based on current settings of the NetMonitor object";
@@ -520,11 +493,14 @@ Program .projects[0].programs.gp[0][7] {
      name="reset_first";
      required=0;
      def_val="false";
+     prev_expr=;
      expr {
       expr="true";
      };
     };
    };
+   meth_sig="void UpdateMonitors(bool reset_first = false)";
+   meth_desc=" old name for UpdateDataTable";
   };
  };
  prog_code {
@@ -543,6 +519,8 @@ Program .projects[0].programs.gp[0][7] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="int AddBlankRow()";
+   meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
   };
   MethodCall @[1] {
    desc="get the new monitor data from the network and other sources -- this does the main work";
@@ -556,6 +534,8 @@ Program .projects[0].programs.gp[0][7] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void GetMonVals()";
+   meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
   };
   MethodCall @[2] {
    desc="update views and other things after writing new data to monitor data table";
@@ -569,6 +549,8 @@ Program .projects[0].programs.gp[0][7] {
     el_typ=ProgArg;
     el_def=0;
    };
+   meth_sig="void WriteClose()";
+   meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
   };
   MethodCall @[3] {
    desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
@@ -587,6 +569,7 @@ Program .projects[0].programs.gp[0][7] {
      name="dt";
      required=1;
      def_val=;
+     prev_expr=;
      expr {
       expr="trial_mon_data";
      };
@@ -597,11 +580,14 @@ Program .projects[0].programs.gp[0][7] {
      name="n_rows";
      required=0;
      def_val="1";
+     prev_expr=;
      expr {
       expr="1";
      };
     };
    };
+   meth_sig="void DMem_ShareTrialData(DataTable* dt, int n_rows = 1)";
+   meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
   };
  };
  step_prog=.projects[0].programs.gp[0][7]$$;

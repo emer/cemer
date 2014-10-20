@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7644
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
 Program .projects[0].programs.gp[0][3] { 
  ProgObjList @.objs = [0] {
  };
@@ -21,7 +21,7 @@ Program .projects[0].programs.gp[0][3] {
  ProgEl_List @.init_code = [0] {
  };
 
- ProgEl_List @.prog_code = [7] {
+ ProgEl_List @.prog_code = [10] {
   LocalVars @[0] { 
    ProgVar_List @.local_vars = [1] {
     ProgVar @[0] { };
@@ -39,7 +39,18 @@ Program .projects[0].programs.gp[0][3] {
    ProgArg_List @.meth_args = [0] {
    };
   };
-  ForLoop @[3] { 
+  Comment @[3] { };
+  MethodCall @[4] { 
+   ProgArg_List @.meth_args = [0] {
+   };
+  };
+  ProgramCall @[5] { 
+   ProgArg_List @.prog_args = [2] {
+    ProgArg @[0] { };
+    ProgArg @[1] { };
+   };
+  };
+  ForLoop @[6] { 
    ProgEl_List @.loop_code = [1] {
     ProgramCall @[0] { 
      ProgArg_List @.prog_args = [2] {
@@ -49,16 +60,16 @@ Program .projects[0].programs.gp[0][3] {
     };
    };
   };
-  MethodCall @[4] { 
+  MethodCall @[7] { 
    ProgArg_List @.meth_args = [0] {
    };
   };
-  ProgramCall @[5] { 
+  ProgramCall @[8] { 
    ProgArg_List @.prog_args = [1] {
     ProgArg @[0] { };
    };
   };
-  NetUpdateView @[6] { };
+  NetUpdateView @[9] { };
  };
 };
 Program .projects[0].programs.gp[0][3] {
@@ -196,7 +207,62 @@ Program .projects[0].programs.gp[0][3] {
    meth_sig="void Trial_Init()";
    meth_desc=" initialize at start of trial (init specs, Decay state)";
   };
-  ForLoop @[3] {
+  Comment @[3] {
+   desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+   flags=CAN_REVERT_TO_CODE;
+   orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+  };
+  MethodCall @[4] {
+   desc="resets input data, before getting new external inputs data from apply inputs call";
+   flags=0;
+   orig_prog_code=;
+   result_var=NULL;
+   obj=$.projects[0].programs.gp[0][3].args[0]$;
+   method=Network::Init_InputData;
+   meth_args {
+    name="meth_args";
+    el_typ=ProgArg;
+    el_def=0;
+   };
+   meth_sig="void Init_InputData()";
+   meth_desc=" Initializes external and target inputs";
+  };
+  ProgramCall @[5] {
+   desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+   flags=0;
+   orig_prog_code=;
+   prog_args {
+    name="prog_args";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Network;
+     type="LeabraNetwork*";
+     name="network";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="network";
+     };
+    };
+    ProgArg @[1] {
+     arg_type=DataTable;
+     type="DataTable*";
+     name="input_data";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="input_data";
+     };
+    };
+   };
+   target=.projects[0].programs.gp[0][6]$$<Program,ApplyInputs>;
+   targ_ld_init="*ApplyInputs*";
+  };
+  ForLoop @[6] {
    desc=;
    flags=0;
    orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
@@ -249,7 +315,7 @@ Program .projects[0].programs.gp[0][3] {
     expr="qtr++";
    };
   };
-  MethodCall @[4] {
+  MethodCall @[7] {
    desc="after the trial is over, do final computations";
    flags=0;
    orig_prog_code=;
@@ -264,7 +330,7 @@ Program .projects[0].programs.gp[0][3] {
    meth_sig="void Trial_Final()";
    meth_desc=" do final processing after trial: Compute_AbsRelNetin";
   };
-  ProgramCall @[5] {
+  ProgramCall @[8] {
    desc="records data about the trial-level processing to a datatable for graphing/processing";
    flags=0;
    orig_prog_code=;
@@ -287,7 +353,7 @@ Program .projects[0].programs.gp[0][3] {
    target=.projects[0].programs.gp[0][7]$$<Program,LeabraTrialMonitor>;
    targ_ld_init="*LeabraTrialMonitor*";
   };
-  NetUpdateView @[6] {
+  NetUpdateView @[9] {
    desc="update the network view(s) (only if update_net_view is true)";
    flags=0;
    orig_prog_code=;

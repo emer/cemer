@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7644
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -241,7 +241,7 @@ LeabraProject .projects["LeabraStd"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [13] {
+    DataTableCols @.data = [8] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -270,12 +270,7 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Input_phase_no"] { };
-     float_Data @["Hidden_phase_no"] { };
-     float_Data @["Output_phase_no"] { };
-     float_Data @["Input_minus_cycles"] { };
-     float_Data @["Hidden_minus_cycles"] { };
-     float_Data @["Output_minus_cycles"] { };
+     float_Data @["rt_cycles"] { };
      float_Data @["sse"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -898,7 +893,7 @@ LeabraProject .projects["LeabraStd"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [7] {
+    ProgEl_List @.prog_code = [10] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
        ProgVar @["qtr"] { };
@@ -916,7 +911,18 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ForLoop @[3] { 
+     Comment @[3] { };
+     MethodCall @[4] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ProgramCall @[5] { 
+      ProgArg_List @.prog_args = [2] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+      };
+     };
+     ForLoop @[6] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [2] {
@@ -926,16 +932,16 @@ LeabraProject .projects["LeabraStd"] {
        };
       };
      };
-     MethodCall @[4] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[5] { 
+     ProgramCall @[8] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     NetUpdateView @[6] { };
+     NetUpdateView @[9] { };
     };
    };
    Program @["LeabraQuarter"] { 
@@ -962,7 +968,7 @@ LeabraProject .projects["LeabraStd"] {
      NetCounterInit @[0] { };
     };
 
-    ProgEl_List @.prog_code = [10] {
+    ProgEl_List @.prog_code = [11] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [2] {
        ProgVar @["cycle_max"] { };
@@ -970,25 +976,26 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
      NetCounterInit @[1] { };
-     MethodCall @[2] { 
+     Comment @[2] { };
+     MethodCall @[3] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ProgramCall @[3] { 
+     ProgramCall @[4] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
-      };
-     };
-     MethodCall @[4] { 
-      ProgArg_List @.meth_args = [0] {
       };
      };
      MethodCall @[5] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     ForLoop @[6] { 
+     MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ForLoop @[7] { 
       ProgEl_List @.loop_code = [2] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -998,15 +1005,15 @@ LeabraProject .projects["LeabraStd"] {
        AssignExpr @[1] { };
       };
      };
-     MethodCall @[7] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
      MethodCall @[8] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetUpdateView @[9] { };
+     MethodCall @[9] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetUpdateView @[10] { };
     };
    };
    Program @["LeabraCycle"] { 
@@ -1099,14 +1106,13 @@ LeabraProject .projects["LeabraStd"] {
    Program @["LeabraTrialMonitor"] { 
     ProgObjList @.objs = [1] {
      NetMonitor @["trial_netmon"] { 
-      NetMonItem_List @.items = [9] {
+      NetMonItem_List @.items = [8] {
        NetMonItem @["batch"] { };
        NetMonItem @["epoch"] { };
        NetMonItem @["trial"] { };
        NetMonItem @["trial_name"] { };
        NetMonItem @["group_name"] { };
-       NetMonItem @["phase_no"] { };
-       NetMonItem @["minus_cycles"] { };
+       NetMonItem @["rt_cycles"] { };
        NetMonItem @["sse"] { };
        NetMonItem @["ext_rew"] { };
       };
@@ -3613,101 +3619,21 @@ LeabraProject .projects["LeabraStd"] {
        name="ar";
       [0]       };
      };
-     float_Data @["Input_phase_no"] {
-      name="Input_phase_no";
+     float_Data @["rt_cycles"] {
+      name="rt_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
        name=;
-      [2] ;;      };
+      [0]       };
       width=0;
       ar {
        name=;
-      [5 5 0]       };
-     };
-     float_Data @["Hidden_phase_no"] {
-      name="Hidden_phase_no";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [2] ;;      };
-      width=0;
-      ar {
-       name=;
-      [5 5 0]       };
-     };
-     float_Data @["Output_phase_no"] {
-      name="Output_phase_no";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [2] ;;      };
-      width=0;
-      ar {
-       name=;
-      [5 5 0]       };
-     };
-     float_Data @["Input_minus_cycles"] {
-      name="Input_minus_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [2] ;;      };
-      width=0;
-      ar {
-       name=;
-      [5 5 0]       };
-     };
-     float_Data @["Hidden_minus_cycles"] {
-      name="Hidden_minus_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [2] ;;      };
-      width=0;
-      ar {
-       name=;
-      [5 5 0]       };
-     };
-     float_Data @["Output_minus_cycles"] {
-      name="Output_minus_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name=;
-      [2] ;;      };
-      width=0;
-      ar {
-       name=;
-      [5 5 0]       };
+      [0]       };
      };
      float_Data @["sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -6504,7 +6430,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=0;
+      int_val=6;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -6898,7 +6824,62 @@ LeabraProject .projects["LeabraStd"] {
       meth_sig="void Trial_Init()";
       meth_desc=" initialize at start of trial (init specs, Decay state)";
      };
-     ForLoop @[3] {
+     Comment @[3] {
+      desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+     };
+     MethodCall @[4] {
+      desc="resets input data, before getting new external inputs data from apply inputs call";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrial"].args["network"]$;
+      method=Network::Init_InputData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
+     };
+     ProgramCall @[5] {
+      desc="apply external input activations from the input_data table to the network
+this program can be extended to do arbitrary things to generate data and apply it to network layers";
+      flags=0;
+      orig_prog_code=;
+      prog_args {
+       name="prog_args";
+       el_typ=ProgArg;
+       el_def=0;
+       ProgArg @[0] {
+	arg_type=Network;
+	type="LeabraNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="network";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=DataTable;
+	type="DataTable*";
+	name="input_data";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="input_data";
+	};
+       };
+      };
+      target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"]$$;
+      targ_ld_init="*ApplyInputs*";
+     };
+     ForLoop @[6] {
       desc=;
       flags=0;
       orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
@@ -6951,7 +6932,7 @@ LeabraProject .projects["LeabraStd"] {
        expr="qtr++";
       };
      };
-     MethodCall @[4] {
+     MethodCall @[7] {
       desc="after the trial is over, do final computations";
       flags=0;
       orig_prog_code=;
@@ -6966,7 +6947,7 @@ LeabraProject .projects["LeabraStd"] {
       meth_sig="void Trial_Final()";
       meth_desc=" do final processing after trial: Compute_AbsRelNetin";
      };
-     ProgramCall @[5] {
+     ProgramCall @[8] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
       flags=0;
       orig_prog_code=;
@@ -6989,7 +6970,7 @@ LeabraProject .projects["LeabraStd"] {
       target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraTrialMonitor"]$$;
       targ_ld_init="*LeabraTrialMonitor*";
      };
-     NetUpdateView @[6] {
+     NetUpdateView @[9] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
       orig_prog_code=;
@@ -7037,7 +7018,7 @@ LeabraProject .projects["LeabraStd"] {
       object_type=DataTable;
       object_val=$.projects["LeabraStd"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      flags=NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -7130,9 +7111,14 @@ LeabraProject .projects["LeabraStd"] {
       counter=Network::cycle;
       update_after=0;
      };
-     MethodCall @[2] {
+     Comment @[2] {
+      desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+     };
+     MethodCall @[3] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
-      flags=0;
+      flags=OFF;
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["LeabraQuarter"].args["network"]$;
@@ -7145,10 +7131,10 @@ LeabraProject .projects["LeabraStd"] {
       meth_sig="void Init_InputData()";
       meth_desc=" Initializes external and target inputs";
      };
-     ProgramCall @[3] {
+     ProgramCall @[4] {
       desc="apply external input activations from the input_data table to the network
 this program can be extended to do arbitrary things to generate data and apply it to network layers";
-      flags=0;
+      flags=OFF;
       orig_prog_code=;
       prog_args {
        name=;
@@ -7177,10 +7163,10 @@ this program can be extended to do arbitrary things to generate data and apply i
 	};
        };
       };
-      target=.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"]$$;
+      target=$.projects["LeabraStd"].programs.gp["LeabraAll_Std"]["ApplyInputs"]$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[4] {
+     MethodCall @[5] {
       desc="initializes various counters at start of settling";
       flags=0;
       orig_prog_code=;
@@ -7195,7 +7181,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Quarter_Init()";
       meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
      };
-     MethodCall @[5] {
+     MethodCall @[6] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
       orig_prog_code="cycle_max = network.CycleRunMax()";
@@ -7210,7 +7196,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="int CycleRunMax()";
       meth_desc=" max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set";
      };
-     ForLoop @[6] {
+     ForLoop @[7] {
       desc="// the main loop over cycles of updating";
       flags=0;
       orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
@@ -7261,7 +7247,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        expr="cyc++";
       };
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
       orig_prog_code=;
@@ -7276,7 +7262,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Quarter_Final()";
       meth_desc=" do final processing after each quarter: ";
      };
-     MethodCall @[8] {
+     MethodCall @[9] {
       desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
       flags=0;
       orig_prog_code=;
@@ -7291,7 +7277,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       meth_sig="void Compute_PhaseStats()";
       meth_desc=" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case";
      };
-     NetUpdateView @[9] {
+     NetUpdateView @[10] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
@@ -7831,45 +7817,12 @@ this program can be extended to do arbitrary things to generate data and apply i
 	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
-       NetMonItem @["phase_no"] {
-	name="phase_no";
+       NetMonItem @["rt_cycles"] {
+	name="rt_cycles";
 	computed=0;
 	object_type=LeabraNetwork;
 	object=$.projects["LeabraStd"].networks["Network_0"]$;
-	variable="phase_no";
-	var_label=;
-	name_style=AUTO_NAME;
-	max_name_len=6;
-	val_type=VT_FLOAT;
-	matrix=0;
-	matrix_geom{ 	};
-	data_agg=0;
-	data_src=NULL;
-	agg_col {
-	 col_name="agg_col";
-	};
-	agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
-	select_rows=0;
-	select_spec {
-	 col_name="select_spec";
-	 name="select_spec_EQUAL_";
-	 on=1;
-	 rel=EQUAL;
-	 use_var=0;
-	 cmp 0 1;
-	 var=NULL;
-	 enable_var=NULL;
-	};
-	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
-       };
-       NetMonItem @["minus_cycles"] {
-	name="minus_cycles";
-	computed=0;
-	object_type=LeabraNetwork;
-	object=$.projects["LeabraStd"].networks["Network_0"]$;
-	variable="minus_cycles";
+	variable="rt_cycles";
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
@@ -9265,12 +9218,12 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.00159744406118989;
+     value 6 0=0.002129925414919853;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.05687605962157249;
+     value 6 0=0.03056027181446552;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -9641,7 +9594,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=17: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -9649,7 +9602,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=7.00522: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -9657,7 +9610,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=6: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_ext_rew"] {
@@ -9673,7 +9626,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraStd"].data.gp["OutputData"]["EpochOutputData"].data["avg_cycles"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=50: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=6: fix_max=0: max=8.33333: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["epoch_time_tot"] {
@@ -9882,7 +9835,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=50: fix_max=0: max=50: };
+	    fixed_range {fix_min=0: min=6: fix_max=0: max=8.33333: };
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10859,6 +10812,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
+     learn_qtr=Q4;
+     deep5b_qtr=Q3;
+     ti_ctxt_qtr=Q4;
      adapt {
       on=0;
       tau=144;
@@ -10871,9 +10827,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       on=0;
       delay=4;
      };
-     learn_qtr=Q4;
-     deep5b_qtr=Q3;
-     ti_ctxt_qtr=Q4;
      cifer {on=0: super_gain=0.05: thal_thr=0.2: act5b_thr=0.2: ti_5b=0.5: thal_bin=1: ti_5b_c=1: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
