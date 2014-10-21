@@ -371,86 +371,175 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   // First, get edit token.
   // api.php ? action=tokens & type=edit
 
-  /*  Questions:
-   1. POST requests require write permission -- should we require a user
-      check first, or generate an error if the POST request fails?
-   2. How do we retrieve the actual content from the `page_content` string?
-      Is it the local file path?  Or just a markdown text file converted to a string?
-      `page_content` should be in markdown format, convert to html with taDoc::WikiParse method
-  */
-
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) return false;
 
   QUrl url(wikiUrl);
-  QNetworkAccessManager mgr;
-  QEventLoop eventLoop;
-  QByteArray data;
 
-  QObject::connect(&mgr, SIGNAL(finished(QNetworkReply*)),
-                   &eventLoop, SLOT(quit()));
 #if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "tokens");
-  urq.addQueryItem("type", "edit");
-  urq.addQueryItem("format", "xml");
-  data.append(urq.toString());
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "tokens");
-  url.addQueryItem("type", "edit");
-  url.addQueryItem("format", "xml");
-  data.append(url.toString());
-#endif
-  
-  
-  QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
-  eventLoop.exec();
-
-  if (reply->error() == QNetworkReply::NoError) {
-    // TODO: Develop 'success' code
-    qDebug() << "Success:\n" << reply->readAll();
-    delete reply;
-    return true;
-  }
-  else {
-    qDebug() << "Failure:\n" << reply->errorString();
-    delete reply;
-    return false;
-  }
-
-  // urq.addQueryItem("action", "edit");
-  // urq.addQueryItem("title", page_name);
-  // urq.addQueryItem("text", page_content);
-  // urq.addQueryItem("format", "xml");
-  // urq.addQueryItem("token", reply);
-  // data.clear();
-  // data.append(urq.toString());
-  // QNetworkReply *reply = mgr.post(QNetworkRequest(url), data);
-  /*
    
   QUrlQuery urq;
   urq.addQueryItem("action", "tokens");
   urq.addQueryItem("type", "edit");
   urq.addQueryItem("format", "xml");
   url.setQuery(urq);
-  */
-  // `url` becomes https://grey.colorado.edu/emergent/api.php?action=tokens&type=edit&format=xml
-  // Navigating to this URL in a web browser results in a warning (Action 'edit' is not allowed
-  // for the current user) -- apparently I don't have write permission.
+#else
+  url.addQueryItem("action", "tokens");
+  url.addQueryItem("type", "edit");
+  url.addQueryItem("format", "xml");
+#endif
 
   // Make the network request.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpGet(url)) {
+  if (QNetworkReply *reply = request.httpPost(url)) {
     // Default the normalized name to the provided page name;
     // will be changed if normalization was performed by the server.
-    String normalizedName = page_name;
+    // String normalizedName = page_name;
 
     QXmlStreamReader reader(reply);
+    // if (!findNextElement(reader, "tokens")) {
+    //     taMisc::Warning("Malformed response while requesting edit token from ", wiki_name, "wiki");
+    //     return false;
+    // }
+    // Check the token result.
+    // QXmlStreamAttributes attrs = reader.attributes();
+    // QString token = attrs.value().toString();
+    // taMisc::Warning("Token retrieved: ", (String)token);
 
-    // STUB
-  
+    while(!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        QString token = attrs.value("edittoken").toString();
+        if(!token.isEmpty()) {
+          taMisc::Info("Edit token retrieved! [", qPrintable(token), "]");
+          
+#if (QT_VERSION >= 0x050000)
+          QUrlQuery urq;
+          urq.addQueryItem("action", "edit");
+          urq.addQueryItem("title", page_name);
+          urq.addQueryItem("section", "new");
+          urq.addQueryItem("appendtext", page_content);
+          urq.addQueryItem("format", "xml");
+          urq.addQueryItem("token", token);
+          url.setQuery(urq);
+#else
+          url.addQueryItem("action", "edit");
+          url.addQueryItem("title", page_name);
+          url.addQueryItem("section", "new");
+          url.addQueryItem("appendtext", page_content);
+          url.addQueryItem("format", "xml");
+          url.addQueryItem("token", token);
+#endif
+
+          if (QNetworkReply *reply = request.httpPost(url)) {
+            taMisc::Info("Edit request sent!");
+            QXmlStreamReader reader(reply);
+            while(!reader.atEnd()) {
+              if (reader.readNext() == QXmlStreamReader::StartElement) {
+                QXmlStreamAttributes attrs = reader.attributes();
+                if(attrs.empty()) {
+                  taMisc::Warning("Page edit failed: Request returned no attributes");
+                  return false;
+                }
+                else if(attrs.hasAttribute("code")) {
+                  QString err_code = attrs.value("code").toString();
+                  QString err_info = attrs.value("info").toString();
+                  taMisc::Warning("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
+                  return false;
+                }
+                else {
+                  taMisc::Info("Page edit successful!");
+                  //for_each(attrs.begin(), attrs.end(), fn) {
+                  foreach(QXmlStreamAttribute attr, attrs) {
+                    QString attr_name = attr.name().toString();
+                    QString attr_val = attr.value().toString();
+                    taMisc::Info("Attribute name: ", qPrintable(attr_name));
+                    taMisc::Info("Attribute value: ", qPrintable(attr_val));
+                  }
+                  return true;
+                }
+              }
+            }
+          }
+          break;
+        }
+      }
+    }
+
+    return false;
+
+    // while (!reader.atEnd()) {
+    //   if (reader.readNextStartElement()) {
+    //     taMisc::Warning(qPrintable(reader.name().toString()));
+    //   }
+    //   else {
+    //     taMisc::Warning("End of reply reached, or error occurred.");
+    //   }
+    // }
+    // int pageCount = 0;
+    // while (!reader.atEnd()) {
+    //   if (reader.readNext() == QXmlStreamReader::StartElement) {
+    //     // Check for an <n> element indicating the normalized name.
+    //     // This is only present if the proivded page_name isn't
+    //     // canonical.
+    //     if (reader.name() == "n") {
+    //       QXmlStreamAttributes attrs = reader.attributes();
+    //       if (attrs.value("from").toString() == page_name) {
+    //         normalizedName = attrs.value("to").toString();
+    //       }
+    //     }
+    //     // Check for a <page> element
+    //     else if (reader.name() == "page") {
+    //       ++pageCount;
+    //       QXmlStreamAttributes attrs = reader.attributes();
+    //       if (attrs.value("title").toString() == normalizedName) {
+    //         // Check if the page name is marked as invalid or missing.
+    //         if (attrs.hasAttribute("invalid")) {
+    //           // For example, the page name "_" is invalid.
+    //           taMisc::Warning("Page name is invalid:", page_name);
+    //           return false;
+    //         }
+    //         else if (attrs.hasAttribute("missing")) {
+    //           // This is the normal case when a page does NOT exist.
+    //           return false;
+    //         }
+    //         else if (attrs.hasAttribute("pageid")) {
+    //           // Double check that the page ID is a positive number -- it
+    //           // should be since the page isn't marked invalid or missing!
+    //           bool ok = false;
+    //           QString pageIdStr = attrs.value("pageid").toString();
+    //           int pageId = pageIdStr.toInt(&ok);
+    //           if (!ok) {
+    //             // Shouldn't happen.
+    //             taMisc::Warning("Page ID is not numeric:", page_name,
+    //               qPrintable(pageIdStr));
+    //             return false;
+    //           }
+    //           else if (pageId <= 0) {
+    //             // Shouldn't happen.
+    //             taMisc::Warning("Page ID is invalid:", page_name,
+    //               qPrintable(pageIdStr));
+    //             return false;
+    //           }
+    //           else {
+    //             // This is the normal case when a page DOES exist.
+    //             return true;
+    //           }
+    //         }
+    //         else {
+    //           // Shouldn't happen.
+    //           taMisc::Warning(
+    //             "Unexpected condition; page isn't missing and doesn't exist:",
+    //             page_name);
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
+
+  // If request cancelled or response malformed, assume page doesn't exist.
+  return false;
 }
 
 bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
