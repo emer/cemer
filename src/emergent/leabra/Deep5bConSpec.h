@@ -21,6 +21,7 @@
 
 // member includes:
 #include <LeabraNetwork>
+#include "ta_vector_ops.h"
 
 // declare all other types mentioned but not required to include:
 
@@ -34,14 +35,49 @@ public:
   bool  IsDeep5bCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
-  inline void Send_Deep5bNetin(LeabraSendCons* cg, LeabraNetwork* net,
-                               const int thread_no, const float su_act) {
-    const float su_act_eff = cg->scale_eff * su_act;
+#ifdef TA_VEC_USE
+  inline void Send_D5bNetDelta_vec
+    (LeabraSendCons* cg, const float su_act_delta_eff,
+     float* send_d5bnet_vec, const float* wts)
+  {
+    VECF sa(su_act_delta_eff);
+    const int sz = cg->size;
+    const int parsz = cg->vec_chunked_size;
+    int i;
+    for(i=0; i<parsz; i += TA_VEC_SIZE) {
+      VECF wt;  wt.load(wts+i);
+      VECF dp = wt * sa;
+      VECF rnet;
+      float* stnet = send_d5bnet_vec + cg->UnIdx(i);
+      rnet.load(stnet);
+      rnet += dp;
+      rnet.store(stnet);
+    }
+
+    // remainder of non-vector chunkable ones
+    for(; i<sz; i++) {
+      send_d5bnet_vec[cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
+    }
+  }
+#endif
+
+  inline void 	C_Send_D5bNetDelta_Thread(const float wt, float* send_d5bnet_vec,
+                                          const int ru_idx, const float su_act_delta_eff)
+  { send_d5bnet_vec[ru_idx] += wt * su_act_delta_eff; }
+  // #IGNORE
+
+  inline void Send_D5bNetDelta(LeabraSendCons* cg, LeabraNetwork* net,
+                               const int thread_no, const float su_act_delta) {
+    const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->send_netin_tmp.el
-      + net->send_netin_tmp.FastElIndex(0, thread_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                cg->UnIdx(i), su_act_eff));
+    float* send_d5bnet_vec = net->send_d5bnet_tmp.el
+      + net->send_d5bnet_tmp.FastElIndex(0, thread_no);
+#ifdef TA_VEC_USE
+    Send_D5bNetDelta_vec(cg, su_act_delta_eff, send_d5bnet_vec, wts);
+#else
+    CON_GROUP_LOOP(cg, C_Send_D5bNetDelta_Thread(wts[i], send_d5bnet_vec,
+                                                 cg->UnIdx(i), su_act_delta_eff));
+#endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 

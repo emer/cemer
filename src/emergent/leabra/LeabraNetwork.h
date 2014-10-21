@@ -198,6 +198,7 @@ public:
   // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
   float_Matrix  unit_vec_vars;
   // #NO_SAVE #HIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
+  float_Matrix  send_d5bnet_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
 
   inline float*  UnVecVar(UnitVecVars var)
@@ -243,6 +244,8 @@ public:
 
   virtual void  Quarter_Init();
   // #CAT_QuarterInit initialize network for quarter-level processing (hard clamp, netscale)
+    virtual void Quarter_Init_Counters();
+    // #CAT_QuarterInit initialize counters for upcoming quarter -- network only
     virtual void Quarter_Init_Unit();
     // #CAT_QuarterInit quarter unit-level initialization functions: Init_TargFlags, NetinScale
     virtual void Quarter_Init_Layer();

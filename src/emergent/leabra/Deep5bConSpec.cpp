@@ -18,6 +18,8 @@
 TA_BASEFUNS_CTORS_DEFN(Deep5bConSpec);
 
 void Deep5bConSpec::Initialize() {
+  SetUnique("learn", true);     // generally doesn't learn..
+  learn = false;
 }
 
 void Deep5bConSpec::GetPrjnName(Projection& prjn, String& nm) {

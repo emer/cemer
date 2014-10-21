@@ -997,6 +997,10 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnit* u, LeabraNetwork* net, int thre
     }
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
+
+  if(Quarter_Deep5bNow(net->quarter)) {
+    Send_Deep5bNetin(u, net, thread_no);
+  }    
 }
 
 void LeabraUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -1080,11 +1084,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
 
   if(Quarter_Deep5bNow(net->quarter)) {
-    // once the reg netin has finished using tmp, we can send deep5b through same tmps
-    // todo: this creates a lag in deep5b relative to regular netin -- alternative would
-    // be to have another tmp buffer to integrate into -- this would require a new
-    // send netin function at conspec level..
-    Send_Deep5bNetin(u, net, thread_no);
+    Send_Deep5bNetin_Post(u, net, thread_no);
   }    
 }
 
@@ -1191,7 +1191,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
         if(tol->hard_clamped)      continue;
         if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
         Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-        sp->Send_Deep5bNetin(send_gp, net, thread_no, act_ts);
+        sp->Send_D5bNetDelta(send_gp, net, thread_no, act_ts);
       }
       u->d5b_sent = act_ts;     // cache the last sent value
     }
@@ -1205,7 +1205,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
       if(tol->hard_clamped)        continue;
       if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
       Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-      sp->Send_Deep5bNetin(send_gp, net, thread_no, act_ts);
+      sp->Send_D5bNetDelta(send_gp, net, thread_no, act_ts);
     }
     u->d5b_sent = 0.0f;         // now it effectively sent a 0..
   }
@@ -1216,7 +1216,7 @@ void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
   int nt = net->lthreads.n_threads_act;
   float net_delta = 0.0f;
   for(int j=0;j<nt;j++) {
-    float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
+    float& ndval = net->send_d5bnet_tmp.FastEl2d(u->flat_idx, j);
     net_delta += ndval;
     ndval = 0.0f;             // zero immediately..
   }
@@ -1274,11 +1274,6 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
   Compute_SelfReg_Cycle(u, net);
 
   u->AddToActBuf(syn_delay);
-
-  if(Quarter_Deep5bNow(net->quarter)) {
-    // see comment for Send_Deep5bNetin -- off by 1 cycle relative to reg netin
-    Send_Deep5bNetin_Post(u, net, thread_no);
-  }    
 }
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {

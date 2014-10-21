@@ -51,6 +51,15 @@ void ConSpec::Copy_(const ConSpec& cp) {
   wt_limits = cp.wt_limits;
 }
 
+void ConSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(TestWarning(rnd.var == 0.0f && wt_limits.sym, "UAE",
+                 "random variance rnd.var is 0, so wt_limits.sym is now turned off to prevent other weights from symmetrizing against fixed non-random weights")) {
+    SetUnique("wt_limits", true);
+    wt_limits.sym = false;
+  }
+}
+
 bool ConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
   return true;
 }

@@ -231,6 +231,9 @@ void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
     }
     send_netin_tmp.InitVals(0.0f);
 
+    send_d5bnet_tmp.SetGeom(2, units_flat.size, lthreads.n_threads);
+    send_d5bnet_tmp.InitVals(0.0f);
+
     unit_vec_vars.SetGeom(2, units_flat.size, N_VEC_VARS);
   }
 }
@@ -287,6 +290,7 @@ void LeabraNetwork::Trial_Init_Layer() {
 //      QuarterInit -- at start of settling
 
 void LeabraNetwork::Quarter_Init() {
+  Quarter_Init_Counters();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
 //   Compute_NetinScale();              // compute net scaling
@@ -297,8 +301,17 @@ void LeabraNetwork::Quarter_Init() {
 
   // these could have accumulated netin deltas for clamped layers..
   send_netin_tmp.InitVals(0.0f); // reset for next time around
+  send_d5bnet_tmp.InitVals(0.0f);
 
   Compute_HardClamp();          // clamp all hard-clamped input acts: not easily threadable
+}
+
+void LeabraNetwork::Quarter_Init_Counters() {
+  // set the phase according to the counter 0,1,2 = MINUS, 3 = PLUS
+  if(quarter <= 2)
+    phase = MINUS_PHASE;
+  else
+    phase = PLUS_PHASE;
 }
 
 void LeabraNetwork::Quarter_Init_Unit() {
@@ -573,14 +586,7 @@ void LeabraNetwork::Quarter_Compute_dWt() {
 }
 
 void LeabraNetwork::Quarter_Final_Counters() {
-  quarter++;                    // goes 0-3 and then wraps back around, C-style
-  if(quarter >= 4) {
-    quarter = 0;
-  }
-  if(quarter <= 2)
-    phase = MINUS_PHASE;
-  else
-    phase = PLUS_PHASE;
+  quarter++;                    // always shows +1 at end of quarter
 }
 
 ///////////////////////////////////////////////////////////////////////

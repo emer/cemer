@@ -63,7 +63,7 @@ public:
   LimitType     type;           // type of weight limitation to impose
   float         min;            // #CONDSHOW_OFF_type:NONE,LT_MAX minimum weight value (if applicable)
   float         max;            // #CONDSHOW_OFF_type:NONE,GT_MIN maximum weight value (if applicable)
-  bool          sym;            // if true, also symmetrize with reciprocal connections
+  bool          sym;            // if true, also symmetrize weights with those in reciprocal connections, during weight initialization process -- this is automatically turned off if the random variance (rnd.var) in the weights is set to 0 (e.g., for fixed weight patterns)
 
   void  ApplyMinLimit(float& wt)        { if(wt < min) wt = min; }
   void  ApplyMaxLimit(float& wt)        { if(wt > max) wt = max; }
@@ -209,8 +209,9 @@ public:
   TA_BASEFUNS(ConSpec);
 protected:
   SPEC_DEFAULTS;
-  bool         CheckType_impl(TypeDef* td) override;
-  bool         CheckObjectType_impl(taBase* obj) override; // don't do checking on 1st con group in units
+  bool  CheckType_impl(TypeDef* td) override;
+  bool  CheckObjectType_impl(taBase* obj) override; // don't do checking on 1st con group in units
+  void  UpdateAfterEdit_impl();
 private:
   void  Initialize();
   void  Destroy()               { CutLinks(); }
