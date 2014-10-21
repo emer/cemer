@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7546
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -231,6 +231,9 @@ LeabraProject .projects["LeabraFlex"] {
   };
  };
 
+ ParamSet_Group @.param_sets = [0] {
+ };
+
  DataTable_Group @.data = [0] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
@@ -243,7 +246,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [11] {
+    DataTableCols @.data = [13] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -267,14 +270,16 @@ LeabraProject .projects["LeabraFlex"] {
      };
      String_Data @["trial_name"] { };
      String_Data @["group_name"] { };
-     float_Data @["minus_cycles"] { };
+     float_Data @["Input_minus_cycles"] { };
+     float_Data @["Hidden_minus_cycles"] { };
+     float_Data @["Output_minus_cycles"] { };
      float_Data @["sse"] { };
      float_Data @["norm_err"] { };
      float_Data @["ext_rew"] { };
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [16] {
+    DataTableCols @.data = [20] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -291,14 +296,18 @@ LeabraProject .projects["LeabraFlex"] {
      float_Data @["avg_norm_err"] { };
      float_Data @["avg_ext_rew"] { };
      float_Data @["avg_cycles"] { };
+     float_Data @["avg_avg_act_diff"] { };
      float_Data @["epoch_time_tot"] { };
      float_Data @["epoch_time_usr"] { };
-     float_Data @["Hidden_Fm_Input_netrel"] { };
-     float_Data @["Hidden_Fm_Output_netrel"] { };
-     float_Data @["Output_Fm_Hidden_netrel"] { };
      float_Data @["Input_netmax"] { };
      float_Data @["Hidden_netmax"] { };
      float_Data @["Output_netmax"] { };
+     float_Data @["Input_avg_act"] { };
+     float_Data @["Hidden_avg_act"] { };
+     float_Data @["Output_avg_act"] { };
+     float_Data @["Hidden_Fm_Input_netrel"] { };
+     float_Data @["Hidden_Fm_Output_netrel"] { };
+     float_Data @["Output_Fm_Hidden_netrel"] { };
     };
    };
   };
@@ -933,7 +942,7 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [22] {
+    ProgEl_List @.prog_code = [17] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
@@ -959,61 +968,40 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      Comment @[5] { };
-     MethodCall @[6] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ProgramCall @[7] { 
+     ProgramCall @[6] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[8] { 
+     MethodCall @[7] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MethodCall @[9] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     NetUpdateView @[10] { };
-     StopStepPoint @[11] { };
-     Comment @[12] { };
-     ProgramCall @[13] { 
-      ProgArg_List @.prog_args = [1] {
-       ProgArg @[0] { };
-      };
-     };
-     ProgramCall @[14] { 
+     NetUpdateView @[8] { };
+     StopStepPoint @[9] { };
+     Comment @[10] { };
+     ProgramCall @[11] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     MethodCall @[15] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ProgramCall @[16] { 
+     ProgramCall @[12] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[17] { 
+     MethodCall @[13] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MethodCall @[18] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     NetUpdateView @[19] { };
-     ProgramCall @[20] { 
+     NetUpdateView @[14] { };
+     ProgramCall @[15] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[21] { 
+     MethodCall @[16] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -1814,16 +1802,24 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [3] {
+    ProgEl_List @.prog_code = [4] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MethodCall @[1] { 
+     If @[1] { 
+      ProgEl_List @.true_code = [1] {
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
+      };
+     };
+     MethodCall @[2] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MemberAssign @[2] { };
+     MemberAssign @[3] { };
     };
    };
    Program @["TrialEnd"] { 
@@ -1847,20 +1843,12 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [3] {
+    ProgEl_List @.prog_code = [2] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     If @[1] { 
-      ProgEl_List @.true_code = [1] {
-       MethodCall @[0] { 
-	ProgArg_List @.meth_args = [0] {
-	};
-       };
-      };
-     };
-     NetUpdateView @[2] { };
+     NetUpdateView @[1] { };
     };
    };
    Program @["SettleMinus"] { 
@@ -1884,18 +1872,13 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [4] {
+    ProgEl_List @.prog_code = [3] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [2] {
-       ProgVar @["cycle_max"] { };
-       ProgVar @["cyc"] { };
+      ProgVar_List @.local_vars = [1] {
+       ProgVar @["qtr"] { };
       };
      };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ForLoop @[2] { 
+     ForLoop @[1] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -1904,7 +1887,7 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     NetUpdateView @[3] { };
+     NetUpdateView @[2] { };
     };
    };
    Program @["SettlePlus"] { 
@@ -1928,30 +1911,20 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [4] {
+    ProgEl_List @.prog_code = [3] {
      LocalVars @[0] { 
-      ProgVar_List @.local_vars = [2] {
-       ProgVar @["cycle_max"] { };
-       ProgVar @["cyc"] { };
+      ProgVar_List @.local_vars = [0] {
       };
      };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
+     ProgramCall @[1] { 
+      ProgArg_List @.prog_args = [1] {
+       ProgArg @[0] { };
       };
      };
-     ForLoop @[2] { 
-      ProgEl_List @.loop_code = [1] {
-       ProgramCall @[0] { 
-	ProgArg_List @.prog_args = [1] {
-	 ProgArg @[0] { };
-	};
-       };
-      };
-     };
-     NetUpdateView @[3] { };
+     NetUpdateView @[2] { };
     };
    };
-   Program @["PlusPhaseStart"] { 
+   Program @["Trial"] { 
     ProgObjList @.objs = [0] {
     };
 
@@ -1962,42 +1935,7 @@ LeabraProject .projects["LeabraFlex"] {
      ProgVar @["network"] { };
     };
 
-    ProgVar_List @.vars = [0] {
-    };
-
-    Function_List @.functions = [0] {
-    };
-
-    ProgEl_List @.init_code = [0] {
-    };
-
-    ProgEl_List @.prog_code = [4] {
-     MemberAssign @[0] { };
-     MethodCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     MethodCall @[2] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     MemberAssign @[3] { };
-    };
-   };
-   Program @["Settle"] { 
-    ProgObjList @.objs = [0] {
-    };
-
-    ProgType_List @.types = [0] {
-    };
-
-    ProgVar_List @.args = [2] {
-     ProgVar @["network"] { };
-     ProgVar @["cycle_max"] { };
-    };
-
-    ProgVar_List @.vars = [2] {
-     ProgVar @["i"] { };
+    ProgVar_List @.vars = [1] {
      ProgVar @["update_net_view"] { };
     };
 
@@ -2007,19 +1945,26 @@ LeabraProject .projects["LeabraFlex"] {
     ProgEl_List @.init_code = [0] {
     };
 
-    ProgEl_List @.prog_code = [5] {
+    ProgEl_List @.prog_code = [7] {
      LocalVars @[0] { 
       ProgVar_List @.local_vars = [1] {
-       ProgVar @["cyc_max"] { };
+       ProgVar @["qtr"] { };
       };
      };
-     AssignExpr @[1] { };
-     If @[2] { 
+     If @[1] { 
       ProgEl_List @.true_code = [1] {
-       AssignExpr @[0] { };
+       MethodCall @[0] { 
+	ProgArg_List @.meth_args = [0] {
+	};
+       };
       };
      };
-     ForLoop @[3] { 
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     Comment @[3] { };
+     ForLoop @[4] { 
       ProgEl_List @.loop_code = [1] {
        ProgramCall @[0] { 
 	ProgArg_List @.prog_args = [1] {
@@ -2028,7 +1973,71 @@ LeabraProject .projects["LeabraFlex"] {
        };
       };
      };
-     NetUpdateView @[4] { };
+     MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetUpdateView @[6] { };
+    };
+   };
+   Program @["Quarter"] { 
+    ProgObjList @.objs = [0] {
+    };
+
+    ProgType_List @.types = [0] {
+    };
+
+    ProgVar_List @.args = [1] {
+     ProgVar @["network"] { };
+    };
+
+    ProgVar_List @.vars = [2] {
+     ProgVar @["cycle"] { };
+     ProgVar @["update_net_view"] { };
+    };
+
+    Function_List @.functions = [0] {
+    };
+
+    ProgEl_List @.init_code = [1] {
+     NetCounterInit @[0] { };
+    };
+
+    ProgEl_List @.prog_code = [8] {
+     LocalVars @[0] { 
+      ProgVar_List @.local_vars = [2] {
+       ProgVar @["cycle_max"] { };
+       ProgVar @["cyc"] { };
+      };
+     };
+     Comment @[1] { };
+     MethodCall @[2] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ForLoop @[4] { 
+      ProgEl_List @.loop_code = [2] {
+       ProgramCall @[0] { 
+	ProgArg_List @.prog_args = [1] {
+	 ProgArg @[0] { };
+	};
+       };
+       AssignExpr @[1] { };
+      };
+     };
+     MethodCall @[5] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     MethodCall @[6] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     NetUpdateView @[7] { };
     };
    };
    Program @["Cycle"] { 
@@ -2348,7 +2357,7 @@ LeabraProject .projects["LeabraFlex"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [16] {
+	 T3DataView_List @.children = [20] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
 	  GraphColView @["train_mode"] { };
@@ -2357,14 +2366,18 @@ LeabraProject .projects["LeabraFlex"] {
 	  GraphColView @["avg_norm_err"] { };
 	  GraphColView @["avg_ext_rew"] { };
 	  GraphColView @["avg_cycles"] { };
+	  GraphColView @["avg_avg_act_diff"] { };
 	  GraphColView @["epoch_time_tot"] { };
 	  GraphColView @["epoch_time_usr"] { };
-	  GraphColView @["Hidden_Fm_Input_netrel"] { };
-	  GraphColView @["Hidden_Fm_Output_netrel"] { };
-	  GraphColView @["Output_Fm_Hidden_netrel"] { };
 	  GraphColView @["Input_netmax"] { };
 	  GraphColView @["Hidden_netmax"] { };
 	  GraphColView @["Output_netmax"] { };
+	  GraphColView @["Input_avg_act"] { };
+	  GraphColView @["Hidden_avg_act"] { };
+	  GraphColView @["Output_avg_act"] { };
+	  GraphColView @["Hidden_Fm_Input_netrel"] { };
+	  GraphColView @["Hidden_Fm_Output_netrel"] { };
+	  GraphColView @["Output_Fm_Hidden_netrel"] { };
 	 };
 
 	 T3Annotation_List @.annotations = [0] {
@@ -2455,11 +2468,10 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
     UserDataItem @["minus_output_name"] { };
-    UserDataItem @["minus_cycles"] { };
+    UserDataItem @["rt_cycles"] { };
     UserDataItem @["tot_cycle"] { };
-    UserDataItem @["ct_cycle"] { };
-    UserDataItem @["phase_no"] { };
     UserDataItem @["phase"] { };
+    UserDataItem @["quarter"] { };
     UserDataItem @["sse"] { };
     UserDataItem @["output_name"] { };
     UserDataItem @["trial_name"] { };
@@ -2471,6 +2483,9 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["minus_cycles"] { };
+    UserDataItem @["ct_cycle"] { };
+    UserDataItem @["phase_no"] { };
     UserDataItem @["maxda"] { };
    };
 
@@ -2635,7 +2650,19 @@ LeabraProject .projects["LeabraFlex"] {
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}  span.smwbuiltin,span.smwttactiveinline span.smwbuiltin{font-style:italic} div.smwpre{white-space:pre;font-family:monospace;padding:1em;border:1px dashed #2f6fab;color:black;background-color:#f9f9f9;line-height:1.1em;margin-bottom:0.5em;margin-top:0.5em} #smwfootbr{clear:both} span.smwsortkey{display:none} a.sortheader:hover{text-decoration:none} div.smwtimeline{border:1px solid #AAAAAA;background-color:#F9F9F9;  }span.smwtlevent,span.smwtlband,span.smwtlsize,span.smwtlposition{display:none;speak:none}span.smwtlcomment{font-style:italic;padding:5px} div.smwfact{clear:both;background-color:#F9F9F9;padding:5px;margin-top:1em;border:1px solid #AAAAAA;font-size:95%}div.smwfact td,div.smwfact tr,div.smwfact table{background-color:#F9F9F9}span.smwfactboxhead{font-size:110%;font-weight:bold;float:left}table.smwfacttable{border-top:1px dotted #AAAAAA;width:100%;clear:both}td.smwpropname,th.smwpropname,td.smwspecname{text-align:right;vertical-align:top;padding-right:1em}td.smwprops,td.smwspecs{vertical-align:top;width:75%}div.smwhr hr{background-color:#DDDDDD;color:#DDDDDD} span.smwwarning{color:#888888;font-style:italic;font-size:90%} span.smwsearchicon{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALySURBVDgRlcFraNVlHMDx7+95nv/zP+d/LnObeVtz2uyCrRUVDAIHMbIXltUgKRYR7kWvupjYDSEkgkgoKCiJfGeRzqw0CvYuahBWyrZWuWihuWNrZ+e2c87OZf//U1DB8EXU52P27XuV9takiiVS95ZjV+xdjK3uxbO0sFi15ewnlBYO1pZqP9YbTZQSLmeUOF1eNs+fj219QXdt1i2rfXwPlpxKho3qbpme3B7+/N2wUoyKCJcz9VB2ZFfdcKDtxh7p3hiRiMFSDfKFJjadwF/fd+V8pfhmYXK83ynJgLCSKanU47Et18qmDsc1axXtAlPzEekOS7XhSK3SmNt6uuemJnc2K5VDog0rmaptvWXtmgRBLKJNBL/h8DyhPRBqScGKI31dB2c8c2exsHhIW8tKZtmm/MBGFIohZ2oRQaDYkFYECgLAOjBa0ajVk8VSGc+3rGSa+Us18XQ8bIREgSKIC74G5aAdsEAjjCgXioXSYgVTX0bE8Q+zMD0xVs2V7tKtCepNiJRQB1JAClgjwskvvuXCzOypWn2ZeLiEA5wD58DkZs69fO7UyYGBPQ/FYxoi51D8JRBhNl/i05FRWlpaLtzReZbOxiSzRcNcCXIVMErL2E+fffSYNe61/t33pUxbEgeIwOmpGY6/fQxj4mzrTe/vyUz0zzflLU/CeSOgcRhRiqhZPzx+/OjEr998tXdDd2dfPBHT1flc4eL0Lyc6OzeeXt9WHu52Xw5etTk9UP0+f2szsg87XMEhGP4kWiNEXxczmQfERQSpBIXMHKVcka1XO/QP76/rvr9rsOf2IezIu3f/PpY/8lvRewTIGv4mImjPw/MtnvXwYhbtB9jqefzKxaMfj+R74+u6nrh+1xDN8MiO7Gj+8ELZDhv+lcOJRhtTuZRt7Hn9xQ/do88MPnnz0BAPyns73ziRf8fwH/lWu9mF5acPHvggevalXU+137QN9fn4PYb/wfN0M1cKn3tl/7FNbVt6tk9L39k/AH8KLAsrDQkDAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/search_icon.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a{padding-right:16px;margin-right:2px;color:#000000;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwmap a{padding-right:20px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.smwmap a:hover{padding-right:20px;color:#0000FF;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.rdflink{float:right}#bodyContent span.rdflink a{padding-right:20px;color:#888888;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-04-01T19:11:40Z) center right no-repeat!ie}#bodyContent span.rdflink a:hover{text-decoration:none;color:#0000FF;padding-right:20px;margin-right:0px;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-04-01T19:11:40Z) center right no-repeat!ie} table.smwb-factbox{border-left:8px solid #DDDDDD;width:100% }tr.smwb-title{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-title td{padding-left:5px;border-bottom:2px solid white}tr.smwb-propvalue{width:100%;background-color:#EEEEEE}tr.smwb-propvalue th{text-align:right;vertical-align:top;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:2px solid white;border-top:2px solid white}tr.smwb-propvalue td{padding-left:0.4em;background-color:#EEEEEE;border:0px solid white;border-bottom:2px solid white;border-top:2px solid white;width:90%}tr.smwb-center{background-color:#DDDDDD}span.smwb-value{} table.smwb-ifactbox{border-right:8px solid #DDDDDD;width:100% }tr.smwb-ititle{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-ititle td{padding-left:5px;border-bottom:2px solid white}tr.smwb-ipropvalue{width:100%;background-color:#EEEEEE;text-align:right}tr.smwb-ipropvalue th{text-align:left;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:3px solid white;border-top:3px solid white}tr.smwb-ipropvalue td{background-color:#EEEEEE;border-bottom:3px solid white;border-top:3px solid white;padding-right:1em;width:90%}span.smwb-ivalue{} .smw-spinner .text{padding-left:2.1em;font-size:12px;vertical-align:middle} .smw-spinner.left.mw-small-spinner{background-position:left;vertical-align:middle;display:inline-block;padding:0px !important} .smw-spinner.center.mw-small-spinner{vertical-align:middle;display:inline-block;padding:0px !important}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:40062047fcfe74a3485af751bb3025f8 */
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-04-01T19:11:40Z) no-repeat left bottom!ie}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:ccf46287b7564d7264bf4c99a1bb8c68 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:ccf46287b7564d7264bf4c99a1bb8c68 */</style><style>
+.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/emergent/resources/mediawiki.action/images/green-checkmark.png?2014-04-01T18:51:40Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:82a544ae3808516cb8a49c709af1c272 */
+#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
@@ -2651,8 +2678,8 @@ mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonema
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20140816T222254Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20140816T222254Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20140816T222254Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20140816T222246Z&amp;*\"></script></head>
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20141014T190307Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20141014T190308Z&amp;*\"></script>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20141014T190309Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20141014T183239Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-vector action-view vector-animateLayout\">
 		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -2735,8 +2762,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.056 seconds
-Real time usage: 0.059 seconds
+CPU time usage: 0.036 seconds
+Real time usage: 0.044 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2745,7 +2772,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20140915021210
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20141020180631
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"				</div>
@@ -2758,14 +2785,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -2784,8 +2811,8 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"This page is protected.
-You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
@@ -2799,7 +2826,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/emergent/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
@@ -2811,8 +2838,8 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
 			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
 			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
 			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
@@ -2824,9 +2851,9 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
 	<div class=\"body\" style=\"display: block;\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=info\">Page information</a></li>
 			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" rel=\"smw-browse\">Browse properties</a></li>
@@ -2839,7 +2866,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -2848,7 +2875,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 11,969 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 12,158 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2868,10 +2895,10 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.490 secs. -->
+<!-- Served in 0.499 secs. -->
 	
 
-</body></html>";
+<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
   };
  };
  wizards {
@@ -2929,6 +2956,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       next_val=0;
       incr=0.1;
      };
+     param_set_value {
+      saved_value=;
+     };
     };
     EditMbrItem @[1] {
      label="Cycle_update_net_view";
@@ -2945,6 +2975,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       next_val=0;
       incr=0.1000000014901161;
      };
+     param_set_value {
+      saved_value=;
+     };
     };
     EditMbrItem @[2] {
      label="LeabraConSpec_0_lrate";
@@ -2960,6 +2993,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       max_val=1;
       next_val=0;
       incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
      };
     };
    };
@@ -4609,6 +4645,11 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    nowin_x=0;
   };
  };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
+ };
  data {
   name="data";
   el_typ=DataTable;
@@ -4857,17 +4898,43 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     float_Data @["minus_cycles"] {
-      name="minus_cycles";
+     float_Data @["Input_minus_cycles"] {
+      name="Input_minus_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
+      is_matrix=1;
+      cell_geom{ 5;5;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name="dim_names";
-      [0]       };
+       name=;
+      [2] ;;      };
+      width=0;
+     };
+     float_Data @["Hidden_minus_cycles"] {
+      name="Hidden_minus_cycles";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [2] ;;      };
+      width=0;
+     };
+     float_Data @["Output_minus_cycles"] {
+      name="Output_minus_cycles";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=1;
+      cell_geom{ 5;5;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [2] ;;      };
       width=0;
      };
      float_Data @["sse"] {
@@ -5049,6 +5116,19 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     float_Data @["avg_avg_act_diff"] {
+      name="avg_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      float_Data @["epoch_time_tot"] {
       name="epoch_time_tot";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5064,45 +5144,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      float_Data @["epoch_time_usr"] {
       name="epoch_time_usr";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     float_Data @["Hidden_Fm_Input_netrel"] {
-      name="Hidden_Fm_Input_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     float_Data @["Hidden_Fm_Output_netrel"] {
-      name="Hidden_Fm_Output_netrel";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     float_Data @["Output_Fm_Hidden_netrel"] {
-      name="Output_Fm_Hidden_netrel";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5142,6 +5183,84 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      float_Data @["Output_netmax"] {
       name="Output_netmax";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Input_avg_act"] {
+      name="Input_avg_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_act"] {
+      name="Hidden_avg_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_act"] {
+      name="Output_avg_act";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_Fm_Input_netrel"] {
+      name="Hidden_Fm_Input_netrel";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_Fm_Output_netrel"] {
+      name="Hidden_Fm_Output_netrel";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_Fm_Hidden_netrel"] {
+      name="Output_Fm_Hidden_netrel";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5636,7 +5755,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      object_type=LeabraNetwork;
      object_val=.projects["LeabraFlex"].networks["Network_0"]$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
      desc="network to operate on -- updates batch counter on network and passes it to train program";
      init_from=NULL;
@@ -5861,11 +5980,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="n_units";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="n_units";
 	 };
 	};
        };
+       meth_sig="void SetNUnits(int n_units)";
+       meth_desc=" set number of units in layer in the un_geom member -- attempts to lay out geometry in closest to a square that fits all the units evenly, if possible. note: does NOT rebuild the network. also does not make any changes if current number of units is same as arg, or arg <= 0 (e.g., for startup arg, just init n_units to -1 prior to getting arg val so it won't have any effect if arg not passed)";
       };
       PrintExpr @[2] {
        desc=;
@@ -6049,6 +6171,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="a";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\"lesson_id is empty -- must specify!  bailing\"";
 	 };
@@ -6059,6 +6182,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="b";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6069,6 +6193,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="c";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6079,6 +6204,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="d";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6089,6 +6215,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="e";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6099,6 +6226,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="f";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6109,6 +6237,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="g";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6119,6 +6248,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="h";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6129,6 +6259,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="i";
 	 required=0;
 	 def_val="0";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
@@ -6192,6 +6323,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="var_nm";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"init_batch\"";
 	 };
@@ -6202,11 +6334,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="value";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
 	};
        };
+       meth_sig="bool SetVar(taString& var_nm, Variant& value)";
+       meth_desc=" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
       };
       ProgVarFmArg @[1] {
        desc="read in the arg to us too, so we can set file names based on it";
@@ -6233,6 +6368,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="num";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="batch_start";
 	 };
@@ -6243,6 +6379,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="len";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="2";
 	 };
@@ -6277,6 +6414,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="ext";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\".args\"";
        };
@@ -6287,6 +6425,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="tag";
        required=0;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="tag";
        };
@@ -6297,6 +6436,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="subdir";
        required=0;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="\"log\"";
        };
@@ -6307,11 +6447,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="dmem_proc_no";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr="false";
        };
       };
      };
+     meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+     meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
     MiscCall @[24] {
      desc=;
@@ -6330,6 +6473,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="fname";
        required=1;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="log_file_nm";
        };
@@ -6353,6 +6497,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="ext";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="\".epc.dat\"";
        };
@@ -6363,6 +6508,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="tag";
        required=0;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="tag";
        };
@@ -6373,6 +6519,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="subdir";
        required=0;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="log_dir";
        };
@@ -6383,11 +6530,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="dmem_proc_no";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr="false";
        };
       };
      };
+     meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+     meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
     MethodCall @[26] {
      desc="last arg is to restrict log to dmem_proc = 0";
@@ -6406,6 +6556,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="fname";
        required=0;
        def_val="\"\"";
+       prev_expr=;
        expr {
 	expr="log_file_nm";
        };
@@ -6416,6 +6567,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="append";
        required=0;
        def_val="false";
+       prev_expr=;
        expr {
 	expr="false";
        };
@@ -6426,11 +6578,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="dmem_proc_0";
        required=0;
        def_val="true";
+       prev_expr=;
        expr {
 	expr="true";
        };
       };
      };
+     meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
+     meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
     If @[27] {
      desc=;
@@ -6460,6 +6615,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="ext";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="\".trl.dat\"";
 	 };
@@ -6470,6 +6626,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="tag";
 	 required=0;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="tag";
 	 };
@@ -6480,6 +6637,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="subdir";
 	 required=0;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="log_dir";
 	 };
@@ -6490,11 +6648,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="dmem_proc_no";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
 	};
        };
+       meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+       meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
       };
       MethodCall @[1] {
        desc="last arg is to restrict log to dmem_proc = 0";
@@ -6513,6 +6674,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="fname";
 	 required=0;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="log_file_nm";
 	 };
@@ -6523,6 +6685,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="append";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
@@ -6533,11 +6696,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="dmem_proc_0";
 	 required=0;
 	 def_val="true";
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
 	};
        };
+       meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
+       meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
       };
      };
     };
@@ -6586,6 +6752,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="network";
        };
@@ -6618,6 +6785,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="network";
        required=1;
        def_val=;
+       prev_expr=;
        expr {
 	expr="network";
        };
@@ -6662,7 +6830,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -6771,6 +6939,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="ext";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\".fix_epc.dat\"";
 	};
@@ -6781,6 +6950,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="tag";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="tag";
 	};
@@ -6791,6 +6961,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="subdir";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="log_dir";
 	};
@@ -6801,11 +6972,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="dmem_proc_no";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
      };
      MethodCall @[2] {
       desc="last arg is to restrict log to dmem_proc = 0";
@@ -6824,6 +6998,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="fname";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="log_file_nm";
 	};
@@ -6834,6 +7009,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="append";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
@@ -6844,11 +7020,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="dmem_proc_0";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
+      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
      };
      If @[3] {
       desc=;
@@ -6878,6 +7057,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="ext";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="\".fix_trl.dat\"";
 	  };
@@ -6888,6 +7068,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="tag";
 	  required=0;
 	  def_val="\"\"";
+	  prev_expr=;
 	  expr {
 	   expr="tag";
 	  };
@@ -6898,6 +7079,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="subdir";
 	  required=0;
 	  def_val="\"\"";
+	  prev_expr=;
 	  expr {
 	   expr="log_dir";
 	  };
@@ -6908,11 +7090,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="dmem_proc_no";
 	  required=0;
 	  def_val="false";
+	  prev_expr=;
 	  expr {
 	   expr="true";
 	  };
 	 };
 	};
+	meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+	meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
        };
        MethodCall @[1] {
 	desc="last arg is to restrict log to dmem_proc = 0";
@@ -6931,6 +7116,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="fname";
 	  required=0;
 	  def_val="\"\"";
+	  prev_expr=;
 	  expr {
 	   expr="log_file_nm";
 	  };
@@ -6941,6 +7127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="append";
 	  required=0;
 	  def_val="false";
+	  prev_expr=;
 	  expr {
 	   expr="false";
 	  };
@@ -6951,11 +7138,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="dmem_proc_0";
 	  required=0;
 	  def_val="true";
+	  prev_expr=;
 	  expr {
 	   expr="false";
 	  };
 	 };
 	};
+	meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
+	meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
        };
       };
      };
@@ -6996,7 +7186,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -7125,6 +7315,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -7194,7 +7385,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -7319,6 +7510,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void Build()";
+	meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
        };
        MethodCall @[1] {
 	desc="initialize network weights: could also load pre-set weights or something else here";
@@ -7332,6 +7525,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void Init_Weights()";
+	meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
        };
        PrintExpr @[2] {
 	desc=;
@@ -7397,6 +7592,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -7407,6 +7603,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="config_id";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="config_id";
 	};
@@ -7437,6 +7634,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -7447,6 +7645,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="config_id";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="config_id";
 	  };
@@ -7457,6 +7656,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="run_prog";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="run_prog";
 	  };
@@ -7500,7 +7700,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -7510,7 +7710,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val="basic_train";
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
       init_from=NULL;
@@ -7520,7 +7720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val="BasicRun";
       objs_ptr=0;
-      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="name of run program from the Config table";
       init_from=NULL;
@@ -7570,6 +7770,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -7580,6 +7781,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="config_id";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="config_id";
 	};
@@ -7624,7 +7826,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_type=LeabraNetwork;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="network to operate on -- updates batch counter on network and passes it to train program";
        init_from=NULL;
@@ -7634,7 +7836,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_String;
        string_val="basic_train";
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
        init_from=NULL;
@@ -7683,6 +7885,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
@@ -7693,6 +7896,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="config_id";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="config_id";
 	 };
@@ -7715,6 +7919,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
@@ -7725,6 +7930,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="lesion_layers";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="lay_lesion_list";
 	 };
@@ -7747,6 +7953,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
@@ -7837,7 +8044,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        object_type=LeabraNetwork;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="network to operate on -- updates batch counter on network and passes it to train program";
        init_from=NULL;
@@ -7847,7 +8054,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        var_type=T_String;
        string_val="basic_train";
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="configuration to use -- lookup in Config table";
        init_from=NULL;
@@ -7943,6 +8150,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
@@ -7953,6 +8161,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="input_data";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="StdInputData";
 	 };
@@ -7963,6 +8172,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="update_net_view";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="update_net_view";
 	 };
@@ -7990,6 +8200,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 name="network";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
@@ -8034,6 +8245,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   name="network";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="network";
 	   };
@@ -8078,6 +8290,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	     name="network";
 	     required=1;
 	     def_val=;
+	     prev_expr=;
 	     expr {
 	      expr="network";
 	     };
@@ -8110,6 +8323,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   name="network";
 	   required=1;
 	   def_val=;
+	   prev_expr=;
 	   expr {
 	    expr="network";
 	   };
@@ -8142,7 +8356,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=4460: sys=344: tot=141077062882: }: end={usr=4461: sys=344: tot=141077062883: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=12212: sys=1404: tot=141387972580: }: end={usr=12212: sys=1404: tot=141387972580: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -8159,7 +8373,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -8170,7 +8384,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -8180,7 +8394,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, will update network views at end of settling";
       init_from=NULL;
@@ -8223,6 +8437,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void ResetUsed()";
+      meth_desc=" reset time used information";
      };
     };
     prog_code {
@@ -8246,11 +8462,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="reset_used";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="void StartTimer(bool reset_used = true)";
+      meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      Comment @[1] {
       desc="=== Start Trial ===";
@@ -8271,6 +8490,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8293,6 +8513,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8303,6 +8524,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="input_data";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -8313,6 +8535,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="permuted";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
@@ -8335,6 +8558,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8345,6 +8569,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="input_data";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -8358,20 +8583,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       flags=0;
       orig_prog_code=;
      };
-     MethodCall @[6] {
-      desc="initializes various counters at start of settling";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
-      method=LeabraNetwork::Settle_Init;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     ProgramCall @[7] {
+     ProgramCall @[6] {
       desc="settle for minus phase, using ct_time.minus as fixed number of cycles to run";
       flags=0;
       orig_prog_code=;
@@ -8385,6 +8597,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8393,72 +8606,39 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"]$$;
       targ_ld_init="*SettleMinus*";
      };
-     MethodCall @[8] {
-      desc="perform final operations at end of settling (storing final activations, etc)";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Settle_Final;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     MethodCall @[9] {
+     MethodCall @[7] {
       desc="compute minus phase statistics";
       flags=0;
       orig_prog_code=;
       result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
+      obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
       method=LeabraNetwork::Compute_MinusStats;
       meth_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_MinusStats()";
+      meth_desc=" compute the stats that should be computed at the end of the minus phase: minus_output_name -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
      };
-     NetUpdateView @[10] {
+     NetUpdateView @[8] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$$;
      };
-     StopStepPoint @[11] {
+     StopStepPoint @[9] {
       desc=;
       flags=0;
       orig_prog_code=;
      };
-     Comment @[12] {
+     Comment @[10] {
       desc="=== Run Plus Phase ===";
       flags=0;
       orig_prog_code=;
      };
-     ProgramCall @[13] {
-      desc="start the plus phase";
-      flags=0;
-      orig_prog_code=;
-      prog_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-       ProgArg @[0] {
-	arg_type=LeabraNetwork;
-	type="LeabraNetwork*";
-	name="network";
-	required=1;
-	def_val=;
-	expr {
-	 expr="network";
-	};
-       };
-      };
-      target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"]$$;
-      targ_ld_init="*PlusPhaseStart*";
-     };
-     ProgramCall @[14] {
+     ProgramCall @[11] {
       desc="apply std external input activations from the input_data table to the network";
       flags=0;
       orig_prog_code=;
@@ -8472,6 +8652,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8482,6 +8663,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="input_data";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -8490,20 +8672,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"]$;
       targ_ld_init="*ApplyInputs*";
      };
-     MethodCall @[15] {
-      desc="initializes various counters at start of settling";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Settle_Init;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     ProgramCall @[16] {
+     ProgramCall @[12] {
       desc="settle for designated plus phase number of cycles";
       flags=0;
       orig_prog_code=;
@@ -8517,6 +8686,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8525,20 +8695,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"]$$;
       targ_ld_init="*Settle*";
      };
-     MethodCall @[17] {
-      desc="perform final operations at end of settling (storing final activations, etc)";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Settle_Final;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     MethodCall @[18] {
+     MethodCall @[13] {
       desc="compute plus phase statistics";
       flags=0;
       orig_prog_code=;
@@ -8550,15 +8707,17 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_PlusStats()";
+      meth_desc=" compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr, ExtRew -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
      };
-     NetUpdateView @[19] {
+     NetUpdateView @[14] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
-     ProgramCall @[20] {
+     ProgramCall @[15] {
       desc="standard end of trial stuff";
       flags=0;
       orig_prog_code=;
@@ -8572,6 +8731,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -8580,7 +8740,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
       targ_ld_init="*TrialEnd*";
      };
-     MethodCall @[21] {
+     MethodCall @[16] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -8592,6 +8752,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
@@ -8651,7 +8813,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 4;1;0;2;5;3;      };
+      [6] 4;2;1;0;5;3;      };
      };
     };
     types {
@@ -8669,7 +8831,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="Network to which to apply inputs";
       init_from=NULL;
@@ -8680,7 +8842,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -8690,7 +8852,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Bool;
       bool_val=1;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="present events in permuted order (otherwise use sequential order)";
       init_from=NULL;
@@ -8713,7 +8875,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=3;
+      int_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -8900,6 +9062,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="dest";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="PermIdxTable";
 	    };
@@ -8910,6 +9073,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="src";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="PermIdxTable";
 	    };
@@ -8975,11 +9139,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="n_rows";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="dmem_rows";
 	  };
 	 };
 	};
+	meth_sig="void EnforceRows(int n_rows)";
+	meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
        };
        MethodCall @[3] {
 	desc=;
@@ -8998,11 +9165,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="col";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="0";
 	  };
 	 };
 	};
+	meth_sig="bool InitValsToRowNo(Variant& col)";
+	meth_desc=" initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name";
        };
        FunctionCall @[4] {
 	desc=;
@@ -9158,6 +9328,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="col";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="0";
 	  };
@@ -9168,11 +9339,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="row";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="cur_idx";
 	  };
 	 };
 	};
+	meth_sig="const_Variant GetVal(Variant& col, int row)";
+	meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
        };
       };
      };
@@ -9243,6 +9417,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="n";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="input_data.rows";
 	    };
@@ -9270,11 +9445,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="idx";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_idx";
 	};
        };
       };
+      meth_sig="bool ReadItem(int idx)";
+      meth_desc=" goes directly (random access) to row idx (- = count back from last row available, otherwise must be in range 0 <= idx < rows) so that it is now available for GetData routines (which use read_idx for their row number), returns true if row exists and was read";
      };
     };
     step_prog=NULL;
@@ -9306,7 +9484,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -9358,6 +9536,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="n";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data.rows";
 	};
@@ -9381,11 +9560,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="idx";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="event_idx";
 	};
        };
       };
+      meth_sig="bool ReadItem(int idx)";
+      meth_desc=" goes directly (random access) to row idx (- = count back from last row available, otherwise must be in range 0 <= idx < rows) so that it is now available for GetData routines (which use read_idx for their row number), returns true if row exists and was read";
      };
     };
     step_prog=NULL;
@@ -9460,7 +9642,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=Network;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
       init_from=NULL;
@@ -9471,7 +9653,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=DataTable;
       object_val=$.projects["LeabraFlex"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -9519,6 +9701,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="db";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -9529,11 +9712,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
       desc="configure to fit the network and input data -- this may cause spurious warning messages and problems in some cases so just turn it OFF if necessary";
@@ -9552,11 +9738,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="remove_unused";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="void AutoConfig(bool remove_unused = true)";
+      meth_desc=" do a 'best guess' configuration of items by matching up like-named data Channels and network Layers -- if remove_unused is true, then layer writer elements that existed previously but were not found in input data and network are removed";
      };
      MethodCall @[2] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
@@ -9575,11 +9764,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
     };
     prog_code {
@@ -9603,6 +9795,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="db";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -9613,11 +9806,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
       desc="apply inputs to the network!  layer writer has all the key specs";
@@ -9631,6 +9827,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="bool ApplyInputData()";
+      meth_desc=" apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success";
      };
     };
     step_prog=NULL;
@@ -9669,7 +9867,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -9679,7 +9877,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val="basic_train";
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="configuration to use -- lookup in Config table";
       init_from=NULL;
@@ -10141,7 +10339,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="required for the batch counter";
       init_from=NULL;
@@ -10194,11 +10392,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="idx";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network.batch % rnd_seeds.seeds.size";
 	};
        };
       };
+      meth_sig="void UseSeed(int idx)";
+      meth_desc=" use seed at given index in the list (does OldSeed on it); wraps around (modulus) if idx is > list size (issues warning)";
      };
     };
     step_prog=NULL;
@@ -10233,7 +10434,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="required for the batch counter";
       init_from=NULL;
@@ -10243,7 +10444,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion";
       init_from=NULL;
@@ -10341,11 +10542,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="idx";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="i";
 	  };
 	 };
 	};
+	meth_sig="Layer_ptr SafeEl(int idx)";
+	meth_desc=" get element at index";
        };
        MethodCall @[1] {
 	desc=;
@@ -10359,6 +10563,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void UnLesionLayers()";
+	meth_desc=" un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing";
        };
        MethodCall @[2] {
 	desc=;
@@ -10372,6 +10578,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void DeIconifyLayers()";
+	meth_desc=" un-set the lesion flag on all the layers within this group";
        };
       };
       init {
@@ -10406,6 +10614,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="str";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="lesion_layers";
 	};
@@ -10416,11 +10625,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="delim";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
+      meth_sig="void FmDelimString(taString& str, taString& delim)";
+      meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
      ForLoop @[4] {
       desc=;
@@ -10447,11 +10659,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="idx";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="i";
 	  };
 	 };
 	};
+	meth_sig="const_taString_ref SafeEl_Flat(int idx)";
+	meth_desc=" (safely) access the matrix as if it were a flat vector, for reading";
        };
        MemberMethodCall @[1] {
 	desc=;
@@ -10471,11 +10686,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="item_nm";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="laygp_nm";
 	  };
 	 };
 	};
+	meth_sig="Layer_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
        If @[2] {
 	desc=;
@@ -10505,6 +10723,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="a";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="\"layer group named:\"";
 	    };
@@ -10515,6 +10734,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="b";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="laygp_nm";
 	    };
@@ -10525,6 +10745,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="c";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="\"not found in network:\"";
 	    };
@@ -10535,6 +10756,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="d";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="network.name";
 	    };
@@ -10545,6 +10767,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="e";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10555,6 +10778,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="f";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10565,6 +10789,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="g";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10575,6 +10800,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="h";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10585,6 +10811,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="i";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10613,6 +10840,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void LesionLayers()";
+	meth_desc=" set the lesion flag on all the layers within this group -- removes them from all processing operations";
        };
        MethodCall @[4] {
 	desc=;
@@ -10626,6 +10855,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void IconifyLayers()";
+	meth_desc=" iconi";
        };
       };
       init {
@@ -10650,6 +10881,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Build()";
+      meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
      };
      MethodCall @[6] {
       desc=;
@@ -10663,6 +10896,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void UpdtAfterNetMod()";
+      meth_desc=" update network after any network modification (calls appropriate functions)";
      };
      PrintExpr @[7] {
       desc=;
@@ -10707,7 +10942,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="required for the batch counter";
       init_from=NULL;
@@ -10717,7 +10952,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_String;
       string_val=;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="a space delimited list of layer group names to lesion or unlesion";
       init_from=NULL;
@@ -10727,7 +10962,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       var_type=T_Bool;
       bool_val=0;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="if true, lesion the layer groups, otherwise unlesion them";
       init_from=NULL;
@@ -10811,6 +11046,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="str";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="lesion_layers";
 	};
@@ -10821,11 +11057,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="delim";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\" \"";
 	};
        };
       };
+      meth_sig="void FmDelimString(taString& str, taString& delim)";
+      meth_desc=" fill this matrix by parsing given string using given delimiter separating strings -- increases size as necessary to fit everything";
      };
      ForLoop @[1] {
       desc=;
@@ -10852,11 +11091,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="idx";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="i";
 	  };
 	 };
 	};
+	meth_sig="const_taString_ref SafeEl_Flat(int idx)";
+	meth_desc=" (safely) access the matrix as if it were a flat vector, for reading";
        };
        MemberMethodCall @[1] {
 	desc=;
@@ -10876,11 +11118,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="item_nm";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="laygp_nm";
 	  };
 	 };
 	};
+	meth_sig="Layer_ptr FindName(taString& item_nm)";
+	meth_desc=" Find element in top-level list with given name (nm) (NULL = not here)";
        };
        If @[2] {
 	desc=;
@@ -10910,6 +11155,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="a";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="\"layer group named:\"";
 	    };
@@ -10920,6 +11166,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="b";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="laygp_nm";
 	    };
@@ -10930,6 +11177,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="c";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="\"not found in network:\"";
 	    };
@@ -10940,6 +11188,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="d";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr="network.name";
 	    };
@@ -10950,6 +11199,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="e";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10960,6 +11210,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="f";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10970,6 +11221,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="g";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10980,6 +11232,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="h";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -10990,6 +11243,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="i";
 	    required=0;
 	    def_val="0";
+	    prev_expr=;
 	    expr {
 	     expr=;
 	    };
@@ -11029,6 +11283,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
+	  meth_sig="void LesionLayers()";
+	  meth_desc=" set the lesion flag on all the layers within this group -- removes them from all processing operations";
 	 };
 	};
        };
@@ -11052,6 +11308,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
+	  meth_sig="void UnLesionLayers()";
+	  meth_desc=" un-set the lesion flag on all the layers within this group -- restores them to engage in normal processing";
 	 };
 	};
        };
@@ -11078,6 +11336,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void UpdtAfterNetMod()";
+      meth_desc=" update network after any network modification (calls appropriate functions)";
      };
     };
     step_prog=NULL;
@@ -11116,7 +11376,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -11217,6 +11477,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -11237,6 +11498,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Build()";
+      meth_desc=" Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)";
      };
      MethodCall @[2] {
       desc="initialize network weights: could also load pre-set weights or something else here";
@@ -11250,6 +11513,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_Weights()";
+      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
      PrintExpr @[3] {
       desc=;
@@ -11289,6 +11554,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="fname";
 	  required=0;
 	  def_val="\"\"";
+	  prev_expr=;
 	  expr {
 	   expr="weights_file";
 	  };
@@ -11299,11 +11565,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="quiet";
 	  required=0;
 	  def_val="false";
+	  prev_expr=;
 	  expr {
 	   expr="false";
 	  };
 	 };
 	};
+	meth_sig="bool LoadWeights(taString& fname, bool quiet = false)";
+	meth_desc=" read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)";
        };
        PrintVar @[1] {
 	desc=;
@@ -11349,6 +11618,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="epcs_per_step";
 	required=0;
 	def_val="50";
+	prev_expr=;
 	expr {
 	 expr="lrs_step_epochs";
 	};
@@ -11359,11 +11629,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="n_steps";
 	required=0;
 	def_val="7";
+	prev_expr=;
 	expr {
 	 expr="7";
 	};
        };
       };
+      meth_sig="void LogLrateSched(int epcs_per_step = 50, float n_steps = 7)";
+      meth_desc=" establish a logarithmic learning rate schedule with given total number of steps (including first step at lrate) and epochs per step: numbers go down in sequence: 1, .5, .2, .1, .05, .02, .01, etc.. this is a particularly good lrate schedule for large nets on hard tasks";
      };
      If @[6] {
       desc="if dmem, then from here on out, processors diverge so that lists of objs per processor are different!";
@@ -11388,6 +11661,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void NewSeed()";
+	meth_desc=" set the seed to a new random value (based on time and process id)";
        };
       };
      };
@@ -11405,6 +11680,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -11443,7 +11719,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -11514,6 +11790,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -11541,6 +11818,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="var_nm";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\"stop_train\"";
 	};
@@ -11551,11 +11829,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="value";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="bool SetVar(taString& var_nm, Variant& value)";
+      meth_desc=" set the value of a program variable (only top-level variables in vars or args) -- can be called from within a running program";
      };
     };
     step_prog=NULL;
@@ -11587,7 +11868,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -11663,11 +11944,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="reset_used";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void StartTimer(bool reset_used = true)";
+      meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[2] {
       desc="keep other time info on an epoch basis";
@@ -11681,6 +11965,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void ResetUsed()";
+      meth_desc=" reset time used information";
      };
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
@@ -11694,6 +11980,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void ResetData()";
+      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
     };
     step_prog=NULL;
@@ -11725,7 +12013,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -11772,6 +12060,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_EpochStats()";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
      MemberMethodCall @[1] {
       desc="start the epoch timer to record computation time per epoch";
@@ -11786,6 +12076,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
      ProgramCall @[2] {
       desc=;
@@ -11801,6 +12093,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -11834,6 +12127,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -11874,7 +12168,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -11911,8 +12205,38 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Trial_Init()";
+      meth_desc=" initialize at start of trial (init specs, Decay state)";
      };
-     MethodCall @[1] {
+     If @[1] {
+      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
+      flags=0;
+      orig_prog_code=;
+      cond {
+       expr="network.Compute_Weights_Test(network.trial+1)";
+      };
+      true_code {
+       name="true_code";
+       el_typ=ProgCode;
+       el_def=0;
+       MethodCall @[0] {
+	desc="update the weight values -- do this at start so that dwt value is valid at end of trial";
+	flags=0;
+	orig_prog_code=;
+	result_var=NULL;
+	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"].args["network"]$;
+	method=Network::Compute_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Compute_Weights()";
+	meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
+       };
+      };
+     };
+     MethodCall @[2] {
       desc="resets input data, before getting new external inputs data from apply inputs call";
       flags=0;
       orig_prog_code=;
@@ -11924,8 +12248,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
      };
-     MemberAssign @[2] {
+     MemberAssign @[3] {
       desc="start at 0 cycle";
       flags=0;
       orig_prog_code=;
@@ -11966,7 +12292,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
@@ -12013,34 +12339,10 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Trial_Final()";
+      meth_desc=" do final processing after trial: Compute_AbsRelNetin";
      };
-     If @[1] {
-      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
-      flags=0;
-      orig_prog_code=;
-      cond {
-       expr="network.Compute_Weights_Test(network.trial+1)";
-      };
-      true_code {
-       name=;
-       el_typ=ProgCode;
-       el_def=0;
-       MethodCall @[0] {
-	desc="update the weight values based on changes computed by trial program";
-	flags=0;
-	orig_prog_code=;
-	result_var=NULL;
-	obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"].args["network"]$;
-	method=Network::Compute_Weights;
-	meth_args {
-	 name=;
-	 el_typ=ProgArg;
-	 el_def=0;
-	};
-       };
-      };
-     };
-     NetUpdateView @[2] {
+     NetUpdateView @[1] {
       desc="update the network view(s) (only if update_net_view is true)";
       flags=0;
       orig_prog_code=;
@@ -12077,7 +12379,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -12120,18 +12422,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="local_vars";
        el_typ=ProgVar;
        el_def=0;
-       ProgVar @["cycle_max"] {
-	name="cycle_max";
-	var_type=T_Int;
-	int_val=50;
-	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	reference=0;
-	desc=;
-	init_from=NULL;
-       };
-       ProgVar @["cyc"] {
-	name="cyc";
+       ProgVar @["qtr"] {
+	name="qtr";
 	var_type=T_Int;
 	int_val=1;
 	objs_ptr=0;
@@ -12142,20 +12434,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     MethodCall @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="int cycle_max = network.CycleRunMax_Minus()";
-      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].prog_code[0].local_vars["cycle_max"]$$;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].args["network"]$$;
-      method=LeabraNetwork::CycleRunMax_Minus;
-      meth_args {
-       name="meth_args";
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     ForLoop @[2] {
+     ForLoop @[1] {
       desc=;
       flags=NEW_EL;
       orig_prog_code=;
@@ -12177,30 +12456,31 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr="network";
 	  expr {
 	   expr="network";
 	  };
 	 };
 	};
-	target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
-	targ_ld_init="*Cycle*";
+	target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"]$$;
+	targ_ld_init="*Quarter*";
        };
       };
       init {
-       expr="cyc = 0";
+       expr="qtr = 0";
       };
       test {
-       expr="cyc < cycle_max";
+       expr="qtr < 3";
       };
       iter {
-       expr="cyc++";
+       expr="qtr++";
       };
      };
-     NetUpdateView @[3] {
+     NetUpdateView @[2] {
       desc="update network views if update_net_view == true";
       flags=0;
       orig_prog_code=;
-      network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].args["network"]$;
+      network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].args["network"]$$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"].vars["update_net_view"]$$;
      };
     };
@@ -12233,7 +12513,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -12276,201 +12556,47 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="local_vars";
        el_typ=ProgVar;
        el_def=0;
-       ProgVar @["cycle_max"] {
-	name="cycle_max";
-	var_type=T_Int;
-	int_val=50;
-	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	reference=0;
-	desc=;
-	init_from=NULL;
-       };
-       ProgVar @["cyc"] {
-	name="cyc";
-	var_type=T_Int;
-	int_val=1;
-	objs_ptr=0;
-	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
-	reference=0;
-	desc=;
-	init_from=NULL;
-       };
       };
      };
-     MethodCall @[1] {
+     ProgramCall @[1] {
       desc=;
       flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="int cycle_max = network.CycleRunMax_Minus()";
-      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].prog_code[0].local_vars["cycle_max"]$$;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].args["network"]$$;
-      method=LeabraNetwork::CycleRunMax_Plus;
-      meth_args {
-       name="meth_args";
+      orig_prog_code="Quarter()";
+      prog_args {
+       name="prog_args";
        el_typ=ProgArg;
        el_def=0;
-      };
-     };
-     ForLoop @[2] {
-      desc=;
-      flags=NEW_EL;
-      orig_prog_code=;
-      loop_code {
-       name="loop_code";
-       el_typ=ProgCode;
-       el_def=0;
-       ProgramCall @[0] {
-	desc="run the cycle program, which computes one cycle of activations";
-	flags=0;
-	orig_prog_code=;
-	prog_args {
-	 name="prog_args";
-	 el_typ=ProgArg;
-	 el_def=0;
-	 ProgArg @[0] {
-	  arg_type=LeabraNetwork;
-	  type="LeabraNetwork*";
-	  name="network";
-	  required=1;
-	  def_val=;
-	  expr {
-	   expr="network";
-	  };
-	 };
+       ProgArg @[0] {
+	arg_type=LeabraNetwork;
+	type="LeabraNetwork*";
+	name="network";
+	required=1;
+	def_val=;
+	prev_expr=;
+	expr {
+	 expr="network";
 	};
-	target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
-	targ_ld_init="*Cycle*";
        };
       };
-      init {
-       expr="cyc = 0";
-      };
-      test {
-       expr="cyc < cycle_max";
-      };
-      iter {
-       expr="cyc++";
-      };
+      target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"]$;
+      targ_ld_init="*Quarter*";
      };
-     NetUpdateView @[3] {
+     NetUpdateView @[2] {
       desc="update network views if update_net_view == true";
       flags=0;
       orig_prog_code=;
-      network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].args["network"]$;
+      network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].args["network"]$$;
       update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"].vars["update_net_view"]$$;
      };
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
     step_n=1;
    };
-   Program @["PlusPhaseStart"] {
-    name="PlusPhaseStart";
-    short_nm="PlPhSt";
-    tags=;
-    desc="update counters to go from minus phase to plus phase";
-    flags=NO_STOP_STEP;
-    objs {
-     name="objs";
-     el_typ=taNBase;
-     el_def=0;
-    };
-    types {
-     name="types";
-     el_typ=DynEnumType;
-     el_def=0;
-    };
-    args {
-     name="args";
-     el_typ=ProgVar;
-     el_def=0;
-     ProgVar @["network"] {
-      name="network";
-      var_type=T_Object;
-      object_type=LeabraNetwork;
-      object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="network to operate on -- updates batch counter on network and passes it to train program";
-      init_from=NULL;
-     };
-    };
-    vars {
-     name="vars";
-     el_typ=ProgVar;
-     el_def=0;
-    };
-    functions {
-     name="functions";
-     el_typ=Function;
-     el_def=0;
-    };
-    init_code {
-     name="init_code";
-     el_typ=ProgCode;
-     el_def=0;
-    };
-    prog_code {
-     name="prog_code";
-     el_typ=ProgCode;
-     el_def=0;
-     MemberAssign @[0] {
-      desc=;
-      flags=0;
-      orig_prog_code=;
-      obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$$;
-      path="phase_no";
-      expr {
-       expr="network.phase_no+ 1";
-      };
-      update_after=0;
-     };
-     MethodCall @[1] {
-      desc="increments other phase state information to prepare for the next phase of settling";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
-      method=LeabraNetwork::Trial_UpdatePhase;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     MethodCall @[2] {
-      desc="resets input data, before getting new external inputs data from apply inputs call";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
-      method=Network::Init_InputData;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-     };
-     MemberAssign @[3] {
-      desc="start at 0 cycle";
-      flags=0;
-      orig_prog_code=;
-      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["PlusPhaseStart"].args["network"]$;
-      path="cycle";
-      expr {
-       expr="0";
-      };
-      update_after=0;
-     };
-    };
-    step_prog=NULL;
-    step_n=1;
-   };
-   Program @["Settle"] {
-    name="Settle";
-    short_nm="Settle";
-    tags=;
-    desc="settle network for arbitrary number of cycles -- actual number of cycles will be modulus lthreads.n_cycles -- see also SettleMinus or SettlePlus";
+   Program @["Trial"] {
+    name="Trial";
+    short_nm="Trial";
+    tags="Leabra, Std";
+    desc="Leabra processing of a single input/output event or external information, over a single alpha frequency cycle (100 msec / 10 Hz) -- iterates over gamma-frequency (25 msec / 40 Hz) quarter-trials";
     flags=0;
     objs {
      name="objs";
@@ -12492,19 +12618,9 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
-      desc=;
-      init_from=NULL;
-     };
-     ProgVar @["cycle_max"] {
-      name="cycle_max";
-      var_type=T_Int;
-      int_val=20;
-      objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc="number of cycles to run -- actually always runs this many cycles -- does not use threshold";
+      desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
      };
     };
@@ -12512,24 +12628,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="vars";
      el_typ=ProgVar;
      el_def=0;
-     ProgVar @["i"] {
-      name="i";
-      var_type=T_Int;
-      int_val=2;
-      objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
-      reference=0;
-      desc=;
-      init_from=NULL;
-     };
      ProgVar @["update_net_view"] {
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=1;
+      bool_val=0;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
-      desc="determines whether network views will be updated on settles";
+      desc="determines whether to update any network view displays after trial is completed";
       init_from=NULL;
      };
     };
@@ -12555,8 +12661,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        name="local_vars";
        el_typ=ProgVar;
        el_def=0;
-       ProgVar @["cyc_max"] {
-	name="cyc_max";
+       ProgVar @["qtr"] {
+	name="qtr";
 	var_type=T_Int;
 	int_val=0;
 	objs_ptr=0;
@@ -12567,51 +12673,68 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        };
       };
      };
-     AssignExpr @[1] {
-      desc=;
-      flags=CAN_REVERT_TO_CODE;
-      orig_prog_code="cyc_max = cycle_max / network.lthreads.n_cycles";
-      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Settle"].prog_code[0].local_vars["cyc_max"]$$;
-      expr {
-       expr="cycle_max / network.lthreads.n_cycles";
-      };
-     };
-     If @[2] {
-      desc=;
+     If @[1] {
+      desc="test if it is time to update the weight values from delta weights (dWt) computed over trials";
       flags=0;
-      orig_prog_code="if(!network.lthreads.using_threads)";
+      orig_prog_code=;
       cond {
-       expr="!network.lthreads.using_threads";
+       expr="network.Compute_Weights_Test(network.trial+1)";
       };
       true_code {
-       name="true_code";
-       el_typ=ProgCode;
-       el_def=0;
-       AssignExpr @[0] {
-	desc=;
-	flags=CAN_REVERT_TO_CODE;
-	orig_prog_code="cyc_max = cycle_max";
-	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Settle"].prog_code[0].local_vars["cyc_max"]$;
-	expr {
-	 expr="cycle_max";
-	};
-       };
-      };
-     };
-     ForLoop @[3] {
-      desc=;
-      flags=NEW_EL;
-      orig_prog_code=;
-      loop_code {
        name=;
        el_typ=ProgCode;
        el_def=0;
+       MethodCall @[0] {
+	desc="update weights -- do this at start instead of end, so that dwt is valid";
+	flags=0;
+	orig_prog_code=;
+	result_var=NULL;
+	obj=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$$;
+	method=Network::Compute_Weights;
+	meth_args {
+	 name=;
+	 el_typ=ProgArg;
+	 el_def=0;
+	};
+	meth_sig="void Compute_Weights()";
+	meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
+       };
+      };
+     };
+     MethodCall @[2] {
+      desc="initializes various counters at start of trial";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
+      method=LeabraNetwork::Trial_Init;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Trial_Init()";
+      meth_desc=" initialize at start of trial (init specs, Decay state)";
+     };
+     Comment @[3] {
+      desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+     };
+     ForLoop @[4] {
+      desc=;
+      flags=0;
+      orig_prog_code="for(qtr = 0; qtr < 4; qtr++)";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
        ProgramCall @[0] {
-	desc="run the cycle program, which computes one cycle of activations";
+	desc="run the quarter program (which iterates over cyles of network activation updating) for each quarter";
 	flags=0;
 	orig_prog_code=;
 	prog_args {
-	 name=;
+	 name="prog_args";
 	 el_typ=ProgArg;
 	 el_def=0;
 	 ProgArg @[0] {
@@ -12620,6 +12743,220 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr="network";
+	  expr {
+	   expr="network";
+	  };
+	 };
+	};
+	target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"]$;
+	targ_ld_init="*Quarter*";
+       };
+      };
+      init {
+       expr="qtr = 0";
+      };
+      test {
+       expr="qtr < 4";
+      };
+      iter {
+       expr="qtr++";
+      };
+     };
+     MethodCall @[5] {
+      desc="after the trial is over, do final computations";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
+      method=LeabraNetwork::Trial_Final;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Trial_Final()";
+      meth_desc=" do final processing after trial: Compute_AbsRelNetin";
+     };
+     NetUpdateView @[6] {
+      desc="update the network view(s) (only if update_net_view is true)";
+      flags=0;
+      orig_prog_code=;
+      network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].args["network"]$;
+      update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Trial"].vars["update_net_view"]$$;
+     };
+    };
+    step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
+    step_n=1;
+   };
+   Program @["Quarter"] {
+    name="Quarter";
+    short_nm="Quarter";
+    tags="Leabra, Std";
+    desc="iterates over cycles of activation updating for a gamma-frequency (25 msec / 40 Hz) quarter of an alpha frequency (100 msec / 10 Hz) trial";
+    flags=0;
+    objs {
+     name="objs";
+     el_typ=taNBase;
+     el_def=0;
+    };
+    types {
+     name="types";
+     el_typ=DynEnumType;
+     el_def=0;
+    };
+    args {
+     name="args";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["network"] {
+      name="network";
+      var_type=T_Object;
+      object_type=LeabraNetwork;
+      object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
+      objs_ptr=0;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+      reference=0;
+      desc=;
+      init_from=NULL;
+     };
+    };
+    vars {
+     name="vars";
+     el_typ=ProgVar;
+     el_def=0;
+     ProgVar @["cycle"] {
+      name="cycle";
+      var_type=T_Int;
+      int_val=0;
+      objs_ptr=0;
+      flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="current cycle of settling (local loop counter)";
+      init_from=NULL;
+     };
+     ProgVar @["update_net_view"] {
+      name="update_net_view";
+      var_type=T_Bool;
+      bool_val=1;
+      objs_ptr=0;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      reference=0;
+      desc="if true, will update network views at end of settling";
+      init_from=NULL;
+     };
+    };
+    functions {
+     name="functions";
+     el_typ=Function;
+     el_def=0;
+    };
+    init_code {
+     name="init_code";
+     el_typ=ProgCode;
+     el_def=0;
+     NetCounterInit @[0] {
+      desc="initialize local cycle counter and corresponding counter on network";
+      flags=0;
+      orig_prog_code=;
+      network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$$;
+      local_ctr_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["cycle"]$$;
+      counter=Network::cycle;
+      update_after=0;
+     };
+    };
+    prog_code {
+     name="prog_code";
+     el_typ=ProgCode;
+     el_def=0;
+     LocalVars @[0] {
+      desc=;
+      flags=0;
+      orig_prog_code=;
+      local_vars {
+       name="local_vars";
+       el_typ=ProgVar;
+       el_def=0;
+       ProgVar @["cycle_max"] {
+	name="cycle_max";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+       ProgVar @["cyc"] {
+	name="cyc";
+	var_type=T_Int;
+	int_val=0;
+	objs_ptr=0;
+	flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+	reference=0;
+	desc=;
+	init_from=NULL;
+       };
+      };
+     };
+     Comment @[1] {
+      desc="== note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="// == note: can apply inputs once at start of trial, or at finer grain within LeabraQuarter, as needed";
+     };
+     MethodCall @[2] {
+      desc="initializes various counters at start of settling";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
+      method=LeabraNetwork::Quarter_Init;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Quarter_Init()";
+      meth_desc=" initialize network for quarter-level processing (hard clamp, netscale)";
+     };
+     MethodCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="cycle_max = network.CycleRunMax()";
+      result_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].prog_code[0].local_vars["cycle_max"]$$;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
+      method=LeabraNetwork::CycleRunMax;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="int CycleRunMax()";
+      meth_desc=" max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set";
+     };
+     ForLoop @[4] {
+      desc="// the main loop over cycles of updating";
+      flags=0;
+      orig_prog_code="for(cyc=0; cyc<cycle_max; cyc++)";
+      loop_code {
+       name="loop_code";
+       el_typ=ProgCode;
+       el_def=0;
+       ProgramCall @[0] {
+	desc="run the cycle program -- can run multiple cycles at a time due to threading";
+	flags=0;
+	orig_prog_code=;
+	prog_args {
+	 name="prog_args";
+	 el_typ=ProgArg;
+	 el_def=0;
+	 ProgArg @[0] {
+	  arg_type=LeabraNetwork;
+	  type="LeabraNetwork*";
+	  name="network";
+	  required=1;
+	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -12628,23 +12965,62 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	target=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
 	targ_ld_init="*Cycle*";
        };
+       AssignExpr @[1] {
+	desc="grab the updated cycle count";
+	flags=CAN_REVERT_TO_CODE;
+	orig_prog_code="cycle = network.cycle";
+	result_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["cycle"]$;
+	expr {
+	 expr="network.cycle";
+	};
+       };
       };
       init {
-       expr="i = 0";
+       expr="cyc=0";
       };
       test {
-       expr="i < cyc_max";
+       expr="cyc<cycle_max";
       };
       iter {
-       expr="i++";
+       expr="cyc++";
       };
      };
-     NetUpdateView @[4] {
-      desc="update network views if update_net_view == true";
+     MethodCall @[5] {
+      desc="perform final operations at end of settling (storing final activations, etc)";
       flags=0;
       orig_prog_code=;
-      network_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Settle"].args["network"]$$;
-      update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Settle"].vars["update_net_view"]$$;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
+      method=LeabraNetwork::Quarter_Final;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Quarter_Final()";
+      meth_desc=" do final processing after each quarter: ";
+     };
+     MethodCall @[6] {
+      desc="compute appropriate stats for each phase (MinusStats, PlusStats)";
+      flags=0;
+      orig_prog_code=;
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
+      method=LeabraNetwork::Compute_PhaseStats;
+      meth_args {
+       name=;
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Compute_PhaseStats()";
+      meth_desc=" compute MinusStats at the end of the minus phase, and PlusStats at the end of the plus phase -- this is preferred over the previous implementation of calling TrialStats only at the end of the minus phase, which required targets to be present in the minus phase, which is not always the case";
+     };
+     NetUpdateView @[7] {
+      desc="update network views, if update_net_view == true";
+      flags=0;
+      orig_prog_code=;
+      network_var=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].args["network"]$;
+      update_var=.projects["LeabraFlex"].programs.gp["UtilProgs"]["Quarter"].vars["update_net_view"]$$;
      };
     };
     step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"]["Cycle"]$;
@@ -12676,7 +13052,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -12723,6 +13099,8 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Cycle_Run()";
+      meth_desc=" compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act";
      };
      NetUpdateView @[1] {
       desc="update network views if update_net_view == true";
@@ -12774,7 +13152,7 @@ also save specs.";
       object_type=LeabraNetwork;
       object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -12884,6 +13262,7 @@ also save specs.";
 	name="num";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network.batch";
 	};
@@ -12894,6 +13273,7 @@ also save specs.";
 	name="len";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="2";
 	};
@@ -12917,6 +13297,7 @@ also save specs.";
 	name="num";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network.epoch";
 	};
@@ -12927,6 +13308,7 @@ also save specs.";
 	name="len";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="4";
 	};
@@ -12959,6 +13341,7 @@ also save specs.";
 	name="ext";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\".wts.gz\"";
 	};
@@ -12969,6 +13352,7 @@ also save specs.";
 	name="tag";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="final_tag";
 	};
@@ -12979,6 +13363,7 @@ also save specs.";
 	name="subdir";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="wts_subdir";
 	};
@@ -12989,11 +13374,14 @@ also save specs.";
 	name="dmem_proc_no";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
      };
      MethodCall @[5] {
       desc=;
@@ -13012,6 +13400,7 @@ also save specs.";
 	name="fname";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="fname";
 	};
@@ -13022,11 +13411,14 @@ also save specs.";
 	name="fmt";
 	required=0;
 	def_val="Network::NET_FMT";
+	prev_expr=;
 	expr {
 	 expr="Network::NET_FMT";
 	};
        };
       };
+      meth_sig="void SaveWeights(taString& fname, Network::WtSaveFormat fmt = NET_FMT)";
+      meth_desc=" write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)";
      };
     };
     step_prog=NULL;
@@ -13438,7 +13830,7 @@ also save specs.";
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="network to record data from";
        init_from=NULL;
@@ -13497,6 +13889,7 @@ also save specs.";
 	 name="dt";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="trial_mon_data";
 	 };
@@ -13507,11 +13900,14 @@ also save specs.";
 	 name="net";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
 	};
        };
+       meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+       meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
       };
       MethodCall @[1] {
        desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
@@ -13530,11 +13926,14 @@ also save specs.";
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
 	};
        };
+       meth_sig="bool CheckConfig(bool quiet = false)";
+       meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
       };
       MethodCall @[2] {
        desc="update the monitor items and data schema based on current settings of the NetMonitor object";
@@ -13553,11 +13952,14 @@ also save specs.";
 	 name="reset_first";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
 	};
        };
+       meth_sig="void UpdateMonitors(bool reset_first = false)";
+       meth_desc=" old name for UpdateDataTable";
       };
      };
      prog_code {
@@ -13576,6 +13978,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
       };
       MethodCall @[1] {
        desc="get the new monitor data from the network and other sources -- this does the main work";
@@ -13589,6 +13993,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void GetMonVals()";
+       meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
       };
       MethodCall @[2] {
        desc="update views and other things after writing new data to monitor data table";
@@ -13602,6 +14008,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void WriteClose()";
+       meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
       };
       MethodCall @[3] {
        desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
@@ -13620,6 +14028,7 @@ also save specs.";
 	 name="dt";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="trial_mon_data";
 	 };
@@ -13630,11 +14039,14 @@ also save specs.";
 	 name="n_rows";
 	 required=0;
 	 def_val="1";
+	 prev_expr=;
 	 expr {
 	  expr="1";
 	 };
 	};
        };
+       meth_sig="void DMem_ShareTrialData(DataTable* dt, int n_rows = 1)";
+       meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
       };
      };
      step_prog=$.projects["LeabraFlex"].programs.gp["UtilProgs"].gp["Monitors"]["LeabraTrialMonitor"]$;
@@ -13949,9 +14361,9 @@ also save specs.";
 	  var=NULL;
 	  enable_var=NULL;
 	 };
-	 pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	 pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	 pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
 	NetMonItem @["epoch_time_tot"] {
 	 name="epoch_time_tot";
@@ -14069,7 +14481,7 @@ also save specs.";
 	 agg_col {
 	  col_name=;
 	 };
-	 agg {name="AggregateSpec_26": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
 	 select_rows=0;
 	 select_spec {
 	  col_name=;
@@ -14081,9 +14493,9 @@ also save specs.";
 	  var=NULL;
 	  enable_var=NULL;
 	 };
-	 pre_proc_1 {name="SimpleMathSpec_73": opr=NONE: arg=0: lw=-1: hi=1: };
-	 pre_proc_2 {name="SimpleMathSpec_74": opr=NONE: arg=0: lw=-1: hi=1: };
-	 pre_proc_3 {name="SimpleMathSpec_75": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
 	NetMonItem @["netrel"] {
 	 name="netrel";
@@ -14139,7 +14551,7 @@ also save specs.";
        object_type=Network;
        object_val=$.projects["LeabraFlex"].networks["Network_0"]$;
        objs_ptr=0;
-       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
        reference=0;
        desc="network to get data from";
        init_from=NULL;
@@ -14218,6 +14630,7 @@ also save specs.";
 	 name="dt";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="epoch_mon_data";
 	 };
@@ -14228,11 +14641,14 @@ also save specs.";
 	 name="net";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="network";
 	 };
 	};
        };
+       meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+       meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
       };
       MethodCall @[2] {
        desc="check configuration and emit errors/warnings for problems";
@@ -14251,11 +14667,14 @@ also save specs.";
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="false";
 	 };
 	};
        };
+       meth_sig="bool CheckConfig(bool quiet = false)";
+       meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
       };
       MethodCall @[3] {
        desc="update the monitor items and data schema based on current settings of NetMonitor";
@@ -14274,11 +14693,14 @@ also save specs.";
 	 name="reset_first";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr="true";
 	 };
 	};
        };
+       meth_sig="void UpdateMonitors(bool reset_first = false)";
+       meth_desc=" old name for UpdateDataTable";
       };
      };
      prog_code {
@@ -14297,6 +14719,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="int AddBlankRow()";
+       meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
       };
       MethodCall @[1] {
        desc="get the new monitor data and stor it into the data table -- this does the main job here";
@@ -14310,6 +14734,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void GetMonVals()";
+       meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
       };
       AssignExpr @[2] {
        desc="get the epoch timer from current network";
@@ -14337,6 +14763,7 @@ also save specs.";
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="epoch_timer.used.GetTotSecs()";
 	 };
@@ -14347,6 +14774,7 @@ also save specs.";
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"epoch_time_tot\"";
 	 };
@@ -14357,6 +14785,7 @@ also save specs.";
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="-1";
 	 };
@@ -14367,11 +14796,14 @@ also save specs.";
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
       };
       MethodCall @[4] {
        desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
@@ -14390,6 +14822,7 @@ also save specs.";
 	 name="val";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="epoch_timer.used.GetUsrSecs()";
 	 };
@@ -14400,6 +14833,7 @@ also save specs.";
 	 name="col_name";
 	 required=1;
 	 def_val="\"\"";
+	 prev_expr=;
 	 expr {
 	  expr="\"epoch_time_usr\"";
 	 };
@@ -14410,6 +14844,7 @@ also save specs.";
 	 name="row";
 	 required=1;
 	 def_val=;
+	 prev_expr=;
 	 expr {
 	  expr="-1";
 	 };
@@ -14420,11 +14855,14 @@ also save specs.";
 	 name="quiet";
 	 required=0;
 	 def_val="false";
+	 prev_expr=;
 	 expr {
 	  expr=;
 	 };
 	};
        };
+       meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+       meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
       };
       MethodCall @[5] {
        desc="update after writing new data to monitor data table";
@@ -14438,6 +14876,8 @@ also save specs.";
 	el_typ=ProgArg;
 	el_def=0;
        };
+       meth_sig="void WriteClose()";
+       meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
       };
       Comment @[6] {
        desc="NOTE: if doing a TestEpoch and wanting to include test results in this train epoch log, then see these instructions:
@@ -14484,7 +14924,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.003193187760189176;
+     value 6 0=0.002662406768649817;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -14494,7 +14934,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9952102303504944;
+     value 6 0=0.995207667350769;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -14850,6 +15290,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
+	   GraphColView @["avg_avg_act_diff"] {
+	    name="avg_avg_act_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_avg_act_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
@@ -14861,30 +15309,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["Hidden_Fm_Input_netrel"] {
-	    name="Hidden_Fm_Input_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Input_netrel"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["Hidden_Fm_Output_netrel"] {
-	    name="Hidden_Fm_Output_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Output_netrel"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
-	   GraphColView @["Output_Fm_Hidden_netrel"] {
-	    name="Output_Fm_Hidden_netrel";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -14909,6 +15333,54 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_netmax"] {
 	    name="Output_netmax";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_netmax"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Input_avg_act"] {
+	    name="Input_avg_act";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Input_avg_act"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_avg_act"] {
+	    name="Hidden_avg_act";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_act"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_avg_act"] {
+	    name="Output_avg_act";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_act"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_Fm_Input_netrel"] {
+	    name="Hidden_Fm_Input_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Input_netrel"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_Fm_Output_netrel"] {
+	    name="Hidden_Fm_Output_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_Fm_Output_netrel"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_Fm_Hidden_netrel"] {
+	    name="Output_Fm_Hidden_netrel";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_Fm_Hidden_netrel"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -15758,7 +16230,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04044704511761665;
+       value 6 0=0.04046858474612236;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -15849,8 +16321,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["minus_cycles"] {
-     name="minus_cycles";
+    UserDataItem @["rt_cycles"] {
+     name="rt_cycles";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -15859,18 +16331,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
-    UserDataItem @["ct_cycle"] {
-     name="ct_cycle";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
-    UserDataItem @["phase_no"] {
-     name="phase_no";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["phase"] {
      name="phase";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["quarter"] {
+     name="quarter";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -15929,6 +16396,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["minus_cycles"] {
+     name="minus_cycles";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["ct_cycle"] {
+     name="ct_cycle";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["phase_no"] {
+     name="phase_no";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["maxda"] {
      name="maxda";
      value 1 0=1;
@@ -15958,48 +16440,24 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_typ=LeabraLayerSpec;
 	el_def=0;
        };
-       inhib_group=ENTIRE_LAYER;
-       inhib {
-	gi=2;
-	ff=1;
-	fb=0.5;
-	self_fb=0;
-	fb_tau=1.4;
-	ff0=0.1;
-	fb_dt=0.7142857;
-       };
-       inhib_misc {
-	prv_trl_ff=0;
-	prv_phs_ff=0;
-	up_immed=0;
-       };
-       avg_act {init=0.1: tau=100: adjust=1: dt=0.01: };
-       unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: };
+       lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+       inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+       clamp {hard=1: gain=0.2: };
+       decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+       del_inhib {on=0: prv_trl=0: prv_q=0: };
        lay_gp_inhib {on=0: gp_g=0.5: };
-       clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
-       decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
       };
      };
-     inhib_group=ENTIRE_LAYER;
-     inhib {
-      gi=2;
-      ff=1;
-      fb=0.5;
-      self_fb=0;
-      fb_tau=1.4;
-      ff0=0.1;
-      fb_dt=0.7142857;
-     };
-     inhib_misc {
-      prv_trl_ff=0;
-      prv_phs_ff=0;
-      up_immed=0;
-     };
-     avg_act {init=0.1: tau=100: adjust=1: dt=0.01: };
-     unit_gp_inhib {on=0: fffb=0: lay_gi=2: gp_g=0.5: };
+     lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
+     inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+     clamp {hard=1: gain=0.2: };
+     decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+     del_inhib {on=0: prv_trl=0: prv_q=0: };
      lay_gp_inhib {on=0: gp_g=0.5: };
-     clamp {hard=1: gain=0.2: max_plus=0: plus=0.01: min_clamp=0.5: };
-     decay {event=1: phase=0: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
      name="LeabraUnitSpec_0";
@@ -16016,25 +16474,30 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
-     act_misc {act_lrn=ACT_EQ: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
+      ex=0;
       exp_slope=0.02;
       spk_thr=1.2;
-      clamp_max_p=0.12;
-      clamp_type=REGULAR;
       vm_r=0.3;
       t_r=6;
+      clamp_max_p=0.12;
+      clamp_type=REGULAR;
+      eff_spk_thr=0.5;
      };
      opt_thresh {send=0.1: delta=0.005: xcal_lrn=0.01: };
      clamp_range {min=0: max=0.95: range=0.95: scale=1.052632: };
      vm_range {min=0: max=2: range=2: scale=0.5: };
      v_m_init {name="v_m_init": type=NONE: mean=0.4000000059604645: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
-     dt {integ=1: vm_tau=3.3: net_tau=1.4: midpoint=0: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
+     dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
      act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
+     learn_qtr=Q4;
+     deep5b_qtr=Q4;
+     ti_ctxt_qtr=Q4;
      adapt {
       on=0;
       tau=144;
@@ -16042,13 +16505,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       spike_gain=0.00805;
       dt=0.006944444;
      };
-     stp {on=0: f_r_ratio=0.02: rec_tau=200: fac_tau=4: fac=0.3: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
+     stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
      };
-     cifer {on=0: phase_updt=0: super_gain=0.05: thal_5b_thr=0.5: act_5b_thr=0.5: binary5b=0: ti_5b=0.5: bg_lrate=1: fg_lrate=0: };
-     da_mod {on=0: mod=PLUS_CONT: gain=0.1: };
+     cifer {on=0: super_gain=0.05: thal_thr=0.2: act5b_thr=0.2: ti_5b=0.5: thal_bin=1: ti_5b_c=1: };
+     da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
      noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
@@ -16080,9 +16543,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        inhib=0;
-       wt_scale {abs=1: rel=1: sem_extra=2: };
+       wt_scale {abs=1: rel=1: };
        diff_scale_p=0;
-       wt_scale_p {abs=1: rel=1: sem_extra=2: };
+       wt_scale_p {abs=1: rel=1: };
        learn=1;
        lrate=0.02;
        cur_lrate=0.04;
@@ -16137,9 +16600,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
+       xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       cifer {on=0: bg_lrate=1: fg_lrate=0: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @["TopDownCons"] {
@@ -16154,9 +16618,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
        inhib=0;
-       wt_scale {abs=1: rel=0.2: sem_extra=2: };
+       wt_scale {abs=1: rel=0.2: };
        diff_scale_p=0;
-       wt_scale_p {abs=1: rel=1: sem_extra=2: };
+       wt_scale_p {abs=1: rel=1: };
        learn=1;
        lrate=0.02;
        cur_lrate=0.04;
@@ -16211,17 +16675,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
+       xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-       xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       cifer {on=0: bg_lrate=1: fg_lrate=0: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      inhib=0;
-     wt_scale {abs=1: rel=1: sem_extra=2: };
+     wt_scale {abs=1: rel=1: };
      diff_scale_p=0;
-     wt_scale_p {abs=1: rel=1: sem_extra=2: };
+     wt_scale_p {abs=1: rel=1: };
      learn=1;
      lrate=0.02;
      cur_lrate=0.04;
@@ -16276,9 +16741,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      ignore_unlearnable=1;
+     xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=0: };
      fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-     xcal {l_mix=X_COS_DIFF: thr_l_mix=0.05: thr_m_mix=0.95: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     cifer {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -16291,8 +16757,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      self_con=0;
      init_wts=0;
-     add_rnd_wts=0;
-     add_rnd_wts_scale=1;
+     add_rnd_var=0;
     };
    };
    layers {
@@ -16347,6 +16812,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
+     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
@@ -16432,6 +16898,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
+     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
@@ -16498,6 +16965,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
+     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
      spec {type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
@@ -16546,24 +17014,26 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=0;
-    n_cycles=10;
+    quarter=1;
     unit_chunks=32;
     timers_on=0;
    };
-   phases {
-    minus=50;
-    plus=20;
-    no_plus_test=0;
+   times {
+    quarter=25;
     time_inc=0.001;
-    total_cycles=70;
+    minus=75;
+    plus=25;
+    total_cycles=100;
    };
    lstats {
     trg_max_act_crit=0.5;
     off_errs=1;
     on_errs=1;
+    cos_err_lrn_thr=-1;
    };
    net_misc {
     ti=0;
+    diff_scale_p=0;
     dwt_norm=0;
     lay_gp_inhib=0;
     inhib_cons=0;
@@ -16573,8 +17043,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     trl_skip=10;
     epc_skip=10;
    };
-   phase_max=2;
-   cos_err_lrn_thr=-1;
   };
  };
 };
