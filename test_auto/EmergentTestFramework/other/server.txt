@@ -262,7 +262,7 @@ SetData Row Specified
     Json Value Should Equal      ${output}             /result/columns/2/values/0   3     # This is the old/previous value
     Json Value Should Equal      ${output}             /result/columns/1/values/0   6
     Json String Should Match     ${output}             /result/columns/3/values/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/11/values/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/6/values/0   4.4
 
 RemoveData First Two Rows
     Ensure Emergent Free
@@ -284,7 +284,7 @@ SetData No Row Specified
     Json Value Should Equal      ${output}             /result/columns/1/values/0   6
     Json Value Should Equal      ${output}             /result/columns/2/values/0   2     # This is the old/previous value
     Json String Should Match     ${output}             /result/columns/3/values/0   letrial
-    Json Value Should Equal      ${output}             /result/columns/11/values/0   4.4
+    Json Value Should Equal      ${output}             /result/columns/6/values/0   4.4
 
 RemoveData All Rows                    
     Ensure Emergent Free
@@ -303,7 +303,7 @@ AppendData
     Json Value Should Equal      ${output}             /result/columns/0/values/0   7
     Json Value Should Equal      ${output}             /result/columns/1/values/0   9
     Json String Should Match     ${output}             /result/columns/3/values/0   mytrial
-    Json Value Should Equal      ${output}             /result/columns/11/values/0   10.2
+    Json Value Should Equal      ${output}             /result/columns/6/values/0   10.2
 
 SetData Add Column
     Ensure Emergent Free
@@ -314,8 +314,8 @@ SetData Add Column
     Json Value Should Equal      ${output}             /result/columns/0/values/0   8
     Json Value Should Equal      ${output}             /result/columns/1/values/0   10
     Json String Should Match     ${output}             /result/columns/3/values/0   mytrial2
-    Json Value Should Equal      ${output}             /result/columns/11/values/0   10.3
-    Json String Should Match     ${output}             /result/columns/13/values/0   new_col_value
+    Json Value Should Equal      ${output}             /result/columns/6/values/0   10.3
+    Json String Should Match     ${output}             /result/columns/8/values/0   new_col_value
 
 SetData Matrix Cell
     Ensure Emergent Free
