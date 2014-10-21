@@ -56,6 +56,7 @@ void LeabraNetStats::Initialize() {
 
 void LeabraNetMisc::Initialize() {
   ti = false;
+  diff_scale_p = false;
   dwt_norm = false;
   lay_gp_inhib = false;
   inhib_cons = false;
@@ -264,6 +265,7 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.ti = false;
   net_misc.dwt_norm = false;
   net_misc.lay_gp_inhib = false;
+  net_misc.diff_scale_p = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Trial_Init_Specs(this);

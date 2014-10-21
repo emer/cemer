@@ -826,6 +826,10 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   float inhib_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
+  if(plus_phase && net->net_misc.diff_scale_p) {
+    Init_Netins(u, net);        // everyone has to init netins b/c scales are different
+  }
+
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
   // then it counts as a zero, but it counts in overall normalization!

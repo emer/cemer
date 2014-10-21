@@ -81,6 +81,7 @@ class E_API LeabraNetMisc : public taOBase {
 INHERITED(taOBase)
 public:
   bool          ti;            // #READ_ONLY #SHOW LeabraTI (temporal integration) processing and learning mechanisms are engaged, because LeabraTICtxtConSpec SELF prjns are present in layers to perform optimized single-layer TI context activation at end of plus phase -- also enabled/s deep5b connections and mechanisms for cifer -- updated in Trial_Init_Specs call
+  bool          diff_scale_p;   // #READ_ONLY #SHOW at least one connection spec uses diff_act_p setting to drive a differential wt scaling in the plus phase relative to the minus phase -- this requires initializing the net inputs between these phases
   bool		dwt_norm;       // #READ_ONLY #SHOW dwt_norm is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag

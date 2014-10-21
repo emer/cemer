@@ -221,6 +221,9 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(wt_sig.dwt_norm) {
     net->net_misc.dwt_norm = true;
   }
+  if(diff_scale_p) {
+    net->net_misc.diff_scale_p = true;
+  }
   if(fast_wts.on) {
     cur_lrate *= fast_wts.fast_lrate;
   }
