@@ -27,6 +27,7 @@
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
+#include <QByteArray>
 #include <QEventLoop>
 #include <QDebug>
 #if (QT_VERSION >= 0x050000)
@@ -228,7 +229,7 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
         taMisc::DebugInfo("Performing 2-stage login to", wiki_name, "wiki.");
 #if (QT_VERSION >= 0x050000)
         urq.addQueryItem("lgtoken", attrs.value("token").toString());
-	url.setQuery(urq);
+  url.setQuery(urq);
 #else
         url.addQueryItem("lgtoken", attrs.value("token").toString());
 #endif
@@ -377,7 +378,6 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   QUrl url(wikiUrl);
 
 #if (QT_VERSION >= 0x050000)
-   
   QUrlQuery urq;
   urq.addQueryItem("action", "tokens");
   urq.addQueryItem("type", "edit");
@@ -392,26 +392,18 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   // Make the network request.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url)) {
-    // Default the normalized name to the provided page name;
-    // will be changed if normalization was performed by the server.
-    // String normalizedName = page_name;
 
     QXmlStreamReader reader(reply);
-    // if (!findNextElement(reader, "tokens")) {
-    //     taMisc::Warning("Malformed response while requesting edit token from ", wiki_name, "wiki");
-    //     return false;
-    // }
-    // Check the token result.
-    // QXmlStreamAttributes attrs = reader.attributes();
-    // QString token = attrs.value().toString();
-    // taMisc::Warning("Token retrieved: ", (String)token);
 
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
         QXmlStreamAttributes attrs = reader.attributes();
-        QString token = attrs.value("edittoken").toString();
-        if(!token.isEmpty()) {
-          taMisc::Info("Edit token retrieved! [", qPrintable(token), "]");
+        QString raw_token = attrs.value("edittoken").toString();
+        QByteArray token = QUrl::toPercentEncoding(raw_token);
+        if(!raw_token.isEmpty()) {
+          taMisc::Info("Edit token retrieval successful");
+
+          QUrl url(wikiUrl);
           
 #if (QT_VERSION >= 0x050000)
           QUrlQuery urq;
@@ -432,16 +424,12 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 #endif
 
           if (QNetworkReply *reply = request.httpPost(url)) {
-            taMisc::Info("Edit request sent!");
+            taMisc::Info("Page edit request sent");
             QXmlStreamReader reader(reply);
             while(!reader.atEnd()) {
               if (reader.readNext() == QXmlStreamReader::StartElement) {
                 QXmlStreamAttributes attrs = reader.attributes();
-                if(attrs.empty()) {
-                  taMisc::Warning("Page edit failed: Request returned no attributes");
-                  return false;
-                }
-                else if(attrs.hasAttribute("code")) {
+                if(reader.hasError()) {
                   QString err_code = attrs.value("code").toString();
                   QString err_info = attrs.value("info").toString();
                   taMisc::Warning("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
@@ -449,96 +437,31 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
                 }
                 else {
                   taMisc::Info("Page edit successful!");
-                  //for_each(attrs.begin(), attrs.end(), fn) {
-                  foreach(QXmlStreamAttribute attr, attrs) {
-                    QString attr_name = attr.name().toString();
-                    QString attr_val = attr.value().toString();
-                    taMisc::Info("Attribute name: ", qPrintable(attr_name));
-                    taMisc::Info("Attribute value: ", qPrintable(attr_val));
+                  if(attrs.empty()) {
+                    taMisc::Info("Request returned no attributes");
+                  }
+                  else {
+                    foreach(QXmlStreamAttribute attr, attrs) {
+                      QString attr_name = attr.name().toString();
+                      QString attr_val = attr.value().toString();
+                      taMisc::Info("Attribute name: ", qPrintable(attr_name));
+                      taMisc::Info("Attribute value: ", qPrintable(attr_val));
+                    }
                   }
                   return true;
                 }
               }
             }
           }
-          break;
+          else {
+            taMisc::Warning("Page edit request failed -- check the wiki URL and page name");
+            return false;
+          }
         }
       }
     }
-
-    return false;
-
-    // while (!reader.atEnd()) {
-    //   if (reader.readNextStartElement()) {
-    //     taMisc::Warning(qPrintable(reader.name().toString()));
-    //   }
-    //   else {
-    //     taMisc::Warning("End of reply reached, or error occurred.");
-    //   }
-    // }
-    // int pageCount = 0;
-    // while (!reader.atEnd()) {
-    //   if (reader.readNext() == QXmlStreamReader::StartElement) {
-    //     // Check for an <n> element indicating the normalized name.
-    //     // This is only present if the proivded page_name isn't
-    //     // canonical.
-    //     if (reader.name() == "n") {
-    //       QXmlStreamAttributes attrs = reader.attributes();
-    //       if (attrs.value("from").toString() == page_name) {
-    //         normalizedName = attrs.value("to").toString();
-    //       }
-    //     }
-    //     // Check for a <page> element
-    //     else if (reader.name() == "page") {
-    //       ++pageCount;
-    //       QXmlStreamAttributes attrs = reader.attributes();
-    //       if (attrs.value("title").toString() == normalizedName) {
-    //         // Check if the page name is marked as invalid or missing.
-    //         if (attrs.hasAttribute("invalid")) {
-    //           // For example, the page name "_" is invalid.
-    //           taMisc::Warning("Page name is invalid:", page_name);
-    //           return false;
-    //         }
-    //         else if (attrs.hasAttribute("missing")) {
-    //           // This is the normal case when a page does NOT exist.
-    //           return false;
-    //         }
-    //         else if (attrs.hasAttribute("pageid")) {
-    //           // Double check that the page ID is a positive number -- it
-    //           // should be since the page isn't marked invalid or missing!
-    //           bool ok = false;
-    //           QString pageIdStr = attrs.value("pageid").toString();
-    //           int pageId = pageIdStr.toInt(&ok);
-    //           if (!ok) {
-    //             // Shouldn't happen.
-    //             taMisc::Warning("Page ID is not numeric:", page_name,
-    //               qPrintable(pageIdStr));
-    //             return false;
-    //           }
-    //           else if (pageId <= 0) {
-    //             // Shouldn't happen.
-    //             taMisc::Warning("Page ID is invalid:", page_name,
-    //               qPrintable(pageIdStr));
-    //             return false;
-    //           }
-    //           else {
-    //             // This is the normal case when a page DOES exist.
-    //             return true;
-    //           }
-    //         }
-    //         else {
-    //           // Shouldn't happen.
-    //           taMisc::Warning(
-    //             "Unexpected condition; page isn't missing and doesn't exist:",
-    //             page_name);
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
   }
 
-  // If request cancelled or response malformed, assume page doesn't exist.
   return false;
 }
 
