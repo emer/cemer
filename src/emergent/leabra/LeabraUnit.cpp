@@ -44,7 +44,7 @@ void LeabraUnit::Initialize() {
   thal_prv = 0.0f;
   deep5b = 0.0f;
   d5b_net = 0.0f;
-  net_ctxt = 0.0f;
+  ti_ctxt = 0.0f;
   lrnmod = 0.0f;
   gc_i = 0.0f;
   gc_l = 0.0f;
@@ -131,7 +131,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   thal_prv = cp.thal_prv;
   deep5b = cp.deep5b;
   d5b_net = cp.d5b_net;
-  net_ctxt = cp.net_ctxt;
+  ti_ctxt = cp.ti_ctxt;
   lrnmod = cp.lrnmod;
   gc_i = cp.gc_i;
   gc_l = cp.gc_l;

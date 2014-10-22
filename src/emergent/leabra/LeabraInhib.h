@@ -64,7 +64,7 @@ public:
   AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
-  AvgMaxVals	nets_ctxt;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum TI net_ctxt stats for the layer
+  AvgMaxVals	ti_ctxts;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum TI ti_ctxt stats for the layer
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }

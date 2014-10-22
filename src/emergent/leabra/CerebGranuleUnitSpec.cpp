@@ -34,7 +34,7 @@ void CerebGranuleSpecs::Defaults_init() {
 void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
                                            int       thread_no) {
   inherited::Compute_NetinInteg(u, net, thread_no);
-  int time_since_thr = (int)u->net_ctxt;
+  int time_since_thr = (int)u->ti_ctxt;
   if(time_since_thr > cereb.inhib_start_time) {
     // by turning net input off here, we allow other gran
     // cells to win the competition
@@ -44,7 +44,7 @@ void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
 
 void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnit* u, LeabraNetwork* net,
                                                 int thread_no) {
-  // int time_since_thr = (int)u->net_ctxt;
+  // int time_since_thr = (int)u->ti_ctxt;
   // if(time_since_thr == 0) {
   //   u->act_lrn = 0.0f;
   //   if(u->act > cereb.act_thr) {
@@ -73,7 +73,7 @@ void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnit* u, LeabraNetwork* ne
   //     u->act_lrn = 0.0f;
   //   }
   // }
-  // u->net_ctxt = time_since_thr; // update counter
+  // u->ti_ctxt = time_since_thr; // update counter
 }
 
 void CerebGranuleUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {

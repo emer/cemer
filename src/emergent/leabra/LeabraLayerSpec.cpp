@@ -828,12 +828,12 @@ void LeabraLayerSpec::Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net) 
   }
 }
 
-void LeabraLayerSpec::Compute_NetCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
-  AvgMaxVals& vals = lay->nets_ctxt;
+void LeabraLayerSpec::Compute_TICtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net) {
+  AvgMaxVals& vals = lay->ti_ctxts;
   static ta_memb_ptr mb_off = 0;
   if(mb_off == 0) {
     TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "net_ctxt");
+    TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "ti_ctxt");
   }
   if(lay->unit_groups) {
     vals.InitVals();
@@ -841,8 +841,8 @@ void LeabraLayerSpec::Compute_NetCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* ne
     int sti = LayerStatsStartUnitIdx();
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->nets_ctxt, mb_off);
-      vals.UpdtFmAvgMax(gpd->nets_ctxt, nunits-sti, g);
+      Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->ti_ctxts, mb_off);
+      vals.UpdtFmAvgMax(gpd->ti_ctxts, nunits-sti, g);
     }
     int lvs_eff = lay->units.leaves-sti*lay->gp_geom.n;
     vals.CalcAvg(lvs_eff);

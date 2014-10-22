@@ -71,7 +71,6 @@ public:
   float         act_max_hz;     // #DEF_100 #MIN_1 for translating rate-code activations into discrete spiking (only used for clamped layers), what is the maximum firing rate associated with a maximum activation value (max act is typically 1.0 -- depends on act_range)
   float		avg_tau;	// #DEF_200 #MIN_1 for integrating activation average (act_avg), time constant in trials (roughly, how long it takes for value to change significantly) -- used mostly for visualization and tracking "hog" units
   float		avg_init;	// #DEF_0.15 #MIN_0 initial activation average value -- used for act_avg, avg_s, avg_m, avg_l
-  bool          rescale_ctxt;   // #DEF_true re-scale the TI context net input in the minus phase, according to how much the relative scaling might have changed across phases -- preserves correct relative scaling levels when there are different relative scaling parameters in plus and minus phases
   float		avg_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
 
   inline int    ActToInterval(const float time_inc, const float integ, const float act)
@@ -351,6 +350,7 @@ public:
   float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
   bool          thal_bin;       // #CONDSHOW_ON_on make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
+  bool          ctxt_5b_even;   // #CONDSHOW_ON_on #DEF_true even out the influence of TI context projections and deep5b projections whenever deep5b activations are being updated
 
   float         ti_5b_c;        // #HIDDEN #READ_ONLY 1.0 - ti_5b
 
@@ -562,7 +562,7 @@ public:
     // #IGNORE called by Compute_NetinInteg -- roll up the deltas into net_raw and gi_syn values (or compute net_raw by some other means for special algorithms)
     virtual float Compute_NetinExtras(float& net_syn, LeabraUnit* u, LeabraNetwork* net,
                                       int thread_no=-1);
-    // #IGNORE called by Compute_NetinInteg -- get extra excitatory net input factors to add on top of regular synapticaly-generated net inputs, passed as net_syn -- standard items include: bias weights, external soft-clamp input, TI extras (net_ctxt, d5b_net), CIFER extras: thal (which multiplies net_syn), and da_mod (which multiplies net_syn) -- specialized algorithms can even overwrite net_syn if they need too..
+    // #IGNORE called by Compute_NetinInteg -- get extra excitatory net input factors to add on top of regular synapticaly-generated net inputs, passed as net_syn -- standard items include: bias weights, external soft-clamp input, TI extras (ti_ctxt, d5b_net), CIFER extras: thal (which multiplies net_syn), and da_mod (which multiplies net_syn) -- specialized algorithms can even overwrite net_syn if they need too..
     virtual void Compute_NetinInteg_Spike_e(LeabraUnit* u, LeabraNetwork* net);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual excitatory netin conductance value for spiking units by integrating over spike
     virtual void Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* net);
@@ -664,8 +664,8 @@ public:
   virtual void	Send_TICtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
   // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  virtual void	ClearContext(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_TI clear the net_ctxt context variables -- can be useful to do at clear discontinuities of experience
+  virtual void	ClearTICtxt(LeabraUnit* u, LeabraNetwork* net);
+  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at clear discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

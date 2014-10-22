@@ -60,7 +60,7 @@ public:
   float 	thal_prv;       // #NO_SAVE #CAT_Activation previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   float         deep5b;         // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information -- see cifer params in LeabraUnitSpec
   float         d5b_net;        // #NO_SAVE #CAT_Activation net input from deep layer 5b activation values
-  float         net_ctxt;       // #VIEW_HOT #NO_SAVE #CAT_Activation leabra TI context netinput value for computing act_ctxt -- computed from LeabraTICtxtConspec connection when network TI is on -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value
+  float         ti_ctxt;        // #VIEW_HOT #NO_SAVE #CAT_Activation leabra TI context netinput value -- computed from LeabraTICtxtConspec connection -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value -- this is just added into overall net input
   float         lrnmod;         // #NO_SAVE #CAT_Activation learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
   float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance
   float         gc_l;           // #NO_SAVE #CAT_Activation total leak conductance
@@ -82,7 +82,7 @@ public:
 
   float		net_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
   float		bias_scale;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
-  float		ctxt_scale;	// #NO_SAVE #EXPERT #CAT_Activation total context netinput weight scaling factor -- computed from TI context projections, and used for auto-rescaling of net_ctxt in plus phase to keep proportions the same
+  float		ctxt_scale;	// #NO_SAVE #EXPERT #CAT_Activation TI context rescaling factor -- needed for rescaling ti_ctxt to compensate for variable deep5b input on different quarters
 
   float		act_sent;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
   float		net_raw;	// #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
@@ -231,9 +231,9 @@ public:
   void	Send_TICtxtNetin_Post(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Send_TICtxtNetin_Post(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  void	ClearContext(LeabraNetwork* net) 
-  { ((LeabraUnitSpec*)GetUnitSpec())->ClearContext(this, net); }
-  // #CAT_TI clear the net_ctxt context variables -- can be useful to do at clear discontinuities of experience
+  void	ClearTICtxt(LeabraNetwork* net) 
+  { ((LeabraUnitSpec*)GetUnitSpec())->ClearTICtxt(this, net); }
+  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Final

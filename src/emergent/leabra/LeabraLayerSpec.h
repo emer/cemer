@@ -379,8 +379,8 @@ public:
   // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used
   virtual void	Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation compute acts_p AvgMaxVals from act_p -- not currently used
-  virtual void	Compute_NetCtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute nets_ctxt AvgMaxVals from net_ctxt
+  virtual void	Compute_TICtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Activation compute ti_ctxts AvgMaxVals from ti_ctxt
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning
