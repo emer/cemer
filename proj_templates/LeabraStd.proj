@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7652
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7656
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -392,7 +392,7 @@ LeabraProject .projects["LeabraStd"] {
     ProgVar @["input_data"] { };
    };
 
-   ProgVar_List @.vars = [12] {
+   ProgVar_List @.vars = [13] {
     ProgVar @["train"] { };
     ProgVar @["batch"] { };
     ProgVar @["batches"] { };
@@ -405,6 +405,7 @@ LeabraProject .projects["LeabraStd"] {
     ProgVar @["EpochOutputData"] { };
     ProgVar @["TrialOutputData"] { };
     ProgVar @["MyClusterRun"] { };
+    ProgVar @["ActiveParamSet"] { };
    };
 
    Function_List @.functions = [0] {
@@ -413,7 +414,7 @@ LeabraProject .projects["LeabraStd"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [30] {
+   ProgEl_List @.prog_code = [31] {
     IfReturn @[0] { };
     RegisterArgs @[1] { };
     PrintExpr @[2] { };
@@ -428,9 +429,17 @@ LeabraProject .projects["LeabraStd"] {
     ProgVarFmArg @[11] { };
     ProgVarFmArg @[12] { };
     ControlPanelsFmArgs @[13] { };
-    Comment @[14] { };
+    If @[14] { 
+     ProgEl_List @.true_code = [1] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+     };
+    };
     Comment @[15] { };
-    If @[16] { 
+    Comment @[16] { };
+    If @[17] { 
      ProgEl_List @.true_code = [5] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [2] {
@@ -465,7 +474,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Else @[17] { 
+    Else @[18] { 
      ProgEl_List @.else_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -482,30 +491,13 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    MiscCall @[18] { 
+    MiscCall @[19] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    Comment @[19] { };
-    MethodCall @[20] { 
-     ProgArg_List @.meth_args = [4] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-      ProgArg @[3] { };
-     };
-    };
+    Comment @[20] { };
     MethodCall @[21] { 
-     ProgArg_List @.meth_args = [3] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-     };
-    };
-    PrintVar @[22] { };
-    Comment @[23] { };
-    MethodCall @[24] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -513,17 +505,34 @@ LeabraProject .projects["LeabraStd"] {
       ProgArg @[3] { };
      };
     };
-    MethodCall @[25] { 
+    MethodCall @[22] { 
      ProgArg_List @.meth_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
      };
     };
-    PrintVar @[26] { };
-    OtherProgramVar @[27] { };
-    PrintExpr @[28] { };
-    ProgramCall @[29] { 
+    PrintVar @[23] { };
+    Comment @[24] { };
+    MethodCall @[25] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    MethodCall @[26] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[27] { };
+    OtherProgramVar @[28] { };
+    PrintExpr @[29] { };
+    ProgramCall @[30] { 
      ProgArg_List @.prog_args = [2] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -4349,6 +4358,17 @@ LeabraProject .projects["LeabraStd"] {
      desc=;
      init_from=NULL;
     };
+    ProgVar @["ActiveParamSet"] {
+     name="ActiveParamSet";
+     var_type=T_Object;
+     object_type=ParamSet;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    functions {
     name="functions";
@@ -4470,17 +4490,45 @@ LeabraProject .projects["LeabraStd"] {
      orig_prog_code=;
      ctrl_panel_var=.projects["LeabraStd"].programs["LeabraStartup"].vars["MyClusterRun"]$$;
     };
-    Comment @[14] {
+    If @[14] {
+     desc="set variables to values stored in a param set";
+     flags=0;
+     orig_prog_code="if (Act";
+     cond {
+      expr="ActiveParamSet";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
+      el_def=0;
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="ActiveParamSet->CopySavedToActive()";
+       result_var=NULL;
+       obj=.projects["LeabraStd"].programs["LeabraStartup"].vars["ActiveParamSet"]$$;
+       method=ParamSet::CopySavedToActive;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void CopySavedToActive()";
+       meth_desc=" ";
+      };
+     };
+    };
+    Comment @[15] {
      desc="= Add your own variables here =";
      flags=0;
      orig_prog_code=;
     };
-    Comment @[15] {
+    Comment @[16] {
      desc="= Below saves log files of standard data tables =";
      flags=0;
      orig_prog_code=;
     };
-    If @[16] {
+    If @[17] {
      desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
      flags=0;
      orig_prog_code=;
@@ -4678,7 +4726,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Else @[17] {
+    Else @[18] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4771,7 +4819,7 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    MiscCall @[18] {
+    MiscCall @[19] {
      desc="report any args that didn't get used!";
      flags=NEW_EL|CAN_REVERT_TO_CODE;
      orig_prog_code="taMisc::ReportUnusedArgs()";
@@ -4795,12 +4843,12 @@ LeabraProject .projects["LeabraStd"] {
       };
      };
     };
-    Comment @[19] {
+    Comment @[20] {
      desc="== Save epoch log -- on by default ==";
      flags=0;
      orig_prog_code=;
     };
-    MethodCall @[20] {
+    MethodCall @[21] {
      desc="last arg is to include dmem proc number";
      flags=0;
      orig_prog_code=;
@@ -4859,7 +4907,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MethodCall @[21] {
+    MethodCall @[22] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=0;
      orig_prog_code=;
@@ -4907,7 +4955,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
-    PrintVar @[22] {
+    PrintVar @[23] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4921,12 +4969,12 @@ LeabraProject .projects["LeabraStd"] {
      my_mask=NULL;
      debug_level=NULL;
     };
-    Comment @[23] {
+    Comment @[24] {
      desc="== Save trial log -- OFF by default ==";
      flags=0;
      orig_prog_code=;
     };
-    MethodCall @[24] {
+    MethodCall @[25] {
      desc="last arg is to include dmem proc number";
      flags=OFF;
      orig_prog_code=;
@@ -4985,7 +5033,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MethodCall @[25] {
+    MethodCall @[26] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=OFF;
      orig_prog_code=;
@@ -5033,7 +5081,7 @@ LeabraProject .projects["LeabraStd"] {
      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
-    PrintVar @[26] {
+    PrintVar @[27] {
      desc=;
      flags=OFF;
      orig_prog_code=;
@@ -5047,7 +5095,7 @@ LeabraProject .projects["LeabraStd"] {
      my_mask=NULL;
      debug_level=NULL;
     };
-    OtherProgramVar @[27] {
+    OtherProgramVar @[28] {
      desc="propagate the tag";
      flags=0;
      orig_prog_code=;
@@ -5058,7 +5106,7 @@ LeabraProject .projects["LeabraStd"] {
      var_3=NULL;
      var_4=NULL;
     };
-    PrintExpr @[28] {
+    PrintExpr @[29] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -5068,7 +5116,7 @@ LeabraProject .projects["LeabraStd"] {
      my_mask=NULL;
      debug_level=NULL;
     };
-    ProgramCall @[29] {
+    ProgramCall @[30] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -9208,22 +9256,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002129925414919853;
+     value 6 0=0.001956181600689888;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.03056027181446552;
+     value 6 0=0.03032440133392811;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9978700876235962;
+     value 6 0=0.9976525902748108;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 6 0=0.7990127205848694;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -10546,17 +10594,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 6 0=0.0211565587669611;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04046858474612236;
+       value 6 0=0.03208137676119804;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.7327221632003784;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
