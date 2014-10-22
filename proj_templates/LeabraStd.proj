@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7646
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7652
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -10788,7 +10788,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       exp_slope=0.02;
       spk_thr=1.2;
       vm_r=0.3;
-      t_r=6;
+      t_r=3;
       clamp_max_p=0.12;
       clamp_type=REGULAR;
       eff_spk_thr=0.5;
@@ -10803,7 +10803,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      learn_qtr=Q4;
-     deep5b_qtr=Q3;
+     deep5b_qtr=Q4;
      ti_ctxt_qtr=Q4;
      adapt {
       on=0;
@@ -10817,7 +10817,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       on=0;
       delay=4;
      };
-     cifer {on=0: super_gain=0.05: thal_thr=0.2: act5b_thr=0.2: ti_5b=0.5: thal_bin=1: ti_5b_c=1: };
+     cifer {on=0: super_gain=0.05: thal_thr=0.2: act5b_thr=0.2: ti_5b=0.5: thal_bin=1: ti_5b_c=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -11196,7 +11196,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=2.998380053750518e-311;
     quarter=1;
-    unit_chunks=1;
+    unit_chunks=32;
     timers_on=0;
    };
    times {
@@ -11214,6 +11214,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    net_misc {
     ti=0;
+    diff_scale_p=0;
     dwt_norm=0;
     lay_gp_inhib=0;
     inhib_cons=0;
