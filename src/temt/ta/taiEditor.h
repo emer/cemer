@@ -28,6 +28,7 @@
 #include <ContextFlag>
 #include <iColor>
 #include <taiMiscCore>
+#include <int_Array>
 #include <TypeDef>
 #ifndef __MAKETA__
 #include <QWidget>
@@ -94,17 +95,17 @@ public:
   String        prompt_str;     // string that goes inside as a prompt or label
   String        win_str;        // string that goes on the window frame or similar area
 
-  QVBoxLayout*  vblDialog;      // layout for the entire dialog -- stacked/nested as follows:
-  QLabel*       prompt;         // informative message at top of dialog
-  QScrollArea*  scrBody;        // scrollbars for the body items
-  QWidget*      body;           // parent for the body items
-  QWidget*      widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
-  QHBoxLayout*  layButtons;
-  iHiLightButton*  okbut; // is HilightButton for the special mouse button handling
-  iHiLightButton*  canbut;// is HilightButton for the special mouse button handling
-  iHiLightButton*  apply_but;    // only use for dialogs that wait around
-  iHiLightButton*  revert_but;
-  iHiLightButton*  help_but;     // help button
+  QVBoxLayout*      vblDialog;      // layout for the entire dialog -- stacked/nested as follows:
+  QLabel*           prompt;         // informative message at top of dialog
+  QScrollArea*      scrBody;        // scrollbars for the body items
+  QWidget*          body;           // parent for the body items
+  QWidget*          widButtons; // box of buttons on the bottom of the dialog (unparented -- added to parent later
+  QHBoxLayout*      layButtons;
+  iHiLightButton*   okbut; // is HilightButton for the special mouse button handling
+  iHiLightButton*   canbut;// is HilightButton for the special mouse button handling
+  iHiLightButton*   apply_but;    // only use for dialogs that wait around
+  iHiLightButton*   revert_but;
+  iHiLightButton*   help_but;     // help button
 
   iColor                bgColor() const {return bg_color;}
   virtual void          setBgColor(const iColor& new_bg);
@@ -116,10 +117,13 @@ public:
     // 'true' when we will be shown in a panel
   inline bool           isControl() {return (host_type == HT_CONTROL);}
     // 'true' when shown in a control
-  QWidget*      widget() {return mwidget;}
+  QWidget*              widget() {return mwidget;}
   void                  Updating(bool enter) {if (enter) ++updating; else --updating;}
   virtual void          StartEndLayout(bool start); // bracket the layout of ctrls; helps optimize
-
+  
+  virtual void          MarkRowException(int row); // this adds the row no to a list of rows that will be highlighted with a special color
+  virtual void          ClearExceptionRows();  // clear the list
+  
   taiEditor(TypeDef* typ_ = NULL, bool read_only_ = false,
     bool modal_ = false, QObject* parent = 0);
   virtual ~taiEditor(); //
@@ -143,17 +147,17 @@ public:
   virtual QWidget*      firstTabFocusWidget() { return NULL; } // first widget that accepts tab focus -- to set link between tab and contents of edit
 
 
-  static bool   AsyncWaitProc();
+  static bool           AsyncWaitProc();
   // process async apply, reshow, getimage requests -- called by overall wait proc system
 
 public: // ITypedObject i/f (common to IDLC and IDH)
-  void*         This() override {return this;}
-  TypeDef*      GetTypeDef() const override {return &TA_taiEditor;}
+  void*                 This() override {return this;}
+  TypeDef*              GetTypeDef() const override {return &TA_taiEditor;}
 
 public: // ISigLinkClient i/f -- note: only registered though for taiEDH and later
 //  bool                ignoreSigEmit() const; we always accept, but respect hidden
-  void          SigLinkDestroying(taSigLink* dl) override;
-  void          SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
+  void                  SigLinkDestroying(taSigLink* dl) override;
+  void                  SigLinkRecv(taSigLink* dl, int sls, void* op1, void* op2) override;
 
 
 // virtuals for IWidgetHost i/f -- call back to these from taiEditorWidgetsMain
@@ -201,22 +205,22 @@ protected:
   const String          def_prompt() const {return m_def_prompt;} // default prompt, provided at constr time
   const String          def_title() const {return m_def_title;}; // default title, provided at constr time
 
-  virtual void  Constr_Strings();
-  virtual void  Constr_Methods() {}
-  virtual void  Constr_RegNotifies() {} // register notify on taBase
-  virtual void Constr_impl();
+  virtual void          Constr_Strings();
+  virtual void          Constr_Methods() {}
+  virtual void          Constr_RegNotifies() {} // register notify on taBase
+  virtual void          Constr_impl();
   // called in following order by Constr_impl
-  virtual void  Constr_Widget(); //create the widget(), then call this inherited member
-  virtual void  Constr_Prompt();
-  virtual void  Constr_Box() {} // impl in subclass
-  virtual void  Constr_Body() {} // impl in subclass
-  virtual void  Insert_Methods() {}
-  virtual void  Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
-  virtual void  Constr_Final() {}
+  virtual void          Constr_Widget(); //create the widget(), then call this inherited member
+  virtual void          Constr_Prompt();
+  virtual void          Constr_Box() {} // impl in subclass
+  virtual void          Constr_Body() {} // impl in subclass
+  virtual void          Insert_Methods() {}
+  virtual void          Constr_Buttons(); // note: Constr_impl creates the box/layout for the buttons
+  virtual void          Constr_Final() {}
 
-  virtual void  Cancel_impl();
-  virtual void  Ok_impl(); // for dialogs
-  virtual void  Refresh_impl(bool reshow) {}
+  virtual void          Cancel_impl();
+  virtual void          Ok_impl(); // for dialogs
+  virtual void          Refresh_impl(bool reshow) {}
 
   virtual void          DoConstr_Dialog(iDialogEditor*& dlg); // common sub-code for constructing a dialog instance
   void                  DoDestr_Dialog(iDialogEditor*& dlg); // common sub-code for destructing a dialog instance

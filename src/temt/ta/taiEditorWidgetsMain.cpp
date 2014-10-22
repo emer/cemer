@@ -263,6 +263,7 @@ void taiEditorWidgetsMain::Constr_Body_impl() {
 
 void taiEditorWidgetsMain::ClearBody_impl() {
   if(body) {
+    ClearExceptionRows();
     delete body->layout();      // nuke our vboxlayout guy
     taiMisc::DeleteWidgetsLater(body);
     body_vlay = new QVBoxLayout(body);

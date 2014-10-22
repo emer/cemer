@@ -16,6 +16,7 @@
 #include "taiEditor.h"
 #include <iDialogEditor>
 #include <iHiLightButton>
+#include <iStripeWidget>
 
 #include <taMisc>
 #include <taiMisc>
@@ -552,4 +553,12 @@ void taiEditor::GetImage_Async() {
 }
 
 void taiEditor::DebugDestroy(QObject* obj) {
+}
+
+void taiEditor::ClearExceptionRows() {
+  ((iStripeWidget*)body)->exception_rows.Reset();
+}
+
+void taiEditor::MarkRowException(int row) {
+  ((iStripeWidget*)body)->exception_rows.Add(row);
 }

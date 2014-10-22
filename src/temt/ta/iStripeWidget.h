@@ -17,6 +17,7 @@
 #define iStripeWidget_h 1
 
 #include "ta_def.h"
+#include <int_Array>
 
 #include <qsize.h>
 #include <QWidget>
@@ -24,26 +25,29 @@
 
 class TA_API iStripeWidget: public QWidget { // #IGNORE provides a horizontal striped background, to highlight items
 public:
-  QSize 		minimumSizeHint () const override;
-  void 			setColors(const QColor& hilight, const QColor& bg); 
+  QSize       minimumSizeHint () const override;
+  void        setColors(const QColor& hilight, const QColor& bg);
     // convenient way to set both
-  void			setHiLightColor(const QColor& val);
-  inline int		stripeHeight() const {return mstripeHeight;}
-  void			setStripeHeight(int val);
-  void			setTopMargin(int val);
-  void			setBottomMargin(int val); // helpful to insure room for scrollbars
-
-  void			clearLater(); // delete all objects
+  void        setHiLightColor(const QColor& val);
+  void        setExceptionColor(const QColor& val);
+  inline int	stripeHeight() const {return mstripeHeight;}
+  void        setStripeHeight(int val);
+  void        setTopMargin(int val);
+  void        setBottomMargin(int val); // helpful to insure room for scrollbars
+  void        clearLater(); // delete all objects
+  
+  int_Array   exception_rows;
 
   iStripeWidget(QWidget* parent = NULL);
   ~iStripeWidget();
 protected:
-  QColor		mhiLightColor;
-  int			mstripeHeight; // default is 25;
-  int			mtopMargin; // default is 0;
-  int			mbottomMargin; // default is 0, suggest: 15;
-
-  void		paintEvent(QPaintEvent* pev) override;
+  QColor      mhiLightColor;
+  QColor      exception_color;  // default set in constructor initialization
+  int         mstripeHeight; // default is 25;
+  int         mtopMargin; // default is 0;
+  int         mbottomMargin; // default is 0, suggest: 15;
+  
+  void        paintEvent(QPaintEvent* pev) override;
 };
 
 

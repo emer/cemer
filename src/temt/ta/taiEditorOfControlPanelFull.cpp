@@ -73,9 +73,10 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
   // delete all previous sele members (sele presumably stands for "SelectEdit" the old name for ControlPanel)
   String name;
   String help_text;
-  
+    
   dat_cnt = 0;  // keeps track of control count
   if (sele->InheritsFrom(&TA_ParamSet)) {
+    
     MemberSpace& ms = sele->GetTypeDef()->members;
     for (int i = 0; i < ms.size; ++i) {
       MemberDef* md = ms.FastEl(i);
@@ -111,8 +112,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
     // make a group header
     if (!def_grp) {
       iLabel* lbl = new iLabel(grp->GetName(), body);
-      AddSectionLabel(-1, lbl,
-                      "");
+      AddSectionLabel(-1, lbl, "");
     }
     for (int i = 0; i < grp->size; ++i) {
       EditMbrItem* item = grp->FastEl(i);
@@ -162,6 +162,11 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           String new_lbl = item->caption();
           AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
           ++dat_cnt;
+          
+          // highlight the rows where active and saved values are different
+          if (!dynamic_cast<ParamSet*>(sele)->ActiveEqualsSaved(item->GetName())) {
+            MarkRowException(dat_cnt);
+          }
         }
       }
       

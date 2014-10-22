@@ -109,7 +109,7 @@ void iProgramEditor::Init() {
   scrBody = new QScrollArea(propsWidget);
   scrBody->setWidgetResizable(true);
   scrBody->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-  body = new iStripeWidget;
+  body = new iStripeWidget();
   scrBody->setWidget(body);
   body->installEventFilter(this);
 

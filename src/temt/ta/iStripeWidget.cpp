@@ -18,11 +18,12 @@
 #include <QPainter>
 
 iStripeWidget::iStripeWidget(QWidget* parent)
-:QWidget(parent), mhiLightColor(0x80, 0x80, 0x80)
+:QWidget(parent), mhiLightColor(0x80, 0x80, 0x80), exception_color(0xFF, 0xFF, 0xe0)
 {
   mstripeHeight = 25;
   mtopMargin = 0;
   mbottomMargin = 0;
+  exception_rows.Initialize();
 }
 
 iStripeWidget::~iStripeWidget()
@@ -56,6 +57,11 @@ void iStripeWidget::setHiLightColor(const QColor& val) {
   update();
 }
 
+void iStripeWidget::setExceptionColor(const QColor& val) {
+  exception_color = val;
+  update();
+}
+
 void iStripeWidget::setStripeHeight(int val) {
   if (val == mstripeHeight) return;
   if (val < 1) return; // must be +ve
@@ -80,17 +86,31 @@ void iStripeWidget::setTopMargin(int val) {
 void iStripeWidget::paintEvent(QPaintEvent* pev)
 {
   QWidget::paintEvent(pev);
-  if (height() <= mtopMargin) return;
+  if (height() <= mtopMargin)
+    return;
   QPainter p(this);
   int num_stripes = (height() - mtopMargin) / mstripeHeight;
-  if ((mstripeHeight * num_stripes) > (height() - mtopMargin)) num_stripes++; // one fraction of a stripe -- should be clipped by painting
-
+  if ((mstripeHeight * num_stripes) > (height() - mtopMargin))
+    num_stripes++; // one fraction of a stripe -- should be clipped by painting
+  
   p.setPen(mhiLightColor);
   p.setBrush(mhiLightColor);
 
-  // hilight every second stripe
-  for (int i = 1; i < num_stripes; i+= 2 ) {
-    p.drawRect(0, (i * mstripeHeight) + mtopMargin, width(), mstripeHeight); // draw hilighted rect
+  for (int i = 1; i < num_stripes; i++ ) {
+    // exceptional rows get colored differently whether odd or even
+    if (exception_rows.size > 0 && exception_rows.FindEl(i) != -1) {
+      p.setPen(exception_color);
+      p.setBrush(exception_color);
+      p.drawRect(0, (i * mstripeHeight) + mtopMargin, width(), mstripeHeight); // draw hilighted rect
+      p.setPen(mhiLightColor);
+      p.setBrush(mhiLightColor);
+    }
+    else {
+      // hilight every second stripe
+      if (i % 2 == 1) {
+        p.drawRect(0, (i * mstripeHeight) + mtopMargin, width(), mstripeHeight); // draw hilighted rect
+      }
+    }
   }
 }
 
