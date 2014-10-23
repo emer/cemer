@@ -1497,15 +1497,16 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
   // Clear and rebuild submenu.
   fileOpenFromWebMenu->Reset();
 
-  // TODO: For now, just one hard-coded value on menu.
-  String repositoryName = "Emergent repository";
-  String label = repositoryName + "...";
+  String wiki_name = "Emergent repository";
+  String label = wiki_name + "...";
+  
+  for(int i=0;i<taMisc::wikis.size; i++) {
+    String wiki_name = taMisc::wikis[i].name;
+    String label = wiki_name + "...";
+    fileOpenFromWebMenu->AddItem(label, iAction::var_act, this,
+                                      SLOT(fileOpenFromWeb(const Variant &)), wiki_name);
+  }
 
-  fileOpenFromWebMenu->AddItemWithNumericAccel(
-      label,
-      iAction::var_act,
-      this, SLOT(fileOpenFromWeb(const Variant &)),
-      repositoryName);
 }
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
@@ -1519,15 +1520,12 @@ void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
   // Clear and rebuild submenu.
   filePublishDocsOnWebMenu->Reset();
 
-  // For now, just one hard-coded value on menu.
-  String repositoryName = "Emergent repository";
-  String label = repositoryName + "...";
-
-  filePublishDocsOnWebMenu->AddItemWithNumericAccel(
-      label,
-      iAction::var_act,
-      this, SLOT(filePublishDocsOnWeb(const Variant &)),
-      repositoryName);
+  for(int i=0;i<taMisc::wikis.size; i++) {
+    String wiki_name = taMisc::wikis[i].name;
+    String label = wiki_name + "...";
+    filePublishDocsOnWebMenu->AddItem(label, iAction::var_act, this,
+                                      SLOT(filePublishDocsOnWeb(const Variant &)), wiki_name);
+  }
 }
 
 void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)

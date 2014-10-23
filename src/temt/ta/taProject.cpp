@@ -40,6 +40,7 @@ taTypeDef_Of(taImageProc);
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <taMediaWiki>
 
 #include <QDir>
 #include <QFileInfo>
@@ -530,7 +531,7 @@ int taProject::SaveAs(const String& fname) {
   else { // if the save wasn't successful reset the save_as_only flag
     save_as_only = tmp_save_as_only;
   }
-
+  
   taRefN::unRefDone(flr);
   SigEmit(SLS_ITEM_UPDATED_ND);
   return rval;
@@ -538,17 +539,23 @@ int taProject::SaveAs(const String& fname) {
 
 void taProject::PublishDocsOnWeb(const String &repositoryName)
 {
-  iDialogPublishDocs dialog(repositoryName);
-  if (dialog.exec()) {
-    // User clicked OK.
-    QString name = dialog.getName();
-    QString desc = dialog.getDesc();
-    QStringList tags = dialog.getTags();
-
-    // TODO: upload the docs.  Initial plan was to turn the pub docs dialog
-    // into an "uploading progress" dialog, but after trying a few things
-    // it seems to make more sense to create a new progress dialog that
-    // could also be used for the PublishProject stage.
+  bool logged_in = taMediaWiki::Login(repositoryName);
+  
+  if (logged_in) {
+    iDialogPublishDocs dialog(repositoryName);
+    if (dialog.exec()) {
+      // User clicked OK.
+      QString name = dialog.getName();
+      QString desc = dialog.getDesc();
+      QStringList tags = dialog.getTags();
+      
+      taMediaWiki::CreatePage(repositoryName, "test_page_1");
+      
+      // TODO: upload the docs.  Initial plan was to turn the pub docs dialog
+      // into an "uploading progress" dialog, but after trying a few things
+      // it seems to make more sense to create a new progress dialog that
+      // could also be used for the PublishProject stage.
+    }
   }
 }
 
