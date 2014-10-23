@@ -36,7 +36,8 @@ TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
-TA_BASEFUNS_CTORS_DEFN(CIFERSpec);
+TA_BASEFUNS_CTORS_DEFN(CIFERThalSpec);
+TA_BASEFUNS_CTORS_DEFN(CIFERDeep5bSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 
@@ -258,24 +259,34 @@ void SynDelaySpec::Initialize() {
   delay = 4;
 }
 
-void CIFERSpec::Initialize() {
+void CIFERThalSpec::Initialize() {
   on = false;
-  super_gain = .1f;
+  thal_to_super = .1f;
   thal_thr = 0.2f;
-  act5b_thr = 0.2f;
   thal_bin = true;
-  ctxt_5b_even = true;
-  ti_5b = 0.0f;
-  ti_5b_c = 1.0f - ti_5b_c;
   Defaults_init();
 }
 
-void CIFERSpec::Defaults_init() {
+void CIFERThalSpec::Defaults_init() {
 }
 
-void CIFERSpec::UpdateAfterEdit_impl() {
+void CIFERDeep5bSpec::Initialize() {
+  on = false;
+  d5b_to_super = 0.01f;
+  act5b_thr = 0.2f;
+  d5b_repl_ctxt = 2.0f;
+  ti_5b = 0.0f;
+  ti_5b_c = 1.0f - ti_5b;
+  Defaults_init();
+}
+
+void CIFERDeep5bSpec::Defaults_init() {
+  d5b_burst = true;
+}
+
+void CIFERDeep5bSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ti_5b_c = 1.0f - ti_5b_c;
+  ti_5b_c = 1.0f - ti_5b;
 }
 
 void DaModSpec::Initialize() {
@@ -309,8 +320,8 @@ void LeabraUnitSpec::Initialize() {
   act_fun = NOISY_XX1;
 
   learn_qtr = Q4;
-  deep5b_qtr = Q4;
-  ti_ctxt_qtr = Q4;
+  deep5b_qtr = QNULL;
+  ti_ctxt_qtr = QNULL;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
@@ -741,9 +752,6 @@ void LeabraUnitSpec::Init_ActBuff(LeabraUnit* u) {
 void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(bias_spec.SPtr())
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
-  if(cifer.on) {
-    net->net_misc.ti = true;
-  }
 }
 
 void LeabraUnitSpec::Trial_Init_Unit(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
@@ -764,7 +772,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnit* u, LeabraNetwork* net) {
     u->avg_l += lval * act_avg.l_up_inc; // additive up
   }
   else {
-    float eff_dt = act_avg.l_dn_dt * u->own_lay()->acts_m_avg_eff;
+    float eff_dt = act_avg.l_dn_dt * u->own_lay()->acts_p_avg_eff;
     u->avg_l += eff_dt * (lval - u->avg_l); // mult down
   }
 }
@@ -818,6 +826,9 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnit* u, LeabraNetwork* net) {
   u->net_prv_q = u->net;
+  if(Quarter_Deep5bNow(net->quarter)) {
+    u->thal_prv = u->thal;        // only grab prv at start of quarter where deep5b is updating
+  }
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
@@ -886,8 +897,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnit* u, LeabraNetwork* net) {
   }
 
   float ctxt_scale = 1.0f;
-  if(cifer.on && cifer.ctxt_5b_even && d5b_rel_scale > 0.0f) {
-    float sc_fact = (1.0f + d5b_rel_scale);
+  if(cifer_d5b.on && d5b_rel_scale > 0.0f) {
+    float sc_fact = (1.0f + cifer_d5b.d5b_repl_ctxt * d5b_rel_scale);
     if(Quarter_Deep5bNow(net->quarter)) {
       ctxt_scale = 1.0f / sc_fact; // record that we scaled it down
       u->ti_ctxt /= sc_fact; // weaken context input to just compensate for d5b input
@@ -1118,8 +1129,11 @@ float LeabraUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
   if(net->net_misc.ti) {
     net_ex += u->ti_ctxt + u->d5b_net;
   }
-  if(cifer.on) {
-    net_ex += cifer.super_gain * u->thal * net_syn;
+  if(cifer_thal.on) {
+    net_ex += cifer_thal.thal_to_super * u->thal * net_syn;
+  }
+  if(cifer_d5b.on) {
+    net_ex += cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn
   }
   if(da_mod.on) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
@@ -1610,19 +1624,26 @@ void LeabraUnitSpec::Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thr
 }
 
 void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) {
-  if(!cifer.on) return;
-  // always update thal:
-  if(u->thal < cifer.thal_thr)
-    u->thal = 0.0f;
-  if(cifer.thal_bin && u->thal > 0.0f)
-    u->thal = 1.0f;
+  if(cifer_thal.on) {
+    if(u->thal < cifer_thal.thal_thr)
+      u->thal = 0.0f;
+    if(cifer_thal.thal_bin && u->thal > 0.0f)
+      u->thal = 1.0f;
+  }
 
-  if(Quarter_Deep5bNow(net->quarter)) {
-    float act5b = u->act_eq;
-    if(act5b < cifer.act5b_thr) {
-      act5b = 0.0f;
+  if(cifer_d5b.on) {
+    if(Quarter_Deep5bNow(net->quarter)) {
+      float act5b = u->act_eq;
+      if(act5b < cifer_d5b.act5b_thr) {
+        act5b = 0.0f;
+      }
+      u->deep5b = u->thal * act5b;  // thal is thresholded
     }
-    u->deep5b = u->thal * act5b;  // thal is thresholded
+    else {
+      if(cifer_d5b.d5b_burst) {
+        u->deep5b = 0.0f;         // turn it off!
+      }
+    }
   }
 }
 
@@ -1700,9 +1721,9 @@ void LeabraUnitSpec::Send_TICtxtNetin(LeabraUnit* u, LeabraNetwork* net,
   if(!Quarter_SendTICtxtNow(net->quarter)) return;
 
   float act_ts = u->act_eq;
-  if(cifer.on) {
-    act_ts *= cifer.ti_5b_c;
-    act_ts += cifer.ti_5b * u->deep5b;
+  if(cifer_d5b.on) {
+    act_ts *= cifer_d5b.ti_5b_c;
+    act_ts += cifer_d5b.ti_5b * u->deep5b;
   }
 
   if(act_ts > opt_thresh.send) {

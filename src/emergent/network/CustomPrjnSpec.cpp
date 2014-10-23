@@ -18,7 +18,9 @@
 
 TA_BASEFUNS_CTORS_DEFN(CustomPrjnSpec);
 
-void CustomPrjnSpec::Connect(Projection* prjn) {
+// TODO: this probably doesn't do anything useful anymore..
+
+void CustomPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   // make sure i have the correct indicies for my con_groups..
   prjn->recv_idx = -1;
   prjn->send_idx = -1;

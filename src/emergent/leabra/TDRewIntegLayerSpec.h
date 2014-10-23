@@ -51,7 +51,9 @@ INHERITED(ScalarValLayerSpec)
 public:
   TDRewIntegSpec	rew_integ;	// misc specs for TDRewIntegLayerSpec
 
-  void Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) override;
+  virtual void  Compute_TDRewInteg(LeabraLayer* lay, LeabraNetwork* net);
+
+  void  Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net,int thread_no=-1) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

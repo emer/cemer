@@ -338,25 +338,47 @@ private:
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
-eTypeDef_Of(CIFERSpec);
+eTypeDef_Of(CIFERThalSpec);
 
-class E_API CIFERSpec : public SpecMemberBase {
+class E_API CIFERThalSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep5b activation
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the CIFER mechanisms (otherwise, deep5b == act and thal is ignored)
-  float         super_gain;     // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin -- thal only increases netin otherwise recv'd: netin = (1 + gain * thal) * netin_raw
+  bool          on;             // enable the CIFER thalamus mechanisms
+  float         thal_to_super;  // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin by thalamic drive -- thal only increases netin otherwise recv'd: netin = (1 + thal_to_super * thal) * netin_raw
   float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
-  float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act or 1 depending on binary_5b flag
-  float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
   bool          thal_bin;       // #CONDSHOW_ON_on make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
-  bool          ctxt_5b_even;   // #CONDSHOW_ON_on #DEF_true even out the influence of TI context projections and deep5b projections whenever deep5b activations are being updated
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(CIFERThalSpec);
+protected:
+  SPEC_DEFAULTS;
+
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(CIFERDeep5bSpec);
+
+class E_API CIFERDeep5bSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep5b activation
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // enable the CIFER deep5b mechanisms
+  float         d5b_to_super;   // #CONDSHOW_ON_on gain on modulation of superficial (2/3 = act) netin by deep5b activations: netin += d5b_to_super * deep5b
+  bool          d5b_burst;      // #CONDSHOW_ON_on #DEF_true do deep5b activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
+  float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act
+  float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
+  float         d5b_repl_ctxt;  // #CONDSHOW_ON_on #DEF_2 extent to which deep5b inputs replace TI context inputs when they are present -- this is a multiplier on total deep5b netin scaling factor, which is used to reduce strength of ti_ctxt input -- use 0 to eliminate, and numbers >= 1 to prevent excessive activation in plus phase -- biologically, a portion of the TI context is thought to come from thalamocortical projections, which are then taken over by deep5b driven activations when those are present -- computationally, the deep5b serves as the plus-phase training signal for implicit TI models, and reducing context to compensate for increased deep5b input helps eliminate a 'main effect' signal of just overall increased activation in plus phase
 
   float         ti_5b_c;        // #HIDDEN #READ_ONLY 1.0 - ti_5b
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(CIFERSpec);
+  TA_SIMPLE_BASEFUNS(CIFERDeep5bSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -465,7 +487,8 @@ public:
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
-  CIFERSpec	cifer;		// #CAT_Learning cortical information flow via extra range -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
+  CIFERThalSpec	 cifer_thal;	// #CAT_Learning cortical information flow via extra range (CIFER) thalamic parameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
+  CIFERDeep5bSpec cifer_d5b;	// #CAT_Learning cortical information flow via extra range (CIFER) deep5b arameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise

@@ -31,7 +31,7 @@ void RowColPrjnSpec::Initialize() {
   one_to_one = false;
 }
 
-void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) override {
+void RowColPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
 
   Layer* recv_lay = prjn->layer;

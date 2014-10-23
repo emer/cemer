@@ -30,7 +30,7 @@ class E_API CustomPrjnSpec : public ProjectionSpec {
 INHERITED(ProjectionSpec)
 public:
 
-  void	Connect(Projection* prjn) override;	// do nothing
+  void	Connect_impl(Projection* prjn, bool make_cons) override;	// do nothing
 
   TA_BASEFUNS_NOCOPY(CustomPrjnSpec);
 private:

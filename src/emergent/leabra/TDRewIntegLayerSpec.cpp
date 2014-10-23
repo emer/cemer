@@ -130,7 +130,7 @@ bool TDRewIntegLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
 }
 
 // this is last stage before compute_act, so doing computation here
-void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* net) {
+void TDRewIntegLayerSpec::Compute_TDRewInteg(LeabraLayer* lay, LeabraNetwork* net) {
   lay->SetExtFlag(Unit::EXT);
 
   float rew_pred_val = 0.0f;
@@ -177,4 +177,9 @@ void TDRewIntegLayerSpec::Compute_ApplyInhib(LeabraLayer* lay, LeabraNetwork* ne
               ClampValue_ugp(lay, acc_md, gpidx, net);
               );
   HardClampExt(lay, net);
+}
+
+void TDRewIntegLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+  Compute_TDRewInteg(lay, net);
+  inherited::Compute_CycleStats(lay, net, thread_no);
 }

@@ -260,10 +260,10 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m_avg = avg_act.init;
   lay->acts_p_avg = avg_act.init;
   if(avg_act.fixed) {
-    lay->acts_m_avg_eff = avg_act.init;
+    lay->acts_p_avg_eff = avg_act.init;
   }
   else {
-    lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
+    lay->acts_p_avg_eff = avg_act.adjust * lay->acts_p_avg;
   }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
@@ -272,10 +272,10 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
       gpd->acts_m_avg = avg_act.init;
       gpd->acts_p_avg = avg_act.init;
       if(avg_act.fixed) {
-        gpd->acts_m_avg_eff = avg_act.init;
+        gpd->acts_p_avg_eff = avg_act.init;
       }
       else {
-        gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
+        gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
       }
     }
   }
@@ -744,23 +744,11 @@ void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) 
 void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_m = lay->acts_eq;
   lay->acts_m_avg += avg_act.dt * (lay->acts_m.avg - lay->acts_m_avg);
-  if(avg_act.fixed) {
-    lay->acts_m_avg_eff = avg_act.init;
-  }
-  else {
-    lay->acts_m_avg_eff = avg_act.adjust * lay->acts_m_avg;
-  }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_m = gpd->acts_eq;
       gpd->acts_m_avg += avg_act.dt * (gpd->acts_m.avg - gpd->acts_m_avg);
-      if(avg_act.fixed) {
-        gpd->acts_m_avg_eff = avg_act.fixed;
-      }
-      else {
-        gpd->acts_m_avg_eff = avg_act.adjust * gpd->acts_m_avg;
-      }
     }
   }
 }
@@ -768,11 +756,23 @@ void LeabraLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* ne
 void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
   lay->acts_p = lay->acts_eq;
   lay->acts_p_avg += avg_act.dt * (lay->acts_p.avg - lay->acts_p_avg); 
+  if(avg_act.fixed) {
+    lay->acts_p_avg_eff = avg_act.init;
+  }
+  else {
+    lay->acts_p_avg_eff = avg_act.adjust * lay->acts_p_avg;
+  }
   if(lay->unit_groups) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->acts_p = gpd->acts_eq;
       gpd->acts_p_avg += avg_act.dt * (gpd->acts_p.avg - gpd->acts_p_avg);
+      if(avg_act.fixed) {
+        gpd->acts_p_avg_eff = avg_act.fixed;
+      }
+      else {
+        gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
+      }
     }
   }
 }

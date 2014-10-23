@@ -35,8 +35,6 @@ public:
   // following are main hook into code:
   void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   void Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Compute_MidMinus(LeabraLayer* lay, LeabraNetwork* net) override { };
-  // no mid minus -- could overwrite!
 
   bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
   virtual void 	ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca3_on);

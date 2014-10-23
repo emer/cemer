@@ -56,8 +56,8 @@ class E_API LeabraInhib {
   // ##CAT_Leabra holds inhibition computation values, used as a parent class for layers and UnitGr etc
 public:
   float 	acts_m_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged minus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init -- this is used for netinput scaling (via _eff version) and should match reasonably well with act_avg.init value
-  float 	acts_m_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_m_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
   float 	acts_p_avg;	// #READ_ONLY #SHOW #CAT_Activation time-averaged plus-phase activation stats for the layer -- time constant in layer spec avg_act.tau and initialized to avg_act.init
+  float 	acts_p_avg_eff;	// #READ_ONLY #SHOW #CAT_Activation acts_p_avg * avg_act.adjust factor -- this is the effective value actually used for netinput scaling based on layer activation levels
   LeabraInhibVals i_val;        // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation computed inhibitory values
   AvgMaxVals	netin;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum net input values for the layer
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum activation values for the layer

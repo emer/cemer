@@ -66,7 +66,7 @@ void LeabraUnit::Initialize() {
 
   net_scale = 0.0f;
   bias_scale = 0.0f;
-  ctxt_scale = 0.0f;
+  ctxt_scale = 1.0f;
 
   act_sent = 0.0f;
   net_raw = 0.0f;

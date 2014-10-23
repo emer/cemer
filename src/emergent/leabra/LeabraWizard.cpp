@@ -1434,10 +1434,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   pbwm_units->bias_spec.SetSpec(fix_bias);
 
-  matrix_units->SetUnique("cifer", true);
-  matrix_units->cifer.on = true;
-  matrix_units->cifer.thal_thr = 0.1f;
-  matrix_units->cifer.thal_bin = false;
+  matrix_units->SetUnique("cifer_thal", true);
+  matrix_units->cifer_thal.on = true;
+  matrix_units->cifer_thal.thal_thr = 0.1f;
+  matrix_units->cifer_thal.thal_bin = false;
 
   matrix_units->SetUnique("noise_type", true);
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
@@ -1446,11 +1446,14 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->SetUnique("noise_adapt", true);
   matrix_units->noise_adapt.trial_fixed = true;
 
-  pfc_units->SetUnique("cifer", true);
-  pfc_units->cifer.on = true;
-  pfc_units->cifer.thal_thr = 0.1f;
-  pfc_units->cifer.act5b_thr = 0.2f;
-  pfc_units->cifer.thal_bin = true;
+  pfc_units->SetUnique("cifer_thal", true);
+  pfc_units->cifer_thal.on = true;
+  pfc_units->cifer_thal.thal_thr = 0.1f;
+  pfc_units->cifer_thal.thal_bin = true;
+
+  pfc_units->SetUnique("cifer_d5b", true);
+  pfc_units->cifer_d5b.on = true;
+  pfc_units->cifer_d5b.act5b_thr = 0.2f;
 
   ////////////	ConSpecs
 
