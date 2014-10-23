@@ -1104,3 +1104,10 @@ void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* ne
   }
 }
 
+void LeabraLayerSpec::ClearTICtxt(LeabraLayer* lay, LeabraNetwork* net) {
+  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+    if(u->lesioned()) continue;
+    u->ClearTICtxt(net);
+  }
+}
+

@@ -439,7 +439,7 @@ public:
   // #IGNORE call network UpdtAfterNetMod only if it is not otherwise being called at a higher level
 
   virtual void  Iconify();
-  // #MENU #MENU_ON_State #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit)
+  // #MENU #MENU_ON_State #DYN1 #CAT_Display iconify this layer in the network display (shrink to size of 1 unit, and make them invisible if lesioned)
   virtual void  DeIconify();
   // #MENU #MENU_ON_State #DYN1 #CAT_Display de-iconify this layer in the network display (make full size)
   inline void   SetDispScale(float disp_sc)     { disp_scale = disp_sc; UpdateAfterEdit(); }

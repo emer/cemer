@@ -617,12 +617,11 @@ void LeabraNetwork::Send_TICtxtNetin() {
   }
 }
 
-void LeabraNetwork::Init_TICtxt() {
-  // todo..
-  // FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-  //   if(!lay->lesioned())
-  //     lay->ClearContext(this);
-  // }
+void LeabraNetwork::ClearTICtxt() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->ClearTICtxt(this);
+  }
 }
 
 

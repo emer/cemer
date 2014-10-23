@@ -2031,6 +2031,50 @@ void Network::UnLesionUnits() {
   UpdtAfterNetMod();
 }
 
+void Network::LesionAllLayers() {
+  taMisc::Busy();
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    l->Lesion();
+  }
+  StructUpdate(false);
+  taMisc::DoneBusy();
+  UpdtAfterNetMod();
+}
+
+void Network::IconifyAllLayers() {
+  taMisc::Busy();
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    l->Iconify();
+  }
+  StructUpdate(false);
+  taMisc::DoneBusy();
+  UpdtAfterNetMod();
+}
+
+void Network::UnLesionAllLayers() {
+  taMisc::Busy();
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    l->UnLesion();
+  }
+  StructUpdate(false);
+  taMisc::DoneBusy();
+  UpdtAfterNetMod();
+}
+
+void Network::DeIconifyAllLayers() {
+  taMisc::Busy();
+  StructUpdate(true);
+  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
+    l->DeIconify();
+  }
+  StructUpdate(false);
+  taMisc::DoneBusy();
+  UpdtAfterNetMod();
+}
+
 void Network::UpdateMaxDispSize() {
   layers.UpdateMaxDispSize();
   max_disp_size = layers.max_disp_size;

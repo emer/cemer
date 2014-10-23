@@ -503,6 +503,14 @@ public:
   // #MENU #USE_RVAL #CAT_Structure turn on unit LESIONED flags with prob p_lesion (permute = fixed no. lesioned)
   virtual void  UnLesionUnits();
   // #MENU #USE_RVAL #CAT_Structure un-lesion units: turn off all unit LESIONED flags
+  virtual void  LesionAllLayers();
+  // #MENU #CAT_Structure #MENU_SEP_BEFORE lesion all of the layers in the network (turns on LESIONED flag)
+  virtual void  IconifyAllLayers();
+  // #MENU #CAT_Structure iconify all of the layers in the network (turns on ICONIFIED flag, shrinks layers to size of 1 unit in the network display, or makes them invisible if lesioned)
+  virtual void  UnLesionAllLayers();
+  // #MENU #CAT_Structure un-lesion all of the layers in the network (turns off LESIONED flag)
+  virtual void  DeIconifyAllLayers();
+  // #MENU #CAT_Structure de-iconify all of the layers in the network (turns off ICONIFIED flag, makes them show up in the network display)
 
   virtual DataTable*    WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay);
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Structure send entire set of weights from sending layer to recv layer in given table (e.g., for analysis), with one row per receiving unit, and the pattern in the event reflects the weights into that unit

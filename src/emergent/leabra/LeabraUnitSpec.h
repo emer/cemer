@@ -592,10 +592,10 @@ public:
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
   virtual void	Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
-  // #CAT_LeabraTI send deep5b netinputs through Deep5bConSpec connections
+  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
   virtual void	Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
                                          int thread_no=-1);
-  // #CAT_LeabraTI send context netinputs through Deep5bConSpec connections -- post processing rollup
+  // #CAT_TI send context netinputs through Deep5bConSpec connections -- post processing rollup
 
   inline float Compute_EThresh(LeabraUnit* u);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
@@ -683,12 +683,12 @@ public:
 
   virtual void	Send_TICtxtNetin(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
-  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections
+  // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
   virtual void	Send_TICtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net,
                                   int thread_no=-1);
-  // #CAT_LeabraTI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
+  // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
   virtual void	ClearTICtxt(LeabraUnit* u, LeabraNetwork* net);
-  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at clear discontinuities of experience
+  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7656
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7661
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -409,10 +409,11 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["network"] { };
    };
 
-   ProgVar_List @.vars = [14] {
+   ProgVar_List @.vars = [15] {
     ProgVar @["batch"] { };
     ProgVar @["tag"] { };
     ProgVar @["config_id"] { };
+    ProgVar @["param_set"] { };
     ProgVar @["log_dir"] { };
     ProgVar @["log_file_nm"] { };
     ProgVar @["log_trials"] { };
@@ -423,7 +424,7 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVar @["batch_start"] { };
     ProgVar @["startup_prog"] { };
     ProgVar @["MyClusterRun"] { };
-    ProgVar @["ActiveParamSet"] { };
+    ProgVar @["param_sets"] { };
    };
 
    Function_List @.functions = [1] {
@@ -453,7 +454,7 @@ LeabraProject .projects["LeabraFlex"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [35] {
+   ProgEl_List @.prog_code = [36] {
     IfReturn @[0] { };
     RegisterArgs @[1] { };
     PrintExpr @[2] { };
@@ -463,23 +464,25 @@ LeabraProject .projects["LeabraFlex"] {
     ProgVarFmArg @[6] { };
     ProgVarFmArg @[7] { };
     ProgVarFmArg @[8] { };
-    Comment @[9] { };
-    ProgVarFmArg @[10] { };
+    ProgVarFmArg @[9] { };
+    Comment @[10] { };
     ProgVarFmArg @[11] { };
     ProgVarFmArg @[12] { };
-    OtherProgramVar @[13] { };
-    ControlPanelsFmArgs @[14] { };
-    If @[15] { 
+    ProgVarFmArg @[13] { };
+    OtherProgramVar @[14] { };
+    ControlPanelsFmArgs @[15] { };
+    If @[16] { 
      ProgEl_List @.true_code = [1] {
       MethodCall @[0] { 
-       ProgArg_List @.meth_args = [0] {
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
        };
       };
      };
     };
-    Comment @[16] { };
     Comment @[17] { };
-    If @[18] { 
+    Comment @[18] { };
+    If @[19] { 
      ProgEl_List @.true_code = [1] {
       MiscCall @[0] { 
        ProgArg_List @.meth_args = [9] {
@@ -496,11 +499,11 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    AssignExpr @[19] { };
-    Comment @[20] { };
-    DataColsFmArgs @[21] { };
-    Comment @[22] { };
-    If @[23] { 
+    AssignExpr @[20] { };
+    Comment @[21] { };
+    DataColsFmArgs @[22] { };
+    Comment @[23] { };
+    If @[24] { 
      ProgEl_List @.true_code = [4] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [2] {
@@ -518,7 +521,7 @@ LeabraProject .projects["LeabraFlex"] {
       VarIncr @[3] { };
      };
     };
-    MethodCall @[24] { 
+    MethodCall @[25] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -526,12 +529,12 @@ LeabraProject .projects["LeabraFlex"] {
       ProgArg @[3] { };
      };
     };
-    MiscCall @[25] { 
+    MiscCall @[26] { 
      ProgArg_List @.meth_args = [1] {
       ProgArg @[0] { };
      };
     };
-    MethodCall @[26] { 
+    MethodCall @[27] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -539,14 +542,14 @@ LeabraProject .projects["LeabraFlex"] {
       ProgArg @[3] { };
      };
     };
-    MethodCall @[27] { 
+    MethodCall @[28] { 
      ProgArg_List @.meth_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
      };
     };
-    If @[28] { 
+    If @[29] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [4] {
@@ -565,16 +568,16 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
     };
-    OtherProgramVar @[29] { };
-    Comment @[30] { };
-    DataVarProg @[31] { };
-    ProgramCallVar @[32] { 
+    OtherProgramVar @[30] { };
+    Comment @[31] { };
+    DataVarProg @[32] { };
+    ProgramCallVar @[33] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
     };
-    PrintExpr @[33] { };
-    ProgramCall @[34] { 
+    PrintExpr @[34] { };
+    ProgramCall @[35] { 
      ProgArg_List @.prog_args = [1] {
       ProgArg @[0] { };
      };
@@ -951,7 +954,7 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [17] {
+    ProgEl_List @.prog_code = [19] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
@@ -963,54 +966,62 @@ LeabraProject .projects["LeabraFlex"] {
        ProgArg @[0] { };
       };
      };
-     ProgramCall @[3] { 
+     MethodCall @[3] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ProgramCall @[4] { 
       ProgArg_List @.prog_args = [3] {
        ProgArg @[0] { };
        ProgArg @[1] { };
        ProgArg @[2] { };
       };
      };
-     ProgramCall @[4] { 
+     ProgramCall @[5] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     Comment @[5] { };
-     ProgramCall @[6] { 
+     Comment @[6] { };
+     ProgramCall @[7] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[7] { 
+     MethodCall @[8] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetUpdateView @[8] { };
-     StopStepPoint @[9] { };
-     Comment @[10] { };
-     ProgramCall @[11] { 
+     NetUpdateView @[9] { };
+     StopStepPoint @[10] { };
+     Comment @[11] { };
+     MethodCall @[12] { 
+      ProgArg_List @.meth_args = [0] {
+      };
+     };
+     ProgramCall @[13] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     ProgramCall @[12] { 
+     ProgramCall @[14] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[13] { 
+     MethodCall @[15] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetUpdateView @[14] { };
-     ProgramCall @[15] { 
+     NetUpdateView @[16] { };
+     ProgramCall @[17] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[16] { 
+     MethodCall @[18] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -2763,8 +2774,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.040 seconds
-Real time usage: 0.046 seconds
+CPU time usage: 0.048 seconds
+Real time usage: 0.053 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2773,7 +2784,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20141021210633
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20141023000821
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"				</div>
@@ -2813,11 +2824,11 @@ Expensive parser function count: 0/100
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"This page is protected.
 You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\" style=\"position: relative; right: 0px; overflow: hidden; width: 14.78381980956756px;\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
-<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
-	<h3 id=\"p-cactions-label\" tabindex=\"0\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
+<div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu\" aria-labelledby=\"p-cactions-label\">
+	<h3 id=\"p-cactions-label\" tabindex=\"0\" style=\"width: 20.921089665874394px; overflow: hidden;\"><span>Actions</span><a href=\"#\" tabindex=\"-1\"></a></h3>
 	<div class=\"menu\">
 		<ul>
 					</ul>
@@ -2876,7 +2887,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 12,164 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 12,172 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2896,7 +2907,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.386 secs. -->
+<!-- Served in 0.455 secs. -->
 	
 
 </body></html>";
@@ -5797,6 +5808,16 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc="selector for config to use";
      init_from=NULL;
     };
+    ProgVar @["param_set"] {
+     name="param_set";
+     var_type=T_String;
+     string_val=;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="name of saved parameter set to apply at startup";
+     init_from=NULL;
+    };
     ProgVar @["log_dir"] {
      name="log_dir";
      var_type=T_String;
@@ -5901,13 +5922,13 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      init_from=NULL;
     };
-    ProgVar @["ActiveParamSet"] {
-     name="ActiveParamSet";
+    ProgVar @["param_sets"] {
+     name="param_sets";
      var_type=T_Object;
-     object_type=ParamSet;
-     object_val=NULL;
+     object_type=ParamSet_Group;
+     object_val=.projects["LeabraFlex"].param_sets$$;
      objs_ptr=0;
-     flags=CTRL_PANEL|SAVE_VAL|USED|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -6079,11 +6100,19 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      desc=;
      flags=0;
      orig_prog_code=;
+     prog=$.projects["LeabraFlex"].programs["MasterStartup"]$;
+     var_name="param_set";
+     arg_name="param_set";
+    };
+    ProgVarFmArg @[7] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
      prog=$.projects["LeabraFlex"].programs.gp["ConfigProgs"]["MasterBatch"]$;
      var_name="max_batch";
      arg_name="batches";
     };
-    ProgVarFmArg @[7] {
+    ProgVarFmArg @[8] {
      desc="b_end is parallel-batch mode of operation (see b_start)";
      flags=0;
      orig_prog_code=;
@@ -6091,7 +6120,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="max_batch";
      arg_name="b_end";
     };
-    ProgVarFmArg @[8] {
+    ProgVarFmArg @[9] {
      desc="b_start is parallel-batch mode of operation (see also b_end)";
      flags=0;
      orig_prog_code=;
@@ -6099,12 +6128,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="batch";
      arg_name="b_start";
     };
-    Comment @[9] {
+    Comment @[10] {
      desc="add our special args from command line";
      flags=0;
      orig_prog_code=;
     };
-    ProgVarFmArg @[10] {
+    ProgVarFmArg @[11] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
      orig_prog_code=;
@@ -6112,7 +6141,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="cur_config";
      arg_name="config";
     };
-    ProgVarFmArg @[11] {
+    ProgVarFmArg @[12] {
      desc="NOTE: set in MasterTrain and copy from there, so it can use that default!";
      flags=0;
      orig_prog_code=;
@@ -6120,7 +6149,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="config_id";
      arg_name="config";
     };
-    ProgVarFmArg @[12] {
+    ProgVarFmArg @[13] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6128,7 +6157,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_name="log_trials";
      arg_name="log_trials";
     };
-    OtherProgramVar @[13] {
+    OtherProgramVar @[14] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6139,18 +6168,18 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    ControlPanelsFmArgs @[14] {
+    ControlPanelsFmArgs @[15] {
      desc="sets any arg listed in the control panel";
      flags=NEW_EL;
      orig_prog_code=;
      ctrl_panel_var=.projects["LeabraFlex"].programs["MasterStartup"].vars["MyClusterRun"]$$;
     };
-    If @[15] {
+    If @[16] {
      desc="set variables to values stored in a param set";
      flags=0;
      orig_prog_code="if (Act";
      cond {
-      expr="ActiveParamSet";
+      expr="param_set.nonempty()";
      };
      true_code {
       name="true_code";
@@ -6161,29 +6190,40 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="ActiveParamSet->CopySavedToActive()";
        result_var=NULL;
-       obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["ActiveParamSet"]$$;
-       method=ParamSet::CopySavedToActive;
+       obj=.projects["LeabraFlex"].programs["MasterStartup"].vars["param_sets"]$$;
+       method=ParamSet_Group::LoadParamSet;
        meth_args {
 	name="meth_args";
 	el_typ=ProgArg;
 	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="set_name";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="param_set";
+	 };
+	};
        };
-       meth_sig="void CopySavedToActive()";
-       meth_desc=" ";
+       meth_sig="bool LoadParamSet(taString& set_name)";
+       meth_desc=;
       };
      };
     };
-    Comment @[16] {
+    Comment @[17] {
      desc="TODO: Add your program comment here (multi-lines ok).";
      flags=0;
      orig_prog_code=;
     };
-    Comment @[17] {
+    Comment @[18] {
      desc="= Add args to tag name =";
      flags=0;
      orig_prog_code=;
     };
-    If @[18] {
+    If @[19] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6308,7 +6348,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    AssignExpr @[19] {
+    AssignExpr @[20] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6317,12 +6357,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       expr="\"_\" +  config_id + tag";
      };
     };
-    Comment @[20] {
+    Comment @[21] {
      desc="set any params from Config";
      flags=0;
      orig_prog_code=;
     };
-    DataColsFmArgs @[21] {
+    DataColsFmArgs @[22] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6330,12 +6370,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      row_spec=ROW_VAL;
      row_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["config_id"]$;
     };
-    Comment @[22] {
+    Comment @[23] {
      desc="Set log files";
      flags=0;
      orig_prog_code=;
     };
-    If @[23] {
+    If @[24] {
      desc="if passed b_start, then turn off init_batch in Batch program, so it starts here instead of 0";
      flags=0;
      orig_prog_code=;
@@ -6437,7 +6477,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    MethodCall @[24] {
+    MethodCall @[25] {
      desc="save args to file: last arg is to include dmem proc number";
      flags=0;
      orig_prog_code=;
@@ -6496,7 +6536,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MiscCall @[25] {
+    MiscCall @[26] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6520,7 +6560,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    MethodCall @[26] {
+    MethodCall @[27] {
      desc="last arg is to include dmem proc number";
      flags=0;
      orig_prog_code=;
@@ -6579,7 +6619,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    MethodCall @[27] {
+    MethodCall @[28] {
      desc="last arg is to restrict log to dmem_proc = 0";
      flags=0;
      orig_prog_code=;
@@ -6627,7 +6667,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      meth_sig="void SaveDataLog(taString& fname, bool append = false, bool dmem_proc_0 = true)";
      meth_desc=" incrementally save each new row of data that is written to the datatable (at WriteClose()) to given file. writes the header first if not appending to existing file. if running under demem, dmem_proc_0 determines if only the first processor writes to the log file, or if all processors write";
     };
-    If @[28] {
+    If @[29] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6747,7 +6787,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       };
      };
     };
-    OtherProgramVar @[29] {
+    OtherProgramVar @[30] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6758,12 +6798,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    Comment @[30] {
+    Comment @[31] {
      desc="= Call sub-startup programs =";
      flags=0;
      orig_prog_code=;
     };
-    DataVarProg @[31] {
+    DataVarProg @[32] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6778,7 +6818,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      var_3=NULL;
      var_4=NULL;
     };
-    ProgramCallVar @[32] {
+    ProgramCallVar @[33] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6801,7 +6841,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      prog_group=.projects["LeabraFlex"].programs.gp["StartupProgs"]$$;
      prog_name_var=$.projects["LeabraFlex"].programs["MasterStartup"].vars["startup_prog"]$;
     };
-    PrintExpr @[33] {
+    PrintExpr @[34] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -6811,7 +6851,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      my_mask=NULL;
      debug_level=NULL;
     };
-    ProgramCall @[34] {
+    ProgramCall @[35] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -8539,7 +8579,22 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialStart"]$$;
       targ_ld_init="*TrialStart*";
      };
-     ProgramCall @[3] {
+     MethodCall @[3] {
+      desc=;
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="network.Init_InputData()";
+      result_var=NULL;
+      obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
+      method=Network::Init_InputData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
+     };
+     ProgramCall @[4] {
       desc="pick next event permuted..";
       flags=0;
       orig_prog_code=;
@@ -8584,7 +8639,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ChooseNextEvent"]$$;
       targ_ld_init="*ChooseNextEvent*";
      };
-     ProgramCall @[4] {
+     ProgramCall @[5] {
       desc="apply std external input activations from the input_data table to the network";
       flags=0;
       orig_prog_code=;
@@ -8618,12 +8673,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"]$$;
       targ_ld_init="*ApplyInputs*";
      };
-     Comment @[5] {
+     Comment @[6] {
       desc="=== Run Minus Phase ===";
       flags=0;
       orig_prog_code=;
      };
-     ProgramCall @[6] {
+     ProgramCall @[7] {
       desc="settle for minus phase, using ct_time.minus as fixed number of cycles to run";
       flags=0;
       orig_prog_code=;
@@ -8646,12 +8701,12 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"]$$;
       targ_ld_init="*SettleMinus*";
      };
-     MethodCall @[7] {
+     MethodCall @[8] {
       desc="compute minus phase statistics";
       flags=0;
       orig_prog_code=;
       result_var=NULL;
-      obj=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$$;
+      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       method=LeabraNetwork::Compute_MinusStats;
       meth_args {
        name=;
@@ -8661,26 +8716,41 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Compute_MinusStats()";
       meth_desc=" compute the stats that should be computed at the end of the minus phase: minus_output_name -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
      };
-     NetUpdateView @[8] {
+     NetUpdateView @[9] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$$;
      };
-     StopStepPoint @[9] {
+     StopStepPoint @[10] {
       desc=;
       flags=0;
       orig_prog_code=;
      };
-     Comment @[10] {
+     Comment @[11] {
       desc="=== Run Plus Phase ===";
       flags=0;
       orig_prog_code=;
      };
-     ProgramCall @[11] {
-      desc="apply std external input activations from the input_data table to the network";
-      flags=0;
+     MethodCall @[12] {
+      desc="only need to re-apply if something is new!";
+      flags=OFF|CAN_REVERT_TO_CODE;
+      orig_prog_code="network.Init_InputData()";
+      result_var=NULL;
+      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
+      method=Network::Init_InputData;
+      meth_args {
+       name="meth_args";
+       el_typ=ProgArg;
+       el_def=0;
+      };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
+     };
+     ProgramCall @[13] {
+      desc="only need to re-apply if something is new!";
+      flags=OFF;
       orig_prog_code=;
       prog_args {
        name=;
@@ -8712,7 +8782,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"]$;
       targ_ld_init="*ApplyInputs*";
      };
-     ProgramCall @[12] {
+     ProgramCall @[14] {
       desc="settle for designated plus phase number of cycles";
       flags=0;
       orig_prog_code=;
@@ -8735,7 +8805,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"]$$;
       targ_ld_init="*Settle*";
      };
-     MethodCall @[13] {
+     MethodCall @[15] {
       desc="compute plus phase statistics";
       flags=0;
       orig_prog_code=;
@@ -8750,14 +8820,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Compute_PlusStats()";
       meth_desc=" compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr, ExtRew -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
      };
-     NetUpdateView @[14] {
+     NetUpdateView @[16] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
-     ProgramCall @[15] {
+     ProgramCall @[17] {
       desc="standard end of trial stuff";
       flags=0;
       orig_prog_code=;
@@ -8780,7 +8850,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
       targ_ld_init="*TrialEnd*";
      };
-     MethodCall @[16] {
+     MethodCall @[18] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -8853,7 +8923,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 3;5;1;2;0;4;      };
      };
     };
     types {
@@ -14964,22 +15034,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.751173734664917;
+     value 6 0=0.5308839082717896;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.02397743239998817;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.751173734664917;
+     value 6 0=0.7507987022399902;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7976022362709045;
+     value 6 0=0.7971137762069702;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16265,17 +16335,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.0211565587669611;
+       value 6 0=0.009337861090898514;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03208137676119804;
+       value 6 0=0.04046858474612236;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7313116788864136;
+       value 6 0=0.7334465384483337;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -16514,7 +16584,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      sse_tol=0.5;
      act_fun=NOISY_XX1;
      act {thr=0.5: gain=100: nvar=0.005: };
-     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: rescale_ctxt=1: avg_dt=0.005: };
+     act_misc {rec_nd=1: avg_nd=1: act_max_hz=100: avg_tau=200: avg_init=0.15: avg_dt=0.005: };
      spike {rise=0: decay=5: g_gain=9: window=3: eq_gain=8: eq_tau=50: eq_dt=0.02: };
      spike_misc {
       ex=0;
@@ -16550,7 +16620,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       on=0;
       delay=4;
      };
-     cifer {on=0: super_gain=0.05: thal_thr=0.2: act5b_thr=0.2: ti_5b=0.5: thal_bin=1: ti_5b_c=0: };
+     cifer_thal {on=0: thal_to_super=0.1: thal_thr=0.2: thal_bin=1: };
+     cifer_d5b {on=0: d5b_to_super=0.01: d5b_burst=1: act5b_thr=0.2: ti_5b=0: d5b_repl_ctxt=2: ti_5b_c=1: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -16852,8 +16923,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
-     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
     LeabraLayer @["Hidden"] {
@@ -16938,8 +17009,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
-     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Output"] {
@@ -17005,8 +17076,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      brain_area=;
      voxel_fill_pct=1;
      acts_m_avg=0.1;
-     acts_m_avg_eff=0.1;
      acts_p_avg=0.1;
+     acts_p_avg_eff=0.1;
      spec {type=LeabraLayerSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
    };

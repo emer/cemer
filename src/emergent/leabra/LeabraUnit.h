@@ -179,6 +179,12 @@ public:
   float Compute_EThresh()
   { return ((LeabraUnitSpec*)GetUnitSpec())->Compute_EThresh(this); }
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
+  void	Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin(this, net, thread_no); }
+  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
+  void	Send_Deep5bNetin_Post(LeabraNetwork* net, int thread_no=-1)
+  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin_Post(this, net, thread_no); }
+  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections -- post processing rollup
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -219,12 +225,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI
 
-  void	Send_Deep5bNetin(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin(this, net, thread_no); }
-  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
-  void	Send_Deep5bNetin_Post(LeabraNetwork* net, int thread_no=-1)
-  { ((LeabraUnitSpec*)GetUnitSpec())->Send_Deep5bNetin_Post(this, net, thread_no); }
-  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections -- post processing rollup
   void	Send_TICtxtNetin(LeabraNetwork* net, int thread_no=-1)
   { ((LeabraUnitSpec*)GetUnitSpec())->Send_TICtxtNetin(this, net, thread_no); }
   // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections

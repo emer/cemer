@@ -349,8 +349,8 @@ public:
     virtual void Send_TICtxtNetin();
     // #CAT_TI send TI context netinput -- calls corresponding functions at unit level, first basic send, then _Post that rolls-up send
 
-  virtual void Init_TICtxt();
-  // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at clear discontinuities of experience
+  virtual void ClearTICtxt();
+  // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final
