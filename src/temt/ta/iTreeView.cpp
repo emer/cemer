@@ -377,7 +377,6 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
 //   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
   if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
-
   if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
 
   bool expand = true;
@@ -415,6 +414,9 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
       setItemExpanded(item, true); // should trigger CreateChildren for lazy
+      // if(tab) {
+      //   taMisc::DebugInfo("expanded:", tab->GetDisplayName(), tab->GetPathNames());
+      // }
     }
     // check if we've expanded deeply enough
     // (works for finite (>=1) and infinite (<0) cases)
@@ -427,11 +429,18 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
       if (child)
         ExpandItem_impl(child, level, max_levels - 1, exp_flags);
     }
-  } else {
+  }
+  else {
     // note: following test not needed for 1st time, but is
     // needed for subsequent ExpandDefault
-    if (isItemExpanded(item)) {
-      setItemExpanded(item, false);
+    if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
+      // for auto-expand, do NOT collapse expanded items!
+      if (isItemExpanded(item)) {
+        setItemExpanded(item, false);
+        // if(tab) {
+        //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
+        // }
+      }
     }
   }
 }
