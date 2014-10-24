@@ -242,9 +242,6 @@ int     taMisc::color_scale_size = 128;
 int     taMisc::jpeg_quality = 95;
 taMisc::ColorHints taMisc::color_hints = (taMisc::ColorHints)(taMisc::CH_EDITS | taMisc::CH_BROWSER);
 //note: we actually init this in ta_project, the first time, for the user
-//taMisc::ProjViewPref taMisc::proj_view_pref = (taMisc::ProjViewPref)-1;//taMisc::PVP_2x2;
-// nobody besides Brad uses 2x2..
-taMisc::ProjViewPref taMisc::proj_view_pref = taMisc::PVP_3PANE;
 taMisc::ViewerOptions   taMisc::viewer_options = (taMisc::ViewerOptions)(taMisc::VO_DOUBLE_CLICK_EXP_ALL | taMisc::VO_AUTO_SELECT_NEW | taMisc::VO_AUTO_EXPAND_NEW);
 taMisc::EditOptions     taMisc::edit_options = EO_0;
 #ifndef NO_TA_BASE

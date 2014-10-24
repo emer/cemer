@@ -235,7 +235,7 @@ String taProject::GetClusterRunPath() {
 
 MainWindowViewer* taProject::GetDefaultProjectBrowser() {
   MainWindowViewer* vwr = NULL;
-  // iterate to find 1st Browser -- will actually be 2nd item in 2x2
+  // iterate to find 1st Browser -- will actually be 2nd item in 2x2 (2x2 no longer supported)
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
     if (vwr && vwr->isProjBrowser()) return vwr;
@@ -246,7 +246,7 @@ MainWindowViewer* taProject::GetDefaultProjectBrowser() {
 MainWindowViewer* taProject::GetDefaultProjectViewer() {
   // get the default T3 guy
   MainWindowViewer* vwr = NULL;
-  // iterate to find 1st Viewer -- will actually be 1st item in 2x2
+  // iterate to find 1st Viewer -- will actually be 1st item in 2x2 (2x2 no longer supported)
   for (int i = 0; i < viewers.size; ++i) {
     vwr = dynamic_cast<MainWindowViewer*>(viewers.FastEl(i));
     if (vwr && vwr->isProjViewer()) return vwr;
@@ -325,7 +325,7 @@ void taProject::OpenNewProjectBrowser(String viewer_name) {
     vwr->SetName(viewer_name);
     vwr->SigEmitUpdated();
   }
-  OpenViewers(); // opens both 2x2 if we made those
+  OpenViewers(); // opens both 2x2 if we made those (2x2 no longer supported)
 }
 
 void taProject::OpenNewProjectViewer(String viewer_name) {

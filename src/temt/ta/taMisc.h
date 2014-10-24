@@ -149,11 +149,6 @@ public:
     TOP_ZERO    // row zero is displayed at top of view (ex. for images)
   };
 
-  enum ProjViewPref { // project viewing preference
-    PVP_2x2,    // #LABEL_2x2_Panes one window has a browser and edit pane, the second has an edit pane and a 3-d viewer
-    PVP_3PANE   // #LABEL_3_Pane one window with a browser, edit pane, and a 3d-viewer
-  };
-
   enum ViewerOptions { // #BITS options for the viewer
     VO_0                = 0, // #IGNORE
     VO_DOUBLE_CLICK_EXP_ALL = 0x001, // #LABEL_DoubleClickExpAll double click expands or contracts all tree items -- use at your own risk on big projects...
@@ -275,7 +270,6 @@ public:
   static int            color_scale_size; // #SAVE #CAT_GUI #EXPERT number of colors to put in a color scale
   static int            jpeg_quality;   // #SAVE #CAT_GUI #EXPERT jpeg quality for dumping jpeg files (1-100; 95 default) -- in general it is better to use PNG format which is lossless and yields small compressed file sizes for saved view images, etc
   static ColorHints     color_hints; // #SAVE #CAT_GUI #EXPERT what types of color hinting to use in the application
-  static ProjViewPref   proj_view_pref; // #SAVE #CAT_GUI #EXPERT the default way to view projects
   static ViewerOptions  viewer_options; // #SAVE #CAT_GUI #EXPERT misc options for the viewer
   static EditOptions    edit_options;  // #SAVE #CAT_GUI #EXPERT misc options for how editing behaves 
 #ifndef NO_TA_BASE

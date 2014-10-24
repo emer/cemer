@@ -177,28 +177,9 @@ MainWindowViewer* MainWindowViewer::NewProjectBrowser(taProject* proj) {
   rval->frames.Add(cb);
   // panel guy
   fv = rval->AddFrameByType(&TA_PanelViewer);
-  MainWindowViewer* viewer = NULL; // only for 2x2 mode
-  switch (taMisc::proj_view_pref) {
-  case taMisc::PVP_2x2: {
-    rval->setBrowserViewer(true, false);
-    viewer = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
-    fv = viewer->AddFrameByType(&TA_PanelViewer);
-    fv = viewer->AddFrameByType(&TA_T3PanelViewer);
-    viewer->SetData(proj);
-    viewer->setBrowserViewer(false, true);
-    // twiddle sizes a bit, to get overlap
-    rval->SetUserData("view_win_wd", 0.6667f);
-    viewer->SetUserData("view_win_lft", 0.3333f);
-    viewer->SetUserData("view_win_wd", 0.6667f);
-  } break;
-  case taMisc::PVP_3PANE: {
-    rval->setBrowserViewer(true, true);
-    fv = rval->AddFrameByType(&TA_T3PanelViewer);
-  } break;
-  // no default, must handle all cases
-  }
-  // always added to the viewer collection
-  // 2x2 only -- better to add this first, because it ends up underneath
+  MainWindowViewer* viewer = NULL;
+  rval->setBrowserViewer(true, true);
+  fv = rval->AddFrameByType(&TA_T3PanelViewer);
   if (viewer) {
     proj->viewers.Add(viewer); // will get auto-opened later
   }
@@ -213,7 +194,7 @@ MainWindowViewer* MainWindowViewer::NewProjectViewer(taProject* proj) {
   if (!proj) return NULL;
   if (!def_viewer_type || !(def_viewer_type->InheritsFrom(&TA_MainWindowViewer)))
     def_viewer_type = &TA_MainWindowViewer; // just in case
-
+  
   MainWindowViewer* viewer  = (MainWindowViewer*)taBase::MakeToken(def_viewer_type);
   FrameViewer* fv = viewer->AddFrameByType(&TA_PanelViewer);
   fv = viewer->AddFrameByType(&TA_T3PanelViewer);
