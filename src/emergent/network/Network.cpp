@@ -276,10 +276,12 @@ void Network::UpdateAfterEdit_impl(){
 
   if(taMisc::is_loading) {
     brain_atlas = brain_atlases->FindName(brain_atlas_name);
-    UpdateAllSpecs(true);       // force
-    BuildUnits();
-    Init_Weights_post();
-    Connect_VecChunk();
+    if(HasNetFlag(SAVE_UNITS) || HasNetFlag(SAVE_UNITS_FORCE)) {
+      UpdateAllSpecs(true);       // need to fix up some things after a load with saved units
+      BuildUnits();
+      Init_Weights_post();
+      Connect_VecChunk();
+    }
   }
   else {
     if(brain_atlas)
