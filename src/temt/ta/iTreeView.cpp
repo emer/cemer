@@ -436,7 +436,7 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
-        setItemExpanded(item, false);
+//        setItemExpanded(item, false);
         // if(tab) {
         //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
         // }
@@ -457,7 +457,9 @@ void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
 
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
-  int exp_flags = EF_DEFAULT;
+  // rohrlich - 11/24/14 - giving this a try to fix bug 1325
+//  int exp_flags = EF_DEFAULT;
+  int exp_flags = 0;
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   taMisc::Busy(true);
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);
