@@ -419,9 +419,8 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   iAction* dyn_act = new iAction(but_no, label, QKeySequence());
   dyn_act->connect(iAction::int_act, this,  SLOT(dynbuttonClicked(int)));
   dyn_act->setParent(dyn_button);
-//   dyn_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
+  dyn_act->setToolTip(tooltip);
   dyn_button->setDefaultAction(dyn_act);
-  dyn_button->setToolTip(tooltip);
   dyn_button->setFont(taiM->buttonFont(taiMisc::sizMedium));
   lhs_button_vbox->addWidget(dyn_button);
   dyn_actions.Add(dyn_act);
