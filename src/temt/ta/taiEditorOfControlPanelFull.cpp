@@ -48,6 +48,8 @@ void taiEditorOfControlPanelFull::Initialize()
 
 void taiEditorOfControlPanelFull::ClearBody_impl() {
   // we also clear all the methods, and then rebuild them
+  prop_membs.memb_el.Reset();
+  prop_membs.widget_el.Reset();
   ta_menus.Reset();
   ta_menu_buttons.Reset();
 //  meth_el.Reset(); // must defer deletion of these, because the MethodWidget objects are used in menu calls, so can't be
@@ -198,6 +200,15 @@ void taiEditorOfControlPanelFull::DoRemoveSelEdit() {
     taMisc::DebugInfo("taiEditorOfControlPanelFull::DoRemoveSelEdit: could not find item");
 }
 
+void taiEditorOfControlPanelFull::DoGoToObject() {
+  int sel_item_index = membs.GetFlatWidgetIndex(sel_item_dat);
+  if (sel_item_index >= 0) {
+    sele->GoToObject(sel_item_index);
+  }
+  else
+    taMisc::DebugInfo("taiEditorOfControlPanelFull::DoGoToObject: could not find item");
+}
+
 void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
   int& last_id)
 {
@@ -210,16 +221,18 @@ void taiEditorOfControlPanelFull::FillLabelContextMenu_SelEdit(QMenu* menu,
   else {
     menu->addAction("Remove from ControlPanel", this, SLOT(DoRemoveSelEdit()));
   }
-  
+  menu->addAction("Go To Object", this, SLOT(DoGoToObject()));
 }
 
 void taiEditorOfControlPanelFull::GetImage_Membs_def() {
   if (sele->InheritsFrom(&TA_ParamSet)) {
+    taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
       MemberDef* md = prop_membs.memb_el.SafeEl(i);
       if (md) {
-        md->im->taiType::GetImage(mb_dat, mb_dat->Base());
+        mb_dat->SetBase(rbase); // used for things like Seledit context menu
+        md->im->GetImage(mb_dat, rbase);
       }
     }
   }
@@ -253,13 +266,14 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
 
 void taiEditorOfControlPanelFull::GetValue_Membs_def() {
   if (sele->InheritsFrom(&TA_ParamSet)) {
+    taBase* rbase = Base();
     for (int i = 0; i < prop_membs.widget_el.size; ++i) {
       taiWidget* mb_dat = prop_membs.widget_el.FastEl(i);
       MemberDef* md = prop_membs.memb_el.SafeEl(i);
       if (md) {
         bool first_diff = true;
-        md->im->GetMbrValue(mb_dat, mb_dat->Base(), first_diff);
-        mb_dat->Base()->UpdateAfterEdit();
+        md->im->GetMbrValue(mb_dat, rbase, first_diff);
+        rbase->UpdateAfterEdit();
       }
     }
   }

@@ -72,6 +72,8 @@ public: // public API
   //  remove edit data item at given index and update dialog
   virtual void  RemoveFun(int idx);
   //  remove function at given index
+  virtual void  GoToObject(int idx);
+  // select object for given member field for editing in the gui
 
   virtual int   SearchMembers(taNBase* obj, const String& memb_contains);
   // #MENU #MENU_ON_ControlPanel search given object for member names that contain given string, and add them to this editor

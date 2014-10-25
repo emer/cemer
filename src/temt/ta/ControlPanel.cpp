@@ -18,16 +18,14 @@
 #include <taGuiDialog>
 #include <Program>
 
+#include <SigLinkSignal>
+#include <taMisc>
+#include <tabMisc>
+
 taTypeDef_Of(taProject);
 SMARTREF_OF_CPP(ControlPanel); //
 
-
-#include <SigLinkSignal>
-#include <taMisc>
-
 TA_BASEFUNS_CTORS_DEFN(ControlPanel);
-
-
 
 void ControlPanel::StatSigEmit_Group(taGroup_impl* grp, int sls,
   void* op1, void* op2)
@@ -196,6 +194,17 @@ void ControlPanel::RemoveField_impl(int idx) {
   EditMbrItem* item = mbrs.Leaf(idx);
   if (item)
     item->Close();
+}
+
+void ControlPanel::GoToObject(int idx) {
+  EditMbrItem* item = mbrs.Leaf(idx);
+  if(item && item->base) {
+    taBase* mbrown = item->base->GetMemberOwner(true);
+    if(mbrown) {
+      taMisc::Info("Going to:", mbrown->GetPathNames());
+      tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
+    }
+  }
 }
 
 void ControlPanel::RemoveFun(int idx) {

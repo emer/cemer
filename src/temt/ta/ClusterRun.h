@@ -127,6 +127,8 @@ public:
   // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
   virtual void  OpenSvnBrowser();
   // #MENU_BUTTON #MENU_ON_OtherFiles open subversion browser for this repository
+  virtual void  SaveJobParams();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();
@@ -147,6 +149,8 @@ public:
   // #IGNORE add files from row in table to file_list
   virtual void  RemoveAllFilesInList();
   // #IGNORE svn remove all the files listed in file_list
+  virtual void SaveJobParams_impl(DataTable& table, int row);
+  // #IGNORE save job parameters to new param_sets saved params
   void SortClusterInfoTable();
   // #IGNORE sort the cluster_info table putting user's jobs and summary info at the top
 

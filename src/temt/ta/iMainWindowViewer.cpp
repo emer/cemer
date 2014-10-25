@@ -74,6 +74,7 @@
 #include <QTextCursor>
 #include <QClipboard>
 #include <QWebView>
+#include <QMenuBar>
 
 int iMainWindowViewer::s_next_unique_id;
 const QString iMainWindowViewer::cmd_str = "Ctrl+";
@@ -383,7 +384,19 @@ void iMainWindowViewer::Constr_impl() {
 void iMainWindowViewer::Constr_MainMenu_impl() {
   if (menu) return;
   // create a taiWidgetMenu wrapper around the window's provided menubar
+#ifdef TA_OS_MAC
+  if(isRoot()) {
+    menu = new taiWidgetMenuBar(this, taiMisc::fonBig, new QMenuBar(0));
+    // no parent = application-wide menu bar, instead of window specific
+  }
+  else {
+    // the problem here is that we don't seem to have a way to find the gobal menu
+    // bar defined for root object!  we could just find it directly somehow..
+    menu = new taiWidgetMenuBar(this, taiMisc::fonBig, menuBar());
+  }
+#else
   menu = new taiWidgetMenuBar(this, taiMisc::fonBig, menuBar());
+#endif
 
   fileMenu = menu->AddSubMenu("F&ile");
   editMenu = menu->AddSubMenu("&Edit");

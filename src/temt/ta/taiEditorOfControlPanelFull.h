@@ -37,6 +37,7 @@ public:
   
 protected slots:
   void          DoRemoveSelEdit() override;
+  void          DoGoToObject();
 
 protected:
   void          ClearBody_impl() override;       // we also clear all the methods, and then rebuild them

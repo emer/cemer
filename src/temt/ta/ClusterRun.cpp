@@ -24,6 +24,7 @@
 #include <taProject>
 #include <SubversionClient>
 #include <iSubversionBrowser>
+#include <ParamSet>
 
 #include <taSigLinkItr>
 #include <iPanelSet>
@@ -847,6 +848,51 @@ void ClusterRun::OpenSvnBrowser() {
   String wc_path = m_cm->GetWcResultsPath();
   String wc_root = wc_path.through(us_user,-1);
   iSubversionBrowser::OpenBrowser(url, wc_root);
+}
+
+void ClusterRun::SaveJobParams() {
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    for (int row = end_row; row >= st_row; --row) {
+      SaveJobParams_impl(jobs_done, row);
+    }
+  }
+  else if (SelectedRows(jobs_archive, st_row, end_row)) {
+    for (int row = end_row; row >= st_row; --row) {
+      SaveJobParams_impl(jobs_archive, row);
+    }
+  }
+  else {
+    taMisc::Warning("No rows selected -- no job parameters saved");
+  }
+}
+
+void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj) return;
+  ParamSet* ps = proj->param_sets.NewEl(1);
+
+  String tag = table.GetValAsString("tag", row);
+  String params = table.GetValAsString("params", row);
+  String notes = table.GetValAsString("notes", row);
+
+  ps->name = String("tag_") + tag;
+  ps->desc = notes;
+  ps->mbrs.Duplicate(mbrs);     // grab our current select edit members
+  ps->CopyActiveToSaved();      // first, grab everything current, b/c we only have a subset
+
+  String_Array parlst;
+  parlst.Split(params, " ");    // space sep
+  for(int i=0;i<parlst.size;i++) {
+    String nm = parlst[i];
+    String val = nm.after("=");
+    nm = nm.before("=");
+    EditMbrItem* itm = ps->mbrs.FindLeafName(nm);
+    if(!itm) continue;
+    itm->param_set_value.saved_value = val;
+  }
+  ps->UpdateAfterEdit();
+  ps->BrowserSelectMe();        // sure..
 }
 
 void ClusterRun::ArchiveJobs() {
