@@ -22,9 +22,12 @@
 #include <taiWidgetMenuBar>
 #include <taiWidgetMashup>
 #include <iHiLightButton>
+#include <iStripeWidget>
 
 #include <taMisc>
 #include <taiMisc>
+
+#include <QColor>
 
 taiEditorOfControlPanelFull::taiEditorOfControlPanelFull(void* base, TypeDef* td,
   bool read_only_, QObject* parent)

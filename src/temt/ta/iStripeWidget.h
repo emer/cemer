@@ -29,7 +29,7 @@ public:
   void        setColors(const QColor& hilight, const QColor& bg);
     // convenient way to set both
   void        setHiLightColor(const QColor& val);
-  void        setExceptionColor(const QColor& val);
+  void        SetExceptionColor(const QColor& val, const QColor& dark_val);
   inline int	stripeHeight() const {return mstripeHeight;}
   void        setStripeHeight(int val);
   void        setTopMargin(int val);
@@ -43,6 +43,7 @@ public:
 protected:
   QColor      mhiLightColor;
   QColor      exception_color;  // default set in constructor initialization
+  QColor      exception_color_dark;  // default set in constructor initialization
   int         mstripeHeight; // default is 25;
   int         mtopMargin; // default is 0;
   int         mbottomMargin; // default is 0, suggest: 15;
