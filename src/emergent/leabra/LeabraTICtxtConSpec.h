@@ -62,12 +62,12 @@ public:
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_act_q0 = su->act_q0;
+    const float su_act_q0 = su->act_q0; // prior trial activation..
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
-      C_Compute_dWt_Delta(dwts[i], ru->act_p, ru->act_m, su_act_q0);  
+      C_Compute_dWt_Delta(dwts[i], ru->avg_s, ru->avg_m, su_act_q0); // using avgs..
     }
   }
 

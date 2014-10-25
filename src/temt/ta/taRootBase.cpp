@@ -1630,11 +1630,11 @@ void taRootBase::WindowShowHook() {
 
 #ifdef TA_OS_MAC
     // select this window, even if run from command line
-    String cmd = "osascript -e 'tell application \"System Events\" ";
-    cmd << "to keystroke tab using {command down}'"; // go to next item
-    system(cmd);
-    // do it twice -- go to other, come back to us
-    system(cmd);
+    // String cmd = "osascript -e 'tell application \"System Events\" ";
+    // cmd << "to keystroke tab using {command down}'"; // go to next item
+    // system(cmd);
+    // // do it twice -- go to other, come back to us
+    // system(cmd);
 
     // this cannot find the window name -- not sure how else to do it
     // or index 0 or 1 don't work..
@@ -1645,9 +1645,6 @@ void taRootBase::WindowShowHook() {
     // system(cmd);
 #endif
   }
-//why is this needed? see bugID:723
-//  if(docs.size > 0)
-//    docs[0]->EditPanel(true, true); // pin, new tab
 }
 
 bool taRootBase::Startup_Console() {
