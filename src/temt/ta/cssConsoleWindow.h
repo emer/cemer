@@ -27,6 +27,8 @@ class QcssConsole; //
 class QIcon; //
 class iAction; //
 class iRect; //
+class QMenu; //
+class QMenuBar; //
 
 class TA_API cssConsoleWindow : public QMainWindow {
   // window to hold the css console
@@ -43,6 +45,14 @@ public:
   iAction*      pin_act;
   iAction*      clear_act;
   iAction*      select_all_act;
+  
+//  iAction*      dummy_window_action;
+//  iAction*      window_min_action;
+//  iAction*      window_zoom_action;
+//
+//  QMenuBar*     menu_bar = NULL;
+//  QMenu*        window_menu;
+//  QMenu*        edit_menu;
 
   virtual void  UpdateFmLock();
   // update based on current lock status
