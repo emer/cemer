@@ -374,46 +374,57 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
   if (!item) return;
   if (isItemHidden(item)) return;
 
-//   // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
+  // special check for guys that should not be auto-expaneded at all!  may need to do this in child below.
   taBase* tab = item->link()->taData();
-  if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
-  if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
-
+  
+  bool expand_saved = false;
+  if(exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER) && tab &&
+     tab->HasBaseFlag(taBase::TREE_EXPANDED)) {
+    expand_saved = true;
+  }
+  
   bool expand = true;
-  if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
-    // get default info from objs
-    String exp_def_str;
-    if(item->md()) {                  // memberdef takes precedence
-      exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
-    }
-    if(exp_def_str.empty()) {
-      exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
-    }
-    if(exp_def_str.nonempty()) {
-      int exp_def = (int)exp_def_str;
-      if(exp_def == 0) {
-        expand = false; // no expand
+  if(!expand_saved) {
+    // figure out default if not otherwise saved
+    if(tab && tab->HasOption("NO_EXPAND_ALL")) return;
+    if(item->md() && item->md()->HasOption("NO_EXPAND_ALL")) return;
+    if(!(exp_flags & EF_CUSTOM_FILTER) && tab && (exp_flags & EF_DEFAULT)) {
+      // get default info from objs
+      String exp_def_str;
+      if(item->md()) {                  // memberdef takes precedence
+        exp_def_str = item->md()->OptionAfter("EXPAND_DEF_");
+      }
+      if(exp_def_str.empty()) {
+        exp_def_str = tab->GetTypeDef()->OptionAfter("EXPAND_DEF_");
+      }
+      if(exp_def_str.nonempty()) {
+        int exp_def = (int)exp_def_str;
+        if(exp_def == 0) {
+          expand = false; // no expand
+        }
+        else {
+          max_levels = exp_def-1; // remaining levels = val-1
+        }
       }
       else {
-        max_levels = exp_def-1; // remaining levels = val-1
+        expand = false;           // if no custom filter, default for all other guys is no expandre
       }
     }
-    else {
-      expand = false;           // if no custom filter, default for all other guys is no expandre
+    if (!(exp_flags & EF_EXPAND_DISABLED)) {
+      if (!item->link()->isEnabled())
+        expand = false;
+    }
+    if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
+      emit CustomExpandFilter(item, level, expand);
     }
   }
 
-  if (!(exp_flags & EF_EXPAND_DISABLED)) {
-    if (!item->link()->isEnabled())
-      expand = false;
-  }
-  if (expand && (exp_flags & EF_CUSTOM_FILTER)) {
-    emit CustomExpandFilter(item, level, expand);
-  }
   if (expand) {
     // first expand the guy...
     if (!isItemExpanded(item)) { // ok, eligible...
       setItemExpanded(item, true); // should trigger CreateChildren for lazy
+      if(tab)
+        tab->SetBaseFlag(taBase::TREE_EXPANDED);
       // if(tab) {
       //   taMisc::DebugInfo("expanded:", tab->GetDisplayName(), tab->GetPathNames());
       // }
@@ -436,7 +447,8 @@ void iTreeView::ExpandItem_impl(iTreeViewItem* item, int level,
     if(!exp_flags & (EF_DEFAULT | EF_CUSTOM_FILTER)) {
       // for auto-expand, do NOT collapse expanded items!
       if (isItemExpanded(item)) {
-//        setItemExpanded(item, false);
+        setItemExpanded(item, false);
+        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
         // if(tab) {
         //   taMisc::DebugInfo("collapsed:", tab->GetDisplayName(), tab->GetPathNames());
         // }
@@ -457,9 +469,7 @@ void iTreeView::ExpandAllUnder(iTreeViewItem* item, int max_levels) {
 
 void iTreeView::ExpandDefaultUnder(iTreeViewItem* item) {
   if (!item) return;
-  // rohrlich - 11/24/14 - giving this a try to fix bug 1325
-//  int exp_flags = EF_DEFAULT;
-  int exp_flags = 0;
+  int exp_flags = EF_DEFAULT;
   if (useCustomExpand()) exp_flags |= EF_CUSTOM_FILTER;
   taMisc::Busy(true);
   ExpandItem_impl(item, 0, m_def_exp_levels, exp_flags);

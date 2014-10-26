@@ -138,7 +138,9 @@ void iTreeViewItem::DecorateDataNode() {
   int dn_flags_supported = 0;
   taiSigLink* link = this->link(); // local cache
   QIcon ic;
-  if (isExpanded()) bmf |= NBF_FOLDER_OPEN;
+  if (isExpanded()) {
+    bmf |= NBF_FOLDER_OPEN;
+  }
   bool has_ic = link->GetIcon(bmf, dn_flags_supported, ic);
   //TODO (or in GetIcon somewhere) add link iconlet and any other appropriate mods
   if (has_ic)
@@ -307,6 +309,17 @@ iClipData* iTreeViewItem::GetClipDataMulti(const ISelectable_PtrList& sel_items,
 void iTreeViewItem::itemExpanded(bool value) {
   inherited::itemExpanded(value); // creates children
   DecorateDataNode();
+  taBase* tab = link()->taData();
+  if(tab) {
+    if(value) {
+      if(tab)
+        tab->SetBaseFlag(taBase::TREE_EXPANDED);
+    }
+    else {
+      if(tab)
+        tab->ClearBaseFlag(taBase::TREE_EXPANDED);
+    }
+  }
 }
 
 void* iTreeViewItem::linkData() const {
