@@ -770,12 +770,10 @@ void iMainWindowViewer::Constr_ShowMenu()
 
 void iMainWindowViewer::Constr_WindowMenu()
 {
-  dummyWindowAction = AddAction(new iAction("Dummy Action", QKeySequence(), "dummyWindowAction"));
-  windowMenu->AddAction(dummyWindowAction);
-
-//  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(Qt::CTRL + Qt::Key_M), "windowMinimizeAction"));
   windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(), "windowMinimizeAction"));
+  windowMenu->AddAction(windowMinimizeAction);
   windowZoomAction = AddAction(new iAction("&Zoom", QKeySequence(), "windowZoomAction"));
+  windowMenu->AddAction(windowZoomAction);
 
   connect(windowMinimizeAction, SIGNAL(Action()), this, SLOT(WindowMinimize()));
   connect(windowZoomAction, SIGNAL(Action()), this, SLOT(WindowZoom()));

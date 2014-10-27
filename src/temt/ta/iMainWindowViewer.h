@@ -208,9 +208,6 @@ public:
   iAction*            windowMinimizeAction;
   iAction*            windowZoomAction;
 
-  // Hack - Qt5.2 & OS X 10.9 window menu not appearing - add dummy action to make it visible until a window is created
-  iAction*            dummyWindowAction;
-
   QObject*              clipHandler() {return last_clip_handler;} // obj (if any) controlling clipboard handling
 
   taProject*            myProject() const; // project of which this viewer is a part
@@ -378,7 +375,7 @@ public slots:
   virtual void  progStatus();
   
   virtual void  windowMenu_aboutToShow();
-  void          windowActivateByName(const Variant& title);
+  virtual void  windowActivateByName(const Variant& title);
   virtual void  WindowMinimize();
   virtual void  WindowZoom();
   virtual void  helpHelp();
