@@ -890,9 +890,9 @@ void LeabraNetwork::Compute_TrialStats() {
 }
 
 void LeabraNetwork::Compute_PhaseStats() {
-  if(quarter == 2)
+  if(quarter == 3)
     Compute_MinusStats();
-  else if(quarter == 3)
+  else if(quarter == 4)
     Compute_PlusStats();
 }
 
