@@ -216,3 +216,7 @@ set(leabra_SRCS
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
 )
+
+set(leabra_CUDA
+  LeabraConSpec_cuda.cu
+)

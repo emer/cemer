@@ -97,6 +97,15 @@ else (WIN32)
   find_package(ZLIB)
 endif (WIN32)
 
+##############################
+# CUDA (set -DCUDA_BUILD flag at compile time)
+IF(CUDA_BUILD)
+  find_package(CUDA REQUIRED)
+  include_directories(${CUDA_INCLUDE_DIRS})
+  set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${CUDA_LIBRARIES} ${CUDA_curand_LIBRARY})
+  add_definitions(-DCUDA_COMPILE)
+ENDIF(CUDA_BUILD)
+
 # NOTE: could also do BISON but it is not really required so not worth the hassle
 #find_package(BISON)
 
@@ -128,7 +137,7 @@ endif (WIN32)
 set(EMERGENT_DEP_LIBRARIES ${COIN_LIBRARY} ${QUARTER_LIBRARY} ${QT_LIBRARIES}
     ${ODE_LIBRARY} ${GSL_LIBRARIES}
     ${OPENGL_LIBRARIES} ${ZLIB_LIBRARIES}
-    ${SUBVERSION_LIBRARIES}
+    ${SUBVERSION_LIBRARIES} ${EMERGENT_OPT_LIBRARIES}
 )
 if (NOT WIN32)
   set(EMERGENT_DEP_LIBRARIES ${EMERGENT_DEP_LIBRARIES}
@@ -145,3 +154,4 @@ if (NOT WIN32)
       )
   endif (APPLE)
 endif (NOT WIN32)
+

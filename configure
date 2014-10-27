@@ -23,6 +23,7 @@ echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., /usr/local/Qt5.2.0/5.2.0/clang_64)"
 echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must be explicitly set, just to be sure you got the right one"
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
+echo "  --enable-cuda (or --cuda)    enable NVIDIA CUDA support"
 echo "  --flags=\"your own flags\"     include your own custom flags"
 echo " "
 echo "  (note: -- before args is optional, and - works too!)"
@@ -69,6 +70,13 @@ do
       mpi=true
       cmake_cmd="$cmake_cmd -DMPI_BUILD=true"
       build_dir="${build_dir}_mpi"
+      shift 1
+    ;;
+
+    --enable-cuda | --cuda | cuda | enable-cuda | -cuda | -enable-cuda)
+      cuda=true
+      cmake_cmd="$cmake_cmd -DCUDA_BUILD=true"
+      build_dir="${build_dir}_cuda"
       shift 1
     ;;
 
@@ -173,6 +181,7 @@ echo "  debug:        $debug"
 echo "  prefix:       $prefix"
 echo "  suffix:       $extra_suffix"
 echo "  mpi:          $mpi"
+echo "  cuda:         $cuda"
 echo "  clean:        $clean"
 echo "  build-dir:    $build_dir"
 echo "  qt-version:   $qt_version"

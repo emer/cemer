@@ -155,6 +155,8 @@ message( STATUS "SUBVERSION_LIBRARIES = ${SUBVERSION_LIBRARIES}" )
 if (NOT WIN32)
   message( STATUS "READLINE_LIBRARY = ${READLINE_LIBRARY}" )
 endif (NOT WIN32)
+message( STATUS "optional libraries = ${EMERGENT_OPT_LIBRARIES}" )
+message( STATUS "all EMERGENT_DEP_LIBRARIES = ${EMERGENT_DEP_LIBRARIES}")
 
 
 ####################################

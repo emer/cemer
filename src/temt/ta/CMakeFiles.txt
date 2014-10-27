@@ -752,6 +752,7 @@ set(ta_HEADS_MAKETA_NOMOC
   ParamSet.h
   ParamSetItem.h
   ParamSet_Group.h
+  ta_cuda.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -1945,6 +1946,7 @@ set(ta_SRCS_MAKETA
   ParamSet.cpp
   ParamSetItem.cpp
   ParamSet_Group.cpp
+  ta_cuda.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

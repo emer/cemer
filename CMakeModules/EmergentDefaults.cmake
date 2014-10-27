@@ -24,6 +24,8 @@ endif(NOT CMAKE_BUILD_TYPE)
 
 # set cache parameter for mpi option
 set(MPI_BUILD FALSE CACHE BOOL "Set to true to enable MPI distributed memory system")
+# set cache parameter for cuda option
+set(CUDA_BUILD FALSE CACHE BOOL "Set to true to enable NVIDIA CUDA GPU compile")
 
 # basic compiler warnings, etc.
 # note: really should be testing MSVC but contrary to docs, it is not true using MSVC
