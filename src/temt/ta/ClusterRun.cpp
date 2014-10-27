@@ -853,12 +853,12 @@ void ClusterRun::OpenSvnBrowser() {
 void ClusterRun::SaveJobParams() {
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
-    for (int row = end_row; row >= st_row; --row) {
+    for (int row = st_row; row <= end_row; ++row) {
       SaveJobParams_impl(jobs_done, row);
     }
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    for (int row = end_row; row >= st_row; --row) {
+    for (int row = st_row; row <= end_row; ++row) {
       SaveJobParams_impl(jobs_archive, row);
     }
   }
@@ -889,6 +889,10 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
     nm = nm.before("=");
     EditMbrItem* itm = ps->mbrs.FindLeafName(nm);
     if(!itm) continue;
+    if(itm->mbr && itm->mbr->type->IsBool()) {
+      if(val == "0") val = "false"; // translate bools..
+      if(val == "1") val = "true";
+    }
     itm->param_set_value.saved_value = val;
   }
   ps->UpdateAfterEdit();

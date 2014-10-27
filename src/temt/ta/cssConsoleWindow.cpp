@@ -29,6 +29,8 @@
 #include <QIcon>
 #include <iClipData>
 #include <QDateTime>
+#include <QMenuBar>
+#include <QMenu>
 
 #include <taMisc>
 
@@ -54,6 +56,11 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
 
   hb->addWidget(css_con);
 
+  menu_bar = menuBar();
+  file_menu = menu_bar->addMenu("&File");
+  edit_menu = menu_bar->addMenu("&Edit");
+  window_menu = menu_bar->addMenu("&Window");
+
   unpinned = new QIcon(":/images/tab_unpushed.png");
   pinned = new QIcon(":/images/tab_locked.png");
   clear_icon = new QIcon(":/images/clear.png");
@@ -63,6 +70,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   pin_act->setIcon(*pinned);
   pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
   tb->addAction(pin_act);
+  file_menu->addAction(pin_act);
   connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
     
   tb->addSeparator();
@@ -71,18 +79,21 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
                                        QKeySequence("Ctrl+X"), "editCutAction");
   editCutAction->setIcon(QIcon(":/images/editcut.png"));
   tb->addAction(editCutAction);
+  edit_menu->addAction(editCutAction);
   connect(editCutAction, SIGNAL(Action()), css_con, SLOT(cut()));
 
   iAction* editCopyAction = new iAction(iClipData::EA_COPY, "&Copy",
                                         QKeySequence("Ctrl+C"), "editCopyAction");
   editCopyAction->setIcon(QIcon(":/images/editcopy.png"));
   tb->addAction(editCopyAction);
+  edit_menu->addAction(editCopyAction);
   connect(editCopyAction, SIGNAL(Action()), css_con, SLOT(copy()));
 
   iAction* editPasteAction = new iAction(iClipData::EA_PASTE, "&Paste",
                                          QKeySequence("Ctrl+V"), "editPasteAction");
   editPasteAction->setIcon(QIcon(":/images/editpaste.png"));
   tb->addAction(editPasteAction);
+  edit_menu->addAction(editPasteAction);
   connect(editPasteAction, SIGNAL(Action()), css_con, SLOT(paste()));
     
   tb->addSeparator();
@@ -91,13 +102,25 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   clear_act->setIcon(*clear_icon);
   clear_act->setToolTip("Clear the console window");
   tb->addAction(clear_act);
+  edit_menu->addAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
     
   select_all_act = new iAction("&Select All", QKeySequence(), "select_all_act");
   select_all_act->setIcon(*select_all_icon);
   select_all_act->setToolTip("Select all contents of console window");
   tb->addAction(select_all_act);
+  edit_menu->addAction(select_all_act);
   connect(select_all_act, SIGNAL(Action()), css_con, SLOT(selectAll()));
+
+  dummy_window_action = new iAction("Dummy Action", QKeySequence(), "dummyWindowAction");
+  window_min_action = new iAction("&Minimize", QKeySequence(), "windowMinimizeAction");
+  window_zoom_action = new iAction("&Zoom", QKeySequence(), "windowZoomAction");
+  window_menu->addAction(dummy_window_action);
+  window_menu->addAction(window_min_action);
+  window_menu->addAction(window_zoom_action);
+  
+  connect(window_min_action, SIGNAL(Action()), this, SLOT(showMinimized()));
+  connect(window_zoom_action, SIGNAL(Action()), this, SLOT(showMaximized()));
     
   setWindowTitle("css Console");
 }

@@ -46,13 +46,14 @@ public:
   iAction*      clear_act;
   iAction*      select_all_act;
   
-//  iAction*      dummy_window_action;
-//  iAction*      window_min_action;
-//  iAction*      window_zoom_action;
-//
-//  QMenuBar*     menu_bar = NULL;
-//  QMenu*        window_menu;
-//  QMenu*        edit_menu;
+  iAction*      dummy_window_action;
+  iAction*      window_min_action;
+  iAction*      window_zoom_action;
+
+  QMenuBar*     menu_bar;
+  QMenu*        file_menu;
+  QMenu*        edit_menu;
+  QMenu*        window_menu;
 
   virtual void  UpdateFmLock();
   // update based on current lock status

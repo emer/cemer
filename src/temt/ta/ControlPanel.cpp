@@ -200,10 +200,10 @@ void ControlPanel::GoToObject(int idx) {
   EditMbrItem* item = mbrs.Leaf(idx);
   if(item && item->base) {
     taBase* mbrown = item->base->GetMemberOwner(true);
-    if(mbrown) {
-      taMisc::Info("Going to:", mbrown->GetPathNames());
-      tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
-    }
+    if(!mbrown) 
+      mbrown = item->base;       // must be object itself?
+    taMisc::Info("Going to:", mbrown->GetPathNames());
+    tabMisc::DelayedFunCall_gui(mbrown, "BrowserSelectMe");
   }
 }
 
