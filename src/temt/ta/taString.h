@@ -154,7 +154,7 @@ public:
   TA_API friend taString  replicate(const taString& y, int n);
   // #IGNORE
   TA_API friend taString  join(const taString src[], int n, const taString& sep); //
-  // #IGNORE
+  // #IGNORE concatenate the first n strings in array src, with separator string sep between them -- returns the concatenated string
 
   // simple builtin transformations
   TA_API friend taString          triml(const taString& x);
@@ -475,6 +475,8 @@ public:
   taString                wrap(int max_width) const;
   // #CAT_Modify add newlines every max_width chars
   taString                CamelToSnake(); // e.g. StdInputData to std_input_data
+  taString                toCamel(); // e.g. std_input_data to StdInputData (also removes any whitespace)
+  taString                removeSpaces(); // returns a copy of this string with all whitespaces and underscores removed
 
   void                  del(const taString& y, int startpos = 0);
   void                  del(const char* t, int startpos = 0);

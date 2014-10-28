@@ -1105,6 +1105,68 @@ taString taString::CamelToSnake() {
   return rval;
 }
 
+taString taString::toCamel() {
+  makeUnique();
+  int found = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
+      found++;
+  }
+
+  if (found == 0)
+    return this;
+
+  taString cval(this->length(), 0, ' ');
+  cval.makeUnique();
+
+  for (uint n = 0; n < this->length(); ++n) {
+    cval[n] = mrep->s[n];
+  }
+  cval.capitalize();
+
+  taString rval(cval.length() - found, 0, ' ');
+  rval.makeUnique();
+
+  rval[0] = cval[0];
+  uint decrement = 0;
+  for (uint n = 1; n < cval.length(); ++n) {
+    if((cval[n] == ' ') || (cval[n] == '_')) {
+      decrement++;
+    }
+    else {
+      rval[n - decrement] = cval[n];
+    }
+  }
+  return rval;
+}
+
+taString taString::removeSpaces() {
+  makeUnique();
+  int found = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
+      found++;
+  }
+
+  if (found == 0)
+    return this;
+
+  taString rval(this->length() - found, 0, ' ');
+  rval.makeUnique();
+
+  rval[0] = mrep->s[0];
+  uint decrement = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
+      decrement++;
+    }
+    else {
+      rval[n - decrement] = mrep->s[n];
+    }
+  }
+  return rval;
+}
+
 /*
  * substring extraction
  */
