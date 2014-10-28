@@ -15,28 +15,32 @@
 
 #include "cssConsoleWindow.h"
 #include <css_qtconsole.h>
-#include <QHBoxLayout>
-#include <QToolBar>
-#include <iAction>
 #include <QApplication>
 #include <tabMisc>
 #include <taRootBase>
 #include <taProject>
 #include <MainWindowViewer>
 #include <iMainWindowViewer>
-#include <taiMisc>
+#include <iAction>
 #include <iRect>
 #include <QIcon>
 #include <iClipData>
+#include <taiMisc>
+#include <taiWidgetMenu>
+#include <taiWidgetMenuBar>
+#include <taMisc>
+#include <taiMisc>
+
 #include <QDateTime>
 #include <QMenuBar>
 #include <QMenu>
+#include <QTextCursor>
+#include <QTextEdit>
+#include <QHBoxLayout>
+#include <QToolBar>
+#include <QClipboard>
 
-#include <taMisc>
-
-cssConsoleWindow::cssConsoleWindow(QWidget* parent)
-  : inherited(parent) {
-
+cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
   lock_to_proj = true;
   self_resize_timestamp = 1;
 
@@ -53,47 +57,43 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   tb->setIconSize(QSize(16,16));
 
   hb->addWidget(tb);
-
   hb->addWidget(css_con);
 
-  menu_bar = menuBar();
-  file_menu = menu_bar->addMenu("&File");
-  edit_menu = menu_bar->addMenu("&Edit");
-  window_menu = menu_bar->addMenu("&Window");
+  menu_bar = new taiWidgetMenuBar(bod, taiMisc::fonBig, menuBar());
+  edit_menu = menu_bar->AddSubMenu("&Edit");
+  window_menu = menu_bar->AddSubMenu("&Window");
 
   unpinned = new QIcon(":/images/tab_unpushed.png");
   pinned = new QIcon(":/images/tab_locked.png");
   clear_icon = new QIcon(":/images/clear.png");
   select_all_icon = new QIcon(":/images/select_all.png");
 
-  pin_act = new iAction("&pin", QKeySequence(), "pin");
+  pin_act = AddAction(new iAction("&pin", QKeySequence(), "pin"));
   pin_act->setIcon(*pinned);
   pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
   tb->addAction(pin_act);
-  file_menu->addAction(pin_act);
-  connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
     
   tb->addSeparator();
 
-  iAction* editCutAction = new iAction(iClipData::EA_CUT, "Cu&t",
+  editCutAction = new iAction(iClipData::EA_CUT, "Cu&t",
                                        QKeySequence("Ctrl+X"), "editCutAction");
   editCutAction->setIcon(QIcon(":/images/editcut.png"));
   tb->addAction(editCutAction);
-  edit_menu->addAction(editCutAction);
+  edit_menu->AddAction(editCutAction);
   connect(editCutAction, SIGNAL(Action()), css_con, SLOT(cut()));
 
-  iAction* editCopyAction = new iAction(iClipData::EA_COPY, "&Copy",
+  editCopyAction = new iAction(iClipData::EA_COPY, "&Copy",
                                         QKeySequence("Ctrl+C"), "editCopyAction");
   editCopyAction->setIcon(QIcon(":/images/editcopy.png"));
   tb->addAction(editCopyAction);
-  edit_menu->addAction(editCopyAction);
+  edit_menu->AddAction(editCopyAction);
   connect(editCopyAction, SIGNAL(Action()), css_con, SLOT(copy()));
 
-  iAction* editPasteAction = new iAction(iClipData::EA_PASTE, "&Paste",
+  editPasteAction = new iAction(iClipData::EA_PASTE, "&Paste",
                                          QKeySequence("Ctrl+V"), "editPasteAction");
   editPasteAction->setIcon(QIcon(":/images/editpaste.png"));
   tb->addAction(editPasteAction);
-  edit_menu->addAction(editPasteAction);
+  edit_menu->AddAction(editPasteAction);
   connect(editPasteAction, SIGNAL(Action()), css_con, SLOT(paste()));
     
   tb->addSeparator();
@@ -102,26 +102,31 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent)
   clear_act->setIcon(*clear_icon);
   clear_act->setToolTip("Clear the console window");
   tb->addAction(clear_act);
-  edit_menu->addAction(clear_act);
+  edit_menu->AddAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
     
   select_all_act = new iAction("&Select All", QKeySequence(), "select_all_act");
   select_all_act->setIcon(*select_all_icon);
   select_all_act->setToolTip("Select all contents of console window");
   tb->addAction(select_all_act);
-  edit_menu->addAction(select_all_act);
+  edit_menu->AddAction(select_all_act);
   connect(select_all_act, SIGNAL(Action()), css_con, SLOT(selectAll()));
+    
+  window_menu->AddAction(pin_act);
+  window_menu->AddSep();
 
-  dummy_window_action = new iAction("Dummy Action", QKeySequence(), "dummyWindowAction");
-  window_min_action = new iAction("&Minimize", QKeySequence(), "windowMinimizeAction");
-  window_zoom_action = new iAction("&Zoom", QKeySequence(), "windowZoomAction");
-  window_menu->addAction(dummy_window_action);
-  window_menu->addAction(window_min_action);
-  window_menu->addAction(window_zoom_action);
-  
+  // actions for dynamically built window menu need to be added to our own action list
+  // so the code for these is a bit different
+  window_min_action = AddAction(new iAction("&Minimize", QKeySequence(), "window_min_action"));
+  window_zoom_action = AddAction(new iAction("&Zoom", QKeySequence(), "window_zoom_action"));
+  window_menu->AddAction(window_min_action);
+  window_menu->AddAction(window_zoom_action);
+    
+  connect(window_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
+  connect(pin_act, SIGNAL(Action()), this, SLOT(PinAction()));
   connect(window_min_action, SIGNAL(Action()), this, SLOT(showMinimized()));
   connect(window_zoom_action, SIGNAL(Action()), this, SLOT(showMaximized()));
-    
+
   setWindowTitle("css Console");
 }
 
@@ -258,4 +263,76 @@ void cssConsoleWindow::closeEvent(QCloseEvent* e) {
   else {
     inherited::closeEvent(e);
   }
+}
+
+iAction* cssConsoleWindow::AddAction(iAction* act) {
+  actions.Add(act); // refs the act
+  // note: don't parent Actions because we manage them manually in our lists
+  // note: because Qt only activates acts with shortcuts if visible, we need
+  // to add the shorcutted guys to something visible... how about... us!
+  if (!act->shortcut().isEmpty())
+    this->addAction(act);
+  return act;
+}
+
+void cssConsoleWindow::windowMenu_aboutToShow() {
+  // Clear and rebuild submenu.
+  window_menu->Reset();
+  if(lock_to_proj)
+    pin_act->setText("Unlock");
+  else
+    pin_act->setText("Lock To Project");
+  window_menu->AddAction(pin_act);
+  window_menu->AddAction(window_min_action);
+  window_menu->AddAction(window_zoom_action);
+  window_menu->AddSep();
+  // Populate with current windows.
+  iWidget_List wl;
+  taiMisc::GetWindowList(wl);
+  for (int i = 0; i < wl.size; ++i) {
+    QWidget* wid = wl.FastEl(i);
+    if (wid->isWindow()) {
+      String title = wid->windowTitle();
+      String label = title;
+      if (wid->isWindowModified()) {
+        label = label + "*";
+      }
+      window_menu->AddItem(label, iAction::var_act,
+                      this, SLOT(windowActivateByName(const Variant&)), title);
+    }
+  }
+}
+
+void cssConsoleWindow::windowActivateByName(const Variant& title_) {
+  iWidget_List wl;
+  taiMisc::GetWindowList(wl);
+  String title = title_.toString();
+  QWidget* wid;
+  for (int i = 0; i < wl.size; ++i) {
+    wid = wl.FastEl(i);
+    if (wid->isWindow()) {
+      String wid_title = wid->windowTitle();
+      if (title == wid_title)
+        break;
+    }
+  }
+  if (!wid)
+    return;
+  if (wid->isMinimized()) {
+    wid->showMaximized();
+  }
+  wid->activateWindow();
+  wid->raise();
+}
+
+void cssConsoleWindow::changeEvent(QEvent* ev) {
+  if(ev->type() == QEvent::ActivationChange) {
+    if (isActiveWindow()) {
+      UpdateUi();
+    }
+  }
+  inherited::changeEvent(ev);
+}
+
+void cssConsoleWindow::UpdateUi() {
 }

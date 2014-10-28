@@ -18,6 +18,7 @@
 
 // parent includes:
 #include "ta_def.h"
+#include <iAction_List>
 #include <QMainWindow>
 
 // member includes:
@@ -26,9 +27,13 @@
 class QcssConsole; //
 class QIcon; //
 class iAction; //
+class iAction_List; //
 class iRect; //
 class QMenu; //
 class QMenuBar; //
+class Variant; //
+class taiWidgetMenuBar; //
+class taiWidgetMenu; //
 
 class TA_API cssConsoleWindow : public QMainWindow {
   // window to hold the css console
@@ -42,35 +47,38 @@ public:
   QIcon*        unpinned;
   QIcon*        clear_icon;
   QIcon*        select_all_icon;
+  iAction_List  actions; // our own list of all created actions
   iAction*      pin_act;
   iAction*      clear_act;
   iAction*      select_all_act;
-  
-  iAction*      dummy_window_action;
   iAction*      window_min_action;
   iAction*      window_zoom_action;
+  iAction*      editCutAction;
+  iAction*      editCopyAction;
+  iAction*      editPasteAction;
 
-  QMenuBar*     menu_bar;
-  QMenu*        file_menu;
-  QMenu*        edit_menu;
-  QMenu*        window_menu;
+  taiWidgetMenuBar*     menu_bar;
+  taiWidgetMenu*        edit_menu;
+  taiWidgetMenu*        window_menu;
 
   virtual void  UpdateFmLock();
   // update based on current lock status
   virtual void  SaveGeom();
   // save our (unlocked) geometry to root for safe keeping..
   virtual void  LoadGeom();
-  // load (resize, reposition) us based on our (unlocked) saved geometry 
-
+  // load (resize, reposition) us based on our (unlocked) saved geometry
   virtual void  LockedNewGeom(int left, int top, int width, int height);
   // if the console is in locked state, get this new geometry
+  virtual iAction*      AddAction(iAction* act); // add the action to the list, returning the instance (for convenience)
 
   cssConsoleWindow(QWidget* parent = NULL);
   ~cssConsoleWindow();
 
 public slots:
-  virtual void  PinAction();
-  // pin action pressed
+  virtual void  PinAction();  // pin pressed
+  virtual void  windowActivateByName(const Variant& title_);
+  virtual void  windowMenu_aboutToShow();
+  virtual void  UpdateUi();
 
 protected:
   int64_t      self_resize_timestamp;
@@ -81,6 +89,7 @@ protected:
   void         resizeEvent(QResizeEvent* ev) override;
   void         moveEvent(QMoveEvent* e) override;
   void         closeEvent(QCloseEvent* e) override;
+  void         changeEvent(QEvent* ev) override;
 };
 
 #endif // cssConsoleWindow_h
