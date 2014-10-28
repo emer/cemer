@@ -22,7 +22,8 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class DataTable; // 
+class DataTable; //
+class QByteArray; //
 
 
 taTypeDef_Of(taMediaWiki);
@@ -33,13 +34,13 @@ class TA_API taMediaWiki : public taNBase {
 
 public:
   /////////////////////////////////////////////////////
-  //            Wiki formatting operations
+  //            Wiki operations
 
-  //static String CamelCase(const String& input_str);
-  // #CAT_Wiki converts the given input string into CamelCase format -- remove all whitespace/underscores, capitalize first letter of each word/abbreviation, lowercase all other letters
-  
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki gets the url for the wiki api
+
+  static QByteArray GetEditToken(const String& wiki_name);
+  // #CAT_Wiki return a QByteArray containing a percent-encoded edit token for the wiki (needed to make push requests to the API) -- on failure, return an empty QByteArray
 
   /////////////////////////////////////////////////////
   //            Account operations
@@ -104,7 +105,7 @@ public:
                             const String& search_str, bool title_only = false,
                             const String& name_space="",
                             int max_results=-1);
-  // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle
+  // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page title
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);
