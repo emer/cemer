@@ -90,6 +90,7 @@ public:
   ConSpec*      m_con_spec;     // #IGNORE con spec that we use: controlled entirely by the projection!
 
   float*        mem_start;      // #IGNORE pointer into Network allocated connection memory -- we do not own this!  for owned cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for ptr cons, it is 2 * sizeof(float) * alloc_size
+  int64_t       mem_idx;        // #IGNORE index into Network allocated connection memory -- this is float-sized (32bit) index into either own_cons_mem or ptr_cons_mem
 
   ////////////////////////////////////////////////////////////////////////////////
   //    Primary infrastructure management routines
@@ -145,9 +146,9 @@ public:
   { return alloc_size * 2; }
   // #IGNORE memory allocation requirements for con ptr, in terms of numbers of float's/int32's
 
-  inline void           SetMemStart(float* ms)
-  { mem_start = ms; }
-  // #IGNORE set our starting memory location -- called by Network Connect_Alloc routine
+  inline void           SetMemStart(float* ms, int midx)
+  { mem_start = ms + midx; mem_idx = midx; }
+  // #IGNORE set our starting memory location and index -- called by Network Connect_Alloc routine
 
   inline int            VecChunkMod(int sz) 
   { return ((int)(sz / vec_chunk_targ) + 1) * vec_chunk_targ; }

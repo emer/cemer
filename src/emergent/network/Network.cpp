@@ -122,11 +122,13 @@ void Network::Initialize() {
 
   null_unit = NULL;
   own_cons_cnt = 0;
+  own_units_x_cons = 0;
   own_cons_mem = NULL;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
   pct_cons_vec_chunked = 0.0f;
   ptr_cons_cnt = 0;
+  ptr_units_x_cons = 0;
   ptr_cons_mem = NULL;
   tmp_chunks = NULL;
   tmp_not_chunks = NULL;
@@ -540,7 +542,9 @@ void Network::Connect_Alloc_RecvOwns() {
 
   // first collect total count
   own_cons_cnt = 0;
+  own_units_x_cons = 0;
   ptr_cons_cnt = 0;
+  ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
@@ -549,6 +553,7 @@ void Network::Connect_Alloc_RecvOwns() {
       RecvCons* rc = un->recv[p];
       if(!taMisc::is_loading)
         if(!rc->PrjnIsActive()) continue;
+      ++own_units_x_cons;
       own_cons_cnt += rc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, rc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, rc->NConVars());
@@ -557,6 +562,7 @@ void Network::Connect_Alloc_RecvOwns() {
       SendCons* sc = un->send[p];
       if(!taMisc::is_loading)
         if(!sc->PrjnIsActive()) continue;
+      ++ptr_units_x_cons;
       ptr_cons_cnt += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
@@ -579,18 +585,18 @@ void Network::Connect_Alloc_RecvOwns() {
       RecvCons* rc = un->recv[p];
       if(!taMisc::is_loading)
         if(!rc->PrjnIsActive()) continue;
-      rc->SetMemStart(own_cons_mem + own_cons_idx);
+      rc->SetMemStart(own_cons_mem, own_cons_idx);
       own_cons_idx += rc->OwnMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
       if(!taMisc::is_loading)
         if(!sc->PrjnIsActive()) continue;
-      sc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
+      sc->SetMemStart(ptr_cons_mem, ptr_cons_idx);
       ptr_cons_idx += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
-      un->bias.SetMemStart(own_cons_mem + own_cons_idx);
+      un->bias.SetMemStart(own_cons_mem, own_cons_idx);
       own_cons_idx += un->bias.OwnMemReq();
     }
   }
@@ -601,7 +607,9 @@ void Network::Connect_Alloc_SendOwns() {
 
   // first collect total count
   own_cons_cnt = 0;
+  own_units_x_cons = 0;
   ptr_cons_cnt = 0;
+  ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
@@ -612,12 +620,14 @@ void Network::Connect_Alloc_SendOwns() {
       RecvCons* rc = un->recv[p];
       if(!taMisc::is_loading)
         if(!rc->PrjnIsActive()) continue;
+      ++ptr_units_x_cons;
       ptr_cons_cnt += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
       if(!taMisc::is_loading)
         if(!sc->PrjnIsActive()) continue;
+      ++own_units_x_cons;
       own_cons_cnt += sc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, sc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
@@ -642,18 +652,18 @@ void Network::Connect_Alloc_SendOwns() {
       RecvCons* rc = un->recv[p];
       if(!taMisc::is_loading)
         if(!rc->PrjnIsActive()) continue;
-      rc->SetMemStart(ptr_cons_mem + ptr_cons_idx);
+      rc->SetMemStart(ptr_cons_mem, ptr_cons_idx);
       ptr_cons_idx += rc->PtrMemReq();
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
       if(!taMisc::is_loading)
         if(!sc->PrjnIsActive()) continue;
-      sc->SetMemStart(own_cons_mem + own_cons_idx);
+      sc->SetMemStart(own_cons_mem, own_cons_idx);
       own_cons_idx += sc->OwnMemReq();
     }
     if(un->bias.alloc_size == 1) {
-      un->bias.SetMemStart(own_cons_mem + own_cons_idx);
+      un->bias.SetMemStart(own_cons_mem, own_cons_idx);
       own_cons_idx += un->bias.OwnMemReq();
     }
   }

@@ -199,11 +199,13 @@ public:
 
   bool          needs_wt_sym;   // #HIDDEN #NO_SAVE tmp flag managed by Init_Weights to determine if any connections have the wt_limits.sym flag checked and thus need weight symmetrizing to happen
   int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
+  int           own_units_x_cons; // #HIDDEN #NO_SAVE number of owning units * con groups that are stored in own_cons_mem
   int           own_cons_max_size; // #HIDDEN #NO_SAVE maximum alloc_size of any owning connection group -- for allocating temp structures..
   int           own_cons_max_vars; // #HIDDEN #NO_SAVE maximum NConVars of any owning connection group -- for allocating temp structures..
   float         pct_cons_vec_chunked; // #READ_ONLY #NO_SAVE #SHOW average percent of connections that are vector chunked (across owned projections and units)
   float*        own_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
+  int           ptr_units_x_cons; // #HIDDEN #NO_SAVE number of pointer units * con groups that are stored in ptr_cons_mem
   float*        ptr_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
   int*          tmp_chunks;      // #IGNORE tmp con vec chunking memory
   int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory

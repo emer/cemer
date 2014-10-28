@@ -51,6 +51,7 @@ void BaseCons::Initialize() {
   m_con_spec = NULL;
   con_type = &TA_Connection;
   mem_start = 0;
+  mem_idx = 0;
 }
 
 void BaseCons::Destroy() {
@@ -286,6 +287,7 @@ void BaseCons::AllocCons(int sz) {
             "mem_start is not null -- re-allocating already allocated connection -- this is a programmer error in the ProjectionSpec, usually from not following make_cons flag");
 
   mem_start = 0;
+  mem_idx = 0;
   size = 0;
   vec_chunked_size = 0;
   alloc_size = sz;
@@ -294,6 +296,7 @@ void BaseCons::AllocCons(int sz) {
 
 void BaseCons::FreeCons() {
   mem_start = 0;
+  mem_idx = 0;
   size = 0;
   vec_chunked_size = 0;
   alloc_size = 0;

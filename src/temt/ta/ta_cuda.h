@@ -16,24 +16,22 @@
 #ifndef ta_cuda_h
 #define ta_cuda_h 1
 
-// parent includes:
-#include <ta_def.h>
-
 #ifdef CUDA_COMPILE
 
 #include <cuda_runtime.h>
 #include <curand.h>
-#include <taMisc>
+//#include <iostream>
 
-#define CudaSafeCall(err)  __CudaSafeCall(err,__FILE__,__LINE__)
+// #define cudaSafeCall(err)  __cudaSafeCall(err,__FILE__,__LINE__)
 
-inline void __CudaSafeCall(cudaError err,
-                           const char *file, const int line){
-  if(cudaSuccess != err) {
-    taMisc::Error("CudaSafeCall() Runtime API error:",
-                  cudaGetErrorString(err), "\nin file:", file, ":", String(line));
-  }
-}
+// inline void __cudaSafeCall(cudaError err,
+//                            const char *file, const int line){
+//   if(cudaSuccess != err) {
+//     printf("%s(%i) : cudaSafeCall() Runtime API error : %s.\n",
+//            file, line, cudaGetErrorString(err) );
+//     exit(-1);
+//   }
+// }
 
 #endif // CUDA_COMPILE
 

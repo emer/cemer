@@ -20,6 +20,10 @@
 #include <taMisc>
 #include <tabMisc>
 
+#ifdef CUDA_COMPILE
+#include "LeabraConSpec_cuda.h"
+#endif
+
 TA_BASEFUNS_CTORS_DEFN(LeabraTimes);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetStats);
 TA_BASEFUNS_CTORS_DEFN(LeabraNetMisc);
@@ -99,6 +103,10 @@ void LeabraNetwork::Initialize() {
   trial_cos_diff = 0.0f;
 
   init_netins_cycle_stat = false;
+
+#ifdef CUDA_COMPILE
+  cuda = new LeabraConSpecCuda;
+#endif
 }
 
 void LeabraNetwork::SetProjectionDefaultTypes(Projection* prjn) {
@@ -217,6 +225,9 @@ void LeabraNetwork::BuildUnits_Threads() {
   }
 
   lthreads.InitAll();
+#ifdef CUDA_COMPILE
+  Cuda_BuildUnits_Threads();
+#endif
 }
 
 void LeabraNetwork::BuildUnits_Threads_send_netin_tmp() {
@@ -418,6 +429,11 @@ void LeabraNetwork::Cycle_IncrCounters() {
 
 
 void LeabraNetwork::Send_Netin() {
+#ifdef CUDA_COMPILE
+  Cuda_Send_Netin();
+  return;
+#endif
+
   // always use delta mode!
   // no threads -- only threaded version supported is lthreads, due to need to
   // use correct thread roll-up numbers, etc
@@ -992,3 +1008,95 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
 }
+
+
+#ifdef CUDA_COMPILE
+
+void LeabraNetwork::Cuda_BuildUnits_Threads() {
+  cuda->AllocCudaArrays(n_units, own_cons_cnt, ptr_cons_cnt,
+                        own_units_x_cons, ptr_units_x_cons,
+                        own_cons_mem, ptr_cons_mem, send_netin_tmp.el);
+
+  if(n_units == 0 || own_units_x_cons == 0) return;
+
+  const int nu = units_flat.size;
+
+  int uncn = 0;
+  for(int i=1;i<nu;i++) {     // 0 = dummy idx
+    Unit* un = units_flat[i];
+    bool first = true;
+    for(int p=0;p<un->send.size;p++) {
+      SendCons* sc = un->send[p];
+      if(!sc->PrjnIsActive()) continue;
+      if(first) {
+        cuda->unit_starts_h[i] = uncn;
+        first = false;
+      }
+      cuda->units_h[uncn] = i;
+      cuda->con_mem_idxs_h[uncn] = sc->mem_idx;
+      cuda->con_allocs_h[uncn] = sc->alloc_size;
+      cuda->con_sizes_h[uncn] = sc->size;
+
+      ++uncn;
+    }
+  }
+
+  cuda->UpdateUnitsXCons();
+}
+
+void LeabraNetwork::Cuda_Send_Netin() {
+  const int nu = units_flat.size;
+
+  int cur_snd = 0;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    float act_ts = u->act;
+    if(us->syn_delay.on) {
+      if(!u->act_buf)
+        us->Init_ActBuff(u);
+      act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
+    }
+
+    if(act_ts > us->opt_thresh.send) {
+      float act_delta = act_ts - u->act_sent;
+      if(fabsf(act_delta) > us->opt_thresh.delta) {
+        int uncn = cuda->unit_starts_h[i];
+        for(int g=0; g<u->send.size; g++) {
+          LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+          if(send_gp->NotActive()) continue;
+          LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+          if(!tol->hard_clamped) {
+            // todo: also exclude other conspec types, etc here!
+            cuda->cur_send_net_h[cur_snd] = uncn;
+            cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
+            cur_snd++;
+          }
+          uncn++;               // needs to track all
+        }
+        u->act_sent = act_ts;
+      }
+    }
+    else if(u->act_sent > us->opt_thresh.send) {
+      float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
+      int uncn = cuda->unit_starts_h[i];
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        if(send_gp->NotActive()) continue;
+        LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+        if(!tol->hard_clamped) {
+          // todo: also exclude other conspec types, etc here!
+          cuda->cur_send_net_h[cur_snd] = uncn;
+          cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
+          cur_snd++;
+        }
+        uncn++;               // needs to track all
+      }
+      u->act_sent = 0.0f;         // now it effectively sent a 0..
+    }
+  }
+  cuda->cur_send_net_n = cur_snd;
+  cuda->Send_NetinDelta();
+}
+
+#endif

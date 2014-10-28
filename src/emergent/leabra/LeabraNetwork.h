@@ -31,6 +31,11 @@
 // declare all other types mentioned but not required to include:
 class DataTable; // 
 
+#ifdef CUDA_COMPILE
+class LeabraConSpecCuda; // #IGNORE
+#endif
+
+
 eTypeDef_Of(LeabraTimes);
 
 class E_API LeabraTimes : public taOBase {
@@ -201,6 +206,9 @@ public:
   // #NO_SAVE #HIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
   float_Matrix  send_d5bnet_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
 
+#ifdef CUDA_COMPILE
+  LeabraConSpecCuda* cuda;      // #IGNORE cuda specific code
+#endif
 
   inline float*  UnVecVar(UnitVecVars var)
   { return unit_vec_vars.el + var * units_flat.size; }
@@ -431,6 +439,11 @@ public:
   void	SetProjectionDefaultTypes(Projection* prjn) override;
 
   void  BuildNullUnit() override;
+
+#ifdef CUDA_COMPILE
+  void  Cuda_BuildUnits_Threads(); // update device data after net mods
+  void  Cuda_Send_Netin();
+#endif
 
   TA_SIMPLE_BASEFUNS(LeabraNetwork);
 protected:

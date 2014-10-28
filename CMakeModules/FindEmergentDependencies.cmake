@@ -100,6 +100,7 @@ endif (WIN32)
 ##############################
 # CUDA (set -DCUDA_BUILD flag at compile time)
 IF(CUDA_BUILD)
+  set(CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER})
   find_package(CUDA REQUIRED)
   include_directories(${CUDA_INCLUDE_DIRS})
   set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${CUDA_LIBRARIES} ${CUDA_curand_LIBRARY})
