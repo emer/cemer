@@ -18,7 +18,6 @@
 #include <taiWidgetDelegateControlPanel>
 #include <iTableWidget>
 #include <iFlowLayout>
-#include <taiWidgetMenuBar>
 
 #include <taMisc>
 #include <taiMisc>

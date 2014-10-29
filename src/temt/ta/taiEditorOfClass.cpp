@@ -29,7 +29,6 @@
 #include <iFormLayout>
 #include <taiWidgetToolBar>
 #include <iMainWindowViewer>
-#include <taiWidgetMenuBar>
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -65,20 +64,25 @@ taiEditorOfClass::taiEditorOfClass(void* base, TypeDef* typ_, bool read_only_,
   membs.SetMinSize(MS_CNT);
   membs.def_size = MS_CNT;
   show_set(MS_NORM) = true;
+  show_set(MS_NORM_RO) = true;
 
-  for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
+  for (int j = MS_NORM_RO; j <= MS_HIDD; ++j) {
     taiMemberWidgets* ms = membs.SafeEl(j);
     if (!ms) break; // shouldn't happen
     ms->modal = true;
     switch (j) {
-    case MS_EXPT:
-      ms->text = "Expert Items";
-      ms->desc = "show member items that are usually only needed for advanced purposes";
-      break;
-    case MS_HIDD:
-      ms->text = "Hidden Items";
-      ms->desc = "show member items that are rarely needed by most users";
-      break;
+      case MS_NORM_RO:
+        ms->text = "Read Only Items";
+        ms->desc = "show important read only members";
+        break;
+      case MS_EXPT:
+        ms->text = "Expert Items";
+        ms->desc = "show member items that are usually only needed for advanced purposes";
+        break;
+      case MS_HIDD:
+        ms->text = "Hidden Items";
+        ms->desc = "show member items that are rarely needed by most users";
+        break;
     }
   }
 
@@ -182,9 +186,15 @@ void taiEditorOfClass::Enum_Members() {
     MemberDef* md = ms.FastEl(i);
     if (md->im == NULL) continue; // this puppy won't show nohow!set_grp
     if (md->ShowMember(~TypeItem::IS_NORMAL, TypeItem::SC_EDIT, TypeItem::IS_NORMAL)) {
-      memb_el(MS_NORM).Add(md);
+      if (md->isGuiReadOnly()) {
+        memb_el(MS_NORM_RO).Add(md);
+      }
+      else {
+        memb_el(MS_NORM).Add(md);
+      }
       continue;
     }
+
     if (membs.def_size <= MS_EXPT) continue;
     // set the show_set guys at this point to default to app values
     if (!(show() & TypeItem::NO_EXPERT))
@@ -218,11 +228,21 @@ void taiEditorOfClass::Constr_Widget_Labels() {
   int idx = 0; // basically a row counter
   dat_cnt = 0; // NOT advanced for the section rows
   // Normal members
-  if (MS_NORM >= membs.def_size) return; // don't do those
+  if (MS_NORM >= membs.def_size)
+    return; // don't do those
   if (show_set(MS_NORM) && (memb_el(MS_NORM).size > 0)) {
-//    Constr_Widget_impl(idx, &memb_el(MS_NORM), &widget_el(MS_NORM));
     Constr_Widget_Labels_impl(idx, &memb_el(MS_NORM), &widget_el(MS_NORM));
   }
+  
+  // this puts the read only members after the editable
+  // (rohrlich 10/28/14) Should work as a collapsable group but there is some interaction between
+  // collapsable group, CONDSHOW and GUI_READ_ONLY that is causing the conditonal
+  // widgets to show up in row 1 when they should be hidden and there are empty rows where they
+  // would appear if visible
+  if (show_set(MS_NORM_RO) && (memb_el(MS_NORM_RO).size > 0)) {
+    Constr_Widget_Labels_impl(idx, &memb_el(MS_NORM_RO), &widget_el(MS_NORM_RO));
+  }
+  
   for (int j = MS_EXPT; j <= MS_HIDD; ++j) {
     if (j >= membs.def_size) return; // don't do those
     taiMemberWidgets* ms = membs.SafeEl(j);
@@ -236,7 +256,6 @@ void taiEditorOfClass::Constr_Widget_Labels() {
     // if we are to show this section, then check the box, and build, else nothing else
     if (show_set(j)) {
       chk->setChecked(true);
-//      Constr_Widget_impl(idx, &memb_el(j), &widget_el(j));
       Constr_Widget_Labels_impl(idx, &memb_el(j), &widget_el(j));
     }
   }
@@ -253,20 +272,18 @@ void taiEditorOfClass::Constr_Inline() {
 }
 
 void taiEditorOfClass::Constr_Widget_Labels_impl(int& idx, Member_List* ms,
-  taiWidget_List* dl)
+                                                 taiWidget_List* dl)
 {
   String name;
   String desc;
   for (int i = 0; i < ms->size; ++i) {
     MemberDef* md = ms->FastEl(i);
-
     // Create data widget
     taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
     dl->Add(mb_dat);
     QWidget* rep = mb_dat->GetRep();
     bool fill_hor = mb_dat->fillHor();
     //AddWidget(idx, rep, fill_hor);
-
     // create label
     name = "";
     desc = "";
@@ -697,20 +714,6 @@ void taiEditorOfClass::SetCurMenu_Name(String men_nm) {
     menu = new taiWidgetToolBar(widget(), taiMisc::fonSmall, NULL);
     vblDialog->insertWidget(0, menu->GetRep());
     vblDialog->insertSpacing(1, 2);
-// #else
-//     menu = new taiWidgetMenuBar(taiMisc::fonSmall, NULL, this, NULL, widget());
-//     QMenuBar *qmb = menu->rep_bar();
-//     vblDialog->setMenuBar(qmb);
-
-//     // This menubar should never be used as a native menubar.  Without
-//     // the following line, emergent doesn't work correctly on the Mac
-//     // or on Ubuntu with the Unity desktop, which both have a global
-//     // menubar.  Specifically, there is no way to access the normal
-//     // menubar (File, Edit, View) because this one (Object, ControlPanel)
-//     // is taking its place.
-// #if (QT_VERSION >= 0x040600)
-//     qmb->setNativeMenuBar(false);
-// #endif
   }
 
   if (men_nm.nonempty()) {

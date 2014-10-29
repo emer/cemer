@@ -40,7 +40,6 @@ class iPanelOfEditor; //
 class taiWidgetMethod; //
 class taiWidgetActions_List; //
 class taiMemberWidgets_List; //
-class taiWidgetMenuBar; //
 class QAction; //
 
 taTypeDef_Of(taiEditorOfClass);
@@ -53,10 +52,10 @@ friend class iPanelOfEditor;
 public:
   enum DeftaiMemberWidgets { // keys for default members sets -- always created
     MS_NORM,    // normal members, always shown
+    MS_NORM_RO, // normal but read only
     MS_EXPT,    // Expert members
     MS_HIDD,    // Hidden members
-
-    MS_CNT      = 3 // number of default members
+    MS_CNT      = 4 // number of default members
   };
 
   taiWidgetActions_List ta_menus;       // menu representations (from methods, non-menubuttons only)

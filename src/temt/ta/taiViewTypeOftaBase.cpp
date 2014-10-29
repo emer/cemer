@@ -18,7 +18,6 @@
 #include <iPanelOfEditor>
 #include <iPanelSet>
 #include <taiEdit>
-#include <taiWidgetMenuBar>
 
 int taiViewTypeOftaBase::BidForView(TypeDef* td) {
   if (td->InheritsFrom(&TA_taBase))

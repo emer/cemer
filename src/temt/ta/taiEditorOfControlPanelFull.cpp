@@ -19,7 +19,6 @@
 #include <iLabel>
 #include <iFlowLayout>
 #include <taiMember>
-#include <taiWidgetMenuBar>
 #include <taiWidgetMashup>
 #include <iHiLightButton>
 #include <iStripeWidget>
