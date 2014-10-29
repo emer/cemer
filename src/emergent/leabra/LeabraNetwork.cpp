@@ -1100,7 +1100,13 @@ void LeabraNetwork::Cuda_Send_Netin() {
     }
   }
   cuda->cur_send_net_n = cur_snd;
+
+  // taMisc::Info((String)cuda->cur_send_net_n, (String)cuda->n_threads);
+
   cuda->Send_NetinDelta();
+
+  // float sumnet = taMath_float::vec_sum(&send_netin_tmp);
+  // taMisc::Info((String)sumnet);
 }
 
 #endif

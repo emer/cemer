@@ -139,28 +139,28 @@ void LeabraConSpecCuda::AllocCudaArrays
   send_netin_tmp_h = send_netin_tmp;
 
   units_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&units_d, own_units_x_cons);
+  cudaMalloc(&units_d, own_units_x_cons * sizeof(int));
 
   con_mem_idxs_h = (int64_t*)malloc(own_units_x_cons * sizeof(int64_t));
-  cudaMalloc(&con_mem_idxs_d, own_units_x_cons);
+  cudaMalloc(&con_mem_idxs_d, own_units_x_cons * sizeof(int64_t));
 
   con_allocs_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&con_allocs_d, own_units_x_cons);
+  cudaMalloc(&con_allocs_d, own_units_x_cons * sizeof(int));
 
   con_sizes_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&con_sizes_d, own_units_x_cons);
+  cudaMalloc(&con_sizes_d, own_units_x_cons * sizeof(int));
 
   unit_starts_h = (int*)malloc((n_units+1) * sizeof(int));
 
   cur_send_net_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&cur_send_net_d, own_units_x_cons);
+  cudaMalloc(&cur_send_net_d, own_units_x_cons * sizeof(int));
 
   send_net_acts_h = (float*)malloc(own_units_x_cons * sizeof(float));
-  cudaMalloc(&send_net_acts_d, own_units_x_cons);
+  cudaMalloc(&send_net_acts_d, own_units_x_cons * sizeof(float));
 
-  cudaMalloc(&send_netin_tmp_d, (n_units+1));
+  cudaMalloc(&send_netin_tmp_d, (n_units+1) * sizeof(float));
 
-  cudaMalloc(&own_cons_mem_d, own_cons_cnt);
+  cudaMalloc(&own_cons_mem_d, own_cons_cnt * sizeof(float));
 
   // conserve memory: not needed..
   //   cudaMalloc(&ptr_cons_mem_d, ptr_cons_cnt);
@@ -168,17 +168,20 @@ void LeabraConSpecCuda::AllocCudaArrays
 
 void LeabraConSpecCuda::UpdateOwnCons() {
   if(own_cons_mem_h && own_cons_mem_d) {
-    cudaMemcpy(own_cons_mem_d, own_cons_mem_h, own_cons_cnt, cudaMemcpyHostToDevice);
+    cudaMemcpy(own_cons_mem_d, own_cons_mem_h, own_cons_cnt * sizeof(float),
+               cudaMemcpyHostToDevice);
   }
 }
 
 void LeabraConSpecCuda::UpdateUnitsXCons() {
   if(!units_h) return;
 
-  cudaMemcpy(units_d, units_h, own_units_x_cons, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_mem_idxs_d, con_mem_idxs_h, own_units_x_cons, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_allocs_d, con_allocs_h, own_units_x_cons, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_sizes_d, con_sizes_h, own_units_x_cons, cudaMemcpyHostToDevice);
+  float sz =  own_units_x_cons * sizeof(float);
+
+  cudaMemcpy(units_d, units_h, sz, cudaMemcpyHostToDevice);
+  cudaMemcpy(con_mem_idxs_d, con_mem_idxs_h, sz, cudaMemcpyHostToDevice);
+  cudaMemcpy(con_allocs_d, con_allocs_h, sz, cudaMemcpyHostToDevice);
+  cudaMemcpy(con_sizes_d, con_sizes_h, sz, cudaMemcpyHostToDevice);
 }
 
 __global__ void Kernel_Send_NetinDelta
@@ -196,28 +199,70 @@ __global__ void Kernel_Send_NetinDelta
     int th = threadIdx.x;
     int cn_per_th = (sz / nth) + 1; // round up
     int st = th * cn_per_th;
-    int ed = th + cn_per_th;
+    int ed = st + cn_per_th;
     ed = ed < sz ? ed : sz;     // max of sz
     while(st < ed) {
       int ridx = ridxs[st];
       atomicAdd(&(send_netin_tmp_d[ridx]), wts[st] * send_eff);
+      st++;
     }
   }
 }
 
+void Test_Kernel_Send_NetinDelta
+(int blockIdx, int blockDim, int threadIdx,
+ int cur_send_net_n, int* cur_send_net_d, float* send_net_acts_d, float* send_netin_tmp_d,
+ float* own_cons_mem_d, int64_t* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d) {
+  int csni = blockIdx;
+  int nth = blockDim;
+  if (csni < cur_send_net_n) {
+    int ucidx = cur_send_net_d[csni];
+    float send_eff = send_net_acts_d[csni];
+    const int sz = con_sizes_d[ucidx];
+    const float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+      (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
+    const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
+    int th = threadIdx;
+    int cn_per_th = (sz / nth) + 1; // round up
+    int st = th * cn_per_th;
+    int ed = st + cn_per_th;
+    ed = ed < sz ? ed : sz;     // max of sz
+    while(st < ed) {
+      int ridx = ridxs[st];
+      send_netin_tmp_d[ridx] += wts[st] * send_eff;
+      st++;
+    }
+  }
+}
+
+
 void LeabraConSpecCuda::Send_NetinDelta() {
   if(cur_send_net_n == 0) return;
 
-  cudaMemcpy(cur_send_net_d, cur_send_net_h, cur_send_net_n, cudaMemcpyHostToDevice);
-  cudaMemcpy(send_net_acts_d, send_net_acts_h, cur_send_net_n, cudaMemcpyHostToDevice);
+  float sz = cur_send_net_n * sizeof(float);
 
-  // Invoke kernel
+  cudaMemcpy(cur_send_net_d, cur_send_net_h, sz, cudaMemcpyHostToDevice);
+  cudaMemcpy(send_net_acts_d, send_net_acts_h, sz, cudaMemcpyHostToDevice);
+
+  cudaMemset(send_netin_tmp_d, 0, (n_units+1) * sizeof(float));
+
+  // manual testing for getting all the logic right
+  // for(int i=0; i< cur_send_net_n; i++) {
+  //   for(int j=0; j< n_threads; j++) {
+  //     Test_Kernel_Send_NetinDelta
+  //       (i, n_threads, j, cur_send_net_n, cur_send_net_h, send_net_acts_h,
+  //        send_netin_tmp_h, own_cons_mem_h, con_mem_idxs_h, con_allocs_h, con_sizes_h);
+  //   }
+  // }
+
+  //  Invoke kernel
   Kernel_Send_NetinDelta<<<cur_send_net_n, n_threads>>>
     (cur_send_net_n, cur_send_net_d, send_net_acts_d, send_netin_tmp_d,
      own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
 
   cudaDeviceSynchronize();
 
-  cudaMemcpy(send_netin_tmp_d, send_netin_tmp_h, n_units+1, cudaMemcpyDeviceToHost);
-  // get results back from device
+  cudaMemcpy(send_netin_tmp_h, send_netin_tmp_d, (n_units+1) * sizeof(float),
+             cudaMemcpyDeviceToHost);
+  // get results back from device -- args are reversed here!
 }
