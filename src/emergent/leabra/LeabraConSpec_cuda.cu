@@ -25,6 +25,10 @@ LeabraConSpecCuda::~LeabraConSpecCuda() {
 
 void LeabraConSpecCuda::Initialize() {
   n_units = 0;
+  own_cons_max_size = 0;
+  thread_chunk_sz = 8;
+  max_threads = 0;
+  n_threads = 256;
   own_cons_cnt = 0;
   ptr_cons_cnt = 0;
   own_units_x_cons = 0;
@@ -100,16 +104,31 @@ void LeabraConSpecCuda::FreeCudaArrays() {
 }
 
 void LeabraConSpecCuda::AllocCudaArrays
-(int n_un, int64_t own_cnt, int64_t ptr_cnt, int own_units_x, int ptr_units_x, 
+(int n_un, int own_cons_max_sz, int64_t own_cnt, int64_t ptr_cnt,
+ int own_units_x, int ptr_units_x, 
  float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp) {
   if(n_units != n_un || own_units_x != own_units_x_cons) {
     FreeCudaArrays();
   }
 
-  if(n_un == 0 || own_units_x_cons == 0)
+  if(n_un == 0 || own_units_x == 0)
     return;
 
   n_units = n_un;
+  own_cons_max_size = own_cons_max_sz;
+  thread_chunk_sz = 8;
+  max_threads = own_cons_max_size / thread_chunk_sz;
+
+  // docs on number of threads: http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#execution-configuration-optimizations
+
+  int mod32 = max_threads % 32;
+  if(mod32 != 0)
+    n_threads = ((max_threads / 32) + 1) * 32;
+  else
+    n_threads = max_threads;
+  if(n_threads > 256)
+    n_threads = 256;
+
   own_cons_cnt = own_cnt;
   ptr_cons_cnt = ptr_cnt;
   own_units_x_cons = own_units_x;
@@ -162,24 +181,42 @@ void LeabraConSpecCuda::UpdateUnitsXCons() {
   cudaMemcpy(con_sizes_d, con_sizes_h, own_units_x_cons, cudaMemcpyHostToDevice);
 }
 
-__global__ void Send_NetinDelta(float* A, float* B, float* C, int N) {
-  int i = blockDim.x * blockIdx.x + threadIdx.x;
-  if (i < N)
-    C[i] = A[i] + B[i];
+__global__ void Kernel_Send_NetinDelta
+(int cur_send_net_n, int* cur_send_net_d, float* send_net_acts_d, float* send_netin_tmp_d,
+ float* own_cons_mem_d, int64_t* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d) {
+  int csni = blockIdx.x;
+  int nth = blockDim.x;
+  if (csni < cur_send_net_n) {
+    int ucidx = cur_send_net_d[csni];
+    float send_eff = send_net_acts_d[csni];
+    const int sz = con_sizes_d[ucidx];
+    const float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+      (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
+    const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
+    int th = threadIdx.x;
+    int cn_per_th = (sz / nth) + 1; // round up
+    int st = th * cn_per_th;
+    int ed = th + cn_per_th;
+    ed = ed < sz ? ed : sz;     // max of sz
+    while(st < ed) {
+      int ridx = ridxs[st];
+      atomicAdd(&(send_netin_tmp_d[ridx]), wts[st] * send_eff);
+    }
+  }
 }
 
 void LeabraConSpecCuda::Send_NetinDelta() {
+  if(cur_send_net_n == 0) return;
+
   cudaMemcpy(cur_send_net_d, cur_send_net_h, cur_send_net_n, cudaMemcpyHostToDevice);
   cudaMemcpy(send_net_acts_d, send_net_acts_h, cur_send_net_n, cudaMemcpyHostToDevice);
 
-//   int N = 256;
-//   size_t size = N * sizeof(float);
+  // Invoke kernel
+  Kernel_Send_NetinDelta<<<cur_send_net_n, n_threads>>>
+    (cur_send_net_n, cur_send_net_d, send_net_acts_d, send_netin_tmp_d,
+     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
 
-//   // Invoke kernel
-//   int threadsPerBlock = 256;
-//   int blocksPerGrid = (N + threadsPerBlock - 1) / threadsPerBlock;
-
-//   VecAdd<<<blocksPerGrid, threadsPerBlock>>>(d_A, d_B, d_C, N);
+  cudaDeviceSynchronize();
 
   cudaMemcpy(send_netin_tmp_d, send_netin_tmp_h, n_units+1, cudaMemcpyDeviceToHost);
   // get results back from device

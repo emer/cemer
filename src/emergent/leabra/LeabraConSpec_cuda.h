@@ -40,6 +40,10 @@ public:
   // static LeabraConSpecCuda* cur; // current instance of this CUDA object
 
   int           n_units;          // total number of units in network flat list
+  int           own_cons_max_size; // helps determine number of threads
+  int           thread_chunk_sz;  // should be same as BaseCons::vec_chunked_size = 8
+  int           max_threads;       // own_cons_max_size / thread_chunk_size
+  int           n_threads;         // actual number of threads to use -- multiple of 32
   int64_t       own_cons_cnt;   // number of floats to allocate to own_cons
   int64_t       ptr_cons_cnt;   // number of floats to allocate to ptr_cons
   int           own_units_x_cons; // number of owning units * con groups that are stored in own_cons_mem -- size of units, con_mem_idx, con_size arrays below
@@ -77,8 +81,8 @@ public:
   // for use in compute code: access recv unit idx for unit x con, variable
 
   
-  void  AllocCudaArrays(int n_un, int64_t own_cnt, int64_t ptr_cnt,
-                        int own_units_x, int ptr_units_x, 
+  void  AllocCudaArrays(int n_un, int own_cons_max_sz, int64_t own_cnt,
+                        int64_t ptr_cnt, int own_units_x, int ptr_units_x, 
                         float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp);
   // allocate arrays based on parameters from network, called after network modifications
   void  FreeCudaArrays();

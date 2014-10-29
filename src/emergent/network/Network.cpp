@@ -572,7 +572,9 @@ void Network::Connect_Alloc_RecvOwns() {
 
   if(own_cons_cnt == 0 || ptr_cons_cnt == 0) return; // something is wrong..
 
-  // use posix_memalign to ensure that for this monster, we've got maximum possible alignment
+  // use posix_memalign to ensure that for this monster, we've got maximum possible
+  // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
+  // that it is useful for AVX2
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
   posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
 

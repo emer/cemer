@@ -78,7 +78,7 @@ public:
   };
 
   static float  null_rval;      // #IGNORE null return value for reference funs
-  static int    vec_chunk_targ; // #READ_ONLY target chunk size for vectorized operations over connections -- typically 4 or 8 -- can be set dynamically -- affects allocation modulus
+  static int    vec_chunk_targ; // #READ_ONLY #DEF_8 target chunk size for vectorized operations over connections -- is currently set to 8 for all types of processors so that the weight files have a consistent layout -- however it can be set dynamically prior to building the network to experiment with different values -- affects allocation modulus
 
   int           size;           // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections currently active
   int           vec_chunked_size; // #CAT_Structure #READ_ONLY #NO_SAVE #SHOW number of connections at start of list that are chunked according to vec_chunk_targ -- for sender-based, this means that the recv unit_idx's are sequential for each of the chunks (individually) -- between chunks can be non-sequential

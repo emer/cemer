@@ -721,6 +721,10 @@ void LeabraNetwork::Compute_Weights_impl() {
       un->Compute_Weights(this, -1);
     }
   }
+
+#ifdef CUDA_COMPILE
+  cuda->UpdateOwnCons();
+#endif
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1013,7 +1017,7 @@ void LeabraNetwork::Compute_EpochStats() {
 #ifdef CUDA_COMPILE
 
 void LeabraNetwork::Cuda_BuildUnits_Threads() {
-  cuda->AllocCudaArrays(n_units, own_cons_cnt, ptr_cons_cnt,
+  cuda->AllocCudaArrays(n_units, own_cons_max_size, own_cons_cnt, ptr_cons_cnt,
                         own_units_x_cons, ptr_units_x_cons,
                         own_cons_mem, ptr_cons_mem, send_netin_tmp.el);
 
