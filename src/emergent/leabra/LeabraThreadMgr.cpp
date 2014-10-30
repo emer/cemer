@@ -233,7 +233,10 @@ void LeabraTask::Cycle_Run() {
 
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
 #ifdef CUDA_COMPILE
-    net->Cuda_Send_Netin();
+    if(task_id == 0) {
+      net->Cuda_Send_Netin();
+    }
+    EndStep(mg->stage_net, send_netin_time, cyc);
 #else
     { // Send_NetinDelta
       LeabraThreadUnitCall un_call(&LeabraUnit::Send_NetinDelta);
