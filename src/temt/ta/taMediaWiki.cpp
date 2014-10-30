@@ -104,7 +104,7 @@ QByteArray taMediaWiki::GetEditToken(const String& wiki_name)
   if (QNetworkReply *reply = request.httpPost(url)) {
 
     QXmlStreamReader reader(reply);
-    if(reader.hasError()) { return QByteArray(); }
+    if(reader.hasError()) { return NULL; }
 
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -117,7 +117,7 @@ QByteArray taMediaWiki::GetEditToken(const String& wiki_name)
       }
     }
   }
-  return QByteArray();
+  return NULL;
 }
 
 /////////////////////////////////////////////////////
