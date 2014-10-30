@@ -752,7 +752,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ParamSet.h
   ParamSetItem.h
   ParamSet_Group.h
-  ta_cuda.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -1014,6 +1013,8 @@ set(ta_HEADS_NOMAKETA_NOMOC
   vectori128.h
   vectori256.h
   vectori256e.h
+
+  ta_cuda.h
 
   SigLinkSignal.h
 

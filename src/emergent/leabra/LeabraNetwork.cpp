@@ -1013,6 +1013,27 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgAbsRelNetin();
 }
 
+String LeabraNetwork::MemoryReport(bool print) {
+
+  int consz = sizeof(LeabraCon) + 3 * sizeof(int32_t);
+  // 3 = send idx, 2 recv idx's
+
+  String constr;
+  constr.convert((float)n_cons);
+
+  String report = name + " memory report:\n";
+  report << "number of units:       " << n_units << "\n"
+         << "    bytes per unit:    " << sizeof(LeabraUnit) << "\n"
+         << "    total unit memory: " << taMisc::GetSizeString(n_units * sizeof(LeabraUnit)) << "\n"
+         << "number of connections: " << constr << "\n"
+         << "    bytes per con+idx: " << consz << "\n"
+         << "    total con memory:  " << taMisc::GetSizeString(own_cons_cnt * sizeof(float) + ptr_cons_cnt * sizeof(int)) << "\n" 
+         << "       owned (send):   " << taMisc::GetSizeString(own_cons_cnt * sizeof(float)) << "\n" 
+         << "       ptr (recv):     " << taMisc::GetSizeString(ptr_cons_cnt * sizeof(int)) << "\n";
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
 
 #ifdef CUDA_COMPILE
 
@@ -1036,7 +1057,7 @@ void LeabraNetwork::Cuda_BuildUnits_Threads() {
         cuda->unit_starts_h[i] = uncn;
         first = false;
       }
-      cuda->units_h[uncn] = i;
+      // cuda->units_h[uncn] = i;
       cuda->con_mem_idxs_h[uncn] = sc->mem_idx;
       cuda->con_allocs_h[uncn] = sc->alloc_size;
       cuda->con_sizes_h[uncn] = sc->size;
@@ -1049,8 +1070,9 @@ void LeabraNetwork::Cuda_BuildUnits_Threads() {
 }
 
 void LeabraNetwork::Cuda_Send_Netin() {
-  const int nu = units_flat.size;
+  cuda_send_netin_time.StartRun(true); // using averaging, so reset used..
 
+  const int nu = units_flat.size;
   int cur_snd = 0;
   for(int i=1; i<nu; i++) {
     LeabraUnit* u = (LeabraUnit*)units_flat[i];
@@ -1105,8 +1127,73 @@ void LeabraNetwork::Cuda_Send_Netin() {
 
   cuda->Send_NetinDelta();
 
+  cuda_send_netin_time.EndRun();
+  cuda_send_netin_time.IncrAvg();
+
   // float sumnet = taMath_float::vec_sum(&send_netin_tmp);
   // taMisc::Info((String)sumnet);
 }
 
-#endif
+String LeabraNetwork::Cuda_MemoryReport(bool print) {
+  int64_t h_size = 0;
+  int64_t d_size = 0;
+
+  // h_size += cuda->own_units_x_cons * sizeof(int); // units_h -- could remove..
+  // d_size += cuda->own_units_x_cons * sizeof(int);
+
+  h_size += cuda->own_units_x_cons * sizeof(bigint); // con_mem_idxs_h 
+  d_size += cuda->own_units_x_cons * sizeof(bigint);
+
+  h_size += cuda->own_units_x_cons * sizeof(int); // con_allocs_h
+  d_size += cuda->own_units_x_cons * sizeof(int);
+
+  h_size += cuda->own_units_x_cons * sizeof(int); // con_sizes_h
+  d_size += cuda->own_units_x_cons * sizeof(int);
+
+  h_size += (cuda->n_units+1) * sizeof(int); // unit_starts_h 
+
+  h_size += cuda->own_units_x_cons * sizeof(int); // cur_send_net_h
+  d_size += cuda->own_units_x_cons * sizeof(int);
+
+  h_size += cuda->own_units_x_cons * sizeof(float); // send_net_acts_h
+  d_size += cuda->own_units_x_cons * sizeof(float);
+
+  d_size += (cuda->n_units+1) * sizeof(float); // send_netin_tmp_d
+
+  int64_t d_con_size = cuda->own_cons_cnt * sizeof(float); // own_cons_mem_d
+  int64_t h_con_size = own_cons_cnt * sizeof(float); // own_cons_mem_h
+  int64_t h_ptr_size = ptr_cons_cnt * sizeof(float); // ptr_cons_mem_h
+
+  String report = "CUDA memory report:\n";
+  report << "total device memory: " << taMisc::GetSizeString(d_size + d_con_size) << "\n"
+         << "        connections: " << taMisc::GetSizeString(d_con_size) << "\n"
+         << "        overhead:    " << taMisc::GetSizeString(d_size) << "\n"
+         << " host   overhead:    " << taMisc::GetSizeString(h_size) << "\n"
+         << " host   connections: " << taMisc::GetSizeString(h_con_size + h_ptr_size) << "\n";
+
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
+
+String LeabraNetwork::Cuda_TimingReport(bool print) {
+  String report = "CUDA memory report:\n";
+  report << "send netin: " << cuda_send_netin_time.ReportAvg(1.0e6); // microseconds
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
+
+#else // NO CUDA_COMPILE
+
+String LeabraNetwork::Cuda_MemoryReport(bool print) {
+  taMisc::Info("CUDA not compiled!");
+  return "";
+}
+
+String LeabraNetwork::Cuda_TimingReport(bool print) {
+  taMisc::Info("CUDA not compiled!");
+  return "";
+}
+
+#endif // CUDA_COMPILE

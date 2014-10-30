@@ -102,6 +102,13 @@ endif (WIN32)
 IF(CUDA_BUILD)
   set(CUDA_HOST_COMPILER ${CMAKE_CXX_COMPILER})
   find_package(CUDA REQUIRED)
+  # turn this on for debugging
+#  set(CUDA_VERBOSE_BUILD ON)
+  FIND_CUDA_HELPER_LIBS(curand)
+# this is pretty aggressive -- just for testing
+  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3)
+# this is more standard and is the default
+#  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)
   include_directories(${CUDA_INCLUDE_DIRS})
   set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${CUDA_LIBRARIES} ${CUDA_curand_LIBRARY})
   add_definitions(-DCUDA_COMPILE)

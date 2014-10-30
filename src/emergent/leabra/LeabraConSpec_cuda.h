@@ -27,6 +27,14 @@
 // completely separately in cuda space
 // regular files can include this file, and fill in values here..
 
+// IMPORTANT: for indexing into the own_cons_mem, for large nets, we really 
+// should use int64_t -- BUT this does NOT seem to work, at least on latest
+// mac pro retina late 2014 NVIDIA GeForce GT 750M chip!  should be 3.0 compute 
+// capability but still doesn't work reliably!
+typedef int bigint;
+// typedef int64_t bigint;
+// typedef long long bigint;
+
 class LeabraConSpecCuda {
   // NVIDIA CUDA support for calling LeabraConSpec functions
 public:
@@ -44,8 +52,8 @@ public:
   int           thread_chunk_sz;  // should be same as BaseCons::vec_chunked_size = 8
   int           max_threads;       // own_cons_max_size / thread_chunk_size
   int           n_threads;         // actual number of threads to use -- multiple of 32
-  int64_t       own_cons_cnt;   // number of floats to allocate to own_cons
-  int64_t       ptr_cons_cnt;   // number of floats to allocate to ptr_cons
+  bigint        own_cons_cnt;   // number of floats to allocate to own_cons
+  bigint        ptr_cons_cnt;   // number of floats to allocate to ptr_cons
   int           own_units_x_cons; // number of owning units * con groups that are stored in own_cons_mem -- size of units, con_mem_idx, con_size arrays below
   int           ptr_units_x_cons; // number of pointer units * con groups that are stored in ptr_cons_mem
 
@@ -55,8 +63,8 @@ public:
   float*        ptr_cons_mem_d;   // device version of ptr_cons_mem -- only needs to be copied once
   int*          units_h;      // host array of sending units * sending con groups -- size own_units_x_cons -- the sending unit indexes
   int*          units_d;      // device array of sending units * sending con groups -- size own_units_x_cons -- the sending unit indexes
-  int64_t*      con_mem_idxs_h; // host array of sending units * sending con groups starting memory indexes -- size own_units_x_cons -- the mem_idx into own_cons_mem
-  int64_t*      con_mem_idxs_d; // device array of sending units * sending con groups  starting memory indexes -- size own_units_x_cons  -- the mem_idx into own_cons_mem
+  bigint*       con_mem_idxs_h; // host array of sending units * sending con groups starting memory indexes -- size own_units_x_cons -- the mem_idx into own_cons_mem
+  bigint*       con_mem_idxs_d; // device array of sending units * sending con groups  starting memory indexes -- size own_units_x_cons  -- the mem_idx into own_cons_mem
   int*          con_allocs_h; // host array of sending units * sending con groups number of cons -- size own_units_x_cons -- the number of cons allocated
   int*          con_allocs_d; // device array of sending units * sending con groups  number of cons -- size own_units_x_cons  -- the number of cons allocated
   int*          con_sizes_h; // host array of sending units * sending con groups number of cons -- size own_units_x_cons -- the number of cons in use
@@ -81,8 +89,8 @@ public:
   // for use in compute code: access recv unit idx for unit x con, variable
 
   
-  void  AllocCudaArrays(int n_un, int own_cons_max_sz, int64_t own_cnt,
-                        int64_t ptr_cnt, int own_units_x, int ptr_units_x, 
+  void  AllocCudaArrays(int n_un, int own_cons_max_sz, bigint own_cnt,
+                        bigint ptr_cnt, int own_units_x, int ptr_units_x, 
                         float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp);
   // allocate arrays based on parameters from network, called after network modifications
   void  FreeCudaArrays();

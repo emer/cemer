@@ -20,18 +20,17 @@
 
 #include <cuda_runtime.h>
 #include <curand.h>
-//#include <iostream>
+#include <stdio.h>
 
-// #define cudaSafeCall(err)  __cudaSafeCall(err,__FILE__,__LINE__)
+#define cudaSafeCall(err)  __cudaSafeCall(err,__FILE__,__LINE__)
 
-// inline void __cudaSafeCall(cudaError err,
-//                            const char *file, const int line){
-//   if(cudaSuccess != err) {
-//     printf("%s(%i) : cudaSafeCall() Runtime API error : %s.\n",
-//            file, line, cudaGetErrorString(err) );
-//     exit(-1);
-//   }
-// }
+inline void __cudaSafeCall(cudaError err,
+                           const char *file, const int line) {
+  if(cudaSuccess != err) {
+    printf("%s(%i) : cudaSafeCall() Runtime API error : %s.\n",
+           file, line, cudaGetErrorString(err) );
+  }
+}
 
 #endif // CUDA_COMPILE
 
