@@ -106,9 +106,24 @@ IF(CUDA_BUILD)
 #  set(CUDA_VERBOSE_BUILD ON)
   FIND_CUDA_HELPER_LIBS(curand)
 # this is pretty aggressive -- just for testing
-  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3)
-# this is more standard and is the default
-#  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)
+  if (NOT WIN32)
+    if (APPLE)
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3)
+      # this is more standard and is the default
+      #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)
+    else (APPLE)
+      #Linux appears to need the -fPIC options to compile with cuda 
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
+      # this is more standard and is the default
+      #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
+    endif (APPLE)
+  else (WIN32)
+    #Todo:Are these the correct flags for windows?
+    set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3)
+    # this is more standard and is the default
+    #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)    
+  endif (WIN32)
   include_directories(${CUDA_INCLUDE_DIRS})
   set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${CUDA_LIBRARIES} ${CUDA_curand_LIBRARY})
   add_definitions(-DCUDA_COMPILE)
