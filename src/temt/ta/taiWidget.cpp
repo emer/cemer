@@ -20,6 +20,9 @@
 #include <taiSigLink>
 #include <taiMisc>
 
+#include <taMisc>
+
+
 // NOTE: this is for maketa only
 taiWidget::taiWidget()
   : QObject()

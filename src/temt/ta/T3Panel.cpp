@@ -467,7 +467,7 @@ void T3Panel::SetColorScheme(ColorScheme color_scheme) {
 
 void T3Panel::EditView(T3DataViewMain* view) {
   if(!view) return;
-  view->EditDialog(false);
+  view->OpenInWindow(false);
 }
 
 void T3Panel::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_views) {

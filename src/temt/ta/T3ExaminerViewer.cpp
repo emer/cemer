@@ -672,7 +672,7 @@ void T3ExaminerViewer::saveviewTriggered(int view_no) {
 void T3ExaminerViewer::nameviewTriggered(int view_no) {
   T3SavedView* sv = saved_views.SafeEl(view_no);
   if(!sv) return;
-  if(sv->EditDialog(true))              // modal!
+  if(sv->OpenInWindow(true))              // modal!
     nameView(view_no, sv->name);
 }
 
@@ -680,7 +680,7 @@ void T3ExaminerViewer::savenameviewTriggered(int view_no) {
   saveView(view_no);
   T3SavedView* sv = saved_views.SafeEl(view_no);
   if(!sv) return;
-  if(sv->EditDialog(true))              // modal!
+  if(sv->OpenInWindow(true))              // modal!
     nameView(view_no, sv->name);
 }
 

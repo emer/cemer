@@ -147,6 +147,7 @@ int taiEditorWidgetsMain::AddNameWidget(int row, const String& name, const Strin
   // add label/body and show
   label->setMinimumHeight(row_height);
   label->setMaximumHeight(row_height);
+  
   lay_dat->addStrut(row_height); // make it full height, so controls center
   layBody->addRow(label, lay_dat);
 
@@ -178,7 +179,6 @@ int taiEditorWidgetsMain::AddWidget(int row, QWidget* data, bool fill_hor)
 //       first_tab_foc = data;
 //     }
 //   }
-
   data->show(); // needed for rebuilds, to make the widget show
 
   return row;

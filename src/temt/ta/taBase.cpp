@@ -2952,7 +2952,7 @@ bool taBase::Edit() {
   return false;
 }
 
-bool taBase::EditDialog(bool modal) {
+bool taBase::OpenInWindow(bool modal) {
   if(!taMisc::gui_active) return false;
 #ifdef TA_GUI
   if (modal) {

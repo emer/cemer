@@ -99,7 +99,7 @@ void iT3PanelViewer::DeletePanel(int tab_idx) {
 void iT3PanelViewer::PanelProperties(int tab_idx) {
   T3Panel* fr = viewPanel(tab_idx);
   if (!fr) return;
-  fr->EditDialog(false);        // non-modal so it can open other dialogs..
+  fr->OpenInWindow(false);        // non-modal so it can open other dialogs..
 }
 
 void iT3PanelViewer::FirstViewProperties(int tab_idx) {
@@ -107,7 +107,7 @@ void iT3PanelViewer::FirstViewProperties(int tab_idx) {
   if (!fr) return;
   T3DataViewMain* dvm = fr->FirstChild();
   if(!dvm) return;
-  dvm->EditDialog(false);
+  dvm->OpenInWindow(false);
 }
 
 void iT3PanelViewer::SetColorScheme(int tab_idx) {

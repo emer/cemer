@@ -93,7 +93,7 @@ void taPlugin::PluginOptions() {
     opt_tab = tabMisc::root->plugin_state.FindType(state_type);
   }
   if (opt_tab) {
-    if (opt_tab->EditDialog(true)) {
+    if (opt_tab->OpenInWindow(true)) {
       opt_tab->Save();
     }
   } else {

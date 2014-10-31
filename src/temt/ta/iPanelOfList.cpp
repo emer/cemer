@@ -156,7 +156,7 @@ void iPanelOfList::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
     // it is still in use or something..
     //    ta->EditPanel(true, false);   // new non-pinned panel -- leads to a proliferation
     // of panels and doesn't make a lot of sense.
-    ta->EditDialog();           // pop up the edit dialog -- not favored, but probably
+    ta->OpenInWindow();           // pop up the edit dialog -- not favored, but probably
                                 // the best thing for this situation
   }
 }

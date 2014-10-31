@@ -256,7 +256,7 @@ void iPanelBase::OpenInWindow() {
   if (link_() && link_()->taData()) {
     taBase* bs = link_()->taData();  // get the object shown in the panel
     if (bs) {
-      bs->EditDialog();
+      bs->OpenInWindow();
     }
   }
 }

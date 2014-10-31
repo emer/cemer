@@ -357,5 +357,5 @@ taiSigLink* T3DataView::viewLink() const {
 
 
 void T3DataView::ViewProperties() {
-  EditDialog();
+  OpenInWindow();
 }
