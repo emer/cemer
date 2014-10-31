@@ -228,7 +228,6 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
 (LeabraSendCons* cg, float* wts, float* dwts, float* fwts, float* swts) {
 
   VECF zeros(0.0f);
-  VECF inv_res_inv(wt_sig_fun_inv.res_inv);
   VECF sig_res_inv(wt_sig_fun.res_inv);
   VECI idx;
 
@@ -246,7 +245,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
     // todo: try this also as a sub-loop
     // wt = SigFmLinWt(fwt)
     idx = truncate_to_int(fwt * sig_res_inv); // min is 0
-    wt = lookup<100002>(idx, wt_sig_fun.el);
+    wt = lookup<10002>(idx, wt_sig_fun.el);
 
     dwt = zeros;
 
@@ -265,7 +264,6 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
  float* wts, float* dwts, float* fwts, float* swts) {
 
   VECF zeros(0.0f);
-  VECF inv_res_inv(wt_sig_fun_inv.res_inv);
   VECF sig_res_inv(wt_sig_fun.res_inv);
   VECI idx;
 
@@ -290,7 +288,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
     // wt = SigFmLinWt(fwt)
     idx = truncate_to_int(fwt * sig_res_inv); // min is 0
     VECF nwt;
-    nwt = lookup<100002>(idx, wt_sig_fun.el);
+    nwt = lookup<10002>(idx, wt_sig_fun.el);
     wt += wdt * (nwt - wt);
 
     dwt = zeros;

@@ -37,6 +37,8 @@ void LeabraConSpecCuda::Initialize() {
   own_units_x_cons = 0;
   ptr_units_x_cons = 0;
 
+  strms_created = false;
+
   own_cons_mem_h = NULL;
   own_cons_mem_d = NULL;
   ptr_cons_mem_h = NULL;
@@ -52,13 +54,21 @@ void LeabraConSpecCuda::Initialize() {
   con_sizes_d = NULL;
   unit_starts_h = NULL;
 
-  cur_send_net_n = 0;
-  cur_send_net_h = NULL;
-  cur_send_net_d = NULL;
+  con_params_h = NULL;
+  con_params_d = NULL;
+  wt_sig_fun_h = NULL;
+  wt_sig_fun_d = NULL;
+
+  cur_units_x_cons_n = 0;
+  cur_units_x_cons_h = NULL;
+  cur_units_x_cons_d = NULL;
   send_net_acts_h = NULL;
   send_net_acts_d = NULL;
   send_netin_tmp_h = NULL;
   send_netin_tmp_d = NULL;
+
+  unit_vec_vars_h = NULL;
+  unit_vec_vars_d = NULL;
 }
 
 void LeabraConSpecCuda::FreeCudaArrays() {
@@ -90,10 +100,18 @@ void LeabraConSpecCuda::FreeCudaArrays() {
   if(unit_starts_h)
     free(unit_starts_h);
 
-  if(cur_send_net_h)
-    free(cur_send_net_h);
-  if(cur_send_net_d)
-    cudaFree(cur_send_net_d);
+  if(con_params_h)
+    free(con_params_h);
+  if(con_params_d)
+    cudaFree(con_params_d);
+
+  if(wt_sig_fun_d)
+    cudaFree(wt_sig_fun_d);
+
+  if(cur_units_x_cons_h)
+    free(cur_units_x_cons_h);
+  if(cur_units_x_cons_d)
+    cudaFree(cur_units_x_cons_d);
 
   if(send_net_acts_h)
     free(send_net_acts_h);
@@ -103,13 +121,26 @@ void LeabraConSpecCuda::FreeCudaArrays() {
   if(send_netin_tmp_d)
     cudaFree(send_netin_tmp_d);
 
+  if(unit_vec_vars_d)
+    cudaFree(unit_vec_vars_d);
+
+  if(strms_created) {
+    cudaStreamDestroy(strm_updt_cons);
+    cudaStreamDestroy(strm_send_netin);
+    cudaStreamDestroy(strm_compute_dwt);
+    cudaStreamDestroy(strm_compute_wt);
+    strms_created = false;
+  }
+
   Initialize();
 }
 
 void LeabraConSpecCuda::AllocCudaArrays
 (int n_un, int own_cons_max_sz, bigint own_cnt, bigint ptr_cnt,
  int own_units_x, int ptr_units_x, 
- float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp) {
+ float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
+ float* unit_vec_vars)
+{
   if(n_un == n_units && own_units_x == own_units_x_cons && own_cnt == own_cons_cnt)
     return;                     // already allocated
 
@@ -117,6 +148,12 @@ void LeabraConSpecCuda::AllocCudaArrays
 
   if(n_un == 0 || own_units_x == 0)
     return;
+
+  cudaStreamCreate(&strm_updt_cons);
+  cudaStreamCreate(&strm_send_netin);
+  cudaStreamCreate(&strm_compute_dwt);
+  cudaStreamCreate(&strm_compute_wt);
+  strms_created = true;
 
   n_units = n_un;
   own_cons_max_size = own_cons_max_sz;
@@ -141,39 +178,62 @@ void LeabraConSpecCuda::AllocCudaArrays
   own_cons_mem_h = own_cons_mem;
   ptr_cons_mem_h = ptr_cons_mem;
   send_netin_tmp_h = send_netin_tmp;
+  unit_vec_vars_h = unit_vec_vars;
 
-  // units_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  // cudaMalloc(&units_d, own_units_x_cons * sizeof(int));
+  units_h = (int*)malloc(own_units_x_cons * sizeof(int));
+  cudaSafeCall(cudaMalloc(&units_d, own_units_x_cons * sizeof(int)));
 
   con_mem_idxs_h = (bigint*)malloc(own_units_x_cons * sizeof(bigint));
-  cudaMalloc(&con_mem_idxs_d, own_units_x_cons * sizeof(bigint));
+  cudaSafeCall(cudaMalloc(&con_mem_idxs_d, own_units_x_cons * sizeof(bigint)));
 
   con_allocs_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&con_allocs_d, own_units_x_cons * sizeof(int));
+  cudaSafeCall(cudaMalloc(&con_allocs_d, own_units_x_cons * sizeof(int)));
 
   con_sizes_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&con_sizes_d, own_units_x_cons * sizeof(int));
+  cudaSafeCall(cudaMalloc(&con_sizes_d, own_units_x_cons * sizeof(int)));
 
   unit_starts_h = (int*)malloc((n_units+1) * sizeof(int));
 
-  cur_send_net_h = (int*)malloc(own_units_x_cons * sizeof(int));
-  cudaMalloc(&cur_send_net_d, own_units_x_cons * sizeof(int));
+  con_params_h = (float*)malloc(own_units_x_cons * N_CON_PARAMS * sizeof(float));
+  cudaSafeCall(cudaMalloc(&con_params_d, own_units_x_cons * N_CON_PARAMS * sizeof(float)));
+
+  cudaSafeCall(cudaMalloc(&wt_sig_fun_d, 10002 * sizeof(float)));
+
+  cur_units_x_cons_h = (int*)malloc(own_units_x_cons * sizeof(int));
+  cudaSafeCall(cudaMalloc(&cur_units_x_cons_d, own_units_x_cons * sizeof(int)));
 
   send_net_acts_h = (float*)malloc(own_units_x_cons * sizeof(float));
-  cudaMalloc(&send_net_acts_d, own_units_x_cons * sizeof(float));
+  cudaSafeCall(cudaMalloc(&send_net_acts_d, own_units_x_cons * sizeof(float)));
 
-  cudaMalloc(&send_netin_tmp_d, (n_units+1) * sizeof(float));
+  cudaSafeCall(cudaMalloc(&send_netin_tmp_d, (n_units+1) * sizeof(float)));
 
-  cudaMalloc(&own_cons_mem_d, own_cons_cnt * sizeof(float));
+  cudaSafeCall(cudaMalloc(&own_cons_mem_d, own_cons_cnt * sizeof(float)));
+
+  cudaSafeCall(cudaMalloc(&unit_vec_vars_d, (n_units+1) * N_VEC_VARS * sizeof(float)));
 
   // conserve memory: not needed..
   //   cudaMalloc(&ptr_cons_mem_d, ptr_cons_cnt);
 }
 
-void LeabraConSpecCuda::UpdateOwnCons() {
+void LeabraConSpecCuda::OwnCons_HostToDevice(bool sync) {
   if(own_cons_mem_h && own_cons_mem_d) {
-    cudaMemcpy(own_cons_mem_d, own_cons_mem_h, own_cons_cnt * sizeof(float),
-               cudaMemcpyHostToDevice);
+    cudaSafeCall(cudaMemcpyAsync(own_cons_mem_d, own_cons_mem_h,
+                                 own_cons_cnt * sizeof(float),
+                                 cudaMemcpyHostToDevice, strm_updt_cons));
+    if(sync) {
+      cudaSafeCall(cudaStreamSynchronize(strm_updt_cons));
+    }
+  }
+}
+
+void LeabraConSpecCuda::OwnCons_DeviceToHost(bool sync) {
+  if(own_cons_mem_h && own_cons_mem_d) {
+    cudaSafeCall(cudaMemcpyAsync(own_cons_mem_h, own_cons_mem_d,
+                                 own_cons_cnt * sizeof(float),
+                                 cudaMemcpyDeviceToHost, strm_updt_cons));
+    if(sync) {
+      cudaSafeCall(cudaStreamSynchronize(strm_updt_cons));
+    }
   }
 }
 
@@ -182,22 +242,101 @@ void LeabraConSpecCuda::UpdateUnitsXCons() {
 
   int sz =  own_units_x_cons * sizeof(int);
 
-  // cudaMemcpy(units_d, units_h, sz, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_mem_idxs_d, con_mem_idxs_h, sz, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_allocs_d, con_allocs_h, sz, cudaMemcpyHostToDevice);
-  cudaMemcpy(con_sizes_d, con_sizes_h, sz, cudaMemcpyHostToDevice);
+  cudaSafeCall(cudaMemcpy(units_d, units_h, sz, cudaMemcpyHostToDevice));
+  cudaSafeCall(cudaMemcpy(con_mem_idxs_d, con_mem_idxs_h, sz, cudaMemcpyHostToDevice));
+  cudaSafeCall(cudaMemcpy(con_allocs_d, con_allocs_h, sz, cudaMemcpyHostToDevice));
+  cudaSafeCall(cudaMemcpy(con_sizes_d, con_sizes_h, sz, cudaMemcpyHostToDevice));
+}
+
+void LeabraConSpecCuda::UpdateConParams() {
+  if(!con_params_h) return;
+
+  int sz =  own_units_x_cons * sizeof(float);
+
+  cudaSafeCall(cudaMemcpy(con_params_d, con_params_h, sz, cudaMemcpyHostToDevice));
+
+  if(wt_sig_fun_h) {
+    cudaSafeCall(cudaMemcpy(wt_sig_fun_d, wt_sig_fun_h, 10002, cudaMemcpyHostToDevice));
+  }
 }
 
 __global__ void Kernel_Send_NetinDelta
-(int cur_send_net_n, int* cur_send_net_d, float* send_net_acts_d, float* send_netin_tmp_d,
+(int* cur_units_x_cons_d, float* send_net_acts_d, float* send_netin_tmp_d,
  float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d) {
-  int csni = blockIdx.x;
-  int nth = blockDim.x;
-  int ucidx = cur_send_net_d[csni];
-  float send_eff = send_net_acts_d[csni];
+  const int csni = blockIdx.x;
+  const int nth = blockDim.x;
+  const int ucidx = cur_units_x_cons_d[csni];
+  const float send_eff = send_net_acts_d[csni];
   const int sz = con_sizes_d[ucidx];
   const float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
-    (con_allocs_d[ucidx] * (1 + 0)); // LeabraConSpecCuda::WT));
+    (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
+  const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
+  const int th = threadIdx.x;
+  const int cn_per_th = (sz / nth) + 1; // round up
+  int st = th * cn_per_th;
+  int ed = st + cn_per_th;
+  ed = ed < sz ? ed : sz;     // max of sz
+  while(st < ed) {
+    int ridx = ridxs[st];
+    atomicAdd(&(send_netin_tmp_d[ridx]), wts[st] * send_eff);
+    // send_netin_tmp_d[ridx] += wts[st] * send_eff; // determine effect of atomic -- not much penalty there
+    st++;
+  }
+}
+
+void LeabraConSpecCuda::Send_NetinDelta() {
+  if(cur_units_x_cons_n == 0) return;
+
+  cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
+                               cur_units_x_cons_n * sizeof(int),
+                               cudaMemcpyHostToDevice, strm_send_netin));
+  cudaSafeCall(cudaMemcpyAsync(send_net_acts_d, send_net_acts_h,
+                               cur_units_x_cons_n * sizeof(float),
+                               cudaMemcpyHostToDevice, strm_send_netin));
+
+  cudaSafeCall(cudaMemsetAsync(send_netin_tmp_d, 0, (n_units+1) * sizeof(float),
+                               strm_send_netin));
+  //  Invoke kernel
+  Kernel_Send_NetinDelta<<<cur_units_x_cons_n, n_threads, 0, strm_send_netin>>>
+    (cur_units_x_cons_d, send_net_acts_d, send_netin_tmp_d,
+     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
+
+  cudaSafeCall(cudaMemcpyAsync(send_netin_tmp_h, send_netin_tmp_d,
+                               (n_units+1) * sizeof(float),
+                               cudaMemcpyDeviceToHost, strm_send_netin));
+  // get results back from device -- args are reversed here!
+
+  cudaSafeCall(cudaStreamSynchronize(strm_send_netin));
+}
+
+
+__global__ void Kernel_Compute_dWt_cosdif
+(int* cur_units_x_cons_d, float* unit_vec_vars_d, float* con_params_d, int* units_d,
+ float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
+ int n_units) {
+  const int nu = n_units; // actually n_units + 1
+  const int csni = blockIdx.x;
+  const int nth = blockDim.x;
+  const int ucidx = cur_units_x_cons_d[csni];
+  const int sidx = units_d[ucidx];
+
+  const float su_avg_s = unit_vec_vars_d[LeabraConSpecCuda::AVG_S * nu + sidx];
+  const float su_avg_m = unit_vec_vars_d[LeabraConSpecCuda::AVG_M * nu + sidx];
+
+  const float s_mix = con_params_d[ucidx * LeabraConSpecCuda::N_CON_PARAMS +
+                                   LeabraConSpecCuda::S_MIX];
+  const float m_mix = con_params_d[ucidx * LeabraConSpecCuda::N_CON_PARAMS +
+                                   LeabraConSpecCuda::M_MIX];
+  const float thr_l_mix = con_params_d[ucidx * LeabraConSpecCuda::N_CON_PARAMS +
+                                       LeabraConSpecCuda::THR_L_MIX];
+  const float thr_max = con_params_d[ucidx * LeabraConSpecCuda::N_CON_PARAMS +
+                                     LeabraConSpecCuda::THR_MAX];
+  const float clrate = con_params_d[ucidx * LeabraConSpecCuda::N_CON_PARAMS +
+                                    LeabraConSpecCuda::CUR_LRATE];
+
+  const int sz = con_sizes_d[ucidx];
+  float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+    (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::DWT));
   const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
   int th = threadIdx.x;
   int cn_per_th = (sz / nth) + 1; // round up
@@ -206,71 +345,108 @@ __global__ void Kernel_Send_NetinDelta
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
     int ridx = ridxs[st];
-    atomicAdd(&(send_netin_tmp_d[ridx]), wts[st] * send_eff);
+    const float ru_avg_s = unit_vec_vars_d[LeabraConSpecCuda::AVG_S * nu + ridx];
+    const float ru_avg_m = unit_vec_vars_d[LeabraConSpecCuda::AVG_M * nu + ridx];
+    const float ru_avg_l = unit_vec_vars_d[LeabraConSpecCuda::AVG_L * nu + ridx];
+
+    // unfortunately, cos_diff_lmix is on recv layer -- so this needs to be in the loop
+    // whereas normally it is outside the loop.. would require a separate
+    // var array just for it, at the unit_x_con level..  could look into it later
+    const float cos_diff_lmix = unit_vec_vars_d[LeabraConSpecCuda::COS_DIFF_LMIX * nu
+                                                + ridx];
+    const float efflmix = thr_l_mix * cos_diff_lmix;
+    const float effmmix = 1.0f - efflmix;
+    const float su_act_mult = efflmix * su_avg_m;
+
+    const float srs = ru_avg_s * su_avg_s;
+    const float srm = ru_avg_m * su_avg_m;
+    const float sm_mix = s_mix * srs + m_mix * srm;
+    const float lthr = su_act_mult * ru_avg_l;
+    float effthr = effmmix * srm + lthr;
+    effthr = effthr < thr_max ? effthr : thr_max; // max = thr_max
+
+    float rval;                 // xcal.dWtFun
+    if(sm_mix < 0.0001f)        // d_thr = 0.0001
+      rval = 0.0f;
+    else if(sm_mix > effthr * 0.1f) // d_rev = 0.1
+      rval = (sm_mix - effthr);
+    else
+      rval = sm_mix * -9.0f;    // d_rev_ratio = -9.0;
+    dwts[st] += clrate * rval;
     st++;
   }
 }
 
-void Test_Kernel_Send_NetinDelta
-(int blockIdx, int blockDim, int threadIdx,
- int cur_send_net_n, int* cur_send_net_d, float* send_net_acts_d, float* send_netin_tmp_d,
- float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d) {
-  int csni = blockIdx;
-  int nth = blockDim;
-  int ucidx = cur_send_net_d[csni];
-  float send_eff = send_net_acts_d[csni];
+void LeabraConSpecCuda::Compute_dWt(bool sync) {
+  if(cur_units_x_cons_n == 0) return;
+
+  cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
+                               cur_units_x_cons_n * sizeof(int),
+                               cudaMemcpyHostToDevice, strm_compute_dwt));
+  cudaSafeCall(cudaMemcpyAsync(unit_vec_vars_d, unit_vec_vars_h,
+                               (n_units+1) * N_VEC_VARS * sizeof(float),
+                               cudaMemcpyHostToDevice, strm_compute_dwt));
+
+  //  Invoke kernel
+  Kernel_Compute_dWt_cosdif<<<cur_units_x_cons_n, n_threads, 0, strm_compute_dwt>>>
+    (cur_units_x_cons_d, unit_vec_vars_d, con_params_d, units_d,
+     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, n_units+1);
+
+  if(sync) {
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_dwt));
+  }
+}
+
+
+__global__ void Kernel_Compute_Weights
+(float* own_cons_mem_d, bigint* con_mem_idxs_d, int* con_allocs_d, int* con_sizes_d,
+ float* wt_sig_fun_d) {
+  const int ucidx = blockIdx.x;  // full unit x con idx here
+  const int nth = blockDim.x;
+
   const int sz = con_sizes_d[ucidx];
-  const float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+  float* wts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
     (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
-  const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
-  int th = threadIdx;
+  float* dwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+    (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::DWT));
+  float* fwts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+    (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::FWT));
+  float* swts = own_cons_mem_d + con_mem_idxs_d[ucidx] +
+    (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::SWT));
+
+  int th = threadIdx.x;
   int cn_per_th = (sz / nth) + 1; // round up
   int st = th * cn_per_th;
   int ed = st + cn_per_th;
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
-    int ridx = ridxs[st];
-    send_netin_tmp_d[ridx] += wts[st] * send_eff;
+    float& dwt = dwts[st];
+    if(dwt != 0.0f) {
+      float& wt = wts[st];
+      float& fwt = fwts[st];
+      float& swt = swts[st];
+      if(dwt > 0.0f)  dwt *= (1.0f - fwt);
+      else            dwt *= fwt;
+      fwt += dwt;
+      swt = fwt;                // keep sync'd -- not tech necc..
+
+      int idx = (int)(fwt * 10000.0f); // sig_res_inv
+      wt = wt_sig_fun_d[idx];
+
+      dwt = 0.0f;
+    }
     st++;
   }
 }
 
+void LeabraConSpecCuda::Compute_Weights(bool sync) {
+  //  Invoke kernel -- does all
+  Kernel_Compute_Weights<<<own_units_x_cons, n_threads, 0, strm_compute_wt>>>
+    (own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d, wt_sig_fun_d);
 
-void LeabraConSpecCuda::Send_NetinDelta() {
-  if(cur_send_net_n == 0) return;
-
-  cudaSafeCall(cudaMemcpy(cur_send_net_d, cur_send_net_h, cur_send_net_n * sizeof(int),
-                          cudaMemcpyHostToDevice));
-  cudaSafeCall(cudaMemcpy(send_net_acts_d, send_net_acts_h, cur_send_net_n * sizeof(float),
-                          cudaMemcpyHostToDevice));
-
-  cudaSafeCall(cudaMemset(send_netin_tmp_d, 0, (n_units+1) * sizeof(float)));
-
-  cudaSafeCall(cudaDeviceSynchronize());
-
-#if 1
-  // manual testing for getting all the logic right
-  for(int i=0; i< cur_send_net_n; i++) {
-    for(int j=0; j< n_threads; j++) {
-      Test_Kernel_Send_NetinDelta
-        (i, n_threads, j, cur_send_net_n, cur_send_net_h, send_net_acts_h,
-         send_netin_tmp_h, own_cons_mem_h, con_mem_idxs_h, con_allocs_h, con_sizes_h);
-    }
+  if(sync) {
+    cudaSafeCall(cudaStreamSynchronize(strm_compute_wt));
   }
-  //#else
-  //  Invoke kernel
-  Kernel_Send_NetinDelta<<<cur_send_net_n, n_threads>>>
-    (cur_send_net_n, cur_send_net_d, send_net_acts_d, send_netin_tmp_d,
-     own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
-
-  cudaSafeCall(cudaDeviceSynchronize());
-
-  // cudaSafeCall(cudaMemcpy(send_netin_tmp_h, send_netin_tmp_d, (n_units+1) * sizeof(float),
-  //                         cudaMemcpyDeviceToHost));
-
-  cudaSafeCall(cudaDeviceSynchronize());
-
-#endif
-
-  // get results back from device -- args are reversed here!
 }
+
+

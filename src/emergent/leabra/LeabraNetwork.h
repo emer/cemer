@@ -133,11 +133,13 @@ public:
     PLUS_PHASE = 1,		// plus phase
   };
 
+  // IMPORTANT: coordinate this with LeabraConSpec_cuda.h!
   enum UnitVecVars {            // unit variables that have special vectorized storage, encoded at end of trial, in time for compute_dwt function
     AVG_S,
     AVG_M,
     AVG_L,
     THAL,
+    COS_DIFF_LMIX,              // from recv layer
     N_VEC_VARS,
   };
   // ACT_M, // note: could add these to unit vec vars if needed
@@ -209,6 +211,8 @@ public:
 #ifdef CUDA_COMPILE
   LeabraConSpecCuda* cuda;      // #IGNORE cuda specific code
   RunWaitTime        cuda_send_netin_time;  // #IGNORE
+  RunWaitTime        cuda_compute_dwt_time;  // #IGNORE
+  RunWaitTime        cuda_compute_wt_time;  // #IGNORE
 #endif
 
   inline float*  UnVecVar(UnitVecVars var)
@@ -446,7 +450,10 @@ public:
 
 #ifdef CUDA_COMPILE
   void  Cuda_BuildUnits_Threads(); // update device data after net mods
+  void  Cuda_UpdateConParams();
   void  Cuda_Send_Netin();
+  void  Cuda_Compute_dWt();
+  void  Cuda_Compute_Weights();
 #endif
   String  Cuda_MemoryReport(bool print = true);
   // #CAT_Statistic report about memory allocation required on CUDA device (only does something for cuda compiled version)

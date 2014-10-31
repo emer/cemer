@@ -31,6 +31,7 @@ class E_API LeabraTICtxtConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // special!
+  bool  DoesStdNetin() override { return false; }
   bool  IsTICtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  

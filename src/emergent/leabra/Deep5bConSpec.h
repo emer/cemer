@@ -32,6 +32,7 @@ class E_API Deep5bConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // special!
+  bool  DoesStdNetin() override { return false; }
   bool  IsDeep5bCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 

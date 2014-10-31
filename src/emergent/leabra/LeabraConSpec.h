@@ -315,6 +315,8 @@ public:
   virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from,
                                    bool plus_phase = false);
   // #IGNORE compute recv_gp->scale_eff based on params in from layer
+  inline virtual bool  DoesStdNetin() { return true; }
+  // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required (as for TICtxt and Deep5b)
   inline virtual bool  IsTICtxtCon() { return false; }
   // #IGNORE is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeep5bCon() { return false; }
@@ -399,8 +401,8 @@ public:
       fwt += dwt;
       swt = fwt;                // keep sync'd -- not tech necc..
       wt = SigFmLinWt(fwt);
+      dwt = 0.0f;
     }
-    dwt = 0.0f;
   }
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts
 

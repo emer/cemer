@@ -47,3 +47,11 @@ echo " "
 echo "=============================================================="
 echo "HUGE Network (5 x 1024 units)"
 $exe -nogui -ni -p leabra_bench.proj epochs=5 pats=10 units=1024 $*
+echo " "
+echo "=============================================================="
+echo "GINORMOUS Network (5 x 2048 units)"
+$exe -nogui -ni -p leabra_bench.proj epochs=2 pats=10 units=2048 $*
+echo " "
+echo "=============================================================="
+echo "GAZILIOUS Network (5 x 4096 units)"
+$exe -nogui -ni -p leabra_bench.proj epochs=1 pats=10 units=4096 $*
