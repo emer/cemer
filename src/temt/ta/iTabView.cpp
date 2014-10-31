@@ -178,6 +178,11 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   }//TODO
   act->setParent(contextMenu);
   contextMenu->addAction(act);
+  
+  // open the panel as a window (same as opening from context menu with "edit dialog"
+  act = new iAction("&Open In Window",  dp, SLOT(OpenInWindow()), NULL);
+  act->setParent(contextMenu);
+  contextMenu->addAction(act);
 }
 
 void iTabView::ShowLink(taiSigLink* link, bool not_in_cur) {

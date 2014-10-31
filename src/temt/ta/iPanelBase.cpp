@@ -251,3 +251,12 @@ QPoint iPanelBase::MapToPanel(QWidget* widg, const QPoint& pt) {
 int iPanelBase::MapToPanelV(QWidget* widg, int pt_y) {
   return taiMisc::MapToAreaV_SA(scr, scr->widget(), widg, pt_y);
 }
+
+void iPanelBase::OpenInWindow() {
+  if (link_() && link_()->taData()) {
+    taBase* bs = link_()->taData();  // get the object shown in the panel
+    if (bs) {
+      bs->EditDialog();
+    }
+  }
+}

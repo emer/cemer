@@ -143,8 +143,9 @@ public:
   ~iPanelBase();
 
 public slots:
-    void                Pin() {setPinned(true);}
-    void                Unpin() {setPinned(false);}
+  void                Pin() {setPinned(true);}
+  void                Unpin() {setPinned(false);}
+  void                OpenInWindow();
 
 public: // ISigLinkClient interface
   void*        This() override {return (void*)this;}
