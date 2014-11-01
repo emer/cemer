@@ -273,9 +273,12 @@ __global__ void Kernel_Send_NetinDelta
     (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
   const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
   const int th = threadIdx.x;
-  const float cn_per_th = ((float)sz / (float)nth);
-  int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)st + cn_per_th);
+  // const float cn_per_th = ((float)sz / (float)nth);
+  // int st = __float2int_rn((float)th * cn_per_th);
+  // int ed = __float2int_rn((float)st + cn_per_th);
+  const int cn_per_th = (sz / nth)+1;
+  int st = th * cn_per_th;
+  int ed = st + cn_per_th;
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
     int ridx = ridxs[st];
@@ -288,6 +291,9 @@ __global__ void Kernel_Send_NetinDelta
 void LeabraConSpecCuda::Send_NetinDelta() {
   if(cur_units_x_cons_n == 0) return;
 
+  cudaSafeCall(cudaMemsetAsync(send_netin_tmp_d, 0, (n_units+1) * sizeof(float),
+                               strm_send_netin));
+
   cudaSafeCall(cudaMemcpyAsync(cur_units_x_cons_d, cur_units_x_cons_h,
                                cur_units_x_cons_n * sizeof(int),
                                cudaMemcpyHostToDevice, strm_send_netin));
@@ -295,17 +301,10 @@ void LeabraConSpecCuda::Send_NetinDelta() {
                                cur_units_x_cons_n * sizeof(float),
                                cudaMemcpyHostToDevice, strm_send_netin));
 
-  cudaSafeCall(cudaMemsetAsync(send_netin_tmp_d, 0, (n_units+1) * sizeof(float),
-                               strm_send_netin));
-
-  cudaSafeCall(cudaStreamSynchronize(strm_send_netin)); // todo: nuke!
-
   //  Invoke kernel
   Kernel_Send_NetinDelta<<<cur_units_x_cons_n, n_threads, 0, strm_send_netin>>>
     (cur_units_x_cons_d, send_net_acts_d, send_netin_tmp_d,
      own_cons_mem_d, con_mem_idxs_d, con_allocs_d, con_sizes_d);
-
-  cudaSafeCall(cudaStreamSynchronize(strm_send_netin)); // todo: nuke!
 
   cudaSafeCall(cudaMemcpyAsync(send_netin_tmp_h, send_netin_tmp_d,
                                (n_units+1) * sizeof(float),
@@ -378,7 +377,7 @@ __global__ void Kernel_Compute_dWt_cosdif
       rval = (sm_mix - effthr);
     else
       rval = sm_mix * -9.0f;    // d_rev_ratio = -9.0;
-    dwts[st] += 1.0f; // clrate * rval;
+    dwts[st] += clrate * rval;
     st++;
   }
 }

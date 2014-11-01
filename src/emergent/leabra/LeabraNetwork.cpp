@@ -699,6 +699,7 @@ void LeabraNetwork::Compute_dWt() {
 #ifdef CUDA_COMPILE
   if(!net_misc.dwt_norm) {      // todo: add other checks here for non-std dwts etc
     Cuda_Compute_dWt();
+    return;
   }
 #endif
 
@@ -1213,7 +1214,7 @@ void LeabraNetwork::Cuda_Compute_dWt() {
   }
   cuda->cur_units_x_cons_n = cur_snd;
 
-  // cuda->Compute_dWt(true);      // sync -- could turn this off later..
+  cuda->Compute_dWt(true);      // sync -- could turn this off later..
 
   cuda_compute_dwt_time.EndRun();
 
@@ -1242,7 +1243,7 @@ void LeabraNetwork::Cuda_Compute_Weights() {
   //   }
   // }
 
-  // cuda->Compute_Weights(true);      // no pre-filtering: run whole thing
+  cuda->Compute_Weights(true);      // no pre-filtering: run whole thing
 
   cuda_compute_wt_time.EndRun();
   cuda_compute_wt_time.StartWait(true);
