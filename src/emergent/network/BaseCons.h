@@ -117,6 +117,12 @@ public:
     else ClearBaseFlag(IS_ACTIVE);
   }
   // #IGNORE update active status: is this an active connection group, with connections and an active projection?
+  inline void           BiasUpdtIsActive()
+  { if((bool)mem_start && alloc_size > 0 && size > 0)
+      SetBaseFlag(IS_ACTIVE);
+    else ClearBaseFlag(IS_ACTIVE);
+  }
+  // #IGNORE update active status: is this an active connection group, with connections?  this is for bias weight case
 
   inline void           SetInactive()
   { ClearBaseFlag(IS_ACTIVE); }

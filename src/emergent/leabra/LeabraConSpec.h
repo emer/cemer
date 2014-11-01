@@ -284,9 +284,12 @@ public:
     }
   }
 
-  inline void Init_Weights(BaseCons* cg, Unit* ru, Network* net) override {
+  inline void Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
     Init_Weights_symflag(net);
-    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
+    if(cg->prjn->spec->init_wts) {
+      Init_dWt(cg, un, net);
+      return; // we don't do it, prjn does
+    }
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -296,6 +299,9 @@ public:
         C_Init_Weight_Rnd(wts[i]);
         C_Init_dWt(dwts[i]);
       }
+    }
+    else {
+      Init_dWt(cg, un, net);
     }
   }
 

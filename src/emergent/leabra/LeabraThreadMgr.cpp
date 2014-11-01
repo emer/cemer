@@ -502,6 +502,9 @@ void LeabraTask::run() {
 }
 
 void LeabraThreadMgr::Initialize() {
+#ifdef CUDA_COMPILE
+  cuda_get_wts = false;
+#endif
   run_state = NOT_RUNNING;
   n_threads_act = 1;
   quarter = true;

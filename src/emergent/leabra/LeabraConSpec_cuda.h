@@ -121,7 +121,7 @@ public:
   { return ((int32_t*)(own_cons_mem_d + con_mem_idxs_d[uncon]))[idx]; }
   // illustration for how to access access recv unit idx for unit x con
 
-  inline float&   ConParam_h(int uncon, int param_no) const
+  inline float&   ConParam_h(int uncon, int param_no)
   { return con_params_h[uncon * N_CON_PARAMS + param_no]; }
   // connection parameter, on host, for given unit x con and parameter number
 

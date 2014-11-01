@@ -118,12 +118,12 @@ IF(CUDA_BUILD)
       #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
     endif (APPLE)
-  else (WIN32)
+  else (NOT WIN32)
     #Todo:Are these the correct flags for windows?
     set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_30 -code=sm_30 --use_fast_math -O3)
     # this is more standard and is the default
     #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)    
-  endif (WIN32)
+  endif (NOT WIN32)
   include_directories(${CUDA_INCLUDE_DIRS})
   set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} ${CUDA_LIBRARIES} ${CUDA_curand_LIBRARY})
   add_definitions(-DCUDA_COMPILE)
@@ -178,3 +178,27 @@ if (NOT WIN32)
   endif (APPLE)
 endif (NOT WIN32)
 
+# theoretically you're not supposed to do this, but we don't pass build type in at
+# run time, so this should be OK -- it is used for maketa flags
+
+get_directory_property(defstr COMPILE_DEFINITIONS)
+foreach(d ${defstr})
+  if(WIN32)
+    set(defs "${defs} /D${d}")
+  else(WIN32)
+    set(defs "${defs} -D${d}")
+  endif(WIN32)
+endforeach(d ${defstr})
+message(STATUS "Compile definitions: ${defs}")
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG} ${defs}" )
+elseif(CMAKE_BUILD_TYPE MATCHES "Release")
+  set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE} ${defs}")
+elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
+  set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO} ${defs}")
+else(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${defs}")
+endif(CMAKE_BUILD_TYPE MATCHES "Debug")
+
+message(STATUS "FULL CMAKE_CXX_FLAGS: ${EMERGENT_FULL_CXX_FLAGS}")

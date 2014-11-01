@@ -607,6 +607,10 @@ void Network::Connect_Alloc_RecvOwns() {
 void Network::Connect_Alloc_SendOwns() {
   const int nu = units_flat.size;
 
+  if(taMisc::is_loading) {
+    taMisc::Info("alloc is loading");
+  }
+
   // first collect total count
   own_cons_cnt = 0;
   own_units_x_cons = 0;

@@ -79,26 +79,11 @@ else (WIN32) # assume gcc!!!
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fabi-version=6 ")
   endif("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
 
-
   if (APPLE)
     # on Mac, DEBUG is not defined!
     set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -DDEBUG")
 #    message(STATUS "CMAKE_CXX_FLAGS_DEBUG: ${CMAKE_CXX_FLAGS_DEBUG}")
   endif (APPLE)
-
-  # theoretically you're not supposed to do this, but we don't pass build type in at
-  # run time, so this should be OK -- it is used for maketa flags
-  if(CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}")
-  elseif(CMAKE_BUILD_TYPE MATCHES "Release")
-    set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELEASE}")
-  elseif(CMAKE_BUILD_TYPE MATCHES "RelWithDebInfo")
-    set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_RELWITHDEBINFO}")
-  else(CMAKE_BUILD_TYPE MATCHES "Debug")
-    set(EMERGENT_FULL_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-  endif(CMAKE_BUILD_TYPE MATCHES "Debug")
-
-  message(STATUS "FULL CMAKE_CXX_FLAGS: ${EMERGENT_FULL_CXX_FLAGS}")
 
 endif (WIN32)
 

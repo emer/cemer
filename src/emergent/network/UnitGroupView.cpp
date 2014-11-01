@@ -268,7 +268,7 @@ void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
-      if(unit->bias.size == 0) continue;
+      if(!unit->bias.IsActive()) continue;
       uvd_bases.Set(&(unit->bias.OwnCn(0, disp_md->idx)), coord.x, coord.y, midx);
     }
   }

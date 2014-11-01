@@ -229,14 +229,14 @@ void Unit::AllocBias() {
 }
 
 void Unit::ConnectBias() {
-  bias.UpdtIsActive();          // should be inactive
+  bias.BiasUpdtIsActive();          // should be inactive
   if(!GetUnitSpec())
     return;
   TypeDef* bstd = GetUnitSpec()->bias_con_type;
   if(!bstd) return;
   if(!bias.mem_start) return;             // we were not allocated.. don't bother..
   bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
-  bias.UpdtIsActive();
+  bias.BiasUpdtIsActive();
 }
 
 void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
@@ -584,6 +584,7 @@ void Unit::UpdtActiveCons() {
       SendCons* cg = send.FastEl(g);
       cg->SetInactive();
     }
+    bias.SetInactive();
   }
   else {
     for(int g = 0; g < recv.size; g++) {
@@ -594,6 +595,7 @@ void Unit::UpdtActiveCons() {
       SendCons* cg = send.FastEl(g);
       cg->UpdtIsActive();
     }
+    bias.BiasUpdtIsActive();
   }
 }
 
