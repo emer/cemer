@@ -273,12 +273,9 @@ __global__ void Kernel_Send_NetinDelta
     (con_allocs_d[ucidx] * (1 + LeabraConSpecCuda::WT));
   const int* ridxs = ((int*)own_cons_mem_d) + con_mem_idxs_d[ucidx];
   const int th = threadIdx.x;
-  // const float cn_per_th = ((float)sz / (float)nth);
-  // int st = __float2int_rn((float)th * cn_per_th);
-  // int ed = __float2int_rn((float)st + cn_per_th);
-  const int cn_per_th = (sz / nth)+1;
-  int st = th * cn_per_th;
-  int ed = st + cn_per_th;
+  const float cn_per_th = ((float)sz / (float)nth);
+  int st = __float2int_rn((float)th * cn_per_th);
+  int ed = __float2int_rn((float)(th+1) * cn_per_th);
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
     int ridx = ridxs[st];
@@ -346,7 +343,7 @@ __global__ void Kernel_Compute_dWt_cosdif
   int th = threadIdx.x;
   const float cn_per_th = ((float)sz / (float)nth);
   int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)st + cn_per_th);
+  int ed = __float2int_rn((float)(th+1) * cn_per_th);
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
     int ridx = ridxs[st];
@@ -422,7 +419,7 @@ __global__ void Kernel_Compute_Weights
   int th = threadIdx.x;
   const float cn_per_th = ((float)sz / (float)nth);
   int st = __float2int_rn((float)th * cn_per_th);
-  int ed = __float2int_rn((float)st + cn_per_th);
+  int ed = __float2int_rn((float)(th+1) * cn_per_th);
   ed = ed < sz ? ed : sz;     // max of sz
   while(st < ed) {
     float& dwt = dwts[st];
