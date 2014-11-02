@@ -32,6 +32,7 @@ INHERITED(LeabraConSpec)
 public:
   // special!
   bool  DoesStdNetin() override { return false; }
+  bool  DoesStdDwt() override { return false; }
   bool  IsTICtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
@@ -53,9 +54,9 @@ public:
   { return 0.0f; }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
-  inline void C_Compute_dWt_Delta(float& dwt, const float ru_act_p, const float ru_act_m,
+  inline void C_Compute_dWt_Delta(float& dwt, const float ru_avg_s, const float ru_avg_m,
                                   const float su_act_q0)
-  { dwt += cur_lrate * (ru_act_p - ru_act_m) * su_act_q0; }
+  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_act_q0; }
   // #IGNORE
 
   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,

@@ -29,6 +29,7 @@
 
 # name of executable to run
 #set exe=emergent
+#set exe=../../build/bin/emergent
 set exe=../../build_cuda/bin/emergent
 
 echo " "

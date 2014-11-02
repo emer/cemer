@@ -207,6 +207,9 @@ public:
   int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
   int           ptr_units_x_cons; // #HIDDEN #NO_SAVE number of pointer units * con groups that are stored in ptr_cons_mem
   float*        ptr_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
+  int64_t       bias_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to bias_cons
+  float*        bias_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the bias connections
+
   int*          tmp_chunks;      // #IGNORE tmp con vec chunking memory
   int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
   float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory

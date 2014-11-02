@@ -35,9 +35,61 @@ typedef int bigint;
 // typedef int64_t bigint;
 // typedef long long bigint;
 
+////////////////////////////////////////////////////////////////////////
+//      Memory layout and overall strategy, etc
+//
+// threads = connections with a sending connection group
+// blocks =  units x cons = sending connection groups
+//           (one for each sending group in each sending unit)
+//
+// cons_sizes for example is organized like this, for small layers with diff numbers
+//      of sending groups:
+// idx  unit con_group
+//  0   1    0  # first layer, 2 units, 1 send con group per unit
+//  1   2    0
+//  2   3    0  # next layer, 2 units, 2 send con groups per unit
+//  3   3    1
+//  4   4    0
+//  5   4    1
+//  6   5    0
+//  7   5    1
+// ... and so on..
+//
+// A routine like Network::Cuda_Send_NetinDelta will fill in the "ucidx" (idx above)
+// into cur_units_x_cons_h by going through the network and finding the sending units
+// and sending con groups within them that should be sent on this cycle -- the cuda
+// side will then copy this _h -> _d and call the kernel with blocks = number of 
+// items in cur_units_x_cons and threads = pre-computed threads based on max number of
+// connections in any connection group in the layer (todo: need more params on that)
+// the kernel then looks up all the info needed to access the own_cons_mem raw memory
+// bank of connection data, and does the computation
+//
+// All conspec parameters and unit-level variables (avg_s, avg_m etc) need to be 
+// consolidated into float* arrays and copied up to the device as needed.
+//
+// Overall, we ONLY use CUDA for the connection-level processing, due to the need
+// to rewrite everything outside of the standard C++ implementation.
+// CRITICALLY, to avoid excessive memory transfers, EVERYTHING at the connection
+// level must be implemented in CUDA -- the connection memory is only transfered
+// back to the host for display or saving the weights at the end.
+// 
+// *This means that all possible special-function ConSpecs must be implemented here!*
+// *Thus, CUDA only supports a subset of what might be avail outside of it*
+// 
+// The only real interface between connections and the unit-level code is the 
+// net input, and then the activations coming back to influence learning, so
+// those vectors of size n_units do need to be transferred, but that is far far
+// less transfer than the full set of connections.  Overall, memory transfer is 
+// a relatively minor cost of the computation.
+// 
+// The major limitations as far as we can tell are in the memory bandwidth required
+// to feed the computations..
+//
+
 class LeabraConSpecCuda {
   // NVIDIA CUDA support for calling LeabraConSpec functions
 public:
+  // IMPORTANT: coordinate this with LeabraConSpec.h
   enum ConVars {                // Connection variables -- must align with Connection obj
     WT,                         // the synaptic weight of connection
     DWT,                        // change in synaptic weight as computed by learning mechanism
@@ -51,6 +103,7 @@ public:
     AVG_M,
     AVG_L,
     THAL,
+    ACT_Q0,
     COS_DIFF_LMIX,              // from recv layer
     N_VEC_VARS,
   };
@@ -94,6 +147,8 @@ public:
   int*          con_allocs_d; // device array of sending units * sending con groups -- size own_units_x_cons  -- the number of cons allocated
   int*          con_sizes_h; // host array of sending units * sending con groups -- size own_units_x_cons -- the number of cons in use
   int*          con_sizes_d; // device array of sending units * sending con groups -- size own_units_x_cons  -- the number of cons in use
+  int*          con_recv_idxs_h; // host array of sending units * sending con groups -- size own_units_x_cons -- the recv_idx for this con group (required for NetinPerPrjn)
+  int*          con_recv_idxs_d; // device array of sending units * sending con groups -- size own_units_x_cons -- the recv_idx for this con group (required for NetinPerPrjn)
   int*          unit_starts_h; // host array where units start into above units x cons arrays -- size n_units
 
   float*        con_params_h; // host array of sending units * sending con groups -- size own_units_x_cons * N_CON_PARAMS -- parameters for each con group
@@ -107,8 +162,11 @@ public:
 
   float*        send_net_acts_h; // sending delta acts * scale_eff to send netin -- size own_units_x_cons
   float*        send_net_acts_d; // sending delta acts * scale_eff to send netin -- size own_units_x_cons
+  int           send_net_max_prjns;   // if using NetinPerPrjn() then = max_prjns, else 1
   float*        send_netin_tmp_h;     // host netinputs -- Network owns!!
   float*        send_netin_tmp_d;     // device netinputs -- size = n_units (todo: support netin per prjn!)
+  float*        send_d5bnet_tmp_h;     // host netinputs -- Network owns!!
+  float*        send_d5bnet_tmp_d;     // device netinputs -- size = n_units
 
   float*        unit_vec_vars_h; // host vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
   float*        unit_vec_vars_d; // device vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
@@ -126,11 +184,12 @@ public:
   // connection parameter, on host, for given unit x con and parameter number
 
   
-  void  AllocCudaArrays(int n_un, int own_cons_max_sz, bigint own_cnt,
-                        bigint ptr_cnt, int own_units_x, int ptr_units_x, 
-                        float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
-                        float* unit_vec_vars);
+  void  AllocCudaArrays
+  (int n_un, int own_cons_max_sz, bigint own_cnt, bigint ptr_cnt, int own_units_x,
+   int ptr_units_x, float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
+   int send_net_max_prj, float* send_d5bnet_tmp, float* unit_vec_vars);
   // allocate arrays based on parameters from network, called after network modifications
+
   void  FreeCudaArrays();
   // free arrays..
 
@@ -146,8 +205,14 @@ public:
 
   void  Send_NetinDelta();
   // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and send_net_acts_h, this will fill out send_netin_tmp_h with the deltas!
+  void  Send_Deep5bNetinDelta();
+  // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and send_net_acts_h, this will fill out send_netin_tmp_h with the deltas!
+  void  Send_TICtxtNetin();
+  // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and send_net_acts_h, this will fill out send_netin_tmp_h with the deltas!
 
-  void  Compute_dWt(bool sync = false);
+  void  Compute_dWt(bool sync = true);
+  // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and unit_vec_vars_h, this will compute weight changes -- ONLY on CUDA side -- call OwnCons_DeviceToHost to get back
+  void  Compute_dWt_TICtxt(bool sync = true);
   // AFTER filling in cur_units_x_cons_n, cur_units_x_cons_h, and unit_vec_vars_h, this will compute weight changes -- ONLY on CUDA side -- call OwnCons_DeviceToHost to get back
   void  Compute_Weights(bool sync = false);
   // compute weight updates -- ONLY on CUDA side -- call OwnCons_DeviceToHost to get back

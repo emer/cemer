@@ -1206,6 +1206,9 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnit* u, LeabraNetwork* ne
 void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
                                          int thread_no) {
   int thno_arg = thread_no;
+  if(thread_no < 0) {
+    thno_arg = 0;		// pass 0 as arg -- need to store in tmp vec
+  }
   float act_ts = u->deep5b;
   // note: no delay for 5b
   // if(syn_delay.on) {
@@ -1224,7 +1227,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
         if(tol->hard_clamped)      continue;
         if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
         Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-        sp->Send_D5bNetDelta(send_gp, net, thread_no, act_ts);
+        sp->Send_D5bNetDelta(send_gp, net, thno_arg, act_delta);
       }
       u->d5b_sent = act_ts;     // cache the last sent value
     }
@@ -1238,7 +1241,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
       if(tol->hard_clamped)        continue;
       if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
       Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-      sp->Send_D5bNetDelta(send_gp, net, thread_no, act_ts);
+      sp->Send_D5bNetDelta(send_gp, net, thno_arg, act_delta);
     }
     u->d5b_sent = 0.0f;         // now it effectively sent a 0..
   }
@@ -1247,6 +1250,9 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnit* u, LeabraNetwork* net,
 void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
                                          int thread_no) {
   int nt = net->lthreads.n_threads_act;
+#ifdef CUDA_COMPILE
+  nt = 1;                       // cuda is always 1 thread for this..
+#endif
   float net_delta = 0.0f;
   for(int j=0;j<nt;j++) {
     float& ndval = net->send_d5bnet_tmp.FastEl2d(u->flat_idx, j);
@@ -1746,6 +1752,9 @@ void LeabraUnitSpec::Send_TICtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net,
   if(!Quarter_SendTICtxtNow(net->quarter)) return;
 
   int nt = net->lthreads.n_threads_act;
+#ifdef CUDA_COMPILE
+  nt = 1;                       // cuda is always 1 thread for this..
+#endif
   float nw_nt = 0.0f;
   for(int j=0;j<nt;j++) {
     float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);

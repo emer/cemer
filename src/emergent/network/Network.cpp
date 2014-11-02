@@ -130,6 +130,8 @@ void Network::Initialize() {
   ptr_cons_cnt = 0;
   ptr_units_x_cons = 0;
   ptr_cons_mem = NULL;
+  bias_cons_cnt = 0;
+  bias_cons_mem = NULL;
   tmp_chunks = NULL;
   tmp_not_chunks = NULL;
   tmp_con_mem =  NULL;
@@ -547,6 +549,7 @@ void Network::Connect_Alloc_RecvOwns() {
   ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
+  bias_cons_cnt = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
@@ -566,7 +569,7 @@ void Network::Connect_Alloc_RecvOwns() {
       ptr_cons_cnt += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
-      own_cons_cnt += un->bias.OwnMemReq();
+      bias_cons_cnt += un->bias.OwnMemReq();
     }
   }
 
@@ -577,10 +580,17 @@ void Network::Connect_Alloc_RecvOwns() {
   // that it is useful for AVX2
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
   posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
+  if(bias_cons_cnt > 0) {
+    posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+  }
+  else {
+    bias_cons_mem = NULL;
+  }
 
   // then dole it out to the units..
-  int own_cons_idx = 0;
-  int ptr_cons_idx = 0;
+  int64_t own_cons_idx = 0;
+  int64_t ptr_cons_idx = 0;
+  int64_t bias_cons_idx = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
@@ -598,18 +608,14 @@ void Network::Connect_Alloc_RecvOwns() {
       ptr_cons_idx += sc->PtrMemReq();
     }
     if(un->bias.alloc_size == 1) {
-      un->bias.SetMemStart(own_cons_mem, own_cons_idx);
-      own_cons_idx += un->bias.OwnMemReq();
+      un->bias.SetMemStart(bias_cons_mem, bias_cons_idx);
+      bias_cons_idx += un->bias.OwnMemReq();
     }
   }
 }
 
 void Network::Connect_Alloc_SendOwns() {
   const int nu = units_flat.size;
-
-  if(taMisc::is_loading) {
-    taMisc::Info("alloc is loading");
-  }
 
   // first collect total count
   own_cons_cnt = 0;
@@ -618,6 +624,7 @@ void Network::Connect_Alloc_SendOwns() {
   ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
+  bias_cons_cnt = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     if(taMisc::is_loading)      // need to allocate bias during first pass loading, but
@@ -639,7 +646,7 @@ void Network::Connect_Alloc_SendOwns() {
       own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
     }
     if(un->bias.alloc_size == 1) {
-      own_cons_cnt += un->bias.OwnMemReq();
+      bias_cons_cnt += un->bias.OwnMemReq();
     }
   }
 
@@ -650,10 +657,17 @@ void Network::Connect_Alloc_SendOwns() {
   // that it is useful for AVX2
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
   posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
+  if(bias_cons_cnt > 0) {
+    posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+  }
+  else {
+    bias_cons_mem = NULL;
+  }
 
   // then dole it out to the units..
-  int own_cons_idx = 0;
-  int ptr_cons_idx = 0;
+  int64_t own_cons_idx = 0;
+  int64_t ptr_cons_idx = 0;
+  int64_t bias_cons_idx = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
     for(int p=0;p<un->recv.size;p++) {
@@ -671,8 +685,8 @@ void Network::Connect_Alloc_SendOwns() {
       own_cons_idx += sc->OwnMemReq();
     }
     if(un->bias.alloc_size == 1) {
-      un->bias.SetMemStart(own_cons_mem, own_cons_idx);
-      own_cons_idx += un->bias.OwnMemReq();
+      un->bias.SetMemStart(bias_cons_mem, bias_cons_idx);
+      bias_cons_idx += un->bias.OwnMemReq();
     }
   }
 }
@@ -930,6 +944,12 @@ void Network::RemoveCons() {
     ptr_cons_mem = 0;
   }
   ptr_cons_cnt = 0;
+
+  if(bias_cons_mem) {
+    free(bias_cons_mem);
+    bias_cons_mem = 0;
+  }
+  bias_cons_cnt = 0;
 
   StructUpdate(false);
   taMisc::DoneBusy();

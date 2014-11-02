@@ -60,6 +60,7 @@ void LeabraNetStats::Initialize() {
 
 void LeabraNetMisc::Initialize() {
   ti = false;
+  deep5b_cons = false;
   diff_scale_p = false;
   dwt_norm = false;
   lay_gp_inhib = false;
@@ -277,6 +278,7 @@ void LeabraNetwork::Trial_Init_Counters() {
 
 void LeabraNetwork::Trial_Init_Specs() {
   net_misc.ti = false;
+  net_misc.deep5b_cons = false;
   net_misc.dwt_norm = false;
   net_misc.lay_gp_inhib = false;
   net_misc.diff_scale_p = false;
@@ -618,6 +620,17 @@ void LeabraNetwork::TICtxtUpdate() {
 }
 
 void LeabraNetwork::Send_TICtxtNetin() {
+#ifdef CUDA_COMPILE
+  Cuda_Send_TICtxtNetin();
+  const int nu = units_flat.size;
+  // always need to roll up the netinput into unit vals
+  for(int i=1;i<nu;i++) {   // 0 = dummy idx
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    u->Send_TICtxtNetin_Post(this);
+  }
+  return;
+#endif
+
   if(lthreads.CanRun()) {
     lthreads.Run(LeabraThreadMgr::RUN_TI_NETS);
   }
@@ -668,6 +681,7 @@ void LeabraNetwork::Compute_dWt_vecvars() {
   float* avg_l = UnVecVar(AVG_L);
   float* thal =  UnVecVar(THAL);
   float* cos_diff_lmix =  UnVecVar(COS_DIFF_LMIX);
+  float* act_q0 =  UnVecVar(ACT_Q0);
   // float* act_m = UnVecVar(ACT_M);
   // float* act_p = UnVecVar(ACT_P);
 
@@ -678,6 +692,7 @@ void LeabraNetwork::Compute_dWt_vecvars() {
     avg_m[i] = un->avg_m;
     avg_l[i] = un->avg_l;
     thal[i] = un->thal;
+    act_q0[i] = un->act_q0;
 
     LeabraLayer* rlay = un->own_lay();
     cos_diff_lmix[i] = rlay->cos_diff_avg_lmix;
@@ -1054,10 +1069,14 @@ String LeabraNetwork::MemoryReport(bool print) {
 #ifdef CUDA_COMPILE
 
 void LeabraNetwork::Cuda_BuildUnits_Threads() {
-  cuda->AllocCudaArrays(n_units, own_cons_max_size, own_cons_cnt, ptr_cons_cnt,
-                        own_units_x_cons, ptr_units_x_cons,
-                        own_cons_mem, ptr_cons_mem, send_netin_tmp.el, 
-                        unit_vec_vars.el);
+  int send_net_max_prj = 1;
+  if(NetinPerPrjn()) {
+    send_net_max_prj = max_prjns;
+  }
+  cuda->AllocCudaArrays
+    (n_units, own_cons_max_size, own_cons_cnt, ptr_cons_cnt,
+     own_units_x_cons, ptr_units_x_cons, own_cons_mem, ptr_cons_mem,
+     send_netin_tmp.el, send_net_max_prj, send_d5bnet_tmp.el, unit_vec_vars.el);
 
   if(n_units == 0 || own_units_x_cons == 0) return;
 
@@ -1078,6 +1097,7 @@ void LeabraNetwork::Cuda_BuildUnits_Threads() {
       cuda->con_mem_idxs_h[uncn] = sc->mem_idx;
       cuda->con_allocs_h[uncn] = sc->alloc_size;
       cuda->con_sizes_h[uncn] = sc->size;
+      cuda->con_recv_idxs_h[uncn] = sc->recv_idx();
 
       ++uncn;
     }
@@ -1146,8 +1166,9 @@ void LeabraNetwork::Cuda_Send_Netin() {
           if(send_gp->NotActive()) continue;
           LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
           LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-          if(!tol->hard_clamped || !cs->DoesStdNetin()) {
-            // todo: also exclude other conspec types, etc here!
+          if(!tol->hard_clamped && cs->DoesStdNetin()) {
+            // note: all other netin types REQUIRE a CUDA impl because the weights
+            // only live (updated) on the GPU device..
             cuda->cur_units_x_cons_h[cur_snd] = uncn;
             cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
             cur_snd++;
@@ -1165,7 +1186,7 @@ void LeabraNetwork::Cuda_Send_Netin() {
         if(send_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-        if(!tol->hard_clamped || !cs->DoesStdNetin()) {
+        if(!tol->hard_clamped && cs->DoesStdNetin()) {
           cuda->cur_units_x_cons_h[cur_snd] = uncn;
           cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
           cur_snd++;
@@ -1177,10 +1198,117 @@ void LeabraNetwork::Cuda_Send_Netin() {
   }
   cuda->cur_units_x_cons_n = cur_snd;
 
-  cuda->Send_NetinDelta();
+  if(cur_snd > 0) {
+    cuda->Send_NetinDelta();
+  }
+
+  if(net_misc.deep5b_cons) {
+    Cuda_Send_Deep5bNetin();
+  }
 
   cuda_send_netin_time.EndRun();
   cuda_send_netin_time.IncrAvg();
+}
+
+void LeabraNetwork::Cuda_Send_Deep5bNetin() {
+  const int nu = units_flat.size;
+  int cur_snd = 0;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    if(!us->Quarter_Deep5bNow(quarter)) continue;
+    float act_ts = u->act;
+    // note: no delay for 5b
+    // if(us->syn_delay.on) {
+    //   if(!u->act_buf)
+    //     us->Init_ActBuff(u);
+    //   act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
+    // }
+
+    if(act_ts > us->opt_thresh.send) {
+      float act_delta = act_ts - u->d5b_sent;
+      if(fabsf(act_delta) > us->opt_thresh.delta) {
+        int uncn = cuda->unit_starts_h[i];
+        for(int g=0; g<u->send.size; g++) {
+          LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+          if(send_gp->NotActive()) continue;
+          LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+          LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+          if(!tol->hard_clamped && cs->IsDeep5bCon()) {
+            cuda->cur_units_x_cons_h[cur_snd] = uncn;
+            cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
+            cur_snd++;
+          }
+          uncn++;               // needs to track all
+        }
+        u->d5b_sent = act_ts;
+      }
+    }
+    else if(u->d5b_sent > us->opt_thresh.send) {
+      float act_delta = - u->d5b_sent; // un-send the last above-threshold activation to get back to 0
+      int uncn = cuda->unit_starts_h[i];
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        if(send_gp->NotActive()) continue;
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+        if(!tol->hard_clamped && cs->IsDeep5bCon()) {
+          cuda->cur_units_x_cons_h[cur_snd] = uncn;
+          cuda->send_net_acts_h[cur_snd] = act_delta * send_gp->scale_eff;
+          cur_snd++;
+        }
+        uncn++;               // needs to track all
+      }
+      u->d5b_sent = 0.0f;         // now it effectively sent a 0..
+    }
+  }
+  cuda->cur_units_x_cons_n = cur_snd;
+
+  if(cur_snd > 0) {
+    cuda->Send_Deep5bNetinDelta();
+  }
+}
+
+void LeabraNetwork::Cuda_Send_TICtxtNetin() {
+  // cuda_send_netin_time.StartRun(true); // using averaging, so reset used..
+
+  const int nu = units_flat.size;
+  int cur_snd = 0;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    if(!us->Quarter_SendTICtxtNow(quarter))
+      continue;
+    
+    float act_ts = u->act_eq;
+    if(us->cifer_d5b.on) {
+      act_ts *= us->cifer_d5b.ti_5b_c;
+      act_ts += us->cifer_d5b.ti_5b * u->deep5b;
+    }
+
+    if(act_ts > us->opt_thresh.send) {
+      int uncn = cuda->unit_starts_h[i];
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        if(send_gp->NotActive()) continue;
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(cs->IsTICtxtCon()) {
+          cuda->cur_units_x_cons_h[cur_snd] = uncn;
+          cuda->send_net_acts_h[cur_snd] = act_ts * send_gp->scale_eff;
+          cur_snd++;
+        }
+        uncn++;               // needs to track all
+      }
+    }
+  }
+  cuda->cur_units_x_cons_n = cur_snd;
+
+  if(cur_snd > 0) {
+    cuda->Send_TICtxtNetin();
+  }
+
+  // cuda_send_netin_time.EndRun();
+  // cuda_send_netin_time.IncrAvg();
 }
 
 void LeabraNetwork::Cuda_Compute_dWt() {
@@ -1197,24 +1325,31 @@ void LeabraNetwork::Cuda_Compute_dWt() {
         for(int g=0; g<u->send.size; g++) {
           LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
           if(send_gp->NotActive()) continue;
-          // LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
-          // if(!cs->DoesStdDwtNetin()) {
-          // could exclude non-standard here -- def need for TICtxt for example!
-          // this will require a whole separate duplication of this process for each type
-          cuda->cur_units_x_cons_h[cur_snd] = uncn;
-          cur_snd++;
+          LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+          if(cs->DoesStdDwt()) {
+            // exclude non-standard here -- def need for TICtxt for example!
+            // requires a whole separate duplication of this process for each type
+            cuda->cur_units_x_cons_h[cur_snd] = uncn;
+            cur_snd++;
+          }
           uncn++;               // needs to track all
         }
       }
-      // damn bias weights are also allocated on con_mem!!!!  UGH!
-      // LeabraLayer* lay = u->own_lay();
-      // LeabraConSpec* bspc = ((LeabraConSpec*)us->bias_spec.SPtr());
-      // bspc->B_Compute_dWt(&u->bias, u, lay);
+      // bias weights are separate from CUDA
+      LeabraLayer* lay = u->own_lay();
+      LeabraConSpec* bspc = ((LeabraConSpec*)us->bias_spec.SPtr());
+      bspc->B_Compute_dWt(&u->bias, u, lay);
     }
   }
   cuda->cur_units_x_cons_n = cur_snd;
 
-  cuda->Compute_dWt(true);      // sync -- could turn this off later..
+  if(cur_snd > 0) {
+    cuda->Compute_dWt(true);      // sync -- need to do this so compute_weights (or tictxt) is ok..
+  }
+
+  if(net_misc.ti) {
+    Cuda_Compute_dWt_TICtxt();
+  }
 
   cuda_compute_dwt_time.EndRun();
 
@@ -1228,22 +1363,48 @@ void LeabraNetwork::Cuda_Compute_dWt() {
   cuda_compute_dwt_time.IncrAvg();
 }
 
+void LeabraNetwork::Cuda_Compute_dWt_TICtxt() {
+  if(!net_misc.ti) return;
+
+  const int nu = units_flat.size;
+  int cur_snd = 0;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    if(us->Quarter_LearnNow(quarter)) {
+      int uncn = cuda->unit_starts_h[i];
+      for(int g=0; g<u->send.size; g++) {
+        LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+        if(send_gp->NotActive()) continue;
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(cs->IsTICtxtCon()) {
+          cuda->cur_units_x_cons_h[cur_snd] = uncn;
+          cur_snd++;
+        }
+        uncn++;               // needs to track all
+      }
+    }
+  }
+  cuda->cur_units_x_cons_n = cur_snd;
+
+  if(cur_snd > 0) {
+    cuda->Compute_dWt_TICtxt(true);      // sync -- need to do it for compute_weights
+  }
+}
 
 void LeabraNetwork::Cuda_Compute_Weights() {
   cuda_compute_wt_time.StartRun(true); // using averaging, so reset used..
 
-  // damn bias weights are also allocated on con_mem!!!!  UGH!
-  // const int nu = units_flat.size;
-  // for(int i=1; i<nu; i++) {
-  //   LeabraUnit* u = (LeabraUnit*)units_flat[i];
-  //   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
-  //   if(us->Quarter_LearnNow(quarter)) {
-  //     LeabraConSpec* bspc = ((LeabraConSpec*)us->bias_spec.SPtr());
-  //     bspc->B_Compute_Weights(&u->bias, u);
-  //   }
-  // }
+  // bias weights are separate from CUDA
+  const int nu = units_flat.size;
+  for(int i=1; i<nu; i++) {
+    LeabraUnit* u = (LeabraUnit*)units_flat[i];
+    LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
+    LeabraConSpec* bspc = ((LeabraConSpec*)us->bias_spec.SPtr());
+    bspc->B_Compute_Weights(&u->bias, u);
+  }
 
-  cuda->Compute_Weights(true);      // no pre-filtering: run whole thing
+  cuda->Compute_Weights(true);      // sync -- todo: make this a param
 
   cuda_compute_wt_time.EndRun();
   cuda_compute_wt_time.StartWait(true);

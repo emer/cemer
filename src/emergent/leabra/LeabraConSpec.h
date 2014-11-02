@@ -323,6 +323,8 @@ public:
   // #IGNORE compute recv_gp->scale_eff based on params in from layer
   inline virtual bool  DoesStdNetin() { return true; }
   // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required (as for TICtxt and Deep5b)
+  inline virtual bool  DoesStdDwt() { return true; }
+  // #IGNORE does this connection compute a standard XCAL dWt function? if so, it will be included in the CUDA Compute_dWt computation -- otherwise a separate function is required (as for TICtxt)
   inline virtual bool  IsTICtxtCon() { return false; }
   // #IGNORE is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
   inline virtual bool  IsDeep5bCon() { return false; }

@@ -28,5 +28,5 @@ void Deep5bConSpec::GetPrjnName(Projection& prjn, String& nm) {
 
 void Deep5bConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   inherited::Trial_Init_Specs(net);
-  net->net_misc.ti = true;
+  net->net_misc.deep5b_cons = true;
 }
