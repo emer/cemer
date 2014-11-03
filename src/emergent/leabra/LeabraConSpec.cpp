@@ -216,6 +216,7 @@ void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* fro
 }
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  float prv_cur_lrate = cur_lrate;
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
   if(wt_sig.dwt_norm) {
@@ -233,6 +234,9 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
 
   lrs_mult = lrate_sched.GetVal(net->epoch);
   cur_lrate *= lrs_mult;
+  if(cur_lrate != prv_cur_lrate) {
+    net->net_misc.lrate_updtd = true;
+  }
 }
 
 void LeabraConSpec::LogLrateSched(int epcs_per_step, float n_steps) {

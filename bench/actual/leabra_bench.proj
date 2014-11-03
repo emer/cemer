@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7688
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7698
 LeabraProject .projects["leabra_bench"] { 
  Doc_Group @.docs = [0] {
  };
@@ -211,8 +211,11 @@ LeabraProject .projects["leabra_bench"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [1] {
+   EditMbrItem_Group @.mbrs = [4] {
     EditMbrItem @[0] { };
+    EditMbrItem @[1] { };
+    EditMbrItem @[2] { };
+    EditMbrItem @[3] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -319,7 +322,7 @@ LeabraProject .projects["leabra_bench"] {
     ProgVar @["input_data"] { };
    };
 
-   ProgVar_List @.vars = [16] {
+   ProgVar_List @.vars = [17] {
     ProgVar @["train"] { };
     ProgVar @["tag"] { };
     ProgVar @["extra_tag"] { };
@@ -336,6 +339,7 @@ LeabraProject .projects["leabra_bench"] {
     ProgVar @["EpochOutputData"] { };
     ProgVar @["TrialOutputData"] { };
     ProgVar @["BenchTimeOut"] { };
+    ProgVar @["control_panel"] { };
    };
 
    Function_List @.functions = [0] {
@@ -344,7 +348,7 @@ LeabraProject .projects["leabra_bench"] {
    ProgEl_List @.init_code = [0] {
    };
 
-   ProgEl_List @.prog_code = [31] {
+   ProgEl_List @.prog_code = [32] {
     IfReturn @[0] { };
     Comment @[1] { };
     MiscCall @[2] { 
@@ -387,8 +391,9 @@ LeabraProject .projects["leabra_bench"] {
     Comment @[18] { };
     AssignExpr @[19] { };
     AssignExpr @[20] { };
-    Comment @[21] { };
-    MethodCall @[22] { 
+    ControlPanelsFmArgs @[21] { };
+    Comment @[22] { };
+    MethodCall @[23] { 
      ProgArg_List @.meth_args = [4] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -396,26 +401,7 @@ LeabraProject .projects["leabra_bench"] {
       ProgArg @[3] { };
      };
     };
-    OtherProgramVar @[23] { };
-    If @[24] { 
-     ProgEl_List @.true_code = [2] {
-      MethodCall @[0] { 
-       ProgArg_List @.meth_args = [4] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-	ProgArg @[3] { };
-       };
-      };
-      MethodCall @[1] { 
-       ProgArg_List @.meth_args = [3] {
-	ProgArg @[0] { };
-	ProgArg @[1] { };
-	ProgArg @[2] { };
-       };
-      };
-     };
-    };
+    OtherProgramVar @[24] { };
     If @[25] { 
      ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
@@ -435,22 +421,41 @@ LeabraProject .projects["leabra_bench"] {
       };
      };
     };
-    OtherProgramVar @[26] { };
-    PrintExpr @[27] { };
-    ProgramCall @[28] { 
+    If @[26] { 
+     ProgEl_List @.true_code = [2] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [3] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+       };
+      };
+     };
+    };
+    OtherProgramVar @[27] { };
+    PrintExpr @[28] { };
+    ProgramCall @[29] { 
      ProgArg_List @.prog_args = [2] {
       ProgArg @[0] { };
       ProgArg @[1] { };
      };
     };
-    ProgramCall @[29] { 
+    ProgramCall @[30] { 
      ProgArg_List @.prog_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
       ProgArg @[2] { };
      };
     };
-    ProgramCall @[30] { 
+    ProgramCall @[31] { 
      ProgArg_List @.prog_args = [3] {
       ProgArg @[0] { };
       ProgArg @[1] { };
@@ -3263,6 +3268,63 @@ LeabraProject .projects["leabra_bench"] {
       saved_value=;
      };
     };
+    EditMbrItem @[1] {
+     label="min_threads";
+     desc="[Default: 32]  minuimum number of CUDA threads to allocate per block (sending group of connections) -- must be a multiple of 32 (i.e., min of 32) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number";
+     cust_desc=0;
+     base=.projects["leabra_bench"].networks["BenchNet_5lay"].cuda$$;
+     mbr=LeabraCudaSpec::min_threads;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
+    EditMbrItem @[2] {
+     label="max_threads";
+     desc="[Default: 256]  maximum number of CUDA threads to allocate per block (sending group of connections) -- actual size will be determined at run-time as function of max number of connections per connection group / cons_per_thread -- for modern cards (compute capability 2.0 or higher) the max is 1024, but in general you might need to experiment to find the best performing number for your card and network, and interactionwith cons_per_thread -- to specify an exact number of threads, just set min and max_threads to the same number";
+     cust_desc=0;
+     base=$.projects["leabra_bench"].networks["BenchNet_5lay"].cuda$;
+     mbr=LeabraCudaSpec::max_threads;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
+    EditMbrItem @[3] {
+     label="cons_per_thread";
+     desc="[Default: 1:8]  when computing number of threads to use, divide max number of connections per unit by this number, and then round to nearest multiple of 32, subject to the min and max_threads constraints";
+     cust_desc=0;
+     base=$.projects["leabra_bench"].networks["BenchNet_5lay"].cuda$;
+     mbr=LeabraCudaSpec::cons_per_thread;
+     is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
    };
    mths {
     name="mths";
@@ -3398,8 +3460,7 @@ LeabraProject .projects["leabra_bench"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [10] 0;1;2;3;4;5;6;7;8;9;
-    };
+    [0]     };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -3533,11 +3594,11 @@ LeabraProject .projects["leabra_bench"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -4035,6 +4096,17 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      desc=;
      init_from=NULL;
     };
+    ProgVar @["control_panel"] {
+     name="control_panel";
+     var_type=T_Object;
+     object_type=ControlPanel;
+     object_val=.projects["leabra_bench"].ctrl_panels["ControlPanel"]$$;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
    };
    functions {
     name="functions";
@@ -4306,12 +4378,18 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       expr="tag + extra_tag";
      };
     };
-    Comment @[21] {
+    ControlPanelsFmArgs @[21] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     ctrl_panel_var=.projects["leabra_bench"].programs["LeabraStartup"].vars["control_panel"]$$;
+    };
+    Comment @[22] {
      desc="Set log files";
      flags=0;
      orig_prog_code=;
     };
-    MethodCall @[22] {
+    MethodCall @[23] {
      desc="last arg is to include dmem proc number";
      flags=0;
      orig_prog_code=;
@@ -4370,7 +4448,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
     };
-    OtherProgramVar @[23] {
+    OtherProgramVar @[24] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4381,7 +4459,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_3=NULL;
      var_4=NULL;
     };
-    If @[24] {
+    If @[25] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4501,7 +4579,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    If @[25] {
+    If @[26] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4621,7 +4699,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
       };
      };
     };
-    OtherProgramVar @[26] {
+    OtherProgramVar @[27] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4632,7 +4710,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      var_3=NULL;
      var_4=NULL;
     };
-    PrintExpr @[27] {
+    PrintExpr @[28] {
      desc=;
      flags=OFF;
      orig_prog_code=;
@@ -4642,7 +4720,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      my_mask=NULL;
      debug_level=NULL;
     };
-    ProgramCall @[28] {
+    ProgramCall @[29] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4676,7 +4754,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      target=.projects["leabra_bench"].programs["ResizeNetwork"]$$;
      targ_ld_init="*ResizeNetwork*";
     };
-    ProgramCall @[29] {
+    ProgramCall @[30] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4721,7 +4799,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      target=.projects["leabra_bench"].programs["MakeRndInputData"]$$;
      targ_ld_init="*MakeRndInputData*";
     };
-    ProgramCall @[30] {
+    ProgramCall @[31] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -4804,7 +4882,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
     ProgVar @["n_units"] {
      name="n_units";
      var_type=T_Int;
-     int_val=1024;
+     int_val=100;
      objs_ptr=0;
      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
      reference=0;
@@ -10270,7 +10348,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 6 0=0.04135737195611;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -11059,6 +11137,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=32: y=32: z=5: };
    max_disp_size2d {x=84: y=134: };
+   cuda {
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
+    timers_on=0;
+   };
    lthreads {
     run_time {name="": s_used=15.638101: n_used=280: avg_used={avg=0: sum=0: n=0: }: };
     sync_time {name="": s_used=0.005048: n_used=280: avg_used={avg=0: sum=0: n=0: }: };
@@ -11069,7 +11153,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     wake_in_sync_pct=1.751378773260958e+190;
     quarter=1;
     unit_chunks=32;
-    timers_on=1;
+    timers_on=0;
    };
    times {
     quarter=25;
@@ -11086,6 +11170,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    net_misc {
     ti=0;
+    deep5b_cons=0;
     diff_scale_p=0;
     dwt_norm=0;
     lay_gp_inhib=0;

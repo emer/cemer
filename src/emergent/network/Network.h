@@ -201,6 +201,7 @@ public:
   int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
   int           own_units_x_cons; // #HIDDEN #NO_SAVE number of owning units * con groups that are stored in own_cons_mem
   int           own_cons_max_size; // #HIDDEN #NO_SAVE maximum alloc_size of any owning connection group -- for allocating temp structures..
+  int           own_cons_avg_size; // #HIDDEN #NO_SAVE average size of any owning connection group -- for optimizing computation
   int           own_cons_max_vars; // #HIDDEN #NO_SAVE maximum NConVars of any owning connection group -- for allocating temp structures..
   float         pct_cons_vec_chunked; // #READ_ONLY #NO_SAVE #SHOW average percent of connections that are vector chunked (across owned projections and units)
   float*        own_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
@@ -304,6 +305,11 @@ public:
 
   virtual void  FixPrjnIndexes();
   // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
+
+  virtual void  GetWeightsFromGPU() { };
+  // #IGNORE this is called before any network-level function that operates on the weights (except Init_Weights()) -- overload to get weights back from a GPU device (e.g., CUDA)
+  virtual void  SendWeightsToGPU() { };
+  // #IGNORE this is called after any network-level function that operates on the weights -- overload to send weights to the GPU device (e.g., CUDA)
 
   virtual void  Copy_Weights(const Network* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other network (incl wts assoc with unit bias member)

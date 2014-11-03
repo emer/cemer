@@ -29,8 +29,10 @@ LeabraConSpecCuda::~LeabraConSpecCuda() {
 void LeabraConSpecCuda::Initialize() {
   n_units = 0;
   own_cons_max_size = 0;
-  thread_chunk_sz = 8;
-  max_threads = 0;
+  own_cons_avg_size = 0;
+  min_threads = 32;
+  max_threads = 1024;
+  cons_per_thread = 2;
   n_threads = 256;
   own_cons_cnt = 0;
   ptr_cons_cnt = 0;
@@ -149,39 +151,51 @@ void LeabraConSpecCuda::FreeCudaArrays() {
 }
 
 void LeabraConSpecCuda::AllocCudaArrays
-(int n_un, int own_cons_max_sz, bigint own_cnt, bigint ptr_cnt,
- int own_units_x, int ptr_units_x, 
- float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp, int send_net_max_prj,
- float* send_d5bnet_tmp, float* unit_vec_vars)
+(int n_un, int min_th, int max_th, int cons_per_th, int own_cons_max_sz,
+ int own_cons_avg_sz, bigint own_cnt, bigint ptr_cnt, int own_units_x, int ptr_units_x, 
+ float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
+ int send_net_max_prj, float* send_d5bnet_tmp, float* unit_vec_vars)
 {
-  if(n_un == n_units && own_units_x == own_units_x_cons && own_cnt == own_cons_cnt)
-    return;                     // already allocated
+  bool already_alloc = false;
+  if(n_un == n_units && own_units_x == own_units_x_cons && own_cnt == own_cons_cnt) {
+    already_alloc = true;
+  }
 
-  FreeCudaArrays();
+  if(!already_alloc) {
+    FreeCudaArrays();
+  }
 
   if(n_un == 0 || own_units_x == 0)
     return;
 
-  cudaStreamCreate(&strm_updt_cons);
-  cudaStreamCreate(&strm_send_netin);
-  cudaStreamCreate(&strm_compute_dwt);
-  cudaStreamCreate(&strm_compute_wt);
-  strms_created = true;
+  if(!already_alloc) {
+    cudaStreamCreate(&strm_updt_cons);
+    cudaStreamCreate(&strm_send_netin);
+    cudaStreamCreate(&strm_compute_dwt);
+    cudaStreamCreate(&strm_compute_wt);
+    strms_created = true;
 
-  n_units = n_un;
+    n_units = n_un;
+  }
+
   own_cons_max_size = own_cons_max_sz;
-  thread_chunk_sz = 8;
-  max_threads = own_cons_max_size / thread_chunk_sz;
+  own_cons_avg_size = own_cons_avg_sz;
+  min_threads = min_th;
+  max_threads = max_th;
+  cons_per_thread = cons_per_th;
 
   // docs on number of threads: http://docs.nvidia.com/cuda/cuda-c-best-practices-guide/index.html#execution-configuration-optimizations
 
-  int mod32 = max_threads % 32;
-  if(mod32 != 0)
-    n_threads = ((max_threads / 32) + 1) * 32;
+  n_threads = (int)round((float)own_cons_avg_size / (float)cons_per_thread);
+  int mod32 = n_threads % 32;
+  if(mod32 > 15)                // round up
+    n_threads = ((n_threads / 32) + 1) * 32;
   else
+    n_threads = (n_threads / 32) * 32;
+  if(n_threads < min_threads)
+    n_threads = min_threads;
+  if(n_threads > max_threads)
     n_threads = max_threads;
-  if(n_threads > 256)
-    n_threads = 256;
 
   own_cons_cnt = own_cnt;
   ptr_cons_cnt = ptr_cnt;
@@ -194,6 +208,10 @@ void LeabraConSpecCuda::AllocCudaArrays
   send_net_max_prjns = send_net_max_prj;
   send_d5bnet_tmp_h = send_d5bnet_tmp;
   unit_vec_vars_h = unit_vec_vars;
+
+  if(already_alloc) {
+    return;
+  }
 
   units_h = (int*)malloc(own_units_x_cons * sizeof(int));
   cudaSafeCall(cudaMalloc(&units_d, own_units_x_cons * sizeof(int)));

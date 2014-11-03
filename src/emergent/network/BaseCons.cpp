@@ -79,6 +79,12 @@ void BaseCons::Copy_(const BaseCons& cp) {
 void BaseCons::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
+  // just to be sure!
+  if(CheckError(sizeof(int) != sizeof(float), quiet, rval,
+                "Fatal platform build incompatibility (internal error): sizeof(int) != sizeof(float) -- this should not happen -- please report this issue!")) {
+    return;                     // fatal!
+  }
+
   if(CheckError(!GetConSpec(), quiet, rval, "No con spec set")) {
     return;                     // fatal!
   }
@@ -204,7 +210,7 @@ int BaseCons::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
   }
   warned_already = false;
   int rval = size;
-  UnIdx(size++) = (int32_t)un->flat_idx;
+  UnIdx(size++) = (int)un->flat_idx;
   return rval;
 }
 
@@ -225,7 +231,7 @@ bool BaseCons::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
   }
   warned_already = false;
   PtrCnIdx(size) = con_idx;
-  UnIdx(size++) = (int32_t)un->flat_idx;
+  UnIdx(size++) = (int)un->flat_idx;
   return true;
 }
 
@@ -614,7 +620,7 @@ int BaseCons::VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
 
   int first_change = -1;
   for(i=0; i<size; i++) {
-    if(UnIdx(i) != ((int32_t*)tmp_con_mem)[i]) {
+    if(UnIdx(i) != ((int*)tmp_con_mem)[i]) {
       first_change = i;
       break;
     }

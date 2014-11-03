@@ -120,9 +120,11 @@ public:
   };
 
   int           n_units;          // total number of units in network flat list
-  int           own_cons_max_size; // helps determine number of threads
-  int           thread_chunk_sz;  // should be same as BaseCons::vec_chunked_size = 8
-  int           max_threads;       // own_cons_max_size / thread_chunk_size
+  int           own_cons_max_size; // max number of cons per con group: helps determine number of threads
+  int           own_cons_avg_size; // avg number of cons per con group: helps determine number of threads
+  int           min_threads;       // from LeabraCudaSpec::min_threads
+  int           max_threads;       // from LeabraCudaSpec::max_threads
+  int           cons_per_thread;   // from LeabraCudaSpec::cons_per_thread
   int           n_threads;         // actual number of threads to use -- multiple of 32
   bigint        own_cons_cnt;   // number of floats to allocate to own_cons
   bigint        ptr_cons_cnt;   // number of floats to allocate to ptr_cons
@@ -175,8 +177,8 @@ public:
   { return own_cons_mem_d + con_mem_idxs_d[uncon] + (con_allocs_d[uncon] * (1 + var_no)); }
   // illustration for how to access connection variable in compute code: access connection variable for unit x con, variable
 
-  inline int32_t  UnIdx(int uncon, int idx) const
-  { return ((int32_t*)(own_cons_mem_d + con_mem_idxs_d[uncon]))[idx]; }
+  inline int      UnIdx(int uncon, int idx) const
+  { return ((int*)(own_cons_mem_d + con_mem_idxs_d[uncon]))[idx]; }
   // illustration for how to access access recv unit idx for unit x con
 
   inline float&   ConParam_h(int uncon, int param_no)
@@ -185,8 +187,9 @@ public:
 
   
   void  AllocCudaArrays
-  (int n_un, int own_cons_max_sz, bigint own_cnt, bigint ptr_cnt, int own_units_x,
-   int ptr_units_x, float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
+  (int n_un, int min_th, int max_th, int cons_per_th, int own_cons_max_sz,
+   int own_cons_avg_sz, bigint own_cnt, bigint ptr_cnt, int own_units_x, int ptr_units_x,
+   float* own_cons_mem, float* ptr_cons_mem, float* send_netin_tmp,
    int send_net_max_prj, float* send_d5bnet_tmp, float* unit_vec_vars);
   // allocate arrays based on parameters from network, called after network modifications
 

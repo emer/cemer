@@ -42,15 +42,15 @@ class DataTable; //
 
 // Memory structure for connection owners =
 // block of (con_type->members.size + 1) * sizeof(float) * alloc_size
-// where sizeof(float) *better be* same size as int32_t (4 bytes, 32 bits)
+// where sizeof(float) *better be* same size as int (4 bytes, 32 bits)
 //
-// int32_t unit_idxs = mem_start[0..alloc_size-1]  // we have to cast from the float*
+// int unit_idxs = mem_start[0..alloc_size-1]  // we have to cast from the float*
 // float   con_val1 =  mem_start[alloc_size .. 2*alloc_size -1]
 // float   con_val2..
 
-// Memory for connection pointers = block of 2 * sizeof(int32_t) * alloc_size
-// int32_t unit_idxs = mem_start[0..alloc_size-1]
-// int32_t con_idxs = mem_start[alloc_size .. 2*alloc_size -1]
+// Memory for connection pointers = block of 2 * sizeof(int) * alloc_size
+// int unit_idxs = mem_start[0..alloc_size-1]
+// int con_idxs = mem_start[alloc_size .. 2*alloc_size -1]
 
 eTypeDef_Of(BaseCons);
 
@@ -175,11 +175,11 @@ public:
   { return mem_start[(alloc_size * (1 + var_no)) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
-  inline const int32_t& UnIdx(int idx) const
-  { return ((int32_t*)mem_start)[idx]; }
+  inline const int& UnIdx(int idx) const
+  { return ((int*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
-  inline int32_t&       UnIdx(int idx)
-  { return ((int32_t*)mem_start)[idx]; }
+  inline int&       UnIdx(int idx)
+  { return ((int*)mem_start)[idx]; }
   // #CAT_Access fast access (no range checking) to unit flat index at given connection index
   inline Unit*          Un(int idx, Network* net) const;
   // #IGNORE #CAT_Access fast access (no range checking) to unit pointer at given connection index (goes through flat index at network level) -- this is the unit on the other end of this connection 
@@ -196,11 +196,11 @@ public:
   inline BaseCons*      SafeUnCons(int idx, Network* net) const;
   // #IGNORE get BaseCons for this projection in unit at given index at other end of this connection -- uses safe access
 
-  inline const int32_t& PtrCnIdx(int idx) const
-  { return ((int32_t*)mem_start)[alloc_size + idx]; }
+  inline const int& PtrCnIdx(int idx) const
+  { return ((int*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
-  inline int32_t&       PtrCnIdx(int idx)
-  { return ((int32_t*)mem_start)[alloc_size + idx]; }
+  inline int&       PtrCnIdx(int idx)
+  { return ((int*)mem_start)[alloc_size + idx]; }
   // #CAT_Access fast access (no range checking) to index of connection within unit cons on other side of connection 
 
   inline float&         PtrCn(int idx, int var_no, Network* net) const

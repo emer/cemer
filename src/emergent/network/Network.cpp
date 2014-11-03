@@ -125,6 +125,7 @@ void Network::Initialize() {
   own_units_x_cons = 0;
   own_cons_mem = NULL;
   own_cons_max_size = 0;
+  own_cons_avg_size = 0;
   own_cons_max_vars = 0;
   pct_cons_vec_chunked = 0.0f;
   ptr_cons_cnt = 0;
@@ -549,6 +550,7 @@ void Network::Connect_Alloc_RecvOwns() {
   ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
+  float ocsum = 0.0f;
   bias_cons_cnt = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
@@ -560,6 +562,7 @@ void Network::Connect_Alloc_RecvOwns() {
       own_cons_cnt += rc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, rc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, rc->NConVars());
+      ocsum += rc->alloc_size;
     }
     for(int p=0;p<un->send.size;p++) {
       SendCons* sc = un->send[p];
@@ -574,6 +577,8 @@ void Network::Connect_Alloc_RecvOwns() {
   }
 
   if(own_cons_cnt == 0 || ptr_cons_cnt == 0) return; // something is wrong..
+
+  own_cons_avg_size = round(ocsum / (float)own_units_x_cons);
 
   // use posix_memalign to ensure that for this monster, we've got maximum possible
   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
@@ -624,6 +629,7 @@ void Network::Connect_Alloc_SendOwns() {
   ptr_units_x_cons = 0;
   own_cons_max_size = 0;
   own_cons_max_vars = 0;
+  float ocsum = 0.0f;
   bias_cons_cnt = 0;
   for(int i=1;i<nu;i++) {     // 0 = dummy idx
     Unit* un = units_flat[i];
@@ -644,6 +650,7 @@ void Network::Connect_Alloc_SendOwns() {
       own_cons_cnt += sc->OwnMemReq();
       own_cons_max_size = MAX(own_cons_max_size, sc->alloc_size);
       own_cons_max_vars = MAX(own_cons_max_vars, sc->NConVars());
+      ocsum += sc->alloc_size;
     }
     if(un->bias.alloc_size == 1) {
       bias_cons_cnt += un->bias.OwnMemReq();
@@ -651,6 +658,8 @@ void Network::Connect_Alloc_SendOwns() {
   }
 
   if(own_cons_cnt == 0 || ptr_cons_cnt == 0) return; // something is wrong..
+
+  own_cons_avg_size = (int)round(ocsum / (float)own_units_x_cons);
 
   // use posix_memalign to ensure that for this monster, we've got maximum possible
   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
@@ -1012,6 +1021,7 @@ void Network::Init_Weights() {
 
   // taMisc::Info("Done Init_Weights...");
 
+  SendWeightsToGPU();
   taMisc::DoneBusy();
 }
 
@@ -1622,6 +1632,7 @@ void Network::DMem_ComputeAggs(MPI_Comm comm) {
 
 void Network::Copy_Weights(const Network* src) {
   taMisc::Busy();
+  GetWeightsFromGPU();
   Layer* l, *sl;
   taLeafItr i,si;
   for(l = (Layer*)layers.FirstEl(i), sl = (Layer*)src->layers.FirstEl(si);
@@ -1631,12 +1642,14 @@ void Network::Copy_Weights(const Network* src) {
     if(!l->lesioned() && !sl->lesioned())
       l->Copy_Weights(sl);
   }
+  SendWeightsToGPU();
   UpdateAllViews();
   taMisc::DoneBusy();
 }
 
 void Network::SaveWeights_strm(ostream& strm, Network::WtSaveFormat fmt) {
   taMisc::Busy();
+  GetWeightsFromGPU();
   if(fmt == NET_FMT) fmt = wt_save_fmt;
 
   strm << "<Fmt " << GetTypeDef()->GetEnumString("WtSaveFormat", fmt) << ">\n"
@@ -1703,6 +1716,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   // could try to read end tag but what is the point?
   rval = true;
   UpdateAllViews();
+  SendWeightsToGPU();
 exit:
   taMisc::DoneBusy();
   return true;
@@ -1982,20 +1996,24 @@ void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_labe
 
 void Network::TransformWeights(const SimpleMathSpec& trans) {
   taMisc::Busy();
+  GetWeightsFromGPU();
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->TransformWeights(trans);
   }
+  SendWeightsToGPU();
   UpdateAllViews();
   taMisc::DoneBusy();
 }
 
 void Network::AddNoiseToWeights(const Random& noise_spec) {
   taMisc::Busy();
+  GetWeightsFromGPU();
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(!l->lesioned())
       l->AddNoiseToWeights(noise_spec);
   }
+  SendWeightsToGPU();
   UpdateAllViews();
   taMisc::DoneBusy();
 }
@@ -2208,6 +2226,7 @@ int Network::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
 DataTable* Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_lay)
 {
   if(recv_lay == NULL) return NULL;
+  GetWeightsFromGPU();
   return recv_lay->WeightsToTable(dt, send_lay);
 }
 
@@ -2239,6 +2258,7 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
                              const String& var9, const String& var10, const String& var11,
                              const String& var12, const String& var13, const String& var14) {
   bool new_table = false;
+  GetWeightsFromGPU();
   if(!dt) {
     taProject* proj = GET_MY_OWNER(taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
@@ -2311,6 +2331,8 @@ static bool net_project_wts_propagate(Network* net, Unit* u, bool swt) {
 void Network::ProjectUnitWeights(Unit* src_u, int top_k_un, int top_k_gp, bool swt,
                                  bool zero_sub_hiddens) {
   if(!src_u) return;
+
+  GetWeightsFromGPU();
 
   float_Matrix topk_un_vec;             // for computing kwta
   float_Matrix topk_gp_vec;             // for computing kwta

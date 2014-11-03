@@ -204,9 +204,6 @@ public:
     RUN_WT,                     // Compute_Weights()
   };
 
-#ifdef CUDA_COMPILE
-  bool          cuda_get_wts;   // #NO_SAVE for NVIDIA CUDA computation, get the dwt and wt values back from the GPU after they are updated there -- for debugging and display purposes only -- GREATLY slows down processing!
-#endif
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   bool          quarter;        // #DEF_true run an entire quarter-trial of cycles per each Cycle thread call 
   int           unit_chunks;    // #MIN_1 #DEF_32 how many units to bite off for each thread off of the list at a time
