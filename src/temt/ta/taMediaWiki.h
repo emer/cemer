@@ -23,7 +23,6 @@
 
 // declare all other types mentioned but not required to include:
 class DataTable; //
-class QByteArray; //
 
 
 taTypeDef_Of(taMediaWiki);
@@ -39,8 +38,8 @@ public:
   static String GetApiURL(const String& wiki_name);
   // #CAT_Wiki gets the url for the wiki api
 
-  static QByteArray GetEditToken(const String& wiki_name);
-  // #IGNORE #CAT_Wiki return a QByteArray containing a percent-encoded edit token for the wiki (needed to make push requests to the API) -- on failure, return an empty QByteArray
+  static String GetEditToken(const String& wiki_name);
+  // #CAT_Wiki return a QByteArray containing a percent-encoded edit token for the wiki (needed to make push requests to the API) -- on failure, return an empty QByteArray
 
   /////////////////////////////////////////////////////
   //            Account operations
@@ -71,11 +70,11 @@ public:
   /////////////////////////////////////////////////////
   //            Upload/Download operations
 
-  static bool   UploadFile(const String& wiki_name, const String& file_name,
+  static bool   UploadFile(const String& wiki_name, const String& local_file_name,
                            const String& wiki_file_name="");
   // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
 
-  static bool   DownloadFile(const String& wiki_name, const String& file_name,
+  static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
                              const String& local_file_name="");
   // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki
 

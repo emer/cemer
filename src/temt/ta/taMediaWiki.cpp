@@ -78,12 +78,12 @@ String taMediaWiki::GetApiURL(const String& wiki_name)
   return wiki_url + "/api.php";
 }
 
-QByteArray taMediaWiki::GetEditToken(const String& wiki_name)
+String taMediaWiki::GetEditToken(const String& wiki_name)
 {
-  // #CAT_Wiki Return a QByteArray containing a percent-encoded edit token for the wiki (needed to make push requests to the API) -- on failure, return an empty QByteArray.
+  // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return NULL.
   
   String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) { return QByteArray(); }
+  if (wikiUrl.empty()) { return _nilString; }
 
   QUrl url(wikiUrl);
 
@@ -104,7 +104,7 @@ QByteArray taMediaWiki::GetEditToken(const String& wiki_name)
   if (QNetworkReply *reply = request.httpPost(url)) {
 
     QXmlStreamReader reader(reply);
-    if(reader.hasError()) { return NULL; }
+    if(reader.hasError()) { return _nilString; }
 
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -112,12 +112,12 @@ QByteArray taMediaWiki::GetEditToken(const String& wiki_name)
         QString token = attrs.value("edittoken").toString();
         if(!token.isEmpty()) {
           taMisc::Info("Edit token retrieval successful");
-          return QUrl::toPercentEncoding(token);
+          return token.toUtf8().constData();
         }
       }
     }
   }
-  return NULL;
+  return _nilString;
 }
 
 /////////////////////////////////////////////////////
@@ -246,7 +246,7 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
         taMisc::DebugInfo("Performing 2-stage login to", wiki_name, "wiki.");
 #if (QT_VERSION >= 0x050000)
         urq.addQueryItem("lgtoken", attrs.value("token").toString());
-  url.setQuery(urq);
+        url.setQuery(urq);
 #else
         url.addQueryItem("lgtoken", attrs.value("token").toString());
 #endif
@@ -398,7 +398,7 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 {
   // #CAT_Page Create given page on the wiki and populate it with given content.
 
-  QByteArray token = GetEditToken(wiki_name);
+  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
   if (token.isEmpty()) { return false; }
 
   String wikiUrl = GetApiURL(wiki_name);
@@ -481,43 +481,35 @@ bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
 /////////////////////////////////////////////////////
 //              Upload/Download operations
 
-bool taMediaWiki::UploadFile(const String& wiki_name, const String& file_name,
+bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name,
                              const String& wiki_file_name)
 {
   // #CAT_File Upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally.
 
-  String out_file_name;
+  String file_name;
 
-  if (wiki_file_name.empty()) { out_file_name = file_name; }
-  else { out_file_name = wiki_file_name; }
+  if (wiki_file_name.empty()) {
+    file_name = local_file_name;
+    file_name = file_name.FileToCamel();
+    taMisc::Info("Converted destination filename from", local_file_name, "to", file_name);
+  }
+  else {
+    file_name = wiki_file_name;
+    file_name = file_name.FileToCamel();
+    taMisc::Info("Converted destination filename from", wiki_file_name, "to", file_name);
+  }
 
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
 
-  QByteArray token = GetEditToken(wiki_name);
-  if (token.isEmpty()) { return false; }
+  String token = GetEditToken(wiki_name);
+  if (token.empty()) { return false; }
 
   QUrl url(wikiUrl);
 
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "upload");
-  urq.addQueryItem("filename", out_file_name);
-  urq.addQueryItem("file", ""); // TODO: Figure out how to parse file contents
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("token", token);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "upload");
-  url.addQueryItem("filename", out_file_name);
-  url.addQueryItem("file", ""); // TODO: Figure out how to parse file contents
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("token", token);
-#endif
-
   // Make the network request.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
+  if (QNetworkReply *reply = request.httpMultiPost(url, local_file_name, token)) {
     QXmlStreamReader reader(reply);
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -546,19 +538,27 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& file_name,
       }
     }
   }
-  taMisc::Warning("File upload request failed -- check the page name");
+  taMisc::Warning("File upload request failed");
   return false;
 }
 
-bool taMediaWiki::DownloadFile(const String& wiki_name, const String& file_name,
+bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
                                const String& local_file_name)
 {
   // #CAT_File Download given file name from wiki, optionally giving it a different file name than what it was on the wiki.
 
-  // String in_file_name;
+  // String file_name;
 
-  // if(local_file_name.empty()) { in_file_name = file_name.toCamel(); }
-  // else { in_file_name = local_file_name.toCamel(); }
+  // if (local_file_name.empty()) {
+  //   file_name = wiki_file_name;
+  //   file_name = file_name.toCamel();
+  //   taMisc::Info("Converted destination filename from", wiki_file_name, "to", file_name);
+  // }
+  // else {
+  //   file_name = local_file_name;
+  //   file_name = file_name.toCamel();
+  //   taMisc::Info("Converted destination filename from", local_file_name, "to", file_name);
+  // }
   
   // STUB
 
