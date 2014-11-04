@@ -164,7 +164,7 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *da
   return getReplyIfSuccess();
 }
 
-QNetworkReply * iSynchronousNetRequest::httpMultiPost(const QUrl &url, const char *filename, const char *token)
+QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token)
 {
   reset();
   QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
@@ -174,7 +174,7 @@ QNetworkReply * iSynchronousNetRequest::httpMultiPost(const QUrl &url, const cha
   actionPart.setBody("upload");
 
   filenamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"filename\""));
-  filenamePart.setBody(filename);
+  filenamePart.setBody(wiki_filename);
 
   formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
   formatPart.setBody("xml");
@@ -182,11 +182,12 @@ QNetworkReply * iSynchronousNetRequest::httpMultiPost(const QUrl &url, const cha
   tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
   tokenPart.setBody(token);
 
+  String fileDisp = ((String) "form-data; name=\"file\"; filename=\"") << ((String) wiki_filename) << ((String) "\"");
   filePart.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-  filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"Test.txt\""));
-  QFile *file = new QFile(filename);
+  filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(fileDisp.chars()));
+  QFile *file = new QFile(local_filename);
   if (!file->open(QIODevice::ReadOnly)) {
-    taMisc::Warning("iSynchronousNetRequest: could not open file", filename);
+    taMisc::Warning("iSynchronousNetRequest: could not open file", local_filename);
     return 0;
   }
   filePart.setBodyDevice(file);
