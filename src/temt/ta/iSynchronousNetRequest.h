@@ -27,6 +27,7 @@
 // declare all other types mentioned but not required to include:
 class QNetworkAccessManager;
 class QNetworkReply;
+class QByteArray;
 class QUrl;
 
 // This class provides a synchronous way to perform HTTP requests.
@@ -54,6 +55,7 @@ public:
   QNetworkReply * httpPost(const QUrl &url);
   QNetworkReply * httpPost(const QUrl &url, const char *filename);
   QNetworkReply * httpPost(const QUrl &url, const char *data, int size);
+  QNetworkReply * httpMultiPost(const QUrl &url, const char *filename, const char *token);
 
   QNetworkReply * getReply();
   QNetworkReply * getReplyIfSuccess();

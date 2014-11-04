@@ -20,7 +20,8 @@
 #include <iNetworkAccessManager>
 #include <Program>
 
-
+#include <QHttpPart>
+#include <QHttpMultiPart>
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
@@ -159,6 +160,48 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *da
   request.setHeader(
     QNetworkRequest::ContentTypeHeader, "application/octet-stream");
   m_reply = m_netManager->post(request, byteArray);
+  waitForReply();
+  return getReplyIfSuccess();
+}
+
+QNetworkReply * iSynchronousNetRequest::httpMultiPost(const QUrl &url, const char *filename, const char *token)
+{
+  reset();
+  QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
+  QHttpPart actionPart, filenamePart, filePart, formatPart, tokenPart;
+
+  actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
+  actionPart.setBody("upload");
+
+  filenamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"filename\""));
+  filenamePart.setBody(filename);
+
+  formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
+  formatPart.setBody("xml");
+
+  tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
+  tokenPart.setBody(token);
+
+  filePart.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
+  filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"file\"; filename=\"Test.txt\""));
+  QFile *file = new QFile(filename);
+  if (!file->open(QIODevice::ReadOnly)) {
+    taMisc::Warning("iSynchronousNetRequest: could not open file", filename);
+    return 0;
+  }
+  filePart.setBodyDevice(file);
+  file->setParent(multiPart);
+
+  multiPart->append(actionPart);
+  multiPart->append(filenamePart);
+  multiPart->append(filePart);
+  multiPart->append(formatPart);
+  multiPart->append(tokenPart);
+
+  // Make HTTP POST request, wait for reply.
+  QNetworkRequest request(url);
+  m_reply = m_netManager->post(request, multiPart);
+  multiPart->setParent(m_reply);
   waitForReply();
   return getReplyIfSuccess();
 }
