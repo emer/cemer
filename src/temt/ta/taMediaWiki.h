@@ -39,7 +39,7 @@ public:
   // #CAT_Wiki gets the url for the wiki api
 
   static String GetEditToken(const String& wiki_name);
-  // #CAT_Wiki return a QByteArray containing a percent-encoded edit token for the wiki (needed to make push requests to the API) -- on failure, return an empty QByteArray
+  // #CAT_Wiki return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return an empty String
 
   /////////////////////////////////////////////////////
   //            Account operations

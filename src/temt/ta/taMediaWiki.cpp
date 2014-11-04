@@ -80,7 +80,7 @@ String taMediaWiki::GetApiURL(const String& wiki_name)
 
 String taMediaWiki::GetEditToken(const String& wiki_name)
 {
-  // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return NULL.
+  // #CAT_Wiki On success, return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query, as in CreatePage) -- On failure, return an empty String.
   
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return _nilString; }
@@ -509,7 +509,7 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
 
   // Make the network request.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpMultiPost(url, local_file_name, token)) {
+  if (QNetworkReply *reply = request.httpPost(url, local_file_name, file_name, token)) {
     QXmlStreamReader reader(reply);
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
