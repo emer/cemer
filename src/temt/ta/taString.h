@@ -476,6 +476,7 @@ public:
   // #CAT_Modify add newlines every max_width chars
   taString                CamelToSnake(); // e.g. StdInputData to std_input_data
   taString                toCamel(); // e.g. std_input_data to StdInputData (also removes any whitespace)
+  taString                FileToCamel();
   taString                removeSpaces(); // returns a copy of this string with all whitespaces and underscores removed
 
   void                  del(const taString& y, int startpos = 0);

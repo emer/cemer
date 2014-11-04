@@ -1107,35 +1107,76 @@ taString taString::CamelToSnake() {
 
 taString taString::toCamel() {
   makeUnique();
-  int found = 0;
+  int spaces = 0;
   for (uint n = 1; n < this->length(); ++n) {
     if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
-      found++;
+      spaces++;
   }
 
-  if (found == 0)
+  if (spaces == 0)
     return this;
 
-  taString cval(this->length(), 0, ' ');
-  cval.makeUnique();
-
-  for (uint n = 0; n < this->length(); ++n) {
-    cval[n] = mrep->s[n];
-  }
-  cval.capitalize();
-
-  taString rval(cval.length() - found, 0, ' ');
+  taString rval(this->length() - spaces, 0, ' ');
   rval.makeUnique();
-
-  rval[0] = cval[0];
+  rval[0] = mrep->s[0];
+  bool inWord = false;
   uint decrement = 0;
-  for (uint n = 1; n < cval.length(); ++n) {
-    if((cval[n] == ' ') || (cval[n] == '_')) {
+  for (uint n = 0; n < this->length(); ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
       decrement++;
+      inWord = false;
+    }
+    else if ((!inWord) && (islower(mrep->s[n]))) {
+      rval[n - decrement] = toupper(mrep->s[n]);
+      inWord = true;
     }
     else {
-      rval[n - decrement] = cval[n];
+      rval[n - decrement] = mrep->s[n];
+      inWord = true;
     }
+  }
+  return rval;
+}
+
+taString taString::FileToCamel() {
+  makeUnique();
+  int spaces = 0;
+  uint dot = 0;
+  for (uint n = 1; n < this->length(); ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_'))
+      spaces++;
+    else if (mrep->s[n] == '.') {
+      dot = n;
+      break;
+    }
+  }
+
+  if (spaces == 0)
+    return this;
+  if (dot == 0)
+    return this->toCamel();
+
+  taString rval(this->length() - spaces, 0, ' ');
+  rval.makeUnique();
+  rval[0] = mrep->s[0];
+  bool inWord = false;
+  uint decrement = 0;
+  for (uint n = 0; n < dot; ++n) {
+    if ((mrep->s[n] == ' ') || (mrep->s[n] == '_')) {
+      decrement++;
+      inWord = false;
+    }
+    else if ((!inWord) && (islower(mrep->s[n]))) {
+      rval[n - decrement] = toupper(mrep->s[n]);
+      inWord = true;
+    }
+    else {
+      rval[n - decrement] = mrep->s[n];
+      inWord = true;
+    }
+  }
+  for (uint n = dot; n < this->length(); ++n) {
+    rval[n - decrement] = mrep->s[n];
   }
   return rval;
 }
