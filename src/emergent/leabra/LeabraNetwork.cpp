@@ -1118,9 +1118,6 @@ void LeabraNetwork::Cuda_BuildUnits_Threads() {
 
       ++uncn;
     }
-    // if(un->bias.alloc_size == 1) {
-    //   ++uncn;                   // bias weights count?
-    // }
   }
 
   cudai->UpdateUnitsXCons();

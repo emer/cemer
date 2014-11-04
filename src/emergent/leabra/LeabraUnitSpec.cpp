@@ -1570,10 +1570,8 @@ void LeabraUnitSpec::Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net) {
     u->adapt = 0.0f;
   }
   else {
-    float dad = dt.integ * adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt);
-    if(u->spike > 0.0f) {       // spiked
-      dad += adapt.spike_gain;
-    }
+    float dad = dt.integ * (adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt) +
+                            u->spike * adapt.spike_gain);
     u->adapt += dad;
   }
 }
