@@ -74,11 +74,21 @@ void ISelectableHost::AddSelectedItem(ISelectable* item,  bool forced) {
 void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
   ISelectable::GuiContext gc_typ)
 {
-  if (dyn_actions[dyn_list].count() == 0) return;
-//nn,at top  menu->AddSep();
+  if (dyn_actions[dyn_list].count() == 0)
+    return;
   for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
     iAction* act = dyn_actions[dyn_list].FastEl(i);
     menu->AddAction(act);
+    
+    // rohrlich - would be nice if all the context menu items were added in one place!
+    // see taiWidgetMethod::AddToMenu 
+    DynMethodDesc* dmd = dyn_methods[dyn_list].FastEl(i);
+    MethodDef* meth =  dmd->md;
+    if(meth->OptionAfter("GHOST_").nonempty()) {
+      TypeDef* typ = meth->owner->owner;
+      bool ghost = meth->GetCondOptTest("GHOST", typ, curItem()->taData());
+      act->setEnabled(!ghost);
+    }
   }
 }
 
