@@ -27,6 +27,7 @@ taTypeDef_Of(taProject);
 #include <SigLinkSignal>
 #include <taMisc>
 #include <ProgElChoiceDlg>
+#include <ControlPanel>
 #include <taProject>
 
 #include <css_machine.h>
@@ -976,4 +977,17 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
     return rval;
   }
   return inherited::GetColText(key, itm_idx);
+}
+
+bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String sub_gp_nm) {
+  if(!ctrl_panel) {
+    taProject* proj = GET_MY_OWNER(taProject);
+    if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
+    ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
+  }
+  MemberDef* md = GetValMemberDef();
+  if (md) {
+    return ctrl_panel->SelectMember(this, md, extra_label, "", sub_gp_nm);
+  }
+  return false;
 }

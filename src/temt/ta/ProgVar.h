@@ -45,7 +45,7 @@ public:
   };
 
   enum VarFlags { // #BITS flags for modifying program variables
-    PV_NONE             = 0, // #NO_BIT
+    PV_NONE             = 0,      // #NO_BIT
     CTRL_PANEL          = 0x0001, // #CONDSHOW_OFF_flags:LOCAL_VAR show this variable in the control panel
     CTRL_READ_ONLY      = 0x0002, // #CONDSHOW_ON_flags:CTRL_PANEL variable is read only (display but not edit) in the control panel
     NULL_CHECK          = 0x0004, // #CONDSHOW_ON_var_type:T_Object complain if object variable is null during checkconfig (e.g., will get assigned during run)
@@ -148,15 +148,21 @@ public:
   { if(on) SetVarFlag(flg); else ClearVarFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  inline void   CtrlPanel()     { SetVarFlag(CTRL_PANEL); }
-  // #MENU #DYN1 #CAT_Display put this variable in the control panel
-  inline void   NoCtrlPanel()   { ClearVarFlag(CTRL_PANEL); }
-  // #MENU #DYN1 #CAT_Display take this variable out of the control panel
-  inline void   CtrlReadOnly()  { SetVarFlag(CTRL_READ_ONLY); }
-  // #MENU #DYN1 #CAT_Display make this variable read only in the control panel
-  inline void   NoCtrlReadOnly() { ClearVarFlag(CTRL_READ_ONLY); }
-  // #MENU #DYN1 #CAT_Display make this variable editable in the control panel
+  inline void   CtrlPanel()     { SetVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
+  inline void   NoCtrlPanel()   { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY);}
+  inline void   CtrlReadOnly()  { SetVarFlag(CTRL_PANEL); SetVarFlag(CTRL_READ_ONLY); }
+  inline void   NoCtrlReadOnly() { ClearVarFlag(CTRL_PANEL); ClearVarFlag(CTRL_READ_ONLY); }
 
+  // these are for the program control panel not a project level control panel
+  inline void   AddToProgramControlPanelEditable()   { CtrlPanel(); }
+  // #MENU #DYN1 #CAT_Display put this variable in the control panel - make editable
+  inline void   AddToProgramControlPanelReadonly()   { CtrlReadOnly(); }
+  // #MENU #DYN1 #CAT_Display #GHOST_ON_flags:CTRL_READ_ONLY put this variable in the control panel - make readonly
+  inline void   RemoveFromProgramControlPanel()      { NoCtrlPanel(); }
+  // #MENU #DYN1 #CAT_Display #GHOST_OFF_flags:CTRL_PANEL,CTRL_READ_ONLY remove this variable from program the control panel
+
+  virtual bool  AddToProjectControlPanel(ControlPanel* ctrl_panel, const String& extra_label = "", const String sub_gp_nm = "");
+  // #MENU #DYN1 #CAT_Display #MENU_SEP_BEFORE #NULL_OK_1 #NULL_TEXT_1_NewCtrlPanel Add this variable to a project control panel. If ctrl_panel is set to NULL, a new one is created in .ctrl_panels.  (Returns false if member is already on the panel, extra_label is prepended to item name, and if sub_gp_nm is specified, item will be put in this sub-group.
   virtual void          SetFlagsByOwnership();
   // #IGNORE auto-set the LOCAL_VAR and FUN_ARG flags based on my owners
   virtual bool          UpdateUsedFlag();
