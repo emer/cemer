@@ -540,26 +540,26 @@ taString::taString(bool b) {
 }
 
 taString::taString(int i,const char* format) {
-  char buf[32];
-  sprintf(buf, format,i);
+  char buf[64];
+  snprintf(buf, 64, format,i);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(uint u, const char* format) {
-  char buf[32];
-  sprintf(buf, format,u);
+  char buf[64];
+  snprintf(buf, 64, format,u);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(long i,const char* format) {
-  char buf[32];
-  sprintf(buf, format,i);
+  char buf[64];
+  snprintf(buf, 64, format,i);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(ulong u, const char* format) {
-  char buf[32];
-  sprintf(buf, format,u);
+  char buf[64];
+  snprintf(buf, 64, format,u);
   newRep(Salloc(buf, -1));
 }
 
@@ -582,7 +582,7 @@ taString::taString(ta_int64_t i64) {
 //  default: format="%lld";break;
 //  }
   format = "%lld";
-  sprintf(buf, format, i64);
+  snprintf(buf, 64, format, i64);
 #endif
   newRep(Salloc(buf, -1));
 }
@@ -606,26 +606,26 @@ taString::taString(ta_uint64_t u64) {
 //  default: format="%llu";break;
 //  }
   format = "%llu";
-  sprintf(buf, format, u64);
+  snprintf(buf, 64, format, u64);
 #endif
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(float f,const char* format) {
-  char buf[32];
-  sprintf(buf,format,f);
+  char buf[64];
+  snprintf(buf,64,format,f);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(double f,const char* format) {
-  char buf[32];
-  sprintf(buf,format,f);
+  char buf[64];
+  snprintf(buf,64,format,f);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(void* p) {
-  char buf[32];
-  sprintf(buf,"%p",p);
+  char buf[64];
+  snprintf(buf,64,"%p",p);
   newRep(Salloc(buf, -1));
 }
 
@@ -770,29 +770,29 @@ taString& taString::capitalize() {
 }
 
 taString& taString::convert(int i,const char* format) {
-  char buf[32];
-  sprintf(buf, format,i);
+  char buf[64];
+  snprintf(buf, 64, format,i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(long i,const char* format) {
-  char buf[32];
-  sprintf(buf,format,i);
+  char buf[64];
+  snprintf(buf, 64, format,i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(float f,const char* format) {
-  char buf[32];
-  sprintf(buf,format,f);
+  char buf[64];
+  snprintf(buf, 64, format,f);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(double f,const char* format) {
-  char buf[32];
-  sprintf(buf,format,f);
+  char buf[64];
+  snprintf(buf, 64, format,f);
   setRep(Salloc(buf, -1));
   return *this;
 }
@@ -1555,7 +1555,7 @@ TA_API istream& operator>>(istream& s, taString& x) {
   int ch;
   uint i = 0;
   x.makeUnique(x.mrep->len + ISTR_RESIZE_QUANTA);
-  register streambuf *sb = s.rdbuf();
+  streambuf *sb = s.rdbuf();
   while ((ch = sb->sbumpc()) != EOF)
   {
     if (isspace(ch))
@@ -1582,7 +1582,7 @@ TA_API int readline(istream& s, taString& x, char terminator, bool discard) {
   int ch;
   uint i = 0;
   x.makeUnique(x.mrep->len + ISTR_RESIZE_QUANTA);
-  register streambuf *sb = s.rdbuf();
+  streambuf *sb = s.rdbuf();
   while ((ch = sb->sbumpc()) != EOF)
   {
     if (ch != terminator || !discard)
