@@ -196,8 +196,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // are fast weights enabled at all?  if not, then there is just one effective weight value at each synapse
   float         nofast_lrate;   // #CONDSHOW_OFF_on #DEF_2 if fast weights are NOT being used, this is an additional multiplier on the learning rate, applied in computing the cur_lrate, to make the overall effective learning rate comparable between using fast weights and not (i.e., the same basic lrate parameter can be used) -- note that the switch to cascaded average activations for avg_s and avg_m caused a reduction in effective learning rate, which this or fast weights then compensates for, allowing use of historical learning rate parameters (.02 default)
-  float         decay_tau;      // #CONDSHOW_ON_on #DEF_300:6000 time constant of fast weight decay in trials (computed at Compute_Weights -- fast weights decay back to slow weight values) -- the biological tau is ~10 min, so for 100 msec trials = 10 trials per second, then ~6,000 is proper value -- more coarse-grained simulations should set this value lower (e.g., 600 for 1 trial / sec)
-  float         wt_tau;         // #CONDSHOW_ON_on #DEF_10:300 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological tau is about 20 seconds, so for 100 msec trials = 10 trials per second, the proper value is ~200 -- for 1 trial / sec it is 20
+  float         decay_tau;      // #CONDSHOW_ON_on #DEF_100:3000 time constant of fast weight decay in trials (computed at Compute_Weights -- fast weights decay back to slow weight values) -- the biological decay time is ~10 min, so for 100 msec trials = 10 trials per second, this is 6,000 trials -- effective weight decay rate is also affected slightly by wt_tau and contrast enhancement -- a value of roughly 3000 produces a reasonable curve -- see GraphFastWtsFun to see time course -- more coarse-grained simulations should set this value lower (e.g., 300 for 1 trial / sec = 600 trial total decay time)
+  float         wt_tau;         // #CONDSHOW_ON_on #DEF_4:60 time constant for how quickly the effective weight (wt) adapts to changes in the fast weight values -- the biological rise time to maximum fast weight change is about 20 seconds, so for 100 msec trials = 10 trials per second, that is ~200 trials -- a value of 44 produces this result -- for more coarse-grained time scales, e.g., 1 trial / sec, scale proportionally, e.g., a value of 5 for 20 trials
   float         fast_lrate;     // #CONDSHOW_ON_on #MIN_1 #DEF_5:10 how much more quickly do the fast weights change compared to the slow weights -- this is a multiplier on top of the standard learning rate parameter lrate -- it will show up in cur_lrate, and then gets undone for updating the slow weights
 
   float		decay_dt;	// #CONDSHOW_ON_on #READ_ONLY #EXPERT rate constant of decay = 1 / decay_tau
@@ -499,6 +499,8 @@ public:
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal dWt function for given threshold value (NULL = new data table)
   virtual void	GraphXCalSoftBoundFun(DataTable* graph_data = NULL);
   // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the xcal soft weight bounding function (NULL = new data table)
+  virtual void	GraphFastWtsFun(int trials = 6000, DataTable* graph_data = NULL);
+  // #BUTTON #NULL_OK #NULL_TEXT_NewGraphData graph the trajectory of fast and slow weight change dynamics over trials, in response to a single .1 dwt change (NULL = new data table)
 
   virtual void 	WtScaleCvt(float slay_kwta_pct=.25, int slay_n_units=100,
                            int n_recv_cons=5, bool norm_con_n=true);

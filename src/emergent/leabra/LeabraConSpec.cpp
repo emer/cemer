@@ -99,8 +99,8 @@ void WtSigSpec::UpdateAfterEdit_impl() {
 
 void FastWtsSpec::Initialize() {
   on = false;
-  decay_tau = 600.0f;
-  wt_tau = 20.0f;
+  decay_tau = 300.0f;
+  wt_tau = 5.0f;
   fast_lrate = 5.0f;
 
   decay_dt = 1.0f / decay_tau;
@@ -349,6 +349,70 @@ void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
     wt->SetValAsFloat(x, -1);
     dwt->SetValAsFloat(dw, -1);
   }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+}
+
+void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_FastWtsFun", true);
+  }
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  int idx;
+  DataCol* trialc = graph_data->FindMakeColName("trial", idx, VT_INT);
+  DataCol* wtc = graph_data->FindMakeColName("wt", idx, VT_FLOAT);
+  DataCol* fwtc = graph_data->FindMakeColName("fwt", idx, VT_FLOAT);
+  DataCol* swtc = graph_data->FindMakeColName("swt", idx, VT_FLOAT);
+  DataCol* dwtc = graph_data->FindMakeColName("dwt", idx, VT_FLOAT);
+  // wtc->SetUserData("MIN", 0.0f);
+  // wtc->SetUserData("MAX", 1.0f);
+  // dwtc->SetUserData("MIN", 0.0f);
+  // dwtc->SetUserData("MAX", 0.5f);
+
+  float dwt = 0.0f;
+  float wt = 0.5f;
+  float fwt = 0.5f;
+  float swt = 0.5f;
+  for(int trl = 0; trl < trials; trl++) {
+    if(trl == 0)
+      dwt = 0.1f;
+    else
+      dwt = 0.0f;
+    float dwt_save = dwt;
+    C_Compute_Weights_CtLeabraXCAL_fast
+      (fast_wts.decay_dt, fast_wts.wt_dt, fast_wts.slow_lrate,
+       wt, dwt, fwt, swt);
+    graph_data->AddBlankRow();
+    trialc->SetValAsInt(trl, -1);
+    dwtc->SetValAsFloat(dwt_save, -1);
+    wtc->SetValAsFloat(wt, -1);
+    fwtc->SetValAsFloat(fwt, -1);
+    swtc->SetValAsFloat(swt, -1);
+  }
+
+  float_Matrix* wtv = (float_Matrix*)wtc->AR();
+  int mx_trl = 0;
+  float mx_wt = taMath_float::vec_max(wtv, mx_trl);
+
+  float swt_wt = wt_sig.SigFmLinWt(swt);
+  float half_wt = swt_wt + 0.5f * (mx_wt - swt_wt);
+  
+  float prv_wt = mx_wt;
+  int half_trl = 0;
+  for(int i=mx_trl; i<wtv->size; i++) {
+    wt = wtv->FastEl_Flat(i);
+    if(wt <= half_wt && prv_wt >= half_wt) {
+      half_trl = i;
+      break;
+    }
+    prv_wt = wt;
+  }
+  
+  taMisc::Info("weight max of:", String(mx_wt), "at trial:", String(mx_trl),
+               "half weight of:", String(half_wt), "at trial:", String(half_trl));
+
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }
