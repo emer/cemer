@@ -24,6 +24,7 @@ void LeabraBiasSpec::Initialize() {
   SetUnique("rnd", true);
   SetUnique("wt_limits", true);
   SetUnique("wt_scale", true);
+  SetUnique("learn", true);
 
   Defaults_init();
 }
@@ -36,6 +37,7 @@ void LeabraBiasSpec::Defaults_init() {
   wt_limits.sym = false;
   wt_limits.type = WeightLimits::NONE;
   dwt_thresh = .1f;
+  learn = false;                // by default, turn off bias weights!  not needed for large networks, and can cause problems in various cases..
 }
 
 bool LeabraBiasSpec::CheckObjectType_impl(taBase* obj) {
