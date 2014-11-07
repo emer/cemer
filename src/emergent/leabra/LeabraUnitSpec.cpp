@@ -175,7 +175,7 @@ void LeabraActAvgSpec::Initialize() {
 }
 
 void LeabraActAvgSpec::Defaults_init() {
-  l_up_inc = 0.2f;
+  l_up_inc = 0.1f;
   l_dn_tau = 2.5f;
   ss_tau = 2.0f;
   s_tau = 2.0f;
