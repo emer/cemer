@@ -51,6 +51,9 @@ public:
   // get all values having given name (converts to strings)
   bool          SetVal(const String& nm, const Variant& val);
   // set value by name; if name already on list, it is updated (rval = true); else new item added
+  
+  Variant       GetName(const String& val);
+  // get name from value; isNull if not found; finds the first only
 
   const String  AsString(const String& sep = def_sep) const;
   void  operator=(const NameVar_PArray& cp)     { Copy_Duplicate(cp); }

@@ -752,6 +752,8 @@ set(ta_HEADS_MAKETA_NOMOC
   ParamSet.h
   ParamSetItem.h
   ParamSet_Group.h
+  KeyBindings.h
+  KeyBindings_List.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -1948,6 +1950,8 @@ set(ta_SRCS_MAKETA
   ParamSetItem.cpp
   ParamSet_Group.cpp
   ta_cuda.cpp
+  KeyBindings.cpp
+  KeyBindings_List.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

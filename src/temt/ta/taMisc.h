@@ -44,6 +44,7 @@
 // declare all other types mentioned but not required to include:
 class ViewColor_List; // 
 class ViewBackground_List; //
+class KeyBindings_List; //
 class TypeDef; // 
 class taBase; // 
 class UserDataItemBase; // 
@@ -276,6 +277,7 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
   static ViewBackground_List* view_backgrounds;   // #NO_SAVE #NO_SHOW backgrounds to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
+  static KeyBindings_List* key_binding_lists;   // #NO_SAVE #NO_SHOW lists of key bindings (for shortcuts and keyPressEvent)
 #endif
 
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.

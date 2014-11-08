@@ -247,6 +247,7 @@ taMisc::EditOptions     taMisc::edit_options = EO_0;
 #ifndef NO_TA_BASE
 ViewColor_List* taMisc::view_colors = NULL;
 ViewBackground_List* taMisc::view_backgrounds = NULL;
+KeyBindings_List* taMisc::key_binding_lists = NULL;
 #endif
 
 int     taMisc::antialiasing_level = 4;
