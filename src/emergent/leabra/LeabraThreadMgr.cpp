@@ -37,8 +37,10 @@ TA_BASEFUNS_CTORS_DEFN(LeabraThreadMgr);
 
 String RunWaitTime::ReportAvg(float rescale) {
   String rval;// = name;
-  rval << " run: " << (rescale * run.avg_used.avg)
-       << ", wait: " << (rescale * wait.avg_used.avg);
+  rval << " run avg: " << (rescale * run.avg_used.avg)
+       << ", sum: " << run.avg_used.sum <<
+       << ", wait avg: " << (rescale * wait.avg_used.avg)
+       << ", sum: " << wait.avg_used.sum;
   return rval;
 }
 
@@ -233,6 +235,7 @@ void LeabraTask::Cycle_Run() {
 
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
 #ifdef CUDA_COMPILE
+    StartTime(send_netin_time);
     if(task_id == 0) {
       net->Cuda_Send_Netin();
     }
@@ -403,14 +406,6 @@ void LeabraTask::ThreadReport(DataTable& dt) {
   wca->SetValAsFloat(dwt_time.wait.avg_used.avg * rescale, -1);
   rcs->SetValAsFloat(dwt_time.run.avg_used.sum, -1);
   wcs->SetValAsFloat(dwt_time.wait.avg_used.sum, -1);
-
-  dt.AddBlankRow();
-  thc->SetValAsInt(task_id, -1);
-  stat->SetValAsString("send_netin_time", -1);
-  rca->SetValAsFloat(send_netin_time.run.avg_used.avg * rescale, -1);
-  wca->SetValAsFloat(send_netin_time.wait.avg_used.avg * rescale, -1);
-  rcs->SetValAsFloat(send_netin_time.run.avg_used.sum, -1);
-  wcs->SetValAsFloat(send_netin_time.wait.avg_used.sum, -1);
 
   dt.AddBlankRow();
   thc->SetValAsInt(task_id, -1);
