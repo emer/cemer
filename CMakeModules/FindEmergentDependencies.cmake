@@ -113,7 +113,7 @@ IF(CUDA_BUILD)
       #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)
     else (APPLE)
       #Linux appears to need the -fPIC options to compile with cuda 
-      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_30 -code=sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_50 -code=sm_50 --use_fast_math -O3 -Xcompiler -fPIC)
       # this is more standard and is the default
       #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")

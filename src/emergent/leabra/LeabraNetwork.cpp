@@ -1493,7 +1493,9 @@ String LeabraNetwork::Cuda_MemoryReport(bool print) {
          << "        connections: " << taMisc::GetSizeString(d_con_size) << "\n"
          << "        overhead:    " << taMisc::GetSizeString(d_size) << "\n"
          << " host   overhead:    " << taMisc::GetSizeString(h_size) << "\n"
-         << " host   connections: " << taMisc::GetSizeString(h_con_size + h_ptr_size) << "\n";
+         << " host   connections: " << taMisc::GetSizeString(h_con_size + h_ptr_size) << "\n"
+         << " number of units:    " << n_units << "\n"
+         << " number of cons:     " << taMisc::GetSizeString(n_cons) << "\n";
 
   if(print)
     taMisc::Info(report);

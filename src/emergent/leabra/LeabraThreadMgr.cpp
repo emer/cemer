@@ -38,7 +38,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraThreadMgr);
 String RunWaitTime::ReportAvg(float rescale) {
   String rval;// = name;
   rval << " run avg: " << (rescale * run.avg_used.avg)
-       << ", sum: " << run.avg_used.sum <<
+       << ", sum: " << run.avg_used.sum
        << ", wait avg: " << (rescale * wait.avg_used.avg)
        << ", sum: " << wait.avg_used.sum;
   return rval;
