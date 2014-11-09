@@ -24,8 +24,11 @@
 #include <QTextEdit>
 #include <QKeyEvent>
 #include <QObject>
+#include <QDebug>
 
 #include <taMisc>
+#include <KeyBindings>
+#include <KeyBindings_List>
 
 iLineEdit::iLineEdit(QWidget* parent)
 : QLineEdit(parent)
@@ -174,6 +177,99 @@ bool iLineEdit::event(QEvent* e)
   // std::cerr << "event" << e->type() << std::endl;
 }
 
+//void iLineEdit::keyPressEvent(QKeyEvent* key_event)
+//{
+//  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+//  
+//  int keyInt = key_event->key();
+//  
+//  // check for a combination of user clicks
+//  Qt::KeyboardModifiers modifiers = key_event->modifiers();
+//  QString keyText = key_event->text();
+//  // if the keyText is empty than it's a special key like F1, F5, ...
+//
+//  //  QList<Qt::Key> modifiersList;
+//  if(modifiers & Qt::ShiftModifier)
+//    keyInt += Qt::SHIFT;
+//  if(modifiers & Qt::ControlModifier)
+//    keyInt += Qt::CTRL;
+//  if(modifiers & Qt::AltModifier)
+//    keyInt += Qt::ALT;
+//  if(modifiers & Qt::MetaModifier)
+//    keyInt += Qt::META;
+//
+//  String key_sequence = String(QKeySequence(keyInt).toString(QKeySequence::PortableText));
+//  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
+//  taiMisc::BoundAction action = bindings->Action(KeyBindings::LINE_EDIT_CONTEXT, key_sequence);
+//
+//  switch (action) {
+//    case taiMisc::EMACS_DESELECT:
+//      key_event->accept();
+//      deselect();
+//      ext_select_on = true;
+//      return;
+//    case taiMisc::EMACS_CLEAR_EXTENDED_SELECTION:
+//      key_event->accept();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_HOME:
+//      key_event->accept();
+//      home(ext_select_on);
+//      return;
+//    case taiMisc::EMACS_END:
+//      key_event->accept();
+//      end(ext_select_on);
+//      return;
+//    case taiMisc::EMACS_CURSOR_FORWARD:
+//      key_event->accept();
+//      cursorForward(ext_select_on, 1);
+//      return;
+//    case taiMisc::EMACS_CURSOR_BACKWARD:
+//      key_event->accept();
+//      cursorBackward(ext_select_on, 1);
+//      return;
+//    case taiMisc::EMACS_DELETE:
+//      key_event->accept();
+//      del();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_BACKSPACE:
+//      key_event->accept();
+//      backspace();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_KILL:
+//      key_event->accept();
+//      end(true);                // mark
+//      cut();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_SELECT_ALL:
+//      key_event->accept();
+//      selectAll();
+//      return;
+//    case taiMisc::EMACS_PASTE:
+//      key_event->accept();
+//      paste();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_CUT:
+//      key_event->accept();
+//      cut();
+//      clearExtSelection();
+//      return;
+//    case taiMisc::EMACS_UNDO:
+//      key_event->accept();
+//      undo();
+//      return;
+//    case taiMisc::LOOKUP:
+//      key_event->accept();
+//      doLookup();
+//      return;
+//  }
+//  QLineEdit::keyPressEvent(key_event);
+//}
+
 void iLineEdit::keyPressEvent(QKeyEvent* e)
 {
   // std::cerr << "keypress" << std::endl;
@@ -276,13 +372,6 @@ void iLineEdit::keyPressEvent(QKeyEvent* e)
       return;
     }
   }
-  
-  // Esc interferes with dialog cancel and other such things
-  // if(e->key() == Qt::Key_Escape) {
-  //   e->ignore();             // fake ignore so that any dialog ops will happen as expected
-  //   clearExtSelection();
-  //   return;
-  // }  
   QLineEdit::keyPressEvent(e);
 }
 

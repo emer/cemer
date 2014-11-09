@@ -18,9 +18,11 @@
 
 // parent includes:
 #include <taNBase>
-#include <NameVar_PArray>
 
 // member includes:
+#include <KeyActionPair_PArray>
+#include <taiMisc>
+
 
 // declare all other types mentioned but not required to include:
 
@@ -30,25 +32,25 @@ class TA_API KeyBindings : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
 public:
-  enum Binding_Context {
+  enum BindingContext {
     MAIN_WINDOW_CONTEXT,             // bindings for main menubar
     LINE_EDIT_CONTEXT                // bindings for single line editing, inline editing of code
   };
   
-  NameVar_PArray            main_window_bindings;
-  NameVar_PArray            line_edit_bindings;
+  KeyActionPair_PArray       main_window_bindings;
+  KeyActionPair_PArray       line_edit_bindings;
   
-  virtual bool              Add(Binding_Context context, String action, String key_sequence);
+  virtual bool              Add(BindingContext context, taiMisc::BoundAction action, String key_sequence);
   // add a name value pair to the list of key bindings
-  virtual String            KeySequence(Binding_Context context, String action);
+  virtual String            KeySequence(BindingContext context, taiMisc::BoundAction action);
   // retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
-  virtual String            Action(Binding_Context context, String key_sequence);
+  virtual taiMisc::BoundAction       Action(BindingContext context, String key_sequence);
   
   TA_SIMPLE_BASEFUNS(KeyBindings);
 
 protected:
-  virtual NameVar_PArray*   CurrentBindings(Binding_Context context);
-  // #IGNORE retrieve pointer to list of bindings for the current Binding_Context
+  virtual KeyActionPair_PArray*   CurrentBindings(BindingContext context);
+  // #IGNORE retrieve pointer to list of bindings for the current BindingContext
   
 private:
   void Initialize()  { };

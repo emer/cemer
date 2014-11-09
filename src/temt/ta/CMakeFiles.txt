@@ -48,6 +48,8 @@ set(ta_HEADS_MAKETA_NOMOC
   int_PArray.h
   voidptr_PArray.h
   NameVar_PArray.h
+  KeyActionPair.h
+  KeyActionPair_PArray.h
 
   ITypedObject.h
   TypeItem.h
@@ -1952,6 +1954,8 @@ set(ta_SRCS_MAKETA
   ta_cuda.cpp
   KeyBindings.cpp
   KeyBindings_List.cpp
+  KeyActionPair.cpp
+  KeyActionPair_PArray.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

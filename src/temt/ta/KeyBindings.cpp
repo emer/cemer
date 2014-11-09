@@ -16,12 +16,15 @@
 #include "KeyBindings.h"
 
 
-#include <NameVar>
+#include <KeyActionPair>
+#include <KeyActionPair_PArray>
 #include <taMisc>
+#include <taiMisc>
+
 
 TA_BASEFUNS_CTORS_DEFN(KeyBindings);
 
-NameVar_PArray* KeyBindings::CurrentBindings(Binding_Context context) {
+KeyActionPair_PArray* KeyBindings::CurrentBindings(BindingContext context) {
   switch (context) {
     case MAIN_WINDOW_CONTEXT:
       return &main_window_bindings;
@@ -34,37 +37,38 @@ NameVar_PArray* KeyBindings::CurrentBindings(Binding_Context context) {
   }
 }
 
-bool KeyBindings::Add(Binding_Context context, String action, String key_sequence) {
+bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action, String key_sequence) {
   bool rval = false;
-  NameVar_PArray* context_bindings = CurrentBindings(context);
+  KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    // if neither action nor value are already defined add to list
-    if ((context_bindings->FindName(action) == -1) && (context_bindings->FindValue(key_sequence) == -1)) {
-      context_bindings->Add(NameVar(action, key_sequence));
+    // okay to bind 2 key sequences to the same action
+    // NOT okay to have the same key sequence bound to 2 actions
+    if ((context_bindings->FindKeySequence(key_sequence) == -1)) {
+      context_bindings->Add(KeyActionPair(key_sequence, action));
       rval = true;
     }
   }
   return rval;
 }
 
-String KeyBindings::KeySequence(Binding_Context context, String action) {
-  NameVar_PArray* context_bindings = CurrentBindings(context);
+String KeyBindings::KeySequence(BindingContext context, taiMisc::BoundAction action) {
+  KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    Variant sequence = context_bindings->GetVal(action);
-    return sequence.toString();
+    String sequence = context_bindings->GetKeySequence(action);
+    return sequence;
   }
   else {
     return String("");
   }
 }
 
-String KeyBindings::Action(Binding_Context context, String key_sequence) {
-  NameVar_PArray* context_bindings = CurrentBindings(context);
+taiMisc::BoundAction KeyBindings::Action(BindingContext context, String key_sequence) {
+  KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    Variant action = context_bindings->GetName(key_sequence);
-    return action.toString();
+    taiMisc::BoundAction action = context_bindings->GetAction(key_sequence);
+    return action;
   }
   else {
-    return String("");
+    return static_cast<taiMisc::BoundAction>(-1);
   }
 }

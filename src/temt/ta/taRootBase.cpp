@@ -36,6 +36,7 @@
 #include <Program>
 #include <taDoc>
 #include <taiWidgetTokenChooser>
+#include <KeyBindings_List>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -1451,6 +1452,7 @@ bool taRootBase::Startup_InitGui() {
       taMisc::gui_active = true;        // officially active!
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
+    Startup_InitKeyBindings();
   }
   else
 #endif // TA_GUI
@@ -1551,6 +1553,20 @@ bool taRootBase::Startup_InitViewBackgrounds() {
   taMisc::view_backgrounds->FindMakeViewBackground("ProgElBreakpointDisabled",
       "State: program element is set for a disabled breakpoint", Qt::Dense5Pattern);
  return true;
+}
+
+bool taRootBase::Startup_InitKeyBindings() {
+  if(!taMisc::key_binding_lists) {
+    taMisc::key_binding_lists = new KeyBindings_List();
+  }
+  KeyBindings* default_list = new KeyBindings();
+
+  // rohrlich 11/8/14 - just a couple for proof of concept
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY, "Ctrl+1");
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, "Meta+-");
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, "Meta+/");
+  taMisc::key_binding_lists->Add_(default_list);
+  return true;
 }
 
 bool taRootBase::Startup_MakeWizards() {

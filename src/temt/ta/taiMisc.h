@@ -111,6 +111,30 @@ public:
 
   };
   
+  enum BoundAction {
+    EMACS_DESELECT,
+    EMACS_CLEAR_EXTENDED_SELECTION,
+    EMACS_HOME,
+    EMACS_END,
+    EMACS_CURSOR_FORWARD,
+    EMACS_CURSOR_BACKWARD,
+    EMACS_DELETE,
+    EMACS_BACKSPACE,
+    EMACS_KILL,
+    EMACS_SELECT_ALL,
+    EMACS_PASTE,
+    EMACS_CUT,
+    EMACS_UNDO,
+    LOOKUP,
+    VIEW_BROWSE_ONLY,
+    VIEW_PANELS_ONLY,
+    VIEW_BROWSE_AND_PANELS,
+    VIEW_T3,ONLY,
+    VIEW_BROWSE_AND_T3,
+    VIEW_PANELS_AND_T3,
+    VIEW_ALL_FRAMES
+  };
+  
   static const String   DEFAULT_PROJ_SPLITTERS;
 
   static const int      FONT_MED; // #DEF_1 pts to subtract from BIG

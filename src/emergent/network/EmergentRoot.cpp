@@ -57,20 +57,8 @@ static void emergent_viewcolor_init() {
   taMisc::view_colors->FindMakeViewColor("Layer", "Emergent Layer", true, "MediumPurple1");
 }
 
-// rohrlich 11/8/14 - just a couple for proof of concept
-static void emergent_key_bindings_init() {
-  if(!taMisc::key_binding_lists) {
-    taMisc::key_binding_lists = new KeyBindings_List();
-  }
-  KeyBindings* default_list = new KeyBindings();
-  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, "viewBrowseOnly", "Ctrl+1");
-  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, "move_to_line_start", "Meta+A");
-  taMisc::key_binding_lists->Add_(default_list);
-}
-
 void emergent_project_init() {
   emergent_viewcolor_init();
-  emergent_key_bindings_init();
   taMisc::default_app_install_folder_name = "Emergent";
 }
 

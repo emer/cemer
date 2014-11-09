@@ -131,9 +131,3 @@ bool NameVar_PArray::SetVal(const String& nm, const Variant& vl) {
     return false;
   }
 }
-
-Variant NameVar_PArray::GetName(const String& val) {
-  int idx = FindValue(val);
-  if(idx < 0) return _nilVariant;
-  return FastEl(idx).name;
-}

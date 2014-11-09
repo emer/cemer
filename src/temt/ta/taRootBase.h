@@ -143,6 +143,8 @@ public:
   // #IGNORE initialize default view colors
   static bool   Startup_InitViewBackgrounds();
   // #IGNORE initialize default view backgrounds - brushes
+  static bool   Startup_InitKeyBindings();
+  // #IGNORE initialize key bindings (key shortcuts)
   static bool   Startup_MakeWizards();
   // #IGNORE make the global wizards
   static bool   Startup_InitPlugins();
