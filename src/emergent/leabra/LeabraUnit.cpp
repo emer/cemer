@@ -47,7 +47,6 @@ void LeabraUnit::Initialize() {
   ti_ctxt = 0.0f;
   lrnmod = 0.0f;
   gc_i = 0.0f;
-  gc_l = 0.0f;
   I_net = 0.0f;
   v_m = 0.0f;
   v_m_eq = 0.0f;
@@ -134,7 +133,6 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   ti_ctxt = cp.ti_ctxt;
   lrnmod = cp.lrnmod;
   gc_i = cp.gc_i;
-  gc_l = cp.gc_l;
   I_net = cp.I_net;
   v_m = cp.v_m;
   v_m_eq = cp.v_m_eq;

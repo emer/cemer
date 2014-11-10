@@ -155,10 +155,12 @@ public:
 
   void          RunUnits(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx);
   // #IGNORE run units on given method, using given looping index
+  void          RunUnitsFixedAlloc(LeabraThreadUnitCall& unit_call);
+  // #IGNORE run units on given method, fixed allocation across threads
   void          RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx,
                              QAtomicInt& stage, RunWaitTime& time, int cyc,
-                             bool reset_used = true);
-  // #IGNORE run units on given method with StartTime, EndStep
+                             bool con_level = false, bool reset_used = true);
+  // #IGNORE run units on given method with StartTime, EndStep -- con_level = if this is operating at the connection level or not (interacts with unit_fixed option)
   void          RunUnitsTime(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx,
                              RunWaitTime& time, bool reset_used = true);
   // #IGNORE run units on given method with StartTime, EndTime
@@ -207,6 +209,7 @@ public:
   int           n_threads_act;  // #READ_ONLY #SHOW #NO_SAVE actual number of threads deployed, based on parameters
   bool          quarter;        // #DEF_true run an entire quarter-trial of cycles per each Cycle thread call 
   int           unit_chunks;    // #MIN_1 #DEF_32 how many units to bite off for each thread off of the list at a time
+  bool          unit_fixed;     // for unit-level computation, used fixed allocation of units to threads -- could be better for high thread count computation on large networks
   bool          timers_on;      // Accumulate timing information for each step of processing -- including at the cycle level for each different type of operation -- for debugging / optimizing threading
   bool          using_threads;  // #READ_ONLY #NO_SAVE are we currently using threads for a computation or not -- also useful for just after a thread call to see if threads were used
 

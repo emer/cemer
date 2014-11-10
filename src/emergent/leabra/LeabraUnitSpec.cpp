@@ -584,7 +584,6 @@ void LeabraUnitSpec::Init_Netins(LeabraUnit* u, LeabraNetwork*) {
   // u->ti_ctxt = 0.0f;
 
   // u->net = 0.0f;
-  // u->gc_i = 0.0f;
 
   for(int g=0; g<u->recv.size; g++) {
     LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
@@ -630,7 +629,6 @@ void LeabraUnitSpec::Init_Acts(Unit* ru, Network* rnet) {
   u->d5b_net = 0.0f;
   u->ti_ctxt = 0.0f;
   u->gc_i = 0.0f;
-  u->gc_l = 0.0f;
   u->I_net = 0.0f;
   u->v_m = v_m_init.Gen();
   u->v_m_eq = u->v_m;
@@ -691,8 +689,10 @@ void LeabraUnitSpec::DecayState(LeabraUnit* u, LeabraNetwork* net, float decay) 
     }
   }
 
-  u->da = 0.0f;
-  u->I_net = 0.0f;
+  if(taMisc::gui_active) {
+    u->da = 0.0f;
+    u->I_net = 0.0f;
+  }
 
   if(decay == 1.0f) {
     Init_SpikeBuff(u);
@@ -786,8 +786,10 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnit* u, LeabraNetwork* net) {
   //  u->sev = 0.0f; // longer time-course
   u->lrnmod = 0.0f;
   // reset all the time vars so it isn't ambiguous as these update
-  u->act_q1 = u->act_q2 = u->act_q3 = u->act_q4 = 0.0f;
-  u->act_m = u->act_p = u->act_dif = 0.0f;
+  if(taMisc::gui_active) {
+    u->act_q1 = u->act_q2 = u->act_q3 = u->act_q4 = 0.0f;
+    u->act_m = u->act_p = u->act_dif = 0.0f;
+  }
 }
 
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnit* u, LeabraNetwork* net) {
@@ -1046,7 +1048,9 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thr
       for(int j=0;j<nt;j++) {
         float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
 	g_net_delta += ndval;
+#ifndef CUDA_COMPILE
         ndval = 0.0f;           // zero immediately upon use -- for threads
+#endif
       }
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       // todo? incorporate finer-grained inhib here?
@@ -1062,7 +1066,9 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thr
     for(int j=0;j<nt;j++) {
       float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
       net_delta += ndval;
+#ifndef CUDA_COMPILE
       ndval = 0.0f;           // zero immediately upon use -- for threads
+#endif
     }
   }
 
@@ -1079,8 +1085,9 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thr
   }
   else {
     // clear so automatic inhibition can add to these values!
-    u->gi_syn = 0.0f;
-    u->gi_raw = 0.0f;
+    // this is an unnec memory write!
+    // u->gi_syn = 0.0f;
+    // u->gi_raw = 0.0f;
   }
   
   u->net_raw += net_delta;
@@ -1105,7 +1112,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int t
   }
   else {
     u->net += dt.integ * dt.net_dt * (net_tot - u->net);
-    u->net = MAX(u->net, 0.0f); // negative netin doesn't make any sense
+    if(u->net < 0.0f) u->net = 0.0f; // negative netin doesn't make any sense
   }
 
   // add after all the other stuff is done..
@@ -1257,7 +1264,9 @@ void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
   for(int j=0;j<nt;j++) {
     float& ndval = net->send_d5bnet_tmp.FastEl2d(u->flat_idx, j);
     net_delta += ndval;
+#ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
+#endif
   }
   u->d5b_net += net_delta;
 }
@@ -1268,14 +1277,15 @@ void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnit* u, LeabraNetwork* net,
 void LeabraUnitSpec::Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
                                         LeabraNetwork* net, LeabraInhib* thr, float ival) {
   Compute_SelfInhib(u, lspec, net);
+  float gi_ex = 0.0f;
   if(lspec->del_inhib.on) {
-    u->gi_ex = lspec->del_inhib.prv_trl * u->net_prv_trl + 
+    gi_ex = lspec->del_inhib.prv_trl * u->net_prv_trl + 
       lspec->del_inhib.prv_q * u->net_prv_q;
   }
-  else {
-    u->gi_ex = 0.0f;
+  u->gc_i = ival + u->gi_syn + u->gi_self + gi_ex;
+  if(taMisc::gui_active) {
+    u->gi_ex = gi_ex;
   }
-  u->gc_i = ival + u->gi_syn + u->gi_self + u->gi_ex;
 }
 
 
@@ -1295,7 +1305,7 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
       u->AddToActBuf(syn_delay);
     }
     else {
-      Compute_RateCodeSpike(u, net);
+      // Compute_RateCodeSpike(u, net); // this is not necessary
     }
     return; // don't re-compute
   }
@@ -1307,7 +1317,6 @@ void LeabraUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
     Compute_ApplyInhib(u, ls, net, thr, thr->i_val.g_i);
   }
 
-  Compute_Conduct(u, net);
   Compute_Vm(u, net);
   Compute_ActFun(u, net);
   Compute_SelfReg_Cycle(u, net);
@@ -1326,9 +1335,12 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
   if(net->cycle < dt.fast_cyc) {
     // directly go to equilibrium value
     float new_v_m = Compute_EqVm(u);
-    u->I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
-    u->v_m += u->I_net;
+    float I_net = new_v_m - u->v_m; // time integrate: not really I_net but hey
+    u->v_m += I_net;
     u->v_m_eq = u->v_m;
+    if(taMisc::gui_active) {
+      u->I_net = I_net;
+    }
   }
   else {
     LeabraLayerSpec* ls = (LeabraLayerSpec*)u->own_lay()->GetLayerSpec();
@@ -1346,27 +1358,33 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
       E_i = e_rev.i;
     }
 
+    float gc_l = g_bar.l;
+    float gc_i = u->gc_i * g_bar.i;
+
     if(updt_spk_vm) {
       // first compute v_m, using midpoint method:
       float v_m_eff = u->v_m;
       // midpoint method: take a half-step:
       float I_net_1 =
-        (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff)) +
-        (u->gc_i * (E_i - v_m_eff));
+        (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff)) +
+        (gc_i * (E_i - v_m_eff));
       v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
-      u->I_net = (net_eff * (e_rev.e - v_m_eff)) + (u->gc_l * (e_rev.l - v_m_eff))
-        + (u->gc_i * (E_i - v_m_eff));
+      float I_net = (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff))
+        + (gc_i * (E_i - v_m_eff));
       // add spike current if relevant
       if(spike_misc.ex) {
-        u->I_net += g_bar.l * spike_misc.exp_slope *
+        I_net += g_bar.l * spike_misc.exp_slope *
           taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
       }
-      u->v_m += dt.integ * dt.vm_dt * (u->I_net - u->adapt);
+      u->v_m += dt.integ * dt.vm_dt * (I_net - u->adapt);
+      if(taMisc::gui_active) {
+        u->I_net = I_net;
+      }
     }
 
     // always compute v_m_eq with simple integration -- used for rate code subthreshold
     float I_net_r = (net_eff * (e_rev.e - u->v_m_eq)) 
-      + (u->gc_l * (e_rev.l - u->v_m_eq)) +  (u->gc_i * (E_i - u->v_m_eq));
+      + (gc_l * (e_rev.l - u->v_m_eq)) +  (gc_i * (E_i - u->v_m_eq));
     u->v_m_eq += dt.integ * dt.vm_dt * (I_net_r - u->adapt);
   }
 
@@ -1376,8 +1394,10 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnit* u, LeabraNetwork* net) {
     u->v_m_eq += ns;
   }
 
-  u->v_m = vm_range.Clip(u->v_m);
-  u->v_m_eq = vm_range.Clip(u->v_m_eq);
+  if(u->v_m < vm_range.min) u->v_m = vm_range.min;
+  if(u->v_m > vm_range.max) u->v_m = vm_range.max;
+  if(u->v_m_eq < vm_range.min) u->v_m_eq = vm_range.min;
+  if(u->v_m_eq > vm_range.max) u->v_m_eq = vm_range.max;
 }
 
 void LeabraUnitSpec::Compute_ActFun(LeabraUnit* u, LeabraNetwork* net) {
@@ -1453,7 +1473,9 @@ void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
     new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
   }
 
-  u->da = new_act - u->act_nd;
+  if(taMisc::gui_active) {
+    u->da = new_act - u->act_nd;
+  }
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += Compute_Noise(u, net);
   }
@@ -1475,7 +1497,7 @@ void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnit* u, LeabraNetwork* net) {
     u->spk_t = net->tot_cycle;
   }
   else {
-    u->spike = 0.0f;
+    TestWrite(u->spike, 0.0f);
   }
 }
 
@@ -1487,8 +1509,8 @@ void LeabraUnitSpec::Compute_ActFun_spike(LeabraUnit* u, LeabraNetwork* net) {
     u->spk_t = net->tot_cycle;
   }
   else {
-    u->act = 0.0f;
-    u->spike = 0.0f;
+    TestWrite(u->act, 0.0f);
+    TestWrite(u->spike, 0.0f);
   }
 
   float act_nd = u->act_nd / spike.eq_gain;
@@ -1501,7 +1523,9 @@ void LeabraUnitSpec::Compute_ActFun_spike(LeabraUnit* u, LeabraNetwork* net) {
     act_nd = (act_nd + u->act) / (float)(net->cycle+1);
   }
   act_nd = act_range.Clip(spike.eq_gain * act_nd);
-  u->da = act_nd - u->act_nd;   // da is on equilibrium activation
+  if(taMisc::gui_active) {
+    u->da = act_nd - u->act_nd;   // da is on equilibrium activation
+  }
   u->act_nd = act_nd;
 
   if(stp.on) {
@@ -1567,7 +1591,7 @@ void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net) {
   if(!adapt.on) {
-    u->adapt = 0.0f;
+    TestWrite(u->adapt, 0.0f);
   }
   else {
     float dad = dt.integ * (adapt.Compute_dAdapt(u->v_m, e_rev.l, u->adapt) +
@@ -1578,10 +1602,12 @@ void LeabraUnitSpec::Compute_ActAdapt_Cycle(LeabraUnit* u, LeabraNetwork* net) {
 
 void LeabraUnitSpec::Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net) {
   if(!stp.on) {
-    u->syn_tr = 1.0f;
-    u->syn_nr = 1.0f;
-    u->syn_pr = stp.p0;
-    u->syn_kre = 0.0f;
+    if(u->syn_tr != 1.0f) {
+      u->syn_tr = 1.0f;
+      u->syn_nr = 1.0f;
+      u->syn_pr = stp.p0;
+      u->syn_kre = 0.0f;
+    }
   }
   else {
     float dnr = (dt.integ * stp.rec_dt + u->syn_kre) * (1.0f - u->syn_nr)
@@ -1595,7 +1621,7 @@ void LeabraUnitSpec::Compute_ShortPlast_Cycle(LeabraUnit* u, LeabraNetwork* net)
     u->syn_kre += dkre;
     if(u->spike > 0.0f) {                                     // only update at spike
       u->syn_tr = stp.oneo_p0_norm * (u->syn_nr * u->syn_pr); // normalize pr by p0_norm
-      u->syn_tr = MIN(1.0f, u->syn_tr);                       // max out at 1.0
+      if(u->syn_tr > 1.0f) u->syn_tr = 1.0f;                  // max out at 1.0
     }
   }
 }
@@ -1632,10 +1658,12 @@ void LeabraUnitSpec::Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thr
 
 void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) {
   if(cifer_thal.on) {
-    if(u->thal < cifer_thal.thal_thr)
-      u->thal = 0.0f;
-    if(cifer_thal.thal_bin && u->thal > 0.0f)
-      u->thal = 1.0f;
+    if(u->thal < cifer_thal.thal_thr) {
+      TestWrite(u->thal, 0.0f);
+    }
+    if(cifer_thal.thal_bin && u->thal > 0.0f) {
+      TestWrite(u->thal, 1.0f);
+    }
   }
 
   if(cifer_d5b.on) {
@@ -1648,7 +1676,7 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) {
     }
     else {
       if(cifer_d5b.d5b_burst) {
-        u->deep5b = 0.0f;         // turn it off!
+        TestWrite(u->deep5b, 0.0f); // turn it off
       }
     }
   }
@@ -1757,7 +1785,9 @@ void LeabraUnitSpec::Send_TICtxtNetin_Post(LeabraUnit* u, LeabraNetwork* net,
   for(int j=0;j<nt;j++) {
     float& ndval = net->send_netin_tmp.FastEl2d(u->flat_idx, j);
     nw_nt += ndval;
+#ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
+#endif
   }
   u->ti_ctxt = nw_nt;
   u->ctxt_scale = 1.0f;         // reset

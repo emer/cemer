@@ -498,6 +498,12 @@ public:
   FunLookup	nxx1_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation convolved gaussian and x/x+1 function as lookup table
   FunLookup	noise_conv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Activation gaussian for convolution
 
+
+  inline void  TestWrite(float& var, const float val) {
+    if(var != val) var = val;
+  }
+  // #IGNORE only write a value to a variable if it is not already set to that value -- may save on cache churn -- use for cases where it is likely that the same value is present
+
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
@@ -621,9 +627,6 @@ public:
   // main function is basic Compute_Act which calls all the various sub-functions below
   // derived types that send activation directly to special unit variables (e.g., VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post 
   void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
-
-    inline void Compute_Conduct(LeabraUnit* u, LeabraNetwork* net);
-    // #CAT_Activation #IGNORE Act Step 1: compute input conductance values in the gc variables
 
     virtual void Compute_Vm(LeabraUnit* u, LeabraNetwork* net);
     // #CAT_Activation Act Step 2: compute the membrane potential from input conductances

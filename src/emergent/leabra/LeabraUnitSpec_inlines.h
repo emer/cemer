@@ -29,20 +29,14 @@ inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* ls
 }
 
 inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
-  return ((u->gc_i * (u->E_i - act.thr) + u->gc_l * e_rev_sub_thr.l - u->adapt) /
+  return ((g_bar.i * u->gc_i * (u->E_i - act.thr) + g_bar.l * e_rev_sub_thr.l - u->adapt) /
 	  thr_sub_e_rev_e);
 } 
 
 inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
-  float new_v_m = (((u->net * e_rev.e) + (u->gc_l * e_rev.l) + (u->gc_i * u->E_i)
-                    - u->adapt) / (u->net + u->gc_l + u->gc_i));
+  float new_v_m = (((u->net * e_rev.e) + (g_bar.l * e_rev.l) + (g_bar.i * u->gc_i * u->E_i)
+                    - u->adapt) / (u->net + g_bar.l + g_bar.i * u->gc_i));
   return new_v_m;
-}
-
-inline void LeabraUnitSpec::Compute_Conduct(LeabraUnit* u, LeabraNetwork* net) {
-  u->gc_i *= g_bar.i;
-  //  u->net *= g_bar_e_val; // do NOT do this here -- keep in original units for dnet stuff -- g_bar.e is multiplied later when net is actually used..
-  u->gc_l = g_bar.l;
 }
 
 inline LeabraInhib* LeabraUnitSpec::GetInhib(LeabraUnit* u) {

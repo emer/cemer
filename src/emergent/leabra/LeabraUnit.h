@@ -50,7 +50,7 @@ public:
   float		act_dif;        // #VIEW_HOT #CAT_Activation act_p - act_m -- difference between plus and minus phase acts, -- reflects the individual error gradient for this neuron in standard error-driven learning terms
   float         net_prv_q;      // #CAT_Activation net input from the previous quarter -- this is used for delayed inhibition as specified in del_inhib on layer spec
   float         net_prv_trl;    // #CAT_Activation net input from the previous trial -- this is used for delayed inhibition as specified in del_inhib on layer spec
-  float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act_nd from one cycle to next -- can be useful to track where changes are taking place
+  float		da;	        // #NO_SAVE #NO_SAVE #CAT_Activation delta activation: change in act_nd from one cycle to next -- can be useful to track where changes are taking place -- only updated when gui active
   float		avg_ss;	        // #CAT_Activation super-short time-scale activation average -- provides the lowest-level time integration -- for spiking this integrates over spikes before subsequent averaging, and it is also useful for rate-code to provide a longer time integral overall
   float		avg_s;	        // #CAT_Activation short time-scale activation average -- tracks the most recent activation states (integrates over avg_ss values), and represents the plus phase for learning in XCAL algorithms
   float		avg_m;	        // #CAT_Activation medium time-scale activation average -- integrates over avg_s values, and represents the minus phase for learning in XCAL algorithms
@@ -62,15 +62,14 @@ public:
   float         d5b_net;        // #NO_SAVE #CAT_Activation net input from deep layer 5b activation values
   float         ti_ctxt;        // #VIEW_HOT #NO_SAVE #CAT_Activation leabra TI context netinput value -- computed from LeabraTICtxtConspec connection -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value -- this is just added into overall net input
   float         lrnmod;         // #NO_SAVE #CAT_Activation learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
-  float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance
-  float         gc_l;           // #NO_SAVE #CAT_Activation total leak conductance
-  float		I_net;	        // #NO_SAVE #CAT_Activation net current produced by all channels
+  float         gc_i;           // #NO_SAVE #CAT_Activation total inhibitory conductance -- does NOT include the g_bar.i
+  float		I_net;	        // #NO_SAVE #CAT_Activation net current produced by all channels -- only updated when gui is active
   float		v_m;	        // #NO_SAVE #CAT_Activation membrane potential -- integrates I_net current over time -- is reset by spiking (even when using rate code activations -- see v_m_eq)
   float		v_m_eq;	        // #NO_SAVE #CAT_Activation equilibrium membrane potential -- this is NOT reset by spiking, so it reaches equilibrium values asymptotically -- it is used for rate code activation in sub-threshold range (whenever v_m_eq < act.thr) -- the gelin activation function does not otherwise provide useful dynamics in this subthreshold range
   float		adapt;	        // #NO_SAVE #CAT_Activation adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   float		gi_syn;	        // #NO_SAVE #CAT_Activation aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
   float         gi_self;        // #NO_SAVE #CAT_Activation self inhibitory current -- requires temporal integration dynamics and thus its own variable
-  float         gi_ex;          // #NO_SAVE #CAT_Activation extra inhibitory current, e.g., from previous trial or phase
+  float         gi_ex;          // #NO_SAVE #CAT_Activation extra inhibitory current, e.g., from previous trial or phase -- only updated when gui active
   float         E_i;            // #NO_SAVE #CAT_Activation inhibitory reversal potential -- this adapts with activity, producing advantage for active neurons
   float		syn_tr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
   float		syn_nr;	        // #NO_SAVE #CAT_Activation presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)

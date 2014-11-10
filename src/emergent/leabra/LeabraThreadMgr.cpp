@@ -95,33 +95,33 @@ void LeabraTask::EndStep(QAtomicInt& stage, RunWaitTime& time, int cyc) {
 // fixed allocation based on thread id -- less flexible..
 // performance is close to the nibble code, but likely much less robust
 // to load differences etc
-// void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call) {
-//   LeabraThreadMgr* mg = mgr();
-//   LeabraNetwork* net = (LeabraNetwork*)network.ptr();
+void LeabraTask::RunUnitsFixedAlloc(LeabraThreadUnitCall& unit_call) {
+  LeabraThreadMgr* mg = mgr();
+  LeabraNetwork* net = (LeabraNetwork*)network.ptr();
 
-//   const int n_task = mg->tasks.size;
-//   const int chk = mg->unit_chunks;
-//   const int un_st = (task_id * chk) + 1; // 1 offset
-//   const int un_inc = ((n_task-1) * chk);
-//   const int un_mx = net->units_flat.size;
-//   int i;
-//   int ci;
+  const int n_task = mg->tasks.size;
+  const int chk = mg->unit_chunks;
+  const int un_st = (task_id * chk) + 1; // 1 offset
+  const int un_inc = ((n_task-1) * chk);
+  const int un_mx = net->units_flat.size;
+  int i;
+  int ci;
 
-//   // 1 2 3 4 5 6 7 8 9 10 11 12
-//   // 0 0 0             0  0  0
-//   //       1 1 1 
-//   //             2 2 2
+  // 1 2 3 4 5 6 7 8 9 10 11 12
+  // 0 0 0             0  0  0
+  //       1 1 1 
+  //             2 2 2
 
-//   i = un_st; ci = 0;
-//   while(i<un_mx) {
-//     LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
-//     unit_call.call(un, net, task_id); // task id indicates threading, and which thread
-//     i++; ci++;
-//     if(ci == chk) {
-//       i += un_inc; ci = 0;
-//     }
-//   }
-// }
+  i = un_st; ci = 0;
+  while(i<un_mx) {
+    LeabraUnit* un = (LeabraUnit*)net->units_flat[i];
+    unit_call.call(un, net, task_id); // task id indicates threading, and which thread
+    i++; ci++;
+    if(ci == chk) {
+      i += un_inc; ci = 0;
+    }
+  }
+}
 
 // dynamic allocation with nibbling
 void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx) {
@@ -146,7 +146,7 @@ void LeabraTask::RunUnits(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx) {
 
 void LeabraTask::RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx,
                               QAtomicInt& stage, RunWaitTime& time, int cyc,
-                              bool reset_used) {
+                              bool con_level, bool reset_used) {
   LeabraThreadMgr* mg = mgr();
   const bool timers_on = mg->timers_on;
   if(timers_on) {
@@ -154,7 +154,12 @@ void LeabraTask::RunUnitsStep(LeabraThreadUnitCall& unit_call, QAtomicInt& lpidx
       time.ResetUsed();
     StartTime(time);
   }
-  RunUnits(unit_call, lpidx);
+  if(!con_level && mg->unit_fixed) {
+    RunUnitsFixedAlloc(unit_call);
+  }
+  else {
+    RunUnits(unit_call, lpidx);
+  }
   EndStep(stage, time, cyc);
 
   if(timers_on)
@@ -243,14 +248,17 @@ void LeabraTask::Cycle_Run() {
 #else
     { // Send_NetinDelta
       LeabraThreadUnitCall un_call(&LeabraUnit::Send_NetinDelta);
-      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_net, send_netin_time, cyc);
+      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_net, send_netin_time, cyc, true);
+      // true = connection level
     }
 #endif
 
     if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
     { // Compute_NetinInteg();
       LeabraThreadUnitCall un_call(&LeabraUnit::Compute_NetinInteg);
-      RunUnitsStep(un_call, mg->loop_idx1, mg->stage_net_int, netin_integ_time, cyc);
+      RunUnitsStep(un_call, mg->loop_idx1, mg->stage_net_int, netin_integ_time, cyc,
+                   false);
+      // false = unit level
     }
 
     if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
@@ -270,7 +278,8 @@ void LeabraTask::Cycle_Run() {
     if(task_id == 0) mg->loop_idx0 = 1;
     { // Compute_Act();
       LeabraThreadUnitCall un_call(&LeabraUnit::Compute_Act_l);
-      RunUnitsStep(un_call, mg->loop_idx1, mg->stage_act, act_time, cyc);
+      RunUnitsStep(un_call, mg->loop_idx1, mg->stage_act, act_time, cyc, false);
+      // false = unit level
     }
 
     // have to do this early before anyone depends on it..
@@ -281,7 +290,8 @@ void LeabraTask::Cycle_Run() {
     if(task_id == 0) mg->loop_idx1 = 1; 
     { // Compute_Act_Post();
       LeabraThreadUnitCall un_call(&LeabraUnit::Compute_Act_Post);
-      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_act_post, act_post_time, cyc);
+      RunUnitsStep(un_call, mg->loop_idx0, mg->stage_act_post, act_post_time, cyc, false);
+      // false = unit level);
     }
 
     if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
@@ -306,13 +316,15 @@ void LeabraTask::Send_TICtxtNetins() {
   if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
   {
     LeabraThreadUnitCall un_call(&LeabraUnit::Send_TICtxtNetin);
-    RunUnitsStep(un_call, mg->loop_idx0, mg->stage_ctxt, ti_netin_time, 0, false); // cyc = 0, no reset
+    RunUnitsStep(un_call, mg->loop_idx0, mg->stage_ctxt, ti_netin_time, 0, true);
+    // cyc = 0, true = con_level
   }
 
   if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
   { 
     LeabraThreadUnitCall un_call(&LeabraUnit::Send_TICtxtNetin_Post);
-    RunUnitsStep(un_call, mg->loop_idx1, mg->stage_ctxt_p, ti_netin_time, 0, false); // cyc = 0, no reset
+    RunUnitsStep(un_call, mg->loop_idx1, mg->stage_ctxt_p, ti_netin_time, 0, false);
+    // cyc = 0, false = unit level
   }
 }
 
@@ -323,13 +335,15 @@ void LeabraTask::Compute_dWt() {
   if(task_id == 0) mg->loop_idx1 = 1;          // reset next guy
   { 
     LeabraThreadUnitCall un_call(&LeabraUnit::Compute_dWt_l);
-    RunUnitsStep(un_call, mg->loop_idx0, mg->stage_dwt, dwt_time, 0, true); // cyc = 0, reset
+    RunUnitsStep(un_call, mg->loop_idx0, mg->stage_dwt, dwt_time, 0, true);
+    // cyc = 0, true = con_level
   }
 
   if(task_id == 0) mg->loop_idx0 = 1;          // reset next guy
   if(net->net_misc.dwt_norm) {
     LeabraThreadUnitCall un_call(&LeabraUnit::Compute_dWt_Norm);
-    RunUnitsStep(un_call, mg->loop_idx1, mg->stage_dwt_norm, dwt_norm_time, 0, true); // cyc = 0, reset
+    RunUnitsStep(un_call, mg->loop_idx1, mg->stage_dwt_norm, dwt_norm_time, 0, true);
+    // cyc = 0, true = con_level
   }
 }
 
@@ -338,7 +352,8 @@ void LeabraTask::Compute_Weights() {
 
   if(task_id == 0) mg->loop_idx1 = 0;          // reset next guy
   LeabraThreadUnitCall un_call(&LeabraUnit::Compute_Weights_l);
-  RunUnitsStep(un_call, mg->loop_idx0, mg->stage_wt, wt_time, 0, true); // cyc = 0, reset
+  RunUnitsStep(un_call, mg->loop_idx0, mg->stage_wt, wt_time, 0, true);
+  // cyc = 0, true = con_level
 }
 
 void LeabraTask::ThreadReport(DataTable& dt) {
@@ -501,6 +516,7 @@ void LeabraThreadMgr::Initialize() {
   n_threads_act = 1;
   quarter = true;
   unit_chunks = 32;
+  unit_fixed = false;
   timers_on = false;
   using_threads = false;
   n_threads_prev = n_threads;
