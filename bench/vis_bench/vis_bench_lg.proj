@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7713
+// ta_Dump File v3.0 -- code v7.0.2.0 rev7720
 LeabraProject .projects["vis_bench_lg"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectDocs"] { 
@@ -5297,7 +5297,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 24 August 2014, at 20:58.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 7,078 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 7,079 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-privacy\"><a href=\"/CompCogNeuro/index.php/Project:Privacy_policy\" title=\"Project:Privacy policy\">Privacy policy</a></li>
@@ -5321,7 +5321,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.339 secs. -->
+<!-- Served in 0.405 secs. -->
 	
 
 </body></html>";
@@ -32396,6 +32396,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	run_time_pct=0;
 	sync_time_pct=0;
 	wake_in_sync_pct=1.919385910272122e-23;
+	on=1;
        };
        data_table=.projects["vis_bench_lg"].programs["ApplyInputsImage"].objs["V1FilterInputData"]$$;
        save_mode=FIRST_ROW;
@@ -32458,6 +32459,7 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
 	run_time_pct=0;
 	sync_time_pct=0;
 	wake_in_sync_pct=2.916426241607065e+44;
+	on=1;
        };
        data_table=$.projects["vis_bench_lg"].programs["ApplyInputsImage"].objs["V1FilterInputData"]$;
        save_mode=FIRST_ROW;
@@ -33130,9 +33132,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="V1RetinaProc_0.V1h.threads.n_threads = 1";
      obj=.projects["vis_bench_lg"].programs["ApplyInputsImage"].vars["V1RetinaProc_0"]$$;
-     path="V1h.threads.n_threads";
+     path="V1h.threads.on";
      expr {
-      expr="1";
+      expr="false";
      };
      update_after=0;
     };
@@ -33141,9 +33143,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="V1RetinaProc_0.V1h.threads.n_threads = 1";
      obj=$.projects["vis_bench_lg"].programs["ApplyInputsImage"].vars["V1RetinaProc_0"]$;
-     path="V1m.threads.n_threads";
+     path="V1m.threads.on";
      expr {
-      expr="1";
+      expr="false";
      };
      update_after=0;
     };
@@ -33168,9 +33170,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="V1RetinaProc_0.V1h.threads.n_threads = 1";
        obj=$.projects["vis_bench_lg"].programs["ApplyInputsImage"].vars["V1RetinaProc_0"]$;
-       path="V1h.threads.n_threads";
+       path="V1h.threads.on";
        expr {
-	expr="1";
+	expr="false";
        };
        update_after=0;
       };
@@ -33179,9 +33181,9 @@ command line is: emergent -nogui -ni -p <project name>.proj [epochs=xxx] [batche
        flags=CAN_REVERT_TO_CODE;
        orig_prog_code="V1RetinaProc_0.V1h.threads.n_threads = 1";
        obj=$.projects["vis_bench_lg"].programs["ApplyInputsImage"].vars["V1RetinaProc_0"]$;
-       path="V1m.threads.n_threads";
+       path="V1m.threads.on";
        expr {
-	expr="1";
+	expr="false";
        };
        update_after=0;
       };

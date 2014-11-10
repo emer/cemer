@@ -29,7 +29,8 @@ void taThreadMgr::Initialize() {
   terminate_max_wait = 10000;
   task_type = NULL;
   get_timing = false;
-  spin_wait = true; // false;
+  //  spin_wait = true;
+  spin_wait = false;
   n_wake_in_sync = 0;
   run_time_pct = 0.0;
   sync_time_pct = 0.0;
