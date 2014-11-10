@@ -97,6 +97,13 @@ else (WIN32)
   find_package(ZLIB)
 endif (WIN32)
 
+if(HPCPROF_BUILD)
+  set(EMERGENT_OPT_LIBRARIES ${EMERGENT_OPT_LIBRARIES} -L/usr/local/lib/hpctoolkit -lhpctoolkit)
+  add_definitions(-DHPCPROF_COMPILE)
+endif(HPCPROF_BUILD)
+
+
+
 ##############################
 # CUDA (set -DCUDA_BUILD flag at compile time)
 IF(CUDA_BUILD)
@@ -108,12 +115,12 @@ IF(CUDA_BUILD)
 # this is pretty aggressive -- just for testing
   if (NOT WIN32)
     if (APPLE)
-      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_30 -code=sm_30 --use_fast_math -O3)
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -gencode=arch=compute_20,code=sm_20 -gencode=arch=compute_30,code=sm_30 -gencode=arch=compute_35,code=sm_35 -gencode=arch=compute_50,code=sm_50 -gencode=arch=compute_52,code=sm_52 -gencode=arch=compute_52,code=compute_52 --use_fast_math -O3)
       # this is more standard and is the default
       #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3)
     else (APPLE)
       #Linux appears to need the -fPIC options to compile with cuda 
-      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_50 -code=sm_50 --use_fast_math -O3 -Xcompiler -fPIC)
+      set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -gencode=arch=compute_20,code=sm_20 -gencode=arch=compute_30,code=sm_30 -gencode=arch=compute_35,code=sm_35 -gencode=arch=compute_50,code=sm_50 --use_fast_math -O3 -Xcompiler -fPIC)
       # this is more standard and is the default
       #  set(CUDA_NVCC_FLAGS ${CUDA_NVCC_FLAGS}; --ptxas-options=-v -arch=compute_20 -code=sm_20,sm_21,sm_30 --use_fast_math -O3 -Xcompiler -fPIC)
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")

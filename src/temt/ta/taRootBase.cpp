@@ -73,9 +73,8 @@ taTypeDef_Of(StartupWizard);
 #ifdef GPROF                    // turn on for profiling
 extern "C" void moncontrol(int mode);
 #endif
-
-#ifdef SATURN_PROF
-#include <Saturn.h>
+#ifdef HPCPROF_COMPILE
+#include <hpctoolkit.h>
 #endif
 
 #ifdef TA_OS_LINUX
@@ -214,16 +213,19 @@ void taRootBase::UpdateAfterEdit_impl() {
 
 #ifdef GPROF                    // turn on for profiling
 void taRootBase::MonControl(bool on) {
+  taMisc::Info("Turning gprof monitoring:", String(on));
   moncontrol(on);
 }
 #else
-#ifdef SATURN_PROF
+#ifdef HPCPROF_COMPILE
 void taRootBase::MonControl(bool on) {
   if(on) {
-    startSaturn();
+    taMisc::Info("Turning on HPCToolkit sampling");
+    hpctoolkit_sampling_start();
   }
   else {
-    stopSaturn();
+    hpctoolkit_sampling_stop();
+    taMisc::Info("Turning off HPCToolkit sampling");
   }
 }
 #else
