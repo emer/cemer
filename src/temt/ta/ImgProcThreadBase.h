@@ -60,6 +60,7 @@ class TA_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
+  bool          on;             // turn on threading
   int		nibble_chunk;	// #MIN_1 #DEF_1 #NO_SAVE #HIDDEN #READ_ONLY how many items to grab at a time to process -- set by each processing stage per its own optimized values
 
   taAtomicInt	nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..

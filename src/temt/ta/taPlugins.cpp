@@ -303,7 +303,12 @@ bool taPlugins::MakePlugin(const String& plugin_path, const String& plugin_name,
       taBase::Own(make_thread, tabMisc::root); // own by root..
     }
     else {
-      if(make_thread->n_running > 0)
+#if (QT_VERSION >= 0x050000)
+      int cur_running = make_thread->n_running.loadAcquire();
+#else
+      int cur_running = (int)make_thread->n_running;
+#endif
+      if(cur_running > 0)
         make_thread->SyncThreads();     // sync now before running again..
     }
     make_thread->MakePlugin(plugin_path, plugin_name, system_plugin, full_rebuild);

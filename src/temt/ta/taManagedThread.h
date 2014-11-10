@@ -59,6 +59,9 @@ protected:
   bool			m_active;  // set to true when in run() state
   bool			m_running; // set to true when running
   bool			m_stop_req; // set to true to signal that this thread should exit
+
+  virtual void          run_wait(); // standard wait-mode
+  virtual void          run_spin(); // spin-wait mode
   
   void 	run() override;
 };

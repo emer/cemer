@@ -29,6 +29,7 @@ void taThreadMgr::Initialize() {
   terminate_max_wait = 10000;
   task_type = NULL;
   get_timing = false;
+  spin_wait = true; // false;
   n_wake_in_sync = 0;
   run_time_pct = 0.0;
   sync_time_pct = 0.0;
@@ -100,21 +101,47 @@ void taThreadMgr::RemoveThreads() {
     tt->stopMe();		// tell them to stop
   }
 
-  wait_mutex.lock();
-  wait.wakeAll();		// now wake them up, where they meet certain death..
-  wait_mutex.unlock();
+  if(!spin_wait) {
+    wait_mutex.lock();
+    wait.wakeAll();		// now wake them up, where they meet certain death..
+    wait_mutex.unlock();
+  }
 
-  taManagedThread::usleep(sync_sleep_usec*100); // give some time to wakeup..
+  taManagedThread::usleep(100); // give some time to wakeup..
   int n_waits = 0;
 
-  wait_mutex.lock();
-  while(n_active > 0 && n_waits < terminate_max_wait) { // wait for everyone to exit
-    wait_mutex.unlock();
-    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
-    n_waits++;
-    wait_mutex.lock();
+#if (QT_VERSION >= 0x050000)
+    int cur_active = n_active.loadAcquire();
+#else
+    int cur_active = (int)n_active;
+#endif
+
+  if(spin_wait) {
+    while(cur_active > 0 && n_waits < terminate_max_wait) { // wait for everyone to exit
+      taManagedThread::usleep(10);    // this is going to be slower, so wait longer
+      n_waits++;
+#if (QT_VERSION >= 0x050000)
+      cur_active = n_active.loadAcquire();
+#else
+      cur_active = (int)n_active;
+#endif
+    }
   }
-  wait_mutex.unlock();
+  else {
+    wait_mutex.lock();
+    while(cur_active > 0 && n_waits < terminate_max_wait) { // wait for everyone to exit
+      wait_mutex.unlock();
+      taManagedThread::usleep(10);    // this is going to be slower, so wait longer
+      n_waits++;
+      wait_mutex.lock();
+#if (QT_VERSION >= 0x050000)
+      cur_active = n_active.loadAcquire();
+#else
+      cur_active = (int)n_active;
+#endif
+    }
+    wait_mutex.unlock();
+  }
 
   // if any remain, terminate them!!
   for (int i = old_cnt - 1; i >= 0; i--) {
@@ -150,42 +177,95 @@ void taThreadMgr::SetTasksToThreads() {
   for(int i=0;i<threads.size;i++) {
     taManagedThread* tt = threads[i];
     tt->setTask(tasks[i+1]);
-    tt->start(); // starts paused -- now actually start the thread!
+    if(!spin_wait)
+      tt->start(); // starts paused -- now actually start the thread!
   }
 
+  if(spin_wait)                 // don't start yet -- just wastes spin cycles..
+    return;
+
   // wait here to make sure the damn threads actually startup!
-  taManagedThread::usleep(sync_sleep_usec*100); // give some time to wakeup..
+  taManagedThread::usleep(100); // give some time to wakeup..
   wait_mutex.lock();
-  while(n_active < threads.size) { // wait for everyone to start and get into first wait
+#if (QT_VERSION >= 0x050000)
+    int cur_active = n_active.loadAcquire();
+#else
+    int cur_active = (int)n_active;
+#endif
+  while(cur_active < threads.size) { // wait for everyone to start and get into first wait
     wait_mutex.unlock();
-    taManagedThread::usleep(sync_sleep_usec*10);    // this is going to be slower, so wait longer
+    taManagedThread::usleep(10);    // this is going to be slower, so wait longer
     wait_mutex.lock();
+#if (QT_VERSION >= 0x050000)
+    cur_active = n_active.loadAcquire();
+#else
+    cur_active = (int)n_active;
+#endif
   }
   wait_mutex.unlock();
   // now we know for sure everyone is groovy
 }
 
 void taThreadMgr::RunThreads() {
-  if(get_timing)    total_time.StartTimer(false); // don't reset
-
+  if(get_timing) {
+    total_time.StartTimer(false); // don't reset
+    sync_time.StartTimer(false); // don't reset
+  }
+  
   // do all this under the mutex, so we know that everyone is fully back in wait
-  wait_mutex.lock();
+  if(!spin_wait)
+    wait_mutex.lock();
+
   n_to_run = threads.size;
   n_started = 0;
   n_running = 0;
-  wait.wakeAll();
-  wait_mutex.unlock();
 
-  if(get_timing)    run_time.StartTimer(false); // don't reset
+  if(spin_wait) {
+#if (QT_VERSION >= 0x050000)
+    const int cur_to_run = n_to_run.loadAcquire();
+    int cur_active = n_active.loadAcquire();
+#else
+    const int cur_to_run = (int)n_to_run;
+    int cur_active = (int)n_active;
+#endif
+    if(cur_active == 0) {       // need to start these guys up!
+      for(int i=0;i<threads.size;i++) {
+        taManagedThread* tt = threads[i];
+        tt->start(); // starts paused -- now actually start the thread!
+      }
+    }
+
+#if (QT_VERSION >= 0x050000)
+    int cur_running = n_running.loadAcquire();
+#else
+    int cur_running = (int)n_running;
+#endif
+    while(cur_running < cur_to_run) {
+      if(sync_sleep_usec > 0)
+        taManagedThread::usleep(sync_sleep_usec);
+#if (QT_VERSION >= 0x050000)
+      cur_running = n_running.loadAcquire();
+#else
+      cur_running = (int)n_running;
+#endif
+    }
+  }
+  else {
+    wait.wakeAll();
+    wait_mutex.unlock();
+  }
+  n_to_run = 0;                 // reset now that everyone has started..
+
+  if(get_timing) {
+    sync_time.EndTimer();
+    run_time.StartTimer(false); // don't reset
+  }
 }
 
 void taThreadMgr::SyncThreads() {
-  if(get_timing)    run_time.EndTimer();
-
   if(get_timing) {
+    run_time.EndTimer();
     sync_time.StartTimer(false); // don't reset
-    if(n_started < n_to_run)
-      n_wake_in_sync += n_to_run - n_started;
   }
 
   // note: one could wrap the following code all in wait_mutex.lock and unlock, but
@@ -193,11 +273,46 @@ void taThreadMgr::SyncThreads() {
   // it is not necessary!  the mutex will be hit next time a run threads guy happens
   // and that will definitely ensure that everyone got back home..
 
-  while(n_started < n_to_run) { // wait for other guys to start
-    taManagedThread::usleep(sync_sleep_usec);
+#if (QT_VERSION >= 0x050000)
+  const int cur_to_run = n_to_run.loadAcquire();
+#else
+  const int cur_to_run = (int)n_to_run;
+#endif
+
+#if (QT_VERSION >= 0x050000)
+  int cur_started = n_started.loadAcquire();
+#else
+  int cur_started = (int)n_started;
+#endif
+
+  if(get_timing) {
+    if(cur_started < cur_to_run)
+      n_wake_in_sync += cur_to_run - cur_started;
   }
-  while(n_running > 0) {	// then wait for everyone to finish
-    taManagedThread::usleep(sync_sleep_usec);
+
+  while(cur_started < cur_to_run) {
+    if(sync_sleep_usec > 0)
+      taManagedThread::usleep(sync_sleep_usec);
+#if (QT_VERSION >= 0x050000)
+    cur_started = n_started.loadAcquire();
+#else
+    cur_started = (int)n_started;
+#endif
+  }
+
+#if (QT_VERSION >= 0x050000)
+  int cur_running = n_running.loadAcquire();
+#else
+  int cur_running = (int)n_running;
+#endif
+  while(cur_running > 0) {
+    if(sync_sleep_usec > 0)
+      taManagedThread::usleep(sync_sleep_usec);
+#if (QT_VERSION >= 0x050000)
+    cur_running = n_running.loadAcquire();
+#else
+    cur_running = (int)n_running;
+#endif
   }
 
   if(get_timing) {
@@ -213,7 +328,6 @@ void taThreadMgr::Run() {
   tasks[0]->run();		// task 0 run in main thread
   SyncThreads();
 }
-
 
 void taThreadMgr::StartTimers() {
   get_timing = true;

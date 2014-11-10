@@ -111,7 +111,12 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
       cur_src->InitFmRec(urec);                    // init
       taMisc::LogInfo("Undo: New source added!");
     }
-    if(diff_threads.n_running > 0)
+#if (QT_VERSION >= 0x050000)
+    int cur_running = diff_threads.n_running.loadAcquire();
+#else
+    int cur_running = (int)diff_threads.n_running;
+#endif
+    if(cur_running > 0)
       diff_threads.SyncThreads();       // sync now before running again..
     urec->diff_src = cur_src;   // this smartref ptr needs to be set in main task
     rec_to_diff = urec;

@@ -27,6 +27,7 @@
 #ifndef __MAKETA__
 #include <QMutex>
 #include <QWaitCondition>
+#include <QAtomicInt>
 #else
 class QMutex; //
 class QWaitCondition; //
@@ -57,6 +58,7 @@ public:
   // Stats on the overhead of the system
 
   bool			get_timing;	// #NO_SAVE #READ_ONLY collect timing information as the system runs -- this is set by StartTimers and turned off by EndTimers
+  bool                  spin_wait;      // #NO_SAVE use spin-wait instead of mutex-based wait() that goes to the OS -- experimental..
   TimeUsedHR		run_time; 	// #EXPERT total time (in secs and fractions thereof) from end of RunThreads() call (after telling threads to wake up) to start of SyncThreads() call
   TimeUsedHR		sync_time;	// #EXPERT total time (in secs and fractions thereof) in SyncThreads() waiting to sync up the threads
   TimeUsedHR		total_time;	// #EXPERT total time (in secs and fractions thereof) from start of RunThreads() to end of SyncThreads()
@@ -69,13 +71,13 @@ public:
   //////////////////////////////////////////////////////
   //		These are used by the managed threads
 
-  int			n_to_run;
+  QAtomicInt		n_to_run;
   // #IGNORE number of threads that should start to run -- this is set to threads.size at start of run, and checked in sync threads
-  int			n_running;
+  QAtomicInt		n_running;
   // #IGNORE number of threads that are currently running -- atomically incremented and decremented by the threads as they run and finish their task
-  int			n_started;
+  QAtomicInt		n_started;
   // #IGNORE number of threads that actually started the task -- this is reset to 0 at start of run, and atomically incremented by the threads when they start running -- ensures that everyone runs..
-  int			n_active;
+  QAtomicInt		n_active;
   // #IGNORE number of threads that are activated and ready to start running -- used for syncing on task startup
   QMutex		wait_mutex;
   // #IGNORE mutex for guarding the wait guy

@@ -180,7 +180,7 @@ void iTabView::FillTabBarContextMenu(QMenu* contextMenu, int tab_idx) {
   contextMenu->addAction(act);
   
   // open the panel as a window (same as opening from context menu with "edit dialog"
-  act = new iAction("&Open In Window",  dp, SLOT(OpenInWindow()), NULL);
+  act = new iAction("&Open In Window",  dp, SLOT(OpenInWindow()), 0);
   act->setParent(contextMenu);
   contextMenu->addAction(act);
 }
