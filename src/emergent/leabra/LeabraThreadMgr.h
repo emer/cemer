@@ -89,6 +89,10 @@ public:
   { run.IncrAvg(); wait.IncrAvg(); }
   // #CAT_TimeUsed increment the avg_used running average with the current s_used data -- for both run and wait timers
 
+  inline void  EndRunIncr()
+  { EndRun(); IncrAvg(); }
+  // #CAT_TimeUsed end the run timer, and increment the avg_used
+
   inline void ResetAvg() 
   { run.ResetAvg(); wait.ResetAvg(); }
   // #CAT_TimeUsed reset the running averages
@@ -256,6 +260,9 @@ public:
 
   void   ThreadReport(DataTable* table);
   // run a report on thread stats, to data table (which is fully reset in the process)
+
+  LeabraTask*   Task0() { return (LeabraTask*)tasks.SafeEl(0); }
+  // #IGNORE main thread task
 
   TA_BASEFUNS_NOCOPY(LeabraThreadMgr);
 protected:

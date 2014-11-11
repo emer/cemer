@@ -245,6 +245,8 @@ void LeabraTask::Cycle_Run() {
       net->Cuda_Send_Netin();
     }
     EndStep(mg->stage_net, send_netin_time, cyc);
+    if(timers_on)
+      send_netin_time.IncrAvg();
 #else
     { // Send_NetinDelta
       LeabraThreadUnitCall un_call(&LeabraUnit::Send_NetinDelta);

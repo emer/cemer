@@ -417,17 +417,43 @@ void LeabraNetwork::Cycle_Run() {
     lthreads.Run(LeabraThreadMgr::RUN_CYCLE);
   }
   else {
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->send_netin_time.StartRun();
     Send_Netin();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->send_netin_time.EndRunIncr();
+
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->netin_integ_time.StartRun();
     Compute_NetinInteg();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->netin_integ_time.EndRunIncr();
 
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->inhib_time.StartRun();
     Compute_Inhib();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->inhib_time.EndRunIncr();
 
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->act_time.StartRun();
     Compute_Act();
-    Compute_Act_Post();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->act_time.EndRunIncr();
 
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->act_post_time.StartRun();
+    Compute_Act_Post();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->act_post_time.EndRunIncr();
+
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->cycstats_time.StartRun();
     Compute_CycleStats_Pre();
     Compute_CycleStats_Layer();
     Compute_CycleStats_Post();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->cycstats_time.EndRunIncr();
 
     Cycle_IncrCounters();
   }
@@ -718,12 +744,17 @@ void LeabraNetwork::Compute_dWt() {
     if(cos_err < lstats.cos_err_lrn_thr) return; // didn't make threshold
   }
 
+  if(lthreads.timers_on && lthreads.tasks.size == 1)
+    lthreads.Task0()->dwt_time.StartRun();
+
   Compute_dWt_Layer_pre();
   Compute_dWt_vecvars();
 
 #ifdef CUDA_COMPILE
   if(!net_misc.dwt_norm) {      // todo: add other checks here for non-std dwts etc
     Cuda_Compute_dWt();
+    if(lthreads.timers_on && lthreads.tasks.size == 1)
+      lthreads.Task0()->dwt_time.EndRunIncr();
     return;
   }
 #endif
@@ -739,6 +770,8 @@ void LeabraNetwork::Compute_dWt() {
     }
     Compute_dWt_Norm();
   }
+  if(lthreads.timers_on && lthreads.tasks.size == 1)
+    lthreads.Task0()->dwt_time.EndRunIncr();
 }
 
 void LeabraNetwork::Compute_dWt_Norm() {
@@ -751,8 +784,13 @@ void LeabraNetwork::Compute_dWt_Norm() {
 }
 
 void LeabraNetwork::Compute_Weights_impl() {
+  if(lthreads.timers_on && lthreads.tasks.size == 1)
+    lthreads.Task0()->wt_time.StartRun();
+
 #ifdef CUDA_COMPILE
   Cuda_Compute_Weights();
+  if(lthreads.timers_on && lthreads.tasks.size == 1)
+    lthreads.Task0()->wt_time.EndRunIncr();
   return;
 #endif
 
@@ -766,6 +804,8 @@ void LeabraNetwork::Compute_Weights_impl() {
       un->Compute_Weights(this, -1);
     }
   }
+  if(lthreads.timers_on && lthreads.tasks.size == 1)
+    lthreads.Task0()->wt_time.EndRunIncr();
 }
 
 ///////////////////////////////////////////////////////////////////////
