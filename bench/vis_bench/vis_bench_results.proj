@@ -284,26 +284,7 @@ LeabraProject .projects["vis_bench_results"] {
      };
     };
    };
-   DataTable @["haswell_c10x2_cuda_all"] { 
-    DataTableCols @.data = [3] {
-     float_Data @["avx2_secs"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     float_Data @["cuda_secs"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-     String_Data @["threads"] { 
-      UserDataItem_List @*(.user_data_) {
-       UserDataItem @["view_panel_wd"] { };
-      };
-     };
-    };
-   };
-   DataTable @["avx2_vs_cuda_th1_sum"] { 
+   DataTable @["avx2_vs_cuda_th1_netin_dwt"] { 
     DataTableCols @.data = [6] {
      int_Data @["thread"] { 
       UserDataItem_List @*(.user_data_) {
@@ -311,17 +292,52 @@ LeabraProject .projects["vis_bench_results"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     String_Data @["stat"] { 
+     String_Data @["function"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["netin"] { 
+     float_Data @["avx2"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["dwt"] { 
+     float_Data @["cuda"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_avg"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_sum"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+    };
+   };
+   DataTable @["avx2_vs_cuda_th4_8_netin_dwt"] { 
+    DataTableCols @.data = [6] {
+     int_Data @["thread"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["function"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["avx2"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cuda"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
@@ -374,7 +390,7 @@ LeabraProject .projects["vis_bench_results"] {
     };
    };
   };
-  DataTable_Group @.gp["AnalysisData"] = [18] { 
+  DataTable_Group @.gp["AnalysisData"] = [20] { 
    DataTable @["cuda_th1_time"] { 
     DataTableCols @.data = [3] {
      float_Data @["epoch_time_tot"] { 
@@ -597,6 +613,76 @@ LeabraProject .projects["vis_bench_results"] {
      };
     };
    };
+   DataTable @["avx2_th4_rpt"] { 
+    DataTableCols @.data = [6] {
+     int_Data @["thread"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["stat"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["run_avg"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["run_sum"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_avg"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_sum"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+    };
+   };
+   DataTable @["avx2_th8_rpt"] { 
+    DataTableCols @.data = [6] {
+     int_Data @["thread"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     String_Data @["stat"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["run_avg"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["run_sum"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_avg"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["wait_sum"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+    };
+   };
    DataTable @["dream_th1_time"] { 
     DataTableCols @.data = [3] {
      float_Data @["epoch_time_tot"] { 
@@ -782,7 +868,7 @@ LeabraProject .projects["vis_bench_results"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [5] {
+     T3Panel_List @.panels = [6] {
       T3Panel @["haswell_c10x2_cuda"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["haswell_c10x2_cuda_Graph"] { 
@@ -853,12 +939,12 @@ LeabraProject .projects["vis_bench_results"] {
       };
       T3Panel @["avx2_vs_cuda_th1"] { 
        T3DataView_List @.root_view.children = [1] {
-	GraphTableView @["avx2_vs_cuda_th1_sum_Graph"] { 
+	GraphTableView @["avx2_vs_cuda_th1_netin_dwt_Graph"] { 
 	 T3DataView_List @.children = [6] {
 	  GraphColView @["thread"] { };
-	  GraphColView @["stat"] { };
-	  GraphColView @["netin"] { };
-	  GraphColView @["dwt"] { };
+	  GraphColView @["function"] { };
+	  GraphColView @["avx2"] { };
+	  GraphColView @["cuda"] { };
 	  GraphColView @["wait_avg"] { };
 	  GraphColView @["wait_sum"] { };
 	 };
@@ -870,41 +956,41 @@ LeabraProject .projects["vis_bench_results"] {
 	 };
 
 	 GraphPlotView_List @.plots = [16] {
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_1"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_2"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_3"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_4"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_5"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_6"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_7"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_8"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_9"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_10"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_11"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_12"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_13"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_14"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_15"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_16"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_1"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_2"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_3"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_4"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_5"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_6"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_7"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_8"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_9"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_10"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_11"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_12"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_13"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_14"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_15"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_16"] { };
 	 };
 
 	 GraphPlotView_List @.errbars = [16] {
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_1"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_2"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_3"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_4"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_5"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_6"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_7"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_8"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_9"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_10"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_11"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_12"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_13"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_14"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_15"] { };
-	  GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_16"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_1"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_2"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_3"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_4"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_5"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_6"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_7"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_8"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_9"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_10"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_11"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_12"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_13"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_14"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_15"] { };
+	  GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_16"] { };
 	 };
 	};
        };
@@ -1112,6 +1198,77 @@ LeabraProject .projects["vis_bench_results"] {
 	  GraphPlotView @["haswell_mem_opt_Graph_err_14"] { };
 	  GraphPlotView @["haswell_mem_opt_Graph_err_15"] { };
 	  GraphPlotView @["haswell_mem_opt_Graph_err_16"] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+      T3Panel @["avx2_vs_cuda_th4_8_netin_dwt"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GraphTableView @["avx2_vs_cuda_th4_8_netin_dwt_Graph"] { 
+	 T3DataView_List @.children = [6] {
+	  GraphColView @["thread"] { };
+	  GraphColView @["function"] { };
+	  GraphColView @["avx2"] { };
+	  GraphColView @["cuda"] { };
+	  GraphColView @["wait_avg"] { };
+	  GraphColView @["wait_sum"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [16] {
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_1"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_2"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_3"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_4"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_5"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_6"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_7"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_8"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_9"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_10"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_11"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_12"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_13"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_14"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_15"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_16"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [16] {
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_1"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_2"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_3"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_4"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_5"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_6"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_7"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_8"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_9"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_10"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_11"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_12"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_13"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_14"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_15"] { };
+	  GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_16"] { };
 	 };
 	};
        };
@@ -2919,7 +3076,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=90;
       ar {
        name="ar";
-      [4] 74.489998;52.43;43.549999;38.32;      };
+      [4] 72.879997;51.200001;41.389999;36.720001;      };
      };
      float_Data @["threads"] {
       UserDataItem_List @*(.user_data_) {
@@ -3144,102 +3301,8 @@ LeabraProject .projects["vis_bench_results"] {
      name="row_indexes";
     [4] 0;1;2;3;    };
    };
-   DataTable @["haswell_c10x2_cuda_all"] {
-    name="haswell_c10x2_cuda_all";
-    desc=;
-    data {
-     name="data";
-     el_typ=float_Data;
-     el_def=0;
-     float_Data @["avx2_secs"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.156739816069603;
-	val_type_fixed=0;
-       };
-      };
-      name="avx2_secs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-      ar {
-       name="ar";
-      [8] 112.95;74.489998;62.419998;52.43;42.189999;43.549999;34.380001;38.32;      };
-     };
-     float_Data @["cuda_secs"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.1410658359527588;
-	val_type_fixed=0;
-       };
-      };
-      name="cuda_secs";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=90;
-      ar {
-       name="ar";
-      [8] 112.95;74.489998;62.419998;52.43;42.189999;43.549999;34.380001;38.32;      };
-     };
-     String_Data @["threads"] {
-      UserDataItem_List @*(.user_data_) {
-       name=;
-       el_typ=UserDataItem;
-       el_def=0;
-       UserDataItem @["view_panel_wd"] {
-	name="view_panel_wd";
-	value 6 0=0.537617564201355;
-	val_type_fixed=0;
-       };
-      };
-      name="threads";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=343;
-      ar {
-       name="ar";
-      [8] "avx2.1";"cuda.1";"avx2.2";"cuda.2";"avx2.4";"cuda.4";"avx2.8";"cuda.8";      };
-     };
-    };
-    data_flags=SAVE_ROWS|AUTO_CALC;
-    auto_load=NO_AUTO_LOAD;
-    auto_load_file=;
-    keygen 4 0=0;
-    row_indexes {
-     name="row_indexes";
-    [8] 0;1;2;3;4;5;6;7;    };
-   };
-   DataTable @["avx2_vs_cuda_th1_sum"] {
-    name="avx2_vs_cuda_th1_sum";
+   DataTable @["avx2_vs_cuda_th1_netin_dwt"] {
+    name="avx2_vs_cuda_th1_netin_dwt";
     desc=;
     data {
      name="data";
@@ -3274,10 +3337,9 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 0;0;0;0;0;0;0;0;0;0;
-      };
+      [2] 0;0;      };
      };
-     String_Data @["stat"] {
+     String_Data @["function"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_82";
        el_typ=UserDataItem;
@@ -3288,7 +3350,7 @@ LeabraProject .projects["vis_bench_results"] {
 	val_type_fixed=0;
        };
       };
-      name="stat";
+      name="function";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3301,10 +3363,9 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] "avx2";"netin_cuda";"inhib_time";"act_time";"act_post_time";"cycstats_time";"cuda";"dwt_cuda";"wt_time";"ti_netin_time";
-      };
+      [2] "netin";"dwt";      };
      };
-     float_Data @["netin"] {
+     float_Data @["avx2"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_83";
        el_typ=UserDataItem;
@@ -3315,7 +3376,7 @@ LeabraProject .projects["vis_bench_results"] {
 	val_type_fixed=0;
        };
       };
-      name="netin";
+      name="avx2";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3328,10 +3389,9 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 29.068701;2852.01;300.19501;2729.8501;2217.9199;2057.54;12.4901;13124.8;388443;0;
-      };
+      [2] 29.068701;18.695601;      };
      };
-     float_Data @["dwt"] {
+     float_Data @["cuda"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_84";
        el_typ=UserDataItem;
@@ -3342,7 +3402,7 @@ LeabraProject .projects["vis_bench_results"] {
 	val_type_fixed=0;
        };
       };
-      name="dwt";
+      name="cuda";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3355,8 +3415,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 18.695601;12.4901;1.50097;13.6492;11.0896;10.2877;2.62497;2.62497;1.94221;0;
-      };
+      [2] 11.4683;1.89767;      };
      };
      float_Data @["wait_avg"] {
       UserDataItem_List @*(.user_data_) {
@@ -3382,8 +3441,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 0;0;0;0;0;0;0;0;0;0;
-      };
+      [2] 0;0;      };
      };
      float_Data @["wait_sum"] {
       UserDataItem_List @*(.user_data_) {
@@ -3409,8 +3467,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 0;0;0;0;0;0;0;0;0;0;
-      };
+      [2] 0;0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3419,7 +3476,184 @@ LeabraProject .projects["vis_bench_results"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [2] 0;6;    };
+    [2] 0;1;    };
+   };
+   DataTable @["avx2_vs_cuda_th4_8_netin_dwt"] {
+    name="avx2_vs_cuda_th4_8_netin_dwt";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["thread"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="thread";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] 0;0;0;0;      };
+     };
+     String_Data @["function"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="function";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] "netin 4";"dwt 4";"netin 8";"dwt 8";      };
+     };
+     float_Data @["avx2"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="avx2";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] 10.0249;5.16537;9.3593903;2.94854;      };
+     };
+     float_Data @["cuda"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="cuda";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] 11.4683;1.89767;11.4683;1.89767;      };
+     };
+     float_Data @["wait_avg"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_avg";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] 0;0;0;0;      };
+     };
+     float_Data @["wait_sum"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_sum";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [4] 0;0;0;0;      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [4] 0;2;1;3;    };
    };
    DataTable @["avx2_vs_cuda_th1_avg"] {
     name="avx2_vs_cuda_th1_avg";
@@ -3635,7 +3869,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 74.489998;      };
+      [1] 72.879997;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -3687,7 +3921,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=343;
       ar {
        name="ar";
-      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_uc16_uf1_th1_epc100_time.dat";      };
+      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_th1024_uc16_uf1_th1_epc100_time.dat";      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3823,7 +4057,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 52.43;      };
+      [1] 51.200001;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -3849,7 +4083,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 87.07;      };
+      [1] 87.099998;      };
      };
      String_Data @["Name"] {
       UserDataItem_List @*(.user_data_) {
@@ -3875,7 +4109,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=315;
       ar {
        name="ar";
-      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_uc16_uf1_th2_epc100_time.dat";      };
+      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_th1024_uc16_uf1_th2_epc100_time.dat";      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4011,7 +4245,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 43.549999;      };
+      [1] 41.389999;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -4037,7 +4271,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 128.42999;      };
+      [1] 125.25;      };
      };
      String_Data @["Name"] {
       UserDataItem_List @*(.user_data_) {
@@ -4046,7 +4280,7 @@ LeabraProject .projects["vis_bench_results"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.4937303960323334;
+	value 6 0=0.6739811897277832;
 	val_type_fixed=0;
        };
       };
@@ -4060,10 +4294,10 @@ LeabraProject .projects["vis_bench_results"] {
       dim_names {
        name="dim_names";
       [0]       };
-      width=315;
+      width=430;
       ar {
        name="ar";
-      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_uc16_uf1_th4_epc100_time.dat";      };
+      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_th1024_uc16_uf1_th4_epc100_time.dat";      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4199,7 +4433,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 38.32;      };
+      [1] 36.720001;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -4225,7 +4459,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [1] 206.25999;      };
+      [1] 202.44;      };
      };
      String_Data @["Name"] {
       UserDataItem_List @*(.user_data_) {
@@ -4251,7 +4485,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=419;
       ar {
        name="ar";
-      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_uc16_uf1_th8_epc100_time.dat";      };
+      [1] "vis_bench_lg_haswell_10cx2_r7_numa_cuda_th1024_uc16_uf1_th8_epc100_time.dat";      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -4630,7 +4864,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 2498.01;2406.95;297.112;2687.6201;2097.3899;1989.03;13124.8;0;108571;0;
+      [10] 2293.6599;2417.73;296.241;2729.3;2101.8899;1999.74;9488.3301;0;64533.801;0;
       };
      };
      float_Data @["run_sum"] {
@@ -4657,7 +4891,7 @@ LeabraProject .projects["vis_bench_results"] {
       width=0;
       ar {
        name="ar";
-      [10] 12.4901;12.0347;1.4855601;13.4381;10.487;9.9451303;2.62497;0;0.542853;0;
+      [10] 11.4683;12.0887;1.48121;13.6465;10.5094;9.9986801;1.89767;0;0.322669;0;
       };
      };
      float_Data @["wait_avg"] {
@@ -4722,6 +4956,444 @@ LeabraProject .projects["vis_bench_results"] {
     row_indexes {
      name="row_indexes";
     [10] 0;1;2;3;4;5;6;7;8;9;
+    };
+   };
+   DataTable @["avx2_th4_rpt"] {
+    name="avx2_th4_rpt";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["thread"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="thread";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] 0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+2;2;2;2;2;2;2;2;2;2;
+3;3;3;3;3;3;3;3;3;3;
+      };
+     };
+     String_Data @["stat"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="stat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] "send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+      };
+     };
+     float_Data @["run_avg"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="run_avg";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] 1532.83;985.34198;81.648697;894.31799;634.34698;84.073601;25887.199;0;193857;799.67999;
+2004.98;996.10699;82.636299;912.57202;642.23798;89.488701;25826.9;0;193783;773.229;
+2004.41;989.75201;89.040703;901.04303;633.242;111.721;25828.9;0;193778;763.85999;
+2004.52;991.22803;77.203102;900.53198;632.94397;109.569;25829.301;0;193792;772.32703;
+      };
+     };
+     float_Data @["run_sum"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="run_sum";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] 7.6641302;4.9267101;0.408243;4.47159;3.17173;0.42036799;5.1774502;0;0.96928602;0.31987199;
+10.0249;4.9805398;0.41318101;4.56286;3.21119;0.44744399;5.16537;0;0.968916;0.30929199;
+10.0221;4.94876;0.44520301;4.5052099;3.1662099;0.55860502;5.1657801;0;0.968889;0.30554399;
+10.0226;4.95614;0.38601601;4.5026598;3.1647201;0.54784697;5.1658502;0;0.96895802;0.30893099;
+      };
+     };
+     float_Data @["wait_avg"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_avg";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] 3.5829501;18.567301;100.48;25.4405;11.5661;144.48199;5.8449998;0;29.200001;4.5700102;
+3.2987101;7.7288098;99.531601;7.00701;3.5887401;139.17599;5.60501;0;29.200001;3.55001;
+3.48053;13.8927;93.324402;18.122;12.3574;117.464;5.52001;0;46;14.5375;
+3.53234;12.6107;104.688;18.6716;12.6048;119.561;5.4000001;0;27.4;5.2050099;
+      };
+     };
+     float_Data @["wait_sum"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_sum";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [40] 0.017914699;0.092836604;0.50240099;0.127203;0.057830699;0.72241199;0.0011690001;0;0.00014600001;0.0018279999;
+0.016493499;0.038644001;0.49765801;0.0350351;0.017943701;0.69587803;0.001121;0;0.00014600001;0.00142;
+0.0174026;0.0694637;0.46662199;0.090609998;0.061787099;0.58732003;0.001104;0;0.00023000001;0.00581499;
+0.0176617;0.063053504;0.52344102;0.093357801;0.063023999;0.59780502;0.00108;0;0.000137;0.002082;
+      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [40] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+    };
+   };
+   DataTable @["avx2_th8_rpt"] {
+    name="avx2_th8_rpt";
+    desc=;
+    data {
+     name="data";
+     el_typ=int_Data;
+     el_def=0;
+     int_Data @["thread"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="thread";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] 0;0;0;0;0;0;0;0;0;0;
+1;1;1;1;1;1;1;1;1;1;
+2;2;2;2;2;2;2;2;2;2;
+3;3;3;3;3;3;3;3;3;3;
+4;4;4;4;4;4;4;4;4;4;
+5;5;5;5;5;5;5;5;5;5;
+6;6;6;6;6;6;6;6;6;6;
+7;7;7;7;7;7;7;7;7;7;
+      };
+     };
+     String_Data @["stat"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="stat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] "send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+"send_netin_time";"netin_integ_time";"inhib_time";"act_time";"act_post_time";"cycstats_time";"dwt_time";"dwt_norm_time";"wt_time";"ti_netin_time";
+      };
+     };
+     float_Data @["run_avg"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="run_avg";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] 1174.9301;714.73798;49.258801;451.33301;334.01001;48.009602;14866.2;0;194192;604.55798;
+1872.29;720.073;44.745602;492.82901;340.358;50.152;14742.7;0;194002;547.09198;
+1872.61;720.49298;46.294601;493.66901;342.59799;46.4347;14744.3;0;194017;551.40997;
+1872.4301;721.875;47.231701;465.20901;340.64899;53.02;14739.5;0;194011;552.60901;
+1872.21;725.10498;45.2281;489.228;338.50699;54.4692;14747.9;0;194020;554.73999;
+1872.35;725.88;43.022301;491.57001;338.72198;59.255001;14730;0;194084;550.07001;
+1872.27;728.35602;37.160301;478.28201;337.957;57.725899;14747.2;0;194094;549.10699;
+1871.88;717.12097;40.751202;466.74301;336.332;53.762699;14740.4;0;194079;550.72498;
+      };
+     };
+     float_Data @["run_sum"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="run_sum";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] 5.87465;3.5736899;0.24629401;2.25666;1.67005;0.24004801;2.9732399;0;0.97096199;0.241823;
+9.3614397;3.6003599;0.223728;2.4641399;1.70179;0.25075999;2.94854;0;0.97000802;0.21883699;
+9.3630304;3.6024699;0.231473;2.4683399;1.71299;0.23217399;2.9488499;0;0.97008699;0.22056399;
+9.3621702;3.60937;0.236159;2.32604;1.7032501;0.2651;2.9479001;0;0.97005397;0.221044;
+9.3610497;3.62552;0.22614101;2.4461401;1.69253;0.27234599;2.9495699;0;0.970101;0.22189599;
+9.3617296;3.6294;0.215111;2.45785;1.69361;0.29627499;2.9460001;0;0.97042102;0.220028;
+9.3613596;3.6417799;0.185802;2.3914101;1.68979;0.28863001;2.94944;0;0.97047001;0.219643;
+9.3593903;3.5855999;0.203756;2.33371;1.6816601;0.268814;2.94807;0;0.970393;0.22029001;
+      };
+     };
+     float_Data @["wait_avg"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_avg";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] 9.4421301;29.5812;143.84801;53.266899;14.5329;193.521;9.52001;0;37.599998;11.05;
+9.4413204;24.285801;148.261;11.8905;7.7231102;191.26401;9.6150103;0;56.799999;11.765;
+9.2651196;23.6581;146.776;11.2967;5.7484899;194.98199;9.5850096;0;34.400002;9.3175201;
+9.5059299;22.219801;145.86;39.511299;7.78232;188.664;10.065;0;59.599998;9.18752;
+9.5043201;19.1551;147.77499;15.5246;9.4823399;187.136;9.6800098;0;52.799999;11.7625;
+9.4805202;18.5935;149.914;13.019;9.1935196;182.629;9.4650097;0;52.200001;7.7825198;
+9.5937405;16.339399;155.451;26.8449;9.9073095;184.13699;9.60501;0;67;11.3475;
+9.7269096;27.3783;152.013;37.7593;11.9672;187.79401;10.57;0;49.400002;11.08;
+      };
+     };
+     float_Data @["wait_sum"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
+      name="wait_sum";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+      ar {
+       name=;
+      [80] 0.0472106;0.14790601;0.71924001;0.266334;0.072664604;0.96760702;0.0019039999;0;0.00018800001;0.0044200001;
+0.047206599;0.121429;0.74130702;0.059452601;0.038615599;0.95632201;0.001923;0;0.00028400001;0.004706;
+0.046325602;0.118291;0.73387802;0.056483701;0.0287425;0.97490799;0.001917;0;0.000172;0.00372701;
+0.047529601;0.111099;0.72930098;0.197557;0.0389116;0.94331801;0.002013;0;0.000298;0.0036750101;
+0.047521599;0.095775701;0.73887402;0.077622801;0.047411699;0.93567801;0.001936;0;0.000264;0.0047050002;
+0.047402602;0.092967696;0.749569;0.065094903;0.045967601;0.91314697;0.001893;0;0.00026100001;0.00311301;
+0.047968701;0.081697203;0.77725297;0.134224;0.049536601;0.92068601;0.001921;0;0.00033499999;0.0045389999;
+0.048634499;0.13689101;0.76006401;0.188796;0.059835799;0.93897003;0.002114;0;0.00024699999;0.00443201;
+      };
+     };
+    };
+    data_flags=SAVE_ROWS|AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name=;
+    [80] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
     };
    };
    DataTable @["dream_th1_time"] {
@@ -5496,12 +6168,12 @@ LeabraProject .projects["vis_bench_results"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002120890887454152;
+     value 6 0=0.004241781774908304;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.01019541174173355;
+     value 6 0=0.07561597228050232;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -6467,9 +7139,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
-	 GraphTableView @["avx2_vs_cuda_th1_sum_Graph"] {
-	  name="avx2_vs_cuda_th1_sum_Graph";
-	  m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"]$$;
+	 GraphTableView @["avx2_vs_cuda_th1_netin_dwt_Graph"] {
+	  name="avx2_vs_cuda_th1_netin_dwt_Graph";
+	  m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"]$$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
 	   name="children";
@@ -6477,39 +7149,39 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	   GraphColView @["thread"] {
 	    name="thread";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["thread"]$$;
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["thread"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @["stat"] {
-	    name="stat";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["stat"]$$;
+	   GraphColView @["function"] {
+	    name="function";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["function"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=-0.51: fix_max=1: max=1.51: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @["netin"] {
-	    name="netin";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["netin"]$$;
+	   GraphColView @["avx2"] {
+	    name="avx2";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["avx2"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=1: min=0: fix_max=1: max=30: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @["dwt"] {
-	    name="dwt";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["dwt"]$$;
+	   GraphColView @["cuda"] {
+	    name="cuda";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["cuda"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=18.6956: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=11.4683: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["wait_avg"] {
 	    name="wait_avg";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["wait_avg"]$$;
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["wait_avg"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -6517,7 +7189,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	   GraphColView @["wait_sum"] {
 	    name="wait_sum";
-	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_sum"].data["wait_sum"]$$;
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th1_netin_dwt"].data["wait_sum"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -6559,7 +7231,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   m_transform=NULL;
 	   on=1;
 	   axis=X;
-	   col_name="stat";
+	   col_name="function";
 	   is_string=1;
 	   is_matrix=0;
 	   n_cells=1;
@@ -6592,13 +7264,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_1"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_1";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_1"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_1";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
-	    col_name="netin";
+	    col_name="avx2";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
@@ -6611,18 +7283,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_2"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_2";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_2"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_2";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=1;
 	    axis=Y;
-	    col_name="dwt";
+	    col_name="cuda";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=18.6956: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=11.4683: };
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -6630,8 +7302,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=SQUARE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_3"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_3";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_3"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_3";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6649,8 +7321,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=DIAMOND;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_4"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_4";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_4"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_4";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6668,8 +7340,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_5"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_5";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_5"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_5";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6687,8 +7359,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_6"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_6";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_6"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_6";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6706,8 +7378,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=PLUS;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_7"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_7";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_7"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_7";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6725,8 +7397,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CROSS;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_8"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_8";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_8"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_8";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6744,8 +7416,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=STAR;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_9"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_9";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_9"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_9";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6763,8 +7435,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_10"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_10";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_10"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_10";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6782,8 +7454,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=SQUARE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_11"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_11";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_11"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_11";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6801,8 +7473,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=DIAMOND;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_12"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_12";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_12"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_12";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6820,8 +7492,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=TRIANGLE_UP;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_13"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_13";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_13"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_13";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6839,8 +7511,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=TRIANGLE_DN;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_14"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_14";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_14"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_14";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6858,8 +7530,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=PLUS;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_15"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_15";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_15"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_15";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6877,8 +7549,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CROSS;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_plot_16"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_plot_16";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_plot_16"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_plot_16";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6901,8 +7573,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_1"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_1";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_1"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_1";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6920,8 +7592,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_2"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_2";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_2"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_2";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6939,8 +7611,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_3"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_3";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_3"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_3";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6958,8 +7630,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_4"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_4";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_4"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_4";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6977,8 +7649,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_5"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_5";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_5"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_5";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -6996,8 +7668,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_6"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_6";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_6"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_6";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7015,8 +7687,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_7"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_7";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_7"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_7";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7034,8 +7706,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_8"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_8";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_8"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_8";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7053,8 +7725,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_9"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_9";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_9"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_9";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7072,8 +7744,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_10"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_10";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_10"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_10";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7091,8 +7763,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_11"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_11";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_11"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_11";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7110,8 +7782,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_12"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_12";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_12"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_12";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7129,8 +7801,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_13"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_13";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_13"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_13";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7148,8 +7820,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_14"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_14";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_14"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_14";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7167,8 +7839,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_15"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_15";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_15"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_15";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -7186,8 +7858,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    point_style=CIRCLE;
 	    alt_y=0;
 	   };
-	   GraphPlotView @["avx2_vs_cuda_th1_sum_Graph_err_16"] {
-	    name="avx2_vs_cuda_th1_sum_Graph_err_16";
+	   GraphPlotView @["avx2_vs_cuda_th1_netin_dwt_Graph_err_16"] {
+	    name="avx2_vs_cuda_th1_netin_dwt_Graph_err_16";
 	    m_data=NULL;
 	    m_transform=NULL;
 	    on=0;
@@ -9885,6 +10557,894 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        stereo_view=STEREO_NONE;
        saved_views {
 	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.425: y=0.43: z=1.658887: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.648887;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+      T3Panel @["avx2_vs_cuda_th4_8_netin_dwt"] {
+       name="avx2_vs_cuda_th4_8_netin_dwt";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_0";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_0";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @["avx2_vs_cuda_th4_8_netin_dwt_Graph"] {
+	  name="avx2_vs_cuda_th4_8_netin_dwt_Graph";
+	  m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"]$$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_0";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["thread"] {
+	    name="thread";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["thread"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["function"] {
+	    name="function";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["function"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=1: min=-0.51: fix_max=1: max=3.51: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avx2"] {
+	    name="avx2";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["avx2"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=1: min=0: fix_max=1: max=12: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["cuda"] {
+	    name="cuda";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["cuda"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=11.4683: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["wait_avg"] {
+	    name="wait_avg";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["wait_avg"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["wait_sum"] {
+	    name="wait_sum";
+	    m_data=.projects["vis_bench_results"].data.gp["OutputData"]["avx2_vs_cuda_th4_8_netin_dwt"].data["wait_sum"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_13";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_0";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=3: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=BAR;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=0.01;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name="GraphAxisView_25";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="function";
+	   is_string=1;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=1: min=-0.51: fix_max=1: max=3.51: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=1;
+	  };
+	  z_axis {
+	   name="GraphAxisView_26";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  tot_plots=16;
+	  plots {
+	   name="GraphPlotView_List_0";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_1"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="avx2";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=0: fix_max=1: max=12: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_2"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="cuda";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=11.4683: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_3"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_4"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_5"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_6"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_7"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_8"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_9"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_10"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_11"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_12"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_13"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_14"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_15"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_16"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_plot_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   name="GraphPlotView_List_0";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_1"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_2"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_3"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_4"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_5"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_6"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_7"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_8"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_9"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_10"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_11"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_12"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_13"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_14"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_15"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["avx2_vs_cuda_th4_8_netin_dwt_Graph_err_16"] {
+	    name="avx2_vs_cuda_th4_8_netin_dwt_Graph_err_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=FIXED_COLOR;
+	  color_axis {
+	   name="GraphAxisView_27";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale_0";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   range=0;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   name="GraphAxisView_28";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_12";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
