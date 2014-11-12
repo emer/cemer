@@ -41,11 +41,11 @@ public:
   KeyActionPair_PArray       line_edit_bindings;
   
   virtual bool              Add(BindingContext context, taiMisc::BoundAction action, String key_sequence);
-  // add a name value pair to the list of key bindings
+  // #IGNORE add a name value pair to the list of key bindings
   virtual String            KeySequence(BindingContext context, taiMisc::BoundAction action);
-  // retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
+  // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
   virtual taiMisc::BoundAction       Action(BindingContext context, String key_sequence);
-  
+  // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);
 
 protected:

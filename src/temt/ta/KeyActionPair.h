@@ -31,7 +31,7 @@ class TA_API KeyActionPair {
   
 public:
   String                   key_sequence; //
-  taiMisc::BoundAction     action; //
+  taiMisc::BoundAction     action; // #IGNORE
   
   // only compare the action
   bool	operator>(const KeyActionPair& kap) { return action > kap.action; }

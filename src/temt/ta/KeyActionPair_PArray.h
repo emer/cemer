@@ -35,12 +35,12 @@ public:
   int   FindKeySequence(const String& seq, int start=0) const;
   // find by key sequence  (start < 0 = from end)
   int   FindAction(taiMisc::BoundAction act, int start=0) const;
-  // find by action (start < 0 = from end)
+  // #IGNORE find by action (start < 0 = from end)
   
   taiMisc::BoundAction GetAction(const String& key_sequence);
-  // get action from key_sequence; isNull if not found
+  // #IGNORE get action from key_sequence; isNull if not found
   String                   GetKeySequence(taiMisc::BoundAction action);
-  // get key_sequence from the action; isNull if not found
+  // #IGNORE get key_sequence from the action; isNull if not found
 
   void  operator=(const KeyActionPair_PArray& cp)           { Copy_Duplicate(cp); }
   KeyActionPair_PArray()                                    { };
