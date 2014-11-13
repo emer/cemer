@@ -552,6 +552,10 @@ private:
   int                   _gsub_lt(const char*, int, const char* ,int);
   int                   _gsub_eq(const char*, int, const char*);
   int                   _gsub_gt(const char*, int, const char* ,int);
+
+#ifdef TA_OS_WIN
+  int                   ta_snprintf(char * s, size_t n, const char * format, ...); // #IGNORE private function for use in Windows - snprintf not yet supported in VC++12
+#endif
 }; //
 
 //extern taString _nilString; // an empty string, for convenience
@@ -1117,5 +1121,24 @@ inline bool operator<=(char x, const taString& t)
 {
   return compare(x, t) <= 0;
 }
+
+#ifdef TA_OS_WIN
+// Implementation of ta_snprintf from 
+// http://stackoverflow.com/questions/3976306/using-snprintf-in-a-cross-platform-application
+
+#include <cstdarg>
+
+inline int taString::ta_snprintf(char * s, size_t n, const char * format, ...)
+{
+   int retval;
+   va_list ap;
+   va_start(ap, format);
+   retval = _vsnprintf(s, n, format, ap);
+   va_end(ap);
+   return retval;
+}
+#else
+#define ta_snprintf snprintf
+#endif
 
 #endif // taString_h

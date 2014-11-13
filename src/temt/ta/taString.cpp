@@ -541,25 +541,25 @@ taString::taString(bool b) {
 
 taString::taString(int i,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,i);
+  ta_snprintf(buf, 64, format, i);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(uint u, const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,u);
+  ta_snprintf(buf, 64, format, u);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(long i,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,i);
+  ta_snprintf(buf, 64, format, i);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(ulong u, const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,u);
+  ta_snprintf(buf, 64, format, u);
   newRep(Salloc(buf, -1));
 }
 
@@ -613,19 +613,19 @@ taString::taString(ta_uint64_t u64) {
 
 taString::taString(float f,const char* format) {
   char buf[64];
-  snprintf(buf,64,format,f);
+  ta_snprintf(buf, 64, format, f);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(double f,const char* format) {
   char buf[64];
-  snprintf(buf,64,format,f);
+  ta_snprintf(buf, 64, format, f);
   newRep(Salloc(buf, -1));
 }
 
 taString::taString(void* p) {
   char buf[64];
-  snprintf(buf,64,"%p",p);
+  ta_snprintf(buf, 64, "%p", p);
   newRep(Salloc(buf, -1));
 }
 
@@ -771,28 +771,28 @@ taString& taString::capitalize() {
 
 taString& taString::convert(int i,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,i);
+  ta_snprintf(buf, 64, format, i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(long i,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,i);
+  ta_snprintf(buf, 64, format, i);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(float f,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,f);
+  ta_snprintf(buf, 64, format, f);
   setRep(Salloc(buf, -1));
   return *this;
 }
 
 taString& taString::convert(double f,const char* format) {
   char buf[64];
-  snprintf(buf, 64, format,f);
+  ta_snprintf(buf, 64, format, f);
   setRep(Salloc(buf, -1));
   return *this;
 }
@@ -1710,3 +1710,4 @@ String_Array* taString::to_array() {
   return rval;
 }
 #endif
+

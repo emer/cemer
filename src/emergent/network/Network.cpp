@@ -583,10 +583,19 @@ void Network::Connect_Alloc_RecvOwns() {
   // use posix_memalign to ensure that for this monster, we've got maximum possible
   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
   // that it is useful for AVX2
+#ifdef TA_OS_WIN
+  own_cons_mem = (float *)_aligned_malloc(own_cons_cnt * sizeof(float), 64);
+  ptr_cons_mem = (float *)_aligned_malloc(ptr_cons_cnt * sizeof(float), 64);
+#else
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
   posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
-  if(bias_cons_cnt > 0) {
-    posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+#endif
+  if (bias_cons_cnt > 0) {
+#ifdef TA_OS_WIN
+     bias_cons_mem = (float *)_aligned_malloc(bias_cons_cnt * sizeof(float), 64);
+#else
+     posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+#endif
   }
   else {
     bias_cons_mem = NULL;
@@ -664,10 +673,19 @@ void Network::Connect_Alloc_SendOwns() {
   // use posix_memalign to ensure that for this monster, we've got maximum possible
   // alignment -- 64 = 64 byte (not bit) -- this is needed for Phi MIC but not clear
   // that it is useful for AVX2
+#ifdef TA_OS_WIN
+  own_cons_mem = (float *)_aligned_malloc(own_cons_cnt * sizeof(float), 64);
+  ptr_cons_mem = (float *)_aligned_malloc(ptr_cons_cnt * sizeof(float), 64);
+#else
   posix_memalign((void**)&own_cons_mem, 64, own_cons_cnt * sizeof(float));
   posix_memalign((void**)&ptr_cons_mem, 64, ptr_cons_cnt * sizeof(float));
-  if(bias_cons_cnt > 0) {
-    posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+#endif
+  if (bias_cons_cnt > 0) {
+#ifdef TA_OS_WIN
+     bias_cons_mem = (float *)_aligned_malloc(bias_cons_cnt * sizeof(float), 64);
+#else
+     posix_memalign((void**)&bias_cons_mem, 64, bias_cons_cnt * sizeof(float));
+#endif
   }
   else {
     bias_cons_mem = NULL;
