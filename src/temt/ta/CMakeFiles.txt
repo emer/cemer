@@ -48,8 +48,6 @@ set(ta_HEADS_MAKETA_NOMOC
   int_PArray.h
   voidptr_PArray.h
   NameVar_PArray.h
-  KeyActionPair.h
-  KeyActionPair_PArray.h
 
   ITypedObject.h
   TypeItem.h
@@ -1000,6 +998,9 @@ set(ta_HEADS_NOMAKETA_MOC
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
   iDialogColorChooser.h
+
+  KeyActionPair.h
+  KeyActionPair_PArray.h
 )
 
 set(ta_HEADS_NOMAKETA_NOMOC

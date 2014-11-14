@@ -37,7 +37,7 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(BindingContext context) {
   }
 }
 
-bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action, String key_sequence) {
+bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action,  QKeySequence key_sequence) {
   bool rval = false;
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
@@ -51,24 +51,18 @@ bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action, Strin
   return rval;
 }
 
-String KeyBindings::KeySequence(BindingContext context, taiMisc::BoundAction action) {
+QKeySequence KeyBindings::KeySequence(BindingContext context, taiMisc::BoundAction action) {
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    String sequence = context_bindings->GetKeySequence(action);
-    return sequence;
+    return context_bindings->GetKeySequence(action);
   }
-  else {
-    return String("");
-  }
+  return QKeySequence("");
 }
 
-taiMisc::BoundAction KeyBindings::Action(BindingContext context, String key_sequence) {
+taiMisc::BoundAction KeyBindings::Action(BindingContext context,  QKeySequence key_sequence) {
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    taiMisc::BoundAction action = context_bindings->GetAction(key_sequence);
-    return action;
+    return context_bindings->GetAction(key_sequence);
   }
-  else {
-    return static_cast<taiMisc::BoundAction>(-1);
-  }
+  return taiMisc::NULL_ACTION;
 }

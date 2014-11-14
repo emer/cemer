@@ -52,6 +52,8 @@
 #include <TypeSpace>
 #include <MethodDef>
 #include <iDialogChoice>
+#include <KeyBindings>
+#include <KeyBindings_List>
 
 #include <taMisc>
 #include <taiMisc>
@@ -669,13 +671,15 @@ void iMainWindowViewer::Constr_EditMenu()
 
 void iMainWindowViewer::Constr_ViewMenu()
 {
-  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", QKeySequence(cmd_str + "1"), "viewBrowseOnlyAction"));
-  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", QKeySequence(cmd_str + "2"), "viewPanelsOnlyAction"));
-  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", QKeySequence(cmd_str + "3"), "viewBrowseAndPanelsAction"));
-  viewT3OnlyAction = AddAction(new iAction("viewT3Only", QKeySequence(cmd_str + "4"), "viewT3OnlyAction"));
-  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", QKeySequence(cmd_str + "5"), "viewBrowseAndT3Action"));
-  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", QKeySequence(cmd_str + "6"), "viewPanelsAndT3Action"));
-  viewAllFramesAction = AddAction(new iAction("viewAllFrames", QKeySequence(cmd_str + "7"), "viewAllFramesAction"));
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
+
+  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_T3_ONLY), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_ALL_FRAMES), "viewAllFramesAction"));
 
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 

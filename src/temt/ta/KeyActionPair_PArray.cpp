@@ -17,7 +17,7 @@
 
 #include <taiMisc>
 
-int KeyActionPair_PArray::FindKeySequence(const String& key_sequence, int start) const {
+int KeyActionPair_PArray::FindKeySequence(QKeySequence key_sequence, int start) const {
   int i;
   if(start < 0) {               // search backwards if start < 0
     for(i=size-start; i>=0; i--) {
@@ -51,16 +51,16 @@ int KeyActionPair_PArray::FindAction(taiMisc::BoundAction action, int start) con
   return -1;
 }
 
-taiMisc::BoundAction KeyActionPair_PArray::GetAction(const String& key_sequence) {
+taiMisc::BoundAction KeyActionPair_PArray::GetAction(QKeySequence key_sequence) {
   int idx = FindKeySequence(key_sequence);
   if(idx < 0)
-    return static_cast<taiMisc::BoundAction>(-1);
+    return taiMisc::NULL_ACTION;
   return FastEl(idx).action;
 }
 
-String KeyActionPair_PArray::GetKeySequence(taiMisc::BoundAction action) {
+QKeySequence KeyActionPair_PArray::GetKeySequence(taiMisc::BoundAction action) {
   int idx = FindAction(action);
   if(idx < 0)
-    return String("");
+    return QKeySequence("");
   return FastEl(idx).key_sequence;
 }

@@ -23,8 +23,8 @@
 #include <KeyActionPair_PArray>
 #include <taiMisc>
 
-
 // declare all other types mentioned but not required to include:
+class QKeySequence;
 
 taTypeDef_Of(KeyBindings);
 
@@ -40,11 +40,12 @@ public:
   KeyActionPair_PArray       main_window_bindings;
   KeyActionPair_PArray       line_edit_bindings;
   
-  virtual bool              Add(BindingContext context, taiMisc::BoundAction action, String key_sequence);
+//  virtual bool                  Add(BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
+  virtual bool                  Add(BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
-  virtual String            KeySequence(BindingContext context, taiMisc::BoundAction action);
+  virtual QKeySequence          KeySequence(BindingContext context, taiMisc::BoundAction action);
   // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
-  virtual taiMisc::BoundAction       Action(BindingContext context, String key_sequence);
+  virtual taiMisc::BoundAction  Action(BindingContext context,  QKeySequence key_sequence);
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);
 

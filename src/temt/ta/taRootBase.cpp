@@ -1563,10 +1563,38 @@ bool taRootBase::Startup_InitKeyBindings() {
   }
   KeyBindings* default_list = new KeyBindings();
 
-  // rohrlich 11/8/14 - just a couple for proof of concept
-  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY, "Ctrl+1");
-  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, "Meta+-");
-  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, "Meta+/");
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY, QKeySequence(Qt::ControlModifier + Qt::Key_1));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_ONLY, QKeySequence(Qt::ControlModifier + Qt::Key_2));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_PANELS, QKeySequence(Qt::ControlModifier + Qt::Key_3));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_T3_ONLY, QKeySequence(Qt::ControlModifier + Qt::Key_4));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_T3, QKeySequence(Qt::ControlModifier + Qt::Key_5));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_AND_T3, QKeySequence(Qt::ControlModifier + Qt::Key_6));
+  default_list->Add(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_ALL_FRAMES, QKeySequence(Qt::ControlModifier + Qt::Key_7));
+  
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_DESELECT, QKeySequence(Qt::MetaModifier + Qt::Key_Space));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_CLEAR_EXTENDED_SELECTION, QKeySequence(Qt::MetaModifier + Qt::Key_G));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_HOME, QKeySequence(Qt::MetaModifier + Qt::Key_A));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_END, QKeySequence(Qt::MetaModifier + Qt::Key_E));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_CURSOR_FORWARD, QKeySequence(Qt::MetaModifier + Qt::Key_F));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_CURSOR_BACKWARD, QKeySequence(Qt::MetaModifier + Qt::Key_B));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_DELETE, QKeySequence(Qt::MetaModifier + Qt::Key_D));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_BACKSPACE, QKeySequence(Qt::MetaModifier + Qt::Key_H));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_KILL, QKeySequence(Qt::MetaModifier + Qt::Key_K));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_SELECT_ALL, QKeySequence(Qt::MetaModifier + Qt::Key_U));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_PASTE, QKeySequence(Qt::MetaModifier + Qt::Key_Y));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_CUT, QKeySequence(Qt::MetaModifier + Qt::Key_W));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, QKeySequence(Qt::MetaModifier + Qt::Key_Minus));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_UNDO, QKeySequence(Qt::MetaModifier + Qt::Key_Slash));
+#ifdef TA_OS_MAC
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_COPY_CLEAR, QKeySequence(Qt::AltModifier + 8721));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_WORD_FORWARD, QKeySequence(Qt::AltModifier + 401));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_WORD_BACKWARD, QKeySequence(Qt::AltModifier + 8747));
+#else
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_COPY_CLEAR, QKeySequence(Qt::AltModifier + Qt::Key_W));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_WORD_FORWARD, QKeySequence(Qt::AltModifier + Qt::Key_F));
+  default_list->Add(KeyBindings::LINE_EDIT_CONTEXT, taiMisc::EMACS_WORD_BACKWARD, QKeySequence(Qt::AltModifier + Qt::Key_B));
+#endif
+  
   taMisc::key_binding_lists->Add_(default_list);
   return true;
 }

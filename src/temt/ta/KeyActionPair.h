@@ -30,8 +30,8 @@ class TA_API KeyActionPair {
   // A key sequence paired with an enum representing a an action
   
 public:
-  String                   key_sequence; //
-  taiMisc::BoundAction     action; // #IGNORE
+  taiMisc::BoundAction      action; // #IGNORE
+  QKeySequence              key_sequence; //
   
   // only compare the action
   bool	operator>(const KeyActionPair& kap) { return action > kap.action; }
@@ -41,9 +41,8 @@ public:
   // for equals compare the action and the key sequence
   bool	operator==(const KeyActionPair& kap) { return ((action == kap.action) && (key_sequence == kap.key_sequence)); }
   
-  KeyActionPair(const KeyActionPair& cp) { key_sequence = cp.key_sequence; action = cp.action; }
-  KeyActionPair(const String& sequence, taiMisc::BoundAction act) { key_sequence = sequence; action = act; }
-  KeyActionPair(const char* sequence, taiMisc::BoundAction act) { key_sequence = sequence; action = act; }
+  KeyActionPair(const KeyActionPair& cp) { action = cp.action; key_sequence = cp.key_sequence; }
+  KeyActionPair(QKeySequence a_key_sequence, taiMisc::BoundAction act) { key_sequence = a_key_sequence; action = act; }
   KeyActionPair()	{ };
   ~KeyActionPair()	{ };
 };

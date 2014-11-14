@@ -30,7 +30,9 @@
 
 // declare all other types mentioned but not required to include:
 class iWidget_List; // 
-class iMainWindowViewer; // 
+class iMainWindowViewer; //
+class KeyBindings; //
+
 class QAbstractScrollArea; // 
 class QWidget; // 
 class QPoint; // 
@@ -112,6 +114,7 @@ public:
   };
   
   enum BoundAction {
+    NULL_ACTION,
     EMACS_DESELECT,
     EMACS_CLEAR_EXTENDED_SELECTION,
     EMACS_HOME,
@@ -125,11 +128,14 @@ public:
     EMACS_PASTE,
     EMACS_CUT,
     EMACS_UNDO,
+    EMACS_COPY_CLEAR,
+    EMACS_WORD_FORWARD,
+    EMACS_WORD_BACKWARD,
     LOOKUP,
     VIEW_BROWSE_ONLY,
     VIEW_PANELS_ONLY,
     VIEW_BROWSE_AND_PANELS,
-    VIEW_T3,ONLY,
+    VIEW_T3_ONLY,
     VIEW_BROWSE_AND_T3,
     VIEW_PANELS_AND_T3,
     VIEW_ALL_FRAMES
@@ -141,12 +147,12 @@ public:
   static const int      FONT_SM;  // #DEF_2 pts to subtract frm BIG
 
 
-  static taiDialogEditor_List     active_dialogs; // #IGNORE list of active (NoBlock) dialogs
+  static taiDialogEditor_List    active_dialogs; // #IGNORE list of active (NoBlock) dialogs
   static taiEditorOfClass_List   active_edits;   // #IGNORE list of active edit dialogs
   static taiEditorOfClass_List   css_active_edits; // #IGNORE list of css active edit dialogs (note: prev in cssiSession)
-  static iTopLevelWindow_List   active_wins; // #IGNORE currently open windows
-  static iNetworkAccessManager* net_access_mgr; // #IGNORE network access manager for web browser
-
+  static iTopLevelWindow_List    active_wins; // #IGNORE currently open windows
+  static iNetworkAccessManager*  net_access_mgr; // #IGNORE network access manager for web browser
+    
   static int                    busy_count; // levels of busy
 
   static TypeSpace              arg_types;      // list of all taiArgTypes
