@@ -31,26 +31,20 @@ taTypeDef_Of(KeyBindings);
 class TA_API KeyBindings : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
-public:
-  enum BindingContext {
-    MAIN_WINDOW_CONTEXT,             // bindings for main menubar
-    LINE_EDIT_CONTEXT                // bindings for single line editing, inline editing of code
-  };
-  
+public:  
   KeyActionPair_PArray       main_window_bindings;
   KeyActionPair_PArray       line_edit_bindings;
   
-//  virtual bool                  Add(BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
-  virtual bool                  Add(BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
+  virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
-  virtual QKeySequence          KeySequence(BindingContext context, taiMisc::BoundAction action);
+  virtual QKeySequence          KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
-  virtual taiMisc::BoundAction  Action(BindingContext context,  QKeySequence key_sequence);
+  virtual taiMisc::BoundAction  Action(taiMisc::BindingContext context,  QKeySequence key_sequence);
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);
 
 protected:
-  virtual KeyActionPair_PArray*   CurrentBindings(BindingContext context);
+  virtual KeyActionPair_PArray*   CurrentBindings(taiMisc::BindingContext context);
   // #IGNORE retrieve pointer to list of bindings for the current BindingContext
   
 private:

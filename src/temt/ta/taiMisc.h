@@ -27,11 +27,11 @@
 #include <taiEditorOfClass>
 #include <iTopLevelWindow_List>
 #include <iFont>
+//#include <KeyBindings>
 
 // declare all other types mentioned but not required to include:
 class iWidget_List; // 
 class iMainWindowViewer; //
-class KeyBindings; //
 
 class QAbstractScrollArea; // 
 class QWidget; // 
@@ -113,6 +113,11 @@ public:
 
   };
   
+  enum BindingContext {
+    MAIN_WINDOW_CONTEXT,              // bindings for main menubar
+    LINE_EDIT_CONTEXT                // bindings for single line editing, inline editing of code
+  };
+
   enum BoundAction {
     NULL_ACTION,
     EMACS_DESELECT,
@@ -138,7 +143,11 @@ public:
     VIEW_T3_ONLY,
     VIEW_BROWSE_AND_T3,
     VIEW_PANELS_AND_T3,
-    VIEW_ALL_FRAMES
+    VIEW_ALL_FRAMES,
+    MOVE_FOCUS_LEFT,
+    MOVE_FOCUS_RIGHT,
+    SHIFT_CUR_TAB_LEFT,
+    SHIFT_CUR_TAB_RIGHT
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;
@@ -216,6 +225,8 @@ public:
   // #IGNORE translate emacs editing (includes nav + copy/paste, undo) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
   static bool   KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e);
   // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
+  static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
+  // #IGNORE translate the key_event into the bound action
 
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management

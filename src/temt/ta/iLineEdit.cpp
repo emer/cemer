@@ -181,20 +181,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
-  int key_int = key_event->key();
-  
-  Qt::KeyboardModifiers modifiers = key_event->modifiers();
-  if(modifiers & Qt::ShiftModifier)
-    key_int += Qt::SHIFT;
-  if(modifiers & Qt::ControlModifier)
-    key_int += Qt::CTRL;
-  if(modifiers & Qt::AltModifier)
-    key_int += Qt::ALT;
-  if(modifiers & Qt::MetaModifier)
-    key_int += Qt::META;
-  
-  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
-  taiMisc::BoundAction action = bindings->Action(KeyBindings::LINE_EDIT_CONTEXT, QKeySequence(key_int));
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::LINE_EDIT_CONTEXT, key_event);
   
   switch (action) {
     case taiMisc::EMACS_DESELECT:

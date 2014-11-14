@@ -24,12 +24,12 @@
 
 TA_BASEFUNS_CTORS_DEFN(KeyBindings);
 
-KeyActionPair_PArray* KeyBindings::CurrentBindings(BindingContext context) {
+KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext context) {
   switch (context) {
-    case MAIN_WINDOW_CONTEXT:
+    case taiMisc::MAIN_WINDOW_CONTEXT:
       return &main_window_bindings;
       break;
-    case LINE_EDIT_CONTEXT:
+    case taiMisc::LINE_EDIT_CONTEXT:
       return &line_edit_bindings;
     default:
       return NULL;
@@ -37,7 +37,7 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(BindingContext context) {
   }
 }
 
-bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action,  QKeySequence key_sequence) {
+bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction action,  QKeySequence key_sequence) {
   bool rval = false;
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
@@ -51,7 +51,7 @@ bool KeyBindings::Add(BindingContext context, taiMisc::BoundAction action,  QKey
   return rval;
 }
 
-QKeySequence KeyBindings::KeySequence(BindingContext context, taiMisc::BoundAction action) {
+QKeySequence KeyBindings::KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action) {
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
     return context_bindings->GetKeySequence(action);
@@ -59,7 +59,7 @@ QKeySequence KeyBindings::KeySequence(BindingContext context, taiMisc::BoundActi
   return QKeySequence("");
 }
 
-taiMisc::BoundAction KeyBindings::Action(BindingContext context,  QKeySequence key_sequence) {
+taiMisc::BoundAction KeyBindings::Action(taiMisc::BindingContext context,  QKeySequence key_sequence) {
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
     return context_bindings->GetAction(key_sequence);

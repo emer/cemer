@@ -23,6 +23,8 @@
 #include <TopLevelViewer>
 #include <iMainWindowViewer>
 #include <AbstractScriptBase>
+#include <KeyBindings>
+#include <KeyBindings_List>
 
 #include <taMisc>
 
@@ -994,6 +996,25 @@ bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
     return true;                // we absorb this event
   }
   return false;
+}
+
+taiMisc::BoundAction taiMisc::GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event) {
+  int key_int = key_event->key();
+  
+  taMisc::DebugInfo((String)key_int);
+  
+  Qt::KeyboardModifiers modifiers = key_event->modifiers();
+  if(modifiers & Qt::ShiftModifier)
+    key_int += Qt::SHIFT;
+  if(modifiers & Qt::ControlModifier)
+    key_int += Qt::CTRL;
+  if(modifiers & Qt::AltModifier)
+    key_int += Qt::ALT;
+  if(modifiers & Qt::MetaModifier)
+    key_int += Qt::META;
+  
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
+  return bindings->Action(context, QKeySequence(key_int));
 }
 
 void taiMisc::ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos) {

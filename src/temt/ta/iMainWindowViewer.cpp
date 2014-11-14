@@ -673,13 +673,13 @@ void iMainWindowViewer::Constr_ViewMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
 
-  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
-  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
-  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
-  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_T3_ONLY), "viewT3OnlyAction"));
-  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
-  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
-  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(KeyBindings::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_ALL_FRAMES), "viewAllFramesAction"));
+  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_T3_ONLY), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_ALL_FRAMES), "viewAllFramesAction"));
 
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
@@ -1817,45 +1817,27 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
   return true;
 }
 
-bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e) {
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if(ctrl_pressed) {
-    switch(e->key()) {
-    case Qt::Key_J: // move left between regions
+bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* key_event) {
+ 
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::MAIN_WINDOW_CONTEXT, key_event);
+  
+  switch(action) {
+    case taiMisc::MOVE_FOCUS_LEFT: // move left between regions
       MoveFocusLeft();
       return true;
-    case Qt::Key_L: // move right between regions
+    case taiMisc::MOVE_FOCUS_RIGHT: // move right between regions
       MoveFocusRight();
       return true;
-    case Qt::Key_Tab:
-      if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-        ShiftCurTabLeft();
-      }
-      else {
-        ShiftCurTabRight();
-      }
-      return true;              // we absorb this event
-    }
+    // these need key bindings
+    case taiMisc::SHIFT_CUR_TAB_LEFT: // switch tab
+      ShiftCurTabLeft();
+      return true;
+    case taiMisc::SHIFT_CUR_TAB_RIGHT: // switch tab
+      ShiftCurTabRight();
+      return true;
+    default:
+      return false;
   }
-  if(QApplication::keyboardModifiers() & Qt::AltModifier) {
-    switch(e->key()) {
-    case Qt::Key_J: // move left between regions
-      MoveFocusLeft();
-      return true;
-    case Qt::Key_L: // move right between regions
-      MoveFocusRight();
-      return true;
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-    case 0x2206:                // J
-      MoveFocusLeft();
-      return true;
-    case 0xAC:                  // L
-      MoveFocusRight();
-      return true;
-#endif
-    }
-  }
-  return false;
 }
 
 iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
