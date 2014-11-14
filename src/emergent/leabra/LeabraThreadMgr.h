@@ -51,9 +51,9 @@ typedef void (LeabraLayer::*LeabraThreadLayerMethod)(LeabraNetwork*, int);
 #endif
 
 
-taTypeDef_Of(RunWaitTime);
+eTypeDef_Of(RunWaitTime);
 
-class TA_API RunWaitTime : public taNBase {
+class E_API RunWaitTime : public taNBase {
   // ##CAT_Program contains timers for run time and wait time
 INHERITED(taNBase)
 public:
@@ -107,9 +107,9 @@ private:
 };
 
 
-taTypeDef_Of(RunWaitTime_List);
+eTypeDef_Of(RunWaitTime_List);
 
-class TA_API RunWaitTime_List: public taList<RunWaitTime> {
+class E_API RunWaitTime_List: public taList<RunWaitTime> {
   // ##CAT_Program a list of run-wait-timers
 INHERITED(taList<RunWaitTime>)
 public:
