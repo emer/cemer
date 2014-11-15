@@ -854,10 +854,6 @@ bool taiMisc::UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e) {
 
 bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   bool ctrl_pressed = false;
-  //  if (QApplication::keyboardModifiers() & Qt::ControlModifier) {
-  if (e->modifiers() & Qt::ControlModifier) { // regular modifiers() is safer for generated events..
-    ctrl_pressed = true;
-  }
 
 #ifdef TA_OS_MAC
   // actual ctrl = meta on apple -- enable this
@@ -865,7 +861,6 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   if (e->modifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
-
   // TODO: Why is this the only key checked?  What about Command+C for Copy?
   // Maybe this check isn't needed anymore.  If not, this function should take
   // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
@@ -876,6 +871,10 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
       && (e->key() == Qt::Key_V)) {
     ctrl_pressed = false;
   }
+#else
+  if (e->modifiers() & Qt::ControlModifier) { // regular modifiers() is safer for generated events..
+    ctrl_pressed = true;
+  }
 #endif
 
   return ctrl_pressed;
@@ -883,44 +882,40 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
 
 bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
   taiMisc::UpdateUiOnCtrlPressed(obj, e);
-
-  bool ctrl_pressed = KeyEventCtrlPressed(e);
-  if(!ctrl_pressed) return false;
-  QCoreApplication* app = QCoreApplication::instance();
-  switch(e->key()) {
-  case Qt::Key_P:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-    return true;                // we absorb this event
-  case Qt::Key_N:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-    return true;                // we absorb this event
-    // note: A and E are doing weird things wherever they are used -- not good
-  // case Qt::Key_A:
-  //   app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::ControlModifier));
-  //   return true;                // we absorb this event
-  // case Qt::Key_E:
-  //   app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::ControlModifier));
-  //   return true;                // we absorb this event
-  case Qt::Key_F:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-    return true;                // we absorb this event
-  case Qt::Key_B:
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-    return true;                // we absorb this event
-  case Qt::Key_U:
-  case Qt::Key_Up:              // translate ctrl+up to page up
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
-    return true;                // we absorb this event
-  case Qt::Key_Down:            // translate ctrl+down to page down
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-    return true;
-  case Qt::Key_V:
-    if(taMisc::emacs_mode) {
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      return true;              // we absorb this event
-    }
-    else {
-      return false;             // pass it on..
+  
+  if (taMisc::emacs_mode) {
+    bool ctrl_pressed = KeyEventCtrlPressed(e);
+    if(!ctrl_pressed) return false;
+    QCoreApplication* app = QCoreApplication::instance();
+    switch(e->key()) {
+      case Qt::Key_P:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_N:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_F:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_B:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_U:
+      case Qt::Key_Up:              // translate ctrl+up to page up
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_Down:            // translate ctrl+down to page down
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+        return true;
+      case Qt::Key_V:
+        if(taMisc::emacs_mode) {
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+          return true;              // we absorb this event
+        }
+        else
+        {
+          return false;             // pass it on..
+        }
     }
   }
   return false;
@@ -929,81 +924,84 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
 bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
   if(KeyEventFilterEmacs_Nav(obj, e))
     return true;
-  taMisc::DebugInfo("KeyEventFilterEmacs_Edit");
   
-//  bool ctrl_pressed = KeyEventCtrlPressed(e);
-//  QCoreApplication* app = QCoreApplication::instance();
-//  if(ctrl_pressed) {
-//    switch(e->key()) {
-//    case Qt::Key_D:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_H:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_K:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_Y:             // this doesn't seem to work to generate paste event
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_W:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_Slash:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-//      return true;              // we absorb this event
-//    case Qt::Key_Minus:
-//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-//      return true;              // we absorb this event
-//    }
-//  }
-//  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
-//#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-//                                          || e->key() == 0x2211   // weird mac key
-//#endif
-//                                          )) { // copy
-//    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-//    return true;                // we absorb this event
-//  }
+  if (taMisc::emacs_mode) {
+    bool ctrl_pressed = KeyEventCtrlPressed(e);
+    QCoreApplication* app = QCoreApplication::instance();
+    if(ctrl_pressed) {
+      switch(e->key()) {
+        case Qt::Key_D:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+          return true;              // we absorb this event
+        case Qt::Key_H:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+          return true;              // we absorb this event
+        case Qt::Key_K:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+          return true;              // we absorb this event
+        case Qt::Key_Y:             // this doesn't seem to work to generate paste event
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_W:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_Slash:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_Minus:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+          return true;              // we absorb this event
+      }
+    }
+    if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+        || e->key() == 0x2211   // weird mac key
+#endif
+      ))
+    { // copy
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+      return true;                // we absorb this event
+    }
+  }
   return false;
 }
 
 bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
   taiMisc::UpdateUiOnCtrlPressed(obj, e);
-  bool ctrl_pressed = KeyEventCtrlPressed(e);
-  QCoreApplication* app = QCoreApplication::instance();
-  if(ctrl_pressed) {
-    switch(e->key()) {
-    case Qt::Key_Y:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_W:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_Slash:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_Minus:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;              // we absorb this event
+  if (taMisc::emacs_mode) {
+    bool ctrl_pressed = KeyEventCtrlPressed(e);
+    QCoreApplication* app = QCoreApplication::instance();
+    if(ctrl_pressed) {
+      switch(e->key()) {
+        case Qt::Key_Y:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_W:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_Slash:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+          return true;              // we absorb this event
+        case Qt::Key_Minus:
+          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+          return true;              // we absorb this event
+      }
     }
-  }
-  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
+    if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                          || e->key() == 0x2211   // weird mac key
+                                            || e->key() == 0x2211   // weird mac key
 #endif
-                                          )) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;                // we absorb this event
+                                            ))
+    { // copy
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+      return true;                // we absorb this event
+    }
   }
   return false;
 }
 
 taiMisc::BoundAction taiMisc::GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event) {
   int key_int = key_event->key();
-  
-  taMisc::DebugInfo((String)key_int);
   
   Qt::KeyboardModifiers modifiers = key_event->modifiers();
   if(modifiers & Qt::ShiftModifier)

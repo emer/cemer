@@ -582,6 +582,8 @@ void iMainWindowViewer::Constr_FileMenu()
 
 void iMainWindowViewer::Constr_EditMenu()
 {
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
+
   editUndoAction = AddAction(new iAction("&Undo", QKeySequence(cmd_str + "Z"), "editUndoAction"));
   editUndoAction->setIcon(QIcon(QPixmap(":/images/editundo.png")));
   editRedoAction = AddAction(new iAction("&Redo", QKeySequence(cmd_str + "Shift+Z"), "editRedoAction"));
@@ -603,7 +605,7 @@ void iMainWindowViewer::Constr_EditMenu()
   editPasteAssignAction->setIcon(QIcon(editpaste));
   editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
-  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", QKeySequence("Ctrl+D"), "editDeleteAction"));
+  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::DELETE), "editDeleteAction"));
   // editDeleteAction->setIcon(QIcon(editpaste));
 
   editLinkAction = AddAction(new iAction(iClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));

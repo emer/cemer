@@ -100,9 +100,20 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_SELECT_ALL:
+    case taiMisc::EMACS_PAGE_UP:
       app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
       key_event->accept();
+      return;
+    case taiMisc::EMACS_PAGE_DOWN:
+      key_event->accept();
+      if (taMisc::emacs_mode) {
+        app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+      }
+      else
+      {
+        paste();
+        clearExtSelection();
+      }
       return;
     case taiMisc::EMACS_DELETE:
       key_event->accept();
@@ -133,17 +144,6 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     case taiMisc::EMACS_UNDO:
       key_event->accept();
       undo();
-      return;
-    case taiMisc::EMACS_PAGE_DOWN:
-      key_event->accept();
-      if (taMisc::emacs_mode) {
-        app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      }
-      else
-      {
-        paste();
-        clearExtSelection();
-      }
       return;
     case taiMisc::LOOKUP:
       key_event->accept();
