@@ -48,146 +48,128 @@ void iTextEdit::clearExtSelection() {
   setTextCursor(cursor);
 }
 
-void iTextEdit::keyPressEvent(QKeyEvent* e) {
-  QTextCursor cursor(textCursor());
-
-  taiMisc::UpdateUiOnCtrlPressed(this, e);
-
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
 
   QCoreApplication* app = QCoreApplication::instance();
-
+  QTextCursor cursor(textCursor());
   QTextCursor::MoveMode mv_md = QTextCursor::MoveAnchor;
   if(ext_select_on)
     mv_md = QTextCursor::KeepAnchor;
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::LINE_EDIT_CONTEXT, key_event);
 
-  // emacs keys!!
-  if(ctrl_pressed) {
-    switch(e->key()) {
-    case Qt::Key_Space:
-      e->accept();
+  switch(action) {
+    case taiMisc::EMACS_DESELECT:
+      key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       return;
-    case Qt::Key_G:
-      e->accept();
+    case taiMisc::EMACS_CLEAR_EXTENDED_SELECTION:
+      key_event->accept();
       clearExtSelection();
       return;
-    case Qt::Key_P:
-    case Qt::Key_Up:
-      e->accept();
+    case taiMisc::CURSOR_UP:
+      key_event->accept();
       cursor.movePosition(QTextCursor::Up, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_N:
-    case Qt::Key_Down:
-      e->accept();
+    case taiMisc::CURSOR_DOWN:
+      key_event->accept();
       cursor.movePosition(QTextCursor::Down, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_A:
-      e->accept();
+    case taiMisc::EMACS_HOME:
+      key_event->accept();
       cursor.movePosition(QTextCursor::StartOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_E:
-      e->accept();
+    case taiMisc::EMACS_END:
+      key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_F:
-    case Qt::Key_Right:
-      e->accept();
+    case taiMisc::EMACS_CURSOR_FORWARD:
+      key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_B:
-    case Qt::Key_Left:
-      e->accept();
+    case taiMisc::EMACS_CURSOR_BACKWARD:
+      key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case Qt::Key_U:
+    case taiMisc::EMACS_SELECT_ALL:
       app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
-      e->accept();
+      key_event->accept();
       return;
-    case Qt::Key_D:
-      e->accept();
+    case taiMisc::EMACS_DELETE:
+      key_event->accept();
       cursor.deleteChar();
       setTextCursor(cursor);
       return;
-    case Qt::Key_K:
-      e->accept();
+    case taiMisc::EMACS_KILL:
+      key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
       cursor.removeSelectedText();
       clearExtSelection();
       return;
-    case Qt::Key_Y:
-      e->accept();
+    case taiMisc::EMACS_PASTE:
+      key_event->accept();
       paste();
       clearExtSelection();
       return;
-    case Qt::Key_W:
-      e->accept();
+    case taiMisc::EMACS_CUT:
+      key_event->accept();
       cut();
       clearExtSelection();
       return;
-    case Qt::Key_C: // global sc can grab these so do it here:
-      e->accept();
+    case taiMisc::EMACS_COPY_CLEAR:
+      key_event->accept();
       copy();
       clearExtSelection();
       return;
-    case Qt::Key_X:
-      e->accept();
-      cut();
-      clearExtSelection();
-      return;
-    case Qt::Key_V:
-      e->accept();
-      if(taMisc::emacs_mode) {
-	app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      }
-      else {
-	paste();
-	clearExtSelection();
-      }
-      return;
-    case Qt::Key_S:
-      findPrompt();
-      return;
-    case Qt::Key_Slash:
-      e->accept();
+    case taiMisc::EMACS_UNDO:
+      key_event->accept();
       undo();
       return;
-    case Qt::Key_Minus:
-      e->accept();
-      undo();
+    case taiMisc::EMACS_PAGE_DOWN:
+      key_event->accept();
+      if (taMisc::emacs_mode) {
+        app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+      }
+      else
+      {
+        paste();
+        clearExtSelection();
+      }
       return;
-    case Qt::Key_L:
-      e->accept();
+    case taiMisc::LOOKUP:
+      key_event->accept();
       emit lookupKeyPressed();
       return;
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
-      e->ignore();		// allow this to go up to higher guy
+    case taiMisc::TEXT_EDIT_IGNORE:
+      key_event->ignore();		// allow this to go up to higher guy
       return;
-    }
-  }
-  else if(QApplication::keyboardModifiers() & Qt::AltModifier) {
-    if(e->key() == Qt::Key_W
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-        || e->key() == 0x2211   // weird mac key
-#endif
-      ) {
-      // copy
-      e->accept();
-      copy();
-      clearExtSelection();
+    case taiMisc::EMACS_FIND_IN_TEXT:
+      findPrompt();
       return;
-    }
+      
+//    case Qt::Key_C: // global sc can grab these so do it here:
+//      key_event->accept();
+//      copy();
+//      clearExtSelection();
+//      return;
+//    case Qt::Key_X:
+//      key_event->accept();
+//      cut();
+//      clearExtSelection();
+//      return;
+
+    default:
+      QTextEdit::keyPressEvent(key_event);
   }
-  QTextEdit::keyPressEvent( e );
 }
 
 void iTextEdit::contextMenuEvent(QContextMenuEvent *event) {

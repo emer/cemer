@@ -929,41 +929,43 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
 bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
   if(KeyEventFilterEmacs_Nav(obj, e))
     return true;
-  bool ctrl_pressed = KeyEventCtrlPressed(e);
-  QCoreApplication* app = QCoreApplication::instance();
-  if(ctrl_pressed) {
-    switch(e->key()) {
-    case Qt::Key_D:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-      return true;              // we absorb this event
-    case Qt::Key_H:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-      return true;              // we absorb this event
-    case Qt::Key_K:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-      return true;              // we absorb this event
-    case Qt::Key_Y:             // this doesn't seem to work to generate paste event
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_W:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_Slash:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;              // we absorb this event
-    case Qt::Key_Minus:
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-      return true;              // we absorb this event
-    }
-  }
-  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                          || e->key() == 0x2211   // weird mac key
-#endif
-                                          )) { // copy
-    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-    return true;                // we absorb this event
-  }
+  taMisc::DebugInfo("KeyEventFilterEmacs_Edit");
+  
+//  bool ctrl_pressed = KeyEventCtrlPressed(e);
+//  QCoreApplication* app = QCoreApplication::instance();
+//  if(ctrl_pressed) {
+//    switch(e->key()) {
+//    case Qt::Key_D:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_H:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_K:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_Y:             // this doesn't seem to work to generate paste event
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_W:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_Slash:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+//      return true;              // we absorb this event
+//    case Qt::Key_Minus:
+//      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+//      return true;              // we absorb this event
+//    }
+//  }
+//  if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
+//#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+//                                          || e->key() == 0x2211   // weird mac key
+//#endif
+//                                          )) { // copy
+//    app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+//    return true;                // we absorb this event
+//  }
   return false;
 }
 
