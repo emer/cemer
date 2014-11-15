@@ -36,6 +36,9 @@ public:
 
   bool         SetFileName(const String& val) override; // #IGNORE note: we canonicalize name first
   String       GetFileName() const override { return file_name; } // #IGNORE
+
+  void          SetDefaultName_impl(int idx) override;
+
   TA_BASEFUNS2(taFBase, taNBase)
 private:
   void                  Copy_(const taFBase& cp) { desc = cp.desc; file_name = cp.file_name; }

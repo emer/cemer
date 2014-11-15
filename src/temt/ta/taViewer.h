@@ -100,6 +100,8 @@ public:
   // #BUTTON print the image of this view to printer
   static bool           InitImageExts(); // initialize the image extensions, if not already done
 
+  void          SetDefaultName_impl(int idx) override;
+
   void  InitLinks();
   void  CutLinks();
   void  Copy_(const taViewer& cp);

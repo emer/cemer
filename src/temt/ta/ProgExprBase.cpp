@@ -361,7 +361,7 @@ bool ProgExprBase::ParseExpr() {
 
   for(int i=0;i<vars.size;i++)  {
     ProgVarRef* vrf = vars.FastEl(i);
-    if(!TestError(!vrf->ptr(), "ParseExpr", "vrf->ptr() == NULL -- this shouldn't happen -- report as a bug!")) {
+    if(!TestError((!vrf->ptr()), "ParseExpr", "vrf->ptr() == NULL -- this shouldn't happen -- report as a bug!")) {
       ProgVar* var = (ProgVar*)vrf->ptr();
       var->ResetParseStuff();
     }

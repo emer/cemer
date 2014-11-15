@@ -1775,8 +1775,8 @@ bool Program::IsForbiddenName(taBase* itm, const String& chk_nm, bool warn) {
   if((forbidden_names.FindEl(chk_nm) < 0) &&
      !(bool)TypeDef::FindGlobalTypeName(chk_nm,false)) return false;
   if(!warn) return true;
-  itm->TestError("IsForbiddenName", "Name:", chk_nm,
-                "is a css reserved name used for something else -- please choose another name");
+  itm->TestError_impl(true, "IsForbiddenName", "Name:", chk_nm,
+                      "is a css reserved name used for something else -- please choose another name");
   return true;
 }
 

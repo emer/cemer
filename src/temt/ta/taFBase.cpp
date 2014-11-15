@@ -31,3 +31,12 @@ bool taFBase::SetFileName(const String& val) {
   return true;
 }
 
+void taFBase::SetDefaultName_impl(int idx) {
+  // name root -- use an explicit name root if any, else just the class name
+  TypeDef* td = GetTypeDef();
+  String nm = td->OptionAfter("DEF_NAME_ROOT_");
+  if (nm.empty()) nm = td->name;
+  nm += ("_" + String(idx));
+  SetName(nm);
+}
+

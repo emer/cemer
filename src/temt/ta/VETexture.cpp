@@ -51,8 +51,8 @@ bool VETexture::NeedsTransform() {
 
 void VETexture::SetTexture(SoTexture2* sotx) {
   if(fname.empty()) return;
-  taMisc::TestError(this, !SoImageEx::SetTextureFile(sotx, fname),
-     "Could not set texture from fname:", fname);
+  TestError(!SoImageEx::SetTextureFile(sotx, fname), "SetTexture",
+            "Could not set texture from fname:", fname);
   if(wrap_horiz == REPEAT)
     sotx->wrapS = SoTexture2::REPEAT;
   else

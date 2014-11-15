@@ -455,6 +455,14 @@ public: \
             IDX_VAR_NAME_a = (LIST_a).IterPrevIndex(FOREACH_itr_a),     \
               IDX_VAR_NAME_b = (LIST_b).IterPrevIndex(FOREACH_itr_b))
 
+
+// these macros optimize the use of the TestError logic -- without this
+// macro, then TestError as a method will evaluate all the args, which 
+// can be quite time consuming, converting ints into strings usually..
+#define TestError(cond, ...) (((cond)) ? TestError_impl(true, __VA_ARGS__) : false)
+
+#define TestWarning(cond, ...) (((cond)) ? TestWarning_impl(true, __VA_ARGS__) : false)
+
 /* Clipboard (Edit) operation summary
 
    Clipboard operations are of two basic types:
@@ -1041,16 +1049,16 @@ protected:      // Impl
   //    Checking the configuration of objects prior to using them
 public:
 
-  bool   TestError(bool test, const char* fun_name,
+  virtual bool   TestError_impl(bool test, const char* fun_name,
                    const char* a, const char* b=0, const char* c=0,
                    const char* d=0, const char* e=0, const char* f=0,
                    const char* g=0, const char* h=0) const;
-  // #CAT_ObjectMgmt if test, then report error, including object name, type, and path information; returns test -- use e.g. if(TestError((condition), "fun", "msg")) return    false;
-  bool   TestWarning(bool test, const char* fun_name,
+  // #IGNORE if test, then report error, including object name, type, and path information; returns test -- use TestError macro to optimize, e.g. if(TestError((condition), "fun", "msg")) return    false;
+  virtual bool   TestWarning_impl(bool test, const char* fun_name,
                      const char* a, const char* b=0, const char* c=0,
                      const char* d=0, const char* e=0, const char* f=0,
                      const char* g=0, const char* h=0) const;
-  // #CAT_ObjectMgmt if test, then report warning, including object name, type, and path information; returns test -- use e.g. if(TestWarning((condition), "fun", "msg")) return false;
+  // #IGNORE if test, then report warning, including object name, type, and path information; returns test -- use TestWarning macro to optimize, e.g. if(TestWarning((condition), "fun", "msg")) return false;
   virtual void  DebugInfo(const char* fun_name,
                           const char* a, const char* b=0, const char* c=0,
                           const char* d=0, const char* e=0, const char* f=0,

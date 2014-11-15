@@ -539,29 +539,14 @@ bool taBase::IsParentOf(const taBase* obj) const {
 void taBase::SetDefaultName_impl(int idx) {
   // name root -- use an explicit name root if any, else just the class name
   TypeDef* td = GetTypeDef();
-  String nm = td->OptionAfter("DEF_NAME_ROOT_");
-  if (nm.empty()) nm = td->name;
-  // name style -- 0 is the legacy one
-  int nm_style = td->OptionAfter("DEF_NAME_STYLE_").toInt(); // 0 if not present
-  if(idx < 0) idx = 0;  // avoid -1 not found: can't just have typedef name for programs etc
-  if (nm_style == 2) { // no number (for things that are unique in a container)
-    ;
-  }
-  else if (nm_style == 1) {
-    nm += String(++idx); // use 1-based, no _
-  } else { // 0, or unknown style -- use legacy
-    nm += ("_" + String(idx));
-  }
+  String nm = td->name;
+  nm << "_"  << String(idx);
   SetName(nm);
 }
 
 //note: normally we dont' call SetDefaultName unless keeping tokens...
 void taBase::SetDefaultName_() {
   TypeDef* td = GetTypeDef();
-  if (td->HasOption("DEF_NAME_LIST")) {
-    SetName(_nilString); // must clear, since desc class may already have set
-    return; // not actually done until added to list
-  }
 //nn  if (!td->tokens.keep) return;
   int idx = td->tokens.FindEl((void *)this);
 //nn  if (idx < 0) return;
@@ -2115,20 +2100,20 @@ String& taBase::ListSigClients(String& strm, int indent) {
 //      Checking the configuration of objects prior to using them
 
 
-bool taBase::TestError(bool test, const char* fun_name,
+bool taBase::TestError_impl(bool test, const char* fun_name,
                        const char* a, const char* b, const char* c,
                        const char* d, const char* e, const char* f,
                        const char* g, const char* h) const {
   if(!test) return false;
-  return taMisc::TestError(this, test, fun_name, a, b, c, d, e, f, g, h);
+  return taMisc::TestError_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
-bool taBase::TestWarning(bool test, const char* fun_name,
+bool taBase::TestWarning_impl(bool test, const char* fun_name,
                          const char* a, const char* b, const char* c,
                          const char* d, const char* e, const char* f,
                          const char* g, const char* h) const {
   if(!test) return false;
-  return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
+  return taMisc::TestWarning_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
 void taBase::DebugInfo(const char* fun_name,

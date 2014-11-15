@@ -24,7 +24,6 @@ set(leabra_HEADS_MAKETA
 
   AvgMaxVals.h
   LeabraInhib.h
-  LeabraUnGpData.h
   LeabraUnGpData_List.h
   LeabraLayerSpec.h
 
@@ -104,12 +103,14 @@ set(leabra_HEADS_MAKETA
 # multiple inheritence -- in correspondence with deps below
 set(leabra_HEADS_MAKETA_MI
   LeabraLayer.h
+  LeabraUnGpData.h
 )
 
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(leabra_HEADS_MAKETA_MI_DEPS
   "../../temt/ta/taBase.h;../network/Layer.h"
+  "../../temt/ta/taBase.h;LeabraInhib.h"
 )
 
 set(leabra_HEADS_NOMAKETA
@@ -120,6 +121,7 @@ set(leabra_HEADS_NOMAKETA
 # all heads -- include maketa generated ones here
 set(leabra_HEADS
     ${leabra_HEADS_MAKETA}
+    ${leabra_HEADS_MAKETA_MI}
     ${leabra_HEADS_NOMAKETA}
 )
 

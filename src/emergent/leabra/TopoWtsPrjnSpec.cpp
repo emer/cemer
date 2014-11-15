@@ -61,7 +61,7 @@ void TopoWtsPrjnSpec::Defaults_init() {
   add_rnd_var = true;
 }
 
-bool TopoWtsPrjnSpec::TestWarning(bool test, const char* fun_name,
+bool TopoWtsPrjnSpec::TestWarning_impl(bool test, const char* fun_name,
 				  const char* a, const char* b, const char* c,
 				  const char* d, const char* e, const char* f,
 				  const char* g, const char* h) const {
@@ -69,7 +69,7 @@ bool TopoWtsPrjnSpec::TestWarning(bool test, const char* fun_name,
   const_cast<TopoWtsPrjnSpec*>(this)->already_warned++;
   if(already_warned > 10)
     return true;
-  return taMisc::TestWarning(this, test, fun_name, a, b, c, d, e, f, g, h);
+  return taMisc::TestWarning_impl(this, test, fun_name, a, b, c, d, e, f, g, h);
 }
 
 void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {

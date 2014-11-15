@@ -540,16 +540,16 @@ public:
   // #CAT_Dialog explicit no-gui version of error: displays error to stderr only
 
 #ifndef NO_TA_BASE
-  static bool   TestError(const taBase* obj, bool test, const char* fun_name,
+  static bool   TestError_impl(const taBase* obj, bool test, const char* fun_name,
                           const char* a, const char* b=0, const char* c=0,
                           const char* d=0, const char* e=0, const char* f=0,
                           const char* g=0, const char* h=0);
-  // #CAT_Dialog if test, then report error, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestError(this, (condition), "fun", "msg")) return false;
-  static bool   TestWarning(const taBase* obj, bool test, const char* fun_name,
+  // #CAT_Dialog if test, then report error, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestError_impl(this, (condition), "fun", "msg")) return false;
+  static bool   TestWarning_impl(const taBase* obj, bool test, const char* fun_name,
                             const char* a, const char* b=0, const char* c=0,
                             const char* d=0, const char* e=0, const char* f=0,
                             const char* g=0, const char* h=0);
-  // #CAT_Dialog if test, then report warning, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestWarning(this, (condition), "fun", "msg")) return false;
+  // #CAT_Dialog if test, then report warning, including object name, type, and path information if non-null; returns test -- use e.g. if(taMisc::TestWarning_impl(this, (condition), "fun", "msg")) return false;
 #endif
 
   static void   CheckError(const char* a, const char* b=0, const char* c=0,

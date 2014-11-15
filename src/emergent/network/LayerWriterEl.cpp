@@ -70,11 +70,11 @@ bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   int chan_idx = GetColIdx(db);
   if(chan_idx < 0) return false;
   if(net_target == TRIAL_NAME) {
-    net->trial_name = db->GetData(chan_idx);
+    net->trial_name = db->GetData(chan_idx).toString();
     return true;
   }
   else if(net_target == GROUP_NAME) {
-    net->group_name = db->GetData(chan_idx);
+    net->group_name = db->GetData(chan_idx).toString();
     return true;
   }
   // LAYER

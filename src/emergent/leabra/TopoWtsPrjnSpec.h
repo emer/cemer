@@ -126,10 +126,10 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
 				taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, float ri_x, float ri_y);
   // returns dbl_add = true if a particular sending wt is clipped by recv lay edge
 
-  bool TestWarning(bool test, const char* fun_name, const char* a,
+  bool TestWarning_impl(bool test, const char* fun_name, const char* a,
 		   const char* b = 0, const char* c = 0, const char* d = 0,
 		   const char* e = 0, const char* f = 0, const char* g = 0,
-		   const char* h = 0) const;
+		   const char* h = 0) const override;
 
   TA_SIMPLE_BASEFUNS(TopoWtsPrjnSpec);
  protected:

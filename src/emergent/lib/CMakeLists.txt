@@ -20,6 +20,12 @@ SET_TA_PROPS(network ${PROJECT_SOURCE_DIR}/src/emergent/network)
 
 MAKETA_WRAP_H(emergent_network_SRCS_MAKETA ${emergent_network_HEADS_MAKETA} OPTIONS network)
 
+ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA_MI ${mypath}/network "${network_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(emergent_network_HEADS_MAKETA_MI_DEPS ${mypath}/network "${network_HEADS_MAKETA_MI_DEPS}")
+
+MAKETA_WRAP_H_MI(emergent_network_SRCS_MAKETA_MI "${emergent_network_HEADS_MAKETA_MI}"
+  "${emergent_network_HEADS_MAKETA_MI_DEPS}")
+
 # bp
 include(${PROJECT_SOURCE_DIR}/src/emergent/bp/CMakeFiles.txt)
 ADD_PATH_TO_FILES(emergent_bp_SRCS ${mypath}/bp "${bp_SRCS}")
@@ -46,7 +52,6 @@ IF(CUDA_BUILD)
 CUDA_WRAP_SRCS(emergentlib OBJ emergent_leabra_CUDA_OBJS "${emergent_leabra_CUDA}")
 ENDIF(CUDA_BUILD)
 
-# using MI1 because only 1 guy
 MAKETA_WRAP_H_MI(emergent_leabra_SRCS_MAKETA_MI "${emergent_leabra_HEADS_MAKETA_MI}"
   "${emergent_leabra_HEADS_MAKETA_MI_DEPS}")
 
@@ -86,7 +91,7 @@ endif (QT_USE_5)
 # just list whole set of files here -- including headers for IDE's
 set(emergentlib_SRCS
   ${emergent_network_SRCS} ${emergent_network_SRCS_MOC}
-  ${emergent_network_SRCS_MAKETA}
+  ${emergent_network_SRCS_MAKETA} ${emergent_network_SRCS_MAKETA_MI}
   ${emergent_bp_SRCS} ${emergent_bp_SRCS_MAKETA}
   ${emergent_leabra_SRCS} ${emergent_leabra_SRCS_MAKETA} ${emergent_leabra_SRCS_MAKETA_MI}
   ${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}

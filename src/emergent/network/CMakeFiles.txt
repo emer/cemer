@@ -66,7 +66,6 @@ set(network_HEADS_MAKETA
   UniformRndPrjnSpec.h
   PolarRndPrjnSpec.h
   SymmetricPrjnSpec.h
-  ScriptPrjnSpec.h
   ProgramPrjnSpec.h
   CustomPrjnSpec.h
   GpOneToOnePrjnSpec.h
@@ -165,9 +164,21 @@ set(network_HEADS_NOMAKETA
   NiftiReader.h
 )
 
+# multiple inheritence -- in correspondence with deps below
+set(network_HEADS_MAKETA_MI
+  ScriptPrjnSpec.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(network_HEADS_MAKETA_MI_DEPS
+  "../../temt/ta/taBase.h;../../temt/ta/ScriptBase.h"
+)
+
 # all heads -- both kinds
 set(network_HEADS
     ${network_HEADS_MAKETA}
+    ${network_HEADS_MAKETA_MI}
     ${network_HEADS_NOMAKETA}
 )
 

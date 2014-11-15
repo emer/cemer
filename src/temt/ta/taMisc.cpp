@@ -669,7 +669,7 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
 }
 
 #ifndef NO_TA_BASE
-bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
+bool taMisc::TestError_impl(const taBase* obj, bool test, const char* fun_name,
                        const char* a, const char* b, const char* c, const char* d,
                        const char* e, const char* f, const char* g, const char* h) {
   static taBase* prv_obj = NULL;  // prv means previous
@@ -719,7 +719,7 @@ bool taMisc::TestError(const taBase* obj, bool test, const char* fun_name,
   return true;
 }
 
-bool taMisc::TestWarning(const taBase* obj, bool test, const char* fun_name,
+bool taMisc::TestWarning_impl(const taBase* obj, bool test, const char* fun_name,
                          const char* a, const char* b, const char* c, const char* d,
                          const char* e, const char* f, const char* g, const char* h) {
   if(!test) return false;
