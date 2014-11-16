@@ -157,6 +157,7 @@ public:
 #ifndef NO_TA_BASE
   taBase* 		toBase() const; // must be a Base or Matrix, otherwise returns NULL
   taMatrix* 		toMatrix() const; // must be a Matrix, otherwise returns NULL
+  QString              toQString() const { return QString(toString().chars()); }
 #endif  
   TypeItem* 		toTypeItem() const; // must be a TypeItem, otherwise returns NULL
   EnumDef* 		toEnumDef() const; // must be a EnumDef, otherwise returns NULL
@@ -356,7 +357,8 @@ public:
   operator QVariant() const {return toQVariant();}
   Variant(const QString& val);
   Variant&	operator = (const QString& y) {setCString(y.toLatin1()); return *this;}
-  operator QString() const {return QString(toString().chars());}
+  // operator QString() const {return QString(toString().chars());}
+  // do NOT want to impliclty convert to QString -- use explicit .toString() method instead!
 #endif 
 
   Variant(); // default is null/invalid

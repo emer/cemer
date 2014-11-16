@@ -735,7 +735,7 @@ ClusterManager::showRepoDialog()
 
     for (int idx = 0; idx < taMisc::svn_repos.size; ++idx) {
       combo2->addItem(taMisc::svn_repos[idx].name.chars(),
-                      static_cast<QString>(taMisc::svn_repos[idx].value));
+                      taMisc::svn_repos[idx].value.toQString());
     }
     hbox->addWidget(combo2);
   }

@@ -859,7 +859,7 @@ void TemtClient::cmdGetVar() {
       str = " {\"status\":\"OK\", \"result\": \"" + val + "\"" + " }";
     }
     else {
-      val = var->GetVar();
+      val = var->GetVar().toString();
       str = " {\"status\":\"OK\", \"result\": " + val + "} ";
     }
     Write(str);

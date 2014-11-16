@@ -296,7 +296,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
 
     // C - Class names - sets all other classes to 0, this class to 1
     for (int j=0; j < TRAIN_C_d1; j++) {
-      cmp_category = work->GetMatrixVal("TRAIN_C_" + category, 0, j);
+      cmp_category = work->GetMatrixVal("TRAIN_C_" + category, 0, j).toString();
       if (cmp_category == category)
 	work->SetMatrixVal(1, "TRAIN_T_" + category, 0, j);
       else
@@ -304,7 +304,7 @@ bool taDataAnal::MultiClassClassificationViaLinearRegression(DataTable* src_data
     }
 
     for (int j=0; j < TEST_C_d1; j++) {
-      cmp_category = work->GetMatrixVal("TEST_C_" + category, 0, j);
+      cmp_category = work->GetMatrixVal("TEST_C_" + category, 0, j).toString();
       if (cmp_category == category)
 	work->SetMatrixVal(1, "TEST_T_" + category, 0, j);
       else

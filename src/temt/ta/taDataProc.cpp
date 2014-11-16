@@ -1417,7 +1417,7 @@ bool taDataProc::Join(DataTable* dest, DataTable* src_a, DataTable* src_b,
       }
       else {                    // left and inner: just skip b's
         if(spec->nomatch_warn) {
-          taMisc::Warning("taDataProc::Join -- value for src_a:", (String)val_a,
+          taMisc::Warning("taDataProc::Join -- value for src_a:", val_a.toString(),
               "from table:", src_a->name, "not found in column",
               spec->col_b.col_name, "of src_b:", src_b->name);
         }

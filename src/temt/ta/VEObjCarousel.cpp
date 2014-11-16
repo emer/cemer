@@ -41,7 +41,7 @@ bool VEObjCarousel::ViewObjNo(int obj_no) {
                String(obj_table->rows), "rows in the obj_table data table"))
     return false;
   cur_obj_no = obj_no;
-  obj_fname = obj_table->GetVal("FileName", cur_obj_no);
+  obj_fname = obj_table->GetVal("FileName", cur_obj_no).toString();
   SigEmitUpdated(); // update displays..
   return true;
 }

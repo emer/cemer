@@ -873,25 +873,29 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataProcCopyActions.size; i++) {
     processMenu->AddAction(dataProcCopyActions[i]);
     connect (dataProcCopyActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcCopyActions[i], QString(String(dataProcCopyActions[i]->usr_data).chars()));
+    signalMapperForDataProc->setMapping
+      (dataProcCopyActions[i], dataProcCopyActions[i]->usr_data.toQString());
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcOrderActions.size; i++) {
     processMenu->AddAction(dataProcOrderActions[i]);
     connect (dataProcOrderActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcOrderActions[i], QString(String(dataProcOrderActions[i]->usr_data).chars()));
+    signalMapperForDataProc->setMapping
+      (dataProcOrderActions[i], dataProcOrderActions[i]->usr_data.toQString());
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcSelectActions.size; i++) {
     processMenu->AddAction(dataProcSelectActions[i]);
     connect (dataProcSelectActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcSelectActions[i], QString(String(dataProcSelectActions[i]->usr_data).chars()));
+    signalMapperForDataProc->setMapping
+      (dataProcSelectActions[i], dataProcSelectActions[i]->usr_data.toQString());
   }
   processMenu->AddSep();
   for (int i=0; i<dataProcColumnsActions.size; i++) {
     processMenu->AddAction(dataProcColumnsActions[i]);
     connect (dataProcColumnsActions[i], SIGNAL(Action()), signalMapperForDataProc, SLOT(map())) ;
-    signalMapperForDataProc->setMapping(dataProcColumnsActions[i], QString(String(dataProcColumnsActions[i]->usr_data).chars()));
+    signalMapperForDataProc->setMapping
+      (dataProcColumnsActions[i], dataProcColumnsActions[i]->usr_data.toQString());
   }
   
   // Build the action lists for taDataAnal methods
@@ -934,31 +938,36 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataAnalStatsActions.size; i++) {
     analysisMenu->AddAction(dataAnalStatsActions[i]);
     connect (dataAnalStatsActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalStatsActions[i], QString(String(dataAnalStatsActions[i]->usr_data).chars()));
+    signalMapperForDataAnal->setMapping
+      (dataAnalStatsActions[i], dataAnalStatsActions[i]->usr_data.toQString());
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalDistanceActions.size; i++) {
     analysisMenu->AddAction(dataAnalDistanceActions[i]);
     connect (dataAnalDistanceActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalDistanceActions[i], QString(String(dataAnalDistanceActions[i]->usr_data).chars()));
+    signalMapperForDataAnal->setMapping
+      (dataAnalDistanceActions[i], dataAnalDistanceActions[i]->usr_data.toQString());
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalHighDimActions.size; i++) {
     analysisMenu->AddAction(dataAnalHighDimActions[i]);
     connect (dataAnalHighDimActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalHighDimActions[i], QString(String(dataAnalHighDimActions[i]->usr_data).chars()));
+    signalMapperForDataAnal->setMapping
+      (dataAnalHighDimActions[i], dataAnalHighDimActions[i]->usr_data.toQString());
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalCleanActions.size; i++) {
     analysisMenu->AddAction(dataAnalCleanActions[i]);
     connect (dataAnalCleanActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalCleanActions[i], QString(String(dataAnalCleanActions[i]->usr_data).chars()));
+    signalMapperForDataAnal->setMapping
+      (dataAnalCleanActions[i], dataAnalCleanActions[i]->usr_data.toQString());
   }
   analysisMenu->AddSep();
   for (int i=0; i<dataAnalGraphActions.size; i++) {
     analysisMenu->AddAction(dataAnalGraphActions[i]);
     connect (dataAnalGraphActions[i], SIGNAL(Action()), signalMapperForDataAnal, SLOT(map())) ;
-    signalMapperForDataAnal->setMapping(dataAnalGraphActions[i], QString(String(dataAnalGraphActions[i]->usr_data).chars()));
+    signalMapperForDataAnal->setMapping
+      (dataAnalGraphActions[i], dataAnalGraphActions[i]->usr_data.toQString());
   }
   
   // Build the action lists for taDataGen methods
@@ -1012,37 +1021,43 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<dataGenBasicActions.size; i++) {
     generateMenu->AddAction(dataGenBasicActions[i]);
     connect (dataGenBasicActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenBasicActions[i], QString(String(dataGenBasicActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenBasicActions[i], dataGenBasicActions[i]->usr_data.toQString());
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenListsActions.size; i++) {
     generateMenu->AddAction(dataGenListsActions[i]);
     connect (dataGenListsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenListsActions[i], QString(String(dataGenListsActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenListsActions[i], dataGenListsActions[i]->usr_data.toQString());
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenDrawActions.size; i++) {
     generateMenu->AddAction(dataGenDrawActions[i]);
     connect (dataGenDrawActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenDrawActions[i], QString(String(dataGenDrawActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenDrawActions[i], dataGenDrawActions[i]->usr_data.toQString());
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenRandomActions.size; i++) {
     generateMenu->AddAction(dataGenRandomActions[i]);
     connect (dataGenRandomActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenRandomActions[i], QString(String(dataGenRandomActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenRandomActions[i], dataGenRandomActions[i]->usr_data.toQString());
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenFeatPatsActions.size; i++) {
     generateMenu->AddAction(dataGenFeatPatsActions[i]);
     connect (dataGenFeatPatsActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenFeatPatsActions[i], QString(String(dataGenFeatPatsActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenFeatPatsActions[i], dataGenFeatPatsActions[i]->usr_data.toQString());
   }
   generateMenu->AddSep();
   for (int i=0; i<dataGenFilesActions.size; i++) {
     generateMenu->AddAction(dataGenFilesActions[i]);
     connect (dataGenFilesActions[i], SIGNAL(Action()), signalMapperForDataGen, SLOT(map())) ;
-    signalMapperForDataGen->setMapping(dataGenFilesActions[i], QString(String(dataGenFilesActions[i]->usr_data).chars()));
+    signalMapperForDataGen->setMapping
+      (dataGenFilesActions[i], dataGenFilesActions[i]->usr_data.toQString());
   }
 
   // Build the action lists for taImageProc methods
@@ -1081,25 +1096,29 @@ void iMainWindowViewer::Constr_DataMenu() {
   for (int i=0; i<imageProcTransformActions.size; i++) {
     processImageMenu->AddAction(imageProcTransformActions[i]);
     connect (imageProcTransformActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcTransformActions[i], QString(String(imageProcTransformActions[i]->usr_data).chars()));
+    signalMapperForImageProc->setMapping
+      (imageProcTransformActions[i], imageProcTransformActions[i]->usr_data.toQString());
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcFilterActions.size; i++) {
     processImageMenu->AddAction(imageProcFilterActions[i]);
     connect (imageProcFilterActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcFilterActions[i], QString(String(imageProcFilterActions[i]->usr_data).chars()));
+    signalMapperForImageProc->setMapping
+      (imageProcFilterActions[i], imageProcFilterActions[i]->usr_data.toQString());
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcNoiseActions.size; i++) {
     processImageMenu->AddAction(imageProcNoiseActions[i]);
     connect (imageProcNoiseActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcNoiseActions[i], QString(String(imageProcNoiseActions[i]->usr_data).chars()));
+    signalMapperForImageProc->setMapping
+      (imageProcNoiseActions[i], imageProcNoiseActions[i]->usr_data.toQString());
   }
   processImageMenu->AddSep();
   for (int i=0; i<imageProcImageProcActions.size; i++) {
     processImageMenu->AddAction(imageProcImageProcActions[i]);
     connect (imageProcImageProcActions[i], SIGNAL(Action()), signalMapperForImageProc, SLOT(map())) ;
-    signalMapperForImageProc->setMapping(imageProcImageProcActions[i], QString(String(imageProcImageProcActions[i]->usr_data).chars()));
+    signalMapperForImageProc->setMapping
+      (imageProcImageProcActions[i], imageProcImageProcActions[i]->usr_data.toQString());
   }
   
   connect (signalMapperForDataProc, SIGNAL(mapped(QString)), this, SLOT(DataProcLauncher(QString))) ;
