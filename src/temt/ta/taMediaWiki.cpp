@@ -482,21 +482,25 @@ bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
 //              Upload/Download operations
 
 bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name,
-                             const String& wiki_file_name)
+                             const String& wiki_file_name, bool convert_to_camel)
 {
   // #CAT_File Upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally.
 
-  String file_name;
+  String dst_filename;
 
   if (wiki_file_name.empty()) {
-    file_name = local_file_name;
-    file_name = file_name.FileToCamel();
-    taMisc::Info("Converted destination filename from", local_file_name, "to", file_name);
+    dst_filename = local_file_name;
+    if (convert_to_camel) {
+      dst_filename = dst_filename.FileToCamel();
+      taMisc::Info("Converted destination filename from", local_file_name, "to", dst_filename);
+    }
   }
   else {
-    file_name = wiki_file_name;
-    file_name = file_name.FileToCamel();
-    taMisc::Info("Converted destination filename from", wiki_file_name, "to", file_name);
+    dst_filename = wiki_file_name;
+    if (convert_to_camel) {
+      dst_filename = dst_filename.FileToCamel();
+      taMisc::Info("Converted destination filename from", wiki_file_name, "to", dst_filename);
+    }
   }
 
   String wikiUrl = GetApiURL(wiki_name);
@@ -509,8 +513,9 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
 
   // Make the network request.
   iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url, local_file_name, file_name, token)) {
+  if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
     QXmlStreamReader reader(reply);
+    
     while(!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
         QXmlStreamAttributes attrs = reader.attributes();
@@ -518,49 +523,116 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Warning("File upload failed with error code:", qPrintable(err_code), "(", qPrintable(err_info), ")");
+          
           return false;
         }
         else {
           taMisc::Info("File upload successful!");
-          if(attrs.empty()) {
-            taMisc::Info("Request returned no attributes");
-          }
-          else {
-            foreach(QXmlStreamAttribute attr, attrs) {
-              QString attr_name = attr.name().toString();
-              QString attr_val = attr.value().toString();
-              taMisc::Info("Attribute name: ", qPrintable(attr_name));
-              taMisc::Info("Attribute value: ", qPrintable(attr_val));
-            }
-          }
+          
           return true;
         }
       }
     }
   }
   taMisc::Warning("File upload request failed");
+  
   return false;
 }
 
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
-                               const String& local_file_name)
+                               const String& local_file_name, bool convert_to_camel)
 {
   // #CAT_File Download given file name from wiki, optionally giving it a different file name than what it was on the wiki.
 
-  // String file_name;
+  String dst_filename;
 
-  // if (local_file_name.empty()) {
-  //   file_name = wiki_file_name;
-  //   file_name = file_name.toCamel();
-  //   taMisc::Info("Converted destination filename from", wiki_file_name, "to", file_name);
-  // }
-  // else {
-  //   file_name = local_file_name;
-  //   file_name = file_name.toCamel();
-  //   taMisc::Info("Converted destination filename from", local_file_name, "to", file_name);
-  // }
+  if (local_file_name.empty()) {
+    dst_filename = wiki_file_name;
+    if (convert_to_camel) {
+      dst_filename = dst_filename.FileToCamel();
+      taMisc::Info("Converted destination filename from", wiki_file_name, "to", dst_filename);
+    }
+  }
+  else {
+    dst_filename = local_file_name;
+    if (convert_to_camel) {
+      dst_filename = dst_filename.FileToCamel();
+      taMisc::Info("Converted destination filename from", local_file_name, "to", dst_filename);
+    }
+  }
   
-  // STUB
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) { return false; }
+
+  QUrl url(wikiUrl);
+
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("list", "allimages");
+  urq.addQueryItem("aiprefix", wiki_file_name);
+  urq.addQueryItem("format", "xml");
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "query");
+  url.addQueryItem("list", "allimages");
+  url.addQueryItem("aiprefix", wiki_file_name);
+  url.addQueryItem("format", "xml");
+#endif
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    QXmlStreamReader reader(reply);
+    if (findNextElement(reader, "img")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      if (attrs.hasAttribute("url")) {
+        String downStr = (String) attrs.value("url").toString();
+        if (!downStr.empty()) {
+          taMisc::Info("Found file at URL:", downStr);
+          
+          QUrl downUrl(downStr);
+          if (QNetworkReply *downReply = request.httpGet(downUrl)) {
+            if (downReply->error() == QNetworkReply::NoError) {
+              QString replyStr;
+              int httpStatusCode = downReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toUInt();
+              
+              switch (httpStatusCode) {
+                case RESPONSE_OK:
+                  if (downReply->isReadable()) {
+                    replyStr = QString::fromUtf8(downReply->readAll().data());
+                  }
+                  break;
+                case RESPONSE_ERROR:
+                case RESPONSE_BAD_REQUEST:
+                default:
+                  break;
+              }
+
+              if (!(replyStr.isNull())) {
+                QFile file(dst_filename);
+                if (file.open(QIODevice::WriteOnly)) {
+                  file.write(qPrintable(replyStr));
+                  file.close();
+                  taMisc::Info(dst_filename, "successfully downloaded!");
+
+                  return true;
+                }
+                else { taMisc::Warning("Could not open", dst_filename, "for writing:", qPrintable(file.errorString())); }
+              }
+              else { taMisc::Warning("Request returned a bad response or null file"); }
+            }
+            else { taMisc::Warning("File download request failed with error:", qPrintable(downReply->error())); }
+          }
+          else { taMisc::Warning("File download request failed"); }
+        }
+        else { taMisc::Warning("Request returned an empty URL attribute"); }
+      }
+      else { taMisc::Warning("Request returned no URL attribute"); }
+    }
+    else { taMisc::Warning(wiki_file_name, "not found on", wiki_name, "wiki"); }
+  }
+  else { taMisc::Warning("File URL request failed"); }
 
   return false;
 }

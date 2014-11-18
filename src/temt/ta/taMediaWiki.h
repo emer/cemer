@@ -16,6 +16,10 @@
 #ifndef taMediaWiki_h
 #define taMediaWiki_h 1
 
+#define RESPONSE_OK 200
+#define RESPONSE_ERROR 500
+#define RESPONSE_BAD_REQUEST 400
+
 // parent includes:
 #include <taNBase>
 
@@ -71,12 +75,12 @@ public:
   //            Upload/Download operations
 
   static bool   UploadFile(const String& wiki_name, const String& local_file_name,
-                           const String& wiki_file_name="");
-  // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
+                           const String& wiki_file_name="", bool convert_to_camel=true);
+  // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally -- if convert_to_camel is true, destination file name will be converted to CamelCase format
 
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
-                             const String& local_file_name="");
-  // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki
+                             const String& local_file_name="", bool convert_to_camel=true);
+  // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki -- if convert_to_camel is true, destination file name will be converted to CamelCase format
 
   /////////////////////////////////////////////////////
   //            Query operations
