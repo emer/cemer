@@ -34,9 +34,9 @@ EMERGENT_SRC_DIR=~/emergent
 echo "${EMERGENT_SRC_DIR}"
 if [ -d $EMERGENT_SRC_DIR ]; then
   echo "${EMERGENT_SRC_DIR} exists; updating to requested revision"
-  if [ $TAG != "trunk" ]; then
-    REV=$(svn log --stop-on-copy http://grey.colorado.edu/svn/emergent/emergent/${TAG} | sed -n '2s/\ .*$//p' | sed 's/r/-r/')
-  fi
+#  if [ $TAG != "trunk" ]; then
+#    REV=$(svn log --stop-on-copy https://grey.colorado.edu/svn/emergent/emergent/${TAG} | sed -n '2s/\ .*$//p' | sed 's/r/-r/')
+#  fi
   svn update --username anonymous --password emergent -r ${REV} ${EMERGENT_SRC_DIR}
   echo "executing configure --clean --$QTVER"
   $EMERGENT_SRC_DIR/configure --clean --$QTVER
@@ -45,7 +45,7 @@ else
   mkdir ~/emergent
    echo "checking out revision ${REV}"
    echo "${EMERGENT_SRC_DIR} does not exist; checking out revision ${REV}"
-  svn checkout --username anonymous --password emergent -r ${REV} http://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
+  svn checkout --username anonymous --password emergent -r ${REV} https://grey.colorado.edu/svn/emergent/emergent/${TAG} ${EMERGENT_SRC_DIR}
 fi
 
 # config.h is a generated file, so can't do this:
@@ -100,7 +100,7 @@ Maintainer: Ubuntu MOTU Developers <ubuntu-motu@lists.ubuntu.com>
 XSBC-Original-Maintainer: ${DEBFULLNAME} <${DEBEMAIL}>
 Build-Depends: debhelper (>= 7.0.17), ${EMERGENT_BLD_DEPS}, ${QT_BLD_DEPS}
 Standards-Version: 3.9.1
-Homepage: http://grey.colorado.edu/emergent
+Homepage: https://grey.colorado.edu/emergent
 
 Package: emergent
 Architecture: any
@@ -131,7 +131,7 @@ This package was debianized by:
 
 It was downloaded from:
 
-    http://grey.colorado.edu
+    https://grey.colorado.edu
 
 Upstream Author(s):
 
@@ -228,7 +228,7 @@ Emergent
 # .SH NAME
 # emergent \- Neural Network Simulation System
 # .SH DESCRIPTION
-# emergent (http://grey.colorado.edu) is a comprehensive simulation
+# emergent (https://grey.colorado.edu) is a comprehensive simulation
 # environment for creating complex, sophisticated models of the brain
 # and cognitive processes using neural network models. These same
 # networks can also be used for all kinds of other more pragmatic tasks,
