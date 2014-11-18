@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7707
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7742
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -972,7 +972,7 @@ LeabraProject .projects["program_examples"] {
    };
   };
   Program_Group @.gp["Data"] = [0] { 
-   Program_Group @.gp["BasicDataReadWrite"] = [6] { 
+   Program_Group @.gp["BasicDataReadWrite"] = [7] { 
     Program @["ReadAndPrintAllRows"] { 
      ProgObjList @.objs = [1] {
       DataTable @["DemoData"] { 
@@ -1331,6 +1331,223 @@ LeabraProject .projects["program_examples"] {
        ProgEl_List @.loop_code = [2] {
 	DataVarProg @[0] { };
 	PrintVar @[1] { };
+       };
+      };
+     };
+    };
+    Program @["ExportImport"] { 
+     ProgObjList @.objs = [3] {
+      DataTable @["DemoDataOrig"] { 
+       DataTableCols @.data = [7] {
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Value"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	double_Data @["DoubleMatrix"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["FloatCol"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	byte_Data @["Byte1DimMatrix"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	Variant_Data @["VariantCol"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+      DataTable @["DemoDataCopyJson"] { 
+       DataTableCols @.data = [3] {
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	float_Data @["Value"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+      DataTable @["DemoDataCopyCSV"] { 
+       DataTableCols @.data = [17] {
+	String_Data @["Name"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["Value"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_0"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_1"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_2"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_3"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_4"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_5"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_6"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["StringMatrix_7"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["DoubleMatrix_0"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["DoubleMatrix_1"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["DoubleMatrix_2"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["DoubleMatrix_3"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	double_Data @["FloatCol"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["Byte1DimMatrix_0"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["VariantCol"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+      };
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [3] {
+      ProgVar @["DemoDataOrig"] { };
+      ProgVar @["DemoDataCopyJson"] { };
+      ProgVar @["DemoDataCopyCSV"] { };
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [8] {
+      LocalVars @[0] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      Comment @[1] { };
+      MethodCall @[2] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      MethodCall @[3] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+       };
+      };
+      MethodCall @[4] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      MethodCall @[5] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      MethodCall @[6] { 
+       ProgArg_List @.meth_args = [0] {
+       };
+      };
+      MethodCall @[7] { 
+       ProgArg_List @.meth_args = [4] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
        };
       };
      };
@@ -2587,10 +2804,10 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["maxda"] { };
     UserDataItem @["minus_cycles"] { };
     UserDataItem @["ct_cycle"] { };
     UserDataItem @["phase_no"] { };
-    UserDataItem @["maxda"] { };
    };
 
    BaseSpec_Group @.specs = [4] {
@@ -9649,7 +9866,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.3822894096374512;
+	   value 6 0=0.2246192842721939;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -9676,7 +9893,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.3822894096374512;
+	   value 6 0=0.2246192842721939;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10322,7 +10539,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        keygen 4 0=0;
        row_indexes {
 	name="row_indexes";
-       [5] 0;1;2;3;4;       };
+       [0]        };
       };
      };
      types {
@@ -10456,7 +10673,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        orig_prog_code=;
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$;
-       method=taBase::OpenInWindow;
+       method=NULL;
        meth_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -10473,8 +10690,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	};
        };
-       meth_sig="bool OpenInWindow(bool modal = false)";
-       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
+       meth_sig=;
+       meth_desc=;
       };
      };
      step_prog=NULL;
@@ -10885,7 +11102,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10899,7 +11116,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] 0;1;2;	 };
@@ -10911,7 +11128,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10925,7 +11142,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] 0;10;20;	 };
@@ -10937,7 +11154,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10951,7 +11168,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] "a";"aa";"aaa";	 };
@@ -10963,7 +11180,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -10977,7 +11194,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] "b";"bb";"bbb";	 };
@@ -10989,7 +11206,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -11003,7 +11220,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] "joe";"sally";"logan";	 };
@@ -11015,7 +11232,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  el_def=0;
 	  UserDataItem @["view_panel_wd"] {
 	   name="view_panel_wd";
-	   value 6 0=0.1511879116296768;
+	   value 6 0=0.1510152220726013;
 	   val_type_fixed=0;
 	  };
 	 };
@@ -11029,7 +11246,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 dim_names {
 	  name="dim_names";
 	 [0] 	 };
-	 width=0;
+	 width=119;
 	 ar {
 	  name="ar";
 	 [3] "red";"blue";"green";	 };
@@ -11232,6 +11449,1125 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        index_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["data_loop_index"]$$;
        order_var=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["data_loop_order"]$$;
        order=SEQUENTIAL;
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
+    Program @["ExportImport"] {
+     name="ExportImport";
+     short_nm="xprtmp";
+     tags=;
+     desc=;
+     flags=NO_STOP_STEP;
+     objs {
+      name="objs";
+      el_typ=taNBase;
+      el_def=0;
+      DataTable @["DemoDataOrig"] {
+       name="DemoDataOrig";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.2272143810987473;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+	 };
+	};
+	float_Data @["Value"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.2272143810987473;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Value";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [10] 20;30;15;55;5;25;45;60;7;44;
+	 };
+	};
+	String_Data @["StringMatrix"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_341";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1258023083209991;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=1;
+	 cell_geom{ 2;2;2;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [3] ;;;	 };
+	 width=98;
+	 ar {
+	  name="ar";
+	 [2 2 2 10] "Hello World 7";"Hello World 8";"Hello World 5";"Hello World 6";"Hello World 3";"Hello World 4";"Hello World 1";"Hello World 2";;;
+;;;;;;"Hello World 2";"Hello World 1";"Hello World 4";"Hello World 3";
+"Hello World 6";"Hello World 5";"Hello World 8";"Hello World 7";;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+	 };
+	};
+	double_Data @["DoubleMatrix"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_342";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1258023083209991;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="DoubleMatrix";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=1;
+	 cell_geom{ 2;2;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [2] ;;	 };
+	 width=98;
+	 ar {
+	  name="ar";
+	 [2 2 10] 3;4;1;2;0;0;0;0;2;1;
+4;3;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+0;0;0;0;0;0;0;0;0;0;
+	 };
+	};
+	float_Data @["FloatCol"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_343";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1258023083209991;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="FloatCol";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=98;
+	 ar {
+	  name="ar";
+	 [10] 0.1;0.2;0.30000001;0.40000001;0.5;0.60000002;0.69999999;0.80000001;0.89999998;1.1;
+	 };
+	};
+	byte_Data @["Byte1DimMatrix"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_142";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Byte1DimMatrix";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=1;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [1] ;	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [1 10] 1;2;3;4;5;6;7;8;9;10;
+	 };
+	};
+	Variant_Data @["VariantCol"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_143";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="VariantCol";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10]  9 0 "Hello"; 0 1; 9 0 "World"; 0 1; 0 1; 0 1; 0 1; 0 1; 0 1; 0 1;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name="row_indexes";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      DataTable @["DemoDataCopyJson"] {
+       name="DemoDataCopyJson";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_139";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+	 };
+	};
+	float_Data @["Value"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_140";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Value";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 20;30;15;55;5;25;45;60;7;44;
+	 };
+	};
+	String_Data @["StringMatrix"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_141";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=1;
+	 cell_geom{ 2;2;2;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [3] ;;;	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [2 2 2 10] ;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+;;;;;;;;;;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name="row_indexes";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+      DataTable @["DemoDataCopyCSV"] {
+       name="DemoDataCopyCSV";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Name"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_144";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
+	 };
+	};
+	int_Data @["Value"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_133";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Value";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 20;30;15;55;5;25;45;60;7;44;
+	 };
+	};
+	String_Data @["StringMatrix_0"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_145";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_0";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 7";;"Hello World 2";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_1"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_146";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_1";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 8";;"Hello World 1";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_2"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_147";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_2";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 5";;"Hello World 4";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_3"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_148";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_3";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 6";;"Hello World 3";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_4"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_149";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_4";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 3";;"Hello World 6";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_5"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_150";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_5";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 4";;"Hello World 5";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_6"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_151";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_6";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 1";;"Hello World 8";;;;;;;;
+	 };
+	};
+	String_Data @["StringMatrix_7"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_152";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="StringMatrix_7";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello World 2";;"Hello World 7";;;;;;;;
+	 };
+	};
+	int_Data @["DoubleMatrix_0"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_134";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="DoubleMatrix_0";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 3;0;2;0;0;0;0;0;0;0;
+	 };
+	};
+	int_Data @["DoubleMatrix_1"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_135";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="DoubleMatrix_1";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 4;0;1;0;0;0;0;0;0;0;
+	 };
+	};
+	int_Data @["DoubleMatrix_2"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_136";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="DoubleMatrix_2";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 1;0;4;0;0;0;0;0;0;0;
+	 };
+	};
+	int_Data @["DoubleMatrix_3"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_137";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="DoubleMatrix_3";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 2;0;3;0;0;0;0;0;0;0;
+	 };
+	};
+	double_Data @["FloatCol"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_153";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="FloatCol";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1.1;
+	 };
+	};
+	int_Data @["Byte1DimMatrix_0"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_138";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Byte1DimMatrix_0";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] 1;2;3;4;5;6;7;8;9;10;
+	 };
+	};
+	String_Data @["VariantCol"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name="UserDataItem_List_154";
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1283697038888931;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="VariantCol";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name=;
+	 [0] 	 };
+	 width=0;
+	 ar {
+	  name=;
+	 [10] "Hello";;"World";;;;;;;;
+	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name="row_indexes";
+       [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+      };
+     };
+     types {
+      name="types";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="args";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["DemoDataOrig"] {
+       name="DemoDataOrig";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].objs["DemoDataOrig"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["DemoDataCopyJson"] {
+       name="DemoDataCopyJson";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].objs["DemoDataCopyJson"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["DemoDataCopyCSV"] {
+       name="DemoDataCopyCSV";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].objs["DemoDataCopyCSV"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     functions {
+      name="functions";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="init_code";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="prog_code";
+      el_typ=ProgCode;
+      el_def=0;
+      LocalVars @[0] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="local_vars";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      Comment @[1] {
+       desc="Exporting DemoDataOrig to json";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="//Exporting DemoDataOrig to json";
+      };
+      MethodCall @[2] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataOrig.ExportDataJSON()";
+       result_var=NULL;
+       obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataOrig"]$$;
+       method=DataTable::ExportDataJSON;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"DemoDataOrigExport.json\"";
+	 };
+	};
+       };
+       meth_sig="void ExportDataJSON(taString& fname)";
+       meth_desc=" exports data in json format";
+      };
+      MethodCall @[3] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataOrig->ExportData()";
+       result_var=NULL;
+       obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataOrig"]$;
+       method=DataTable::ExportData;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"DemoDataOrigExport.csv\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=DataTable::Delimiters;
+	 type="DataTable::Delimiters";
+	 name="delim";
+	 required=0;
+	 def_val="DataTable::COMMA";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=bool;
+	 type="bool";
+	 name="quote_str";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=bool;
+	 type="bool";
+	 name="headers";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="void ExportData(taString& fname, DataTable::Delimiters delim = COMMA, bool quote_str = true, bool headers = true)";
+       meth_desc=" exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)";
+      };
+      MethodCall @[4] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataCopy.RemoveAllCols()";
+       result_var=NULL;
+       obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataCopyJson"]$$;
+       method=DataTable::RemoveAllCols;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void RemoveAllCols()";
+       meth_desc=" remove all columns (and data)";
+      };
+      MethodCall @[5] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataCopy->ImportDataJSON()";
+       result_var=NULL;
+       obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataCopyJson"]$;
+       method=DataTable::ImportDataJSON;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="\"DemoDataOrigExport.json\"";
+	 };
+	};
+       };
+       meth_sig="void ImportDataJSON(taString& fname)";
+       meth_desc=" load JSON format data (ONLY)";
+      };
+      MethodCall @[6] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataCopyCSV->RemoveAllCols()";
+       result_var=NULL;
+       obj=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataCopyCSV"]$$;
+       method=DataTable::RemoveAllCols;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+       };
+       meth_sig="void RemoveAllCols()";
+       meth_desc=" remove all columns (and data)";
+      };
+      MethodCall @[7] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="DemoDataCopyCSV->ImportData()";
+       result_var=NULL;
+       obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ExportImport"].vars["DemoDataCopyCSV"]$;
+       method=DataTable::ImportData;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=const_taString_ref;
+	 type="taString&";
+	 name="fname";
+	 required=0;
+	 def_val="\"\"";
+	 prev_expr=;
+	 expr {
+	  expr="\"DemoDataOrigExport.csv\"";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=bool;
+	 type="bool";
+	 name="headers";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=DataTable::LoadDelimiters;
+	 type="DataTable::LoadDelimiters";
+	 name="delim";
+	 required=0;
+	 def_val="DataTable::LD_AUTO";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=DataTable::LoadQuotes;
+	 type="DataTable::LoadQuotes";
+	 name="quote_str";
+	 required=0;
+	 def_val="DataTable::LQ_AUTO";
+	 prev_expr=;
+	 expr {
+	  expr=;
+	 };
+	};
+       };
+       meth_sig="void ImportData(taString& fname, bool headers = true, DataTable::LoadDelimiters delim = LD_AUTO, DataTable::LoadQuotes quote_str = LQ_AUTO)";
+       meth_desc=" imports externally-generated data in delimited text file format -- if headers is selected, then first row is treated as column headers -- auto defaults are typically fine (see also Load Any Data or Load Any Data Append -- same functionality with all AUTO defaults)";
       };
      };
      step_prog=NULL;
@@ -12674,7 +14010,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        orig_prog_code=;
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
-       method=taBase::OpenInWindow;
+       method=NULL;
        meth_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -12691,8 +14027,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	};
        };
-       meth_sig="bool OpenInWindow(bool modal = false)";
-       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
+       meth_sig=;
+       meth_desc=;
       };
      };
      step_prog=NULL;
@@ -15793,22 +17129,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=-0.9713541865348816;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.05645730346441269;
+     value 6 0=0.01231060642749071;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=1;
+     value 6 0=0.9661458134651184;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7995765805244446;
+     value 6 0=0.7992424368858337;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -15825,7 +17161,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    name="Browser2";
    m_data=.projects["program_examples"]$$;
    visible=1;
-   win_name=".projects[\"program_examples\"] - program_examples.proj";
+   win_name=".projects[\"program_examples\"] - program_examples.proj [*]";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -16988,22 +18324,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=0;
+       value 6 0=-1;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.02470006980001926;
+       value 6 0=0.02462121285498142;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.03442879393696785;
+       value 6 0=0.04218750074505806;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7282992005348206;
+       value 6 0=0.685606062412262;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -17150,6 +18486,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["maxda"] {
+     name="maxda";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["minus_cycles"] {
      name="minus_cycles";
      value 1 0=1;
@@ -17162,11 +18503,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["phase_no"] {
      name="phase_no";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
-    UserDataItem @["maxda"] {
-     name="maxda";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -17246,7 +18582,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      v_m_init {name="v_m_init": type=UNIFORM: mean=0.3: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
-     act_avg {l_up_inc=0.6: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
      learn_qtr=Q4;
@@ -17315,7 +18651,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        ignore_unlearnable=1;
        xcal {raw_l_mix=0: thr_l_mix=0.01: thr_m_mix=0.99: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=1: };
-       fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+       fast_wts {on=0: nofast_lrate=2: decay_tau=300: wt_tau=5: fast_lrate=5: decay_dt=0.003333333: wt_dt=0.2: slow_lrate=0.2: };
        cifer {on=0: bg_lrate=1: fg_lrate=0: };
        dwt_thresh=0.1;
       };
@@ -17340,7 +18676,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      ignore_unlearnable=1;
      xcal {raw_l_mix=0: thr_l_mix=0.01: thr_m_mix=0.99: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=1: };
-     fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
+     fast_wts {on=0: nofast_lrate=2: decay_tau=300: wt_tau=5: fast_lrate=5: decay_dt=0.003333333: wt_dt=0.2: slow_lrate=0.2: };
      cifer {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
@@ -17408,8 +18744,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0;
-     acts_p_avg=0;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
@@ -17494,8 +18830,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0;
-     acts_p_avg=nan;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
@@ -17561,8 +18897,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0;
-     acts_p_avg=0;
+     acts_m_avg=0.1;
+     acts_p_avg=0.1;
      acts_p_avg_eff=1;
      spec {type=LeabraLayerSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
@@ -17616,9 +18952,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     n_wake_in_sync=0;
     run_time_pct=0;
     sync_time_pct=0;
-    wake_in_sync_pct=1.780695116337334e-315;
+    wake_in_sync_pct=6.929263367506111e-310;
     quarter=1;
     unit_chunks=32;
+    unit_fixed=0;
     timers_on=0;
    };
    times {
