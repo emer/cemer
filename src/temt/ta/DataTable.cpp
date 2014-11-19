@@ -2979,7 +2979,10 @@ void DataTable::ImportDataJSON(const String& fname) {
 void DataTable::ImportDataJSONString(const String& json_as_string) {
   if (libjson::is_valid(json_string(json_as_string.chars()))) {
     JSONNode n = libjson::parse(json_string(json_as_string.chars()));
-    SetDataFromJSON(n);
+    bool rval = SetDataFromJSON(n);
+    if (rval == false) {
+      taMisc::Error("ImportDataJSON: ", "Something has gone awry with the import. Please file a bug and include the file to be imported");
+    }
   }
   else {
     taMisc::Error("ImportDataJSON: ", "The json file has a format error, look for missing/extra bracket, brace or quotation");
@@ -3011,7 +3014,7 @@ bool DataTable::SetDataFromJSON(const JSONNode& n, int start_row, int start_cell
       start_row = rows + start_row + 1;
     }
     JSONNode::const_iterator columns = i->begin();
-    while (columns != i->end() && rval == true) {
+      while (columns != i->end()) {
       const JSONNode aCol = *columns;
       rval = SetColumnFromJSON(aCol, start_row, start_cell);
       columns++;
@@ -3090,7 +3093,7 @@ bool DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int start
   columnType = dc->valType();
   
   int row;
-  int rowCount = theValues.size();  // row count to write to table
+  int rowCount = theValues.size();  // the number of rows to write to table (not rows in table)
 
   if (start_row == -1 || start_row > rows) { // means append!
     row = this->rows;
@@ -3139,7 +3142,7 @@ bool DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int start
   }
 
   if (isMatrix) {
-    int valueCount = 0;  // how many values were passed in
+    int valueCount = 0;  // how many values were passed in TOTAL for this column (rows * cell size)
     const JSONNode matrixArray = theValues;
     int_Array intValues;
     float_Array floatValues;
@@ -3180,18 +3183,18 @@ bool DataTable::SetColumnFromJSON(const JSONNode& aCol, int start_row, int start
     }
     
     
-    if (start_cell < 0 || start_cell > mg.Product()) {
+    if (start_cell < 0 || start_cell > (mg.Product()*rowCount)) {
       error_msg = "cell range error";
       return false;
     }
-    if (valueCount + start_cell > mg.Product()) {
+    if (valueCount + start_cell > (mg.Product()*rowCount)) {
       error_msg = "more values than cells";
       return false;
     }
 
     // store flat array of values into matrix cells
     for (int i = 0, r = row; i < rowCount; i++, r++) {
-      for (int j = 0, k = start_cell; j < valueCount; j++, k++) {
+      for (int j = 0, k = start_cell; j < valueCount/rowCount; j++, k++) {
         switch (dc->valType()) {
         case VT_STRING:
           SetValAsStringM(stringValues[i*mg.Product() + j], columnName, r, k);
