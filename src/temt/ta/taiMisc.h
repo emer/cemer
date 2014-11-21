@@ -115,12 +115,17 @@ public:
   
   enum BindingContext {
     MAIN_WINDOW_CONTEXT,              // bindings for main menubar
-    LINE_EDIT_CONTEXT                // bindings for single line editing, inline editing of code
+    LINE_EDIT_CONTEXT,                // bindings for single line editing, inline editing of code
+    CONSOLE_CONTEXT                   // bindings for single line editing, inline editing of code
   };
 
   enum BoundAction {
     NULL_ACTION,
+    STOP,  // typically ctrl+C
+    ENTER,
     DELETE,
+    UNDO,
+    CLEAR,
     EMACS_DESELECT,
     EMACS_CLEAR_EXTENDED_SELECTION,
     EMACS_HOME,
@@ -154,7 +159,13 @@ public:
     MOVE_FOCUS_LEFT,
     MOVE_FOCUS_RIGHT,
     SHIFT_CUR_TAB_LEFT,
-    SHIFT_CUR_TAB_RIGHT
+    SHIFT_CUR_TAB_RIGHT,
+    CONTINUE_PAGING,  // used by console
+    QUIT_PAGING,      // used by console
+    AUTO_COMPLETE,
+    BACKSPACE,
+    HISTORY_FORWARD,
+    HISTORY_BACKWARD
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;

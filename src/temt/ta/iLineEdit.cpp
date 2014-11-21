@@ -261,7 +261,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       doLookup();
       return;
     default:
-      QLineEdit::keyPressEvent(key_event);
+      inherited::keyPressEvent(key_event);
   }
 }
 

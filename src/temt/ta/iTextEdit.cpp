@@ -168,7 +168,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
 //      return;
 
     default:
-      QTextEdit::keyPressEvent(key_event);
+      inherited::keyPressEvent(key_event);
   }
 }
 

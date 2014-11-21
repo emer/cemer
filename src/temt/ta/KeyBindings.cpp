@@ -28,9 +28,10 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
   switch (context) {
     case taiMisc::MAIN_WINDOW_CONTEXT:
       return &main_window_bindings;
-      break;
     case taiMisc::LINE_EDIT_CONTEXT:
       return &line_edit_bindings;
+    case taiMisc::CONSOLE_CONTEXT:
+      return &console_bindings;
     default:
       return NULL;
       break;
@@ -63,6 +64,9 @@ taiMisc::BoundAction KeyBindings::Action(taiMisc::BindingContext context,  QKeyS
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
     return context_bindings->GetAction(key_sequence);
+  }
+  else {
+    taMisc::Error("KeyActionPair_PArray not found, did you forget to add the context to KeyBindings::CurrentBindings()");
   }
   return taiMisc::NULL_ACTION;
 }

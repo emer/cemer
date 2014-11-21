@@ -387,165 +387,175 @@ void iConsole::resizeEvent(QResizeEvent* e) {
 }
 
 // Reimplemented key press event
-void iConsole::keyPressEvent(QKeyEvent* e)
+void iConsole::keyPressEvent(QKeyEvent* key_event)
 {
-  QTextCursor cursor(textCursor());
-
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::CONSOLE_CONTEXT, key_event);
 
   if (curOutputLn >= maxLines) {
-    if (is_enter) {
+    if (action == taiMisc::ENTER) {
       curOutputLn = 0;
     }
-    else if (e->key() == Qt::Key_Q) {
+    else if (action == taiMisc::QUIT_PAGING) {
       curOutputLn = 0;
       quitPager = true;
     }
-    else if (e->key() == Qt::Key_C) {
+    else if (action == taiMisc::CONTINUE_PAGING) {
       curOutputLn = 0;
       contPager = true;
     }
     flushOutput();
     promptDisp = false;
-    e->accept();
+    key_event->accept();
     return;
   }
+  
+  QTextCursor cursor(textCursor());
+  QTextCursor::MoveMode mv_mode = QTextCursor::MoveAnchor;
+  if(ext_select_on)
+    mv_mode = QTextCursor::KeepAnchor;
 
-  QTextCursor::MoveMode mv_mode = ext_select_on ? QTextCursor::KeepAnchor :
-    QTextCursor::MoveAnchor;
-
-  //If Ctrl + C pressed, then undo the current command
-  if((e->key() == Qt::Key_C) && ctrl_pressed) {
-    ctrlCPressed();
-    e->accept();
-    displayPrompt();
-  }
-  else if(e->key() == Qt::Key_Tab) {   //Treat the tab key & autocomplete the current command
-    e->accept();
-    QString command = getCurrentCommand();
-    QStringList sl = autocompleteCommand(command);
-    QString intersect = findIntersection(sl);
-    if(!intersect.isEmpty()) {
-      command = intersect;
-      replaceCurrentCommand(command);
+  switch(action) {
+    case taiMisc::UNDO:         // undo the current command
+      key_event->accept();
+      displayPrompt();
+      break;
+    case taiMisc::AUTO_COMPLETE:         // auto complete current command
+    {
+      key_event->accept();
+      QString command = getCurrentCommand();
+      QStringList sl = autocompleteCommand(command);
+      QString intersect = findIntersection(sl);
+      if(!intersect.isEmpty()) {
+        command = intersect;
+        replaceCurrentCommand(command);
+      }
+      QString str = sl.join(" ");
+      if(sl.count() == 1) {
+        replaceCurrentCommand(sl[0]);
+      }
+      else if(sl.count() > 1) {
+        setTextColor(completionColor);
+        append(sl.join(" "));
+        displayPrompt(true);      // force!
+        cursor.insertText(command);
+      }
+      break;
     }
-    QString str = sl.join(" ");
-    if(sl.count() == 1)
-      replaceCurrentCommand(sl[0]);
-    else if(sl.count() > 1) {
-      setTextColor(completionColor);
-      append(sl.join(" "));
-      displayPrompt(true);      // force!
-      cursor.insertText(command);
-    }
-  }
-  else if(e->key() == Qt::Key_Backspace) { // todo: trap other cases..
-    if(cursorInCurrentCommand()) // don't backup into prompt
-      inherited::keyPressEvent( e );
-    else
-      e->accept();
-  }
-  else if(e->key() == Qt::Key_Return) {
-    e->accept();
-    if(waiting_for_key) {
-      key_response = e->key();
-      waiting_for_key = false;
-    }
-    else {
-      if(promptDisp) {
-        QString command = getCurrentCommand();
-        if(isCommandComplete(command))
-          execCommand(command, false);
+    case taiMisc::BACKSPACE:
+      if(cursorInCurrentCommand()) {       // don't backup into prompt
+        inherited::keyPressEvent(key_event);
       }
       else {
-        displayPrompt(true);
+        key_event->accept();  // we are at the prompt - swallow
       }
+      break;
+    case taiMisc::ENTER:
+    {
+      key_event->accept();
+      if (waiting_for_key) {
+        key_response = key_event->key();
+        waiting_for_key = false;
+      }
+      else {
+        if(promptDisp) {
+          QString command = getCurrentCommand();
+          if(isCommandComplete(command))
+            execCommand(command, false);
+        }
+        else {
+          displayPrompt(true);
+        }
+      }
+      break;
     }
-  }
-    else if((e->key() == '.') && ctrl_pressed) {
-    e->accept();
-    clear();
-  }
-  else if((e->key() == Qt::Key_Up) || ((e->key() == Qt::Key_P) && ctrl_pressed)) {
-    e->accept();
-    if(history.size() > 0) {
-      historyIndex--; if(historyIndex < 0) historyIndex = 0;
-      QString cmd = history[historyIndex];
-      if(!cmd.isEmpty())
-        replaceCurrentCommand(cmd);
+    case taiMisc::CLEAR:
+      key_event->accept();
+      clear();
+      break;
+    case taiMisc::HISTORY_BACKWARD:
+      key_event->accept();
+      if(history.size() > 0) {
+        historyIndex--; if(historyIndex < 0) historyIndex = 0;
+        QString cmd = history[historyIndex];
+        if(!cmd.isEmpty())
+          replaceCurrentCommand(cmd);
+      }
+      break;
+    case taiMisc::HISTORY_FORWARD:
+      key_event->accept();
+      if(history.size() > 0) {
+        historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;
+        QString cmd = history[historyIndex];
+        if(!cmd.isEmpty())
+          replaceCurrentCommand(cmd);
+      }
+      break;
+      // these deselects don't work - rohrlich 11/20/14
+    case taiMisc::EMACS_DESELECT:
+      key_event->accept();
+      cursor.clearSelection();
+      ext_select_on = true;
+      break;
+    case taiMisc::EMACS_CLEAR_EXTENDED_SELECTION:
+      key_event->accept();
+      cursor.clearSelection();
+      ext_select_on = false;
+      break;
+    case taiMisc::EMACS_HOME:
+      key_event->accept();
+      gotoPrompt(cursor, ext_select_on);
+      setTextCursor(cursor);
+      break;
+    case taiMisc::EMACS_END:
+      key_event->accept();
+      gotoEnd(cursor, ext_select_on);
+      setTextCursor(cursor);
+      break;
+    case taiMisc::EMACS_CURSOR_FORWARD:
+      key_event->accept();
+      cursor.movePosition(QTextCursor::NextCharacter, mv_mode);
+      setTextCursor(cursor);
+      break;
+    case taiMisc::EMACS_CURSOR_BACKWARD:
+      key_event->accept();
+      cursor.movePosition(QTextCursor::PreviousCharacter, mv_mode);
+      setTextCursor(cursor);
+      break;
+    case taiMisc::EMACS_DELETE:
+      key_event->accept();
+      cursor.deleteChar();
+      setTextCursor(cursor);
+      break;
+    case taiMisc::EMACS_KILL:
+    {
+      key_event->accept();
+      cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
+      QTextDocumentFragment frag = cursor.selection();
+      MyQTextEditMimeData* md = new MyQTextEditMimeData(frag);
+      QApplication::clipboard()->setMimeData(md);
+      cursor.removeSelectedText();
+      ext_select_on = false;
+      break;
     }
-  }
-  else if((e->key() == Qt::Key_Down) || ((e->key() == Qt::Key_N) && ctrl_pressed)) {
-    e->accept();
-    if(history.size() > 0) {
-      historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;
-      QString cmd = history[historyIndex];
-      if(!cmd.isEmpty())
-        replaceCurrentCommand(cmd);
-    }
-  }
-  else if((e->key() == Qt::Key_Space) && ctrl_pressed) {
-    e->accept();
-    cursor.clearSelection();
-    ext_select_on = true;
-  }
-  else if((e->key() == Qt::Key_G) && ctrl_pressed) {
-    e->accept();
-    cursor.clearSelection();
-    ext_select_on = false;
-  }
-  else if((e->key() == Qt::Key_A) && ctrl_pressed) {
-    e->accept();
-    gotoPrompt(cursor, ext_select_on);
-    setTextCursor(cursor);
-  }
-  else if((e->key() == Qt::Key_E) && ctrl_pressed) {
-    e->accept();
-    gotoEnd(cursor, ext_select_on);
-    setTextCursor(cursor);
-  }
-  else if((e->key() == Qt::Key_F) && ctrl_pressed) {
-    e->accept();
-    cursor.movePosition(QTextCursor::NextCharacter, mv_mode);
-    setTextCursor(cursor);
-  }
-  else if((e->key() == Qt::Key_B) && ctrl_pressed) {
-    e->accept();
-    cursor.movePosition(QTextCursor::PreviousCharacter, mv_mode);
-    setTextCursor(cursor);
-  }
-  else if((e->key() == Qt::Key_D) && ctrl_pressed) {
-    e->accept();
-    cursor.deleteChar();
-    setTextCursor(cursor);
-  }
-  else if((e->key() == Qt::Key_K) && ctrl_pressed) {
-    e->accept();
-    cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-    QTextDocumentFragment frag = cursor.selection();
-    MyQTextEditMimeData* md = new MyQTextEditMimeData(frag);
-    QApplication::clipboard()->setMimeData(md);
-    cursor.removeSelectedText();
-    ext_select_on = false;
-  }
-  else if((e->key() == Qt::Key_Y) && ctrl_pressed) {
-    e->accept();
-    inherited::paste();         // don't go to end first!
-    ext_select_on = false;
-  }
-  else if((e->key() == Qt::Key_W) && ctrl_pressed) {
-    e->accept();
-    cut();
-    ext_select_on = false;
-  }
-  else if(waiting_for_key) {
-    key_response = e->key();
-    waiting_for_key = false;
-    e->accept();
-  }
-  else {
-    inherited::keyPressEvent( e );
+    case taiMisc::EMACS_PASTE:
+      key_event->accept();
+      inherited::paste();         // don't go to end first!
+      ext_select_on = false;
+      break;
+    case taiMisc::EMACS_CUT:
+      key_event->accept();
+      cut();
+      ext_select_on = false;
+      break;
+    default:
+      if(waiting_for_key) {
+        key_response = key_event->key();
+        waiting_for_key = false;
+        key_event->accept();
+      }
+      else {
+        inherited::keyPressEvent(key_event);
+      }
   }
 
   // make sure we never go past prompt..
