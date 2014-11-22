@@ -228,13 +228,19 @@ void iViewPanel::UpdateButtons() {
   }
 }
 
-void iViewPanel::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
-    Apply();                    // do it!
-  }
-  if(e->key() == Qt::Key_Escape) {
-    Revert();                   // do it!
+void iViewPanel::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PANEL_CONTEXT, key_event);
+  
+  switch(action) {
+    case taiMisc::APPLY:
+      Apply();
+      return;
+    case taiMisc::REVERT:
+      Revert();
+      return;
+    default:  // why didn't this code called inherited and pass on key event
+      return;
+      
   }
 }
 

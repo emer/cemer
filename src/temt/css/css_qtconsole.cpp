@@ -20,6 +20,7 @@
 #include "css_ta.h"
 
 #include <taMisc>
+#include <taiMisc>
 #include <EnumDef>
 #include <Program>
 
@@ -58,17 +59,16 @@ void QcssConsole::resizeEvent(QResizeEvent* e) {
   taMisc::display_height = maxLines;
 }
 
-void QcssConsole::keyPressEvent( QKeyEvent *e ) {
-  if((e->key() == Qt::Key_C) && (e->modifiers() == Qt::ControlModifier)) {
-    cmd_shell->src_prog->Stop();
-  }
-  else {
-    // todo: also implement basic emacs keys!  may need to redef qtext edit for this
-    inherited::keyPressEvent(e);
+void QcssConsole::keyPressEvent(QKeyEvent *key_event) {
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::CONSOLE_CONTEXT, key_event);
+  
+  switch (action) {
+    case taiMisc::STOP:
+      cmd_shell->src_prog->Stop();
+    default:
+      inherited::keyPressEvent(key_event);
   }
 }
-
-
 
 /////////////////////////////////////////////
 // autocompletion

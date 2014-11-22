@@ -368,17 +368,16 @@ void iDialogRegexp::CreateTableModel()
   }
 }
 
-void iDialogRegexp::keyPressEvent(QKeyEvent *e)
+void iDialogRegexp::keyPressEvent(QKeyEvent* key_event)
 {
   // don't accept on enter
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
+  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(key_event);
+  bool is_enter = key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return;
   if (!ctrl_pressed && is_enter) {
-    e->accept(); // just bail!
+    key_event->accept(); // just bail!
     return;
   }
-
-  iDialog::keyPressEvent(e);
+  iDialog::keyPressEvent(key_event);
 }
 
 void iDialogRegexp::accept()

@@ -32,6 +32,14 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
       return &line_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
+    case taiMisc::DIALOG_CONTEXT:
+      return &dialog_bindings;
+    case taiMisc::PANEL_CONTEXT:
+      return &panel_bindings;
+    case taiMisc::TABLE_CONTEXT:
+      return &table_bindings;
+    case taiMisc::TREE_CONTEXT:
+      return &tree_bindings;
     default:
       return NULL;
       break;

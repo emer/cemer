@@ -46,29 +46,21 @@ int iDialog::exec()
   return rval;
 }
 
-void iDialog::keyPressEvent(QKeyEvent *e)
+void iDialog::keyPressEvent(QKeyEvent* key_event)
 {
 #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
   // needs to be after window is fully up and running..
   TurnOffTouchEventsForWindow(windowHandle());
 #endif
-
-  // support Ctrl-Return/Enter as Accept
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
-
-  if (ctrl_pressed && is_enter) {
-    e->accept();
-    accept();
-    return;
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
+  
+  switch(action) {
+    case taiMisc::ACCEPT:
+      key_event->accept();
+      accept();
+      return;
+    default:
+      QDialog::keyPressEvent(key_event);
   }
-
-  // this is the default so should not need reiterating.
-  // if(e->key() == Qt::Key_Escape) {
-  //   e->accept();
-  //   reject();
-  //   return;
-  // }
-
-  QDialog::keyPressEvent(e);
 }

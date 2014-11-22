@@ -113,17 +113,25 @@ public:
 
   };
   
-  enum BindingContext {
-    MAIN_WINDOW_CONTEXT,              // bindings for main menubar
-    LINE_EDIT_CONTEXT,                // bindings for single line editing, inline editing of code
-    CONSOLE_CONTEXT                   // bindings for single line editing, inline editing of code
+  enum BindingContext {     // key bindings for various contexts
+    MAIN_WINDOW_CONTEXT,
+    LINE_EDIT_CONTEXT,
+    CONSOLE_CONTEXT,
+    DIALOG_CONTEXT,
+    PANEL_CONTEXT,
+    TABLE_CONTEXT,           // data tables
+    TREE_CONTEXT
   };
 
   enum BoundAction {
     NULL_ACTION,
-    STOP,  // typically ctrl+C
+    STOP,                   // typically ctrl+C
     ENTER,
     DELETE,
+    DUPLICATE,
+    APPLY,
+    REVERT,
+    ACCEPT,
     UNDO,
     CLEAR,
     EMACS_DESELECT,
@@ -165,7 +173,12 @@ public:
     AUTO_COMPLETE,
     BACKSPACE,
     HISTORY_FORWARD,
-    HISTORY_BACKWARD
+    HISTORY_BACKWARD,
+    NEW_DEFAULT_ELEMENT,
+    NEW_ELEMENT_ABOVE,
+    NEW_ELEMENT_BELOW,
+    FIND,
+    FIND_REPLACE
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;

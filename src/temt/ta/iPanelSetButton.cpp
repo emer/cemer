@@ -28,36 +28,52 @@ iPanelSetButton::iPanelSetButton(QWidget* parent) : QToolButton(parent) {
   m_idx = -1;
 }
 
-void iPanelSetButton::keyPressEvent(QKeyEvent* e) {
-  if(!m_datapanelset || m_idx < 0) { inherited::keyPressEvent(e); return; }
-
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  // arrow/ctrl-key nav to adjacent buttons
-  if((e->key() == Qt::Key_Left) || (ctrl_pressed && e->key() == Qt::Key_B)) {
-    int prv_idx = m_idx -1;
-    if(prv_idx < 0) prv_idx = m_datapanelset->panels.size-1;
-    if(prv_idx == m_idx) { e->accept(); return; }
-    QAbstractButton* pbut = m_datapanelset->buttons->button(prv_idx);
-    if(pbut) {
-      pbut->click();
-      pbut->setFocus();
-    }
-    e->accept();
+void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
+  if(!m_datapanelset || m_idx < 0) {
+    inherited::keyPressEvent(key_event);
     return;
   }
-  else if((e->key() == Qt::Key_Right) || (ctrl_pressed && e->key() == Qt::Key_F)) {
-    int nxt_idx = m_idx +1;
-    if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;
-    if(nxt_idx == m_idx) { e->accept(); return; }
-    QAbstractButton* pbut = m_datapanelset->buttons->button(nxt_idx);
-    if(pbut) {
-      pbut->click();
-      pbut->setFocus();
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::LINE_EDIT_CONTEXT, key_event);
+  
+  QAbstractButton* but;
+  
+  switch(action) {
+    case taiMisc::MOVE_FOCUS_LEFT:
+    {
+      int prv_idx = m_idx -1;
+      if(prv_idx < 0) prv_idx = m_datapanelset->panels.size-1;
+      if(prv_idx == m_idx) {
+        key_event->accept();
+        return;
+      }
+      but = m_datapanelset->buttons->button(prv_idx);
+      if(but) {
+        but->click();
+        but->setFocus();
+      }
+      key_event->accept();
+      return;
     }
-    e->accept();
-    return;
+    case taiMisc::MOVE_FOCUS_RIGHT:
+    {
+      int nxt_idx = m_idx +1;
+      if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;
+      if(nxt_idx == m_idx) {
+        key_event->accept();
+        return;
+      }
+      but = m_datapanelset->buttons->button(nxt_idx);
+      if(but) {
+        but->click();
+        but->setFocus();
+      }
+      key_event->accept();
+      return;
+    }
+    default:
+      inherited::keyPressEvent(key_event);
   }
-  inherited::keyPressEvent(e);
 }
 
 bool iPanelSetButton::focusNextPrevChild(bool next) {

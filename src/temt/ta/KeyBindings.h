@@ -35,6 +35,10 @@ public:
   KeyActionPair_PArray       main_window_bindings;
   KeyActionPair_PArray       line_edit_bindings;
   KeyActionPair_PArray       console_bindings;
+  KeyActionPair_PArray       dialog_bindings;
+  KeyActionPair_PArray       panel_bindings;
+  KeyActionPair_PArray       table_bindings;
+  KeyActionPair_PArray       tree_bindings;
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings

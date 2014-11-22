@@ -587,13 +587,9 @@ QStringList iTreeView::mimeTypes () const {
   return rval;
 }
 
-void iTreeView::keyPressEvent(QKeyEvent* e) {
-
-  taiMisc::UpdateUiOnCtrlPressed(this, e);
-
-  taProject* proj = myProject();
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-
+void iTreeView::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
   bool stru_actions_enabled = true; // enabled by default
   ISelectable* si = curItem();
   if(si && si->link()) {
@@ -611,28 +607,28 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
       }
     }
   }
-
+  
+  iMainWindowViewer* imw = mainWindow();
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, key_event);
+  
   if(stru_actions_enabled) {
-    if((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter)) {
-      ext_select_on = false;
-      InsertDefaultEl(true);            // after
-      e->accept();
-      return;
-    }
-    if(ctrl_pressed) {
-      if(e->key() == Qt::Key_I) {
+    switch(action) {
+      case taiMisc::NEW_DEFAULT_ELEMENT:
+        ext_select_on = false;
+        InsertDefaultEl(true);            // after
+        key_event->accept();
+        return;
+      case taiMisc::NEW_ELEMENT_ABOVE:
         ext_select_on = false;
         InsertEl();             // at
-        e->accept();
+        key_event->accept();
         return;
-      }
-      if(e->key() == Qt::Key_O) {
+      case taiMisc::NEW_ELEMENT_BELOW:
         ext_select_on = false;
         InsertEl(true);         // after
-        e->accept();
+        key_event->accept();
         return;
-      }
-      if(e->key() == Qt::Key_M) {
+      case taiMisc::DUPLICATE:
         ext_select_on = false;
         if (ISelectable *si = curItem()) {
           if (ISelectableHost *host = si->host()) {
@@ -643,76 +639,54 @@ void iTreeView::keyPressEvent(QKeyEvent* e) {
             }
           }
         }
-        e->accept();
+        key_event->accept();
         return;
-      }
-    }
-      if((ctrl_pressed && e->key() == Qt::Key_W) ||
-         (ctrl_pressed && e->key() == Qt::Key_D) ||
-         (ctrl_pressed && e->key() == Qt::Key_Backspace))
-    {
-      ext_select_on = false;
-      if (ISelectable *si = curItem()) {
-        if (ISelectableHost *host = si->host()) {
-          int ea = 0;
-          host->EditActionsEnabled(ea);
-          if (ea & iClipData::EA_DELETE) {
-            host->EditAction(iClipData::EA_DELETE);
-            //WARNING: we may be deleted at this point!!!
+      case taiMisc::DELETE:
+        ext_select_on = false;
+        if (ISelectable *si = curItem()) {
+          if (ISelectableHost *host = si->host()) {
+            int ea = 0;
+            host->EditActionsEnabled(ea);
+            if (ea & iClipData::EA_DELETE) {
+              host->EditAction(iClipData::EA_DELETE);
+              //WARNING: we may be deleted at this point!!!
+            }
           }
         }
-      }
-      e->accept();
-      return;
+        key_event->accept();
+        return;
+      case taiMisc::HISTORY_FORWARD:
+        if(imw && imw->brow_hist) {
+          imw->brow_hist->forward();
+        }
+        key_event->accept();
+        return;
+      case taiMisc::HISTORY_BACKWARD:
+        if(imw && imw->brow_hist) {
+          imw->brow_hist->back();
+        }
+        key_event->accept();
+        return;
+      case taiMisc::FIND:
+        if(si && si->link()) {   // si is curItem()
+          taiSigLink* link = si->link();
+          iMainWindowViewer* imw = mainWindow();
+          if(imw) imw->Find(link);
+        }
+        key_event->accept();
+        return;
+      case taiMisc::FIND_REPLACE:
+        if(si && si->link()) {  // si is curItem()
+          taiSigLink* link = si->link();
+          iMainWindowViewer* imw = mainWindow();
+          if(imw) imw->Replace(link, selItems());
+        }
+        key_event->accept();
+        return;
+      default:
+        inherited::keyPressEvent(key_event);
     }
   }
-  // if((QApplication::keyboardModifiers() & Qt::AltModifier)) {
-  //   String ky;
-  //   ky.convert(e->key(), "%X");
-  //   taMisc::Info("alt", ky);
-  // } 
-  if((QApplication::keyboardModifiers() & Qt::AltModifier) && (e->key() == Qt::Key_F
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                            // freaky new key for Alt+F
-                                            || e->key() == 0x191
-#endif
-                                            )) {
-    ISelectable* si = curItem();
-    if(si && si->link()) {
-      taiSigLink* link = si->link();
-      iMainWindowViewer* imw = mainWindow();
-      if(imw) imw->Find(link);
-    }
-    e->accept();
-    return;
-  }
-  if((QApplication::keyboardModifiers() & Qt::AltModifier) && (e->key() == Qt::Key_R
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                            // freaky new key for Alt+R
-                                            || e->key() == 0xAE
-#endif
-                                            )) {
-    ISelectable* si = curItem();
-    if(si && si->link()) {
-      taiSigLink* link = si->link();
-      iMainWindowViewer* imw = mainWindow();
-      if(imw) imw->Replace(link, selItems());
-    }
-    e->accept();
-    return;
-  }
-  if(ctrl_pressed && (e->key() == Qt::Key_Left || e->key() == Qt::Key_Right)) {
-    iMainWindowViewer* imw = mainWindow();
-    if(imw && imw->brow_hist) {
-      if(e->key() == Qt::Key_Left)
-        imw->brow_hist->back();
-      else if(e->key() == Qt::Key_Right)
-        imw->brow_hist->forward();
-    }
-    e->accept();
-    return;
-  }
-  inherited::keyPressEvent(e);
 }
 
 bool iTreeView::focusNextPrevChild(bool next) {

@@ -1571,6 +1571,9 @@ bool taRootBase::Startup_InitKeyBindings() {
   int meta_key = static_cast<int>(Qt::MetaModifier);
 #endif
   
+  // All of these are for the default key bindings - no ui or additional sets at this time
+  // Also need api to replace a binding so the user can change a subset of the many bindings without
+  // creating a new set - Rohrlich 11/22/14
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_ONLY, QKeySequence(meta_key + Qt::Key_1));
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_PANELS_ONLY, QKeySequence(meta_key + Qt::Key_2));
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_BROWSE_AND_PANELS, QKeySequence(meta_key + Qt::Key_3));
@@ -1580,6 +1583,8 @@ bool taRootBase::Startup_InitKeyBindings() {
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::VIEW_ALL_FRAMES, QKeySequence(meta_key + Qt::Key_7));
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MOVE_FOCUS_LEFT, QKeySequence(control_key + Qt::Key_J));
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MOVE_FOCUS_RIGHT, QKeySequence(control_key + Qt::Key_L));
+  //  default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::SHIFT_CUR_TAB_LEFT, QKeySequence(control_key + Qt::Key_));
+  //  default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::SHIFT_CUR_TAB_RIGHT, QKeySequence(control_key + Qt::Key_));
 #ifdef TA_OS_MAC  // why both control and alt for shifting focus
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MOVE_FOCUS_LEFT, QKeySequence(Qt::AltModifier + 0x2206));
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MOVE_FOCUS_RIGHT, QKeySequence(Qt::AltModifier + 0xAC));
@@ -1591,12 +1596,12 @@ bool taRootBase::Startup_InitKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::STOP, QKeySequence(control_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::ENTER, QKeySequence(Qt::Key_Enter));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::ENTER, QKeySequence(Qt::Key_Return));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONTINUE_PAGING, QKeySequence(Qt::Key_C));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::QUIT_PAGING, QKeySequence(Qt::Key_Q));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::UNDO, QKeySequence(control_key + Qt::Key_C));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CLEAR, QKeySequence(control_key + Qt::Key_Period));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::AUTO_COMPLETE, QKeySequence(Qt::Key_Tab));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::BACKSPACE, QKeySequence(Qt::Key_Backspace));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CLEAR, QKeySequence(control_key + Qt::Key_Period));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::QUIT_PAGING, QKeySequence(Qt::Key_Q));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONTINUE_PAGING, QKeySequence(Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::HISTORY_BACKWARD, QKeySequence(Qt::Key_Up));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::HISTORY_FORWARD, QKeySequence(Qt::Key_Down));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::HISTORY_BACKWARD, QKeySequence(control_key + Qt::Key_P));
@@ -1613,6 +1618,29 @@ bool taRootBase::Startup_InitKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::EMACS_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::EMACS_CUT, QKeySequence(control_key + Qt::Key_W));
 
+  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::ACCEPT, QKeySequence(Qt::Key_Enter));
+  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::ACCEPT, QKeySequence(Qt::Key_Return));
+
+  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::APPLY, QKeySequence(Qt::Key_Enter));
+  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::APPLY, QKeySequence(Qt::Key_Return));
+  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::REVERT, QKeySequence(Qt::Key_Escape));
+
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::NEW_DEFAULT_ELEMENT, QKeySequence(Qt::Key_Enter));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::NEW_DEFAULT_ELEMENT, QKeySequence(Qt::Key_Return));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::NEW_ELEMENT_ABOVE, QKeySequence(control_key + Qt::Key_I));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::NEW_ELEMENT_BELOW, QKeySequence(control_key + Qt::Key_O));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::DELETE, QKeySequence(control_key + Qt::Key_D));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::DELETE, QKeySequence(control_key + Qt::Key_W));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::DELETE, QKeySequence(control_key + Qt::Key_Backspace));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::DUPLICATE, QKeySequence(control_key + Qt::Key_M));
+#ifdef TA_OS_MAC
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::FIND, QKeySequence(Qt::AltModifier + 0x191));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::FIND_REPLACE, QKeySequence(Qt::AltModifier + 0xAE));
+#else
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::FIND, QKeySequence(Qt::AltModifier + Qt::Key_F));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
+#endif
+  
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::LOOKUP, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::TEXT_EDIT_IGNORE, QKeySequence(control_key + Qt::Key_Return));
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::TEXT_EDIT_IGNORE, QKeySequence(control_key + Qt::Key_Enter));
@@ -1656,10 +1684,6 @@ bool taRootBase::Startup_InitKeyBindings() {
   // some exceptions to normal OS behavior to be consistent with emergent 7.0 behavior
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::DELETE, QKeySequence(control_key + Qt::Key_D));
 
-  
-  //  default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::SHIFT_CUR_TAB_LEFT, QKeySequence(control_key + Qt::Key_));
-//  default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::SHIFT_CUR_TAB_RIGHT, QKeySequence(control_key + Qt::Key_));
-  
   taMisc::key_binding_lists->Add_(default_list);
   return true;
 }

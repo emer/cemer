@@ -26,18 +26,16 @@ iDialogColorChooser::iDialogColorChooser(const QColor &old_clr, QWidget *parent)
 {
 }
 
-void iDialogColorChooser::keyPressEvent(QKeyEvent *e)
+void iDialogColorChooser::keyPressEvent(QKeyEvent *key_event)
 {
-  // Copied from iDialog class:
-  // support Ctrl-Return/Enter as Accept
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  bool is_enter = e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return;
-
-  if (ctrl_pressed && is_enter) {
-    e->accept();
-    accept();
-    return;
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
+  
+  switch(action) {
+    case taiMisc::ACCEPT:
+      key_event->accept();
+      accept();
+      return;
+    default:
+      QColorDialog::keyPressEvent(key_event);
   }
-
-  QColorDialog::keyPressEvent(e);
 }

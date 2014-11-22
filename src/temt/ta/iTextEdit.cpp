@@ -155,18 +155,6 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     case taiMisc::EMACS_FIND_IN_TEXT:
       findPrompt();
       return;
-      
-//    case Qt::Key_C: // global sc can grab these so do it here:
-//      key_event->accept();
-//      copy();
-//      clearExtSelection();
-//      return;
-//    case Qt::Key_X:
-//      key_event->accept();
-//      cut();
-//      clearExtSelection();
-//      return;
-
     default:
       inherited::keyPressEvent(key_event);
   }
