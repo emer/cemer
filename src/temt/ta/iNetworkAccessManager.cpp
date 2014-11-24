@@ -471,8 +471,14 @@ bool getUsernamePassword(
 {
   // If no MainWindow passed in, use the currently active window.
   if (!mw) {
-    if (QWidget *widget = QApplication::activeWindow()) {
-      mw = qobject_cast<QMainWindow *>(widget);
+//    if (QWidget *widget = QApplication::activeWindow()) {
+//      mw = qobject_cast<QMainWindow *>(widget);
+//    }
+    foreach (QWidget *widget, QApplication::topLevelWidgets()) {
+      if (widget->isActiveWindow()) {
+        mw = qobject_cast<QMainWindow *>(widget);
+        break;
+      }
     }
   }
 
