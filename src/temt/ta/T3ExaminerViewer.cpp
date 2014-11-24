@@ -688,94 +688,101 @@ void T3ExaminerViewer::dynbuttonClicked(int but_no) {
   emit dynbuttonActivated(but_no);
 }
 
-void T3ExaminerViewer::keyPressEvent(QKeyEvent* e) {
-  if(e->key() == Qt::Key_Escape) {
-    if(interactionModeOn()) {
+void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::GRAPHICS_CONTEXT, key_event);
+  
+  switch (action) {
+    case taiMisc::INTERACTION_MODE_TOGGLE:
+      if(interactionModeOn()) {
+        setInteractionModeOn(false);
+      }
+      else {
+        setInteractionModeOn(true);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::INTERACTION_MODE_OFF:
       setInteractionModeOn(false);
-    }
-    else {
+      key_event->accept();
+      return;
+    case taiMisc::INTERACTION_MODE_ON:
       setInteractionModeOn(true);
-    }
-    e->accept();
-    return;
+      key_event->accept();
+      return;
+    case taiMisc::RESET_VIEW:
+      gotoView(0);                        // 0 is base guy
+      key_event->accept();
+      return;
+    case taiMisc::VIEW_ALL:
+      viewAll();
+      key_event->accept();
+      return;
+    case taiMisc::SEEK:
+      quarter->seek();
+      key_event->accept();
+      return;
+    case taiMisc::PAN_LEFT:
+      if (!interactionModeOn()) {
+        horizPanView(-fixed_pan_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::PAN_RIGHT:
+      if (!interactionModeOn()) {
+        horizPanView(fixed_pan_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::PAN_UP:
+      if (!interactionModeOn()) {
+        vertPanView(-fixed_pan_distance);
+      }
+      key_event->accept();
+      return;
+   case taiMisc::PAN_DOWN:
+      if (!interactionModeOn()) {
+        vertPanView(fixed_pan_distance);
+      }
+      key_event->accept();
+      return;
+   case taiMisc::ROTATE_LEFT:
+      if (!interactionModeOn()) {
+        horizRotateView(-fixed_rotate_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::ROTATE_RIGHT:
+      if (!interactionModeOn()) {
+        horizRotateView(fixed_rotate_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::ROTATE_UP:
+      if (!interactionModeOn()) {
+        vertRotateView(-fixed_rotate_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::ROTATE_DOWN:
+      if (!interactionModeOn()) {
+        vertRotateView(fixed_rotate_distance);
+      }
+      key_event->accept();
+      return;
+    case taiMisc::ZOOM_IN:
+      zoomView(-fixed_zoom_delta);
+      key_event->accept();
+      return;
+    case taiMisc::ZOOM_OUT:
+      zoomView(fixed_zoom_delta);
+      key_event->accept();
+      return;
+    default:
+      emit unTrappedKeyPressEvent(key_event);
+      QWidget::keyPressEvent(key_event);
   }
-  else if(e->key() == Qt::Key_I) {
-    setInteractionModeOn(true);
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_V) {
-    setInteractionModeOn(false);
-    e->accept();
-    return;
-  }
-  else if((e->key() == Qt::Key_Home) || (e->key() == Qt::Key_H)) {
-    gotoView(0);                        // 0 is base guy
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_A) {
-    viewAll();
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_S) {   // seek
-    quarter->seek();
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_Left && !interactionModeOn()) {
-    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-      horizPanView(-fixed_pan_distance);
-    }
-    else {
-      horizRotateView(-fixed_rotate_distance);
-    }
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_Right && !interactionModeOn()) {
-    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-      horizPanView(fixed_pan_distance);
-    }
-    else {
-      horizRotateView(fixed_rotate_distance);
-    }
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_Up && !interactionModeOn()) {
-    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-      vertPanView(-fixed_pan_distance);
-    }
-    else {
-      vertRotateView(-fixed_rotate_distance);
-    }
-    e->accept();
-    return;
-  }
-  else if(e->key() == Qt::Key_Down && !interactionModeOn()) {
-    if(QApplication::keyboardModifiers() & Qt::ShiftModifier) {
-      vertPanView(fixed_pan_distance);
-    }
-    else {
-      vertRotateView(fixed_rotate_distance);
-    }
-    e->accept();
-    return;
-  }
-  else if(e->key() == '+' || e->key() == '=') {
-    zoomView(-fixed_zoom_delta);
-    e->accept();
-    return;
-  }
-  else if(e->key() == '-') {
-    zoomView(fixed_zoom_delta);
-    e->accept();
-    return;
-  }
-  emit unTrappedKeyPressEvent(e);
-  QWidget::keyPressEvent(e);
 }
 
 ///////////////////////////////////////////////////////////////

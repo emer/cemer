@@ -40,6 +40,8 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
       return &table_bindings;
     case taiMisc::TREE_CONTEXT:
       return &tree_bindings;
+    case taiMisc::GRAPHICS_CONTEXT:
+      return &tree_bindings;
     default:
       return NULL;
       break;

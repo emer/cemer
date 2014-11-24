@@ -120,7 +120,8 @@ public:
     DIALOG_CONTEXT,
     PANEL_CONTEXT,
     TABLE_CONTEXT,           // data tables
-    TREE_CONTEXT
+    TREE_CONTEXT,
+    GRAPHICS_CONTEXT
   };
 
   enum BoundAction {
@@ -178,7 +179,23 @@ public:
     NEW_ELEMENT_ABOVE,
     NEW_ELEMENT_BELOW,
     FIND,
-    FIND_REPLACE
+    FIND_REPLACE,
+    INTERACTION_MODE_OFF,
+    INTERACTION_MODE_ON,
+    INTERACTION_MODE_TOGGLE,
+    RESET_VIEW,
+    VIEW_ALL,
+    SEEK,
+    PAN_LEFT,
+    PAN_RIGHT,
+    PAN_UP,
+    PAN_DOWN,
+    ROTATE_LEFT,
+    ROTATE_RIGHT,
+    ROTATE_UP,
+    ROTATE_DOWN,
+    ZOOM_IN,
+    ZOOM_OUT
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;

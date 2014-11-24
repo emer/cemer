@@ -39,6 +39,7 @@ public:
   KeyActionPair_PArray       panel_bindings;
   KeyActionPair_PArray       table_bindings;
   KeyActionPair_PArray       tree_bindings;
+  KeyActionPair_PArray       graphics_bindings;
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings

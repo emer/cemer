@@ -1641,6 +1641,25 @@ bool taRootBase::Startup_InitKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
 #endif
   
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::INTERACTION_MODE_OFF, QKeySequence(Qt::Key_V));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::INTERACTION_MODE_ON, QKeySequence(Qt::Key_I));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::INTERACTION_MODE_TOGGLE, QKeySequence(Qt::Key_Escape));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::RESET_VIEW, QKeySequence(Qt::Key_Home));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::RESET_VIEW, QKeySequence(Qt::Key_H));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::VIEW_ALL, QKeySequence(Qt::Key_A));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::SEEK, QKeySequence(Qt::Key_S));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::PAN_LEFT, QKeySequence(Qt::Key_Left));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::PAN_RIGHT, QKeySequence(Qt::Key_Right));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::PAN_UP, QKeySequence(Qt::Key_Up));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::PAN_DOWN, QKeySequence(Qt::Key_Down));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ROTATE_LEFT, QKeySequence(Qt::Key_Left));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ROTATE_RIGHT, QKeySequence(Qt::Key_Right));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ROTATE_UP, QKeySequence(Qt::Key_Up));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ROTATE_DOWN, QKeySequence(Qt::Key_Down));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ZOOM_IN, QKeySequence(Qt::Key_Plus));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ZOOM_IN, QKeySequence(Qt::Key_Equal));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::ZOOM_OUT, QKeySequence(Qt::Key_Minus));
+  
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::LOOKUP, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::TEXT_EDIT_IGNORE, QKeySequence(control_key + Qt::Key_Return));
   default_list->Add(taiMisc::LINE_EDIT_CONTEXT, taiMisc::TEXT_EDIT_IGNORE, QKeySequence(control_key + Qt::Key_Enter));
