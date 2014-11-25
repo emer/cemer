@@ -3498,8 +3498,10 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
       // we only accept _xxx as mat col designator if col already a mat, and cell in bounds
       if(!(da && (cell_idx >= 0) && (da->is_matrix) && (cell_idx < da->cell_size()))) {
         da = FindMakeCol(hstr, val_typ);
-        col_idx = da->col_idx;
-        cell_idx = -1;
+        if (da) {
+          col_idx = da->col_idx;
+          cell_idx = -1;
+        }
       }
     }
     else {
@@ -3526,18 +3528,20 @@ void DataTable::ImportHeaderCols(const String& hdr_ln, const String& dat_ln,
         }
       }
     }
-    if(da->valType() != val_typ) {
+    if(da && da->valType() != val_typ) {
       if(da->isNumeric() && val_typ == VT_STRING) {
         taMisc::Warning("Import data for data table:", name, "column:", da->name,
-            "is numeric but first row of laded data is string format -- import may be bad.");
+                        "is numeric but first row of laded data is string format -- import may be bad.");
       }
       else if((da->isString() && (val_typ != VT_STRING && val_typ != VT_VARIANT))) {
         taMisc::Warning("Import data for data table:", name, "column:", da->name,
-            "is String but first row of laded data is a numeric format -- import may be bad.");
+                        "is String but first row of laded data is a numeric format -- import may be bad.");
       }
     }
-    load_col_idx.Add(da->col_idx);
-    load_mat_idx.Add(cell_idx);
+    if (da) {
+      load_col_idx.Add(da->col_idx);
+      load_mat_idx.Add(cell_idx);
+    }
   }
 }
 
