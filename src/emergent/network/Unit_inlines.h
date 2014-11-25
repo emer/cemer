@@ -29,12 +29,67 @@ inline Layer* Unit::own_lay() const {
   return ((Unit_Group*)owner)->own_lay;
 }
 
-inline Network* Unit::own_net() const {
-  return own_lay()->own_net;
-}
-
 inline bool Unit::lay_lesioned() const {
   return own_lay()->lesioned();
+}
+
+inline int Unit::NRecvConGps() const {
+  return own_net()->UnNRecvConGps(flat_idx);
+}
+
+inline int Unit::NSendConGps() const {
+  return own_net()->UnNSendConGps(flat_idx);
+}
+
+inline ConGroup* Unit::RecvConGroup(int rcg_idx) const {
+  return own_net()->RecvConGroup(flat_idx, rcg_idx);
+}
+
+inline ConGroup* Unit::SendConGroup(int scg_idx) const {
+  return own_net()->SendConGroup(flat_idx, scg_idx);
+}
+
+inline UnitVars* Unit::GetUnitVars() const {
+  return own_net()->UnUnitVars(flat_idx);
+}
+
+inline int Unit::ThrNo() const {
+  return own_net()->UnThr(flat_idx);
+}
+
+/////////////////////////
+//      UnitVars
+
+inline Unit*  UnitVars::Un(Network* net, int thr_no) const {
+  return net->ThrUnit(thr_no, thr_un_idx);
+}
+
+inline int UnitVars::UnFlatIdx(Network* net, int thr_no) const {
+  return net->ThrUnitIdx(thr_no, thr_un_idx);
+}
+
+inline int UnitVars::NRecvConGps(Network* net, int thr_no) const {
+  return net->ThrUnNRecvConGps(thr_no, thr_un_idx);
+}
+
+inline int UnitVars::NSendConGps(Network* net, int thr_no) const {
+  return net->ThrUnNSendConGps(thr_no, thr_un_idx);
+}
+
+inline ConGroup* UnitVars::RecvConGroup(Network* net, int thr_no, int rcg_idx) const {
+  return net->ThrUnRecvConGroup(thr_no, thr_un_idx, rcg_idx);
+}
+
+inline ConGroup* UnitVars::SendConGroup(Network* net, int thr_no, int scg_idx) const {
+  return net->ThrUnSendConGroup(thr_no, thr_un_idx, scg_idx);
+}
+
+inline ConGroup* UnitVars::RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn) {
+  return net->ThrUnRecvConGroup(thr_no, thr_un_idx, prjn->recv_idx);
+}
+
+inline ConGroup* UnitVars::SendConGroupPrjn(Network* net, int thr_no, Projection* prjn) {
+  return net->ThrUnSendConGroup(thr_no, thr_un_idx, prjn->send_idx);
 }
 
 #endif // Unit_inlines_h

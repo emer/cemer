@@ -679,11 +679,14 @@ protected:
   //    Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 public:
 
-  bool                  HasBaseFlag(int flag) const;
+  inline bool           HasBaseFlag(int flag) const 
+  { return (base_flags & flag); }
   // #CAT_ObjectMgmt true if flag set, or if multiple, any set
-  void                  SetBaseFlag(int flag);
+  inline void           SetBaseFlag(int flag)
+  { base_flags = (BaseFlags)(base_flags | flag); }
   // #CAT_ObjectMgmt sets the flag(s)
-  void                  ClearBaseFlag(int flag);
+  inline void           ClearBaseFlag(int flag)
+  { base_flags = (BaseFlags)(base_flags & ~flag); }
   // #CAT_ObjectMgmt clears the flag(s)
   void                  ChangeBaseFlag(int flag, bool set)
     {if (set) SetBaseFlag(flag); else ClearBaseFlag(flag);}

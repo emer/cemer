@@ -50,7 +50,8 @@ public:
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
   void	Connect_impl(Projection* prjn, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                          int thr_no) override;
 
   static float	UnitDist(UnitDistType typ, Projection* prjn,
 			 const taVector2i& ru, const taVector2i& su);

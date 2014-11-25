@@ -30,13 +30,13 @@ class E_API MarkerConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   // don't send regular net inputs or learn!
-  void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
+  void Send_NetinDelta(LeabraConGroup*, LeabraNetwork* net, int thread_no, 
 				float su_act_delta_eff) override { };
   float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override { return 0.0f; }
-  void Compute_dWt(BaseCons*, Unit*, Network* net) override { };
-  void Compute_dWt_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
-  void	Compute_Weights(BaseCons*, Unit*, Network* net) override { };
-  void	Compute_Weights_CtLeabraXCAL(LeabraSendCons*, LeabraUnit*, LeabraNetwork* net) override { };
+  void Compute_dWt(ConGroup*, Unit*, Network* net) override { };
+  void Compute_dWt_CtLeabraXCAL(LeabraConGroup*, LeabraUnit*, LeabraNetwork* net) override { };
+  void	Compute_Weights(ConGroup*, Unit*, Network* net) override { };
+  void	Compute_Weights_CtLeabraXCAL(LeabraConGroup*, LeabraUnit*, LeabraNetwork* net) override { };
 
   void  GetPrjnName(Projection& prjn, String& nm) override;
 

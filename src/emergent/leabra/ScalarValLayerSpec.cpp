@@ -260,7 +260,7 @@ void ScalarValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode 
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-        float& wt = recv_gp->PtrCn(ci, BaseCons::WT, net);
+        float& wt = recv_gp->PtrCn(ci, ConGroup::WT, net);
         wt += act;
         if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
         if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
@@ -280,7 +280,7 @@ void ScalarValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode 
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * scalar.GetUnitAct(i);
     if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0,BaseCons::WT) = act;
+      u->bias.OwnCn(0,ConGroup::WT) = act;
   }
 }
 
@@ -294,7 +294,7 @@ void ScalarValLayerSpec::Compute_UnBias_NegSlp(LeabraLayer* lay, Layer::AccessMo
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0,BaseCons::WT) = -val;
+      u->bias.OwnCn(0,ConGroup::WT) = -val;
     val += incr;
   }
 }
@@ -309,7 +309,7 @@ void ScalarValLayerSpec::Compute_UnBias_PosSlp(LeabraLayer* lay, Layer::AccessMo
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     if(bias_val.un == ScalarValBias::BWT)
-      u->bias.OwnCn(0,BaseCons::WT) = val;
+      u->bias.OwnCn(0,ConGroup::WT) = val;
     val += incr;
   }
 }

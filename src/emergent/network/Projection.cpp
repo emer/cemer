@@ -35,8 +35,6 @@ void Projection::Initialize() {
   layer = NULL;
   from_type = INIT; //was: PREV;
   con_type = &TA_Connection;
-  recvcons_type = &TA_RecvCons;
-  sendcons_type = &TA_SendCons;
   recv_idx = -1;
   send_idx = -1;
   recv_n = 1;
@@ -103,11 +101,9 @@ void Projection::Copy_(const Projection& cp) {
   from = cp.from;
   spec = cp.spec;
   con_type = cp.con_type;
-  recvcons_type = cp.recvcons_type;
-  sendcons_type = cp.sendcons_type;
   con_spec = cp.con_spec;
   prjn_clr = cp.prjn_clr;
-  // note: these are not copied; fixed after network copy in FixPrjnIndexes
+  // note: these are not copied; fixed after network copy
 //   recv_idx = cp.recv_idx;
 //   send_idx = cp.send_idx;
 //   recv_n = cp.recv_n;
@@ -178,14 +174,14 @@ void Projection::UpdateName() {
 
 void Projection::RemoveCons() {
   if(layer) {
-    FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-      u->recv.RemovePrjn(this);
-    }
+    // FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
+    //   u->recv.RemovePrjn(this);
+    // }
   }
 
   if(from) {
-    FOREACH_ELEM_IN_GROUP(Unit, u, from->units)
-      u->send.RemovePrjn(this);
+    // FOREACH_ELEM_IN_GROUP(Unit, u, from->units)
+    //   u->send.RemovePrjn(this);
   }
 
   recv_idx = -1;
@@ -219,13 +215,13 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
                                       from->flat_geom.x, from->flat_geom.y);
 
   FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
-    RecvCons* cg = ru->recv.FindFrom(from);
+    ConGroup* cg = ru->FindRecvConGroupFrom(from);
     if(cg == NULL)
       break;
     dt->AddBlankRow();
     int wi;
     for(wi=0;wi<cg->size;wi++) {
-      scol->SetValAsFloatM(cg->Cn(wi,BaseCons::WT,net), -1, wi);
+      scol->SetValAsFloatM(cg->Cn(wi,ConGroup::WT,net), -1, wi);
     }
   }
   dt->StructUpdate(false);
@@ -357,27 +353,20 @@ bool Projection::UpdateConSpecs(bool force) {
   if(!sp) return false;
   m_prv_con_spec = sp;          // don't redo it
   FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    int g;
-    for(g=0; g<u->recv.size; g++) {
-      RecvCons* recv_gp = u->recv.FastEl(g);
+    for(int g=0; g<u->NRecvConGps(); g++) {
+      ConGroup* recv_gp = u->RecvConGroup(g);
       if(recv_gp->prjn == this) {
-        if(sp->CheckObjectType(recv_gp))
-          recv_gp->SetConSpec(sp);
-        else
-          return false;
+        recv_gp->SetConSpec(sp);
       }
     }
   }
   // also do the from!
   FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
     int g;
-    for(g=0; g<u->send.size; g++) {
-      SendCons* send_gp = u->send.FastEl(g);
+    for(g=0; g<u->NSendConGps(); g++) {
+      ConGroup* send_gp = u->SendConGroup(g);
       if(send_gp->prjn == this) {
-        if(sp->CheckObjectType(send_gp))
-          send_gp->SetConSpec(sp);
-        else
-          return false;
+        send_gp->SetConSpec(sp);
       }
     }
   }
@@ -410,49 +399,9 @@ bool Projection::SetConType(TypeDef* td) {
   return true;
 }
 
-bool Projection::SetRecvConsType(TypeDef* td) {
-  if(recvcons_type == td) return false;
-  projected = false;
-  recvcons_type = td;
-  return true;
-}
-
-bool Projection::SetSendConsType(TypeDef* td) {
-  if(sendcons_type == td) return false;
-  projected = false;
-  sendcons_type = td;
-  return true;
-}
-
 void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
   if(!net_mon) return;
   net_mon->AddObject(this, variable);
-}
-
-void Projection::FixPrjnIndexes() {
-  projected = false;
-  if((!(bool)layer) || (!(bool)from)) return;
-  if((layer->units.leaves == 0) || (from->units.leaves == 0)) return;
-  Unit* ru = layer->units.Leaf(0);
-  Unit* su = from->units.Leaf(0);
-  recv_idx = ru->recv.FindPrjnIdx(this);
-  send_idx = su->send.FindPrjnIdx(this);
-  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
-    for(int g=0; g<u->recv.size; g++) {
-      RecvCons* recv_gp = u->recv.FastEl(g);
-      if(recv_gp->prjn != this) continue;
-      recv_gp->other_idx = send_idx;
-    }
-  }
-  FOREACH_ELEM_IN_GROUP(Unit, u, from->units) {
-    int g;
-    for(g=0; g<u->send.size; g++) {
-      SendCons* send_gp = u->send.FastEl(g);
-      if(send_gp->prjn != this) continue;
-      send_gp->other_idx = recv_idx;
-    }
-  }
-  projected = true;
 }
 
 int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
@@ -472,15 +421,6 @@ void Projection::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
 
   CheckSpecs();                 // just check!
-
-  if(CheckError((recvcons_type == &TA_RecvCons), quiet, rval,
-                "recvcons_type is base type; should be special one for specific algorithm")) {
-    projected = false;
-  }
-  if(CheckError((sendcons_type == &TA_SendCons), quiet, rval,
-                "sendcons_type is base type; should be special one for specific algorithm")) {
-    projected = false;
-  }
 }
 
 void Projection::Copy_Weights(const Projection* src) {

@@ -21,7 +21,6 @@
 #include <LeabraInhib>
 
 // member includes:
-#include <LeabraUnit_Group>
 #include <LeabraLayerSpec>
 #include <AvgMaxVals>
 #include <LeabraUnGpData_List>
@@ -70,8 +69,6 @@ public:
 
   void  CheckSpecs() override;
   void	BuildUnits() override;
-  void  BuildUnits_Threads(Network* net) override
-  { if(spec) spec->BuildUnits_Threads(this, (LeabraNetwork*)net); }
 
   LeabraUnGpData* 	UnGpData(int gpidx)
   { return ungp_data.SafeEl(gpidx); }
@@ -86,20 +83,11 @@ public:
   void	Init_Weights_Layer(Network* net) override
   { if(spec) spec->Init_Weights_Layer(this, (LeabraNetwork*)net); }
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
-
-  void	Init_ActAvg(LeabraNetwork* net) 	{ spec->Init_ActAvg(this, net); }
-  // #CAT_Activation initialize act_avg values
-  void	Init_Netins(LeabraNetwork* net)		{ spec->Init_Netins(this, net); }
-  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
+  virtual void	Init_Acts_Layer(Network* net)
+  { if(spec) spec->Init_Acts_Layer(this, (LeabraNetwork*)net); }
+  // #CAT_Activation layer-level initialization taking place after Init_Acts on units
 
   void  Init_InputData(Network* net) override;
-
-  void	Init_Acts(Network* net) override
-  { if(spec) spec->Init_Acts(this, (LeabraNetwork*)net); }
-  // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
-
-  void	DecayState(LeabraNetwork* net, float decay) { spec->DecayState(this, net, decay); }
-  // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
 
   void	CheckInhibCons(LeabraNetwork* net);
   // #CAT_Structure check for inhibitory connections -- sets flag on network
@@ -111,12 +99,9 @@ public:
   // #CAT_Learning initialize specs and specs update network flags 
   void	Trial_Init_Layer(LeabraNetwork* net) { spec->Trial_Init_Layer(this, net); }
   // #CAT_Learning layer-level trial init
-    void	Trial_DecayState(LeabraNetwork* net)
-    { spec->Trial_DecayState(this, net); }
-    // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
-    void 	Trial_Init_SRAvg(LeabraNetwork* net)
-    { spec->Trial_Init_SRAvg(this, net); }
-    // #CAT_Learning NOT CALLED DURING STD PROCESSING initialize sending-receiving activation product averages (CtLeabra_X/CAL)
+  void	Compute_HardClamp_Layer(LeabraNetwork* net)
+  { spec->Compute_HardClamp_Layer(this, net); }
+  // #CAT_Activation hard clamp, layer level
 
   ///////////////////////////////////////////////////////////////////////
   //	QuarterInit -- at start of settling
@@ -124,13 +109,9 @@ public:
   void	Quarter_Init_Layer(LeabraNetwork* net)	{ spec->Quarter_Init_Layer(this, net); }
   // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Quarter_Init_Units call
 
-  void	Quarter_Init_TargFlags(LeabraNetwork* net) { spec->Quarter_Init_TargFlags(this, net); }
-  // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
-    void	Quarter_Init_TargFlags_Layer(LeabraNetwork* net)
-    { spec->Quarter_Init_TargFlags_Layer(this, net); }
-    // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
-  void	Compute_HardClamp(LeabraNetwork* net) 	{ spec->Compute_HardClamp(this, net); }
-  // #CAT_Activation prior to settling: hard-clamp inputs
+  void	Quarter_Init_TargFlags_Layer(LeabraNetwork* net)
+  { spec->Quarter_Init_TargFlags_Layer(this, net); }
+  // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
 
   void	ExtToComp(LeabraNetwork* net)		{ spec->ExtToComp(this, net); }
   // #CAT_Activation change external inputs to comparisons (remove input)
@@ -237,8 +218,6 @@ public:
 
   ////////////////////////////////////////////
   //	Misc structural routines
-
-  void	TriggerContextUpdate() override;
 
   bool		SetLayerSpec(LayerSpec* sp);
   LayerSpec*	GetLayerSpec()		{ return (LayerSpec*)spec.SPtr(); }

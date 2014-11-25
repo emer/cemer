@@ -21,11 +21,11 @@
 #include <taNBase>
 
 // member includes:
+#include <UnitVars>
 #include <UnitRef>
 #include <UnitSpec>
 #include <Voxel_List>
-#include <RecvCons_List>
-#include <SendCons_List>
+#include <ConGroup>
 #include <taVector3i>
 
 // declare all other types mentioned but not required to include:
@@ -38,50 +38,22 @@ class Unit_Group; //
 eTypeDef_Of(Unit);
 
 class E_API Unit: public taNBase {
-  // ##NO_TOKENS ##CAT_Network Generic unit -- basic computational unit of a neural network (e.g., a neuron-like processing unit)
+  // ##NO_TOKENS ##CAT_Network contains all the structural information for units (name, position, etc), while UnitVars contains the computationally-relevant variables, which are stored separately for optimized vector-based processing
 INHERITED(taNBase)
 public: //
-  enum ExtType {// #BITS indicates type of external input; some flags used in Layer to control usage
-    NO_EXTERNAL         = 0x00, // #NO_BIT no input
-    TARG                = 0x01, // a target value used to train the network (value goes in targ field of unit)
-    EXT                 = 0x02, // an external input value that drives activations (value goes in ext field of unit)
-    COMP                = 0x04, // a comparison value used for computing satistics but not training the network (value goes in targ field of unit)
-    TARG_EXT            = 0x03, // #NO_BIT as both external input and target value
-    COMP_TARG           = 0x05, // #NO_BIT as a comparision and target layer
-    COMP_EXT            = 0x06, // #NO_BIT as a comparison and external input layer
-    COMP_TARG_EXT       = 0x07  // #NO_BIT as a comparison, target, and external input layer
-  };
-
   enum UnitFlags { // #BITS misc flags for units
     UF_NONE             = 0,    // #NO_BIT no flags
-    LESIONED            = 0x0001, // unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
+    LESIONED            = 0x0001, // #READ_ONLY unit is temporarily lesioned (inactivated for all network-level processing functions) -- IMPORTANT: use the Lesion and UnLesion functions to set this flag -- they provide proper updating after changes -- otherwise network dynamics will be wrong and the display will not be properly updated
   };
 
   UnitFlags     flags;
   // #CAT_Structure flags controlling various aspects of unit state and function
-  ExtType       ext_flag;
-  // #GUI_READ_ONLY #SHOW #CAT_Activation tells what kind of external input unit received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
-  float         targ;
-  // #VIEW_HOT #CAT_Activation target value: drives learning to produce this activation value
-  float         ext;
-  // #VIEW_HOT #CAT_Activation external input: drives activation of unit from outside influences (e.g., sensory input)
-  float         act;
-  // #VIEW_HOT #CAT_Activation activation value -- what the unit communicates to others
-  float         net;
-  // #VIEW_HOT #CAT_Activation net input value -- what the unit receives from others (typically sum of sending activations times the weights)
   float         wt_prjn;
   // #NO_SAVE #CAT_Statistic weight projection value -- computed by Network::ProjectUnitWeights (triggered in GUI by setting wt prjn variable in netview control panel to point to a layer instead of NULL) -- represents weight values projected through any intervening layers from source unit (selected unit in netview or passed to ProjectUnitWeights function directly)
   float         snap;
   // #NO_SAVE #CAT_Statistic current snapshot value, as computed by the Snapshot function -- this can be displayed as a border around the units in the netview
   float         tmp_calc1;
   // #NO_SAVE #READ_ONLY #HIDDEN #CAT_Statistic temporary calculation variable (used for computing wt_prjn and prossibly other things)
-
-  RecvCons_List recv;
-  // #CAT_Structure Receiving connections, one set of connections for each projection (collection of connections) received from other units
-  SendCons_List send;
-  // #CAT_Structure Sending connections, one set of connections for each projection (collection of connections) sent from other units
-  RecvCons      bias;
-  // #CAT_Structure bias weight connection (type determined in unit spec) -- provides intrinsic activation in absence of other inputs
 
   int           n_recv_cons;
   // #CAT_Structure #READ_ONLY #EXPERT total number of recv connections for this unit
@@ -95,10 +67,51 @@ public: //
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit within containing unit group
   int           flat_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in a flat array of units (used by parallel threading) -- 0 is special null case -- real idx's start at 1
+  int           thr_un_idx;
+  // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE index of this unit in owning thread's array of units (used by parallel threading)
   int		ug_idx;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure unit group index, if this unit belongs in a unit group (virtual or real) -- assigned at build by layer
   bool		in_subgp;
   // #CAT_Structure #READ_ONLY #HIDDEN #NO_COPY #NO_SAVE #CAT_Structure determine if unit is in a subgroup
+
+  // UnitVars variable access:
+
+  inline UnitVars*      GetUnitVars() const;
+  // #CAT_Structure get unit variables for this unit (stored in thread-specific memory)
+  inline int            ThrNo() const;
+  // #CAT_Structure get thread number that owns this unit
+
+  inline UnitVars::ExtFlags& ext_flag() { return GetUnitVars()->ext_flag; }
+  // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
+  inline float& targ()  { return GetUnitVars()->targ; }
+  // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
+  inline float& ext()   { return GetUnitVars()->ext; }
+  // #VIEW_HOT #CAT_UnitVar external input: drives activation of unit from outside influences (e.g., sensory input)
+  inline float& act()   { return GetUnitVars()->act; }
+  // #VIEW_HOT #CAT_UnitVar activation value -- what the unit communicates to others
+  inline float& net()   { return GetUnitVars()->net; }
+  // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others (typically sum of sending activations times the weights)
+  inline float& bias_wt() { return GetUnitVars()->bias_wt; }
+  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
+  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
+
+  inline int            NRecvConGps() const;
+  // #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)
+  inline int            NSendConGps() const;
+  // #CAT_Structure get number of sending connection groups (determined by number of active layer send_prjns at time of build)
+  inline ConGroup*      RecvConGroup(int rcg_idx) const;
+  // #CAT_Structure get receiving connection group at given index -- no safe range checking is applied to rcg_idx!
+  inline ConGroup*      SendConGroup(int scg_idx) const;
+  // #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
+  ConGroup*             RecvConGroupPrjn(Projection* prjn);
+  // #CAT_Structure get con group at given prjn->recv_idx -- if it is not in range, emits error message and returns NULL
+  ConGroup*             SendConGroupPrjn(Projection* prjn);
+  // #CAT_Structure get con group at given prjn->send_idx -- if it is not in range, emits error message and returns NULL
+  ConGroup*             FindRecvConGroupFrom(Layer* fm_lay) const;
+  // #CAT_Structure get receiving connection group from given sending layer
+  ConGroup*             FindRecvConGroupFromName(const String& fm_nm) const;
+  // #CAT_Structure get receiving connection group from given sending layer name
 
   inline void           SetUnitFlag(UnitFlags flg)   { flags = (UnitFlags)(flags | flg); }
   // set flag state on
@@ -124,7 +137,8 @@ public: //
   // #CAT_Structure #IGNORE is the layer this unit is in lesioned?
   inline Layer*         own_lay() const;
   // #CAT_Structure #IGNORE get the owning layer of this unit
-  inline Network*       own_net() const;
+  inline Network*       own_net() const
+  { return m_own_net; }
   // #CAT_Structure #IGNORE get the owning network of this unit
   inline Unit_Group*    own_subgp() const
   { if(!in_subgp) return NULL; return (Unit_Group*)owner; }
@@ -137,103 +151,31 @@ public: //
 
   inline UnitSpec* GetUnitSpec() const { return m_unit_spec; }
   // #CAT_Structure get the unit spec for this unit -- this is controlled entirely by the layer and all units in the layer have the same unit spec
-  inline void   SetUnitSpec(UnitSpec* us) { m_unit_spec = us; if(us) bias.SetConSpec(us->bias_spec.SPtr()); }
+  void   SetUnitSpec(UnitSpec* us);
   // #CAT_Structure set the unit spec to given value -- no ref counting or other checking is done
 
   virtual void  Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member) -- if prjn is specified, then it only copies weights for that particular projection on this unit, from the same projection index number on the src unit (assumes that there is a correspondence in the projections across this and source unit!)
 
-  virtual void  SaveWeights_strm(std::ostream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, Projection* prjn = NULL, ConGroup::WtSaveFormat fmt = ConGroup::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(std::istream& strm, Projection* prjn = NULL, RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
+  virtual int   LoadWeights_strm(std::istream& strm, Projection* prjn = NULL, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus, TAG_END if successful
-  static int    SkipWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);
   // #IGNORE skip over saved weight values -- rval is taMisc::ReadTagStatus, TAG_END if successful
 
-  void          SetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag | flg); }
-  // #CAT_Activation set ext flag for what type of input data we receive
-  void          UnSetExtFlag(ExtType flg) { ext_flag = (ExtType)(ext_flag & ~flg); }
-  // #CAT_Activation un-set ext flag for what type of input data we receive
-  bool          HasExtFlag(int flg) { return ext_flag & flg; }
-  // #CAT_Activation check if has given ext flag value
-
-  virtual void  ApplyInputData(float val, ExtType act_ext_flags, Random* ran = NULL,
-                               bool na_by_range=false);
+  virtual void  ApplyInputData(float val, UnitVars::ExtFlags act_ext_flags,
+                               Random* ran = NULL, bool na_by_range=false);
   // #CAT_Activation apply external input or target value to unit
-
-  ////////////////////////////////////////////////////////////////////////////////
-  //    Below are the primary computational interface to the Network Objects
-  //    for performing algorithm-specific activation and learning
-  //    Many functions operate directly on the units via threads, and then
-  //    call through to the layers for any layer-level subsequent processing
-  //    units typically call spec versions except for basic stuff
-
-  //    Init functions are NOT threaded, while Compute functions are
-
-  virtual void  Init_InputData() { ext = targ = 0.0f; ext_flag = NO_EXTERNAL; }
-  // #MENU #MENU_ON_Actions initialize unit external input data variables
-
-  void  Init_Acts(Network* net) { GetUnitSpec()->Init_Acts(this, net); }
-  // #MENU #CAT_Activation initialize unit state variables
-  void  Init_dWt(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Init_dWt(this, net, thread_no); }
-  // #MENU #CAT_Learning initialze weight change variables
-  void  Init_Weights(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Init_Weights(this, net, thread_no); }
-  // #MENU #CAT_Learning Initialize weight values
-  void  Init_Weights_sym(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Init_Weights_sym(this, net, thread_no); }
-  // #CAT_Structure symmetrize weights after first pass init -- called when needed -- threaded for speed
-  void  Init_Weights_post(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Init_Weights_post(this, net, thread_no); }
-  // #CAT_Structure post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- threaded for speed
-
-  void  Compute_Netin(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Compute_Netin(this, net, thread_no); }
-  // #CAT_Activation compute net input from other units
-  void  Send_Netin(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Send_Netin(this, net, thread_no); }
-  // #CAT_Activation send net input to other units
-  void  Compute_SentNetin(Network* net, float sent_netin)
-  { GetUnitSpec()->Compute_SentNetin(this, net, sent_netin); }
-  // #CAT_Activation compute net input for unit based on sent_netin value from Send_Netin
-  void  Compute_Act(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Compute_Act(this, net, thread_no); }
-  // #CAT_Activation compute activation value: what we send to others
-  void  Compute_NetinAct(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Compute_Netin(this, net, thread_no);
-    GetUnitSpec()->Compute_Act(this, net, thread_no); }
-  // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
-
-  void  Compute_dWt(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Compute_dWt(this, net, thread_no); }
-  // #CAT_Learning compute weight changes: the essence of learning
-  void  Compute_Weights(Network* net, int thread_no=-1)
-  { GetUnitSpec()->Compute_Weights(this, net, thread_no); }
-  // #CAT_Learning update weight values from weight change variables
-
-  float Compute_SSE(Network* net, bool& has_targ)
-  { return GetUnitSpec()->Compute_SSE(this, net, has_targ); }
-  // #CAT_Statistic compute sum-squared-error of activations versus target values (standard measure of performance) -- not threadable due to integration requirements at higher levels
-  bool  Compute_PRerr(Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg)
-  { return GetUnitSpec()->Compute_PRerr(this, net, true_pos, false_pos, false_neg, true_neg); }
-  // #CAT_Statistic compute precision and recall error statistics for this unit -- true positive, false positive, and false negative -- returns true if unit actually has a target value specified (otherwise everything is 0) -- precision = tp / (tp + fp), recall = tp / (tp + fn), fmeasure = 2 * p * r / (p + r), mcc = ((tp*tn) - (fp*fn)) / sqrt((tp+fp)*(tp+fn)*(tn+fp)*(tn+fn))
-
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
 
   virtual void  BuildUnits();
   // #CAT_Structure build unit -- allocate any extra unit-level memory etc
-  virtual void  AllocBias();
-  // #IGNORE allocate bias connection
-  virtual void  ConnectBias();
-  // #IGNORE self-connect bias
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network is built
-  virtual void  RemoveCons();
-  // #IGNORE remove all of unit's sending and receiving connections -- since this doesn't affect other units, it should not be called individually
   virtual void  RecvConsPreAlloc(int no, Projection* prjn);
   // #CAT_Structure pre-allocate given no of receiving connections -- sufficient connections must be allocated in advance of making specific connections
   virtual void  SendConsPreAlloc(int no, Projection* prjn);
@@ -246,10 +188,6 @@ public: //
   // #CAT_Structure post-allocate given no of sending connections (calls AllocConsFmSize on send con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
   virtual void  RecvConsPostAlloc(Projection* prjn);
   // #CAT_Structure post-allocate given no of recv connections (calls AllocConsFmSize on recv con group) -- if connections were initially made using the alloc_send = true, then this must be called to actually allocate connections -- then routine needs to call ConnectFrom again to make the connections
-  virtual void  Connect_VecChunk_SendOwns(Network* net, int thread_no=-1);
-  // #IGNORE threaded vector-chunking of connections, sender owns cons
-  virtual void  Connect_VecChunk_RecvOwns(Network* net, int thread_no=-1);
-  // #IGNORE threaded vector-chunking of connections, recv owns cons
 
   virtual int   ConnectFrom(Unit* su, Projection* prjn, bool alloc_send = false,
                             bool ignore_alloc_errs = false, bool set_init_wt = false,
@@ -328,6 +266,7 @@ public: //
 
 protected:
   UnitSpec*     m_unit_spec;    // unit spec that we use: controlled entirely by the layer!
+  Network*      m_own_net;      // network that owns us
 
   void  UpdateAfterEdit_impl() override;
   void  CheckThisConfig_impl(bool quiet, bool& rval) override;

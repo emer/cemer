@@ -299,16 +299,16 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
+void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru, float dist,
                                     int cg_idx) {
   Network* net = prjn->layer->own_net;
   float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
   float wt_val = wt_range.min + gaus * wt_range.Range();
-  cg->Cn(cg_idx,BaseCons::WT,net) = wt_val;
+  cg->Cn(cg_idx,ConGroup::WT,net) = wt_val;
 }
 
-void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                          Network* net) {
+void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+                                          Network* net, int thr_no) {
   // Layer* recv_lay = (Layer*)prjn->layer;
   // Layer* send_lay = (Layer*)prjn->from.ptr();
 

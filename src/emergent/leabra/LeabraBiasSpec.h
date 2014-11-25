@@ -34,8 +34,15 @@ INHERITED(LeabraConSpec)
 public:
   float		dwt_thresh;  // #CONDSHOW_ON_learn #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
-  inline void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
-                                           LeabraLayer* rlay) override;
+  inline void B_Compute_dWt(UnitVars* u, Network* net, int thr_no) override {
+    if(!learn) return;
+    LeabraUnitVars* uv = (LeabraUnitVars*)u;
+    // only err is useful contributor to this learning
+    float dw = uv->avg_s - uv->avg_m;
+    if(fabsf(dw) >= dwt_thresh) {
+      uv->bias_dwt += cur_lrate * dw;
+    }
+  }
 
   bool	CheckObjectType_impl(taBase* obj);
 

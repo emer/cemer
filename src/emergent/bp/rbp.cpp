@@ -109,7 +109,7 @@ void RBpUnitSpec::Compute_HardClampNet(RBpUnit* ru, BpNetwork* net, int thread_n
     ru->clmp_net += recv_gp->Compute_Netin(ru,net);
   }
   if(ru->bias.size > 0) {
-    ru->clmp_net += ru->bias.OwnCn(0, BaseCons::WT);
+    ru->clmp_net += ru->bias.OwnCn(0, ConGroup::WT);
   }
 }
 

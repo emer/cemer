@@ -22,18 +22,18 @@
 
 // declare all other types mentioned but not required to include:
 
-inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnit* u, LeabraLayerSpec* lspec,
-                                              LeabraNetwork* net) {
+inline void LeabraUnitSpec::Compute_SelfInhib(LeabraUnitVars* u, LeabraNetwork* net,
+                                              int thr_no, LeabraLayerSpec* lspec) {
   float self = lspec->inhib_misc.self_fb * u->act_eq;
   u->gi_self += lspec->inhib_misc.self_dt * (self - u->gi_self);
 }
 
-inline float LeabraUnitSpec::Compute_EThresh(LeabraUnit* u) {
+inline float LeabraUnitSpec::Compute_EThresh(LeabraUnitVars* u) {
   return ((g_bar.i * u->gc_i * (u->E_i - act.thr) + g_bar.l * e_rev_sub_thr.l - u->adapt) /
 	  thr_sub_e_rev_e);
 } 
 
-inline float LeabraUnitSpec::Compute_EqVm(LeabraUnit* u) {
+inline float LeabraUnitSpec::Compute_EqVm(LeabraUnitVars* u) {
   float new_v_m = (((u->net * e_rev.e) + (g_bar.l * e_rev.l) + (g_bar.i * u->gc_i * u->E_i)
                     - u->adapt) / (u->net + g_bar.l + g_bar.i * u->gc_i));
   return new_v_m;

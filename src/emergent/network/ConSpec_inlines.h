@@ -27,19 +27,19 @@
 // con group that owns the connections, as it calls OwnCnVar -- thus
 // it is imperitive that the algorithm use this code appropriately!
 
-inline void ConSpec::ApplyLimits(BaseCons* cg, Unit* un, Network* net) {
+inline void ConSpec::ApplyLimits(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   if(wt_limits.type != WeightLimits::NONE) {
     CON_GROUP_LOOP(cg, C_ApplyLimits(wts[i]));
   }
 }
 
-inline void ConSpec::Init_Weights_symflag(Network* net) {
+inline void ConSpec::Init_Weights_symflag(Network* net, int thr_no) {
   if(wt_limits.sym) net->needs_wt_sym = true;
 }
 
-inline void ConSpec::Init_Weights(BaseCons* cg, Unit* un, Network* net) {
-  Init_Weights_symflag(net);
+inline void ConSpec::Init_Weights(ConGroup* cg, Network* net, int thr_no) {
+  Init_Weights_symflag(net, thr_no);
 
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
@@ -52,71 +52,77 @@ inline void ConSpec::Init_Weights(BaseCons* cg, Unit* un, Network* net) {
   }
 }
 
-inline void ConSpec::Init_dWt(BaseCons* cg, Unit* un, Network* net) {
+inline void ConSpec::Init_dWt(ConGroup* cg, Network* net, int thr_no) {
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Init_dWt(dwts[i]));
 }
 
-inline void ConSpec::B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) {
-  C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
-}
-
-inline void ConSpec::B_Init_Weights(RecvCons* cg, Unit* ru, Network* net) {
-  C_Init_Weight_Rnd(cg->OwnCn(0, BaseCons::WT));
-  B_Init_dWt(cg, ru, net);          // virtual..
-}
-
-inline float ConSpec::Compute_Netin(RecvCons* cg, Unit* ru, Network* net) {
+inline float ConSpec::Compute_Netin(ConGroup* cg, Network* net, int thr_no) {
   float rval=0.0f;
   float* wts = cg->OwnCnVar(WT);
-  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(wts[i], cg->Un(i,net)->act));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Netin(wts[i], cg->UnVars(i,net)->act));
   // todo: if unit act is all in a contiguous vector, and with vec chunking, this 
   // could be a very fast vector op
   return rval;
 }
 
-inline void ConSpec::Send_Netin(SendCons* cg, Network* net, const int thread_no,
-                                Unit* su) {
-  // assumes sender-based own-cons
+inline void ConSpec::Send_Netin(ConGroup* cg, Network* net, int thr_no) {
+  UnitVars* su = cg->ThrOwnUnVars(net, thr_no);
   const float su_act = su->act;
-  float* send_netin_vec = net->send_netin_tmp.el +
-    net->send_netin_tmp.FastElIndex(0, thread_no);
+  float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
   float* wts = cg->OwnCnVar(WT);
-  CON_GROUP_LOOP(cg, C_Send_Netin(wts[i], send_netin_vec, cg->Un(i,net)->flat_idx,
-                                  su_act));
+  CON_GROUP_LOOP(cg, C_Send_Netin(wts[i], send_netin_vec, cg->UnIdx(i), su_act));
 }
 
-inline void ConSpec::Send_Netin_PerPrjn(SendCons* cg, Network* net,
-                                        const int thread_no, Unit* su) {
+inline void ConSpec::Send_Netin_PerPrjn(ConGroup* cg, Network* net, int thr_no) {
+  UnitVars* su = cg->ThrOwnUnVars(net, thr_no);
   const float su_act = su->act;
-  float* send_netin_vec = net->send_netin_tmp.el +
-    net->send_netin_tmp.FastElIndex(0, cg->recv_idx(), thread_no);
+  float* send_netin_vec = net->ThrSendNetinTmpPerPrjn(thr_no, cg->other_idx);
   float* wts = cg->OwnCnVar(WT);
-  CON_GROUP_LOOP(cg, C_Send_Netin(wts[i], send_netin_vec, cg->Un(i,net)->flat_idx,
-                                  su_act));
+  CON_GROUP_LOOP(cg, C_Send_Netin(wts[i], send_netin_vec, cg->UnIdx(i), su_act));
 }
 
-inline float ConSpec::Compute_Dist(RecvCons* cg, Unit* ru, Network* net) {
+inline float ConSpec::Compute_Dist(ConGroup* cg, Network* net, int thr_no) {
   float rval=0.0f;
   float* wts = cg->OwnCnVar(WT);
-  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(wts[i], cg->Un(i,net)->act));
+  CON_GROUP_LOOP(cg, rval += C_Compute_Dist(wts[i], cg->UnVars(i,net)->act));
   // todo: if unit act is all in a contiguous vector, and with vec chunking, this 
   // could be a very fast vector op
   return rval;
 }
 
-inline void ConSpec::Compute_dWt(BaseCons* cg, Unit* un, Network* net) {
+inline void ConSpec::Compute_dWt(ConGroup* cg, Network* net, int thr_no) {
+  UnitVars* ru = cg->ThrOwnUnVars(net, thr_no);
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
-  const float ru_act = un->act; // assume recv based
-  CON_GROUP_LOOP(cg, C_Compute_dWt(wts[i], dwts[i], ru_act, cg->Un(i,net)->act));
+  const float ru_act = ru->act; // assume recv based
+  CON_GROUP_LOOP(cg, C_Compute_dWt(wts[i], dwts[i], ru_act,
+                                   cg->UnVars(i,net)->act));
 }
 
-inline void ConSpec::Compute_Weights(BaseCons* cg, Unit* un, Network* net) {
+inline void ConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Compute_Weights(wts[i], dwts[i]));
-  ApplyLimits(cg,un,net); // ApplySymmetry_r(cg,ru);  don't apply symmetry during learning..
+  ApplyLimits(cg,net,thr_no); 
+  // ApplySymmetry_r(cg,ru);  don't apply symmetry during learning..
+}
+
+inline void ConSpec::B_Init_Weights(UnitVars* uv, Network* net, int thr_no) {
+  C_Init_Weight_Rnd(uv->bias_wt);
+  C_Init_dWt(uv->bias_dwt);
+}
+
+inline void ConSpec::B_Init_dWt(UnitVars* uv, Network* net, int thr_no) {
+  C_Init_dWt(uv->bias_dwt);
+}
+
+inline void ConSpec::B_Compute_dWt(UnitVars* uv, Network* net, int thr_no) {
+  // todo: learning rule here..
+}
+
+inline void ConSpec::B_Compute_Weights(UnitVars* uv, Network* net, int thr_no) {
+  C_Compute_Weights(uv->bias_wt, uv->bias_dwt);
 }
 
 #endif // ConSpec_inlines_h

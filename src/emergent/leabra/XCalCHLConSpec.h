@@ -34,7 +34,7 @@ public:
 // #endif
   bool		use_chl;	// use LeabraCHL learning instead of XCAL or CAL learning, even when rest of network is using those other algorithms
 
-  // inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  // inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
   //                                        LeabraNetwork* net) override {
   //   if(use_chl)
   //     inherited::Compute_dWt_LeabraCHL(cg, su, net);
@@ -42,7 +42,7 @@ public:
   //     inherited::Compute_dWt_CtLeabraXCAL(cg, su, net);
   // }
 
-  // inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  // inline void	Compute_Weights_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
   //                                                    LeabraNetwork* net) override {
   //   if(use_chl)
   //     inherited::Compute_Weights_LeabraCHL(cg, su, net);
@@ -50,7 +50,7 @@ public:
   //     inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
   // }
 
-  // inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+  // inline void Compute_dWt_CtLeabraCAL(LeabraConGroup* cg, LeabraUnit* su,
   //                                              LeabraNetwork* net) override {
   //   if(use_chl)
   //     inherited::Compute_dWt_LeabraCHL(cg, su, net);

@@ -39,7 +39,7 @@ public:
     else dwt += cur_lrate * nerr_lrate * gran_act;  }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) override
   { // if(su->act_lrn == 0.0f) return; // if sender is not active, bail
     if(ignore_unlearnable && net->unlearnable_trial) return;

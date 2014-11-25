@@ -114,7 +114,7 @@ void GPiUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
   }
 
   for(int g=0; g<u->send.size; g++) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       ((LeabraUnit*)send_gp->Un(j,net))->thal = snd_val;

@@ -29,7 +29,7 @@ void LearnModUnitSpec::Defaults_init() {
 void LearnModUnitSpec::Send_LearnMod(LeabraUnit* u, LeabraNetwork* net) {
   float lrnmod = (u->act_eq > learn_thr) ? u->act_eq : 0.0f;
   for(int g=0; g<u->send.size; g++) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       ((LeabraUnit*)send_gp->Un(j,net))->lrnmod = lrnmod;

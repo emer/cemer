@@ -28,8 +28,7 @@ int Weights_List::Dump_Load_Value(std::istream& strm, taBase* par) {
     // so we are the trigger for allocating based on what has been specified
     // so far!  rval == 2 is for first pass..
     if(rval == 2) {
-      net->UpdtAfterNetMod();
-      net->Connect_Alloc();       // take the network
+      // net->Build();
     }
     else {
       // maybe not quite ready for this yet.. try UAE?

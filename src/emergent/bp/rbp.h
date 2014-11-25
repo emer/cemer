@@ -53,7 +53,7 @@ class E_API RBpConSpec : public BpConSpec {
   // Recurrent Backprop Con Spec
 INHERITED(BpConSpec)
 public:
-  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) override;
+  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) override;
   // Compute dE with respect to the weights (using prv_act) as sender
 
   TA_BASEFUNS_NOCOPY(RBpConSpec);
@@ -74,7 +74,7 @@ public:
                                 const float su_act, const float su_dEdNet,
                                 const float ru_act)
   { dwt += 0.5f * (su_act * ru_dEdNet + ru_act * su_dEdNet); }
-  inline void 		Compute_dWt(BaseCons* cg, Unit* ru, Network* net) override;
+  inline void 		Compute_dWt(ConGroup* cg, Unit* ru, Network* net) override;
 
   TA_SIMPLE_BASEFUNS(SymRBpConSpec);
 private:
@@ -181,14 +181,14 @@ private:
   void	Destroy()		{ };
 };
 
-inline void RBpConSpec::Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+inline void RBpConSpec::Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
   const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
   float* dwts = cg->OwnCnVar(DWT);
   CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_dEdNet,
                                    ((RBpUnit*)cg->Un(i,net))->prv_act));
 }
 
-inline void SymRBpConSpec::Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+inline void SymRBpConSpec::Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
   const float ru_dEdNet = ((BpUnit*)ru)->dEdNet;
   const float ru_act = ((RBpUnit*)ru)->prv_act;
   float* dwts = cg->OwnCnVar(DWT);

@@ -25,7 +25,6 @@
 #include <LeabraUnit>
 #include <LeabraLayer>
 #include <LeabraPrjn>
-#include <LeabraThreadMgr>
 #include <int_Array>
 
 // declare all other types mentioned but not required to include:
@@ -34,6 +33,23 @@ class DataTable; //
 #ifdef CUDA_COMPILE
 class LeabraConSpecCuda; // #IGNORE
 #endif
+
+eTypeDef_Of(LeabraNetTiming);
+
+class E_API LeabraNetTiming : public NetTiming {
+  // timers for Leabra network functions
+INHERITED(NetTiming)
+public:
+  TimeUsedHR   netin_integ;     // Compute_NetinInteg integrate net inputs
+  TimeUsedHR   inhib;           // Compute_Inhib inhibition
+  TimeUsedHR   act_post;        // Compute_Act_Post post integration
+  TimeUsedHR   cycstats;        // Compute_CycleStats cycle statistics
+
+  TA_SIMPLE_BASEFUNS(LeabraNetTiming);
+private:
+  void	Initialize()    { };
+  void 	Destroy()	{ };
+};
 
 
 eTypeDef_Of(LeabraCudaSpec);
@@ -64,6 +80,7 @@ class E_API LeabraTimes : public taOBase {
 INHERITED(taOBase)
 public:
   int		quarter;	// #DEF_25 number of cycles to run per each quarter of a trial -- typically, a trial is one alpha cycle of 100 msec (10 Hz), and we run at 1 cycle = 1 msec, so that is 25 cycles per quarter, which gives the ubiquitous gamma frequency power of 40 Hz -- a traditional minus phase takes the first 3 quarters, and the last quarter is the plus phase -- use CycleRunMax_Minus and CycleRunMax_Plus to get proper minus and plus phase cycles values to use in programs, taking into account lthreads.quarter setting
+  bool          cycle_qtr;      // #DEF_true one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
 
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
@@ -170,13 +187,7 @@ public:
   // ACT_M, // note: could add these to unit vec vars if needed
   // ACT_P,
 
-
-#ifdef __MAKETA__
-  UnitCallThreadMgr threads;    // #HIDDEN unit-call threading mechanism -- lthreads used instead
-#endif
-
   LeabraCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
-  LeabraThreadMgr lthreads;     // #CAT_Threads parallel threading for leabra algorithm -- handles majority of computation within threads that are kept active and ready to go
   LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters
   LeabraNetMisc	  net_misc;	// misc network level parameters for leabra -- these determine various algorithm variants, typically auto-detected based on the network configuration in Trial_Init_Specs
@@ -228,11 +239,10 @@ public:
 
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it - todo: can we eliminate this please??
 
-  int_Array     active_layer_idx;
-  // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
   float_Matrix  unit_vec_vars;
   // #NO_SAVE #HIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
-  float_Matrix  send_d5bnet_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
+  float**       thrs_send_d5bnet_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
+  float         tmp_arg1;        // #IGNORE for passing args through threaded call
 
 #ifdef CUDA_COMPILE
   LeabraConSpecCuda* cudai;      // #IGNORE internal structure for cuda specific code
@@ -245,6 +255,11 @@ public:
   { return unit_vec_vars.el + var * units_flat.size; }
   // #IGNORE get start of given unit vector variable array
 
+  inline float* ThrSendD5bNetTmp(int thr_no) const 
+  { return thrs_send_d5bnet_tmp[thr_no]; }
+  // #CAT_Structure temporary sending deep5b netinput memory for given thread 
+
+
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
@@ -254,14 +269,20 @@ public:
 
   virtual void  Init_Netins();
   // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
+    virtual void  Init_Netins_Thr(int thr_no);
+    // #IGNORE initialize netinput computation variables (delta-based requires several intermediate variables)
 
   virtual void	DecayState(float decay);
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
+    virtual void DecayState_Thr(int thr_no);
+    // #IGNORE decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
+
+  bool  RecvOwnsCons() override { return false; }
 
   virtual void	CheckInhibCons();
-  void	BuildUnits_Threads() override;
-  void  BuildUnits_Threads_send_netin_tmp() override;
-  bool  RecvOwnsCons() override { return false; }
+  void	Build() override;
+  void  AllocSendNetinTmp() override;
+  void  InitSendNetinTmp_Thr(int thr_no) override;
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
@@ -275,6 +296,8 @@ public:
 
     virtual void Trial_Init_Unit();
     // #CAT_TrialInit trial unit-level initialization functions: Trial_Init_SRAvg, DecayState, NoiseInit
+    virtual void Trial_Init_Unit_Thr(int thr_no);
+    // #IGNORE trial unit-level initialization functions: Trial_Init_SRAvg, DecayState, NoiseInit
     virtual void Trial_Init_Layer();
     // #CAT_TrialInit layer-level trial init (used in base code to init layer-level sravg, can be overloaded)
 
@@ -287,18 +310,27 @@ public:
     // #CAT_QuarterInit initialize counters for upcoming quarter -- network only
     virtual void Quarter_Init_Unit();
     // #CAT_QuarterInit quarter unit-level initialization functions: Init_TargFlags, NetinScale
+      virtual void Quarter_Init_Unit_Thr(int thr_no);
+      //IGNORE quarter unit-level initialization functions: Init_TargFlags, NetinScale
     virtual void Quarter_Init_Layer();
     // #CAT_QuarterInit quarter layer-level initialization hook -- default calls TargFlags_Layer, and can be used for hook for other guys
       virtual void Quarter_Init_TargFlags();
       // #CAT_QuarterInit initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
+      virtual void Quarter_Init_TargFlags_Thr(int thr_no);
+      // #IGNORE initialize at start of settling phase -- sets target external input flags based on phase -- not called by default -- direct to unit level function
       virtual void Compute_NetinScale();
       // #CAT_QuarterInit compute netinput scaling values by projection -- not called by default -- direct to unit-level function
-
-    virtual void Compute_NetinScale_Senders();
-    // #CAT_QuarterInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
+      virtual void Compute_NetinScale_Thr(int thr_no);
+      // #IGNORE compute netinput scaling values by projection -- not called by default -- direct to unit-level function
+      virtual void Compute_NetinScale_Senders();
+      // #CAT_QuarterInit compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the Quarter_Init_Unit stage after all the recv ones are computed
+      virtual void Compute_NetinScale_Senders_Thr(int thr_no);
+      // #IGNORE compute net input scaling values for sending cons -- copies from values computed in the recv guys -- has to be done as a second phase of the
 
     virtual void Compute_HardClamp();
     // #CAT_QuarterInit compute hard clamping from external inputs
+      virtual void Compute_HardClamp_Thr(int thr_no);
+      // #IGNORE compute hard clamping from external inputs
 
     virtual void ExtToComp();
     // #CAT_QuarterInit move external input values to comparison values (not currently used)
@@ -312,11 +344,13 @@ public:
   //	Cycle_Run
   
   inline  int   CycleRunMax()
-  { if(lthreads.CanRun() && lthreads.quarter) return 1; return times.quarter; }
+  { if(times.cycle_qtr) return 1; return times.quarter; }
   // #CAT_Quarter max loop counter for running cycles in a gamma quarter of processing, taking into account the fact that threading can run multiple cycles per Cycle_Run call if quarter flag is set
 
   virtual void	Cycle_Run();
   // #CAT_Cycle compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple threads are actually being used -- see lthreads.n_threads_act
+    virtual void Cycle_Run_Thr(int thr_no);
+    // #IGNORE compute cycle(s) of updating: netinput, inhibition, activations -- multiple cycles can be run depending on lthreads.n_cycles setting and whether multiple 
 
   virtual void  Cycle_IncrCounters();
   // #CAT_Cycle increment the cycle-level counters -- called internally during Cycle_Run()
@@ -324,16 +358,16 @@ public:
   ///////////////////////////////////////////////////////
   //	Cycle Stage 1: netinput
 
-  void	Send_Netin() override;
+  void	Send_Netin_Thr(int thr_no) override;
   // #CAT_Cycle compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
-  virtual void Compute_NetinInteg();
+  virtual void Compute_NetinInteg_Thr(int thr_no);
   // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
 
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  virtual void	Compute_Inhib();
+  virtual void	Compute_Inhib_Thr(int thr_no);
   // #CAT_Cycle compute inhibitory conductances via inhib functions (FFFB, kWTA) -- calls Compute_NetinStats and LayInhibToGps to coordinate group-level inhibition sharing
     virtual void Compute_Inhib_LayGp();
     // #CAT_Cycle compute inhibition across layer groups -- if layer spec lay_gp_inhib flag is on anywhere
@@ -341,9 +375,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
 
-  void	Compute_Act() override;
-  // #CAT_Cycle compute activations
-  virtual void	Compute_Act_Post();
+  virtual void	Compute_Act_Post_Thr(int thr_no);
   // #CAT_Cycle post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed
 
   ///////////////////////////////////////////////////////////////////////
@@ -351,7 +383,7 @@ public:
 
   virtual void	Compute_CycleStats_Pre();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
-  virtual void	Compute_CycleStats_Layer();
+  virtual void	Compute_CycleStats_Layer_Thr(int thr_no);
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- layer level computation
   virtual void	Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
@@ -369,7 +401,7 @@ public:
   // #CAT_QuarterFinal do final processing after each quarter: 
     virtual void Quarter_Final_Pre();
     // #CAT_QuarterFinal perform computations in layers at end of quarter -- this is a pre-stage that occurs prior to final Quarter_Final_impl -- use this for anything that needs to happen prior to the standard Quarter_Final across units and layers (called by Quarter_Final)
-    virtual void Quarter_Final_Unit();
+    virtual void Quarter_Final_Unit_Thr(int thr_no);
     // #CAT_QuarterFinal perform Quarter_Final computations in units at end of quarter (called by Quarter_Final)
     virtual void Quarter_Final_Layer();
     // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
@@ -382,10 +414,8 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	LeabraTI Special code
 
-  virtual void TICtxtUpdate();
-  // #CAT_TI updates context activation at end of plus phase (called from Quarter_Final())
-    virtual void Send_TICtxtNetin();
-    // #CAT_TI send TI context netinput -- calls corresponding functions at unit level, first basic send, then _Post that rolls-up send
+  virtual void Send_TICtxtNetin_Thr(int thr_no);
+  // #CAT_TI send TI context netinput -- calls corresponding functions at unit level, first basic send, then _Post that rolls-up send
 
   virtual void ClearTICtxt();
   // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at discontinuities of experience
@@ -406,11 +436,11 @@ public:
   // #CAT_Learning copy over the vectorized variables for learning
 
   void	Compute_dWt() override;
-  // #CAT_Learning compute weight change after first plus phase has been encountered
-  virtual void	Compute_dWt_Norm();
+    void Compute_dWt_Thr(int thr_no) override;
+  virtual void	Compute_dWt_Norm_Thr(int thr_no);
   // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
 
-  void Compute_Weights_impl() override;
+  virtual void Compute_Weights_impl();
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats

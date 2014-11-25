@@ -41,7 +41,8 @@ public:
   taVector2i 	 trg_recv_geom;	// #READ_ONLY #SHOW target receiving layer gp geometry -- computed from send and rf_width, move by TrgRecvFmSend button, or given by TrgSendFmRecv
   taVector2i 	 trg_send_geom;	// #READ_ONLY #SHOW target sending layer geometry -- computed from recv and rf_width, move by TrgSendFmRecv button, or given by TrgRecvFmSend
 
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                          int thr_no) override;
 
   void Connect_impl(Projection* prjn, bool make_cons) override;
   virtual void 	Connect_Reciprocal(Projection* prjn, bool make_cons);
@@ -49,7 +50,7 @@ public:
   virtual void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				  int rgpidx, int sgpidx, int alloc_loop);
   // #IGNORE connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx
-  virtual void 	SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru, float dist,
+  virtual void 	SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru, float dist,
                             int cg_idx);
   // actually set the weight value from distance value -- util used by both of above main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 

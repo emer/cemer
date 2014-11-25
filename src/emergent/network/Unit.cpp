@@ -31,24 +31,19 @@ using namespace std;
 
 void Unit::Initialize() {
   flags = UF_NONE;
-  ext_flag = NO_EXTERNAL;
-  targ = 0.0f;
-  ext = 0.0f;
-  act = 0.0f;
-  net = 0.0f;
   wt_prjn = tmp_calc1 = 0.0f;
   snap = 0.0f;
-  // recv, send, bias = ??
   n_recv_cons = 0;
   n_send_cons = 0;
   // pos = ??
   idx = -1;
   flat_idx = 0;
+  thr_un_idx = 0;
   ug_idx = -1;
   in_subgp = false;
   voxels = NULL;
   m_unit_spec = NULL;
-  bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
+  m_own_net = NULL;
 }
 
 void Unit::Destroy() {
@@ -57,18 +52,13 @@ void Unit::Destroy() {
 
 void Unit::InitLinks() {
   inherited::InitLinks();
-  taBase::Own(recv, this);      // always own your constitutents
-  taBase::Own(send, this);
-  taBase::Own(bias, this);
   taBase::Own(pos, this);
+  m_own_net = GET_MY_OWNER(Network);
   GetInSubGp();
   BuildUnits();
 }
 
 void Unit::CutLinks() {
-  recv.CutLinks();
-  send.CutLinks();
-  bias.CutLinks();
   m_unit_spec = NULL;
   idx = -1;
   flat_idx = 0;
@@ -87,17 +77,9 @@ void Unit::MakeVoxelsList() {
 
 void Unit::Copy_(const Unit& cp) {
   pos = cp.pos;
-  ext_flag = cp.ext_flag;
-  targ = cp.targ;
-  ext = cp.ext;
-  act = cp.act;
-  net = cp.net;
   wt_prjn = cp.wt_prjn;
   tmp_calc1 = cp.tmp_calc1;
   snap = cp.snap;
-  recv = cp.recv;
-  send = cp.send;
-  bias = cp.bias;
   n_recv_cons = cp.n_recv_cons;
   n_send_cons = cp.n_send_cons;
   m_unit_spec = cp.m_unit_spec;
@@ -116,10 +98,15 @@ void Unit::UpdateAfterEdit_impl() {
   pos.z = 0;                    // always zero: can't go out of plane
 }
 
+void Unit::BuildUnits() {
+}
+
 void Unit::Lesion() {
   if(lesioned()) return;
   StructUpdate(true);
   SetUnitFlag(LESIONED);
+  GetUnitVars()->SetExtFlag(UnitVars::LESIONED);
+  UpdtActiveCons();
   StructUpdate(false);
   UpdtAfterNetModIfNecc();
 }
@@ -128,6 +115,8 @@ void Unit::UnLesion()  {
   if(!lesioned()) return;
   StructUpdate(true);
   ClearUnitFlag(LESIONED);
+  GetUnitVars()->ClearExtFlag(UnitVars::LESIONED);
+  UpdtActiveCons();
   StructUpdate(false);
   UpdtAfterNetModIfNecc();
 }
@@ -178,7 +167,8 @@ void Unit::AddRelPos2d(taVector2i& rel_pos) {
   }
 }
 
-void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na_by_range) {
+void Unit::ApplyInputData(float val, UnitVars::ExtFlags act_ext_flags, Random* ran,
+                          bool na_by_range) {
   // note: not all flag values are valid, so following is a fuzzy cascade
   // ext is the default place, so we check for
   if(na_by_range) {
@@ -192,57 +182,25 @@ void Unit::ApplyInputData(float val, ExtType act_ext_flags, Random* ran, bool na
   if (ran && (ran->type != Random::NONE)) {
     val += ran->Gen();
   }
-  if (act_ext_flags & Unit::EXT) {
-    ext = val;
-    SetExtFlag(Unit::EXT);
-  } else {
-    targ = val;
-    if (act_ext_flags & Unit::TARG)
-      SetExtFlag(Unit::TARG);
-    else if (act_ext_flags & Unit::COMP)
-      SetExtFlag(Unit::COMP);
-  }
-}
 
-void Unit::BuildUnits() {
-}
-
-void Unit::AllocBias() {
-  bias.SetBaseFlag(RecvCons::OWN_CONS); // bias definitely owns
-  if(GetUnitSpec()) {
-    TypeDef* bstd = GetUnitSpec()->bias_con_type;
-    if(bstd == NULL) {
-      bias.Reset();
-      bias.SetConSpec(NULL);
-    }
-    else {
-      bias.SetConType(bstd);
-      bias.FreeCons();
-      bias.AllocCons(1);
-      bias.SetConSpec(GetUnitSpec()->bias_spec.SPtr()); // not generally used, but could be!
-    }
+  UnitVars* uv = GetUnitVars();
+  if (act_ext_flags & UnitVars::EXT) {
+    uv->ext = val;
+    uv->SetExtFlag(UnitVars::EXT);
   }
   else {
-    bias.FreeCons();
-    bias.AllocCons(1);
+    uv->targ = val;
+    if (act_ext_flags & UnitVars::TARG)
+      uv->SetExtFlag(UnitVars::TARG);
+    else if (act_ext_flags & UnitVars::COMP)
+      uv->SetExtFlag(UnitVars::COMP);
   }
-}
-
-void Unit::ConnectBias() {
-  bias.BiasUpdtIsActive();          // should be inactive
-  if(!GetUnitSpec())
-    return;
-  TypeDef* bstd = GetUnitSpec()->bias_con_type;
-  if(!bstd) return;
-  if(!bias.mem_start) return;             // we were not allocated.. don't bother..
-  bias.ConnectUnOwnCn(this, false, true); // true = allow_null_unit
-  bias.BiasUpdtIsActive();
 }
 
 void Unit::CheckChildConfig_impl(bool quiet, bool& rval) {
   inherited::CheckChildConfig_impl(quiet, rval);
-  recv.CheckConfig(quiet, rval);
-  send.CheckConfig(quiet, rval);
+  // recv.CheckConfig(quiet, rval);
+  // send.CheckConfig(quiet, rval);
 }
 
 void Unit::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -263,28 +221,14 @@ bool Unit::CheckBuild(bool quiet) {
     return false;               // fatal
   }
   UnitSpec* us = GetUnitSpec();
-  if(!us->bias_con_type) {
-    if(CheckError(bias.size > 0, quiet, rval,
-                  "Unit CheckBuild: bias weight exists but no type")) {
-      return false;
-    }
-  }
-  else {
-    if(CheckError((bias.IsActive() && (bias.con_type != us->bias_con_type)),
-                  quiet, rval,
-                  "Unit CheckBuild: bias not same type as specified in UnitSpec:", us->name)) {
-      return false;
-    }
-  }
   return true;
 }
 
-void Unit::RemoveCons() {
-  recv.RemoveAll();             // blunt, but effective
-  send.RemoveAll();
-  bias.Reset();
-  n_recv_cons = 0;
-  n_send_cons = 0;
+void Unit::SetUnitSpec(UnitSpec* us) {
+  m_unit_spec = us;
+  if(!own_net()) return;
+  if(own_net()->n_units_built == 0) return;
+  GetUnitVars()->unit_spec = us; // keep synchronized!
 }
 
 void Unit::MonitorVar(NetMonitor* net_mon, const String& variable) {
@@ -304,10 +248,11 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     String cvar = var.after(".");
     bool is_send = var.startsWith("s.");
     if(is_send) {
-      for(int g=0;g<recv.size;g++) {
-        RecvCons* tcong = recv.FastEl(g);
+      const int rsz = NRecvConGps();
+      for(int g=0;g<rsz;g++) {
+        ConGroup* tcong = RecvConGroup(g);
         if(tcong->NotActive()) continue;
-        MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+        MemberDef* act_md = tcong->ConType()->members.FindName(cvar);
         if(!act_md) continue;
         int con = tcong->FindConFromIdx(src_u);
         if(con < 0) continue;
@@ -316,10 +261,11 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
       }
     }
     else {
-      for(int g=0;g<send.size;g++) {
-        SendCons* tcong = send.FastEl(g);
+      const int ssz = NSendConGps();
+      for(int g=0;g<ssz;g++) {
+        ConGroup* tcong = SendConGroup(g);
         if(tcong->NotActive()) continue;
-        MemberDef* act_md = tcong->con_type->members.FindName(cvar);
+        MemberDef* act_md = tcong->ConType()->members.FindName(cvar);
         if(!act_md)     continue;
         int con = tcong->FindConFromIdx(src_u);
         if(con < 0) continue;
@@ -327,13 +273,6 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
         break;
       }
     }
-  }
-  else if(var.startsWith("bias.")) {
-    if(bias.size == 0) return false;
-    String cvar = var.after(".");
-    MemberDef* act_md = bias.con_type->members.FindName(cvar);
-    if(!act_md) return false;
-    val = bias.Cn(0, act_md->idx, net);
   }
   else {
     MemberDef* md = NULL;
@@ -351,207 +290,165 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
   return true;
 }
 
-void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
-  RecvCons* cgp = NULL;
-  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
-    cgp = recv.NewPrjn(prjn); // sets the type
-    prjn->recv_idx = recv.size-1;
+ConGroup* Unit::FindRecvConGroupFrom(Layer* fm_lay) const {
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
+    if(cg->prjn && cg->prjn->from.ptr() == fm_lay)
+      return cg;
   }
-  cgp->AllocCons(no);
+  return NULL;
+}
+
+ConGroup* Unit::FindRecvConGroupFromName(const String& fm_nm) const {
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
+    if(cg->prjn && cg->prjn->from->name == fm_nm)
+      return cg;
+  }
+  return NULL;
+}
+
+ConGroup* Unit::RecvConGroupPrjn(Projection* prjn) {
+  if(TestError(prjn->recv_idx < 0, "CheckPrjnRecvIdx",
+               "Projection recv_idx is -1 -- attempt to connect to an inactive projection -- programmer error probably -- please report!"))
+    return NULL;
+  if(TestError(prjn->recv_idx >= NRecvConGps(), "CheckPrjnRecvIdx",
+               "Projection recv_idx is >= number of allocated recv con groups for this u nit -- programmer error probably -- please report!"))
+    return NULL;
+  return RecvConGroup(prjn->recv_idx);
+}
+
+ConGroup* Unit::SendConGroupPrjn(Projection* prjn) {
+  if(TestError(prjn->send_idx < 0, "CheckPrjnSendIdx",
+               "Projection send_idx is -1 -- attempt to connect to an inactive projection -- programmer error probably -- please report!"))
+    return NULL;
+  if(TestError(prjn->send_idx >= NSendConGps(), "CheckPrjnSendIdx",
+               "Projection send_idx is >= number of allocated send con groups for this u nit -- programmer error probably -- please report!"))
+    return NULL;
+  return SendConGroup(prjn->send_idx);
+}
+
+void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
+  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  if(cgp)
+    cgp->AllocCons(no);
 }
 
 void Unit::SendConsPreAlloc(int no, Projection* prjn) {
-  SendCons* cgp = NULL;
-  if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
-    cgp = send.NewPrjn(prjn); // sets the type
-    prjn->send_idx = send.size-1;
-  }
-  cgp->AllocCons(no);
+  ConGroup* cgp = SendConGroupPrjn(prjn);
+  if(cgp)
+    cgp->AllocCons(no);
 }
 
 void Unit::SendConsAllocInc(int no, Projection* prjn) {
-  SendCons* cgp = NULL;
-  if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
-    cgp = send.NewPrjn(prjn); // sets the type
-    prjn->send_idx = send.size-1;
-  }
-  cgp->ConnectAllocInc(no);
+  ConGroup* cgp = SendConGroupPrjn(prjn);
+  if(cgp)
+    cgp->ConnectAllocInc(no);
 }
 
 void Unit::SendConsPostAlloc(Projection* prjn) {
-  SendCons* cgp = NULL;
-  if((prjn->send_idx < 0) || ((cgp = send.SafeEl(prjn->send_idx)) == NULL)) {
-    cgp = send.NewPrjn(prjn); // sets the type
-    prjn->send_idx = send.size-1;
-  }
-  cgp->AllocConsFmSize();
+  ConGroup* cgp = SendConGroupPrjn(prjn);
+  if(cgp)
+    cgp->AllocConsFmSize();
 }
 
 void Unit::RecvConsAllocInc(int no, Projection* prjn) {
-  RecvCons* cgp = NULL;
-  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
-    cgp = recv.NewPrjn(prjn); // sets the type
-    prjn->recv_idx = recv.size-1;
-  }
-  cgp->ConnectAllocInc(no);
+  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  if(cgp)
+    cgp->ConnectAllocInc(no);
 }
 
 void Unit::RecvConsPostAlloc(Projection* prjn) {
-  RecvCons* cgp = NULL;
-  if((prjn->recv_idx < 0) || ((cgp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
-    cgp = recv.NewPrjn(prjn); // sets the type
-    prjn->recv_idx = recv.size-1;
-  }
-  cgp->AllocConsFmSize();
-}
-
-void Unit::Connect_VecChunk_SendOwns(Network* net, int thread_no) {
-  if(thread_no < 0) thread_no = 0;
-  int* tmp_chunks = net->tmp_chunks + thread_no * net->own_cons_max_size;
-  int* tmp_not_chunks = net->tmp_not_chunks + thread_no * net->own_cons_max_size;
-  float* tmp_con_mem = net->tmp_con_mem + thread_no * (net->own_cons_max_size *
-                                                       (net->own_cons_max_vars + 1));
-  for(int p=0;p<send.size;p++) {
-    SendCons* sc = send[p];
-    if(sc->NotActive()) continue;
-    sc->VecChunk_SendOwns(this, net, tmp_chunks, tmp_not_chunks,
-                          tmp_con_mem);
-  }
-}
-
-void Unit::Connect_VecChunk_RecvOwns(Network* net, int thread_no) {
-  if(thread_no < 0) thread_no = 0;
-  int* tmp_chunks = net->tmp_chunks + thread_no * net->own_cons_max_size;
-  int* tmp_not_chunks = net->tmp_not_chunks + thread_no * net->own_cons_max_size;
-  float* tmp_con_mem = net->tmp_con_mem + thread_no * (net->own_cons_max_size *
-                                                       (net->own_cons_max_vars + 1));
-  for(int p=0;p<recv.size;p++) {
-    RecvCons* rc = recv[p];
-    if(rc->NotActive()) continue;
-    rc->VecChunk_RecvOwns(this, net, tmp_chunks, tmp_not_chunks,
-                          tmp_con_mem);
-  }
+  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  if(cgp)
+    cgp->AllocConsFmSize();
 }
 
 int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
                       bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-  RecvCons* recv_gp = NULL;
-  SendCons* send_gp = NULL;
-  if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn);
-    prjn->recv_idx = recv.size-1;
-  }
-  if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn);
-    prjn->send_idx = su->send.size-1;
-  }
-  if(recv_gp->send_idx() < 0)
-    recv_gp->other_idx = prjn->send_idx;
-  if(send_gp->recv_idx() < 0)
-    send_gp->other_idx = prjn->recv_idx;
+  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  if(!rcgp) return -1;
+  ConGroup* scgp = su->SendConGroupPrjn(prjn);
+  if(!scgp) return -1;
 
   if(alloc_send) {
-    send_gp->ConnectAllocInc(); // just do alloc increment
+    scgp->ConnectAllocInc(); // just do alloc increment
     return -1;
   }
 
-  int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
-                                  set_init_wt, init_wt);
+  int con = rcgp->ConnectUnits(this, su, scgp, ignore_alloc_errs,
+                               set_init_wt, init_wt);
   return con;
 }
 
 int Unit::ConnectFromCk(Unit* su, Projection* prjn,
                         bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-  Network* net = own_net();
+  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  if(!rcgp) return -1;
+  ConGroup* scgp = SendConGroupPrjn(prjn);
+  if(!scgp) return -1;
 
-  RecvCons* recv_gp = NULL;
-  SendCons* send_gp = NULL;
-  if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL)) {
-    recv_gp = recv.NewPrjn(prjn);
-    prjn->recv_idx = recv.size-1;
-  }
-  if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL)) {
-    send_gp = su->send.NewPrjn(prjn);
-    prjn->send_idx = su->send.size-1;
-  }
-  if(recv_gp->send_idx() < 0)
-    recv_gp->other_idx = prjn->send_idx;
-  if(send_gp->recv_idx() < 0)
-    send_gp->other_idx = prjn->recv_idx;
-
-  if(recv_gp->FindConFromIdx(su) >= 0) // already connected!
+  if(rcgp->FindConFromIdx(su) >= 0) // already connected!
     return -1;
 
-  int con = recv_gp->ConnectUnits(this, su, send_gp, ignore_alloc_errs,
-                                  set_init_wt, init_wt);
+  int con = rcgp->ConnectUnits(this, su, scgp, ignore_alloc_errs,
+                               set_init_wt, init_wt);
   return con;
 }
 
 bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
   Network* net = own_net();
-  RecvCons* recv_gp;
-  SendCons* send_gp;
-  if(prjn) {
-    if((prjn->recv_idx < 0) || ((recv_gp = recv.SafeEl(prjn->recv_idx)) == NULL))
-      return false;
-    if((prjn->send_idx < 0) || ((send_gp = su->send.SafeEl(prjn->send_idx)) == NULL))
-      return false;
-  }
-  else {
-    Layer* su_lay = GET_OWNER(su,Layer);
-    recv_gp = recv.FindFrom(su_lay);
-    if(!recv_gp)        return false;
-    if(recv_gp->send_idx() >= 0)
-      send_gp = su->send.SafeEl(recv_gp->send_idx());
-    else
-      send_gp = NULL;
-    if(send_gp == NULL)
-      send_gp = su->send.FindPrjn(recv_gp->prjn);
-    if(send_gp == NULL) return false;
-    prjn = recv_gp->prjn;
+
+  if(!prjn) {
+    Layer* su_lay = su->own_lay();
+    prjn = own_lay()->projections.FindPrjnFrom(su_lay);
+    if(!prjn)        return false;
   }
 
-  recv_gp->RemoveConUn(su, this, net);
-  return send_gp->RemoveConUn(this, su, net);
+  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  if(!rcgp) return false;
+  ConGroup* scgp = su->SendConGroupPrjn(prjn);
+  if(!scgp) return false;
+
+  rcgp->RemoveConUn(su, this, net);
+  return scgp->RemoveConUn(this, su, net);
 }
 
 void Unit::DisConnectAll() {
-  RecvCons* recv_gp;
-  SendCons* send_gp;
+  ConGroup* recv_gp;
+  ConGroup* send_gp;
   Network* net = own_net();
   int g;
   int i;
-  for(g=0; g<recv.size; g++) { // the removes cause the leaf_gp to crash..
-    recv_gp = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(g=0; g<rsz; g++) { // the removes cause the leaf_gp to crash..
+    recv_gp = RecvConGroup(g);
     for(i=recv_gp->size-1; i>=0; i--) {
       Unit* su = recv_gp->Un(i,net);
-      if(recv_gp->send_idx() >= 0)
-        send_gp = su->send.SafeEl(recv_gp->send_idx());
+      if(recv_gp->other_idx >= 0)
+        send_gp = su->SendConGroup(recv_gp->other_idx);
       else
         send_gp = NULL;
-      if(send_gp == NULL)
-        send_gp = su->send.FindPrjn(recv_gp->prjn);
       if(send_gp)
         send_gp->RemoveConUn(this, su, net);
       recv_gp->RemoveConIdx(i, this, net);
     }
-    recv_gp->other_idx = -1;
   }
-  for(g=0; g<send.size; g++) { // the removes cause the leaf_gp to crash..
-    send_gp = send.FastEl(g);
+  const int ssz = NSendConGps();
+  for(g=0; g<ssz; g++) { // the removes cause the leaf_gp to crash..
+    send_gp = SendConGroup(g);
     for(i=send_gp->size-1; i>=0; i--) {
       Unit* ru = send_gp->Un(i,net);
-      if(send_gp->recv_idx() >= 0)
-        recv_gp = ru->recv.SafeEl(send_gp->recv_idx());
+      if(send_gp->other_idx >= 0)
+        recv_gp = ru->RecvConGroup(send_gp->other_idx);
       else
         recv_gp = NULL;
-      if(recv_gp == NULL)
-        recv_gp = ru->recv.FindPrjn(send_gp->prjn);
       if(recv_gp)
         recv_gp->RemoveConUn(this, ru, net);
       send_gp->RemoveConIdx(i, this, net);
     }
-    send_gp->other_idx = -1;
   }
   n_recv_cons = 0;
   n_send_cons = 0;
@@ -559,14 +456,16 @@ void Unit::DisConnectAll() {
 
 int Unit::CountCons(Network* net) {
   n_recv_cons = 0;
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive()) continue;
     n_recv_cons += cg->size;
   }
   n_send_cons = 0;
-  for(int g = 0; g < send.size; g++) {
-    SendCons* cg = send.FastEl(g);
+  const int ssz = NSendConGps();
+  for(int g = 0; g < ssz; g++) {
+    ConGroup* cg = SendConGroup(g);
     if(cg->NotActive()) continue;
     n_send_cons += cg->size;
   }
@@ -574,28 +473,29 @@ int Unit::CountCons(Network* net) {
 }
 
 void Unit::UpdtActiveCons() {
-  Layer* ol = own_lay();
-  if(lesioned() || !ol || ol->lesioned()) {
-    for(int g = 0; g < recv.size; g++) {
-      RecvCons* cg = recv.FastEl(g);
+  if(lesioned()) {
+    const int rsz = NRecvConGps();
+    for(int g = 0; g < rsz; g++) {
+      ConGroup* cg = RecvConGroup(g);
       cg->SetInactive();
     }
-    for(int g = 0; g < send.size; g++) {
-      SendCons* cg = send.FastEl(g);
+    const int ssz = NSendConGps();
+    for(int g = 0; g < ssz; g++) {
+      ConGroup* cg = SendConGroup(g);
       cg->SetInactive();
     }
-    bias.SetInactive();
   }
   else {
-    for(int g = 0; g < recv.size; g++) {
-      RecvCons* cg = recv.FastEl(g);
+    const int rsz = NRecvConGps();
+    for(int g = 0; g < rsz; g++) {
+      ConGroup* cg = RecvConGroup(g);
       cg->UpdtIsActive();
     }
-    for(int g = 0; g < send.size; g++) {
-      SendCons* cg = send.FastEl(g);
+    const int ssz = NSendConGps();
+    for(int g = 0; g < ssz; g++) {
+      ConGroup* cg = SendConGroup(g);
       cg->UpdtIsActive();
     }
-    bias.BiasUpdtIsActive();
   }
 }
 
@@ -609,37 +509,35 @@ void Unit::GetInSubGp() {
 
 void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   Network* net = own_net();
-  if((bias.size) && (src->bias.size)) {
-    bias.OwnCn(0, BaseCons::WT) = src->bias.OwnCn(0, BaseCons::WT);
-  }
-  int mx = MIN(recv.size, src->recv.size);
+  bias_wt() = ((Unit*)src)->bias_wt();
+  const int rsz = NRecvConGps();
+  const int srsz = src->NRecvConGps();
+  int mx = MIN(rsz, srsz);
   for(int i=0; i<mx; i++) {
-    RecvCons* cg = recv.FastEl(i);
-    RecvCons* scg = src->recv.FastEl(i);
+    ConGroup* cg = RecvConGroup(i);
+    ConGroup* scg = src->RecvConGroup(i);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->Copy_Weights(scg, net);
   }
 }
 
-void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt) {
+void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, ConGroup::WtSaveFormat fmt) {
   Network* net = own_net();
   strm << "<Un>\n";
-  float bwt = 0.0;
-  if(bias.IsActive()) {
-    bwt = bias.OwnCn(0, BaseCons::WT);
-  }
+  float bwt = bias_wt();
   // always write this for a consistent format
   switch(fmt) {
-  case RecvCons::TEXT:
+  case ConGroup::TEXT:
     strm << bwt << "\n";
     break;
-  case RecvCons::BINARY:
+  case ConGroup::BINARY:
     strm.write((char*)&(bwt), sizeof(bwt));
     strm << "\n";
     break;
   }
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || (prjn && (cg->prjn != prjn))) continue;
     strm << "<Cg " << g << " Fm:" << cg->prjn->from->name << ">\n";
     cg->SaveWeights_strm(strm, this, net, fmt);
@@ -648,28 +546,26 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, RecvCons::WtSaveFor
   strm << "</Un>\n";
 }
 
-int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Unit::LoadWeights_strm(istream& strm, Projection* prjn, ConGroup::WtSaveFormat fmt, bool quiet) {
   Network* net = own_net();
   String tag, val;
-  int stat = RecvCons::LoadWeights_StartTag(strm, "Un", val, quiet);
+  int stat = ConGroup::LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   //   String lidx = val.before(' ');
   // todo: could compare lidx with GetMyLeafIdx()...
   float bwt = 0.0;
   switch(fmt) {
-  case RecvCons::TEXT:
+  case ConGroup::TEXT:
     taMisc::read_till_eol(strm);
     bwt = (float)taMisc::LexBuf;
     break;
-  case RecvCons::BINARY:
+  case ConGroup::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
     strm.get();         // get the /n
     break;
   }
-  if(bias.IsActive()) {
-    bias.OwnCn(0, BaseCons::WT) = bwt;
-  }
+  bias_wt() = bwt;
 
   while(true) {
     stat = taMisc::read_tag(strm, tag, val);
@@ -677,43 +573,44 @@ int Unit::LoadWeights_strm(istream& strm, Projection* prjn, RecvCons::WtSaveForm
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
     int gi = (int)val.before(' ');
     String fm = val.after("Fm:");
-    RecvCons* cg = NULL;
-    if(recv.size > gi) {
-      cg = recv.FastEl(gi);
+    ConGroup* cg = NULL;
+    const int rsz = NRecvConGps();
+    if(rsz > gi) {
+      cg = RecvConGroup(gi);
       if(cg->prjn->from->name != fm)
-        cg = recv.FindFromName(fm);
+        cg = FindRecvConGroupFromName(fm);
     }
     else {
-      cg = recv.FindFromName(fm);
+      cg = FindRecvConGroupFromName(fm);
     }
     if(cg) {
       stat = cg->LoadWeights_strm(strm, this, net, fmt, quiet);
     }
     else {
-      stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
+      stat = ConGroup::SkipWeights_strm(strm, fmt, quiet); // skip over
     }
     if(stat != taMisc::TAG_END) break; // something is wrong
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    ConGroup::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
 
-  RecvCons::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  ConGroup::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
   return stat;
 }
 
-int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Unit::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = RecvCons::LoadWeights_StartTag(strm, "Un", val, quiet);
+  int stat = ConGroup::LoadWeights_StartTag(strm, "Un", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   float bwt = 0.0;
   switch(fmt) {
-  case RecvCons::TEXT:
+  case ConGroup::TEXT:
     taMisc::read_till_eol(strm);
     bwt = (float)taMisc::LexBuf;
     break;
-  case RecvCons::BINARY:
+  case ConGroup::BINARY:
     strm.read((char*)&bwt, sizeof(bwt));
     strm.get();         // get the /n
     break;
@@ -722,21 +619,22 @@ int Unit::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet
     stat = taMisc::read_tag(strm, tag, val);
     if(stat != taMisc::TAG_GOT) break;          // *should* break at TAG_END
     if(tag != "Cg") { stat = taMisc::TAG_NONE;  break; } // bumping up against some other tag
-    stat = RecvCons::SkipWeights_strm(strm, fmt, quiet); // skip over
+    stat = ConGroup::SkipWeights_strm(strm, fmt, quiet); // skip over
     if(stat != taMisc::TAG_END) break; // something is wrong
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    RecvCons::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
+    ConGroup::LoadWeights_EndTag(strm, "Cg", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  RecvCons::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
+  ConGroup::LoadWeights_EndTag(strm, "Un", tag, stat, quiet);
   return stat;
 }
 
 void Unit::GetLocalistName() {
   if(name.nonempty()) return;   // only if not otherwise named!
   Network* net = own_net();
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive()) continue;
     if(cg->size != 1) continue; // only 1-to-1
     Unit* un = cg->Un(0,net);
@@ -748,16 +646,18 @@ void Unit::GetLocalistName() {
 }
 
 void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->TransformWeights(trans);
   }
 }
 
 void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
-  for(int g = 0; g < recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     cg->AddNoiseToWeights(noise_spec);
   }
@@ -768,8 +668,9 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
 {
   int rval = 0;
   int g;
-  for(g=0; g<recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(g=0; g<rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->PruneCons(this, pre_proc, rel, cmp_val);
   }
@@ -779,8 +680,9 @@ int Unit::PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
 
 int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
   int rval = 0;
-  for(int g=0; g<recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g=0; g<rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
     rval += cg->LesionCons(this, p_lesion, permute);
   }
@@ -827,11 +729,13 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
     new_table = true;
   }
   dt->StructUpdate(true);
-  for(int g=0; g<recv.size; g++) {
-    RecvCons* cg = recv.FastEl(g);
+  const int rsz = NRecvConGps();
+  for(int g=0; g<rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
-    cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
-                       var9, var10, var11, var12, var13, var14);
+    // todo:
+    // cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
+    //                    var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
   if(new_table)

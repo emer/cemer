@@ -62,7 +62,7 @@ public:
   AvgInActSource avg_act_source; // source of average input actviation value
 
 
-  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
+  inline void   Init_dWt(ConGroup* cg, Unit* un, Network* net) override {
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
     for(int i=0; i<cg->size; i++) {
@@ -71,7 +71,7 @@ public:
     }
   }
 
-  inline void   Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
+  inline void   Init_Weights(ConGroup* cg, Unit* un, Network* net) override {
     Init_Weights_symflag(net);
     if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
@@ -89,13 +89,13 @@ public:
   }
 
   inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
-    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+    C_Init_dWt(cg->OwnCn(0, ConGroup::DWT));
     cg->OwnCn(0, PDW) = 0.0f;
   }
 
   inline void	C_Compute_Weights(float& wt, float& dwt, float& pdw)
   { pdw = dwt;  wt += lrate * dwt;  dwt = 0.0f; }
-  inline void	Compute_Weights(BaseCons* cg, Unit* ru, Network* net);
+  inline void	Compute_Weights(ConGroup* cg, Unit* ru, Network* net);
 
   inline virtual void	Compute_AvgInAct(SoRecvCons* cg, SoUnit* ru, SoNetwork* net);
   // compute the average input activation 
@@ -309,7 +309,7 @@ private:
 //	Inline Functions	//
 //////////////////////////////////
 
-inline void SoConSpec::Compute_Weights(BaseCons* cg, Unit* ru, Network* net) {
+inline void SoConSpec::Compute_Weights(ConGroup* cg, Unit* ru, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdws = cg->OwnCnVar(PDW);
@@ -347,7 +347,7 @@ public:
   inline void	C_Compute_dWt(float& dwt, const float ru_act, const float su_act) 
   { dwt += ru_act * su_act; }
 
-  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = ru->act;
     CON_GROUP_LOOP(cg, C_Compute_dWt(dwts[i], ru_act, cg->Un(i,net)->act));

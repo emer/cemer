@@ -765,26 +765,6 @@ void NetView::GetMembs() {
           }
         }
       }
-
-      // then do bias weights
-      if(u->bias.size) {
-        TypeDef* td = u->bias.con_type;
-        for(int k=0; k<td->members.size; k++) {
-          MemberDef* smd = td->members.FastEl(k);
-          if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-            if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                smd->HasOption("READ_ONLY")))
-              continue;
-            String nm = "bias." + smd->name;
-            if(membs.FindName(nm)==NULL) {
-              MemberDef* nmd = smd->Clone();
-              nmd->name = nm;
-              membs.Add(nmd);
-              nmd->idx = smd->idx;
-            }
-          }
-        }
-      }
     }
   }
 
@@ -1363,20 +1343,18 @@ void NetView::Render_wt_lines() {
   bool swt = wt_line_swt;
 
   if(wt_line_width >= 0.0f) {
-    for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
-      taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
-      Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+    for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
+      ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
+      Projection* prjn = cg->prjn;
       if(!prjn || !prjn->IsActive()) continue;
       if(prjn->from->Iconified()) continue;
 
       n_prjns++;
       int n_con = 0;
-      for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-        float wt = (swt ? ((SendCons*)cg)->Cn(i,BaseCons::WT,nt) :
-                    ((RecvCons*)cg)->Cn(i, BaseCons::WT, nt));
+      for(int i=0;i< cg->size; i++) {
+        float wt = cg->Cn(i,ConGroup::WT,nt);
         if(wt >= wt_line_thr) n_con++;
       }
-
       n_vtx += 1 + n_con;   // one for recv + senders
       n_coord += 3 * n_con; // start, end -1 for each coord
       n_mat += n_con;       // one per line
@@ -1423,9 +1401,9 @@ void NetView::Render_wt_lines() {
   float sc_val;
   float trans = view_params.unit_trans;
 
-  for(int g=0;g<(swt ? unit_src->send.size : unit_src->recv.size);g++) {
-    taOBase* cg = (swt ? (taOBase*)unit_src->send.FastEl(g) : (taOBase*)unit_src->recv.FastEl(g));
-    Projection* prjn = (swt ? ((SendCons*)cg)->prjn : ((RecvCons*)cg)->prjn);
+  for(int g=0;g<(swt ? unit_src->NSendConGps() : unit_src->NRecvConGps());g++) {
+    ConGroup* cg = (swt ? unit_src->SendConGroup(g) : unit_src->RecvConGroup(g));
+    Projection* prjn = cg->prjn;
     if(!prjn || !prjn->IsActive()) continue;
     if(prjn->from->Iconified()) continue;
     Layer* lay_fr = (swt ? prjn->layer : prjn->from);
@@ -1448,10 +1426,9 @@ void NetView::Render_wt_lines() {
     int ru_idx = v_idx;
     vertex_dat[v_idx++].setValue(src.x, src.y, src.z);
 
-    for(int i=0;i<(swt ? ((SendCons*)cg)->size : ((RecvCons*)cg)->size); i++) {
-      Unit* su = (swt ? ((SendCons*)cg)->Un(i,nt) : ((RecvCons*)cg)->Un(i,nt));
-      float wt = (swt ? ((SendCons*)cg)->Cn(i, BaseCons::WT, nt) :
-                  ((RecvCons*)cg)->Cn(i, BaseCons::WT, nt));
+    for(int i=0;i< cg->size; i++) {
+      Unit* su = cg->Un(i,nt);
+      float wt = cg->Cn(i, ConGroup::WT, nt);
       if(fabsf(wt) < wt_line_thr) continue;
 
       // note: only want layer_rel for ru_pos

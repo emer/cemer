@@ -44,13 +44,13 @@ public:
   { wt = PrecLimitVal(wt); }
   // #IGNORE
 
-  inline void Compute_LimPrecWts(LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net) {
+  inline void Compute_LimPrecWts(LeabraConGroup* cg, LeabraUnit* su, LeabraNetwork* net) {
     float* wts = cg->OwnCnVar(WT);
     CON_GROUP_LOOP(cg, C_Compute_LimPrecWts(wts[i]));
   }
   // #IGNORE
 
-  inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline void	Compute_Weights_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
                                                      LeabraNetwork* net) override {
     inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
     Compute_LimPrecWts(cg, su, net);

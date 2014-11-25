@@ -33,7 +33,8 @@ public:
   ProgramRef	prog;		// program to call to connect layers -- prjn arg value (must exist) is set to current projection and then it is called
 
   void	Connect_impl(Projection* prj, bool make_cons) override;
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                          int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(ProgramPrjnSpec);
 protected:

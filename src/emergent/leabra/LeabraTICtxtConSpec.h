@@ -36,21 +36,20 @@ public:
   bool  IsTICtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
-  inline void Send_TICtxtNetin(LeabraSendCons* cg, LeabraNetwork* net,
-                               const int thread_no, const float su_act) {
+  inline void Send_TICtxtNetin(LeabraConGroup* cg, LeabraNetwork* net,
+                               int thr_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->send_netin_tmp.el
-      + net->send_netin_tmp.FastElIndex(0, thread_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta_Thread(wts[i], send_netin_vec,
-                                                cg->UnIdx(i), su_act_eff));
+    float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
+                                         cg->UnIdx(i), su_act_eff));
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
-                                       float su_act_delta_eff) override { };
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override
+  inline void Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net, int thr_no, 
+                              float su_act_delta) override { };
+  inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
   // everything can use one dwt with post-soft-bound because no hebbian term
@@ -59,16 +58,18 @@ public:
   { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_act_q0; }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) override {
-    if(ignore_unlearnable && net->unlearnable_trial) return;
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
     float* dwts = cg->OwnCnVar(DWT);
     const float su_act_q0 = su->act_q0; // prior trial activation..
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
       C_Compute_dWt_Delta(dwts[i], ru->avg_s, ru->avg_m, su_act_q0); // using avgs..
     }
   }

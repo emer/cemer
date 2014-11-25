@@ -26,7 +26,7 @@ void LayerWriterEl::Initialize() {
   use_layer_type = true;
   quiet = false;
   na_by_range = false;
-  ext_flags = Unit::NO_EXTERNAL;
+  ext_flags = UnitVars::NO_EXTERNAL;
   noise.type = Random::NONE;
   noise.mean = 0.0f;
   noise.var = 0.5f;
@@ -88,11 +88,11 @@ bool LayerWriterEl::ApplyInputData(DataTable* db, Network* net) {
   }
   if(use_layer_type) {
     if(lay->layer_type == Layer::INPUT)
-      ext_flags = Unit::EXT;
+      ext_flags = UnitVars::EXT;
     else if(lay->layer_type == Layer::TARGET)
-      ext_flags = Unit::TARG;
+      ext_flags = UnitVars::TARG;
     else
-      ext_flags = Unit::COMP;
+      ext_flags = UnitVars::COMP;
   }
 
   // note: always provide all data, it is up to the network to decide how to use it

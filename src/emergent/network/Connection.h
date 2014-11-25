@@ -25,13 +25,13 @@
 
 eTypeDef_Of(Connection);
 
-// the connection is managed fully by the ConSpec and the BaseCons
+// the connection is managed fully by the ConSpec and the ConGroup
 // and is no longer used as such -- all the memory is directly 
 // allocated floats -- the Connection object is only used for type information
 // regarding number of variables
 
 // note: connections MUST have only float members -- type information 
-// of this object is used by the BaseCons to manage the connection memory,
+// of this object is used by the ConGroup to manage the connection memory,
 // which is allocated vector-wise so that each variable is contiguous in memory,
 // to optimize the vectorization processes
 

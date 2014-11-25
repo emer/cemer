@@ -191,9 +191,6 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
     else if ((nm=="s") || (nm == "r")) {
       UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u);
     }
-    else if (nm=="bias") {
-      UpdateUnitViewBase_Bias_impl(midx, disp_md);
-    }
     else { // sub-member of unit
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
     }
@@ -201,10 +198,6 @@ void BrainVolumeView::UpdateUnitViewBases(Unit* src_u)
 }
 
 void BrainVolumeView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u)
-{
-}
-
-void BrainVolumeView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md)
 {
 }
 

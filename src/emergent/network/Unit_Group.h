@@ -22,6 +22,7 @@
 
 // member includes:
 #include <PosVector3i>
+#include <Relation>
 
 // declare all other types mentioned but not required to include:
 class Layer; //
@@ -61,19 +62,19 @@ public:
   virtual void  Copy_Weights(const Unit_Group* src);
   // #MENU #MENU_ON_Object #CAT_ObjectMgmt copies weights from other unit group (incl wts assoc with unit bias member)
 
-  virtual void  SaveWeights_strm(std::ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  virtual int   LoadWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
-  static int    SkipWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
-  virtual void  SaveWeights(const String& fname="", RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void  SaveWeights(const String& fname="", ConGroup::WtSaveFormat fmt = ConGroup::TEXT);
   // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual int   LoadWeights(const String& fname="",
-                            RecvCons::WtSaveFormat fmt = RecvCons::TEXT, bool quiet = false);
+                            ConGroup::WtSaveFormat fmt = ConGroup::TEXT, bool quiet = false);
   // #MENU #EXT_wts #COMPRESS #CAT_File #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
 
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);

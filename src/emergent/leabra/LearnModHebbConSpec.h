@@ -63,7 +63,7 @@ public:
   }
   // #IGNORE with dopamine
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
                                        LeabraNetwork* net) override {
     // Compute_SAvgCor(cg, su, net);
     // if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;

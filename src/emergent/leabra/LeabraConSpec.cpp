@@ -141,6 +141,7 @@ void LeabraConSpec::Initialize() {
   diff_scale_p = false;
   
   learn = true;
+  learn_qtr = Q4;
   
   ignore_unlearnable = true;
 
@@ -199,12 +200,12 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   ClearBaseFlag(BF_MISC2);      // done..
 }
 
-bool LeabraConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
+bool LeabraConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
   bool rval = true;
   return rval;
 }
 
-void LeabraConSpec::Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from, 
+void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* from, 
                                        bool plus_phase) {
   float savg = from->acts_p_avg_eff;
   float from_sz = (float)from->units.leaves;

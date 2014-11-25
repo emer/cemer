@@ -39,8 +39,9 @@ void GradientWtsPrjnSpec::Defaults_init() {
 }
 
 
-void GradientWtsPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                       Network* net) {
+void GradientWtsPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+                                            Network* net, int thr_no) {
+  Unit* ru = cg->OwnUn(net);
   if(use_gps && prjn->layer->unit_groups)
     InitWeights_RecvGps(prjn, cg, ru, net);
   else
@@ -48,7 +49,7 @@ void GradientWtsPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit
 }
 
 
-void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
+void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
                                       Network* net, float dist, int cg_idx) {
   float wt_val = wt_range.min;
   if(grad_type == LINEAR) {
@@ -78,7 +79,7 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
 //      -4      -3      -2      -1   wrp_x < .5  int
 //      -1.33   -1      -.66    -.33 wrp_x < .5  flt
 
-void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Unit* ru,
+void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConGroup* cg, Unit* ru,
                                               Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
@@ -149,7 +150,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, RecvCons* cg, Un
   }
 }
 
-void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, RecvCons* cg, Unit* ru,
+void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConGroup* cg, Unit* ru,
                                                Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();

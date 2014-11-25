@@ -418,18 +418,6 @@ TypeDef* taBase::StatTypeDef(int) {
 ///////////////////////////////////////////////////////////////////////////
 //      Object managment flags (taBase supports up to 8 flags for basic object mgmt purposes)
 
-bool taBase::HasBaseFlag(int flag) const {
-  return (base_flags & flag);
-}
-
-void taBase::SetBaseFlag(int flag) {
-  base_flags = (BaseFlags)(base_flags | flag);
-}
-
-void taBase::ClearBaseFlag(int flag) {
-  base_flags = (BaseFlags)(base_flags & ~flag);
-}
-
 bool taBase::isDestroying() const {
   if(HasBaseFlag(DESTROYING)) return true;
   taBase* own = GetOwner();

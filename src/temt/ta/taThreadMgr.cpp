@@ -325,8 +325,21 @@ void taThreadMgr::SyncThreads() {
 void taThreadMgr::Run() {
   InitAll();			// fast if no diff
   if(tasks.size == 0) return;
-  RunThreads();
-  tasks[0]->run();		// task 0 run in main thread
+  if(n_threads == 1) {
+    if(get_timing) {
+      total_time.StartTimer(false);     // don't reset
+      run_time.StartTimer(false);       // don't reset
+    }
+    tasks[0]->run();      // run our own set..
+    if(get_timing) {
+      total_time.EndTimer();
+      run_time.EndTimer();
+    }
+  }
+  else {
+    RunThreads();
+    tasks[0]->run();		// task 0 run in main thread
+  }
   SyncThreads();
 }
 

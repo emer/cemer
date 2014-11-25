@@ -183,9 +183,6 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
       UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u,
                                   nv->con_type);
     }
-    else if (nm=="bias") {
-      UpdateUnitViewBase_Bias_impl(midx, disp_md);
-    }
     else { // sub-member of unit
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
     }
@@ -225,11 +222,11 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
       if(unit->lesioned()) continue;
 
       if (is_send) {
-        for(int g=0;g<unit->recv.size;g++) {
-          RecvCons* tcong = unit->recv.FastEl(g);
+        for(int g=0;g<unit->NRecvConGps();g++) {
+          ConGroup* tcong = unit->RecvConGroup(g);
           if(check_prjn && tcong->prjn && !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
-          MemberDef* act_md = tcong->con_type->members.FindName(nm);
+          MemberDef* act_md = tcong->ConType()->members.FindName(nm);
           if (!act_md)  continue;
           int con = tcong->FindConFromIdx(src_u);
           if (con < 0) continue;
@@ -239,12 +236,12 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
         }
       }
       else {
-        for(int g=0;g<unit->send.size;g++) {
-          SendCons* tcong = unit->send.FastEl(g);
+        for(int g=0;g<unit->NSendConGps();g++) {
+          ConGroup* tcong = unit->SendConGroup(g);
           if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
              !tcong->prjn->name.startsWith(prjn_starts_with))
             continue;
-          MemberDef* act_md = tcong->con_type->members.FindName(nm);
+          MemberDef* act_md = tcong->ConType()->members.FindName(nm);
           if (!act_md)  continue;
           int con = tcong->FindConFromIdx(src_u);
           if (con < 0) continue;
@@ -253,23 +250,6 @@ void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String n
           break;                // once you've got one, done!
         }
       }
-    }
-  }
-}
-
-void UnitGroupView::UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md) {
-  Layer* lay = this->layer(); //cache
-  if(!lay) return;
-  Network* net = lay->own_net;
-  taVector2i coord;
-  for(coord.y = 0; coord.y < lay->flat_geom.y; coord.y++) {
-    for(coord.x = 0; coord.x < lay->flat_geom.x; coord.x++) {
-      Unit* unit = lay->UnitAtCoord(coord);
-      uvd_bases.Set(NULL, coord.x, coord.y, midx);
-      if (!unit) continue;  // rest will be null too, but we loop to null disp_base
-      if(unit->lesioned()) continue;
-      if(!unit->bias.IsActive()) continue;
-      uvd_bases.Set(&(unit->bias.OwnCn(0, disp_md->idx)), coord.x, coord.y, midx);
     }
   }
 }

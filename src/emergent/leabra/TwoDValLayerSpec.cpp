@@ -319,7 +319,7 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
          cs->InheritsFrom(TA_MarkerConSpec)) continue;
       for(int ci=0;ci<recv_gp->size;ci++) {
-        float& wt = recv_gp->PtrCn(ci, BaseCons::WT, net);
+        float& wt = recv_gp->PtrCn(ci, ConGroup::WT, net);
         wt += act;
         if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
         if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
@@ -339,7 +339,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode ac
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * twod.GetUnitAct(i);
     if(bias_val.un == TwoDValBias::BWT)
-      u->bias.OwnCn(0,BaseCons::WT) = act;
+      u->bias.OwnCn(0,ConGroup::WT) = act;
   }
 }
 

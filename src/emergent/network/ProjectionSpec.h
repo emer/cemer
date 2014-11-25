@@ -28,7 +28,7 @@
 
 // declare all other types mentioned but not required to include:
 class Projection; //
-class RecvCons; //
+class ConGroup; //
 class Unit; //
 class Layer; //
 class Network; //
@@ -47,9 +47,7 @@ public:
   bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
 
   virtual void  Connect_Sizes(Projection* prjn);
-  // #CAT_Structure first-pass connects the network, doing PreConnect, Connect_impl(false), ending up with target allocation sizes
-    virtual void        PreConnect(Projection* prjn);
-    // #CAT_Structure Prepare to connect (init con_groups)
+  // #CAT_Structure first-pass connects the network, doing Connect_impl(false), ending up with target allocation sizes
     virtual void        Connect_impl(Projection*, bool make_cons) { };
     // #CAT_Structure actually implements specific connection code -- called in two passes -- first with make_cons = false does allocation, and second with make_cons = true
   virtual void  Connect_Cons(Projection* prjn);
@@ -60,11 +58,11 @@ public:
     virtual int ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
     // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  virtual void  SetCnWt(RecvCons* cg, int cn_idx, Network* net, float wt_val);
+  virtual void  SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val);
   // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
 
-  virtual void  Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                  Network* net);
+  virtual void  Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                                  int thr_no);
   // #CAT_Weights #IGNORE when init_wts flag is set, the projection spec sets weights for the entire set of connections, from a recv perspective (always use safe access for Cn that does not depend on who owns it) -- overload in subclasses that set weights
 
   virtual bool  CheckConnect(Projection* prjn, bool quiet=false);

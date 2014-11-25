@@ -77,8 +77,6 @@ protected:
   void          UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
   void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm, Unit* src_u);
   // for cons
-  void          UpdateUnitViewBase_Bias_impl(int midx, MemberDef* disp_md);
-  // for bias vals
   void  DoActionChildren_impl(DataViewAction acts) override;
   virtual void   Render_impl_children(); // #IGNORE we trap this in DoActionChildren
   virtual void   Render_impl_blocks();  // optimized blocks

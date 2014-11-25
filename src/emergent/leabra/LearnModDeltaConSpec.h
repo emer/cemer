@@ -57,7 +57,7 @@ public:
   }
   // #IGNORE dopamine multiplication
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
                                                 LeabraNetwork* net) override {
     float su_act;
     if(send_act == ACT_M)

@@ -74,7 +74,7 @@ public:
   void 		(*decay_fun)(CsConSpec* spec, float& wt, float& dwt);
   // #LIST_CsConSpec_WtDecay #CONDEDIT_OFF_decay:0 the weight decay function to use
 
-  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
+  inline void   Init_dWt(ConGroup* cg, Unit* un, Network* net) override {
     float* dwts = cg->OwnCnVar(DWT);
     float* pdws = cg->OwnCnVar(PDW);
     float* aggs = cg->OwnCnVar(DWT_AGG);
@@ -85,7 +85,7 @@ public:
     }
   }
 
-  inline void   Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
+  inline void   Init_Weights(ConGroup* cg, Unit* un, Network* net) override {
     Init_Weights_symflag(net);
     if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
@@ -105,7 +105,7 @@ public:
   }
 
   inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
-    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+    C_Init_dWt(cg->OwnCn(0, ConGroup::DWT));
     cg->OwnCn(0, PDW) = 0.0f;
   }
 
@@ -124,7 +124,7 @@ public:
 
   inline void		C_Compute_dWt(float& dwt_agg, float& dwt, const float n_dwt_aggs) 
   { dwt_agg /= n_dwt_aggs;  dwt += dwt_agg;  dwt_agg = 0.0f; }
-  inline void		Compute_dWt(BaseCons* cg, Unit* ru, Network* net);
+  inline void		Compute_dWt(ConGroup* cg, Unit* ru, Network* net);
 
   inline virtual void	B_Compute_dWt(RecvCons* bias, CsUnit* ru);
  
@@ -134,7 +134,7 @@ public:
     wt += lrate * pdw;	
     dwt = 0.0f; }
 
-  inline void		Compute_Weights(BaseCons* cg, Unit* ru, Network* net);
+  inline void		Compute_Weights(ConGroup* cg, Unit* ru, Network* net);
   inline virtual void	B_Compute_Weights(RecvCons* bias, Unit* ru) {
     C_Compute_Weights(bias->OwnCn(0,WT), bias->OwnCn(0,DWT),
                       bias->OwnCn(0,PDW));
@@ -557,7 +557,7 @@ inline void CsConSpec::B_Aggregate_dWt(RecvCons* bias, CsUnit* ru, float phase) 
   bias->OwnCn(0,DWT_AGG) += phase * ru->act;
 }
 
-inline void CsConSpec::Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+inline void CsConSpec::Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
   float* aggs = cg->OwnCnVar(DWT_AGG);
   float* dwts = cg->OwnCnVar(DWT);
   const float n_dwt_aggs = ((CsUnit*)ru)->n_dwt_aggs; // already guaranteed to be non-0
@@ -569,7 +569,7 @@ inline void CsConSpec::B_Compute_dWt(RecvCons* bias, CsUnit* ru) {
                 (float)ru->n_dwt_aggs);
 }
 
-inline void CsConSpec::Compute_Weights(BaseCons* cg, Unit* ru, Network* net) {
+inline void CsConSpec::Compute_Weights(ConGroup* cg, Unit* ru, Network* net) {
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);
   float* pdws = cg->OwnCnVar(PDW);
@@ -595,7 +595,7 @@ public:
   inline void 		C_Compute_dWt_Hebb(float& dwt, const float ru_act,
                                            const float su_act) 
   { dwt += ru_act * su_act; }
-  inline void 		Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+  inline void 		Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
     float* dwts = cg->OwnCnVar(DWT);
     const float ru_act = (ru->ext_flag & Unit::TARG) ? ru->targ : ru->act;
     CON_GROUP_LOOP(cg, C_Compute_dWt_Hebb(dwts[i], ru_act, cg->Un(i,net)->act));

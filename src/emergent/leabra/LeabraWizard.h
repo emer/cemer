@@ -35,6 +35,8 @@ class E_API LeabraWizard : public Wizard {
   // #STEM_BASE ##CAT_Leabra Leabra-specific wizard for automating construction of simulation objects
 INHERITED(Wizard)
 public:
+
+#if 0 // todo: not building this yet
   bool StdNetwork() override;
   bool	UpdateInputDataFmNet(Network* net, DataTable* data_table) override;
 
@@ -96,9 +98,11 @@ public:
   bool	StdProgs() override;
   bool	TestProgs(Program* call_test_from, bool call_in_loop=true, int call_modulus=1) override;
 
+#endif
+
   TA_BASEFUNS_NOCOPY(LeabraWizard);
 protected:
-  String RenderWizDoc_network() override;
+  //  String RenderWizDoc_network() override;
 private:
   void 	Initialize();
   void 	Destroy()	{ };

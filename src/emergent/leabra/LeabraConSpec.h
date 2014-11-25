@@ -19,21 +19,21 @@
 // parent includes:
 #include "network_def.h"
 #include <ConSpec>
-#include <BaseCons_inlines>
+#include <ConGroup_inlines>
+#include <LeabraConGroup>
 #include <SpecMemberBase>
 
 // member includes:
 #include <Schedule>
 #include <FunLookup>
-#include <RecvCons>
 #include <LeabraCon>
+#include <LeabraUnitVars>
 #include "ta_vector_ops.h"
 
 // declare all other types mentioned but not required to include:
 class LeabraUnit; // 
-class LeabraRecvCons; // 
 class LeabraLayer; // 
-class LeabraSendCons; // 
+class LeabraConGroup; // 
 class LeabraNetwork; // 
 class DataTable; // 
 
@@ -250,13 +250,22 @@ public:
     SWT,                        // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
   };
 
+  enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
+    QNULL = 0x00,              // #NO_BIT no quarter (yeah..)
+    Q1 = 0x01,                 // first quarter
+    Q2 = 0x02,                 // second quarter
+    Q3 = 0x04,                 // third quarter -- posterior cortical minus phase
+    Q4 = 0x08,                 // fourth quarter -- posterior cortical plus phase
+  };
+
   bool		inhib;		// #DEF_false #CAT_Activation makes the connection inhibitory (to g_i instead of net)
   WtScaleSpec	wt_scale;	// #CAT_Activation scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
   bool          diff_scale_p;   // #CAT_Activation use a different wt_scale setting for the plus phase compared to the std wt_scale which is used only for the minus phase if this is checked
   WtScaleSpec	wt_scale_p;	// #CAT_Activation #CONDSHOW_ON_diff_scale_p plus phase only: scale effective weight values to control the overall strength of a projection -- relative shifts balance among different projections, while absolute is a direct multipler
 
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
-  float		lrate;		// #CAT_Learning #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] #CONDSHOW_ON_learn learning rate -- how fast do the weights change per experience
+  Quarters      learn_qtr;      // #CAT_Learning #CONDSHOW_ON_learn quarters after which learning (Compute_dWt) should take place
+  float		lrate;		// #CAT_Learning #CONDSHOW_ON_learn #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (NOTE: these factors (lrs_mult) multiply lrate to give the cur_lrate value)
@@ -277,19 +286,12 @@ public:
   inline float	LinFmSigWt(float sig_wt) { return wt_sig_fun_inv.Eval(sig_wt); }
   // #CAT_Learning get linear weight value from contrast-enhanced sigmoidal weight value
 
-  inline void   Init_dWt(BaseCons* cg, Unit* un, Network* net) override {
-    float* dwts = cg->OwnCnVar(DWT);
-    for(int i=0; i<cg->size; i++) {
-      C_Init_dWt(dwts[i]);
-    }
-  }
+  inline  bool Quarter_LearnNow(int qtr)
+  { return learn_qtr & (1 << qtr); }
+  // #CAT_Learning test whether to learn at given quarter (pass net->quarter as arg)
 
-  inline void Init_Weights(BaseCons* cg, Unit* un, Network* net) override {
-    Init_Weights_symflag(net);
-    if(cg->prjn->spec->init_wts) {
-      Init_dWt(cg, un, net);
-      return; // we don't do it, prjn does
-    }
+  inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
+    Init_Weights_symflag(net, thr_no);
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -301,11 +303,11 @@ public:
       }
     }
     else {
-      Init_dWt(cg, un, net);
+      Init_dWt(cg, net, thr_no);
     }
   }
 
-  inline void Init_Weights_post(BaseCons* cg, Unit* un, Network* net) override {
+  inline void Init_Weights_post(ConGroup* cg, Network* net, int thr_no) override {
     float* wts = cg->OwnCnVar(WT);
     float* swts = cg->OwnCnVar(SWT);
     float* fwts = cg->OwnCnVar(FWT);
@@ -318,7 +320,7 @@ public:
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 
-  virtual void	Compute_NetinScale(LeabraRecvCons* recv_gp, LeabraLayer* from,
+  virtual void	Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* from,
                                    bool plus_phase = false);
   // #IGNORE compute recv_gp->scale_eff based on params in from layer
   inline virtual bool  DoesStdNetin() { return true; }
@@ -330,28 +332,28 @@ public:
   inline virtual bool  IsDeep5bCon() { return false; }
   // #IGNORE is this a deep5b connection (Deep5bConSpec) -- optimized check for higher speed
 
-  inline void 	C_Send_NetinDelta_Thread(const float wt, float* send_netin_vec,
-                                         const int ru_idx, const float su_act_delta_eff)
+  inline void 	C_Send_NetinDelta(const float wt, float* send_netin_vec,
+                                  const int ru_idx, const float su_act_delta_eff)
   { send_netin_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
 #ifdef TA_VEC_USE
-  inline void 	Send_NetinDelta_vec(LeabraSendCons* cg, const float su_act_delta_eff,
+  inline void 	Send_NetinDelta_vec(LeabraConGroup* cg, const float su_act_delta_eff,
                                     float* send_netin_vec, const float* wts);
   // #IGNORE vectorized version
 #endif
-  inline void 	Send_NetinDelta_impl(LeabraSendCons* cg, LeabraNetwork* net,
-                                     const int thread_no, const float su_act_delta,
+  inline void 	Send_NetinDelta_impl(LeabraConGroup* cg, LeabraNetwork* net,
+                                     int thr_no, const float su_act_delta,
                                      const float* wts);
   // #IGNORE implementation that uses specified weights -- typically only diff in different subclasses is the weight variables used
-  inline virtual void 	Send_NetinDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                                   const int thread_no, const float su_act_delta);
-  // #IGNORE #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+  inline virtual void 	Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net,
+                                        int thr_no, const float su_act_delta);
+  // #IGNORE #CAT_Activation sender-based delta-activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // recv-based also needed for some statistics, but is NOT used for main compute code -- uses act_eq for sender act as well
   inline float 	C_Compute_Netin(const float wt, const float su_act)
   { return wt * su_act;	}
   // #IGNORE NOTE: doesn't work with spiking -- need a separate function to use act_eq for that case -- using act_eq does NOT work with scalarval etc
-  inline float 	Compute_Netin(RecvCons* cg, Unit* ru, Network* net);
+  inline float 	Compute_Netin(ConGroup* cg, Network* net, int thr_no);
   // #IGNORE
 
   ///////////////////////////////////////////////////////////////
@@ -390,16 +392,13 @@ public:
 
 #ifdef TA_VEC_USE
   inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
-    (LeabraSendCons* cg, LeabraUnit* su, LeabraNetwork* net, float* dwts,
-     float* avg_s, float* avg_m, float* avg_l, float* thal,
+    (LeabraConGroup* cg, float* dwts, float* avg_s, float* avg_m, float* avg_l, float* thal,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
   // #IGNORE vectorized version
 #endif
 
-  inline virtual void 	Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                 LeabraNetwork* net);
-  // #IGNORE CtLeabraXCAL weight changes
+  inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;
 
   inline void	C_Compute_Weights_CtLeabraXCAL
     (float& wt, float& dwt, float& fwt, float& swt)
@@ -430,57 +429,66 @@ public:
 
 #ifdef TA_VEC_USE
   inline void	Compute_Weights_CtLeabraXCAL_vec
-    (LeabraSendCons* cg, float* wts, float* dwts, float* fwts, float* swts);
+    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
   inline void	Compute_Weights_CtLeabraXCAL_fast_vec
-    (LeabraSendCons* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
+    (LeabraConGroup* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
      float* wts, float* dwts, float* fwts, float* swts);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
 #endif
 
-  inline virtual void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net);
-  // #IGNORE overall compute weights for CtLeabraXCAL learning rule
+  inline void	Compute_Weights(ConGroup* cg, Network* net, int thr_no) override;
 
-  /////////////////////////////////////
-  // Master dWt, Weights functions
-
-  inline void	Compute_dWt(BaseCons* cg, Unit* su, Network* net) override;
-  // #IGNORE overall compute delta-weights for Leabra 
-
-  inline void	Compute_Weights(BaseCons* cg, Unit* su, Network* net) override;
-  // #IGNORE overall compute weights for Leabra
-
-  inline virtual void 	Compute_dWt_Norm(LeabraRecvCons* cg, LeabraUnit* ru,
-                                         LeabraNetwork* net);
+  inline virtual void 	Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* net,
+                                         int thr_no);
   // #IGNORE compute dwt normalization
 
   /////////////////////////////////////
   // 	Bias Weights
 
-  inline void    B_Init_dWt(RecvCons* cg, Unit* ru, Network* net) override {
-    C_Init_dWt(cg->OwnCn(0, BaseCons::DWT));
+  // same as original:
+  inline void B_Init_dWt(UnitVars* uv, Network* net, int thr_no) override {
+    C_Init_dWt(uv->bias_wt);
   }
 
-  inline void   B_Init_Weights_post(RecvCons* cg, Unit* ru, Network* net) {
-    float wt = cg->OwnCn(0, WT);
-    cg->OwnCn(0, SWT) = wt; cg->OwnCn(0, FWT) = wt;
+  inline void B_Init_Weights_post(UnitVars* u, Network* net, int thr_no) override {
+    LeabraUnitVars* uv = (LeabraUnitVars*)u;
+    float wt = uv->bias_wt; uv->bias_swt = wt; uv->bias_fwt = wt;
   }
 
-  inline virtual void	B_Compute_dWt_CtLeabraXCAL(RecvCons* bias, LeabraUnit* ru,
-                                                   LeabraLayer* rlay);
-  // #IGNORE compute bias weight change for XCAL rule
+  inline void B_Compute_dWt(UnitVars* u, Network* net, int thr_no) override {
+    if(!learn) return;
+    LeabraUnitVars* uv = (LeabraUnitVars*)u;
+    // only err is useful contributor to this learning
+    float dw = uv->avg_s - uv->avg_m;
+    uv->bias_dwt += cur_lrate * dw;
+  }
 
-  inline void	B_Compute_dWt(RecvCons* bias, LeabraUnit* ru, LeabraLayer* rlay);
-  // #IGNORE overall compute bias delta-weights for Leabra
-
-  inline virtual void	B_Compute_Weights(RecvCons* bias, LeabraUnit* ru);
-  // #IGNORE update weights for bias connection (same for all algos)
+  inline void B_Compute_Weights(UnitVars* u, Network* net, int thr_no) override {
+    if(!learn) return;
+    LeabraUnitVars* uv = (LeabraUnitVars*)u;
+    float& wt =  uv->bias_wt;
+    float& dwt = uv->bias_dwt;
+    float& fwt = uv->bias_fwt;
+    float& swt = uv->bias_swt;
+    fwt += dwt;
+    if(fast_wts.on) {
+      fwt += fast_wts.decay_dt * (swt - fwt);
+      swt += fast_wts.slow_lrate * dwt;
+      wt += fast_wts.wt_dt * (fwt - wt);
+    }
+    else {
+      swt = fwt;
+      wt = fwt;
+    }
+    dwt = 0.0f;
+    C_ApplyLimits(wt);
+  }
 
   /////////////////////////////////////
   // General 
 
-  inline void Compute_CopyWeights(LeabraSendCons* cg, LeabraSendCons* src_cg,
+  inline void Compute_CopyWeights(ConGroup* cg, ConGroup* src_cg,
                                   LeabraNetwork* net);
   // #IGNORE copy weights from src_cg to cg -- typically used to compute synchronization of weights thought to take place during sleep -- typically in TI mode, where the Thal pathway synchronizes with the Super weights -- can be useful for any plus phase conveying weights to avoid positive feedback loop dynamics
 
@@ -506,7 +514,7 @@ public:
                            int n_recv_cons=5, bool norm_con_n=true);
   // #BUTTON helper for converting from old wt_scale computation to new one -- enter parameters for the sending layer kwta pct (overall layer activit), number of receiving connections, and whether the norm_con_n flag was on or off (effectively always on in new version) -- it reports what the effective weight scaling was in the old version, what it is in the new version, and what you should set the wt_scale.abs to to get equivalent performance, assuming wt_scale.abs reflects what was set previously
 
-  bool CheckConfig_RecvCons(RecvCons* cg, bool quiet=false) override;
+  bool CheckConfig_RecvCons(ConGroup* cg, bool quiet=false) override;
   // check for for misc configuration settings required by different algorithms
 
   void	InitLinks();

@@ -14,6 +14,14 @@
 //   GNU General Public License for more details.
 
 #include "LeabraWizard.h"
+
+TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
+
+void LeabraWizard::Initialize() {
+}
+
+// note: not building any of this!
+#if 0
 #include <LeabraProject>
 #include <LeabraNetwork>
 #include <StdNetWizDlg>
@@ -74,11 +82,6 @@
 #include <SubiculumLayerSpec>
 
 #include <taMisc>
-
-TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
-
-void LeabraWizard::Initialize() {
-}
 
 // use these macros to make specs
 #define FMSpec(T, var, par, nm)\
@@ -2443,3 +2446,4 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   return true;
 }
 
+#endif

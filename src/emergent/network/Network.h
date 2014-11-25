@@ -26,8 +26,9 @@
 #include <taBrainAtlas_List>
 #include <Weights_List>
 #include <TimeUsed>
-#include <UnitCallThreadMgr>
+#include <NetworkThreadMgr>
 #include <UnitPtrList>
+#include <int_Array>
 #include <float_Matrix>
 #include <DMemComm>
 #include <DMemAggVars>
@@ -35,11 +36,7 @@
 // NOTE: by including network, you end up including all the network code:
 // #include <Connection>
 // #include <ConSpec>
-// #include <BaseCons>
-// #include <RecvCons>
-// #include <RecvCons_List>
-// #include <SendCons>
-// #include <SendCons_List>
+// #include <ConGroup>
 // #include <UnitSpec>
 // #include <Unit>
 // #include <ProjectionSpec>
@@ -53,6 +50,35 @@ class NetView; //
 class BrainView; //
 class T3Panel; //
 
+////////////////////////////////////////////////////////
+//      Memory structure for version 8.0.0 
+//
+// The network now owns and manages all the unit vars and the connections
+// which are allocated into separate memory structures organized by thread.
+//
+// The Unit has been split into the structural aspects (name, position, etc) 
+// which remain in the Unit class, and UnitVars
+// UnitVars contains the algorithm-specific variables -- this must
+// contain exclusively floats in a flat list of members -- no subclasses, etc
+// it also now directly contains the bias variables -- no point in all the overhead 
+// to deal with those separately -- connection code should operate directly on the
+// float& variables, so it doesn't care if these are in a connection structure or not
+
+// There can only be one type of UnitVars used within the network -- allocation is
+// fully vector based into a big pool of memory per thread.  Computation should
+// now also be fully vector-based over units (and connections) where possible
+//
+// send, recv connection structures are all allocated in separate memory
+// not within the Unit structure at all -- methods are avail to access
+//
+// the ConGroup (formerly BaseCons) object is now just a data structure -- not a taBase
+//
+// There are 3 levels of memory allocation, all done at the thread level:
+// * UnitVars -- array[n_units+1]
+// * ConGroups -- one for recv, the other for send -- each in a flat array
+// * Connections -- each thread has its own chunk and indexes into it..
+
+
 // on functions in the spec:
 // only those functions that relate to the computational processing done by
 // a given object should be defined in the spec, while the "structural" or
@@ -65,6 +91,44 @@ class T3Panel; //
 // note that with the projection spec, its job is to define connectivity, so
 // it does have structural functions in the spec..
 
+
+// this macro can be used instead of NET_THREAD_CALL to just loop directly
+// over a thread-level method call -- for cases that are not thread safe
+#define NET_THREAD_LOOP(meth) { NetworkThreadCall meth_call((NetworkThreadMethod)(&meth));\
+    for(int thr_no=0; thr_no < n_thrs_built; thr_no++) \
+      meth_call.call(this, thr_no); }
+
+eTypeDef_Of(NetTiming);
+
+class E_API NetTiming : public taOBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Network timers for different network functions
+INHERITED(taOBase)
+public:
+  TimeUsedHR   netin;  // Compute_Netin net input
+  TimeUsedHR   act;    // Compute_Act activation
+  TimeUsedHR   dwt;    // Compute_dWt weight changes (learning)
+  TimeUsedHR   wt;     // Compute_Weights update weights
+
+  String       GetTypeDecoKey() const override { return "Network"; }
+
+  TA_SIMPLE_BASEFUNS(NetTiming);
+private:
+  void	Initialize()    { };
+  void 	Destroy()	{ };
+};
+
+eTypeDef_Of(NetTiming_List);
+
+class E_API NetTiming_List : public taList<NetTiming> {
+  // #NO_TOKENS #NO_UPDATE_AFTER List of NetTiming objects
+INHERITED(taList<NetTiming>)
+public:
+
+  TA_BASEFUNS_NOCOPY(NetTiming_List);
+private:
+  void Initialize()  { SetBaseType(&TA_NetTiming); };
+  void Destroy()     { };
+};
 
 eTypeDef_Of(NetStatsSpecs);
 
@@ -127,6 +191,8 @@ public:
     SAVE_UNITS_FORCE    = 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
     MANUAL_POS          = 0x0004, // disables the automatic cleanup/positioning of layers
     NETIN_PER_PRJN      = 0x0008, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
+    BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
+    INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
   };
 
   enum NetTextLoc {
@@ -146,6 +212,9 @@ public:
 
   NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
 
+  TypeDef*      unit_vars_type; // #CAT_Structure #TYPE_UnitVars type of unit variables object to create in the network -- there can only be ONE type of UnitVars in the entire network, because it is allocated globally!
+  TypeDef*      con_group_type; // #CAT_Structure #TYPE_ConGroup type of connection group objects to create in the network -- there can only be ONE type of ConGroup in the entire network, because it is allocated globally!
+
   AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
 
   taBrainAtlasRef 	brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
@@ -156,7 +225,8 @@ public:
   int           small_batch_n;  // #CONDSHOW_ON_wt_update:SMALL_BATCH #CAT_Learning number of events for small_batch learning mode (specifies how often weight changes are synchronized in dmem)
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
-  UnitCallThreadMgr threads;    // #CAT_Threads parallel threading of network computation
+  NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
+  NetTiming_List   net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
@@ -193,27 +263,7 @@ public:
   TimeUsed      wt_sync_time;   // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic time used for the DMem_SumDWts operation (trial-level dmem, computed by network)
   TimeUsed      misc_time;      // #NO_SAVE #GUI_READ_ONLY #EXPERT #CAT_Statistic misc timer for ad-hoc use by programs
 
-  UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Threads flat list of units for deploying in threads and for connection indexes -- first (0 index) is a null unit that is skipped over and should never be computed on
-  Unit*         null_unit;      // #HIDDEN #NO_SAVE unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
-  float_Matrix  send_netin_tmp; // #NO_SAVE #READ_ONLY #CAT_Threads temporary storage for threaded sender-based netinput computation -- dimensions are [un_idx][task] (inner = units, outer = task, such that units per task is contiguous in memory)
-
   bool          needs_wt_sym;   // #HIDDEN #NO_SAVE tmp flag managed by Init_Weights to determine if any connections have the wt_limits.sym flag checked and thus need weight symmetrizing to happen
-  int64_t       own_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to own_cons
-  int           own_units_x_cons; // #HIDDEN #NO_SAVE number of owning units * con groups that are stored in own_cons_mem
-  int           own_cons_max_size; // #HIDDEN #NO_SAVE maximum alloc_size of any owning connection group -- for allocating temp structures..
-  int           own_cons_avg_size; // #HIDDEN #NO_SAVE average size of any owning connection group -- for optimizing computation
-  int           own_cons_max_vars; // #HIDDEN #NO_SAVE maximum NConVars of any owning connection group -- for allocating temp structures..
-  float         pct_cons_vec_chunked; // #READ_ONLY #NO_SAVE #SHOW average percent of connections that are vector chunked (across owned projections and units)
-  float*        own_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
-  int64_t       ptr_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to ptr_cons
-  int           ptr_units_x_cons; // #HIDDEN #NO_SAVE number of pointer units * con groups that are stored in ptr_cons_mem
-  float*        ptr_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the connections that are owned by the BaseCons object -- depends on the algorithm whether these are the senders (Leabra) or the receivers (everything else)
-  int64_t       bias_cons_cnt;   // #HIDDEN #NO_SAVE number of floats to allocate to bias_cons
-  float*        bias_cons_mem;   // #IGNORE #NO_SAVE bulk memory allocated for all of the bias connections
-
-  int*          tmp_chunks;      // #IGNORE tmp con vec chunking memory
-  int*          tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
-  float*        tmp_con_mem;     // #IGNORE tmp con vec chunking memory
 
   Usr1SaveFmt   usr1_save_fmt;  // #CAT_File #EXPERT save network for -USR1 signal: full net or weights
   WtSaveFormat  wt_save_fmt;    // #CAT_File #EXPERT format to save weights in if saving weights
@@ -223,6 +273,62 @@ public:
   int           max_prjns;      // #READ_ONLY #EXPERT #CAT_Structure maximum number of prjns per any given layer or unit in the network
   PosVector3i   max_disp_size;  // #AKA_max_size #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net
   PosVector2i   max_disp_size2d; // #READ_ONLY #EXPERT #CAT_Structure maximum display size in each dimension of the net -- for 2D display
+
+  //////////////////////////////////////////////////////////////////////////////////
+  // Following is full memory structure for the units and connections in the network
+
+  int_Array     active_layers;
+  // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
+
+  UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Structure flat list of structural Unit's -- first (0 index) is a null unit that is skipped over and should never be computed on -- this is ALL units regardless of unit-level lesion status (but it does account for layer-level lesion status)
+  Unit*         null_unit;      // #HIDDEN #NO_SAVE #CAT_Structure unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
+
+  int           n_thrs_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of threads that the network was built for -- must use this number of threads for running network, and rebuild if the number changes
+  TypeDef*      unit_vars_built; // #NO_SAVE #READ_ONLY #CAT_Structure #TYPE_UnitVars type of unit variables objects actually built
+  TypeDef*      con_group_built; // #NO_SAVE #READ_ONLY #CAT_Structure #TYPE_ConGroup type of con group objects actually built
+  int           con_group_size;  // #NO_SAVE #READ_ONLY #CAT_Structure size in bytes of con group objects actually built 
+  int           unit_vars_size;  // #NO_SAVE #READ_ONLY #CAT_Threads number of float variables in the unit_vars_built UnitVars
+  int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of units built -- actually the n+1 size of units_flat
+  int           n_layers_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of active layers when built -- size of active_layers array
+  int           max_thr_n_units; // #NO_SAVE #READ_ONLY #CAT_Threads maximum number of units assigned to any one thread
+  int*          units_thrs;   // #IGNORE allocation of units to threads -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating which thread is responsible for that unit
+  int*          units_thr_un_idxs; // #IGNORE allocation of units to threads, thread-specific index for this unit -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating index in thread-specific memory where that unit lives
+  int*          thrs_n_units; // #IGNORE number of units assigned to each thread -- array of int[n_threads_built]
+  int**         thrs_unit_idxs; // #IGNORE allocation of units to threads -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing unit->flat_idx indexes of units processed by a given thread (thread-centric complement to units_thrs)
+  char**       thrs_units_mem;  // #IGNORE actual memory allocation of UnitVars variables, organized by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_units[thr_no] * unit_vars_size], containing the units processed by a given thread -- this is the primary memory allocation of units
+  int**        thrs_lay_unit_idxs; // #IGNORE allocation of units to layers by threads -- array of int**[n_thrs_built], pointing to arrays of int[active_layers * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given layer
+
+  int*          units_n_recv_cgps;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
+  int*          units_n_send_cgps;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
+  int           n_recv_cgps; // #IGNORE total number of units * recv con groups per unit
+  int           n_send_cgps; // #IGNORE total number of units * send con groups per unit
+
+  int**         thrs_units_n_recv_cgps;   // #IGNORE number of receiving connection groups per unit, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing number of recv groups per unit
+  int**         thrs_units_n_send_cgps;   // #IGNORE number of sending connection groups per unit, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing number of send groups per unit
+  int*          thrs_n_recv_cgps;       // #IGNORE total number of units * recv con groups per unit, per thread: array of int[n_thrs_built] of units * thrs_units_n_recv_cgps 
+  int*          thrs_n_send_cgps;       // #IGNORE total number of units * send con groups per unit, per thread: array of int[n_thrs_built] of units * thrs_units_n_send_cgps 
+
+  char**        thrs_recv_cgp_mem; // #IGNORE memory allocation for ConGroup for all recv connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[n_recv_cgps[thr_no] * con_group_size], containing the recv ConGroup processed by a given thread -- this is the primary memory allocation of recv ConGroups
+  char**        thrs_send_cgp_mem; // #IGNORE memory allocation for ConGroup for all send connection group objects, by thread -- array of char*[n_thrs_built], pointing to arrays of char[n_send_cgps[thr_no] * con_group_size], containing the send ConGroup processed by a given thread -- this is the primary memory allocation of send ConGroups
+  int**         thrs_recv_cgp_start; // #IGNORE starting indexes into thrs_recv_cgp_mem, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing indexes into thrs_recv_cgp_mem for first recv gp for given unit -- contains 0 for units that have none 
+  int**         thrs_send_cgp_start; // #IGNORE starting indexes into thrs_send_cgp_mem, per thread units (organized 1-to-1 with thrs_units*) -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing indexes into thrs_send_cgp_mem for send recv gp for given unit -- contains 0 for units that have none 
+
+  int64_t*      thrs_recv_cons_cnt; // #IGNORE number of floats to allocate to thrs_recv_cons_mem
+  int64_t*      thrs_send_cons_cnt; // #IGNORE number of floats to allocate to thrs_send_cons_mem
+  float**       thrs_recv_cons_mem; // #IGNORE bulk memory allocated for all of the recv connections, by thread -- array of float*[thrs_recv_cons_cnt[thr_no]]
+  float**       thrs_send_cons_mem; // #IGNORE bulk memory allocated for all of the recv connections, by thread -- array of float*[thrs_recv_cons_cnt[thr_no]]
+
+  int*          thrs_own_cons_max_size; // #IGNORE maximum alloc_size of any owning connection group, by thread -- for allocating temp structures..
+  int*          thrs_own_cons_avg_size; // #IGNORE average size of any owning connection group, by thread -- for optimizing computation
+  int*          thrs_own_cons_max_vars; // #IGNORE maximum NConVars of any owning connection group, by thread -- for allocating temp structures..
+  float*        thrs_pct_cons_vec_chunked; // #IGNORE average percent of connections that are vector chunked (across owned projections and units), by thread
+
+
+  int**         thrs_tmp_chunks;      // #IGNORE tmp con vec chunking memory
+  int**         thrs_tmp_not_chunks;  // #IGNORE tmp con vec chunking memory
+  float**       thrs_tmp_con_mem;     // #IGNORE tmp con vec chunking memory
+
+  float**       thrs_send_netin_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based netinput computation -- float*[threads] array of float[n_units]
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
   bool          old_load_cons;  // #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
@@ -237,10 +343,93 @@ public:
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  inline Unit*  UnFmIdx(int idx) const { return units_flat.FastEl(idx); }
+  inline Unit*  UnFmIdx(int flat_idx) const { return units_flat.FastEl(flat_idx); }
   // #CAT_Structure get the unit from its flat_idx value
-  inline Unit*  UnFmIdx_Safe(int idx) const { return units_flat.SafeEl(idx); }
+  inline Unit*  UnFmIdx_Safe(int flat_idx) const { return units_flat.SafeEl(flat_idx); }
   // #CAT_Structure get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
+
+  inline int    UnThr(int flat_idx) const { return units_thrs[flat_idx]; }
+  // #CAT_Structure thread that owns and processes the given unit (flat_idx)
+  inline int    UnThrUnIdx(int flat_idx) const { return units_thr_un_idxs[flat_idx]; }
+  // #CAT_Structure index in thread-specific memory where that unit lives for given unit (flat_idx)
+  inline int    ThrNUnits(int thr_no) const { return thrs_n_units[thr_no]; }
+  // #CAT_Structure number of units processed by given thread
+  inline int    ThrUnitIdx(int thr_no, int thr_un_idx) const
+  { return thrs_unit_idxs[thr_no][thr_un_idx]; }
+  // #CAT_Structure flat_idx of unit at given thread, thread-specific unit index (max ThrNUnits()-1)
+  inline UnitVars*  ThrUnitVars(int thr_no, int thr_un_idx) const
+  { return (UnitVars*)(thrs_units_mem[thr_no] + (thr_un_idx * unit_vars_size)); }
+  // #CAT_Structure unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
+  inline Unit*      ThrUnit(int thr_no, int thr_un_idx) const
+  { return UnFmIdx(ThrUnitIdx(thr_no, thr_un_idx)); }
+  // #CAT_Structure structural Unit object at given thread, thread-specific unit index (max ThrNUnits()-1)
+  inline UnitVars*  UnUnitVars(int flat_idx) const
+  { return ThrUnitVars(UnThr(flat_idx), UnThrUnIdx(flat_idx)); }
+  // #CAT_Structure unit variables for unit at given unit at flat_idx 
+  inline int    ThrLayUnStart(int thr_no, int lay_no)
+  { return thrs_lay_unit_idxs[thr_no][2*lay_no]; }
+  // #CAT_Structure starting thread-specific unit index for given layer (from active_layers list)
+  inline int    ThrLayUnEnd(int thr_no, int lay_no)
+  { return thrs_lay_unit_idxs[thr_no][2*lay_no + 1]; }
+  // #CAT_Structure ending thread-specific unit index for given layer (from active_layers list) -- this is like the max in a for loop -- valid indexes are < end
+  inline Layer* ActiveLayer(int lay_no)
+  { return layers.Leaf(active_layers[lay_no]); }
+  // #CAT_Structure retrieve actual layer from active_layers list for given layer index
+
+  inline int    UnNRecvConGps(int flat_idx) const { return units_n_recv_cgps[flat_idx]; }
+  // #CAT_Structure number of recv connection groups for given unit at flat_idx
+  inline int    UnNSendConGps(int flat_idx) const { return units_n_send_cgps[flat_idx]; }
+  // #CAT_Structure number of send connection groups for given unit at flat_idx
+
+  inline int    ThrUnNRecvConGps(int thr_no, int thr_un_idx) const
+  { return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
+  // #CAT_Structure number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  inline int    ThrUnNSendConGps(int thr_no, int thr_un_idx) const
+  { return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
+  // #CAT_Structure number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  
+  inline int    ThrNRecvConGps(int thr_no) const
+  { return thrs_n_recv_cgps[thr_no]; }
+  // #CAT_Structure number of recv connection groups as a flat list across all units processed by given thread
+  inline int    ThrNSendConGps(int thr_no) const
+  { return thrs_n_send_cgps[thr_no]; }
+  // #CAT_Structure number of send connection groups as a flat list across all units processed by given thread
+
+  inline ConGroup* ThrRecvConGroup(int thr_no, int thr_cgp_idx) const
+  { return (ConGroup*)(thrs_recv_cgp_mem[thr_no] + (thr_cgp_idx * con_group_size)); }
+  // #CAT_Structure recv ConGroup for given thread, thread-specific con-group index 
+  inline ConGroup* ThrSendConGroup(int thr_no, int thr_cgp_idx) const
+  { return (ConGroup*)(thrs_send_cgp_mem[thr_no] + (thr_cgp_idx * con_group_size)); }
+  // #CAT_Structure send ConGroup for given thread, thread-specific con-group index 
+
+  inline ConGroup* ThrUnRecvConGroup(int thr_no, int thr_un_idx, int recv_idx) const
+  { return ThrRecvConGroup(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
+  // #CAT_Structure recv ConGroup for given thread, thread-specific unit index, and recv group index
+  inline ConGroup* ThrUnSendConGroup(int thr_no, int thr_un_idx, int send_idx) const
+  { return ThrSendConGroup(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
+  // #CAT_Structure send ConGroup for given thread, thread-specific unit index, and send group index
+
+  inline ConGroup* RecvConGroup(int flat_idx, int recv_idx) const
+  { int thr_no = UnThr(flat_idx); 
+    return ThrUnRecvConGroup(thr_no, UnThrUnIdx(flat_idx), recv_idx); }
+  // #CAT_Structure recv ConGroup for given flat unit index and recv group index number
+  inline ConGroup* SendConGroup(int flat_idx, int send_idx) const
+  { int thr_no = UnThr(flat_idx); 
+    return ThrUnSendConGroup(thr_no, UnThrUnIdx(flat_idx), send_idx); }
+  // #CAT_Structure send ConGroup for given flat unit index and send index number
+
+  inline float* ThrSendNetinTmp(int thr_no) const 
+  { return thrs_send_netin_tmp[thr_no]; }
+  // #CAT_Structure temporary sending netinput memory for given thread -- no NETIN_PER_PRJN version
+  inline float* ThrSendNetinTmpPerPrjn(int thr_no, int recv_idx) const 
+  { return thrs_send_netin_tmp[thr_no] + recv_idx * n_units_built; }
+  // #CAT_Structure temporary sending netinput memory for given thread -- NETIN_PER_PRJN version
+
+
+  static bool net_aligned_malloc(void** ptr, size_t sz);
+  // properly (maximally) aligned memory allocation routine to given pointer of given number of bytes -- alignment is (currently) 64 bytes
+  static bool net_free(void** ptr);
+  // free previously malloc'd memory, and set *ptr = NULL
 
   virtual void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
@@ -248,29 +437,53 @@ public:
     // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
     virtual void  BuildLayers();
     // #MENU #MENU_ON_Structure #CAT_Structure Build any network layers that are dynamically constructed
-    virtual void  BuildUnits();
-    // #MENU #CAT_Structure Build the network units in layers according to geometry
-    virtual void  BuildNullUnit();
-    // #IGNORE make the null_unit unit
-    virtual void  BuildUnits_Threads();
-    // #IGNORE build unit-level thread information: flat list of units, etc, and update thread structures
-    virtual void  BuildUnits_Threads_send_netin_tmp();
-    // #IGNORE allocate send_netin_tmp for netin computation
     virtual void  BuildPrjns();
     // #MENU #CAT_Structure Build any network prjns that are dynamically constructed
+    virtual void  BuildUnits();
+    // #IGNORE Build the network units in layers according to geometry
+    virtual void  BuildNullUnit();
+    // #IGNORE make the null_unit unit
+    virtual void  BuildUnitsFlatList();
+    // #IGNORE build flat list of units
+    virtual void  FreeUnitConGpThreadMem();
+    // #IGNORE free all of the thread-based unit, connection-group memory -- also calls FreeConThreadMem()
+    virtual void  FreeConThreadMem();
+    // #IGNORE free all of the thread-based connection memory
+    virtual void  AllocUnitConGpThreadMem();
+    // #IGNORE allocate all of the thread-based unit, connection group memory
+    virtual void  InitUnitThreadIdxs(int thr_no);
+    // #IGNORE initialize thread-specific index structures
+    virtual void  InitUnitConGpThreadMem(int thr_no);
+    // #IGNORE initialize thread-based unit and con group memory -- should assign to thread
+    virtual int   FindActiveLayerIdx(Layer* lay, const int st_idx);
+    // #IGNORE find the index in active_layers of this layer -- uses st_idx to seed a bidirectional search, so if you have any hint as to where it might be found, this results in considerable speedup
+#ifdef NUMA_COMPILE
+    virtual void  FreeUnitConGpThreadMem_Thr(int thr_no);
+    // #IGNORE free all of the thread-based unit, connection group memory -- thread-specific, for NUMA
+    virtual void  FreeConThreadMem_Thr(int thr_no);
+    // #IGNORE free all of the thread-based connection memory -- thread-specific, for NUMA
+    virtual void  AllocUnitConGpThreadMem_Thr(int thr_no);
+    // #IGNORE allocate all of the thread-based unit, connection group memory -- thread-specific, for NUMA
+    virtual void  AllocSendNetinTmp_Thr(int thr_no);
+    // #IGNORE alloc send_netin_tmp for netin computation, for NUMA
+#endif
+    virtual void  AllocSendNetinTmp();
+    // #IGNORE allocate send_netin_tmp for netin computation
+    virtual void  InitSendNetinTmp_Thr(int thr_no);
+    // #IGNORE init send_netin_tmp for netin computation
   virtual void  Connect();
-  // #MENU #CAT_Structure Connect this network according to projections on Layers
+  // #IGNORE Connect this network according to projections on Layers -- must be done as part of Build to ensure proper sync
     virtual void  Connect_Sizes();
     // #IGNORE first pass of connecting -- sets up all the Cons objects within units, and computes all the target allocation size information (done by projection specs)
     virtual void  Connect_Alloc();
-    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list
-    virtual void  Connect_Alloc_RecvOwns();
-    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list -- for recv owns cons
-    virtual void  Connect_Alloc_SendOwns();
-    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done on the flat unit list -- for send owns cons
+    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- managed by the Network and done by thread
+    virtual void  Connect_AllocSizes_Thr(int thr_no);
+    // #IGNORE second pass of connecting -- allocate all the memory for all the connections -- get the total sizes needed
+    virtual void  Connect_Alloc_Thr(int thr_no);
+    // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
     virtual void  Connect_Cons();
     // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
-    virtual void  Connect_VecChunk();
+    virtual void  Connect_VecChunk(int thr_no);
     // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
 
   virtual bool  CheckBuild(bool quiet=false);
@@ -283,8 +496,6 @@ public:
   virtual void  SetUnitType(TypeDef* td);
   // #MENU #TYPE_Unit #CAT_Structure set unit type for all units in layer (created by Build)
 
-  virtual void  UpdtActiveCons();
-  // #CAT_Structure update active status of all connections
   virtual void  SyncSendPrjns();
   // #CAT_Structure synchronize sending projections with the recv projections so everyone's happy
   virtual void  CountCons();
@@ -298,12 +509,12 @@ public:
 
   virtual void  RemoveCons();
   // #MENU #MENU_ON_Structure #CONFIRM #MENU_SEP_BEFORE #CAT_Structure Remove all connections in network
+    virtual void  RemoveCons_Thr(int thr_no);
+    // #IGNORE thread level remove cons
   virtual void  RemoveUnits();
-  // #MENU #CONFIRM #CAT_Structure Remove all units in network (preserving unit groups)
-  virtual void  RemoveUnitGroups();
-  // #MENU #CONFIRM #CAT_Structure Remove all unit groups in network
+  // #MENU #CONFIRM #CAT_Structure Remove all units in network -- also calls RemoveCons()
 
-  virtual void  FixPrjnIndexes();
+  virtual void  UpdatePrjnIdxs();
   // #CAT_Structure fix the projection indexes of the connection groups (recv_idx, send_idx)
 
   virtual void  GetWeightsFromGPU() { };
@@ -345,16 +556,26 @@ public:
 
   virtual void  Init_InputData();
   // #CAT_Activation Initializes external and target inputs
+    virtual void  Init_InputData_Thr(int thr_no);
+    // #IGNORE
   virtual void  Init_Acts();
   // #MENU #MENU_ON_State #MENU_SEP_BEFORE #CAT_Activation initialize the unit activation state variables
+    virtual void  Init_Acts_Thr(int thr_no);
+    // #IGNORE
   virtual void  Init_dWt();
   // #CAT_Learning Initialize the weight change variables
+    virtual void  Init_dWt_Thr(int thr_no);
+    // #IGNORE
   virtual void  Init_Weights();
   // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
-    virtual void Init_Weights_sym();
-    // #CAT_Learning symmetrize weights after first init pass, called when needed
+    virtual void  Init_Weights_Thr(int thr_no);
+    // #IGNORE
+    virtual void Init_Weights_sym(int thr_no);
+    // #IGNORE symmetrize weights after first init pass, called when needed
     virtual void Init_Weights_post();
     // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+    virtual void Init_Weights_post_Thr(int thr_no);
+    // #IGNORE
     virtual void Init_Weights_Layer();
     // #CAT_Learning call layer-level init weights functions -- after all unit-level inits
 
@@ -373,24 +594,34 @@ public:
 
   virtual void  Compute_Netin();
   // #CAT_Activation Compute NetInput: weighted activation from other units
+    virtual void  Compute_Netin_Thr(int thr_no);
+    // #IGNORE
   virtual void  Send_Netin();
   // #CAT_Activation sender-based computation of net input: weighted activation from other units
+    virtual void  Send_Netin_Thr(int thr_no);
+    // #IGNORE
     inline bool NetinPerPrjn() { return HasNetFlag(NETIN_PER_PRJN); }
     // #CAT_Activation is this network configured to compute net input on a per-prjn basis?
   virtual void  Compute_Act();
   // #CAT_Activation Compute Activation based on net input
+    virtual void  Compute_Act_Thr(int thr_no);
+    // #IGNORE
   virtual void  Compute_NetinAct();
   // #CAT_Activation compute net input from other units and then our own activation value based on that -- use this for feedforward networks to propagate activation through network in one compute cycle
+    virtual void  Compute_NetinAct_Thr(int thr_no);
+    // #IGNORE
 
   virtual void  Compute_dWt();
   // #CAT_Learning compute weight changes -- the essence of learning
+    virtual void  Compute_dWt_Thr(int thr_no);
+    // #IGNORE
 
   virtual bool  Compute_Weights_Test(int trial_no);
   // #CAT_Learning check to see if it is time to update the weights based on the given number of completed trials (typically trial counter + 1): if ON_LINE, always true; if SMALL_BATCH, only if trial_no % batch_n_eff == 0; if BATCH, never (check at end of epoch and run then)
   virtual void  Compute_Weights();
   // #CAT_Learning update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode
-  virtual void  Compute_Weights_impl();
-  // #CAT_Learning just the weight update routine: update weights from delta-weight changes
+    virtual void  Compute_Weights_Thr(int thr_no);
+    // #IGNORE
 
   virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
@@ -644,7 +875,7 @@ private:
 // these inline functions depend on having all the structure defined already
 // so we include them here, at the very end
 
-#include <BaseCons_inlines>
+#include <ConGroup_inlines>
 #include <Unit_inlines>
 #include <ConSpec_inlines>
 

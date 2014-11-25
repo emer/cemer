@@ -111,7 +111,7 @@ bool ActBasedRF::IncrementSums() {
     Unit* tu;
     taLeafItr tui;
     for(tu = trg_layer->units.FirstEl(tui); tu; tu = trg_layer->units.NextEl(tui), tidx++) {
-      float tact = fabsf(tu->act);
+      float tact = fabsf(tu->act());
       if(tact < threshold) continue; // not this time!
 
       wt_array.FastEl1d(tidx) += tact;
@@ -122,7 +122,7 @@ bool ActBasedRF::IncrementSums() {
       Unit* su;
       taLeafItr sui;
       for(su = lay->units.FirstEl(sui); su; su = lay->units.NextEl(sui), sidx++) {
-        sum_mat->FastEl1d(sidx) += tu->act * su->act;
+        sum_mat->FastEl1d(sidx) += tu->act() * su->act();
       }
       taBase::unRefDone(sum_mat);
     }

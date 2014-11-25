@@ -161,7 +161,7 @@ void TdLayerSpec::Send_Td(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
     for(int g=0; g<u->send.size; g++) {
-      LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+      LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       for(int j=0;j<send_gp->size; j++) {

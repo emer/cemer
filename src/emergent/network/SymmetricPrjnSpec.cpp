@@ -27,7 +27,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
       int n_cons = 0;
       FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
-        if(RecvCons::FindRecipRecvCon(con_idx, su, ru, prjn->layer))
+        if(ConGroup::FindRecipRecvCon(con_idx, su, ru, prjn->layer))
           n_cons++;
       }
       ru->RecvConsPreAlloc(n_cons, prjn);
@@ -37,7 +37,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
       int n_cons = 0;
       FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
-        if(RecvCons::FindRecipSendCon(con_idx, ru, su, prjn->from))
+        if(ConGroup::FindRecipSendCon(con_idx, ru, su, prjn->from))
           n_cons++;
       }
       su->SendConsPreAlloc(n_cons, prjn);
@@ -47,7 +47,7 @@ void SymmetricPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     int cnt = 0;
     FOREACH_ELEM_IN_GROUP(Unit, ru, prjn->layer->units) {
       FOREACH_ELEM_IN_GROUP(Unit, su, prjn->from->units) {
-        if(RecvCons::FindRecipRecvCon(con_idx, su, ru, prjn->layer))
+        if(ConGroup::FindRecipRecvCon(con_idx, su, ru, prjn->layer))
           if(ru->ConnectFrom(su, prjn))
             cnt++;
       }

@@ -45,11 +45,13 @@ void Layer::Initialize() {
   // gp_geom = ??
   gp_spc.x = 1;
   gp_spc.y = 1;
+  n_recv_prjns = 0;
+  n_send_prjns = 0;
   projections.SetBaseType(&TA_Projection);
   send_prjns.send_prjns = true;
   units.SetBaseType(&TA_Unit);
   // unit_spec = ??
-  ext_flag = Unit::NO_EXTERNAL;
+  ext_flag = UnitVars::NO_EXTERNAL;
   // flat_geom = ??
   disp_geom = un_geom;
   scaled_disp_geom = disp_geom;
@@ -143,6 +145,8 @@ void Layer::Copy_(const Layer& cp) {
   flat_geom = cp.flat_geom;
   disp_geom = cp.disp_geom;
   scaled_disp_geom = cp.scaled_disp_geom;
+  n_recv_prjns = cp.n_recv_prjns;
+  n_send_prjns = cp.n_send_prjns;
   projections = cp.projections;
   units = cp.units;
   unit_spec = cp.unit_spec;
@@ -236,8 +240,13 @@ void Layer::UpdateAfterEdit_impl() {
 }
 
 void Layer::Lesion() {
+  if(lesioned()) return;
   StructUpdate(true);
   SetLayerFlag(LESIONED);
+  FOREACH_ELEM_IN_GROUP(Unit, u, units) { // unit-level needs lesion flag too
+    if(u->lesioned()) continue;
+    u->Lesion();
+  }
   if(own_net)
     Init_Acts(own_net);
   m_prv_layer_flags = flags;
@@ -249,6 +258,7 @@ void Layer::Lesion() {
 void Layer::UnLesion()  {
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
+  UnLesionUnits();              // all our units were lesioned when parent was
   m_prv_layer_flags = flags;
   StructUpdate(false);
   if(own_net)
@@ -508,6 +518,7 @@ void Layer::BuildUnits() {
   taMisc::Busy();
   StructUpdate(true);
   RecomputeGeometry();
+  UpdatePrjnIdxs();
   units_lesioned = false;
   bool units_changed = false;
   if(unit_groups) {
@@ -578,7 +589,29 @@ void Layer::BuildUnits() {
   taMisc::DoneBusy();
 }
 
-void Layer::BuildUnits_Threads(Network* net) {
+void Layer::UpdatePrjnIdxs() {
+  // make sure we always have up-to-date count of active prjns..
+  n_recv_prjns = 0;
+  n_send_prjns = 0;
+  FOREACH_ELEM_IN_GROUP(Projection, prj, projections) {
+    if(prj->IsActive()) {
+      prj->recv_idx = n_recv_prjns++;
+    }
+    else {
+      prj->recv_idx = -1;
+    }
+  }
+  FOREACH_ELEM_IN_GROUP(Projection, prj, send_prjns) {
+      if(prj->IsActive()) {
+      prj->send_idx = n_send_prjns++;
+    }
+    else {
+      prj->send_idx = -1;
+    }
+  }
+}
+
+void Layer::BuildUnitsFlatList(Network* net) {
   units_flat_idx = net->units_flat.size;
   FOREACH_ELEM_IN_GROUP(Unit, un, units) {
     if(un->lesioned()) continue;
@@ -658,31 +691,6 @@ void Layer::CheckChildConfig_impl(bool quiet, bool& rval) {
   projections.CheckConfig(quiet, rval);
 }
 
-void Layer::FixPrjnIndexes() {
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
-    p->FixPrjnIndexes();
-}
-
-void Layer::RemoveCons() {
-  taMisc::Busy();
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
-    if(p->spec.spec)
-      p->RemoveCons();
-  }
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->RemoveCons();
-  }
-  taMisc::DoneBusy();
-}
-
-void Layer::RemoveCons_Net() {
-  taMisc::Busy();
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->RemoveCons();
-  }
-  taMisc::DoneBusy();
-}
-
 void Layer::RemoveUnits() {
   taMisc::Busy();
   StructUpdate(true);
@@ -690,8 +698,7 @@ void Layer::RemoveUnits() {
     units.RemoveAll();
   }
   else {
-    int g;
-    for(g=0; g<units.gp.size; g++) {
+    for(int g=0; g<units.gp.size; g++) {
       Unit_Group* ug = (Unit_Group*)units.gp.FastEl(g);
       ug->RemoveAll();
     }
@@ -715,10 +722,6 @@ void Layer::Connect_Sizes(Network* net) {
     p->Connect_Sizes();
   }
 
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->AllocBias();
-  }
-
   StructUpdate(false);
   taMisc::DoneBusy();
 }
@@ -728,10 +731,6 @@ void Layer::Connect_Cons(Network* net) {
   StructUpdate(true);
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
     p->Connect_Cons();
-  }
-
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    u->ConnectBias();
   }
 
   StructUpdate(false);
@@ -764,22 +763,15 @@ int Layer::CountCons(Network* net) {
   return n_cons;
 }
 
-void Layer::UpdtActiveCons() {
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    //    if(u->lesioned()) continue;
-    u->UpdtActiveCons();
-  }
-}
-
 void Layer::SetLayUnitExtFlags(int flg) {
   SetExtFlag(flg);
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    u->SetExtFlag((Unit::ExtType)flg);
+    u->GetUnitVars()->SetExtFlag((UnitVars::ExtFlags)flg);
   }
 }
 
-void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyInputData(taMatrix* data, UnitVars::ExtFlags ext_flags,
            Random* ran, const PosVector2i* offset, bool na_by_range)
 {
   // note: when use LayerWriters, we typically always just get a single frame of
@@ -811,7 +803,7 @@ void Layer::ApplyInputData(taMatrix* data, Unit::ExtType ext_flags,
   }
 }
 
-void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyInputData_1d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                               Random* ran, bool na_by_range) {
   for(int d_x = 0; d_x < data->dim(0); d_x++) {
     Unit* un = units.Leaf(d_x);
@@ -822,7 +814,7 @@ void Layer::ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
   }
 }
 
-void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                               Random* ran, const taVector2i& offs, bool na_by_range) {
   for(int d_y = 0; d_y < data->dim(1); d_y++) {
     int u_y = offs.y + d_y;
@@ -837,7 +829,7 @@ void Layer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
   }
 }
 
-void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+void Layer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                   Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -858,7 +850,7 @@ void Layer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
   }
 }
 
-void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran,
+void Layer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Random* ran,
                                 bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -877,32 +869,24 @@ void Layer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random*
   }
 }
 
-void Layer::ApplyLayerFlags(Unit::ExtType act_ext_flags) {
+void Layer::ApplyLayerFlags(UnitVars::ExtFlags act_ext_flags) {
   SetExtFlag(act_ext_flags);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-//      Below are the primary computational interface to the Network Objects
-//      for performing algorithm-specific activation and learning
-//      Many functions operate directly on the units via threads, with
-//      optional call through to the layers for any layer-level subsequent processing
+//  Below are the primary computational interface to the Network Objects
+//  for performing algorithm-specific activation and learning
+//  All functions at network level operate directly on the units via threads, with
+//  optional call through to the layers for any layer-level subsequent processing
 
 void Layer::Init_InputData(Network* net) {
-  if(ext_flag == Unit::NO_EXTERNAL)
-    return;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(u->lesioned()) continue;
-    u->Init_InputData();
-  }
-  ext_flag = Unit::NO_EXTERNAL;
+  ext_flag = UnitVars::NO_EXTERNAL;
+  // unit-level done separately!
 }
 
 void  Layer::Init_Acts(Network* net) {
-  ext_flag = Unit::NO_EXTERNAL;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(u->lesioned()) continue;
-    u->Init_Acts(net);
-  }
+  ext_flag = UnitVars::NO_EXTERNAL;
+  // unit-level done separately!
 }
 
 void Layer::Init_Weights_Layer(Network* net) {
@@ -912,11 +896,12 @@ void Layer::Init_Weights_Layer(Network* net) {
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
-  if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0.0f;
+  if(!HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0.0f;
+  // todo: fix this logic to be cleaner
   bool has_targ;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    sse += u->Compute_SSE(net, has_targ);
+    sse += u->GetUnitSpec()->Compute_SSE(u->GetUnitVars(), net, has_targ);
     if(has_targ) n_vals++;
   }
   float rval = sse;
@@ -924,7 +909,7 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
     sse /= (float)n_vals;
   if(sqrt)
     sse = sqrtf(sse);
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) &&
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
                                   HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
@@ -935,11 +920,11 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
 int Layer::Compute_PRerr(Network* net) {
   int n_vals = 0;
   prerr.InitVals();
-  if(!HasExtFlag(Unit::TARG | Unit::COMP)) return 0;
+  if(!HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0;
   float true_pos, false_pos, false_neg, true_neg;
   FOREACH_ELEM_IN_GROUP(Unit, u, units) {
     if(u->lesioned()) continue;
-    bool has_targ = u->Compute_PRerr(net, true_pos, false_pos, false_neg, true_neg);
+    bool has_targ = u->GetUnitSpec()->Compute_PRerr(u->GetUnitVars(), net, true_pos, false_pos, false_neg, true_neg);
     if(has_targ) {
       n_vals++;
       prerr.true_pos += true_pos;
@@ -949,7 +934,7 @@ int Layer::Compute_PRerr(Network* net) {
     }
   }
   prerr.ComputePR();
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(Unit::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
     n_vals = 0;
   }
   return n_vals;
@@ -961,16 +946,17 @@ int Layer::Compute_PRerr(Network* net) {
 void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
-void Layer::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
+
+void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
   units.SaveWeights_strm(strm, fmt);
 }
 
-int Layer::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   return units.LoadWeights_strm(strm, fmt, quiet);
 }
 
-int Layer::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Layer::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
 }
 

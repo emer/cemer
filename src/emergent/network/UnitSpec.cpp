@@ -26,7 +26,6 @@ void UnitSpec::Initialize() {
   min_obj_type = &TA_Unit;
   act_range.max = 1.0f; act_range.min = 0.0f;
   act_range.range = 1.0f; act_range.scale = 1.0f;
-  bias_con_type = NULL;
   sse_tol = 0.0f;
 }
 
@@ -52,7 +51,6 @@ void UnitSpec::CutLinks() {
 
 void UnitSpec::Copy_(const UnitSpec& cp) {
   act_range = cp.act_range;
-  bias_con_type = cp.bias_con_type;
   bias_spec = cp.bias_spec;
   sse_tol = cp.sse_tol;
 }
@@ -63,15 +61,6 @@ bool UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void UnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
-  if(!bias_con_type) return;
-  if(CheckError(!bias_spec.spec, quiet, rval,
-                 "Bias con type of:", bias_con_type->name,
-                 "does not have a spec set!"))
-    return;
-  CheckError((!bias_con_type->InheritsFrom(bias_spec.spec->min_obj_type)), quiet, rval,
-             "Bias con type of:", bias_con_type->name,
-             "is not of the correct type for the bias con spec,"
-             "which needs at least a:", bias_spec.spec->min_obj_type->name);
 }
 
 bool UnitSpec::CheckType_impl(TypeDef* td) {
@@ -95,163 +84,91 @@ void UnitSpec::UpdateAfterEdit_impl() {
   act_range.UpdateAfterEdit_NoGui();
 }
 
-void UnitSpec::BuildBiasCons() {
-  Network* net = (Network *) GET_MY_OWNER(Network);
-  if (!net) return;
-  net->BuildUnits();
-}
 
 ////////////////////////////////////////////////////////////////////////////////
-//      Below are the primary computational interface to the Network Objects
-//      for performing algorithm-specific activation and learning
-//      Many functions operate directly on the units via threads, and then
-//      call through to the layers for any layer-level subsequent processing
-//      units typically call spec versions except for basic stuff
+//  Below are the primary computational interface to the Network Objects
+//  for performing algorithm-specific activation and learning
+//  Most functions operate directly on the units via threads, and then
+//  call through to the layers for any layer-level subsequent processing
+//  ConGroup level processing is all done as a separate pass at network level
+//  so DON'T do that here!
 
-//      Init functions are NOT threaded, while Compute functions are
+void UnitSpec::Init_InputData(UnitVars* u, Network* net, int thr_no) {
+  u->ext_flag = UnitVars::NO_EXTERNAL;
+  u->ext = 0.0f;
+  u->targ = 0.0f;
+}
 
-void UnitSpec::Init_Acts(Unit* u, Network* net) {
-  u->Init_InputData();
+void UnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
+  u->ext_flag = UnitVars::NO_EXTERNAL;
+  u->ext = 0.0f;
+  u->targ = 0.0f;
   u->net = 0.0f;
   u->act = 0.0f;
 }
 
-void UnitSpec::Init_dWt(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    recv_gp->Init_dWt(u, net);
-  }
-  if(u->bias.IsActive()) {
-    bias_spec->B_Init_dWt(&u->bias, u, net);
+void UnitSpec::Init_dWt(UnitVars* u, Network* net, int thr_no) {
+  if(bias_spec) {
+    bias_spec->B_Init_dWt(u, net, thr_no);
   }
 }
 
-void UnitSpec::Init_Weights(Unit* u, Network* net, int thread_no) {
-  u->snap = 0.0f;
-
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    if(recv_gp->prjn->spec->init_wts) continue; // skip over 
-    recv_gp->Init_Weights(u, net);
-  }
-
-  if(u->bias.IsActive()) {
-    bias_spec->B_Init_Weights(&u->bias, u, net); // this is a virtual fun
-  }
-  
-  Init_Weights_Prjn(u, net, thread_no);
-}
-
-void UnitSpec::Init_Weights_Prjn(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    if(!recv_gp->prjn->spec->init_wts) continue; // only prjn guys
-    recv_gp->prjn->Init_Weights_Prjn(recv_gp, u, net);
+void UnitSpec::Init_Weights(UnitVars* u, Network* net, int thr_no) {
+  if(bias_spec) {
+    bias_spec->B_Init_Weights(u, net, thr_no);
   }
 }
 
-void UnitSpec::Init_Weights_sym(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    Projection* prjn = recv_gp->prjn;
-    if(prjn->layer->units_flat_idx < prjn->from->units_flat_idx)
-      continue;                 // higher copies from lower, so if we're lower, bail..
-    recv_gp->Init_Weights_sym(u, net);
+void UnitSpec::Init_Weights_post(UnitVars* u, Network* net, int thr_no) {
+  if(bias_spec) {
+    bias_spec->B_Init_Weights_post(u, net, thr_no);
   }
 }
 
-void UnitSpec::Init_Weights_post(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    recv_gp->Init_Weights_post(u, net);
-  }
-  if(u->bias.IsActive()) {
-    bias_spec->B_Init_Weights_post(&u->bias, u, net); // this is a virtual fun
-  }
-}
-
-void UnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
+void UnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
   u->net = 0.0f;
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    u->net += recv_gp->Compute_Netin(u, net);
-  }
-  if(u->bias.IsActive()) {
-    u->net += u->bias.OwnCn(0,BaseCons::WT);
+  if(bias_spec) {
+    u->net += u->bias_wt;
   }
 }
 
-void UnitSpec::Send_Netin(Unit* u, Network* net, int thread_no) {
-  // typically the whole point of using sender based net input is that you want to check
-  // here if the sending unit's activation (i.e., this one) is above some threshold
-  // so you don't send if it isn't above that threshold..  this isn't implemented here though.
-  if(thread_no < 0) thread_no = 0; // use 0 thread in tmp matrix in this case
-  if(net->NetinPerPrjn()) {
-    for(int g = 0; g < u->send.size; g++) {
-      SendCons* send_gp = u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      Layer* tol = send_gp->prjn->layer;
-      send_gp->Send_Netin_PerPrjn(net, thread_no, u);
-    }
-  }
-  else {
-    for(int g = 0; g < u->send.size; g++) {
-      SendCons* send_gp = u->send.FastEl(g);
-      if(send_gp->NotActive()) continue;
-      Layer* tol = send_gp->prjn->layer;
-      send_gp->Send_Netin(net, thread_no, u);
-    }
-  }
-}
-
-void UnitSpec::Compute_SentNetin(Unit* u, Network* net, float sent_netin) {
+void UnitSpec::Compute_SentNetin(UnitVars* u, Network* net, float sent_netin) {
   // called by network-level Send_Netin function to integrate sent netin value
   // with current net input value -- default is just to set to net val + bias wt if avail
   u->net = sent_netin;
-  if(u->bias.IsActive()) {
-    u->net += u->bias.OwnCn(0,BaseCons::WT);
+  if(bias_spec) {
+    u->net += u->bias_wt;
   }
 }
 
-void UnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  if(u->HasExtFlag(Unit::EXT))
+void UnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
+  if(u->HasExtFlag(UnitVars::EXT))
     u->act = u->ext;
   else
     u->act = u->net;
 }
 
-void UnitSpec::Compute_dWt(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    recv_gp->Compute_dWt(u, net);
-  }
-  // NOTE: derived classes must supply bias.OwnCn(0)->Compute_dWt call because C_Compute_dWt
-  // is not virtual, so if called here, only ConSpec version would be called.
-  // This is not true of Init_Weights and Init_dWt, which are virtual.
+void UnitSpec::Compute_NetinAct(UnitVars* u, Network* net, int thr_no) {
+  Compute_Netin(u, net, thr_no);
+  Compute_Act(u, net, thr_no);
 }
 
-void UnitSpec::Compute_Weights(Unit* u, Network* net, int thread_no) {
-  for(int g = 0; g < u->recv.size; g++) {
-    RecvCons* recv_gp = u->recv.FastEl(g);
-    if(recv_gp->NotActive()) continue;
-    recv_gp->Compute_Weights(u, net);
+void UnitSpec::Compute_dWt(UnitVars* u, Network* net, int thr_no) {
+  if(bias_spec) {
+    bias_spec->B_Compute_dWt(u, net, thr_no);
   }
-  // NOTE: derived classes must supply bias.OwnCn(0)->Compute_Weights call because C_Compute_Weights
-  // is not virtual, so if called here, only ConSpec version would be called.
-  // This is not true of Init_Weights and Init_dWt, which are virtual.
 }
 
-float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
+void UnitSpec::Compute_Weights(UnitVars* u, Network* net, int thr_no) {
+  if(bias_spec) {
+    bias_spec->B_Compute_Weights(u, net, thr_no);
+  }
+}
+
+float UnitSpec::Compute_SSE(UnitVars* u, Network* net, bool& has_targ) {
   float sse = 0.0f;
   has_targ = false;
-  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
+  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
     has_targ = true;
     float uerr = u->targ - u->act;
     if(fabsf(uerr) >= sse_tol)
@@ -260,10 +177,10 @@ float UnitSpec::Compute_SSE(Unit* u, Network* net, bool& has_targ) {
   return sse;
 }
 
-bool UnitSpec::Compute_PRerr(Unit* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
+bool UnitSpec::Compute_PRerr(UnitVars* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
   true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f; true_neg = 0.0f;
   bool has_targ = false;
-  if(u->HasExtFlag(Unit::TARG | Unit::COMP)) {
+  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
     has_targ = true;
     // float uerr = u->targ - u->act;
     // if(fabsf(uerr) < sse_tol) {

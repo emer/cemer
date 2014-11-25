@@ -42,8 +42,7 @@ class Projection; //
 class Projection_Group; //
 class Unit; //
 class Unit_Group; //
-class SendCons; //
-class RecvCons; //
+class ConGroup; //
 
 eTypeDef_Of(NetMonItem);
 
@@ -166,10 +165,8 @@ protected:
   void	ScanObject_PrjnCons(Projection* p, String var);
   // known to be a connection variable (r.x or s.x); matrix already allocated
 
-  void	ScanObject_RecvCons(RecvCons* cg, String var);
-  void	ScanObject_SendCons(SendCons* cg, String var);
-  void	ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj);
-  // called for bias.x where bias is a RecvCons
+  void	ScanObject_RecvCons(ConGroup* cg, String var);
+  void	ScanObject_SendCons(ConGroup* cg, String var);
 
 private:
   void	Initialize();

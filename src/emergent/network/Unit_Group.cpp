@@ -121,7 +121,7 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
   }
 }
 
-void Unit_Group::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt) {
   strm << "<Ug>\n";
   FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     int lfi = u->GetMyLeafIndex();
@@ -132,9 +132,9 @@ void Unit_Group::SaveWeights_strm(ostream& strm, RecvCons::WtSaveFormat fmt) {
   strm << "</Ug>\n";
 }
 
-int Unit_Group::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   String tag, val;
-  int stat = RecvCons::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = ConGroup::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -151,16 +151,16 @@ int Unit_Group::LoadWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
     }
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    ConGroup::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  RecvCons::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  ConGroup::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-int Unit_Group::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   String val, tag;
-  int stat = RecvCons::LoadWeights_StartTag(strm, "Ug", val, quiet);
+  int stat = ConGroup::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
 
   while(true) {
@@ -170,14 +170,14 @@ int Unit_Group::SkipWeights_strm(istream& strm, RecvCons::WtSaveFormat fmt, bool
     stat = Unit::SkipWeights_strm(strm, fmt, quiet);
     if(stat != taMisc::TAG_END) break;
     stat = taMisc::TAG_NONE;           // reset so EndTag will definitely read new tag
-    RecvCons::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
+    ConGroup::LoadWeights_EndTag(strm, "UgUn", tag, stat, quiet);
     if(stat != taMisc::TAG_END) break;
   }
-  RecvCons::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
+  ConGroup::LoadWeights_EndTag(strm, "Ug", tag, stat, quiet);
   return stat;
 }
 
-void Unit_Group::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights(const String& fname, ConGroup::WtSaveFormat fmt) {
   taFiler* flr = GetSaveFiler(fname, ".wts", true);
   if(flr->ostrm)
     SaveWeights_strm(*flr->ostrm, fmt);
@@ -185,7 +185,7 @@ void Unit_Group::SaveWeights(const String& fname, RecvCons::WtSaveFormat fmt) {
   taRefN::unRefDone(flr);
 }
 
-int Unit_Group::LoadWeights(const String& fname, RecvCons::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights(const String& fname, ConGroup::WtSaveFormat fmt, bool quiet) {
   taFiler* flr = GetLoadFiler(fname, ".wts", true);
   int rval = false;
   if(flr->istrm)
@@ -241,9 +241,7 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
     ary.Sort();
     for(j=ary.size-1; j>=0; j--) {
       Unit* un = Leaf(ary.FastEl(j));
-      un->Lesion();
-//       un->DisConnectAll();
-//       RemoveLeafEl(un);
+      un->Lesion();             // just sets a flag
     }
   }
   else {
@@ -252,8 +250,6 @@ int Unit_Group::LesionUnits(float p_lesion, bool permute) {
       if(Random::ZeroOne() <= p_lesion) {
         Unit* un = (Unit*)Leaf(j);
         un->Lesion();
-//         un->DisConnectAll();
-//         RemoveLeafIdx(j);
         rval++;
       }
     }
@@ -429,13 +425,13 @@ Unit* Unit_Group::MostActiveUnit(int& idx) {
   idx = -1;
   if(leaves == 0) return NULL;
   Unit* max_un = Leaf(0);
-  float max_act = max_un->act;
+  float max_act = max_un->act();
   for(int i=1;i<leaves;i++) {
     Unit* un = Leaf(i);
-    if(un->act > max_act) {
+    if(un->act() > max_act) {
       max_un = un;
       idx = i;
-      max_act = max_un->act;
+      max_act = max_un->act();
     }
   }
   return max_un;

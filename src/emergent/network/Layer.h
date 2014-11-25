@@ -121,11 +121,13 @@ public:
   XYNGeom               disp_geom;      // #AKA_act_geom #HIDDEN #READ_ONLY #CAT_Structure actual view geometry, includes spaces and groups and everything: the full extent of units within the layer
   XYNGeom               scaled_disp_geom; // #AKA_scaled_act_geom #HIDDEN #READ_ONLY #CAT_Structure scaled actual view geometry: disp_scale * disp_geom -- use for view computations
 
+  int                   n_recv_prjns;    // #CAT_Structure #READ_ONLY number of active receiving projections
+  int                   n_send_prjns;    // #CAT_Structure #READ_ONLY number of active sending projections
   Projection_Group      projections;    // #CAT_Structure group of receiving projections
   Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group            units;          // #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
-  Unit::ExtType         ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
+  UnitVars::ExtFlags         ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
 
   LayerDistances        dist;           // #CAT_Structure distances from closest input/output layers to this layer
 
@@ -296,12 +298,12 @@ public:
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
 
-  virtual void  SaveWeights_strm(std::ostream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  virtual int   LoadWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
-  static int    SkipWeights_strm(std::istream& strm, RecvCons::WtSaveFormat fmt = RecvCons::TEXT,
+  static int    SkipWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);
   // #EXT_wts #COMPRESS #CAT_File skip over weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus = END_TAG if successful
 
@@ -313,9 +315,11 @@ public:
   virtual void  CheckSpecs();
   // #CAT_Structure check to make sure that specs are not null and set to the right type, and update with new specs etc to fix any errors (with notify), so that at least network operations will not crash -- called in Build and CheckConfig
   virtual void  BuildUnits();
-  // #MENU #MENU_ON_Structure #CONFIRM #CAT_Structure build the units based current geometry configuration
-  virtual void  BuildUnits_Threads(Network* net);
-  // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
+  // #IGNORE build the units based current geometry configuration
+  virtual void  UpdatePrjnIdxs();
+  // #IGNORE update the recv_idx, send_idx guys for active projections, and count number of prjns of each type
+  virtual void  BuildUnitsFlatList(Network* net);
+  // #IGNORE build flat list of units -- layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
   virtual void  RecomputeGeometry();
   // #CAT_Structure recompute the layer's geometry specifcations
   virtual void  LayoutUnits();
@@ -334,10 +338,6 @@ public:
   // #CAT_Structure check if network is built
   virtual bool  CheckConnect(bool quiet=false);
   // #CAT_Structure check if network is connected
-  virtual void  RemoveCons();
-  // #MENU #CONFIRM #MENU_SEP_BEFORE #CAT_Structure remove all connections in this layer
-  virtual void  RemoveCons_Net();
-  // #CAT_Structure remove all connections in this layer, in context of entire network removecons -- calls unit removecons only
   virtual void  RemoveUnits();
   // #MENU #DYN1 #CAT_Structure remove all units in this layer (preserving groups)
   virtual void  RemoveUnitGroups();
@@ -358,12 +358,10 @@ public:
   // #MENU #CONFIRM #CAT_Structure disconnect layer from all others
   virtual int   CountCons(Network* net);
   // #CAT_Structure count connections for all units in layer
-  virtual void  UpdtActiveCons();
-  // #CAT_Structure update the active state of all connection groups
 
-  void          SetExtFlag(int flg)   { ext_flag = (Unit::ExtType)(ext_flag | flg); }
+  void          SetExtFlag(int flg)   { ext_flag = (UnitVars::ExtFlags)(ext_flag | flg); }
   // #CAT_Activation set external input data flag
-  void          UnSetExtFlag(int flg) { ext_flag = (Unit::ExtType)(ext_flag & ~flg); }
+  void          UnSetExtFlag(int flg) { ext_flag = (UnitVars::ExtFlags)(ext_flag & ~flg); }
   // #CAT_Activation un-set external input data flag
   bool          HasExtFlag(int flg)   { return ext_flag & flg; }
   // #CAT_Activation check if has given ext flag value set
@@ -371,8 +369,9 @@ public:
   virtual void  SetLayUnitExtFlags(int flg);
   // #CAT_Activation set external input data flags for layer and all units in the layer
 
-  virtual void  ApplyInputData(taMatrix* data, Unit::ExtType ext_flags = Unit::NO_EXTERNAL,
-      Random* ran = NULL, const PosVector2i* offset = NULL, bool na_by_range=false);
+  virtual void  ApplyInputData
+    (taMatrix* data, UnitVars::ExtFlags ext_flags = UnitVars::NO_EXTERNAL,
+     Random* ran = NULL, const PosVector2i* offset = NULL, bool na_by_range=false);
   // #CAT_Activation apply the 2d or 4d external input pattern to the network, optional random additional values, and offsetting; uses a flat 2-d model where grouped layer or 4-d data are flattened to 2d; frame<0 means from end; na_by_range means that values are not applicable if they fall outside act_range on unit spec, and thus don't have flags or values set
   virtual void  TriggerContextUpdate() {} // for algorithms/specs that suport context layers (copy of previous state) this manually triggers an update
 
@@ -466,8 +465,6 @@ public:
   // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_unit_spec.spec set unit spec for all units in layer
   virtual void  SetUnitType(TypeDef* td);
   // #BUTTON #DYN1 #TYPE_Unit #CAT_Structure #INIT_ARGVAL_ON_units.el_typ set unit type for all units in layer (created by Build)
-  virtual void  FixPrjnIndexes();
-  // #CAT_Structure fix the projection indexes of the connection groups (other_idx)
 
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this layer (can be a variable on the units or connections -- in which case a matrix with a value for each will be created -- e.g., 'act' will monitor activations of all units within the layer)
@@ -530,18 +527,18 @@ protected:
 
   void         UpdateAfterEdit_impl() override;
   void         UpdateAfterMove_impl(taBase* old_owner) override;
-  virtual void          ApplyLayerFlags(Unit::ExtType act_ext_flags);
+  virtual void          ApplyLayerFlags(UnitVars::ExtFlags act_ext_flags);
   // #IGNORE set layer flag to reflect the kind of input received
-  virtual void          ApplyInputData_1d(taMatrix* data, Unit::ExtType ext_flags,
+  virtual void          ApplyInputData_1d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                Random* ran, bool na_by_range=false);
   // #IGNORE 1d data -- just go in order -- offsets ignored
-  virtual void          ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+  virtual void          ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE 2d data is always treated the same: UnitAtCoord deals with unit grouping
-  virtual void          ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+  virtual void          ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                Random* ran, const taVector2i& offs, bool na_by_range=false);
   // #IGNORE flat layer, 4d data
-  virtual void          ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+  virtual void          ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                Random* ran, bool na_by_range=false);
   // #IGNORE grouped layer, 4d data -- note this cannot have offsets..
 

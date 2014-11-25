@@ -11,20 +11,20 @@
 # all headers that need maketa run on them
 set(bp_HEADS_MAKETA
     bp.h
-    rbp.h
+#    rbp.h
 #    bp_v3_compat.h
 )
 
 # all heads -- include maketa generated ones here
 set(bp_HEADS
     bp.h
-    rbp.h
+#    rbp.h
 #    bp_v3_compat.h
 )
 
 # all source files to compile: NOTE: do NOT include TA or .moc files -- auto generated
 set(bp_SRCS
     bp.cpp
-    rbp.cpp
+#    rbp.cpp
 #    bp_v3_compat.cpp
 )

@@ -184,7 +184,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
       ru = (Unit*)prjn->layer->units.NextEl(ru_itr), cnt++) {
     ru_pos.y = cnt / ru_geom.x;
     ru_pos.x = cnt % ru_geom.x;
-    RecvCons* recv_gp = NULL;
+    ConGroup* recv_gp = NULL;
     taVector2f suc;
     int n_con = 0;
     int n_retry = 0;
@@ -211,8 +211,9 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 }
 
-void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                         Network* net) {
+void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+                                         Network* net, int thr_no) {
+  Unit* ru = cg->OwnUn(net);
   for(int i=0; i<cg->size; i++) {
     SetCnWt(cg, i, net, GetDistProb(prjn, ru, cg->Un(i,net)));
   }

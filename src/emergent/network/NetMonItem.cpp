@@ -235,21 +235,22 @@ String NetMonItem::GetObjName(taBase* obj) {
         return nm + "_gp_" + String(idx) + "_";
     }
   }
-  else if (obj->InheritsFrom(TA_RecvCons)) {
-    RecvCons* cg = (RecvCons*)obj;
-    if(cg->prjn && cg->prjn->from.ptr()) {
-      Unit* un = GET_OWNER(obj, Unit);
-      if (un) {
-        return GetObjName(un) + "_r_" + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);
+  else if (obj->InheritsFrom(TA_ConGroup)) {
+    ConGroup* cg = (ConGroup*)obj;
+    if(cg->IsRecv()) {
+      if(cg->prjn && cg->prjn->from.ptr()) {
+        Unit* un = GET_OWNER(obj, Unit);
+        if (un) {
+          return GetObjName(un) + "_r_" + taMisc::StringMaxLen(cg->prjn->from->name, max_name_len);
+        }
       }
     }
-  }
-  else if (obj->InheritsFrom(TA_SendCons)) {
-    SendCons* cg = (SendCons*)obj;
-    if(cg->prjn && cg->prjn->layer) {
-      Unit* un = GET_OWNER(obj, Unit);
-      if (un) {
-        return GetObjName(un) + "_s_" + taMisc::StringMaxLen(cg->prjn->layer->name, max_name_len);
+    else {
+      if(cg->prjn && cg->prjn->layer) {
+        Unit* un = GET_OWNER(obj, Unit);
+        if (un) {
+          return GetObjName(un) + "_s_" + taMisc::StringMaxLen(cg->prjn->layer->name, max_name_len);
+        }
       }
     }
   }
@@ -482,15 +483,15 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       return true; //no mon, but we did handle it
     }
 
-    if(membname == "bias" && md->type->InheritsFrom(&TA_RecvCons)) {
-      ScanObject_BiasCon((RecvCons*)ths, var.after('.'), name_obj);
-      return true;
-    }
-    else {
+    // if(membname == "bias" && md->type->InheritsFrom(&TA_ConGroup)) {
+    //   ScanObject_BiasCon((RecvCons*)ths, var.after('.'), name_obj);
+    //   return true;
+    // }
+    // else {
       // because we found the subobj, we deref the var and invoke ourself recursively
       var = var.after('.');
       return ScanObject_InObject(ths, var, name_obj);
-    }
+    // }
   }
   else {
     md = obj->FindMember(var);
@@ -731,7 +732,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
   taVector2i con_geom_min(INT_MAX, INT_MAX);
   FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
     if(recv) {
-      RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
+      ConGroup* cg = u->RecvConGroupPrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -742,7 +743,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       }
     }
     else {                      // send
-      SendCons* cg = u->send.SafeEl(prjn->send_idx);
+      ConGroup* cg = u->SendConGroupPrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -770,7 +771,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       ptrs.Add(NULL); members.Link(con_md);
     }
     if(recv) {
-      RecvCons* cg = u->recv.SafeEl(prjn->recv_idx);
+      ConGroup* cg = u->RecvConGroupPrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -782,7 +783,7 @@ void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
       }
     }
     else {                      // send
-      SendCons* cg = u->send.SafeEl(prjn->send_idx);
+      ConGroup* cg = u->SendConGroupPrjn(prjn);
       if(!cg) continue;
       for(int j=0; j<cg->size; ++j) {
         Unit* su = cg->Un(j,net);
@@ -873,18 +874,18 @@ void NetMonItem::ScanObject_Unit(Unit* u, String var) {
   String subvar = var.before('.');
   String convar = var.after('.');
   if (subvar=="r") {
-    for(int i=0;i<u->recv.size;i++)
-      ScanObject_RecvCons(u->recv[i], convar);
+    for(int i=0;i<u->NRecvConGps();i++)
+      ScanObject_RecvCons(u->RecvConGroup(i), convar);
   }
   else {                        // must be s
-    for(int i=0;i<u->send.size;i++)
-      ScanObject_SendCons(u->send[i], convar);
+    for(int i=0;i<u->NSendConGps();i++)
+      ScanObject_SendCons(u->SendConGroup(i), convar);
   }
 }
 
-void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
+void NetMonItem::ScanObject_RecvCons(ConGroup* cg, String var) {
   if(!cg || !cg->IsActive()) return;
-  MemberDef* con_md = cg->con_type->members.FindNameR(var);
+  MemberDef* con_md = cg->ConType()->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 
   Network* net = cg->prjn->layer->own_net;
@@ -906,7 +907,7 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  String valname = GetColName(cg, val_specs.size);
+  String valname = GetColName(cg->OwnUn(net), val_specs.size);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
@@ -922,9 +923,9 @@ void NetMonItem::ScanObject_RecvCons(RecvCons* cg, String var) {
   }
 }
 
-void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
+void NetMonItem::ScanObject_SendCons(ConGroup* cg, String var) {
   if(!cg || !cg->IsActive()) return;
-  MemberDef* con_md = cg->con_type->members.FindNameR(var);
+  MemberDef* con_md = cg->ConType()->members.FindNameR(var);
   if(!con_md) return;           // can't find that var!
 
   Network* net = cg->prjn->layer->own_net;
@@ -946,7 +947,7 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
   int n_cons = con_geom.Product();
   MatrixGeom geom;
   geom.SetGeom(2, con_geom.x, con_geom.y);
-  String valname = GetColName(cg, val_specs.size);
+  String valname = GetColName(cg->OwnUn(net), val_specs.size);
   AddMatrixCol(valname, VT_FLOAT, &geom);
 
   for(int j=0;j<n_cons;j++) {   // add blanks -- set them later
@@ -960,23 +961,6 @@ void NetMonItem::ScanObject_SendCons(SendCons* cg, String var) {
     int idx = upos.y * con_geom.x + upos.x;
     ptrs[idx] = &(cg->Cn(j, con_md->idx, net));      // set the ptr
   }
-}
-
-void NetMonItem::ScanObject_BiasCon(RecvCons* cg, String var, taBase* name_obj) {
-  if(!cg || cg->size != 1) return;
-  MemberDef* con_md = cg->con_type->members.FindNameR(var);
-  if(!con_md) return;           // can't find that var!
-
-  if(name_obj) {
-    String valname = GetColName(name_obj, val_specs.size);
-    ValType vt = ValTypeForType(con_md->type);
-    AddScalarCol(valname, vt);
-    if(agg.op != Aggregate::NONE) {
-      AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
-    }
-  }
-  ptrs.Add(&(cg->OwnCn(0, con_md->idx)));
-  members.Link(con_md);
 }
 
 void NetMonItem::SetMonVals(taBase* obj, const String& var) {

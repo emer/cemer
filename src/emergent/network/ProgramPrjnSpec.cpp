@@ -44,8 +44,8 @@ void ProgramPrjnSpec::Connect_impl(Projection* prj, bool make_cons) {
   prog->Run();
 }
 
-void ProgramPrjnSpec::Init_Weights_Prjn(Projection* prj, RecvCons* cg, Unit* ru,
-                                       Network* net) {
+void ProgramPrjnSpec::Init_Weights_Prjn(Projection* prj, ConGroup* cg,
+                                        Network* net, int thr_no) {
   if(!prog) return;
   bool did_it = prog->SetVar("prjn", prj);
   if(!did_it) return;

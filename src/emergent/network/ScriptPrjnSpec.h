@@ -37,7 +37,8 @@ public:
   SArg_Array	s_args;		// string-valued arguments to pass to script
 
   void	Connect_impl(Projection* prj, bool make_cns) override;
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                          int thr_no) override;
   // NOTE: if you allow init_wts you must set wts in your script
 
 

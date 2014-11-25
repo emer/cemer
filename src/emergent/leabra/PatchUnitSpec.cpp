@@ -28,7 +28,7 @@ void PatchUnitSpec::Defaults_init() {
 void PatchUnitSpec::Send_DAShunt(LeabraUnit* u, LeabraNetwork* net) {
   if(u->act_eq < opt_thresh.send) return;
   for(int g=0; g<u->send.size; g++) {
-    LeabraSendCons* send_gp = (LeabraSendCons*)u->send.FastEl(g);
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
       ((LeabraUnit*)send_gp->Un(j,net))->dav = 0.0f; // shunt!

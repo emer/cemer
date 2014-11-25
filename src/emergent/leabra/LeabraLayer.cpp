@@ -24,7 +24,6 @@ void LeabraLayer::Initialize() {
   projections.SetBaseType(&TA_LeabraPrjn);
   send_prjns.SetBaseType(&TA_LeabraPrjn);
   units.SetBaseType(&TA_LeabraUnit);
-  units.gp.SetBaseType(&TA_LeabraUnit_Group);
   unit_spec.SetBaseType(&TA_LeabraUnitSpec);
 
   Inhib_Initialize();
@@ -69,7 +68,6 @@ void LeabraLayer::InitLinks() {
   DMem_InitAggs();
 #endif
   spec.SetDefaultSpec(this);
-  units.gp.SetBaseType(&TA_LeabraUnit_Group);
 
   AutoNameMyMembers();
 }
@@ -139,8 +137,6 @@ void LeabraLayer::BuildUnits() {
   ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
 }
-
-// void LeabraLayer::TriggerContextUpdate() -- in leabra_extra.cpp
 
 #ifdef DMEM_COMPILE
 void LeabraLayer::DMem_InitAggs() {

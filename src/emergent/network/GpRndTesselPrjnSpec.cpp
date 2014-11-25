@@ -219,8 +219,8 @@ void GpRndTesselPrjnSpec::Connect_Gps_Sym(int rgpidx, int sgpidx,
 
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-    for(int g=0;g<ru->send.size;g++) {
-      SendCons* scg = ru->send.FastEl(g);
+    for(int g=0;g<ru->NSendConGps();g++) {
+      ConGroup* scg = ru->SendConGroup(g);
       if((scg->prjn->layer != send_lay) || (scg->prjn->layer != recv_lay))
         continue;               // only deal with self projections to this same layer
       for(int i=0;i<scg->size;i++) {
@@ -273,7 +273,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
       if(!self_con && (ru == su)) continue;
       // don't connect to anyone who already recvs from me cuz that will make
       // a symmetric connection which isn't good: symmetry will be enforced later
-      RecvCons* scg = su->recv.FindPrjn(prjn);
+      ConGroup* scg = su->RecvConGroupPrjn(prjn);
       if(scg->FindConFromIdx(ru) >= 0) continue;
       perm_list.Link(su);
     }
@@ -286,7 +286,7 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameGp(int rgpidx, int sgpidx,
   // now go thru and make the symmetric connections
   for(int rui=0; rui < ru_nunits; rui++) {
     Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-    SendCons* scg = ru->send.FindPrjn(prjn);
+    ConGroup* scg = ru->SendConGroupPrjn(prjn);
     if(scg == NULL) continue;
     for(int i=0;i<scg->size;i++) {
       Unit* su = scg->Un(i,net);
@@ -308,13 +308,13 @@ void GpRndTesselPrjnSpec::Connect_Gps_SymSameLay(int rgpidx, int sgpidx,
   // so I should just make symmetric versions of its connections
   // take first send unit and find if it recvs from anyone in this prjn yet
   Unit* su = send_lay->UnitAtUnGpIdx(0, sgpidx);
-  RecvCons* scg = su->recv.FindPrjn(prjn);
+  ConGroup* scg = su->RecvConGroupPrjn(prjn);
   if((scg != NULL) && (scg->size > 0)) {        // sender has been connected already: try to connect me!
     int n_con = 0;              // number of actual connections made
 
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-      SendCons* scg = ru->send.FindPrjn(prjn);
+      ConGroup* scg = ru->SendConGroupPrjn(prjn);
       if(scg == NULL) continue;
       for(int i=0;i<scg->size;i++) {
         Unit* su = scg->Un(i,net);

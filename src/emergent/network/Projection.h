@@ -20,13 +20,18 @@
 #include <taBase>
 
 // member includes:
+#include <ConSpec>
 #include <ProjectionRef>
 #include <ProjectionSpec>
 #include <LayerRef>
-#include <RecvCons>
 #include <taColor>
+#include <Random>
+#include <SimpleMathSpec>
+#include <Relation>
 
 // declare all other types mentioned but not required to include:
+class DataTable; //
+class NetMonitor; //
 
 eTypeDef_Of(Projection);
 
@@ -60,8 +65,6 @@ public:
   LayerRef              from;           // #CAT_Structure #CONDEDIT_ON_from_type:CUSTOM layer receiving from (set this for custom)
   ProjectionSpec_SPtr   spec;           // #CAT_Structure spec for this item
   TypeDef*              con_type;       // #TYPE_Connection #CAT_Structure Type of connection
-  TypeDef*              recvcons_type;  // #TYPE_RecvCons #CAT_Structure Type of receiving connection group to make
-  TypeDef*              sendcons_type;  // #TYPE_SendCons #CAT_Structure Type of sending connection group to make
   ConSpec_SPtr          con_spec;       // #CAT_Structure conspec to use for creating connections
 
   int                   recv_idx;       // #READ_ONLY #CAT_Structure receiving con_group index
@@ -114,8 +117,8 @@ public:
   { return spec->ProbAddCons(this, p_add_con, init_wt); }
   // #MENU #MENU_ON_Actions #USE_RVAL #CAT_Structure probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  void  Init_Weights_Prjn(RecvCons* cg, Unit* ru, Network* net)
-  { spec->Init_Weights_Prjn(this, cg, ru, net); }
+  void  Init_Weights_Prjn(ConGroup* cg, Network* net, int thr_no)
+  { spec->Init_Weights_Prjn(this, cg, net, thr_no); }
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
@@ -137,8 +140,6 @@ public:
   // #BUTTON #DROP1 #DYN1 #CAT_Structure #INIT_ARGVAL_ON_con_spec.spec set the con spec for all connections in this prjn
   virtual bool  CheckConnect(bool quiet=false) { return spec->CheckConnect(this, quiet); }
   // #CAT_Structure check if projection is connected
-  virtual void  FixPrjnIndexes();
-  // #MENU #CAT_Structure fix the indexes of the connection groups (recv_idx, send_idx)
 
   virtual int   ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp);
   // #CAT_Structure switch any connections/projections using old_sp to using new_sp
@@ -147,10 +148,6 @@ public:
 
   virtual bool  SetConType(TypeDef* td);
   // #BUTTON #DYN1 #CAT_Structure #TYPE_Connection #INIT_ARGVAL_ON_con_type set the connection type for all connections in this prjn
-  virtual bool  SetRecvConsType(TypeDef* td);
-  // #BUTTON #DYN1 #CAT_Structure #TYPE_RecvCons #INIT_ARGVAL_ON_recvcons_type set the receiving connection group type for all connections in this prjn
-  virtual bool  SetSendConsType(TypeDef* td);
-  // #BUTTON #DYN1 #CAT_Structure #TYPE_SendCons #INIT_ARGVAL_ON_sendcons_type set the connection group type for all connections in this prjn
 
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this projection

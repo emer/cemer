@@ -42,6 +42,11 @@ public:
   virtual Projection*   ConnectFrom(Layer* lay);
   // #BUTTON #DROP1 #DYN1 #CAT_Structure make a new projection from given layer (can also drag and drop a layer into projections group to call this function)
 
+  virtual Projection*   FindPrjnFrom(Layer* lay);
+  // #CAT_Structure find a projection from the given layer (from pointer = lay) -- only makes sense in layers.projections group
+  virtual Projection*   FindPrjnTo(Layer* lay);
+  // #CAT_Structure find a projection to given recv layer = lay (layer pointer = lay) -- only makes sense in layers.send_prjns group
+
   String       GetTypeDecoKey() const override { return "Projection"; }
 
   void  SigEmit(int sls, void* op1 = NULL, void* op2 = NULL);

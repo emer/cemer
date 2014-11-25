@@ -243,9 +243,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
 
-  virtual void BuildUnits_Threads(LeabraLayer* lay, LeabraNetwork* net);
-  // #IGNORE build unit-level thread information: flat list of units, etc -- this is called by network BuildUnits_Threads so that layers (and layerspecs) can potentially modify which units get added to the compute lists, and thus which are subject to standard computations -- default is all units in the layer
-
   virtual void	Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
     virtual void Init_Inhib(LeabraLayer* lay, LeabraNetwork* net);
@@ -253,15 +250,8 @@ public:
     virtual void Init_Stats(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Statistic called in Init_Weights_Layer intialize statistic variables
 
-  virtual void	Init_Acts(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void	Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize unit-level dynamic state variables (activations, etc)
-  virtual void	Init_ActAvg(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation initialize act_avg values
-  virtual void	Init_Netins(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation initialize netinput computation variables (delta-based requires several intermediate variables)
-
-  virtual void 	DecayState(LeabraLayer* lay, LeabraNetwork* net, float decay);
-  // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial_Init -- at start of trial
@@ -271,22 +261,15 @@ public:
   virtual void	Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Learning layer level trial init -- overload where needed
 
-    virtual void Trial_DecayState(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Activation NOT CALLED DURING STD PROCESSING decay activations and other state between events
-    virtual void Trial_Init_SRAvg(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Learning NOT CALLED DURING STD PROCESSING reset the sender-receiver coproduct average (CtLeabra_X/CAL) -- calls unit-level function of same name
-
   ///////////////////////////////////////////////////////////////////////
   //	Quarter_Init -- at start of settling
 
   virtual void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation initialize start of a setting phase: all layer-level misc init takes place here (calls TargFlags_Layer) -- other stuff all done directly in Quarter_Init_Units call
 
-  virtual void	Quarter_Init_TargFlags(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation initialize start of a setting phase, set input flags appropriately, etc
-    virtual void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
-    // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
-  virtual void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  virtual void Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetwork* net);
+  // #IGNORE layer-level initialize start of a setting phase, set input flags appropriately, etc
+  virtual void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation prior to settling: hard-clamp inputs
 
   virtual void	ExtToComp(LeabraLayer* lay, LeabraNetwork* net);

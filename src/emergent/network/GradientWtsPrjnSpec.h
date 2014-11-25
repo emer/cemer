@@ -44,15 +44,16 @@ public:
   GradType	grad_type;	// #CONDEDIT_ON_init_wts type of gradient to make -- applies to both axes
   float		gauss_sig;	// #CONDSHOW_ON_grad_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0 
 
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                          int thr_no) override;
 
-  virtual void	InitWeights_RecvGps(Projection* prjn, RecvCons* cg,
+  virtual void	InitWeights_RecvGps(Projection* prjn, ConGroup* cg,
                                     Unit* ru, Network* net);
   // for recv unit group case
-  virtual void 	InitWeights_RecvFlat(Projection* prjn, RecvCons* cg,
+  virtual void 	InitWeights_RecvFlat(Projection* prjn, ConGroup* cg,
                                      Unit* ru, Network* net);
   // for flat recv layer case (just unit positions)
-  virtual void 	SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
+  virtual void 	SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
                             Network* net, float dist, int cg_idx);
   // actually set the weight value from distance value -- util used by both of above main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 

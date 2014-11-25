@@ -227,7 +227,7 @@ void CsUnitSpec::Compute_Netin(Unit* u, Network* net, int thread_no) {
         continue;
       u->net += recv_gp->Compute_Netin(u, net);
     }
-    u->net += u->bias.OwnCn(0,BaseCons::WT);
+    u->net += u->bias.OwnCn(0,ConGroup::WT);
   }
   else if(clamp_type == HARD_CLAMP) {
     if(cu->ext_flag & Unit::EXT) // no point in computing net for clamped units!

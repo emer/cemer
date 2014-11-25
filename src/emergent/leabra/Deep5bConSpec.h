@@ -38,7 +38,7 @@ public:
 
 #ifdef TA_VEC_USE
   inline void Send_D5bNetDelta_vec
-    (LeabraSendCons* cg, const float su_act_delta_eff,
+    (LeabraConGroup* cg, const float su_act_delta_eff,
      float* send_d5bnet_vec, const float* wts)
   {
     VECF sa(su_act_delta_eff);
@@ -62,30 +62,29 @@ public:
   }
 #endif
 
-  inline void 	C_Send_D5bNetDelta_Thread(const float wt, float* send_d5bnet_vec,
-                                          const int ru_idx, const float su_act_delta_eff)
+  inline void 	C_Send_D5bNetDelta(const float wt, float* send_d5bnet_vec,
+                                   const int ru_idx, const float su_act_delta_eff)
   { send_d5bnet_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
 
-  inline void Send_D5bNetDelta(LeabraSendCons* cg, LeabraNetwork* net,
-                               const int thread_no, const float su_act_delta) {
+  inline void Send_D5bNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
+                               int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_d5bnet_vec = net->send_d5bnet_tmp.el
-      + net->send_d5bnet_tmp.FastElIndex(0, thread_no);
+    float* send_d5bnet_vec = net->ThrSendD5bNetTmp(thr_no);
 #ifdef TA_VEC_USE
     Send_D5bNetDelta_vec(cg, su_act_delta_eff, send_d5bnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_D5bNetDelta_Thread(wts[i], send_d5bnet_vec,
-                                                 cg->UnIdx(i), su_act_delta_eff));
+    CON_GROUP_LOOP(cg, C_Send_D5bNetDelta(wts[i], send_d5bnet_vec,
+                                          cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
-  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
   // don't send regular net inputs..
-  inline void Send_NetinDelta(LeabraSendCons*, LeabraNetwork* net, int thread_no, 
-                                       float su_act_delta_eff) override { };
-  inline float Compute_Netin(RecvCons* cg, Unit* ru, Network* net) override
+  inline void Send_NetinDelta(LeabraConGroup* cg, LeabraNetwork* net, int thr_no, 
+                              float su_act_delta) override { };
+  inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
   void  GetPrjnName(Projection& prjn, String& nm) override;

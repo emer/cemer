@@ -10,18 +10,18 @@
 
 # all headers that need maketa run on them
 set(cs_HEADS_MAKETA
-    cs.h
+#    cs.h
 #    cs_v3_compat.h
 )
 
 # all heads -- include maketa generated ones here
 set(cs_HEADS
-    cs.h
+#    cs.h
 #    cs_v3_compat.h
 )
 
 # all source files to compile: NOTE: do NOT include .moc files -- auto generated
 set(cs_SRCS
-    cs.cpp
+#    cs.cpp
 #    cs_v3_compat.cpp
 )

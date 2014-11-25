@@ -34,7 +34,7 @@ public:
 //   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
 // #endif
 
-//   inline void Compute_dWt_LeabraCHL(LeabraSendCons* cg, LeabraUnit* su,
+//   inline void Compute_dWt_LeabraCHL(LeabraConGroup* cg, LeabraUnit* su,
 //                                              LeabraNetwork* net) override {
 //     if(ignore_unlearnable && net->unlearnable_trial) return;
 
@@ -56,15 +56,15 @@ public:
 //     }
 //   }
 
-//   inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+//   inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
 //                                                 LeabraNetwork* net) override {
 //     Compute_dWt_LeabraCHL(cg, su, net);
 //   }
-//   inline void Compute_dWt_CtLeabraCAL(LeabraSendCons* cg, LeabraUnit* su,
+//   inline void Compute_dWt_CtLeabraCAL(LeabraConGroup* cg, LeabraUnit* su,
 //                                                LeabraNetwork* net) override {
 //     Compute_dWt_LeabraCHL(cg, su, net);
 //   }
-//   inline void	Compute_Weights_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+//   inline void	Compute_Weights_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
 //                                                      LeabraNetwork* net) override {
 //     inherited::Compute_Weights_LeabraCHL(cg, su, net);
 //   }

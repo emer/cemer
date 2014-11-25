@@ -52,6 +52,9 @@ public:
   { avg_used.ResetAvg(); }
   // #CAT_TimeUsed reset the avg_used running average accumulator
 
+  inline void  EndIncrAvg() { EndTimer(); IncrAvg(); }
+  // #CAT_TimeUsed end timing recording, and then increment this run into the ongoing average
+
   TA_BASEFUNS(TimeUsedHR);
 protected:
   TimeUsedHRd*          d; // private impl data (depends on platform)

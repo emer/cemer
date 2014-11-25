@@ -38,7 +38,7 @@ public:
                               const float sum_in_act, const float wt)
   { dwt += ru_act * ((su_act / sum_in_act) - wt); }
 
-  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
     Compute_AvgInAct((SoRecvCons*)cg, (SoUnit*)ru, (SoNetwork*)net);
     const float sum_in_act = ((SoRecvCons*)cg)->sum_in_act;
     const float ru_act = ru->act;
@@ -65,7 +65,7 @@ public:
                               const float wt)
   { dwt += ru_act * (su_act - wt); }
 
-  inline void 	Compute_dWt(BaseCons* cg, Unit* ru, Network* net) {
+  inline void 	Compute_dWt(ConGroup* cg, Unit* ru, Network* net) {
     const float ru_act = ru->act;
     float* dwts = cg->OwnCnVar(DWT);
     float* wts = cg->OwnCnVar(WT);

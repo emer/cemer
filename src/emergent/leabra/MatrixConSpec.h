@@ -59,7 +59,7 @@ public:
   bool                  nogo;    // are these nogo con specs -- if so, flip the sign of the dopamine signal
   MatrixLearnSpec       matrix;  // parameters for special matrix learning dynamics
 
-  inline void Init_Weights(BaseCons* cg, Unit* ru, Network* net) override {
+  inline void Init_Weights(ConGroup* cg, Unit* ru, Network* net) override {
     Init_Weights_symflag(net);
     if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
 
@@ -97,7 +97,7 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraSendCons* cg, LeabraUnit* su,
+  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
                                        LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 

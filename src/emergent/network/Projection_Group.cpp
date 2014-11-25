@@ -38,3 +38,18 @@ void Projection_Group::SigEmit(int sls, void* op1, void* op2) {
   }
 }
 
+Projection* Projection_Group::FindPrjnFrom(Layer* lay) {
+  FOREACH_ELEM_IN_GROUP(Projection, prjn, *this) {
+    if(prjn->from.ptr() == lay)
+      return prjn;
+  }
+  return NULL;
+}
+
+Projection* Projection_Group::FindPrjnTo(Layer* lay) {
+  FOREACH_ELEM_IN_GROUP(Projection, prjn, *this) {
+    if(prjn->layer == lay)
+      return prjn;
+  }
+  return NULL;
+}

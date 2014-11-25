@@ -15,8 +15,6 @@
 
 #include "ConSpec.h"
 #include <Network>
-#include <RecvCons>
-#include <SendCons>
 #include <Projection>
 #include <Connection>
 #include <UnitSpec>
@@ -60,7 +58,7 @@ void ConSpec::UpdateAfterEdit_impl() {
   }
 }
 
-bool ConSpec::CheckConfig_RecvCons(RecvCons* cg, bool quiet) {
+bool ConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
   return true;
 }
 
@@ -73,18 +71,11 @@ void ConSpec::Init_Weights_Net() {
 
 bool ConSpec::CheckObjectType_impl(taBase* obj) {
   TypeDef* con_tp = &TA_Connection;
-  if(obj->InheritsFrom(&TA_RecvCons)) {
-    con_tp = ((RecvCons*)obj)->con_type;
-  }
-  else if(obj->InheritsFrom(&TA_SendCons)) {
-    con_tp = ((SendCons*)obj)->con_type;
+  if(obj->InheritsFrom(&TA_ConGroup)) {
+    con_tp = ((ConGroup*)obj)->ConType();
   }
   else if(obj->InheritsFrom(&TA_Projection)) {
     con_tp = ((Projection*)obj)->con_type;
-  }
-  else if(obj->InheritsFrom(&TA_UnitSpec)) {
-    if(((UnitSpec*)obj)->bias_con_type)
-      con_tp = ((UnitSpec*)obj)->bias_con_type;
   }
   if(!con_tp->InheritsFrom(min_obj_type))
     return false;
@@ -97,11 +88,12 @@ bool ConSpec::CheckType_impl(TypeDef* td) {
   return inherited::CheckType_impl(td);
 }
 
-void ConSpec::ApplySymmetry_r(RecvCons* cg, Unit* ru, Network* net) {
+void ConSpec::ApplySymmetry_r(ConGroup* cg, Network* net, int thr_no) {
+  Unit* ru = cg->ThrOwnUn(net, thr_no);
   if(!wt_limits.sym) return;
   for(int i=0; i<cg->size;i++) {
     int con_idx = -1;
-    RecvCons* rrcg = BaseCons::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
+    ConGroup* rrcg = ConGroup::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
                                                 cg->prjn->layer);
     if(rrcg) {
       cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
@@ -109,11 +101,12 @@ void ConSpec::ApplySymmetry_r(RecvCons* cg, Unit* ru, Network* net) {
   }
 }
 
-void ConSpec::ApplySymmetry_s(SendCons* cg, Unit* su, Network* net) {
+void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
+  Unit* su = cg->ThrOwnUn(net, thr_no);
   if(!wt_limits.sym) return;
   for(int i=0; i<cg->size;i++) {
     int con_idx = -1;
-    SendCons* rscg = BaseCons::FindRecipSendCon(con_idx, cg->Un(i,net), su,
+    ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
                                                 cg->prjn->from.ptr());
     if(rscg) {
       cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);

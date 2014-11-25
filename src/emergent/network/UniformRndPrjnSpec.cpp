@@ -86,7 +86,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
         if(!self_con && (ru == su)) continue;
         // don't connect to anyone who already recvs from me cuz that will make
         // a symmetric connection which isn't good: symmetry will be enforced later
-        RecvCons* scg = su->recv.FindPrjn(prjn);
+        ConGroup* scg = su->RecvConGroupPrjn(prjn);
         if(scg->FindConFromIdx(ru) >= 0) continue;
         perm_list.Link(su);
       }
@@ -98,7 +98,7 @@ void UniformRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     }
     // now go thru and make the symmetric connections
     FOREACH_ELEM_IN_GROUP(Unit, ru, lay->units) {
-      SendCons* scg = ru->send.FindPrjn(prjn);
+      ConGroup* scg = ru->SendConGroupPrjn(prjn);
       if(scg == NULL) continue;
       int i;
       for(i=0;i<scg->size;i++) {
