@@ -770,8 +770,7 @@ void Network::AllocUnitConGpThreadMem() {
   }
 #endif
 
-  //  NET_THREAD_CALL(Network::InitUnitConGpThreadMem);
-  NET_THREAD_LOOP(Network::InitUnitConGpThreadMem);
+  NET_THREAD_CALL(Network::InitUnitConGpThreadMem);
 }
 
 int  Network::FindActiveLayerIdx(Layer* lay, const int st_idx) {
@@ -863,11 +862,7 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
     uv->unit_spec = us;
     uv->thr_un_idx = i;
     if(us) {
-      // todo: we need a generic raw initializer routine here -- 
-      // Init_Acts in Leabra goes into the con groups!
-
-      // us->Init_Acts(uv, this, thr_no);  // initialze -- causes this thread to own mem
-      // us->Init_Weights(uv, this, thr_no);  // initialze -- causes this thread to own mem
+      us->Init_Vars(uv, this, thr_no);  // initialze -- causes this thread to own mem
     }
 
     int rcg_idx = 0;
@@ -889,7 +884,6 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
     }
   }
 }
-
 
 #ifdef NUMA_COMPILE
 void Network::AllocSendNetinTmp_Thr(int thr_no) {

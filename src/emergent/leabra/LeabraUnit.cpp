@@ -19,63 +19,6 @@
 TA_BASEFUNS_CTORS_DEFN(LeabraUnit);
 
 void LeabraUnit::Initialize() {
-  // act_eq = 0.0f;
-  // act_nd = 0.0f;
-  // spike = 0.0f;
-  // act_q0 = 0.0f;
-  // act_q1 = 0.0f;
-  // act_q2 = 0.0f;
-  // act_q3 = 0.0f;
-  // act_q4 = 0.0f;
-  // act_m = 0.0f;
-  // act_p = 0.0f;
-  // act_dif = 0.0f;
-  // net_prv_q = 0.0f;
-  // net_prv_trl = 0.0f;
-  // da = 0.0f;
-  // avg_ss = 0.15f;
-  // avg_s = 0.15f;
-  // avg_m = 0.15f;
-  // avg_l = 0.15f;
-  // act_avg = 0.15f;
-  // thal = 0.0f;
-  // thal_prv = 0.0f;
-  // deep5b = 0.0f;
-  // d5b_net = 0.0f;
-  // ti_ctxt = 0.0f;
-  // lrnmod = 0.0f;
-  // gc_i = 0.0f;
-  // I_net = 0.0f;
-  // v_m = 0.0f;
-  // v_m_eq = 0.0f;
-  // adapt = 0.0f;
-  // gi_syn = 0.0f;
-  // gi_self = 0.0f;
-  // gi_ex = 0.0f;
-  // E_i = 0.25f;
-  // syn_tr = 1.0f;
-  // syn_nr = 1.0f;
-  // syn_pr = 0.2f;
-  // syn_kre = 0.0f;
-  // noise = 0.0f;
-  // dav = 0.0f;
-  // sev = 0.0f;
-
-  // net_scale = 0.0f;
-  // bias_scale = 0.0f;
-  // ctxt_scale = 1.0f;
-
-  // act_sent = 0.0f;
-  // net_raw = 0.0f;
-  // gi_raw = 0.0f;
-  // d5b_sent = 0.0f;
-
-  // misc_1 = 0.0f;
-  // spk_t = -1;
-
-  // act_buf = NULL;
-  // spike_e_buf = NULL;
-  // spike_i_buf = NULL;
 }
 
 void LeabraUnit::CutLinks() {

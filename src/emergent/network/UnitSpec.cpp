@@ -93,6 +93,16 @@ void UnitSpec::UpdateAfterEdit_impl() {
 //  ConGroup level processing is all done as a separate pass at network level
 //  so DON'T do that here!
 
+void UnitSpec::Init_Vars(UnitVars* u, Network* net, int thr_no) {
+  u->ext_flag = UnitVars::NO_EXTERNAL;
+  u->ext = 0.0f;
+  u->targ = 0.0f;
+  u->net = 0.0f;
+  u->act = 0.0f;
+  u->bias_wt = 0.0f;
+  u->bias_dwt = 0.0f;
+}
+
 void UnitSpec::Init_InputData(UnitVars* u, Network* net, int thr_no) {
   u->ext_flag = UnitVars::NO_EXTERNAL;
   u->ext = 0.0f;

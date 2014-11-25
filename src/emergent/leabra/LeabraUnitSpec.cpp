@@ -490,6 +490,70 @@ void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_f
   nxx1_fl.Convolve(fun, noise_fl); // does alloc
 }
 
+void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
+  LeabraUnitVars* u = (LeabraUnitVars*)ru;
+  LeabraNetwork* net = (LeabraNetwork*)rnet;
+  inherited::Init_Vars(u, net, thr_no);
+
+  u->act_eq = 0.0f;
+  u->act_nd = 0.0f;
+  u->spike = 0.0f;
+  u->act_q0 = 0.0f;
+  u->act_q1 = 0.0f;
+  u->act_q2 = 0.0f;
+  u->act_q3 = 0.0f;
+  u->act_q4 = 0.0f;
+  u->act_m = 0.0f;
+  u->act_p = 0.0f;
+  u->act_dif = 0.0f;
+  u->net_prv_q = 0.0f;
+  u->net_prv_trl = 0.0f;
+  u->da = 0.0f;
+  u->avg_ss = 0.15f;
+  u->avg_s = 0.15f;
+  u->avg_m = 0.15f;
+  u->avg_l = 0.15f;
+  u->act_avg = 0.15f;
+  u->thal = 0.0f;
+  u->thal_prv = 0.0f;
+  u->deep5b = 0.0f;
+  u->d5b_net = 0.0f;
+  u->ti_ctxt = 0.0f;
+  u->lrnmod = 0.0f;
+  u->gc_i = 0.0f;
+  u->I_net = 0.0f;
+  u->v_m = 0.0f;
+  u->v_m_eq = 0.0f;
+  u->adapt = 0.0f;
+  u->gi_syn = 0.0f;
+  u->gi_self = 0.0f;
+  u->gi_ex = 0.0f;
+  u->E_i = 0.25f;
+  u->syn_tr = 1.0f;
+  u->syn_nr = 1.0f;
+  u->syn_pr = 0.2f;
+  u->syn_kre = 0.0f;
+  u->noise = 0.0f;
+  u->dav = 0.0f;
+  u->sev = 0.0f;
+
+  u->net_scale = 0.0f;
+  u->bias_scale = 0.0f;
+  u->ctxt_scale = 1.0f;
+
+  u->act_sent = 0.0f;
+  u->net_raw = 0.0f;
+  u->gi_raw = 0.0f;
+  u->d5b_sent = 0.0f;
+
+  u->misc_1 = 0.0f;
+  u->spk_t = -1;
+
+  // act_buf = NULL;
+  // spike_e_buf = NULL;
+  // spike_i_buf = NULL;
+}
+
 void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
   LeabraUnitVars* u = (LeabraUnitVars*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;

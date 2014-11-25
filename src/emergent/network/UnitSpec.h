@@ -51,6 +51,8 @@ public:
   //    call through to the layers for any layer-level subsequent processing
   //    units typically call spec versions except for basic stuff
 
+  virtual void  Init_Vars(UnitVars* u, Network* net, int thr_no);
+  // #CAT_Activation initialize all unit variables -- do NOT access anything else, e.g., at congroup level
   virtual void  Init_InputData(UnitVars* u, Network* net, int thr_no);
   // #CAT_Activation initialize unit activation state variables for input data
   virtual void  Init_Acts(UnitVars* u, Network* net, int thr_no);

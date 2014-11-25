@@ -51,7 +51,11 @@ public:
 
   void run() override;
 
-  void SyncSpin(int usec_wait = 0);
+  void SyncSpin1(int usec_wait = 0);
+  // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
+  void SyncSpin2(int usec_wait = 0);
+  // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
+  void SyncSpin3(int usec_wait = 0);
   // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
 
   NetworkThreadMgr* mgr() { return (NetworkThreadMgr*)owner->GetOwner(); }
@@ -68,8 +72,12 @@ class E_API NetworkThreadMgr : public taThreadMgr {
   // #INLINE thread manager for network methods -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  QAtomicInt    sync_ctr;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
-  QAtomicInt    sync_step;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+  QAtomicInt    sync1_ctr;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync1_step;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+  QAtomicInt    sync2_ctr;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync2_step;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+  QAtomicInt    sync3_ctr;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync3_step;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
 
   Network*      network()       { return (Network*)owner; }
 
@@ -78,8 +86,12 @@ public:
   void Run(NetworkThreadCall& meth_call);
   // #IGNORE run given function on the Network, passing thread number as arg
 
-  void SyncSpin(int thread_no, int usec_wait = 0);
-  // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!!
+  void SyncSpin1(int thread_no, int usec_wait = 0);
+  // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!! -- MUST ALTERNATE between SyncSpin1 and 2 calls!
+  void SyncSpin2(int thread_no, int usec_wait = 0);
+  // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!! -- MUST ALTERNATE between SyncSpin1 and 2 calls!
+  void SyncSpin3(int thread_no, int usec_wait = 0);
+  // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!! -- MUST ALTERNATE between SyncSpin1 and 2 calls!
 
   TA_BASEFUNS_NOCOPY(NetworkThreadMgr);
 protected:
