@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7742
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7747
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -10539,7 +10539,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        keygen 4 0=0;
        row_indexes {
 	name="row_indexes";
-       [0]        };
+       [5] 0;1;2;3;4;       };
       };
      };
      types {
@@ -10673,7 +10673,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        orig_prog_code=;
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["AddRowsAndWriteToTable"].vars["SomeTable"]$;
-       method=NULL;
+       method=taBase::OpenInWindow;
        meth_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -10690,8 +10690,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	};
        };
-       meth_sig=;
-       meth_desc=;
+       meth_sig="bool OpenInWindow(bool modal = false)";
+       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
       };
      };
      step_prog=NULL;
@@ -11635,11 +11635,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [1] ;	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [1 10] 1;2;3;4;5;6;7;8;9;10;
 	 };
 	};
@@ -11662,11 +11662,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10]  9 0 "Hello"; 0 1; 9 0 "World"; 0 1; 0 1; 0 1; 0 1; 0 1; 0 1; 0 1;
 	 };
 	};
@@ -11706,11 +11706,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -11733,11 +11733,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -11760,11 +11760,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [3] ;;;	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [2 2 2 10] ;;;;;;;;;;
 ;;;;;;;;;;
 ;;;;;;;;;;
@@ -11811,11 +11811,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Fruit";"Grapes";"Huckleberry";"Imo";"Jam";
 	 };
 	};
@@ -11843,11 +11843,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 20;30;15;55;5;25;45;60;7;44;
 	 };
 	};
@@ -11870,11 +11870,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 7";;"Hello World 2";;;;;;;;
 	 };
 	};
@@ -11897,11 +11897,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 8";;"Hello World 1";;;;;;;;
 	 };
 	};
@@ -11924,11 +11924,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 5";;"Hello World 4";;;;;;;;
 	 };
 	};
@@ -11951,11 +11951,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 6";;"Hello World 3";;;;;;;;
 	 };
 	};
@@ -11978,11 +11978,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 3";;"Hello World 6";;;;;;;;
 	 };
 	};
@@ -12005,11 +12005,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 4";;"Hello World 5";;;;;;;;
 	 };
 	};
@@ -12032,11 +12032,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 1";;"Hello World 8";;;;;;;;
 	 };
 	};
@@ -12059,11 +12059,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello World 2";;"Hello World 7";;;;;;;;
 	 };
 	};
@@ -12091,11 +12091,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 3;0;2;0;0;0;0;0;0;0;
 	 };
 	};
@@ -12123,11 +12123,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 4;0;1;0;0;0;0;0;0;0;
 	 };
 	};
@@ -12155,11 +12155,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 1;0;4;0;0;0;0;0;0;0;
 	 };
 	};
@@ -12187,11 +12187,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 2;0;3;0;0;0;0;0;0;0;
 	 };
 	};
@@ -12214,11 +12214,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 0.1;0.2;0.3;0.4;0.5;0.6;0.7;0.8;0.9;1.1;
 	 };
 	};
@@ -12246,11 +12246,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] 1;2;3;4;5;6;7;8;9;10;
 	 };
 	};
@@ -12273,11 +12273,11 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	  expr=;
 	 };
 	 dim_names {
-	  name=;
+	  name="dim_names";
 	 [0] 	 };
 	 width=0;
 	 ar {
-	  name=;
+	  name="ar";
 	 [10] "Hello";;"World";;;;;;;;
 	 };
 	};
@@ -14010,7 +14010,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        orig_prog_code=;
        result_var=NULL;
        obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataCalcLoop"].vars["TableTwo"]$;
-       method=NULL;
+       method=taBase::OpenInWindow;
        meth_args {
 	name="ProgArg_List_0";
 	el_typ=ProgArg;
@@ -14027,8 +14027,8 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 };
 	};
        };
-       meth_sig=;
-       meth_desc=;
+       meth_sig="bool OpenInWindow(bool modal = false)";
+       meth_desc=" Edit this object in a popup dialog using the gui (if modal == true, the edit dialog blocks all other gui operations until the user closes it)";
       };
      };
      step_prog=NULL;
@@ -17134,7 +17134,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.01231060642749071;
+     value 6 0=0.00284090917557478;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
@@ -18952,7 +18952,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     n_wake_in_sync=0;
     run_time_pct=0;
     sync_time_pct=0;
-    wake_in_sync_pct=6.929263367506111e-310;
+    wake_in_sync_pct=0;
     quarter=1;
     unit_chunks=32;
     unit_fixed=0;
