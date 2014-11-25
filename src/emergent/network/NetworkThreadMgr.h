@@ -37,7 +37,7 @@ typedef void (Network::*NetworkThreadMethod)(int);
 #endif
 
 #define NET_THREAD_CALL(meth) { NetworkThreadCall meth_call((NetworkThreadMethod)(&meth));\
-  threads.Run(&meth_call); }
+  threads.Run(meth_call); }
 
 
 eTypeDef_Of(NetworkThreadTask);
@@ -46,7 +46,7 @@ class E_API NetworkThreadTask : public taTask {
 INHERITED(taTask)
 public:
   NetworkRef            network;   // the network we're operating on
-  NetworkThreadCall*    meth_call; // #IGNORE method to call on the network
+  NetworkThreadCall     meth_call; // #IGNORE method to call on the network
   TimeUsedHR            wait_time; // amount of time spent in spin-lock wait
 
   void run() override;
@@ -75,7 +75,7 @@ public:
 
   void InitAll() override;      // initialize threads and tasks
 
-  void Run(NetworkThreadCall* meth_call);
+  void Run(NetworkThreadCall& meth_call);
   // #IGNORE run given function on the Network, passing thread number as arg
 
   void SyncSpin(int thread_no, int usec_wait = 0);

@@ -318,10 +318,8 @@ void Network::UpdateAfterEdit_impl(){
   if(taMisc::is_loading) {
     brain_atlas = brain_atlases->FindName(brain_atlas_name);
     if(HasNetFlag(SAVE_UNITS) || HasNetFlag(SAVE_UNITS_FORCE)) {
-      UpdateAllSpecs(true);       // need to fix up some things after a load with saved units
-      BuildUnits();
-      Init_Weights_post();
-      NET_THREAD_LOOP(Network::Connect_VecChunk);
+      UpdateAllSpecs(true);       // need to fix up some things after a load with saved
+      // todo: no longer supported!!!
     }
   }
   else {
@@ -484,11 +482,11 @@ void Network::Build() {
   AllocUnitConGpThreadMem();
 
   Connect();
+
+  AllocSendNetinTmp();
+
   if(taMisc::gui_active)	// only when gui is active..
     AssignVoxels();
-  StructUpdate(false);
-  --taMisc::no_auto_expand;
-  taMisc::DoneBusy();
 
   SetNetFlag(BUILT);
   SetNetFlag(INTACT);
@@ -497,6 +495,10 @@ void Network::Build() {
   layers.RestorePanels();
 
   net_timing.SetSize(n_thrs_built + 1);
+
+  StructUpdate(false);
+  --taMisc::no_auto_expand;
+  taMisc::DoneBusy();
 }
 
 void Network::CheckSpecs() {
@@ -861,8 +863,11 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
     uv->unit_spec = us;
     uv->thr_un_idx = i;
     if(us) {
-      us->Init_Acts(uv, this, thr_no);  // initialze -- causes this thread to own mem
-      us->Init_Weights(uv, this, thr_no);  // initialze -- causes this thread to own mem
+      // todo: we need a generic raw initializer routine here -- 
+      // Init_Acts in Leabra goes into the con groups!
+
+      // us->Init_Acts(uv, this, thr_no);  // initialze -- causes this thread to own mem
+      // us->Init_Weights(uv, this, thr_no);  // initialze -- causes this thread to own mem
     }
 
     int rcg_idx = 0;
@@ -912,8 +917,7 @@ void Network::AllocSendNetinTmp() {
   }
 #endif
 
-  //  NET_THREAD_CALL(Network::InitSendNetinTmp_Thr);
-  NET_THREAD_LOOP(Network::InitSendNetinTmp_Thr);
+  NET_THREAD_CALL(Network::InitSendNetinTmp_Thr);
 }
 
 void Network::InitSendNetinTmp_Thr(int thr_no) {
@@ -942,7 +946,7 @@ void Network::Connect() {
   StructUpdate(true);
 
   CheckSpecs();
-  // RemoveCons();
+  RemoveCons();
   SyncSendPrjns();
 
   Connect_Sizes();
@@ -950,7 +954,6 @@ void Network::Connect() {
   Connect_Cons();
 
   //  NET_THREAD_CALL(Network::Connect_VecChunk);
-  // NET_THREAD_LOOP(Network::Connect_VecChunk);
 
   CountCons();
   UpdtAfterNetMod();
@@ -1026,8 +1029,7 @@ void Network::Connect_Alloc() {
   }
 #endif
 
-  //  NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
-  NET_THREAD_LOOP(Network::Connect_Alloc_Thr); // allocate to con groups
+  NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
 }
 
 void Network::Connect_AllocSizes_Thr(int thr_no) {
@@ -1425,8 +1427,7 @@ void Network::Init_InputData_Thr(int thr_no) {
 }
 
 void Network::Init_Acts() {
-  //  NET_THREAD_CALL(Network::Init_Acts_Thr);
-  NET_THREAD_LOOP(Network::Init_Acts_Thr);
+  NET_THREAD_CALL(Network::Init_Acts_Thr);
 }
 
 void Network::Init_Acts_Thr(int thr_no) {
@@ -1483,10 +1484,10 @@ void Network::Init_Weights() {
 
   if(needs_wt_sym) {
     // taMisc::Info("Starting Init_Weights_sym...");
-    NET_THREAD_LOOP(Network::Init_Weights_sym);
+    NET_THREAD_CALL(Network::Init_Weights_sym);
   }
   // taMisc::Info("Starting Init_Weights_post...");
-  NET_THREAD_LOOP(Network::Init_Weights_post_Thr);
+  NET_THREAD_CALL(Network::Init_Weights_post_Thr);
 
   // taMisc::Info("Starting Init_Weights_Layer..");
   Init_Weights_Layer();

@@ -140,8 +140,19 @@ class taTaskMethCall1 {
 public:
   typedef ReturnType (Class::*Method)(Parameter);
 
+  Method        meth() const { return method; }
+
+  taTaskMethCall1() {
+    method = NULL;
+  }
+
   taTaskMethCall1(Method _method) {
     method        = _method;
+  }
+
+  taTaskMethCall1& operator=(const taTaskMethCall1& cp) {
+    method = cp.meth();
+    return *this;
   }
 
   ReturnType call(Class* base, Parameter parameter) {
@@ -157,8 +168,19 @@ class taTaskMethCall2 {
 public:
   typedef ReturnType (Class::*Method) (Parameter1, Parameter2);
 
+  Method        meth() const { return method; }
+
+  taTaskMethCall2() {
+    method = NULL;
+  }
+
   taTaskMethCall2(Method _method) {
     method        = _method;
+  }
+
+  taTaskMethCall2& operator=(const taTaskMethCall2& cp) {
+    method = cp.meth();
+    return *this;
   }
 
   ReturnType call(Class* base, Parameter1 parameter1, Parameter2 parameter2) {

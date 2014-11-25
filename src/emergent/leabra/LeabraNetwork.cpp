@@ -194,7 +194,7 @@ void LeabraNetwork::Init_Stats() {
 }
 
 void LeabraNetwork::Init_Acts() {
-  NET_THREAD_LOOP(LeabraNetwork::Init_Acts_Thr);
+  NET_THREAD_CALL(LeabraNetwork::Init_Acts_Thr);
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
@@ -261,7 +261,6 @@ void LeabraNetwork::AllocSendNetinTmp() {
   if(n_units_built == 0 || threads.n_threads == 0) return;
 
   net_aligned_malloc((void**)&thrs_send_d5bnet_tmp, n_thrs_built * sizeof(float*));
-  inherited::AllocSendNetinTmp();
 
 #ifndef NUMA_COMPILE
   for(int i=0; i<n_thrs_built; i++) {
@@ -269,6 +268,8 @@ void LeabraNetwork::AllocSendNetinTmp() {
                        n_units_built * sizeof(float));
   }
 #endif
+
+  inherited::AllocSendNetinTmp();
 }
 
 void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
@@ -445,7 +446,7 @@ void LeabraNetwork::Compute_NetinScale_Senders_Thr(int thr_no) {
 }
 
 void LeabraNetwork::Compute_HardClamp() {
-  NET_THREAD_CALL(LeabraNetwork::Compute_HardClamp);
+  NET_THREAD_CALL(LeabraNetwork::Compute_HardClamp_Thr);
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())

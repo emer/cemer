@@ -23,17 +23,15 @@ TA_BASEFUNS_CTORS_DEFN(NetworkThreadMgr);
 TA_BASEFUNS_CTORS_DEFN(NetworkThreadTask);
 
 void NetworkThreadTask::Initialize() {
-  meth_call = NULL;
 }
 
 void NetworkThreadTask::Destroy() {
   network.CutLinks();
-  meth_call = NULL;
 }
 
 void NetworkThreadTask::run() {
   NetworkThreadMgr* mg = mgr();
-  meth_call->call(network, task_id); // task id indicates threading, and which thread
+  meth_call.call(network, task_id); // task id indicates threading, and which thread
 }
 
 
@@ -103,7 +101,7 @@ void NetworkThreadMgr::InitAll() {
   }
 }
 
-void NetworkThreadMgr::Run(NetworkThreadCall* meth_call) {
+void NetworkThreadMgr::Run(NetworkThreadCall& meth_call) {
   sync_ctr = 0;
   sync_step = 0;
 
