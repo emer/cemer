@@ -380,7 +380,9 @@ ConGroup* ConGroup::FindRecipRecvCon(int& con_idx, Unit* su, Unit* ru, Layer* ru
   Projection* prj = su->own_lay()->projections.FindPrjnFrom(ru_lay);
   if(!prj) return NULL;
   ConGroup* rcg = su->RecvConGroupPrjn(prj);
-  return rcg;
+  con_idx = rcg->FindConFromIdx(ru);
+  if(con_idx >= 0) return rcg;
+  return NULL;
 }
 
 // static
@@ -388,7 +390,9 @@ ConGroup* ConGroup::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su
   Projection* prj = ru->own_lay()->send_prjns.FindPrjnTo(su_lay);
   if(!prj) return NULL;
   ConGroup* scg = ru->SendConGroupPrjn(prj);
-  return scg;
+  con_idx = scg->FindConFromIdx(su);
+  if(con_idx >= 0) return scg;
+  return NULL;
 }  
 
 void ConGroup::FixConPtrs_SendOwns(Network* net, int st_idx) {
