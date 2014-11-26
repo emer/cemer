@@ -158,9 +158,10 @@ int ConGroup::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
     taMisc::Error("ConnectUnOwnCn: does not own cons!");
     return -1;
   }
-  if(!allow_null_unit && un->flat_idx == 0)
+  if(!allow_null_unit && un->flat_idx == 0) {
     return -1; // null unit -- don't even connect!
-  if(size >= alloc_size || mem_start == NULL) {
+  }
+  if((size >= alloc_size) || (mem_start == NULL)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnOwnCn: mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");
@@ -180,9 +181,10 @@ bool ConGroup::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
     taMisc::Error("ConnectUnPtrCn: is not a ptr cons!");
     return false;
   }
-  if(un->flat_idx == 0)
+  if(un->flat_idx == 0) {
     return false; // null unit -- don't even connect!
-  if(size >= alloc_size || mem_start == NULL) {
+  }
+  if((size >= alloc_size) || (mem_start == NULL)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnPtrCn: mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");
@@ -385,7 +387,7 @@ ConGroup* ConGroup::FindRecipRecvCon(int& con_idx, Unit* su, Unit* ru, Layer* ru
 ConGroup* ConGroup::FindRecipSendCon(int& con_idx, Unit* ru, Unit* su, Layer* su_lay) {
   Projection* prj = ru->own_lay()->send_prjns.FindPrjnTo(su_lay);
   if(!prj) return NULL;
-  ConGroup* scg = su->SendConGroupPrjn(prj);
+  ConGroup* scg = ru->SendConGroupPrjn(prj);
   return scg;
 }  
 

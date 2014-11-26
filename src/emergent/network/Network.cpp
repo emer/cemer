@@ -947,7 +947,8 @@ void Network::Connect() {
   Connect_Alloc();
   Connect_Cons();
 
-  //  NET_THREAD_CALL(Network::Connect_VecChunk);
+  NET_THREAD_CALL(Network::Connect_VecChunk_Thr);
+  NET_THREAD_CALL(Network::Connect_UpdtActives_Thr);
 
   CountCons();
   UpdtAfterNetMod();
@@ -1153,7 +1154,7 @@ void Network::Connect_Cons() {
   }
 }
 
-void Network::Connect_VecChunk(int thr_no) {
+void Network::Connect_VecChunk_Thr(int thr_no) {
   float pct_chunked = 0.0f;
   int   ncg = 0;
   if(RecvOwnsCons()) {
@@ -1185,6 +1186,19 @@ void Network::Connect_VecChunk(int thr_no) {
   else {
     thrs_pct_cons_vec_chunked[thr_no] = 0.0f;
   }    
+}
+
+void Network::Connect_UpdtActives_Thr(int thr_no) {
+  const int nrcg = ThrNRecvConGps(thr_no);
+  for(int i=0; i<nrcg; i++) {
+    ConGroup* rcg = ThrRecvConGroup(thr_no, i);
+    rcg->UpdtIsActive();
+  }
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    ConGroup* scg = ThrSendConGroup(thr_no, i);
+    scg->UpdtIsActive();
+  }
 }
 
 bool Network::CheckBuild(bool quiet) {
@@ -1360,6 +1374,7 @@ void Network::RemoveUnits() {
 void Network::RemoveCons() {
   ClearNetFlag(BUILT);
   ClearNetFlag(INTACT);
+  if(!thrs_n_recv_cgps) return; // cgps already gone
   taMisc::Busy();
   StructUpdate(true);
   for(int i=0; i<n_thrs_built; i++) { // don't use actual threading -- maybe destroying
@@ -2337,7 +2352,7 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
   }
 
   Init_Weights_post();
-  NET_THREAD_LOOP(Network::Connect_VecChunk); // re-chunk just to be sure, in case they moved around
+  NET_THREAD_CALL(Network::Connect_VecChunk_Thr); // re-chunk just to be sure, in case they moved around
   
   // could try to read end tag but what is the point?
   rval = true;

@@ -483,8 +483,10 @@ public:
     // #IGNORE second pass of connecting -- dole out the allocated memory to con groups
     virtual void  Connect_Cons();
     // #IGNORE third pass of connecting -- actually make the connections -- done by projection specs
-    virtual void  Connect_VecChunk(int thr_no);
+    virtual void  Connect_VecChunk_Thr(int thr_no);
     // #IGNORE fourth pass of connecting -- organize connections into optimal vectorizable chunks
+    virtual void  Connect_UpdtActives_Thr(int thr_no);
+    // #IGNORE update the active flag status of all connections
 
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built

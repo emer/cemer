@@ -716,58 +716,42 @@ void NetView::GetMembs() {
 
   setUnitDispMd(NULL);
   membs.Reset();
-  TypeDef* prv_td = NULL;
 
-  // first do the unit variables
-  FOREACH_ELEM_IN_GROUP(Layer, lay, net()->layers) {
-    FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-      TypeDef* td = u->GetTypeDef();
-      if(td == prv_td) continue; // don't re-scan!
-      prv_td = td;
+  // there is now only one global unit variables type!
+  if(net()->unit_vars_built) {
+    TypeDef* td = net()->unit_vars_built;
 
-      for(int m=0; m<td->members.size; m++) {
-        MemberDef* md = td->members.FastEl(m);
-        if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
-            md->HasOption("READ_ONLY")))
-          continue;
-        if((md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double))
-           && (membs.FindName(md->name)==NULL))
-        {
-          MemberDef* nmd = md->Clone();
-          membs.Add(nmd);       // index now reflects position in list...
-          nmd->idx = md->idx;   // so restore it to the orig one
-        }       // check for nongroup owned sub fields (ex. bias)
-        else if(md->type->DerivesFrom(&TA_taBase) && !md->type->DerivesFrom(&TA_taGroup)) {
-          if(md->type->IsPtrPtr()) continue; // only one level of pointer tolerated
-          TypeDef* nptd;
-          if(md->type->IsPointer()) {
-            taBase** par_ptr = (taBase**)md->GetOff((void*)u);
-            if(*par_ptr == NULL) continue; // null pointer
-            nptd = (*par_ptr)->GetTypeDef(); // get actual type of connection
-          }
-          else
-            nptd = md->type;
-          int k;
-          for(k=0; k<nptd->members.size; k++) {
-            MemberDef* smd = nptd->members.FastEl(k);
-            if(smd->type->InheritsFrom(&TA_float) || smd->type->InheritsFrom(&TA_double)) {
-              if((smd->HasOption("NO_VIEW") || smd->HasOption("HIDDEN") ||
-                  smd->HasOption("READ_ONLY")))
-                continue;
-              String nm = md->name + "." + smd->name;
-              if(membs.FindName(nm)==NULL) {
-                MemberDef* nmd = smd->Clone();
-                nmd->name = nm;
-                membs.Add(nmd);
-                nmd->idx = smd->idx;
-              }
-            }
-          }
-        }
+    for(int m=0; m<td->members.size; m++) {
+      MemberDef* md = td->members.FastEl(m);
+      if((md->HasOption("NO_VIEW") || md->HasOption("HIDDEN") ||
+          md->HasOption("READ_ONLY")))
+        continue;
+      if(md->type->InheritsFrom(&TA_float) || md->type->InheritsFrom(&TA_double)) {
+        MemberDef* nmd = md->Clone();
+        membs.Add(nmd);       // index now reflects position in list...
+        nmd->idx = md->idx;   // so restore it to the orig one
       }
     }
   }
 
+  // we only support two standard unit-specific variables: snap and wt_prjn
+  if (membs.size > 0) {
+    TypeDef* td = &TA_Unit;
+    MemberDef* md = td->members.FindName("snap");
+    if(md) {
+      MemberDef* nmd = md->Clone();
+      membs.Add(nmd);       // index now reflects position in list...
+      nmd->idx = md->idx;   // so restore it to the orig one
+    }
+    md = td->members.FindName("wt_prjn");
+    if(md) {
+      MemberDef* nmd = md->Clone();
+      membs.Add(nmd);       // index now reflects position in list...
+      nmd->idx = md->idx;   // so restore it to the orig one
+    }
+  }
+
+  TypeDef* prv_td = NULL;
   // then, only do the connections if any Unit guys, otherwise we are
   // not built yet, so we leave ourselves empty to signal that
   if (membs.size > 0) {

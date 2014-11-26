@@ -95,7 +95,7 @@ void ConSpec::ApplySymmetry_r(ConGroup* cg, Network* net, int thr_no) {
     int con_idx = -1;
     ConGroup* rrcg = ConGroup::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
                                                 cg->prjn->layer);
-    if(rrcg) {
+    if(rrcg && con_idx >= 0) {
       cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
     }
   }
@@ -108,7 +108,7 @@ void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
     int con_idx = -1;
     ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
                                                 cg->prjn->from.ptr());
-    if(rscg) {
+    if(rscg && con_idx >= 0) {
       cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
     }
   }

@@ -183,7 +183,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
       UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u,
                                   nv->con_type);
     }
-    else { // sub-member of unit
+    else { // sub-member of unit -- not supported anymore!
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
     }
   }
@@ -264,7 +264,15 @@ void UnitGroupView::UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md) {
       uvd_bases.Set(NULL, coord.x, coord.y, midx);
       if (!unit) continue;  // rest will be null too, but we loop to null disp_base
       if(unit->lesioned()) continue;
-      uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
+      if(disp_md->name == "snap" || disp_md->name == "wt_prjn") {
+        uvd_bases.Set(disp_md->GetOff(unit), coord.x, coord.y, midx);
+      }
+      else {
+        UnitVars* uv = unit->GetUnitVars();
+        if(uv) {
+          uvd_bases.Set(disp_md->GetOff(uv), coord.x, coord.y, midx);
+        }
+      }
     }
   }
 }

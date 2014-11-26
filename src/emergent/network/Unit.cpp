@@ -227,7 +227,7 @@ bool Unit::CheckBuild(bool quiet) {
 void Unit::SetUnitSpec(UnitSpec* us) {
   m_unit_spec = us;
   if(!own_net()) return;
-  if(own_net()->n_units_built == 0) return;
+  if(own_net()->n_units_built == 0 || own_net()->units_thrs == NULL) return;
   GetUnitVars()->unit_spec = us; // keep synchronized!
 }
 

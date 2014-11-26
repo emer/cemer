@@ -505,14 +505,14 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.StartTimer(true); // reset
     Compute_NetinInteg_Thr(thr_no);
-    threads.SyncSpin2(thr_no);
+    threads.SyncSpin1(thr_no);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.EndIncrAvg();
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->inhib.StartTimer(true); // reset
     Compute_Inhib_Thr(thr_no);
-    threads.SyncSpin3(thr_no);
+    threads.SyncSpin1(thr_no);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
 
@@ -526,7 +526,7 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->act_post.StartTimer(true); // reset
     Compute_Act_Post_Thr(thr_no);
-    threads.SyncSpin2(thr_no);
+    threads.SyncSpin1(thr_no);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->act_post.EndIncrAvg();
 
@@ -542,7 +542,7 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
       Compute_CycleStats_Post();
     }
 
-    threads.SyncSpin3(thr_no);
+    threads.SyncSpin1(thr_no);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.EndIncrAvg();
 
