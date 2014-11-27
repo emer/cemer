@@ -77,9 +77,9 @@ public: //
   // UnitVars variable access:
 
   inline UnitVars*      GetUnitVars() const;
-  // #CAT_Structure get unit variables for this unit (stored in thread-specific memory)
+  // #IGNORE get unit variables for this unit (stored in thread-specific memory)
   inline int            ThrNo() const;
-  // #CAT_Structure get thread number that owns this unit
+  // #IGNORE get thread number that owns this unit
 
   inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
   // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
@@ -97,13 +97,13 @@ public: //
   // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
   inline int            NRecvConGps() const;
-  // #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)
+  // #IGNORE #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)
   inline int            NSendConGps() const;
-  // #CAT_Structure get number of sending connection groups (determined by number of active layer send_prjns at time of build)
+  // #IGNORE #CAT_Structure get number of sending connection groups (determined by number of active layer send_prjns at time of build)
   inline ConGroup*      RecvConGroup(int rcg_idx) const;
-  // #CAT_Structure get receiving connection group at given index -- no safe range checking is applied to rcg_idx!
+  // #IGNORE #CAT_Structure get receiving connection group at given index -- no safe range checking is applied to rcg_idx!
   inline ConGroup*      SendConGroup(int scg_idx) const;
-  // #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
+  // #IGNORE #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
   ConGroup*             RecvConGroupPrjn(Projection* prjn);
   // #CAT_Structure get con group at given prjn->recv_idx -- if it is not in range, emits error message and returns NULL
   ConGroup*             SendConGroupPrjn(Projection* prjn);

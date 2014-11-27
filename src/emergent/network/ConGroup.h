@@ -152,7 +152,7 @@ public:
   // #CAT_Access is index in range?
 
   inline TypeDef*       ConType() const;
-  // #CAT_Access connection type (only used for looking up variable names)
+  // #IGNORE #CAT_Access connection type (only used for looking up variable names)
 
   inline int            NConVars() const  { return n_con_vars; }
   // #CAT_Access number of connection-level variables
