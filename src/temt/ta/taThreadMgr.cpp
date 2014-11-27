@@ -217,9 +217,9 @@ void taThreadMgr::RunThreads() {
   if(!spin_wait)
     wait_mutex.lock();
 
-  n_to_run = threads.size;
-  n_started = 0;
+  n_started = 0;                // should already be 0
   n_running = 0;
+  n_to_run = threads.size;
 
   if(spin_wait) {
 #if (QT_VERSION >= 0x050000)
@@ -254,12 +254,41 @@ void taThreadMgr::RunThreads() {
   else {
     wait.wakeAll();
     wait_mutex.unlock();
+    //    SyncThreadsStart();         // todo: just trying this out
   }
-  n_to_run = 0;                 // reset now that everyone has started..
 
   if(get_timing) {
     sync_time.EndTimer();
     run_time.StartTimer(false); // don't reset
+  }
+}
+
+void taThreadMgr::SyncThreadsStart() {
+  // note: one could wrap the following code all in wait_mutex.lock and unlock, but
+  // because the threads are mutex on all the increments, esp the n_running one, 
+  // it is not necessary!  the mutex will be hit next time a run threads guy happens
+  // and that will definitely ensure that everyone got back home..
+
+#if (QT_VERSION >= 0x050000)
+  const int cur_to_run = n_to_run.loadAcquire();
+#else
+  const int cur_to_run = (int)n_to_run;
+#endif
+
+#if (QT_VERSION >= 0x050000)
+  int cur_started = n_started.loadAcquire();
+#else
+  int cur_started = (int)n_started;
+#endif
+
+  while(cur_started < cur_to_run) {
+    if(sync_sleep_usec > 0)
+      taManagedThread::usleep(sync_sleep_usec);
+#if (QT_VERSION >= 0x050000)
+    cur_started = n_started.loadAcquire();
+#else
+    cur_started = (int)n_started;
+#endif
   }
 }
 
@@ -335,6 +364,7 @@ void taThreadMgr::Run() {
       total_time.EndTimer();
       run_time.EndTimer();
     }
+    return;
   }
   else {
     RunThreads();

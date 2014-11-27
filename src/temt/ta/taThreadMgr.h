@@ -94,6 +94,7 @@ public:
 
   virtual void	RunThreads();	// start the threads running their current task: NOTE this is ONLY called on the actual threads, and does not run the main thread
   virtual void	SyncThreads();	// synchronize the threads at the end of running to ensure everyone has finished their task and is ready to move on
+  virtual void  SyncThreadsStart(); // synchronize all threads started -- after this call, all threads have started running
 
   virtual void	StartTimers();
   // Start accumulating timing information on all threads -- must be called *after* everything is initialized and ready to run

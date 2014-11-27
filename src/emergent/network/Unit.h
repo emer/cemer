@@ -81,6 +81,9 @@ public: //
   inline int            ThrNo() const;
   // #IGNORE get thread number that owns this unit
 
+  inline UnitVars*      MyUnitVars() const
+  { return GetUnitVars(); }
+  // #CAT_Structure the unit variables for this unit -- this interface is for program-based access to GetUnitVars call, for obscure compiling-related issues
   inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
   // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
   inline float& targ()  { return GetUnitVars()->targ; }

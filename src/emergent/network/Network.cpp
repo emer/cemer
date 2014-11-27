@@ -756,8 +756,7 @@ void Network::AllocUnitConGpThreadMem() {
     n_send_cgps += lay->n_send_prjns;
   }
 
-  //  NET_THREAD_CALL(Network::InitUnitThreadIdxs);
-  NET_THREAD_LOOP(Network::InitUnitThreadIdxs);
+  NET_THREAD_CALL(Network::InitUnitThreadIdxs);
 
 #ifdef NUMA_COMPILE
   NET_THREAD_CALL(Network::AllocUnitConGpThreadMem_Thr2);
@@ -988,8 +987,7 @@ void Network::Connect_Alloc() {
   net_aligned_malloc((void**)&thrs_tmp_not_chunks, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_tmp_con_mem, n_thrs_built * sizeof(float*));
 
-  //  NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
-  NET_THREAD_LOOP(Network::Connect_AllocSizes_Thr);
+  NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
 
 #ifndef NUMA_ALLOC              // NUMA_ALLOC did it already in the thread
   for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
@@ -1737,7 +1735,6 @@ void Network::Send_Netin_Thr(int thr_no) {
 void Network::Compute_Act() {
   // todo: test performance of each..
   NET_THREAD_CALL(Network::Compute_Act_Thr);
-  //  NET_THREAD_LOOP(Network::Compute_Act_Thr);
 }
 
 void Network::Compute_Act_Thr(int thr_no) {
