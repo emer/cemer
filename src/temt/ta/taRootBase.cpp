@@ -1993,11 +1993,21 @@ bool taRootBase::Startup_ProcessArgs() {
   String proj_ld = taMisc::FindArgByName("Project");
   if(proj_ld.empty())
     proj_ld = taMisc::FindArgValContains(".proj");
-
+  
   if(!proj_ld.empty()) {
     tabMisc::root->projects.Load(proj_ld);
     taRootBase::ProjectOpened();
   }
+  
+  bool file_exists = false;
+  QFileInfo checkFile(proj_ld);
+  // check if file exists and if yes: Is it really a file and not a directory?
+  if (checkFile.exists() && checkFile.isFile()) {
+    file_exists = true;
+  }
+  
+  if (!taMisc::gui_active && !file_exists)
+    taiMC_->Quit();
 
   if(run_startup) {
     // chain the next step -- this will hopefully happen *after* any post-loading
@@ -2007,6 +2017,7 @@ bool taRootBase::Startup_ProcessArgs() {
   else {
     taiMC_->Quit();
   }
+
 
   return true;
 }
