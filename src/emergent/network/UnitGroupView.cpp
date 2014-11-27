@@ -520,7 +520,7 @@ void UnitGroupView::Render_impl_blocks() {
   float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
 
   if(nv->snap_bord_disp) {
-    spacing += max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
+    spacing += max_xy * 0.0005f * nv->snap_bord_width;
     if(spacing > 0.25f) spacing = 0.25f;
   }
 
@@ -618,8 +618,6 @@ void UnitGroupView::Render_impl_blocks() {
           txt->justification = SoAsciiText::CENTER;
           tsep->addChild(txt);
         }
-        // todo: could figure out how to do this without a separator
-        // but it just isn't clear that it is that big a deal..  very convenient
         SoSeparator* tsep = (SoSeparator*)un_txt->getChild(t_idx);
         SoTranslation* tr = (SoTranslation*)tsep->getChild(0);
         float xfp = .5f * (xp + xp1);
@@ -1120,7 +1118,7 @@ void UnitGroupView::Render_impl_snap_bord() {
   float max_xy = MAX(nv->eff_max_size.x, nv->eff_max_size.y);
   float max_z = MAX(max_xy, nv->eff_max_size.z); // make sure Z isn't bigger
 
-  float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width; // todo: play with this constant
+  float spacing = 0.5f * max_xy * 0.0005f * nv->snap_bord_width;
   if(spacing > .1f) spacing = .1f;
   float zp = (spacing * 2.0f) / max_z;
 

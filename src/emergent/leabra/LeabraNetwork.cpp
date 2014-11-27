@@ -245,6 +245,9 @@ void LeabraNetwork::Build() {
   }
   inherited::Build();
 
+  // taMisc::Info("sizeof:", String(sizeof(LeabraUnitVars)), ".size:",
+  //              String(unit_vars_size));
+
 #ifdef CUDA_COMPILE
   Cuda_BuildUnits_Threads();
 #endif
@@ -691,7 +694,7 @@ void LeabraNetwork::Compute_RTCycles() {
 
 void LeabraNetwork::Quarter_Final() {
   Quarter_Final_Pre();
-  NET_THREAD_CALL(LeabraNetwork::Quarter_Final_Unit_Thr);
+  NET_THREAD_LOOP(LeabraNetwork::Quarter_Final_Unit_Thr);
   Quarter_Final_Layer();
   Quarter_Compute_dWt();
   Quarter_Final_Counters();

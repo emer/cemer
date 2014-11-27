@@ -161,7 +161,7 @@ int ConGroup::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
   if(!allow_null_unit && un->flat_idx == 0) {
     return -1; // null unit -- don't even connect!
   }
-  if((size >= alloc_size) || (mem_start == NULL)) {
+  if((size >= alloc_size) || (!mem_start)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnOwnCn: mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");
@@ -184,7 +184,7 @@ bool ConGroup::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
   if(un->flat_idx == 0) {
     return false; // null unit -- don't even connect!
   }
-  if((size >= alloc_size) || (mem_start == NULL)) {
+  if((size >= alloc_size) || (!mem_start)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnPtrCn: mem not allocated or size already at maximum allocated of",
                 String(alloc_size),"this is a programmer error -- please report the bug");

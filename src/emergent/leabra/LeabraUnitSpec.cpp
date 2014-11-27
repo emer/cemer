@@ -927,6 +927,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!u->HasExtFlag(UnitVars::EXT))
+    return;
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  if(!(ls->clamp.hard && lay->HasExtFlag(UnitVars::EXT))) {
+    return;
+  }
   u->net = u->ext;
   u->thal = u->ext;             // thalamus is external input
   u->act_eq = clamp_range.Clip(u->ext);
@@ -945,8 +952,15 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
 
 // NOTE: these two functions should always be the same modulo the clamp_range.Clip
 
-void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnitVars* u, LeabraNetwork*,
+void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnitVars* u, LeabraNetwork* net,
                                              int thr_no) {
+  if(!u->HasExtFlag(UnitVars::EXT))
+    return;
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+  if(!(ls->clamp.hard && lay->HasExtFlag(UnitVars::EXT))) {
+    return;
+  }
   u->net = u->ext;
   u->thal = u->ext;             // thalamus is external input
   //  u->act_eq = clamp_range.Clip(u->ext);

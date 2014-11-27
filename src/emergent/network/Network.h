@@ -343,25 +343,103 @@ public:
   { if(on) SetNetFlag(flg); else ClearNetFlag(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
 
-  inline Unit*  UnFmIdx(int flat_idx) const { return units_flat.FastEl(flat_idx); }
+  inline bool   ThrInRange(int thr_no, bool err_msg = true) const
+  { if(thr_no >= 0 && thr_no < n_thrs_built) return true;
+    TestError(err_msg, "ThrInRange", "thread number:", String(thr_no), "out of range");
+    return false; }
+  // #CAT_Structure test if thread number is in range
+  inline bool   UnFlatIdxInRange(int flat_idx, bool err_msg = true) const
+  { if(flat_idx >= 1 && flat_idx < n_units_built) return true;
+    TestError(err_msg, "UnFlatIdxInRange", "unit flat index number:", String(flat_idx),
+              "out of range"); return false; }
+  // #CAT_Structure test if unit flat index is in range
+  inline bool   ThrUnIdxInRange(int thr_no, int thr_un_idx, bool err_msg = true) const
+  { if(ThrInRange(thr_no) && thr_un_idx >= 0 && thr_un_idx < ThrNUnits(thr_no))
+      return true;
+    TestError(err_msg, "ThrUnIdxInRange", "unit thread index number:", String(thr_un_idx),
+              "out of range in thread:", String(thr_no)); return false; }
+  // #CAT_Structure test if thread-based unit index is in range
+
+  inline bool   UnRecvConGpInRange(int flat_idx, int recv_idx, bool err_msg = true) const
+  { if(UnFlatIdxInRange(flat_idx) && recv_idx >= 0 && recv_idx < UnNRecvConGps(flat_idx))
+      return true;
+    TestError(err_msg, "UnRecvConGpInRange", "unit recv con group index number:",
+              String(recv_idx),
+              "out of range in unit flat idx:", String(flat_idx)); return false; }
+  // #CAT_Structure test if unit recv con group index is in range
+  inline bool   UnSendConGpInRange(int flat_idx, int send_idx, bool err_msg = true) const
+  { if(UnFlatIdxInRange(flat_idx) && send_idx >= 0 && send_idx < UnNSendConGps(flat_idx))
+      return true;
+    TestError(err_msg, "UnSendConGpInRange", "unit send con group index number:",
+              String(send_idx),
+              "out of range in unit flat idx:", String(flat_idx)); return false; }
+  // #CAT_Structure test if unit send con group index is in range
+  inline bool   ThrUnRecvConGpInRange(int thr_no, int thr_un_idx, int recv_idx,
+                                      bool err_msg = true) const
+  { if(ThrUnIdxInRange(thr_no, thr_un_idx)
+       && recv_idx >= 0 && recv_idx < ThrUnNRecvConGps(thr_no, thr_un_idx))
+      return true;
+    TestError(err_msg, "ThrUnRecvConGpInRange", "unit recv con group index number:",
+              String(recv_idx),
+              "out of range in thread unit idx:", String(thr_un_idx),
+              "in thread:", String(thr_no)); return false; }
+  // #CAT_Structure test if thread-specified unit recv con group index is in range
+  inline bool   ThrUnSendConGpInRange(int thr_no, int thr_un_idx, int send_idx,
+                                      bool err_msg = true) const
+  { if(ThrUnIdxInRange(thr_no, thr_un_idx)
+       && send_idx >= 0 && send_idx < ThrUnNSendConGps(thr_no, thr_un_idx))
+      return true;
+    TestError(err_msg, "ThrUnSendConGpInRange", "unit send con group index number:",
+              String(send_idx),
+              "out of range in thread unit idx:", String(thr_un_idx),
+              "in thread:", String(thr_no)); return false; }
+  // #CAT_Structure test if thread-specified unit send con group index is in range
+
+
+  inline Unit*  UnFmIdx(int flat_idx) const {
+#ifdef DEBUG
+    if(!UnFlatIdxInRange(flat_idx)) return NULL;
+#endif
+    return units_flat.FastEl(flat_idx); }
   // #CAT_Structure get the unit from its flat_idx value
   inline Unit*  UnFmIdx_Safe(int flat_idx) const { return units_flat.SafeEl(flat_idx); }
   // #CAT_Structure get the unit from its flat_idx value, with safe range checking (slow -- generally avoid using if possible)
 
-  inline int    UnThr(int flat_idx) const { return units_thrs[flat_idx]; }
+  inline int    UnThr(int flat_idx) const {
+#ifdef DEBUG
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+#endif
+    return units_thrs[flat_idx]; }
   // #CAT_Structure thread that owns and processes the given unit (flat_idx)
-  inline int    UnThrUnIdx(int flat_idx) const { return units_thr_un_idxs[flat_idx]; }
+  inline int    UnThrUnIdx(int flat_idx) const {
+#ifdef DEBUG
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+#endif
+    return units_thr_un_idxs[flat_idx]; }
   // #CAT_Structure index in thread-specific memory where that unit lives for given unit (flat_idx)
-  inline int    ThrNUnits(int thr_no) const { return thrs_n_units[thr_no]; }
+  inline int    ThrNUnits(int thr_no) const {
+#ifdef DEBUG
+    if(!ThrInRange(thr_no)) return 0;
+#endif
+    return thrs_n_units[thr_no]; }
   // #CAT_Structure number of units processed by given thread
-  inline int    ThrUnitIdx(int thr_no, int thr_un_idx) const
-  { return thrs_unit_idxs[thr_no][thr_un_idx]; }
+  inline int    ThrUnitIdx(int thr_no, int thr_un_idx) const {
+#ifdef DEBUG
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
+#endif
+    return thrs_unit_idxs[thr_no][thr_un_idx]; }
   // #CAT_Structure flat_idx of unit at given thread, thread-specific unit index (max ThrNUnits()-1)
-  inline UnitVars*  ThrUnitVars(int thr_no, int thr_un_idx) const
-  { return (UnitVars*)(thrs_units_mem[thr_no] + (thr_un_idx * unit_vars_size)); }
+  inline UnitVars*  ThrUnitVars(int thr_no, int thr_un_idx) const {
+#ifdef DEBUG
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return NULL;
+#endif
+    return (UnitVars*)(thrs_units_mem[thr_no] + (thr_un_idx * unit_vars_size)); }
   // #CAT_Structure unit variables for unit at given thread, thread-specific unit index (max ThrNUnits()-1)
-  inline Unit*      ThrUnit(int thr_no, int thr_un_idx) const
-  { return UnFmIdx(ThrUnitIdx(thr_no, thr_un_idx)); }
+  inline Unit*      ThrUnit(int thr_no, int thr_un_idx) const {
+#ifdef DEBUG
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return NULL;
+#endif
+    return UnFmIdx(ThrUnitIdx(thr_no, thr_un_idx)); }
   // #CAT_Structure structural Unit object at given thread, thread-specific unit index (max ThrNUnits()-1)
   inline UnitVars*  UnUnitVars(int flat_idx) const
   { return ThrUnitVars(UnThr(flat_idx), UnThrUnIdx(flat_idx)); }
@@ -376,23 +454,43 @@ public:
   { return layers.Leaf(active_layers[lay_no]); }
   // #CAT_Structure retrieve actual layer from active_layers list for given layer index
 
-  inline int    UnNRecvConGps(int flat_idx) const { return units_n_recv_cgps[flat_idx]; }
+  inline int    UnNRecvConGps(int flat_idx) const {
+#ifdef DEBUG
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+#endif
+    return units_n_recv_cgps[flat_idx]; }
   // #CAT_Structure number of recv connection groups for given unit at flat_idx
-  inline int    UnNSendConGps(int flat_idx) const { return units_n_send_cgps[flat_idx]; }
+  inline int    UnNSendConGps(int flat_idx) const {
+#ifdef DEBUG
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+#endif
+    return units_n_send_cgps[flat_idx]; }
   // #CAT_Structure number of send connection groups for given unit at flat_idx
 
-  inline int    ThrUnNRecvConGps(int thr_no, int thr_un_idx) const
-  { return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
+  inline int    ThrUnNRecvConGps(int thr_no, int thr_un_idx) const {
+#ifdef DEBUG
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
+#endif
+    return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
   // #CAT_Structure number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
-  inline int    ThrUnNSendConGps(int thr_no, int thr_un_idx) const
-  { return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
+  inline int    ThrUnNSendConGps(int thr_no, int thr_un_idx) const {
+#ifdef DEBUG
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
+#endif
+    return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
   // #CAT_Structure number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   
-  inline int    ThrNRecvConGps(int thr_no) const
-  { return thrs_n_recv_cgps[thr_no]; }
+  inline int    ThrNRecvConGps(int thr_no) const {
+#ifdef DEBUG
+    if(!ThrInRange(thr_no)) return 0;
+#endif
+    return thrs_n_recv_cgps[thr_no]; }
   // #CAT_Structure number of recv connection groups as a flat list across all units processed by given thread
-  inline int    ThrNSendConGps(int thr_no) const
-  { return thrs_n_send_cgps[thr_no]; }
+  inline int    ThrNSendConGps(int thr_no) const {
+#ifdef DEBUG
+    if(!ThrInRange(thr_no)) return 0;
+#endif
+    return thrs_n_send_cgps[thr_no]; }
   // #CAT_Structure number of send connection groups as a flat list across all units processed by given thread
 
   inline ConGroup* ThrRecvConGroup(int thr_no, int thr_cgp_idx) const
@@ -402,19 +500,31 @@ public:
   { return (ConGroup*)(thrs_send_cgp_mem[thr_no] + (thr_cgp_idx * con_group_size)); }
   // #CAT_Structure send ConGroup for given thread, thread-specific con-group index 
 
-  inline ConGroup* ThrUnRecvConGroup(int thr_no, int thr_un_idx, int recv_idx) const
-  { return ThrRecvConGroup(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
+  inline ConGroup* ThrUnRecvConGroup(int thr_no, int thr_un_idx, int recv_idx) const {
+#ifdef DEBUG
+    if(!ThrUnRecvConGpInRange(thr_no, thr_un_idx, recv_idx)) return NULL;
+#endif
+    return ThrRecvConGroup(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
   // #CAT_Structure recv ConGroup for given thread, thread-specific unit index, and recv group index
-  inline ConGroup* ThrUnSendConGroup(int thr_no, int thr_un_idx, int send_idx) const
-  { return ThrSendConGroup(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
+  inline ConGroup* ThrUnSendConGroup(int thr_no, int thr_un_idx, int send_idx) const {
+#ifdef DEBUG
+    if(!ThrUnSendConGpInRange(thr_no, thr_un_idx, send_idx)) return 0;
+#endif
+    return ThrSendConGroup(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
   // #CAT_Structure send ConGroup for given thread, thread-specific unit index, and send group index
 
-  inline ConGroup* RecvConGroup(int flat_idx, int recv_idx) const
-  { int thr_no = UnThr(flat_idx); 
+  inline ConGroup* RecvConGroup(int flat_idx, int recv_idx) const {
+#ifdef DEBUG
+    if(!UnRecvConGpInRange(flat_idx, recv_idx)) return NULL;
+#endif
+    int thr_no = UnThr(flat_idx); 
     return ThrUnRecvConGroup(thr_no, UnThrUnIdx(flat_idx), recv_idx); }
   // #CAT_Structure recv ConGroup for given flat unit index and recv group index number
-  inline ConGroup* SendConGroup(int flat_idx, int send_idx) const
-  { int thr_no = UnThr(flat_idx); 
+  inline ConGroup* SendConGroup(int flat_idx, int send_idx) const {
+#ifdef DEBUG
+    if(!UnSendConGpInRange(flat_idx, send_idx)) return 0;
+#endif
+    int thr_no = UnThr(flat_idx); 
     return ThrUnSendConGroup(thr_no, UnThrUnIdx(flat_idx), send_idx); }
   // #CAT_Structure send ConGroup for given flat unit index and send index number
 

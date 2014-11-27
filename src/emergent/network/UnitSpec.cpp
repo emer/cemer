@@ -104,13 +104,13 @@ void UnitSpec::Init_Vars(UnitVars* u, Network* net, int thr_no) {
 }
 
 void UnitSpec::Init_InputData(UnitVars* u, Network* net, int thr_no) {
-  u->ext_flag = UnitVars::NO_EXTERNAL;
+  u->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   u->ext = 0.0f;
   u->targ = 0.0f;
 }
 
 void UnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
-  u->ext_flag = UnitVars::NO_EXTERNAL;
+  u->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   u->ext = 0.0f;
   u->targ = 0.0f;
   u->net = 0.0f;

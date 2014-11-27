@@ -336,7 +336,7 @@ void Network::UpdtAfterNetMod() {
 
   bool units_diff = 
     (n_units_built != units_flat.size) ||
-    (n_thrs_built != threads.n_threads) || // todo: replace with n_threads_act
+    (n_thrs_built != threads.n_threads) ||
     (unit_vars_built != unit_vars_type) ||
     (con_group_built != con_group_type) ||
     (unit_vars_size != unit_vars_built->size);
@@ -472,7 +472,7 @@ void Network::Build() {
   BuildUnits();
 
   n_units_built = units_flat.size;
-  n_thrs_built = threads.n_threads; // todo: replace with n_threads_act
+  n_thrs_built = threads.n_threads;
   unit_vars_built = unit_vars_type;
   con_group_built = con_group_type;
   con_group_size = con_group_built->size;
@@ -1736,8 +1736,8 @@ void Network::Send_Netin_Thr(int thr_no) {
 
 void Network::Compute_Act() {
   // todo: test performance of each..
-  //  NET_THREAD_CALL(Network::Compute_Act_Thr);
-  NET_THREAD_LOOP(Network::Compute_Act_Thr);
+  NET_THREAD_CALL(Network::Compute_Act_Thr);
+  //  NET_THREAD_LOOP(Network::Compute_Act_Thr);
 }
 
 void Network::Compute_Act_Thr(int thr_no) {

@@ -81,7 +81,7 @@ public: //
   inline int            ThrNo() const;
   // #CAT_Structure get thread number that owns this unit
 
-  inline UnitVars::ExtFlags& ext_flag() { return GetUnitVars()->ext_flag; }
+  inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
   // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
   inline float& targ()  { return GetUnitVars()->targ; }
   // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
