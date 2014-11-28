@@ -293,6 +293,11 @@ void LeabraNetwork::Trial_Init() {
   //  Trial_Init_SRAvg();
   //  Trial_DecayState();
   //  Trial_NoiseInit(); 
+  //  Compute_NetinScale();              // compute net scaling
+
+  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
+  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
+
   Trial_Init_Layer();
 }
 
@@ -353,13 +358,9 @@ void LeabraNetwork::Quarter_Init() {
   Quarter_Init_Counters();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
-//   Compute_NetinScale();              // compute net scaling
+//   Compute_HardClamp();        // clamp all hard-clamped input acts: not easily threadable
   Quarter_Init_Layer();
 
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
-
-  Compute_HardClamp();          // clamp all hard-clamped input acts: not easily threadable
 }
 
 void LeabraNetwork::Quarter_Init_Counters() {
@@ -439,16 +440,14 @@ void LeabraNetwork::Compute_NetinScale_Senders_Thr(int thr_no) {
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
     LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
-    if(scg->NotActive()) {
-      scg->scale_eff = 0.0f;
-      continue;
-    }
+    if(scg->NotActive()) continue;
     LeabraConGroup* rcg = (LeabraConGroup*)scg->UnCons(0, this);
     scg->scale_eff = rcg->scale_eff;
   }
 }
 
 void LeabraNetwork::Compute_HardClamp() {
+  // NOT called by default -- done in Quarter_Init_Unit
   NET_THREAD_CALL(LeabraNetwork::Compute_HardClamp_Thr);
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {

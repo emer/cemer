@@ -766,6 +766,7 @@ void LeabraUnitSpec::Trial_Init_Unit(LeabraUnitVars* u, LeabraNetwork* net, int 
   Trial_Init_SRAvg(u, net, thr_no);     // do this b4 decay..
   Trial_DecayState(u, net, thr_no);
   Trial_NoiseInit(u, net, thr_no);
+  Compute_NetinScale(u, net, thr_no);
 }
 
 void LeabraUnitSpec::Trial_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -814,19 +815,19 @@ void LeabraUnitSpec::Trial_NoiseInit(LeabraUnitVars* u, LeabraNetwork* net, int 
 void LeabraUnitSpec::Quarter_Init_Unit(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Quarter_Init_TargFlags(u, net, thr_no);
   Quarter_Init_PrvVals(u, net, thr_no);
-  Compute_NetinScale(u, net, thr_no);
+  Compute_HardClamp(u, net, thr_no);
 }
 
 void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* net,
                                             int thr_no) {
-  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(!u->HasExtFlag(UnitVars::TARG))
     return;
 
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
-    if(!lay->HasExtFlag(UnitVars::TARG)) {  // layer isn't a target but unit is..
-      u->targ = u->ext;
-    }
+    // LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+    // if(!lay->HasExtFlag(UnitVars::TARG)) {  // layer isn't a target but unit is..
+    //   u->targ = u->ext;
+    // }
     u->ext = 0.0f;
     u->ClearExtFlag(UnitVars::EXT);
   }
