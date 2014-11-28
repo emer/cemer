@@ -356,11 +356,11 @@ void LeabraNetwork::Quarter_Init() {
   // todo: consolidate the 2 unit-level threaded guys into one..
 
   Quarter_Init_Counters();
+  Quarter_Init_Layer();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
 //   Compute_HardClamp();        // clamp all hard-clamped input acts: not easily threadable
-  Quarter_Init_Layer();
-
+  Compute_HardClamp_Layer();
 }
 
 void LeabraNetwork::Quarter_Init_Counters() {
@@ -450,10 +450,7 @@ void LeabraNetwork::Compute_HardClamp() {
   // NOT called by default -- done in Quarter_Init_Unit
   NET_THREAD_CALL(LeabraNetwork::Compute_HardClamp_Thr);
 
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->Compute_HardClamp_Layer(this);
-  }
+  Compute_HardClamp_Layer();
 }
 
 void LeabraNetwork::Compute_HardClamp_Thr(int thr_no) {
@@ -462,6 +459,13 @@ void LeabraNetwork::Compute_HardClamp_Thr(int thr_no) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->Compute_HardClamp(uv, this, thr_no);
+  }
+}
+
+void LeabraNetwork::Compute_HardClamp_Layer() {
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->Compute_HardClamp_Layer(this);
   }
 }
 

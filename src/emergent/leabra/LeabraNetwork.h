@@ -331,6 +331,8 @@ public:
     // #CAT_QuarterInit compute hard clamping from external inputs
       virtual void Compute_HardClamp_Thr(int thr_no);
       // #IGNORE compute hard clamping from external inputs
+      virtual void Compute_HardClamp_Layer();
+      // #IGNORE compute hard clamping from external inputs
 
     virtual void ExtToComp();
     // #CAT_QuarterInit move external input values to comparison values (not currently used)
