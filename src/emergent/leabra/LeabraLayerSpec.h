@@ -295,7 +295,7 @@ public:
 					LeabraInhib* thr,  LeabraNetwork* net);
     // #IGNORE compute AvgMax stats on netin values computed during netin computation -- per unit group
 
-  virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1);
+  virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
     virtual void Compute_Inhib_impl
       (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx, 
@@ -319,7 +319,7 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  virtual void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1);
+  virtual void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Statistic compute cycle-level stats -- acts AvgMax, OutputName, etc
   // this does all the indented functions below
 

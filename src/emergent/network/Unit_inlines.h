@@ -49,6 +49,14 @@ inline ConGroup* Unit::SendConGroup(int scg_idx) const {
   return own_net()->SendConGroup(flat_idx, scg_idx);
 }
 
+inline ConGroup* Unit::RecvConGroupPrjn(Projection* prjn) const {
+  return RecvConGroup(prjn->recv_idx);
+}
+
+inline ConGroup* Unit::SendConGroupPrjn(Projection* prjn) const {
+  return SendConGroup(prjn->send_idx);
+}
+
 inline UnitVars* Unit::GetUnitVars() const {
   return own_net()->UnUnitVars(flat_idx);
 }
@@ -84,11 +92,11 @@ inline ConGroup* UnitVars::SendConGroup(Network* net, int thr_no, int scg_idx) c
   return net->ThrUnSendConGroup(thr_no, thr_un_idx, scg_idx);
 }
 
-inline ConGroup* UnitVars::RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn) {
+inline ConGroup* UnitVars::RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn) const {
   return net->ThrUnRecvConGroup(thr_no, thr_un_idx, prjn->recv_idx);
 }
 
-inline ConGroup* UnitVars::SendConGroupPrjn(Network* net, int thr_no, Projection* prjn) {
+inline ConGroup* UnitVars::SendConGroupPrjn(Network* net, int thr_no, Projection* prjn) const {
   return net->ThrUnSendConGroup(thr_no, thr_un_idx, prjn->send_idx);
 }
 

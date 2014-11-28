@@ -86,13 +86,21 @@ public:
   // #IGNORE #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)
   inline int            NSendConGps(Network* net, int thr_no) const;
   // #IGNORE #CAT_Structure get number of sending connection groups (determined by number of active layer send_prjns at time of build)
+  int                   NRecvConGpsSafe(Network* net, int thr_no) const;
+  // #CAT_Structure get number of receiving connection groups (determined by number of active layer projections at time of build)
+  int                   NSendConGpsSafe(Network* net, int thr_no) const;
+  // #CAT_Structure get number of sending connection groups (determined by number of active layer send_prjns at time of build)
   inline ConGroup*      RecvConGroup(Network* net, int thr_no, int rcg_idx) const;
   // #IGNORE #CAT_Structure get receiving connection group at given index -- no safe range checking is applied to rcg_idx!
   inline ConGroup*      SendConGroup(Network* net, int thr_no, int scg_idx) const;
   // #IGNORE #CAT_Structure get sendingconnection group at given index -- no safe range checking is applied to scg_idx!
-  inline ConGroup*      RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn);
+  ConGroup*             RecvConGroupSafe(Network* net, int thr_no, int rcg_idx) const;
+  // #CAT_Structure get receiving connection group at given index
+  ConGroup*             SendConGroupSafe(Network* net, int thr_no, int scg_idx) const;
+  // #CAT_Structure get sendingconnection group at given index
+  inline ConGroup*      RecvConGroupPrjn(Network* net, int thr_no, Projection* prjn) const;
   // #IGNORE #CAT_Structure get con group at given prjn->recv_idx -- if it is not in range, emits error message and returns NULL
-  inline ConGroup*      SendConGroupPrjn(Network* net, int thr_no, Projection* prjn);
+  inline ConGroup*      SendConGroupPrjn(Network* net, int thr_no, Projection* prjn) const;
   // #IGNORE #CAT_Structure get con group at given prjn->send_idx -- if it is not in range, emits error message and returns NULL
 };
 

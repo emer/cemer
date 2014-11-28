@@ -51,27 +51,30 @@ public:
   }
   // #IGNORE dopamine multiplication
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) override {
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
     const float su_act = su->act_m; // note: using act_m
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         C_Compute_dWt_Delta_NoDa(dwts[i], ru->act_p, ru->act_m, su_act);
       }
     }
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, ru->dav);
       }
     }
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
         C_Compute_dWt_Delta_Da(dwts[i], ru->act_p, ru->act_m, su_act, fabsf(ru->dav));
       }
     }

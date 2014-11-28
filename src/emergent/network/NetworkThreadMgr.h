@@ -104,8 +104,4 @@ private:
   void  Destroy();
 };
 
-#ifdef __TA_COMPILE__
-#include <Network>
-#endif
-
 #endif // NetworkThreadMgr_h

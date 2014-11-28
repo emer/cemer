@@ -140,7 +140,8 @@ void TopoWtsPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 }
 
 void TopoWtsPrjnSpec::Init_Weights_Prjn
-(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) {
+(Projection* prjn, ConGroup* cg, Network* net, int thr_no) {
+  Unit* ru = cg->OwnUn(net);
 
   if(TestError(((send_range_end.x != -1 && send_range_end.x < send_range_start.x) || (send_range_end.y != -1 && send_range_end.y < send_range_start.y)), "TopoWtsPrjnSpec::C_InitWeights ", " either send_range_end.x or send_range_end.y is less than start_idx. Please correct -- aborting!"))
     return;
@@ -170,7 +171,7 @@ void TopoWtsPrjnSpec::Init_Weights_Prjn
       InitWeights_SendFlatRecvFlat(prjn, cg, ru, net);
 }
 
-void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
+void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
                                   Network* net, float dist, int cg_idx, bool dbl_add) {
   float wt_val = wt_range.min;
   float wt_add = 0.0f; // how much are we adding over baseline minimum?
@@ -192,7 +193,7 @@ void TopoWtsPrjnSpec::SetWtFmDist(Projection* prjn, RecvCons* cg, Unit* ru,
   SetCnWt(cg, cg_idx, net, wt_val);
 }
 
-bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru, int i, taVector2i ri_pos,
+bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, ConGroup* cg, Unit* ru, int i, taVector2i ri_pos,
 																			 taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, float ri_x, float ri_y) {
   //Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
@@ -431,7 +432,7 @@ bool TopoWtsPrjnSpec::ReflectClippedWt(Projection* prjn, RecvCons* cg, Unit* ru,
   else { return false; }
 }
 
-float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru, int i, float ri_x, float ri_y,
+float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru, int i, float ri_x, float ri_y,
 																			 taVector2i srs, taVector2i sre, taVector2i rrs, taVector2i rre, taVector2i ri_pos) {
   Layer* send_lay = (Layer*)prjn->from.ptr();
   Network* net = prjn->layer->own_net;
@@ -768,7 +769,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, RecvCons* cg, Unit* ru,
 //      -4      -3      -2      -1   wrp_x < .5  int
 //      -1.33   -1      -.66    -.33 wrp_x < .5  flt
 
-void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, ConGroup* cg,
                                                  Unit* ru, Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
@@ -948,7 +949,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvGps(Projection* prjn, RecvCons* cg,
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg,
+void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, ConGroup* cg,
                                                   Unit* ru, Network* net) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
@@ -1080,7 +1081,7 @@ void TopoWtsPrjnSpec::InitWeights_SendGpsRecvFlat(Projection* prjn, RecvCons* cg
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg,
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, ConGroup* cg,
                                                   Unit* ru, Network* net) {
 
   //	if(!index_by_gps_recv.x && !index_by_gps_recv.y) { 	// ignoring recv gps in both x- and y-dimensions - just do flat!
@@ -1251,7 +1252,7 @@ void TopoWtsPrjnSpec::InitWeights_SendFlatRecvGps(Projection* prjn, RecvCons* cg
   }
 }
 
-void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, RecvCons* cg,
+void TopoWtsPrjnSpec::InitWeights_SendFlatRecvFlat(Projection* prjn, ConGroup* cg,
                                                    Unit* ru, Network* net) {
 
   Layer* recv_lay = (Layer*)prjn->layer;

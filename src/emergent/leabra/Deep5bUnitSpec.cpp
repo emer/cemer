@@ -31,7 +31,7 @@ bool Deep5bUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)u->own_net();
 
-  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(0);
   if(u->CheckError(!cg, quiet, rval,
                      "Requires one recv projection!")) {
     return false;
@@ -45,10 +45,11 @@ bool Deep5bUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void Deep5bUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+void Deep5bUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net,
+                                         int thr_no) {
+  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
   if(!cg) return;
-  LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
+  LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
   if(!su) return;
   LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
   if(fmlay->lesioned()) {
@@ -58,10 +59,10 @@ void Deep5bUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
   u->act = su->deep5b;
   u->act_eq = u->act_nd = u->act;
   u->da = 0.0f;            // I'm fully settled!
-  u->AddToActBuf(syn_delay);
+  // u->AddToActBuf(syn_delay); // todo:
 }
 
-void Deep5bUnitSpec::Compute_Act(Unit* un, Network* rnet, int thread_no) {
-  Compute_ActFmSource((LeabraUnit*)un, (LeabraNetwork*)rnet);
+void Deep5bUnitSpec::Compute_Act(UnitVars* un, Network* rnet, int thr_no) {
+  Compute_ActFmSource((LeabraUnitVars*)un, (LeabraNetwork*)rnet, thr_no);
 }
 

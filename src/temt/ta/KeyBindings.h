@@ -32,14 +32,14 @@ class TA_API KeyBindings : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
 public:  
-  KeyActionPair_PArray       main_window_bindings;
-  KeyActionPair_PArray       line_edit_bindings;
-  KeyActionPair_PArray       console_bindings;
-  KeyActionPair_PArray       dialog_bindings;
-  KeyActionPair_PArray       panel_bindings;
-  KeyActionPair_PArray       table_bindings;
-  KeyActionPair_PArray       tree_bindings;
-  KeyActionPair_PArray       graphics_bindings;
+  KeyActionPair_PArray       main_window_bindings; // #IGNORE 
+  KeyActionPair_PArray       line_edit_bindings; // #IGNORE 
+  KeyActionPair_PArray       console_bindings; // #IGNORE 
+  KeyActionPair_PArray       dialog_bindings; // #IGNORE 
+  KeyActionPair_PArray       panel_bindings; // #IGNORE 
+  KeyActionPair_PArray       table_bindings; // #IGNORE 
+  KeyActionPair_PArray       tree_bindings; // #IGNORE 
+  KeyActionPair_PArray       graphics_bindings; // #IGNORE 
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings

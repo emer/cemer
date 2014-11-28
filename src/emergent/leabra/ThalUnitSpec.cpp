@@ -25,21 +25,22 @@ void ThalUnitSpec::Initialize() {
 void ThalUnitSpec::Defaults_init() {
 }
 
-void ThalUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
+void ThalUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->thal = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
     }
   }
 }
 
-void ThalUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  inherited::Compute_Act(ru, rnet, thread_no);
-  LeabraUnit* u = (LeabraUnit*)ru;
+void ThalUnitSpec::Compute_Act(UnitVars* ru, Network* rnet, int thr_no) {
+  inherited::Compute_Act(ru, rnet, thr_no);
+  LeabraUnitVars* u = (LeabraUnitVars*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Send_Thal(u, net);
+  Send_Thal(u, net, thr_no);
 }
 

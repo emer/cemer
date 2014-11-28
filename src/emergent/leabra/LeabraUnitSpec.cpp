@@ -589,7 +589,8 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 
   // u->net = 0.0f;
 
-  for(int g=0; g<u->NRecvConGps(net, thr_no); g++) {
+  const int nrg = u->NRecvConGps(net, thr_no); 
+  for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     recv_gp->net = 0.0f;
     recv_gp->net_raw = 0.0f;
@@ -857,7 +858,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
   // then it counts as a zero, but it counts in overall normalization!
-  for(int g=0; g<u->NRecvConGps(net, thr_no); g++) {
+  const int nrg = u->NRecvConGps(net, thr_no); 
+  for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
@@ -886,7 +888,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 
   float d5b_rel_scale = 0.0f;
   // now renormalize, each one separately..
-  for(int g=0; g<u->NRecvConGps(net, thr_no); g++) {
+  for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->prjn->NotActive()) continue; // key!! just check for prjn, not con group!
     Projection* prjn = (Projection*) recv_gp->prjn;
@@ -1018,7 +1020,8 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       if(net->n_thrs_built == 1) {
         net->send_pct_n++;
       }
-      for(int g=0; g<u->NSendConGps(net, thr_no); g++) {
+      const int nsg = u->NSendConGps(net, thr_no); 
+      for(int g=0; g< nsg; g++) {
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
         if(send_gp->NotActive()) continue;
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -1034,7 +1037,8 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
       net->send_pct_n++;
     }
     float act_delta = - u->act_sent; // un-send the last above-threshold activation to get back to 0
-    for(int g=0; g<u->NSendConGps(net, thr_no); g++) {
+    const int nsg = u->NSendConGps(net, thr_no); 
+    for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -1060,7 +1064,8 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
   float net_delta = 0.0f;
   float gi_delta = 0.0f;
   if(net->NetinPerPrjn()) {
-    for(int g=0; g<u->NRecvConGps(net, thr_no); g++) {
+    const int nrg = u->NRecvConGps(net, thr_no); 
+    for(int g=0; g< nrg; g++) {
       LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
       if(recv_gp->NotActive()) continue;
       float g_net_delta = 0.0f;
@@ -1245,7 +1250,8 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   if(act_ts > opt_thresh.send) {
     float act_delta = act_ts - u->d5b_sent;
     if(fabsf(act_delta) > opt_thresh.delta) {
-      for(int g=0; g<u->NSendConGps(net, thr_no); g++) {
+      const int nsg = u->NSendConGps(net, thr_no); 
+      for(int g=0; g< nsg; g++) {
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
         if(send_gp->NotActive()) continue;
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -1259,7 +1265,8 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   }
   else if(u->d5b_sent > opt_thresh.send) {
     float act_delta = - u->d5b_sent; // un-send the last above-threshold activation to get back to 0
-    for(int g=0; g<u->NSendConGps(net, thr_no); g++) {
+    const int nsg = u->NSendConGps(net, thr_no); 
+    for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
@@ -1792,7 +1799,8 @@ void LeabraUnitSpec::Send_TICtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
   }
 
   if(act_ts > opt_thresh.send) {
-    for(int g=0; g<u->NSendConGps(net, thr_no); g++) {
+    const int nsg = u->NSendConGps(net, thr_no); 
+    for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;

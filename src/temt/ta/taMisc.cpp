@@ -64,6 +64,8 @@ taTypeDef_Of(EnumDef);
 #include <QNetworkAddressEntry>
 #include <QHostAddress>
 #include <QList>
+#include <QThread>
+#include <QApplication>
 #endif
 
 #include <ctime>
@@ -1144,6 +1146,18 @@ bool taMisc::ConsoleOutput(const String& str, bool err, bool pager) {
     console_hold << str;
   }
   
+  // cannot directly output to console from a thread!
+  // todo: need to figure out a better workaround?
+#ifndef NO_TA_BASE
+  if(QThread::currentThread() != QApplication::instance()->thread()) {
+    if(err)
+      cerr << "thread " << (String)QThread::currentThread()->objectName() << ": " << str << endl;
+    else
+      cout << "thread " << (String)QThread::currentThread()->objectName() << ": " << str << endl;
+    return true;
+  }
+#endif
+
   if(!taMisc::interactive) pager = false;
   int pageln = 0;
   String rmdr;

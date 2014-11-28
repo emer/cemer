@@ -14,4 +14,21 @@
 //   GNU General Public License for more details.
 
 #include "UnitVars.h"
+#include <Network>
+
+ConGroup* UnitVars::RecvConGroupSafe(Network* net, int thr_no, int rcg_idx) const {
+  return net->ThrUnRecvConGroupSafe(thr_no, thr_un_idx, rcg_idx);
+}
+
+ConGroup* UnitVars::SendConGroupSafe(Network* net, int thr_no, int scg_idx) const {
+  return net->ThrUnSendConGroupSafe(thr_no, thr_un_idx, scg_idx);
+}
+
+int UnitVars::NRecvConGpsSafe(Network* net, int thr_no) const {
+  return net->ThrUnNRecvConGpsSafe(thr_no, thr_un_idx);
+}
+
+int UnitVars::NSendConGpsSafe(Network* net, int thr_no) const {
+  return net->ThrUnNSendConGpsSafe(thr_no, thr_un_idx);
+}
 

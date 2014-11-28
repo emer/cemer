@@ -72,10 +72,10 @@ public:
   virtual void	UpdateStencils();
   // update the stencils that determine the topology of neighborhood connections based on orientation
 
-  virtual void	Compute_FeatGpActive(LeabraLayer* lay, LeabraUnit_Group* fug, LeabraNetwork* net);
+  virtual void	Compute_FeatGpActive(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // compute active units in active_buf for given feature unit group
 
-  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no) override;
 
   bool CheckConfig_Layer(Layer* lay, bool quiet=false) override;
   

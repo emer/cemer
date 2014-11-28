@@ -32,14 +32,14 @@ set(leabra_HEADS_MAKETA
 
   LeabraWizard.h
 
-  # Deep5bUnitSpec.h
-  # LeabraTICtxtConSpec.h
-  # Deep5bConSpec.h
-  # ThalUnitSpec.h
+  LeabraTICtxtConSpec.h
+  Deep5bConSpec.h
+  Deep5bUnitSpec.h
+  ThalUnitSpec.h
 
-  # MarkerConSpec.h
-  # LeabraDeltaConSpec.h
-  # DaDeltaConSpec.h
+  MarkerConSpec.h
+  LeabraDeltaConSpec.h
+  DaDeltaConSpec.h
   # LeabraLimPrecConSpec.h
   
   # LayerActUnitSpec.h
@@ -50,7 +50,7 @@ set(leabra_HEADS_MAKETA
   # TwoDValLeabraLayer.h
   # TwoDValLayerSpec.h
   # DecodeTwoDValLayerSpec.h
-  # LeabraV1LayerSpec.h
+  LeabraV1LayerSpec.h
 
   # ScalarValSelfPrjnSpec.h
   # SaliencyPrjnSpec.h
@@ -83,9 +83,9 @@ set(leabra_HEADS_MAKETA
   # InvertUnitSpec.h
   # PFCUnitSpec.h
   
-  # GpCustomPrjnSpecBase.h
-  # RowColPrjnSpec.h
-  # TopoWtsPrjnSpec.h
+  GpCustomPrjnSpecBase.h
+  RowColPrjnSpec.h
+  TopoWtsPrjnSpec.h
 
   # ThetaPhaseLayerSpec.h
   # ECinLayerSpec.h
@@ -150,14 +150,14 @@ set(leabra_SRCS
 
   LeabraWizard.cpp
 
-  # Deep5bUnitSpec.cpp
-  # LeabraTICtxtConSpec.cpp
-  # Deep5bConSpec.cpp
-  # ThalUnitSpec.cpp
+  LeabraTICtxtConSpec.cpp
+  Deep5bConSpec.cpp
+  Deep5bUnitSpec.cpp
+  ThalUnitSpec.cpp
 
-  # MarkerConSpec.cpp
-  # LeabraDeltaConSpec.cpp
-  # DaDeltaConSpec.cpp
+  MarkerConSpec.cpp
+  LeabraDeltaConSpec.cpp
+  DaDeltaConSpec.cpp
   # LeabraLimPrecConSpec.cpp
   
   # LayerActUnitSpec.cpp
@@ -168,7 +168,7 @@ set(leabra_SRCS
   # TwoDValLeabraLayer.cpp
   # TwoDValLayerSpec.cpp
   # DecodeTwoDValLayerSpec.cpp
-  # LeabraV1LayerSpec.cpp
+  LeabraV1LayerSpec.cpp
 
   # ScalarValSelfPrjnSpec.cpp
   # SaliencyPrjnSpec.cpp
@@ -201,9 +201,9 @@ set(leabra_SRCS
   # InvertUnitSpec.cpp
   # PFCUnitSpec.cpp
   
-  # GpCustomPrjnSpecBase.cpp
-  # RowColPrjnSpec.cpp
-  # TopoWtsPrjnSpec.cpp
+  GpCustomPrjnSpecBase.cpp
+  RowColPrjnSpec.cpp
+  TopoWtsPrjnSpec.cpp
 
   # ThetaPhaseLayerSpec.cpp
   # ECinLayerSpec.cpp

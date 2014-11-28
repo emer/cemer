@@ -70,6 +70,10 @@ void Unit::CutLinks() {
   inherited::CutLinks();
 }
 
+UnitVars* Unit::MyUnitVars() const {
+  return GetUnitVars();
+}
+
 void Unit::MakeVoxelsList() {
   if(voxels) return;
   taBase::OwnPointer((taBase**)&voxels, new Voxel_List, this);
@@ -310,67 +314,71 @@ ConGroup* Unit::FindRecvConGroupFromName(const String& fm_nm) const {
   return NULL;
 }
 
-ConGroup* Unit::RecvConGroupPrjn(Projection* prjn) {
-  if(TestError(prjn->recv_idx < 0, "CheckPrjnRecvIdx",
-               "Projection recv_idx is -1 -- attempt to connect to an inactive projection -- programmer error probably -- please report!"))
-    return NULL;
-  if(TestError(prjn->recv_idx >= NRecvConGps(), "CheckPrjnRecvIdx",
-               "Projection recv_idx is >= number of allocated recv con groups for this u nit -- programmer error probably -- please report!"))
-    return NULL;
-  return RecvConGroup(prjn->recv_idx);
+int Unit::NRecvConGpsSafe() const {
+  return own_net()->UnNRecvConGpsSafe(flat_idx);
 }
 
-ConGroup* Unit::SendConGroupPrjn(Projection* prjn) {
-  if(TestError(prjn->send_idx < 0, "CheckPrjnSendIdx",
-               "Projection send_idx is -1 -- attempt to connect to an inactive projection -- programmer error probably -- please report!"))
-    return NULL;
-  if(TestError(prjn->send_idx >= NSendConGps(), "CheckPrjnSendIdx",
-               "Projection send_idx is >= number of allocated send con groups for this u nit -- programmer error probably -- please report!"))
-    return NULL;
-  return SendConGroup(prjn->send_idx);
+int Unit::NSendConGpsSafe() const {
+  return own_net()->UnNSendConGpsSafe(flat_idx);
+}
+
+ConGroup* Unit::RecvConGroupSafe(int rcg_idx) const {
+  return own_net()->RecvConGroupSafe(flat_idx, rcg_idx);
+}
+
+ConGroup* Unit::SendConGroupSafe(int scg_idx) const {
+  return own_net()->SendConGroupSafe(flat_idx, scg_idx);
+}
+
+ConGroup* Unit::RecvConGroupPrjnSafe(Projection* prjn) const {
+  return RecvConGroupSafe(prjn->recv_idx);
+}
+
+ConGroup* Unit::SendConGroupPrjnSafe(Projection* prjn) const {
+  return SendConGroupSafe(prjn->send_idx);
 }
 
 void Unit::RecvConsPreAlloc(int no, Projection* prjn) {
-  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  ConGroup* cgp = RecvConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->AllocCons(no);
 }
 
 void Unit::SendConsPreAlloc(int no, Projection* prjn) {
-  ConGroup* cgp = SendConGroupPrjn(prjn);
+  ConGroup* cgp = SendConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->AllocCons(no);
 }
 
 void Unit::SendConsAllocInc(int no, Projection* prjn) {
-  ConGroup* cgp = SendConGroupPrjn(prjn);
+  ConGroup* cgp = SendConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->ConnectAllocInc(no);
 }
 
 void Unit::SendConsPostAlloc(Projection* prjn) {
-  ConGroup* cgp = SendConGroupPrjn(prjn);
+  ConGroup* cgp = SendConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->AllocConsFmSize();
 }
 
 void Unit::RecvConsAllocInc(int no, Projection* prjn) {
-  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  ConGroup* cgp = RecvConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->ConnectAllocInc(no);
 }
 
 void Unit::RecvConsPostAlloc(Projection* prjn) {
-  ConGroup* cgp = RecvConGroupPrjn(prjn);
+  ConGroup* cgp = RecvConGroupPrjnSafe(prjn);
   if(cgp)
     cgp->AllocConsFmSize();
 }
 
 int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
                       bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  ConGroup* rcgp = RecvConGroupPrjnSafe(prjn);
   if(!rcgp) return -1;
-  ConGroup* scgp = su->SendConGroupPrjn(prjn);
+  ConGroup* scgp = su->SendConGroupPrjnSafe(prjn);
   if(!scgp) return -1;
 
   if(alloc_send) {
@@ -385,9 +393,9 @@ int Unit::ConnectFrom(Unit* su, Projection* prjn, bool alloc_send,
 
 int Unit::ConnectFromCk(Unit* su, Projection* prjn,
                         bool ignore_alloc_errs, bool set_init_wt, float init_wt) {
-  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  ConGroup* rcgp = RecvConGroupPrjnSafe(prjn);
   if(!rcgp) return -1;
-  ConGroup* scgp = SendConGroupPrjn(prjn);
+  ConGroup* scgp = su->SendConGroupPrjnSafe(prjn);
   if(!scgp) return -1;
 
   if(rcgp->FindConFromIdx(su) >= 0) // already connected!
@@ -407,9 +415,9 @@ bool Unit::DisConnectFrom(Unit* su, Projection* prjn) {
     if(!prjn)        return false;
   }
 
-  ConGroup* rcgp = RecvConGroupPrjn(prjn);
+  ConGroup* rcgp = RecvConGroupPrjnSafe(prjn);
   if(!rcgp) return false;
-  ConGroup* scgp = su->SendConGroupPrjn(prjn);
+  ConGroup* scgp = su->SendConGroupPrjnSafe(prjn);
   if(!scgp) return false;
 
   rcgp->RemoveConUn(su, this, net);

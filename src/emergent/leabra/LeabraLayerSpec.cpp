@@ -373,7 +373,7 @@ void LeabraLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* n
   lay->hard_clamped = true;     // cache this flag
   lay->Inhib_SetVals(0.5f);            // assume 0 - 1 clamped inputs
 
-  Compute_CycleStats(lay, net); // compute once only
+  Compute_CycleStats(lay, net, 0); // todo: thread arg! compute once only
 }
 
 void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {

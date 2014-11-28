@@ -31,17 +31,18 @@ class E_API Deep5bUnitSpec : public LeabraUnitSpec {
   // units that continuously copy deep5b activation values from a one-to-one receiving projection -- should typically just be used for visualization convenience -- use Deep5bConSpec to send deep5b activations to the d5b_net of other layers
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net);
+  virtual void Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // set current act of deep unit to sending super unit activation
 
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
+                           LeabraLayerSpec* lspec, LeabraInhib* thr, float ival)
+    override { };
+  void	Compute_Act(UnitVars* u, Network* net, int thr_no) override;
 
-  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
-  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 

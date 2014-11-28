@@ -466,6 +466,14 @@ public:
 #endif
     return units_n_send_cgps[flat_idx]; }
   // #CAT_Structure number of send connection groups for given unit at flat_idx
+  inline int    UnNRecvConGpsSafe(int flat_idx) const {
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+    return units_n_recv_cgps[flat_idx]; }
+  // #CAT_Structure number of recv connection groups for given unit at flat_idx
+  inline int    UnNSendConGpsSafe(int flat_idx) const {
+    if(!UnFlatIdxInRange(flat_idx)) return 0;
+    return units_n_send_cgps[flat_idx]; }
+  // #CAT_Structure number of send connection groups for given unit at flat_idx
 
   inline int    ThrUnNRecvConGps(int thr_no, int thr_un_idx) const {
 #ifdef DEBUG
@@ -477,6 +485,14 @@ public:
 #ifdef DEBUG
     if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
 #endif
+    return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
+  // #CAT_Structure number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  inline int    ThrUnNRecvConGpsSafe(int thr_no, int thr_un_idx) const {
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
+    return thrs_units_n_recv_cgps[thr_no][thr_un_idx]; }
+  // #CAT_Structure number of recv connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
+  inline int    ThrUnNSendConGpsSafe(int thr_no, int thr_un_idx) const {
+    if(!ThrUnIdxInRange(thr_no, thr_un_idx)) return 0;
     return thrs_units_n_send_cgps[thr_no][thr_un_idx]; }
   // #CAT_Structure number of send connection groups for given unit within thread-specific memory at given thread number and thread-specific unit index
   
@@ -528,6 +544,26 @@ public:
     return ThrUnSendConGroup(thr_no, UnThrUnIdx(flat_idx), send_idx); }
   // #CAT_Structure send ConGroup for given flat unit index and send index number
 
+  inline ConGroup* ThrUnRecvConGroupSafe(int thr_no, int thr_un_idx, int recv_idx) const {
+    if(!ThrUnRecvConGpInRange(thr_no, thr_un_idx, recv_idx)) return NULL;
+    return ThrRecvConGroup(thr_no, thrs_recv_cgp_start[thr_no][thr_un_idx] + recv_idx); }
+  // #CAT_Structure recv ConGroup for given thread, thread-specific unit index, and recv group index
+  inline ConGroup* ThrUnSendConGroupSafe(int thr_no, int thr_un_idx, int send_idx) const {
+    if(!ThrUnSendConGpInRange(thr_no, thr_un_idx, send_idx)) return 0;
+    return ThrSendConGroup(thr_no, thrs_send_cgp_start[thr_no][thr_un_idx] + send_idx); }
+  // #CAT_Structure send ConGroup for given thread, thread-specific unit index, and send group index
+
+  inline ConGroup* RecvConGroupSafe(int flat_idx, int recv_idx) const {
+    if(!UnRecvConGpInRange(flat_idx, recv_idx)) return NULL;
+    int thr_no = UnThr(flat_idx); 
+    return ThrUnRecvConGroup(thr_no, UnThrUnIdx(flat_idx), recv_idx); }
+  // #CAT_Structure recv ConGroup for given flat unit index and recv group index number
+  inline ConGroup* SendConGroupSafe(int flat_idx, int send_idx) const {
+    if(!UnSendConGpInRange(flat_idx, send_idx)) return 0;
+    int thr_no = UnThr(flat_idx); 
+    return ThrUnSendConGroup(thr_no, UnThrUnIdx(flat_idx), send_idx); }
+  // #CAT_Structure send ConGroup for given flat unit index and send index number
+
   inline float* ThrSendNetinTmp(int thr_no) const 
   { return thrs_send_netin_tmp[thr_no]; }
   // #CAT_Structure temporary sending netinput memory for given thread -- no NETIN_PER_PRJN version
@@ -537,9 +573,9 @@ public:
 
 
   static bool net_aligned_malloc(void** ptr, size_t sz);
-  // properly (maximally) aligned memory allocation routine to given pointer of given number of bytes -- alignment is (currently) 64 bytes
+  // #IGNORE properly (maximally) aligned memory allocation routine to given pointer of given number of bytes -- alignment is (currently) 64 bytes
   static bool net_free(void** ptr);
-  // free previously malloc'd memory, and set *ptr = NULL
+  // #IGNORE free previously malloc'd memory, and set *ptr = NULL
 
   virtual void  Build();
   // #BUTTON #CAT_Structure Build the network units and Connect them (calls CheckSpecs/BuildLayers/Units/Prjns and Connect)
