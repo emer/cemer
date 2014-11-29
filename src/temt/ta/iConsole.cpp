@@ -494,11 +494,13 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
     case taiMisc::EMACS_DESELECT:
       key_event->accept();
       cursor.clearSelection();
+      setTextCursor(cursor);
       ext_select_on = true;
       break;
     case taiMisc::EMACS_CLEAR_EXTENDED_SELECTION:
       key_event->accept();
       cursor.clearSelection();
+      setTextCursor(cursor);
       ext_select_on = false;
       break;
     case taiMisc::EMACS_HOME:
