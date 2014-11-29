@@ -110,7 +110,9 @@ void DataCol::CopyFromCol_Robust(const DataCol& cp) {
   // note: caller has asserted Struct guys, but ok for us to do it again
   // assumes copy has been validated
   StructUpdate(true);
-  inherited::Copy_impl(cp); // do all common generic class copying
+  String save_name(this->name); // hold on to the current column name
+  inherited::Copy_impl(cp);     // do all common generic class copying
+  this->name = save_name;       // restore the name because copy addes _copy
   SetBaseFlag(COPYING); // note: still have to set/reset here, because not nestable
   // assume name already copied, else don't want it overwritten
   // don't do these -- just the data!!
