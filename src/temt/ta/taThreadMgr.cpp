@@ -250,6 +250,8 @@ void taThreadMgr::RunThreads() {
       cur_running = (int)n_running;
 #endif
     }
+    n_to_run = 0;               // everyone is started, so now we say, no more..
+    // IMPORTANT: NEVER move this line into the !spin_wait section -- deadly!!
   }
   else {
     wait.wakeAll();
