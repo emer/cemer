@@ -240,7 +240,7 @@ public:
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it - todo: can we eliminate this please??
 
   float**       unit_vec_vars;
-  // #GNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
+  // #IGNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
   float**       thrs_send_d5bnet_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
   float         tmp_arg1;        // #IGNORE for passing args through threaded call
 
