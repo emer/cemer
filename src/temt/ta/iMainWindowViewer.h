@@ -44,6 +44,7 @@ class iPanelBase; //
 class iSplitter; //
 class QSignalMapper; //
 class iRect; //
+class iDialogKeyBindings; //
 
 
 class TA_API iMainWindowViewer: public QMainWindow, public IViewerWidget {
@@ -195,6 +196,7 @@ public:
   iAction*            toolsSvnBrowseActionSvn3;
   iAction*            toolsOpenServerAction;
   iAction*            toolsCloseServerAction;
+  iAction*            toolsChooseKeyBindingsAction;
 
   iAction*            ctrlStopAction;
   iAction*            ctrlContAction;
@@ -229,8 +231,9 @@ public:
 #ifndef __MAKETA__
   virtual void          AddDockViewer(iDockViewer* dv,
     Qt::DockWidgetArea in_area = Qt::BottomDockWidgetArea);
-  QPointer<iDialogSearch> search_dialog;
-  QPointer<iTreeView>   cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
+  QPointer<iDialogSearch>       search_dialog;
+  QPointer<iTreeView>           cur_tree_view;  // current tree viewer (set in focus event on iTreeView)
+  QPointer<iDialogKeyBindings>  key_bindings_dialog;
 
   void                  Find(taiSigLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds
@@ -358,6 +361,7 @@ public slots:
   void          toolsDiffNetworks();
   void          toolsDiffLayers();
   void          toolsDiffSpecs();
+  void          toolsChooseKeyBindings();
   void          toolsTypeInfoBrowser();
   void          toolsHelpBrowser();
   void          toolsSvnBrowserEmergent();

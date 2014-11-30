@@ -63,7 +63,7 @@ void QcssConsole::keyPressEvent(QKeyEvent *key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::CONSOLE_CONTEXT, key_event);
   
   switch (action) {
-    case taiMisc::STOP:
+    case taiMisc::CONSOLE_STOP:
       cmd_shell->src_prog->Stop();
     default:
       inherited::keyPressEvent(key_event);

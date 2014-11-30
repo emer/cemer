@@ -34,12 +34,12 @@ void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
     return;
   }
   
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::LINE_EDIT_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXT_EDIT_CONTEXT, key_event);
   
   QAbstractButton* but;
   
   switch(action) {
-    case taiMisc::MOVE_FOCUS_LEFT:
+    case taiMisc::PANEL_MOVE_FOCUS_LEFT:
     {
       int prv_idx = m_idx -1;
       if(prv_idx < 0) prv_idx = m_datapanelset->panels.size-1;
@@ -55,7 +55,7 @@ void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
       key_event->accept();
       return;
     }
-    case taiMisc::MOVE_FOCUS_RIGHT:
+    case taiMisc::PANEL_MOVE_FOCUS_RIGHT:
     {
       int nxt_idx = m_idx +1;
       if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;

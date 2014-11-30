@@ -694,7 +694,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::GRAPHICS_CONTEXT, key_event);
   
   switch (action) {
-    case taiMisc::INTERACTION_MODE_TOGGLE:
+    case taiMisc::GRAPHICS_INTERACTION_MODE_TOGGLE:
       if(interactionModeOn()) {
         setInteractionModeOn(false);
       }
@@ -703,79 +703,79 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
       }
       key_event->accept();
       return;
-    case taiMisc::INTERACTION_MODE_OFF:
+    case taiMisc::GRAPHICS_INTERACTION_MODE_OFF:
       setInteractionModeOn(false);
       key_event->accept();
       return;
-    case taiMisc::INTERACTION_MODE_ON:
+    case taiMisc::GRAPHICS_INTERACTION_MODE_ON:
       setInteractionModeOn(true);
       key_event->accept();
       return;
-    case taiMisc::RESET_VIEW:
+    case taiMisc::GRAPHICS_RESET_VIEW:
       gotoView(0);                        // 0 is base guy
       key_event->accept();
       return;
-    case taiMisc::VIEW_ALL:
+    case taiMisc::GRAPHICS_VIEW_ALL:
       viewAll();
       key_event->accept();
       return;
-    case taiMisc::SEEK:
+    case taiMisc::GRAPHICS_SEEK:
       quarter->seek();
       key_event->accept();
       return;
-    case taiMisc::PAN_LEFT:
+    case taiMisc::GRAPHICS_PAN_LEFT:
       if (!interactionModeOn()) {
         horizPanView(-fixed_pan_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::PAN_RIGHT:
+    case taiMisc::GRAPHICS_PAN_RIGHT:
       if (!interactionModeOn()) {
         horizPanView(fixed_pan_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::PAN_UP:
+    case taiMisc::GRAPHICS_PAN_UP:
       if (!interactionModeOn()) {
         vertPanView(-fixed_pan_distance);
       }
       key_event->accept();
       return;
-   case taiMisc::PAN_DOWN:
+   case taiMisc::GRAPHICS_PAN_DOWN:
       if (!interactionModeOn()) {
         vertPanView(fixed_pan_distance);
       }
       key_event->accept();
       return;
-   case taiMisc::ROTATE_LEFT:
+   case taiMisc::GRAPHICS_ROTATE_LEFT:
       if (!interactionModeOn()) {
         horizRotateView(-fixed_rotate_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::ROTATE_RIGHT:
+    case taiMisc::GRAPHICS_ROTATE_RIGHT:
       if (!interactionModeOn()) {
         horizRotateView(fixed_rotate_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::ROTATE_UP:
+    case taiMisc::GRAPHICS_ROTATE_UP:
       if (!interactionModeOn()) {
         vertRotateView(-fixed_rotate_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::ROTATE_DOWN:
+    case taiMisc::GRAPHICS_ROTATE_DOWN:
       if (!interactionModeOn()) {
         vertRotateView(fixed_rotate_distance);
       }
       key_event->accept();
       return;
-    case taiMisc::ZOOM_IN:
+    case taiMisc::GRAPHICS_ZOOM_IN:
       zoomView(-fixed_zoom_delta);
       key_event->accept();
       return;
-    case taiMisc::ZOOM_OUT:
+    case taiMisc::GRAPHICS_ZOOM_OUT:
       zoomView(fixed_zoom_delta);
       key_event->accept();
       return;

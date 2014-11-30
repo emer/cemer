@@ -232,10 +232,10 @@ void iViewPanel::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PANEL_CONTEXT, key_event);
   
   switch(action) {
-    case taiMisc::APPLY:
+    case taiMisc::PANEL_APPLY:
       Apply();
       return;
-    case taiMisc::REVERT:
+    case taiMisc::PANEL_REVERT:
       Revert();
       return;
     default:  // why didn't this code called inherited and pass on key event

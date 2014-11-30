@@ -56,7 +56,7 @@ void iDialog::keyPressEvent(QKeyEvent* key_event)
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
   
   switch(action) {
-    case taiMisc::ACCEPT:
+    case taiMisc::DIALOG_ACCEPT:
       key_event->accept();
       accept();
       return;

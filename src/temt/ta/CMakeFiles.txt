@@ -1,4 +1,4 @@
-########### ta files ###############
+########## ta files ###############
 
 # IMPORTANT: this is just a list of files -- the compile commands are all located
 # in the temt/lib dir, which is where everything is actually built
@@ -781,6 +781,7 @@ set(ta_HEADS_MAKETA_MI_DEPS
 
 # need both maketa and moc -- relatively rare
 set(ta_HEADS_MAKETA_MOC
+  taiMisc.h
   taiMiscCore.h
   taiMimeSource.h
 
@@ -910,7 +911,6 @@ set(ta_HEADS_NOMAKETA_MOC
   taSigLink_QObj.h
   ISelectableHost_QObj.h
 
-  taiMisc.h
   taApplication.h
 
   taiEditorOfDoc.h
@@ -966,7 +966,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iDialogPublishDocs.h
   iDialogObjDiffFilter.h
   iDialogObjDiffBrowser.h
-
+  iDialogKeyBindings.h
   iPanelSetButton.h
 
   iMainWindowViewer.h
@@ -1887,6 +1887,7 @@ set(ta_SRCS_MAKETA
   T3Translate2Translator.cpp
   SoScrollBar.cpp
 
+  taiMisc.cpp
   taiMiscCore.cpp
   taiMimeSource.cpp
 
@@ -2029,7 +2030,6 @@ set(ta_SRCS_NOMAKETA
   taSigLink_QObj.cpp
   ISelectableHost_QObj.cpp
 
-  taiMisc.cpp
   taApplication.cpp
 
   taiEditorOfDoc.cpp
@@ -2086,6 +2086,7 @@ set(ta_SRCS_NOMAKETA
   iDialogPublishDocs.cpp
   iDialogObjDiffFilter.cpp
   iDialogObjDiffBrowser.cpp
+  iDialogKeyBindings.cpp
 
   iPanelSetButton.cpp
 

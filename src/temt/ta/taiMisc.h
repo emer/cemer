@@ -27,7 +27,6 @@
 #include <taiEditorOfClass>
 #include <iTopLevelWindow_List>
 #include <iFont>
-//#include <KeyBindings>
 
 // declare all other types mentioned but not required to include:
 class iWidget_List; // 
@@ -40,7 +39,9 @@ class QObject; //
 class iNetworkAccessManager; //
 class QAbstractButton; //
 class QProgressDialog; //
+class QKeyEvent; //
 
+taTypeDef_Of(taiMisc);
 
 class TA_API taiMisc: public taiMiscCore {
 INHERITED(taiMiscCore)
@@ -115,7 +116,7 @@ public:
   
   enum BindingContext {     // key bindings for various contexts
     MAIN_WINDOW_CONTEXT,
-    LINE_EDIT_CONTEXT,
+    TEXT_EDIT_CONTEXT,
     CONSOLE_CONTEXT,
     DIALOG_CONTEXT,
     PANEL_CONTEXT,
@@ -126,76 +127,99 @@ public:
 
   enum BoundAction {
     NULL_ACTION,
-    STOP,                   // typically ctrl+C
-    ENTER,
-    DELETE,
-    DUPLICATE,
-    APPLY,
-    REVERT,
-    ACCEPT,
-    UNDO,
-    CLEAR,
-    EMACS_DESELECT,
-    EMACS_CLEAR_EXTENDED_SELECTION,
-    EMACS_HOME,
-    EMACS_END,
-    EMACS_CURSOR_FORWARD,
-    EMACS_CURSOR_BACKWARD,
-    EMACS_DELETE,
-    EMACS_BACKSPACE,
-    EMACS_KILL,
-    EMACS_SELECT_ALL,
-    EMACS_PASTE,
-    EMACS_CUT,
-    EMACS_UNDO,
-    EMACS_COPY_CLEAR,
-    EMACS_WORD_FORWARD,
-    EMACS_WORD_BACKWARD,
-    EMACS_PAGE_UP,
-    EMACS_PAGE_DOWN,
-    EMACS_FIND_IN_TEXT,
-    CURSOR_UP,
-    CURSOR_DOWN,
-    LOOKUP,
+    
+    TEXT_EDIT_LOOKUP,
     TEXT_EDIT_IGNORE,
-    VIEW_BROWSE_ONLY,
-    VIEW_PANELS_ONLY,
-    VIEW_BROWSE_AND_PANELS,
-    VIEW_T3_ONLY,
-    VIEW_BROWSE_AND_T3,
-    VIEW_PANELS_AND_T3,
-    VIEW_ALL_FRAMES,
-    MOVE_FOCUS_LEFT,
-    MOVE_FOCUS_RIGHT,
-    SHIFT_CUR_TAB_LEFT,
-    SHIFT_CUR_TAB_RIGHT,
-    CONTINUE_PAGING,  // used by console
-    QUIT_PAGING,      // used by console
-    AUTO_COMPLETE,
-    BACKSPACE,
-    HISTORY_FORWARD,
-    HISTORY_BACKWARD,
-    NEW_DEFAULT_ELEMENT,
-    NEW_ELEMENT_ABOVE,
-    NEW_ELEMENT_BELOW,
-    FIND,
-    FIND_REPLACE,
-    INTERACTION_MODE_OFF,
-    INTERACTION_MODE_ON,
-    INTERACTION_MODE_TOGGLE,
-    RESET_VIEW,
-    VIEW_ALL,
-    SEEK,
-    PAN_LEFT,
-    PAN_RIGHT,
-    PAN_UP,
-    PAN_DOWN,
-    ROTATE_LEFT,
-    ROTATE_RIGHT,
-    ROTATE_UP,
-    ROTATE_DOWN,
-    ZOOM_IN,
-    ZOOM_OUT
+    TEXT_EDIT_CURSOR_UP,
+    TEXT_EDIT_CURSOR_DOWN,
+    TEXT_EDIT_EMACS_DESELECT,
+    TEXT_EDIT_EMACS_CLEAR_EXTENDED_SELECTION,
+    TEXT_EDIT_EMACS_HOME,
+    TEXT_EDIT_EMACS_END,
+    TEXT_EDIT_EMACS_CURSOR_FORWARD,
+    TEXT_EDIT_EMACS_CURSOR_BACKWARD,
+    TEXT_EDIT_EMACS_DELETE,
+    TEXT_EDIT_EMACS_BACKSPACE,
+    TEXT_EDIT_EMACS_KILL,
+    TEXT_EDIT_EMACS_SELECT_ALL,
+    TEXT_EDIT_EMACS_PASTE,
+    TEXT_EDIT_EMACS_CUT,
+    TEXT_EDIT_EMACS_UNDO,
+    TEXT_EDIT_EMACS_PAGE_UP,
+    TEXT_EDIT_EMACS_PAGE_DOWN,
+    TEXT_EDIT_EMACS_FIND_IN_TEXT,
+    TEXT_EDIT_EMACS_COPY_CLEAR,
+    TEXT_EDIT_EMACS_WORD_FORWARD,
+    TEXT_EDIT_EMACS_WORD_BACKWARD,
+    
+    CONSOLE_EMACS_DESELECT,
+    CONSOLE_EMACS_CLEAR_EXTENDED_SELECTION,
+    CONSOLE_EMACS_HOME,
+    CONSOLE_EMACS_END,
+    CONSOLE_EMACS_CURSOR_FORWARD,
+    CONSOLE_EMACS_CURSOR_BACKWARD,
+    CONSOLE_EMACS_DELETE,
+    CONSOLE_EMACS_KILL,
+    CONSOLE_EMACS_PASTE,
+    CONSOLE_EMACS_CUT,
+    CONSOLE_ENTER,
+    CONSOLE_QUIT_PAGING,
+    CONSOLE_CONTINUE_PAGING,
+    CONSOLE_UNDO,
+    CONSOLE_AUTO_COMPLETE,
+    CONSOLE_BACKSPACE,
+    CONSOLE_CLEAR,
+    CONSOLE_HISTORY_FORWARD,
+    CONSOLE_HISTORY_BACKWARD,
+    CONSOLE_EMACS_BACKSPACE,
+    CONSOLE_STOP,
+    
+    MAIN_WINDOW_DELETE,
+    MAIN_WINDOW_VIEW_BROWSE_ONLY,
+    MAIN_WINDOW_VIEW_PANELS_ONLY,
+    MAIN_WINDOW_VIEW_BROWSE_AND_PANELS,
+    MAIN_WINDOW_VIEW_T3_ONLY,
+    MAIN_WINDOW_VIEW_BROWSE_AND_T3,
+    MAIN_WINDOW_VIEW_PANELS_AND_T3,
+    MAIN_WINDOW_VIEW_ALL_FRAMES,
+    MAIN_WINDOW_MOVE_FOCUS_LEFT,
+    MAIN_WINDOW_MOVE_FOCUS_RIGHT,
+    MAIN_WINDOW_SHIFT_CUR_TAB_LEFT,
+    MAIN_WINDOW_SHIFT_CUR_TAB_RIGHT,
+
+    PANEL_MOVE_FOCUS_LEFT,
+    PANEL_MOVE_FOCUS_RIGHT,
+    PANEL_APPLY,
+    PANEL_REVERT,
+    
+    DIALOG_ACCEPT,
+
+    TREE_NEW_DEFAULT_ELEMENT,
+    TREE_NEW_ELEMENT_ABOVE,
+    TREE_NEW_ELEMENT_BELOW,
+    TREE_DELETE,
+    TREE_DUPLICATE,
+    TREE_FIND,
+    TREE_FIND_REPLACE,
+    TREE_HISTORY_FORWARD,
+    TREE_HISTORY_BACKWARD,
+    
+    GRAPHICS_INTERACTION_MODE_OFF,
+    GRAPHICS_INTERACTION_MODE_ON,
+    GRAPHICS_INTERACTION_MODE_TOGGLE,
+    GRAPHICS_RESET_VIEW,
+    GRAPHICS_VIEW_ALL,
+    GRAPHICS_SEEK,
+    GRAPHICS_PAN_LEFT,
+    GRAPHICS_PAN_RIGHT,
+    GRAPHICS_PAN_UP,
+    GRAPHICS_PAN_DOWN,
+    GRAPHICS_ROTATE_LEFT,
+    GRAPHICS_ROTATE_RIGHT,
+    GRAPHICS_ROTATE_UP,
+    GRAPHICS_ROTATE_DOWN,
+    GRAPHICS_ZOOM_IN,
+    GRAPHICS_ZOOM_OUT
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;
@@ -222,8 +246,10 @@ public:
   static taBase_PtrList         unopened_windows;
   // #HIDDEN unopened windows waiting to be opened
 
+#ifndef __MAKETA__
   static void                   GetWindowList(iWidget_List& rval);
     // returns, as widgets, all "top level" windows, for use in a Windows menu; you can only use these transiently, i.e. in an on-demand popup
+#endif
   static taiMisc*               New(bool gui, QObject* parent = NULL);
    // #IGNORE initialize Qt interface system -- launch main window if gui;
 
@@ -243,15 +269,19 @@ public:
   // revert any open edit dialogs for given object
 //  static bool ReShowEdits(void* obj, TypeDef* td, bool force = true);
   // rebuilds any open edit dialogs for object; if force=true, doesn't prompt user if changes, just does it
+#ifndef __MAKETA__
   static taiEditorOfClass* FindEdit(void* base, iMainWindowViewer* not_in_win = NULL);
   // find first active edit dialog or panel for this object; for panels, if not_in_win specified, then must be active in a tab (not buried) in some win other than specified
   static taiEditorOfClass* FindEditDialog(void* base, bool read_only);
   // find an active (non-modal) edit dialog with same read_only state for the object
   static taiEditorOfClass* FindEditPanel(void* base, bool read_only,
     iMainWindowViewer* not_in_win = NULL);
-  static iMainWindowViewer* FindMainWinParent(QObject* obj);
+#endif
+  
+#ifndef __MAKETA__
+static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // find the iMainWindowViewer parent of a given gui object, if it can be found through successive parent() calls -- otherwise NULL
-
+#endif
 
   static void   Cleanup(int err); // #IGNORE function to be called upon exit to clean stuff up
 
@@ -259,12 +289,12 @@ public:
   void          AdjustFont(int fontSpec, iFont& font); // sets the font according to the spec parameter
   void          ResolveEditChanges(CancelOp& cancel_op); // resolve all changes on ALL edits panels and dialogs
   void          ResolveViewerChanges(CancelOp& cancel_op); // resolve all changes on ALL top level viewers
-  void Busy_(bool busy) override;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
-  void CheckConfigResult_(bool ok) override;
+  void          Busy_(bool busy) override;// impl for taMisc, puts system in a 'busy' state (pointer, no input)
+  void          CheckConfigResult_(bool ok) override;
 
+#ifndef __MAKETA__
   static bool   UpdateUiOnCtrlPressed(QObject* obj, QKeyEvent* e);
   // call UpdateUi on iMainWindowViewer associated with given object if the given keyboard event or the global keyboardModifiers status indicates that a ctrl key is pressed -- this enables just-in-time updating of the global cut/copy/paste edit action shortcuts -- should be called in keyboard event processing routines for objects that have such routines and depend on shortcuts..
-
   static bool   KeyEventCtrlPressed(QKeyEvent* e);
   // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..
   static bool   KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e);
@@ -275,16 +305,17 @@ public:
   // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
   static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
   // #IGNORE translate the key_event into the bound action
-
+#endif
+  
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management
 
   // static helper functions to be used by any other class to implement similar functionality
 
+#ifndef __MAKETA__
   static void           ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos);
   // scroll vertically to given position -- just scrollbar set value
-  static void           CenterOn_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg,
-                                    QWidget* widg);
+  static void           CenterOn_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg);
   // center the scrollarea on center of given widget vertically -- sa_main_widg is the main widget() of the scroll area
   static void           KeepInView_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg);
   // ensure that the given widget is fully in view within scroll area -- just move up or down as needed to keep fully in view -- sa_main_widg is the main widget() of the scroll area
@@ -294,16 +325,18 @@ public:
   // map coordinate point within given child widget on panel to the coordinates of the scroll area main widget (underlying space that is being scrolled over) -- sa_main_widg is the main widget() of the scroll area
   static int            MapToAreaV_SA(QAbstractScrollArea* sa, QWidget* sa_main_widg, QWidget* widg, int pt_y);
   // map vertical coordinate value within given child widget to the coordinates of the scroll area main widget (underlying space that is being scrolled over) -- sa_main_widg is the main widget() of the scroll area
-
+#endif
+  
   //		Delete children
-
-  static void	DeleteChildrenLater(QObject* obj); 
+#ifndef __MAKETA__
+  static void	DeleteChildrenLater(QObject* obj);
   // convenience function -- deleteLater all children
   static void	DeleteChildrenNow(QObject* obj);
   // convenience function -- delete *now* all children
   static void	DeleteWidgetsLater(QObject* obj);
   // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
-
+#endif
+  
 protected:
   static void   SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status
@@ -377,6 +410,7 @@ public:
 
   taiMisc(QObject* parent = NULL);
   ~taiMisc();
+  
 protected:
   int           base_height;    // implementation defined base control height used to derive other heights
   iFont         mbig_button_font; // largest button font -- others are derived from this

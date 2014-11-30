@@ -57,54 +57,54 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   if(ext_select_on)
     mv_md = QTextCursor::KeepAnchor;
   
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::LINE_EDIT_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXT_EDIT_CONTEXT, key_event);
 
   switch(action) {
-    case taiMisc::EMACS_DESELECT:
+    case taiMisc::TEXT_EDIT_EMACS_DESELECT:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       return;
-    case taiMisc::EMACS_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::TEXT_EDIT_EMACS_CLEAR_EXTENDED_SELECTION:
       key_event->accept();
       clearExtSelection();
       return;
-    case taiMisc::CURSOR_UP:
+    case taiMisc::TEXT_EDIT_CURSOR_UP:
       key_event->accept();
       cursor.movePosition(QTextCursor::Up, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::CURSOR_DOWN:
+    case taiMisc::TEXT_EDIT_CURSOR_DOWN:
       key_event->accept();
       cursor.movePosition(QTextCursor::Down, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_HOME:
+    case taiMisc::TEXT_EDIT_EMACS_HOME:
       key_event->accept();
       cursor.movePosition(QTextCursor::StartOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_END:
+    case taiMisc::TEXT_EDIT_EMACS_END:
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_CURSOR_FORWARD:
+    case taiMisc::TEXT_EDIT_EMACS_CURSOR_FORWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_CURSOR_BACKWARD:
+    case taiMisc::TEXT_EDIT_EMACS_CURSOR_BACKWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_PAGE_UP:
+    case taiMisc::TEXT_EDIT_EMACS_PAGE_UP:
       app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
       key_event->accept();
       return;
-    case taiMisc::EMACS_PAGE_DOWN:
+    case taiMisc::TEXT_EDIT_EMACS_PAGE_DOWN:
       key_event->accept();
       if (taMisc::emacs_mode) {
         app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
@@ -115,44 +115,44 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
         clearExtSelection();
       }
       return;
-    case taiMisc::EMACS_DELETE:
+    case taiMisc::TEXT_EDIT_EMACS_DELETE:
       key_event->accept();
       cursor.deleteChar();
       setTextCursor(cursor);
       return;
-    case taiMisc::EMACS_KILL:
+    case taiMisc::TEXT_EDIT_EMACS_KILL:
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
       cursor.removeSelectedText();
       clearExtSelection();
       return;
-    case taiMisc::EMACS_PASTE:
+    case taiMisc::TEXT_EDIT_EMACS_PASTE:
       key_event->accept();
       paste();
       clearExtSelection();
       return;
-    case taiMisc::EMACS_CUT:
+    case taiMisc::TEXT_EDIT_EMACS_CUT:
       key_event->accept();
       cut();
       clearExtSelection();
       return;
-    case taiMisc::EMACS_COPY_CLEAR:
+    case taiMisc::TEXT_EDIT_EMACS_COPY_CLEAR:
       key_event->accept();
       copy();
       clearExtSelection();
       return;
-    case taiMisc::EMACS_UNDO:
+    case taiMisc::TEXT_EDIT_EMACS_UNDO:
       key_event->accept();
       undo();
       return;
-    case taiMisc::LOOKUP:
+    case taiMisc::TEXT_EDIT_LOOKUP:
       key_event->accept();
       emit lookupKeyPressed();
       return;
     case taiMisc::TEXT_EDIT_IGNORE:
       key_event->ignore();		// allow this to go up to higher guy
       return;
-    case taiMisc::EMACS_FIND_IN_TEXT:
+    case taiMisc::TEXT_EDIT_EMACS_FIND_IN_TEXT:
       findPrompt();
       return;
     default:

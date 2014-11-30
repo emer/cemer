@@ -549,7 +549,7 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
       QString desc = dialog.getDesc();
       QStringList tags = dialog.getTags();
       
-      taMediaWiki::CreatePage(repositoryName, "test_page_1");
+      taMediaWiki::CreatePage(repositoryName, name, "this is the content");
       
       // TODO: upload the docs.  Initial plan was to turn the pub docs dialog
       // into an "uploading progress" dialog, but after trying a few things

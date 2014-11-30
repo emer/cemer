@@ -613,22 +613,22 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   
   if(stru_actions_enabled) {
     switch(action) {
-      case taiMisc::NEW_DEFAULT_ELEMENT:
+      case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
         ext_select_on = false;
         InsertDefaultEl(true);            // after
         key_event->accept();
         return;
-      case taiMisc::NEW_ELEMENT_ABOVE:
+      case taiMisc::TREE_NEW_ELEMENT_ABOVE:
         ext_select_on = false;
         InsertEl();             // at
         key_event->accept();
         return;
-      case taiMisc::NEW_ELEMENT_BELOW:
+      case taiMisc::TREE_NEW_ELEMENT_BELOW:
         ext_select_on = false;
         InsertEl(true);         // after
         key_event->accept();
         return;
-      case taiMisc::DUPLICATE:
+      case taiMisc::TREE_DUPLICATE:
         ext_select_on = false;
         if (ISelectable *si = curItem()) {
           if (ISelectableHost *host = si->host()) {
@@ -641,7 +641,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         }
         key_event->accept();
         return;
-      case taiMisc::DELETE:
+      case taiMisc::TREE_DELETE:
         ext_select_on = false;
         if (ISelectable *si = curItem()) {
           if (ISelectableHost *host = si->host()) {
@@ -655,19 +655,19 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         }
         key_event->accept();
         return;
-      case taiMisc::HISTORY_FORWARD:
+      case taiMisc::TREE_HISTORY_FORWARD:
         if(imw && imw->brow_hist) {
           imw->brow_hist->forward();
         }
         key_event->accept();
         return;
-      case taiMisc::HISTORY_BACKWARD:
+      case taiMisc::TREE_HISTORY_BACKWARD:
         if(imw && imw->brow_hist) {
           imw->brow_hist->back();
         }
         key_event->accept();
         return;
-      case taiMisc::FIND:
+      case taiMisc::TREE_FIND:
         if(si && si->link()) {   // si is curItem()
           taiSigLink* link = si->link();
           iMainWindowViewer* imw = mainWindow();
@@ -675,7 +675,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         }
         key_event->accept();
         return;
-      case taiMisc::FIND_REPLACE:
+      case taiMisc::TREE_FIND_REPLACE:
         if(si && si->link()) {  // si is curItem()
           taiSigLink* link = si->link();
           iMainWindowViewer* imw = mainWindow();

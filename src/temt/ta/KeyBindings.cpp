@@ -28,7 +28,7 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
   switch (context) {
     case taiMisc::MAIN_WINDOW_CONTEXT:
       return &main_window_bindings;
-    case taiMisc::LINE_EDIT_CONTEXT:
+    case taiMisc::TEXT_EDIT_CONTEXT:
       return &line_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
@@ -41,7 +41,7 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
     case taiMisc::TREE_CONTEXT:
       return &tree_bindings;
     case taiMisc::GRAPHICS_CONTEXT:
-      return &tree_bindings;
+      return &graphics_bindings;
     default:
       return NULL;
       break;
