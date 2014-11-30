@@ -195,16 +195,15 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
     const float effmmix = 1.0f - efflmix;
     const float su_act_mult = efflmix * su_avg_m;
 
-#if 0 // TA_VEC_USE
-    // todo: copy these into thread-specific memory!
+#if TA_VEC_USE
     LeabraNetwork* lnet = (LeabraNetwork*)net;
-    float* avg_s = lnet->UnVecVar(LeabraNetwork::AVG_S, thr_no);
-    float* avg_m = lnet->UnVecVar(LeabraNetwork::AVG_M, thr_no);
-    float* avg_l = lnet->UnVecVar(LeabraNetwork::AVG_L, thr_no);
-    float* thal = lnet->UnVecVar(LeabraNetwork::THAL, thr_no);
+    float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
+    float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
+    float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
+    float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
 
     Compute_dWt_CtLeabraXCAL_cosdiff_vec
-      (cg, su, net, dwts, avg_s, avg_m, avg_l, thal,
+      (cg, dwts, avg_s, avg_m, avg_l, thal,
        cifer_on, clrate, bg_lrate, fg_lrate,
        su_avg_s, su_avg_m, effmmix, su_act_mult);
 #else

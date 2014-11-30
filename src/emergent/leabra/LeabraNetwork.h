@@ -239,8 +239,8 @@ public:
 
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it - todo: can we eliminate this please??
 
-  float_Matrix  unit_vec_vars;
-  // #NO_SAVE #HIDDEN #CAT_Activation vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
+  float**       unit_vec_vars;
+  // #GNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
   float**       thrs_send_d5bnet_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
   float         tmp_arg1;        // #IGNORE for passing args through threaded call
 
@@ -251,14 +251,30 @@ public:
   RunWaitTime        cuda_compute_wt_time;  // #IGNORE
 #endif
 
-  inline float*  UnVecVar(UnitVecVars var)
-  { return unit_vec_vars.el + var * units_flat.size; }
+  inline float*  UnVecVar(int thr_no, UnitVecVars var)
+  { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
 
   inline float* ThrSendD5bNetTmp(int thr_no) const 
   { return thrs_send_d5bnet_tmp[thr_no]; }
   // #CAT_Structure temporary sending deep5b netinput memory for given thread 
 
+  ///////////////////////////////////////////////////////////////////////
+  //    Build functionality
+
+  bool  RecvOwnsCons() override { return false; }
+
+  virtual void	CheckInhibCons();
+  void	Build() override;
+  void  AllocSendNetinTmp() override;
+  void  InitSendNetinTmp_Thr(int thr_no) override;
+  void  BuildNullUnit() override;
+  void  FreeConThreadMem() override;
+  virtual void BuildUnitVecVars();
+  // #IGNORE
+  virtual void InitUnitVecVars_Thr(int thr_no);
+  // #IGNORE
+  
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions
@@ -276,13 +292,6 @@ public:
   // #CAT_Activation decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
     virtual void DecayState_Thr(int thr_no);
     // #IGNORE decay activation states towards initial values by given amount (0 = no decay, 1 = full decay)
-
-  bool  RecvOwnsCons() override { return false; }
-
-  virtual void	CheckInhibCons();
-  void	Build() override;
-  void  AllocSendNetinTmp() override;
-  void  InitSendNetinTmp_Thr(int thr_no) override;
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialInit -- at start of trial
@@ -432,10 +441,10 @@ public:
   //	Learning
 
   virtual void	Compute_dWt_Layer_pre();
-  // #CAT_Learning do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
+  // #IGNORE do special computations at layer level prior to standard unit-level thread dwt computation -- not used in base class but is in various derived classes
 
-  virtual void  Compute_dWt_vecvars();
-  // #CAT_Learning copy over the vectorized variables for learning
+  virtual void  Compute_dWt_VecVars_Thr(int thr_no);
+  // #IGNORE copy over the vectorized variables for learning
 
   void	Compute_dWt() override;
     void Compute_dWt_Thr(int thr_no) override;
@@ -499,8 +508,6 @@ public:
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
-
-  void  BuildNullUnit() override;
 
   String  MemoryReport(bool print = true);
   // #CAT_Statistic report about memory allocation for the network

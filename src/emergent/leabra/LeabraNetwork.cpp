@@ -119,6 +119,8 @@ void LeabraNetwork::Initialize() {
 
   trial_cos_diff = 0.0f;
 
+  unit_vec_vars = NULL;
+
   init_netins_cycle_stat = false;
   thrs_send_d5bnet_tmp = NULL;  // todo: need to free this thing too!
 
@@ -141,6 +143,86 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
     lstats.on_errs = true;
     lstats.off_errs = true;
   }
+}
+
+void LeabraNetwork::CheckInhibCons() {
+  net_misc.inhib_cons = false;
+  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
+    if(!lay->lesioned())
+      lay->CheckInhibCons(this);
+  }
+}
+
+void LeabraNetwork::Build() {
+  CheckInhibCons();
+  if(net_misc.inhib_cons) {
+    SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
+  }
+  inherited::Build();
+
+  BuildUnitVecVars();
+
+  // taMisc::Info("sizeof:", String(sizeof(LeabraUnitVars)), ".size:",
+  //              String(unit_vars_size));
+
+#ifdef CUDA_COMPILE
+  Cuda_BuildUnits_Threads();
+#endif
+}
+
+void LeabraNetwork::BuildUnitVecVars() {
+  net_aligned_malloc((void**)&unit_vec_vars, n_thrs_built * sizeof(int));
+
+  for(int i=0; i<n_thrs_built; i++) {
+    net_aligned_malloc((void**)&unit_vec_vars[i], n_units_built
+                       * N_VEC_VARS * sizeof(float));
+  }
+
+  NET_THREAD_CALL(LeabraNetwork::InitUnitVecVars_Thr);
+}
+
+void LeabraNetwork::InitUnitVecVars_Thr(int thr_no) {
+  memset(unit_vec_vars[thr_no], 0, n_units_built * N_VEC_VARS * sizeof(float));
+}
+
+#ifdef NUMA_COMPILE
+void LeabraNetwork::AllocSendNetinTmp_Thr(int thr_no) {
+  inherited::AllocSendNetinTmp_Thr(thr_no);
+}
+#endif
+
+void LeabraNetwork::AllocSendNetinTmp() {
+  // temporary storage for sender-based netinput computation
+  if(n_units_built == 0 || threads.n_threads == 0) return;
+
+  net_aligned_malloc((void**)&thrs_send_d5bnet_tmp, n_thrs_built * sizeof(float*));
+
+#ifndef NUMA_COMPILE
+  for(int i=0; i<n_thrs_built; i++) {
+    net_aligned_malloc((void**)&thrs_send_d5bnet_tmp[i],
+                       n_units_built * sizeof(float));
+  }
+#endif
+
+  inherited::AllocSendNetinTmp();
+}
+
+void LeabraNetwork::FreeConThreadMem() {
+  inherited::FreeConThreadMem();
+
+  if(!thrs_send_d5bnet_tmp) return;
+
+  for(int i=0; i<n_thrs_built; i++) {
+    net_free((void**)&thrs_send_d5bnet_tmp[i]);
+    net_free((void**)&unit_vec_vars[i]);
+  }
+  net_free((void**)&thrs_send_d5bnet_tmp);
+  net_free((void**)&unit_vec_vars);
+}
+
+void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
+  inherited::InitSendNetinTmp_Thr(thr_no);
+  memset(thrs_send_d5bnet_tmp[thr_no], 0, n_units_built * sizeof(float));
 }
 
 void LeabraNetwork::BuildNullUnit() {
@@ -229,57 +311,6 @@ void LeabraNetwork::DecayState_Thr(int thr_no) {
     ((LeabraUnitSpec*)uv->unit_spec)->DecayState(uv, this, thr_no, decay);
   }
 }
-
-void LeabraNetwork::CheckInhibCons() {
-  net_misc.inhib_cons = false;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->CheckInhibCons(this);
-  }
-}
-
-void LeabraNetwork::Build() {
-  CheckInhibCons();
-  if(net_misc.inhib_cons) {
-    SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
-  }
-  inherited::Build();
-
-  // taMisc::Info("sizeof:", String(sizeof(LeabraUnitVars)), ".size:",
-  //              String(unit_vars_size));
-
-#ifdef CUDA_COMPILE
-  Cuda_BuildUnits_Threads();
-#endif
-}
-
-#ifdef NUMA_COMPILE
-void LeabraNetwork::AllocSendNetinTmp_Thr(int thr_no) {
-  inherited::AllocSendNetinTmp_Thr(thr_no);
-}
-#endif
-
-void LeabraNetwork::AllocSendNetinTmp() {
-  // temporary storage for sender-based netinput computation
-  if(n_units_built == 0 || threads.n_threads == 0) return;
-
-  net_aligned_malloc((void**)&thrs_send_d5bnet_tmp, n_thrs_built * sizeof(float*));
-
-#ifndef NUMA_COMPILE
-  for(int i=0; i<n_thrs_built; i++) {
-    net_aligned_malloc((void**)&thrs_send_d5bnet_tmp[i],
-                       n_units_built * sizeof(float));
-  }
-#endif
-
-  inherited::AllocSendNetinTmp();
-}
-
-void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
-  inherited::InitSendNetinTmp_Thr(thr_no);
-  memset(thrs_send_d5bnet_tmp[thr_no], 0, n_units_built * sizeof(float));
-}
-
 
 ///////////////////////////////////////////////////////////////////////
 //      TrialInit -- at start of trial
@@ -802,18 +833,17 @@ void LeabraNetwork::Compute_dWt_Layer_pre() {
   }
 }
 
-void LeabraNetwork::Compute_dWt_vecvars() {
-  // todo: fix this to work per thread -- but just not sure how much benefit it will have..
-  float* avg_s = UnVecVar(AVG_S);
-  float* avg_m = UnVecVar(AVG_M);
-  float* avg_l = UnVecVar(AVG_L);
-  float* thal =  UnVecVar(THAL);
-  float* cos_diff_lmix =  UnVecVar(COS_DIFF_LMIX);
-  float* act_q0 =  UnVecVar(ACT_Q0);
+void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
+  float* avg_s = UnVecVar(thr_no, AVG_S);
+  float* avg_m = UnVecVar(thr_no, AVG_M);
+  float* avg_l = UnVecVar(thr_no, AVG_L);
+  float* thal =  UnVecVar(thr_no, THAL);
+  float* cos_diff_lmix =  UnVecVar(thr_no, COS_DIFF_LMIX);
+  float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
   // float* act_m = UnVecVar(ACT_M);
   // float* act_p = UnVecVar(ACT_P);
 
-  // non-threaded for now..
+  // each thread copies all into their own local mem
   for(int i=1; i<units_flat.size; i++) {
     LeabraUnit* un = (LeabraUnit*)units_flat[i];
     avg_s[i] = un->avg_s();
@@ -837,7 +867,7 @@ void LeabraNetwork::Compute_dWt() {
   }
 
   Compute_dWt_Layer_pre();
-  // Compute_dWt_vecvars(); // todo
+  NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
 
 #ifdef CUDA_COMPILE
   if(!net_misc.dwt_norm) {      // todo: add other checks here for non-std dwts etc
