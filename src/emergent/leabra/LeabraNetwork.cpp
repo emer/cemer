@@ -532,40 +532,20 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
   if(times.cycle_qtr)
     tot_cyc = times.quarter;
   for(int cyc = 0; cyc < tot_cyc; cyc++) {
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->netin.StartTimer(true); // reset
     Send_Netin_Thr(thr_no);
     threads.SyncSpin1(thr_no);
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->netin.EndIncrAvg();
 
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.StartTimer(true); // reset
     Compute_NetinInteg_Thr(thr_no);
     threads.SyncSpin1(thr_no);
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.EndIncrAvg();
 
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->inhib.StartTimer(true); // reset
     Compute_Inhib_Thr(thr_no);
     threads.SyncSpin1(thr_no);
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
 
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->act.StartTimer(true); // reset
     Compute_Act_Thr(thr_no);
     threads.SyncSpin1(thr_no);
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->act.EndIncrAvg();
 
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->act_post.StartTimer(true); // reset
     Compute_Act_Post_Thr(thr_no);
     threads.SyncSpin1(thr_no);
-    if(threads.get_timing)
-      ((LeabraNetTiming*)net_timing[thr_no])->act_post.EndIncrAvg();
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
@@ -604,6 +584,9 @@ void LeabraNetwork::Send_Netin_Thr(int thr_no) {
 //   return;
 // #endif
 
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->netin.StartTimer(true); // reset
+
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
@@ -614,21 +597,33 @@ void LeabraNetwork::Send_Netin_Thr(int thr_no) {
     send_pct = (float)send_pct_n / (float)send_pct_tot;
     avg_send_pct.Increment(send_pct);
   }
+
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->netin.EndIncrAvg();
 }
 
 void LeabraNetwork::Compute_NetinInteg_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.StartTimer(true); // reset
+
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->Compute_NetinInteg(uv, this, thr_no);
   }
+
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.EndIncrAvg();
 }
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 2: Inhibition
 
 void LeabraNetwork::Compute_Inhib_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->inhib.StartTimer(true); // reset
+
   // note: only running on thr_no == 0 right now -- may be best overall to avoid
   // messy cache stuff, to just keep it on 0
   if(thr_no == 0) {
@@ -639,6 +634,8 @@ void LeabraNetwork::Compute_Inhib_Thr(int thr_no) {
     if(net_misc.lay_gp_inhib)
       Compute_Inhib_LayGp();
   }
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->inhib.EndIncrAvg();
 }
 
 void LeabraNetwork::Compute_Inhib_LayGp() {
@@ -673,12 +670,18 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 //      Cycle Step 3: Activation
 
 void LeabraNetwork::Compute_Act_Post_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act_post.StartTimer(true); // reset
+
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->Compute_Act_Post(uv, this, thr_no);
   }
+
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act_post.EndIncrAvg();
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -867,22 +870,25 @@ void LeabraNetwork::Compute_dWt() {
   }
 
   Compute_dWt_Layer_pre();
-  NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
 
 #ifdef CUDA_COMPILE
   if(!net_misc.dwt_norm) {      // todo: add other checks here for non-std dwts etc
+    NET_THREAD_CALL(LeabraNetwork::Compute_dWt_VecVars_Thr);
     Cuda_Compute_dWt();
     return;
   }
 #endif
 
   NET_THREAD_CALL(LeabraNetwork::Compute_dWt_Thr);
-
 }
 
 void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->dwt.StartTimer(true); // reset
+
+  Compute_dWt_VecVars_Thr(thr_no);
+
+  threads.SyncSpin1(thr_no);
 
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
@@ -1202,30 +1208,163 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgAbsRelNetin();
 }
 
-String LeabraNetwork::MemoryReport(bool print) {
-
-  int consz = sizeof(LeabraCon) + 3 * sizeof(int);
-  // 3 = send idx, 2 recv idx's
-
-  String constr;
-  constr.convert((float)n_cons);
-  return constr;
-
-  // todo: move to Network, add raw n_recv,send cons_cnt
-
-  // String report = name + " memory report:\n";
-  // report << "number of units:       " << n_units << "\n"
-  //        << "    bytes per unit:    " << sizeof(LeabraUnit) << "\n"
-  //        << "    total unit memory: " << taMisc::GetSizeString(n_units * sizeof(LeabraUnit)) << "\n"
-  //        << "number of connections: " << constr << "\n"
-  //        << "    bytes per con+idx: " << consz << "\n"
-  //        << "    total con memory:  " << taMisc::GetSizeString(n_send_cons_cnt * sizeof(float) + n_recv_cons_cnt * sizeof(int)) << "\n" 
-  //        << "       owned (send):   " << taMisc::GetSizeString(n_send_cons_cnt * sizeof(float)) << "\n" 
-  //        << "       ptr (recv):     " << taMisc::GetSizeString(n_recv_cons_cnt * sizeof(int)) << "\n";
-  // if(print)
-  //   taMisc::Info(report);
-  // return report;
+static String pct_val_out(float val, float sum) {
+  String rval;
+  rval = taMisc::FormatValue(val, 7, 3) + " " 
+    + taMisc::FormatValue(100.0f * (val / sum), 7, 3);
+  return rval;
 }
+
+String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
+  if(!HasNetFlag(BUILT)) {
+    String rval = "Network not built yet!";
+    if(print)
+      taMisc::Info(rval);
+    return rval;
+  }
+
+  int idx;
+  DataCol* thc = dt.FindMakeColName("thread", idx, VT_INT);
+  DataCol* stat = dt.FindMakeColName("stat", idx, VT_STRING);
+  DataCol* rca = dt.FindMakeColName("run_avg", idx, VT_FLOAT);
+  DataCol* rcs = dt.FindMakeColName("run_sum", idx, VT_FLOAT);
+  float rescale = 1.0e6;        // how many microseconds
+
+  LeabraNetTiming* net_tm = (LeabraNetTiming*)net_timing.Peek();
+  net_tm->netin.avg_used.ResetSum();
+  net_tm->act.avg_used.ResetSum();
+  net_tm->dwt.avg_used.ResetSum();
+  net_tm->wt.avg_used.ResetSum();
+  net_tm->netin_integ.avg_used.ResetSum();
+  net_tm->inhib.avg_used.ResetSum();
+  net_tm->act_post.avg_used.ResetSum();
+  net_tm->cycstats.avg_used.ResetSum();
+
+  float tot_time = 0.0f;
+  float wait_time_avg = 0.0f;
+  float wait_time_sum = 0.0f;
+  for(int i=0; i<net_timing.size; i++) {
+    LeabraNetTiming* tm = (LeabraNetTiming*)net_timing[i];
+    if(i < n_thrs_built) {
+      net_tm->netin.avg_used.IncrementAvg(tm->netin.avg_used.sum);
+      net_tm->act.avg_used.IncrementAvg(tm->act.avg_used.sum);
+      net_tm->dwt.avg_used.IncrementAvg(tm->dwt.avg_used.sum);
+      net_tm->wt.avg_used.IncrementAvg(tm->wt.avg_used.sum);
+      net_tm->netin_integ.avg_used.IncrementAvg(tm->netin_integ.avg_used.sum);
+      net_tm->inhib.avg_used.IncrementAvg(tm->inhib.avg_used.sum);
+      net_tm->act_post.avg_used.IncrementAvg(tm->act_post.avg_used.sum);
+      net_tm->cycstats.avg_used.IncrementAvg(tm->cycstats.avg_used.sum);
+    }
+    else {
+      tot_time += tm->netin.avg_used.avg;
+      tot_time += tm->act.avg_used.avg;
+      tot_time += tm->dwt.avg_used.avg;
+      tot_time += tm->wt.avg_used.avg;
+      tot_time += tm->netin_integ.avg_used.avg;
+      tot_time += tm->inhib.avg_used.avg;
+      tot_time += tm->act_post.avg_used.avg;
+      tot_time += tm->cycstats.avg_used.avg;
+    }
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("netin_time", -1);
+    rca->SetValAsFloat(tm->netin.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->netin.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("netin_integ_time", -1);
+    rca->SetValAsFloat(tm->netin_integ.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->netin_integ.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("inhib_time", -1);
+    rca->SetValAsFloat(tm->inhib.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->inhib.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("act_time", -1);
+    rca->SetValAsFloat(tm->act.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->act.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("act_post_time", -1);
+    rca->SetValAsFloat(tm->act_post.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->act_post.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("cycstats_time", -1);
+    rca->SetValAsFloat(tm->cycstats.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->cycstats.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("dwt_time", -1);
+    rca->SetValAsFloat(tm->dwt.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->dwt.avg_used.sum, -1);
+
+    // dt.AddBlankRow();
+    // thc->SetValAsInt(i, -1);
+    // stat->SetValAsString("dwt_norm_time", -1);
+    // rca->SetValAsFloat(dwt_norm.avg_used.avg * rescale, -1);
+    // rcs->SetValAsFloat(dwt_norm.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("wt_time", -1);
+    rca->SetValAsFloat(tm->wt.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->wt.avg_used.sum, -1);
+
+    // dt.AddBlankRow();
+    // thc->SetValAsInt(i, -1);
+    // stat->SetValAsString("ti_netin_time", -1);
+    // rca->SetValAsFloat(ti_netin.avg_used.avg * rescale, -1);
+    // rcs->SetValAsFloat(ti_netin.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("wt_time", -1);
+
+    if(i < n_thrs_built) {
+      TimeUsedHR& wt = ((NetworkThreadTask*)threads.tasks[i])->wait_time;
+      rca->SetValAsFloat(wt.avg_used.avg * rescale, -1);
+      rcs->SetValAsFloat(wt.avg_used.sum, -1);
+      wait_time_avg += wt.avg_used.avg;
+      wait_time_sum += wt.avg_used.sum;
+    }
+    else {
+      wait_time_avg /= (float)n_thrs_built;
+      wait_time_sum /= (float)n_thrs_built;
+
+      rca->SetValAsFloat(wait_time_avg * rescale, -1);
+      rcs->SetValAsFloat(wait_time_sum, -1);
+    }
+  }
+
+  String report = name + " timing report:\n";
+  report << "function       time     percent \n"
+         << "netin:         " << pct_val_out(net_tm->netin.avg_used.avg, tot_time) << "\n"
+         << "netin_integ:   " << pct_val_out(net_tm->netin_integ.avg_used.avg, tot_time) << "\n"
+         << "inhib:         " << pct_val_out(net_tm->inhib.avg_used.avg, tot_time) << "\n"
+         << "act:           " << pct_val_out(net_tm->act.avg_used.avg, tot_time) << "\n"
+         << "act_post:      " << pct_val_out(net_tm->act_post.avg_used.avg, tot_time) << "\n"
+         << "cycstats:      " << pct_val_out(net_tm->cycstats.avg_used.avg, tot_time) << "\n"
+         << "dwt:           " << pct_val_out(net_tm->dwt.avg_used.avg, tot_time) << "\n"
+         << "wt:            " << pct_val_out(net_tm->wt.avg_used.avg, tot_time) << "\n"
+         << "    total:     " << taMisc::FormatValue(tot_time, 7, 3) << "\n"
+         << "sync wait:     " << taMisc::FormatValue(wait_time_sum, 7, 3) << "\n"
+    ;
+
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
+
 
 #ifdef CUDA_COMPILE
 

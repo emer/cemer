@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7758
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7767
 LeabraProject .projects["vis_bench_sm"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectDocs"] { 
@@ -22,13 +22,15 @@ LeabraProject .projects["vis_bench_sm"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [6] {
+   EditMbrItem_Group @.mbrs = [8] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
     EditMbrItem @[2] { };
     EditMbrItem @[3] { };
     EditMbrItem @[4] { };
     EditMbrItem @[5] { };
+    EditMbrItem @[6] { };
+    EditMbrItem @[7] { };
    };
 
    EditMthItem_Group @.mths = [13] {
@@ -1855,9 +1857,10 @@ LeabraProject .projects["vis_bench_sm"] {
       ProgArg_List @.meth_args = [0] {
       };
      };
-     MemberMethodCall @[23] { 
-      ProgArg_List @.meth_args = [1] {
+     MethodCall @[23] { 
+      ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
      ProgramCall @[24] { 
@@ -4974,8 +4977,8 @@ mw.loader.load([\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"media
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.272 seconds
-Real time usage: 0.298 seconds
+CPU time usage: 0.252 seconds
+Real time usage: 0.264 seconds
 Preprocessor visited node count: 390/1000000
 Preprocessor generated node count: 1371/1000000
 Post?expand include size: 14912/2097152 bytes
@@ -4984,7 +4987,7 @@ Highest expansion depth: 5/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20141127211539
+<!-- Saved in parser cache with key compcogneuro:pcache:idhash:653-0!*!0!!en!2!* and timestamp 20141129211741
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616\">https://grey.colorado.edu/CompCogNeuro/index.php?title=CCNBook/Sims/Perception/Objrec&amp;oldid=4616</a>\"				</div>
@@ -5085,7 +5088,7 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 24 August 2014, at 20:58.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 7,183 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 7,196 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-privacy\"><a href=\"/CompCogNeuro/index.php/Project:Privacy_policy\" title=\"Project:Privacy policy\">Privacy policy</a></li>
@@ -5108,11 +5111,11 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 <script>if(window.mw){
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
-<script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
+<script src=\"https://grey.colorado.edu/CompCogNeuro/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script><div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div>
 <!-- Served in 0.296 secs. -->
 	
 
-<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
+</body></html>";
   };
  };
  wizards {
@@ -5257,6 +5260,44 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      base=$.projects["vis_bench_sm"].networks["ObjrecNet"].cuda$;
      mbr=LeabraCudaSpec::cons_per_thread;
      is_numeric=1;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
+    EditMbrItem @[6] {
+     label="rel_netin_on";
+     desc="[Default: true]  whether to compute relative netinput at all";
+     cust_desc=0;
+     base=.projects["vis_bench_sm"].networks["ObjrecNet"].rel_netin$$;
+     mbr=RelNetinSched::on;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
+    EditMbrItem @[7] {
+     label="spin_wait";
+     desc=" use spin-wait instead of mutex-based wait() that goes to the OS -- experimental..";
+     cust_desc=0;
+     base=.projects["vis_bench_sm"].networks["ObjrecNet"].threads$$;
+     mbr=taThreadMgr::spin_wait;
+     is_numeric=0;
      is_single=1;
      param_search {
       srch=NO;
@@ -20402,22 +20443,21 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       meth_sig="void EndTimer()";
       meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
-     MemberMethodCall @[23] {
+     MethodCall @[23] {
       desc=;
-      flags=OFF|CAN_REVERT_TO_CODE;
-      orig_prog_code="network.cyc_threads.ThreadReport()";
-      obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
-      path="lthreads";
+      flags=CAN_REVERT_TO_CODE;
+      orig_prog_code="network.TimingReport()";
       result_var=NULL;
-      method=NULL;
+      obj=$.projects["vis_bench_sm"].programs.gp["LeabraAll_Std"]["LeabraTrain"].args["network"]$;
+      method=LeabraNetwork::TimingReport;
       meth_args {
        name="meth_args";
        el_typ=ProgArg;
        el_def=0;
        ProgArg @[0] {
-	arg_type=DataTable_ptr;
-	type="DataTable*";
-	name="table";
+	arg_type=DataTable_ref;
+	type="DataTable&";
+	name="dt";
 	required=1;
 	def_val=;
 	prev_expr=;
@@ -20425,9 +20465,20 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	 expr="thread_report_data";
 	};
        };
+       ProgArg @[1] {
+	arg_type=bool;
+	type="bool";
+	name="print";
+	required=0;
+	def_val="true";
+	prev_expr=;
+	expr {
+	 expr="true";
+	};
+       };
       };
-      meth_sig="void ThreadReport(DataTable* table)";
-      meth_desc=" run a report on thread stats, to data table (which is fully reset in the process)";
+      meth_sig="taString TimingReport(DataTable& dt, bool print = true)";
+      meth_desc=" report detailed timing data to data table, and print a summary -- only collected if thread.get_timing engaged (e.g., call threads.get_timing)";
      };
      ProgramCall @[24] {
       desc=;
@@ -25931,7 +25982,7 @@ err_output_data.data.pct_err.UpdateAfterEdit();";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.005299416836351156;
+     value 6 0=0.004772004205733538;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -25941,7 +25992,7 @@ err_output_data.data.pct_err.UpdateAfterEdit();";
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9941706657409668;
+     value 6 0=0.9941675662994385;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -29644,7 +29695,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04027557000517845;
+       value 6 0=0.04029692336916924;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {

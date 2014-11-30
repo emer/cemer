@@ -1199,6 +1199,55 @@ void Network::Connect_UpdtActives_Thr(int thr_no) {
   }
 }
 
+String Network::MemoryReport(bool print) {
+  if(!HasNetFlag(BUILT)) {
+    String rval = "Network not built yet!";
+    if(print)
+      taMisc::Info(rval);
+    return rval;
+  }
+  
+  String constr;
+  constr.convert((float)n_cons);
+
+  int64_t recv_cons_tot = 0;
+  int64_t send_cons_tot = 0;
+  for(int i=0; i< n_thrs_built; i++) {
+    recv_cons_tot += thrs_recv_cons_cnt[i];
+    send_cons_tot += thrs_send_cons_cnt[i];
+  }
+
+  int64_t congp_tot = (n_recv_cgps + n_send_cgps) * con_group_size;
+  int64_t unit_tot = n_units_built * unit_vars_size;
+
+  int64_t mem_tot = recv_cons_tot + send_cons_tot + congp_tot + unit_tot;
+
+  String report = name + " memory report:\n";
+  report << "number of units:            " << n_units_built << "\n"
+         << "    bytes per unitvar:      " << unit_vars_size << "\n"
+         << "    total unit memory:      " << taMisc::GetSizeString
+    (unit_tot) << "\n"
+         << "number of recv con groups:  " << n_recv_cgps << "\n"
+         << "number of send con groups:  " << n_send_cgps << "\n"
+         << "    bytes per con group:    " << con_group_size << "\n"
+         << "    total con group memory: " << taMisc::GetSizeString
+    (congp_tot) << "\n"
+         << "number of connections:      " << constr << "\n"
+         << "    bytes per con+idx:      " << thrs_own_cons_max_vars[0] << "\n"
+         << "    total con memory:       " << taMisc::GetSizeString
+    (recv_cons_tot + send_cons_tot) << "\n" 
+         << "       recv cons:           " << taMisc::GetSizeString
+    (recv_cons_tot) << "\n" 
+         << "       send cons:           " << taMisc::GetSizeString
+    (send_cons_tot) << "\n"
+         << "grand total memory:         " << taMisc::GetSizeString
+    (mem_tot) << "\n";
+  if(print)
+    taMisc::Info(report);
+  return report;
+}
+
+
 bool Network::CheckBuild(bool quiet) {
   if(!HasNetFlag(BUILT)) {
     if(!quiet) {
@@ -1659,6 +1708,9 @@ void Network::Compute_Netin() {
 }
 
 void Network::Compute_Netin_Thr(int thr_no) {
+  if(threads.get_timing)
+    net_timing[thr_no]->netin.StartTimer(true); // reset
+
   // unit-level, as separate pass -- this initializes net
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -1673,6 +1725,9 @@ void Network::Compute_Netin_Thr(int thr_no) {
     if(rcg->NotActive()) continue;
     rcg->con_spec->Compute_Netin(rcg, this, thr_no);
   }
+
+  if(threads.get_timing)
+    net_timing[thr_no]->netin.EndIncrAvg();
 }
 
 void Network::Send_Netin() {
@@ -1714,6 +1769,9 @@ void Network::Send_Netin_Thr(int thr_no) {
   // want to check here if the sending unit's activation is above some threshold
   // so you don't send if it isn't above that threshold..
   // this isn't implemented here though.
+  if(threads.get_timing)
+    net_timing[thr_no]->netin.StartTimer(true); // reset
+
   if(NetinPerPrjn()) {
     const int nscg = ThrNSendConGps(thr_no);
     for(int i=0; i<nscg; i++) {
@@ -1730,20 +1788,28 @@ void Network::Send_Netin_Thr(int thr_no) {
       scg->con_spec->Send_Netin(scg, this, thr_no);
     }
   }
+
+  if(threads.get_timing)
+    net_timing[thr_no]->netin.EndIncrAvg();
 }
 
 void Network::Compute_Act() {
-  // todo: test performance of each..
   NET_THREAD_CALL(Network::Compute_Act_Thr);
 }
 
 void Network::Compute_Act_Thr(int thr_no) {
+  if(threads.get_timing)
+    net_timing[thr_no]->act.StartTimer(true); // reset
+
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     UnitVars* uv = ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
     uv->unit_spec->Compute_Act(uv, this, thr_no);
   }
+
+  if(threads.get_timing)
+    net_timing[thr_no]->act.EndIncrAvg();
 }
 
 void Network::Compute_NetinAct() {

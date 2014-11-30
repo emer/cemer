@@ -509,8 +509,8 @@ public:
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
 
-  String  MemoryReport(bool print = true);
-  // #CAT_Statistic report about memory allocation for the network
+  virtual String   TimingReport(DataTable& dt, bool print = true);
+  // #CAT_Statistic report detailed timing data to data table, and print a summary -- only collected if thread.get_timing engaged (e.g., call threads.get_timing)
 
 #ifdef CUDA_COMPILE
   void  Cuda_BuildUnits_Threads(); // update device data after net mods

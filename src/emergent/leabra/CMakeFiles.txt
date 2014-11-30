@@ -27,7 +27,6 @@ set(leabra_HEADS_MAKETA
   LeabraLayerSpec.h
 
   LeabraNetwork.h
-  #  LeabraThreadMgr.h  # TODO: Don't forget to delete!
   LeabraProject.h
 
   LeabraWizard.h
@@ -145,7 +144,6 @@ set(leabra_SRCS
   LeabraLayer.cpp
 
   LeabraNetwork.cpp
-#  LeabraThreadMgr.cpp  
   LeabraProject.cpp
 
   LeabraWizard.cpp

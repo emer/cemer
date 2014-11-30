@@ -389,7 +389,10 @@ void taThreadMgr::EndTimers(bool print_report) {
   if(total_time.s_used > 0.0) {
     run_time_pct = run_time.s_used / total_time.s_used;
     sync_time_pct = sync_time.s_used / total_time.s_used;
-    wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used * threads.size);
+    if(threads.size > 0) 
+      wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used * threads.size);
+    else
+      wake_in_sync_pct = (double)n_wake_in_sync / (double)(run_time.n_used);
   }
   else {
     run_time_pct = 0.0;

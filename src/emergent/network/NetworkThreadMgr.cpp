@@ -56,7 +56,7 @@ void NetworkThreadTask::SyncSpin1(int usec_wait) {
   }
 
   if(mg->get_timing) {
-    wait_time.StartTimer(false); // this is the only reason this has to be in Task guy
+    wait_time.StartTimer(true); // this is the only reason this has to be in Task guy
   }
 
   while(cur_cnt < trg) {
@@ -71,7 +71,7 @@ void NetworkThreadTask::SyncSpin1(int usec_wait) {
   mg->sync1_step.testAndSetOrdered(cur_step, nxt_step);
 
   if(mg->get_timing) {
-    wait_time.EndTimer();
+    wait_time.EndIncrAvg();
   }
 }
 

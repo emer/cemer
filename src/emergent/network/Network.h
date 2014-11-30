@@ -634,6 +634,9 @@ public:
     virtual void  Connect_UpdtActives_Thr(int thr_no);
     // #IGNORE update the active flag status of all connections
 
+  virtual String  MemoryReport(bool print = true);
+  // #CAT_Statistic report about memory allocation for the network
+
   virtual bool  CheckBuild(bool quiet=false);
   // #CAT_Structure check if network units are built
   virtual bool  CheckConnect(bool quiet=false);
