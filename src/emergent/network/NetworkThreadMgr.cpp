@@ -35,13 +35,13 @@ void NetworkThreadTask::run() {
 }
 
 
-void NetworkThreadTask::SyncSpin1(int usec_wait) {
+void NetworkThreadTask::SyncSpin(int usec_wait) {
   NetworkThreadMgr* mg = mgr();
 
 #if (QT_VERSION >= 0x050000)
-  const int cur_step = mg->sync1_step.loadAcquire();
+  const int cur_step = mg->sync_step.loadAcquire();
 #else
-  const int cur_step = (int)mg->sync1_step;
+  const int cur_step = (int)mg->sync_step;
 #endif
 
   const int nxt_step = cur_step+1;
@@ -49,9 +49,9 @@ void NetworkThreadTask::SyncSpin1(int usec_wait) {
 
   // acquire vs. ordered is not really a big deal here -- generating a release is
   // essentially automatic whenever a volitile variable is written to anyway
-  int cur_cnt = mg->sync1_ctr.fetchAndAddOrdered(1);
+  int cur_cnt = mg->sync_ctr.fetchAndAddOrdered(1);
   if(cur_cnt == trg) { // we were the last guy
-    mg->sync1_step.testAndSetOrdered(cur_step, nxt_step);
+    mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
     return;
   }
 
@@ -63,95 +63,15 @@ void NetworkThreadTask::SyncSpin1(int usec_wait) {
     if(usec_wait > 0)
       taManagedThread::usleep(usec_wait);
 #if (QT_VERSION >= 0x050000)
-    cur_cnt = mg->sync1_ctr.loadAcquire();
+    cur_cnt = mg->sync_ctr.loadAcquire();
 #else
-    cur_cnt = (int)mg->sync1_ctr;
+    cur_cnt = (int)mg->sync_ctr;
 #endif
   }
-  mg->sync1_step.testAndSetOrdered(cur_step, nxt_step);
+  mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
 
   if(mg->get_timing) {
     wait_time.EndIncrAvg();
-  }
-}
-
-void NetworkThreadTask::SyncSpin2(int usec_wait) {
-  NetworkThreadMgr* mg = mgr();
-
-#if (QT_VERSION >= 0x050000)
-  const int cur_step = mg->sync2_step.loadAcquire();
-#else
-  const int cur_step = (int)mg->sync2_step;
-#endif
-
-  const int nxt_step = cur_step+1;
-  const int trg = nxt_step * mg->tasks.size;
-
-  // acquire vs. ordered is not really a big deal here -- generating a release is
-  // essentially automatic whenever a volitile variable is written to anyway
-  int cur_cnt = mg->sync2_ctr.fetchAndAddOrdered(1);
-  if(cur_cnt == trg) { // we were the last guy
-    mg->sync2_step.testAndSetOrdered(cur_step, nxt_step);
-    return;
-  }
-
-  if(mg->get_timing) {
-    wait_time.StartTimer(false); // this is the only reason this has to be in Task guy
-  }
-
-  while(cur_cnt < trg) {
-    if(usec_wait > 0)
-      taManagedThread::usleep(usec_wait);
-#if (QT_VERSION >= 0x050000)
-    cur_cnt = mg->sync2_ctr.loadAcquire();
-#else
-    cur_cnt = (int)mg->sync2_ctr;
-#endif
-  }
-  mg->sync2_step.testAndSetOrdered(cur_step, nxt_step);
-
-  if(mg->get_timing) {
-    wait_time.EndTimer();
-  }
-}
-
-void NetworkThreadTask::SyncSpin3(int usec_wait) {
-  NetworkThreadMgr* mg = mgr();
-
-#if (QT_VERSION >= 0x050000)
-  const int cur_step = mg->sync3_step.loadAcquire();
-#else
-  const int cur_step = (int)mg->sync3_step;
-#endif
-
-  const int nxt_step = cur_step+1;
-  const int trg = nxt_step * mg->tasks.size;
-
-  // acquire vs. ordered is not really a big deal here -- generating a release is
-  // essentially automatic whenever a volitile variable is written to anyway
-  int cur_cnt = mg->sync3_ctr.fetchAndAddOrdered(1);
-  if(cur_cnt == trg) { // we were the last guy
-    mg->sync3_step.testAndSetOrdered(cur_step, nxt_step);
-    return;
-  }
-
-  if(mg->get_timing) {
-    wait_time.StartTimer(false); // this is the only reason this has to be in Task guy
-  }
-
-  while(cur_cnt < trg) {
-    if(usec_wait > 0)
-      taManagedThread::usleep(usec_wait);
-#if (QT_VERSION >= 0x050000)
-    cur_cnt = mg->sync3_ctr.loadAcquire();
-#else
-    cur_cnt = (int)mg->sync3_ctr;
-#endif
-  }
-  mg->sync3_step.testAndSetOrdered(cur_step, nxt_step);
-
-  if(mg->get_timing) {
-    wait_time.EndTimer();
   }
 }
 
@@ -185,12 +105,8 @@ void NetworkThreadMgr::InitAll() {
 }
 
 void NetworkThreadMgr::Run(NetworkThreadCall& meth_call) {
-  sync1_ctr = 0;
-  sync1_step = 0;
-  sync2_ctr = 0;
-  sync2_step = 0;
-  sync3_ctr = 0;
-  sync3_step = 0;
+  sync_ctr = 0;
+  sync_step = 0;
 
   Network* net = network();
   const int nt = tasks.size;
@@ -202,17 +118,8 @@ void NetworkThreadMgr::Run(NetworkThreadCall& meth_call) {
   inherited::Run();
 }
 
-void NetworkThreadMgr::SyncSpin1(int thread_no, int usec_wait) {
+void NetworkThreadMgr::SyncSpin(int thread_no, int usec_wait) {
   NetworkThreadTask* ntt = (NetworkThreadTask*)tasks[thread_no];
-  ntt->SyncSpin1(usec_wait);
+  ntt->SyncSpin(usec_wait);
 }
 
-void NetworkThreadMgr::SyncSpin2(int thread_no, int usec_wait) {
-  NetworkThreadTask* ntt = (NetworkThreadTask*)tasks[thread_no];
-  ntt->SyncSpin2(usec_wait);
-}
-
-void NetworkThreadMgr::SyncSpin3(int thread_no, int usec_wait) {
-  NetworkThreadTask* ntt = (NetworkThreadTask*)tasks[thread_no];
-  ntt->SyncSpin3(usec_wait);
-}

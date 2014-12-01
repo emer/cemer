@@ -547,48 +547,48 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     tot_cyc = times.quarter;
   for(int cyc = 0; cyc < tot_cyc; cyc++) {
     Send_Netin_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     Compute_NetinInteg_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.StartTimer(true); // reset
 
     Compute_NetinStats_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
     if(thr_no == 0) {
       Compute_NetinStats_Post();
     }
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.EndIncrAvg();
 
     Compute_Inhib_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     Compute_Act_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     if(thr_no == 0) {           // do this well before, so addn'l sync not needed
       Compute_CycleStats_Pre();
     }
 
     Compute_Act_Post_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
 
     Compute_CycleStats_Thr(thr_no);
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
     
     if(thr_no == 0) {
       Compute_CycleStats_Post();
     }
 
-    threads.SyncSpin1(thr_no);
+    threads.SyncSpin(thr_no);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.EndIncrAvg();
 
@@ -1132,7 +1132,7 @@ void LeabraNetwork::Send_TICtxtNetin_Thr(int thr_no) {
     ((LeabraUnitSpec*)uv->unit_spec)->Send_TICtxtNetin(uv, this, thr_no);
   }
 
-  threads.SyncSpin1(thr_no);
+  threads.SyncSpin(thr_no);
 
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
@@ -1219,7 +1219,7 @@ void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
 
   Compute_dWt_VecVars_Thr(thr_no);
 
-  threads.SyncSpin1(thr_no);
+  threads.SyncSpin(thr_no);
 
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
