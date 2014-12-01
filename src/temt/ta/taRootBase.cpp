@@ -76,6 +76,9 @@ extern "C" void moncontrol(int mode);
 #ifdef HPCPROF_COMPILE
 #include <hpctoolkit.h>
 #endif
+#ifdef CUDA_COMPILE
+#include "cuda_profiler_api.h"
+#endif
 
 #ifdef TA_OS_LINUX
 # include <fenv.h>
@@ -211,29 +214,36 @@ void taRootBase::UpdateAfterEdit_impl() {
 #endif
 }
 
-#ifdef GPROF                    // turn on for profiling
 void taRootBase::MonControl(bool on) {
-  taMisc::Info("Turning gprof monitoring:", String(on));
+#ifdef GPROF                    // turn on for profiling
+  taMisc::Info("Turning gprof profiler monitoring:", String(on));
   moncontrol(on);
 }
 #else
 #ifdef HPCPROF_COMPILE
-void taRootBase::MonControl(bool on) {
   if(on) {
-    taMisc::Info("Turning on HPCToolkit sampling");
+    taMisc::Info("Turning on HPCToolkit profiler sampling");
     hpctoolkit_sampling_start();
   }
   else {
     hpctoolkit_sampling_stop();
-    taMisc::Info("Turning off HPCToolkit sampling");
+    taMisc::Info("Turning off HPCToolkit profiler sampling");
   }
-}
 #else
-void taRootBase::MonControl(bool on) {
   // nop
+#endif
+#ifdef CUDA_COMPILE
+  if(on) {
+    taMisc::Info("Turning on CUDA profiler sampling");
+    cudaProfilerStart();
+  }
+  else {
+    cudaProfilerStop();
+    taMisc::Info("Turning off CUDA profiler sampling");
+  }
+#endif
+#endif
 }
-#endif
-#endif
 
 void taRootBase::ClearRecentFiles() {
   recent_files.Reset();
