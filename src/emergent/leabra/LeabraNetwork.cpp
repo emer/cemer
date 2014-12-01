@@ -1670,7 +1670,7 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
 
     dt.AddBlankRow();
     thc->SetValAsInt(i, -1);
-    stat->SetValAsString("wt_time", -1);
+    stat->SetValAsString("sync_time", -1);
 
     if(i < n_thrs_built) {
       TimeUsedHR& wt = ((NetworkThreadTask*)threads.tasks[i])->wait_time;
