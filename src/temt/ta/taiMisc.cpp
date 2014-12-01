@@ -1017,6 +1017,11 @@ taiMisc::BoundAction taiMisc::GetActionFromKeyEvent(taiMisc::BindingContext cont
   return bindings->Action(context, QKeySequence(key_int));
 }
 
+QKeySequence taiMisc::GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action) {
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);  // only the default list for now - hence the zero
+  return bindings->KeySequence(context, action);
+}
+
 void taiMisc::ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos) {
   sa->verticalScrollBar()->setValue(scr_pos);
 }

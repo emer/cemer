@@ -1214,7 +1214,7 @@ void iMainWindowViewer::Constr_ToolsMenu()
   connect(toolsChooseKeyBindingsAction, SIGNAL(triggered()),
           this, SLOT(toolsChooseKeyBindings()));
   
-  toolsChooseKeyBindingsAction->setEnabled(false);
+//  toolsChooseKeyBindingsAction->setEnabled(false);
 }
 
 void iMainWindowViewer::Constr_HelpMenu()

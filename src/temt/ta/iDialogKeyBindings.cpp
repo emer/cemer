@@ -26,6 +26,7 @@
 #include <QFormLayout>
 #include <QKeySequenceEdit>
 #include <QPushButton>
+#include <QGroupBox>
 
 iDialogKeyBindings* iDialogKeyBindings::New(iMainWindowViewer* par_window_)
 {
@@ -47,28 +48,61 @@ iDialogKeyBindings::iDialogKeyBindings(QWidget* par_window_)
 iDialogKeyBindings::iDialogKeyBindings() {
 }
 
-void iDialogKeyBindings::Constr() {  // TODO - use tabWidget for each context and all of the actual binding
+void iDialogKeyBindings::Constr() {
+  QGroupBox* header_box = new QGroupBox("");
+  QGroupBox* body_box = new QGroupBox("");
+  
   layOuter = new QVBoxLayout(this);
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c);
   
-  String instruction_str = "Type the key sequence you want to use - simple as that";
+  // two boxes
+  layOuter->addWidget(header_box);
+  layOuter->addWidget(body_box);
+  
+  // instruction box
+  QHBoxLayout* header_layout = new QHBoxLayout();
+  String instruction_str = "Under Construction - not functional yet\n\nSteps: 1) Select 2) Press a key or key combination 3) Tab out";
   QLabel* instruction = new QLabel(instruction_str);
-  layOuter->addWidget(instruction);
+  header_layout->addWidget(instruction);
+  header_box->setLayout(header_layout);
   
-  // add all of the actions that can be bound to keys
-  QFormLayout* bindings_layout = new QFormLayout;
-  bindings_layout->setLabelAlignment(Qt::AlignLeft);
+  // set key bindings box - broken down by tabs
+  QHBoxLayout* body_layout = new QHBoxLayout();
+  QTabWidget* tabWidget = new QTabWidget;
+  body_layout->addWidget(tabWidget);
+  body_box->setLayout(body_layout);
   
-  String enum_label;
-  QKeySequenceEdit* edit;
-  for (int i=0; i<5; i++) {
-    enum_label = TA_taiMisc.GetEnumString("BoundAction", i);
-    QLabel* action = new QLabel(enum_label);
-    edit = new QKeySequenceEdit(QKeySequence());
-    bindings_layout->addRow(action, edit);
+  String context_label;
+  String action_label;
+  int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+  for (int i=0; i<context_count-1; i++) {
+    taiMisc::BindingContext current_context = taiMisc::BindingContext(i);
+    context_label = TA_taiMisc.GetEnumString("BindingContext", i);
+    context_label = context_label.before("_CONTEXT");  // strip off "_CONTEXT"
+    QWidget* some_tab = new QWidget();
+    tabWidget->addTab(some_tab, context_label);
+    body_layout->QLayout::addWidget(tabWidget);
+    
+    // add all of the actions that can be bound to keys
+    QFormLayout* bindings_layout = new QFormLayout;
+    bindings_layout->setLabelAlignment(Qt::AlignLeft);
+    some_tab  ->setLayout(bindings_layout);
+    
+    QKeySequenceEdit* edit;
+    int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
+    for (int i=0; i<action_count-1; i++) {
+      action_label = TA_taiMisc.GetEnumString("BoundAction", i);
+      if (action_label.startsWith(context_label)) {
+        action_label = action_label.after(context_label + "_");
+        QLabel* action = new QLabel(action_label);
+        taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
+        QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
+        QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
+        bindings_layout->addRow(action, edit);
+      }
+    }
   }
-  layOuter->addLayout(bindings_layout);
   
   QHBoxLayout* button_layout = new QHBoxLayout();
   button_layout->addStretch();

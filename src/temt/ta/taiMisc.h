@@ -122,7 +122,8 @@ public:
     PANEL_CONTEXT,
     TABLE_CONTEXT,           // data tables
     TREE_CONTEXT,
-    GRAPHICS_CONTEXT
+    GRAPHICS_CONTEXT,
+    CONTEXT_COUNT
   };
 
   enum BoundAction {
@@ -219,7 +220,9 @@ public:
     GRAPHICS_ROTATE_UP,
     GRAPHICS_ROTATE_DOWN,
     GRAPHICS_ZOOM_IN,
-    GRAPHICS_ZOOM_OUT
+    GRAPHICS_ZOOM_OUT,
+    
+    ACTION_COUNT
   };
   
   static const String   DEFAULT_PROJ_SPLITTERS;
@@ -305,6 +308,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
   static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
   // #IGNORE translate the key_event into the bound action
+  static QKeySequence GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
+  // #IGNORE get the key sequence bound to this action - will get the first it comes to
 #endif
   
   /////////////////////////////////////////////////////////////////
