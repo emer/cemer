@@ -225,9 +225,13 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
   for(int i=0; i<n_thrs_built; i++) {
     net_free((void**)&thrs_send_d5bnet_tmp[i]);
     net_free((void**)&unit_vec_vars[i]);
+    net_free((void**)&thrs_lay_avg_max_vals[i]);
+    net_free((void**)&thrs_ungp_avg_max_vals[i]);
   }
   net_free((void**)&thrs_send_d5bnet_tmp);
   net_free((void**)&unit_vec_vars);
+  net_free((void**)&thrs_lay_avg_max_vals);
+  net_free((void**)&thrs_ungp_avg_max_vals);
 }
 
 void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
@@ -799,7 +803,6 @@ void LeabraNetwork::Compute_CycleStats_Pre() {
 void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
   const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
   // this is when we should update clamped layers
-  const bool do_gi = net_misc.inhib_cons;
   
   // first go by layers
   const int nlay = n_layers_built;
@@ -808,14 +811,7 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
     if(lay->hard_clamped && !updt_clamped)
       continue;
     AvgMaxValsRaw* am_act = ThrLayAvgMax(thr_no, li, AM_ACT);
-    AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(thr_no, li, AM_ACT_EQ);
     am_act->InitVals();
-    am_act_eq->InitVals();
-    AvgMaxValsRaw* am_un_g_i = NULL;
-    if(do_gi) {
-      am_un_g_i = ThrLayAvgMax(thr_no, li, AM_UN_G_I);
-      am_un_g_i->InitVals();
-    }
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -824,10 +820,6 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act->UpdtVals(uv->act, flat_idx); 
-      am_act_eq->UpdtVals(uv->act_eq, flat_idx);
-      if(do_gi) {
-        am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
-      }
     }
   }
 
@@ -838,14 +830,7 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
     if(lay->hard_clamped && !updt_clamped)
       continue;
     AvgMaxValsRaw* am_act = ThrUnGpAvgMax(thr_no, li, AM_ACT);
-    AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(thr_no, li, AM_ACT_EQ);
     am_act->InitVals();
-    am_act_eq->InitVals();
-    AvgMaxValsRaw* am_un_g_i = NULL;
-    if(do_gi) {
-      am_un_g_i = ThrUnGpAvgMax(thr_no, li, AM_UN_G_I);
-      am_un_g_i->InitVals();
-    }
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -854,10 +839,52 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act->UpdtVals(uv->act, flat_idx); 
+    }
+  }
+  
+  // todo: if(spike)
+  // Compute_ActEqStats_Thr -- split out spiking at network level..
+}
+
+void LeabraNetwork::Compute_ActEqStats_Thr(int thr_no) {
+  const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
+  // this is when we should update clamped layers
+  
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(thr_no, li, AM_ACT_EQ);
+    am_act_eq->InitVals();
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act_eq->UpdtVals(uv->act_eq, flat_idx);
-      if(do_gi) {
-        am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
-      }
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(thr_no, li, AM_ACT_EQ);
+    am_act_eq->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_act_eq->UpdtVals(uv->act_eq, flat_idx);
     }
   }
 }
@@ -867,8 +894,7 @@ void LeabraNetwork::Compute_CycleStats_Post() {
 
   const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
   // this is when we should update clamped layers
-  const bool do_gi = net_misc.inhib_cons;
-  
+
   // first go by layers
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -879,22 +905,16 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     AvgMaxVals& acts_eq = lay->acts_eq;
     acts.InitVals();
     acts_eq.InitVals();
-    AvgMaxVals& un_g_i = lay->un_g_i;
-    if(do_gi) 
-      un_g_i.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrLayAvgMax(i, li, AM_ACT);
-      AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(i, li, AM_ACT_EQ);
       acts.UpdtFmAvgMaxRaw(*am_act);
-      acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
-
-      if(do_gi) {
-        AvgMaxValsRaw* am_un_g_i = ThrLayAvgMax(i, li, AM_UN_G_I);
-        un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
-      }
+      // todo: if spike..
+      // AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(i, li, AM_ACT_EQ);
+      // acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+      // else
+      acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
     }
-
     acts.CalcAvg();
     acts_eq.CalcAvg();
     if(lay->HasExtFlag(UnitVars::TARG)) {
@@ -917,23 +937,16 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     AvgMaxVals& acts_eq = gpd->acts_eq;
     acts.InitVals();
     acts_eq.InitVals();
-    AvgMaxVals& un_g_i = lay->un_g_i;
-    if(do_gi) 
-      un_g_i.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrUnGpAvgMax(i, li, AM_ACT);
-      AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(i, li, AM_ACT_EQ);
-
       acts.UpdtFmAvgMaxRaw(*am_act);
-      acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
-
-      if(do_gi) {
-        AvgMaxValsRaw* am_un_g_i = ThrUnGpAvgMax(i, li, AM_UN_G_I);
-        un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
-      }
+      // todo: if spike..
+      // AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(i, li, AM_ACT_EQ);
+      // acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+      // else
+      acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
     }
-
     acts.CalcAvg();
     acts_eq.CalcAvg();
   }
@@ -959,6 +972,89 @@ void LeabraNetwork::Compute_RTCycles() {
   if(rt_cycles > 0) return;  // already set
   if(trg_max_act > lstats.trg_max_act_crit)
     rt_cycles = cycle;
+}
+
+void LeabraNetwork::Compute_GcIStats_Thr(int thr_no) {
+  const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
+  
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_un_g_i = ThrLayAvgMax(thr_no, li, AM_UN_G_I);
+    am_un_g_i->InitVals();
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_un_g_i = ThrUnGpAvgMax(thr_no, li, AM_UN_G_I);
+    am_un_g_i->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
+    }
+  }
+}
+
+void LeabraNetwork::Compute_GcIStats_Post() {
+  // integrate all the data from thread-specific guys
+  const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
+  
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxVals& un_g_i = lay->un_g_i;
+    un_g_i.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_un_g_i = ThrLayAvgMax(i, li, AM_UN_G_I);
+      un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
+    }
+
+    un_g_i.CalcAvg();
+  }
+
+  // then by unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    int ugidx = ActiveUnGp(li);
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
+    AvgMaxVals& un_g_i = lay->un_g_i;
+    un_g_i.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_un_g_i = ThrUnGpAvgMax(i, li, AM_UN_G_I);
+      un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
+    }
+
+    un_g_i.CalcAvg();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////

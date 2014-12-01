@@ -275,12 +275,12 @@ public:
 
   inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
   { return (AvgMaxValsRaw*)(thrs_lay_avg_max_vals[thr_no] +
-                            (lay_idx * N_AM_VARS + var) * sizeof(AvgMaxValsRaw)); }
+                            (n_layers_built * var + lay_idx) * sizeof(AvgMaxValsRaw)); }
   // #IGNORE get AvgMax data for given thread, layer, and variable
 
   inline AvgMaxValsRaw* ThrUnGpAvgMax(int thr_no, int ungp_idx, AvgMaxVars var) 
   { return (AvgMaxValsRaw*)(thrs_ungp_avg_max_vals[thr_no] +
-                            (ungp_idx * N_AM_VARS + var) * sizeof(AvgMaxValsRaw)); }
+                            (n_ungps_built * var + ungp_idx) * sizeof(AvgMaxValsRaw)); }
   // #IGNORE get AvgMax data for given thread, unit group, and variable
 
 
@@ -424,6 +424,8 @@ public:
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
   virtual void	Compute_CycleStats_Thr(int thr_no);
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
+  virtual void	Compute_ActEqStats_Thr(int thr_no);
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
 
@@ -432,6 +434,10 @@ public:
     virtual void  Compute_RTCycles();
     // #CAT_Statistic compute the rt_cycles statistic based on trg_max_act and trg_max_act_crit criterion, only in the minus phase -- this is a good measure for computing the reaction time (RT) of the network, as in a psychological experiment -- called automatically in Compute_CycleStats_Post()
 
+  virtual void	Compute_GcIStats_Thr(int thr_no);
+  // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- fast layer level computation
+  virtual void	Compute_GcIStats_Post();
+  // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- single thread post-step
 
   ///////////////////////////////////////////////////////////////////////
   //	Quarter Final
