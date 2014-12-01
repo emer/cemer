@@ -265,9 +265,15 @@ public:
   RunWaitTime        cuda_compute_wt_time;  // #IGNORE
 #endif
 
+#if 0
   inline float*  UnVecVar(int thr_no, UnitVecVars var)
   { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
+#else
+  inline float*  UnVecVar(int thr_no)
+  { return unit_vec_vars[thr_no]; }
+  // #IGNORE get start of given unit vector variable array
+#endif
 
   inline float* ThrSendD5bNetTmp(int thr_no) const 
   { return thrs_send_d5bnet_tmp[thr_no]; }

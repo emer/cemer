@@ -1168,12 +1168,15 @@ void LeabraNetwork::Compute_dWt_Layer_pre() {
 }
 
 void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
+#if 0
   float* avg_s = UnVecVar(thr_no, AVG_S);
   float* avg_m = UnVecVar(thr_no, AVG_M);
   float* avg_l = UnVecVar(thr_no, AVG_L);
   float* thal =  UnVecVar(thr_no, THAL);
+#ifdef CUDA_COMPILE
   float* cos_diff_lmix =  UnVecVar(thr_no, COS_DIFF_LMIX);
   float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
+#endif
   // float* act_m = UnVecVar(ACT_M);
   // float* act_p = UnVecVar(ACT_P);
 
@@ -1184,14 +1187,28 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
     avg_m[i] = un->avg_m();
     avg_l[i] = un->avg_l();
     thal[i] = un->thal();
+#ifdef CUDA_COMPILE
     act_q0[i] = un->act_q0();
 
     LeabraLayer* rlay = un->own_lay();
     cos_diff_lmix[i] = rlay->cos_diff_avg_lmix;
-
+#endif
     // act_m[i] = un->act_m;
     // act_p[i] = un->act_p;
   }
+#else
+  float* vecs = UnVecVar(thr_no);
+
+  // each thread copies all into their own local mem
+  for(int i=1; i<units_flat.size; i++) {
+    LeabraUnit* un = (LeabraUnit*)units_flat[i];
+    int veci = i * N_VEC_VARS;
+    vecs[veci] = un->avg_s();
+    vecs[veci + AVG_M] = un->avg_m();
+    vecs[veci + AVG_L] = un->avg_l();
+    vecs[veci + THAL] = un->thal();
+  }
+#endif
 }
 
 
