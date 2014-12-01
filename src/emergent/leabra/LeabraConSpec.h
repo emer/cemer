@@ -391,21 +391,11 @@ public:
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
 
 #ifdef TA_VEC_USE
-
-#if 0
   inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
     (LeabraConGroup* cg, float* dwts, float* avg_s, float* avg_m, float* avg_l, float* thal,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
   // #IGNORE vectorized version
-#else
-  inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
-    (LeabraConGroup* cg, float* dwts, float* vecs,
-     const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
-     const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
-  // #IGNORE vectorized version
-#endif
-
 #endif
 
   inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;

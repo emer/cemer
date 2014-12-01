@@ -98,7 +98,6 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 
 #ifdef TA_VEC_USE
 
-#if 0
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
 (LeabraConGroup* cg, float* dwts, float* avg_s, float* avg_m, float* avg_l, float* thal,
  const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
@@ -151,78 +150,6 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
   }
 }
 
-#else
-
-inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
-(LeabraConGroup* cg, float* dwts, float* vecs,
- const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
- const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult) {
-  VECF su_avg_s_v(su_avg_s);
-  VECF su_avg_m_v(su_avg_m);
-  VECF effmmix_v(effmmix);
-  VECF su_act_mult_v(su_act_mult);
-  VECF s_mix(xcal.s_mix);
-  VECF m_mix(xcal.m_mix);
-  VECF thr_max(xcal.thr_max);
-
-  const int nvv = LeabraNetwork::N_VEC_VARS;
-
-  const int sz = cg->size;
-  const int parsz = cg->vec_chunked_size;
-  int i;
-  for(i=0; i<parsz; i += TA_VEC_SIZE) {
-    const int ru_idx = cg->UnIdx(i);
-
-    int veci = ru_idx * LeabraNetwork::N_VEC_VARS;
-    VECF ru_avg_s(vecs[veci], vecs[veci + nvv], vecs[veci + 2 * nvv],
-                  vecs[veci + 3 * nvv], vecs[veci + 4 * nvv],
-                  vecs[veci + 5 * nvv], vecs[veci + 6 * nvv],
-                  vecs[veci + 7 * nvv]);
-    veci++;
-    VECF ru_avg_m(vecs[veci], vecs[veci + nvv], vecs[veci + 2 * nvv],
-                  vecs[veci + 3 * nvv], vecs[veci + 4 * nvv],
-                  vecs[veci + 5 * nvv], vecs[veci + 6 * nvv],
-                  vecs[veci + 7 * nvv]);
-
-    veci++;
-    VECF ru_avg_l(vecs[veci], vecs[veci + nvv], vecs[veci + 2 * nvv],
-                  vecs[veci + 3 * nvv], vecs[veci + 4 * nvv],
-                  vecs[veci + 5 * nvv], vecs[veci + 6 * nvv],
-                  vecs[veci + 7 * nvv]);
-    
-    VECF srs = ru_avg_s * su_avg_s_v;
-    VECF srm = ru_avg_m * su_avg_m_v;
-    VECF sm_mix = s_mix * srs + m_mix * srm;
-    
-    VECF lthr = su_act_mult_v * ru_avg_l;
-    VECF effthr = effmmix_v * srm + lthr;
-    effthr = min(thr_max, effthr);
-
-    for(int j=0; j< TA_VEC_SIZE; j++) {
-      const float sm_mix_j = sm_mix[j];
-      const float effthr_j = effthr[j];
-      float lrate_eff = clrate;
-      // if(cifer_on) {
-      //   lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx+j]);
-      // }
-      dwts[i+j] += lrate_eff * xcal.dWtFun(sm_mix_j, effthr_j);
-    }
-  }
-  for(;i<sz;i++) {              // get the remainder
-    const int ru_idx = cg->UnIdx(i);
-    float lrate_eff = clrate;
-    // if(cifer_on) {
-    //   lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx]);
-    // }
-    int veci = ru_idx * LeabraNetwork::N_VEC_VARS;
-    C_Compute_dWt_CtLeabraXCAL_cosdiff
-      (dwts[i], lrate_eff, vecs[veci], vecs[veci+1], vecs[veci+2],
-       su_avg_s, su_avg_m, su_act_mult, effmmix);
-  }
-}
-
-#endif
-
 #endif
 
 inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
@@ -270,25 +197,14 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
 
 #if TA_VEC_USE
     LeabraNetwork* lnet = (LeabraNetwork*)net;
-#if 0
     float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
     float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
     float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
     float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
-
     Compute_dWt_CtLeabraXCAL_cosdiff_vec
       (cg, dwts, avg_s, avg_m, avg_l, thal,
        cifer_on, clrate, bg_lrate, fg_lrate,
        su_avg_s, su_avg_m, effmmix, su_act_mult);
-#else
-    float* vecs = lnet->UnVecVar(thr_no);
-
-    Compute_dWt_CtLeabraXCAL_cosdiff_vec
-      (cg, dwts, vecs,
-       cifer_on, clrate, bg_lrate, fg_lrate,
-       su_avg_s, su_avg_m, effmmix, su_act_mult);
-#endif
-
 #else
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
