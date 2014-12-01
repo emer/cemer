@@ -38,6 +38,7 @@ void taManagedThread::run() {
   if(!mgr) return;		// should not happen!
 
 #ifdef TA_OS_LINUX
+#if 0
   // set processor affinity on linux, based on task number
   // this is just for experimentation -- does not deal with load balancing!!
 
@@ -47,6 +48,7 @@ void taManagedThread::run() {
 
    pthread_t current_thread = pthread_self();    
    pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+#endif
 #endif
   
   if(mgr->spin_wait)
