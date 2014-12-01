@@ -24,7 +24,9 @@
 #include <QVBoxLayout>
 #include <QGridLayout>
 #include <QFormLayout>
+#if (QT_VERSION >= 0x050200)
 #include <QKeySequenceEdit>
+#endif
 #include <QPushButton>
 #include <QGroupBox>
 
@@ -62,11 +64,16 @@ void iDialogKeyBindings::Constr() {
   
   // instruction box
   QHBoxLayout* header_layout = new QHBoxLayout();
+#if (QT_VERSION >= 0x050200)
   String instruction_str = "Under Construction - not functional yet\n\nSteps: 1) Select 2) Press a key or key combination 3) Tab out";
+#else
+  String instruction_str = "Only available with QT5";
+#endif
   QLabel* instruction = new QLabel(instruction_str);
   header_layout->addWidget(instruction);
   header_box->setLayout(header_layout);
   
+#if (QT_VERSION >= 0x050200)
   // set key bindings box - broken down by tabs
   QHBoxLayout* body_layout = new QHBoxLayout();
   QTabWidget* tabWidget = new QTabWidget;
@@ -103,6 +110,7 @@ void iDialogKeyBindings::Constr() {
       }
     }
   }
+#endif
   
   QHBoxLayout* button_layout = new QHBoxLayout();
   button_layout->addStretch();
