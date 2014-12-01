@@ -16,6 +16,10 @@
 #include "taManagedThread.h"
 #include <taThreadMgr>
 
+#ifdef TA_OS_LINUX
+#include <pthread.h>
+#endif
+
 taManagedThread::taManagedThread(taThreadMgr* mg)
   : mgr(mg)
 {
@@ -32,6 +36,18 @@ taManagedThread::~taManagedThread() {
 // this is the QThread run state
 void taManagedThread::run() {
   if(!mgr) return;		// should not happen!
+
+#ifdef TA_OS_LINUX
+  // set processor affinity on linux, based on task number
+  // this is just for experimentation -- does not deal with load balancing!!
+
+   cpu_set_t cpuset;
+   CPU_ZERO(&cpuset);
+   CPU_SET(task()->task_id, &cpuset);
+
+   pthread_t current_thread = pthread_self();    
+   pthread_setaffinity_np(current_thread, sizeof(cpu_set_t), &cpuset);
+#endif
   
   if(mgr->spin_wait)
     run_spin();
