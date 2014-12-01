@@ -278,7 +278,11 @@ public:
   // Following is full memory structure for the units and connections in the network
 
   int_Array     active_layers;
-  // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned, non-hard clamped input) layers in the network
+  // #NO_SAVE #HIDDEN #CAT_Activation leaf indicies of the active (non-lesioned) layers in the network
+  int_Array     active_ungps;
+  // #NO_SAVE #HIDDEN #CAT_Activation unit group indicies of the active (non-lesioned) unit groups in the network -- these just count up 0..n-1 for unit groups within layers -- see _layers for relevant layer
+  int_Array     active_ungps_layers;
+  // #NO_SAVE #HIDDEN #CAT_Activation layer leaf indicies of the active (non-lesioned) unit groups in the network
 
   UnitPtrList   units_flat;     // #NO_SAVE #READ_ONLY #CAT_Structure flat list of structural Unit's -- first (0 index) is a null unit that is skipped over and should never be computed on -- this is ALL units regardless of unit-level lesion status (but it does account for layer-level lesion status)
   Unit*         null_unit;      // #HIDDEN #NO_SAVE #CAT_Structure unit for the first null unit in the units_flat list -- created by BuildNullUnit() function, specific to each algorithm
@@ -290,13 +294,15 @@ public:
   int           unit_vars_size;  // #NO_SAVE #READ_ONLY #CAT_Threads number of float variables in the unit_vars_built UnitVars
   int           n_units_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of units built -- actually the n+1 size of units_flat
   int           n_layers_built; // #NO_SAVE #READ_ONLY #CAT_Threads number of active layers when built -- size of active_layers array
+  int           n_ungps_built;  // #NO_SAVE #READ_ONLY #CAT_Threads number of active unit groups when built -- size of active_ungpss array
   int           max_thr_n_units; // #NO_SAVE #READ_ONLY #CAT_Threads maximum number of units assigned to any one thread
   int*          units_thrs;   // #IGNORE allocation of units to threads -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating which thread is responsible for that unit
   int*          units_thr_un_idxs; // #IGNORE allocation of units to threads, thread-specific index for this unit -- array of int[n_units+1], indexed starting at 1 (i.e., flat_idx with 0 = null unit) with each int indicating index in thread-specific memory where that unit lives
   int*          thrs_n_units; // #IGNORE number of units assigned to each thread -- array of int[n_threads_built]
   int**         thrs_unit_idxs; // #IGNORE allocation of units to threads -- array of int*[n_thrs_built], pointing to arrays of int[thrs_n_units[thr_no]], containing unit->flat_idx indexes of units processed by a given thread (thread-centric complement to units_thrs)
   char**       thrs_units_mem;  // #IGNORE actual memory allocation of UnitVars variables, organized by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_units[thr_no] * unit_vars_size], containing the units processed by a given thread -- this is the primary memory allocation of units
-  int**        thrs_lay_unit_idxs; // #IGNORE allocation of units to layers by threads -- array of int**[n_thrs_built], pointing to arrays of int[active_layers * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given layer
+  int**        thrs_lay_unit_idxs; // #IGNORE allocation of units to layers by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_layers_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given layer
+  int**        thrs_ungp_unit_idxs; // #IGNORE allocation of units to unit groups by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_ungps_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given unit group
 
   int*          units_n_recv_cgps;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_send_cgps;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
@@ -453,6 +459,18 @@ public:
   inline Layer* ActiveLayer(int lay_no)
   { return layers.Leaf(active_layers[lay_no]); }
   // #CAT_Structure retrieve actual layer from active_layers list for given layer index
+  inline int ActiveUnGp(int ungp_idx)
+  { return active_ungps[ungp_idx]; }
+  // #CAT_Structure retrieve active unit group index from list of active unit groups
+  inline Layer* ActiveUnGpLayer(int ungp_idx)
+  { return layers.Leaf(active_ungps_layers[ungp_idx]); }
+  // #CAT_Structure retrieve layer for active unit group index from list of active unit groups
+  inline int    ThrUnGpUnStart(int thr_no, int lay_no)
+  { return thrs_ungp_unit_idxs[thr_no][2*lay_no]; }
+  // #CAT_Structure starting thread-specific unit index for given unit group (from active_ungps list)
+  inline int    ThrUnGpUnEnd(int thr_no, int lay_no)
+  { return thrs_ungp_unit_idxs[thr_no][2*lay_no + 1]; }
+  // #CAT_Structure ending thread-specific unit index for given unit group (from active_ungps list) -- this is like the max in a for loop -- valid indexes are < end
 
   inline int    UnNRecvConGps(int flat_idx) const {
 #ifdef DEBUG
@@ -603,6 +621,8 @@ public:
     // #IGNORE initialize thread-based unit and con group memory -- should assign to thread
     virtual int   FindActiveLayerIdx(Layer* lay, const int st_idx);
     // #IGNORE find the index in active_layers of this layer -- uses st_idx to seed a bidirectional search, so if you have any hint as to where it might be found, this results in considerable speedup
+    virtual int   FindActiveUnGpIdx(Layer* lay, const int ungp_idx, const int st_idx);
+    // #IGNORE find the index in active_ungps of this unit group within layer -- uses st_idx to seed a bidirectional search, so if you have any hint as to where it might be found, this results in considerable speedup
 #ifdef NUMA_COMPILE
     virtual void  FreeUnitConGpThreadMem_Thr(int thr_no);
     // #IGNORE free all of the thread-based unit, connection group memory -- thread-specific, for NUMA

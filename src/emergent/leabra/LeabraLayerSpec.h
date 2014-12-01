@@ -288,13 +288,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
-  virtual void	Compute_NetinStats(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute AvgMax stats on netin values computed during netin computation -- used for FF_FB inhibition -- called automatically by Compute_Inhib
-    virtual void Compute_NetinStats_ugp(LeabraLayer* lay,
-					Layer::AccessMode acc_md, int gpidx,
-					LeabraInhib* thr,  LeabraNetwork* net);
-    // #IGNORE compute AvgMax stats on netin values computed during netin computation -- per unit group
-
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
     virtual void Compute_Inhib_impl
@@ -319,32 +312,14 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  virtual void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
-  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, OutputName, etc
-  // this does all the indented functions below
-
-    virtual int  LayerStatsStartUnitIdx() { return 0; }
-    // #IGNORE unit index to start on for computing layer statistics -- ScalarValLayers set this to 1
-
-    virtual void Compute_AvgMaxVals_ugp(LeabraLayer* lay, 
-					Layer::AccessMode acc_md, int gpidx,
-					AvgMaxVals& vals, ta_memb_ptr mb_off);
-    // #IGNORE utility to compute avg max vals for units in group, with member offset mb_off from unit
-    virtual void Compute_AvgMaxActs_ugp(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-					LeabraInhib* thr);
-    // #IGNORE unit group compute AvgMaxVals for acts -- also does acts_top_k
-    virtual void Compute_Acts_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Statistic compute activation AvgMaxVals (acts)
-
-    virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
-      virtual void Compute_OutputName_ugp(LeabraLayer* lay, 
-					  Layer::AccessMode acc_md, int gpidx,
-					  LeabraInhib* thr, LeabraNetwork* net);
-      // #IGNORE compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
-
-    virtual void Compute_UnitInhib_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-    // #CAT_Statistic compute unit inhibition AvgMaxVals (un_g_i)
+  virtual int  LayerStatsStartUnitIdx() { return 0; }
+  // #IGNORE unit index to start on for computing layer statistics -- ScalarValLayers set this to 1
+  virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
+  virtual void Compute_OutputName_ugp(LeabraLayer* lay, 
+                                      Layer::AccessMode acc_md, int gpidx,
+                                      LeabraInhib* thr, LeabraNetwork* net);
+  // #IGNORE compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
 
   ///////////////////////////////////////////////////////////////////////
   //	Quarter_Final
@@ -357,13 +332,6 @@ public:
     // #CAT_Activation get minus phase act stats
     virtual void Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_Activation get plus phase act stats
-
-  virtual void	Compute_ActM_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute acts_m AvgMaxVals from act_m -- not currently used
-  virtual void	Compute_ActP_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute acts_p AvgMaxVals from act_p -- not currently used
-  virtual void	Compute_TICtxt_AvgMax(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_Activation compute ti_ctxts AvgMaxVals from ti_ctxt
 
   ///////////////////////////////////////////////////////////////////////
   //	Learning

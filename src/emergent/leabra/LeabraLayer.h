@@ -123,9 +123,6 @@ public:
 
   // main computation is direct Send_NetinDelta call on units through threading mechanism
 
-  void	Compute_NetinStats(LeabraNetwork* net)  { spec->Compute_NetinStats(this, net); }
-  // #CAT_Activation compute AvgMax stats on netin values computed during netin computation -- used for various regulatory and monitoring functions
-
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
 
@@ -145,9 +142,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  void	Compute_CycleStats(LeabraNetwork* net, int thread_no=-1)
-  { spec->Compute_CycleStats(this, net, thread_no); }
-  // #CAT_Statistic compute cycle-level stats -- acts AvgMax, OutputName, etc
   void	Compute_OutputName(LeabraNetwork* net)
   { spec->Compute_OutputName(this, net); }
   // #CAT_Statistic compute output name based on most active unit name
@@ -165,10 +159,6 @@ public:
   void	Quarter_Final_Layer(LeabraNetwork* net)	{ spec->Quarter_Final_Layer(this, net); }
   // #CAT_Activation after settling, keep track of phase variables, etc.
 
-  void	Compute_ActM_AvgMax(LeabraNetwork* net) { spec->Compute_ActM_AvgMax(this, net); }
-  // #CAT_Activation compute acts_m.avg from act_m
-  void	Compute_ActP_AvgMax(LeabraNetwork* net) { spec->Compute_ActP_AvgMax(this, net); }
-  // #CAT_Activation compute acts_p.avg from act_p
 
   ///////////////////////////////////////////////////////////////////////
   //	TrialFinal

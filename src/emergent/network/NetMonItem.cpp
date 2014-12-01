@@ -516,6 +516,26 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
       members.Link(md);
       return true;
     }
+    else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitVars
+      Unit* un = (Unit*)obj;
+      if(un->own_net()->unit_vars_built) {
+        md = un->own_net()->unit_vars_built->members.FindName(var);
+        if(md) {
+          if(name_obj) {
+            String valname = GetColName(name_obj, val_specs.size);
+            ValType vt = ValTypeForType(md->type);
+            AddScalarCol(valname, vt);
+            if(agg.op != Aggregate::NONE) {
+              AddScalarCol_Agg(valname, vt); // add the agg guy just to keep it consistent
+            }
+          }
+          // if not adding a column, it is part of a pre-allocated matrix; just add vars
+          ptrs.Add(un->GetUnitVars());
+          members.Link(md);
+          return true;
+        }
+      }
+    }
   }
   return false;
 }

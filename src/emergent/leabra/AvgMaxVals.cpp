@@ -19,22 +19,15 @@ TA_BASEFUNS_CTORS_DEFN(AvgMaxVals);
 
 void AvgMaxVals::Initialize() {
   cmpt = true;
-  avg = max = 0.0f; max_i = -1;
+  avg = sum = max = 0.0f; n = 0; max_i = -1;
 }
 
 void AvgMaxVals::Copy_(const AvgMaxVals& cp) {
   cmpt = cp.cmpt;
-  avg = cp.avg; max = cp.max; max_i = cp.max_i;
+  avg = cp.avg;
+  max = cp.max;
+  max_i = cp.max_i;
+  sum = cp.sum;
+  n = cp.n;
 }
 
-void AvgMaxVals::UpdtTimeAvg(const AvgMaxVals& cp, float dt) {
-  if(max_i < 0) {
-    Copy_(cp);
-    max_i = 1;                  // first data point
-  }
-  else {
-    avg += dt * (cp.avg - avg);
-    max += dt * (cp.max - max);
-    max_i++;                    // keep track of number of updates
-  }
-}

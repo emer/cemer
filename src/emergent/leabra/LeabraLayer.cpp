@@ -54,7 +54,6 @@ void LeabraLayer::InitLinks() {
 
   taBase::Own(acts_p, this);
   taBase::Own(acts_m, this);
-  taBase::Own(ti_ctxts, this);
 
   taBase::Own(i_val, this);
 

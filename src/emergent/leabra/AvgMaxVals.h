@@ -28,6 +28,34 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(AvgMaxValsRaw);
+
+class E_API AvgMaxValsRaw {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra raw average and max values -- not a taBase object -- for thread-specific memory 
+public:
+  float		avg;		// #DMEM_AGG_SUM average value
+  float		max;		// #DMEM_AGG_SUM maximum value
+  int 		max_i;		// index of unit with maximum value
+  float		sum;		// #DMEM_AGG_SUM sum for computing average
+  int		n;		// #DMEM_AGG_SUM number of items in sum
+
+  inline void	InitVals()	{ avg = sum = 0.0f; n = 0; max = -FLT_MAX; max_i = -1; }
+  // init for computing update from new data
+
+  inline void	UpdtVals(float val, int idx)
+  { sum += val; ++n; if(val > max) { max = val; max_i = idx; } }
+  // update from data as it comes in
+
+  inline void	CalcAvg()
+  { if(n > 0) avg = sum / (float)n; else avg = sum; }
+  // compute the avg after doing UpdtVals on all the data
+
+  inline void	UpdtFmAvgMax(const AvgMaxValsRaw& oth)
+  { sum += oth.sum; n += oth.n; if(oth.max > max) { max = oth.max; max_i = oth.max_i; } }
+  // update a higher-order guy from a lower-level guy (e.g., layer from unit group)
+};
+
+
 eTypeDef_Of(AvgMaxVals);
 
 class E_API AvgMaxVals : public taOBase {
@@ -38,25 +66,27 @@ public:
   float		avg;		// #DMEM_AGG_SUM average value
   float		max;		// #DMEM_AGG_SUM maximum value
   int 		max_i;		// index of unit with maximum value
+  float		sum;		// #DMEM_AGG_SUM sum for computing average
+  int		n;		// #DMEM_AGG_SUM number of items in sum
 
-  inline void	InitVals()	{ avg = 0.0f; max = -FLT_MAX; max_i = -1; }
+  inline void	InitVals()	{ avg = sum = 0.0f; n = 0; max = -FLT_MAX; max_i = -1; }
   // init for computing update from new data
+
   inline void	UpdtVals(float val, int idx)
-  { avg += val; if(val > max) { max = val; max_i = idx; } }
+  { sum += val; ++n; if(val > max) { max = val; max_i = idx; } }
   // update from data as it comes in
-  inline void	CalcAvg(int n) { if(n > 0) avg /= (float)n; }
+
+  inline void	CalcAvg()
+  { if(n > 0) avg = sum / (float)n; else avg = sum; }
   // compute the avg after doing UpdtVals on all the data
 
-  inline void	UpdtFmAvgMax(const AvgMaxVals& oth, int gpn, int idx)
-  { avg += oth.avg * (float)gpn; if(oth.max > max) { max = oth.max; max_i = idx; } }
+  inline void	UpdtFmAvgMax(const AvgMaxVals& oth)
+  { sum += oth.sum; n += oth.n; if(oth.max > max) { max = oth.max; max_i = oth.max_i; } }
   // update a higher-order guy from a lower-level guy (e.g., layer from unit group)
 
-  inline void   InitForTimeAvg(float init_avg = 0.25f, float init_max = 0.9f)
-  { avg = init_avg; max = init_max; max_i = -1; }
-  // initialize for computing a time average of AvgMaxVals (max_i = -1 indicates init -- used in update to copy on first update to avoid biasing from initial defaults)
-  
-  void   UpdtTimeAvg(const AvgMaxVals& src, float dt);
-  // update the time average from a source guy, using given time constant for runnign average integration
+  inline void	UpdtFmAvgMaxRaw(const AvgMaxValsRaw& oth)
+  { sum += oth.sum; n += oth.n; if(oth.max > max) { max = oth.max; max_i = oth.max_i; } }
+  // update the official guy from raw data
 
   String       GetTypeDecoKey() const override { return "Layer"; }
 

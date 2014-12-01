@@ -133,6 +133,7 @@ void Network::Initialize() {
   unit_vars_size = 0;
   n_units_built = 0;
   n_layers_built = 0;
+  n_ungps_built = 0;
   max_thr_n_units = 0;
   units_thrs = NULL;
   units_thr_un_idxs = NULL;
@@ -140,6 +141,7 @@ void Network::Initialize() {
   thrs_unit_idxs = NULL;
   thrs_units_mem = NULL;
   thrs_lay_unit_idxs = NULL;
+  thrs_ungp_unit_idxs = NULL;
 
   units_n_recv_cgps = NULL;
   units_n_send_cgps = NULL;
@@ -207,6 +209,8 @@ void Network::InitLinks() {
   taBase::Own(wt_sync_time, this);
   taBase::Own(misc_time, this);
   taBase::Own(active_layers, this);
+  taBase::Own(active_ungps, this);
+  taBase::Own(active_ungps_layers, this);
 
   brain_atlas = brain_atlases->FindNameContains("Talairach"); // default
 
@@ -515,12 +519,22 @@ void Network::BuildLayers() {
   layers.BuildLayers(); // recurses
 
   active_layers.Reset();
+  active_ungps.Reset();
+  active_ungps_layers.Reset();
   for(int i=0;i<layers.leaves; i++) {
     Layer* l = (Layer*)layers.Leaf(i);
     if(l->lesioned()) continue;
     active_layers.Add(i);
+    
+    if(l->unit_groups && l->gp_geom.n > 0) {
+      for(int j=0; j<l->gp_geom.n; j++) {
+        active_ungps.Add(j);
+        active_ungps_layers.Add(i);
+      }
+    }
   }
   n_layers_built = active_layers.size;
+  n_ungps_built = active_ungps.size;
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
@@ -578,6 +592,7 @@ void Network::FreeUnitConGpThreadMem_Thr(int thr_no) {
   numa_free(thrs_send_cgp_start[i]);
   numa_free(thrs_unit_idxs[i]);
   numa_free(thrs_lay_unit_idxs[i]);
+  numa_free(thrs_ungp_unit_idxs[i]);
   numa_free(thrs_units_mem[i]);
 }
 #endif
@@ -603,6 +618,7 @@ void Network::FreeUnitConGpThreadMem() {
 
     net_free((void**)&thrs_unit_idxs[i]);
     net_free((void**)&thrs_lay_unit_idxs[i]);
+    net_free((void**)&thrs_ungp_unit_idxs[i]);
     net_free((void**)&thrs_units_mem[i]);
   }
 #endif
@@ -619,6 +635,7 @@ void Network::FreeUnitConGpThreadMem() {
 
   net_free((void**)&thrs_unit_idxs);
   net_free((void**)&thrs_lay_unit_idxs);
+  net_free((void**)&thrs_ungp_unit_idxs);
   net_free((void**)&thrs_units_mem);
 
   // now go back and get the rest
@@ -694,7 +711,8 @@ void Network::AllocUnitConGpThreadMem() {
   net_aligned_malloc((void**)&thrs_n_units, n_thrs_built * sizeof(int));
   net_aligned_malloc((void**)&thrs_unit_idxs, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_lay_unit_idxs, n_thrs_built * sizeof(int*));
-  net_aligned_malloc((void**)&thrs_units_mem, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_ungp_unit_idxs, n_thrs_built * sizeof(int*));
+  net_aligned_malloc((void**)&thrs_units_mem, n_thrs_built * sizeof(char*));
 
   net_aligned_malloc((void**)&units_n_recv_cgps, n_units_built * sizeof(int));
   net_aligned_malloc((void**)&units_n_send_cgps, n_units_built * sizeof(int));
@@ -720,6 +738,7 @@ void Network::AllocUnitConGpThreadMem() {
     net_aligned_malloc((void**)&thrs_unit_idxs[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_units_mem[i], max_thr_n_units * unit_vars_size);
     net_aligned_malloc((void**)&thrs_lay_unit_idxs[i], 2 * n_layers_built * sizeof(int));
+    net_aligned_malloc((void**)&thrs_ungp_unit_idxs[i], 2 * n_ungps_built * sizeof(int));
 
     net_aligned_malloc((void**)&thrs_units_n_recv_cgps[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_units_n_send_cgps[i], max_thr_n_units * sizeof(int));
@@ -795,15 +814,45 @@ int  Network::FindActiveLayerIdx(Layer* lay, const int st_idx) {
   return -1;
 }
 
+int  Network::FindActiveUnGpIdx(Layer* lay, const int ungp_idx, const int st_idx) {
+  int upi = st_idx + 1;
+  int dni = st_idx;
+  while(true) {
+    bool upo = false;
+    if(upi < n_ungps_built) {
+      if(ActiveUnGpLayer(upi) == lay && ActiveUnGp(upi) == ungp_idx) return upi;
+      ++upi;
+    }
+    else {
+      upo = true;
+    }
+    if(dni >= 0) {
+      if(ActiveUnGpLayer(dni) == lay && ActiveUnGp(dni) == ungp_idx) return dni;
+      --dni;
+    }
+    else if(upo) {
+      break;
+    }
+  }
+  return -1;
+}
+
 void Network::InitUnitThreadIdxs(int thr_no) {
 
   for(int i=0; i< 2*n_layers_built; i++) {
     thrs_lay_unit_idxs[thr_no][i] = -1;
   }
+  for(int i=0; i< 2*n_ungps_built; i++) {
+    thrs_ungp_unit_idxs[thr_no][i] = -1;
+  }
 
   int thr_un_idx = 0;
   int act_lay_idx = 0;
   int prv_act_lay_idx = -1;
+  int ungp_idx = 0;
+  int prv_ungp_idx = -1;
+  Layer* lay = NULL;
+  Layer* prv_lay = NULL;
   for(int i=1; i< n_units_built; i++) {
     int th = units_thrs[i];
     if(th != thr_no) continue;
@@ -813,13 +862,29 @@ void Network::InitUnitThreadIdxs(int thr_no) {
                  "Programmer error -- un->thr_un_idx != thr_un_idx -- please report!")) {
       return;
     }
-    Layer* lay = un->own_lay();
-    act_lay_idx = FindActiveLayerIdx(lay, act_lay_idx);
-    if(act_lay_idx != prv_act_lay_idx) {
+    lay = un->own_lay();
+    if(lay != prv_lay) {
+      act_lay_idx = FindActiveLayerIdx(lay, act_lay_idx);
       thrs_lay_unit_idxs[thr_no][act_lay_idx * 2] = thr_un_idx; // start
       if(prv_act_lay_idx >= 0)
         thrs_lay_unit_idxs[thr_no][prv_act_lay_idx * 2 + 1] = thr_un_idx; // end of prev
       prv_act_lay_idx = act_lay_idx;
+
+      if(prv_lay && prv_lay->unit_groups && prv_ungp_idx >= 0) {
+        thrs_ungp_unit_idxs[thr_no][prv_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
+        prv_ungp_idx = -1;                                              // reset!
+      }
+      prv_lay = lay;
+    }
+    
+    if(lay->unit_groups) {
+      ungp_idx = FindActiveUnGpIdx(lay, un->UnitGpIdx(), ungp_idx);
+      if(ungp_idx != prv_ungp_idx) {
+        thrs_ungp_unit_idxs[thr_no][ungp_idx * 2] = thr_un_idx; // start
+        if(prv_ungp_idx >= 0)
+          thrs_ungp_unit_idxs[thr_no][prv_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
+        prv_ungp_idx = ungp_idx;
+      }
     }
 
     thrs_unit_idxs[thr_no][thr_un_idx] = i;
@@ -836,6 +901,8 @@ void Network::InitUnitThreadIdxs(int thr_no) {
   }
   if(prv_act_lay_idx >= 0)
     thrs_lay_unit_idxs[thr_no][prv_act_lay_idx * 2 + 1] = thr_un_idx; // end of prev
+  if(prv_lay && prv_lay->unit_groups && prv_ungp_idx >= 0)
+    thrs_ungp_unit_idxs[thr_no][prv_ungp_idx * 2 + 1] = thr_un_idx; // end of prev
 }
 
 void Network::InitUnitConGpThreadMem(int thr_no) {

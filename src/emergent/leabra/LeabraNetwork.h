@@ -41,6 +41,7 @@ class E_API LeabraNetTiming : public NetTiming {
 INHERITED(NetTiming)
 public:
   TimeUsedHR   netin_integ;     // Compute_NetinInteg integrate net inputs
+  TimeUsedHR   netin_stats;     // Compute_NetinStats netin stats
   TimeUsedHR   inhib;           // Compute_Inhib inhibition
   TimeUsedHR   act_post;        // Compute_Act_Post post integration
   TimeUsedHR   cycstats;        // Compute_CycleStats cycle statistics
@@ -187,6 +188,14 @@ public:
   // ACT_M, // note: could add these to unit vec vars if needed
   // ACT_P,
 
+  enum AvgMaxVars { // variables that we collect average and max values of -- thread optimized -- coordintate with LeabraInhib.h
+    AM_NET,
+    AM_ACT,
+    AM_ACT_EQ,
+    AM_UN_G_I,
+    N_AM_VARS,
+  };
+
   LeabraCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
   LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters
@@ -240,8 +249,13 @@ public:
   bool		init_netins_cycle_stat; // #NO_SAVE #HIDDEN #CAT_Activation flag to trigger the call of Init_Netins at the end of the Compute_CycleStats function -- this is needed for specialized cases where projection scaling parameters have changed, and thus the net inputs are all out of whack and need to be recomputed -- flag is set to false at start of Compute_CycleStats and checked at end, so layers just need to set it - todo: can we eliminate this please??
 
   float**       unit_vec_vars;
-  // #IGNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size
-  float**       thrs_send_d5bnet_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
+  // #IGNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
+  float**       thrs_send_d5bnet_tmp;
+  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
+  char**        thrs_lay_avg_max_vals;
+  // #IGNORE AvgMaxValsRaw data for layers, by thread
+  char**        thrs_ungp_avg_max_vals;
+  // #IGNORE AvgMaxValsRaw data for unit groups, by thread
   float         tmp_arg1;        // #IGNORE for passing args through threaded call
 
 #ifdef CUDA_COMPILE
@@ -257,7 +271,18 @@ public:
 
   inline float* ThrSendD5bNetTmp(int thr_no) const 
   { return thrs_send_d5bnet_tmp[thr_no]; }
-  // #CAT_Structure temporary sending deep5b netinput memory for given thread 
+  // #IGNORE temporary sending deep5b netinput memory for given thread 
+
+  inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
+  { return (AvgMaxValsRaw*)(thrs_lay_avg_max_vals[thr_no] +
+                            (lay_idx * N_AM_VARS + var) * sizeof(AvgMaxValsRaw)); }
+  // #IGNORE get AvgMax data for given thread, layer, and variable
+
+  inline AvgMaxValsRaw* ThrUnGpAvgMax(int thr_no, int ungp_idx, AvgMaxVars var) 
+  { return (AvgMaxValsRaw*)(thrs_ungp_avg_max_vals[thr_no] +
+                            (ungp_idx * N_AM_VARS + var) * sizeof(AvgMaxValsRaw)); }
+  // #IGNORE get AvgMax data for given thread, unit group, and variable
+
 
   ///////////////////////////////////////////////////////////////////////
   //    Build functionality
@@ -269,10 +294,10 @@ public:
   void  AllocSendNetinTmp() override;
   void  InitSendNetinTmp_Thr(int thr_no) override;
   void  BuildNullUnit() override;
-  void  FreeConThreadMem() override;
-  virtual void BuildUnitVecVars();
+  void  FreeUnitConGpThreadMem() override;
+  virtual void BuildLeabraThreadMem();
   // #IGNORE
-  virtual void InitUnitVecVars_Thr(int thr_no);
+  virtual void InitLeabraThreadMem_Thr(int thr_no);
   // #IGNORE
   
 
@@ -372,8 +397,11 @@ public:
   void	Send_Netin_Thr(int thr_no) override;
   // #CAT_Cycle compute netinputs -- sender-delta based -- only send when sender activations change -- sends into tmp array that is then integrated into net_raw, gi_raw
   virtual void Compute_NetinInteg_Thr(int thr_no);
-  // #CAT_Cycle Stage 1.2 integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
-
+  // #CAT_Cycle integrate newly-computed netinput delta values into a resulting complete netinput value for the network (does both excitatory and inhibitory)
+  virtual void Compute_NetinStats_Thr(int thr_no);
+  // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
+  virtual void Compute_NetinStats_Post();
+  // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 2: Inhibition
@@ -394,8 +422,8 @@ public:
 
   virtual void	Compute_CycleStats_Pre();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level pre-step
-  virtual void	Compute_CycleStats_Layer_Thr(int thr_no);
-  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- layer level computation
+  virtual void	Compute_CycleStats_Thr(int thr_no);
+  // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
 

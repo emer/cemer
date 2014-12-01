@@ -160,7 +160,7 @@ void LeabraNetwork::Build() {
   }
   inherited::Build();
 
-  BuildUnitVecVars();
+  BuildLeabraThreadMem();
 
   // taMisc::Info("sizeof:", String(sizeof(LeabraUnitVars)), ".size:",
   //              String(unit_vars_size));
@@ -170,19 +170,29 @@ void LeabraNetwork::Build() {
 #endif
 }
 
-void LeabraNetwork::BuildUnitVecVars() {
-  net_aligned_malloc((void**)&unit_vec_vars, n_thrs_built * sizeof(int));
+void LeabraNetwork::BuildLeabraThreadMem() {
+  net_aligned_malloc((void**)&unit_vec_vars, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_lay_avg_max_vals, n_thrs_built * sizeof(char*));
+  net_aligned_malloc((void**)&thrs_ungp_avg_max_vals, n_thrs_built * sizeof(char*));
 
   for(int i=0; i<n_thrs_built; i++) {
     net_aligned_malloc((void**)&unit_vec_vars[i], n_units_built
                        * N_VEC_VARS * sizeof(float));
+    net_aligned_malloc((void**)&thrs_lay_avg_max_vals[i], n_layers_built
+                       * N_AM_VARS * sizeof(AvgMaxValsRaw));
+    net_aligned_malloc((void**)&thrs_ungp_avg_max_vals[i], n_ungps_built
+                       * N_AM_VARS * sizeof(AvgMaxValsRaw));
   }
 
-  NET_THREAD_CALL(LeabraNetwork::InitUnitVecVars_Thr);
+  NET_THREAD_CALL(LeabraNetwork::InitLeabraThreadMem_Thr);
 }
 
-void LeabraNetwork::InitUnitVecVars_Thr(int thr_no) {
+void LeabraNetwork::InitLeabraThreadMem_Thr(int thr_no) {
   memset(unit_vec_vars[thr_no], 0, n_units_built * N_VEC_VARS * sizeof(float));
+  memset(thrs_lay_avg_max_vals[thr_no], 0, n_layers_built * N_AM_VARS *
+         sizeof(AvgMaxValsRaw));
+  memset(thrs_ungp_avg_max_vals[thr_no], 0, n_ungps_built * N_AM_VARS *
+         sizeof(AvgMaxValsRaw));
 }
 
 #ifdef NUMA_COMPILE
@@ -207,10 +217,10 @@ void LeabraNetwork::AllocSendNetinTmp() {
   inherited::AllocSendNetinTmp();
 }
 
-void LeabraNetwork::FreeConThreadMem() {
-  inherited::FreeConThreadMem();
+void LeabraNetwork::FreeUnitConGpThreadMem() {
+  inherited::FreeUnitConGpThreadMem();
 
-  if(!thrs_send_d5bnet_tmp) return;
+  if(!unit_vec_vars) return;
 
   for(int i=0; i<n_thrs_built; i++) {
     net_free((void**)&thrs_send_d5bnet_tmp[i]);
@@ -538,22 +548,37 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     Compute_NetinInteg_Thr(thr_no);
     threads.SyncSpin1(thr_no);
 
+    if(threads.get_timing)
+      ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.StartTimer(true); // reset
+
+    Compute_NetinStats_Thr(thr_no);
+    threads.SyncSpin1(thr_no);
+    if(thr_no == 0) {
+      Compute_NetinStats_Post();
+    }
+    threads.SyncSpin1(thr_no);
+
+    if(threads.get_timing)
+      ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.EndIncrAvg();
+
     Compute_Inhib_Thr(thr_no);
     threads.SyncSpin1(thr_no);
 
     Compute_Act_Thr(thr_no);
     threads.SyncSpin1(thr_no);
 
+    if(thr_no == 0) {           // do this well before, so addn'l sync not needed
+      Compute_CycleStats_Pre();
+    }
+
     Compute_Act_Post_Thr(thr_no);
     threads.SyncSpin1(thr_no);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
-    if(thr_no == 0) {
-      Compute_CycleStats_Pre();
-    }
 
-    Compute_CycleStats_Layer_Thr(thr_no);
+    Compute_CycleStats_Thr(thr_no);
+    threads.SyncSpin1(thr_no);
     
     if(thr_no == 0) {
       Compute_CycleStats_Post();
@@ -615,6 +640,84 @@ void LeabraNetwork::Compute_NetinInteg_Thr(int thr_no) {
 
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->netin_integ.EndIncrAvg();
+}
+
+void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped)
+      continue;
+    AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_NET);
+    am_net->InitVals();
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_net->UpdtVals(uv->net, flat_idx); 
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped)
+      continue;
+    AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_NET);
+    am_net->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_net->UpdtVals(uv->net, flat_idx); 
+    }
+  }
+}
+
+void LeabraNetwork::Compute_NetinStats_Post() {
+  // integrate all the data from thread-specific guys
+
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped)
+      continue;
+    AvgMaxVals& netin = lay->netin;
+    netin.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_NET);
+      netin.UpdtFmAvgMaxRaw(*am_net);
+    }
+    netin.CalcAvg();
+  }
+
+  // then by unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped)
+      continue;
+    int ugidx = ActiveUnGp(li);
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
+    AvgMaxVals& netin = gpd->netin;
+    netin.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_NET);
+      netin.UpdtFmAvgMaxRaw(*am_net);
+    }
+    netin.CalcAvg();
+  }
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -693,16 +796,148 @@ void LeabraNetwork::Compute_CycleStats_Pre() {
   init_netins_cycle_stat = false;
 }
 
-void LeabraNetwork::Compute_CycleStats_Layer_Thr(int thr_no) {
-  if(thr_no == 0) {
-    FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-      if(lay->lesioned()) continue;
-      lay->Compute_CycleStats(this);
+void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
+  const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
+  // this is when we should update clamped layers
+  const bool do_gi = net_misc.inhib_cons;
+  
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_act = ThrLayAvgMax(thr_no, li, AM_ACT);
+    AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(thr_no, li, AM_ACT_EQ);
+    am_act->InitVals();
+    am_act_eq->InitVals();
+    AvgMaxValsRaw* am_un_g_i = NULL;
+    if(do_gi) {
+      am_un_g_i = ThrLayAvgMax(thr_no, li, AM_UN_G_I);
+      am_un_g_i->InitVals();
+    }
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_act->UpdtVals(uv->act, flat_idx); 
+      am_act_eq->UpdtVals(uv->act_eq, flat_idx);
+      if(do_gi) {
+        am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
+      }
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxValsRaw* am_act = ThrUnGpAvgMax(thr_no, li, AM_ACT);
+    AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(thr_no, li, AM_ACT_EQ);
+    am_act->InitVals();
+    am_act_eq->InitVals();
+    AvgMaxValsRaw* am_un_g_i = NULL;
+    if(do_gi) {
+      am_un_g_i = ThrUnGpAvgMax(thr_no, li, AM_UN_G_I);
+      am_un_g_i->InitVals();
+    }
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_act->UpdtVals(uv->act, flat_idx); 
+      am_act_eq->UpdtVals(uv->act_eq, flat_idx);
+      if(do_gi) {
+        am_un_g_i->UpdtVals(uv->gc_i, flat_idx);
+      }
     }
   }
 }
 
 void LeabraNetwork::Compute_CycleStats_Post() {
+  // integrate all the data from thread-specific guys
+
+  const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
+  // this is when we should update clamped layers
+  const bool do_gi = net_misc.inhib_cons;
+  
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    AvgMaxVals& acts = lay->acts;
+    AvgMaxVals& acts_eq = lay->acts_eq;
+    acts.InitVals();
+    acts_eq.InitVals();
+    AvgMaxVals& un_g_i = lay->un_g_i;
+    if(do_gi) 
+      un_g_i.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_act = ThrLayAvgMax(i, li, AM_ACT);
+      AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(i, li, AM_ACT_EQ);
+      acts.UpdtFmAvgMaxRaw(*am_act);
+      acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+
+      if(do_gi) {
+        AvgMaxValsRaw* am_un_g_i = ThrLayAvgMax(i, li, AM_UN_G_I);
+        un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
+      }
+    }
+
+    acts.CalcAvg();
+    acts_eq.CalcAvg();
+    if(lay->HasExtFlag(UnitVars::TARG)) {
+      trg_max_act = MAX(trg_max_act, acts_eq.max);
+    }
+    if(lay->Iconified()) {
+      lay->icon_value = acts_eq.avg;
+    }
+  }
+
+  // then by unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    if(lay->hard_clamped && !updt_clamped)
+      continue;
+    int ugidx = ActiveUnGp(li);
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
+    AvgMaxVals& acts = gpd->acts;
+    AvgMaxVals& acts_eq = gpd->acts_eq;
+    acts.InitVals();
+    acts_eq.InitVals();
+    AvgMaxVals& un_g_i = lay->un_g_i;
+    if(do_gi) 
+      un_g_i.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_act = ThrUnGpAvgMax(i, li, AM_ACT);
+      AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(i, li, AM_ACT_EQ);
+
+      acts.UpdtFmAvgMaxRaw(*am_act);
+      acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+
+      if(do_gi) {
+        AvgMaxValsRaw* am_un_g_i = ThrUnGpAvgMax(i, li, AM_UN_G_I);
+        un_g_i.UpdtFmAvgMaxRaw(*am_un_g_i);
+      }
+    }
+
+    acts.CalcAvg();
+    acts_eq.CalcAvg();
+  }
+
   Compute_OutputName();
   Compute_RTCycles();
   // todo: eliminate this if possible -- just kinda hacky..
@@ -1228,7 +1463,8 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
   DataCol* stat = dt.FindMakeColName("stat", idx, VT_STRING);
   DataCol* rca = dt.FindMakeColName("run_avg", idx, VT_FLOAT);
   DataCol* rcs = dt.FindMakeColName("run_sum", idx, VT_FLOAT);
-  float rescale = 1.0e6;        // how many microseconds
+  float rescale_val = 1.0e6;        // how many microseconds
+  float rescale = rescale_val;      // effective
 
   LeabraNetTiming* net_tm = (LeabraNetTiming*)net_timing.Peek();
   net_tm->netin.avg_used.ResetSum();
@@ -1236,6 +1472,7 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
   net_tm->dwt.avg_used.ResetSum();
   net_tm->wt.avg_used.ResetSum();
   net_tm->netin_integ.avg_used.ResetSum();
+  net_tm->netin_stats.avg_used.ResetSum();
   net_tm->inhib.avg_used.ResetSum();
   net_tm->act_post.avg_used.ResetSum();
   net_tm->cycstats.avg_used.ResetSum();
@@ -1251,16 +1488,19 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
       net_tm->dwt.avg_used.IncrementAvg(tm->dwt.avg_used.sum);
       net_tm->wt.avg_used.IncrementAvg(tm->wt.avg_used.sum);
       net_tm->netin_integ.avg_used.IncrementAvg(tm->netin_integ.avg_used.sum);
+      net_tm->netin_stats.avg_used.IncrementAvg(tm->netin_stats.avg_used.sum);
       net_tm->inhib.avg_used.IncrementAvg(tm->inhib.avg_used.sum);
       net_tm->act_post.avg_used.IncrementAvg(tm->act_post.avg_used.sum);
       net_tm->cycstats.avg_used.IncrementAvg(tm->cycstats.avg_used.sum);
     }
     else {
+      rescale = 1.0f;
       tot_time += tm->netin.avg_used.avg;
       tot_time += tm->act.avg_used.avg;
       tot_time += tm->dwt.avg_used.avg;
       tot_time += tm->wt.avg_used.avg;
       tot_time += tm->netin_integ.avg_used.avg;
+      tot_time += tm->netin_stats.avg_used.avg;
       tot_time += tm->inhib.avg_used.avg;
       tot_time += tm->act_post.avg_used.avg;
       tot_time += tm->cycstats.avg_used.avg;
@@ -1277,6 +1517,12 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
     stat->SetValAsString("netin_integ_time", -1);
     rca->SetValAsFloat(tm->netin_integ.avg_used.avg * rescale, -1);
     rcs->SetValAsFloat(tm->netin_integ.avg_used.sum, -1);
+
+    dt.AddBlankRow();
+    thc->SetValAsInt(i, -1);
+    stat->SetValAsString("netin_stats_time", -1);
+    rca->SetValAsFloat(tm->netin_stats.avg_used.avg * rescale, -1);
+    rcs->SetValAsFloat(tm->netin_stats.avg_used.sum, -1);
 
     dt.AddBlankRow();
     thc->SetValAsInt(i, -1);
@@ -1341,7 +1587,7 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
       wait_time_avg /= (float)n_thrs_built;
       wait_time_sum /= (float)n_thrs_built;
 
-      rca->SetValAsFloat(wait_time_avg * rescale, -1);
+      rca->SetValAsFloat(wait_time_avg * rescale_val, -1);
       rcs->SetValAsFloat(wait_time_sum, -1);
     }
   }
@@ -1350,6 +1596,7 @@ String LeabraNetwork::TimingReport(DataTable& dt, bool print) {
   report << "function       time     percent \n"
          << "netin:         " << pct_val_out(net_tm->netin.avg_used.avg, tot_time) << "\n"
          << "netin_integ:   " << pct_val_out(net_tm->netin_integ.avg_used.avg, tot_time) << "\n"
+         << "netin_stats:   " << pct_val_out(net_tm->netin_stats.avg_used.avg, tot_time) << "\n"
          << "inhib:         " << pct_val_out(net_tm->inhib.avg_used.avg, tot_time) << "\n"
          << "act:           " << pct_val_out(net_tm->act.avg_used.avg, tot_time) << "\n"
          << "act_post:      " << pct_val_out(net_tm->act_post.avg_used.avg, tot_time) << "\n"
