@@ -78,7 +78,7 @@ public:
   void Run(NetworkThreadCall& meth_call);
   // #IGNORE run given function on the Network, passing thread number as arg
 
-  void SyncSpin(int thread_no, int usec_wait = 1);
+  void SyncSpin(int thread_no, int usec_wait = 0);
   // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!!
 
   TA_BASEFUNS_NOCOPY(NetworkThreadMgr);
