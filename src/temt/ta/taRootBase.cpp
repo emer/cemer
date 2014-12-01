@@ -1631,8 +1631,8 @@ bool taRootBase::Startup_InitKeyBindings() {
   default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Enter));
   default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Return));
 
-  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(Qt::Key_Enter));
-  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(Qt::Key_Return));
+  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(control_key + Qt::Key_Enter));
+  default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(control_key + Qt::Key_Return));
   default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_REVERT, QKeySequence(Qt::Key_Escape));
 
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT, QKeySequence(Qt::Key_Enter));
