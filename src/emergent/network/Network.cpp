@@ -1156,28 +1156,31 @@ void Network::Connect_UpdtActives_Thr(int thr_no) {
 
 bool Network::AutoBuild() {
   if(auto_build == NO_BUILD) return false;
-
+  
   if(taMisc::gui_active && (auto_build == PROMPT_BUILD)) {
     int chs = taMisc::Choice("Build network: " + name, "Yes", "No");
     if(chs == 1) return false;
   }
   taMisc::Info("Network:",name,"auto building");
   Build();
-
+  
   switch(auto_load_wts) {
-  case NO_AUTO_LOAD:
-    return true;
-  case AUTO_LOAD_WTS_0:
-    LoadFmFirstWeights(false);  // not quiet
-    return true;
-    break;
-  case AUTO_LOAD_FILE:
-    if(TestWarning(auto_load_file.empty(), "AutoBuild",
-                   "auto_load_file is empty -- cannot auto-load weights"))
+    case NO_AUTO_LOAD:
       return true;
-    LoadWeights(auto_load_file);
-    return true;
-    break;
+    case AUTO_LOAD_WTS_0:
+      LoadFmFirstWeights(false);  // not quiet
+      return true;
+      break;
+    case AUTO_LOAD_FILE:
+      if(TestWarning(auto_load_file.empty(), "AutoBuild",
+                     "auto_load_file is empty -- cannot auto-load weights"))
+        return true;
+      LoadWeights(auto_load_file);
+      return true;
+      break;
+    default:
+      taMisc::Warning("Programmer error: Network::AutoBuild - Should not reach default case in this switch");
+      return true;
   }
 }
   
