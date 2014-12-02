@@ -256,8 +256,11 @@ MainWindowViewer* taProject::GetDefaultProjectViewer() {
 
 void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
-  if(taMisc::is_undo_loading) return; // none of this.
-  OpenProjectLog();
+  if(taMisc::is_undo_loading)
+    return; // none of this.
+  if (taMisc::write_to_log_file) {
+    OpenProjectLog();
+  }
   DoView();
   setDirty(false);              // nobody should start off dirty!
   if(!taMisc::interactive) {
@@ -526,7 +529,9 @@ int taProject::SaveAs(const String& fname) {
     if(!fnm.contains("_recover") && !fnm.contains("_autosave")) {
       CleanFiles();
     }
-    OpenProjectLog();
+    if (taMisc::write_to_log_file) {
+      OpenProjectLog();
+    }
   }
   else { // if the save wasn't successful reset the save_as_only flag
     save_as_only = tmp_save_as_only;
