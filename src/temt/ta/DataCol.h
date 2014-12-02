@@ -353,7 +353,7 @@ public:
   // misc
 
   virtual String        ColStats();
-  // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
+  // #CAT_DataProc #BUTTON #MENU #MENU_ON_Column #MENU_SEP_BEFORE #USE_RVAL #GHOST_ON_is_matrix compute standard descriptive statistics on given data table column, returning result as a string of name=value; pairs (e.g., mean=3.2; etc).
 
   int                   displayWidth() const;
   // #CAT_Display low level display width, in chars, taken from options

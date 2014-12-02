@@ -371,7 +371,8 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
 
 void DataCol::BuildHashTable() {
   RemoveHashTable();
-  if(TestError(isMatrix(), "BuildHashTable", "column must be scalar, not matrix")) return;
+  if(TestError(isMatrix(), "BuildHashTable", "column must be scalar, not matrix"))
+    return;
   hash_table = new taHashTable;
   if(!hash_table->Alloc(rows() + 10)) return;
   for(int i=0; i<rows(); i++) {
@@ -388,6 +389,8 @@ void DataCol::RemoveHashTable() {
 }
 
 String DataCol::ColStats() {
+  if (TestError(isMatrix(), "ColStats", "column must be scalar, not matrix"))
+    return _nilString;
   if(valType() == VT_DOUBLE) {
     return taMath_double::vec_stats((double_Matrix*)AR());
   }
