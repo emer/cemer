@@ -2008,17 +2008,17 @@ bool taRootBase::Startup_ProcessArgs() {
     tabMisc::root->projects.Load(proj_ld);
     taRootBase::ProjectOpened();
   }
-  
-  bool file_exists = false;
-  QFileInfo checkFile(proj_ld);
-  // check if file exists and if yes: Is it really a file and not a directory?
-  if (checkFile.exists() && checkFile.isFile()) {
-    file_exists = true;
+  else if (!taMisc::gui_active) {
+    bool file_exists = false;
+    QFileInfo checkFile(proj_ld);
+    // check if file exists and if yes: Is it really a file and not a directory?
+    if (checkFile.exists() && checkFile.isFile()) {
+      file_exists = true;
+    }
+    if (!file_exists)
+      taiMC_->Quit();
   }
   
-  if (!taMisc::gui_active && !file_exists)
-    taiMC_->Quit();
-
   if(run_startup) {
     // chain the next step -- this will hopefully happen *after* any post-loading
     // events triggered by the projects.load
