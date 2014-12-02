@@ -124,6 +124,7 @@ class E_API LeabraNetMisc : public taOBase {
   // ##INLINE ##NO_TOKENS ##CAT_Leabra misc network-level parameters for Leabra
 INHERITED(taOBase)
 public:
+  bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
   bool          ti;            // #READ_ONLY #SHOW LeabraTI (temporal integration) processing and learning mechanisms are engaged, because LeabraTICtxtConSpec SELF prjns are present in layers to perform optimized single-layer TI context activation at end of plus phase -- updated in Trial_Init_Specs call
   bool          deep5b_cons; // #READ_ONLY #SHOW Deep5bConSpec prjns are present in layers to send deep5b activations instead of superficial activations -- updated in Trial_Init_Specs call
   bool          diff_scale_p;   // #READ_ONLY #SHOW at least one connection spec uses diff_act_p setting to drive a differential wt scaling in the plus phase relative to the minus phase -- this requires initializing the net inputs between these phases
@@ -413,6 +414,13 @@ public:
 
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
+
+  void	Compute_Act_Thr(int thr_no) override;
+  // #CAT_Cycle compute activations
+  virtual void	Compute_Act_Rate_Thr(int thr_no);
+  // #CAT_Cycle rate coded activations
+  virtual void	Compute_Act_Spike_Thr(int thr_no);
+  // #CAT_Cycle spiking activations
 
   virtual void	Compute_Act_Post_Thr(int thr_no);
   // #CAT_Cycle post processing after activations have been computed -- special algorithm code takes advantage of this stage, and running average activations (SRAvg) also computed

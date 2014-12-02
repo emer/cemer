@@ -71,6 +71,7 @@ void LeabraNetStats::Initialize() {
 }
 
 void LeabraNetMisc::Initialize() {
+  spike = false;
   ti = false;
   deep5b_cons = false;
   diff_scale_p = false;
@@ -354,6 +355,7 @@ void LeabraNetwork::Trial_Init_Counters() {
 }
 
 void LeabraNetwork::Trial_Init_Specs() {
+  net_misc.spike = false;
   net_misc.ti = false;
   net_misc.deep5b_cons = false;
   net_misc.dwt_norm = false;
@@ -775,6 +777,45 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 3: Activation
+
+void LeabraNetwork::Compute_Act_Thr(int thr_no) override {
+  if(net_misc.spike) {
+    Compute_Act_Spike_Thr(thr_no);
+  }
+  else {
+    Compute_Act_Rate_Thr(thr_no);
+  }
+}
+
+void LeabraNetwork::Compute_Act_Rate_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act.StartTimer(true); // reset
+
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_Act_Rate(uv, this, thr_no);
+  }
+
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act.EndIncrAvg();
+}
+
+void LeabraNetwork::Compute_Act_Spike_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act.StartTimer(true); // reset
+
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_Act_Spike(uv, this, thr_no);
+  }
+
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->act.EndIncrAvg();
+}
 
 void LeabraNetwork::Compute_Act_Post_Thr(int thr_no) {
   if(threads.get_timing)

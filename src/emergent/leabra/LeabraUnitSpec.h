@@ -448,9 +448,6 @@ public:
   enum ActFun {
     NOISY_XX1,			// x over x plus 1 convolved with Gaussian noise (noise is nvar)
     SPIKE,			// discrete spiking activations (spike when > thr) -- default params produce adaptive exponential (AdEx) model
-    NOISY_LINEAR,		// simple linear output function (still thesholded) convolved with Gaussian noise (noise is nvar)
-    XX1,			// x over x plus 1, hard threshold, no noise convolution
-    LINEAR,			// simple linear output function (still thesholded)
   };
 
   enum NoiseType {
@@ -623,39 +620,46 @@ public:
 
   // main function is basic Compute_Act which calls all the various sub-functions below
   // derived types that send activation directly to special unit variables (e.g., VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post 
-  void	Compute_Act(UnitVars* uv, Network* net, int thr_no) override;
+  inline void	Compute_Act(UnitVars* uv, Network* net, int thr_no) override {
+    if(act_fun == SPIKE)
+      Compute_Act_Spike((LeabraUnitVars*)uv, (LeabraNetwork*)net, thr_no);
+    else
+      Compute_Act_Rate((LeabraUnitVars*)uv, (LeabraNetwork*)net, thr_no);
+  }
 
-    virtual void Compute_Vm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation Act Step 2: compute the membrane potential from input conductances
-      inline float Compute_EqVm(LeabraUnitVars* uv);
-      // #CAT_Activation #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
+  virtual void Compute_Act_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation Rate coded activation
 
-    virtual void Compute_ActFun(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation Act Step 2: compute the activation function
-      virtual void Compute_ActFun_rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-      // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
-      virtual float Compute_ActFun_rate_impl(float val_sub_thr);
-      // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
+    virtual void Compute_ActFun_Rate(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute the activation from g_e vs. threshold -- rate code functions
+    virtual float Compute_ActFun_Rate_impl(float val_sub_thr);
+    // #CAT_Activation raw activation function: computes an activation value from given value subtracted from its relevant threshold value
 
-      virtual void Compute_ActFun_spike(LeabraUnitVars* uv, LeabraNetwork* net,
+    virtual void Compute_RateCodeSpike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute spiking activation (u->spike) based off of rate-code activation value
+
+  virtual void Compute_Act_Spike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation Spiking activation
+
+    virtual void Compute_ActFun_Spike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute the activation from membrane potential -- discrete spiking
+    virtual void Compute_ClampSpike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
+                                    float spike_p);
+    // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFun_spike -- used for hard clamped inputs in spiking nets
+
+  virtual void Compute_Vm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation Act Step 2: compute the membrane potential from input conductances
+    inline float Compute_EqVm(LeabraUnitVars* uv);
+    // #CAT_Activation #IGNORE compute the equilibrium (asymptotic) membrante potential from input conductances (assuming they remain fixed as they are)
+
+  virtual void Compute_SelfReg_Cycle(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation Act Step 3: compute self-regulatory dynamics at the cycle time scale -- adapt, etc
+    virtual void Compute_ActAdapt_Cycle(LeabraUnitVars* uv, LeabraNetwork* net, 
                                         int thr_no);
-      // #CAT_Activation compute the activation from membrane potential -- discrete spiking
-      virtual void Compute_ClampSpike(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no,
-                                      float spike_p);
-      // #CAT_Activation compute spiking activation according to spike.clamp_type with given probability (typically spike.clamp_max_p * u->ext) -- includes depression and other active factors as done in Compute_ActFun_spike -- used for hard clamped inputs in spiking nets
-      virtual void Compute_RateCodeSpike(LeabraUnitVars* uv, LeabraNetwork* net,
-                                         int thr_no);
-      // #CAT_Activation compute spiking activation (u->spike) based off of rate-code activation value
-
-    virtual void Compute_SelfReg_Cycle(LeabraUnitVars* uv, LeabraNetwork* net,
-                                       int thr_no);
-    // #CAT_Activation Act Step 3: compute self-regulatory dynamics at the cycle time scale -- adapt, etc
-      virtual void Compute_ActAdapt_Cycle(LeabraUnitVars* uv, LeabraNetwork* net,
-                                          int thr_no);
-      // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
-      virtual void Compute_ShortPlast_Cycle(LeabraUnitVars* uv, LeabraNetwork* net,
+    // #CAT_Activation compute the activation-based adaptation value based on spiking and membrane potential
+    virtual void Compute_ShortPlast_Cycle(LeabraUnitVars* uv, LeabraNetwork* net,
                                             int thr_no);
-      // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the syn_* unit variables
+    // #CAT_Activation compute whole-neuron (presynaptic) short-term plasticity at the cycle level, using the stp parameters -- updates the syn_* unit variables
 
     virtual float Compute_Noise(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Activation utility fun to generate and return the noise value based on current settings -- will set unit->noise value as appropriate (generally excludes effect of noise_sched schedule)

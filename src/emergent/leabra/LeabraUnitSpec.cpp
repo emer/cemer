@@ -468,23 +468,12 @@ void LeabraUnitSpec::CreateNXX1Fun(LeabraActFunSpec& act_spec, FunLookup& nxx1_f
   fun.UpdateAfterEdit_NoGui();
   fun.AllocForRange();
 
-  if(act_fun == LeabraUnitSpec::NOISY_LINEAR) {
-    for(i=0; i<fun.size; i++) {
-      float x = fun.Xval(i);
-      float val = 0.0f;
-      if(x > 0.0f)
-        val = act_spec.gain * x;
-      fun[i] = val;
-    }
-  }
-  else {
-    for(i=0; i<fun.size; i++) {
-      float x = fun.Xval(i);
-      float val = 0.0f;
-      if(x > 0.0f)
-        val = (act_spec.gain * x) / ((act_spec.gain * x) + 1.0f);
-      fun[i] = val;
-    }
+  for(i=0; i<fun.size; i++) {
+    float x = fun.Xval(i);
+    float val = 0.0f;
+    if(x > 0.0f)
+      val = (act_spec.gain * x) / ((act_spec.gain * x) + 1.0f);
+    fun[i] = val;
   }
 
   nxx1_fl.Convolve(fun, noise_fl); // does alloc
@@ -757,6 +746,13 @@ void LeabraUnitSpec::Init_ActBuff(LeabraUnitVars* u) {
 //      TrialInit functions
 
 void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  if(act_fun == SPIKE) {
+    net->net_misc.spike = true;
+  }
+  else {
+    TestWarning(net->net_misc.spike, "Trial_Init_Specs",
+                "detected a mix of SPIKE and NOISY_XX1 activation functions -- due to code optimizations, must all be either one or the other!");
+  }
   if(bias_spec)
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
 }
@@ -1318,23 +1314,14 @@ void LeabraUnitSpec::Compute_ApplyInhib
 
 
 ///////////////////////////////////////////////////////////////////////
-//      Cycle Step 3: activation
+//      Cycle Step 3: activation -- rate code
 
-void LeabraUnitSpec::Compute_Act(UnitVars* ru, Network* rnet, int thr_no) {
-  LeabraUnitVars* u = (LeabraUnitVars*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
+void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
-    if(act_fun == SPIKE) {
-      Compute_ClampSpike(u, net, thr_no, u->ext * spike_misc.clamp_max_p);
-      // u->AddToActBuf(syn_delay);
-    }
-    else {
-      // Compute_RateCodeSpike(u, net); // this is not necessary
-    }
     return; // don't re-compute
   }
 
@@ -1347,11 +1334,188 @@ void LeabraUnitSpec::Compute_Act(UnitVars* ru, Network* rnet, int thr_no) {
   }
 
   Compute_Vm(u, net, thr_no);
-  Compute_ActFun(u, net, thr_no);
+  Compute_ActFun_Rate(u, net, thr_no);
   Compute_SelfReg_Cycle(u, net, thr_no);
 
   // u->AddToActBuf(syn_delay);
 }
+
+float LeabraUnitSpec::Compute_ActFun_Rate_impl(float val_sub_thr) {
+  float new_act = 0.0f;
+  if(val_sub_thr >= nxx1_fun.x_range.max) {
+    val_sub_thr *= act.gain;
+    new_act = val_sub_thr / (val_sub_thr + 1.0f);
+  }
+  else if(val_sub_thr > nxx1_fun.x_range.min) {
+    new_act = nxx1_fun.Eval(val_sub_thr);
+  }
+  return new_act;
+}
+
+void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
+                                         int thr_no) {
+  float new_act;
+  if(u->v_m_eq <= act.thr) {
+    // note: this is quite important -- if you directly use the gelin
+    // the whole time, then units are active right away -- need v_m_eq dynamics to
+    // drive subthreshold activation behavior
+    new_act = Compute_ActFun_Rate_impl(u->v_m_eq - act.thr);
+  }
+  else {
+    float g_e_thr = Compute_EThresh(u);
+    new_act = Compute_ActFun_Rate_impl((u->net * g_bar.e) - g_e_thr);
+  }
+  if(net->cycle >= dt.fast_cyc) {
+    new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
+  }
+
+  if(taMisc::gui_active) {
+    u->da = new_act - u->act_nd;
+  }
+  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+    new_act += Compute_Noise(u, net, thr_no);
+  }
+  u->act_nd = act_range.Clip(new_act);
+
+  if(stp.on) {                   // short term plasticity, depression
+    u->act = u->act_nd * u->syn_tr; // overall probability of transmission
+  }
+  else {
+    u->act = u->act_nd;
+  }
+  u->act_eq = u->act;           // for rate code, eq == act
+
+  // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
+  // note that v_m_eq is NOT reset here:
+  if(u->v_m > spike_misc.eff_spk_thr) {
+    u->spike = 1.0f;
+    u->v_m = spike_misc.vm_r;
+    u->spk_t = net->tot_cycle;
+  }
+  else {
+    TestWrite(u->spike, 0.0f);
+  }
+}
+
+void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int thr_no) {
+  // use act_nd here so it isn't a self-fulfilling function!
+  // note: this is only used for clamped layers -- dynamic layers use SPIKE-based mechanisms
+  u->spike = 0.0f;
+  if(u->act_nd <= opt_thresh.send) { // no spiking below threshold..
+    u->spk_t = -1;
+    return;
+  }
+  if(u->spk_t < 0) {            // start counting from first time above threshold
+    u->spk_t = net->tot_cycle;
+    return;
+  }
+  int interval = act_misc.ActToInterval(net->times.time_inc, dt.integ, u->act_nd);
+  if((net->tot_cycle - u->spk_t) >= interval) {
+    u->spike = 1.0f;
+    u->spk_t = net->tot_cycle;
+    u->v_m = spike_misc.vm_r;   // reset vm when we spike -- now we can use it just like spiking!
+  }
+}
+
+///////////////////////////////////////////////////////////////////////
+//      Cycle Step 3: activation -- spiking
+
+void LeabraUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+
+  // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
+
+  if((net->cycle >= 0) && lay->hard_clamped) {
+    Compute_ClampSpike(u, net, thr_no, u->ext * spike_misc.clamp_max_p);
+      // u->AddToActBuf(syn_delay);
+    return; // don't re-compute
+  }
+
+  // first, apply inhibition 
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
+  if(thr) {
+    LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+    Compute_ApplyInhib(u, net, thr_no, ls, thr, thr->i_val.g_i);
+  }
+
+  Compute_Vm(u, net, thr_no);
+  Compute_ActFun_Spike(u, net, thr_no);
+  Compute_SelfReg_Cycle(u, net, thr_no);
+
+  // u->AddToActBuf(syn_delay);
+}
+
+void LeabraUnitSpec::Compute_ActFun_Spike(LeabraUnitVars* u, LeabraNetwork* net,
+                                          int thr_no) {
+  if(u->v_m > spike_misc.eff_spk_thr) {
+    u->act = 1.0f;
+    u->spike = 1.0f;
+    u->v_m = spike_misc.vm_r;
+    u->spk_t = net->tot_cycle;
+  }
+  else {
+    TestWrite(u->act, 0.0f);
+    TestWrite(u->spike, 0.0f);
+  }
+
+  float act_nd = u->act_nd / spike.eq_gain;
+  if(spike.eq_dt > 0.0f) {
+    act_nd += dt.integ * spike.eq_dt * (u->act - act_nd);
+  }
+  else {                        // increment by phase
+    if(net->cycle > 0)
+      act_nd *= (float)net->cycle;
+    act_nd = (act_nd + u->act) / (float)(net->cycle+1);
+  }
+  act_nd = act_range.Clip(spike.eq_gain * act_nd);
+  if(taMisc::gui_active) {
+    u->da = act_nd - u->act_nd;   // da is on equilibrium activation
+  }
+  u->act_nd = act_nd;
+
+  if(stp.on) {
+    u->act *= u->syn_tr;
+    u->act_eq = u->syn_tr * u->act_nd; // act_eq is depressed rate code
+  }
+  else {
+    u->act_eq = u->act_nd;      // eq = nd
+  }
+}
+
+void LeabraUnitSpec::Compute_ClampSpike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
+                                        float spike_p) {
+  bool fire_now = false;
+  switch(spike_misc.clamp_type) {
+  case SpikeMiscSpec::POISSON:
+    if(Random::Poisson(spike_p) > 0.0f) fire_now = true;
+    break;
+  case SpikeMiscSpec::UNIFORM:
+    fire_now = Random::BoolProb(spike_p);
+    break;
+  case SpikeMiscSpec::REGULAR: {
+    if(spike_p > 0.0f) {
+      int cyc_int = (int)((1.0f / spike_p) + 0.5f);
+      fire_now = (net->cycle % cyc_int == 0);
+    }
+    break;
+  }
+  case SpikeMiscSpec::CLAMPED:
+    return;                     // do nothing further
+  }
+  if(fire_now) {
+    u->v_m = spike_misc.eff_spk_thr + 0.1f; // make it fire
+  }
+  else {
+    u->v_m = e_rev.l;           // make it not fire
+  }
+
+  Compute_ActFun_Spike(u, net, thr_no); // then do normal spiking computation
+}
+
+///////////////////////////////////////////////////////////////////////
+//      Cycle Step 3.2: membrane potential
 
 void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   bool updt_spk_vm = true;
@@ -1427,196 +1591,6 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
   if(u->v_m > vm_range.max) u->v_m = vm_range.max;
   if(u->v_m_eq < vm_range.min) u->v_m_eq = vm_range.min;
   if(u->v_m_eq > vm_range.max) u->v_m_eq = vm_range.max;
-}
-
-void LeabraUnitSpec::Compute_ActFun(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(act_fun == SPIKE) {
-    Compute_ActFun_spike(u, net, thr_no);
-  }
-  else {
-    Compute_ActFun_rate(u, net, thr_no);
-  }
-}
-
-float LeabraUnitSpec::Compute_ActFun_rate_impl(float val_sub_thr) {
-  float new_act = 0.0f;
-  switch(act_fun) {
-  case NOISY_XX1: {
-    if(val_sub_thr <= nxx1_fun.x_range.min)
-      new_act = 0.0f;
-    else if(val_sub_thr >= nxx1_fun.x_range.max) {
-      val_sub_thr *= act.gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    }
-    else {
-      new_act = nxx1_fun.Eval(val_sub_thr);
-    }
-    break;
-  }
-  case SPIKE:
-    break;                      // compiler food
-  case NOISY_LINEAR: {
-    if(val_sub_thr <= nxx1_fun.x_range.min)
-      new_act = 0.0f;
-    else if(val_sub_thr >= nxx1_fun.x_range.max) {
-      new_act = val_sub_thr * act.gain;
-    }
-    else {
-      new_act = nxx1_fun.Eval(val_sub_thr);
-    }
-    break;
-  }
-  case XX1: {
-    if(val_sub_thr < 0.0f)
-      new_act = 0.0f;
-    else {
-      val_sub_thr *= act.gain;
-      new_act = val_sub_thr / (val_sub_thr + 1.0f);
-    }
-    break;
-  }
-  case LINEAR: {
-    if(val_sub_thr < 0.0f)
-      new_act = 0.0f;
-    else
-      new_act = val_sub_thr * act.gain;
-  }
-  break;
-  }
-  return new_act;
-}
-
-void LeabraUnitSpec::Compute_ActFun_rate(LeabraUnitVars* u, LeabraNetwork* net,
-                                         int thr_no) {
-  float new_act;
-  if(u->v_m_eq <= act.thr) {
-    // note: this is quite important -- if you directly use the gelin
-    // the whole time, then units are active right away -- need v_m_eq dynamics to
-    // drive subthreshold activation behavior
-    new_act = Compute_ActFun_rate_impl(u->v_m_eq - act.thr);
-  }
-  else {
-    float g_e_thr = Compute_EThresh(u);
-    new_act = Compute_ActFun_rate_impl((u->net * g_bar.e) - g_e_thr);
-  }
-  if(net->cycle >= dt.fast_cyc) {
-    new_act = u->act_nd + dt.integ * dt.vm_dt * (new_act - u->act_nd); // time integral with dt.vm_dt  -- use nd to avoid synd problems
-  }
-
-  if(taMisc::gui_active) {
-    u->da = new_act - u->act_nd;
-  }
-  if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
-    new_act += Compute_Noise(u, net, thr_no);
-  }
-  u->act_nd = act_range.Clip(new_act);
-
-  if(stp.on) {                   // short term plasticity, depression
-    u->act = u->act_nd * u->syn_tr; // overall probability of transmission
-  }
-  else {
-    u->act = u->act_nd;
-  }
-  u->act_eq = u->act;           // for rate code, eq == act
-
-  // we now use the exact same vm-based dynamics as in SPIKE model, for full consistency!
-  // note that v_m_eq is NOT reset here:
-  if(u->v_m > spike_misc.eff_spk_thr) {
-    u->spike = 1.0f;
-    u->v_m = spike_misc.vm_r;
-    u->spk_t = net->tot_cycle;
-  }
-  else {
-    TestWrite(u->spike, 0.0f);
-  }
-}
-
-void LeabraUnitSpec::Compute_ActFun_spike(LeabraUnitVars* u, LeabraNetwork* net,
-                                          int thr_no) {
-  if(u->v_m > spike_misc.eff_spk_thr) {
-    u->act = 1.0f;
-    u->spike = 1.0f;
-    u->v_m = spike_misc.vm_r;
-    u->spk_t = net->tot_cycle;
-  }
-  else {
-    TestWrite(u->act, 0.0f);
-    TestWrite(u->spike, 0.0f);
-  }
-
-  float act_nd = u->act_nd / spike.eq_gain;
-  if(spike.eq_dt > 0.0f) {
-    act_nd += dt.integ * spike.eq_dt * (u->act - act_nd);
-  }
-  else {                        // increment by phase
-    if(net->cycle > 0)
-      act_nd *= (float)net->cycle;
-    act_nd = (act_nd + u->act) / (float)(net->cycle+1);
-  }
-  act_nd = act_range.Clip(spike.eq_gain * act_nd);
-  if(taMisc::gui_active) {
-    u->da = act_nd - u->act_nd;   // da is on equilibrium activation
-  }
-  u->act_nd = act_nd;
-
-  if(stp.on) {
-    u->act *= u->syn_tr;
-    u->act_eq = u->syn_tr * u->act_nd; // act_eq is depressed rate code
-  }
-  else {
-    u->act_eq = u->act_nd;      // eq = nd
-  }
-}
-
-void LeabraUnitSpec::Compute_ClampSpike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
-                                        float spike_p) {
-  bool fire_now = false;
-  switch(spike_misc.clamp_type) {
-  case SpikeMiscSpec::POISSON:
-    if(Random::Poisson(spike_p) > 0.0f) fire_now = true;
-    break;
-  case SpikeMiscSpec::UNIFORM:
-    fire_now = Random::BoolProb(spike_p);
-    break;
-  case SpikeMiscSpec::REGULAR: {
-    if(spike_p > 0.0f) {
-      int cyc_int = (int)((1.0f / spike_p) + 0.5f);
-      fire_now = (net->cycle % cyc_int == 0);
-    }
-    break;
-  }
-  case SpikeMiscSpec::CLAMPED:
-    return;                     // do nothing further
-  }
-  if(fire_now) {
-    u->v_m = spike_misc.eff_spk_thr + 0.1f; // make it fire
-  }
-  else {
-    u->v_m = e_rev.l;           // make it not fire
-  }
-
-  Compute_ActFun_spike(u, net, thr_no); // then do normal spiking computation
-}
-
-void LeabraUnitSpec::Compute_RateCodeSpike(LeabraUnitVars* u, LeabraNetwork* net,
-                                           int thr_no) {
-  // use act_nd here so it isn't a self-fulfilling function!
-  // note: this is only used for clamped layers -- dynamic layers use SPIKE-based mechanisms
-  u->spike = 0.0f;
-  if(u->act_nd <= opt_thresh.send) { // no spiking below threshold..
-    u->spk_t = -1;
-    return;
-  }
-  if(u->spk_t < 0) {            // start counting from first time above threshold
-    u->spk_t = net->tot_cycle;
-    return;
-  }
-  int interval = act_misc.ActToInterval(net->times.time_inc, dt.integ, u->act_nd);
-  if((net->tot_cycle - u->spk_t) >= interval) {
-    u->spike = 1.0f;
-    u->spk_t = net->tot_cycle;
-    u->v_m = spike_misc.vm_r;   // reset vm when we spike -- now we can use it just like spiking!
-  }
 }
 
 ////////////////////////////////////////////////////////////////////
@@ -1993,7 +1967,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   float x;
   for(x = min; x <= max; x += incr) {
     float aval;
-    aval = Compute_ActFun_rate_impl(x - g_e_thr);
+    aval = Compute_ActFun_Rate_impl(x - g_e_thr);
     float ln = x - g_e_thr;
     if(ln < 0.0f) ln = 0.0f;
     ln *= lin_gain;
