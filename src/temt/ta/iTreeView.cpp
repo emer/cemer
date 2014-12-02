@@ -687,6 +687,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         inherited::keyPressEvent(key_event);
     }
   }
+  inherited::keyPressEvent(key_event);
 }
 
 bool iTreeView::focusNextPrevChild(bool next) {
