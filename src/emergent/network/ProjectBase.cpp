@@ -95,13 +95,7 @@ void ProjectBase::SaveRecoverFile_strm(ostream& strm) {
 
 void ProjectBase::AutoBuildNets() {
   FOREACH_ELEM_IN_GROUP(Network, net, networks) {
-    if(net->auto_build == Network::NO_BUILD) continue;
-    if(taMisc::gui_active && (net->auto_build == Network::PROMPT_BUILD)) {
-      int chs = taMisc::Choice("Build network: " + net->name, "Yes", "No");
-      if(chs == 1) continue;
-    }
-    taMisc::Info("Network:",net->name,"auto building");
-    net->Build();
+    net->AutoBuild();
   }
   networks.RestorePanels();
 }

@@ -34,7 +34,6 @@ using namespace std;
 void Layer::Initialize() {
   // desc = ??
   own_net = NULL;
-  lesion_ = false;
   flags = LF_NONE;
   layer_type = HIDDEN;
   // pos = ??
@@ -70,7 +69,7 @@ void Layer::Initialize() {
   // unit_names = ??
   brain_area = "";
   voxel_fill_pct = 1.0f;
-  n_units = 0;                  // note: v3compat obs
+  active_lay_idx = -1;
 }
 
 void Layer::InitLinks() {
@@ -165,8 +164,6 @@ void Layer::Copy_(const Layer& cp) {
   brain_area = cp.brain_area;
   voxel_fill_pct = cp.voxel_fill_pct;
 
-  n_units = cp.n_units;         // note: v3compat obs
-
   // this will update all pointers under us to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!
   UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Network);
@@ -188,24 +185,12 @@ void Layer::UpdateAfterMove_impl(taBase* old_owner) {
 void Layer::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
-  if (lesion_) {                // obs: v3compat conversion obs remove later
-    SetLayerFlag(LESIONED);
-    lesion_ = false;
-  }
-
   // no negative geoms., y,z must be 1 (for display)
   UpdateUnitSpecs((bool)taMisc::is_loading); // force if loading
   //  SyncSendPrjns(); // this is not a good place to do this -- too frequent and unnec
   // also causes problems during copy..
 
   if(taMisc::is_loading) {
-    if(n_units > 0) {           // obs: v3compat conversion
-      if(n_units != un_geom.x * un_geom.y) {
-        un_geom.n_not_xy = true;
-        un_geom.n = n_units;
-      }
-      n_units = 0;
-    }
     if(un_geom.z > 1) {         // obs: v3compat conversion
       gp_geom.UpdateAfterEdit_NoGui();  // get n from xy
       unit_groups = true;

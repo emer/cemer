@@ -380,26 +380,14 @@ public:
   void  Copy_Weights(const ConGroup* src, Network* net);
   // #CAT_ObjectMgmt copies weights from other con_group
 
-  // DataTable*    ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
-  //           const String& var1, const String& var2 = "",
-  //           const String& var3 = "", const String& var4 = "", const String& var5 = "",
-  //           const String& var6 = "", const String& var7 = "", const String& var8 = "",
-  //           const String& var9 = "", const String& var10 = "", const String& var11 = "",
-  //           const String& var12 = "", const String& var13 = "", const String& var14 = "");
+ DataTable*    ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
+           const String& var1, const String& var2 = "",
+           const String& var3 = "", const String& var4 = "", const String& var5 = "",
+           const String& var6 = "", const String& var7 = "", const String& var8 = "",
+           const String& var9 = "", const String& var10 = "", const String& var11 = "",
+           const String& var12 = "", const String& var13 = "", const String& var14 = "");
   // #MENU #NULL_OK_0 #NULL_TEXT_0_NewTable #CAT_Statistics record given connection-level variable to data table with column names the same as the variable names, and one row per *connection* (unlike monitor-based operations which create matrix columns) -- this is useful for performing analyses on learning rules as a function of sending and receiving unit variables -- uses receiver-based connection traversal -- connection variables are just specified directly by name -- corresponding receiver unit variables are "r.var" and sending unit variables are "s.var"
 
-  // int  Dump_Save_PathR(std::ostream& strm, taBase* par=NULL, int indent=0) override;
-  // int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
-  // the dump system saves the alloc_size during the first 'path' stage of dumping, and then during loading does a full AllocCons for everything, building it all anew prior to the second 'value' stage of loading, which can then do ConnectFrom to setup connections, and set weights etc
-
-  // the cons versions below have support for loading an "old" format file (prior to 4.1.0), which does not have the pre-alloc during the first path load phase: they save the load string into user data on the Unit, and then the Network::Dump_Load_Value goes through and reads those in after doing a manual Connect, so that everything is allocated
-
-  // int   Dump_Save_Cons(std::ostream& strm, int indent);
-  // // #CAT_FILE save just the connection values out to given stream -- call this in Dump_Save_Value after default guy to actually save connections (in RecvCons)
-  // int   Dump_Load_Cons(std::istream& strm, bool old_2nd_load = false);
-  // #CAT_FILE load just the connection values from given stream -- call this in Dump_Load_Value to actually load connections (in RecvCons)
-
-  // void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 };
 
 #endif // ConGroup_h

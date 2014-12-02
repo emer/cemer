@@ -883,8 +883,9 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
     }
   }
   
-  // todo: if(spike)
-  // Compute_ActEqStats_Thr -- split out spiking at network level..
+  if(net_misc.spike) {
+    Compute_ActEqStats_Thr(thr_no); // act_eq requred separately for spiking
+  }
 }
 
 void LeabraNetwork::Compute_ActEqStats_Thr(int thr_no) {
@@ -950,11 +951,13 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrLayAvgMax(i, li, AM_ACT);
       acts.UpdtFmAvgMaxRaw(*am_act);
-      // todo: if spike..
-      // AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(i, li, AM_ACT_EQ);
-      // acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
-      // else
-      acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
+      if(net_misc.spike) {
+        AvgMaxValsRaw* am_act_eq = ThrLayAvgMax(i, li, AM_ACT_EQ);
+        acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+      }
+      else {
+        acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
+      }
     }
     acts.CalcAvg();
     acts_eq.CalcAvg();
@@ -982,11 +985,13 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrUnGpAvgMax(i, li, AM_ACT);
       acts.UpdtFmAvgMaxRaw(*am_act);
-      // todo: if spike..
-      // AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(i, li, AM_ACT_EQ);
-      // acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
-      // else
-      acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
+      if(net_misc.spike) {
+        AvgMaxValsRaw* am_act_eq = ThrUnGpAvgMax(i, li, AM_ACT_EQ);
+        acts_eq.UpdtFmAvgMaxRaw(*am_act_eq);
+      }
+      else {
+        acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
+      }
     }
     acts.CalcAvg();
     acts_eq.CalcAvg();

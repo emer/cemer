@@ -127,7 +127,7 @@ public:
   Projection_Group      send_prjns;     // #CAT_Structure #HIDDEN #LINK_GROUP group of sending projections
   Unit_Group            units;          // #CAT_Structure #NO_SEARCH units or groups of units
   UnitSpec_SPtr         unit_spec;      // #CAT_Structure default unit specification for units in this layer
-  UnitVars::ExtFlags         ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
+  UnitVars::ExtFlags    ext_flag;       // #NO_SAVE #CAT_Activation #GUI_READ_ONLY #SHOW indicates which kind of external input layer received -- this is normally set by the ApplyInputData function -- it is not to be manipulated directly
 
   LayerDistances        dist;           // #CAT_Structure distances from closest input/output layers to this layer
 
@@ -143,11 +143,7 @@ public:
 
   String                brain_area;     // #CAT_Structure #REGEXP_DIALOG #TYPE_BrainAtlasRegexpPopulator Which brain area this layer's units should be mapped to in a brain view.  Must match a label from the atlas chosen for the network.  Layer will not render to brain view if LESIONED flag is checked.
   float                 voxel_fill_pct; // #CAT_Structure #MIN_0 #MAX_1 Percent of brain_area voxels to be filled by units in this layer.
-
-  int                   n_units;
-  // #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 specification of number of units in layer -- do not use!!
-  bool                  lesion_;
-  // #AKA_lesion #HIDDEN #READ_ONLY #NO_SAVE obsolete v3 flag to inactivate this layer from processing (reversable)
+  int                   active_lay_idx; // #NO_SAVE #READ_ONLY index of this layer in the network active_layers list -- -1 if not active..
 
   ProjectBase*          project(); // #IGNORE this layer's project
 

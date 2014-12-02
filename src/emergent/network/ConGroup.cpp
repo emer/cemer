@@ -954,255 +954,6 @@ int ConGroup::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool q
   return stat;
 }
 
-#if 0
-
-int ConGroup::Dump_Save_PathR(ostream& strm, taBase* par, int indent) {
-  // first save any sub-members (there usually aren't any)
-//   int rval = GetTypeDef()->Dump_Save_PathR(strm, (void*)this, (void*)par, indent);
-
-  if(this == par) {                // hack signal to just save as a sub-guy
-    strm << "\n";
-    taMisc::indent(strm, indent+1, 1) << "[" << size << ":" << 
-      ConType()->name << "]"; // need type to allocate properly
-  }
-  return true;
-}
-
-int ConGroup::Dump_Load_Value(istream& strm, taBase* par) {
-  int c = taMisc::skip_white(strm);
-  if(c == EOF)  return EOF;
-  if(c == ';')  return 2;       // signal that its a path
-  if(c == '}') {
-    if(strm.peek() == ';') strm.get();
-    return 2;
-  }
-
-  if (c != '{') {
-    taMisc::Error("Missing '{' in dump file for type:",GetTypeDef()->name,"\n");
-    return false;
-  }
-  // now, load members (if we have dims, will exit at that point)
-  int rval = GetTypeDef()->members.Dump_Load(strm, (void*)this, (void*)par);
-  // 3 is a hacky code to tell us that it got the [
-  if ((rval != 3) || (rval == EOF)) return rval;
-
-  c = taMisc::read_word(strm);
-  if(c == '[') {
-    c = taMisc::read_word(strm);
-    if(c == ':') {
-      int sz = atoi(taMisc::LexBuf);
-      c = taMisc::read_word(strm);
-      ConType() = taMisc::FindTypeName(taMisc::LexBuf);
-      AllocCons(sz);
-    }
-    else {
-      int sz = atoi(taMisc::LexBuf);
-      ConType() = DefaultConType(); // fall back on default
-      AllocCons(sz);
-    }
-  }
-  c = taMisc::read_till_rbracket(strm);
-  if (c==EOF)   return EOF;
-  c = taMisc::read_till_semi(strm);
-  if (c==EOF)   return EOF;
-  return 2;                     // path signal -- if we got this!
-}
-
-/////////////////////////////////////////////////////////////
-//      Dump Load/Save
-
-int ConGroup::Dump_Save_Cons(ostream& strm, int indent) {
-  // output the units
-  taMisc::indent(strm, indent, 1) << "{ con_alloc = " << alloc_size << ";\n";
-  taMisc::indent(strm, indent+1, 1) << "units = {";
-  if(!prjn || !prjn->layer || !prjn->layer->own_net) return false;
-  Network* net = prjn->layer->own_net;
-  for(int i=0; i<size; i++) {
-    Unit* u = Un(i,net);
-    if(u)
-      strm << u->GetMyLeafIndex() << "; ";
-    else
-      strm << -1 << "; ";       // null..
-  }
-  strm << "};\n";
-
-  // output the connection values
-  int ncv = NConVars();
-  for(int j=0; j<ncv; j++) {
-    MemberDef* md = ConType()->members.FastEl(j);
-    if((md->type->IsAnyPtr()) || (md->HasOption("NO_SAVE")))
-      continue;
-    taMisc::indent(strm, indent+1,1) << md->name << " = {";
-    for(int i=0; i<size; i++) {
-       strm << Cn(i,md->idx,net) << "; ";
-    }
-    strm << "};\n";
-  }
-  return true;
-}
-
-int ConGroup::Dump_Load_Cons(istream& strm, bool old_2nd_load) {
-  if(!prjn || !prjn->layer || !prjn->layer->own_net) return false;
-  Network* net = prjn->layer->own_net;
-  Unit* own_ru = OwnUn(net);
-
-  int c = taMisc::read_till_lbracket(strm);     // get past opening bracket
-  if(c == EOF) return EOF;
-  c = taMisc::read_word(strm);
-  if(TestWarning(taMisc::LexBuf != "con_alloc", "Dump_Load_Cons",
-                 "Expecting: 'con_alloc' in load file, got:",
-                 taMisc::LexBuf,"instead")) {
-    return false;
-  }
-  // skip =
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '=', "Dump_Load_Cons",
-                 "Missing '=' in dump file for con_alloc in RecvCons")) {
-    return false;
-  }
-  c = taMisc::read_till_semi(strm);
-  int con_alloc = (int)taMisc::LexBuf;
-
-  bool old_load = false;
-  if(alloc_size != con_alloc) {
-    // if not allocated yet, we have an old-style dump file that we need to postpone loading
-    // otherwise, we might be doing a load-over in which case it is fine, hopefully..
-    old_load = true;
-  }
-  String load_str;              // this will be the load string
-  if(old_load) {
-    load_str += "{ con_alloc = " + String(con_alloc) + ";\n";
-  }
-  c = taMisc::read_word(strm);
-  if(TestWarning(taMisc::LexBuf != "units",
-                 "Dump_Load_Cons", "Expecting 'units' in load file, got:",
-                 taMisc::LexBuf,"instead")) {
-    return false;
-  }
-  // skip =
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '=', "Dump_Load_Cons", "Missing '=' in dump file for unit")) {
-    return false;
-  }
-  // skip {
-  c = taMisc::skip_white(strm);
-  if(TestWarning(c != '{', "Dump_Load_Cons", "Missing '{' in dump file for unit")) {
-    return false;
-  }
-
-  if(old_load) {
-    load_str += "units = {";
-  }
-
-  // first read in the units
-  Unit_Group* ug = NULL;
-  if(prjn && prjn->from.ptr())
-    ug = &(prjn->from->units);
-  int c_count = 0;              // number of connections
-  while(true) {
-    c = taMisc::read_till_rb_or_semi(strm);
-    if(c == EOF) return EOF;
-    if(c == '}') {
-      if(old_load)      load_str += "};\n";
-      break;
-    }
-    if(old_load) {
-      load_str += taMisc::LexBuf + "; ";
-      continue;                 // just load and save
-    }
-    Unit* un = NULL;
-    int lfidx = (int)taMisc::LexBuf;
-    if(ug && (lfidx >= 0)) {
-      un = (Unit*)ug->Leaf(lfidx);
-      if(TestWarning(!un, "Dump_Load_Cons", "Connection unit not found")) {
-        continue;
-      }
-    }
-    if(!old_2nd_load && un && size <= c_count) {
-      own_ru->ConnectFrom(un, prjn);
-    }
-    c_count++;
-  }
-
-  if(!old_load && c_count > alloc_size) {
-    TestWarning(true, "Dump_Load_Cons", "More connections read:", String(c_count),
-                "than allocated:", String(alloc_size),
-                "-- weights will be incomplete");
-  }
-
-  // now read in the values
-  while(true) {
-    c = taMisc::read_word(strm);
-    if(c == EOF) return EOF;
-    if(c == '}') {
-      if(strm.peek() == ';') strm.get(); // get the semi
-      break;            // done
-    }
-    MemberDef* md = ConType()->members.FindName(taMisc::LexBuf);
-    if(TestWarning(!md, "Dump_Load_Cons",
-                   "Connection member not found:", taMisc::LexBuf)) {
-      c = taMisc::skip_past_err(strm);
-      if(c == '}') break;
-      continue;
-    }
-    // skip =
-    c = taMisc::skip_white(strm);
-    if(TestWarning(c != '=', "Dump_Load_Cons",
-                   "Missing '=' in dump file for unit")) {
-      c = taMisc::skip_past_err(strm);
-      continue;
-    }
-    // skip {
-    c = taMisc::skip_white(strm);
-    if(TestWarning(c != '{', "Dump_Load_Cons",
-                   "Missing '{' in dump file for unit")) {
-      c = taMisc::skip_past_err(strm);
-      continue;
-    }
-
-    if(old_load) load_str += md->name + " = {";
-
-    int i = 0;
-    while(true) {
-      c = taMisc::read_till_rb_or_semi(strm);
-      if(c == EOF) return EOF;
-      if(c == '}') {
-        if(old_load)    load_str += "};\n";
-        break;
-      }
-      if(old_load) {            // just save it up..
-        load_str += taMisc::LexBuf + "; ";
-        continue;
-      }
-      if(i >= size) {
-        c = taMisc::skip_past_err_rb(strm); // bail to ending rb
-        if(old_load)    load_str += "};\n";
-        break;
-      }
-      float& val = Cn(i,md->idx,net);
-      val = (float)taMisc::LexBuf;
-      i++;
-    }
-  }
-
-  if(prjn && prjn->con_spec.spec) {
-    SetConSpec(prjn->con_spec.spec); // must set conspec b/c not otherwise saved or set
-    // if(!old_load)
-    //   Init_Weights_post(own_ru, net);        // update weights after loading
-  }
-
-  // if(old_load) { // todo!
-  //   if(net) {
-  //     // int my_idx = own_ru->recv.FindEl(this);
-  //     // own_ru->SetUserData("OldLoadCons_" + String(my_idx), load_str);
-  //     // save in user data for loading later -- important: can't save in this because we
-  //     // have to do a Connect later and that nukes us! :(  So, we use the unit instead
-  //     net->old_load_cons = true; // tell network to load later
-  //   }
-  // }
-  return true;
-}
-
 DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
                               const String& var1, const String& var2,
                               const String& var3, const String& var4, const String& var5,
@@ -1217,7 +968,7 @@ DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
 
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GET_OWNER(net, taProject);
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }
@@ -1229,72 +980,47 @@ DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
   MemberDef* mds[nvars];
   bool ruv[nvars];              // recv unit var
   bool suv[nvars];              // send unit var
-  bool biasv[nvars];            // bias var
 
-  TypeDef* rutd = ru->GetTypeDef();
-  Unit* su0 = Un(0, net);
-  TypeDef* sutd = su0->GetTypeDef();
-
-  TypeDef* rubiastd = NULL;
-  TypeDef* subiastd = NULL;
-  if(ru->bias.size) {
-    rubiastd = ru->bias.con_type;
-  }
-  if(su0->bias.size) {
-    subiastd = su0->bias.con_type;
-  }
+  TypeDef* rutd = net->unit_vars_built;
+  TypeDef* sutd = net->unit_vars_built;
+  TypeDef* con_type = ConType();
 
   int idx;
   for(int i=0;i<nvars;i++) {
     if(vars[i].nonempty()) {
       String colnm = taMisc::StringCVar(vars[i]);
-      cols[i] = dt->FindMakeColName(colnm, idx, VT_FLOAT);
-      ruv[i] = suv[i] = biasv[i] = false;
+      cols[i] = dt->FindMakeColName(colnm, idx, taBase::VT_FLOAT);
+      ruv[i] = suv[i] = false;
       if(vars[i].startsWith("r.")) {
         ruv[i] = true;
         String varnxt = vars[i].after("r.");
-        if(varnxt.startsWith("bias.")) {
-          if(TestWarning(!rubiastd, "ConVarstoTable", "recv bias type or con not set"))
-            continue;
-          biasv[i] = true;
-          varnxt = varnxt.after("bias.");
-          mds[i] = rubiastd->members.FindName(varnxt);
-          if(TestWarning(!mds[i], "ConVarsToTable", "recv unit bias variable named:", varnxt,
-                         "not found in type:", rubiastd->name))
-            continue;
-        }
-        else {
-          mds[i] = rutd->members.FindName(varnxt);
-          if(TestWarning(!mds[i], "ConVarsToTable", "recv unit variable named:", varnxt,
-                         "not found in type:", rutd->name))
-            continue;
+        mds[i] = rutd->members.FindName(varnxt);
+        if(!mds[i]) {
+          taMisc::Warning("ConVarsToTable",
+                          "recv unit variable named:", varnxt,
+                          "not found in type:", rutd->name);
+          continue;
         }
       }
       else if(vars[i].startsWith("s.")) {
         suv[i] = true;
         String varnxt = vars[i].after("s.");
-        if(varnxt.startsWith("bias.")) {
-          if(TestWarning(!subiastd, "ConVarstoTable", "recv bias type or con not set"))
-            continue;
-          biasv[i] = true;
-          varnxt = varnxt.after("bias.");
-          mds[i] = subiastd->members.FindName(varnxt);
-          if(TestWarning(!mds[i], "ConVarsToTable", "send unit bias variable named:", varnxt,
-                         "not found in type:", subiastd->name))
-            continue;
-        }
-        else {
-          mds[i] = sutd->members.FindName(varnxt);
-          if(TestWarning(!mds[i], "ConVarsToTable", "send unit variable named:", varnxt,
-                         "not found in type:", sutd->name))
-            continue;
+        mds[i] = sutd->members.FindName(varnxt);
+        if(!mds[i]) {
+          taMisc::Warning("ConVarsToTable",
+                          "send unit variable named:", varnxt,
+                          "not found in type:", sutd->name);
+          continue;
         }
       }
       else {
         mds[i] = con_type->members.FindName(vars[i]);
-        if(TestWarning(!mds[i], "ConVarsToTable", "connection variable named:", vars[i],
-                       "not found in type:", con_type->name))
+        if(!mds[i]) {
+          taMisc::Warning("ConVarsToTable",
+                          "connection variable named:", vars[i],
+                          "not found in type:", con_type->name);
           continue;
+        }
       }
     }
     else {
@@ -1308,20 +1034,10 @@ DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
       if(!mds[i]) continue;
       Variant val;
       if(ruv[i]) {
-        if(biasv[i]) {
-          val = ru->bias.OwnCn(0, mds[i]->idx);
-        }
-        else {
-          val = mds[i]->GetValVar((void*)ru);
-        }
+        val = mds[i]->GetValVar((void*)ru);
       }
       else if(suv[i]) {
-        if(biasv[i]) {
-          val = Un(j,net)->bias.OwnCn(0, mds[i]->idx);
-        }
-        else {
-          val = mds[i]->GetValVar((void*)Un(j,net));
-        }
+        val = mds[i]->GetValVar((void*)Un(j,net));
       }
       else {
         val = Cn(j, mds[i]->idx, net);
@@ -1335,4 +1051,3 @@ DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
   return dt;
 }
 
-#endif // 0 -- nuked!

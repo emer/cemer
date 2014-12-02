@@ -15,6 +15,7 @@
 
 #include "Weights.h"
 
+#include <MemberDef>
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(Weights);
@@ -22,18 +23,26 @@ TA_BASEFUNS_CTORS_DEFN(Weights);
 void Weights::Initialize() {
   batch = 0;
   epoch = 0;
+  save_with_proj = false;
   auto_load = false;
   quiet_load = false;
 }
 
 void Weights::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(taMisc::is_loading && auto_load && load_file.nonempty()) {
+  if(taMisc::is_loading && !save_with_proj && auto_load && load_file.nonempty()) {
     taMisc::Info("Auto loading weights file:", load_file);
     LoadWeights(load_file);
     taMisc::Info("Done", load_file);
   }
 }
+
+taBase::DumpQueryResult Weights::Dump_QuerySaveMember(MemberDef* md) {
+  if (md->name != "wt_file")
+    return inherited::Dump_QuerySaveMember(md);
+  return (save_with_proj) ? DQR_SAVE : DQR_NO_SAVE;
+}
+
 
 // WeightsFmNet and WeightsToNet are in Network
 

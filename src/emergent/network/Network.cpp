@@ -65,6 +65,7 @@ void Network::Initialize() {
 
   flags = NF_NONE;
   auto_build = AUTO_BUILD;
+  auto_load_wts = NO_AUTO_LOAD;
 
   train_mode = TRAIN;
   wt_update = ON_LINE;
@@ -123,7 +124,6 @@ void Network::Initialize() {
   max_disp_size2d.y = 1;
 
   proj = NULL;
-  old_load_cons = false;
 
   null_unit = NULL;
   n_thrs_built = 0;
@@ -262,6 +262,8 @@ void Network::Copy_(const Network& cp) {
   layers = cp.layers;
 
   auto_build = cp.auto_build;
+  auto_load_wts = cp.auto_load_wts;
+  auto_load_file = cp.auto_load_file;
 
   train_mode = cp.train_mode;
   wt_update = cp.wt_update;
@@ -321,17 +323,11 @@ void Network::UpdateAfterEdit_impl(){
 
   if(taMisc::is_loading) {
     brain_atlas = brain_atlases->FindName(brain_atlas_name);
-    if(HasNetFlag(SAVE_UNITS) || HasNetFlag(SAVE_UNITS_FORCE)) {
-      UpdateAllSpecs(true);       // need to fix up some things after a load with saved
-      // todo: no longer supported!!!
-    }
   }
   else {
     if(brain_atlas)
       brain_atlas_name = brain_atlas->name; // for later saving..
   }
-
-  ClearNetFlag(SAVE_UNITS_FORCE); // might have been saved in on state from recover file or something!
 }
 
 void Network::UpdtAfterNetMod() {
@@ -380,26 +376,7 @@ bool Network::ChangeMyType(TypeDef* new_typ) {
 }
 
 int Network::Dump_Load_Value(istream& strm, taBase* par) {
-  old_load_cons = false;
   int rval = inherited::Dump_Load_Value(strm, par);
-
-  // todo:  no can load units anyway!
-  // if(old_load_cons) { // old dump format
-  //   Connect();                    // needs an explicit connect to make everything
-  //   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
-  //     FOREACH_ELEM_IN_GROUP(Unit, u, lay->units) {
-  //       for(int g=0; g<u->recv.size; g++) {
-  //         ConGroup* cg = u->recv.FastEl(g);
-  //         cg->Dump_Load_Old_Cons(u, g);
-  //       }
-  //     }
-  //   }
-  //   old_load_cons = false;
-  // }
-
-  ClearNetFlag(SAVE_UNITS_FORCE);       // might have been saved in on state from recover file or something!
-
-  //  Build();
 #ifdef DMEM_COMPILE
   DMem_UpdtWtUpdt();
 #endif
@@ -427,10 +404,7 @@ int Network::Dump_Save_impl(ostream& strm, taBase* par, int indent) {
 }
 
 int Network::Save_strm(ostream& strm, taBase* par, int indent) {
-  if(!taMisc::is_undo_saving)     // don't do it for undo!!
-    SetNetFlag(SAVE_UNITS_FORCE); // override if !SAVE_UNITS
   int rval = inherited::Save_strm(strm, par, indent);
-  ClearNetFlag(SAVE_UNITS_FORCE);
   return rval;
 }
 
@@ -523,9 +497,13 @@ void Network::BuildLayers() {
   active_ungps_layers.Reset();
   for(int i=0;i<layers.leaves; i++) {
     Layer* l = (Layer*)layers.Leaf(i);
-    if(l->lesioned()) continue;
+    if(l->lesioned()) {
+      l->active_lay_idx = -1;
+      continue;
+    }
+    l->active_lay_idx = active_layers.size;
     active_layers.Add(i);
-    
+
     if(l->unit_groups && l->gp_geom.n > 0) {
       for(int j=0; j<l->gp_geom.n; j++) {
         active_ungps.Add(j);
@@ -579,32 +557,11 @@ void Network::BuildUnitsFlatList() {
   }
 }
 
-#ifdef NUMA_COMPILE
-void Network::FreeUnitConGpThreadMem_Thr(int thr_no) {
-  // todo: super annoyingly this requires the size for the free method!
-  numa_free(thrs_recv_cons_mem[i]); // go in reverse order: cons to units..
-  numa_free(thrs_send_cons_mem[i]);
-  numa_free(thrs_recv_cgp_mem[i]);
-  numa_free(thrs_send_cgp_mem[i]);
-  numa_free(thrs_units_n_recv_cgps[i]);
-  numa_free(thrs_units_n_send_cgps[i]);
-  numa_free(thrs_recv_cgp_start[i]);
-  numa_free(thrs_send_cgp_start[i]);
-  numa_free(thrs_unit_idxs[i]);
-  numa_free(thrs_lay_unit_idxs[i]);
-  numa_free(thrs_ungp_unit_idxs[i]);
-  numa_free(thrs_units_mem[i]);
-}
-#endif
-
 void Network::FreeUnitConGpThreadMem() {
   if(!units_thrs) return; // nothing allocated yet -- otherwise assume EVERYTHING is
 
   FreeConThreadMem();           // this must go first!
 
-#ifdef NUMA_COMPILE
-  NET_THREAD_CALL(Network::FreeUnitConGpThreadMem_Thr);
-#else
   for(int i=0; i<n_thrs_built; i++) {
      // go in reverse order: con gps to units..
     net_free((void**)&thrs_recv_cgp_start[i]);
@@ -621,7 +578,6 @@ void Network::FreeUnitConGpThreadMem() {
     net_free((void**)&thrs_ungp_unit_idxs[i]);
     net_free((void**)&thrs_units_mem[i]);
   }
-#endif
 
   // first all the doubly-allocated by-thread guys from above
   net_free((void**)&thrs_recv_cgp_start);
@@ -650,20 +606,9 @@ void Network::FreeUnitConGpThreadMem() {
   net_free((void**)&units_thrs);
 }
 
-#ifdef NUMA_COMPILE
-void Network::FreeConThreadMem_Thr(int thr_no) {
-  // todo: super annoyingly this requires the size for the free method!
-  numa_free(thrs_recv_cons_mem[i]); // go in reverse order: cons to units..
-  numa_free(thrs_send_cons_mem[i]);
-}
-#endif
-
 void Network::FreeConThreadMem() {
   if(!thrs_recv_cons_mem) return; // nothing allocated yet -- otherwise assume EVERYTHING is
 
-#ifdef NUMA_COMPILE
-  NET_THREAD_CALL(Network::FreeConThreadMem_Thr);
-#else
   for(int i=0; i<n_thrs_built; i++) {
      // go in reverse order: cons to units..
     net_free((void**)&thrs_send_netin_tmp[i]);
@@ -675,7 +620,6 @@ void Network::FreeConThreadMem() {
     net_free((void**)&thrs_recv_cons_mem[i]);
     net_free((void**)&thrs_send_cons_mem[i]);
   }
-#endif
 
   // first all the doubly-allocated by-thread guys from above
   net_free((void**)&thrs_send_netin_tmp);
@@ -698,13 +642,10 @@ void Network::FreeConThreadMem() {
 }
 
 void Network::AllocUnitConGpThreadMem() {
-  // NUMA alloc notes:
   // absent any other special process, the first thread to touch (write) to a memory block
-  // gets that memory allocated on its physical memory.  so we could simplify things
+  // gets that memory allocated on its physical memory.  so we simplify things
   // by doing all the malloc here in one method, and then ensure that the threads
-  // initialize the memory, or we could do the malloc by thread, with proper numa calls
-  // probably latter is preferable.  but we need a coherent overall threading framework
-  // then -- can't be the UnitCall thing
+  // initialize the memory during the subsequent Init call
 
   net_aligned_malloc((void**)&units_thrs, n_units_built * sizeof(int));
   net_aligned_malloc((void**)&units_thr_un_idxs, n_units_built * sizeof(int));
@@ -731,9 +672,6 @@ void Network::AllocUnitConGpThreadMem() {
 
   max_thr_n_units = (n_units_built / n_thrs_built) + 2;
 
-#ifdef NUMA_COMPILE
-  NET_THREAD_CALL(Network::AllocUnitConGpThreadMem_Thr);
-#else
   for(int i=0; i<n_thrs_built; i++) {
     net_aligned_malloc((void**)&thrs_unit_idxs[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_units_mem[i], max_thr_n_units * unit_vars_size);
@@ -746,7 +684,6 @@ void Network::AllocUnitConGpThreadMem() {
     net_aligned_malloc((void**)&thrs_recv_cgp_start[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_send_cgp_start[i], max_thr_n_units * sizeof(int));
   }
-#endif
 
   n_recv_cgps = 0;
   n_send_cgps = 0;
@@ -777,16 +714,12 @@ void Network::AllocUnitConGpThreadMem() {
 
   NET_THREAD_CALL(Network::InitUnitThreadIdxs);
 
-#ifdef NUMA_COMPILE
-  NET_THREAD_CALL(Network::AllocUnitConGpThreadMem_Thr2);
-#else
   for(int i=0; i<n_thrs_built; i++) {
     net_aligned_malloc((void**)&thrs_recv_cgp_mem[i], thrs_n_recv_cgps[i] *
                        con_group_size);
     net_aligned_malloc((void**)&thrs_send_cgp_mem[i], thrs_n_send_cgps[i] *
                        con_group_size);
   }
-#endif
 
   NET_THREAD_CALL(Network::InitUnitConGpThreadMem);
 }
@@ -951,20 +884,12 @@ void Network::InitUnitConGpThreadMem(int thr_no) {
   }
 }
 
-#ifdef NUMA_COMPILE
-void Network::AllocSendNetinTmp_Thr(int thr_no) {
-}
-#endif
-
 void Network::AllocSendNetinTmp() {
   // temporary storage for sender-based netinput computation
   if(n_units_built == 0 || threads.n_threads == 0) return;
 
   net_aligned_malloc((void**)&thrs_send_netin_tmp, n_thrs_built * sizeof(float*));
 
-#ifdef NUMA_COMPILE
-  NET_THREAD_CALL(Network::AllocSendNetinTmp_Thr);
-#else
   for(int i=0; i<n_thrs_built; i++) {
     if(NetinPerPrjn()) {
       net_aligned_malloc((void**)&thrs_send_netin_tmp[i],
@@ -975,7 +900,6 @@ void Network::AllocSendNetinTmp() {
                          n_units_built * sizeof(float));
     }
   }
-#endif
 
   NET_THREAD_CALL(Network::InitSendNetinTmp_Thr);
 }
@@ -1056,7 +980,6 @@ void Network::Connect_Alloc() {
 
   NET_THREAD_CALL(Network::Connect_AllocSizes_Thr);
 
-#ifndef NUMA_ALLOC              // NUMA_ALLOC did it already in the thread
   for(int thr_no=0; thr_no<n_thrs_built; thr_no++) {
     if(thrs_recv_cons_cnt[thr_no] > 0) {
       net_aligned_malloc((void**)&thrs_recv_cons_mem[thr_no],
@@ -1087,7 +1010,6 @@ void Network::Connect_Alloc() {
       thrs_tmp_con_mem[thr_no] = 0;
     }
   }
-#endif
 
   NET_THREAD_CALL(Network::Connect_Alloc_Thr); // allocate to con groups
 }
@@ -1139,40 +1061,6 @@ void Network::Connect_AllocSizes_Thr(int thr_no) {
   if(ocn > 0) {
     thrs_own_cons_avg_size[thr_no] = round(ocsum / (float)ocn);
   }
-
-#ifdef NUMA_ALLOC
-  // NOTE: this is doing the malloc within the thread..
-  if(thrs_recv_cons_cnt[thr_no] > 0) {
-    net_aligned_malloc((void**)&thrs_recv_cons_mem[thr_no],
-                       thrs_recv_cons_cnt[thr_no] * sizeof(float));
-  }
-  else {
-    thrs_recv_cons_mem[thr_no] = 0;
-  }
-  if(thrs_send_cons_cnt[thr_no] > 0) {
-    net_aligned_malloc((void**)&thrs_send_cons_mem[thr_no],
-                       thrs_send_cons_cnt[thr_no] * sizeof(float));
-  }
-  else {
-    thrs_send_cons_mem[thr_no] = 0;
-  }
-
-  if(thrs_own_cons_max_size[thr_no] > 0) {
-    net_aligned_malloc((void**)&thrs_tmp_chunks[thr_no],
-                       thrs_own_cons_max_size[thr_no] * sizeof(int));
-    net_aligned_malloc((void**)&thrs_tmp_not_chunks[thr_no],
-                       thrs_own_cons_max_size[thr_no] * sizeof(int));
-    net_aligned_malloc((void**)&thrs_tmp_con_mem[thr_no],
-                       thrs_own_cons_max_size[thr_no] * (tmp_own_cons_max_vars[thr_no] + 1)
-                       * sizeof(float));
-  }
-  else {
-    thrs_tmp_chunks[thr_no] = 0;
-    thrs_tmp_not_chunks[thr_no] = 0;
-    thrs_tmp_con_mem[thr_no] = 0;
-  }
-
-#endif
 }
 
 void Network::Connect_Alloc_Thr(int thr_no) {
@@ -1265,6 +1153,34 @@ void Network::Connect_UpdtActives_Thr(int thr_no) {
     scg->UpdtIsActive();
   }
 }
+
+bool Network::AutoBuild() {
+  if(auto_build == NO_BUILD) return false;
+
+  if(taMisc::gui_active && (auto_build == PROMPT_BUILD)) {
+    int chs = taMisc::Choice("Build network: " + name, "Yes", "No");
+    if(chs == 1) return false;
+  }
+  taMisc::Info("Network:",name,"auto building");
+  Build();
+
+  switch(auto_load_wts) {
+  case NO_AUTO_LOAD:
+    return true;
+  case AUTO_LOAD_WTS_0:
+    LoadFmFirstWeights(false);  // not quiet
+    return true;
+    break;
+  case AUTO_LOAD_FILE:
+    if(TestWarning(auto_load_file.empty(), "AutoBuild",
+                   "auto_load_file is empty -- cannot auto-load weights"))
+      return true;
+    LoadWeights(auto_load_file);
+    return true;
+    break;
+  }
+}
+  
 
 String Network::MemoryReport(bool print) {
   if(!HasNetFlag(BUILT)) {

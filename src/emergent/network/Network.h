@@ -185,12 +185,16 @@ public:
     NO_BUILD,                   // do not build network after loading
   };
 
+  enum AutoLoadMode {
+    NO_AUTO_LOAD,               // Do not automatically load a weights file
+    AUTO_LOAD_WTS_0,            // Automatically load weights from the first weights saved weights entry -- that should have the save_with_proj or auto_load flags set
+    AUTO_LOAD_FILE,             // Automatically load a weights file named in auto_load_file after loading the project.
+  };
+
   enum NetFlags {               // #BITS flags for network
     NF_NONE             = 0,    // #NO_BIT
-    SAVE_UNITS          = 0x0001, // save units with the project or other saves (specificaly saving just the network always saves the units)
-    SAVE_UNITS_FORCE    = 0x0002, // #NO_SHOW internal flag that forces the saving of units in cases where it is important to do so (e.g., saving just the network, or for a crash recover file)
-    MANUAL_POS          = 0x0004, // disables the automatic cleanup/positioning of layers
-    NETIN_PER_PRJN      = 0x0008, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
+    MANUAL_POS          = 0x0001, // disables the automatic cleanup/positioning of layers
+    NETIN_PER_PRJN      = 0x0002, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
     BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
   };
@@ -215,10 +219,14 @@ public:
   TypeDef*      unit_vars_type; // #CAT_Structure #TYPE_UnitVars type of unit variables object to create in the network -- there can only be ONE type of UnitVars in the entire network, because it is allocated globally!
   TypeDef*      con_group_type; // #CAT_Structure #TYPE_ConGroup type of connection group objects to create in the network -- there can only be ONE type of ConGroup in the entire network, because it is allocated globally!
 
-  AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not (if the SAVE_UNITS flag is not on, then auto building makes sense)
+  AutoBuildMode auto_build;     // #CAT_Structure whether to automatically build the network (make units and connections) after loading or not
+  AutoLoadMode  auto_load_wts;
+  // #CONDEDIT_OFF_auto_build:NO_BUILD Whether to automatically load a weights file when the Network object is loaded.  It is not possible to save the units, so this can be used to provide pre-configured network for the user (must auto_build network first)
+  String        auto_load_file;
+  // #CONDSHOW_ON_auto_load_wts:AUTO_LOAD_FILE #FILE_DIALOG_LOAD #COMPRESS #FILETYPE_Weights #EXT_wts file name to auto-load weights file from (any path must be relative to project file)
 
-  taBrainAtlasRef 	brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
-  String		brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
+  taBrainAtlasRef brain_atlas;  // #FROM_GROUP_brain_atlases #NO_SAVE The name of the atlas to use for brain view rendering.  Labels from this atlas can be applied to layers' brain_area member.
+  String        brain_atlas_name; // #HIDDEN the name of the brain atlas that we're using -- this is what is actually saved b/c the ref is not saveable
 
   TrainMode     train_mode;     // #CAT_Learning training mode -- determines whether weights are updated or not (and other algorithm-dependent differences as well).  TEST turns off learning
   WtUpdate      wt_update;      // #CAT_Learning #CONDSHOW_ON_train_mode:TRAIN weight update mode: when are weights updated (only applicable if train_mode = TRAIN)
@@ -226,7 +234,7 @@ public:
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
-  NetTiming_List   net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
+  NetTiming_List net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
@@ -337,7 +345,6 @@ public:
   float**       thrs_send_netin_tmp; // #IGNORE #CAT_Threads temporary storage for threaded sender-based netinput computation -- float*[threads] array of float[n_units]
 
   ProjectBase*  proj;           // #IGNORE ProjectBase this network is in
-  bool          old_load_cons;  // #IGNORE #NO_SAVE special flag (can't use flags b/c it is saved, loaded!) for case when loading a project with old cons file format (no pre-alloc of cons)
 
   inline void           SetNetFlag(NetFlags flg)   { flags = (NetFlags)(flags | flg); }
   // set flag state on
@@ -623,16 +630,6 @@ public:
     // #IGNORE find the index in active_layers of this layer -- uses st_idx to seed a bidirectional search, so if you have any hint as to where it might be found, this results in considerable speedup
     virtual int   FindActiveUnGpIdx(Layer* lay, const int ungp_idx, const int st_idx);
     // #IGNORE find the index in active_ungps of this unit group within layer -- uses st_idx to seed a bidirectional search, so if you have any hint as to where it might be found, this results in considerable speedup
-#ifdef NUMA_COMPILE
-    virtual void  FreeUnitConGpThreadMem_Thr(int thr_no);
-    // #IGNORE free all of the thread-based unit, connection group memory -- thread-specific, for NUMA
-    virtual void  FreeConThreadMem_Thr(int thr_no);
-    // #IGNORE free all of the thread-based connection memory -- thread-specific, for NUMA
-    virtual void  AllocUnitConGpThreadMem_Thr(int thr_no);
-    // #IGNORE allocate all of the thread-based unit, connection group memory -- thread-specific, for NUMA
-    virtual void  AllocSendNetinTmp_Thr(int thr_no);
-    // #IGNORE alloc send_netin_tmp for netin computation, for NUMA
-#endif
     virtual void  AllocSendNetinTmp();
     // #IGNORE allocate send_netin_tmp for netin computation
     virtual void  InitSendNetinTmp_Thr(int thr_no);
@@ -654,6 +651,9 @@ public:
     virtual void  Connect_UpdtActives_Thr(int thr_no);
     // #IGNORE update the active flag status of all connections
 
+  virtual bool    AutoBuild();
+  // #CAT_Structure called by ProjectBase::AutoBuildNets() -- does auto-building and loading of weight files after project is loaded
+    
   virtual String  MemoryReport(bool print = true);
   // #CAT_Statistic report about memory allocation for the network
 

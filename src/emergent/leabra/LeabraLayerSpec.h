@@ -312,8 +312,6 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Stats
 
-  virtual int  LayerStatsStartUnitIdx() { return 0; }
-  // #IGNORE unit index to start on for computing layer statistics -- ScalarValLayers set this to 1
   virtual void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the output_name field from the layer acts.max_i (only for OUTPUT or TARGET layers)
   virtual void Compute_OutputName_ugp(LeabraLayer* lay, 

@@ -193,7 +193,7 @@ public:
   void	Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
-  int   LayerStatsStartUnitIdx() override { return 1; } // skip first unit
+  int   LayerStatsStartUnitIdx() override { return 1; } // todo: no can do! skip first unit
 
   float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
 			     bool unit_avg = false, bool sqrt = false) override;

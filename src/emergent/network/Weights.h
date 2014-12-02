@@ -32,10 +32,11 @@ INHERITED(taNBase)
 public:
   int           batch;          // #READ_ONLY #SHOW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
   int           epoch;          // #READ_ONLY #SHOW epoch counter: number of times a complete set of training patterns has been presented (updated by program)
-  bool          auto_load;      // automatically load weights from file named in load_file -- weights are not otherwise saved and loaded with a project
-  bool          quiet_load;     // 
+  bool          save_with_proj; // save these weights with the project file -- NOTE that this can greatly increase the size of the project file!
+  bool          auto_load;      // #CONDSHOW_OFF_save_with_proj automatically load weights from file named in load_file -- this makes the project file smaller, but requires managing multiple different files
+  bool          quiet_load;     // suppress warning messages when loading weights files into the network (not recommended!)
   String        load_file;      // #CONDSHOW_ON_auto_load name of file to load weights from for auto_load
-  String        wt_file;        // #HIDDEN #NO_SAVE the weights, encoded as a file
+  String        wt_file;        // #HIDDEN the weights, encoded as a file
 
   virtual bool  HasWeights(bool err = true);
   // check if we have weights currently -- if err then emit error if we don't
@@ -49,6 +50,8 @@ public:
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write saved weight values in this object out to given file
   virtual bool  LoadWeights(const String& fname="");
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from given file into this object
+
+  DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
   TA_SIMPLE_BASEFUNS(Weights);
 protected:
