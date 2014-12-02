@@ -2005,18 +2005,19 @@ bool taRootBase::Startup_ProcessArgs() {
     proj_ld = taMisc::FindArgValContains(".proj");
   
   if(!proj_ld.empty()) {
-    tabMisc::root->projects.Load(proj_ld);
-    taRootBase::ProjectOpened();
-  }
-  else if (!taMisc::gui_active) {
     bool file_exists = false;
     QFileInfo checkFile(proj_ld);
     // check if file exists and if yes: Is it really a file and not a directory?
     if (checkFile.exists() && checkFile.isFile()) {
-      file_exists = true;
+      tabMisc::root->projects.Load(proj_ld);
+      taRootBase::ProjectOpened();
     }
-    if (!file_exists)
-      taiMC_->Quit();
+    else {
+      taMisc::Error("Startup_ProcessArgs: Project file not found");
+      if (!taMisc::gui_active) {
+          taiMC_->Quit();
+      }
+    }
   }
   
   if(run_startup) {
@@ -2027,8 +2028,6 @@ bool taRootBase::Startup_ProcessArgs() {
   else {
     taiMC_->Quit();
   }
-
-
   return true;
 }
 
