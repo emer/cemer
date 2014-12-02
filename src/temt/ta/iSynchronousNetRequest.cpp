@@ -20,8 +20,10 @@
 #include <iNetworkAccessManager>
 #include <Program>
 
+#if (QT_VERSION >= 0x040800)
 #include <QHttpPart>
 #include <QHttpMultiPart>
+#endif
 #include <QNetworkReply>
 #include <QNetworkRequest>
 #include <QXmlStreamReader>
@@ -167,6 +169,7 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *da
 QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *local_filename, const char *wiki_filename, const char *token)
 {
   reset();
+#if (QT_VERSION >= 0x040800)
   QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
   QHttpPart actionPart, filenamePart, filePart, formatPart, tokenPart;
 
@@ -205,6 +208,10 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   multiPart->setParent(m_reply);
   waitForReply();
   return getReplyIfSuccess();
+#else
+  // todo: we should probably issue an error message or something. Dream is still on 4.5!
+  return NULL;
+#endif
 }
 
 QNetworkReply * iSynchronousNetRequest::getReply()
