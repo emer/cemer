@@ -227,6 +227,21 @@ void ColorScale::FixRangeZero() {
   zero = max - range;
 };
 
+void ColorScale::SetScaleData(bool auto_scale_, float min_, float max_) {
+  if ((auto_scale == auto_scale_) && (min == min_) && (max == max_))
+    return;
+  if (!auto_scale_) {
+    if (auto_scale) {  // switching form auto to manual scaling
+      RestoreMinMax();
+    }
+    else {
+      SetMinMax(min_, max_);  // continue manual
+    }
+  }
+  auto_scale = auto_scale_;  // switch to auto
+}
+
+
 void ColorScale::SetMinMax(float mn,float mx) {
   if((min == mn) && (max == mx))
     return;

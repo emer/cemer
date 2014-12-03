@@ -180,7 +180,7 @@ void GraphTableView::Initialize() {
   last_sel_pt = 0.0f;
 
   colorscale.auto_scale = false;
-  colorscale.min = -1.0f; colorscale.max = 1.0f;
+  colorscale.SetMinMax(-1.0f, 1.0f);
 
   children.SetBaseType(&TA_GraphColView); // subclasses need to set this to their type!
 

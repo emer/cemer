@@ -1180,17 +1180,7 @@ void GridTableView::setWidth(float wdth) {
 }
 
 void GridTableView::setScaleData(bool auto_scale_, float min_, float max_) {
-  if ((colorscale.auto_scale == auto_scale_) && (colorscale.min == min_) && (colorscale.max == max_))
-    return;
-  if (!auto_scale_) {
-    if (colorscale.auto_scale) {  // switching form auto to manual scaling
-      colorscale.RestoreMinMax();
-    }
-    else {
-      colorscale.SetMinMax(min_, max_);  // continue manual
-    }
-  }
-  colorscale.auto_scale = auto_scale_;  // switch to auto
+  colorscale.SetScaleData(auto_scale_, min_, max_);
 }
 
 void GridTableView::VScroll(bool left) {

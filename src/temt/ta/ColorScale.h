@@ -81,6 +81,8 @@ public:
   virtual void          RestoreMinMax(); // restore min max to pre auto_scale values
   virtual void          SymRange();              // symmetrize min/max values around zero
 
+  virtual void          SetScaleData(bool auto_scale_, float min_, float max_);
+
   void  InitLinks();
   void  CutLinks();
   void  UpdateAfterEdit();
