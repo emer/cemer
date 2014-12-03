@@ -46,16 +46,16 @@ set(leabra_HEADS_MAKETA
   # LeabraContextLayerSpec.h
   # ScalarValLayerSpec.h
   # MotorForceLayerSpec.h
-  # TwoDValLeabraLayer.h
-  # TwoDValLayerSpec.h
-  # DecodeTwoDValLayerSpec.h
+  TwoDValLeabraLayer.h
+  TwoDValLayerSpec.h
+  DecodeTwoDValLayerSpec.h
   LeabraV1LayerSpec.h
 
-  # ScalarValSelfPrjnSpec.h
-  # SaliencyPrjnSpec.h
-  # TiledGpRFOneToOnePrjnSpec.h
-  # TiledGpRFOneToOneWtsPrjnSpec.h
-  # CerebConj2PrjnSpec.h
+  ScalarValSelfPrjnSpec.h
+  SaliencyPrjnSpec.h
+  TiledGpRFOneToOnePrjnSpec.h
+  TiledGpRFOneToOneWtsPrjnSpec.h
+  CerebConj2PrjnSpec.h
 
   # LeabraTdUnit.h
   # LeabraTdUnitSpec.h
@@ -163,16 +163,16 @@ set(leabra_SRCS
   # LeabraContextLayerSpec.cpp
   # ScalarValLayerSpec.cpp
   # MotorForceLayerSpec.cpp
-  # TwoDValLeabraLayer.cpp
-  # TwoDValLayerSpec.cpp
-  # DecodeTwoDValLayerSpec.cpp
+  TwoDValLeabraLayer.cpp
+  TwoDValLayerSpec.cpp
+  DecodeTwoDValLayerSpec.cpp
   LeabraV1LayerSpec.cpp
 
-  # ScalarValSelfPrjnSpec.cpp
-  # SaliencyPrjnSpec.cpp
-  # TiledGpRFOneToOnePrjnSpec.cpp
-  # TiledGpRFOneToOneWtsPrjnSpec.cpp
-  # CerebConj2PrjnSpec.cpp
+  ScalarValSelfPrjnSpec.cpp
+  SaliencyPrjnSpec.cpp
+  TiledGpRFOneToOnePrjnSpec.cpp
+  TiledGpRFOneToOneWtsPrjnSpec.cpp
+  CerebConj2PrjnSpec.cpp
 
   # LeabraTdUnit.cpp
   # LeabraTdUnitSpec.cpp

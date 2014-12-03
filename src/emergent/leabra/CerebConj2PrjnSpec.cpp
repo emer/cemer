@@ -181,8 +181,8 @@ void CerebConj2PrjnSpec::Connect_Inner(Projection* prjn, bool make_cons) {
   }
 }
 
-void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                           Network* net) {
+void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
+                                           Network* net, int thr_no) {
   taVector2i rf_half_wd = rf_width / 2;
   taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == rf_width) // even

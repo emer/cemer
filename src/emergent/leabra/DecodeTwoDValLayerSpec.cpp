@@ -32,14 +32,14 @@ void DecodeTwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    if(u->recv.size == 0) continue;
-    LeabraRecvCons* cg = (LeabraRecvCons*)u->recv[0];
+    if(u->NRecvConGps() == 0) continue;
+    ConGroup* cg = u->RecvConGroup(0);
     if(cg->NotActive()) continue;
     LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
-    u->net = su->net;
-    u->act = su->act;
-    u->act_eq = su->act_eq;
-    u->act_nd = su->act_nd;
+    u->net() = su->net();
+    u->act() = su->act();
+    u->act_eq() = su->act_eq();
+    u->act_nd() = su->act_nd();
   }
   inherited::ReadValue_ugp(lay, acc_md, gpidx, net);
 }

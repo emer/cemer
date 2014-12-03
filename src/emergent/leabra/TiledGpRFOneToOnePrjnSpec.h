@@ -37,7 +37,8 @@ public:
 
   void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
 				  int rgpidx, int sgpidx, int alloc_loop) override;
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
+    override;
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOnePrjnSpec);
 private:

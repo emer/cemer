@@ -189,11 +189,14 @@ void SaliencyPrjnSpec::Connect_full_dog(Projection* prjn, bool make_cons) {
   }
 }
 
-void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                       Network* net) {
+void SaliencyPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
+                                         int thr_no) {
   if(feat_only) {               // just use regular -- shouldn't happen
     return;
   }
+
+  Unit* ru = cg->OwnUn(net);
+  
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 

@@ -38,7 +38,7 @@ void TwoDValLeabraLayer::UpdateTwoDValsGeom() {
   }
 }
 
-void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                               Random* ran, const taVector2i& offs, bool na_by_range) {
   // only no unit_group supported!
   if(TestError(unit_groups, "ApplyInputData_2d",
@@ -50,7 +50,7 @@ void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_fla
     for(int d_x = 0; d_x < data->dim(0); d_x++) {
       int xy_idx = offs.x + d_x;
       Variant val = data->SafeElAsVar(d_x, d_y);
-      if(ext_flags & Unit::EXT)
+      if(ext_flags & UnitVars::EXT)
         twod_vals.SetFmVar(val, xy_idx, TWOD_EXT, val_idx, 0, 0);
       else
         twod_vals.SetFmVar(val, xy_idx, TWOD_TARG, val_idx, 0, 0);
@@ -58,7 +58,7 @@ void TwoDValLeabraLayer::ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_fla
   }
 }
 
-void TwoDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+void TwoDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
                                   Random* ran, const taVector2i& offs, bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   if(TestError(!unit_groups, "ApplyInputData_Flat4d",
@@ -83,7 +83,7 @@ void TwoDValLeabraLayer::ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext
   }
 }
 
-void TwoDValLeabraLayer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags, Random* ran,
+void TwoDValLeabraLayer::ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags, Random* ran,
                                 bool na_by_range) {
   // outer-loop is data-group (groups of x-y data items)
   for(int dg_y = 0; dg_y < data->dim(3); dg_y++) {
@@ -94,7 +94,7 @@ void TwoDValLeabraLayer::ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_f
         for(int d_x = 0; d_x < data->dim(0); d_x++) {
           int xy_idx = d_x;
           Variant val = data->SafeElAsVar(d_x, d_y, dg_x, dg_y);
-          if(ext_flags & Unit::EXT)
+          if(ext_flags & UnitVars::EXT)
             twod_vals.SetFmVar(val, xy_idx, TWOD_EXT, val_idx, dg_x, dg_y);
           else
             twod_vals.SetFmVar(val, xy_idx, TWOD_TARG, val_idx, dg_x, dg_y);

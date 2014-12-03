@@ -53,7 +53,7 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
 }
 
 void TiledGpRFOneToOnePrjnSpec::Init_Weights_Prjn
-(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) {
+(Projection* prjn, ConGroup* cg, Network* net, int thr_no) {
   taVector2i rf_half_wd = send_gp_size / 2;
   taVector2f rf_ctr = rf_half_wd;
   if(rf_half_wd * 2 == send_gp_size) // even

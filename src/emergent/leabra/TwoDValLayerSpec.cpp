@@ -207,8 +207,8 @@ bool TwoDValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     return false;               // fatal
   }
 
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  for(int g=0; g<u->NRecvConGps(); g++) {
+    ConGroup* recv_gp = (ConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec)) {
@@ -246,17 +246,17 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       // kwta.k = 1;
       // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
       // inhib.kwta_pt = 0.9f;
-      us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
-      us->act.thr = .17f;
-      us->act.gain = 220.0f;
-      us->act.nvar = .01f;
-      us->dt.vm_tau = 20.0f;
+      // us->act_fun = LeabraUnitSpec::NOISY_LINEAR;
+      // us->act.thr = .17f;
+      // us->act.gain = 220.0f;
+      // us->act.nvar = .01f;
+      // us->dt.vm_tau = 20.0f;
       bias_val.un = TwoDValBias::NO_UN; bias_val.wt = TwoDValBias::NO_WT;
       x_range.min = 0.0f; x_range.max = 1.0f;
       y_range.min = 0.0f; y_range.max = 1.0f;
 
-      for(int g=0; g<u->recv.size; g++) {
-        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      for(int g=0; g<u->NRecvConGps(); g++) {
+        ConGroup* recv_gp = (ConGroup*)u->RecvConGroup(g);
         if(recv_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -281,8 +281,8 @@ void TwoDValLayerSpec::ReConfig(Network* net, int n_units) {
       x_range.min = -.5f; x_range.max = 1.5f;
       y_range.min = -.5f; y_range.max = 1.5f;
 
-      for(int g=0; g<u->recv.size; g++) {
-        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      for(int g=0; g<u->NRecvConGps(); g++) {
+        ConGroup* recv_gp = (ConGroup*)u->RecvConGroup(g);
         if(recv_gp->NotActive()) continue;
         LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
         if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -312,8 +312,8 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     float act = .03f * bias_val.wt_gain * twod.GetUnitAct(i);
-    for(int g=0; g<u->recv.size; g++) {
-      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+    for(int g=0; g<u->NRecvConGps(); g++) {
+      ConGroup* recv_gp = (ConGroup*)u->RecvConGroup(g);
       if(recv_gp->NotActive()) continue;
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       if(recv_gp->prjn->spec.SPtr()->InheritsFrom(TA_ScalarValSelfPrjnSpec) ||
@@ -324,7 +324,6 @@ void TwoDValLayerSpec::Compute_WtBias_Val(LeabraLayer* lay, Layer::AccessMode ac
         if(wt < cs->wt_limits.min) wt = cs->wt_limits.min;
         if(wt > cs->wt_limits.max) wt = cs->wt_limits.max;
       }
-      recv_gp->Init_Weights_post(u, lay->own_net);
     }
   }
 }
@@ -339,7 +338,7 @@ void TwoDValLayerSpec::Compute_UnBias_Val(LeabraLayer* lay, Layer::AccessMode ac
     if(u->lesioned()) continue;
     float act = bias_val.un_gain * twod.GetUnitAct(i);
     if(bias_val.un == TwoDValBias::BWT)
-      u->bias.OwnCn(0,ConGroup::WT) = act;
+      u->bias_wt() = act;
   }
 }
 
@@ -368,8 +367,8 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
-    u->SetExtFlag(Unit::EXT);
-    u->ext = 0.0;
+    u->GetUnitVars()->SetExtFlag(UnitVars::EXT);
+    u->ext() = 0.0;
   }
   for(int k=0;k<twod.n_vals;k++) {
     float x_val = lay->GetTwoDVal(TwoDValLeabraLayer::TWOD_X, TwoDValLeabraLayer::TWOD_EXT,
@@ -387,7 +386,7 @@ void TwoDValLayerSpec::ClampValue_ugp(TwoDValLeabraLayer* lay,
       float act = rescale * twod.GetUnitAct(i);
       if(act < us->opt_thresh.send)
         act = 0.0f;
-      u->ext += act;
+      u->ext() += act;
     }
   }
 }
@@ -410,7 +409,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
       LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
       if(u->lesioned()) continue;
       float x_cur, y_cur;  twod.GetUnitVal(i, x_cur, y_cur);
-      float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
+      float act_val = us->clamp_range.Clip(u->act_eq()) / us->clamp_range.max; // clipped & normalized!
       x_avg += x_cur * act_val;
       y_avg += y_cur * act_val;
       sum_act += act_val;
@@ -438,7 +437,7 @@ void TwoDValLayerSpec::ReadValue_ugp(TwoDValLeabraLayer* lay,
           if(idx < 0 || idx >= nunits) continue;
           LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, idx, gpidx);
 	  if(u->lesioned()) continue;
-          float act_val = us->clamp_range.Clip(u->act_eq) / us->clamp_range.max; // clipped & normalized!
+          float act_val = us->clamp_range.Clip(u->act_eq()) / us->clamp_range.max; // clipped & normalized!
           nsum += 1.0f;
           sum += act_val;
         }
@@ -500,9 +499,10 @@ void TwoDValLayerSpec::LabelUnitsNet(LeabraNetwork* net) {
   }
 }
 
-void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Compute_HardClamp(lay, net);
-}
+// todo:
+// void TwoDValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
+//   inherited::Compute_HardClamp(lay, net);
+// }
 
 void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer_ugp(TwoDValLeabraLayer* lay,
                                                        Layer::AccessMode acc_md, int gpidx,
@@ -522,7 +522,7 @@ void TwoDValLayerSpec::Quarter_Init_TargFlags_Layer(LeabraLayer* lay, LeabraNetw
   inherited::Quarter_Init_TargFlags_Layer(lay, net);
   // need to actually copy over targ to ext vals!
   TwoDValLeabraLayer* tdlay = (TwoDValLeabraLayer*)lay;
-  if(lay->HasExtFlag(Unit::TARG)) {     // only process target layers..
+  if(lay->HasExtFlag(UnitVars::TARG)) {     // only process target layers..
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       UNIT_GP_ITR(lay, Quarter_Init_TargFlags_Layer_ugp(tdlay, acc_md, gpidx, net); );
     }
@@ -540,18 +540,18 @@ void TwoDValLayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) 
     // if using bias-weight bias, keep a constant scaling (independent of layer size)
     FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
       LeabraConSpec* bspec = (LeabraConSpec*)u->GetUnitSpec()->bias_spec.SPtr();
-      u->bias_scale = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
-      u->bias_scale /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
+      u->bias_scale() = bspec->wt_scale.abs;  // still have absolute scaling if wanted..
+      u->bias_scale() /= 100.0f;              // keep a constant scaling so it doesn't depend on network size!
     }
   }
 }
 
-void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+void TwoDValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(twod.clamp_pat) {
-    inherited::Compute_HardClamp(lay, net);
+    inherited::Compute_HardClamp_Layer(lay, net);
     return;
   }
-  if(!(lay->ext_flag & Unit::EXT)) {
+  if(!(lay->ext_flag & UnitVars::EXT)) {
     lay->hard_clamped = false;
     return;
   }
@@ -562,7 +562,8 @@ void TwoDValLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     lay->hard_clamped = false;
     return;
   }
-  HardClampExt(lay, net);
+  // todo: 
+  // HardClampExt(lay, net);
 }
 
 void TwoDValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
@@ -646,7 +647,7 @@ float TwoDValLayerSpec::Compute_SSE_ugp(LeabraLayer* ly,
 float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
                                     int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
-  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return 0.0f;
+  if(!(lay->ext_flag & (UnitVars::COMP_TARG))) return 0.0f;
   lay->sse = 0.0f;
   UNIT_GP_ITR(lay,
               lay->sse += Compute_SSE_ugp(lay, acc_md, gpidx, n_vals);
@@ -657,7 +658,7 @@ float TwoDValLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork*,
   if(sqrt)
     lay->sse = sqrtf(lay->sse);
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+     ((lay->ext_flag & UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }
@@ -699,7 +700,7 @@ float TwoDValLayerSpec::Compute_NormErr_ugp(LeabraLayer* ly,
 
 float TwoDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = -1.0f;                                         // assume not contributing
-  if(!(lay->ext_flag & (Unit::TARG | Unit::COMP))) return -1.0f; // indicates not applicable
+  if(!(lay->ext_flag & (UnitVars::COMP_TARG))) return -1.0f; // indicates not applicable
 
   float nerr = 0.0f;
   float ntot = 0;
@@ -720,7 +721,7 @@ float TwoDValLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
 
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     ((lay->ext_flag & Unit::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
+     ((lay->ext_flag & UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
     return -1.0f;               // no contributarse
 
   return lay->norm_err;

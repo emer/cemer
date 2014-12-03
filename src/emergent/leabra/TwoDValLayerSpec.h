@@ -135,7 +135,7 @@ public:
     virtual void ReadValue_ugp(TwoDValLeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
 			       LeabraNetwork* net);
     // #CAT_TwoDVal unit group version: read out current value represented by activations in layer
-  virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
+  // virtual void	HardClampExt(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_TwoDVal hard clamp current ext values (on all units, after ClampValue called) to all the units (calls ResetAfterClamp)
 
   virtual void	LabelUnits(LeabraLayer* lay, LeabraNetwork* net);
@@ -161,8 +161,8 @@ public:
 						 Layer::AccessMode acc_md, int gpidx,
 						 LeabraNetwork* net);
     // #IGNORE
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
-  void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
+  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
   void	Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
     virtual void Quarter_Final_ugp(TwoDValLeabraLayer* lay,
 				Layer::AccessMode acc_md, int gpidx, LeabraNetwork* net);

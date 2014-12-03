@@ -43,7 +43,8 @@ public:
   int		units_per_feat_gp; // #READ_ONLY #NO_SAVE #SHOW number of units per feature group (computed from sending layer)
   
   void 	Connect_impl(Projection* prjn, bool make_cons);
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
+    override;
 
   virtual void 	Connect_feat_only(Projection* prjn, bool make_cons);
   virtual void 	Connect_full_dog(Projection* prjn, bool make_cons);

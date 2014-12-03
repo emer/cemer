@@ -65,8 +65,9 @@ void ScalarValSelfPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   UNIT_GP_ITR(lay, Connect_UnitGroup(lay, acc_md, gpidx, prjn, make_cons); );
 }
 
-void ScalarValSelfPrjnSpec::Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru,
-                                              Network* net) {
+void ScalarValSelfPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg, 
+                                              Network* net, int thr_no) {
+  Unit* ru = cg->OwnUn(net);
   float neigh1 = 1.0f / wt_width;
   float val1 = expf(-(neigh1 * neigh1));
   float scale_val = wt_max / val1;

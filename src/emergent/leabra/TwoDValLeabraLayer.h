@@ -80,11 +80,11 @@ public:
 protected:
   void	UpdateAfterEdit_impl() override;
 
-  void	ApplyInputData_2d(taMatrix* data, Unit::ExtType ext_flags,
+  void	ApplyInputData_2d(taMatrix* data, UnitVars::ExtFlags ext_flags,
 				  Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Flat4d(taMatrix* data, Unit::ExtType ext_flags,
+  void	ApplyInputData_Flat4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
 				      Random* ran, const taVector2i& offs, bool na_by_range=false) override;
-  void	ApplyInputData_Gp4d(taMatrix* data, Unit::ExtType ext_flags,
+  void	ApplyInputData_Gp4d(taMatrix* data, UnitVars::ExtFlags ext_flags,
 				    Random* ran, bool na_by_range=false) override;
 
 private:

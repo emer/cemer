@@ -33,7 +33,8 @@ public:
   float		one_to_one_wt;	// #CONDEDIT_ON_init_wts weight between units with the same index in the unit group
   float		other_wt;	// #CONDEDIT_ON_init_wts weight between other non-one-to-one units
 
-  void	Init_Weights_Prjn(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) override;
+  void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
+    override;
 
   TA_SIMPLE_BASEFUNS(TiledGpRFOneToOneWtsPrjnSpec);
 private:

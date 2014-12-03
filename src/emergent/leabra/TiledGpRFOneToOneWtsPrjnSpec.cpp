@@ -26,9 +26,10 @@ void TiledGpRFOneToOneWtsPrjnSpec::Initialize() {
 }
 
 void TiledGpRFOneToOneWtsPrjnSpec::Init_Weights_Prjn
-(Projection* prjn, RecvCons* cg, Unit* ru, Network* net) {
+(Projection* prjn, ConGroup* cg, Network* net, int thr_no) {
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+  Unit* ru = cg->OwnUn(net);
 
   int rgpidx;
   int rui;
