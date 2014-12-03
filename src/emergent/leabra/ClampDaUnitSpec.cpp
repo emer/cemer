@@ -23,30 +23,38 @@ void ClampDaUnitSpec::Initialize() {
   send_da = CYCLE;
 }
 
-void ClampDaUnitSpec::Send_Da(LeabraUnit* u, LeabraNetwork* net) {
+void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act;
   for(int g=0; g<u->send.size; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
+      ((LeabraUnitVars*)send_gp->Un(j,net))->dav = snd_val;
     }
   }
 }
 
-void ClampDaUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  inherited::Compute_Act(ru, rnet, thread_no);
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
+void ClampDaUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Rate(u, net, thr_no);
   if(send_da == CYCLE) {
-    Send_Da(u, net);
+    Send_Da(u, net, thr_no);
   }
   else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(u, net);
+    Send_Da(u, net, thr_no);
   }
 }
 
-void ClampDaUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
+void ClampDaUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  if(send_da == CYCLE) {
+    Send_Da(u, net, thr_no);
+  }
+  else if(send_da == PLUS_START && net->phase == LeabraNetwork::PLUS_PHASE) {
+    Send_Da(u, net, thr_no);
+  }
+}
+
+void ClampDaUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Quarter_Final(u, net);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
     Send_Da(u, net);

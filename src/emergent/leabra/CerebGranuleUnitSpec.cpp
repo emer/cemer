@@ -31,9 +31,9 @@ void CerebGranuleSpecs::Initialize() {
 void CerebGranuleSpecs::Defaults_init() {
 }
 
-void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
-                                           int       thread_no) {
-  inherited::Compute_NetinInteg(u, net, thread_no);
+void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int       thr_no) {
+  inherited::Compute_NetinInteg(u, net, thr_no);
   int time_since_thr = (int)u->ti_ctxt;
   if(time_since_thr > cereb.inhib_start_time) {
     // by turning net input off here, we allow other gran
@@ -42,8 +42,8 @@ void CerebGranuleUnitSpec::Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net,
   }
 }
 
-void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnit* u, LeabraNetwork* net,
-                                                int thread_no) {
+void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnitVars* u, LeabraNetwork* net,
+                                                int thr_no) {
   // int time_since_thr = (int)u->ti_ctxt;
   // if(time_since_thr == 0) {
   //   u->act_lrn = 0.0f;
@@ -76,7 +76,14 @@ void CerebGranuleUnitSpec::Compute_GranLearnAct(LeabraUnit* u, LeabraNetwork* ne
   // u->ti_ctxt = time_since_thr; // update counter
 }
 
-void CerebGranuleUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  inherited::Compute_Act(u, net, thread_no);
-  Compute_GranLearnAct((LeabraUnit*)u, (LeabraNetwork*)net, thread_no);
+void CerebGranuleUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+{
+  inherited::Compute_Act_Rate(u, net, thr_no);
+  Compute_GranLearnAct(u, net, thr_no);
+}
+
+void CerebGranuleUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+{
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  Compute_GranLearnAct(u, net, thr_no);
 }

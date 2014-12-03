@@ -38,7 +38,8 @@ public:
   void	Compute_ApplyInhib(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
                            LeabraLayerSpec* lspec, LeabraInhib* thr, float ival)
     override { };
-  void	Compute_Act(UnitVars* u, Network* net, int thr_no) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
   void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };

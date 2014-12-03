@@ -62,7 +62,11 @@ void Deep5bUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net,
   // u->AddToActBuf(syn_delay); // todo:
 }
 
-void Deep5bUnitSpec::Compute_Act(UnitVars* un, Network* rnet, int thr_no) {
-  Compute_ActFmSource((LeabraUnitVars*)un, (LeabraNetwork*)rnet, thr_no);
+void Deep5bUnitSpec::Compute_Act_Rate(LeabraUnitVars* un, LeabraNetwork* rnet, int thr_no) {
+  Compute_ActFmSource(un, rnet, thr_no);
+}
+
+void Deep5bUnitSpec::Compute_Act_Spike(LeabraUnitVars* un, LeabraNetwork* rnet, int thr_no) {
+  Compute_ActFmSource(un, rnet, thr_no);
 }
 

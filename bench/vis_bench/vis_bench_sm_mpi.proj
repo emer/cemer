@@ -5873,7 +5873,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [1] 0;    };
+    [2] 0;1;    };
    };
    jobs_done {
     name="jobs_done";
@@ -6995,8 +6995,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [16] 2;3;0;1;15;13;14;5;4;6;
-7;8;9;10;11;12;    };
+    [17] 2;3;0;1;16;13;14;15;5;4;
+6;7;8;9;10;11;12;    };
    };
    search_algos {
     name="search_algos";
@@ -7004,7 +7004,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
    };
    cur_search_algo=NULL;
-   last_submit_time="2014_12_03_13_41_38";
+   last_submit_time="2014_12_03_13_42_49";
    notes="log epc, 10 epcs";
    extra_files=;
    svn_repo="grey_run";
@@ -7014,8 +7014,8 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    run_time="1h";
    ram_gb=0;
    n_threads=2;
-   use_mpi=1;
-   mpi_nodes=5;
+   use_mpi=0;
+   mpi_nodes=2;
    parallel_batch=0;
    pb_batches=10;
    pb_nodes=0;

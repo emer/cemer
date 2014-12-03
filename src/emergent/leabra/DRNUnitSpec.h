@@ -55,24 +55,24 @@ INHERITED(LeabraUnitSpec)
 public:
   DRN5htSpec      se;             // parameters for computing serotonin values
 
-  virtual void  Send_Se(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Send_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the se value to sending projections: every cycle
-  virtual void  Compute_Se(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the se value based on recv projections from PV and bodily state layers
 
-  void  Init_Weights(Unit* ru, Network* rnet, int thread_no) override;
+  void  Init_Weights(UnitVars* ru, Network* rnet, int thr_no) override;
 
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thread_no) override { };
+  void	Compute_ApplyInhib(LeabraUnitVars* u, LeabraLayerSpec* lspec, 
                            LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
-  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
-  // bool  CheckConfig_Unit(Unit* lay, bool quiet=false);
 
   TA_SIMPLE_BASEFUNS(DRNUnitSpec);
 protected:

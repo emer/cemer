@@ -37,11 +37,13 @@ public:
 
   SendDaMode    send_da;        // when to send da values
 
-  virtual void  Send_Da(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
-  void	Quarter_Final(LeabraUnit* u, LeabraNetwork* net) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+
+  void	Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(ClampDaUnitSpec);
 protected:

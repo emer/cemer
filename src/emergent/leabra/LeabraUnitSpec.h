@@ -619,8 +619,12 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Cycle Step 3: Activation
 
-  // main function is basic Compute_Act which calls all the various sub-functions below
-  // derived types that send activation directly to special unit variables (e.g., VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post 
+  // main function is Compute_Act_Rate or _Spike which calls all the various sub-functions
+  // below derived types that send activation directly to special unit variables (e.g.,
+  // VTAUnitSpec -> dav) should do this here, so they can be processed in Compute_Act_Post
+
+  // IMPORTANT: the following function is NOT called -- Network calls _Rate or _Spike
+  // directly!!
   inline void	Compute_Act(UnitVars* uv, Network* net, int thr_no) override {
     if(act_fun == SPIKE)
       Compute_Act_Spike((LeabraUnitVars*)uv, (LeabraNetwork*)net, thr_no);

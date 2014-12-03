@@ -49,7 +49,7 @@ void DRNUnitSpec::HelpConfig() {
   taMisc::Confirm(help);
 }
 
-void DRNUnitSpec::Compute_Se(LeabraUnit* u, LeabraNetwork* net) {
+void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float pospv = 0.0f;
   int   pospv_n  = 0;
   float negpv = 0.0f;
@@ -107,27 +107,30 @@ void DRNUnitSpec::Compute_Se(LeabraUnit* u, LeabraNetwork* net) {
   u->da = 0.0f;
 }
 
-void DRNUnitSpec::Send_Se(LeabraUnit* u, LeabraNetwork* net) {
+void DRNUnitSpec::Send_Se(LeabraUnitVars* u, LeabraNetwork* net) {
   const float snd_val = u->sev;
   for(int g=0; g<u->send.size; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->sev = snd_val;
+      ((LeabraUnitVars*)send_gp->Un(j,net))->sev = snd_val;
     }
   }
 }
 
-void DRNUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Compute_Se(u, net);
-  Send_Se(u, net);
+void DRNUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_Se(u, net, thr_no);
+  Send_Se(u, net, thr_no);
 }
 
-void DRNUnitSpec::Init_Weights(Unit* ru, Network* rnet, int thread_no) {
-  inherited::Init_Weights(ru, rnet, thread_no);
-  LeabraUnit* u = (LeabraUnit*)ru;
+void DRNUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_Se(u, net, thr_no);
+  Send_Se(u, net, thr_no);
+}
+
+void DRNUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
+  inherited::Init_Weights(ru, rnet, thr_no);
+  LeabraUnitVars* u = (LeabraUnitVars*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   u->sev = se.se_base;
 }
