@@ -157,7 +157,7 @@ void GridTableView::Initialize() {
   scrolling_ = false;
 
   colorscale.auto_scale = false;
-  colorscale.min = -1.0f; colorscale.max = 1.0f;
+  colorscale.SetMinMax(-1.0f, 1.0f);
 
   row_height = 0.1f; // non-zero dummy value
   head_height = .1f;
@@ -192,7 +192,6 @@ void GridTableView::CutLinks() {
 
 void GridTableView::Copy_(const GridTableView& cp) {
   col_n = cp.col_n;
-
   col_range = cp.col_range;
   width = cp.width;
   grid_on = cp.grid_on;
@@ -1181,11 +1180,17 @@ void GridTableView::setWidth(float wdth) {
 }
 
 void GridTableView::setScaleData(bool auto_scale_, float min_, float max_) {
-  if ((colorscale.auto_scale == auto_scale_) && (colorscale.min == min_) && (colorscale.max == max_)) return;
-  colorscale.auto_scale = auto_scale_;
-  if(!colorscale.auto_scale)
-    colorscale.SetMinMax(min_, max_);
-//  UpdateDisplay(true);
+  if ((colorscale.auto_scale == auto_scale_) && (colorscale.min == min_) && (colorscale.max == max_))
+    return;
+  if (!auto_scale_) {
+    if (colorscale.auto_scale) {  // switching form auto to manual scaling
+      colorscale.RestoreMinMax();
+    }
+    else {
+      colorscale.SetMinMax(min_, max_);  // continue manual
+    }
+  }
+  colorscale.auto_scale = auto_scale_;  // switch to auto
 }
 
 void GridTableView::VScroll(bool left) {

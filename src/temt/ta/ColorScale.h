@@ -41,6 +41,8 @@ public:
   int                   chunks;         // number of chunks to divide scale into
   float                 min;
   float                 max;
+  float                 last_min;
+  float                 last_max;
   float                 range;
   float                 zero;
   ColorScaleSpec*       spec;           // specifies the color ranges
@@ -76,6 +78,7 @@ public:
   virtual void          SetMinMax(float mn,float mx);
   virtual void          UpdateMinMax(float mn, float mx); // maybe expand bounds
   virtual bool          UpdateMinMax(float val); // maybe expand bounds, returning true if expanded
+  virtual void          RestoreMinMax(); // restore min max to pre auto_scale values
   virtual void          SymRange();              // symmetrize min/max values around zero
 
   void  InitLinks();

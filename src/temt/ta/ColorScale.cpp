@@ -35,6 +35,8 @@ void ColorScale::Initialize() {
   owner = NULL;
   min = 0.0f;
   max = 0.0f;
+  last_min = 0.0f;
+  last_max = 0.0f;
   range = 0.0f;
   zero = 0.0f;
   auto_scale = true;
@@ -225,8 +227,13 @@ void ColorScale::FixRangeZero() {
   zero = max - range;
 };
 
-void ColorScale::SetMinMax(float mn,float mx){
-  if((min == mn) && (max == mx)) return;
+void ColorScale::SetMinMax(float mn,float mx) {
+  if((min == mn) && (max == mx))
+    return;
+  if (!auto_scale) {
+    last_min = mn;
+    last_max = mx;
+  }
   min = mn; max = mx;
   FixRangeZero();
 }
@@ -242,6 +249,11 @@ bool ColorScale::UpdateMinMax(float val) {
 void ColorScale::UpdateMinMax(float mn, float mx) {
   if(mn < min) min = mn;
   if(mx > max) max = mx;
+  FixRangeZero();
+}
+
+void ColorScale::RestoreMinMax() {
+  SetMinMax(last_min, last_max);
   FixRangeZero();
 }
 
