@@ -37,42 +37,19 @@ class TA_API taMediaWiki : public taNBase {
 
 public:
   /////////////////////////////////////////////////////
-  //            Wiki operations
-
-  static String GetApiURL(const String& wiki_name);
-  // #CAT_Wiki gets the url for the wiki api
-
-  static String GetEditToken(const String& wiki_name);
-  // #CAT_Wiki return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return an empty String
-
-  /////////////////////////////////////////////////////
-  //            Account operations
+  //            ACCOUNT OPERATIONS
 
   static String GetLoggedInUsername(const String &wiki_name);
   // #CAT_Account Get the username of the user currently logged in via emergent's Webkit browser.
 
-  static bool Login(const String &wiki_name, const String &username = "");
+  static bool   Login(const String &wiki_name, const String &username = "");
   // #CAT_Account Login to the wiki.  Returns true if username specified is already logged in.  Otherwise prompts for username/password and returns true if login succeeds.
 
-  static bool Logout(const String &wiki_name);
+  static bool   Logout(const String &wiki_name);
   // #CAT_Account Logout from the wiki.
 
   /////////////////////////////////////////////////////
-  //            Page operations
-
-  static bool   PageExists(const String& wiki_name, const String& page_name);
-  // #CAT_Page determine if given page exists on wiki
-
-  static bool   CreatePage(const String& wiki_name, const String& page_name,
-                           const String& page_content="");
-  // #CAT_Page create given page on the wiki and populate it with given content if non-empty  -- return true on success
-
-  static bool   FindMakePage(const String& wiki_name, const String& page_name,
-                             const String& page_content="");
-  // #CAT_Page find or create given page on the wiki and populate it with given content if non-empty -- return true on success
-
-  /////////////////////////////////////////////////////
-  //            Upload/Download operations
+  //            UPLOAD/DOWNLOAD OPERATIONS
 
   static bool   UploadFile(const String& wiki_name, const String& local_file_name,
                            const String& wiki_file_name="", bool convert_to_camel=true);
@@ -83,7 +60,7 @@ public:
   // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki -- if convert_to_camel is true, destination file name will be converted to CamelCase format
 
   /////////////////////////////////////////////////////
-  //            Query operations
+  //            QUERY OPERATIONS
 
   static bool   QueryPages(DataTable* results, const String& wiki_name,
                            const String& name_space="",
@@ -109,6 +86,40 @@ public:
                             const String& name_space="",
                             int max_results=-1);
   // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page title
+
+  /////////////////////////////////////////////////////
+  //            PAGE OPERATIONS
+
+  static bool   PageExists(const String& wiki_name, const String& page_name);
+  // #CAT_Page determine if given page exists on wiki -- returns true if it does, false if it doesn't
+
+  static bool   DeletePage(const String& wiki_name, const String& page_name);
+  // #CAT_Page delete given page from the wiki -- returns true on success
+
+  static bool   FindMakePage(const String& wiki_name, const String& page_name,
+                             const String& page_content="", const String& page_category="");
+  // #CAT_Page find or create given page on the wiki and populate it with given content -- calls EditPage if the given page already exists on the wiki, otherwise calls CreatePage -- returns true on success
+
+  static bool   CreatePage(const String& wiki_name, const String& page_name,
+                           const String& page_content="", const String& page_category="");
+  // #CAT_Page create given page on the wiki and populate it with given content if it does not currently exist  -- returns true on success
+
+  static bool   EditPage(const String& wiki_name, const String& page_name,
+                         const String& page_content="", const String& page_category="");
+  // #CAT_Page append given page on the wiki with given content if it currently exists -- returns true on success
+
+  /////////////////////////////////////////////////////
+  //            WIKI OPERATIONS
+
+  static String GetApiURL(const String& wiki_name);
+  // #CAT_Wiki gets the url for the wiki api
+
+  static String GetEditToken(const String& wiki_name);
+  // #CAT_Wiki return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return an empty String
+
+  static bool   PublishProject(const String& wiki_name, const String& proj_filename,
+                               const String& page_content="", const String& proj_category="");
+  // #CAT_Wiki create/edit the wiki page for this project, upload all files from the local project directory, then post links to these files on the project's wiki page -- returns true on success
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);

@@ -55,73 +55,11 @@ namespace { // anonymous
 
 void taMediaWiki::Initialize()
 {
-  // Initializes a taMediaWiki object -- Should this be doing something?
-
-  // STUB
-
+  // Placeholder -- taMediaWiki objects currently do not need to be initialized.
 }
 
 /////////////////////////////////////////////////////
-//            Wiki operations
-
-String taMediaWiki::GetApiURL(const String& wiki_name)
-{
-  // #CAT_Wiki Get the URL for the wiki API.
-
-  bool appendIndexPhp = false;
-  String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
-  if (wiki_url.empty()) {
-    taMisc::Error("taMediaWiki::GetApiURL", "wiki named:", wiki_name,
-                  "not found in global preferences/options under wiki_url settings");
-    return _nilString;
-  }
-  return wiki_url + "/api.php";
-}
-
-String taMediaWiki::GetEditToken(const String& wiki_name)
-{
-  // #CAT_Wiki On success, return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query, as in CreatePage) -- On failure, return an empty String.
-  
-  String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) { return _nilString; }
-
-  QUrl url(wikiUrl);
-
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "tokens");
-  urq.addQueryItem("type", "edit");
-  urq.addQueryItem("format", "xml");
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "tokens");
-  url.addQueryItem("type", "edit");
-  url.addQueryItem("format", "xml");
-#endif
-
-  // Make the network request.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
-
-    QXmlStreamReader reader(reply);
-    if(reader.hasError()) { return _nilString; }
-
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        QString token = attrs.value("edittoken").toString();
-        if(!token.isEmpty()) {
-          taMisc::Info("Edit token retrieval successful");
-          return token.toUtf8().constData();
-        }
-      }
-    }
-  }
-  return _nilString;
-}
-
-/////////////////////////////////////////////////////
-//            Account operations
+//            ACCOUNT OPERATIONS
 
 String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 {
@@ -287,199 +225,7 @@ bool taMediaWiki::Logout(const String &wiki_name)
 }
 
 /////////////////////////////////////////////////////
-//            Page operations
-
-bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
-{
-  // #CAT_Page Determine if given page exists on wiki.
-
-  // Build the request URL.
-  String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) return false;
-
-  QUrl url(wikiUrl);
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "query");
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("titles", page_name);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "query");
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("titles", page_name);
-#endif
-  // Make the network request.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpGet(url)) {
-    // Default the normalized name to the provided page name;
-    // will be changed if normalization was performed by the server.
-    String normalizedName = page_name;
-
-    QXmlStreamReader reader(reply);
-    int pageCount = 0;
-    while (!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        // Check for an <n> element indicating the normalized name.
-        // This is only present if the proivded page_name isn't
-        // canonical.
-        if (reader.name() == "n") {
-          QXmlStreamAttributes attrs = reader.attributes();
-          if (attrs.value("from").toString() == page_name) {
-            normalizedName = attrs.value("to").toString();
-          }
-        }
-        // Check for a <page> element
-        else if (reader.name() == "page") {
-          ++pageCount;
-          QXmlStreamAttributes attrs = reader.attributes();
-          if (attrs.value("title").toString() == normalizedName) {
-            // Check if the page name is marked as invalid or missing.
-            if (attrs.hasAttribute("invalid")) {
-              // For example, the page name "_" is invalid.
-              taMisc::Warning("Page name is invalid:", page_name);
-              return false;
-            }
-            else if (attrs.hasAttribute("missing")) {
-              // This is the normal case when a page does NOT exist.
-              return false;
-            }
-            else if (attrs.hasAttribute("pageid")) {
-              // Double check that the page ID is a positive number -- it
-              // should be since the page isn't marked invalid or missing!
-              bool ok = false;
-              QString pageIdStr = attrs.value("pageid").toString();
-              int pageId = pageIdStr.toInt(&ok);
-              if (!ok) {
-                // Shouldn't happen.
-                taMisc::Warning("Page ID is not numeric:", page_name,
-                  qPrintable(pageIdStr));
-                return false;
-              }
-              else if (pageId <= 0) {
-                // Shouldn't happen.
-                taMisc::Warning("Page ID is invalid:", page_name,
-                  qPrintable(pageIdStr));
-                return false;
-              }
-              else {
-                // This is the normal case when a page DOES exist.
-                return true;
-              }
-            }
-            else {
-              // Shouldn't happen.
-              taMisc::Warning(
-                "Unexpected condition; page isn't missing and doesn't exist:",
-                page_name);
-            }
-          }
-        }
-      }
-    }
-
-    if (pageCount == 0) {
-      // If page_name is "" or " ", for example, the entire response will be:
-      //   <api/>
-      taMisc::Warning("No page name provided:", page_name);
-    }
-    else {
-      // Not sure what happened if we got here.
-      taMisc::Warning("Unsure if page exists:", page_name);
-    }
-  }
-
-  // If request cancelled or response malformed, assume page doesn't exist.
-  return false;
-}
-
-bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
-                             const String& page_content)
-{
-  // #CAT_Page Create given page on the wiki and populate it with given content.
-
-  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
-  if (token.isEmpty()) { return false; }
-
-  String wikiUrl = GetApiURL(wiki_name);
-  QUrl url(wikiUrl);
-
-#if (QT_VERSION >= 0x050000)
-  QUrlQuery urq;
-  urq.addQueryItem("action", "edit");
-  urq.addQueryItem("title", page_name);
-  urq.addQueryItem("section", "new");
-  urq.addQueryItem("appendtext", page_content);
-  urq.addQueryItem("format", "xml");
-  urq.addQueryItem("token", token);
-  url.setQuery(urq);
-#else
-  url.addQueryItem("action", "edit");
-  url.addQueryItem("title", page_name);
-  url.addQueryItem("section", "new");
-  url.addQueryItem("appendtext", page_content);
-  url.addQueryItem("format", "xml");
-  url.addQueryItem("token", token);
-#endif
-
-  // Make the network request.
-  iSynchronousNetRequest request;
-  if (QNetworkReply *reply = request.httpPost(url)) {
-    taMisc::Info("Page edit request sent");
-    QXmlStreamReader reader(reply);
-    while(!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if(reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Warning("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info("Page edit successful!");
-          if(attrs.empty()) {
-            taMisc::Info("Request returned no attributes");
-          }
-          else {
-            foreach(QXmlStreamAttribute attr, attrs) {
-              QString attr_name = attr.name().toString();
-              QString attr_val = attr.value().toString();
-              taMisc::Info("Attribute name: ", qPrintable(attr_name));
-              taMisc::Info("Attribute value: ", qPrintable(attr_val));
-            }
-          }
-          return true;
-        }
-      }
-    }
-  }
-  taMisc::Warning("Page edit request failed -- check the page name");
-  return false;
-}
-
-bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
-                               const String& page_content)
-{
-  // #CAT_Page Find or create given page on the wiki and populate it with given content if non-empty -- return true on success.
-
-  // Given page exists on wiki.
-  if(PageExists(wiki_name, page_name)) {
-    // TODO: Determine if page is non-empty; if non-empty, populate with content & return true; if empty, return false.
-    
-    // STUB
-
-    return false;
-  }
-  // Given page does not exist on wiki.
-  else {
-    // Create page and populate it with given content.
-    return CreatePage(wiki_name, page_name, page_content);
-  }
-}
-
-/////////////////////////////////////////////////////
-//              Upload/Download operations
+//              UPLOAD/DOWNLOAD OPERATIONS
 
 bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name,
                              const String& wiki_file_name, bool convert_to_camel)
@@ -644,7 +390,7 @@ bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_
 }
 
 /////////////////////////////////////////////////////
-//              Query operations
+//              QUERY OPERATIONS
 
 bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
                              const String& name_space,
@@ -654,7 +400,72 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
 {
   // #CAT_Query Fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number.
   
-  // STUB
+  if (!results) {
+    taMisc::Error("taMediaWiki::QueryPages -- results data table is NULL -- must supply a valid data table!");
+    return false;
+  }
+
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("list", "allpages");
+  urq.addQueryItem("apfrom", start_nm);
+  urq.addQueryItem("apprefix", prefix);
+  if (name_space.empty()) {
+    urq.addQueryItem("apnamespace", QString::number(0));
+  }
+  else {
+    urq.addQueryItem("apnamespace", QString::number(0)); // TODO: convert namespace string to appropriate namespace ID (int)
+  }
+  if (max_results > 0) {
+    urq.addQueryItem("aplimit", QString::number(max_results));
+  }
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("list", "allpages");
+  url.addQueryItem("apfrom", start_nm);
+  url.addQueryItem("apprefix", prefix);
+  if (name_space.empty()) {
+    url.addQueryItem("apnamespace", QString::number(0));
+  }
+  else {
+    url.addQueryItem("apnamespace", QString::number(0)); // TODO: convert namespace string to appropriate namespace ID (int)
+  }
+  if (max_results > 0) {
+    url.addQueryItem("aplimit", QString::number(max_results));
+  }
+#endif
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Prepare the datatable.
+    results->RemoveAllRows();
+    DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+    DataCol* pid_col = results->FindMakeCol("PageId", VT_INT);
+
+  // For all <p> elements in the XML, add the page title and page ID to the datatable.
+    QXmlStreamReader reader(reply);
+    while (findNextElement(reader, "p")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      String pt = attrs.value("title").toString();
+      int pid = attrs.value("pageid").toInt();
+      results->AddBlankRow();
+      pt_col->SetVal(pt, -1);
+      pid_col->SetVal(pid, -1);
+    }
+
+    // Return true (success) as long as there were no errors in the XML.
+    return !reader.hasError();
+  }
 
   return false;
 }
@@ -666,7 +477,72 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
 {
   // #CAT_Query Fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number.
   
-  // STUB
+  if (!results) {
+    taMisc::Error("taMediaWiki::QueryPagesByCategory -- results data table is NULL -- must supply a valid data table!");
+    return false;
+  }
+
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("list", "categorymembers");
+  urq.addQueryItem("cmtitle", "Category:" + category);
+  if (name_space.empty()) {
+    urq.addQueryItem("cmnamespace", QString::number(0));
+  }
+  else {
+    urq.addQueryItem("cmnamespace", QString::number(0)); // TODO: convert namespace string to appropriate namespace ID (int)
+  }
+  urq.addQueryItem("cmtype", "page|subcat");
+  if (max_results > 0) {
+    urq.addQueryItem("cmlimit", QString::number(max_results));
+  }
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("list", "categorymembers");
+  url.addQueryItem("cmtitle", "Category:" + category);
+  if (name_space.empty()) {
+    url.addQueryItem("cmnamespace", QString::number(0));
+  }
+  else {
+    url.addQueryItem("cmnamespace", QString::number(0)); // TODO: convert namespace string to appropriate namespace ID (int)
+  }
+  url.addQueryItem("cmtype", "page|subcat");
+  if (max_results > 0) {
+    url.addQueryItem("cmlimit", QString::number(max_results));
+  }
+#endif
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Prepare the datatable.
+    results->RemoveAllRows();
+    DataCol* pt_col = results->FindMakeCol("PageTitle", VT_STRING);
+    DataCol* pid_col = results->FindMakeCol("PageId", VT_INT);
+
+  // For all <cm> elements in the XML, add the page title and page ID to the datatable.
+    QXmlStreamReader reader(reply);
+    while (findNextElement(reader, "cm")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      String pt = attrs.value("title").toString();
+      int pid = attrs.value("pageid").toInt();
+      results->AddBlankRow();
+      pt_col->SetVal(pt, -1);
+      pid_col->SetVal(pid, -1);
+    }
+
+    // Return true (success) as long as there were no errors in the XML.
+    return !reader.hasError();
+  }
 
   return false;
 }
@@ -678,7 +554,67 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
 {
   // #CAT_Query Fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all), string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type.
   
-  // STUB
+  if (!results) {
+    taMisc::Error("taMediaWiki::QueryFiles -- results data table is NULL -- must supply a valid data table!");
+    return false;
+  }
+
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("list", "allimages");
+  urq.addQueryItem("aisort", "name");
+  urq.addQueryItem("aifrom", start_nm);
+  urq.addQueryItem("aiprefix", prefix);
+  urq.addQueryItem("aiprop", "timestamp|url|size|mime");
+  if (max_results > 0) {
+    urq.addQueryItem("ailimit", QString::number(max_results));
+  }
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("list", "allimages");
+  url.addQueryItem("aisort", "name");
+  url.addQueryItem("aifrom", start_nm);
+  url.addQueryItem("aiprefix", prefix);
+  url.addQueryItem("aiprop", "timestamp|url|size|mime");
+  if (max_results > 0) {
+    url.addQueryItem("ailimit", QString::number(max_results));
+  }
+#endif
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Prepare the datatable.
+    results->RemoveAllRows();
+    DataCol* fn_col = results->FindMakeCol("FileName", VT_STRING);
+    DataCol* sz_col = results->FindMakeCol("Size", VT_INT);
+    DataCol* mt_col = results->FindMakeCol("MimeType", VT_STRING);
+
+  // For all <img> elements in the XML, add the file name, file size, and mime type to the datatable.
+    QXmlStreamReader reader(reply);
+    while (findNextElement(reader, "img")) {
+      QXmlStreamAttributes attrs = reader.attributes();
+      String fn = attrs.value("name").toString();
+      int sz = attrs.value("size").toInt();
+      String mt = attrs.value("mime").toString();
+      results->AddBlankRow();
+      fn_col->SetVal(fn, -1);
+      sz_col->SetVal(sz, -1);
+      mt_col->SetVal(mt, -1);
+    }
+
+    // Return true (success) as long as there were no errors in the XML.
+    return !reader.hasError();
+  }
 
   return false;
 }
@@ -741,6 +677,334 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
     // Return true (success) as long as there were no errors in the XML.
     return !reader.hasError();
   }
+
+  return false;
+}
+
+/////////////////////////////////////////////////////
+//            PAGE OPERATIONS
+
+bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
+{
+  // #CAT_Page Determine if given page exists on wiki.
+
+  // Build the request URL.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) return false;
+
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "query");
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("titles", page_name);
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "query");
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("titles", page_name);
+#endif
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpGet(url)) {
+    // Default the normalized name to the provided page name;
+    // will be changed if normalization was performed by the server.
+    String normalizedName = page_name;
+
+    QXmlStreamReader reader(reply);
+    int pageCount = 0;
+    while (!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        // Check for an <n> element indicating the normalized name.
+        // This is only present if the proivded page_name isn't
+        // canonical.
+        if (reader.name() == "n") {
+          QXmlStreamAttributes attrs = reader.attributes();
+          if (attrs.value("from").toString() == page_name) {
+            normalizedName = attrs.value("to").toString();
+          }
+        }
+        // Check for a <page> element
+        else if (reader.name() == "page") {
+          ++pageCount;
+          QXmlStreamAttributes attrs = reader.attributes();
+          if (attrs.value("title").toString() == normalizedName) {
+            // Check if the page name is marked as invalid or missing.
+            if (attrs.hasAttribute("invalid")) {
+              // For example, the page name "_" is invalid.
+              taMisc::Warning("Page name is invalid:", page_name);
+              return false;
+            }
+            else if (attrs.hasAttribute("missing")) {
+              // This is the normal case when a page does NOT exist.
+              return false;
+            }
+            else if (attrs.hasAttribute("pageid")) {
+              // Double check that the page ID is a positive number -- it
+              // should be since the page isn't marked invalid or missing!
+              bool ok = false;
+              QString pageIdStr = attrs.value("pageid").toString();
+              int pageId = pageIdStr.toInt(&ok);
+              if (!ok) {
+                // Shouldn't happen.
+                taMisc::Warning("Page ID is not numeric:", page_name,
+                  qPrintable(pageIdStr));
+                return false;
+              }
+              else if (pageId <= 0) {
+                // Shouldn't happen.
+                taMisc::Warning("Page ID is invalid:", page_name,
+                  qPrintable(pageIdStr));
+                return false;
+              }
+              else {
+                // This is the normal case when a page DOES exist.
+                return true;
+              }
+            }
+            else {
+              // Shouldn't happen.
+              taMisc::Warning(
+                "Unexpected condition; page isn't missing and doesn't exist:",
+                page_name);
+            }
+          }
+        }
+      }
+    }
+
+    if (pageCount == 0) {
+      // If page_name is "" or " ", for example, the entire response will be:
+      //   <api/>
+      taMisc::Warning("No page name provided:", page_name);
+    }
+    else {
+      // Not sure what happened if we got here.
+      taMisc::Warning("Unsure if page exists:", page_name);
+    }
+  }
+
+  // If request cancelled or response malformed, assume page doesn't exist.
+  return false;
+}
+
+bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name)
+{
+  // #CAT_Page Delete given page from the wiki.
+
+  // STUB
+
+  return false;
+}
+
+bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
+                               const String& page_content, const String& page_category)
+{
+  // #CAT_Page Find or create given page on the wiki and populate it with given content if non-empty -- return true on success.
+
+  // Given page exists on wiki.
+  if(PageExists(wiki_name, page_name)) {
+    // Append page with given content.
+    return EditPage(wiki_name, page_name, page_content);
+  }
+  // Given page does not exist on wiki.
+  else {
+    // Create page and populate it with given content.
+    return CreatePage(wiki_name, page_name, page_content);
+  }
+}
+
+bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
+                             const String& page_content, const String& page_category)
+{
+  // #CAT_Page Create given page on the wiki and populate it with given content.
+
+  if (!(PageExists(wiki_name, page_name))) {
+    QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+    if (token.isEmpty()) { return false; }
+
+    String wikiUrl = GetApiURL(wiki_name);
+    QUrl url(wikiUrl);
+
+#if (QT_VERSION >= 0x050000)
+    QUrlQuery urq;
+    urq.addQueryItem("action", "edit");
+    urq.addQueryItem("title", page_name);
+    urq.addQueryItem("section", "0");
+    urq.addQueryItem("createonly", "");
+    urq.addQueryItem("text", page_content);
+    urq.addQueryItem("format", "xml");
+    urq.addQueryItem("token", token);
+    url.setQuery(urq);
+#else
+    url.addQueryItem("action", "edit");
+    url.addQueryItem("title", page_name);
+    url.addQueryItem("section", "0");
+    url.addQueryItem("createonly", "");
+    url.addQueryItem("text", page_content);
+    url.addQueryItem("format", "xml");
+    url.addQueryItem("token", token);
+#endif
+
+    // Make the network request.
+    iSynchronousNetRequest request;
+    if (QNetworkReply *reply = request.httpPost(url)) {
+      QXmlStreamReader reader(reply);
+      while(!reader.atEnd()) {
+        if (reader.readNext() == QXmlStreamReader::StartElement) {
+          QXmlStreamAttributes attrs = reader.attributes();
+          if(reader.hasError()) {
+            QString err_code = attrs.value("code").toString();
+            QString err_info = attrs.value("info").toString();
+            taMisc::Warning("Page creation failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
+            
+            return false;
+          }
+          else {
+            taMisc::Info("Successfully created", page_name, "page on", wiki_name, "wiki!");
+            
+            return true;
+          }
+        }
+      }
+    }
+    taMisc::Warning("Page create request failed -- check the wiki/page names");
+    return false;
+  }
+  else {
+    taMisc::Warning("Page already exists!  Call FindMakePage to make edits to existing pages");
+    return false;
+  }
+}
+
+bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
+                           const String& page_content, const String& page_category)
+{
+  // #CAT_Page Append given page on the wiki with given content.
+
+  if (PageExists(wiki_name, page_name)) {
+    QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+    if (token.isEmpty()) { return false; }
+
+    String wikiUrl = GetApiURL(wiki_name);
+    QUrl url(wikiUrl);
+
+#if (QT_VERSION >= 0x050000)
+    QUrlQuery urq;
+    urq.addQueryItem("action", "edit");
+    urq.addQueryItem("title", page_name);
+    urq.addQueryItem("section", "new");
+    urq.addQueryItem("nocreate", "");
+    urq.addQueryItem("appendtext", page_content);
+    urq.addQueryItem("format", "xml");
+    urq.addQueryItem("token", token);
+    url.setQuery(urq);
+#else
+    url.addQueryItem("action", "edit");
+    url.addQueryItem("title", page_name);
+    url.addQueryItem("section", "new");
+    url.addQueryItem("nocreate", "");
+    url.addQueryItem("appendtext", page_content);
+    url.addQueryItem("format", "xml");
+    url.addQueryItem("token", token);
+#endif
+
+    // Make the network request.
+    iSynchronousNetRequest request;
+    if (QNetworkReply *reply = request.httpPost(url)) {
+      QXmlStreamReader reader(reply);
+      while(!reader.atEnd()) {
+        if (reader.readNext() == QXmlStreamReader::StartElement) {
+          QXmlStreamAttributes attrs = reader.attributes();
+          if(reader.hasError()) {
+            QString err_code = attrs.value("code").toString();
+            QString err_info = attrs.value("info").toString();
+            taMisc::Warning("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
+            
+            return false;
+          }
+          else {
+            taMisc::Info("Successfully edited", page_name, "page on", wiki_name, "wiki!");
+            
+            return true;
+          }
+        }
+      }
+    }
+    taMisc::Warning("Page edit request failed -- check the wiki/page names");
+    return false;
+  }
+  else {
+    taMisc::Warning("Page does not exist!  Call FindMakePage to create a new page");
+    return false;
+  }
+}
+
+/////////////////////////////////////////////////////
+//            WIKI OPERATIONS
+
+String taMediaWiki::GetApiURL(const String& wiki_name)
+{
+  // #CAT_Wiki Get the URL for the wiki API.
+
+  bool appendIndexPhp = false;
+  String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
+  if (wiki_url.empty()) {
+    taMisc::Error("taMediaWiki::GetApiURL", "wiki named:", wiki_name,
+                  "not found in global preferences/options under wiki_url settings");
+    return _nilString;
+  }
+  return wiki_url + "/api.php";
+}
+
+String taMediaWiki::GetEditToken(const String& wiki_name)
+{
+  // #CAT_Wiki On success, return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query, as in CreatePage) -- On failure, return an empty String.
+  
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) { return _nilString; }
+
+  QUrl url(wikiUrl);
+
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "tokens");
+  urq.addQueryItem("type", "edit");
+  urq.addQueryItem("format", "xml");
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "tokens");
+  url.addQueryItem("type", "edit");
+  url.addQueryItem("format", "xml");
+#endif
+
+  // Make the network request.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpPost(url)) {
+
+    QXmlStreamReader reader(reply);
+    if(reader.hasError()) { return _nilString; }
+
+    while(!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        QXmlStreamAttributes attrs = reader.attributes();
+        QString token = attrs.value("edittoken").toString();
+        if(!token.isEmpty()) {
+          taMisc::Info("Edit token retrieval successful");
+          return token.toUtf8().constData();
+        }
+      }
+    }
+  }
+  return _nilString;
+}
+
+bool taMediaWiki::PublishProject(const String& wiki_name, const String& proj_filename,
+                                   const String& page_content, const String& proj_category)
+{
+  // #CAT_Wiki Create or edit the wiki page for this project, upload all files in the local project directory, then post links to these files on the project's wiki page
+
+  // STUB
 
   return false;
 }
