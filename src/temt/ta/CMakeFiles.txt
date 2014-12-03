@@ -230,7 +230,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ViewBackground_List.h
     
   iFont.h
-  taFontSpec.h
 
   AbstractScriptBase.h
   ScriptBase.h
