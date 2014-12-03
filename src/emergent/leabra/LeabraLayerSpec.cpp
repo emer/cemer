@@ -579,55 +579,34 @@ void LeabraLayerSpec::LayerAvgAct(DataTable* report_table) {
 
 float LeabraLayerSpec::Compute_SSE(LeabraLayer* lay, LeabraNetwork* net,
                                    int& n_vals, bool unit_avg, bool sqrt) {
+  // use default, but allow subclasses to override in layerspec
   return lay->Layer::Compute_SSE(net, n_vals, unit_avg, sqrt);
 }
 
-float LeabraLayerSpec::Compute_NormErr_ugp(LeabraLayer* lay,
-                                           Layer::AccessMode acc_md, int gpidx,
-                                           LeabraInhib* thr, LeabraNetwork* net) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  float nerr = 0.0f;
-  for(int i=0; i<nunits; i++) {
-    LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
-    if(u->lesioned()) continue;
-    nerr += ((LeabraUnitSpec*)u->GetUnitSpec())->Compute_NormErr
-      ((LeabraUnitVars*)u->GetUnitVars(), net, u->ThrNo());
-  }
-  return nerr;
-}
-
 float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
-  lay->norm_err = -1.0f;                                         // assume not contributing
-  if(!lay->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return -1.0f; // indicates not applicable
-
+  lay->norm_err = -1.0f;        // assume not contributing
+  if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return -1.0f; // indicates not applicable
 
   float nerr = 0.0f;
-  int ntot = 0;
-  if(HasUnitGpInhib(lay)) {
-    int gp_nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-    for(int g=0; g < lay->gp_geom.n; g++) {
-      LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      nerr += Compute_NormErr_ugp(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net);
-      int nact = (int)(gpd->acts_m_avg * (float)gp_nunits + 0.5f);
-      nact = MAX(1, nact);      // must have at least 1
-      ntot += nact;
-      if(net->lstats.on_errs && net->lstats.off_errs)
-        ntot += nact;           // another
-    }
-  }
-  else {
-    int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
-    nerr += Compute_NormErr_ugp(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net);
-    int nact = (int)(lay->acts_m_avg * (float)lay_nunits + 0.5f);
-    nact = MAX(1, nact);      // must have at least 1
-    ntot += nact;
-    if(net->lstats.on_errs && net->lstats.off_errs)
-      ntot += nact;
-  }
-  if(ntot == 0) return -1.0f;
+  int ntrg_act = 0;
 
-  lay->norm_err = nerr / (float)ntot;
-  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f;
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lay_nerr = net->ThrLayStats(thr_no, li, 0);
+    float& lay_trg_n = net->ThrLayStats(thr_no, li, 1);
+
+    nerr += lay_nerr;
+    ntrg_act += (int)lay_trg_n;
+  }
+
+  if(net->lstats.on_errs && net->lstats.off_errs)
+    ntrg_act *= 2;              // double count
+
+  if(ntrg_act == 0) return -1.0f;
+
+  lay->norm_err = nerr / (float)ntrg_act;
+  if(lay->norm_err > 1.0f) lay->norm_err = 1.0f; // shouldn't happen...
 
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
      (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
@@ -642,7 +621,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   lay->cos_err_prv = 0.0f;
   lay->cos_err_vs_prv = 0.0f;
   n_vals = 0;
-  if(!lay->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0.0f;
+  if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
      (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
     return 0.0f;
@@ -652,16 +631,23 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   float ssm = 0.0f;
   float ssp = 0.0f;
   float sst = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    //    if(!u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) continue;
-    n_vals++;
-    cosv += u->targ() * u->act_m();
-    ssm += u->act_m() * u->act_m();
-    sst += u->targ() * u->targ();
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lcosv = net->ThrLayStats(thr_no, li, 0);
+    float& lcosvp = net->ThrLayStats(thr_no, li, 1);
+    float& lssm = net->ThrLayStats(thr_no, li, 2);
+    float& lssp = net->ThrLayStats(thr_no, li, 3);
+    float& lsst = net->ThrLayStats(thr_no, li, 4);
+    float& lnvals = net->ThrLayStats(thr_no, li, 5);
+
+    n_vals += lnvals;
+    cosv += lcosv;
+    ssm += lssm;
+    sst += lsst;
     if(net->net_misc.ti) {
-      cosvp += u->targ() * u->act_q0();
-      ssp += u->act_q0() * u->act_q0();
+      cosvp += lcosvp;
+      ssp += lssp;
     }
   }
   if(n_vals == 0) return 0.0f;
@@ -685,11 +671,17 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   float cosv = 0.0f;
   float ssm = 0.0f;
   float sst = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    cosv += u->act_p() * u->act_m();
-    ssm += u->act_m() * u->act_m();
-    sst += u->act_p() * u->act_p();
+
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lcosv = net->ThrLayStats(thr_no, li, 0);
+    float& lssm = net->ThrLayStats(thr_no, li, 1);
+    float& lsst = net->ThrLayStats(thr_no, li, 2);
+
+    cosv += lcosv;
+    ssm += lssm;
+    sst += lsst;
   }
   float dist = sqrtf(ssm * sst);
   if(dist != 0.0f)
@@ -711,11 +703,16 @@ float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) 
   lay->avg_act_diff = 0.0f;
   float adiff = 0.0f;
   int nd = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    adiff += u->act_p() - u->act_m();
-    nd++;
+
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& ladiff = net->ThrLayStats(thr_no, li, 0);
+    float& lnd = net->ThrLayStats(thr_no, li, 1);
+    adiff += ladiff;
+    nd += (int)lnd;
   }
+  
   if(nd > 0)
     adiff /= (float)nd;
   lay->avg_act_diff = adiff;
@@ -727,12 +724,19 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   float cosv = 0.0f;
   float ssm = 0.0f;
   float sst = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-    if(u->lesioned()) continue;
-    cosv += u->act_p() * u->act_q0();
-    ssm += u->act_q0() * u->act_q0();
-    sst += u->act_p() * u->act_p();
+
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lcosv = net->ThrLayStats(thr_no, li, 0);
+    float& lssm = net->ThrLayStats(thr_no, li, 1);
+    float& lsst = net->ThrLayStats(thr_no, li, 2);
+
+    cosv += lcosv;
+    ssm += lssm;
+    sst += lsst;
   }
+  
   float dist = sqrtf(ssm * sst);
   if(dist != 0.0f)
     cosv /= dist;

@@ -514,14 +514,24 @@ public:
   // #CAT_Statistic compute external reward information: called in plus phase stats
   virtual void	Compute_NormErr();
   // #CAT_Statistic compute normalized binary error between act_m and targ unit values: called in TrialStats -- per unit: if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0; normalization is per layer based on k value: total possible err for both on and off errs is 2 * k (on or off alone is just k)
+    virtual void Compute_NormErr_Thr(int thr_no);
+    // #IGNORE
   virtual float	Compute_CosErr();
   // #CAT_Statistic compute cosine (normalized dot product) error between act_m and targ unit values
+    virtual void Compute_CosErr_Thr(int thr_no);
+    // #IGNORE
   virtual float	Compute_CosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) phase difference between act_m and act_p unit values -- must be called after PostQuarter (QuarterFinal) for plus phase to get the act_p values
+    virtual void Compute_CosDiff_Thr(int thr_no);
+    // #IGNORE
   virtual float	Compute_AvgActDiff();
   // #CAT_Statistic compute average act_diff (act_p - act_m) -- must be called after PostQuarter (QuarterFinal) for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
+    virtual void Compute_AvgActDiff_Thr(int thr_no);
+    // #IGNORE
   virtual float	Compute_TrialCosDiff();
   // #CAT_Statistic compute cosine (normalized dot product) trial activation difference between act_q0 and act_q4 unit values -- must be called after Quarter_Final for plus phase to get the act_q4 values
+    virtual void Compute_TrialCosDiff_Thr(int thr_no);
+    // #IGNORE
   void	Compute_TrialStats() override;
   // #CAT_Statistic #OBSOLETE do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time
 

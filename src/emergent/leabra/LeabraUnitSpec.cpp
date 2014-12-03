@@ -1855,9 +1855,13 @@ bool LeabraUnitSpec::Compute_PRerr
   return has_targ;
 }
 
-float LeabraUnitSpec::Compute_NormErr(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0.0f;
+float LeabraUnitSpec::Compute_NormErr(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
+                                      bool& targ_active) {
+  targ_active = false;
+  if(!u->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
 
+  targ_active = (u->targ > 0.5f);   // use this for counting expected activity level
+    
   if(net->lstats.on_errs) {
     if(u->act_m > 0.5f && u->targ < 0.5f) return 1.0f;
   }

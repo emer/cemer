@@ -1914,14 +1914,14 @@ void Network::Compute_Weights_Thr(int thr_no) {
 }
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {
+  NET_THREAD_CALL(Network::Compute_SSE_Thr);
+  
   sse = 0.0f;
   int n_vals = 0;
   int lay_vals = 0;
-
-  NET_THREAD_CALL(Network::Compute_SSE_Thr);
-  
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* l = ActiveLayer(li);
     sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
   }
@@ -1961,13 +1961,13 @@ void Network::Compute_SSE_Thr(int thr_no) {
 }
 
 void Network::Compute_PRerr() {
-  prerr.InitVals();
-  int n_vals = 0;
-
   NET_THREAD_CALL(Network::Compute_PRerr_Thr);
 
-  FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
+  prerr.InitVals();
+  int n_vals = 0;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* l = ActiveLayer(li);
     int lay_vals = l->Compute_PRerr(this);
     if(lay_vals > 0) {
       prerr.IncrVals(l->prerr);

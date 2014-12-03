@@ -1403,10 +1403,14 @@ void LeabraNetwork::Compute_ExtRew() {
 }
 
 void LeabraNetwork::Compute_NormErr() {
+
+  NET_THREAD_CALL(LeabraNetwork::Compute_NormErr_Thr);
+
   float nerr_sum = 0.0f;
   float nerr_avail = 0.0f;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(lay->lesioned()) continue;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
     float nerr = lay->Compute_NormErr(this);
     if(nerr >= 0.0f) {
       nerr_avail += 1.0f;
@@ -1426,19 +1430,49 @@ void LeabraNetwork::Compute_NormErr() {
   }
 }
 
+void LeabraNetwork::Compute_NormErr_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+
+    float& lay_nerr = ThrLayStats(thr_no, li, 0);
+    float& lay_trg_n = ThrLayStats(thr_no, li, 1);
+    lay_nerr = 0.0f;
+    lay_trg_n = 0.0f;
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool targ_active = false;
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      lay_nerr += ((LeabraUnitSpec*)uv->unit_spec)->Compute_NormErr
+        (uv, this, thr_no, targ_active);
+      if(targ_active) lay_trg_n += 1.0f;
+    }
+  }
+}
+
 float LeabraNetwork::Compute_CosErr() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_CosErr_Thr);
+
   float cosv = 0.0f;
   float cosvp = 0.0f;
   float cosvsp = 0.0f;
   int n_lays = 0;
   int lay_vals = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
     cosv += l->Compute_CosErr(this, lay_vals);
-    if(net_misc.ti && lay_vals > 0) {
-      cosvp += l->cos_err_prv;
-      cosvsp += l->cos_err_vs_prv;
+    if(lay_vals > 0) {
       n_lays++;
+      if(net_misc.ti) {
+        cosvp += l->cos_err_prv;
+        cosvsp += l->cos_err_vs_prv;
+      }
     }
   }
   if(n_lays > 0) {
@@ -1464,13 +1498,51 @@ float LeabraNetwork::Compute_CosErr() {
   return cosv;
 }
 
+void LeabraNetwork::Compute_CosErr_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+
+    float& cosv = ThrLayStats(thr_no, li, 0);
+    float& cosvp = ThrLayStats(thr_no, li, 1);
+    float& ssm = ThrLayStats(thr_no, li, 2);
+    float& ssp = ThrLayStats(thr_no, li, 3);
+    float& sst = ThrLayStats(thr_no, li, 4);
+    float& nvals = ThrLayStats(thr_no, li, 5);
+
+    cosv = 0.0f;  cosvp = 0.0f;  ssm = 0.0f;  ssp = 0.0f; sst = 0.0f; nvals = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool targ_active = false;
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      if(!uv->HasExtFlag(UnitVars::COMP_TARG)) continue;
+      nvals += 1.0f;
+      cosv += uv->targ * uv->act_m;
+      ssm += uv->act_m * uv->act_m;
+      sst += uv->targ * uv->targ;
+      if(net_misc.ti) {
+        cosvp += uv->targ * uv->act_q0;
+        ssp += uv->act_q0 * uv->act_q0;
+      }
+    }
+  }
+}
+
 float LeabraNetwork::Compute_CosDiff() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_CosDiff_Thr);
+    
   float cosv = 0.0f;
   int n_lays = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
     float lcosv = l->Compute_CosDiff(this);
-    if(!l->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+    if(!l->HasExtFlag(UnitVars::COMP_TARG)) {
       cosv += lcosv;
       n_lays++;
     }
@@ -1487,13 +1559,40 @@ float LeabraNetwork::Compute_CosDiff() {
   return cosv;
 }
 
+void LeabraNetwork::Compute_CosDiff_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+
+    float& cosv = ThrLayStats(thr_no, li, 0);
+    float& ssm = ThrLayStats(thr_no, li, 1);
+    float& sst = ThrLayStats(thr_no, li, 2);
+
+    cosv = 0.0f;  ssm = 0.0f;  sst = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool targ_active = false;
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      cosv += uv->act_p * uv->act_m;
+      ssm += uv->act_m * uv->act_m;
+      sst += uv->act_p * uv->act_p;
+    }
+  }
+}
+
 float LeabraNetwork::Compute_AvgActDiff() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_AvgActDiff_Thr);
+
   float adiff = 0.0f;
   int n_lays = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
     float ladiff = l->Compute_AvgActDiff(this);
-    if(!l->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+    if(!l->HasExtFlag(UnitVars::COMP_TARG)) {
       adiff += ladiff;
       n_lays++;
     }
@@ -1510,13 +1609,37 @@ float LeabraNetwork::Compute_AvgActDiff() {
   return adiff;
 }
 
+void LeabraNetwork::Compute_AvgActDiff_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+
+    float& adiff = ThrLayStats(thr_no, li, 0);
+    float& nd = ThrLayStats(thr_no, li, 1);
+    adiff = 0.0f;  nd = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool targ_active = false;
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      adiff += uv->act_p - uv->act_m;
+      nd += 1.0f;
+    }
+  }
+}
+
 float LeabraNetwork::Compute_TrialCosDiff() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_TrialCosDiff_Thr);
+    
   float cosv = 0.0f;
+  const int nlay = n_layers_built;
   int n_lays = 0;
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, l, layers) {
-    if(l->lesioned()) continue;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
     float lcosv = l->Compute_TrialCosDiff(this);
-    if(!l->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+    if(!l->HasExtFlag(UnitVars::COMP_TARG)) {
       cosv += lcosv;
       n_lays++;
     }
@@ -1531,6 +1654,30 @@ float LeabraNetwork::Compute_TrialCosDiff() {
     trial_cos_diff = 0.0f;
   }
   return cosv;
+}
+
+void LeabraNetwork::Compute_TrialCosDiff_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+
+    float& cosv = ThrLayStats(thr_no, li, 0);
+    float& ssm = ThrLayStats(thr_no, li, 1);
+    float& sst = ThrLayStats(thr_no, li, 2);
+
+    cosv = 0.0f;  ssm = 0.0f;  sst = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool targ_active = false;
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      cosv += uv->act_p * uv->act_q0;
+      ssm += uv->act_q0 * uv->act_q0;
+      sst += uv->act_p * uv->act_p;
+    }
+  }
 }
 
 void LeabraNetwork::Compute_TrialStats() {

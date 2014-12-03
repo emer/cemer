@@ -884,7 +884,6 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   if(!HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
 
   const int li = active_lay_idx;
-  
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
     float& lay_sse = net->ThrLayStats(thr_no, li, 0);
@@ -913,7 +912,6 @@ int Layer::Compute_PRerr(Network* net) {
   if(!HasExtFlag(UnitVars::COMP_TARG)) return 0;
 
   const int li = active_lay_idx;
-  
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
     float& true_pos = net->ThrLayStats(thr_no, li, 0);

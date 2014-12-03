@@ -741,9 +741,8 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
   for(int g=0; g<rsz; g++) {
     ConGroup* cg = RecvConGroup(g);
     if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
-    // todo:
-    // cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
-    //                    var9, var10, var11, var12, var13, var14);
+    cg->ConVarsToTable(dt, this, net, var1, var2, var3, var4, var5, var6, var7, var8,
+                       var9, var10, var11, var12, var13, var14);
   }
   dt->StructUpdate(false);
   if(new_table)
