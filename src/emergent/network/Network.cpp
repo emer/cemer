@@ -2283,8 +2283,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     if(lay->lesioned()) continue;
     FOREACH_ELEM_IN_GROUP(Unit, un, lay->units) {
       if(un->lesioned()) continue;
-      if(un->bias.size)
-        un->bias.OwnCn(0,ConGroup::DWT) = results.FastEl(cidx++);
+      un->bias_wt() = results.FastEl(cidx++);
       if(RecvOwnsCons()) {
         for(int g = 0; g < un->NRecvConGps(); g++) {
           ConGroup* cg = un->RecvConGroup(g);
