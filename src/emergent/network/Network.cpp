@@ -142,6 +142,8 @@ void Network::Initialize() {
   thrs_units_mem = NULL;
   thrs_lay_unit_idxs = NULL;
   thrs_ungp_unit_idxs = NULL;
+  thrs_lay_stats = NULL;
+  n_lay_stats = 6;
 
   units_n_recv_cgps = NULL;
   units_n_send_cgps = NULL;
@@ -576,6 +578,7 @@ void Network::FreeUnitConGpThreadMem() {
     net_free((void**)&thrs_unit_idxs[i]);
     net_free((void**)&thrs_lay_unit_idxs[i]);
     net_free((void**)&thrs_ungp_unit_idxs[i]);
+    net_free((void**)&thrs_lay_stats[i]);
     net_free((void**)&thrs_units_mem[i]);
   }
 
@@ -592,6 +595,7 @@ void Network::FreeUnitConGpThreadMem() {
   net_free((void**)&thrs_unit_idxs);
   net_free((void**)&thrs_lay_unit_idxs);
   net_free((void**)&thrs_ungp_unit_idxs);
+  net_free((void**)&thrs_lay_stats);
   net_free((void**)&thrs_units_mem);
 
   // now go back and get the rest
@@ -653,6 +657,7 @@ void Network::AllocUnitConGpThreadMem() {
   net_aligned_malloc((void**)&thrs_unit_idxs, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_lay_unit_idxs, n_thrs_built * sizeof(int*));
   net_aligned_malloc((void**)&thrs_ungp_unit_idxs, n_thrs_built * sizeof(int*));
+  net_aligned_malloc((void**)&thrs_lay_stats, n_thrs_built * sizeof(float*));
   net_aligned_malloc((void**)&thrs_units_mem, n_thrs_built * sizeof(char*));
 
   net_aligned_malloc((void**)&units_n_recv_cgps, n_units_built * sizeof(int));
@@ -677,6 +682,7 @@ void Network::AllocUnitConGpThreadMem() {
     net_aligned_malloc((void**)&thrs_units_mem[i], max_thr_n_units * unit_vars_size);
     net_aligned_malloc((void**)&thrs_lay_unit_idxs[i], 2 * n_layers_built * sizeof(int));
     net_aligned_malloc((void**)&thrs_ungp_unit_idxs[i], 2 * n_ungps_built * sizeof(int));
+    net_aligned_malloc((void**)&thrs_lay_stats[i], n_lay_stats * n_layers_built * sizeof(float));
 
     net_aligned_malloc((void**)&thrs_units_n_recv_cgps[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_units_n_send_cgps[i], max_thr_n_units * sizeof(int));
@@ -777,6 +783,9 @@ void Network::InitUnitThreadIdxs(int thr_no) {
   }
   for(int i=0; i< 2*n_ungps_built; i++) {
     thrs_ungp_unit_idxs[thr_no][i] = -1;
+  }
+  for(int i=0; i< n_lay_stats*n_layers_built; i++) {
+    thrs_lay_stats[thr_no][i] = 0.0f;
   }
 
   int thr_un_idx = 0;
@@ -1908,6 +1917,9 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
   sse = 0.0f;
   int n_vals = 0;
   int lay_vals = 0;
+
+  NET_THREAD_CALL(Network::Compute_SSE_Thr);
+  
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
@@ -1923,9 +1935,37 @@ void Network::Compute_SSE(bool unit_avg, bool sqrt) {
     cur_cnt_err += 1.0;
 }
 
+void Network::Compute_SSE_Thr(int thr_no) {
+  // gather all the raw data for sse computation
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+
+    float& lay_sse = ThrLayStats(thr_no, li, 0);
+    float& lay_n = ThrLayStats(thr_no, li, 1);
+    lay_sse = 0.0f;
+    lay_n = 0.0f;
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool has_targ = false;
+    for(int ui = ust; ui < ued; ui++) {
+      UnitVars* uv = ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      lay_sse += uv->unit_spec->Compute_SSE(uv, this, thr_no, has_targ);
+      if(has_targ) lay_n += 1.0f;
+    }
+  }
+}
+
 void Network::Compute_PRerr() {
   prerr.InitVals();
   int n_vals = 0;
+
+  NET_THREAD_CALL(Network::Compute_PRerr_Thr);
+
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
     if(l->lesioned()) continue;
     int lay_vals = l->Compute_PRerr(this);
@@ -1938,6 +1978,34 @@ void Network::Compute_PRerr() {
     sum_prerr.IncrVals(prerr);
     prerr.ComputePR();
     sum_prerr.ComputePR();
+  }
+}
+
+void Network::Compute_PRerr_Thr(int thr_no) {
+  // gather all the raw data for prerr computation
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    if(!lay->HasExtFlag(UnitVars::COMP_TARG))
+      continue;
+
+    float& true_pos = ThrLayStats(thr_no, li, 0);
+    float& false_pos = ThrLayStats(thr_no, li, 1);
+    float& false_neg = ThrLayStats(thr_no, li, 2);
+    float& true_neg = ThrLayStats(thr_no, li, 3);
+    float& lay_n = ThrLayStats(thr_no, li, 4);
+    true_pos = 0.0f;   false_pos = 0.0f;    false_neg = 0.0f;    true_neg = 0.0f;
+    lay_n = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      UnitVars* uv = ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      bool has_targ = uv->unit_spec->Compute_PRerr
+        (uv, this, thr_no, true_pos, false_pos, false_neg, true_neg);
+      if(has_targ) lay_n += 1.0f;
+    }
   }
 }
 

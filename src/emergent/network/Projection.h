@@ -122,9 +122,9 @@ public:
   // #CAT_Weights custom initialize weights in this con group for given receiving unit ru
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
-  // #MENU #MENU_SEP_BEFORE #CAT_Weights apply given transformation to weights
+  // #MENU #MENU_SEP_BEFORE #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec);
-  // #MENU #CAT_Weights add noise to weights using given noise specification
+  // #MENU #CAT_Weights add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   virtual int   PruneCons(const SimpleMathSpec& pre_proc,
                              Relation::Relations rel, float cmp_val);
   // #MENU #USE_RVAL #CAT_Weights remove weights that (after pre-proc) meet relation to compare val

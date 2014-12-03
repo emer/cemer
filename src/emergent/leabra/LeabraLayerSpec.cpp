@@ -378,23 +378,12 @@ void LeabraLayerSpec::ExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
   if(!lay->HasExtFlag(UnitVars::EXT))       // only process ext
     return;
   lay->ext_flag = UnitVars::COMP;   // totally reset to comparison
-
-  // todo: fix
-  // FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-  //   if(u->lesioned()) continue;
-  //   u->ExtToComp(net);
-  // }
 }
 
 void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
   if(!lay->HasExtFlag(UnitVars::TARG_EXT))  // only process w/ external input
     return;
   lay->ext_flag = UnitVars::COMP;   // totally reset to comparison
-
-  // FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-  //   if(u->lesioned()) continue;
-  //   u->TargExtToComp(net);
-  // }
 }
 
 ///////////////////////////////////////////////////////////////////////

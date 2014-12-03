@@ -705,9 +705,10 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	Stats
 
-  float Compute_SSE(UnitVars* uv, Network* net, bool& has_targ) override;
-  bool	 Compute_PRerr(UnitVars* uv, Network* net, float& true_pos, float& false_pos,
-                       float& false_neg, float& true_neg) override;
+  float Compute_SSE(UnitVars* uv, Network* net, int thr_no, bool& has_targ) override;
+  bool  Compute_PRerr
+    (UnitVars* uv, Network* net, int thr_no, float& true_pos, float& false_pos,
+     float& false_neg, float& true_neg) override;
   virtual float  Compute_NormErr(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Statistic compute normalized binary error (0-1 as function of bits off of act_m vs target) according to settings on the network (returns a 1 or 0) -- if (net->lstats.on_errs && act_m > .5 && targ < .5) return 1; if (net->lstats.off_errs && act_m < .5 && targ > .5) return 1; else return 0
 

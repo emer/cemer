@@ -881,14 +881,19 @@ void Layer::Init_Weights_Layer(Network* net) {
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   n_vals = 0;
   sse = 0.0f;
-  if(!HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0.0f;
-  // todo: fix this logic to be cleaner
-  bool has_targ;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(u->lesioned()) continue;
-    sse += u->GetUnitSpec()->Compute_SSE(u->GetUnitVars(), net, has_targ);
-    if(has_targ) n_vals++;
+  if(!HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
+
+  const int li = active_lay_idx;
+  
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lay_sse = net->ThrLayStats(thr_no, li, 0);
+    float& lay_n = net->ThrLayStats(thr_no, li, 1);
+
+    sse += lay_sse;
+    n_vals += (int)lay_n;
   }
+  
   float rval = sse;
   if(unit_avg && n_vals > 0)
     sse /= (float)n_vals;
@@ -905,21 +910,27 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
 int Layer::Compute_PRerr(Network* net) {
   int n_vals = 0;
   prerr.InitVals();
-  if(!HasExtFlag(UnitVars::TARG | UnitVars::COMP)) return 0;
-  float true_pos, false_pos, false_neg, true_neg;
-  FOREACH_ELEM_IN_GROUP(Unit, u, units) {
-    if(u->lesioned()) continue;
-    bool has_targ = u->GetUnitSpec()->Compute_PRerr(u->GetUnitVars(), net, true_pos, false_pos, false_neg, true_neg);
-    if(has_targ) {
-      n_vals++;
-      prerr.true_pos += true_pos;
-      prerr.false_pos += false_pos;
-      prerr.false_neg += false_neg;
-      prerr.true_neg += true_neg;
-    }
+  if(!HasExtFlag(UnitVars::COMP_TARG)) return 0;
+
+  const int li = active_lay_idx;
+  
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& true_pos = net->ThrLayStats(thr_no, li, 0);
+    float& false_pos = net->ThrLayStats(thr_no, li, 1);
+    float& false_neg = net->ThrLayStats(thr_no, li, 2);
+    float& true_neg = net->ThrLayStats(thr_no, li, 3);
+    float& lay_n = net->ThrLayStats(thr_no, li, 4);
+
+    n_vals += (int)lay_n;
+    prerr.true_pos += true_pos;
+    prerr.false_pos += false_pos;
+    prerr.false_neg += false_neg;
+    prerr.true_neg += true_neg;
   }
   prerr.ComputePR();
-  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) && HasLayerFlag(NO_ADD_COMP_SSE))) {
+  if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
+                                  HasLayerFlag(NO_ADD_COMP_SSE))) {
     n_vals = 0;
   }
   return n_vals;

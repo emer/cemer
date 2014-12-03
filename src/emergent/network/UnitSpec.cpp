@@ -175,10 +175,10 @@ void UnitSpec::Compute_Weights(UnitVars* u, Network* net, int thr_no) {
   }
 }
 
-float UnitSpec::Compute_SSE(UnitVars* u, Network* net, bool& has_targ) {
+float UnitSpec::Compute_SSE(UnitVars* u, Network* net, int thr_no, bool& has_targ) {
   float sse = 0.0f;
   has_targ = false;
-  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+  if(u->HasExtFlag(UnitVars::COMP_TARG)) {
     has_targ = true;
     float uerr = u->targ - u->act;
     if(fabsf(uerr) >= sse_tol)
@@ -187,27 +187,23 @@ float UnitSpec::Compute_SSE(UnitVars* u, Network* net, bool& has_targ) {
   return sse;
 }
 
-bool UnitSpec::Compute_PRerr(UnitVars* u, Network* net, float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
+bool UnitSpec::Compute_PRerr
+(UnitVars* u, Network* net, int thr_no,
+ float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
   true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f; true_neg = 0.0f;
   bool has_targ = false;
-  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+  if(u->HasExtFlag(UnitVars::COMP_TARG)) {
     has_targ = true;
-    // float uerr = u->targ - u->act;
-    // if(fabsf(uerr) < sse_tol) {
-    //   true_pos = u->targ;
-    // }
-    // else {
-      if(u->targ > u->act) {
-	true_pos = u->act;
-	true_neg = 1.0 - u->targ;
-        false_neg = u->targ - u->act;
-      }
-      else {
-        true_pos = u->targ;
-        false_pos = u->act - u->targ;
-	true_neg = 1.0 - u->act;
-      }
-    // }
+    if(u->targ > u->act) {
+      true_pos = u->act;
+      true_neg = 1.0 - u->targ;
+      false_neg = u->targ - u->act;
+    }
+    else {
+      true_pos = u->targ;
+      false_pos = u->act - u->targ;
+      true_neg = 1.0 - u->act;
+    }
   }
   return has_targ;
 }

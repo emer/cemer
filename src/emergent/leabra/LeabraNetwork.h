@@ -127,6 +127,7 @@ public:
   bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
   bool          ti;            // #READ_ONLY #SHOW LeabraTI (temporal integration) processing and learning mechanisms are engaged, because LeabraTICtxtConSpec SELF prjns are present in layers to perform optimized single-layer TI context activation at end of plus phase -- updated in Trial_Init_Specs call
   bool          deep5b_cons; // #READ_ONLY #SHOW Deep5bConSpec prjns are present in layers to send deep5b activations instead of superficial activations -- updated in Trial_Init_Specs call
+  bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
   bool          diff_scale_p;   // #READ_ONLY #SHOW at least one connection spec uses diff_act_p setting to drive a differential wt scaling in the plus phase relative to the minus phase -- this requires initializing the net inputs between these phases
   bool		dwt_norm;       // #READ_ONLY #SHOW dwt_norm is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
@@ -371,8 +372,12 @@ public:
 
     virtual void ExtToComp();
     // #CAT_QuarterInit move external input values to comparison values (not currently used)
+      virtual void ExtToComp_Thr(int thr_no);
+      // #IGNORE
     virtual void TargExtToComp();
     // #CAT_QuarterInit move target and external input values to comparison
+      virtual void TargExtToComp_Thr(int thr_no);
+      // #IGNORE
 
   virtual void  NewInputData_Init();
   // #CAT_QuarterInit perform initialization stuff needed to update external input data signals so they actually show up as activations in the network: Quarter_Init_Layer, Quarter_Init_TrgFlags, Compute_HardClamp
@@ -494,6 +499,7 @@ public:
   // #CAT_Learning compute normalization of weight changes -- must be done as a second pass after initial weight changes
 
   virtual void Compute_Weights_impl();
+    void Compute_Weights_Thr(int thr_no) override;
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats

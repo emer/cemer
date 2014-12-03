@@ -74,6 +74,7 @@ void LeabraNetMisc::Initialize() {
   spike = false;
   ti = false;
   deep5b_cons = false;
+  bias_learn = false;
   diff_scale_p = false;
   dwt_norm = false;
   lay_gp_inhib = false;
@@ -521,12 +522,34 @@ void LeabraNetwork::ExtToComp() {
     if(!lay->lesioned())
       lay->ExtToComp(this);
   }
+
+  NET_THREAD_CALL(LeabraNetwork::ExtToComp_Thr);
+}
+
+void LeabraNetwork::ExtToComp_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->ExtToComp(uv, this, thr_no);
+  }
 }
 
 void LeabraNetwork::TargExtToComp() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->TargExtToComp(this);
+  }
+
+  NET_THREAD_CALL(LeabraNetwork::TargExtToComp_Thr);
+}
+
+void LeabraNetwork::TargExtToComp_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->TargExtToComp(uv, this, thr_no);
   }
 }
 
@@ -1274,6 +1297,15 @@ void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
     cs->Compute_dWt(scg, this, thr_no);
   }
 
+  if(net_misc.bias_learn) {
+    const int nu = ThrNUnits(thr_no);
+    for(int i=0; i<nu; i++) {
+      UnitVars* uv = ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      uv->unit_spec->Compute_dWt(uv, this, thr_no); // just bias weights
+    }
+  }
+  
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->dwt.EndIncrAvg();
 }
@@ -1296,6 +1328,32 @@ void LeabraNetwork::Compute_Weights_impl() {
 
   NET_THREAD_CALL(LeabraNetwork::Compute_Weights_Thr);
 }
+
+void LeabraNetwork::Compute_Weights_Thr(int thr_no) {
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->wt.StartTimer(true); // reset
+
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
+    if(scg->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)scg->con_spec;
+    cs->Compute_Weights(scg, this, thr_no);
+  }
+
+  if(net_misc.bias_learn) {
+    const int nu = ThrNUnits(thr_no);
+    for(int i=0; i<nu; i++) {
+      UnitVars* uv = ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      uv->unit_spec->Compute_Weights(uv, this, thr_no); // just bias weights
+    }
+  }
+  
+  if(threads.get_timing)
+    ((LeabraNetTiming*)net_timing[thr_no])->wt.EndIncrAvg();
+}
+
 
 ///////////////////////////////////////////////////////////////////////
 //      Stats

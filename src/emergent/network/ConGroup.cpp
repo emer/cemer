@@ -591,8 +591,6 @@ void ConGroup::TransformWeights(const SimpleMathSpec& trans) {
     float& wt = Cn(i, WT,net);
     wt = trans.Evaluate(wt);
   }
-  // todo:
-  // Init_Weights_post(ru, net);        // update weights after mod
 }
 
 void ConGroup::AddNoiseToWeights(const Random& noise_spec) {
@@ -600,8 +598,6 @@ void ConGroup::AddNoiseToWeights(const Random& noise_spec) {
   Network* net = prjn->layer->own_net;
   for(int i=0; i < size; i++)
     Cn(i, WT, net) += noise_spec.Gen();
-  // todo:
-  //  Init_Weights_post(ru, net);        // update weights after mod
 }
 
 int ConGroup::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
@@ -706,7 +702,6 @@ bool ConGroup::ConValuesFromArray(float_Array& ary, const String& variable) {
     float& val = Cn(i, md->idx, net);
     val = ary[i];
   }
-  // Init_Weights_post(ru, net);        // update weights after mod
   return true;
 }
 
@@ -725,7 +720,6 @@ bool ConGroup::ConValuesFromMatrix(float_Matrix& mat, const String& variable) {
     float& val = Cn(i,md->idx, net);
     val = mat.FastEl_Flat(i);
   }
-  // Init_Weights_post(ru, net);        // update weights after mod
   return true;
 }
 

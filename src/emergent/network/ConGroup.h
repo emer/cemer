@@ -341,12 +341,12 @@ public:
   // todo: need to ifdef these out for CUDA
 
   void  TransformWeights(const SimpleMathSpec& trans);
-  // // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
+  // #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   void  AddNoiseToWeights(const Random& noise_spec);
-  // // #MENU #CAT_Learning add noise to weights using given noise specification
+  // #CAT_Learning add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   int   PruneCons(Unit* un, const SimpleMathSpec& pre_proc,
                              Relation::Relations rel, float cmp_val);
-  // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
+  // #CAT_Structure remove weights that (after pre-proc) meet relation to compare val
   int   LesionCons(Unit* un, float p_lesion, bool permute=true);
   // #MENU #USE_RVAL #CAT_Structure remove weights with prob p_lesion (permute = fixed no. lesioned)
 
@@ -355,9 +355,9 @@ public:
   bool  ConValuesToMatrix(float_Matrix& mat, const String& variable);
   // #CAT_Structure sets values of variable from the connections into the given matrix (uses flat index of cons to set: 0..size-1), returns false if matrix is not appropriately sized
   bool  ConValuesFromArray(float_Array& ary, const String& variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found)
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- must call Init_Weights_post at network level after running this!
   bool  ConValuesFromMatrix(float_Matrix& mat, const String& variable);
-  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1
+  // #CAT_Structure sets values of variable in the connections from the given array (false if var not found) -- uses flat index of cons to set: 0..size-1 -- must call Init_Weights_post at network level after running this!
 
   static int    LoadWeights_StartTag(std::istream& strm, const String& tag,
                                      String& val, bool quiet);

@@ -223,9 +223,9 @@ public: //
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 
   virtual void  TransformWeights(const SimpleMathSpec& trans, Projection* prjn = NULL);
-  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights
+  // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec, Projection* prjn = NULL);
-  // #MENU #CAT_Learning add noise to weights using given noise specification
+  // #MENU #CAT_Learning add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   virtual int   PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,
                              float cmp_val, Projection* prjn = NULL);
   // #MENU #USE_RVAL #CAT_Structure remove weights that (after pre-proc) meet relation to compare val

@@ -463,7 +463,7 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp(LeabraLayer* lay,
     u->act_dif = u->act_p - u->act_m;
     // important to clear ext stuff, otherwise it will get added into netin next time around!!
     u->ext = 0.0f;
-    u->ext_flag = Unit::NO_EXTERNAL;
+    u->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   }
 }
 
@@ -479,7 +479,7 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp(LeabraLayer* lay,
     if(i > 0) u->act_eq = u->act = us->clamp_range.Clip(u->ext);
     else u->act_eq = u->ext;
     u->ext = 0.0f;
-    u->ext_flag = Unit::NO_EXTERNAL;
+    u->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   }
 }
 

@@ -311,6 +311,8 @@ public:
   char**       thrs_units_mem;  // #IGNORE actual memory allocation of UnitVars variables, organized by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_units[thr_no] * unit_vars_size], containing the units processed by a given thread -- this is the primary memory allocation of units
   int**        thrs_lay_unit_idxs; // #IGNORE allocation of units to layers by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_layers_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given layer
   int**        thrs_ungp_unit_idxs; // #IGNORE allocation of units to unit groups by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_ungps_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given unit group
+  int          n_lay_stats;     // #IGNORE #DEF_6 number of thread-specific layer-level statistics available for stats algorithms
+  float**      thrs_lay_stats;  // #IGNORE thread-specific layer-level stats variables available for stats routines to do efficient initial pre-computation across units at the thread level, followed by a main-thread integration of the thread-specific values -- array of float*[n_thrs_built] of float[n_lay_stats * n_layers_built] -- n_lay_stats is accessed as the inner dimension
 
   int*          units_n_recv_cgps;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_send_cgps;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
@@ -478,6 +480,9 @@ public:
   inline int    ThrUnGpUnEnd(int thr_no, int lay_no)
   { return thrs_ungp_unit_idxs[thr_no][2*lay_no + 1]; }
   // #CAT_Structure ending thread-specific unit index for given unit group (from active_ungps list) -- this is like the max in a for loop -- valid indexes are < end
+  inline float& ThrLayStats(int thr_no, int lay_idx, int stat_no) 
+  { return thrs_lay_stats[thr_no][lay_idx * n_lay_stats + stat_no]; }
+  // #IGNORE get layer statistic value for given thread, layer (active layer index), and stat number (0..n_lay_stats max)
 
   inline int    UnNRecvConGps(int flat_idx) const {
 #ifdef DEBUG
@@ -744,7 +749,7 @@ public:
     virtual void Init_Weights_sym(int thr_no);
     // #IGNORE symmetrize weights after first init pass, called when needed
     virtual void Init_Weights_post();
-    // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc)
+    // #CAT_Learning post-initialize state variables (ie. for scaling symmetrical weights, other wt state keyed off of weights, etc) -- this MUST be called after any external modifications to the weights, e.g., the TransformWeights or AddNoiseToWeights calls on any lower-level objects (layers, units, con groups)
     virtual void Init_Weights_post_Thr(int thr_no);
     // #IGNORE
     virtual void Init_Weights_Layer();
@@ -796,8 +801,12 @@ public:
 
   virtual void  Compute_SSE(bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
+    virtual void Compute_SSE_Thr(int thr_no);
+    // #IGNORE
   virtual void  Compute_PRerr();
   // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
+    virtual void Compute_PRerr_Thr(int thr_no);
+    // #IGNORE
 
   virtual Layer* NewLayer();
   // #BUTTON create a new layer in the network, using default layer type

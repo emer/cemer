@@ -992,8 +992,7 @@ void LeabraUnitSpec::TargExtToComp(LeabraUnitVars* u, LeabraNetwork* net, int th
   if(u->HasExtFlag(UnitVars::EXT))
     u->targ = u->ext;
   u->ext = 0.0f;
-  u->ClearExtFlag(UnitVars::TARG);
-  u->ClearExtFlag(UnitVars::EXT);
+  u->ClearExtFlag(UnitVars::TARG_EXT);
   u->SetExtFlag(UnitVars::COMP);
 }
 
@@ -1817,13 +1816,13 @@ void LeabraUnitSpec::ClearTICtxt(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 ///////////////////////////////////////////////////////////////////////
 //      Stats
 
-float LeabraUnitSpec::Compute_SSE(UnitVars* ru, Network* rnet, bool& has_targ) {
+float LeabraUnitSpec::Compute_SSE(UnitVars* ru, Network* rnet, int thr_no, bool& has_targ) {
   LeabraUnitVars* u = (LeabraUnitVars*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   // just replaces act_m for act in original
   float sse = 0.0f;
   has_targ = false;
-  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+  if(u->HasExtFlag(UnitVars::COMP_TARG)) {
     has_targ = true;
     float uerr = u->targ - u->act_m;
     if(fabsf(uerr) >= sse_tol)
@@ -1832,31 +1831,26 @@ float LeabraUnitSpec::Compute_SSE(UnitVars* ru, Network* rnet, bool& has_targ) {
   return sse;
 }
 
-bool LeabraUnitSpec::Compute_PRerr(UnitVars* ru, Network* rnet, float& true_pos,
-                                   float& false_pos, float& false_neg, float& true_neg) {
+bool LeabraUnitSpec::Compute_PRerr
+(UnitVars* ru, Network* rnet, int thr_no,
+ float& true_pos, float& false_pos, float& false_neg, float& true_neg) {
   // just replaces act_m for act in original
   LeabraUnitVars* u = (LeabraUnitVars*)ru;
   LeabraNetwork* net = (LeabraNetwork*)rnet;
-  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f;
+  true_pos = 0.0f; false_pos = 0.0f; false_neg = 0.0f; true_neg = 0.0f;
   bool has_targ = false;
-  if(u->HasExtFlag(UnitVars::TARG | UnitVars::COMP)) {
+  if(u->HasExtFlag(UnitVars::COMP_TARG)) {
     has_targ = true;
-    // float uerr = u->targ - u->act_m;
-    // if(fabsf(uerr) < sse_tol) {
-    //   true_pos = u->targ;
-    // }
-    // else {
-      if(u->targ > u->act_m) {
-        true_pos = u->act_m;
-	true_neg = 1.0 - u->targ;
-        false_neg = u->targ - u->act_m;
-      }
-      else {
-        true_pos = u->targ;
-        false_pos = u->act_m - u->targ;
-	true_neg = 1.0 - u->act_m;
-      }
-    // }
+    if(u->targ > u->act_m) {
+      true_pos = u->act_m;
+      true_neg = 1.0 - u->targ;
+      false_neg = u->targ - u->act_m;
+    }
+    else {
+      true_pos = u->targ;
+      false_pos = u->act_m - u->targ;
+      true_neg = 1.0 - u->act_m;
+    }
   }
   return has_targ;
 }

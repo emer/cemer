@@ -220,11 +220,13 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   float prv_cur_lrate = cur_lrate;
   cur_lrate = lrate;            // as a backup..
   lrs_mult = 1.0f;
-  if(wt_sig.dwt_norm) {
-    net->net_misc.dwt_norm = true;
-  }
-  if(diff_scale_p) {
-    net->net_misc.diff_scale_p = true;
+  if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
+    if(wt_sig.dwt_norm) {
+      net->net_misc.dwt_norm = true;
+    }
+    if(diff_scale_p) {
+      net->net_misc.diff_scale_p = true;
+    }
   }
   if(fast_wts.on) {
     cur_lrate *= fast_wts.fast_lrate;

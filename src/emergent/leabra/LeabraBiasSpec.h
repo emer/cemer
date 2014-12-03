@@ -32,6 +32,11 @@ class E_API LeabraBiasSpec : public LeabraConSpec {
   // Leabra bias-weight connection specs (bias wts are a little bit special)
 INHERITED(LeabraConSpec)
 public:
+
+#ifdef __MAKETA__
+  bool		learn;		// #CAT_Learning #DEF_false individual control over whether learning takes place in bias weights -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels -- default is OFF for bias weights, because they are generally not needed for larger models, and can only really get in the way -- turning them off also results in a small speed improvement
+#endif
+
   float		dwt_thresh;  // #CONDSHOW_ON_learn #DEF_0.1 #MIN_0 #CAT_Learning don't change if dwt < thresh, prevents buildup of small changes
 
   inline void B_Compute_dWt(UnitVars* u, Network* net, int thr_no) override {
@@ -43,6 +48,8 @@ public:
       uv->bias_dwt += cur_lrate * dw;
     }
   }
+
+  void	Trial_Init_Specs(LeabraNetwork* net) override;
 
   bool	CheckObjectType_impl(taBase* obj);
 
