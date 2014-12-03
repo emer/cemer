@@ -79,6 +79,7 @@ void Network::Initialize() {
   tick = 0;
   cycle = 0;
   time = 0.0f;
+  total_trials = 0;
 
   // group_name = ??
   // trial_name = ??
@@ -280,6 +281,8 @@ void Network::Copy_(const Network& cp) {
   tick = cp.tick;
   cycle = cp.cycle;
   time = cp.time;
+  total_trials = cp.total_trials;
+  
   group_name = cp.group_name;
   trial_name = cp.trial_name;
   output_name = cp.output_name;
@@ -1671,6 +1674,7 @@ void Network::Init_Counters() {
   tick = 0;
   cycle = 0;
   time = 0.0f;
+  total_trials = 0;
 }
 
 void Network::Init_Stats() {

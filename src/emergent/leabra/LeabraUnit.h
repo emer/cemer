@@ -38,19 +38,19 @@ class E_API LeabraUnit : public Unit {
 INHERITED(Unit)
 public:
   inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
-  // #CAT_UnitVar #IGNORE external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
+  // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
   inline float& targ()  { return GetUnitVars()->targ; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE target value: drives learning to produce this activation value
+  // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
   inline float& ext()   { return GetUnitVars()->ext; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE external input: drives activation of unit from outside influences (e.g., sensory input)
+  // #VIEW_HOT #CAT_UnitVar external input: drives activation of unit from outside influences (e.g., sensory input)
   inline float& act()   { return GetUnitVars()->act; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE activation value -- what the unit communicates to others
+  // #VIEW_HOT #CAT_UnitVar activation value -- what the unit communicates to others
   inline float& net()   { return GetUnitVars()->net; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE net input value -- what the unit receives from others (typically sum of sending activations times the weights)
+  // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others  (typically sum of sending activations times the weights)
   inline float& bias_wt() { return GetUnitVars()->bias_wt; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
   inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
-  // #VIEW_HOT #CAT_UnitVar #IGNORE change in bias weight value as computed by a learning mechanism
+  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
 
   inline float& act_eq()
   { return ((LeabraUnitVars*)GetUnitVars())->act_eq; }

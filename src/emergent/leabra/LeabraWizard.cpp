@@ -824,7 +824,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   laysp->avg_act.init = 0.25f;
   laysp->avg_act.fixed = true;
   laysp->inhib_misc.self_fb = 0.3f;
-  laysp->decay.event = 0.0f;
+  laysp->decay.trial = 0.0f;
 
   vsmsp->SetUnique("del_inhib", true);
   vsmsp->del_inhib.on = true;
@@ -1574,7 +1574,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfc_sp->avg_act.init = 0.2f;
   pfc_sp->avg_act.fixed = true; // use fixed..
   pfc_sp->SetUnique("decay", true);
-  pfc_sp->decay.event = 0.0f;
+  pfc_sp->decay.trial = 0.0f;
 
   ////////////	PrjnSpecs
 

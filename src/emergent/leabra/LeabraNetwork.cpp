@@ -75,6 +75,7 @@ void LeabraNetMisc::Initialize() {
   ti = false;
   deep5b_cons = false;
   bias_learn = false;
+  trial_decay = false;
   diff_scale_p = false;
   dwt_norm = false;
   lay_gp_inhib = false;
@@ -353,15 +354,18 @@ void LeabraNetwork::Trial_Init_Counters() {
   quarter = 0;
   phase = MINUS_PHASE;
   rt_cycles = -1;          // signal that nothing has been recorded
+  total_trials++;          // this is when we increment it!
 }
 
 void LeabraNetwork::Trial_Init_Specs() {
   net_misc.spike = false;
   net_misc.ti = false;
   net_misc.deep5b_cons = false;
+  net_misc.bias_learn = false;
+  net_misc.trial_decay = false;
+  net_misc.diff_scale_p = false;
   net_misc.dwt_norm = false;
   net_misc.lay_gp_inhib = false;
-  net_misc.diff_scale_p = false;
   net_misc.lrate_updtd = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())

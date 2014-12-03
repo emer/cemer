@@ -243,6 +243,7 @@ public:
   int           tick;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW tick counter: optional extra counter to record a level of organization below the trial level (for cases where trials have multiple component elements)
   int           cycle;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW cycle counter: number of iterations of activation updating (settling) on the current external input pattern (updated by program)
   float         time;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW the current time, relative to some established starting point, in algorithm-specific units (often miliseconds)
+  int           total_trials;   // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW total number of trials counter: number of external input patterns that have been presented since the weights were initialized
   String        group_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current group of trials, if such a grouping is applicable (typically set by a LayerWriter)
   String        trial_name;     // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name associated with the current trial (e.g., name of input pattern, typically set by a LayerWriter)
   String        output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW name for the output produced by the network (must be computed by a program)

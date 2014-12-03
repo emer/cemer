@@ -42,7 +42,7 @@ void LeabraContextLayerSpec::Initialize() {
 }
 
 void LeabraContextLayerSpec::Defaults_init() {
-  decay.event = 0.0f;
+  decay.trial = 0.0f;
 }
 
 // void LeabraContextLayerSpec::UpdateAfterEdit-impl() {

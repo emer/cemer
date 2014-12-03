@@ -151,7 +151,7 @@ class E_API LayerDecaySpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra holds decay values and other layer-level time constants
 INHERITED(SpecMemberBase)
 public:
-  float		event;		// #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between events
+  float		trial;		// #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
 
   float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua

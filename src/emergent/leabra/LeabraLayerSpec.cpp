@@ -103,7 +103,7 @@ void LeabraClampSpec::Defaults_init() {
 }
 
 void LayerDecaySpec::Initialize() {
-  event = 1.0f;
+  trial = 1.0f;
 
   Defaults_init();
 }
@@ -335,17 +335,20 @@ void LeabraLayerSpec::Trial_Init_Specs(LeabraLayer* lay, LeabraNetwork* net) {
 
   if(lay_gp_inhib.on) 
     net->net_misc.lay_gp_inhib = true;
+
+  if(decay.trial > 0.0f)
+    net->net_misc.trial_decay = true;
 }
 
 void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  if(decay.event > 0.0f) {
-    lay->i_val.ffi -= decay.event * lay->i_val.ffi;
-    lay->i_val.fbi -= decay.event * lay->i_val.fbi;
+  if(decay.trial > 0.0f) {
+    lay->i_val.ffi -= decay.trial * lay->i_val.ffi;
+    lay->i_val.fbi -= decay.trial * lay->i_val.fbi;
     if(lay->unit_groups) {
       for(int g=0; g < lay->gp_geom.n; g++) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-        gpd->i_val.ffi -= decay.event * gpd->i_val.ffi;
-        gpd->i_val.fbi -= decay.event * gpd->i_val.fbi;
+        gpd->i_val.ffi -= decay.trial * gpd->i_val.ffi;
+        gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
       }
     }
   }
