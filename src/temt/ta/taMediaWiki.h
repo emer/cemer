@@ -93,7 +93,7 @@ public:
   static bool   PageExists(const String& wiki_name, const String& page_name);
   // #CAT_Page determine if given page exists on wiki -- returns true if it does, false if it doesn't
 
-  static bool   DeletePage(const String& wiki_name, const String& page_name);
+  static bool   DeletePage(const String& wiki_name, const String& page_name, const String& reason="");
   // #CAT_Page delete given page from the wiki -- returns true on success
 
   static bool   FindMakePage(const String& wiki_name, const String& page_name,

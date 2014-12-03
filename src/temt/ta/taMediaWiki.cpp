@@ -457,7 +457,7 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
     while (findNextElement(reader, "p")) {
       QXmlStreamAttributes attrs = reader.attributes();
       String pt = attrs.value("title").toString();
-      int pid = attrs.value("pageid").toInt();
+      int pid = attrs.value("pageid").toString().toInt();
       results->AddBlankRow();
       pt_col->SetVal(pt, -1);
       pid_col->SetVal(pid, -1);
@@ -534,7 +534,7 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
     while (findNextElement(reader, "cm")) {
       QXmlStreamAttributes attrs = reader.attributes();
       String pt = attrs.value("title").toString();
-      int pid = attrs.value("pageid").toInt();
+      int pid = attrs.value("pageid").toString().toInt();
       results->AddBlankRow();
       pt_col->SetVal(pt, -1);
       pid_col->SetVal(pid, -1);
@@ -604,7 +604,7 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
     while (findNextElement(reader, "img")) {
       QXmlStreamAttributes attrs = reader.attributes();
       String fn = attrs.value("name").toString();
-      int sz = attrs.value("size").toInt();
+      int sz = attrs.value("size").toString().toInt();
       String mt = attrs.value("mime").toString();
       results->AddBlankRow();
       fn_col->SetVal(fn, -1);
@@ -788,13 +788,66 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
   return false;
 }
 
-bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name)
+bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, const String& reason)
 {
   // #CAT_Page Delete given page from the wiki.
 
-  // STUB
+  if (PageExists(wiki_name, page_name)) {
+    QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+    if (token.isEmpty()) { return false; }
 
-  return false;
+    String wikiUrl = GetApiURL(wiki_name);
+    QUrl url(wikiUrl);
+
+#if (QT_VERSION >= 0x050000)
+    QUrlQuery urq;
+    urq.addQueryItem("action", "delete");
+    urq.addQueryItem("title", page_name);
+    if (!reason.empty()) {
+      urq.addQueryItem("reason", reason);
+    }
+    urq.addQueryItem("format", "xml");
+    urq.addQueryItem("token", token);
+    url.setQuery(urq);
+#else
+    url.addQueryItem("action", "delete");
+    url.addQueryItem("title", page_name);
+    if (!reason.empty()) {
+      url.addQueryItem("reason", reason);
+    }
+    url.addQueryItem("format", "xml");
+    url.addQueryItem("token", token);
+#endif
+
+    // Make the network request.
+    iSynchronousNetRequest request;
+    if (QNetworkReply *reply = request.httpPost(url)) {
+      QXmlStreamReader reader(reply);
+      while(!reader.atEnd()) {
+        if (reader.readNext() == QXmlStreamReader::StartElement) {
+          QXmlStreamAttributes attrs = reader.attributes();
+          if(reader.hasError()) {
+            QString err_code = attrs.value("code").toString();
+            QString err_info = attrs.value("info").toString();
+            taMisc::Warning("Page deletion failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
+            
+            return false;
+          }
+          else {
+            taMisc::Info("Successfully deleted", page_name, "page on", wiki_name, "wiki!");
+            
+            return true;
+          }
+        }
+      }
+    }
+    taMisc::Warning("Page delete request failed -- check the wiki/page names");
+    return false;
+  }
+  else {
+    taMisc::Warning("Cannot find given page on the given wiki!");
+    return false;
+  }
 }
 
 bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
