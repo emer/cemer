@@ -1018,7 +1018,7 @@ taiMisc::BoundAction taiMisc::GetActionFromKeyEvent(taiMisc::BindingContext cont
 }
 
 QKeySequence taiMisc::GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action) {
-  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);  // only the default list for now - hence the zero
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
   return bindings->KeySequence(context, action);
 }
 

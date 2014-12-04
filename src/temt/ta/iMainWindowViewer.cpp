@@ -1282,10 +1282,10 @@ void iMainWindowViewer::toolsChooseKeyBindings() {
   if (!key_bindings_dialog) {
     key_bindings_dialog = iDialogKeyBindings::New(this);
   }
-  iDialogKeyBindings* dlg = key_bindings_dialog;
-  dlg->show();
-  dlg->raise();
-  dlg->activateWindow();
+  key_bindings_dialog->setAttribute(Qt::WA_DeleteOnClose);
+  key_bindings_dialog->show();
+  key_bindings_dialog->raise();
+  key_bindings_dialog->activateWindow();
 }
 
 void iMainWindowViewer::Find(taiSigLink* root, const String& find_str) {

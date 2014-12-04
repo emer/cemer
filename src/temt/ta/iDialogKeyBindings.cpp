@@ -20,6 +20,7 @@
 #include <iMainWindowViewer>
 #include <EnumSpace>
 #include <TypeDef>
+#include <KeyBindings>
 
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -29,6 +30,7 @@
 #endif
 #include <QPushButton>
 #include <QGroupBox>
+#include <QFile>
 
 iDialogKeyBindings* iDialogKeyBindings::New(iMainWindowViewer* par_window_)
 {
@@ -48,6 +50,10 @@ iDialogKeyBindings::iDialogKeyBindings(QWidget* par_window_)
 }
 
 iDialogKeyBindings::iDialogKeyBindings() {
+}
+
+iDialogKeyBindings::~iDialogKeyBindings() {
+  delete current_bindings;
 }
 
 void iDialogKeyBindings::Constr() {
@@ -80,21 +86,23 @@ void iDialogKeyBindings::Constr() {
   body_layout->addWidget(tabWidget);
   body_box->setLayout(body_layout);
   
+  current_bindings = new KeyBindings();  // build a list of current bindings for modification and saving
   String context_label;
   String action_label;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
-  for (int i=0; i<context_count-1; i++) {
-    taiMisc::BindingContext current_context = taiMisc::BindingContext(i);
-    context_label = TA_taiMisc.GetEnumString("BindingContext", i);
+  for (int ctxt=0; ctxt<context_count-1; ctxt++) {
+    taiMisc::BindingContext current_context = taiMisc::BindingContext(ctxt);
+    context_label = TA_taiMisc.GetEnumString("BindingContext", ctxt);
     context_label = context_label.before("_CONTEXT");  // strip off "_CONTEXT"
     QWidget* some_tab = new QWidget();
     tabWidget->addTab(some_tab, context_label);
     body_layout->QLayout::addWidget(tabWidget);
     
     // add all of the actions that can be bound to keys
-    QFormLayout* bindings_layout = new QFormLayout;
-    bindings_layout->setLabelAlignment(Qt::AlignLeft);
-    some_tab  ->setLayout(bindings_layout);
+//    QFormLayout* bindings_layout = new QFormLayout;
+    bindings_layout[ctxt] = new QFormLayout;
+    bindings_layout[ctxt]->setLabelAlignment(Qt::AlignLeft);
+    some_tab->setLayout(bindings_layout[ctxt]);
     
     QKeySequenceEdit* edit;
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
@@ -106,7 +114,8 @@ void iDialogKeyBindings::Constr() {
         taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
         QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
         QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
-        bindings_layout->addRow(action, edit);
+        bindings_layout[ctxt]->addRow(action, edit);
+        current_bindings->Add(current_context, current_action, key_seq);
       }
     }
   }
@@ -128,7 +137,24 @@ void iDialogKeyBindings::Constr() {
 
 void iDialogKeyBindings::accept() {
   inherited::accept();
+  
+  for (int i=0; i<7; i++) {
+  taMisc::DebugInfo((String)bindings_layout[i]->rowCount());
+    QLayoutItem* item = bindings_layout[i]->itemAt(0,  QFormLayout::LabelRole);
+    QWidgetItem* foo = dynamic_cast<QWidgetItem*>(item);
+    if (foo) {
+      QLabel* label = dynamic_cast<QLabel*>(foo->widget());
+//      taMisc::DebugInfo("is widget item ", String(label->text()));
+    }
+  }
+
   // here is where we execute actions!
+//  QFile file("file.dat");
+//  file.open(QIODevice::WriteOnly);
+//  QDataStream out(&file);   // we will serialize the data into the file
+//  out << QString("the answer is");   // serialize a string
+//  out << (qint32)42;        // serialize an integer
+  
 }
 
 void iDialogKeyBindings::reject() {

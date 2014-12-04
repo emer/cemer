@@ -24,6 +24,8 @@
 class iMainWindowViewer; //
 class QVBoxLayout; //
 class QPushButton; //
+class QFormLayout; //
+class KeyBindings; //
 
 // declare all other types mentioned but not required to include:
 
@@ -38,6 +40,7 @@ public:
   
   iDialogKeyBindings(QWidget* par_window_);
   iDialogKeyBindings();
+  ~iDialogKeyBindings();
   
   QVBoxLayout*          layOuter;
 
@@ -45,12 +48,16 @@ public:
 protected:
   virtual void          Constr();
   
-  QPushButton*              button_ok;
-  QPushButton*              button_revert;
+  QPushButton*          button_ok;
+  QPushButton*          button_revert;
+  
+  KeyBindings*          current_bindings;
+
+  QFormLayout*          bindings_layout[10];
 
   protected slots:
-    void         accept() override;
-    void         reject() override;
+    void                accept() override;
+    void                reject() override;
   
 private:
 };
