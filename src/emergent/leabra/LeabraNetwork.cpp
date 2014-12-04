@@ -341,10 +341,6 @@ void LeabraNetwork::Trial_Init() {
   //  Trial_Init_SRAvg();
   //  Trial_DecayState();
   //  Trial_NoiseInit(); 
-  //  Compute_NetinScale();              // compute net scaling
-
-  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
-  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
 
   Trial_Init_Layer();
 }
@@ -411,7 +407,11 @@ void LeabraNetwork::Quarter_Init() {
   Quarter_Init_Layer();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
+//   Compute_NetinScale();       // compute net scaling
 //   Compute_HardClamp();        // clamp all hard-clamped input acts
+
+  Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
+  // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
   Compute_HardClamp_Layer();
 }
 
