@@ -52,8 +52,7 @@ protected:
   QPushButton*          button_revert;
   
   KeyBindings*          current_bindings;
-
-  QFormLayout*          bindings_layout[10];
+  QFormLayout*          bindings_layout[10];  // make sure the array is big enough for all the contexts
 
   protected slots:
     void                accept() override;

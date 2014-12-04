@@ -90,7 +90,7 @@ void iDialogKeyBindings::Constr() {
   String context_label;
   String action_label;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
-  for (int ctxt=0; ctxt<context_count-1; ctxt++) {
+  for (int ctxt=0; ctxt<context_count-1; ctxt++) {  // -1 because the last enum is the count
     taiMisc::BindingContext current_context = taiMisc::BindingContext(ctxt);
     context_label = TA_taiMisc.GetEnumString("BindingContext", ctxt);
     context_label = context_label.before("_CONTEXT");  // strip off "_CONTEXT"
@@ -99,14 +99,13 @@ void iDialogKeyBindings::Constr() {
     body_layout->QLayout::addWidget(tabWidget);
     
     // add all of the actions that can be bound to keys
-//    QFormLayout* bindings_layout = new QFormLayout;
     bindings_layout[ctxt] = new QFormLayout;
     bindings_layout[ctxt]->setLabelAlignment(Qt::AlignLeft);
     some_tab->setLayout(bindings_layout[ctxt]);
     
     QKeySequenceEdit* edit;
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
-    for (int i=0; i<action_count-1; i++) {
+    for (int i=0; i<action_count-1; i++) {  // -1 because the last enum is the count
       action_label = TA_taiMisc.GetEnumString("BoundAction", i);
       if (action_label.startsWith(context_label)) {
         action_label = action_label.after(context_label + "_");
@@ -138,23 +137,35 @@ void iDialogKeyBindings::Constr() {
 void iDialogKeyBindings::accept() {
   inherited::accept();
   
-  for (int i=0; i<7; i++) {
-  taMisc::DebugInfo((String)bindings_layout[i]->rowCount());
-    QLayoutItem* item = bindings_layout[i]->itemAt(0,  QFormLayout::LabelRole);
-    QWidgetItem* foo = dynamic_cast<QWidgetItem*>(item);
-    if (foo) {
-      QLabel* label = dynamic_cast<QLabel*>(foo->widget());
-//      taMisc::DebugInfo("is widget item ", String(label->text()));
+#if (QT_VERSION >= 0x050200)
+  QLabel* action;
+  QKeySequenceEdit* key_seq_edit;
+  int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+  for (int ctxt=0; ctxt<context_count-1; ctxt++) {
+    for (int row=0; row<bindings_layout[ctxt]->rowCount(); row++) {
+      QLayoutItem* label_item = bindings_layout[ctxt]->itemAt(row,  QFormLayout::LabelRole);
+      QWidgetItem* label = dynamic_cast<QWidgetItem*>(label_item);
+      QLayoutItem* field_item = bindings_layout[ctxt]->itemAt(row,  QFormLayout::FieldRole);
+      QWidgetItem* field = dynamic_cast<QWidgetItem*>(field_item);
+      if (label) {
+        action = dynamic_cast<QLabel*>(label->widget());
+      }
+      if (field) {
+        key_seq_edit = dynamic_cast<QKeySequenceEdit*>(field->widget());
+      }
+      if (action && key_seq_edit) {
+            taMisc::DebugInfo(String(action->text()), "   ", String(key_seq_edit->keySequence().toString()));
+      }
     }
   }
-
+  
   // here is where we execute actions!
 //  QFile file("file.dat");
 //  file.open(QIODevice::WriteOnly);
 //  QDataStream out(&file);   // we will serialize the data into the file
 //  out << QString("the answer is");   // serialize a string
 //  out << (qint32)42;        // serialize an integer
-  
+#endif
 }
 
 void iDialogKeyBindings::reject() {
