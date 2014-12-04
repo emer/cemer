@@ -197,6 +197,11 @@ public:
     HD_DETAILS,         // full programming details -- offsets, comments, etc
   };
 
+  enum KeyBindingSet {
+    KEY_BINDINGS_DEFAULT,
+    KEY_BINDINGS_CUSTOM
+  };
+  
   static String         app_name;
   // #READ_ONLY #NO_SAVE #SHOW #CAT_App the root name of the app, ex. "emergent" or "css"
   static String         app_prefs_key;
@@ -235,8 +240,8 @@ public:
   ////////////////////////////////////////////////////////
   //    TA GUI parameters
 
-  static GuiStyle       gui_style;      // #SAVE #CAT_GUI #DEF_GS_DEFAULT style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
-  static AppToolbarStyle app_toolbar_style;      // #SAVE #CAT_GUI #DEF_TB_UNDER_ICON style options provided by the gui system, change only takes effect on restarting the program
+  static GuiStyle       gui_style;      // #SAVE #CAT_GUI style options provided by the gui system, affecting how the widgets are drawn, etc (not all are available on all platforms) -- change only takes effect on restarting the program
+  static AppToolbarStyle app_toolbar_style;      // #SAVE #CAT_GUI style options provided by the gui system, change only takes effect on restarting the program
   static String         font_name;      // #SAVE #CAT_GUI default font name to use
   static int            font_size;      // #SAVE #CAT_GUI default font size to use
   static String         t3d_bg_color;   // #SAVE #CAT_GUI default background color for 3d view -- standard X11 color names are supported, most of which are also web/html standard color names
@@ -277,9 +282,10 @@ public:
 //NOTE: following not keeping tokens so cannot be viewed in any mode
   static ViewColor_List* view_colors;   // #NO_SAVE #NO_SHOW colors to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
   static ViewBackground_List* view_backgrounds;   // #NO_SAVE #NO_SHOW backgrounds to use in the view displays -- looked up by name emitted by GetTypeDecoKey and GetStateDecoKey on objects
-  static KeyBindings_List* key_binding_lists;   // #NO_SAVE #NO_SHOW lists of key bindings (for shortcuts and keyPressEvent)
+  static KeyBindings_List* key_binding_lists;   // #NO_SAVE #NO_SHOW a list of key binding sets; each set has bindings for various contexts (for shortcuts and keyPressEvent)
 #endif
 
+  static KeyBindingSet  current_key_bindings;  // #SAVE the user has a choice of key bindings - custom or detault
   static int            antialiasing_level; // #SAVE #CAT_GUI level of smoothing to perform in the 3d display -- values depend on hardware acceleration, but 2 or 4 are typical values.  1 or lower disables entirely.  modern hardware can do typically do level 4 with little slowdown in speed.
   static float          text_complexity;     // #SAVE #CAT_GUI #EXPERT complexity value (between 0 and 1) for rendering 3D text -- values above .5 are usually not noticibly better and slow rendering
   static TypeItem::ShowMembs show_gui;       // #IGNORE #CAT_GUI #EXPERT what to show in the gui -- set in main window viewer
@@ -297,7 +303,7 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
-  static bool           write_to_log_file;  // #SAVE preference to write or not to log file (.plog)
+  static bool           write_to_project_log_file;  // #SAVE preference to write or not to write to the project level log file (.plog). Does not stop logging of trial or epoch data. Only stops logging to the .plog file
   
  ////////////////////////////////////////////////////////
   //    File/Paths Info
@@ -716,6 +722,7 @@ public:
   static void   AddUserDataSchema(const String& type_name, UserDataItemBase* item);
   // #CAT_UserData adds the item as schema, putting on deferred list if type not avail yet
   static void   AddDeferredUserDataSchema(); // #IGNORE call during init to resolve
+  static void   SetKeyBindingSet(KeyBindingSet kb_set); //
 protected:
   static String_PArray* deferred_schema_names; // for early startup if type not defined yet
   static UserDataItem_List* deferred_schema_items; // for early startup if type not defined yet

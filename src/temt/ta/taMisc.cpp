@@ -268,7 +268,8 @@ short                   taMisc::num_browse_history = 20;
 
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
-bool                    taMisc::write_to_log_file = false;
+bool                    taMisc::write_to_project_log_file = false;
+taMisc::KeyBindingSet   taMisc::current_key_bindings = taMisc::KEY_BINDINGS_DEFAULT;
 
 ////////////////////////////////////////////////////////
 //      File/Path/Arg Info
@@ -1882,6 +1883,10 @@ void taMisc::Init_DMem(int& argc, const char* argv[]) {
     cerr << "DMEM Running on " << dmem_nprocs << " processors." << endl;
   }
 #endif
+}
+
+void taMisc::SetKeyBindingSet(KeyBindingSet kb_set) {
+  current_key_bindings = kb_set;
 }
 
 void taMisc::HelpMsg(String& strm) {

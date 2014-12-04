@@ -1465,7 +1465,7 @@ bool taRootBase::Startup_InitGui() {
     Startup_InitViewColors();
     Startup_InitViewBackgrounds();
     Startup_InitKeyBindings();
-  }
+   }
   else
 #endif // TA_GUI
   {
@@ -1572,6 +1572,9 @@ bool taRootBase::Startup_InitKeyBindings() {
     taMisc::key_binding_lists = new KeyBindings_List();
   }
   KeyBindings* default_list = new KeyBindings();
+  KeyBindings* custom_list = new KeyBindings();
+  taMisc::key_binding_lists->Add_(default_list);
+  taMisc::key_binding_lists->Add_(custom_list);
   
 #ifdef TA_OS_MAC
   int control_key = static_cast<int>(Qt::MetaModifier);
@@ -1712,8 +1715,11 @@ bool taRootBase::Startup_InitKeyBindings() {
   
   // some exceptions to normal OS behavior to be consistent with emergent 7.0 behavior
   default_list->Add(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
-
-  taMisc::key_binding_lists->Add_(default_list);
+  
+  // just for testing - will be removed - rohrlich 12/3/14
+  custom_list->Add(taiMisc::TEXT_EDIT_CONTEXT, taiMisc::TEXT_EDIT_EMACS_HOME, QKeySequence(control_key + Qt::Key_F));
+  custom_list->Add(taiMisc::TEXT_EDIT_CONTEXT, taiMisc::TEXT_EDIT_EMACS_END, QKeySequence(control_key + Qt::Key_O));
+  
   return true;
 }
 
