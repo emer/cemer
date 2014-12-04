@@ -44,16 +44,15 @@ public:
   { wt = PrecLimitVal(wt); }
   // #IGNORE
 
-  inline void Compute_LimPrecWts(LeabraConGroup* cg, LeabraUnit* su, LeabraNetwork* net) {
+  inline void Compute_LimPrecWts(ConGroup* cg, LeabraNetwork* net, int thr_no) {
     float* wts = cg->OwnCnVar(WT);
     CON_GROUP_LOOP(cg, C_Compute_LimPrecWts(wts[i]));
   }
   // #IGNORE
 
-  inline void	Compute_Weights_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                                     LeabraNetwork* net) override {
-    inherited::Compute_Weights_CtLeabraXCAL(cg, su, net);
-    Compute_LimPrecWts(cg, su, net);
+  inline void Compute_Weights(ConGroup* rcg, Network* net, int thr_no) override {
+    inherited::Compute_Weights(rcg, net, thr_no);
+    Compute_LimPrecWts(rcg, (LeabraNetwork*)net, thr_no);
   }
 
   // NOTE: bias weights typically not subject to limited precision!

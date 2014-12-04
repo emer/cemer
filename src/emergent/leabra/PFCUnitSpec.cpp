@@ -61,17 +61,17 @@ bool  PFCUnitSpec::ActiveMaint(LeabraUnit* u) {
   return ((ugpos.y >= fst_row) && (ugpos.y <= lst_row));
 }
 
-float PFCUnitSpec::Compute_NetinExtras(float& net_syn, LeabraUnit* u,
-                                       LeabraNetwork* net, int thread_no) {
-  float net_ex = inherited::Compute_NetinExtras(net_syn, u, net, thread_no);
-  bool act_mnt = ActiveMaint(u);
+float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
+                            int thr_no, float& net_syn) {
+  float net_ex = inherited::Compute_NetinExtras(uv, net, thr_no, net_syn);
+  bool act_mnt = ActiveMaint((LeabraUnit*)uv->Un(net, thr_no));
   if(act_mnt) {
-    net_ex += pfc_maint.maint_d5b_to_super * u->deep5b;
+    net_ex += pfc_maint.maint_d5b_to_super * uv->deep5b;
   }
   return net_ex;
 }
 
-void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) {
+void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(cifer_thal.on) {
     if(u->thal < cifer_thal.thal_thr)
       u->thal = 0.0f;
@@ -81,7 +81,7 @@ void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) {
 
   if(!cifer_d5b.on) return;
 
-  bool act_mnt = ActiveMaint(u);
+  bool act_mnt = ActiveMaint((LeabraUnit*)u->Un(net, thr_no));
   
   if(Quarter_Deep5bNow(net->quarter)) {
     float act5b = u->act_eq;

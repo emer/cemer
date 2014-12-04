@@ -25,8 +25,8 @@ void VSPatchUnitSpec::Initialize() {
 void VSPatchUnitSpec::Defaults_init() {
 }
 
-void VSPatchUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::Quarter_Final(u, net);
+void VSPatchUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Quarter_Final(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->act_p = u->lrnmod;
   }

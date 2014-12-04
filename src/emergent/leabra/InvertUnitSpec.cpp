@@ -32,7 +32,7 @@ bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
   LeabraNetwork* net = (LeabraNetwork*)un->own_net();
 
-  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(0);
   if(u->CheckError(!cg, quiet, rval,
                    "Requires one recv projection!")) {
     return false;

@@ -59,8 +59,9 @@ void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   float negstate = 0.0f;
   int   negstate_n = 0;
 
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  const int nrg = u->NRecvConGps(net, thr_no);
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*)recv_gp->prjn->from.ptr();
     const float act_avg = from->acts_eq.avg;
@@ -107,13 +108,14 @@ void DRNUnitSpec::Compute_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   u->da = 0.0f;
 }
 
-void DRNUnitSpec::Send_Se(LeabraUnitVars* u, LeabraNetwork* net) {
+void DRNUnitSpec::Send_Se(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->sev;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->Un(j,net))->sev = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->sev = snd_val;
     }
   }
 }

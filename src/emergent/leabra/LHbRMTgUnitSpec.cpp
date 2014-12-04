@@ -63,8 +63,9 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   bool matrix_ind = false;
   bool pv_pos = false;
   bool pv_neg = false;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  const int nrg = u->NRecvConGps();
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
@@ -121,8 +122,12 @@ bool LHbRMTgUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  int nt = net->lthreads.n_threads_act;
+void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  int nt = net->n_thrs_built;
+  int flat_idx = u->UnFlatIdx(net, thr_no);
+#ifdef CUDA_COMPILE
+  nt = 1;                       // cuda is always 1 thread for this..
+#endif
 
   // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
   float patch_dir = 0.0f;
@@ -131,16 +136,19 @@ void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int th
   float matrix_ind = 0.0f;
   float pv_pos = 0.0f;
   float pv_neg = 0.0f;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  const int nrg = u->NRecvConGps(net, thr_no);
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
     float g_nw_nt = 0.0f;
     for(int j=0;j<nt;j++) {
-      float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
+      float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
       g_nw_nt += ndval;
+#ifndef CUDA_COMPILE
       ndval = 0.0f;           // zero immediately upon use -- for threads
+#endif
     }
 
     recv_gp->net_raw += g_nw_nt;
@@ -192,13 +200,14 @@ void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int th
   u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
 }
 
-void LHbRMTgUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::Quarter_Final(u, net);
+void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Quarter_Final(u, net, thr_no);
   if(gains.matrix_td) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
       float matrix_ind = 0.0f;
-      for(int g=0; g<u->recv.size; g++) {
-        LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+      const int nrg = u->NRecvConGps(net, thr_no);
+      for(int g=0; g<nrg; g++) {
+        LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
         if(recv_gp->NotActive()) continue;
         LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
         if(from->name.contains("Matrix") && (from->name.contains("Ind") ||

@@ -59,9 +59,8 @@ public:
   bool                  nogo;    // are these nogo con specs -- if so, flip the sign of the dopamine signal
   MatrixLearnSpec       matrix;  // parameters for special matrix learning dynamics
 
-  inline void Init_Weights(ConGroup* cg, Unit* ru, Network* net) override {
-    Init_Weights_symflag(net);
-    if(cg->prjn->spec->init_wts) return; // we don't do it, prjn does
+  inline void Init_Weights(ConGroup* cg, Network* net, int thr_no) override {
+    Init_Weights_symflag(net, thr_no);
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
@@ -97,9 +96,11 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) override {
-    if(ignore_unlearnable && net->unlearnable_trial) return;
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
     float* dwts = cg->OwnCnVar(DWT);
     float* ntrs = cg->OwnCnVar(NTR);
@@ -110,7 +111,7 @@ public:
     const int sz = cg->size;
     if(nogo) {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], trs[i], otr_lr,
                                 -ru->dav, ru->thal, ru->act_eq, su->act_eq);
         // only diff is -dav for nogo
@@ -118,7 +119,7 @@ public:
     }
     else {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], trs[i], otr_lr,
                                 ru->dav, ru->thal, ru->act_eq, su->act_eq);
       }

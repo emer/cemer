@@ -70,7 +70,7 @@ bool GPiUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 }
 
 void GPiUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  int nt = net->lthreads.n_threads_act;
+  int nt = net->n_thrs_built;
   int flat_idx = u->UnFlatIdx(net, thr_no);
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
@@ -90,7 +90,7 @@ void GPiUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int th
       float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
       g_nw_nt += ndval;
 #ifndef CUDA_COMPILE
-        ndval = 0.0f;           // zero immediately upon use -- for threads
+      ndval = 0.0f;           // zero immediately upon use -- for threads
 #endif
     }
 

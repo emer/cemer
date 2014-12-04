@@ -66,13 +66,13 @@ taBase::DumpQueryResult LeabraContextLayerSpec::Dump_QuerySaveMember(MemberDef* 
 }
 
 void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u,
-                                             LeabraNetwork* net) {
+                                             LeabraNetwork* net, int thr_no) {
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     uv->ext = uv->act_m;          // just use previous minus phase value!
   }
   else {
-    LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
+    LeabraConGroup* cg = (LeabraConGroup*)uv->RecvConGroupSafe(net, thr_no, 0);
     if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
       return;
     }
@@ -82,13 +82,13 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u,
     }
     uv->ext = updt.fm_prv * uv->act_p + updt.fm_hid * su->act_p; // compute new value
   }
-  uv->SetExtFlag(Unit::EXT);
-  ((LeabraUnitSpec*)uv->unit_spec)->Compute_HardClamp(uv, net, u->ThrNo());
+  uv->SetExtFlag(UnitVars::EXT);
+  ((LeabraUnitSpec*)uv->unit_spec)->Compute_HardClamp(uv, net, thr_no);
 }
 
 void LeabraContextLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   lay->hard_clamped = true;     // cache this flag
-  lay->SetExtFlag(Unit::EXT);
+  lay->SetExtFlag(UnitVars::EXT);
   bool do_update = lay->GetUserDataDef(do_update_key, false).toBool();
   if (do_update) {
     lay->SetUserData(do_update_key, false); // reset
@@ -109,9 +109,10 @@ void LeabraContextLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNet
 
   // lay->Inhib_SetVals(inhib.kwta_pt);            // assume 0 - 1 clamped inputs
 
+  
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    Compute_Context(lay, u, net);
+    Compute_Context(lay, u, net, u->ThrNo());
   }
 }
 
@@ -123,10 +124,3 @@ void LeabraContextLayerSpec::TriggerUpdate(LeabraLayer* lay) {
   lay->SetUserData(do_update_key, true);
 }
 
-void LeabraLayer::TriggerContextUpdate() {
-  LeabraContextLayerSpec* cls = dynamic_cast<LeabraContextLayerSpec*>
-    (spec.spec.ptr());
-  if (cls) {
-    cls->TriggerUpdate(this);
-  }
-}

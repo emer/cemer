@@ -81,7 +81,7 @@ public:
   CtxtUpdateSpec updt;		// ctxt updating constants: from hidden, from previous values (hysteresis), outputs from context (n/a on simple gate layer)
   CtxtNSpec	n_spec; // #CONDSHOW_ON_update_criteria:UC_N_TRIAL trials per update and optional offset for multi
   
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) override;
+  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
   // clamp from act_p values of sending layer
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false) override;
 
@@ -96,7 +96,8 @@ public:
 protected:
   SPEC_DEFAULTS;
   static const String do_update_key;
-  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net);
+  virtual void Compute_Context(LeabraLayer* lay, LeabraUnit* u, LeabraNetwork* net,
+                               int thr_no);
   // get context source value for given context unit
 
 private:

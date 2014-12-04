@@ -59,10 +59,9 @@ public:
   bool  ActiveMaint(LeabraUnit* u);
   // should active maintenance engaged for this unit -- looks at pfc_maint.maint_last_row compared to unit group Y position coordinate for unit
 
-  float Compute_NetinExtras(float& net_syn, LeabraUnit* u, LeabraNetwork* net,
-                            int thread_no=-1) override;
-
-  void  Compute_Act_ThalDeep5b(LeabraUnit* u, LeabraNetwork* net) override;
+  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
+                            int thr_no, float& net_syn) override;
+  void  Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);
 protected:

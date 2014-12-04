@@ -86,7 +86,7 @@ public:
   virtual void  Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the da value based on recv projections from PPTg and LHbRMTg
 
-  virtual bool  GetRecvLayers(LeabraUnitVars* u,
+  virtual bool  GetRecvLayers(LeabraUnit* u,
                               LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
   // get the recv layers..

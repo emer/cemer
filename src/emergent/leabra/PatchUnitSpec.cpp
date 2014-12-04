@@ -25,18 +25,19 @@ void PatchUnitSpec::Initialize() {
 void PatchUnitSpec::Defaults_init() {
 }
 
-void PatchUnitSpec::Send_DAShunt(LeabraUnit* u, LeabraNetwork* net) {
+void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(u->act_eq < opt_thresh.send) return;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->dav = 0.0f; // shunt!
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = 0.0f; // shunt!
     }
   }
 }
 
-void PatchUnitSpec::Compute_Act_Post(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
-  Send_DAShunt(u, net);
-  inherited::Compute_Act_Post(u, net, thread_no);
+void PatchUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Send_DAShunt(u, net, thr_no);
+  inherited::Compute_Act_Post(u, net, thr_no);
 }

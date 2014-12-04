@@ -25,11 +25,12 @@ void ClampDaUnitSpec::Initialize() {
 
 void ClampDaUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->Un(j,net))->dav = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = snd_val;
     }
   }
 }
@@ -55,9 +56,9 @@ void ClampDaUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 void ClampDaUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  inherited::Quarter_Final(u, net);
+  inherited::Quarter_Final(u, net, thr_no);
   if(send_da == PLUS_END && net->phase == LeabraNetwork::PLUS_PHASE) {
-    Send_Da(u, net);
+    Send_Da(u, net, thr_no);
   }
 }
 
