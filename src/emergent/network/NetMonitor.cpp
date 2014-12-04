@@ -18,6 +18,7 @@
 #include <Network>
 #include <Layer>
 #include <Projection>
+#include <SigLinkSignal>
 
 #include <taMisc>
 
@@ -66,6 +67,19 @@ void NetMonitor::UpdateAfterEdit_impl() {
     return;
   }
   UpdateNetworkPtrs();          // updates prev_network..
+  UpdateDataTable();
+}
+
+void NetMonitor::SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) {
+  inherited::SmartRef_SigDestroying(ref, obj); // does UAE
+}
+
+void NetMonitor::SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+                                  int sls, void* op1_, void* op2_)
+{
+  if(sls != SLS_STRUCT_UPDATE_END || !obj || !obj->InheritsFrom(&TA_Network)) {
+    return;
+  }
   UpdateDataTable();
 }
 

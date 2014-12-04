@@ -482,16 +482,8 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
                 " or ptrs to them, not pointer-pointers, var: ", var);
       return true; //no mon, but we did handle it
     }
-
-    // if(membname == "bias" && md->type->InheritsFrom(&TA_ConGroup)) {
-    //   ScanObject_BiasCon((RecvCons*)ths, var.after('.'), name_obj);
-    //   return true;
-    // }
-    // else {
-      // because we found the subobj, we deref the var and invoke ourself recursively
-      var = var.after('.');
-      return ScanObject_InObject(ths, var, name_obj);
-    // }
+    var = var.after('.');
+    return ScanObject_InObject(ths, var, name_obj);
   }
   else {
     md = obj->FindMember(var);
