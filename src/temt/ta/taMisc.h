@@ -303,7 +303,7 @@ public:
 
   static bool           tree_spring_loaded; // #SAVE #CAT_GUI do the tree view folders expand during drag and drop
   static short          spring_loaded_delay; // #SAVE #DEF_1000 #MIN_500 #MAX_2000 delay in milliseconds for expanding
-  static bool           write_to_project_log_file;  // #SAVE preference to write or not to write to the project level log file (.plog). Does not stop logging of trial or epoch data. Only stops logging to the .plog file
+  static bool           project_log;  // #SAVE save a project-level log file (.plog), which contains a record of all the css console messages, and other debugging and event logging information, which can be useful for reporting bugs when the software crashes unexpectedly -- e.g., if you attach the .plog file to a bug report, it can be helpful in diagonsing what is causing the problem.
   
  ////////////////////////////////////////////////////////
   //    File/Paths Info

@@ -411,7 +411,7 @@ void LeabraNetwork::Quarter_Init() {
   Quarter_Init_Layer();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:
 //   Quarter_Init_TargFlags();
-//   Compute_HardClamp();        // clamp all hard-clamped input acts: not easily threadable
+//   Compute_HardClamp();        // clamp all hard-clamped input acts
   Compute_HardClamp_Layer();
 }
 

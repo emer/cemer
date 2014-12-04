@@ -81,24 +81,26 @@ public:
   gdPVLVDaSpec    da;             // parameters for the pvlv da computation
   LVBlockSpec     lv_block;       // how LV signals are blocked by PV and LHbRMTg dip signals -- there are good reasons for these signals to block LV, because they reflect a stronger overall signal about outcomes, compared to the more "speculative" LV signal
 
-  virtual void  Send_Da(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the da value to sending projections: every cycle
-  virtual void  Compute_Da(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // compute the da value based on recv projections from PPTg and LHbRMTg
 
-  virtual bool  GetRecvLayers(LeabraUnit* u,
+  virtual bool  GetRecvLayers(LeabraUnitVars* u,
                               LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
                               LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay);
   // get the recv layers..
 
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override;
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
+     LeabraInhib* thr, float ival) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
-  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
   bool  CheckConfig_Unit(Unit* u, bool quiet=false);

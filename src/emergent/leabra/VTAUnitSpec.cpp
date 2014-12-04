@@ -119,14 +119,15 @@ bool VTAUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 }
 
 bool VTAUnitSpec::GetRecvLayers(LeabraUnit* u,
-                                 LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
-                                 LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay) {
+                                LeabraLayer*& pptg_lay, LeabraLayer*& lhb_lay,
+                                LeabraLayer*& pospv_lay, LeabraLayer*& vspatch_lay) {
   pptg_lay = NULL;
   lhb_lay = NULL;
   pospv_lay = NULL;
   vspatch_lay = NULL;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  const int nrg = u->NRecvConGps();
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(g);
     if(recv_gp->NotActive()) continue;
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     LeabraLayer* fmlay = (LeabraLayer*)recv_gp->prjn->from.ptr();
@@ -142,12 +143,13 @@ bool VTAUnitSpec::GetRecvLayers(LeabraUnit* u,
   return true;
 }
 
-void VTAUnitSpec::Compute_Da(LeabraUnit* u, LeabraNetwork* net) {
+void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* pptg_lay = NULL;
   LeabraLayer* lhb_lay = NULL;
   LeabraLayer* pospv_lay = NULL;
   LeabraLayer* vspatch_lay = NULL;
-  GetRecvLayers(u, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  GetRecvLayers(un, pptg_lay, lhb_lay, pospv_lay, vspatch_lay);
 
   // use avg act over layer..
   float burst_da = pptg_lay->acts_eq.avg;
@@ -166,7 +168,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnit* u, LeabraNetwork* net) {
   net_da *= da.da_gain;
 
   if(lv_block.rec_data) {
-    LeabraLayer* lay = u->own_lay();
+    LeabraLayer* lay = un->own_lay();
     lay->SetUserData("burst_da", burst_da);
     lay->SetUserData("dip_da", dip_da);
     lay->SetUserData("pos_pv", pospv);
@@ -197,22 +199,26 @@ void VTAUnitSpec::Compute_Da(LeabraUnit* u, LeabraNetwork* net) {
   u->da = 0.0f;
 }
 
-void VTAUnitSpec::Send_Da(LeabraUnit* u, LeabraNetwork* net) {
+void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->dav = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = snd_val;
     }
   }
 }
 
-void VTAUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Compute_Da(u, net);
-  Send_Da(u, net);
+void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_Da(u, net, thr_no);
+  Send_Da(u, net, thr_no);
+}
+
+void VTAUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_Da(u, net, thr_no);
+  Send_Da(u, net, thr_no);
 }
 
 

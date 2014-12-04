@@ -56,17 +56,18 @@ INHERITED(LeabraUnitSpec)
 public:
   GPiMiscSpec    gpi;      // parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold
 
-  void	Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override;
+  void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  virtual void  Send_Thal(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the act value as thal to sending projections: every cycle
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   // no learning in this one..
-  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
-  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec

@@ -258,7 +258,7 @@ void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
   if(taMisc::is_undo_loading)
     return; // none of this.
-  if (taMisc::write_to_project_log_file) {
+  if (taMisc::project_log) {
     OpenProjectLog();
   }
   DoView();
@@ -529,7 +529,7 @@ int taProject::SaveAs(const String& fname) {
     if(!fnm.contains("_recover") && !fnm.contains("_autosave")) {
       CleanFiles();
     }
-    if (taMisc::write_to_project_log_file) {
+    if (taMisc::project_log) {
       OpenProjectLog();
     }
   }

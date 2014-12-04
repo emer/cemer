@@ -63,11 +63,14 @@ public:
   }
   // #IGNORE with dopamine
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) override {
-    // Compute_SAvgCor(cg, su, net);
-    // if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+  inline void Compute_dWt_CtLeabraXCAL(ConGroup* rcg, Network* rnet, int thr_no) override {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
+    // todo: this was originally designed to work with savg cor!
+    
     float* fwts = cg->OwnCnVar(FWT);
     float* dwts = cg->OwnCnVar(DWT);
     float su_act;
@@ -81,7 +84,7 @@ public:
     const int sz = cg->size;
     if(da_mod == NO_DA_MOD) {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_NoDa(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act);
@@ -89,7 +92,7 @@ public:
     }
     else if(da_mod == DA_MOD) {
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act, ru->dav);
@@ -97,7 +100,7 @@ public:
     }
     else {                      // DA_MOD_ABS
       for(int i=0; i<sz; i++) {
-        LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         if(ru->lrnmod == 0.0f) continue; // must have this to learn
         const float lin_wt = LinFmSigWt(fwts[i]);
         C_Compute_dWt_Hebb_Da(dwts[i], /* cg->savg_cor */ .1f, lin_wt, ru->act_p, su_act,

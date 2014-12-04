@@ -69,22 +69,29 @@ bool GPiUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void GPiUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread_no) {
+void GPiUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   int nt = net->lthreads.n_threads_act;
+  int flat_idx = u->UnFlatIdx(net, thr_no);
+#ifdef CUDA_COMPILE
+  nt = 1;                       // cuda is always 1 thread for this..
+#endif
 
   // note: REQUIRES NetinPerPrjn!  Set automatically in CheckConfig
   float go_in = 0.0f;
   float nogo_in = 0.0f;
-  for(int g=0; g<u->recv.size; g++) {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.FastEl(g);
+  const int nrg = u->NRecvConGps(net, thr_no);
+  for(int g=0; g<nrg; g++) {
+    LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
     if(recv_gp->NotActive()) continue;
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
 
     float g_nw_nt = 0.0f;
     for(int j=0;j<nt;j++) {
-      float& ndval = net->send_netin_tmp.FastEl3d(u->flat_idx, g, j); 
+      float& ndval = net->ThrSendNetinTmpPerPrjn(j, g)[flat_idx]; 
       g_nw_nt += ndval;
-      ndval = 0.0f;           // zero immediately upon use -- for threads
+#ifndef CUDA_COMPILE
+        ndval = 0.0f;           // zero immediately upon use -- for threads
+#endif
     }
 
     recv_gp->net_raw += g_nw_nt;
@@ -103,7 +110,7 @@ void GPiUnitSpec::Compute_NetinRaw(LeabraUnit* u, LeabraNetwork* net, int thread
   u->net_raw = gpi_net;
 }
 
-void GPiUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
+void GPiUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float snd_val;
   if(gpi.thr_act) {
     if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
@@ -113,19 +120,23 @@ void GPiUnitSpec::Send_Thal(LeabraUnit* u, LeabraNetwork* net) {
     snd_val = (u->act_eq > gpi.gate_thr ? u->act_eq : 0.0f);
   }
 
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->thal = snd_val;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
     }
   }
 }
 
-void GPiUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  inherited::Compute_Act(ru, rnet, thread_no);
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Send_Thal(u, net);
+void GPiUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Rate(u, net, thr_no);
+  Send_Thal(u, net, thr_no);
+}
+
+void GPiUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  Send_Thal(u, net, thr_no);
 }
 

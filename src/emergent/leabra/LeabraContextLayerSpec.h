@@ -68,7 +68,7 @@ private:
 eTypeDef_Of(LeabraContextLayerSpec);
 
 class E_API LeabraContextLayerSpec : public LeabraLayerSpec {
-  // context layer that copies from its recv projection (like an input layer)
+  // context layer that copies from its recv projection, which should have one-to-one connections with a source layer -- this is a slow and outdated way to achieve simple recurrent network (SRN) behavior -- consider using LeabraTICtxtConSpec connections within a single layer, which implements this more efficiently
 INHERITED(LeabraLayerSpec)
 public:
   enum UpdateCriteria {

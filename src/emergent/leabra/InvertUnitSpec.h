@@ -29,17 +29,19 @@ class E_API InvertUnitSpec : public LeabraUnitSpec {
   // a unit that continuously copies activations from input (use one to one prjns, weights don't matter) and sets our activations to 1.0 - input->act
 INHERITED(LeabraUnitSpec)
 public:
-  virtual void Compute_ActFmSource(LeabraUnit* lay, LeabraNetwork* net);
+  virtual void Compute_ActFmSource(LeabraUnitVars* lay, LeabraNetwork* net, int thr_no);
   // set current act 
 
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
+     LeabraInhib* thr, float ival) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
-  void 	Compute_dWt(Unit* u, Network* net, int thread_no=-1) override { };
-  void	Compute_dWt_Norm(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_Weights(Unit* u, Network* net, int thread_no=-1) override { };
+  void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
+  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 

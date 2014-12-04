@@ -39,13 +39,13 @@ set(leabra_HEADS_MAKETA
   MarkerConSpec.h
   LeabraDeltaConSpec.h
   DaDeltaConSpec.h
-  # LeabraLimPrecConSpec.h
+  LeabraLimPrecConSpec.h
   
-  # LayerActUnitSpec.h
+  LayerActUnitSpec.h
     
-  # LeabraContextLayerSpec.h
-  # ScalarValLayerSpec.h
-  # MotorForceLayerSpec.h
+  LeabraContextLayerSpec.h
+#  ScalarValLayerSpec.h
+#  MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
   TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
@@ -65,22 +65,22 @@ set(leabra_HEADS_MAKETA
   # TDRewIntegLayerSpec.h
   # TdLayerSpec.h
 
-  # LearnModUnitSpec.h
-  # LearnModDeltaConSpec.h
-  # LearnModHebbConSpec.h
-  # PPTgUnitSpec.h
-  # LHbRMTgUnitSpec.h
-  # VTAUnitSpec.h
-  # DRNUnitSpec.h
-  # VSPatchUnitSpec.h
-  # ClampDaUnitSpec.h
+  LearnModUnitSpec.h
+  LearnModDeltaConSpec.h
+  LearnModHebbConSpec.h
+  PPTgUnitSpec.h
+  LHbRMTgUnitSpec.h
+  VTAUnitSpec.h
+  DRNUnitSpec.h
+  VSPatchUnitSpec.h
+  ClampDaUnitSpec.h
 
-  # MatrixCon.h
-  # MatrixConSpec.h
-  # PatchUnitSpec.h
-  # GPiUnitSpec.h
-  # InvertUnitSpec.h
-  # PFCUnitSpec.h
+  MatrixCon.h
+  MatrixConSpec.h
+  PatchUnitSpec.h
+  GPiUnitSpec.h
+  InvertUnitSpec.h
+  PFCUnitSpec.h
   
   GpCustomPrjnSpecBase.h
   RowColPrjnSpec.h
@@ -156,13 +156,13 @@ set(leabra_SRCS
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
-  # LeabraLimPrecConSpec.cpp
+  LeabraLimPrecConSpec.cpp
   
-  # LayerActUnitSpec.cpp
+  LayerActUnitSpec.cpp
     
-  # LeabraContextLayerSpec.cpp
-  # ScalarValLayerSpec.cpp
-  # MotorForceLayerSpec.cpp
+  LeabraContextLayerSpec.cpp
+#  ScalarValLayerSpec.cpp
+#  MotorForceLayerSpec.cpp
   TwoDValLeabraLayer.cpp
   TwoDValLayerSpec.cpp
   DecodeTwoDValLayerSpec.cpp
@@ -182,22 +182,22 @@ set(leabra_SRCS
   # TDRewIntegLayerSpec.cpp
   # TdLayerSpec.cpp
                    
-  # LearnModUnitSpec.cpp
-  # LearnModDeltaConSpec.cpp
-  # LearnModHebbConSpec.cpp
-  # PPTgUnitSpec.cpp
-  # LHbRMTgUnitSpec.cpp
-  # VTAUnitSpec.cpp
-  # DRNUnitSpec.cpp
-  # VSPatchUnitSpec.cpp
-  # ClampDaUnitSpec.cpp
+  LearnModUnitSpec.cpp
+  LearnModDeltaConSpec.cpp
+  LearnModHebbConSpec.cpp
+  PPTgUnitSpec.cpp
+  LHbRMTgUnitSpec.cpp
+  VTAUnitSpec.cpp
+  DRNUnitSpec.cpp
+  VSPatchUnitSpec.cpp
+  ClampDaUnitSpec.cpp
 
-  # MatrixCon.cpp
-  # MatrixConSpec.cpp
-  # PatchUnitSpec.cpp
-  # GPiUnitSpec.cpp
-  # InvertUnitSpec.cpp
-  # PFCUnitSpec.cpp
+  MatrixCon.cpp
+  MatrixConSpec.cpp
+  PatchUnitSpec.cpp
+  GPiUnitSpec.cpp
+  InvertUnitSpec.cpp
+  PFCUnitSpec.cpp
   
   GpCustomPrjnSpecBase.cpp
   RowColPrjnSpec.cpp

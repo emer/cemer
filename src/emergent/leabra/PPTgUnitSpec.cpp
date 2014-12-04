@@ -27,22 +27,34 @@ void PPTgUnitSpec::Initialize() {
 void PPTgUnitSpec::Defaults_init() {
 }
 
-void PPTgUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  LeabraUnit* lu = (LeabraUnit*)u;
-  float net_save = lu->net;
-  lu->net = d_net_gain * (lu->net - lu->misc_1); // convert to delta
-  if(lu->net < 0.0f) lu->net = 0.0f;
+void PPTgUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  float net_save = u->net;
+  u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
+  if(u->net < 0.0f) u->net = 0.0f;
   // note: positive rectification means that trial after PV, which is often neg, will be nullified
-  inherited::Compute_Act(u, net, thread_no);
+  inherited::Compute_Act_Rate(u, net, thr_no);
   if(clamp_act) {
-    lu->act_eq = lu->act_nd = lu->act = lu->net;
-    lu->da = 0.0f;
+    u->act_eq = u->act_nd = u->act = u->net;
+    u->da = 0.0f;
   }
-  lu->net = net_save;           // restore
+  u->net = net_save;           // restore
 }
 
-void PPTgUnitSpec::Quarter_Final(LeabraUnit* u, LeabraNetwork* net) {
-  inherited::Quarter_Final(u, net);
+void PPTgUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  float net_save = u->net;
+  u->net = d_net_gain * (u->net - u->misc_1); // convert to delta
+  if(u->net < 0.0f) u->net = 0.0f;
+  // note: positive rectification means that trial after PV, which is often neg, will be nullified
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  if(clamp_act) {
+    u->act_eq = u->act_nd = u->act = u->net;
+    u->da = 0.0f;
+  }
+  u->net = net_save;           // restore
+}
+
+void PPTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  inherited::Quarter_Final(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->misc_1 = u->net;       // save for next time -- this is the raw net..
   }

@@ -29,10 +29,12 @@ class E_API LayerActUnitSpec : public LeabraUnitSpec {
   // Layer-driven activation unit spec -- use this for any layer that computes activation values at the layer-level, instead of using the usual net input, currents etc -- saves on computational costs by negating most functions
 INHERITED(LeabraUnitSpec)
 public:
-  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thread_no=-1) override { };
-  void	Compute_ApplyInhib(LeabraUnit* u, LeabraLayerSpec* lspec, 
-                           LeabraNetwork* net, LeabraInhib* thr, float ival) override { };
-  void	Compute_Act(Unit* u, Network* net, int thread_no=-1) override { };
+  void	Compute_NetinInteg(LeabraUnit* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_ApplyInhib
+    (LeabraUnitVars* uv, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
+     LeabraInhib* thr, float ival) override { };
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
 
   TA_SIMPLE_BASEFUNS(LayerActUnitSpec);
 protected:

@@ -46,10 +46,10 @@ bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void InvertUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
-  LeabraRecvCons* cg = (LeabraRecvCons*)u->recv.SafeEl(0);
+void InvertUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
   if(!cg) return;
-  LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
+  LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
   if(!su) return;
   LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
   if(fmlay->lesioned()) {
@@ -59,12 +59,14 @@ void InvertUnitSpec::Compute_ActFmSource(LeabraUnit* u, LeabraNetwork* net) {
   u->act = 1.0f - su->act_eq;
   u->act_eq = u->act_nd = u->act;
   u->da = 0.0f;            // I'm fully settled!
-  u->AddToActBuf(syn_delay);
+  // u->AddToActBuf(syn_delay);
 }
 
-void InvertUnitSpec::Compute_Act(Unit* ru, Network* rnet, int thread_no) {
-  LeabraUnit* u = (LeabraUnit*)ru;
-  LeabraNetwork* net = (LeabraNetwork*)rnet;
-  Compute_ActFmSource(u, net);
+void InvertUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_ActFmSource(u, net, thr_no);
+}
+
+void InvertUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  Compute_ActFmSource(u, net, thr_no);
 }
 

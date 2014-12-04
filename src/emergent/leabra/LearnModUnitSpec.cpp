@@ -26,19 +26,27 @@ void LearnModUnitSpec::Initialize() {
 void LearnModUnitSpec::Defaults_init() {
 }
 
-void LearnModUnitSpec::Send_LearnMod(LeabraUnit* u, LeabraNetwork* net) {
+void LearnModUnitSpec::Send_LearnMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float lrnmod = (u->act_eq > learn_thr) ? u->act_eq : 0.0f;
-  for(int g=0; g<u->send.size; g++) {
-    LeabraConGroup* send_gp = (LeabraConGroup*)u->send.FastEl(g);
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnit*)send_gp->Un(j,net))->lrnmod = lrnmod;
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->lrnmod = lrnmod;
     }
   }
 }
 
-void LearnModUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
-  inherited::Compute_Act(u, net, thread_no);
-  Send_LearnMod((LeabraUnit*)u, (LeabraNetwork*)net);
+void LearnModUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+{
+  inherited::Compute_Act_Rate(u, net, thr_no);
+  Send_LearnMod(u, net, thr_no);
+}
+
+void LearnModUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no)
+{
+  inherited::Compute_Act_Spike(u, net, thr_no);
+  Send_LearnMod(u, net, thr_no);
 }
 

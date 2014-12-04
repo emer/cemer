@@ -268,7 +268,7 @@ short                   taMisc::num_browse_history = 20;
 
 bool                    taMisc::tree_spring_loaded = true;
 short                   taMisc::spring_loaded_delay = 1000;  // milliseconds
-bool                    taMisc::write_to_project_log_file = false;
+bool                    taMisc::project_log = false;
 taMisc::KeyBindingSet   taMisc::current_key_bindings = taMisc::KEY_BINDINGS_DEFAULT;
 
 ////////////////////////////////////////////////////////

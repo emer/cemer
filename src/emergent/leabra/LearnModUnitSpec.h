@@ -31,10 +31,11 @@ INHERITED(LeabraUnitSpec)
 public:
   float         learn_thr;      // #DEF_0.1 Threshold value of unit activation to set the learning flag on
 
-  virtual void  Send_LearnMod(LeabraUnit* u, LeabraNetwork* net);
+  virtual void  Send_LearnMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the unit lrnmod value to all units that we project to, based on unit activation thresholds
 
-  void	Compute_Act(Unit* u, Network* net, int thread_no = -1) override;
+  void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(LearnModUnitSpec);
 protected:
