@@ -148,7 +148,6 @@ void OptThreshSpec::Initialize() {
   send = .1f;
   delta = 0.005f;
   xcal_lrn = 0.01f;
-  init_net_trls = 10;
 }
 
 void LeabraDtSpec::Initialize() {
@@ -787,13 +786,10 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
   DecayState(u, net, thr_no, ls->decay.trial);
-  if(net->net_misc.trial_decay) {
-    Init_Netins(u, net, thr_no);          // need to re-init here at start of trial..
-  }
-  else {
-    if((net->total_trials-1) % opt_thresh.init_net_trls == 0)
-      Init_Netins(u, net, thr_no);          // need to re-init here at start of trial..
-  }
+  // note: theoretically you could avoid doing Init_Netins if there is no decay between
+  // trials, and save some compute time, but the delta-based netin has enough
+  // error accumulation that this does NOT work well in practice, so we always do it here
+  Init_Netins(u, net, thr_no); 
   u->dav = 0.0f;
   //  u->sev = 0.0f; // longer time-course
   u->lrnmod = 0.0f;
