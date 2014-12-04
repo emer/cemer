@@ -747,7 +747,6 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgElChoiceDlg.h
   ProgBrkPt.h
   ProgBrkPt_List.h
-  CondBase.h
   ParamSet.h
   ParamSetItem.h
   ParamSet_Group.h
@@ -1950,7 +1949,6 @@ set(ta_SRCS_MAKETA
   ViewBackground.cpp
   ViewBackground_List.cpp
   iDialogColorChooser.cpp
-  CondBase.cpp
   ParamSet.cpp
   ParamSetItem.cpp
   ParamSet_Group.cpp
