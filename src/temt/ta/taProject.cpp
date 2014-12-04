@@ -544,7 +544,11 @@ int taProject::SaveAs(const String& fname) {
 
 void taProject::PublishDocsOnWeb(const String &repositoryName)
 {
-  bool logged_in = taMediaWiki::Login(repositoryName);
+  String username = taMediaWiki::GetLoggedInUsername(repositoryName);
+  
+  // if username not empty ask if they want to stay logged in under that name
+  
+  bool logged_in = taMediaWiki::Login(repositoryName, username);
   
   if (logged_in) {
     iDialogPublishDocs dialog(repositoryName);
@@ -552,14 +556,9 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
       // User clicked OK.
       QString name = dialog.getName();
       QString desc = dialog.getDesc();
-      QStringList tags = dialog.getTags();
-      
+      QString categories = dialog.getTags();
+      // to do pass categories after Tom checks in new api
       taMediaWiki::CreatePage(repositoryName, name, "this is the content");
-      
-      // TODO: upload the docs.  Initial plan was to turn the pub docs dialog
-      // into an "uploading progress" dialog, but after trying a few things
-      // it seems to make more sense to create a new progress dialog that
-      // could also be used for the PublishProject stage.
     }
   }
 }

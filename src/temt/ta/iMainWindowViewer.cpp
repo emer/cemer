@@ -1585,7 +1585,7 @@ void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
   String repositoryName = repo.toString();
 
   taProject *proj = curProject();
-  if (repositoryName.empty() && proj) {
+  if (!repositoryName.empty() && proj) {
     proj->PublishDocsOnWeb(repositoryName);
   }
 }

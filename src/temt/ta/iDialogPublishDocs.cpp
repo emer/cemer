@@ -97,9 +97,9 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
 
   // Tags
   m_tagsEdit = new QLineEdit;
-  m_tagsEdit->setStatusTip("Instructions: Enter tags relevant to this project (comma or space spearated)");
+  m_tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (comma or space spearated)");
   m_tagsEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Tags:", m_tagsEdit);
+  addLabeledWidget(newHBox(vbox), "&Categories (space as separator):", m_tagsEdit);
 
   // OK, Cancel buttons
   QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -119,10 +119,11 @@ QString iDialogPublishDocs::getDesc() const
   return m_descEdit->toPlainText();
 }
 
-QStringList iDialogPublishDocs::getTags() const
+QString iDialogPublishDocs::getTags() const
 {
   QString tags = m_tagsEdit->text();
-  return tags.split(QRegExp("[,\\s]+"), QString::SkipEmptyParts);
+//  return tags.split(QRegExp("[,\\s]+"), QString::SkipEmptyParts);
+  return tags;
 }
 
 bool iDialogPublishDocs::event(QEvent *event)

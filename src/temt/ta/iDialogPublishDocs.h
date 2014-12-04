@@ -37,7 +37,7 @@ public:
   iDialogPublishDocs(const char *repositoryName);
   QString getName() const;
   QString getDesc() const;
-  QStringList getTags() const;
+  QString getTags() const;
 
 private:
   bool event(QEvent *event) override;
