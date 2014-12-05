@@ -34,7 +34,7 @@ void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
     return;
   }
   
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXT_EDIT_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PANEL_CONTEXT, key_event);
   
   QAbstractButton* but;
   

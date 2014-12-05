@@ -606,7 +606,7 @@ void iMainWindowViewer::Constr_EditMenu()
   editPasteAssignAction->setIcon(QIcon(editpaste));
   editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
-  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_DELETE), "editDeleteAction"));
+  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_DELETE), "editDeleteAction"));
   // editDeleteAction->setIcon(QIcon(editpaste));
 
   editLinkAction = AddAction(new iAction(iClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
@@ -676,13 +676,13 @@ void iMainWindowViewer::Constr_ViewMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
 
-  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
-  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
-  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
-  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_T3_ONLY), "viewT3OnlyAction"));
-  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
-  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
-  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::MAIN_WINDOW_CONTEXT, taiMisc::MAIN_WINDOW_VIEW_ALL_FRAMES), "viewAllFramesAction"));
+  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_T3_ONLY), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_ALL_FRAMES), "viewAllFramesAction"));
 
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
@@ -1857,20 +1857,20 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
 
 bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* key_event) {
  
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::MAIN_WINDOW_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::MAINWINDOW_CONTEXT, key_event);
   
   switch(action) {
-    case taiMisc::MAIN_WINDOW_MOVE_FOCUS_LEFT: // move left between regions
+    case taiMisc::MAINWINDOW_MOVE_FOCUS_LEFT: // move left between regions
       MoveFocusLeft();
       return true;
-    case taiMisc::MAIN_WINDOW_MOVE_FOCUS_RIGHT: // move right between regions
+    case taiMisc::MAINWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
       MoveFocusRight();
       return true;
     // these need key bindings
-    case taiMisc::MAIN_WINDOW_SHIFT_CUR_TAB_LEFT: // switch tab
+    case taiMisc::MAINWINDOW_SHIFT_CUR_TAB_LEFT: // switch tab
       ShiftCurTabLeft();
       return true;
-    case taiMisc::MAIN_WINDOW_SHIFT_CUR_TAB_RIGHT: // switch tab
+    case taiMisc::MAINWINDOW_SHIFT_CUR_TAB_RIGHT: // switch tab
       ShiftCurTabRight();
       return true;
     default:

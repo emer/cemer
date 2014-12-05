@@ -39,6 +39,7 @@
 #include <QPushButton>
 #include <QMenuBar>
 #include <QScrollBar>
+#include <QDebug>
 
 
 #define record_cursor_width 16
@@ -1111,3 +1112,24 @@ void taiMisc::DeleteChildrenNow(QObject* obj) {
   }
 }
 
+void taiMisc::LoadCustomKeyBindings() {
+  String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
+  QFile in_file(filename);
+  if (!in_file.open(QIODevice::ReadOnly)) {
+    return;
+  }
+  
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_CUSTOM));
+  QDataStream in(&in_file);
+  QString context;
+  QString action;
+  QKeySequence ks;
+  String enum_tp_nm;
+  
+  for (int i=0; i<taiMisc::ACTION_COUNT-1; i++) {  // minus 1 for NULL_ACTION
+    in >> context >> action >> ks;
+    int context_val = TA_taiMisc.GetEnumVal((String)context, enum_tp_nm);
+    int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);    
+    bindings->Add(static_cast<taiMisc::BindingContext>(context_val), static_cast<taiMisc::BoundAction>(action_val), ks);
+  }
+}

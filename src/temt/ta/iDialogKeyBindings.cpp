@@ -90,7 +90,7 @@ void iDialogKeyBindings::Constr() {
   String context_label;
   String action_label;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
-  for (int ctxt=0; ctxt<context_count-1; ctxt++) {  // -1 because the last enum is the count
+  for (int ctxt=0; ctxt<context_count; ctxt++) {
     taiMisc::BindingContext current_context = taiMisc::BindingContext(ctxt);
     context_label = TA_taiMisc.GetEnumString("BindingContext", ctxt);
     context_label = context_label.before("_CONTEXT");  // strip off "_CONTEXT"
@@ -105,7 +105,7 @@ void iDialogKeyBindings::Constr() {
     
     QKeySequenceEdit* edit;
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
-    for (int i=0; i<action_count-1; i++) {  // -1 because the last enum is the count
+    for (int i=0; i<action_count; i++) {
       action_label = TA_taiMisc.GetEnumString("BoundAction", i);
       if (action_label.startsWith(context_label)) {
         action_label = action_label.after(context_label + "_");
@@ -138,10 +138,17 @@ void iDialogKeyBindings::accept() {
   inherited::accept();
   
 #if (QT_VERSION >= 0x050200)
+  String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
+  QFile file(filename);
+  if (!file.open(QIODevice::WriteOnly)) {
+    return;
+  }
+  QDataStream out(&file);
+  
   QLabel* action;
   QKeySequenceEdit* key_seq_edit;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
-  for (int ctxt=0; ctxt<context_count-1; ctxt++) {
+  for (int ctxt=0; ctxt<context_count; ctxt++) {
     for (int row=0; row<bindings_layout[ctxt]->rowCount(); row++) {
       QLayoutItem* label_item = bindings_layout[ctxt]->itemAt(row,  QFormLayout::LabelRole);
       QWidgetItem* label = dynamic_cast<QWidgetItem*>(label_item);
@@ -154,17 +161,18 @@ void iDialogKeyBindings::accept() {
         key_seq_edit = dynamic_cast<QKeySequenceEdit*>(field->widget());
       }
       if (action && key_seq_edit) {
-            taMisc::DebugInfo(String(action->text()), "   ", String(key_seq_edit->keySequence().toString()));
+        // add back the context string to the action string
+        String context_str = TA_taiMisc.GetEnumString("BindingContext", ctxt);
+        String context_prefix = context_str.before("CONTEXT");
+        String action_str = (String)action->text();
+        action_str = context_prefix + action_str;
+        QKeySequence ks = key_seq_edit->keySequence();
+        out << (QString)context_str.chars() << (QString)action_str.chars() << ks;
       }
     }
   }
-  
-  // here is where we execute actions!
-//  QFile file("file.dat");
-//  file.open(QIODevice::WriteOnly);
-//  QDataStream out(&file);   // we will serialize the data into the file
-//  out << QString("the answer is");   // serialize a string
-//  out << (qint32)42;        // serialize an integer
+  file.close();
+  taiMisc::LoadCustomKeyBindings();
 #endif
 }
 

@@ -44,7 +44,7 @@ public:
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
   virtual QKeySequence          KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action);
-  // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAIN_WINDOW_CONTEXT, "view_browse_only")
+  // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAINWINDOW_CONTEXT, "view_browse_only")
   virtual taiMisc::BoundAction  Action(taiMisc::BindingContext context,  QKeySequence key_sequence);
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);

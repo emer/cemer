@@ -181,82 +181,82 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
 {
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXT_EDIT_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
   
   switch (action) {
-    case taiMisc::TEXT_EDIT_EMACS_DESELECT:
+    case taiMisc::TEXTEDIT_EMACS_DESELECT:
       key_event->accept();
       deselect();
       ext_select_on = true;
       return;
-    case taiMisc::TEXT_EDIT_EMACS_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::TEXTEDIT_EMACS_CLEAR_EXTENDED_SELECTION:
       key_event->accept();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_HOME:
+    case taiMisc::TEXTEDIT_EMACS_HOME:
       key_event->accept();
       home(ext_select_on);
       return;
-    case taiMisc::TEXT_EDIT_EMACS_END:
+    case taiMisc::TEXTEDIT_EMACS_END:
       key_event->accept();
       end(ext_select_on);
       return;
-    case taiMisc::TEXT_EDIT_EMACS_CURSOR_FORWARD:
+    case taiMisc::TEXTEDIT_EMACS_CURSOR_FORWARD:
       key_event->accept();
       cursorForward(ext_select_on, 1);
       return;
-    case taiMisc::TEXT_EDIT_EMACS_CURSOR_BACKWARD:
+    case taiMisc::TEXTEDIT_EMACS_CURSOR_BACKWARD:
       key_event->accept();
       cursorBackward(ext_select_on, 1);
       return;
-    case taiMisc::TEXT_EDIT_EMACS_DELETE:
+    case taiMisc::TEXTEDIT_EMACS_DELETE:
       key_event->accept();
       del();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_BACKSPACE:
+    case taiMisc::TEXTEDIT_EMACS_BACKSPACE:
       key_event->accept();
       backspace();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_KILL:
+    case taiMisc::TEXTEDIT_EMACS_KILL:
       key_event->accept();
       end(true);                // mark
       cut();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_SELECT_ALL:
+    case taiMisc::TEXTEDIT_EMACS_SELECT_ALL:
       key_event->accept();
       selectAll();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_PASTE:
+    case taiMisc::TEXTEDIT_EMACS_PASTE:
       key_event->accept();
       paste();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_CUT:
+    case taiMisc::TEXTEDIT_EMACS_CUT:
       key_event->accept();
       cut();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_UNDO:
+    case taiMisc::TEXTEDIT_EMACS_UNDO:
       key_event->accept();
       undo();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_COPY_CLEAR:
+    case taiMisc::TEXTEDIT_EMACS_COPY_CLEAR:
       key_event->accept();
       copy();
       clearExtSelection();
       return;
-    case taiMisc::TEXT_EDIT_EMACS_WORD_FORWARD:
+    case taiMisc::TEXTEDIT_EMACS_WORD_FORWARD:
       key_event->accept();
       cursorWordForward(ext_select_on);
       return;
-    case taiMisc::TEXT_EDIT_EMACS_WORD_BACKWARD:
+    case taiMisc::TEXTEDIT_EMACS_WORD_BACKWARD:
       key_event->accept();
       cursorWordBackward(ext_select_on);
       return;
-    case taiMisc::TEXT_EDIT_LOOKUP:
+    case taiMisc::TEXTEDIT_LOOKUP:
       key_event->accept();
       doLookup();
       return;

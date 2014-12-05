@@ -26,9 +26,9 @@ TA_BASEFUNS_CTORS_DEFN(KeyBindings);
 
 KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext context) {
   switch (context) {
-    case taiMisc::MAIN_WINDOW_CONTEXT:
+    case taiMisc::MAINWINDOW_CONTEXT:
       return &main_window_bindings;
-    case taiMisc::TEXT_EDIT_CONTEXT:
+    case taiMisc::TEXTEDIT_CONTEXT:
       return &line_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
