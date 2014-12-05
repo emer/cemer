@@ -23,9 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 
-// timing of ThetaPhase dynamics -- split minus and normal plus:
-// [ ------ minus ------- ][ ---- plus ---- ]
-// [   auto-  ][ recall-  ][ -- both plus-- ]
+// timing of ThetaPhase dynamics -- based on quarter structure:
+// [  q1      ][  q2  q3  ][     q4     ]
+// [ ------ minus ------- ][ -- plus -- ]
+// [   auto-  ][ recall-  ][ -- plus -- ]
 
 //  DG -> CA3 -> CA1
 //  /    /      /    \
@@ -39,26 +40,23 @@
 // CA3 -> CA1 = 0, EC_in -> CA1 = 1
 // (same as auto- -- training signal for CA3 -> CA1 is what EC would produce!
 
-// act_mid = auto encoder minus phase state (in both CA1 and EC_out
+// act_q1 = auto encoder minus phase state (in both CA1 and EC_out
 //   used by HippoEncoderConSpec relative to act_p plus phase)
-// act_m = recall minus phase (normal minus phase dynamics for CA3 recall learning)
-// act_p = plus (serves as plus phase for both auto and recall)
+// act_q3 / act_m = recall minus phase (normal minus phase dynamics for CA3 recall learning)
+// act_a4 / act_p = plus (serves as plus phase for both auto and recall)
 
 // learning just happens at end of trial as usual, but encoder projections use
-// the act_mid, act_p variables to learn on the right signals
+// the act_q2, act_p variables to learn on the right signals
+
+// todo: implement a two-trial version of the code to produce a true theta rhythm
+// integrating over two adjacent alpha trials..
 
 eTypeDef_Of(ThetaPhaseLayerSpec);
 
 class E_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
-  // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning
+  // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning -- sets global options -- quarter timing: q1 is auto-encoder minus phase, q2, q3 are recall, q4 is common plus phase
 INHERITED(LeabraLayerSpec)
 public:
-  int		auto_m_cycles;	// #DEF_20:80 number of cycles for auto-encoder minus phase, at which point act_mid is recorded for training the EC <-> CA1 auto-encoder -- this should be just long enough for information to reach EC_in and flow through CA1 to EC_out -- will set network min_cycles to be this number plus 20 cycles, which is a minimum for combined assoc and recall minus phases
-
-  virtual void 	RecordActMid(LeabraLayer* lay, LeabraNetwork* net);
-  // save current act_nd values as act_mid -- minus phase for auto-encoder learning
-  virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
-  // compute compute error stats as user data on layer (enc_sse, enc_norm_err)
 
   TA_SIMPLE_BASEFUNS(ThetaPhaseLayerSpec);
 protected:

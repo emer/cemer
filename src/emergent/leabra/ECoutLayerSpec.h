@@ -36,6 +36,9 @@ public:
   virtual void 	ClampFromECin(LeabraLayer* lay, LeabraNetwork* net);
   // clamp ECout values from ECin values
 
+  virtual void 	Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net);
+  // compute compute error stats as user data on layer (enc_sse, enc_norm_err)
+
   TA_SIMPLE_BASEFUNS(ECoutLayerSpec);
 protected:
   SPEC_DEFAULTS;

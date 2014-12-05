@@ -19,74 +19,9 @@
 TA_BASEFUNS_CTORS_DEFN(ThetaPhaseLayerSpec);
 
 void ThetaPhaseLayerSpec::Initialize() {
-  auto_m_cycles = 30;
   Defaults_init();
 }
 
 void ThetaPhaseLayerSpec::Defaults_init() {
-  // inhib.type = LeabraInhibSpec::KWTA_AVG_INHIB;
-  // inhib.kwta_pt = 0.7f;
 }
 
-void ThetaPhaseLayerSpec::RecordActMid(LeabraLayer* lay, LeabraNetwork* net) {
-  // todo: redo with quarters..
-
-  // FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-  //   if(u->lesioned()) continue;
-  //   u->act_mid = u->act_nd;      // record the minus phase before overwriting it..
-  // }
-
-  // // record stats for act_mid
-  // AvgMaxVals& vals = lay->acts_mid;
-  // static ta_memb_ptr mb_off = 0;
-  // if(mb_off == 0) {
-  //   TypeDef* td = &TA_LeabraUnit; int net_base_off = 0;
-  //   TypeDef::FindMemberPathStatic(td, net_base_off, mb_off, "act_mid");
-  // }
-  // if(lay->unit_groups) {
-  //   vals.InitVals();
-  //   int nunits = lay->UnitAccess_NUnits(Layer::ACC_GP);
-  //   for(int g=0; g < lay->gp_geom.n; g++) {
-  //     LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-  //     Compute_AvgMaxVals_ugp(lay, Layer::ACC_GP, g, gpd->acts_mid, mb_off);
-  //     vals.UpdtFmAvgMax(gpd->acts_mid, nunits, g);
-  //   }
-  //   vals.CalcAvg(lay->units.leaves);
-  // }
-  // else {
-  //   Compute_AvgMaxVals_ugp(lay, Layer::ACC_LAY, 0, vals, mb_off);
-  // }
-}
-
-void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
-  // LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
-  // float norm_err = 0.0f;
-  // float sse_err = 0.0f;
-  // FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-  //   if(u->lesioned()) continue;
-  //   float sse = u->act_eq - u->act_mid;
-  //   if(fabsf(sse) < us->sse_tol)
-  //     sse = 0.0f;
-  //   sse *= sse;
-  //   sse_err += sse;
-
-  //   if(net->lstats.on_errs) {
-  //     if(u->act_mid > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
-  //   }
-  //   if(net->lstats.off_errs) {
-  //     if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
-  //   }
-  // }
-  // int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
-  // int ntot = 0;
-  // if(net->lstats.on_errs && net->lstats.off_errs)
-  //   ntot = 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
-  // else
-  //   ntot = (int)(lay->acts_m_avg * (float)lay_nunits);
-  // if(ntot > 0)
-  //   norm_err = norm_err / (float)ntot;
-  // if(norm_err > 1.0f)
-  //   norm_err = 1.0f;
-  // lay->SetUserData("enc_sse", sse_err);
-  // lay->SetUserData("enc_norm_err", norm_err);
-}

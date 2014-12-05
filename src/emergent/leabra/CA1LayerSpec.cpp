@@ -58,9 +58,9 @@ void CA1LayerSpec::ModulateCA3Prjn(LeabraLayer* lay, LeabraNetwork* net, bool ca
       u->Compute_NetinScale(net,0);
     }
     else {
-    LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
-    if(recv_gp)
-      recv_gp->scale_eff = 0.0f;
+      LeabraRecvCons* recv_gp = (LeabraRecvCons*)u->recv.SafeEl(ca3_prjn_idx);
+      if(recv_gp)
+        recv_gp->scale_eff = 0.0f;
     }
   }
 
@@ -105,8 +105,6 @@ void CA1LayerSpec::Quarter_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
 }
 
 void CA1LayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
-  if(net->cycle == auto_m_cycles)
-    RecordActMid(lay,net);
   if(net->cycle == auto_m_cycles+1) {
     if(!(use_test_mode && net->train_mode == Network::TEST))
       lay->DecayState(net, recall_decay); // specifically CA1 activations at recall

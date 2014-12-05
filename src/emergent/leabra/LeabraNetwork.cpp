@@ -401,8 +401,6 @@ void LeabraNetwork::Trial_Init_Layer() {
 //      QuarterInit -- at start of settling
 
 void LeabraNetwork::Quarter_Init() {
-  // todo: consolidate the 2 unit-level threaded guys into one..
-
   Quarter_Init_Counters();
   Quarter_Init_Layer();
   Quarter_Init_Unit();           // do chunk of following unit-level functions:

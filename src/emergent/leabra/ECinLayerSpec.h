@@ -29,8 +29,6 @@ class E_API ECinLayerSpec : public ThetaPhaseLayerSpec {
   // layer spec for EC input layers that implements ThetaPhase learning -- this serves only as a marker for ECout layers to search for -- no new functionality over LeabraLayerSpec
 INHERITED(ThetaPhaseLayerSpec)
 public:
-  // following is main hook into code:
-  void Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int thread_no=-1) override;
   TA_SIMPLE_BASEFUNS(ECinLayerSpec);
 private:
   void 	Initialize()		{ };

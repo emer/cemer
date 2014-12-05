@@ -89,3 +89,36 @@ void ECoutLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, in
   }
   inherited::Compute_CycleStats(lay, net, thread_no);
 }
+
+void ThetaPhaseLayerSpec::Compute_AutoEncStats(LeabraLayer* lay, LeabraNetwork* net) {
+  // LeabraUnitSpec* us = (LeabraUnitSpec*)lay->unit_spec.SPtr();
+  // float norm_err = 0.0f;
+  // float sse_err = 0.0f;
+  // FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
+  //   if(u->lesioned()) continue;
+  //   float sse = u->act_eq - u->act_mid;
+  //   if(fabsf(sse) < us->sse_tol)
+  //     sse = 0.0f;
+  //   sse *= sse;
+  //   sse_err += sse;
+
+  //   if(net->lstats.on_errs) {
+  //     if(u->act_mid > 0.5f && u->act_eq < 0.5f) norm_err += 1.0f;
+  //   }
+  //   if(net->lstats.off_errs) {
+  //     if(u->act_mid < 0.5f && u->act_eq > 0.5f) norm_err += 1.0f;
+  //   }
+  // }
+  // int lay_nunits = lay->UnitAccess_NUnits(Layer::ACC_LAY);
+  // int ntot = 0;
+  // if(net->lstats.on_errs && net->lstats.off_errs)
+  //   ntot = 2 * (int)(lay->acts_m_avg * (float)lay_nunits);
+  // else
+  //   ntot = (int)(lay->acts_m_avg * (float)lay_nunits);
+  // if(ntot > 0)
+  //   norm_err = norm_err / (float)ntot;
+  // if(norm_err > 1.0f)
+  //   norm_err = 1.0f;
+  // lay->SetUserData("enc_sse", sse_err);
+  // lay->SetUserData("enc_norm_err", norm_err);
+}
