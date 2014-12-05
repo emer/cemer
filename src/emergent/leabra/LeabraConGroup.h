@@ -30,7 +30,6 @@ class E_API LeabraConGroup : public ConGroup {
   // #STEM_BASE ##CAT_Leabra Leabra connection group
 public:
   float		scale_eff;	// #NO_SAVE #CAT_Activation effective scale parameter for netin -- copied from recv congroup where it is computed
-  float		savg_cor;	// #NO_SAVE #CAT_Learning savg correction factor for hebbian learning
   float		net;		// #NO_SAVE #CAT_Activation netinput to this con_group: only computed for special statistics such as RelNetin
   float		net_raw;	// #NO_SAVE #CAT_Activation raw summed netinput to this con_group -- only used for NETIN_PER_PRJN
 

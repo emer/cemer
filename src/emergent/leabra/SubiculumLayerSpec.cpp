@@ -16,7 +16,7 @@
 #include "SubiculumLayerSpec.h"
 #include <LeabraNetwork>
 #include <ECinLayerSpec>
-#include <ECoutLayerSpec>
+#include <ECoutUnitSpec>
 
 TA_BASEFUNS_CTORS_DEFN(SubiculumNoveltySpec);
 
@@ -76,7 +76,7 @@ bool SubiculumLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
                        lsin->name, "type:", lsin->GetTypeDef()->name)) {
       return false;
     }
-    if(lay->CheckError(!lsout->InheritsFrom(&TA_ECoutLayerSpec), quiet, rval,
+    if(lay->CheckError(!lsout->InheritsFrom(&TA_ECoutUnitSpec), quiet, rval,
                "projection number:", String(pi+1), "should have been ECout, instead was:",
                lsout->name, "type:", lsout->GetTypeDef()->name)) {
       return false;

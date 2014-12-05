@@ -73,13 +73,10 @@ void LeabraContextLayerSpec::Compute_Context(LeabraLayer* lay, LeabraUnit* u,
   }
   else {
     LeabraConGroup* cg = (LeabraConGroup*)uv->RecvConGroupSafe(net, thr_no, 0);
-    if(TestError(!cg, "Compute_Context", "requires one recv projection!")) {
+    if(TestError(!cg || cg->size == 0, "Compute_Context", "requires one recv projection with at least one unit!")) {
       return;
     }
     LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
-    if(TestError(!su, "Compute_Context", "requires one unit in recv projection!")) {
-      return;
-    }
     uv->ext = updt.fm_prv * uv->act_p + updt.fm_hid * su->act_p; // compute new value
   }
   uv->SetExtFlag(UnitVars::EXT);

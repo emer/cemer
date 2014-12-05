@@ -74,11 +74,11 @@ void LeabraWizard::Initialize() {
 #include <TopoWtsPrjnSpec>
 
 #include <HippoEncoderConSpec>
-#include <XCalCHLConSpec>
+#include <CHLConSpec>
 #include <ECinLayerSpec>
-#include <ECoutLayerSpec>
+#include <ECoutUnitSpec>
 #include <CA3LayerSpec>
-#include <CA1LayerSpec>
+#include <CA1UnitSpec>
 #include <SubiculumLayerSpec>
 
 #include <taMisc>
@@ -2215,20 +2215,20 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   FMChild(LeabraConSpec, tosubic_cons, ecca1_cons, "ToSubic");
 
   // connection specs
-  FMSpec(XCalCHLConSpec, hip_cons, hipspec, "HippoConSpecs");
+  FMSpec(CHLConSpec, hip_cons, hipspec, "HippoConSpecs");
   FMChild(LeabraBiasSpec, hip_bias, hip_cons, "HippoBiasSpec");
-  FMChild(XCalCHLConSpec, ppath_cons, hip_cons, "PerfPath");
-  FMChild(XCalCHLConSpec, mossy_cons, hip_cons, "Mossy");
-  FMChild(XCalCHLConSpec, ca3ca3_cons, hip_cons, "CA3_CA3");
-  FMChild(XCalCHLConSpec, ca3ca1_cons, hip_cons, "CA3_CA1");
+  FMChild(CHLConSpec, ppath_cons, hip_cons, "PerfPath");
+  FMChild(CHLConSpec, mossy_cons, hip_cons, "Mossy");
+  FMChild(CHLConSpec, ca3ca3_cons, hip_cons, "CA3_CA3");
+  FMChild(CHLConSpec, ca3ca1_cons, hip_cons, "CA3_CA1");
 
   // layer specs
   FMSpec(ThetaPhaseLayerSpec, hip_laysp, hipspec, "HippoLayerSpec");
-  FMChild(ECoutLayerSpec, ecout_laysp, hip_laysp, "EC_out");
+  FMChild(ECoutUnitSpec, ecout_laysp, hip_laysp, "EC_out");
   FMChild(ECinLayerSpec, ecin_laysp, ecout_laysp, "EC_in");
   FMChild(LeabraLayerSpec, dg_laysp, hip_laysp, "DG");
   FMChild(CA3LayerSpec, ca3_laysp, hip_laysp, "CA3");
-  FMChild(CA1LayerSpec, ca1_laysp, hip_laysp, "CA1");
+  FMChild(CA1UnitSpec, ca1_laysp, hip_laysp, "CA1");
   FMSpec(SubiculumLayerSpec, subic_laysp, hipspec, "Subiculum");
 
   // prjn specs

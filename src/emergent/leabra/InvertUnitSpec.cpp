@@ -37,7 +37,7 @@ bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
                    "Requires one recv projection!")) {
     return false;
   }
-  LeabraUnit* su = (LeabraUnit*)cg->Un(0, net);
+  LeabraUnit* su = (LeabraUnit*)cg->SafeUn(0);
   if(u->CheckError(!su, quiet, rval, 
                    "Requires one unit in recv projection!")) {
     return false;
@@ -48,9 +48,7 @@ bool InvertUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
 
 void InvertUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
-  if(!cg) return;
   LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
-  if(!su) return;
   LeabraLayer* fmlay = (LeabraLayer*)cg->prjn->from.ptr();
   if(fmlay->lesioned()) {
     u->act = 1.0f;
@@ -58,8 +56,8 @@ void InvertUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, 
   }
   u->act = 1.0f - su->act_eq;
   u->act_eq = u->act_nd = u->act;
-  u->da = 0.0f;            // I'm fully settled!
-  // u->AddToActBuf(syn_delay);
+  TestWrite(u->da, 0.0f);
+  // u->AddToActBuf(syn_delay); // todo
 }
 
 void InvertUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

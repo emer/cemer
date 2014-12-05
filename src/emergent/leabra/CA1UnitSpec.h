@@ -13,11 +13,11 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef ThetaPhaseLayerSpec_h
-#define ThetaPhaseLayerSpec_h 1
+#ifndef CA1UnitSpec_h
+#define CA1UnitSpec_h 1
 
 // parent includes:
-#include <LeabraLayerSpec>
+#include <LeabraUnitSpec>
 
 // member includes:
 
@@ -30,17 +30,17 @@
 
 //  DG -> CA3 -> CA1
 //  /    /      /    \
-// [----EC_in---] -> [ EC_out ]
+// [----ECin---] -> [ ECout ]
 
-// minus phase: EC_out unclamped, driven by CA1
-// auto-   CA3 -> CA1 = 0, EC_in -> CA1 = 1
-// recall- CA3 -> CA1 = 1, EC_in -> CA1 = 0
+// minus phase: ECout unclamped, driven by CA1
+// auto-   CA3 -> CA1 = 0, ECin -> CA1 = 1
+// recall- CA3 -> CA1 = 1, ECin -> CA1 = 0
 
-// plus phase: EC_in -> EC_out auto clamped
-// CA3 -> CA1 = 0, EC_in -> CA1 = 1
+// plus phase: ECin -> ECout auto clamped
+// CA3 -> CA1 = 0, ECin -> CA1 = 1
 // (same as auto- -- training signal for CA3 -> CA1 is what EC would produce!
 
-// act_q1 = auto encoder minus phase state (in both CA1 and EC_out
+// act_q1 = auto encoder minus phase state (in both CA1 and ECout
 //   used by HippoEncoderConSpec relative to act_p plus phase)
 // act_q3 / act_m = recall minus phase (normal minus phase dynamics for CA3 recall learning)
 // act_a4 / act_p = plus (serves as plus phase for both auto and recall)
@@ -51,21 +51,29 @@
 // todo: implement a two-trial version of the code to produce a true theta rhythm
 // integrating over two adjacent alpha trials..
 
-eTypeDef_Of(ThetaPhaseLayerSpec);
 
-class E_API ThetaPhaseLayerSpec : public LeabraLayerSpec {
-  // #AKA_HippoQuadLayerSpec base layer spec for hippocampal layers that implements theta phase learning -- sets global options -- quarter timing: q1 is auto-encoder minus phase, q2, q3 are recall, q4 is common plus phase
-INHERITED(LeabraLayerSpec)
+eTypeDef_Of(CA1UnitSpec);
+
+class E_API CA1UnitSpec : public LeabraUnitSpec {
+  // unit spec for CA1 layers that implements ThetaPhase learning -- modulates ECin and CA1 weight scale strengths (wt_scale.abs = 0 or 1) in conspecs -- must use unique conspecs for these projections -- ECin = 1, CA3 = 0 for 1st quarter, then ECin = 0, CA3 = 1 until q4, where it goes back to ECin = 1, CA3 = 0 for plus phase
+INHERITED(LeabraUnitSpec)
 public:
+  float		recall_decay; 		// #DEF_1 proportion to decay activations at start of recall phase
+  float		plus_decay; 		// #DEF_1 proportion to decay activations at start of plus phase
+  bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then don't modulate CA3 off in plus phase, and keep ECin -> CA1 on, and don't decay -- makes it more likely to at least get input parts right
 
-  TA_SIMPLE_BASEFUNS(ThetaPhaseLayerSpec);
+  void Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+
+  bool CheckConfig_Unit(Unit* un, bool quiet=false) override;
+
+  TA_SIMPLE_BASEFUNS(CA1UnitSpec);
 protected:
   SPEC_DEFAULTS;
 
 private:
   void 	Initialize();
   void	Destroy()		{ };
-  void	Defaults_init();
+  void	Defaults_init()		{ };
 };
 
-#endif // ThetaPhaseLayerSpec_h
+#endif // CA1UnitSpec_h

@@ -39,6 +39,7 @@ set(leabra_HEADS_MAKETA
   MarkerConSpec.h
   LeabraDeltaConSpec.h
   DaDeltaConSpec.h
+  CHLConSpec.h
   LeabraLimPrecConSpec.h
   
   LayerActUnitSpec.h
@@ -86,14 +87,10 @@ set(leabra_HEADS_MAKETA
   RowColPrjnSpec.h
   TopoWtsPrjnSpec.h
 
-  # ThetaPhaseLayerSpec.h
-  # ECinLayerSpec.h
-  # CA3LayerSpec.h
-  # ECoutLayerSpec.h
-  # CA1LayerSpec.h
+  ECoutUnitSpec.h
+  CA1UnitSpec.h
   # SubiculumLayerSpec.h
-  # HippoEncoderConSpec.h
-  # XCalCHLConSpec.h
+  HippoEncoderConSpec.h
   # CerebGranuleUnitSpec.h
   # CerebPfPcConSpec.h
 )
@@ -156,6 +153,7 @@ set(leabra_SRCS
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp
   DaDeltaConSpec.cpp
+  CHLConSpec.cpp
   LeabraLimPrecConSpec.cpp
   
   LayerActUnitSpec.cpp
@@ -203,14 +201,10 @@ set(leabra_SRCS
   RowColPrjnSpec.cpp
   TopoWtsPrjnSpec.cpp
 
-  # ThetaPhaseLayerSpec.cpp
-  # ECinLayerSpec.cpp
-  # CA3LayerSpec.cpp
-  # ECoutLayerSpec.cpp
-  # CA1LayerSpec.cpp
+  ECoutUnitSpec.cpp
+  CA1UnitSpec.cpp
   # SubiculumLayerSpec.cpp
-  # HippoEncoderConSpec.cpp
-  # XCalCHLConSpec.cpp
+  HippoEncoderConSpec.cpp
   # CerebGranuleUnitSpec.cpp
   # CerebPfPcConSpec.cpp
 )

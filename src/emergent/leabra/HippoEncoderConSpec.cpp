@@ -18,29 +18,5 @@
 TA_BASEFUNS_CTORS_DEFN(HippoEncoderConSpec);
 
 void HippoEncoderConSpec::Initialize() {
-  // SetUnique("lmix", true);
-  // lmix.hebb = 0.005f;		// works better with tiny bit of hebb apparently..
-  // lmix.err = 1.0f;
-//   lmix.err_sb = false;
-
-  // SetUnique("wt_limits", true);
-  // wt_limits.sym = false;
-
-  SetUnique("wt_sig", true);
-  wt_sig.gain = 6.0f;  wt_sig.off = 1.0f; // 1.0f seems to work better actually
-
-  // SetUnique("savg_cor", true);
-  // savg_cor.cor = 1.0f;
-
-//   SetUnique("xcalm", true);
-//   xcalm.use_sb = false;
-}
-
-void HippoEncoderConSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  // these are enforced absolutely because the code does not use them:
-  // actually it does so turning this off!
-  // lmix.hebb = 0.0f;
-  // lmix.err = 1.0f;
 }
 

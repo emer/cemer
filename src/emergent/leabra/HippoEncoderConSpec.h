@@ -27,52 +27,36 @@
 eTypeDef_Of(HippoEncoderConSpec);
 
 class E_API HippoEncoderConSpec : public LeabraConSpec {
-  // for EC <-> CA1 connections: CHL learning on encoder variables (ru_act_p vs. ru_act_mid) -- soft bounding as specified in spec
+  // for EC <-> CA1 connections: CHL learning on encoder variables (act_p vs. act_q1)
 INHERITED(LeabraConSpec)
 public:
-// #ifdef __MAKETA__
-//   LearnMixSpec	lmix;		// #CAT_Learning mixture of hebbian & err-driven learning 
-// #endif
 
-//   inline void Compute_dWt_LeabraCHL(LeabraConGroup* cg, LeabraUnit* su,
-//                                              LeabraNetwork* net) override {
-//     if(ignore_unlearnable && net->unlearnable_trial) return;
+  inline void C_Compute_dWt_CHL(float& dwt, const float ru_act_p, 
+                                const float ru_act_m, const float su_act_p,
+                                const float su_act_m) {
+    dwt += cur_lrate * ((ru_act_p * su_act_p) - (ru_act_m * su_act_m));
+  }
+  // #IGNORE
 
-//     Compute_SAvgCor(cg, su, net);
-//     if(((LeabraLayer*)cg->prjn->from.ptr())->acts_p.avg < savg_cor.thresh) return;
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
+    const float su_act_p = su->act_p;
+    const float su_act_m = su->act_q1;
+    float* dwts = cg->OwnCnVar(DWT);
 
-//     float* fwts = cg->OwnCnVar(FWT);
-//     float* dwts = cg->OwnCnVar(DWT);
-
-//     const int sz = cg->size;
-//     for(int i=0; i<sz; i++) {
-//       LeabraUnit* ru = (LeabraUnit*)cg->Un(i, net);
-//       const float lin_wt = fwts[i];
-//       C_Compute_dWt_LeabraCHL(dwts[i],
-// 		    C_Compute_Hebb(cg->savg_cor, lin_wt, ru->act_p, su->act_p),
-//                               // only diff: replaces act_mid instead of act_m
-//                     C_Compute_Err_LeabraCHL(lin_wt, ru->act_p, ru->act_mid,
-// 					    su->act_p, su->act_mid));  
-//     }
-//   }
-
-//   inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-//                                                 LeabraNetwork* net) override {
-//     Compute_dWt_LeabraCHL(cg, su, net);
-//   }
-//   inline void Compute_dWt_CtLeabraCAL(LeabraConGroup* cg, LeabraUnit* su,
-//                                                LeabraNetwork* net) override {
-//     Compute_dWt_LeabraCHL(cg, su, net);
-//   }
-//   inline void	Compute_Weights_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-//                                                      LeabraNetwork* net) override {
-//     inherited::Compute_Weights_LeabraCHL(cg, su, net);
-//   }
+    const int sz = cg->size;
+    for(int i=0; i<sz; i++) {
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+      C_Compute_dWt_CHL(dwts[i], ru->act_p, ru->act_q1, su_act_p, su_act_m);
+    }
+  }
 
   TA_BASEFUNS_NOCOPY(HippoEncoderConSpec);
 protected:
   SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
 private:
   void 	Initialize();
   void	Destroy()		{ };
