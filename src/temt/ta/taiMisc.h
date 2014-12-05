@@ -311,6 +311,7 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   static QKeySequence GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE get the key sequence bound to this action - will get the first it comes to
 #endif
+  static void   DefaultCustomKeyBindings();
   static void   LoadCustomKeyBindings();
   
   /////////////////////////////////////////////////////////////////

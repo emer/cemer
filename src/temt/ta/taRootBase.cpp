@@ -1715,13 +1715,8 @@ bool taRootBase::Startup_InitKeyBindings() {
   // some exceptions to normal OS behavior to be consistent with emergent 7.0 behavior
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
   
-  // just for testing - will be removed - rohrlich 12/3/14
-//  custom_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_EMACS_HOME, QKeySequence(control_key + Qt::Key_F));
-//  custom_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_EMACS_END, QKeySequence(control_key + Qt::Key_O));
+  taiMisc::LoadCustomKeyBindings();
   
-  if (taMisc::current_key_bindings == taMisc::KEY_BINDINGS_CUSTOM) {
-    taiMisc::LoadCustomKeyBindings();
-  }
   return true;
 }
 

@@ -1112,21 +1112,60 @@ void taiMisc::DeleteChildrenNow(QObject* obj) {
   }
 }
 
+void taiMisc::DefaultCustomKeyBindings() {
+  String filename = taMisc::GetCustomKeyFilename();
+  QFile file(filename);
+  if (!file.open(QIODevice::WriteOnly)) {
+    return;
+  }
+  QDataStream out(&file);
+  
+  // set the binding set to the default to get the default bindings - that is the starting point for custom bindings
+  taMisc::KeyBindingSet current_set = taMisc::current_key_bindings;
+  taMisc::SetKeyBindingSet(taMisc::KEY_BINDINGS_DEFAULT);
+
+  String action;
+  String context;
+  String context_pre;
+  int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+  for (int ctxt=0; ctxt<context_count; ctxt++) {
+    taiMisc::BindingContext current_context = taiMisc::BindingContext(ctxt);
+    context = TA_taiMisc.GetEnumString("BindingContext", ctxt);
+    context_pre = context.before("_CONTEXT");  // strip off "_CONTEXT"
+    int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
+    for (int i=1; i<action_count; i++) {  // skip 0 for NULL_ACTION
+      action = TA_taiMisc.GetEnumString("BoundAction", i);
+      if (action.startsWith(context_pre)) {
+        taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
+        QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
+        out << (QString)context.chars() << (QString)action.chars() << key_seq;
+      }
+    }
+  }
+  file.close();
+  taMisc::SetKeyBindingSet(current_set);  // reset key binding set - might not have been default on enter
+}
+
 void taiMisc::LoadCustomKeyBindings() {
-  String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
+  String filename = taMisc::GetCustomKeyFilename();
   QFile in_file(filename);
+  if (!in_file.exists()) {
+    DefaultCustomKeyBindings();  // create the default custom key bindings file (file in prefs dir)
+  }
   if (!in_file.open(QIODevice::ReadOnly)) {
     return;
   }
   
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_CUSTOM));
+  bindings->Reset();
+  
   QDataStream in(&in_file);
   QString context;
   QString action;
   QKeySequence ks;
   String enum_tp_nm;
   
-  for (int i=0; i<taiMisc::ACTION_COUNT-1; i++) {  // minus 1 for NULL_ACTION
+  for (int i=0; i<taiMisc::ACTION_COUNT-1; i++) {
     in >> context >> action >> ks;
     int context_val = TA_taiMisc.GetEnumVal((String)context, enum_tp_nm);
     int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);    

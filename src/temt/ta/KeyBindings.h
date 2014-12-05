@@ -43,6 +43,8 @@ public:
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
+  virtual void                  Reset();
+  // #IGNORE delete key bindings from all contexts
   virtual QKeySequence          KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAINWINDOW_CONTEXT, "view_browse_only")
   virtual taiMisc::BoundAction  Action(taiMisc::BindingContext context,  QKeySequence key_sequence);

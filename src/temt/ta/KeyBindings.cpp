@@ -62,6 +62,17 @@ bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction acti
   return rval;
 }
 
+void KeyBindings::Reset() {
+  main_window_bindings.Reset();
+  line_edit_bindings.Reset();
+  console_bindings.Reset();
+  dialog_bindings.Reset();
+  panel_bindings.Reset();
+  table_bindings.Reset();
+  tree_bindings.Reset();
+  graphics_bindings.Reset();
+ }
+
 QKeySequence KeyBindings::KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action) {
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {

@@ -53,7 +53,7 @@ iDialogKeyBindings::iDialogKeyBindings() {
 }
 
 iDialogKeyBindings::~iDialogKeyBindings() {
-  delete current_bindings;
+  delete temp_bindings;
 }
 
 void iDialogKeyBindings::Constr() {
@@ -71,7 +71,7 @@ void iDialogKeyBindings::Constr() {
   // instruction box
   QHBoxLayout* header_layout = new QHBoxLayout();
 #if (QT_VERSION >= 0x050200)
-  String instruction_str = "Under Construction - not functional yet\n\nSteps: 1) Select 2) Press a key or key combination 3) Tab out";
+  String instruction_str = "Steps: 1) Select 2) Press a key or key combination 3) Tab out";
 #else
   String instruction_str = "Only available with QT5";
 #endif
@@ -86,7 +86,12 @@ void iDialogKeyBindings::Constr() {
   body_layout->addWidget(tabWidget);
   body_box->setLayout(body_layout);
   
-  current_bindings = new KeyBindings();  // build a list of current bindings for modification and saving
+  String filename = taMisc::GetCustomKeyFilename();
+
+  taMisc::KeyBindingSet current_key_set = taMisc::current_key_bindings;
+  taMisc::SetKeyBindingSet(taMisc::KEY_BINDINGS_CUSTOM);
+
+  temp_bindings = new KeyBindings();  // build a list of current bindings for modification and saving
   String context_label;
   String action_label;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
@@ -114,7 +119,7 @@ void iDialogKeyBindings::Constr() {
         QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
         QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
         bindings_layout[ctxt]->addRow(action, edit);
-        current_bindings->Add(current_context, current_action, key_seq);
+        temp_bindings->Add(current_context, current_action, key_seq);
       }
     }
   }
@@ -132,6 +137,8 @@ void iDialogKeyBindings::Constr() {
 
   connect(button_ok, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(button_revert, SIGNAL(clicked()), this, SLOT(reject()) );
+  
+  taMisc::SetKeyBindingSet(current_key_set);
 }
 
 void iDialogKeyBindings::accept() {

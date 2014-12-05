@@ -338,6 +338,7 @@ public:
   // #SHOW #READ_ONLY #CAT_File executable command path and filename -- how was this program invoked (from argv0)
   static String         exe_path;
   // #SHOW #READ_ONLY #CAT_File full absoluate path to executable
+  static String         custom_key_file;
 
   static String         web_home;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for location of main web home page for this application
@@ -871,6 +872,8 @@ public:
   // #CAT_File root for preference data, typically hidden from user
   static String GetAppDocPath(const String& appname);
   // #CAT_File root for user-visible application files
+  static String GetCustomKeyFilename();
+  // #CAT_File the file with the custom key bindings
   static String FileDiff(const String& fname_a, const String& fname_b,
                          bool trimSpace = false, bool ignoreSpace = false,
                          bool ignoreCase = false);

@@ -294,6 +294,7 @@ String  taMisc::user_plugin_dir;
 String  taMisc::user_log_dir;
 String  taMisc::exe_cmd;
 String  taMisc::exe_path;
+String  taMisc::custom_key_file;
 
 // note: app should set all these url's in its main or other app-specific code
 String  taMisc::web_home = "https://grey.colorado.edu/emergent/index.php/Main_Page";
@@ -2870,6 +2871,10 @@ String taMisc::GetAppDocPath(const String& appname) {
 #else
   return GetHomePath() + "/lib/" + capitalize(appname);
 #endif
+}
+
+String taMisc::GetCustomKeyFilename() {
+ return taMisc::prefs_dir + PATH_SEP + "custom_keys";
 }
 
 String taMisc::FileDiff(const String& fname_a, const String& fname_b,
