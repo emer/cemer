@@ -60,13 +60,13 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
 
   switch(action) {
-    case taiMisc::TEXTEDIT_EMACS_DESELECT:
+    case taiMisc::TEXTEDIT_DESELECT:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       return;
-    case taiMisc::TEXTEDIT_EMACS_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::TEXTEDIT_CLEAR_EXTENDED_SELECTION:
       key_event->accept();
       clearExtSelection();
       return;
@@ -80,31 +80,31 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       cursor.movePosition(QTextCursor::Down, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_HOME:
+    case taiMisc::TEXTEDIT_HOME:
       key_event->accept();
       cursor.movePosition(QTextCursor::StartOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_END:
+    case taiMisc::TEXTEDIT_END:
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_CURSOR_FORWARD:
+    case taiMisc::TEXTEDIT_CURSOR_FORWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_CURSOR_BACKWARD:
+    case taiMisc::TEXTEDIT_CURSOR_BACKWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_md);
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_PAGE_UP:
+    case taiMisc::TEXTEDIT_PAGE_UP:
       app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
       key_event->accept();
       return;
-    case taiMisc::TEXTEDIT_EMACS_PAGE_DOWN:
+    case taiMisc::TEXTEDIT_PAGE_DOWN:
       key_event->accept();
       if (taMisc::emacs_mode) {
         app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
@@ -115,33 +115,33 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
         clearExtSelection();
       }
       return;
-    case taiMisc::TEXTEDIT_EMACS_DELETE:
+    case taiMisc::TEXTEDIT_DELETE:
       key_event->accept();
       cursor.deleteChar();
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_EMACS_KILL:
+    case taiMisc::TEXTEDIT_KILL:
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
       cursor.removeSelectedText();
       clearExtSelection();
       return;
-    case taiMisc::TEXTEDIT_EMACS_PASTE:
+    case taiMisc::TEXTEDIT_PASTE:
       key_event->accept();
       paste();
       clearExtSelection();
       return;
-    case taiMisc::TEXTEDIT_EMACS_CUT:
+    case taiMisc::TEXTEDIT_CUT:
       key_event->accept();
       cut();
       clearExtSelection();
       return;
-    case taiMisc::TEXTEDIT_EMACS_COPY_CLEAR:
+    case taiMisc::TEXTEDIT_COPY_CLEAR:
       key_event->accept();
       copy();
       clearExtSelection();
       return;
-    case taiMisc::TEXTEDIT_EMACS_UNDO:
+    case taiMisc::TEXTEDIT_UNDO:
       key_event->accept();
       undo();
       return;
@@ -152,7 +152,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
     case taiMisc::TEXTEDIT_IGNORE:
       key_event->ignore();		// allow this to go up to higher guy
       return;
-    case taiMisc::TEXTEDIT_EMACS_FIND_IN_TEXT:
+    case taiMisc::TEXTEDIT_FIND_IN_TEXT:
       findPrompt();
       return;
     default:

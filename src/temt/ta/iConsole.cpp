@@ -491,44 +491,44 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       }
       break;
       // these deselects don't work - rohrlich 11/20/14
-    case taiMisc::CONSOLE_EMACS_DESELECT:
+    case taiMisc::CONSOLE_DESELECT:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       break;
-    case taiMisc::CONSOLE_EMACS_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::CONSOLE_CLEAR_EXTENDED_SELECTION:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = false;
       break;
-    case taiMisc::CONSOLE_EMACS_HOME:
+    case taiMisc::CONSOLE_HOME:
       key_event->accept();
       gotoPrompt(cursor, ext_select_on);
       setTextCursor(cursor);
       break;
-    case taiMisc::CONSOLE_EMACS_END:
+    case taiMisc::CONSOLE_END:
       key_event->accept();
       gotoEnd(cursor, ext_select_on);
       setTextCursor(cursor);
       break;
-    case taiMisc::CONSOLE_EMACS_CURSOR_FORWARD:
+    case taiMisc::CONSOLE_CURSOR_FORWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_mode);
       setTextCursor(cursor);
       break;
-    case taiMisc::CONSOLE_EMACS_CURSOR_BACKWARD:
+    case taiMisc::CONSOLE_CURSOR_BACKWARD:
       key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_mode);
       setTextCursor(cursor);
       break;
-    case taiMisc::CONSOLE_EMACS_DELETE:
+    case taiMisc::CONSOLE_DELETE:
       key_event->accept();
       cursor.deleteChar();
       setTextCursor(cursor);
       break;
-    case taiMisc::CONSOLE_EMACS_KILL:
+    case taiMisc::CONSOLE_KILL:
     {
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
@@ -539,12 +539,12 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       ext_select_on = false;
       break;
     }
-    case taiMisc::CONSOLE_EMACS_PASTE:
+    case taiMisc::CONSOLE_PASTE:
       key_event->accept();
       inherited::paste();         // don't go to end first!
       ext_select_on = false;
       break;
-    case taiMisc::CONSOLE_EMACS_CUT:
+    case taiMisc::CONSOLE_CUT:
       key_event->accept();
       cut();
       ext_select_on = false;

@@ -71,9 +71,9 @@ void iDialogKeyBindings::Constr() {
   // instruction box
   QHBoxLayout* header_layout = new QHBoxLayout();
 #if (QT_VERSION >= 0x050200)
-  String instruction_str = "Steps: 1) Select 2) Press a key or key combination 3) Tab out";
+  String instruction_str = "To Set:    Press a key or key combination and tab out \nTo Clear: Press any single modifier key";
 #else
-  String instruction_str = "Only available with QT5";
+  String instruction_str = "Only available since QT5.2";
 #endif
   QLabel* instruction = new QLabel(instruction_str);
   header_layout->addWidget(instruction);

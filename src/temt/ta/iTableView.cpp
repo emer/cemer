@@ -66,7 +66,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
 
-  QKeyEvent* e = static_cast<QKeyEvent *>(event);
+  QKeyEvent* e = static_cast<QKeyEvent*>(event);
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && e->key() == Qt::Key_Y) {
     // go into edit mode then press paste?
@@ -79,121 +79,108 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     // don't let this go to edit filter -- we want it
   }
   else {
-    if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
-      return true;
+//    if(taiMisc::KeyEventFilterEmacs_Edit(obj, e)) {
+//      return true;
+//    }
     if((bool)m_window) {
       if(m_window->KeyEventFilterWindowNav(obj, e))
         return true;
     }
   }
-
   return inherited::eventFilter(obj, event);
 }
 
-void iTableView::keyPressEvent(QKeyEvent* e) {
+void iTableView::keyPressEvent(QKeyEvent* key_event) {
   if(state() == EditingState) {
-    e->ignore();
+    key_event->ignore();
     return;
   }
 
-  taiMisc::UpdateUiOnCtrlPressed(this, e);
-
-  if(e->key() == Qt::Key_Delete) {
-    RowColOp(OP_ROW | OP_DELETE);
-    e->accept();
-    return;
-  }
-
-  // note: emacs nav keys have all been converted into basic arrow keys by this point..
-
-//  QCoreApplication* app = QCoreApplication::instance();
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   QPersistentModelIndex newCurrent;
-  if(ctrl_pressed) {
-    switch (e->key()) {
-      // note: cannot use Ctrl+Space as that is reserved for selecting item to start editing
-    case Qt::Key_S:
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TABLE_CONTEXT, key_event);
+  
+  switch (action) {
+    case taiMisc::TABLE_DELETE:
+      RowColOp(OP_ROW | OP_DELETE);
+      key_event->accept();
+      return;
+    case taiMisc::TABLE_SELECT:
       selectCurCell();
       ext_select_on = true;
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_G:
+    case taiMisc::TABLE_CLEAR_SELECTION:
       clearExtSelection();
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_Up:
-      newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
-      e->accept();
+    case taiMisc::TABLE_MOVE_FOCUS_UP:
+      newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
+      key_event->accept();
       break;
-    case Qt::Key_Down:
-      newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
-      e->accept();
+    case taiMisc::TABLE_MOVE_FOCUS_DOWN:
+      newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
+      key_event->accept();
       break;
-    case Qt::Key_Left:
-      newCurrent = moveCursor(MoveHome, QApplication::keyboardModifiers());
-      e->accept();
+    case taiMisc::TABLE_MOVE_FOCUS_LEFT:
+      newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
+      key_event->accept();
       break;
-    case Qt::Key_Right:
-      newCurrent = moveCursor(MoveEnd, QApplication::keyboardModifiers());
-      e->accept();
+    case taiMisc::TABLE_MOVE_FOCUS_RIGHT:
+      newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
+      key_event->accept();
       break;
-    case Qt::Key_I:
+    case taiMisc::TABLE_INSERT:
       RowColOp(OP_ROW | OP_INSERT);
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_O:
+    case taiMisc::TABLE_INSERT_AFTER:
       RowColOp(OP_ROW | OP_INSERT_AFTER);
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_M:
+    case taiMisc::TABLE_DUPLICATE:
       RowColOp(OP_ROW | OP_DUPLICATE);
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_D:
-      RowColOp(OP_ROW | OP_DELETE);
-      e->accept();
-      break;
-    case Qt::Key_A:
+    case taiMisc::TABLE_EDIT_HOME:
       edit_start_pos = 0;
       edit_start_kill = false;
       edit(currentIndex());
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_E:
+    case taiMisc::TABLE_EDIT_END:
       edit_start_pos = -1;
       edit_start_kill = false;
       edit(currentIndex());
-      e->accept();
+      key_event->accept();
       break;
-    case Qt::Key_K:
+    case taiMisc::TABLE_DELETE_TO_END:
       edit_start_pos = 0;
       edit_start_kill = true;
       edit(currentIndex());
-      e->accept();
+      key_event->accept();
       break;
-    }
+    case taiMisc::TABLE_PAGE_UP:
+      newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
+      key_event->accept();
+      break;
+    case taiMisc::TABLE_PAGE_DOWN:
+      newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
+      key_event->accept();
+      break;
+    default:
+      ;  // no op - without default you get a warning about missing cases
   }
-  else {
-    // deal with these here to manage the ext select
-    switch (e->key()) {
-    case Qt::Key_Down:
-      newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
-      e->accept();
-      break;
-    case Qt::Key_Up:
-      newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
-      e->accept();
-      break;
-    case Qt::Key_Right:
-      newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
-      e->accept();
-      break;
-    case Qt::Key_Left:
-      newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
-      e->accept();
-      break;
-    }
-  }
+  
+  //    case Qt::Key_Left:
+  //      newCurrent = moveCursor(MoveHome, QApplication::keyboardModifiers());
+  //      e->accept();
+  //      break;
+  //    case Qt::Key_Right:
+  //      newCurrent = moveCursor(MoveEnd, QApplication::keyboardModifiers());
+  //      e->accept();
+//      break;
+
   // from qabstractitemview.cpp
   QPersistentModelIndex oldCurrent = currentIndex();
   if(newCurrent != oldCurrent && newCurrent.isValid()) {
@@ -207,7 +194,7 @@ void iTableView::keyPressEvent(QKeyEvent* e) {
     selectionModel()->setCurrentIndex(newCurrent, command);
     return;
   }
-  inherited::keyPressEvent(e);
+  inherited::keyPressEvent(key_event);
 }
 
 bool iTableView::event(QEvent* ev) {

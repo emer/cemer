@@ -254,7 +254,8 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
         tvTable->selectCurCell();
       }
       return true;
-    case taiMisc::TABLE_EDIT:
+    case taiMisc::TABLE_EDIT_HOME:
+    case taiMisc::TABLE_EDIT_END:
       if(m_cell && obj->inherits("iDataTableView")) {
         tvCell->tv->setFocus();
         tvCell->tv->selectCurCell();

@@ -471,10 +471,6 @@ void taMisc::SaveConfig() {
   TA_taMisc.Dump_Save_Value(strm, (void*)this);
   strm.close(); strm.clear();
   --taFiler::no_save_last_fname;
-  
-  if (taMisc::current_key_bindings == taMisc::KEY_BINDINGS_CUSTOM) {
-    taiMisc::LoadCustomKeyBindings();
-  }
 #endif
 }
 
