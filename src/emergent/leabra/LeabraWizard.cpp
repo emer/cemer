@@ -2205,14 +2205,15 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // FMSpec(LeabraUnitSpec, ecout_units, units, "ECOutUnits");
 
   FMSpec(HippoEncoderConSpec, ecca1_cons, hipspec, "EC_CA1ConSpecs");
-  FMChild(HippoEncoderConSpec, ecin_ca1_cons, ecca1_cons, "EC_in_CA1");
-  FMChild(HippoEncoderConSpec, ca1_ecout_cons, ecca1_cons, "CA1_EC_out");
-  FMChild(HippoEncoderConSpec, ecout_ca1_cons, ecca1_cons, "EC_out_CA1");
-  FMChild(HippoEncoderConSpec, ecin_ecout_cons, ecca1_cons, "EC_in_EC_out");
-  FMChild(HippoEncoderConSpec, ecout_ecin_cons, ecca1_cons, "EC_out_EC_in");
-  FMChild(LeabraConSpec, in_ecin_cons, ecca1_cons, "Input_EC_in");
-  FMChild(LeabraConSpec, ecout_out_cons, ecca1_cons, "EC_out_Output");
+  FMChild(HippoEncoderConSpec, ecin_ca1_cons, ecca1_cons, "ECin_CA1");
+  FMChild(HippoEncoderConSpec, ca1_ecout_cons, ecca1_cons, "CA1_ECout");
+  FMChild(HippoEncoderConSpec, ecout_ca1_cons, ecca1_cons, "ECout_CA1");
+  FMChild(HippoEncoderConSpec, ecin_ecout_cons, ecca1_cons, "ECin_ECout");
+  FMChild(HippoEncoderConSpec, ecout_ecin_cons, ecca1_cons, "ECout_ECin");
+  FMChild(LeabraConSpec, in_ecin_cons, ecca1_cons, "Input_ECin");
+  FMChild(LeabraConSpec, ecout_out_cons, ecca1_cons, "ECout_Output");
   FMChild(LeabraConSpec, tosubic_cons, ecca1_cons, "ToSubic");
+  FMChild(MarkerConSpec, marker_cons, ecca1_cons, "HippoMarker");
 
   // connection specs
   FMSpec(CHLConSpec, hip_cons, hipspec, "HippoConSpecs");
@@ -2268,8 +2269,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   net->FindMakePrjn(ecin, ecout, onetoone, ecout_ecin_cons);
 
-//   net->FindMakePrjn(ecout, ecin, onetoone, ecin_ecout_cons);
   net->FindMakePrjn(ecout, ca1, gponetoone, ca1_ecout_cons);
+  net->FindMakePrjn(ecout, ecin, onetoone, marker_cons);
 
   net->FindMakePrjn(dg, ecin, ppath_prjn, ppath_cons);
 
@@ -2327,15 +2328,15 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   // EC_CA1ConSpecs, wt_sig.gain = 6, off 1.25, cor = 1 (not .4)
 
-  // EC_in_CA1, abs = 2
+  // ECin_CA1, abs = 2
   ecin_ca1_cons->SetUnique("wt_scale", true);
   ecin_ca1_cons->wt_scale.abs = 2.0f;
 
-  // CA1_EC_out, abs = 4
+  // CA1_ECout, abs = 4
   ca1_ecout_cons->SetUnique("wt_scale", true);
   ca1_ecout_cons->wt_scale.abs = 4.0f;
 
-  // EC_in_EC_out mean/var = .9, .01, rel = 0, lrate = 0
+  // ECin_ECout mean/var = .9, .01, rel = 0, lrate = 0
   ecin_ecout_cons->SetUnique("wt_scale", true);
   ecin_ecout_cons->wt_scale.rel = 0.0f;
   ecin_ecout_cons->SetUnique("lrate", true);
@@ -2372,7 +2373,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // ca3_ca3 rel = 2, 
   ca3ca3_cons->SetUnique("wt_scale", true);
   ca3ca3_cons->wt_scale.rel = 2.0f;
-  ca3ca3_cons->SetUnique("savg_cor", true);
+  ca3ca3_cons->SetUnique("chl", true);
   ca3ca3_cons->chl.savg_cor = 1.0f;
 
   // ca3_ca1 lrate = 0.05

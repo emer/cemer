@@ -90,6 +90,10 @@ public:
   { return !IsActive(); }
   // #CAT_Access is this projection NOT active and valid?
 
+  inline bool   ValidIdxs() 
+  { return ((recv_idx >= 0) && (send_idx >= 0)); }
+  // #CAT_Access are the recv_idx and send_idx valid for this projection?
+
   virtual void  UpdateName();
   // #CAT_Structure update the name of projection to reflect any changes in where it receives from
   virtual void  SetFrom();

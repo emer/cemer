@@ -587,7 +587,7 @@ void Layer::UpdatePrjnIdxs() {
     }
   }
   FOREACH_ELEM_IN_GROUP(Projection, prj, send_prjns) {
-      if(prj->IsActive()) {
+    if(prj->IsActive()) {
       prj->send_idx = n_send_prjns++;
     }
     else {
@@ -704,6 +704,7 @@ void Layer::Connect_Sizes(Network* net) {
   taMisc::Busy();
   StructUpdate(true);
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    if(p->NotActive()) continue;
     p->Connect_Sizes();
   }
 
@@ -715,6 +716,7 @@ void Layer::Connect_Cons(Network* net) {
   taMisc::Busy();
   StructUpdate(true);
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    if(p->NotActive()) continue;
     p->Connect_Cons();
   }
 
@@ -957,7 +959,7 @@ int Layer::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quie
 void Layer::PropagateInputDistance() {
   int new_dist = dist.fm_input + 1;
   FOREACH_ELEM_IN_GROUP(Projection, p, send_prjns) {
-    if(!p->layer || p->layer->lesioned()) continue;
+    if(p->NotActive()) continue;
     if(p->layer->dist.fm_input >= 0) { // already set
       if(new_dist < p->layer->dist.fm_input) { // but we're closer
         p->layer->dist.fm_input = new_dist;
@@ -1203,8 +1205,10 @@ int Layer::PruneCons(const SimpleMathSpec& pre_proc,
 
 int Layer::ProbAddCons(float p_add_con, float init_wt) {
   int rval = 0;
-  FOREACH_ELEM_IN_GROUP(Projection, p, projections)
+  FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    if(p->NotActive()) continue;
     rval += p->ProbAddCons(p_add_con, init_wt);
+  }
   return rval;
 }
 
@@ -1336,6 +1340,7 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   if(send_lay == NULL) return NULL;
   bool gotone = false;
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    if(p->NotActive()) continue;
     if(p->from.ptr() != send_lay) continue;
     p->WeightsToTable(dt);
     gotone = true;

@@ -454,6 +454,9 @@ void Network::Build() {
   BuildPrjns(); // note: for Area constructs
   BuildUnits();
 
+  SyncSendPrjns();
+  UpdatePrjnIdxs();
+  
   n_units_built = units_flat.size;
   n_thrs_built = threads.n_threads;
   unit_vars_built = unit_vars_type;
@@ -943,7 +946,6 @@ void Network::Connect() {
 
   CheckSpecs();
   RemoveCons();
-  SyncSendPrjns();
 
   Connect_Sizes();
   Connect_Alloc();
