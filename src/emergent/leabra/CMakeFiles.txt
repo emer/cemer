@@ -45,7 +45,7 @@ set(leabra_HEADS_MAKETA
   LayerActUnitSpec.h
     
   LeabraContextLayerSpec.h
-#  ScalarValLayerSpec.h
+  ScalarValLayerSpec.h
 #  MotorForceLayerSpec.h
   TwoDValLeabraLayer.h
   TwoDValLayerSpec.h
@@ -58,9 +58,9 @@ set(leabra_HEADS_MAKETA
   TiledGpRFOneToOneWtsPrjnSpec.h
   CerebConj2PrjnSpec.h
 
+  ExtRewLayerSpec.h
   # LeabraTdUnit.h
   # LeabraTdUnitSpec.h
-  # ExtRewLayerSpec.h
   # TDRewPredConSpec.h
   # TDRewPredLayerSpec.h
   # TDRewIntegLayerSpec.h
@@ -159,7 +159,7 @@ set(leabra_SRCS
   LayerActUnitSpec.cpp
     
   LeabraContextLayerSpec.cpp
-#  ScalarValLayerSpec.cpp
+  ScalarValLayerSpec.cpp
 #  MotorForceLayerSpec.cpp
   TwoDValLeabraLayer.cpp
   TwoDValLayerSpec.cpp
@@ -172,9 +172,9 @@ set(leabra_SRCS
   TiledGpRFOneToOneWtsPrjnSpec.cpp
   CerebConj2PrjnSpec.cpp
 
+  ExtRewLayerSpec.cpp
   # LeabraTdUnit.cpp
   # LeabraTdUnitSpec.cpp
-  # ExtRewLayerSpec.cpp
   # TDRewPredConSpec.cpp
   # TDRewPredLayerSpec.cpp
   # TDRewIntegLayerSpec.cpp

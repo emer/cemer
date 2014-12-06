@@ -96,8 +96,9 @@ public:
     virtual void Compute_DaRew(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ExtRew clamp external rewards as da values (put in da val, clamp)
 
-    virtual void Compute_UnitDa(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-				float er, LeabraUnit* u, LeabraNetwork* net);
+    virtual void Compute_UnitDa
+      (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx,
+       float er, LeabraUnit* u);
     // #CAT_ExtRew used in above routines: actually compute the unit da value based on external reward value er
     virtual void Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present

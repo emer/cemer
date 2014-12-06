@@ -526,9 +526,10 @@ void LeabraLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
 //      Quarter_Final
 
 void LeabraLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* net) {
-  if(net->phase == LeabraNetwork::MINUS_PHASE)
+  if(net->quarter == 2) {       // quarter still pre-increment?
     Quarter_Final_GetMinus(lay, net);
-  else {
+  }
+  else if(net->quarter == 3) {
     Quarter_Final_GetPlus(lay, net);
   }
 }

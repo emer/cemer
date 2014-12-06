@@ -20,8 +20,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraWizard);
 void LeabraWizard::Initialize() {
 }
 
-// note: not building any of this!
-#if 0
 #include <LeabraProject>
 #include <LeabraNetwork>
 #include <StdNetWizDlg>
@@ -45,12 +43,12 @@ void LeabraWizard::Initialize() {
 #include <LeabraContextLayerSpec>
 
 #include <ExtRewLayerSpec>
-#include <LeabraTdUnit>
-#include <LeabraTdUnitSpec>
-#include <TDRewPredConSpec>
-#include <TDRewPredLayerSpec>
-#include <TDRewIntegLayerSpec>
-#include <TdLayerSpec>
+// #include <LeabraTdUnit>
+// #include <LeabraTdUnitSpec>
+// #include <TDRewPredConSpec>
+// #include <TDRewPredLayerSpec>
+// #include <TDRewIntegLayerSpec>
+// #include <TdLayerSpec>
 
 #include <PPTgUnitSpec>
 #include <LHbRMTgUnitSpec>
@@ -75,11 +73,9 @@ void LeabraWizard::Initialize() {
 
 #include <HippoEncoderConSpec>
 #include <CHLConSpec>
-#include <ECinLayerSpec>
 #include <ECoutUnitSpec>
-#include <CA3LayerSpec>
 #include <CA1UnitSpec>
-#include <SubiculumLayerSpec>
+//#include <SubiculumLayerSpec>
 
 #include <taMisc>
 
@@ -101,7 +97,7 @@ String LeabraWizard::RenderWizDoc_network() {
 * [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on biology -- functionally similar to an SRN but auto-encoding and predictive\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
-* [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using quad-phase specs -- high functioning hippocampal episodic memory system.\n\
+* [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
 * [[<this>.TD()|Temporal Differences (TD)]] -- configure temporal-differences (TD) reinforcement learning layers.\n\
 * [[<this>.PVLV()|PVLV]] -- configure PVLV (Primary Value, Learned Value) biologically-motivated reinforcement learning layers -- provides a simulated dopamine signal that reflects unexpected primary rewards (PV = primary value system) and unexpected learned reward assocations (conditioned stimuli; LV = learned value = system).\n\
 :* [[<this>.PVLV_ConnectLayer()|PVLV Connect Layer]] -- connect or disconnect a layer as an input to the PVLV system -- multiple PVLV layers should be connected together so this automates that process and is strongly recommended.\n\
@@ -449,6 +445,7 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net) {
 // todo: set td_mod.on = true for td_mod_all; need to get UnitSpec..
 
 bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
+#if 0
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
     net = (LeabraNetwork*)proj->GetNewNetwork();
@@ -700,6 +697,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
     tdrpsp->AddToControlPanelNm("rew_pred", edit, "tdrp");
     tdintsp->AddToControlPanelNm("rew_integ", edit, "tdint");
   }
+#endif
   return true;
 }
 
@@ -2175,8 +2173,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
     if(!StdNetwork()) return false;
   }
 
-  String msg = "Configuring ThetaPhase Hippocampus:\n\n\
- You will have to configure inputs/outputs to/from the EC layers after the configuration:\n\n";
+  String man_msg = "You will have to configure inputs/outputs to/from the EC layers after the configuration";
+  String msg = "Configuring ThetaPhase Hippocampus:\n\n" + man_msg + "\n\n";
 
   taMisc::Confirm(msg);
 
@@ -2187,12 +2185,12 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   bool new_lay;
   Layer_Group* hip_laygp = net->FindMakeLayerGroup("Hippocampus");
-  LeabraLayer* ecin = (LeabraLayer*)hip_laygp->FindMakeLayer("EC_in", NULL, new_lay);
-  LeabraLayer* ecout = (LeabraLayer*)hip_laygp->FindMakeLayer("EC_out", NULL, new_lay);
+  LeabraLayer* ecin = (LeabraLayer*)hip_laygp->FindMakeLayer("ECin", NULL, new_lay);
+  LeabraLayer* ecout = (LeabraLayer*)hip_laygp->FindMakeLayer("ECout", NULL, new_lay);
   LeabraLayer* dg = (LeabraLayer*)hip_laygp->FindMakeLayer("DG", NULL, new_lay);
   LeabraLayer* ca3 = (LeabraLayer*)hip_laygp->FindMakeLayer("CA3", NULL, new_lay);
   LeabraLayer* ca1 = (LeabraLayer*)hip_laygp->FindMakeLayer("CA1", NULL, new_lay);
-  LeabraLayer* subic = (LeabraLayer*)hip_laygp->FindMakeLayer("Subiculum", NULL, new_lay);
+  //  LeabraLayer* subic = (LeabraLayer*)hip_laygp->FindMakeLayer("Subiculum", NULL, new_lay);
 
   //////////////////////////////////////////////////////////////////////////////////
   // make specs
@@ -2201,6 +2199,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   // unit specs
   FMSpec(LeabraUnitSpec, hip_units, hipspec, "HippoUnitSpec");
+  FMChild(ECoutUnitSpec, ecout_units, hip_units, "ECoutUnits");
+  FMChild(CA1UnitSpec, ca1_units, hip_units, "CA1Units");
   // FMChild(LeabraUnitSpec, dg_units, hip_units, "DGUnits");
   // FMSpec(LeabraUnitSpec, ecout_units, units, "ECOutUnits");
 
@@ -2223,13 +2223,13 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   FMChild(CHLConSpec, ca3ca1_cons, hip_cons, "CA3_CA1");
 
   // layer specs
-  FMSpec(ThetaPhaseLayerSpec, hip_laysp, hipspec, "HippoLayerSpec");
-  FMChild(ECoutUnitSpec, ecout_laysp, hip_laysp, "EC_out");
-  FMChild(ECinLayerSpec, ecin_laysp, ecout_laysp, "EC_in");
+  FMSpec(LeabraLayerSpec, hip_laysp, hipspec, "HippoLayerSpec");
+  FMChild(LeabraLayerSpec, ecout_laysp, hip_laysp, "ECout");
+  FMChild(LeabraLayerSpec, ecin_laysp, ecout_laysp, "ECin");
   FMChild(LeabraLayerSpec, dg_laysp, hip_laysp, "DG");
-  FMChild(CA3LayerSpec, ca3_laysp, hip_laysp, "CA3");
-  FMChild(CA1UnitSpec, ca1_laysp, hip_laysp, "CA1");
-  FMSpec(SubiculumLayerSpec, subic_laysp, hipspec, "Subiculum");
+  FMChild(LeabraLayerSpec, ca3_laysp, hip_laysp, "CA3");
+  FMChild(LeabraLayerSpec, ca1_laysp, hip_laysp, "CA1");
+  // FMSpec(SubiculumLayerSpec, subic_laysp, hipspec, "Subiculum");
 
   // prjn specs
   BaseSpec_Group* prjns = (BaseSpec_Group*)hipspec->FindMakeGpName("HippoPrjns");
@@ -2252,14 +2252,14 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   dg->SetLayerSpec(dg_laysp);
   ca3->SetLayerSpec(ca3_laysp);
   ca1->SetLayerSpec(ca1_laysp);
-  subic->SetLayerSpec(subic_laysp);
+  // subic->SetLayerSpec(subic_laysp);
 
   ecin->SetUnitSpec(hip_units);
-  ecout->SetUnitSpec(hip_units);
+  ecout->SetUnitSpec(ecout_units);
   dg->SetUnitSpec(hip_units);
   ca3->SetUnitSpec(hip_units);
-  ca1->SetUnitSpec(hip_units);
-  subic->SetUnitSpec(hip_units);
+  ca1->SetUnitSpec(ca1_units);
+  // subic->SetUnitSpec(hip_units);
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
@@ -2281,8 +2281,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   net->FindMakePrjn(ca1, ecout, gponetoone, ecout_ca1_cons);
   net->FindMakePrjn(ca1, ca3, fullprjn, ca3ca1_cons);
 
-  net->FindMakePrjn(subic, ecin, onetoone, tosubic_cons);
-  net->FindMakePrjn(subic, ecout, onetoone, tosubic_cons);
+  // net->FindMakePrjn(subic, ecin, onetoone, tosubic_cons);
+  // net->FindMakePrjn(subic, ecout, onetoone, tosubic_cons);
 
   //////////////////////////////////////////////////////////////////////////////////
   // set positions & geometries
@@ -2292,7 +2292,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   dg->brain_area = ".*/.*/.*/.*/Hippocampus dentate gyrus";
   ca3->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
   ca1->brain_area = ".*/.*/.*/.*/Hippocampus cornu ammonis";
-  subic->brain_area = ".*/.*/.*/.*/Hippocampus subiculum";
+  // subic->brain_area = ".*/.*/.*/.*/Hippocampus subiculum";
 
   ecin->unit_groups = true;
   ecin->SetNUnitGroups(n_ec_slots);
@@ -2310,14 +2310,14 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   ca3->SetNUnits(225);
 
-  subic->SetNUnits(12);
-  subic->un_geom.x = 12;
-  subic->un_geom.y = 1;
+  // subic->SetNUnits(12);
+  // subic->un_geom.x = 12;
+  // subic->un_geom.y = 1;
 
   hip_laygp->pos.SetXYZ(0, 0, 1);
   ecin->pos.SetXYZ(0, 0, 0);
   ecout->pos.SetXYZ(35, 0, 0);
-  subic->pos.SetXYZ(70, 0, 0);
+  // subic->pos.SetXYZ(70, 0, 0);
   dg->pos.SetXYZ(0, 0, 1);
   ca3->pos.SetXYZ(0, 0, 2);
   ca1->pos.SetXYZ(35, 0, 2);
@@ -2355,8 +2355,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   // HippoConSpecs, lrate = .2, hebb = 0.05
   hip_cons->SetUnique("lrate", true);
   hip_cons->lrate = 0.2f;
-  // hip_cons->SetUnique("lmix", true);
-  // hip_cons->lmix.hebb = 0.05f;
+  hip_cons->SetUnique("chl", true);
+  hip_cons->chl.hebb = 0.05f;
   
   // mossy mean = 0.9 var = 0.01, rel = 8 , lrate = 0
   mossy_cons->SetUnique("rnd", true);
@@ -2366,36 +2366,36 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   mossy_cons->wt_scale.rel = 8.0f;
   mossy_cons->SetUnique("lrate", true);
   mossy_cons->lrate = 0.0f;
-  // mossy_cons->SetUnique("savg_cor", true);
-  // mossy_cons->savg_cor.cor = 1.0f;
+  mossy_cons->SetUnique("chl", true);
+  mossy_cons->chl.savg_cor = 1.0f;
   
   // ca3_ca3 rel = 2, 
   ca3ca3_cons->SetUnique("wt_scale", true);
   ca3ca3_cons->wt_scale.rel = 2.0f;
-  // ca3ca3_cons->SetUnique("savg_cor", true);
-  // ca3ca3_cons->savg_cor.cor = 1.0f;
+  ca3ca3_cons->SetUnique("savg_cor", true);
+  ca3ca3_cons->chl.savg_cor = 1.0f;
 
   // ca3_ca1 lrate = 0.05
   ca3ca1_cons->SetUnique("lrate", true);
   ca3ca1_cons->lrate = 0.05f;
-  // ca3ca1_cons->SetUnique("lmix", true);
-  // ca3ca1_cons->lmix.hebb = 0.005f;
+  ca3ca1_cons->SetUnique("chl", true);
+  ca3ca1_cons->chl.hebb = 0.005f;
 
   // sparse hippocampal layers!
 
-  // dg_laysp->SetUnique("kwta", true);
-  // dg_laysp->kwta.pct = 0.01f;
+  dg_laysp->SetUnique("lay_inhib", true);
+  dg_laysp->lay_inhib.gi = 3.8f;
 
-  // ca3_laysp->SetUnique("kwta", true);
-  // ca3_laysp->kwta.pct = 0.02f;
+  ca3_laysp->SetUnique("lay_inhib", true);
+  ca3_laysp->lay_inhib.gi = 3.0f;
 
-  // ca1_laysp->SetUnique("inhib_group", true);
-  // ca1_laysp->inhib_group = LeabraLayerSpec::UNIT_GROUPS;
-  // ca1_laysp->SetUnique("gp_kwta", true);
-  // ca1_laysp->gp_kwta.pct = 0.1f;
- 
+  ca1_laysp->SetUnique("lay_inhib", true);
+  ca1_laysp->lay_inhib.on = false;
+  ca1_laysp->SetUnique("unit_gp_inhib", true);
+  ca1_laysp->unit_gp_inhib.on = true;
+  ca1_laysp->unit_gp_inhib.gi = 2.4f;
 
-  subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
+  // subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
 
   // todo; lrate schedule!
   
@@ -2405,34 +2405,21 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   net->Build();
   net->LayerPos_Cleanup();
 
-//   taMisc::CheckConfigStart(false, false);
+  bool ok = net->CheckConfig();
 
-//   bool ok = patchsp->CheckConfig_Layer(patch, false);
-//   ok &= sncsp->CheckConfig_Layer(snc, false);
-//   ok &= pfcmsp->CheckConfig_Layer(pfc_m, false);
-//   ok &= matrixsp->CheckConfig_Layer(matrix_m, false);
-//   ok &= snrthalsp->CheckConfig_Layer(snrthal_m, false);
-//   if(out_gate) {
-//     ok &= pfcosp->CheckConfig_Layer(pfc_o, false);
-//     ok &= matrixosp->CheckConfig_Layer(matrix_o, false);
-//     ok &= snrthalosp->CheckConfig_Layer(snrthal_o, false);
-//   }
-
-//   taMisc::CheckConfigEnd(ok);
-
-//   if(!ok) {
-//     msg =
-//       "BG/PFC: An error in the configuration has occurred (it should be the last message\
-//  you received prior to this one).  The network will not run until this is fixed.\
-//  In addition, the configuration process may not be complete, so you should run this\
-//  function again after you have corrected the source of the error.";
-//   }
-//   else {
-//     msg =
-//     "BG/PFC configuration is now complete.  Do not forget the one remaining thing\
-//  you need to do manually:\n\n" + man_msg;
-//   }
-//   taMisc::Confirm(msg);
+  if(!ok) {
+    msg =
+      "Hippo: An error in the configuration has occurred (it should be the last message\
+ you received prior to this one).  The network will not run until this is fixed.\
+ In addition, the configuration process may not be complete, so you should run this\
+ function again after you have corrected the source of the error.";
+  }
+  else {
+    msg =
+      "Hippo configuration is now complete.  Do not forget the one remaining thing\
+ you need to do manually:\n\n" + man_msg;
+  }
+  taMisc::Confirm(msg);
 
   for(int j=0;j<net->specs.leaves;j++) {
     BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
@@ -2446,4 +2433,3 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   return true;
 }
 
-#endif
