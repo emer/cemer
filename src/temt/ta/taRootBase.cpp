@@ -1630,6 +1630,11 @@ bool taRootBase::Startup_InitKeyBindings() {
 
   default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Enter));
   default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Return));
+  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_FOCUS_SEARCH, QKeySequence(control_key + Qt::Key_S));
+
+  default_list->Add(taiMisc::TABLE_CONTEXT, taiMisc::TABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
+  default_list->Add(taiMisc::TABLE_CONTEXT, taiMisc::TABLE_EDIT, QKeySequence(control_key + Qt::Key_A));
+  default_list->Add(taiMisc::TABLE_CONTEXT, taiMisc::TABLE_EDIT, QKeySequence(control_key + Qt::Key_E));
 
   default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(control_key + Qt::Key_Enter));
   default_list->Add(taiMisc::PANEL_CONTEXT, taiMisc::PANEL_APPLY, QKeySequence(control_key + Qt::Key_Return));

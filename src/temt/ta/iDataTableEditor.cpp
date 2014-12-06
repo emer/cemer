@@ -235,12 +235,12 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   if((bool)tvTable->m_window) {
     tvTable->m_window->FocusIsMiddlePanel();
   }
-
-//   QCoreApplication* app = QCoreApplication::instance();
-  QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_T) {
+  
+  QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TABLE_CONTEXT, key_event);
+  
+  switch (action) {
+    case taiMisc::TABLE_TOGGLE_FOCUS:
       if(obj->inherits("iDataTableView")) {
         tvTable->clearExtSelection();
         if(m_cell) {
@@ -254,16 +254,15 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
         tvTable->selectCurCell();
       }
       return true;
-    }
-    else if(e->key() == Qt::Key_A || e->key() == Qt::Key_E) {
+    case taiMisc::TABLE_EDIT:
       if(m_cell && obj->inherits("iDataTableView")) {
         tvCell->tv->setFocus();
         tvCell->tv->selectCurCell();
         return true;
       }
-    }
+    default:
+      return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
   }
-  return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
 }
 
 void iDataTableEditor::ScrollToBottom() {

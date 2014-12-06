@@ -123,6 +123,7 @@ void iDialogKeyBindings::Constr() {
       }
     }
   }
+  taMisc::SetKeyBindingSet(current_key_set);
 #endif
   
   QHBoxLayout* button_layout = new QHBoxLayout();
@@ -137,8 +138,6 @@ void iDialogKeyBindings::Constr() {
 
   connect(button_ok, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(button_revert, SIGNAL(clicked()), this, SLOT(reject()) );
-  
-  taMisc::SetKeyBindingSet(current_key_set);
 }
 
 void iDialogKeyBindings::accept() {
