@@ -2386,15 +2386,21 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
 
   dg_laysp->SetUnique("lay_inhib", true);
   dg_laysp->lay_inhib.gi = 3.8f;
+  dg_laysp->SetUnique("avg_act", true);
+  dg_laysp->avg_act.init = 0.01f;
 
   ca3_laysp->SetUnique("lay_inhib", true);
   ca3_laysp->lay_inhib.gi = 3.0f;
+  ca3_laysp->SetUnique("avg_act", true);
+  ca3_laysp->avg_act.init = 0.02f;
 
   ca1_laysp->SetUnique("lay_inhib", true);
   ca1_laysp->lay_inhib.on = false;
   ca1_laysp->SetUnique("unit_gp_inhib", true);
   ca1_laysp->unit_gp_inhib.on = true;
   ca1_laysp->unit_gp_inhib.gi = 2.4f;
+  ca1_laysp->SetUnique("avg_act", true);
+  ca1_laysp->avg_act.init = 0.1f;
 
   // subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
 

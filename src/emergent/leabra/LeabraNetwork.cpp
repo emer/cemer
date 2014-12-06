@@ -123,10 +123,10 @@ void LeabraNetwork::Initialize() {
   trial_cos_diff = 0.0f;
 
   unit_vec_vars = NULL;
-
-  init_netins_cycle_stat = false;
-  thrs_send_d5bnet_tmp = NULL;  // todo: need to free this thing too!
-
+  thrs_send_d5bnet_tmp = NULL;
+  thrs_lay_avg_max_vals = NULL;
+  thrs_ungp_avg_max_vals = NULL;
+  
 #ifdef CUDA_COMPILE
   cudai = new LeabraConSpecCuda;
 #endif
@@ -863,7 +863,6 @@ void LeabraNetwork::Compute_Act_Post_Thr(int thr_no) {
 void LeabraNetwork::Compute_CycleStats_Pre() {
   // stats are never threadable due to updating at higher levels
   trg_max_act = 0.0f;
-  init_netins_cycle_stat = false;
 }
 
 void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
@@ -1024,10 +1023,6 @@ void LeabraNetwork::Compute_CycleStats_Post() {
 
   Compute_OutputName();
   Compute_RTCycles();
-  // todo: eliminate this if possible -- just kinda hacky..
-  if(init_netins_cycle_stat) {
-    Init_Netins();
-  }
 }
 
 void LeabraNetwork::Compute_OutputName() {
