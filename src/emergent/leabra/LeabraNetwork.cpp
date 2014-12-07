@@ -77,6 +77,7 @@ void LeabraNetMisc::Initialize() {
   bias_learn = false;
   trial_decay = false;
   diff_scale_p = false;
+  diff_scale_q1 = false;
   dwt_norm = false;
   lay_gp_inhib = false;
   inhib_cons = false;
@@ -360,6 +361,7 @@ void LeabraNetwork::Trial_Init_Specs() {
   net_misc.bias_learn = false;
   net_misc.trial_decay = false;
   net_misc.diff_scale_p = false;
+  net_misc.diff_scale_q1 = false;
   net_misc.dwt_norm = false;
   net_misc.lay_gp_inhib = false;
   net_misc.lrate_updtd = false;

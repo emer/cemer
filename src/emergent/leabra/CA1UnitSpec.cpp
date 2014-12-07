@@ -16,12 +16,22 @@
 #include "CA1UnitSpec.h"
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(ThetaPhaseSpecs);
 TA_BASEFUNS_CTORS_DEFN(CA1UnitSpec);
 
-void CA1UnitSpec::Initialize() {
+void ThetaPhaseSpecs::Initialize() {
+  Defaults_init();
+}
+
+void ThetaPhaseSpecs::Defaults_init() {
+  mod_ec_out = true;
+  ca3_on_p = false;
   recall_decay = 1.0f;
-  plus_decay = 1.0f;
+  plus_decay = 0.0f;
   use_test_mode = true;
+}
+
+void CA1UnitSpec::Initialize() {
 }
 
 bool CA1UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
@@ -69,8 +79,14 @@ bool CA1UnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return true;
 }
 
+void CA1UnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
+  net->net_misc.diff_scale_p = true;
+  net->net_misc.diff_scale_q1 = true;
+  inherited::Trial_Init_Specs(net);
+}
+
 void CA1UnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  bool test_mode = (use_test_mode && net->train_mode == Network::TEST);
+  bool test_mode = (theta.use_test_mode && net->train_mode == Network::TEST);
   const int nrg = u->NRecvConGps(net, thr_no); 
   for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -79,7 +95,7 @@ void CA1UnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int 
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
 
     if(from->name.contains("EC")) {
-      if(!mod_ec_out && from->name.contains("out"))
+      if(!theta.mod_ec_out && from->name.contains("out"))
         continue;
       switch(net->quarter) {
       case 0:
@@ -103,23 +119,18 @@ void CA1UnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int 
         cs->wt_scale.abs = 1.0f;
         break;
       case 3:
-        // actually, this should have everything so it is a proper plus phase!
-        // if(!test_mode)
-        //   cs->wt_scale.abs = 0.0f;
+        if(!test_mode && !theta.ca3_on_p)
+          cs->wt_scale.abs = 0.0f;
         break;
       }
     }
   }
 
-  if(net->quarter == 1 || net->quarter == 3) {
-    Init_Netins(u, net, thr_no);
-  }
-
   if(net->quarter == 1 && !test_mode) {
-    DecayState(u, net, thr_no, recall_decay);
+    DecayState(u, net, thr_no, theta.recall_decay);
   }
   if(net->quarter == 3 && !test_mode) {
-    DecayState(u, net, thr_no, plus_decay);
+    DecayState(u, net, thr_no, theta.plus_decay);
   }
   
   inherited::Compute_NetinScale(u, net, thr_no);
