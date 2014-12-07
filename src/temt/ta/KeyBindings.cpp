@@ -26,10 +26,12 @@ TA_BASEFUNS_CTORS_DEFN(KeyBindings);
 
 KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext context) {
   switch (context) {
+    case taiMisc::MENU_CONTEXT:
+      return &menu_bindings;
     case taiMisc::MAINWINDOW_CONTEXT:
       return &main_window_bindings;
     case taiMisc::TEXTEDIT_CONTEXT:
-      return &line_edit_bindings;
+      return &text_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
     case taiMisc::DIALOG_CONTEXT:
@@ -64,7 +66,7 @@ bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction acti
 
 void KeyBindings::Reset() {
   main_window_bindings.Reset();
-  line_edit_bindings.Reset();
+  text_edit_bindings.Reset();
   console_bindings.Reset();
   dialog_bindings.Reset();
   panel_bindings.Reset();

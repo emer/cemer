@@ -120,7 +120,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       cursor.deleteChar();
       setTextCursor(cursor);
       return;
-    case taiMisc::TEXTEDIT_KILL:
+    case taiMisc::TEXTEDIT_DELETE_TO_END:
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
       cursor.removeSelectedText();

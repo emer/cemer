@@ -1115,7 +1115,7 @@ void taiMisc::DeleteChildrenNow(QObject* obj) {
 void taiMisc::LoadDefaultKeyBindings() {
 #ifdef TA_OS_MAC
   int control_key = static_cast<int>(Qt::MetaModifier);
-  int meta_key = static_cast<int>(Qt::ControlModifier);
+  int meta_key = static_cast<int>(Qt::ControlModifier);  // "command" key
 #else
   int control_key = static_cast<int>(Qt::ControlModifier);
   int meta_key = static_cast<int>(Qt::MetaModifier);
@@ -1124,6 +1124,20 @@ void taiMisc::LoadDefaultKeyBindings() {
   KeyBindings* default_list = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_DEFAULT));
   
   default_list->Reset();
+// menu items for mac only (for now anyway)
+#ifdef TA_OS_MAC
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_NEW, QKeySequence(meta_key + Qt::Key_N));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_OPEN, QKeySequence(meta_key + Qt::Key_O));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CLOSE, QKeySequence(meta_key + Qt::Key_W));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND, QKeySequence(meta_key + Qt::Key_F));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_MINIMIZE, QKeySequence(meta_key + Qt::Key_M));
+#endif
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DELETE, QKeySequence(control_key + Qt::Key_D));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence("F3"));
+
+#ifdef TA_OS_MAC
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_ONLY, QKeySequence(meta_key + Qt::Key_1));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_ONLY, QKeySequence(meta_key + Qt::Key_2));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_PANELS, QKeySequence(meta_key + Qt::Key_3));
@@ -1131,10 +1145,21 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_T3, QKeySequence(meta_key + Qt::Key_5));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_AND_T3, QKeySequence(meta_key + Qt::Key_6));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_ALL_FRAMES, QKeySequence(meta_key + Qt::Key_7));
+#else
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_ONLY, QKeySequence(control_key + Qt::Key_1));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_ONLY, QKeySequence(control_key + Qt::Key_2));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_PANELS, QKeySequence(control_key + Qt::Key_3));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_T3_ONLY, QKeySequence(control_key + Qt::Key_4));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_T3, QKeySequence(control_key + Qt::Key_5));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_AND_T3, QKeySequence(control_key + Qt::Key_6));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_ALL_FRAMES, QKeySequence(control_key + Qt::Key_7));
+#endif
+  
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_MOVE_FOCUS_LEFT, QKeySequence(control_key + Qt::Key_J));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_MOVE_FOCUS_RIGHT, QKeySequence(control_key + Qt::Key_L));
-  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_SHIFT_CUR_TAB_LEFT, QKeySequence(control_key + Qt::Key_B));
-  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_SHIFT_CUR_TAB_RIGHT, QKeySequence(control_key + Qt::Key_F));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_SHIFT_TAB_LEFT, QKeySequence(control_key + Qt::Key_B));
+  default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_SHIFT_TAB_RIGHT, QKeySequence(control_key + Qt::Key_F));
+  
 #ifdef TA_OS_MAC  // why both control and alt for shifting focus
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_MOVE_FOCUS_LEFT, QKeySequence(Qt::AltModifier + 0x2206));
   default_list->Add(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_MOVE_FOCUS_RIGHT, QKeySequence(Qt::AltModifier + 0xAC));
@@ -1226,9 +1251,10 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ROTATE_RIGHT, QKeySequence(Qt::Key_Right));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ROTATE_UP, QKeySequence(Qt::Key_Up));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ROTATE_DOWN, QKeySequence(Qt::Key_Down));
-  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_IN, QKeySequence(Qt::Key_Plus));
-  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_IN, QKeySequence(Qt::Key_Equal));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_IN, QKeySequence(Qt::ShiftModifier + Qt::Key_Plus));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_IN_II, QKeySequence(Qt::Key_Equal));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_OUT, QKeySequence(Qt::Key_Minus));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_OUT_II, QKeySequence(Qt::ShiftModifier + Qt::Key_Underscore));
   
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_LOOKUP, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_IGNORE, QKeySequence(control_key + Qt::Key_Return));
@@ -1249,7 +1275,7 @@ void taiMisc::LoadDefaultKeyBindings() {
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_BACKWARD, QKeySequence(control_key + Qt::Key_Left));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DELETE, QKeySequence(control_key + Qt::Key_D));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_BACKSPACE, QKeySequence(control_key + Qt::Key_H));
-    default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_KILL, QKeySequence(control_key + Qt::Key_K));
+    default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DELETE_TO_END, QKeySequence(control_key + Qt::Key_K));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_SELECT_ALL, QKeySequence(control_key + Qt::Key_U));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PASTE, QKeySequence(control_key + Qt::Key_Y));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CUT, QKeySequence(control_key + Qt::Key_W));

@@ -79,34 +79,34 @@ static void t3ev_config_wheel(iThumbWheel* whl) {
 }
 
 T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
-  : QWidget(parent)
+: QWidget(parent)
 {
   t3vw = parent;
   quarter = NULL;               // for startup events
-
+  
   viewer_mode = VIEW;
-
+  
   // all the main layout code
   //  main_vbox: main_hbox: lhs_vbox quarter rhs_vbox
   //             bot_hbox
-
+  
   setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-
+  
   main_vbox = new QVBoxLayout(this);
   main_vbox->setMargin(0); main_vbox->setSpacing(0);
-
+  
   main_hbox = new QHBoxLayout;
   main_hbox->setMargin(0); main_hbox->setSpacing(0);
   main_vbox->addLayout(main_hbox);
-
+  
   bot_hbox = new QHBoxLayout;
   bot_hbox->setMargin(0); main_hbox->setSpacing(0);
   main_vbox->addLayout(bot_hbox);
-
+  
   lhs_vbox = new QVBoxLayout;
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
-
+  
   // note: we're setting our format right at construction, instead of doing
   // it later in iT3ViewSpaceWidget, which we used to do..
   QGLFormat fmt;
@@ -119,7 +119,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
     fmt.setSamples(taMisc::antialiasing_level);
   }
   quarter = new T3QuarterWidget(fmt, this);
-
+  
   quarter->setUpdatesEnabled(false);
   // set any initial configs for quarter widget here (or somewhere else if you please)
   quarter->setInteractionModeEnabled(true);
@@ -130,108 +130,108 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   SoEventManager* emgr = quarter->getSoEventManager();
   emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
   main_hbox->addWidget(quarter, 1);
-
+  
   rhs_vbox = new QVBoxLayout;
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
   main_hbox->addLayout(rhs_vbox);
-
+  
   ///// make wheels all together
-
+  
   hrot_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hrot_wheel);
   hrot_start_val = THUMB_INIT_VAL;
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
-
+  
   vrot_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vrot_wheel);
   vrot_start_val = THUMB_INIT_VAL;
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
-
+  
   zoom_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(zoom_wheel);
   zoom_start_val = THUMB_INIT_VAL;
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
-
+  
   hpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hpan_wheel);
   hpan_start_val = THUMB_INIT_VAL;
   hpan_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
   connect(hpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(hpanwheelChanged(int)));
-
+  
   vpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vpan_wheel);
   vpan_start_val = THUMB_INIT_VAL;
   vpan_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
   connect(vpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(vpanwheelChanged(int)));
-
+  
   /////  lhs_vbox
-
+  
   lhs_button_vbox = new QVBoxLayout;
   lhs_button_vbox->setMargin(0); lhs_button_vbox->setSpacing(0);
   lhs_vbox->addLayout(lhs_button_vbox);
-
+  
   lhs_vbox->addStretch();
-
+  
   lhs_vbox->addWidget(vrot_wheel);
-
+  
   /////  rhs_vbox
-
+  
   rhs_button_vbox = new QVBoxLayout;
   rhs_button_vbox->setMargin(0); rhs_button_vbox->setSpacing(0);
   rhs_vbox->addLayout(rhs_button_vbox);
-
+  
   rhs_vbox->addStretch();
-
+  
   rhs_vbox->addWidget(zoom_wheel);
   zoom_lbl = new QLabel("Zoom", this);
   zoom_lbl->setFont(taiM->buttonFont(taiMisc::sizMedium));
   zoom_lbl->setToolTip("Wheel above will Zoom the view camera in and out -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   rhs_vbox->addWidget(zoom_lbl);
-
+  
   rhs_vbox->addSpacing(4);
   rhs_vbox->addWidget(vpan_wheel);
-
+  
   /////  bot_hbox
-
+  
   vrot_lbl = new QLabel("V.Rot", this);
   vrot_lbl->setToolTip("Wheel above will rotate the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(vrot_lbl);
-
+  
   bot_hbox->addSpacing(4);
-
+  
   hrot_lbl = new QLabel("H.Rot", this);
   hrot_lbl->setToolTip("Wheel to the right will rotate the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(hrot_lbl);
-
+  
   bot_hbox->addWidget(hrot_wheel);
-
+  
   bot_hbox->addStretch();
-
+  
   bot_button_hbox = new QHBoxLayout;
   bot_button_hbox->setMargin(0); rhs_button_vbox->setSpacing(0);
   bot_hbox->addLayout(bot_button_hbox);
-
+  
   bot_hbox->addStretch();
-
+  
   bot_hbox->addWidget(hpan_wheel);
   hpan_lbl = new QLabel("H.Pan", this);
   hpan_lbl->setToolTip("Wheel to the left will pan (move) the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(hpan_lbl);
-
+  
   bot_hbox->addSpacing(4);
-
+  
   vpan_lbl = new QLabel("V.Pan ", this);
   vpan_lbl->setToolTip("Wheel above will pan (move) the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
   bot_hbox->addWidget(vpan_lbl);
-
+  
   Constr_RHS_Buttons();
   Constr_LHS_Buttons();
   Constr_Bot_Buttons();
-
-//   quarter->setInteractionModeOn(false);
+  
+  //   quarter->setInteractionModeOn(false);
   setInteractionModeOn(false);  // default start it off!
 }
 
@@ -257,7 +257,7 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
   connect(interact_button, SIGNAL(clicked()), this, SLOT(interactbuttonClicked()));
   rhs_button_vbox->addWidget(interact_button);
-
+  
   view_button = new QToolButton(this);
   view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   view_button->setCheckable(true);
@@ -266,90 +266,90 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   view_button->setToolTip("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
   connect(view_button, SIGNAL(clicked()), this, SLOT(viewbuttonClicked()));
   rhs_button_vbox->addWidget(view_button);
-
+  
   view_all_button = new QToolButton(this);
   view_all_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   view_all_button->setIcon(QPixmap((const char **)view_all_xpm));
   view_all_button->setToolTip("(A key) View All: repositions the camera view to the standard initial view with everything in view");
   connect(view_all_button, SIGNAL(clicked()), this, SLOT(viewallbuttonClicked()));
   rhs_button_vbox->addWidget(view_all_button);
-
+  
   seek_button = new QToolButton(this);
   seek_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   seek_button->setIcon(QPixmap((const char **)seek_xpm));
   seek_button->setToolTip("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
   connect(seek_button, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
   rhs_button_vbox->addWidget(seek_button);
-
+  
   snapshot_button = new QToolButton(this);
   snapshot_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   snapshot_button->setIcon(QPixmap((const char **)snapshot_xpm));
   snapshot_button->setToolTip("Snapshot: save the current viewer image to a file -- PNG format is recommended for most cases as it compresses well and is lossles.  Use EPS to produce a postscript format file that can be converted to PDF or other vector formats for editing.");
   connect(snapshot_button, SIGNAL(clicked()), this, SLOT(snapshotbuttonClicked()));
   rhs_button_vbox->addWidget(snapshot_button);
-
+  
   print_button = new QToolButton(this);
   print_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   print_button->setIcon(QPixmap((const char **)print_xpm));
   print_button->setToolTip("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
   connect(print_button, SIGNAL(clicked()), this, SLOT(printbuttonClicked()));
   rhs_button_vbox->addWidget(print_button);
-
+  
   annote_button = new iMenuButton(this);
   taiM->FormatButton(annote_button, "+", taiMisc::fonBig);
   annote_button->setToolTip("Add annotations (lines, text, etc) to the view");
-
+  
   QMenu* anmenu = new QMenu();
   QAction* tmpact = new QAction("line", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteLineClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("start arrow", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteStartArrowClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("end arrow", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEndArrowClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("double arrow", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteDoubleArrowClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("rectangle", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteRectangleClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("ellipse", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEllipseClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("circle", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteCircleClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("text", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteTextClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("object", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteObjectClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("clear all", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteClearAllClicked()));
   anmenu->addAction(tmpact);
-
+  
   tmpact = new QAction("edit all", this);
   connect(tmpact, SIGNAL(triggered()), this, SLOT(annoteEditAllClicked()));
   anmenu->addAction(tmpact);
-
+  
   annote_button->setMenu(anmenu);
   rhs_button_vbox->addWidget(annote_button);
 }
 
 void T3ExaminerViewer::Constr_LHS_Buttons() {
-
+  
 }
 
 void T3ExaminerViewer::Constr_Bot_Buttons() {
@@ -362,44 +362,44 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
       nm = "Vw_" + String(i);
       sv->name = nm;
     }
-
+    
     QToolButton* view_button = new iContextMenuButton(this);
-
+    
     iAction* view_act = new iAction(i, nm, QKeySequence());
     view_act->connect(iAction::int_act, this,  SLOT(gotoviewbuttonClicked(int)));
     view_act->setParent(view_button);
     view_act->setCheckable(true);
     view_act->setChecked(sv->view_saved);
-
+    
     view_button->setToolTip("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name");
     //    view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
     view_button->setDefaultAction(view_act);
     bot_button_hbox->addWidget(view_button);
-
+    
     sv->view_action = view_act;
     sv->view_button = view_button;
-
+    
     QMenu* view_menu = new QMenu(this);
     view_menu->setFont(taiM->menuFont(taiMisc::fonMedium));
-
+    
     iAction* save_act = new iAction(i, "&Save View", QKeySequence());
     save_act->setStatusTip("Save the current view settings to this view button");
     save_act->connect(iAction::int_act, this,  SLOT(saveviewTriggered(int)));
     save_act->setParent(view_menu);
     view_menu->addAction(save_act);
-
+    
     iAction* name_act = new iAction(i, "&Name View", QKeySequence());
     name_act->setStatusTip("Name this view button");
     name_act->connect(iAction::int_act, this,  SLOT(nameviewTriggered(int)));
     name_act->setParent(view_menu);
     view_menu->addAction(name_act);
-
+    
     iAction* sname_act = new iAction(i, "&Save + Name", QKeySequence());
     sname_act->setStatusTip("Save the current view settings to this view button, and then name it");
     sname_act->connect(iAction::int_act, this,  SLOT(savenameviewTriggered(int)));
     sname_act->setParent(view_menu);
     view_menu->addAction(sname_act);
-
+    
     view_button->setMenu(view_menu);
     view_button->setPopupMode(QToolButton::DelayedPopup);
   }
@@ -411,7 +411,7 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   but_no = dyn_buttons.size;
   NameVar nv(label, but_no);
   dyn_buttons.Add(nv);
-
+  
   QToolButton* dyn_button = new QToolButton(this);
   // make them all the same size
   QSizePolicy sp(QSizePolicy::MinimumExpanding, QSizePolicy::Fixed);
@@ -446,7 +446,7 @@ void T3ExaminerViewer::setDynButtonChecked(int but_no, bool onoff, bool mutex) {
       da->setChecked(false);
     }
   }
-
+  
   iAction* da = dyn_actions[but_no];
   da->setCheckable(true);
   da->setChecked(onoff);
@@ -723,59 +723,69 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
       quarter->seek();
       key_event->accept();
       return;
-    case taiMisc::GRAPHICS_PAN_LEFT:
+    case taiMisc::GRAPHICS_PAN_LEFT: // arrow keys do double duty - depends on mode ;break and drop through if "interaction" mode
       if (!interactionModeOn()) {
         horizPanView(-fixed_pan_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_PAN_RIGHT:
       if (!interactionModeOn()) {
         horizPanView(fixed_pan_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_PAN_UP:
       if (!interactionModeOn()) {
         vertPanView(-fixed_pan_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
-   case taiMisc::GRAPHICS_PAN_DOWN:
+      break;
+    case taiMisc::GRAPHICS_PAN_DOWN:
       if (!interactionModeOn()) {
         vertPanView(fixed_pan_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
-   case taiMisc::GRAPHICS_ROTATE_LEFT:
+      break;
+    case taiMisc::GRAPHICS_ROTATE_LEFT:
       if (!interactionModeOn()) {
         horizRotateView(-fixed_rotate_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_ROTATE_RIGHT:
       if (!interactionModeOn()) {
         horizRotateView(fixed_rotate_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_ROTATE_UP:
       if (!interactionModeOn()) {
         vertRotateView(-fixed_rotate_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_ROTATE_DOWN:
       if (!interactionModeOn()) {
         vertRotateView(fixed_rotate_distance);
+        key_event->accept();
+        return;
       }
-      key_event->accept();
-      return;
+      break;
     case taiMisc::GRAPHICS_ZOOM_IN:
+    case taiMisc::GRAPHICS_ZOOM_IN_II:
       zoomView(-fixed_zoom_delta);
       key_event->accept();
       return;
     case taiMisc::GRAPHICS_ZOOM_OUT:
+    case taiMisc::GRAPHICS_ZOOM_OUT_II:
       zoomView(fixed_zoom_delta);
       key_event->accept();
       return;
@@ -783,6 +793,8 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
       emit unTrappedKeyPressEvent(key_event);
       QWidget::keyPressEvent(key_event);
   }
+  emit unTrappedKeyPressEvent(key_event);
+  QWidget::keyPressEvent(key_event);
 }
 
 ///////////////////////////////////////////////////////////////
@@ -815,13 +827,13 @@ void T3ExaminerViewer::viewAll() {
 void T3ExaminerViewer::zoomView(const float diffvalue) {
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
-
+  
   SoType t = cam->getTypeId();
   SbName tname = t.getName();
-
+  
   // This will be in the range of <0, ->>.
   float multiplicator = float(exp(diffvalue));
-
+  
   if (t.isDerivedFrom(SoOrthographicCamera::getClassTypeId())) {
     // Since there's no perspective, "zooming" in the original sense
     // of the word won't have any visible effect. So we just increase
@@ -838,25 +850,25 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
         tname != "FrustumCamera") {
       static SbBool first = TRUE;
       if (first) {
-/*SoDebugError prolly doesn't exist in non-debug builds of Coin...
-        SoDebugError::postWarning("SoGuiFullViewerP::zoom",
-                                  "Unknown camera type, "
-                                  "will zoom by moving position, but this might not be correct.");*/
+        /*SoDebugError prolly doesn't exist in non-debug builds of Coin...
+         SoDebugError::postWarning("SoGuiFullViewerP::zoom",
+         "Unknown camera type, "
+         "will zoom by moving position, but this might not be correct.");*/
         taMisc::Warning("SoGuiFullViewerP::zoom",
-          "Unknown camera type, will zoom by moving position, but this might not be correct.");
+                        "Unknown camera type, will zoom by moving position, but this might not be correct.");
         first = FALSE;
       }
     }
-
+    
     const float oldfocaldist = cam->focalDistance.getValue();
     const float newfocaldist = oldfocaldist * multiplicator;
-
+    
     SbVec3f direction;
     cam->orientation.getValue().multVec(SbVec3f(0, 0, -1), direction);
-
+    
     const SbVec3f oldpos = cam->position.getValue();
     const SbVec3f newpos = oldpos + (newfocaldist - oldfocaldist) * -direction;
-
+    
     // This catches a rather common user interface "buglet": if the
     // user zooms the camera out to a distance from origo larger than
     // what we still can safely do floating point calculations on
@@ -903,19 +915,19 @@ void T3ExaminerViewer::vertPanView(const float pan_value) {
 void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
-
+  
   const SbVec3f DEFAULTDIRECTION(0, 0, -1);
   const SbRotation currentorientation = cam->orientation.getValue();
-
+  
   SbVec3f currentdir;
   currentorientation.multVec(DEFAULTDIRECTION, currentdir);
-
+  
   const SbVec3f focalpoint = cam->position.getValue() +
-    cam->focalDistance.getValue() * currentdir;
-
+  cam->focalDistance.getValue() * currentdir;
+  
   // set new orientation
   cam->orientation = SbRotation(axis, ang) * currentorientation;
-
+  
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
@@ -925,9 +937,9 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
 void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
-
+  
   SbVec3f mvec = dir * dist;
-
+  
   SbVec3f newpos = cam->position.getValue() + mvec;
   cam->position = newpos;
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
@@ -946,9 +958,9 @@ void T3ExaminerViewer::syncViewerMode() {
     if(!int_onoff) {
       emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
     }
-// #ifdef DEBUG
-//     taMisc::Info("sync interact to:", String(int_onoff));
-// #endif
+    // #ifdef DEBUG
+    //     taMisc::Info("sync interact to:", String(int_onoff));
+    // #endif
   }
 }
 
@@ -974,9 +986,9 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
     if(!onoff) {
       emgr->setNavigationState(SoEventManager::JUST_NAVIGATION); // after is best here
     }
-// #ifdef DEBUG
-//     taMisc::Info("set interact to:", String(onoff));
-// #endif
+    // #ifdef DEBUG
+    //     taMisc::Info("set interact to:", String(onoff));
+    // #endif
     if(re_render) {
       T3Panel* panl = GetPanel();
       if(panl) {
@@ -1055,12 +1067,12 @@ void T3ExaminerViewer::printImage() {
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
   static bool inside_event_loop = false;
-
+  
   //NOTE: the base classes don't check if event is already handled, so we have to skip
   // calling inherited if we handle it ourselves
-
+  
   bool rval = inherited::event(ev_);
-
+  
   if(so_scrollbar_is_dragging) {
     if(!inside_event_loop) {
       inside_event_loop = true;
@@ -1075,12 +1087,12 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
 
 bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
   if(!t3vw || (obj != this && obj != quarter)) goto do_inherited;
-
+  
   if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) ||
      (ev_->type() == QEvent::Enter) || (ev_->type() == QEvent::FocusIn)) {
     syncViewerMode();
   }
-
+  
   if(ev_->type() == QEvent::MouseButtonPress) {
     QMouseEvent* ev = (QMouseEvent*)ev_;
     if (ev->button() == Qt::RightButton) {
@@ -1091,10 +1103,10 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
       return true;
     }
   }
-
- do_inherited:
+  
+do_inherited:
   static bool inside_event_loop = false;
-
+  
   if(so_scrollbar_is_dragging) {
     if(!inside_event_loop) {
       inside_event_loop = true;
@@ -1104,6 +1116,6 @@ bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
       inside_event_loop = false;
     }
   }
-
+  
   return inherited::eventFilter(obj, ev_);
 }

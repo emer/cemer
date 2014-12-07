@@ -219,7 +219,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       backspace();
       clearExtSelection();
       return;
-    case taiMisc::TEXTEDIT_KILL:
+    case taiMisc::TEXTEDIT_DELETE_TO_END:
       key_event->accept();
       end(true);                // mark
       cut();

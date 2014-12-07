@@ -32,8 +32,9 @@ class TA_API KeyBindings : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
 public:  
-  KeyActionPair_PArray       main_window_bindings; // #IGNORE 
-  KeyActionPair_PArray       line_edit_bindings; // #IGNORE 
+  KeyActionPair_PArray       menu_bindings; // #IGNORE
+  KeyActionPair_PArray       main_window_bindings; // #IGNORE
+  KeyActionPair_PArray       text_edit_bindings; // #IGNORE
   KeyActionPair_PArray       console_bindings; // #IGNORE 
   KeyActionPair_PArray       dialog_bindings; // #IGNORE 
   KeyActionPair_PArray       panel_bindings; // #IGNORE 

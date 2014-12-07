@@ -438,25 +438,26 @@ void iMainWindowViewer::Constr_Menu_impl()
 
 void iMainWindowViewer::Constr_FileMenu()
 {
-  fileNewAction = AddAction(new iAction("&New Project...", QKeySequence(), "fileNewAction"));
+  QKeySequence ks_new = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_NEW);
+  fileNewAction = AddAction(new iAction("&New Project...", ks_new, "fileNewAction"));
   fileNewAction->setIcon(QIcon(":/images/filenew.png"));
   fileNewAction->setIconText("New");
 
-  fileOpenAction = AddAction(new iAction("&Open Project...", QKeySequence(), "fileOpenAction"));
+  QKeySequence ks_open = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_OPEN);
+  fileOpenAction = AddAction(new iAction("&Open Project...", ks_open, "fileOpenAction"));
   fileOpenAction->setIcon(QIcon(QPixmap(":/images/project_open_icon.png")));
   fileOpenAction->setIconText("Open");
 
-  fileSaveAction = AddAction(new iAction("&Save Project", QKeySequence(cmd_str + "S"), "fileSaveAction"));
+  // so standard we don't offer custom key binding
+  fileSaveAction = AddAction(new iAction("&Save Project", QKeySequence(QKeySequence::Save), "fileSaveAction"));
   fileSaveAction->setIcon(QIcon(QPixmap(":/images/save_icon.png")));
   fileSaveAction->setIconText("Save");
 
-  fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(cmd_str + "Shift+S"), "fileSaveAsAction"));
+  // so standard we don't offer custom key binding
+  fileSaveAsAction = AddAction(new iAction("Save Project &As...", QKeySequence(QKeySequence::SaveAs), "fileSaveAsAction"));
   fileSaveAsAction->setIcon(QIcon(QPixmap(":/images/save_as_icon.png")));
   fileSaveAsAction->setIconText("Save As");
   
-  // filePrintAction = AddAction(new iAction("&Print...", QKeySequence(), "filePrintAction"));
-  // filePrintAction->setIcon(QIcon(QPixmap(":/images/fileprint.png")));
-
   fileSaveNotesAction = AddAction(new iAction("Save Note &Changes...", QKeySequence(), "fileSaveNotesAction"));
   fileSaveAsTemplateAction = AddAction(new iAction("Save As &Template...", QKeySequence(), "fileSaveAsTemplate"));
   fileUpdateChangeLogAction = AddAction(new iAction("&Updt Change Log...", QKeySequence(), "fileUpdateChangeLogAction"));
@@ -583,39 +584,41 @@ void iMainWindowViewer::Constr_FileMenu()
 
 void iMainWindowViewer::Constr_EditMenu()
 {
-  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
-
-  editUndoAction = AddAction(new iAction("&Undo", QKeySequence(cmd_str + "Z"), "editUndoAction"));
+  // so standard we don't offer custom key binding
+  editUndoAction = AddAction(new iAction("&Undo", QKeySequence::Undo, "editUndoAction"));
   editUndoAction->setIcon(QIcon(QPixmap(":/images/editundo.png")));
-  editRedoAction = AddAction(new iAction("&Redo", QKeySequence(cmd_str + "Shift+Z"), "editRedoAction"));
+  editRedoAction = AddAction(new iAction("&Redo", QKeySequence::Redo, "editRedoAction"));
   editRedoAction->setIcon(QIcon(QPixmap(":/images/editredo.png")));
 
-  editCutAction = AddAction(new iAction(iClipData::EA_CUT, "Cu&t", QKeySequence(cmd_str + "X"), "editCutAction"));
+  editCutAction = AddAction(new iAction(iClipData::EA_CUT, "Cu&t", QKeySequence::Cut, "editCutAction"));
   editCutAction->setIcon(QIcon(QPixmap(":/images/editcut.png")));
-  editCopyAction = AddAction(new iAction(iClipData::EA_COPY, "&Copy", QKeySequence(cmd_str + "C"), "editCopyAction"));
+  editCopyAction = AddAction(new iAction(iClipData::EA_COPY, "&Copy", QKeySequence::Copy, "editCopyAction"));
   editCopyAction->setIcon(QIcon(QPixmap(":/images/editcopy.png")));
 
   // Note: we twiddle the visibility, shortcuts, and accelerator for the Paste and Link guys
-  editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate", QKeySequence(Qt::META + Qt::Key_M), "editDuplicateAction"));
   QPixmap editpaste(":/images/editpaste.png");
-  editPasteAction = AddAction(new iAction(iClipData::EA_PASTE, "&Paste", QKeySequence(cmd_str + "V"), "editPasteAction"));
+  editPasteAction = AddAction(new iAction(iClipData::EA_PASTE, "&Paste", QKeySequence::Paste, "editPasteAction"));
   editPasteAction->setIcon(QIcon(editpaste));
-  editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence(cmd_str + "V"), "editPasteIntoAction"));
+  editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence::Paste, "editPasteIntoAction"));
   editPasteIntoAction->setIcon(QIcon(editpaste));
   editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(), "editPasteAssignAction"));
   editPasteAssignAction->setIcon(QIcon(editpaste));
   editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
-  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_DELETE), "editDeleteAction"));
-  // editDeleteAction->setIcon(QIcon(editpaste));
+  QKeySequence ks_delete = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_DELETE);
+  editDeleteAction = AddAction(new iAction(iClipData::EA_DELETE, "&Delete", ks_delete, "editDeleteAction"));
+  QKeySequence ks_dupe = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE);
+  editDupeAction = AddAction(new iAction(iClipData::EA_DUPE, "Duplicate", ks_dupe, "editDuplicateAction"));
 
   editLinkAction = AddAction(new iAction(iClipData::EA_LINK, "&Link", QKeySequence(), "editLinkAction"));
   editLinkIntoAction = AddAction(new iAction(iClipData::EA_LINK, "&Link Into", QKeySequence(), "editLinkIntoAction"));
   editUnlinkAction = AddAction(new iAction(iClipData::EA_LINK, "Unlin&k", QKeySequence(), "editUnlinkAction"));
 
-  editFindAction = AddAction(new iAction(0, "&Find...", QKeySequence(), "editFindAction"));
+  QKeySequence ks_find = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND);
+  editFindAction = AddAction(new iAction(0, "&Find...", ks_find, "editFindAction"));
   editFindAction->setIcon(QIcon(QPixmap(":/images/find_icon.png")));
-  editFindNextAction = AddAction(new iAction(0, "Find &Next", QKeySequence("F3"), "editFindNextAction"));
+  QKeySequence ks_find_next = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT);
+  editFindNextAction = AddAction(new iAction(0, "Find &Next", ks_find_next, "editFindNextAction"));
 
   // Build menu items.
   editMenu->AddAction(editUndoAction);
@@ -777,7 +780,8 @@ void iMainWindowViewer::Constr_ShowMenu()
 
 void iMainWindowViewer::Constr_WindowMenu()
 {
-  windowMinimizeAction = AddAction(new iAction("&Minimize", QKeySequence(), "windowMinimizeAction"));
+  QKeySequence ks_minimize = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_MINIMIZE);
+  windowMinimizeAction = AddAction(new iAction("&Minimize", ks_minimize, "windowMinimizeAction"));
   windowMenu->AddAction(windowMinimizeAction);
   windowZoomAction = AddAction(new iAction("&Zoom", QKeySequence(), "windowZoomAction"));
   windowMenu->AddAction(windowZoomAction);
@@ -1867,10 +1871,10 @@ bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* key_eve
       MoveFocusRight();
       return true;
     // these need key bindings
-    case taiMisc::MAINWINDOW_SHIFT_CUR_TAB_LEFT: // switch tab
+    case taiMisc::MAINWINDOW_SHIFT_TAB_LEFT: // switch tab
       ShiftCurTabLeft();
       return true;
-    case taiMisc::MAINWINDOW_SHIFT_CUR_TAB_RIGHT: // switch tab
+    case taiMisc::MAINWINDOW_SHIFT_TAB_RIGHT: // switch tab
       ShiftCurTabRight();
       return true;
     default:
