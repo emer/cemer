@@ -32,6 +32,19 @@ void CerebGranuleSpecs::Initialize() {
 void CerebGranuleSpecs::Defaults_init() {
 }
 
+bool CerebGranuleUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+  if(!inherited::CheckConfig_Unit(un, quiet)) return false;
+
+  bool rval = true;
+
+  if(un->CheckError(stp.on, quiet, rval,
+                     "Cannot have stp activated for Granule neurons -- using the stp parameters for special variables in granule cells -- I just turned it back off.")) {
+    stp.on = false;
+  }
+  return true;
+}
+
+
 float CerebGranuleUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                                int thr_no, float& net_syn) {
   float rval = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
