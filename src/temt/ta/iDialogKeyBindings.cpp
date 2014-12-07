@@ -46,6 +46,7 @@ iDialogKeyBindings::iDialogKeyBindings(QWidget* par_window_)
 {
   setModal(true);
   setWindowTitle("Key Binding Preferences");
+  setFont(taiM->dialogFont(taiMisc::fonSmall));
   resize(taiM->dialogSize(taiMisc::hdlg_s));
 }
 
