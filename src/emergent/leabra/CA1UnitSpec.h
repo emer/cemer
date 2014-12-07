@@ -60,6 +60,7 @@ INHERITED(LeabraUnitSpec)
 public:
   float		recall_decay; 		// #DEF_1 proportion to decay activations at start of recall phase
   float		plus_decay; 		// #DEF_1 proportion to decay activations at start of plus phase
+  bool          mod_ec_out;             // modulate ECout projection strength in same way as ECin projections, 
   bool		use_test_mode;		// #DEF_true if network train_mode == TEST, then don't modulate CA3 off in plus phase, and keep ECin -> CA1 on, and don't decay -- makes it more likely to at least get input parts right
 
   void Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;

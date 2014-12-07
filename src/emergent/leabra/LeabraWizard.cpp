@@ -2202,7 +2202,6 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   FMChild(ECoutUnitSpec, ecout_units, hip_units, "ECoutUnits");
   FMChild(CA1UnitSpec, ca1_units, hip_units, "CA1Units");
   // FMChild(LeabraUnitSpec, dg_units, hip_units, "DGUnits");
-  // FMSpec(LeabraUnitSpec, ecout_units, units, "ECOutUnits");
 
   FMSpec(HippoEncoderConSpec, ecca1_cons, hipspec, "EC_CA1ConSpecs");
   FMChild(HippoEncoderConSpec, ecin_ca1_cons, ecca1_cons, "ECin_CA1");
@@ -2401,6 +2400,14 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ca1_laysp->unit_gp_inhib.gi = 2.4f;
   ca1_laysp->SetUnique("avg_act", true);
   ca1_laysp->avg_act.init = 0.1f;
+
+  ecout_laysp->SetUnique("lay_inhib", true);
+  ecout_laysp->lay_inhib.on = false;
+  ecout_laysp->SetUnique("unit_gp_inhib", true);
+  ecout_laysp->unit_gp_inhib.on = true;
+  ecout_laysp->unit_gp_inhib.gi = 2.1f;
+  ecout_laysp->SetUnique("avg_act", true);
+  ecout_laysp->avg_act.init = 0.2f;
 
   // subic_laysp->lrate_mod_con_spec.SetSpec(ca3ca1_cons);
 

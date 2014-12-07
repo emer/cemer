@@ -171,10 +171,10 @@ void ScalarValLayerSpec::HelpConfig() {
  Uses distributed coarse-coding units to represent a single scalar value.  Each unit\
  has a preferred value arranged evenly between the min-max range, and decoding\
  simply computes an activation-weighted average based on these preferred values.  The\
- current scalar value is displayed in the misc_1 variable of first unit in the layer, which can be clamped\
+ current scalar value is displayed in the act_eq variable of first unit in the layer, which can be clamped\
  and compared, etc (i.e., set the environment patterns to have just one unit and provide\
  the actual scalar value and it will automatically establish the appropriate distributed\
- representation in the rest of the units).  Unlike previous implementations, all units including the first are part of the distributed representation -- first unit is not special except in receiving the input and displaying output as misc_1.\n\
+ representation in the rest of the units).  Unlike previous implementations, all units including the first are part of the distributed representation -- first unit is not special except in receiving the input and displaying output as act_eq.\n\
  \nScalarValLayerSpec Configuration:\n\
  - Default UnitSpec and LayerSpec params with FF_FB_INHIB, gi = 2.2 generally works well\n\
  - For 0-1 range, GAUSSIAN: 11 or 21 units works well, LOCALIST: 3 units\n\
@@ -351,7 +351,7 @@ void ScalarValLayerSpec::ClampValue_ugp
   float val = uv->ext;
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
-  uv->misc_1 = val;                      // record this val
+  uv->act_eq = uv->misc_1 = val;        // record this val
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
 
   float avg_act = 0.0f;
@@ -423,7 +423,8 @@ float ScalarValLayerSpec::ReadValue_ugp
   }
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  u->misc_1() = avg;
+  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
+  uv->act_eq = uv->misc_1 = avg;
   return avg;
 }
 
@@ -541,38 +542,6 @@ void ScalarValLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork
 void ScalarValLayerSpec::Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) {
   inherited::Compute_OutputName(lay, net);
   ReadValue(lay, net);          // always read out the value
-}
-
-void ScalarValLayerSpec::Quarter_Final_GetMinus_ugp
-(LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;   // must be at least a few units..
-
-  // set the first unit in the group to represent the value
-  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->act_m = uv->misc_1;        // first unit saves m, p as ext value -- not good for learning though!
-}
-
-void ScalarValLayerSpec::Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Quarter_Final_GetMinus(lay, net);
-  UNIT_GP_ITR(lay, Quarter_Final_GetMinus_ugp(lay, net, acc_md, gpidx); );
-}
-
-void ScalarValLayerSpec::Quarter_Final_GetPlus_ugp
-(LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
-  int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;   // must be at least a few units..
-
-  // set the first unit in the group to represent the value
-  LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
-  LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->act_p = uv->misc_1;        // first unit saves m, p as ext value -- not good for learning though!
-}
-
-void ScalarValLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) {
-  inherited::Quarter_Final_GetPlus(lay, net);
-  UNIT_GP_ITR(lay, Quarter_Final_GetPlus_ugp(lay, net, acc_md, gpidx); );
 }
 
 float ScalarValLayerSpec::Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,

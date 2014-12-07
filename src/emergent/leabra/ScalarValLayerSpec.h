@@ -126,7 +126,7 @@ private:
 eTypeDef_Of(ScalarValLayerSpec);
 
 class E_API ScalarValLayerSpec : public LeabraLayerSpec {
-  // represents a scalar value using a coarse-coded distributed code over units.  the external input to the first unit is used to generate distributed inputs to the rest of the units, but unlike in earlier versions, all the units represent the distributed representation - the first unit is not just for display anymore, though it does contain the scalar readout val in misc_1, and in act_m and act_p
+  // represents a scalar value using a coarse-coded distributed code over units.  the external input to the first unit is used to generate distributed inputs to the rest of the units, but unlike in earlier versions, all the units represent the distributed representation - the first unit is not just for display anymore, though it does contain the scalar readout val in act_eq and in act_m and act_p
 INHERITED(LeabraLayerSpec)
 public:
   ScalarValSpec	 scalar;	// specifies how values are represented in terms of distributed patterns of activation across the layer
@@ -186,15 +186,6 @@ public:
 
   void Compute_OutputName(LeabraLayer* lay, LeabraNetwork* net) override;
 
-  void Quarter_Final_GetMinus(LeabraLayer* lay, LeabraNetwork* net) override;
-  void Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net) override;
-    virtual void Quarter_Final_GetMinus_ugp(LeabraLayer* lay, LeabraNetwork* net,
-                                            Layer::AccessMode acc_md, int gpidx);
-    // #IGNORE
-    virtual void Quarter_Final_GetPlus_ugp(LeabraLayer* lay, LeabraNetwork* net,
-                                           Layer::AccessMode acc_md, int gpidx);
-    // #IGNORE
-  
   float Compute_SSE(LeabraLayer* lay, LeabraNetwork* net, int& n_vals,
                     bool unit_avg = false, bool sqrt = false) override;
   virtual float Compute_SSE_ugp(LeabraLayer* lay, LeabraNetwork* net,

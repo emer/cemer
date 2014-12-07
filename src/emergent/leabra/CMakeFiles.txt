@@ -89,6 +89,8 @@ set(leabra_HEADS_MAKETA
 
   ECoutUnitSpec.h
   CA1UnitSpec.h
+  CA3UnitSpec.h
+  ECinUnitSpec.h
   # SubiculumLayerSpec.h
   HippoEncoderConSpec.h
   # CerebGranuleUnitSpec.h
@@ -203,6 +205,8 @@ set(leabra_SRCS
 
   ECoutUnitSpec.cpp
   CA1UnitSpec.cpp
+  CA3UnitSpec.cpp
+  ECinUnitSpec.cpp
   # SubiculumLayerSpec.cpp
   HippoEncoderConSpec.cpp
   # CerebGranuleUnitSpec.cpp
