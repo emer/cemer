@@ -32,29 +32,28 @@ INHERITED(LeabraConSpec)
 public:
   float         nerr_lrate;      // no-error learning rate value -- weights increase at this rate * cur_lrate (i.e., this is relative to the basic learning rate -- typically smaller)
 
-  // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_PfPc(float& dwt, const float gran_act,
                                  const float purk_minus, const float purk_plus)
   { if(purk_plus != 0.0f) dwt += -cur_lrate * purk_plus * gran_act * purk_minus;
     else dwt += cur_lrate * nerr_lrate * gran_act;  }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                                LeabraNetwork* net) override
-  { // if(su->act_lrn == 0.0f) return; // if sender is not active, bail
-    if(ignore_unlearnable && net->unlearnable_trial) return;
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+    LeabraNetwork* net = (LeabraNetwork*)rnet;
+    if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
+    LeabraConGroup* cg = (LeabraConGroup*)rcg;
+    LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
-    const float gran_act = su->act_eq; // todo: need to fix this! su->act_lrn;
+    const float gran_act = su->syn_nr; // special lagged act value for CerebGranuleUnitSpec
     float* dwts = cg->OwnCnVar(DWT);
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
-      LeabraUnit* ru = (LeabraUnit*)cg->Un(i,net);
+      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
       C_Compute_dWt_PfPc(dwts[i], gran_act, ru->act_eq, ru->targ);
       // target activation trains relative to act_eq
     }
   }
-  // #IGNORE 
 
   TA_SIMPLE_BASEFUNS(CerebPfPcConSpec);
 private:

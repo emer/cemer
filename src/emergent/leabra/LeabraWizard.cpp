@@ -2374,6 +2374,7 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   ca3ca3_cons->wt_scale.rel = 2.0f;
   ca3ca3_cons->SetUnique("chl", true);
   ca3ca3_cons->chl.savg_cor = 1.0f;
+  ca3ca3_cons->chl.hebb = 0.01f; // todo: need to explore..
 
   // ca3_ca1 lrate = 0.05
   ca3ca1_cons->SetUnique("lrate", true);

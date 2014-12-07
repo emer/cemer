@@ -50,7 +50,7 @@ private:
 eTypeDef_Of(CHLConSpec);
 
 class E_API CHLConSpec : public LeabraConSpec {
-  // does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..
+  // #AKA_XCalCHLConSpec does CHL-based Leabra learning under XCAL and CAL learning framework -- sometimes CHL performs better, e.g., in the hippocampus..
 INHERITED(LeabraConSpec)
 public:
   ChlSpecs	chl;		// #CAT_Learning CHL learning parameters
