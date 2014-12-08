@@ -1818,12 +1818,18 @@ void Network::Compute_NetinAct() {
 }
 
 void Network::Compute_NetinAct_Thr(int thr_no) {
-  // todo: this needs to proceed in layer-level chunks!
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitVars* uv = ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool has_targ = false;
+    for(int ui = ust; ui < ued; ui++) {
+      UnitVars* uv = ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
+    }
+    threads.SyncSpin(thr_no);   // need to sync for each layer!
   }
 }
 

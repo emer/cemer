@@ -252,6 +252,21 @@ class E_API BpUnit : public Unit {
   // #STEM_BASE ##CAT_Bp standard feed-forward Bp unit
 INHERITED(Unit)
 public:
+  inline UnitVars::ExtFlags ext_flag() { return GetUnitVars()->ext_flag; }
+  // #CAT_UnitVar external input flags -- determines whether the unit is receiving an external input (EXT), target (TARG), or comparison value (COMP)
+  inline float& targ()  { return GetUnitVars()->targ; }
+  // #VIEW_HOT #CAT_UnitVar target value: drives learning to produce this activation value
+  inline float& ext()   { return GetUnitVars()->ext; }
+  // #VIEW_HOT #CAT_UnitVar external input: drives activation of unit from outside influences (e.g., sensory input)
+  inline float& act()   { return GetUnitVars()->act; }
+  // #VIEW_HOT #CAT_UnitVar activation value -- what the unit communicates to others
+  inline float& net()   { return GetUnitVars()->net; }
+  // #VIEW_HOT #CAT_UnitVar net input value -- what the unit receives from others  (typically sum of sending activations times the weights)
+  inline float& bias_wt() { return GetUnitVars()->bias_wt; }
+  // #VIEW_HOT #CAT_UnitVar bias weight value -- the bias weight acts like a connection from a unit that is always active with a constant value of 1 -- reflects intrinsic excitability from a biological perspective
+  inline float& bias_dwt() { return GetUnitVars()->bias_dwt; }
+  // #VIEW_HOT #CAT_UnitVar change in bias weight value as computed by a learning mechanism
+
   float&        bias_pdw()
   { return ((BpUnitVars*)GetUnitVars())->bias_pdw; }
   // #VIEW_HOT previous bias weight change
@@ -731,22 +746,23 @@ class E_API BpNetwork : public Network {
   // #STEM_BASE ##CAT_Bp project for feedforward backpropagation networks (recurrent backprop is in RBpNetwork)
 INHERITED(Network)
 public:
-  bool			bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
-
+  bool	bp_to_inputs;	// #DEF_false backpropagate errors to input layers (faster if not done, which is the default)
+  int   prev_epoch;     // #NO_SAVE #HIDDEN previous epoch counter -- for detecting changes
+    
   virtual void	SetCurLrate_Thr(int thr_no);
   // #IGNORE set current learning rate, based on network epoch counter
-
-  void	Compute_NetinAct_Thr(int thr_no) override;
 
   virtual void	Compute_dEdA_dEdNet_Thr(int thr_no);
   // #IGNORE compute derivatives of error with respect to activations & net inputs (backpropagate)
   virtual void	Compute_Error();
   // #IGNORE compute local error values, for display purposes only (only call when testing, not training)
 
+  void  Init_Weights() override;
   void	Compute_dWt_Thr(int thr_no) override;
   void	Compute_Weights_Thr(int thr_no) override;
   
   virtual void  Trial_Run(); // #CAT_Bp run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt.  If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)
+  virtual void  Trial_Run_Thr(int thr_no); // #IGNORE
   
   void	SetProjectionDefaultTypes(Projection* prjn) override;
   void  BuildNullUnit() override;

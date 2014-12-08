@@ -180,7 +180,7 @@ void BpUnitSpec::SetCurLrate(BpUnitVars* uv, BpNetwork* net, int thr_no) {
 }
 
 void BpUnitSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
-  UnitSpec::Init_Acts(u, net, thr_no);
+  inherited::Init_Acts(u, net, thr_no);
   BpUnitVars* bu = (BpUnitVars*)u;
   bu->err = bu->dEdA = bu->dEdNet = 0.0f;
 }
@@ -223,12 +223,12 @@ void BpUnitSpec::Compute_dEdNet(BpUnitVars* u, BpNetwork* net, int thr_no) {
 
 void BpUnitSpec::Compute_dWt(UnitVars* u, Network* net, int thr_no) {
   if(u->ext_flag & UnitVars::EXT)  return; // don't compute dwts for clamped units
-  UnitSpec::Compute_dWt(u, net, thr_no);
+  inherited::Compute_dWt(u, net, thr_no);
 }
 
 void BpUnitSpec::Compute_Weights(UnitVars* u, Network* net, int thr_no) {
   if(u->ext_flag & UnitVars::EXT)  return; // don't update for clamped units
-  UnitSpec::Compute_Weights(u, net, thr_no);
+  inherited::Compute_Weights(u, net, thr_no);
 }
 
 void BpUnitSpec::GraphActFun(DataTable* graph_data, float min, float max) {
@@ -600,6 +600,7 @@ void BpNetwork::Initialize() {
   unit_vars_type = &TA_BpUnitVars;
   con_group_type = &TA_ConGroup;
   bp_to_inputs = false;
+  prev_epoch = -1;
 }
 
 void BpNetwork::UpdateAfterEdit_impl() {
@@ -618,6 +619,11 @@ void BpNetwork::SetProjectionDefaultTypes(Projection* prjn) {
   prjn->con_spec.SetBaseType(&TA_BpConSpec);
 }
 
+void BpNetwork::Init_Weights() {
+  inherited::Init_Weights();
+  prev_epoch = -1;
+}
+
 void BpNetwork::SetCurLrate_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
@@ -627,23 +633,19 @@ void BpNetwork::SetCurLrate_Thr(int thr_no) {
   }
 }
 
-void BpNetwork::Compute_NetinAct_Thr(int thr_no) {
-  // todo: this needs to use layer-staged computation
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    UnitVars* uv = ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    uv->unit_spec->Compute_NetinAct(uv, this, thr_no);
-  }
-}
-
 void BpNetwork::Compute_dEdA_dEdNet_Thr(int thr_no) {
-  // todo: this needs to use layer-staged computation
-  const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    BpUnitVars* uv = (BpUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((BpUnitSpec*)uv->unit_spec)->Compute_dEdA_dEdNet(uv, this, thr_no);
+  const int nlay = n_layers_built;
+  for(int li = nlay-1; li >= 0; li--) { // go in reverse order!
+    Layer* lay = ActiveLayer(li);
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    bool has_targ = false;
+    for(int ui = ust; ui < ued; ui++) {
+      BpUnitVars* uv = (BpUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      ((BpUnitSpec*)uv->unit_spec)->Compute_dEdA_dEdNet(uv, this, thr_no);
+    }
+    threads.SyncSpin(thr_no);   // need to sync for each layer!
   }
 }
 
@@ -661,6 +663,9 @@ void BpNetwork::Compute_Error() {
 }
 
 void BpNetwork::Compute_dWt_Thr(int thr_no) {
+  if(threads.get_timing)
+    net_timing[thr_no]->dwt.StartTimer(true); // reset
+
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     ConGroup* rcg = ThrRecvConGroup(thr_no, i);
@@ -673,41 +678,58 @@ void BpNetwork::Compute_dWt_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     uv->unit_spec->Compute_dWt(uv, this, thr_no);
   }
+  
+  if(threads.get_timing)
+    net_timing[thr_no]->dwt.EndIncrAvg();
 }
 
 void BpNetwork::Compute_Weights_Thr(int thr_no) {
+  if(threads.get_timing)
+    net_timing[thr_no]->wt.StartTimer(true); // reset
+
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     ConGroup* rcg = ThrRecvConGroup(thr_no, i);
     if(rcg->NotActive()) continue;
-    rcg->con_spec->Compute_dWt(rcg, this, thr_no);
+    rcg->con_spec->Compute_Weights(rcg, this, thr_no);
   }
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     UnitVars* uv = ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
-    uv->unit_spec->Compute_dWt(uv, this, thr_no);
+    uv->unit_spec->Compute_Weights(uv, this, thr_no);
   }
+  
+  if(threads.get_timing)
+    net_timing[thr_no]->wt.EndIncrAvg();
 }
 
 void BpNetwork::Trial_Run() {
+  if(prev_epoch != epoch) {
+    NET_THREAD_CALL(BpNetwork::SetCurLrate_Thr);
+    prev_epoch = epoch;
+  }
   DataUpdate(true);
+  NET_THREAD_CALL(BpNetwork::Trial_Run_Thr);
+  DataUpdate(false);
+}
 
-  // todo: put this whole thing into one thread loop
+void BpNetwork::Trial_Run_Thr(int thr_no) {
+  Compute_NetinAct_Thr(thr_no);
 
-  NET_THREAD_CALL(BpNetwork::SetCurLrate_Thr); // todo: crazy to be doing this every time -- detect when epoch changes!
+  threads.SyncSpin(thr_no);
+  
+  Compute_dEdA_dEdNet_Thr(thr_no);
 
-  Compute_NetinAct();
-  NET_THREAD_CALL(BpNetwork::Compute_dEdA_dEdNet_Thr);
+  threads.SyncSpin(thr_no);
 
   // compute the weight err derivatives (only if not testing...)
   if(train_mode == TRAIN) {
-    Compute_dWt();
-  } else {
+    Compute_dWt_Thr(thr_no);
+  }
+  else {
     Compute_Error();            // for display purposes only..
   }
-  // weight update taken care of by the epoch program
-  DataUpdate(false);
 }
 
 

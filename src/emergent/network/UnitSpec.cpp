@@ -136,10 +136,17 @@ void UnitSpec::Init_Weights_post(UnitVars* u, Network* net, int thr_no) {
 }
 
 void UnitSpec::Compute_Netin(UnitVars* u, Network* net, int thr_no) {
-  u->net = 0.0f;
-  if(bias_spec) {
-    u->net += u->bias_wt;
+  float new_net = 0.0f;
+  const int nrcg = net->ThrUnNRecvConGps(thr_no, u->thr_un_idx);
+  for(int g=0; g<nrcg; g++) {
+    ConGroup* rgp = net->ThrUnRecvConGroup(thr_no, u->thr_un_idx, g);
+    if(rgp->NotActive()) continue;
+    new_net += rgp->con_spec->Compute_Netin(rgp, net, thr_no);
   }
+  if(bias_spec) {
+    new_net += u->bias_wt;
+  }
+  u->net = new_net;
 }
 
 void UnitSpec::Compute_SentNetin(UnitVars* u, Network* net, float sent_netin) {

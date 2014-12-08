@@ -1,14 +1,9 @@
-// ta_Dump File v3.0 -- code v7.0.0.0 rev7196
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7835
 BpProject .projects["bp_xor"] { 
  Doc_Group @.docs = [0] {
  };
 
- Wizard_Group @.wizards = [1] {
-  BpWizard @["BpWizard_0"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
+ Wizard_Group @.wizards = [0] {
  };
 
  ControlPanel_Group @.ctrl_panels = [1] {
@@ -204,6 +199,9 @@ BpProject .projects["bp_xor"] {
   };
  };
 
+ ParamSet_Group @.param_sets = [0] {
+ };
+
  DataTable_Group @.data = [0] {
   DataTable_Group @.gp["InputData"] = [1] { 
    DataTable @["StdInputData"] { 
@@ -266,44 +264,39 @@ BpProject .projects["bp_xor"] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["epoch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["avg_sse"] { };
-     float_Data @["cnt_err"] { };
-     float_Data @["epoch_time_tot"] { };
-     float_Data @["epoch_time_usr"] { };
+     float_Data @["avg_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cnt_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_tot"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["epoch_time_usr"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
    };
   };
   DataTable_Group @.gp["AnalysisData"] { 
-  };
- };
-
- taBase_Group @.data_proc = [4] {
-  taDataProc @["data_base"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataAnal @["data_anal"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taDataGen @["data_gen"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
-  };
-  taImageProc @["image_proc"] { 
-   UserDataItem_List @*(.user_data_) {
-    UserDataItem @["NO_CLIP"] { };
-   };
   };
  };
 
@@ -1185,8 +1178,8 @@ BpProject .projects["bp_xor"] {
       UserDataItem @["view_panel_selected"] { };
      };
 
-     T3Panel_List @.panels = [1] {
-      T3Panel @["Frame1"] { 
+     T3Panel_List @.panels = [2] {
+      T3Panel @["XORNet"] { 
        T3DataView_List @.root_view.children = [3] {
 	NetView @["XOR_Net_View"] { 
 	 T3Annotation_List @.annotations = [0] {
@@ -1195,13 +1188,17 @@ BpProject .projects["bp_xor"] {
 	 T3DataView_List @.annote_children = [0] {
 	 };
 
-	 ScaleRange_List @.scale_ranges = [6] {
+	 ScaleRange_List @.scale_ranges = [10] {
 	  ScaleRange @[0] { };
 	  ScaleRange @[1] { };
 	  ScaleRange @[2] { };
 	  ScaleRange @[3] { };
 	  ScaleRange @[4] { };
 	  ScaleRange @[5] { };
+	  ScaleRange @[6] { };
+	  ScaleRange @[7] { };
+	  ScaleRange @[8] { };
+	  ScaleRange @[9] { };
 	 };
 	};
 	GraphTableView @["EpochOutputData_Graph"] { 
@@ -1291,6 +1288,77 @@ BpProject .projects["bp_xor"] {
 	T3SavedView @["Vw_9"] { };
        };
       };
+      T3Panel @["EpochOutputData"] { 
+       T3DataView_List @.root_view.children = [1] {
+	GraphTableView @["EpochOutputData_Graph"] { 
+	 T3DataView_List @.children = [6] {
+	  GraphColView @["batch"] { };
+	  GraphColView @["epoch"] { };
+	  GraphColView @["avg_sse"] { };
+	  GraphColView @["cnt_err"] { };
+	  GraphColView @["epoch_time_tot"] { };
+	  GraphColView @["epoch_time_usr"] { };
+	 };
+
+	 T3Annotation_List @.annotations = [0] {
+	 };
+
+	 T3DataView_List @.annote_children = [0] {
+	 };
+
+	 GraphPlotView_List @.plots = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_plot_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_plot_16"] { };
+	 };
+
+	 GraphPlotView_List @.errbars = [16] {
+	  GraphPlotView @["EpochOutputData_Graph_err_1"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_2"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_3"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_4"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_5"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_6"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_7"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_8"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_9"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_10"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_11"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_12"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_13"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_14"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_15"] { };
+	  GraphPlotView @["EpochOutputData_Graph_err_16"] { };
+	 };
+	};
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
      };
     };
    };
@@ -1317,6 +1385,7 @@ BpProject .projects["bp_xor"] {
     UserDataItem @["output_name"] { };
     UserDataItem @["trial_name"] { };
     UserDataItem @["group_name"] { };
+    UserDataItem @["total_trials"] { };
     UserDataItem @["time"] { };
     UserDataItem @["cycle"] { };
     UserDataItem @["tick"] { };
@@ -1372,6 +1441,14 @@ BpProject .projects["bp_xor"] {
 
    Weights_List @.weights = [0] {
    };
+
+   NetTiming_List NULL = [5] {
+    NetTiming @[0] { };
+    NetTiming @[1] { };
+    NetTiming @[2] { };
+    NetTiming @[3] { };
+    NetTiming @[4] { };
+   };
   };
  };
 };
@@ -1403,22 +1480,8 @@ BpProject .projects["bp_xor"] {
  };
  wizards {
   name="wizards";
-  el_typ=BpWizard;
+  el_typ=Wizard;
   el_def=0;
-  BpWizard @["BpWizard_0"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="BpWizard_0";
-   auto_open=0;
-  };
  };
  ctrl_panels {
   name="ctrl_panels";
@@ -1426,7 +1489,6 @@ BpProject .projects["bp_xor"] {
   el_def=0;
   ClusterRun @["ClusterRun"] {
    name="ClusterRun";
-   auto_edit=0;
    running_updt=0;
    desc=;
    mbrs {
@@ -1457,7 +1519,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1471,7 +1533,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1485,7 +1547,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1499,7 +1561,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1513,7 +1575,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1527,7 +1589,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1541,7 +1603,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1555,7 +1617,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1569,7 +1631,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1583,7 +1645,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1597,7 +1659,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1611,7 +1673,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1625,7 +1687,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1649,7 +1711,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1663,7 +1725,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1677,7 +1739,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1691,7 +1753,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1705,7 +1767,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1719,7 +1781,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1743,7 +1805,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1767,7 +1829,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1791,7 +1853,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1815,7 +1877,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1839,7 +1901,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1853,7 +1915,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1867,7 +1929,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1877,7 +1939,7 @@ BpProject .projects["bp_xor"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_done {
@@ -1897,7 +1959,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1911,7 +1973,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1925,7 +1987,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1939,7 +2001,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1953,7 +2015,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1967,7 +2029,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1981,7 +2043,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -1995,7 +2057,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2009,7 +2071,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2023,7 +2085,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2037,7 +2099,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2051,7 +2113,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2065,7 +2127,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2089,7 +2151,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2103,7 +2165,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2117,7 +2179,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2131,7 +2193,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2145,7 +2207,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2159,7 +2221,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2183,7 +2245,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2207,7 +2269,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2231,7 +2293,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2255,7 +2317,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2279,7 +2341,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2293,7 +2355,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2307,7 +2369,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2317,7 +2379,7 @@ BpProject .projects["bp_xor"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    jobs_archive {
@@ -2337,7 +2399,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2351,7 +2413,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2365,7 +2427,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2379,7 +2441,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2393,7 +2455,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2407,7 +2469,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2421,7 +2483,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2435,7 +2497,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2449,7 +2511,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2463,7 +2525,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2477,7 +2539,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2491,7 +2553,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2505,7 +2567,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2529,7 +2591,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2543,7 +2605,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2557,7 +2619,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2571,7 +2633,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2585,7 +2647,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2599,7 +2661,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2623,7 +2685,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2647,7 +2709,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2671,7 +2733,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2695,7 +2757,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2719,7 +2781,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2733,7 +2795,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2747,7 +2809,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2757,7 +2819,7 @@ BpProject .projects["bp_xor"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    file_list {
@@ -2777,7 +2839,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2791,7 +2853,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2805,7 +2867,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2819,7 +2881,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2833,7 +2895,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2847,7 +2909,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2861,7 +2923,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2875,7 +2937,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2889,7 +2951,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2899,7 +2961,7 @@ BpProject .projects["bp_xor"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    cluster_info {
@@ -2919,7 +2981,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2933,7 +2995,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2947,7 +3009,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2961,7 +3023,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2975,7 +3037,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2989,7 +3051,7 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -2999,7 +3061,7 @@ BpProject .projects["bp_xor"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    search_algos {
@@ -3025,6 +3087,11 @@ BpProject .projects["bp_xor"] {
    pb_nodes=0;
    nowin_x=0;
   };
+ };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
  };
  data {
   name="data";
@@ -3132,11 +3199,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3158,11 +3225,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -3184,11 +3251,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -3200,11 +3267,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -3216,11 +3283,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -3232,11 +3299,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -3274,11 +3341,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3300,11 +3367,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -3326,11 +3393,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -3342,11 +3409,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -3358,11 +3425,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -3374,11 +3441,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Input_act"] {
@@ -3390,11 +3457,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [2 1 0]       };
      };
      float_Data @["Output_act"] {
@@ -3406,11 +3473,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [2] ;;      };
       width=0;
       ar {
-       name=;
+       name="ar";
       [1 1 0]       };
      };
     };
@@ -3439,6 +3506,11 @@ BpProject .projects["bp_xor"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
       };
       name="batch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3448,11 +3520,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -3465,6 +3537,11 @@ BpProject .projects["bp_xor"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
       };
       name="epoch";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -3474,14 +3551,24 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_52";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
+      };
       name="avg_sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -3490,14 +3577,24 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_53";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
+      };
       name="cnt_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -3506,14 +3603,24 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_54";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
+      };
       name="epoch_time_tot";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -3522,14 +3629,24 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_55";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156494528055191;
+	val_type_fixed=0;
+       };
+      };
       name="epoch_time_usr";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -3538,11 +3655,11 @@ BpProject .projects["bp_xor"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -3560,63 +3677,6 @@ BpProject .projects["bp_xor"] {
    el_typ=DataTable;
    el_def=0;
    save_tables=1;
-  };
- };
- data_proc {
-  name="data_proc";
-  el_typ=taDataProc;
-  el_def=0;
-  taDataProc @["data_base"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_base";
-  };
-  taDataAnal @["data_anal"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_anal";
-  };
-  taDataGen @["data_gen"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="data_gen";
-  };
-  taImageProc @["image_proc"] {
-   UserDataItem_List @*(.user_data_) {
-    name=;
-    el_typ=UserDataItem;
-    el_def=0;
-    UserDataItem @["NO_CLIP"] {
-     name="NO_CLIP";
-     value 1 0=1;
-     val_type_fixed=0;
-    };
-   };
-   name="image_proc";
   };
  };
  programs {
@@ -3657,7 +3717,7 @@ BpProject .projects["bp_xor"] {
       object_type=BpNetwork;
       object_val=.projects["bp_xor"].networks["XOR_Net"]$$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- updates batch counter on network and passes it to train program";
       init_from=NULL;
@@ -3668,7 +3728,7 @@ BpProject .projects["bp_xor"] {
       object_type=DataTable;
       object_val=.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable with training patterns -- not used by this program, but passed to train program";
       init_from=NULL;
@@ -3678,7 +3738,7 @@ BpProject .projects["bp_xor"] {
       var_type=T_Int;
       int_val=10;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="maximum number of batch runs to perform";
       init_from=NULL;
@@ -3753,6 +3813,7 @@ BpProject .projects["bp_xor"] {
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -3763,6 +3824,7 @@ BpProject .projects["bp_xor"] {
 	  name="input_data";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="input_data";
 	  };
@@ -3801,8 +3863,8 @@ BpProject .projects["bp_xor"] {
      el_def=0;
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      seed{ 897248114;-1259630319;-1954705695;-2086433643;-1705562578;-246166775;142172280;-1066196830;649876912;-363601797;-1551220787;-201998924;984813377;-1929982005;1866720504;1737535582;-2064818913;-596409631;-537210356;-394821123;-1176302275;-1088439095;390472553;1002483428;-644065336;-93234492;-249392311;1955837623;486322880;268723693;-1316990013;-1148081097;1053267338;-194887551;722894185;-1796145741;-419870710;-744395548;-2126350183;-1623934615;-1975558537;-1109580724;1457379925;952758326;-932820647;-793678521;622734178;-1116891631;992844023;348717466;1162608598;-2078137647;-402129645;-523610230;-892508948;-545793120;1897913877;280270467;-1694155315;294983543;-1251003482;-1650029695;-1335161250;-843867016;1576969605;-260969840;-224140684;1265137246;954732510;2064975050;-1145863940;-1435022393;-1859029257;1513712809;985631399;417291160;-2038587757;-1933156114;888379733;1446724555;-464909414;-1706911051;-1159096460;-1791674743;-147343083;960690226;682596297;1099430942;359127508;311504974;93962501;-1671326033;632618192;-885562045;1179982281;-1505675969;1344906533;-1418551925;1622092278;1701084792;242471559;-1984251903;-1568971862;-1063520265;1591722069;-1959097976;-1601150455;-874166212;-889564662;717605003;-1582378599;-1301052667;1211123575;485189748;-182999148;374766658;1150697026;-738165078;-390496439;960351772;-332421139;71115877;-1747551486;-288197538;2067393244;-402841323;168191432;698976579;-691346957;454158309;419567441;-1655444926;1843518827;-1387150657;-1775972895;1209349907;1737084105;-273997764;2063222132;-629133755;1321145195;-340980602;-64855207;836106865;-384606302;857100345;-616134379;-1192753754;-1534913223;1646103447;-337508797;-104008340;1371554336;1910014402;1731164243;157488784;-1230766726;1651230814;-1801393009;1853249886;-1909629469;-2064890998;-586605120;1029458265;-1567764431;-569878997;-1071722633;1842759325;1870815306;1275367738;-2047480342;699437794;-2078020834;2120915280;1609487567;715455530;-1961002406;-1366381474;1214551640;1682680277;1866914062;-1438763676;1522254727;410589237;1882867230;-2066414372;335577213;-1969515802;-2079897542;1101145964;-914546306;-578950040;-399253994;-1096753521;-660660212;-1198578643;1339175923;-781551297;-1839371394;1105332893;-1928816742;-400816250;1655921312;-452260989;2002840327;447789431;319958765;-658015714;-2019202134;-1586612048;-137582258;706769011;1101838665;827045450;599553857;-2145445088;244597783;1487421271;1630555190;-344172316;-1830139429;-1553867370;-156727033;-755056810;-2131860048;-494346652;1852068823;91308896;725609566;-1111505690;-982815291;1292267944;1836226774;-810066908;-496780978;202956912;603675823;637918661;-10943404;552199869;1297990249;-1519144401;-1727998742;1493519921;-1227758025;-860568373;2118867559;1126222143;-1549971275;-1469719981;-370967157;-1094842937;2081077388;-1045858167;-179155018;-384518151;905350287;-1851803717;571620219;760498291;-480881197;-973785647;838212682;340510526;510321855;-801267485;-852016520;1774211485;39420368;537777206;2107097314;1618664461;210916571;-423959548;631482818;-1040919263;-279241335;-892903760;497369428;1334556795;-290177741;-620998078;1723791759;253979182;2098469877;2033083432;2025527244;-556275368;-1153759308;1554310973;-2109179006;1594713042;-1652347925;-1896234258;1399293819;-1212915145;264979477;2035769098;-26264659;816116738;-1472777223;-1886895409;579752040;1987550252;850378084;-592526232;228677599;-1282752773;-3264037;1636907752;554996081;10747923;1856021975;150743074;1441285143;-284865308;64061770;547700487;2007963302;-518601320;717968026;-1887063740;-1161755710;654757340;624448862;1095845326;1219653475;1112960789;540367258;1430941426;-1573264900;842324047;-1866598839;672477326;-834606497;456739053;2014938441;1820294365;-1127769538;237909957;778195458;-320898672;-493131725;374332760;1492882317;244532839;1469335464;813662131;1904048850;1828753335;1969748325;1462812563;773013089;1263710334;6222118;1806899780;-1306665146;695150693;1034369820;-410885147;-2065109159;-21981403;1688153775;-1834763828;-2034905187;-868895926;-2040902706;760295113;705437415;-801989522;-327259983;340256932;1639347777;676478214;-868392127;-2126595595;1085040460;-101711712;1181203896;-1177629723;1052562025;-385800214;-2127578499;-247860261;-210619237;-1285411717;-1501642238;-1370695642;-901640534;-1139102088;-1435816006;2062624444;733280257;-325264040;815916517;1806401640;106587238;222094010;-1348528385;297616670;-861761020;117428779;2046490308;1520601476;1774880419;2117307057;709856479;658783300;-1019651996;1857641166;-1623434894;-1466106812;1764750271;337867896;1769011978;1878580541;-337505063;55931846;657238908;1968152816;-169076117;-975001150;-619957198;463669432;-1908341507;-643594058;-2026430605;1348524010;-730896925;454931916;416148985;-1578791134;-739712940;-1725329931;204101311;-1062609662;-1691773722;860783264;946450304;1161241387;207536058;3478215;923381087;-305329130;-1353819564;48467194;-497866365;-1191262819;1442954968;-408984143;934531440;1843513070;-1086308879;585900848;-1977125474;-643228730;1005419111;430194483;1169789286;892875109;-1732318651;-897476207;416658129;2090816327;-186559977;-187909452;1699611428;132945605;1386154990;-1021089733;1553010825;1685237703;1771892687;-1665309430;-1471203233;408978895;-1985168698;-1461014828;-475885929;-149644797;184461852;-1631733780;-113049057;1929365839;-1841043271;755994780;1384891379;-572376242;-1822728640;527993133;536302677;-728200547;-1916517795;401821920;777687226;634513383;938837982;-1741204308;-712292839;-888158003;-989731250;1070351745;-997999887;-1220926516;-477621207;-668502217;432615022;341097247;-1817216444;-1580909839;1073812924;-1037427637;-421491456;-2071807233;419582815;835099779;-300811050;1008848942;-622226245;1119083448;2015783992;374250496;417956216;70961961;-1285132279;1021911943;1585993281;1118486430;-946608452;-1704284523;1344252873;908115709;2135579935;636192621;-776174384;533471998;586778067;-154978136;1359740759;1629951629;-1733015859;2121954041;2104107711;-295897115;1345244080;-1738577645;-559564224;1033955967;-1763695458;250221436;-693902564;1091788545;927707887;-712040796;1439001997;1595609215;1364606826;661845780;-755815374;-2034931863;1346096804;-2074100882;-1065691144;654888208;1007146357;778226326;1410374083;1808044267;239070962;-300943249;1387420801;914251343;580430497;1404608152;117575915;1513662704;256310634;-569005681;-1678005121;-1445134348;2053633677;2025466731;-1577911340;-1278866808;-623511374;-1672074119;45321757;1247003680;1061170196;1198754894;-104913407;2054118989;-1781862918;1530368638;-226966082;-707276305;1591871350;331461390;608113940;235882513;-2046843672;-1075932011;-1894925926;1648301914;1170547429;1665497643;-1251944432;-1796010764;-73953480;788544378;1090859788;-1128050928;-145143834;594707390;-728801566;-252193318;1890915838;-834826210;602694736;1275821290;-2078563303;-1397408457;-343458496;1558647263;      };
-      mti=156;
+      seed{ -1543574532;-1143994057;175374059;1335645626;1319888331;-2007973193;-1358778769;1013065224;-1018476240;-616223704;-535138303;2020426453;1068159408;-2073302403;-58033367;-726527583;153003770;155822771;1162814385;-333298557;1605207700;646895070;669003436;-1960806925;679706925;-532804646;-1950298697;1293550980;-1696900459;-1440314192;-1285634984;-772955743;-1045530870;-725104722;1315462243;-1488263987;-1431827249;415351302;1265681028;-1992758368;1660725522;-407969880;1063109025;1677954480;-401498111;899887863;409619105;2051447476;-1650923879;-1292308904;1345991604;-1835711588;929381258;-527214681;159668202;-1280775799;1298958095;964282047;-610230123;1214882153;1659196996;931722870;-1171758388;-1435420283;1562767747;-2134582645;-329479857;-1760569537;-1306881963;572162456;1324841278;2084474146;506096151;874719836;1544483478;-1478916898;317663000;-1511111483;-817847855;1607940649;1965120024;302968110;18035064;-1403798357;1100931073;160325717;1963753183;-35333139;276767550;-1430841905;1770082107;1979731005;479080456;201669509;1200466135;-266853683;2143812006;-1240408508;2005215232;-302493240;-1488263045;2118482210;322012725;449794128;2012577784;1093058214;450991949;-200022324;-1777871081;549787830;-587848132;-2024944054;151972568;444088233;-719220961;-979930497;1919453024;-1286122822;1606425358;-1498499998;-1340831144;916111355;2141720961;-919836677;-1712276140;111655275;-1739363659;-603584078;-110588843;2008245359;1636269544;-1170907536;-1279834754;836879985;-1705196517;1949941604;-1711763359;2064315032;-1789618201;-219383068;895687855;-1220740968;-1337032880;-1537663511;2107150663;-1277573329;-289559981;422117923;-1303932061;-1748824358;-892439602;638018936;1551909104;-1812883282;1706641526;2032289422;1680956935;217403131;1894349989;407761235;-366304929;1823466989;-588971330;-2080622028;1831067122;-695034748;1498218729;1463125039;287032526;-437722129;575617222;67984585;359410937;-1634861078;1800478518;-818495390;1010094069;265496922;1491499828;626063772;-1312098496;1580457919;862319788;400397459;317934007;-462420756;157211141;-2026131020;-257850486;-1008978230;1790062347;-188814927;910194170;-1738058141;-1230635513;-225385028;441900063;-118853632;-24851211;-556891179;1323403830;-848038020;1991023845;-1404310849;-1044528547;-176947741;1522534958;-1367331750;-961243256;-752472664;539854921;-1780164960;-795647810;-1978314650;1160395850;771419502;1393658686;-1943427148;-181825112;403176530;1064070966;-540686549;1924397990;-398481214;-1145840123;1442404516;1683179259;-1901278331;1204325415;-2111200797;-80394325;1962290735;-1894197490;-1321843547;1236760013;-1946179993;883667909;-1319806298;1319798690;-984432834;413669633;-893753514;1814708859;-1818917611;-1781018105;2007861742;-1345236159;-302402202;391814865;964002414;-2027203488;720289189;2133925909;-921150239;1115658280;-102499796;1126030475;-1248600717;2129581975;313808177;-485239207;150977671;-2072338103;-239090018;-1405197831;-387384304;2069274505;-1052460621;1531736956;-748521890;-1883539265;297715872;369281072;-443896831;1372647388;-489232316;-821517289;985886969;-379595693;-375548761;-1070372404;-1869510972;569647928;-1565336013;-1462705295;541542524;760083978;-1967952623;-1112656737;-1137850350;-158302350;-1018379848;1360167659;818078071;-439573479;-1572558487;-1985078433;2044760538;-1532706927;1619673386;-6768093;700223437;-889949681;298675179;205084647;1576750676;-1855691333;-350542800;-914779053;1535530181;12080778;-2066743383;-678468945;169081621;1691569539;-765057147;1243500314;67611108;-2043868110;-1600421841;304916481;361616038;825815744;-2002745597;-325333591;305012567;1784212889;727979583;-568492253;1686849769;324005074;1979896357;9317760;-1930332979;1483660793;-363901913;637816708;719127653;-347092437;-255710437;861067724;-1697506607;1157923221;-1624550213;1501458261;1942086013;-410168506;1597294740;658366757;1558815222;1369118417;-1860873873;-604539295;-878041077;-507112310;1877109872;-210484487;-1853081593;443533407;-823269918;688397357;1216492586;-629761695;848164629;-1999652427;1817720224;1458000627;1900362985;1212231928;-943942482;-978174285;1504636131;-789157730;1736330342;-158841575;208940729;1776710005;617470013;1402599051;1450450925;-1336285800;-292748993;-336684502;1220658348;-1016189247;818693643;543196889;-1439803872;-1555157266;493408417;1382513163;1902674297;-708031008;-1803667688;-1694586676;-193931055;1514925670;995831600;-1047900290;1216758496;921292117;1114865946;-211393479;144610933;-1102513475;-1875630608;-293635056;-1170792426;1215716732;958777578;-86802452;2020696550;1399931071;1954953875;4931384;-1123226953;1185314825;-1641962295;-1979471687;-371546518;523295249;-1787813030;261098334;830196669;336234553;1352483110;838440205;-677985076;1937206871;-997945445;-2041773914;1714751075;939784282;-68212941;-1281153118;-990690349;2113147588;-289810834;2081222583;861731461;-77396687;1748422771;1045119156;-1908613953;1968127309;1831132345;1924238934;-577062638;1988894325;-2034230907;-1641786619;234128006;1962620578;-640759020;-622432039;-1119538743;-1266726433;-1781896454;-119345758;236579664;-1638422436;-1539195677;304803731;-1238683186;1766118220;-1604938702;-456775486;-683385096;27971035;361393212;-651374206;-783043908;-672743885;488684233;-379698137;-1851512817;-477248515;683885331;1836295005;1485812011;1722179954;-1209008320;-736622356;-1664323794;-564499904;1214171476;-1535709841;32899816;1643466608;-983379330;1074590267;1246928077;-501937560;-506633948;454440273;864183268;86142692;-1406548507;615822613;-3755972;-1553055281;-1001280298;-1081463041;-1986727736;-903537750;-1441768282;-1836821842;1898359767;1360089962;-1385746892;-1393941684;1684450757;-2329516;-828541100;-1067538859;1622517745;907719604;2090875913;-275777234;1549886920;644135765;156329874;-1433861980;-1510991479;1278376163;-1194810057;671452407;-782119294;77628405;-1314574662;1664346282;1806389386;8268779;246749388;1967912594;-1343097578;170485500;1263959941;804910382;-837461183;319903014;678555675;-483446843;-1197944515;-385988869;-1860912647;1318171945;-846798101;1509797804;232056422;-1189773724;48854629;-281361151;279694835;-1432072695;115584898;894358134;-1074515781;-898024405;1209935351;1743757886;1125628940;-866441133;1119467971;-1543692866;1206540641;-1159092970;-1156458725;-942325739;-16248601;-1787514834;-897249385;-119448672;275276940;651336058;-1349592735;1801896271;-1910569977;-477739717;596396379;2132256299;258411223;945117209;-629136092;1082231211;1097682011;1550928844;-1461805268;-2058982030;-2090197123;338847337;160406204;714779260;-1918525123;-2107877587;257920734;-1002820118;451203138;-1719173536;-507162367;-1170142686;284434681;1220887959;1999355017;-203543548;1147674656;-2094180253;1540802980;1294589305;-2024695111;773660969;-61077360;283840355;-1481765004;-2111028748;-1602441611;63931995;-1606174896;319829956;1771693759;2103818594;-1089658500;2039260964;1744027912;      };
+      mti=624;
       is_gauss_double_cached=0;
       cached_gauss_double=-0.0531442841422318;
      };
@@ -3842,7 +3904,7 @@ BpProject .projects["bp_xor"] {
       object_type=BpNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to train";
       init_from=NULL;
@@ -3853,7 +3915,7 @@ BpProject .projects["bp_xor"] {
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable with training patterns";
       init_from=NULL;
@@ -3866,7 +3928,7 @@ BpProject .projects["bp_xor"] {
      ProgVar @["max_epoch"] {
       name="max_epoch";
       var_type=T_Int;
-      int_val=500;
+      int_val=1000;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -3889,7 +3951,7 @@ BpProject .projects["bp_xor"] {
       var_type=T_DynEnum;
       dyn_enum_val {
        enum_type=.projects["bp_xor"].programs.gp["BpAll_Std"]["BpTrain"].types["RndInitType"]$$;
-       value=0;
+       value=1;
       };
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
@@ -3977,11 +4039,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
      AssignExpr @[1] {
       desc="get our pointer to the network training time object";
@@ -4024,6 +4089,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void OldSeed()";
+	meth_desc=" restore current seed to random num generator";
        };
       };
      };
@@ -4047,6 +4114,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void NewSeed()";
+	meth_desc=" set the seed to a new random value (based on time and process id)";
        };
       };
      };
@@ -4062,6 +4131,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_Weights()";
+      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
     };
     prog_code {
@@ -4094,11 +4165,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	name="reset_used";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void StartTimer(bool reset_used = true)";
+      meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      NetCounterInit @[2] {
       desc="initialize epoch counter (both our local copy and network's epoch counter)";
@@ -4132,6 +4206,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_Weights()";
+      meth_desc=" Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after";
      };
      WhileLoop @[5] {
       desc="main loop over epochs of training";
@@ -4155,6 +4231,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -4165,6 +4242,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  name="input_data";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="input_data";
 	  };
@@ -4198,6 +4276,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    name="network";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="network";
 	    };
@@ -4208,6 +4287,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	    name="input_data";
 	    required=1;
 	    def_val=;
+	    prev_expr=;
 	    expr {
 	     expr="input_data";
 	    };
@@ -4252,9 +4332,11 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
-    step_prog=NULL;
+    step_prog=.projects["bp_xor"].programs.gp["BpTestAll"]["BpTrialTest"]$$;
     step_n=1;
    };
    Program @["BpEpoch"] {
@@ -4283,7 +4365,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=BpNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -4294,7 +4376,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="table of patterns to present to the network, one row at a time";
       init_from=NULL;
@@ -4426,11 +4508,14 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	name="reset_used";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void StartTimer(bool reset_used = true)";
+      meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[3] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
@@ -4444,6 +4529,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void ResetData()";
+      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
      NetDataLoop @[4] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
@@ -4467,6 +4554,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -4477,6 +4565,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	  name="input_data";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="input_data";
 	  };
@@ -4508,6 +4597,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	   el_typ=ProgArg;
 	   el_def=0;
 	  };
+	  meth_sig="void Compute_Weights()";
+	  meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
 	 };
 	};
        };
@@ -4549,6 +4640,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	 el_typ=ProgArg;
 	 el_def=0;
 	};
+	meth_sig="void Compute_Weights()";
+	meth_desc=" update weights for whole net: calls DMem_SumDWts before doing update if in dmem mode";
        };
       };
      };
@@ -4564,6 +4657,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_EpochStats()";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
@@ -4579,6 +4674,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -4599,6 +4695,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
     };
     step_prog=NULL;
@@ -4630,7 +4728,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=BpNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
@@ -4641,7 +4739,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable containing training input/output patterns";
       init_from=NULL;
@@ -4688,6 +4786,8 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
      };
      ProgramCall @[1] {
       desc="apply external input activations from the input_data table to the network
@@ -4704,6 +4804,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -4714,6 +4815,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="input_data";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -4734,6 +4836,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Trial_Run()";
+      meth_desc=" run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt. If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)";
      };
      MethodCall @[3] {
       desc=;
@@ -4747,6 +4851,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_TrialStats()";
+      meth_desc=" compute trial-level statistics (SSE and others defined by specific algorithms) do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time";
      };
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
@@ -4762,6 +4868,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -4800,7 +4907,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
-	chan_name="Input";
+	col_name="Input";
 	net_target=LAYER;
 	layer_name="Input";
 	offset {x=0: y=0: };
@@ -4811,7 +4918,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
-	chan_name="Output";
+	col_name="Output";
 	net_target=LAYER;
 	layer_name="Output";
 	offset {x=0: y=0: };
@@ -4822,7 +4929,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
-	chan_name="Name";
+	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
 	offset {x=0: y=0: };
@@ -4850,7 +4957,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LeabraNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
       init_from=NULL;
@@ -4861,7 +4968,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -4909,6 +5016,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="db";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -4919,11 +5027,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
@@ -4942,11 +5053,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
     };
     prog_code {
@@ -4965,6 +5079,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="bool ApplyInputData()";
+      meth_desc=" apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success";
      };
     };
     step_prog=NULL;
@@ -5007,7 +5123,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5040,7 +5156,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5073,7 +5189,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5106,7 +5222,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5139,7 +5255,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5172,7 +5288,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5205,7 +5321,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to record data from";
       init_from=NULL;
@@ -5264,6 +5380,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="trial_mon_data";
 	};
@@ -5274,11 +5391,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+      meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
@@ -5297,11 +5417,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
@@ -5320,11 +5443,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="reset_first";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void UpdateMonitors(bool reset_first = false)";
+      meth_desc=" old name for UpdateDataTable";
      };
     };
     prog_code {
@@ -5343,6 +5469,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="int AddBlankRow()";
+      meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
      };
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
@@ -5356,6 +5484,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void GetMonVals()";
+      meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
      };
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
@@ -5363,12 +5493,14 @@ this program can be extended to do arbitrary things to generate data and apply i
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["bp_xor"].programs.gp["BpAll_Std"]["BpTrialMonitor"].vars["trial_mon_data"]$;
-      method=DataBlock::WriteClose;
+      method=DataTable::WriteClose;
       meth_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void WriteClose()";
+      meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
      };
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
@@ -5387,6 +5519,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="trial_mon_data";
 	};
@@ -5397,11 +5530,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="n_rows";
 	required=0;
 	def_val="1";
+	prev_expr=;
 	expr {
 	 expr="1";
 	};
        };
       };
+      meth_sig="void DMem_ShareTrialData(DataTable* dt, int n_rows = 1)";
+      meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
      };
     };
     step_prog=NULL;
@@ -5444,7 +5580,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5477,7 +5613,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5510,7 +5646,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5543,7 +5679,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5576,7 +5712,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5609,7 +5745,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -5642,7 +5778,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to get data from";
       init_from=NULL;
@@ -5721,6 +5857,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_mon_data";
 	};
@@ -5731,11 +5868,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+      meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
@@ -5754,11 +5894,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
@@ -5777,11 +5920,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="reset_first";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void UpdateMonitors(bool reset_first = false)";
+      meth_desc=" old name for UpdateDataTable";
      };
     };
     prog_code {
@@ -5800,6 +5946,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="int AddBlankRow()";
+      meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
      };
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
@@ -5813,6 +5961,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void GetMonVals()";
+      meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
      };
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
@@ -5840,6 +5990,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="val";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
 	};
@@ -5850,6 +6001,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="col_name";
 	required=1;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\"epoch_time_tot\"";
 	};
@@ -5860,6 +6012,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="row";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="-1";
 	};
@@ -5870,11 +6023,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+      meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
      };
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
@@ -5893,6 +6049,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="val";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
 	};
@@ -5903,6 +6060,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="col_name";
 	required=1;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\"epoch_time_usr\"";
 	};
@@ -5913,6 +6071,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="row";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="-1";
 	};
@@ -5923,11 +6082,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+      meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
      };
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
@@ -5935,12 +6097,14 @@ this program can be extended to do arbitrary things to generate data and apply i
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["bp_xor"].programs.gp["BpAll_Std"]["BpEpochMonitor"].vars["epoch_mon_data"]$;
-      method=DataBlock::WriteClose;
+      method=DataTable::WriteClose;
       meth_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void WriteClose()";
+      meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
      };
     };
     step_prog=NULL;
@@ -5972,7 +6136,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc=;
       init_from=NULL;
@@ -6082,6 +6246,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="num";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network.batch";
 	};
@@ -6092,6 +6257,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="len";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="2";
 	};
@@ -6115,6 +6281,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="num";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network.epoch";
 	};
@@ -6125,6 +6292,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="len";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="4";
 	};
@@ -6157,6 +6325,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="ext";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="\".wts.gz\"";
 	};
@@ -6167,6 +6336,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="tag";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="final_tag";
 	};
@@ -6177,6 +6347,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="subdir";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="wts_subdir";
 	};
@@ -6187,11 +6358,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dmem_proc_no";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="taString GetFileNameFmProject(taString& ext, taString& tag, taString& subdir, bool dmem_proc_no = false)";
+      meth_desc=" get file name from project file name -- useful for saving files associated with the project; ext = extension; tag = additional tag; subdir = additional directory after any existing in project name; fname = proj->base_name (subdir) + tag + ext; if dmem_proc_no, add dmem proc no to file name. empty if project not found";
      };
      MethodCall @[5] {
       desc="save the weights to that file name";
@@ -6210,6 +6384,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="fname";
 	required=0;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="fname";
 	};
@@ -6220,11 +6395,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="fmt";
 	required=0;
 	def_val="Network::NET_FMT";
+	prev_expr=;
 	expr {
 	 expr="Network::NET_FMT";
 	};
        };
       };
+      meth_sig="void SaveWeights(taString& fname, Network::WtSaveFormat fmt = NET_FMT)";
+      meth_desc=" write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)";
      };
     };
     step_prog=NULL;
@@ -6263,7 +6441,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=BpNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on";
       init_from=NULL;
@@ -6274,7 +6452,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="table of patterns to present to the network, one row at a time";
       init_from=NULL;
@@ -6417,11 +6595,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="reset_used";
 	required=0;
 	def_val="true";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void StartTimer(bool reset_used = true)";
+      meth_desc=" record the current time as the starting time, and optionally reset the time used information";
      };
      MethodCall @[4] {
       desc="reset trial-level monitor data every epoch, so it reflects only the most recent epoch's worth of data (turn flags OFF to accumulate trial data across entire training run)";
@@ -6435,6 +6616,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void ResetData()";
+      meth_desc=" deletes all the data (rows), but keeps the column structure -- this cannot be undone!";
      };
      NetDataLoop @[5] {
       desc="iterates over the events/rows of input_data, according to data_loop_order variable";
@@ -6458,6 +6641,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  name="network";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="network";
 	  };
@@ -6468,12 +6652,13 @@ this program can be extended to do arbitrary things to generate data and apply i
 	  name="input_data";
 	  required=1;
 	  def_val=;
+	  prev_expr=;
 	  expr {
 	   expr="input_data";
 	  };
 	 };
 	};
-	target=.projects["bp_xor"].programs.gp["BpTestAll"]["BpTrialTest"]$$;
+	target=$.projects["bp_xor"].programs.gp["BpTestAll"]["BpTrialTest"]$;
 	targ_ld_init="*BpTrial*";
        };
       };
@@ -6503,6 +6688,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_EpochStats()";
+      meth_desc=" compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles";
      };
      ProgramCall @[7] {
       desc="run program that records data from network and possibly other sources about the epoch";
@@ -6518,6 +6705,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -6538,6 +6726,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void EndTimer()";
+      meth_desc=" record the current time as the ending time, and compute difference as the time used";
      };
      MemberAssign @[9] {
       desc="set back to training";
@@ -6580,7 +6770,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=BpNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to operate on -- typically set by higher-level calling programs";
       init_from=NULL;
@@ -6591,7 +6781,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="datatable containing training input/output patterns";
       init_from=NULL;
@@ -6638,6 +6828,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Init_InputData()";
+      meth_desc=" Initializes external and target inputs";
      };
      ProgramCall @[1] {
       desc="apply external input activations from the input_data table to the network
@@ -6654,6 +6846,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -6664,6 +6857,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="input_data";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -6684,6 +6878,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Trial_Run()";
+      meth_desc=" run one trial of Bp: calls SetCurLrate, Compute_NetinAct, Compute_dEdA_dEdNet, and, if train_mode == TRAIN, Compute_dWt. If you want to save some speed just for testing, you can just call Compute_NetinAct and skip the other two (esp Compute_dEdA_dEdNet, which does a full backprop and is expensive, but often useful for visualization & testing)";
      };
      MethodCall @[3] {
       desc=;
@@ -6697,6 +6893,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void Compute_TrialStats()";
+      meth_desc=" compute trial-level statistics (SSE and others defined by specific algorithms) do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time";
      };
      ProgramCall @[4] {
       desc="records data about the trial-level processing to a datatable for graphing/processing";
@@ -6712,6 +6910,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="network";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
@@ -6750,7 +6949,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=LayerWriterEl;
        el_def=0;
        LayerWriterEl @[0] {
-	chan_name="Input";
+	col_name="Input";
 	net_target=LAYER;
 	layer_name="Input";
 	offset {x=0: y=0: };
@@ -6761,7 +6960,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[1] {
-	chan_name="Output";
+	col_name="Output";
 	net_target=LAYER;
 	layer_name="Output";
 	offset {x=0: y=0: };
@@ -6772,7 +6971,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	noise {name="noise": type=NONE: mean=0: var=0.5: par=1: };
        };
        LayerWriterEl @[2] {
-	chan_name="Name";
+	col_name="Name";
 	net_target=TRIAL_NAME;
 	layer_name="Name";
 	offset {x=0: y=0: };
@@ -6800,7 +6999,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=LeabraNetwork;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to apply inputs to -- typically set by calling program";
       init_from=NULL;
@@ -6811,7 +7010,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=DataTable;
       object_val=$.projects["bp_xor"].data.gp["InputData"]["StdInputData"]$;
       objs_ptr=0;
-      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="input datatable containing input/output patterns";
       init_from=NULL;
@@ -6859,6 +7058,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="db";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="input_data";
 	};
@@ -6869,11 +7069,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* db, Network* net)";
+      meth_desc=" set the data table and network pointers -- convenience function for programs ";
      };
      MethodCall @[1] {
       desc="check the configuration of the layer writer -- will emit warnings and errors for missing or misconfigured items";
@@ -6892,11 +7095,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
     };
     prog_code {
@@ -6915,6 +7121,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="bool ApplyInputData()";
+      meth_desc=" apply data to the layers, using the network's current context settings (TEST,TRAIN,etc) -- returns success";
      };
     };
     step_prog=NULL;
@@ -6957,7 +7165,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -6990,7 +7198,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7023,7 +7231,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7056,7 +7264,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7089,7 +7297,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7122,7 +7330,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7155,7 +7363,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7188,7 +7396,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7221,7 +7429,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to record data from";
       init_from=NULL;
@@ -7280,6 +7488,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="trial_mon_data";
 	};
@@ -7290,11 +7499,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+      meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
      };
      MethodCall @[1] {
       desc="check the configuration of the network monitor -- will emit warnings and errors for misconfigurations";
@@ -7313,11 +7525,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
      MethodCall @[2] {
       desc="update the monitor items and data schema based on current settings of the NetMonitor object";
@@ -7336,11 +7551,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="reset_first";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void UpdateMonitors(bool reset_first = false)";
+      meth_desc=" old name for UpdateDataTable";
      };
     };
     prog_code {
@@ -7359,6 +7577,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="int AddBlankRow()";
+      meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
      };
      MethodCall @[1] {
       desc="get the new monitor data from the network and other sources -- this does the main work";
@@ -7372,6 +7592,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void GetMonVals()";
+      meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
      };
      MethodCall @[2] {
       desc="update views and other things after writing new data to monitor data table";
@@ -7379,12 +7601,14 @@ this program can be extended to do arbitrary things to generate data and apply i
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["bp_xor"].programs.gp["BpTestAll"]["BpTrialMonitor"].vars["trial_mon_data"]$;
-      method=DataBlock::WriteClose;
+      method=DataTable::WriteClose;
       meth_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void WriteClose()";
+      meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
      };
      MethodCall @[3] {
       desc="only functional for dmem projects: synchronizes trial data across processes so that all distributed memory processors have the same trial-level data, despite having run only a subset of them each";
@@ -7403,6 +7627,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="trial_mon_data";
 	};
@@ -7413,11 +7638,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="n_rows";
 	required=0;
 	def_val="1";
+	prev_expr=;
 	expr {
 	 expr="1";
 	};
        };
       };
+      meth_sig="void DMem_ShareTrialData(DataTable* dt, int n_rows = 1)";
+      meth_desc=" share trial data from given datatable across the trial-level dmem communicator (outer loop) -- each processor gets data from all other processors; if called every trial with n_rows = 1, data will be identical to non-dmem; if called at end of epoch with n_rows = -1 data will be grouped by processor but this is more efficient";
      };
     };
     step_prog=NULL;
@@ -7460,7 +7688,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7493,7 +7721,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7526,7 +7754,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7559,7 +7787,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7592,7 +7820,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7625,7 +7853,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	select_rows=0;
 	select_spec {
 	 col_name=;
-	 name=;
+	 name="_EQUAL_";
 	 on=1;
 	 rel=EQUAL;
 	 use_var=0;
@@ -7658,7 +7886,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       object_type=Network;
       object_val=$.projects["bp_xor"].networks["XOR_Net"]$;
       objs_ptr=0;
-      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+      flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
       reference=0;
       desc="network to get data from";
       init_from=NULL;
@@ -7737,6 +7965,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="dt";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_mon_data";
 	};
@@ -7747,11 +7976,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="net";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="network";
 	};
        };
       };
+      meth_sig="void SetDataNetwork(DataTable* dt, Network* net)";
+      meth_desc=" set both the data table and network -- convenient for programs -- calls ResetDataTableCols too -- don't call if columns are manually added or this is adding additional rows to a table";
      };
      MethodCall @[2] {
       desc="check configuration and emit errors/warnings for problems";
@@ -7770,11 +8002,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="false";
 	};
        };
       };
+      meth_sig="bool CheckConfig(bool quiet = false)";
+      meth_desc=" check the configuration of this object and all its children (defaults to no confirm of success)";
      };
      MethodCall @[3] {
       desc="update the monitor items and data schema based on current settings of NetMonitor";
@@ -7793,11 +8028,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="reset_first";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr="true";
 	};
        };
       };
+      meth_sig="void UpdateMonitors(bool reset_first = false)";
+      meth_desc=" old name for UpdateDataTable";
      };
     };
     prog_code {
@@ -7816,6 +8054,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="int AddBlankRow()";
+      meth_desc=" add a new row to the data table, sets read (source) and write (sink) index to this last row (as in ReadItem or WriteItem), so that subsequent data routines refer to this new row, and returns row ";
      };
      MethodCall @[1] {
       desc="get the new monitor data and stor it into the data table -- this does the main job here";
@@ -7829,6 +8069,8 @@ this program can be extended to do arbitrary things to generate data and apply i
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void GetMonVals()";
+      meth_desc=" get all the values and store in current row of data table -- call in program to get new data";
      };
      AssignExpr @[2] {
       desc="get the epoch timer from current network";
@@ -7856,6 +8098,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="val";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_timer.used.GetTotSecs()";
 	};
@@ -7866,6 +8109,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="col_name";
 	required=1;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\"epoch_time_tot\"";
 	};
@@ -7876,6 +8120,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="row";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="-1";
 	};
@@ -7886,11 +8131,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+      meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
      };
      MethodCall @[4] {
       desc="set the user process time (cpu time for this process, epoch_time_usr) to time used data from network timer";
@@ -7909,6 +8157,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="val";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="epoch_timer.used.GetUsrSecs()";
 	};
@@ -7919,6 +8168,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="col_name";
 	required=1;
 	def_val="\"\"";
+	prev_expr=;
 	expr {
 	 expr="\"epoch_time_usr\"";
 	};
@@ -7929,6 +8179,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="row";
 	required=1;
 	def_val=;
+	prev_expr=;
 	expr {
 	 expr="-1";
 	};
@@ -7939,11 +8190,14 @@ this program can be extended to do arbitrary things to generate data and apply i
 	name="quiet";
 	required=0;
 	def_val="false";
+	prev_expr=;
 	expr {
 	 expr=;
 	};
        };
       };
+      meth_sig="bool SetValColName(Variant& val, taString& col_name, int row, bool quiet = false)";
+      meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column name, row; returns 'true' if valid access and set is successful -- quiet = fail quietly";
      };
      MethodCall @[5] {
       desc="update after writing new data to monitor data table";
@@ -7951,12 +8205,14 @@ this program can be extended to do arbitrary things to generate data and apply i
       orig_prog_code=;
       result_var=NULL;
       obj=$.projects["bp_xor"].programs.gp["BpTestAll"]["BpEpochMonitor"].vars["epoch_mon_data"]$;
-      method=DataBlock::WriteClose;
+      method=DataTable::WriteClose;
       meth_args {
        name=;
        el_typ=ProgArg;
        el_def=0;
       };
+      meth_sig="void WriteClose()";
+      meth_desc=" closes up a write operation -- call when done writing data -- performs any post-writing cleanup/closing of files, etc";
      };
     };
     step_prog=NULL;
@@ -7990,7 +8246,7 @@ this program can be extended to do arbitrary things to generate data and apply i
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7996604442596436;
+     value 6 0=0.799490213394165;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -8007,7 +8263,7 @@ this program can be extended to do arbitrary things to generate data and apply i
    name="Browser";
    m_data=.projects["bp_xor"]$$;
    visible=1;
-   win_name=".projects[\"XOR_Project\"] - bp_xor.proj [*]";
+   win_name=".projects[\"bp_xor\"] - bp_xor.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -8070,8 +8326,8 @@ this program can be extended to do arbitrary things to generate data and apply i
       name="panels";
       el_typ=T3Panel;
       el_def=0;
-      T3Panel @["Frame1"] {
-       name="Frame1";
+      T3Panel @["XORNet"] {
+       name="XORNet";
        m_data=NULL;
        visible=1;
        root_view {
@@ -8152,6 +8408,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=1;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -8187,15 +8445,39 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   };
 	   ScaleRange @[4] {
 	    var_name="r.wt";
-	    auto_scale=0;
-	    min=-7.3971;
-	    max=7.3971;
+	    auto_scale=1;
+	    min=-0.2353304;
+	    max=0.2353304;
 	   };
 	   ScaleRange @[5] {
 	    var_name="bias.wt";
 	    auto_scale=0;
 	    min=-3.931111;
 	    max=3.931111;
+	   };
+	   ScaleRange @[6] {
+	    var_name="dEdNet";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[7] {
+	    var_name="bias_dwt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[8] {
+	    var_name="bias_pdw";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
+	   };
+	   ScaleRange @[9] {
+	    var_name="bias_wt";
+	    auto_scale=0;
+	    min=-1;
+	    max=1;
 	   };
 	  };
 	  lay_disp_modes{ Input=0;Hidden=0;Output=0;	  };
@@ -8413,7 +8695,7 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	    color {name="violet": r=0.9333334: g=0.509804: b=0.9333334: a=1: desc="": };
+	    color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -8964,6 +9246,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=0;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
@@ -9084,7 +9368,7 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	    m_data=.projects["bp_xor"].data.gp["OutputData"]["TestTrialOutputData"].data["Output_act"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    text_width=1;
+	    text_width=2;
 	    scale_on=1;
 	    mat_layout=BOT_ZERO;
 	    mat_image=0;
@@ -9120,6 +9404,8 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=1;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
@@ -9220,6 +9506,896 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	};
        };
       };
+      T3Panel @["EpochOutputData"] {
+       name="EpochOutputData";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="T3DataViewRoot_1";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="T3DataView_List_1";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	 GraphTableView @["EpochOutputData_Graph"] {
+	  name="EpochOutputData_Graph";
+	  m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"]$;
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  children {
+	   name="T3DataView_List_1";
+	   el_typ=GraphColView;
+	   el_def=0;
+	   GraphColView @["batch"] {
+	    name="batch";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["batch"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch"] {
+	    name="epoch";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=87: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_sse"] {
+	    name="avg_sse";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.252802: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["cnt_err"] {
+	    name="cnt_err";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_tot"] {
+	    name="epoch_time_tot";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["epoch_time_usr"] {
+	    name="epoch_time_usr";
+	    m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	  };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  annotations {
+	   name="T3Annotation_List_11";
+	   el_typ=T3Annotation;
+	   el_def=0;
+	  };
+	  annote_children {
+	   name="T3DataView_List_1";
+	   el_typ=T3DataView;
+	   el_def=0;
+	  };
+	  view_rows=10000;
+	  view_range {min=0: max=-1: };
+	  display_on=1;
+	  manip_ctrl_on=1;
+	  graph_type=XY;
+	  plot_style=LINE;
+	  negative_draw=0;
+	  negative_draw_z=1;
+	  line_width=2;
+	  point_size=0.01;
+	  point_spacing=1;
+	  bar_space=0.2;
+	  bar_depth=0.01;
+	  label_spacing=-1;
+	  width=1;
+	  depth=1;
+	  axis_font_size=0.05;
+	  label_font_size=0.04;
+	  x_axis {
+	   name="GraphAxisView_9";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=1;
+	   axis=X;
+	   col_name="epoch";
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  z_axis {
+	   name="GraphAxisView_10";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Z;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  tot_plots=16;
+	  plots {
+	   name="GraphPlotView_List_1";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
+	    name="EpochOutputData_Graph_plot_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=1;
+	    axis=Y;
+	    col_name="avg_sse";
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_2"] {
+	    name="EpochOutputData_Graph_plot_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_3"] {
+	    name="EpochOutputData_Graph_plot_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_4"] {
+	    name="EpochOutputData_Graph_plot_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_5"] {
+	    name="EpochOutputData_Graph_plot_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_6"] {
+	    name="EpochOutputData_Graph_plot_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_7"] {
+	    name="EpochOutputData_Graph_plot_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_8"] {
+	    name="EpochOutputData_Graph_plot_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_9"] {
+	    name="EpochOutputData_Graph_plot_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_10"] {
+	    name="EpochOutputData_Graph_plot_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=SQUARE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_11"] {
+	    name="EpochOutputData_Graph_plot_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=DIAMOND;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_12"] {
+	    name="EpochOutputData_Graph_plot_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_UP;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_13"] {
+	    name="EpochOutputData_Graph_plot_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=TRIANGLE_DN;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_14"] {
+	    name="EpochOutputData_Graph_plot_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=PLUS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_15"] {
+	    name="EpochOutputData_Graph_plot_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=CROSS;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_plot_16"] {
+	    name="EpochOutputData_Graph_plot_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=DOT;
+	    point_style=STAR;
+	    alt_y=0;
+	   };
+	  };
+	  errbars {
+	   name="GraphPlotView_List_1";
+	   el_typ=GraphPlotView;
+	   el_def=0;
+	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
+	    name="EpochOutputData_Graph_err_1";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_2"] {
+	    name="EpochOutputData_Graph_err_2";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_3"] {
+	    name="EpochOutputData_Graph_err_3";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_4"] {
+	    name="EpochOutputData_Graph_err_4";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_5"] {
+	    name="EpochOutputData_Graph_err_5";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_6"] {
+	    name="EpochOutputData_Graph_err_6";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_7"] {
+	    name="EpochOutputData_Graph_err_7";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_8"] {
+	    name="EpochOutputData_Graph_err_8";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_9"] {
+	    name="EpochOutputData_Graph_err_9";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_10"] {
+	    name="EpochOutputData_Graph_err_10";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_11"] {
+	    name="EpochOutputData_Graph_err_11";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_12"] {
+	    name="EpochOutputData_Graph_err_12";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_13"] {
+	    name="EpochOutputData_Graph_err_13";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_14"] {
+	    name="EpochOutputData_Graph_err_14";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_15"] {
+	    name="EpochOutputData_Graph_err_15";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	   GraphPlotView @["EpochOutputData_Graph_err_16"] {
+	    name="EpochOutputData_Graph_err_16";
+	    m_data=NULL;
+	    m_transform=NULL;
+	    on=0;
+	    axis=Y;
+	    col_name=;
+	    is_string=0;
+	    is_matrix=0;
+	    n_cells=1;
+	    matrix_cell=0;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	    n_ticks=10;
+	    axis_length=1;
+	    line_style=SOLID;
+	    point_style=CIRCLE;
+	    alt_y=0;
+	   };
+	  };
+	  err_spacing=1;
+	  err_bar_width=0.02;
+	  color_mode=VALUE_COLOR;
+	  color_axis {
+	   name="GraphAxisView_11";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  colorscale {
+	   name="ColorScale_1";
+	   chunks=133;
+	   min=-1;
+	   max=1;
+	   last_min=-1;
+	   last_max=1;
+	   range=1;
+	   zero=0;
+	   spec=$.colorspecs["C_ColdHot"]$;
+	   auto_scale=0;
+	  };
+	  raster_axis {
+	   name="GraphAxisView_12";
+	   m_data=NULL;
+	   m_transform=NULL;
+	   on=0;
+	   axis=Y;
+	   col_name=;
+	   is_string=0;
+	   is_matrix=0;
+	   n_cells=1;
+	   matrix_cell=0;
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
+	   n_ticks=10;
+	   axis_length=1;
+	   row_num=0;
+	  };
+	  thresh=0.5;
+	  thr_line_len=0.48;
+	  matrix_mode=SEP_GRAPHS;
+	  mat_layout=BOT_ZERO;
+	  mat_odd_vert=1;
+	  two_d_font=0;
+	  two_d_font_scale=350;
+	 };
+	};
+       };
+       bg_color {r=1: g=1: b=1: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="T3SavedView_List_4";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=1.39: y=0.43: z=1.696575: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=1.686575;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
      };
     };
    };
@@ -9239,17 +10415,17 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.009337861090898514;
+       value 6 0=0.008496176451444626;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04049014300107956;
+       value 6 0=0.04029692336916924;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7359932065010071;
+       value 6 0=0.7357689142227173;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -9306,6 +10482,11 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["total_trials"] {
+     name="total_trials";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["time"] {
      name="time";
      value 1 0=1;
@@ -9358,7 +10539,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_con_type=BpCon;
      bias_spec {type=BpConSpec: spec=.projects["bp_xor"].networks["XOR_Net"].specs["BpConSpec_0"]$$: };
      sse_tol=0;
      sig {off=0: gain=1: };
@@ -9402,8 +10582,7 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
      };
      self_con=0;
      init_wts=0;
-     add_rnd_wts=0;
-     add_rnd_wts_scale=1;
+     add_rnd_var=0;
     };
    };
    layers {
@@ -9430,6 +10609,8 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
      flat_geom {x=2: y=1: n_not_xy=0: n=2: };
      disp_geom {x=2: y=1: n_not_xy=0: n=2: };
      scaled_disp_geom {x=2: y=1: n_not_xy=0: n=1: };
+     n_recv_prjns=0;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=Projection;
@@ -9449,7 +10630,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
       output_name=;
      };
      unit_spec {type=BpUnitSpec: spec=.projects["bp_xor"].networks["XOR_Net"].specs["BpUnitSpec_0"]$$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -9475,6 +10655,8 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
      flat_geom {x=2: y=1: n_not_xy=0: n=2: };
      disp_geom {x=2: y=1: n_not_xy=0: n=2: };
      scaled_disp_geom {x=2: y=1: n_not_xy=0: n=1: };
+     n_recv_prjns=1;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=Projection;
@@ -9487,8 +10669,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
        from=$.projects["bp_xor"].networks["XOR_Net"].layers["Input"]$;
        spec {type=FullPrjnSpec: spec=.projects["bp_xor"].networks["XOR_Net"].specs["FullPrjnSpec_0"]$$: };
        con_type=BpCon;
-       recvcons_type=BpRecvCons;
-       sendcons_type=BpSendCons;
        con_spec {type=BpConSpec: spec=$.projects["bp_xor"].networks["XOR_Net"].specs["BpConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
@@ -9513,7 +10693,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
       output_name=;
      };
      unit_spec {type=BpUnitSpec: spec=$.projects["bp_xor"].networks["XOR_Net"].specs["BpUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -9539,6 +10718,8 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
      flat_geom {x=1: y=1: n_not_xy=0: n=1: };
      disp_geom {x=1: y=1: n_not_xy=0: n=1: };
      scaled_disp_geom {x=1: y=1: n_not_xy=0: n=1: };
+     n_recv_prjns=1;
+     n_send_prjns=0;
      projections {
       name="projections";
       el_typ=Projection;
@@ -9551,8 +10732,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
        from=.projects["bp_xor"].networks["XOR_Net"].layers["Hidden"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["bp_xor"].networks["XOR_Net"].specs["FullPrjnSpec_0"]$: };
        con_type=BpCon;
-       recvcons_type=BpRecvCons;
-       sendcons_type=BpSendCons;
        con_spec {type=BpConSpec: spec=$.projects["bp_xor"].networks["XOR_Net"].specs["BpConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
@@ -9576,7 +10755,6 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
       output_name=;
      };
      unit_spec {type=BpUnitSpec: spec=$.projects["bp_xor"].networks["XOR_Net"].specs["BpUnitSpec_0"]$: };
-     dmem_dist=DMEM_DIST_DEFAULT;
      dist {
       fm_input=-1;
       fm_output=-1;
@@ -9592,29 +10770,66 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
     el_typ=Weights;
     el_def=0;
    };
-   flags=0;
+   flags=BUILT|INTACT;
+   unit_vars_type=BpUnitVars;
+   con_group_type=ConGroup;
    auto_build=AUTO_BUILD;
+   auto_load_wts=NO_AUTO_LOAD;
+   auto_load_file=;
    brain_atlas_name=;
    train_mode=TRAIN;
    wt_update=ON_LINE;
    small_batch_n=10;
-   sse_unit_avg=0;
-   sse_sqrt=0;
-   cnt_err_tol=0;
-   compute_prerr=0;
+   stats {
+    sse_unit_avg=0;
+    sse_sqrt=0;
+    cnt_err_tol=0;
+    prerr=0;
+   };
    threads {
-    run_time {name="": s_used=0: n_used=0: };
-    sync_time {name="": s_used=0: n_used=0: };
-    total_time {name="": s_used=0: n_used=0: };
+    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
     n_wake_in_sync=0;
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=527765651431424;
-    interleave=1;
-    ignore_lay_sync=0;
    };
-   dmem_sync_level=DMEM_SYNC_NETWORK;
-   dmem_nprocs=1;
+   net_timing {
+    name="net_timing";
+    el_typ=NetTiming;
+    el_def=0;
+    NetTiming @[0] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    NetTiming @[1] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    NetTiming @[2] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    NetTiming @[3] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    NetTiming @[4] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+   };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=5;

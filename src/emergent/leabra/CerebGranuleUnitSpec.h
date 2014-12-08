@@ -34,7 +34,7 @@ public:
   int           inhib_start_time; // #DEF_10 how long after unit crosses act_thr do we start inhibiting
   int           lrn_start_time;  // #DEF_60 starting time window (in cycles) for learning -- how long after activity crosses act_thr threshold does the learning window start?
   int           lrn_end_time;    // #DEF_90 ending time window (in cycles) for learning -- the learning window closes after this time
-  float         inhib_net_pct;   // multiplier on net input to decrease it when a unit becomes inhibited -- going all the way to 0 reduces the effectiveness of FF_FB inhib..
+  float         inhib_net_pct;   // #DEF_0.5 multiplier on net input to decrease it when a unit becomes inhibited -- going all the way to 0 reduces the effectiveness of FF_FB inhib..
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
