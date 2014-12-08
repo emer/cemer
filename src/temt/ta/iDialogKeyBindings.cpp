@@ -31,6 +31,7 @@
 #include <QPushButton>
 #include <QGroupBox>
 #include <QFile>
+#include <QScrollArea>
 
 iDialogKeyBindings* iDialogKeyBindings::New(iMainWindowViewer* par_window_)
 {
@@ -83,11 +84,11 @@ void iDialogKeyBindings::Constr() {
 #if (QT_VERSION >= 0x050200)
   // set key bindings box - broken down by tabs
   QHBoxLayout* body_layout = new QHBoxLayout();
-  QTabWidget* tabWidget = new QTabWidget;
-  body_layout->addWidget(tabWidget);
+  QTabWidget* tab_widget = new QTabWidget;
+  body_layout->addWidget(tab_widget);
   body_box->setLayout(body_layout);
   
-  String filename = taMisc::GetCustomKeyFilename();
+  String filename = taMisc::GetCustomKeyFilename();  // this file contains the current user set bindings
 
   taMisc::KeyBindingSet current_key_set = taMisc::current_key_bindings;
   taMisc::SetKeyBindingSet(taMisc::KEY_BINDINGS_CUSTOM);
@@ -100,14 +101,19 @@ void iDialogKeyBindings::Constr() {
     taiMisc::BindingContext current_context = taiMisc::BindingContext(ctxt);
     context_label = TA_taiMisc.GetEnumString("BindingContext", ctxt);
     context_label = context_label.before("_CONTEXT");  // strip off "_CONTEXT"
-    QWidget* some_tab = new QWidget();
-    tabWidget->addTab(some_tab, context_label);
-    body_layout->QLayout::addWidget(tabWidget);
+    QWidget* a_tab = new QWidget();
+    body_layout->QLayout::addWidget(tab_widget);
     
+    QScrollArea *scroll_area = new QScrollArea(tab_widget);  // tab_widget is the parent
+    scroll_area->setWidgetResizable(true);
+    scroll_area->setWidget(a_tab);  // each tab has a scrollarea
+    
+    tab_widget->addTab(scroll_area, context_label);
+
     // add all of the actions that can be bound to keys
     bindings_layout[ctxt] = new QFormLayout;
     bindings_layout[ctxt]->setLabelAlignment(Qt::AlignLeft);
-    some_tab->setLayout(bindings_layout[ctxt]);
+    a_tab->setLayout(bindings_layout[ctxt]);
     
     QKeySequenceEdit* edit;
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
