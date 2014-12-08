@@ -25,6 +25,7 @@
 #include <AbstractScriptBase>
 #include <KeyBindings>
 #include <KeyBindings_List>
+#include <KeyActionPair_PArray>
 
 #include <taMisc>
 
@@ -1359,4 +1360,29 @@ void taiMisc::DefaultCustomKeyBindings() {
   }
   file.close();
   taMisc::SetKeyBindingSet(current_set);  // reset key binding set - might not have been default on enter
+}
+
+void taiMisc::UpdateCustomKeyBindings() {
+  if (true) { // check version
+    // compare the default bindings to see if there are actions that aren't in the custom bindings
+    // or if there are actions in custom that are no longer in default
+    KeyBindings* default_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_DEFAULT));
+    KeyBindings* custom_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_CUSTOM));
+    
+    // set the context, retrieve that sub list for each set of bindings, do the comparison
+    int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+    for (int ctxt=0; ctxt<context_count; ctxt++) {
+      KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+      KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+      for (int i=0; i<default_pairs->size; i++) {
+        KeyActionPair* default_pair = &default_pairs->SafeEl(i);
+        taiMisc::BoundAction default_action = default_pair->action;
+        if (custom_pairs->FindAction(default_action) == -1) {
+//          taMisc::DebugInfo("missing action");
+          custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), default_action, default_pair->key_sequence);
+        }
+      }
+    }
+    // now write out the custom bindings - i.e. update the file!
+  }
 }

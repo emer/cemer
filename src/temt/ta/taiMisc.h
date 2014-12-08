@@ -347,7 +347,9 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // #IGNORE the custom key/action bindings are loaded from a file
   static void   DefaultCustomKeyBindings();
   // #IGNORE create a custom key binding file that starts with the default bindings
-
+  static void   UpdateCustomKeyBindings();
+  // #IGNORE reconcile custom key bindings loaded with current set actions supported for key binding
+  
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management
 

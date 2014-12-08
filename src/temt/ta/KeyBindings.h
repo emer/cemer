@@ -52,7 +52,7 @@ public:
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);
 
-protected:
+//protected:
   virtual KeyActionPair_PArray*   CurrentBindings(taiMisc::BindingContext context);
   // #IGNORE retrieve pointer to list of bindings for the current BindingContext
   
