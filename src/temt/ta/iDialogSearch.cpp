@@ -31,6 +31,13 @@
 #include <QToolButton>
 #include <QStatusBar>
 #include <QDesktopServices>
+#include <QKeyEvent>
+
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
+// defined in mac_objc_code.mm objective C file:
+// per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
+extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
+#endif
 
 class QSleazyFakeTreeWidget: public QTreeWidget {
 public:
@@ -412,3 +419,23 @@ void iDialogSearch::closeEvent(QCloseEvent * e) {
   m_stop = true;                // stop on close
   inherited::closeEvent(e);
 }
+
+void iDialogSearch::keyPressEvent(QKeyEvent* key_event)
+{
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
+  // needs to be after window is fully up and running..
+  TurnOffTouchEventsForWindow(windowHandle());
+#endif
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
+  
+  switch(action) {
+    case taiMisc::DIALOG_ACCEPT:
+//      Search();  // handled by retrun pressed signal connected to "go" button
+      key_event->accept();
+      return;
+    default:
+      inherited::keyPressEvent(key_event);
+  }
+}
+
