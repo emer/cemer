@@ -1127,6 +1127,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Reset();
 // menu items for mac only (for now anyway)
 #ifdef TA_OS_MAC
+//  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_XXX, QKeySequence(meta_key + Qt::Key_B));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_NEW, QKeySequence(meta_key + Qt::Key_N));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_OPEN, QKeySequence(meta_key + Qt::Key_O));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CLOSE, QKeySequence(meta_key + Qt::Key_W));
@@ -1326,6 +1327,7 @@ void taiMisc::LoadCustomKeyBindings() {
     int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);    
     bindings->Add(static_cast<taiMisc::BindingContext>(context_val), static_cast<taiMisc::BoundAction>(action_val), ks);
   }
+  UpdateCustomKeyBindings();
 }
 
 void taiMisc::DefaultCustomKeyBindings() {
@@ -1363,7 +1365,7 @@ void taiMisc::DefaultCustomKeyBindings() {
 }
 
 void taiMisc::UpdateCustomKeyBindings() {
-  if (true) { // check version
+  if (false) { // check version
     // compare the default bindings to see if there are actions that aren't in the custom bindings
     // or if there are actions in custom that are no longer in default
     KeyBindings* default_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_DEFAULT));
@@ -1378,11 +1380,38 @@ void taiMisc::UpdateCustomKeyBindings() {
         KeyActionPair* default_pair = &default_pairs->SafeEl(i);
         taiMisc::BoundAction default_action = default_pair->action;
         if (custom_pairs->FindAction(default_action) == -1) {
-//          taMisc::DebugInfo("missing action");
-          custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), default_action, default_pair->key_sequence);
+          custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), default_action, QKeySequence(default_pair->key_sequence));
+//          taMisc::DebugInfo("update", (String)default_pair->key_sequence.toString());
         }
       }
     }
-    // now write out the custom bindings - i.e. update the file!
+    SaveCustomKeyBindings();
   }
+}
+
+void taiMisc::SaveCustomKeyBindings() {
+  String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
+  QFile file(filename);
+  if (!file.open(QIODevice::WriteOnly)) {
+    return;
+  }
+  QDataStream out(&file);
+  
+  KeyBindings* custom_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_CUSTOM));
+  
+  // add any bindings that are in the default list that aren't in the custom list
+  int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+  for (int ctxt=0; ctxt<context_count; ctxt++) {
+    KeyActionPair_PArray* pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+    for (int i=0; i<pairs->size; i++) {
+      KeyActionPair* pair = &pairs->SafeEl(i);
+      taiMisc::BoundAction action = pair->action;
+      QKeySequence ks = pair->key_sequence;
+      String context_str = TA_taiMisc.GetEnumString("BindingContext", ctxt);
+      String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(action));
+      out << (QString)context_str.chars() << (QString)action_str.chars() << ks;
+    }
+  }
+  // do the same for bindings which no longer exist
+  file.close();
 }
