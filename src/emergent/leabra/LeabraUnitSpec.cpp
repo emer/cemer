@@ -261,9 +261,10 @@ void SynDelaySpec::Initialize() {
 
 void CIFERThalSpec::Initialize() {
   on = false;
-  thal_to_super = .1f;
   thal_thr = 0.2f;
   thal_bin = true;
+  auto_thal = false;
+  thal_to_super = 0.0f;
   Defaults_init();
 }
 
@@ -272,9 +273,9 @@ void CIFERThalSpec::Defaults_init() {
 
 void CIFERDeep5bSpec::Initialize() {
   on = false;
-  d5b_to_super = 0.01f;
   act5b_thr = 0.2f;
   d5b_repl_ctxt = 2.0f;
+  d5b_to_super = 0.0f;
   ti_5b = 0.0f;
   ti_5b_c = 1.0f - ti_5b;
   Defaults_init();
@@ -1673,6 +1674,9 @@ void LeabraUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int
 void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net,
                                             int thr_no) {
   if(cifer_thal.on) {
+    if(cifer_thal.auto_thal) {
+      u->thal = u->act_eq;
+    }
     if(u->thal < cifer_thal.thal_thr) {
       TestWrite(u->thal, 0.0f);
     }

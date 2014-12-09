@@ -346,9 +346,10 @@ class E_API CIFERThalSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the CIFER thalamus mechanisms
-  float         thal_to_super;  // #CONDSHOW_ON_on #MIN_0 gain on modulation of superficial (2/3 = act) netin by thalamic drive -- thal only increases netin otherwise recv'd: netin = (1 + thal_to_super * thal) * netin_raw
-  float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
-  bool          thal_bin;       // #CONDSHOW_ON_on make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
+  float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.2 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
+  bool          thal_bin;       // #CONDSHOW_ON_on #DEF_true make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
+  bool          auto_thal;      // #CONDSHOW_ON_on for layers without a need for an explicit thalamic layer (e.g., they only have a single channel of information flow), just drive thalamus activity directly from superficial layer activations
+  float         thal_to_super;  // #CONDSHOW_ON_on #MIN_0 #DEF_0 gain on modulation of superficial (2/3 = act) netin by thalamic drive -- thal only increases netin otherwise recv'd: netin = (1 + thal_to_super * thal) * netin_raw
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -369,11 +370,11 @@ class E_API CIFERDeep5bSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable the CIFER deep5b mechanisms
-  float         d5b_to_super;   // #CONDSHOW_ON_on gain on modulation of superficial (2/3 = act) netin by deep5b activations: netin += d5b_to_super * deep5b
   bool          d5b_burst;      // #CONDSHOW_ON_on #DEF_true do deep5b activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
   float	        act5b_thr;	// #CONDSHOW_ON_on #MIN_0 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
-  float         d5b_repl_ctxt;  // #CONDSHOW_ON_on #DEF_2 extent to which deep5b inputs replace TI context inputs when they are present -- this is a multiplier on total deep5b netin scaling factor, which is used to reduce strength of ti_ctxt input -- use 0 to eliminate, and numbers >= 1 to prevent excessive activation in plus phase -- biologically, a portion of the TI context is thought to come from thalamocortical projections, which are then taken over by deep5b driven activations when those are present -- computationally, the deep5b serves as the plus-phase training signal for implicit TI models, and reducing context to compensate for increased deep5b input helps eliminate a 'main effect' signal of just overall increased activation in plus phase
+  float         d5b_repl_ctxt;  // #CONDSHOW_ON_on #DEF_2;100;500 extent to which deep5b inputs replace TI context inputs when they are present -- this is a multiplier on total deep5b netin scaling factor, which is used to reduce strength of ti_ctxt input -- use 0 to eliminate, and numbers >= 1 to prevent excessive activation in plus phase (can go quite large, e.g., 500 or so, as needed) -- biologically, a portion of the TI context is thought to come from thalamocortical projections, which are then taken over by deep5b driven activations when those are present -- computationally, the deep5b serves as the plus-phase training signal for implicit TI models, and reducing context to compensate for increased deep5b input helps eliminate a 'main effect' signal of just overall increased activation in plus phase
+  float         d5b_to_super;   // #CONDSHOW_ON_on #DEF_0 gain on modulation of superficial (2/3 = act) netin by deep5b activations: netin += d5b_to_super * deep5b
 
   float         ti_5b_c;        // #HIDDEN #READ_ONLY 1.0 - ti_5b
 
