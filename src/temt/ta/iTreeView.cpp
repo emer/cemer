@@ -611,7 +611,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   iMainWindowViewer* imw = mainWindow();
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, key_event);
   
-  if(stru_actions_enabled) {
+  if(stru_actions_enabled && action != taiMisc::NULL_ACTION) {
     switch(action) {
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
         ext_select_on = false;
