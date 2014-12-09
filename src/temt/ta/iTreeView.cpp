@@ -611,7 +611,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
   iMainWindowViewer* imw = mainWindow();
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, key_event);
   
-  if(stru_actions_enabled && action != taiMisc::NULL_ACTION) {
+  if(stru_actions_enabled) {
     switch(action) {
       case taiMisc::TREE_NEW_DEFAULT_ELEMENT:
         ext_select_on = false;
@@ -687,7 +687,9 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         inherited::keyPressEvent(key_event);
     }
   }
-  inherited::keyPressEvent(key_event);
+  else {
+    inherited::keyPressEvent(key_event);
+  }
 }
 
 bool iTreeView::focusNextPrevChild(bool next) {
