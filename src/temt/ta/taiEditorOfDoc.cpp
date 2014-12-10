@@ -104,8 +104,8 @@ bool taiEditorOfDoc::eventFilter(QObject* obj, QEvent* event) {
   iMainWindowViewer* mvw = viewerWindow();
   if(mvw) {
     mvw->FocusIsMiddlePanel();
-    if(mvw->KeyEventFilterWindowNav(obj, e))
-      return true;
+//    if(mvw->KeyEventFilterWindowNav(obj, e))
+//      return true;
   }
 
   // already has all the emacs edits!

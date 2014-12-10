@@ -80,17 +80,17 @@ void  iTreeWidget::init() {
   // we never use this class for Qt-internal dnd semantics
   setAutoScroll(true);
   setDragDropMode(DragDrop);
-
+  
   iTreeWidgetDefaultDelegate* del = new iTreeWidgetDefaultDelegate(this);
   setItemDelegate(del);
-
+  
   connect(this, SIGNAL(itemExpanded(QTreeWidgetItem*)),
-    this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
+          this,  SLOT(this_itemExpanded(QTreeWidgetItem*)) );
   connect(this, SIGNAL(itemCollapsed(QTreeWidgetItem*)),
-    this,  SLOT(this_itemCollapsed(QTreeWidgetItem*)) );
+          this,  SLOT(this_itemCollapsed(QTreeWidgetItem*)) );
   // default is to do auto-open
-//buggy!!!  setAutoExpandDelay(500);
-
+  //buggy!!!  setAutoExpandDelay(500);
+  
   // make active same as inactive
   QPalette p = palette();
   p.setColor(QPalette::Inactive, QPalette::Highlight, p.color(QPalette::Active, QPalette::Highlight));
@@ -102,8 +102,8 @@ void  iTreeWidget::init() {
 void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
 {
   if (!receivers( SIGNAL(contextMenuRequested(QTreeWidgetItem*,const QPoint&,int)) ) ) {
-      e->ignore();
-      return;
+    e->ignore();
+    return;
   }
   if (e->reason() == QContextMenuEvent::Keyboard ) {
     QTreeWidgetItem* item = currentItem();
@@ -119,9 +119,9 @@ void iTreeWidget::contextMenuEvent(QContextMenuEvent* e)
       emit contextMenuRequested(item, viewport()->mapToGlobal( p ), -1 );
     }
   } else {
-    QPoint vp = e->pos() ; 
+    QPoint vp = e->pos() ;
     QTreeWidgetItem* i = itemAt( vp );
-//    int c = i ? d->h->mapToLogical( d->h->cellAt( vp.x() ) ) : -1;
+    //    int c = i ? d->h->mapToLogical( d->h->cellAt( vp.x() ) ) : -1;
     int c = 0; // TODO
     emit contextMenuRequested( i, viewport()->mapToGlobal( vp ), c );
   }
@@ -143,45 +143,45 @@ void iTreeWidget::dragMoveEvent(QDragMoveEvent* ev) {
   if (ev->isAccepted()) {
     drop_ind = dropIndicatorPosition();
     switch (drop_ind) {
-    //TEMP: forbid above/below
-    case AboveItem:
-    case BelowItem:
-//      ev->setDropAction(Qt::IgnoreAction);
-//      ev->ignore(); // puts up the stop sign icon
-      break;
-    case OnItem: {
-      QModelIndex index = indexAt(ev->pos());
-      iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
-      if (!item || !item->canAcceptDrop(ev->mimeData())) {
-        ev->setDropAction(Qt::IgnoreAction);
-      }
+        //TEMP: forbid above/below
+      case AboveItem:
+      case BelowItem:
+        //      ev->setDropAction(Qt::IgnoreAction);
+        //      ev->ignore(); // puts up the stop sign icon
+        break;
+      case OnItem: {
+        QModelIndex index = indexAt(ev->pos());
+        iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+        if (!item || !item->canAcceptDrop(ev->mimeData())) {
+          ev->setDropAction(Qt::IgnoreAction);
+        }
       } break;
-    case OnViewport:
-      ev->setDropAction(Qt::IgnoreAction);
-      ev->ignore(); // puts up the stop sign icon
-      break;
+      case OnViewport:
+        ev->setDropAction(Qt::IgnoreAction);
+        ev->ignore(); // puts up the stop sign icon
+        break;
     }
   }
 }
 
 void iTreeWidget::drawRow(QPainter* painter,
-    const QStyleOptionViewItem& option, const QModelIndex& index) const
+                          const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
-/*  if (highlightRows()) {
-    iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
-    if (!item) goto no_hi;
-    int idx = item->highlightIndex();
-    if (!hasHighlightColor(idx)) goto no_hi;
-    ColorMap* cm = (ColorMap*)highlightColors();
-    ColorEntry& ce = (*cm)[idx]; //NOTE: insure idx exists, otherwise creates dummy ce
-    QStyleOptionViewItem opt = option; // gotta dup to modify
-    opt.palette.setColor(QPalette::Active, QPalette::Base, ce.base); 
-    opt.palette.setColor(QPalette::Active, QPalette::Highlight, ce.highlight); 
-    opt.palette.setColor(QPalette::Inactive, QPalette::Highlight, ce.highlight); 
-    inherited::drawRow(painter, opt, index);
-    return;
-  }
-no_hi: */
+  /*  if (highlightRows()) {
+   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(itemFromIndex(index));
+   if (!item) goto no_hi;
+   int idx = item->highlightIndex();
+   if (!hasHighlightColor(idx)) goto no_hi;
+   ColorMap* cm = (ColorMap*)highlightColors();
+   ColorEntry& ce = (*cm)[idx]; //NOTE: insure idx exists, otherwise creates dummy ce
+   QStyleOptionViewItem opt = option; // gotta dup to modify
+   opt.palette.setColor(QPalette::Active, QPalette::Base, ce.base);
+   opt.palette.setColor(QPalette::Active, QPalette::Highlight, ce.highlight);
+   opt.palette.setColor(QPalette::Inactive, QPalette::Highlight, ce.highlight);
+   inherited::drawRow(painter, opt, index);
+   return;
+   }
+   no_hi: */
   inherited::drawRow(painter, option, index);
 }
 
@@ -190,53 +190,53 @@ void iTreeWidget::dropEvent(QDropEvent* e) {
   drop_pos = e->pos();
   key_mods = e->keyboardModifiers();
   // we have to skip QTreeWidget because it does the evil gui move, esp. on Mac
-//  QTreeView::dropEvent(e);
-//TEMP MAC
+  //  QTreeView::dropEvent(e);
+  //TEMP MAC
   QDropEvent et(e->pos(), Qt::CopyAction, e->mimeData(), e->mouseButtons(),
-    e->keyboardModifiers(), e->type());
+                e->keyboardModifiers(), e->type());
   QTreeView::dropEvent(&et);
 }
 
-bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index, 
-  const QMimeData* data, Qt::DropAction action) 
+bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
+                               const QMimeData* data, Qt::DropAction action)
 {
   iTreeWidgetItem* item = dynamic_cast<iTreeWidgetItem*>(parent);
   
   iTreeWidgetItem::WhereIndicator where = iTreeWidgetItem::WI_ON; // default
   switch (drop_ind) {
-  case AboveItem:
-  case BelowItem:
-    // both these cases are essentially identical -- the index indicates
-    // the new target position -- but we need to differentiate the
-    // "before" case in our semantics, from the "at end" case
-    // NOTE: if parent==NULL then this is the root list, ie us
-    if (parent) {
-      if (index == parent->childCount()) {
-        // "at end" case -- item is correct, but we set the flag
-        where = iTreeWidgetItem::WI_AT_END;
-      } else { // "before" case
-        // so we'll change to that item..
-        where = iTreeWidgetItem::WI_BEFORE;
-        item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
+    case AboveItem:
+    case BelowItem:
+      // both these cases are essentially identical -- the index indicates
+      // the new target position -- but we need to differentiate the
+      // "before" case in our semantics, from the "at end" case
+      // NOTE: if parent==NULL then this is the root list, ie us
+      if (parent) {
+        if (index == parent->childCount()) {
+          // "at end" case -- item is correct, but we set the flag
+          where = iTreeWidgetItem::WI_AT_END;
+        } else { // "before" case
+          // so we'll change to that item..
+          where = iTreeWidgetItem::WI_BEFORE;
+          item = dynamic_cast<iTreeWidgetItem*>(parent->child(index));
+        }
+      } else { // use us
+        if (index == topLevelItemCount()) {
+          // "at end" case -- item is correct, but we set the flag
+          where = iTreeWidgetItem::WI_AT_END;
+          //NOTE: this case cannot be handled, since there is no parent item
+          // which could handle the drop, therefore, without redesign, we
+          // can't process an "after last" on the root, ex. in a listview
+        } else { // "before" case
+          // so we'll change to that item..
+          where = iTreeWidgetItem::WI_BEFORE;
+          item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index));
+        }
       }
-    } else { // use us
-      if (index == topLevelItemCount()) {
-        // "at end" case -- item is correct, but we set the flag
-        where = iTreeWidgetItem::WI_AT_END;
-        //NOTE: this case cannot be handled, since there is no parent item
-        // which could handle the drop, therefore, without redesign, we
-        // can't process an "after last" on the root, ex. in a listview
-      } else { // "before" case
-        // so we'll change to that item..
-        where = iTreeWidgetItem::WI_BEFORE;
-        item = dynamic_cast<iTreeWidgetItem*>(topLevelItem(index));
-      }
-    }
-    break;
-  case OnItem: // default case
-    break;
-  case OnViewport:
-    return false; // probably shouldn't happen
+      break;
+    case OnItem: // default case
+      break;
+    case OnViewport:
+      return false; // probably shouldn't happen
   }
   if (!item) return false;
   
@@ -245,17 +245,17 @@ bool iTreeWidget::dropMimeData(QTreeWidgetItem* parent, int index,
 }
 
 /*bool iTreeWidget::getHighlightColor(int idx, QColor& base,
-    QColor& hilight) const
-{
-  if ((idx <= 0) || ! m_highlightColors) return false;
-  ColorMap* cm = (ColorMap*)highlightColors();
-  if (cm->contains(idx)) {
-    ColorEntry& ce = (*cm)[idx];
-    ce.getValues(base, highlight);
-    return true;
-  }
-  return false;
-}*/
+ QColor& hilight) const
+ {
+ if ((idx <= 0) || ! m_highlightColors) return false;
+ ColorMap* cm = (ColorMap*)highlightColors();
+ if (cm->contains(idx)) {
+ ColorEntry& ce = (*cm)[idx];
+ ce.getValues(base, highlight);
+ return true;
+ }
+ return false;
+ }*/
 
 bool iTreeWidget::hasHighlightColor(int idx) const {
   if ((idx <= 0) || ! m_highlightColors) return false;
@@ -264,27 +264,27 @@ bool iTreeWidget::hasHighlightColor(int idx) const {
 }
 
 void* iTreeWidget::highlightColors() const {
-  if (!m_highlightColors) 
+  if (!m_highlightColors)
     m_highlightColors = new ColorMap;
   return m_highlightColors;
 }
 
 void iTreeWidget::resizeColumnsToContents() {
-//FIXME: BA 2006-12-22
-// need to develop better approach, perhaps we can
-// at least shrink a col
-// the key properties:
-/* key code from Qt treewidget:
-    int contents = sizeHintForColumn(column);
-    int header = d->header->isHidden() ? 0 : d->header->sectionSizeHint(column);
-    d->header->resizeSection(column, qMax(contents, header));
-*/
+  //FIXME: BA 2006-12-22
+  // need to develop better approach, perhaps we can
+  // at least shrink a col
+  // the key properties:
+  /* key code from Qt treewidget:
+   int contents = sizeHintForColumn(column);
+   int header = d->header->isHidden() ? 0 : d->header->sectionSizeHint(column);
+   d->header->resizeSection(column, qMax(contents, header));
+   */
   if (columnCount() > 0)
     resizeColumnToContents(0);
-/*was:  for (int i = 0; i < (columnCount() - 1); ++i) {
-    resizeColumnToContents(i);
-  }
-*/
+  /*was:  for (int i = 0; i < (columnCount() - 1); ++i) {
+   resizeColumnToContents(i);
+   }
+   */
 }
 
 void iTreeWidget::clearExtSelection() {
@@ -298,7 +298,7 @@ void iTreeWidget::keyboardSearch(const QString& search) {
   // and thus preventing it from working
   // if(editTriggers() & QAbstractItemView::EditKeyPressed)
   //   return;
-
+  
   // this makes it go directly to single selection mode for keyboard search --
   // perhaps not as powerful as extended select under keyboard ctrl but a LOT
   // more intuitive, esp on mac where you don't even get the ghosty outline of
@@ -316,7 +316,7 @@ void iTreeWidget::setHighlightColor(int idx, const QColor& base)
 }
 
 void iTreeWidget::setHighlightColor(int idx, const QColor& base,
-    const QColor& hilight)
+                                    const QColor& hilight)
 {
   if (idx <= 0) return; // bad caller!!!
   ColorMap* cm = (ColorMap*)highlightColors();
@@ -379,9 +379,9 @@ QTreeWidgetItem* iTreeWidget::getNextItem(QTreeWidgetItem* itm, int n_dn) const 
 }
 
 void iTreeWidget::keyPressEvent(QKeyEvent* e) {
-
+  
   taiMisc::UpdateUiOnCtrlPressed(this, e);
-
+  
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   
   QTreeWidgetItem* cur_item = currentItem();
@@ -403,7 +403,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   }
   
   if ((QApplication::keyboardModifiers() & Qt::ShiftModifier) && (e->key() == Qt::Key_Up ||
-                                               e->key() == Qt::Key_Down)) {
+                                                                  e->key() == Qt::Key_Down)) {
     if (ext_select_on == false) {
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Space,
                                                       Qt::MetaModifier));
@@ -420,128 +420,128 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
     return;
   }
   
-  if(ctrl_pressed) {
-    QPersistentModelIndex newCurrent = currentIndex();
-    switch (e->key()) {
-      case Qt::Key_S:		// s works too
-      case Qt::Key_Space:
-        clearSelection();
-        // select this guy
-        selectionModel()->setCurrentIndex(currentIndex(),
-                                          QItemSelectionModel::ClearAndSelect);
-        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        // editItem(cur_item);     // todo: get column
-        // }
-        // else {
-        ext_select_on = true;
-        // }
-        e->accept();
-        return;			// don't continue
-      case Qt::Key_G:
-        clearExtSelection();
-        e->accept();
-        break;
-      case Qt::Key_N:
-        newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
-        e->accept();
-        break;
-      case Qt::Key_P:
-        newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
-        e->accept();
-        break;
-      case Qt::Key_U:
-      case Qt::Key_Up:
-        newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
-        e->accept();
-        break;
-      case Qt::Key_Down:
-        newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
-        e->accept();
-        break;
-      case Qt::Key_V:
-        if(taMisc::emacs_mode) {
-          newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
-          e->accept();
-        }
-        else {
-          e->ignore();		// save for paste elsewhere
-        }
-        break;
-      case Qt::Key_F:
-        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-        //   editItem(cur_item);     // todo: get column
-        // }
-        // else {
-        newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
-        // }
-        e->accept();
-        break;
-      case Qt::Key_B:
-        newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
-        e->accept();
-        break;
-      case Qt::Key_Enter:
-      case Qt::Key_Return:
-        e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
-        return;
-      case Qt::Key_A:
-        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-          edit_start_pos = 0;
-          edit_start_kill = false;
-          editItem(cur_item);     // todo: get column
-        }
-        e->accept();
-        break;
-      case Qt::Key_E:
-        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-          edit_start_pos = -1;
-          edit_start_kill = false;
-          editItem(cur_item);     // todo: get column
-        }
-        e->accept();
-        break;
-      case Qt::Key_K:
-        if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-          edit_start_pos = 0;
-          edit_start_kill = true;
-          editItem(cur_item);     // todo: get column
-        }
-        e->accept();
-        break;
-    }
-    
-    // from qabstractitemview.cpp
-    QPersistentModelIndex oldCurrent = currentIndex();
-    if(newCurrent.isValid() && newCurrent != oldCurrent) {
-      QItemSelectionModel::SelectionFlags command;
-      if(ext_select_on) {
-        // the following logic prevents selecting items at different levels!
-        QModelIndexList sels = selectionModel()->selectedIndexes();
-        if(m_sibling_sel && sels.count() > 0) {
-          QModelIndex firstpar = sels[0].parent();
-          if(newCurrent.parent() == firstpar) {     // only select at same level!
-            command = QItemSelectionModel::Select;
-            QTreeWidgetItem* new_item = itemFromIndex(newCurrent);
-            if (new_item->isSelected()) {
-              QTreeWidgetItem* old_item = itemFromIndex(oldCurrent);
-              old_item->setSelected(false);
-            }
-          }
-          else
-            command = QItemSelectionModel::Current;
-        }
-        else {
+  if (ctrl_pressed && (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)) {
+    e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
+    return;
+  }
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TREE_CONTEXT, e);
+  QPersistentModelIndex newCurrent = currentIndex();
+  
+  switch (action) {
+    case taiMisc::TREE_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II:		// s works too
+      //      case Qt::Key_Space:
+      clearSelection();
+      // select this guy
+      selectionModel()->setCurrentIndex(currentIndex(),
+                                        QItemSelectionModel::ClearAndSelect);
+      // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+      // editItem(cur_item);     // todo: get column
+      // }
+      // else {
+      ext_select_on = true;
+      // }
+      e->accept();
+      return;			// don't continue
+    case taiMisc::TREE_CLEAR_SELECTION:
+      clearExtSelection();
+      e->accept();
+      break;
+    case taiMisc::TREE_MOVE_SELECTION_UP:
+      newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
+      e->accept();
+      break;
+    case taiMisc::TREE_MOVE_SELECTION_DOWN:
+      newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
+      e->accept();
+      break;
+    case taiMisc::TREE_PAGE_UP:
+    case taiMisc::TREE_PAGE_UP_II:
+      newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
+      e->accept();
+      break;
+    case taiMisc::TREE_PAGE_DOWN:
+    case taiMisc::TREE_PAGE_DOWN_II:
+      newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
+      e->accept();
+      break;
+      //      case Qt::Key_F:
+      //        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+      //        //   editItem(cur_item);     // todo: get column
+      //        // }
+      //        // else {
+      //        newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
+      //        // }
+      //        e->accept();
+      //        break;
+      //      case Qt::Key_B:
+      //        newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
+      //        e->accept();
+      //        break;
+      //      case Qt::Key_Enter:
+      //      case Qt::Key_Return:
+      //        e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
+      //        return;
+    case taiMisc::TREE_EDIT_HOME:
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        edit_start_pos = 0;
+        edit_start_kill = false;
+        editItem(cur_item);     // todo: get column
+      }
+      e->accept();
+      break;
+    case taiMisc::TREE_EDIT_END:
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        edit_start_pos = -1;
+        edit_start_kill = false;
+        editItem(cur_item);     // todo: get column
+      }
+      e->accept();
+      break;
+    case taiMisc::TREE_EDIT_DELETE_TO_END:
+      if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
+        edit_start_pos = 0;
+        edit_start_kill = true;
+        editItem(cur_item);     // todo: get column
+      }
+      e->accept();
+      break;
+    default:
+      ;
+  }
+  
+  // from qabstractitemview.cpp
+  QPersistentModelIndex oldCurrent = currentIndex();
+  if(newCurrent.isValid() && newCurrent != oldCurrent) {
+    QItemSelectionModel::SelectionFlags command;
+    if(ext_select_on) {
+      // the following logic prevents selecting items at different levels!
+      QModelIndexList sels = selectionModel()->selectedIndexes();
+      if(m_sibling_sel && sels.count() > 0) {
+        QModelIndex firstpar = sels[0].parent();
+        if(newCurrent.parent() == firstpar) {     // only select at same level!
           command = QItemSelectionModel::Select;
+          QTreeWidgetItem* new_item = itemFromIndex(newCurrent);
+          if (new_item->isSelected()) {
+            QTreeWidgetItem* old_item = itemFromIndex(oldCurrent);
+            old_item->setSelected(false);
+          }
         }
+        else
+          command = QItemSelectionModel::Current;
       }
       else {
-        command = QItemSelectionModel::ClearAndSelect;
+        command = QItemSelectionModel::Select;
       }
-      selectionModel()->setCurrentIndex(newCurrent, command);
-      return;
     }
+    else {
+      command = QItemSelectionModel::ClearAndSelect;
+    }
+    selectionModel()->setCurrentIndex(newCurrent, command);
+    return;
   }
-  inherited::keyPressEvent( e );
+inherited::keyPressEvent( e );
 }
 
 void iTreeWidget::setSelection(const QRect &rect, QItemSelectionModel::SelectionFlags command) {
@@ -623,7 +623,7 @@ void iTreeWidget::lookupKeyPressed(iLineEdit* le) const {
 
 
 iTreeWidgetDefaultDelegate::iTreeWidgetDefaultDelegate(iTreeWidget* own_tw) :
-  inherited(own_tw)
+inherited(own_tw)
 {
   own_tree_widg = own_tw;
 }
@@ -649,7 +649,7 @@ QWidget* iTreeWidgetDefaultDelegate::createEditor(QWidget *parent,
 void iTreeWidgetDefaultDelegate::setModelData(QWidget* editor, QAbstractItemModel* model,
                                               const QModelIndex& index) const {
   inherited::setModelData(editor, model, index);
-  if(own_tree_widg) 
+  if(own_tree_widg)
     own_tree_widg->itemWasEdited(index);
 }
 
@@ -665,48 +665,48 @@ bool iTreeWidgetDefaultDelegate::eventFilter(QObject *object, QEvent *event) {
     QKeyEvent* ke = static_cast<QKeyEvent *>(event);
     bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(ke);
     switch (ke->key()) {
-    case Qt::Key_Tab:
-      if(own_tree_widg) {
-        own_tree_widg->move_after_edit = 1;
-        // own_tree_widg->edit_start_pos = 0;
-      }
-      emit commitData(editor);
-      emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
-      return true;
-    case Qt::Key_Backtab:
-      if(own_tree_widg) {
-        own_tree_widg->move_after_edit = -1;
-        // own_tree_widg->edit_start_pos = 0;
-      }
-      emit commitData(editor);
-      emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
-      return true;
-    case Qt::Key_Enter:
-    case Qt::Key_Return:
-      if(!le->hasAcceptableInput())
-        return false;
-      if(own_tree_widg) {
-        own_tree_widg->move_after_edit = 0;
-        own_tree_widg->edit_start_pos = 0;
-      }
-      emit commitData(editor);
-      // if(ctrl_pressed) {
-      //   emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
-      //   return true;
-      // }
-      // else {
+      case Qt::Key_Tab:
+        if(own_tree_widg) {
+          own_tree_widg->move_after_edit = 1;
+          // own_tree_widg->edit_start_pos = 0;
+        }
+        emit commitData(editor);
+        emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+        return true;
+      case Qt::Key_Backtab:
+        if(own_tree_widg) {
+          own_tree_widg->move_after_edit = -1;
+          // own_tree_widg->edit_start_pos = 0;
+        }
+        emit commitData(editor);
+        emit closeEditor(editor, QAbstractItemDelegate::EditPreviousItem);
+        return true;
+      case Qt::Key_Enter:
+      case Qt::Key_Return:
+        if(!le->hasAcceptableInput())
+          return false;
+        if(own_tree_widg) {
+          own_tree_widg->move_after_edit = 0;
+          own_tree_widg->edit_start_pos = 0;
+        }
+        emit commitData(editor);
+        // if(ctrl_pressed) {
+        //   emit closeEditor(editor, QAbstractItemDelegate::EditNextItem);
+        //   return true;
+        // }
+        // else {
         emit closeEditor(editor, QAbstractItemDelegate::SubmitModelCache);
         return true;             // filter the return
-      // }
-    case Qt::Key_Escape:
-      // don't commit data
-      if(own_tree_widg) {
-        own_tree_widg->edit_start_pos = 0;
-      }
-      emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
-      break;
-    default:
-      return false;
+        // }
+      case Qt::Key_Escape:
+        // don't commit data
+        if(own_tree_widg) {
+          own_tree_widg->edit_start_pos = 0;
+        }
+        emit closeEditor(editor, QAbstractItemDelegate::RevertModelCache);
+        break;
+      default:
+        return false;
     }
     if (editor->parentWidget())
       editor->parentWidget()->setFocus();

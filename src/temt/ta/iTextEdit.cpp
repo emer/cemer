@@ -106,14 +106,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       return;
     case taiMisc::TEXTEDIT_PAGE_DOWN:
       key_event->accept();
-      if (taMisc::emacs_mode) {
         app->postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-      }
-      else
-      {
-        paste();
-        clearExtSelection();
-      }
       return;
     case taiMisc::TEXTEDIT_DELETE:
       key_event->accept();

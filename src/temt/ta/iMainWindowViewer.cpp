@@ -2169,10 +2169,10 @@ bool iMainWindowViewer::eventFilter(QObject *obj, QEvent *event) {
   // this ends up being redundant with all the relevant control-specific cases..
   // taiMisc::UpdateUiOnCtrlPressed(this, e);
   
-  if(KeyEventFilterWindowNav(obj, e))
-    return true;
-  if(taiMisc::KeyEventFilterEmacs_Clip(obj, e))
-    return true;
+//  if(KeyEventFilterWindowNav(obj, e))
+//    return true;
+//  if(taiMisc::KeyEventFilterEmacs_Clip(obj, e))
+//    return true;
   return inherited::eventFilter(obj, event);
 }
 
@@ -2180,6 +2180,33 @@ int iMainWindowViewer::GetEditActions() {
   int rval = 0;
   emit GetEditActionsEnabled(rval);
   return rval;
+}
+
+void iMainWindowViewer::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::UpdateUiOnCtrlPressed(this, key_event);
+  
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
+  switch (action) {
+    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT: // move left between regions
+      MoveFocusLeft();
+      key_event->accept();
+      return;
+    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
+      MoveFocusRight();
+      key_event->accept();
+      return;
+      // these need key bindings
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT: // switch tab
+      ShiftCurTabLeft();
+      key_event->accept();
+      return;
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT: // switch tab
+      ShiftCurTabRight();
+      key_event->accept();
+      return;
+    default:
+      inherited::keyPressEvent(key_event);
+  }
 }
 
 void iMainWindowViewer::viewSaveView() {

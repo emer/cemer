@@ -236,10 +236,10 @@ bool iProgramEditor::eventFilter(QObject* obj, QEvent* event) {
   }
 
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  if((bool)m_window) {
-    if(m_window->KeyEventFilterWindowNav(obj, e))
-      return true;
-  }
+//  if((bool)m_window) {
+//    if(m_window->KeyEventFilterWindowNav(obj, e))
+//      return true;
+//  }
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
     Apply();                    // do it!

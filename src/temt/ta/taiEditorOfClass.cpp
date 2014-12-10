@@ -768,8 +768,9 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
   iMainWindowViewer* mvw = viewerWindow();
   if(mvw) {
     mvw->FocusIsMiddlePanel();
-    if(mvw->KeyEventFilterWindowNav(obj, e))
-      return true;
+    taMisc::DebugInfo("taiEditorOfClass - would call nav");
+//    if(mvw->KeyEventFilterWindowNav(obj, e))
+//      return true;
   }
 
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
@@ -792,12 +793,9 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::ShiftModifier));
       return true;              // we absorb this event
     case Qt::Key_V:
-      if(taMisc::emacs_mode) {
         for(int i=0;i<5;i++)    // page up = 5
           app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));
         return true;            // we absorb this event
-      }
-      return false;
     case Qt::Key_Down:
       for(int i=0;i<5;i++)
         app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Tab, Qt::NoModifier));

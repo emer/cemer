@@ -240,7 +240,7 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
   
   switch (action) {
-    case taiMisc::TABLE_TOGGLE_FOCUS:
+    case taiMisc::DATATABLE_TOGGLE_FOCUS:
       if(obj->inherits("iDataTableView")) {
         tvTable->clearExtSelection();
         if(m_cell) {
@@ -254,8 +254,8 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
         tvTable->selectCurCell();
       }
       return true;
-    case taiMisc::TABLE_EDIT_HOME:
-    case taiMisc::TABLE_EDIT_END:
+    case taiMisc::DATATABLE_EDIT_HOME:
+    case taiMisc::DATATABLE_EDIT_END:
       if(m_cell && obj->inherits("iDataTableView")) {
         tvCell->tv->setFocus();
         tvCell->tv->selectCurCell();

@@ -220,11 +220,6 @@ int     taMisc::display_width = 120;
 int     taMisc::max_display_width = 255;
 int     taMisc::indent_spc = 2;
 int     taMisc::display_height = 25;
-#ifdef TA_OS_MAC
-bool    taMisc::emacs_mode = true;
-#else
-bool    taMisc::emacs_mode = false;
-#endif
 int     taMisc::undo_depth = 100;
 int     taMisc::undo_data_max_cells = 10000;
 float   taMisc::undo_new_src_thr = 0.3f;

@@ -564,7 +564,6 @@ void taRootBase::Options() {
   taMisc* inst = (taMisc*)TA_taMisc.GetInstance();
   
   taMisc::KeyBindingSet old_key_bindings = taMisc::current_key_bindings;
-  bool  old_emacs_mode = taMisc::emacs_mode;
   
   int accepted = ie->EditDialog(inst, false, true, taiTypeBase::def_color,
                                 800, 600); // r/w, modal, min width, height
@@ -573,9 +572,6 @@ void taRootBase::Options() {
     
     if ((old_key_bindings == taMisc::KEY_BINDINGS_DEFAULT) && (taMisc::current_key_bindings == taMisc::KEY_BINDINGS_CUSTOM)) {
       taiMisc::LoadCustomKeyBindings();
-    }
-    if (old_emacs_mode != taMisc::emacs_mode) {
-      taiMisc::LoadDefaultKeyBindings();  // emacs mode changed reload
     }
   }
 #endif

@@ -32,6 +32,7 @@ iTableWidget::iTableWidget(QWidget* parent)
 }
 
 void iTableWidget::keyPressEvent(QKeyEvent* e) {
+  taMisc::DebugInfo("iTableWidget::keyPressEvent");
   if((e->key() == Qt::Key_Tab) || (e->key() == Qt::Key_Backtab)) {
     e->ignore();                        // tell that we don't want this -- send to others
     return;

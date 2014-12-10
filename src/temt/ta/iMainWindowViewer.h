@@ -426,6 +426,7 @@ protected:
   void         Constr_impl() override;
   void         ResolveChanges_impl(CancelOp& cancel_op) override; // only for project browsers
   void         Refresh_impl() override;
+  void         keyPressEvent(QKeyEvent * e) override;
 
 protected slots:
   void                  ch_destroyed(); // cliphandler destroyed (just in case it doesn't deregister)

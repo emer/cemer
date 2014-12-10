@@ -858,8 +858,7 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   bool ctrl_pressed = false;
 
 #ifdef TA_OS_MAC
-  // actual ctrl = meta on apple -- enable this
-  // if (QApplication::keyboardModifiers() & Qt::MetaModifier) {
+  // On mac the control key sends Meta
   if (e->modifiers() & Qt::MetaModifier) {
     ctrl_pressed = true;
   }
@@ -868,11 +867,10 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   // a const QInputEvent * parameter so it can be used in qtthumbwheel.cpp.
 
   // Command + V should NOT be registered as ctrl_pressed on a mac -- that is paste..
-  //  if ((QApplication::keyboardModifiers() & Qt::ControlModifier)
-  if ((e->modifiers() & Qt::ControlModifier)
-      && (e->key() == Qt::Key_V)) {
-    ctrl_pressed = false;
-  }
+//  if ((e->modifiers() & Qt::ControlModifier)
+//      && (e->key() == Qt::Key_V)) {
+//    ctrl_pressed = false;
+//  }
 #else
   if (e->modifiers() & Qt::ControlModifier) { // regular modifiers() is safer for generated events..
     ctrl_pressed = true;
@@ -883,9 +881,11 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
 }
 
 bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
+  taMisc::DebugInfo("KeyEventFilterEmacs_Nav");
+  
+#if 0
   taiMisc::UpdateUiOnCtrlPressed(obj, e);
   
-  if (taMisc::emacs_mode) {
     bool ctrl_pressed = KeyEventCtrlPressed(e);
     if(!ctrl_pressed) return false;
     QCoreApplication* app = QCoreApplication::instance();
@@ -910,24 +910,21 @@ bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
         app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
         return true;
       case Qt::Key_V:
-        if(taMisc::emacs_mode) {
           app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
           return true;              // we absorb this event
-        }
-        else
-        {
-          return false;             // pass it on..
-        }
     }
-  }
+#endif
   return false;
 }
 
 bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
+  taMisc::DebugInfo("KeyEventFilterEmacs_edit");
+  
+#if 0
+
   if(KeyEventFilterEmacs_Nav(obj, e))
     return true;
   
-  if (taMisc::emacs_mode) {
     bool ctrl_pressed = KeyEventCtrlPressed(e);
     QCoreApplication* app = QCoreApplication::instance();
     if(ctrl_pressed) {
@@ -964,14 +961,20 @@ bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
       return true;                // we absorb this event
     }
-  }
+  
+#endif
+  
   return false;
 }
 
 bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
+  
+#if 0
+
+  
   taiMisc::UpdateUiOnCtrlPressed(obj, e);
-  if (taMisc::emacs_mode) {
-    bool ctrl_pressed = KeyEventCtrlPressed(e);
+
+  bool ctrl_pressed = KeyEventCtrlPressed(e);
     QCoreApplication* app = QCoreApplication::instance();
     if(ctrl_pressed) {
       switch(e->key()) {
@@ -998,7 +1001,9 @@ bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
       app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
       return true;                // we absorb this event
     }
-  }
+  
+#endif
+  
   return false;
 }
 
@@ -1127,7 +1132,6 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Reset();
 // menu items for mac only (for now anyway)
 #ifdef TA_OS_MAC
-//  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_XXX, QKeySequence(meta_key + Qt::Key_B));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_NEW, QKeySequence(meta_key + Qt::Key_N));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_OPEN, QKeySequence(meta_key + Qt::Key_O));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CLOSE, QKeySequence(meta_key + Qt::Key_W));
@@ -1195,22 +1199,22 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CUT, QKeySequence(control_key + Qt::Key_W));
     
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_EDIT_HOME, QKeySequence(control_key + Qt::Key_A));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_EDIT_END, QKeySequence(control_key + Qt::Key_E));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_DELETE, QKeySequence(control_key + Qt::Key_D));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_SELECT, QKeySequence(control_key + Qt::Key_S));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_MOVE_FOCUS_UP, QKeySequence(control_key + Qt::Key_P));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_MOVE_FOCUS_DOWN, QKeySequence(control_key + Qt::Key_N));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_MOVE_FOCUS_LEFT, QKeySequence(control_key + Qt::Key_B));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_MOVE_FOCUS_RIGHT, QKeySequence(control_key + Qt::Key_F));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_INSERT, QKeySequence(control_key + Qt::Key_I));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_INSERT_AFTER, QKeySequence(control_key + Qt::Key_O));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_DELETE_TO_END, QKeySequence(control_key + Qt::Key_K));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_PAGE_UP, QKeySequence(control_key + Qt::Key_U));
-  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_EDIT_HOME, QKeySequence(control_key + Qt::Key_A));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_EDIT_END, QKeySequence(control_key + Qt::Key_E));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_DELETE, QKeySequence(control_key + Qt::Key_D));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_SELECT, QKeySequence(control_key + Qt::Key_S));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_MOVE_FOCUS_UP, QKeySequence(control_key + Qt::Key_P));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_MOVE_FOCUS_DOWN, QKeySequence(control_key + Qt::Key_N));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_MOVE_FOCUS_LEFT, QKeySequence(control_key + Qt::Key_B));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_MOVE_FOCUS_RIGHT, QKeySequence(control_key + Qt::Key_F));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_INSERT, QKeySequence(control_key + Qt::Key_I));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_INSERT_AFTER, QKeySequence(control_key + Qt::Key_O));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_DELETE_TO_END, QKeySequence(control_key + Qt::Key_K));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_UP, QKeySequence(control_key + Qt::Key_U));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
   
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_APPLY, QKeySequence(control_key + Qt::Key_Enter));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_APPLY, QKeySequence(control_key + Qt::Key_Return));
@@ -1224,6 +1228,18 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE, QKeySequence(control_key + Qt::Key_W));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE, QKeySequence(control_key + Qt::Key_Backspace));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_Space));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II, QKeySequence(control_key + Qt::Key_S));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_UP, QKeySequence(control_key + Qt::Key_P));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_DOWN, QKeySequence(control_key + Qt::Key_N));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PAGE_UP, QKeySequence(control_key + Qt::Key_Up));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_Down));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PAGE_UP_II, QKeySequence(control_key + Qt::Key_U));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PAGE_DOWN_II, QKeySequence(control_key + Qt::Key_V));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_HOME, QKeySequence(control_key + Qt::Key_A));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_END, QKeySequence(control_key + Qt::Key_E));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_EDIT_DELETE_TO_END, QKeySequence(control_key + Qt::Key_K));
 #ifdef TA_OS_MAC
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, QKeySequence(Qt::AltModifier + 0x191));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + 0xAE));
@@ -1231,6 +1247,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, QKeySequence(Qt::AltModifier + Qt::Key_F));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
 #endif
+
   
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_OFF, QKeySequence(Qt::Key_V));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_ON, QKeySequence(Qt::Key_I));
@@ -1260,7 +1277,6 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_UP, QKeySequence(control_key + Qt::Key_Up));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_DOWN, QKeySequence(control_key + Qt::Key_Down));
   
-  if (taMisc::emacs_mode) {
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DESELECT, QKeySequence(control_key + Qt::Key_Space));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_G));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_HOME, QKeySequence(control_key + Qt::Key_A));
@@ -1290,7 +1306,6 @@ void taiMisc::LoadDefaultKeyBindings() {
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_FORWARD, QKeySequence(Qt::AltModifier + Qt::Key_F));
     default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_WORD_BACKWARD, QKeySequence(Qt::AltModifier + Qt::Key_B));
 #endif
-  }
   
   // some exceptions to normal OS behavior to be consistent with emergent 7.0 behavior
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
