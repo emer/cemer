@@ -273,8 +273,11 @@ void CIFERThalSpec::Defaults_init() {
 
 void CIFERDeep5bSpec::Initialize() {
   on = false;
+  rescale = false;
+  scale_mult = 1.0f;
+  ti_rescale = true;
+  ti_scale_mult = 1.0f;
   act5b_thr = 0.2f;
-  d5b_repl_ctxt = 2.0f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
   ti_5b_c = 1.0f - ti_5b;
@@ -282,7 +285,7 @@ void CIFERDeep5bSpec::Initialize() {
 }
 
 void CIFERDeep5bSpec::Defaults_init() {
-  d5b_burst = true;
+  burst = true;
 }
 
 void CIFERDeep5bSpec::UpdateAfterEdit_impl() {
@@ -527,9 +530,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->dav = 0.0f;
   u->sev = 0.0f;
 
-  u->net_scale = 0.0f;
   u->bias_scale = 0.0f;
-  u->ctxt_scale = 1.0f;
 
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
@@ -566,9 +567,6 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 }
 
 void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  // too drastic
-  // u->net_scale = 0.0f;
-  // u->bias_scale = 0.0f;
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
@@ -846,18 +844,46 @@ void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   // this is all receiver-based and done only at beginning of each quarter
-  u->net_scale = 0.0f;  // total of scale values for this unit's inputs
   Unit* un = u->Un(net, thr_no);
+  bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
+  bool init_netin = false;
+  // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
+  bool exclude_d5b = false;
+  bool modulate_d5b = false;
+  bool d5b_turned_on = false;   // deep5b just turned on
+  bool d5b_turned_off = false;   // deep5b just turned off
+  if((plus_phase && net->net_misc.diff_scale_p) ||
+     (net->quarter == 1 && net->net_misc.diff_scale_q1)) {
+    init_netin = true;
+  }
+  if(cifer_d5b.on) {
+    d5b_turned_on = (net->quarter >= 1 && Quarter_Deep5bNow(net->quarter) &&
+                     !Quarter_Deep5bNow(net->quarter-1));
+    d5b_turned_off = (net->quarter >= 1 && !Quarter_Deep5bNow(net->quarter) &&
+                      Quarter_Deep5bNow(net->quarter-1));
+    if(cifer_d5b.rescale) {
+      if(Quarter_Deep5bNow(net->quarter))
+        modulate_d5b = true;
+      else
+        exclude_d5b = true;
+      if(d5b_turned_on || d5b_turned_off) {
+        init_netin = true;
+      }
+    }
+    else if(cifer_d5b.ti_rescale) {
+      exclude_d5b = true;        // always exclude!
+    }
+  }
+
+  if(init_netin) {
+    Init_Netins(u, net, thr_no);
+  }
+
+  float net_scale = 0.0f;
+  float d5b_net_scale = 0.0f;
   float inhib_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
-  bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
-  if(plus_phase && net->net_misc.diff_scale_p) {
-    Init_Netins(u, net, thr_no); // everyone has to init netins b/c scales are different -- note that you CANNOT do this locally for subsets of units, because then they lose any constant inputs -- this must be a global init..
-  }
-  else if(net->quarter == 1 && net->net_misc.diff_scale_q1) {
-    Init_Netins(u, net, thr_no); // everyone has to init netins b/c scales are different
-  }    
-
+  
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
   // then it counts as a zero, but it counts in overall normalization!
@@ -868,19 +894,31 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
+    if(exclude_d5b && cs->IsDeep5bCon())               // exclude from rel rescaling
+      continue;
     float rel_scale = 0.0f;
     if(plus_phase && cs->diff_scale_p)
       rel_scale = cs->wt_scale_p.rel;
     else
       rel_scale = cs->wt_scale.rel;
+    
     if(cs->inhib) {
       inhib_net_scale += rel_scale;
     }
     else {
       n_active_cons++;
-      u->net_scale += rel_scale;
+
+      if(modulate_d5b && cs->IsDeep5bCon()) {
+        net_scale += rel_scale * cifer_d5b.scale_mult;
+        d5b_net_scale += rel_scale;
+      }
+      else {
+        net_scale += rel_scale;
+        d5b_net_scale += rel_scale;
+      }
     }
   }
+  
   // add the bias weight into the netinput, scaled by 1/n
   if(bias_spec) {
     LeabraConSpec* bspec = (LeabraConSpec*)bias_spec.SPtr();
@@ -890,6 +928,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   }
 
   float d5b_rel_scale = 0.0f;
+  float ctxt_rel_scale = 0.0f;
   // now renormalize, each one separately..
   for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -902,33 +941,34 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
         recv_gp->scale_eff /= inhib_net_scale;
     }
     else {
-      if(u->net_scale > 0.0f) {
-        recv_gp->scale_eff /= u->net_scale;
+      if(net_scale > 0.0f) {
         if(cs->IsDeep5bCon()) {
+          if(modulate_d5b)
+            recv_gp->scale_eff /= d5b_net_scale; // don't affect us..
+          else
+            recv_gp->scale_eff /= net_scale;
           d5b_rel_scale += recv_gp->scale_eff;
         }
-        // else if(cs->IsTICtxtCon()) {
-        //   ctxt_rel_scale += recv_gp->scale_eff;
-        // }
+        else if(cs->IsTICtxtCon()) {
+          recv_gp->scale_eff /= net_scale;
+          ctxt_rel_scale += recv_gp->scale_eff;
+        }
+        else {
+          recv_gp->scale_eff /= net_scale;
+        }
       }
     }
   }
 
-  float ctxt_scale = 1.0f;
-  if(cifer_d5b.on && d5b_rel_scale > 0.0f) {
-    float sc_fact = (1.0f + cifer_d5b.d5b_repl_ctxt * d5b_rel_scale);
-    if(Quarter_Deep5bNow(net->quarter)) {
-      ctxt_scale = 1.0f / sc_fact; // record that we scaled it down
-      u->ti_ctxt /= sc_fact; // weaken context input to just compensate for d5b input
-    }
-    else {
-      if(u->ctxt_scale < 1.0f) { // we have previously rescaled it down, so scale it back up
-        ctxt_scale = sc_fact;           // record that we scaled it up
-        u->ti_ctxt *= sc_fact;
-      }
-    }
+  // finally: renorm ti scale
+  if(cifer_d5b.on && cifer_d5b.ti_rescale) {
+    float sc_fact = (1.0f - cifer_d5b.ti_scale_mult * d5b_rel_scale);
+    if(sc_fact < 0.001f) sc_fact = 0.001f; // keep it something so we can recover original
+    if(d5b_turned_on)
+      u->ti_ctxt *= sc_fact;    // downscale
+    else if(d5b_turned_off)
+      u->ti_ctxt /= sc_fact;    // upscale
   }
-  u->ctxt_scale = ctxt_scale;
 }
 
 void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1694,7 +1734,7 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       u->deep5b = u->thal * act5b;  // thal is thresholded
     }
     else {
-      if(cifer_d5b.d5b_burst) {
+      if(cifer_d5b.burst) {
         TestWrite(u->deep5b, 0.0f); // turn it off
       }
     }
@@ -1812,7 +1852,6 @@ void LeabraUnitSpec::Send_TICtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* net
 #endif
   }
   u->ti_ctxt = nw_nt;
-  u->ctxt_scale = 1.0f;         // reset
 }
 
 void LeabraUnitSpec::ClearTICtxt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

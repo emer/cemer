@@ -90,9 +90,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // dav = cp.dav;
   // sev = cp.sev;
 
-  // net_scale = cp.net_scale;
   // bias_scale = cp.bias_scale;
-  // ctxt_scale = cp.ctxt_scale;
   // act_sent = cp.act_sent;
   // net_raw = cp.net_raw;
   // gi_raw = cp.gi_raw;

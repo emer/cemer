@@ -72,9 +72,7 @@ public:
   float      dav;            // #NO_SAVE #VIEW_HOT #CAT_Activation dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   float      sev;            // #NO_SAVE #CAT_Activation serotonin value 
 
-  float      net_scale;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation total netinput scaling basis
   float      bias_scale;     // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation bias weight scaling factor
-  float      ctxt_scale;     // #NO_SAVE #EXPERT #CAT_Activation TI context rescaling factor -- needed for rescaling ti_ctxt to compensate for variable deep5b input on different quarters
 
   float      act_sent;       // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
   float      net_raw;        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)

@@ -176,15 +176,9 @@ public:
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
   // #NO_SAVE #CAT_UnitVar serotonin value 
 
-  inline float& net_scale()
-  { return ((LeabraUnitVars*)GetUnitVars())->net_scale; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar total netinput scaling basis
   inline float& bias_scale()
   { return ((LeabraUnitVars*)GetUnitVars())->bias_scale; }
   // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar bias weight scaling factor
-  inline float& ctxt_scale()
-  { return ((LeabraUnitVars*)GetUnitVars())->ctxt_scale; }
-  // #NO_SAVE #EXPERT #CAT_UnitVar TI context rescaling factor -- needed for rescaling ti_ctxt to compensate for variable deep5b input on different quarters
 
   inline float& act_sent()
   { return ((LeabraUnitVars*)GetUnitVars())->act_sent; }

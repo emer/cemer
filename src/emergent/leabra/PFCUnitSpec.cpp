@@ -98,7 +98,7 @@ void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, 
     }
   }
   else {
-    if(cifer_d5b.d5b_burst && !act_mnt) {
+    if(cifer_d5b.burst && !act_mnt) {
       u->deep5b = 0.0f;         // turn it off! only if not maint!
     }
   }
