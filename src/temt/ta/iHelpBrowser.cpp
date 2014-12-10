@@ -776,22 +776,16 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-
   QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
   if(taiMisc::KeyEventFilterEmacs_Edit(obj, key_event))
     return true;
   
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
-  
-  switch (action) {
-    case taiMisc::DIALOG_FOCUS_SEARCH:
-      if(find_text->hasFocus())
-        filter->setFocus();
-      else
-        find_text->setFocus();
-      return true;                // we absorb this event
-    default:
-      return inherited::eventFilter(obj, event);
+  if((taiMisc::KeyEventCtrlPressed(key_event)) && (key_event->key() == Qt::Key_S)) {
+    if(find_text->hasFocus())
+      filter->setFocus();
+    else
+      find_text->setFocus();
+    return true;                // we absorb this event
   }
   return inherited::eventFilter(obj, event);
 }

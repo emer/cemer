@@ -1194,11 +1194,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_KILL, QKeySequence(control_key + Qt::Key_K));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CUT, QKeySequence(control_key + Qt::Key_W));
-  
-  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Enter));
-  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_ACCEPT, QKeySequence(Qt::Key_Return));
-  default_list->Add(taiMisc::DIALOG_CONTEXT, taiMisc::DIALOG_FOCUS_SEARCH, QKeySequence(control_key + Qt::Key_S));
-  
+    
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_EDIT_HOME, QKeySequence(control_key + Qt::Key_A));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::TABLE_EDIT_END, QKeySequence(control_key + Qt::Key_E));

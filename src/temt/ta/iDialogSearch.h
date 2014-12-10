@@ -153,7 +153,6 @@ protected:
            const String& path, int relev);
 
   void                   closeEvent(QCloseEvent * e) override;
-  void                   keyPressEvent(QKeyEvent* key_event) override;
 
   iDialogSearch(iMainWindowViewer* par_window_);
   ~iDialogSearch();

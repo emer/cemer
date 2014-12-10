@@ -36,7 +36,6 @@ public:
   KeyActionPair_PArray       project_window_bindings; // #IGNORE
   KeyActionPair_PArray       text_edit_bindings; // #IGNORE
   KeyActionPair_PArray       console_bindings; // #IGNORE 
-  KeyActionPair_PArray       dialog_bindings; // #IGNORE 
   KeyActionPair_PArray       table_bindings; // #IGNORE
   KeyActionPair_PArray       tree_bindings; // #IGNORE 
   KeyActionPair_PArray       graphics_bindings; // #IGNORE 

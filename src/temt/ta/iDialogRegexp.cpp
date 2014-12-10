@@ -371,11 +371,11 @@ void iDialogRegexp::CreateTableModel()
 void iDialogRegexp::keyPressEvent(QKeyEvent* key_event)
 {
   // don't accept on enter
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(key_event);
-  bool is_enter = key_event->key() == Qt::Key_Enter || key_event->key() == Qt::Key_Return;
-  if (!ctrl_pressed && is_enter) {
-    key_event->accept(); // just bail!
-    return;
+  if(taiMisc::KeyEventCtrlPressed(key_event)) {  // knows about mac vs other OS
+    if ((key_event->key() == Qt::Key_Return) || (key_event->key() == Qt::Key_Enter)) {
+      key_event->accept();
+      return;
+    }
   }
   iDialog::keyPressEvent(key_event);
 }

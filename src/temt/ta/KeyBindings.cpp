@@ -34,8 +34,6 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
       return &text_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
-    case taiMisc::DIALOG_CONTEXT:
-      return &dialog_bindings;
     case taiMisc::DATATABLE_CONTEXT:
       return &table_bindings;
     case taiMisc::TREE_CONTEXT:
@@ -67,7 +65,6 @@ void KeyBindings::Reset() {
   project_window_bindings.Reset();
   text_edit_bindings.Reset();
   console_bindings.Reset();
-  dialog_bindings.Reset();
   table_bindings.Reset();
   tree_bindings.Reset();
   graphics_bindings.Reset();

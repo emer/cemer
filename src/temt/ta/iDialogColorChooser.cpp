@@ -28,14 +28,12 @@ iDialogColorChooser::iDialogColorChooser(const QColor &old_clr, QWidget *parent)
 
 void iDialogColorChooser::keyPressEvent(QKeyEvent *key_event)
 {
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DIALOG_CONTEXT, key_event);
-  
-  switch(action) {
-    case taiMisc::DIALOG_ACCEPT:
+  if(taiMisc::KeyEventCtrlPressed(key_event)) {  // knows about mac vs other OS
+    if ((key_event->key() == Qt::Key_Return) || (key_event->key() == Qt::Key_Enter)) {
       key_event->accept();
       accept();
       return;
-    default:
-      QColorDialog::keyPressEvent(key_event);
+    }
   }
+  QDialog::keyPressEvent(key_event);
 }
