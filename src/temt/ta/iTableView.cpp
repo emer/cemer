@@ -98,7 +98,7 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
 
   taiMisc::UpdateUiOnCtrlPressed(this, key_event);
   QPersistentModelIndex newCurrent;
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TABLE_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
   
   switch (action) {
     case taiMisc::TABLE_DELETE:

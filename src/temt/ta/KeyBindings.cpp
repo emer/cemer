@@ -28,17 +28,15 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
   switch (context) {
     case taiMisc::MENU_CONTEXT:
       return &menu_bindings;
-    case taiMisc::MAINWINDOW_CONTEXT:
-      return &main_window_bindings;
+    case taiMisc::PROJECTWINDOW_CONTEXT:
+      return &project_window_bindings;
     case taiMisc::TEXTEDIT_CONTEXT:
       return &text_edit_bindings;
     case taiMisc::CONSOLE_CONTEXT:
       return &console_bindings;
     case taiMisc::DIALOG_CONTEXT:
       return &dialog_bindings;
-    case taiMisc::PANEL_CONTEXT:
-      return &panel_bindings;
-    case taiMisc::TABLE_CONTEXT:
+    case taiMisc::DATATABLE_CONTEXT:
       return &table_bindings;
     case taiMisc::TREE_CONTEXT:
       return &tree_bindings;
@@ -65,11 +63,11 @@ bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction acti
 }
 
 void KeyBindings::Reset() {
-  main_window_bindings.Reset();
+  menu_bindings.Reset();
+  project_window_bindings.Reset();
   text_edit_bindings.Reset();
   console_bindings.Reset();
   dialog_bindings.Reset();
-  panel_bindings.Reset();
   table_bindings.Reset();
   tree_bindings.Reset();
   graphics_bindings.Reset();

@@ -237,7 +237,7 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   }
   
   QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TABLE_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::DATATABLE_CONTEXT, key_event);
   
   switch (action) {
     case taiMisc::TABLE_TOGGLE_FOCUS:

@@ -33,12 +33,11 @@ class TA_API KeyBindings : public taNBase {
 INHERITED(taNBase)
 public:  
   KeyActionPair_PArray       menu_bindings; // #IGNORE
-  KeyActionPair_PArray       main_window_bindings; // #IGNORE
+  KeyActionPair_PArray       project_window_bindings; // #IGNORE
   KeyActionPair_PArray       text_edit_bindings; // #IGNORE
   KeyActionPair_PArray       console_bindings; // #IGNORE 
   KeyActionPair_PArray       dialog_bindings; // #IGNORE 
-  KeyActionPair_PArray       panel_bindings; // #IGNORE 
-  KeyActionPair_PArray       table_bindings; // #IGNORE 
+  KeyActionPair_PArray       table_bindings; // #IGNORE
   KeyActionPair_PArray       tree_bindings; // #IGNORE 
   KeyActionPair_PArray       graphics_bindings; // #IGNORE 
   
@@ -47,7 +46,7 @@ public:
   virtual void                  Reset();
   // #IGNORE delete key bindings from all contexts
   virtual QKeySequence          KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action);
-  // #IGNORE retrieve the key sequence bound to this context and action (e.g. MAINWINDOW_CONTEXT, "view_browse_only")
+  // #IGNORE retrieve the key sequence bound to this context and action (e.g. PROJECTWINDOW_CONTEXT, "view_browse_only")
   virtual taiMisc::BoundAction  Action(taiMisc::BindingContext context,  QKeySequence key_sequence);
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
   TA_SIMPLE_BASEFUNS(KeyBindings);

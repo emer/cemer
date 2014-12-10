@@ -679,13 +679,13 @@ void iMainWindowViewer::Constr_ViewMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
 
-  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
-  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
-  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
-  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_T3_ONLY), "viewT3OnlyAction"));
-  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
-  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
-  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::MAINWINDOW_CONTEXT, taiMisc::MAINWINDOW_VIEW_ALL_FRAMES), "viewAllFramesAction"));
+  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_T3_ONLY), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_ALL_FRAMES), "viewAllFramesAction"));
 
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
@@ -1861,20 +1861,20 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
 
 bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* key_event) {
  
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::MAINWINDOW_CONTEXT, key_event);
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
   
   switch(action) {
-    case taiMisc::MAINWINDOW_MOVE_FOCUS_LEFT: // move left between regions
+    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT: // move left between regions
       MoveFocusLeft();
       return true;
-    case taiMisc::MAINWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
+    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
       MoveFocusRight();
       return true;
     // these need key bindings
-    case taiMisc::MAINWINDOW_SHIFT_TAB_LEFT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT: // switch tab
       ShiftCurTabLeft();
       return true;
-    case taiMisc::MAINWINDOW_SHIFT_TAB_RIGHT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT: // switch tab
       ShiftCurTabRight();
       return true;
     default:
