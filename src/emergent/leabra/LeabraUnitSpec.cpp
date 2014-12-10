@@ -928,7 +928,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   }
 
   float d5b_rel_scale = 0.0f;
-  float ctxt_rel_scale = 0.0f;
+  // float ctxt_rel_scale = 0.0f;
   // now renormalize, each one separately..
   for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -951,7 +951,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
         }
         else if(cs->IsTICtxtCon()) {
           recv_gp->scale_eff /= net_scale;
-          ctxt_rel_scale += recv_gp->scale_eff;
+          // ctxt_rel_scale += recv_gp->scale_eff;
         }
         else {
           recv_gp->scale_eff /= net_scale;
@@ -963,7 +963,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   // finally: renorm ti scale
   if(cifer_d5b.on && cifer_d5b.ti_rescale) {
     float sc_fact = (1.0f - cifer_d5b.ti_scale_mult * d5b_rel_scale);
-    if(sc_fact < 0.001f) sc_fact = 0.001f; // keep it something so we can recover original
+    if(sc_fact < 0.0001f) sc_fact = 0.0001f; // keep it something so we can recover original
     if(d5b_turned_on)
       u->ti_ctxt *= sc_fact;    // downscale
     else if(d5b_turned_off)

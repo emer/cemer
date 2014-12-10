@@ -494,7 +494,6 @@ void Network::CheckSpecs() {
 }
 
 void Network::BuildLayers() {
-  taMisc::Busy();
   ++taMisc::no_auto_expand;
   StructUpdate(true);
   LayerPos_Cleanup();
@@ -524,11 +523,9 @@ void Network::BuildLayers() {
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
-  taMisc::DoneBusy();
 }
 
 void Network::BuildUnits() {
-  taMisc::Busy();
   StructUpdate(true);
   threads.InitAll();
   BuildNullUnit();
@@ -540,7 +537,6 @@ void Network::BuildUnits() {
   BuildUnitsFlatList();
 
   StructUpdate(false);
-  taMisc::DoneBusy();
 }
 
 void Network::BuildNullUnit() {
@@ -929,18 +925,15 @@ void Network::InitSendNetinTmp_Thr(int thr_no) {
 }
 
 void Network::BuildPrjns() {
-  taMisc::Busy();
   ++taMisc::no_auto_expand;
   StructUpdate(true);
   layers.BuildPrjns(); // recurses
   StructUpdate(false);
-  taMisc::DoneBusy();
   --taMisc::no_auto_expand;
   if(!taMisc::gui_active)    return;
 }
 
 void Network::Connect() {
-  taMisc::Busy();
   ++taMisc::no_auto_expand;
   StructUpdate(true);
 
