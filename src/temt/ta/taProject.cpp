@@ -558,7 +558,7 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
       QString desc = dialog.getDesc();
       QString categories = dialog.getTags();
       // to do pass categories after Tom checks in new api
-      taMediaWiki::CreatePage(repositoryName, name, "this is the content");
+      taMediaWiki::FindMakePage(repositoryName, name, "this is the content", categories);
     }
   }
 }
