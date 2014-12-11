@@ -1,520 +1,6212 @@
-// ta_Dump File v2.0
-LeabraProject .projects[0] { 
-Wizard_Group @.wizards = [1] {
-LeabraWizard @[0] { 
-UserDataItem_List @*(.user_data_) {
-UserDataItem @[0] { };
-};
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7848
+LeabraProject .projects["media_wiki_test"] { 
+ Doc_Group @.docs = [0] {
+ };
 
-LayerWizElList @.layer_cfg = [3] {
-LayerWizEl @[0] { };
-LayerWizEl @[1] { };
-LayerWizEl @[2] { };
-};
-};
-};
+ Wizard_Group @.wizards = [1] {
+  LeabraWizard @["LeabraWizard_0"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["NO_CLIP"] { };
+   };
+  };
+ };
 
-taBase_Group @.data_proc = [4] {
-taDataProc @[0] { 
-UserDataItem_List @*(.user_data_) {
-UserDataItem @[0] { };
-};
-};
-taDataAnal @[1] { 
-UserDataItem_List @*(.user_data_) {
-UserDataItem @[0] { };
-};
-};
-taDataGen @[2] { 
-UserDataItem_List @*(.user_data_) {
-UserDataItem @[0] { };
-};
-};
-taImageProc @[3] { 
-UserDataItem_List @*(.user_data_) {
-UserDataItem @[0] { };
-};
-};
-};
+ ControlPanel_Group @.ctrl_panels = [1] {
+  ClusterRun @["ClusterRun"] { 
+   EditMbrItem_Group @.mbrs = [0] {
+   };
 
-Program_Group @.programs = [1] {
-Program @[0] { 
-ProgObjList @.objs = [1] {
-DataTable @[0] { 
-DataTableCols @.data = [1] {
-String_Data @[0] { };
-};
-};
-};
+   EditMthItem_Group @.mths = [0] {
+   };
 
-ProgVar_List @.vars = [4] {
-ProgVar @[0] { };
-ProgVar @[1] { };
-ProgVar @[2] { };
-ProgVar @[3] { };
-};
+   DataTableCols @.jobs_running.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
 
-ProgEl_List @.prog_code = [1] {
-StaticMethodCall @[0] { 
-ProgArg_List @.meth_args = [6] {
-ProgArg @[0] { };
-ProgArg @[1] { };
-ProgArg @[2] { };
-ProgArg @[3] { };
-ProgArg @[4] { };
-ProgArg @[5] { };
-};
-};
-};
-};
-};
+   DataTableCols @.jobs_done.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
 
-DataViewer_List @.viewers = [1] {
-MainWindowViewer @[0] { 
-ToolBar_List @.toolbars = [1] {
-ToolBar @[0] { };
-};
+   DataTableCols @.jobs_archive.data = [26] {
+    String_Data @["tag"] { };
+    String_Data @["notes"] { };
+    String_Data @["params"] { };
+    String_Data @["status"] { };
+    String_Data @["status_info"] { };
+    String_Data @["submit_time"] { };
+    String_Data @["start_time"] { };
+    String_Data @["end_time"] { };
+    String_Data @["job_no"] { };
+    String_Data @["job_out"] { };
+    String_Data @["job_out_file"] { };
+    String_Data @["dat_files"] { };
+    String_Data @["other_files"] { };
+    int_Data @["command_id"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["command"] { };
+    String_Data @["repo_url"] { };
+    String_Data @["cluster"] { };
+    String_Data @["queue"] { };
+    String_Data @["run_time"] { };
+    int_Data @["ram_gb"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["n_threads"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_batches"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["pb_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    String_Data @["submit_svn"] { };
+    String_Data @["submit_job"] { };
+   };
 
-FrameViewer_List @.frames = [3] {
-tabBrowseViewer @[0] { };
-PanelViewer @[1] { };
-T3DataViewer @[2] { 
-T3DataViewFrame_List @.frames = [1] {
-T3DataViewFrame @[0] { };
-};
-};
-};
+   DataTableCols @.file_list.data = [9] {
+    String_Data @["file_name"] { };
+    String_Data @["tag"] { };
+    String_Data @["size"] { };
+    String_Data @["kind"] { };
+    String_Data @["date_modified"] { };
+    String_Data @["date_created"] { };
+    String_Data @["svn_file_path"] { };
+    String_Data @["proj_file_path"] { };
+    String_Data @["file_path"] { };
+   };
 
-DockViewer_List @.docks = [1] {
-ToolBoxDockViewer @[0] { };
-};
-};
-};
-};
-LeabraProject .projects[0] {
-name="Project_0";
-desc=;
-tags=;
-version {
-major=0;
-minor=0;
-step=0;
-};
-wiki_url {
-sync=0;
-wiki=;
-url=;
-};
-templates {
-name=;
-el_typ=taBase;
-el_def=0;
-};
-docs {
-name=;
-el_typ=taDoc;
-el_def=0;
-};
-wizards {
-name=;
-el_typ=LeabraWizard;
-el_def=0;
-LeabraWizard @[0] {
-UserDataItem_List @*(.user_data_) {
-name=;
-el_typ=UserDataItem;
-el_def=0;
-UserDataItem @[0] {
-name="NO_CLIP";
-value 1 0=1;
-};
-};
-name="LeabraWizard_0";
-auto_open=0;
-n_layers=3;
-layer_cfg {
-name=;
-el_typ=LayerWizEl;
-el_def=0;
-LayerWizEl @[0] {
-name="Input";
-n_units=25;
-io_type=INPUT;
-};
-LayerWizEl @[1] {
-name="Hidden";
-n_units=25;
-io_type=HIDDEN;
-};
-LayerWizEl @[2] {
-name="Output";
-n_units=25;
-io_type=OUTPUT;
-};
-};
-connectivity=BIDIRECTIONAL;
-default_net_type=LeabraNetwork;
-};
-};
-edits {
-name=;
-el_typ=SelectEdit;
-el_def=0;
-};
-data {
-name=;
-el_typ=DataTable;
-el_def=0;
-DataTable_Group @.gp[0] {
-name="InputData";
-el_typ=DataTable;
-el_def=0;
-};
-DataTable_Group @.gp[1] {
-name="OutputData";
-el_typ=DataTable;
-el_def=0;
-};
-DataTable_Group @.gp[2] {
-name="AnalysisData";
-el_typ=DataTable;
-el_def=0;
-};
-};
-data_proc {
-name=;
-el_typ=taDataProc;
-el_def=0;
-taDataProc @[0] {
-UserDataItem_List @*(.user_data_) {
-name=;
-el_typ=UserDataItem;
-el_def=0;
-UserDataItem @[0] {
-name="NO_CLIP";
-value 1 0=1;
-};
-};
-name="data_base";
-};
-taDataAnal @[1] {
-UserDataItem_List @*(.user_data_) {
-name=;
-el_typ=UserDataItem;
-el_def=0;
-UserDataItem @[0] {
-name="NO_CLIP";
-value 1 0=1;
-};
-};
-name="data_anal";
-};
-taDataGen @[2] {
-UserDataItem_List @*(.user_data_) {
-name=;
-el_typ=UserDataItem;
-el_def=0;
-UserDataItem @[0] {
-name="NO_CLIP";
-value 1 0=1;
-};
-};
-name="data_gen";
-};
-taImageProc @[3] {
-UserDataItem_List @*(.user_data_) {
-name=;
-el_typ=UserDataItem;
-el_def=0;
-UserDataItem @[0] {
-name="NO_CLIP";
-value 1 0=1;
-};
-};
-name="image_proc";
-};
-};
-programs {
-name=;
-el_typ=Program;
-el_def=0;
-step_prog=NULL;
-tags=;
-desc=;
-Program @[0] {
-name="MediaWikiTest";
-tags=;
-desc="media wiki testing program";
-flags=;
-objs {
-name=;
-el_typ=DataTable;
-el_def=0;
-DataTable @[0] {
-name="Results";
-desc=;
-data {
-name="data";
-el_typ=String_Data;
-el_def=0;
-String_Data @[0] {
-name="PageTitle";
-col_flags=SAVE_ROWS|SAVE_DATA;
-is_matrix=0;
-cell_geom{ };
-calc_expr {
-expr=;
-};
-ar {
-name=;
-[10] "Main Page";"Emergent";"CCN Repository";"CECN";"CECN1 Projects";"CECN1 Units";"CECN1 Detector";"CECN1 Transform";"CECN CU Boulder OReilly";"CECN2";
-};
-};
-};
-data_flags=SAVE_ROWS|AUTO_CALC;
-auto_load=NO_AUTO_LOAD;
-auto_load_file=;
-keygen 4 0=0;
-};
-};
-types {
-name=;
-el_typ=ProgType;
-el_def=0;
-};
-args {
-name=;
-el_typ=ProgVar;
-el_def=0;
-};
-vars {
-name=;
-el_typ=ProgVar;
-el_def=0;
-ProgVar @[0] {
-name="Results";
-var_type=T_Object;
-object_type=DataTable;
-object_val=.projects[0].programs[0].objs[0]$0$;
-objs_ptr=1;
-flags=NULL_CHECK|USED;
-reference=0;
-desc=;
-};
-ProgVar @[1] {
-name="wiki_name";
-var_type=T_String;
-string_val="CCN";
-objs_ptr=0;
-flags=CTRL_PANEL|NULL_CHECK|USED;
-reference=0;
-desc=;
-};
-ProgVar @[2] {
-name="search_str";
-var_type=T_String;
-string_val="Emergent";
-objs_ptr=0;
-flags=CTRL_PANEL|NULL_CHECK|USED;
-reference=0;
-desc=;
-};
-ProgVar @[3] {
-name="max_results";
-var_type=T_Int;
-int_val=10;
-objs_ptr=0;
-flags=CTRL_PANEL|NULL_CHECK|USED;
-reference=0;
-desc=;
-};
-};
-functions {
-name=;
-el_typ=Function;
-el_def=0;
-};
-load_code {
-name=;
-el_typ=ProgEl;
-el_def=0;
-};
-init_code {
-name=;
-el_typ=ProgEl;
-el_def=0;
-};
-prog_code {
-name=;
-el_typ=ProgEl;
-el_def=0;
-StaticMethodCall @[0] {
-desc=;
-flags=;
-result_var=NULL;
-object_type=taMediaWiki;
-method=taMediaWiki::SearchPages;
-meth_args {
-name=;
-el_typ=ProgArg;
-el_def=0;
-ProgArg @[0] {
-arg_type=DataTable_ptr;
-type="DataTable*";
-name="results";
-required=1;
-def_val=;
-expr {
-expr="Results";
-};
-};
-ProgArg @[1] {
-arg_type=const_taString_ref;
-type="const taString&";
-name="wiki_name";
-required=1;
-def_val=;
-expr {
-expr="wiki_name";
-};
-};
-ProgArg @[2] {
-arg_type=const_taString_ref;
-type="const taString&";
-name="search_str";
-required=1;
-def_val=;
-expr {
-expr="search_str";
-};
-};
-ProgArg @[3] {
-arg_type=bool;
-type="bool";
-name="title_only";
-required=0;
-def_val="false";
-expr {
-expr="false";
-};
-};
-ProgArg @[4] {
-arg_type=const_taString_ref;
-type="const taString&";
-name="name_space";
-required=0;
-def_val="\"\"";
-expr {
-expr="\"\"";
-};
-};
-ProgArg @[5] {
-arg_type=int;
-type="int";
-name="max_results";
-required=0;
-def_val="-1";
-expr {
-expr="max_results";
-};
-};
-};
-};
-};
-};
-};
-viewers {
-name=;
-el_typ=TopLevelViewer;
-el_def=0;
-MainWindowViewer @[0] {
-m_data=.projects[0]$1$;
-name="Browser2";
-visible=1;
-m_is_root=0;
-m_is_viewer_xor_browser=0;
-m_is_proj_viewer=1;
-m_is_dialog=0;
-toolbars {
-name=;
-el_typ=ToolBar;
-el_def=0;
-ToolBar @[0] {
-m_data=NULL;
-name="Application";
-visible=0;
-lft=0;
-top=0;
-o=Horizontal;
-};
-};
-frames {
-name=;
-el_typ=FrameViewer;
-el_def=0;
-tabBrowseViewer @[0] {
-m_data=NULL;
-name="Tree";
-visible=1;
-root_typ=LeabraProject;
-root_md=NULL;
-m_root=$1$;
-};
-PanelViewer @[1] {
-m_data=NULL;
-name="Panels";
-visible=1;
-};
-T3DataViewer @[2] {
-m_data=NULL;
-name="T3Frames";
-visible=1;
-frames {
-name=;
-el_typ=T3DataViewFrame;
-el_def=0;
-T3DataViewFrame @[0] {
-m_data=NULL;
-name="Frame1";
-visible=1;
-root_view {
-m_data=NULL;
-m_transform=NULL;
-children {
-name=;
-el_typ=T3DataViewMain;
-el_def=0;
-};
-};
-camera_pos {x=0: y=0: z=-0.4765596: };
-camera_orient {x=0: y=0: z=1: rot=0: };
-camera_focdist=3.52344;
-bg_color {r=0.8: g=0.8: b=0.8: a=1: };
-headlight_on=1;
-fullscreen_on=0;
-stereo_view=STEREO_NONE;
-};
-};
-};
-};
-docks {
-name=;
-el_typ=DockViewer;
-el_def=0;
-ToolBoxDockViewer @[0] {
-m_data=NULL;
-name="Tools";
-visible=1;
-dock_flags=DV_MOVABLE|DV_FLOATABLE;
-dock_area=1;
-};
-};
-};
-};
-last_change_desc=;
-networks {
-name=;
-el_typ=LeabraNetwork;
-el_def=0;
-};
+   DataTableCols @.cluster_info.data = [6] {
+    String_Data @["queue"] { };
+    String_Data @["job_no"] { };
+    String_Data @["user"] { };
+    String_Data @["state"] { };
+    String_Data @["procs"] { };
+    String_Data @["start_time"] { };
+   };
+
+   ParamSearchAlgo_List @.search_algos = [0] {
+   };
+  };
+ };
+
+ ParamSet_Group @.param_sets = [0] {
+ };
+
+ DataTable_Group @.data = [0] {
+  DataTable_Group @.gp["InputData"] { 
+  };
+  DataTable_Group @.gp["OutputData"] { 
+  };
+  DataTable_Group @.gp["AnalysisData"] { 
+  };
+ };
+
+ Program_TopGroup @.programs = [18] {
+  Program @["Login"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["Logout"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["GetDirectoryContents"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["results"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["FileName"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["Size"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["results"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["UploadFile"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["DownloadFile"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["DeleteFile"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["LinkFile"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["LinkFiles"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["files"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["FileName"] { };
+      int_Data @["Size"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+       };
+      };
+      String_Data @["MimeType"] { };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["files"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [4] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    MethodCall @[2] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[3] { };
+   };
+  };
+  Program @["CreatePage"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["EditPage"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["FindMakePage"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["AddCategories"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["DeletePage"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["PublishProject"] { 
+   ProgObjList @.objs = [1] {
+    taMediaWiki @["media_wiki"] { };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [1] {
+    ProgVar @["media_wiki"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [4] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["QueryPages"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["results"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["PageTitle"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["PageId"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["results"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [6] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["QueryPagesByCategory"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["results"] { 
+     DataTableCols @.data = [2] {
+      String_Data @["PageTitle"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["PageId"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["results"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["QueryFiles"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["results"] { 
+     DataTableCols @.data = [3] {
+      String_Data @["FileName"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      int_Data @["Size"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["NARROW"] { };
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+      String_Data @["MimeType"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["results"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+  Program @["SearchPages"] { 
+   ProgObjList @.objs = [2] {
+    taMediaWiki @["media_wiki"] { };
+    DataTable @["results"] { 
+     DataTableCols @.data = [1] {
+      String_Data @["PageTitle"] { 
+       UserDataItem_List @*(.user_data_) {
+	UserDataItem @["view_panel_wd"] { };
+       };
+      };
+     };
+    };
+   };
+
+   ProgType_List @.types = [0] {
+   };
+
+   ProgVar_List @.args = [0] {
+   };
+
+   ProgVar_List @.vars = [2] {
+    ProgVar @["media_wiki"] { };
+    ProgVar @["results"] { };
+   };
+
+   Function_List @.functions = [0] {
+   };
+
+   ProgEl_List @.init_code = [0] {
+   };
+
+   ProgEl_List @.prog_code = [3] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [1] {
+      ProgVar @["success"] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [6] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+      ProgArg @[5] { };
+     };
+    };
+    PrintVar @[2] { };
+   };
+  };
+ };
+
+ taViewer_List @.viewers = [1] {
+  MainWindowViewer @["Browser2"] { 
+   UserDataItem_List @*(.user_data_) {
+    UserDataItem @["view_win_lft"] { };
+    UserDataItem @["view_win_top"] { };
+    UserDataItem @["view_win_wd"] { };
+    UserDataItem @["view_win_ht"] { };
+    UserDataItem @["view_win_iconified"] { };
+    UserDataItem @["view_splitter_state"] { };
+   };
+
+   ToolBar_List @.toolbars = [1] {
+    ToolBar @["Application"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_visible"] { };
+     };
+    };
+   };
+
+   FrameViewer_List @.frames = [3] {
+    BrowseViewerTaBase @["Tree"] { };
+    PanelViewer @["Panels"] { };
+    T3PanelViewer @["T3Frames"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_panel_selected"] { };
+     };
+
+     T3Panel_List @.panels = [1] {
+      T3Panel @["Frame1"] { 
+       T3DataView_List @.root_view.children = [0] {
+       };
+
+       T3SavedView_List @.saved_views = [10] {
+	T3SavedView @["Vw_0"] { };
+	T3SavedView @["Vw_1"] { };
+	T3SavedView @["Vw_2"] { };
+	T3SavedView @["Vw_3"] { };
+	T3SavedView @["Vw_4"] { };
+	T3SavedView @["Vw_5"] { };
+	T3SavedView @["Vw_6"] { };
+	T3SavedView @["Vw_7"] { };
+	T3SavedView @["Vw_8"] { };
+	T3SavedView @["Vw_9"] { };
+       };
+      };
+     };
+    };
+   };
+
+   DockViewer_List @.docks = [1] {
+    ToolBoxDockViewer @["Tools"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["view_win_lft"] { };
+      UserDataItem @["view_win_top"] { };
+      UserDataItem @["view_win_wd"] { };
+      UserDataItem @["view_win_ht"] { };
+      UserDataItem @["view_win_iconified"] { };
+      UserDataItem @["view_visible"] { };
+     };
+    };
+   };
+  };
+ };
+
+ Network_Group @.networks = [0] {
+ };
+};
+LeabraProject .projects["media_wiki_test"] {
+ name="media_wiki_test";
+ desc=;
+ tags=;
+ version {
+  major=0;
+  minor=0;
+  step=0;
+ };
+ license {
+  owner=;
+  license=NO_LIC;
+  org=;
+  year="2014";
+  custom=;
+ };
+ wiki_url {
+  sync=0;
+  wiki=;
+  url=;
+ };
+ docs {
+  name="docs";
+  el_typ=taDoc;
+  el_def=0;
+ };
+ wizards {
+  name="wizards";
+  el_typ=LeabraWizard;
+  el_def=0;
+  LeabraWizard @["LeabraWizard_0"] {
+   UserDataItem_List @*(.user_data_) {
+    name=;
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["NO_CLIP"] {
+     name="NO_CLIP";
+     value 1 0=1;
+     val_type_fixed=0;
+    };
+   };
+   name="LeabraWizard_0";
+  };
+ };
+ ctrl_panels {
+  name="ctrl_panels";
+  el_typ=ControlPanel;
+  el_def=0;
+  ClusterRun @["ClusterRun"] {
+   name="ClusterRun";
+   running_updt=0;
+   desc=;
+   mbrs {
+    name="mbrs";
+    el_typ=EditMbrItem;
+    el_def=0;
+   };
+   mths {
+    name="mths";
+    el_typ=EditMthItem;
+    el_def=0;
+    group_type=GT_BUTTONS;
+   };
+   jobs_running {
+    name="jobs_running";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   jobs_done {
+    name="jobs_done";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   jobs_archive {
+    name="jobs_archive";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["tag"] {
+      name="tag";
+      desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["notes"] {
+      name="notes";
+      desc="notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status_info"] {
+      name="status_info";
+      desc="more detailed information about status";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_time"] {
+      name="submit_time";
+      desc="when was the job submitted (tracks time from emergent client submission)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="when did the job actually start running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["end_time"] {
+      name="end_time";
+      desc="when did the job finish running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number on cluster -- assigned once the job is submitted to the cluster";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out"] {
+      name="job_out";
+      desc="job output information -- contains (top of) the job standard output and standard error output as the job is running (truncated to top 2048 characters if longer than that) -- full information available in job_out_file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_out_file"] {
+      name="job_out_file";
+      desc="job output file -- file name containing full job output information -- file name should be tag.out";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["dat_files"] {
+      name="dat_files";
+      desc="list of data table output (results) files generated by model (space separated) -- these files have the tag in their name, and end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["other_files"] {
+      name="other_files";
+      desc="list of other output (results) files generated by model (space separated) -- these files have the tag in their name but do not end in .dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["command_id"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="command_id";
+      desc="id for this command, assigned by the search algorithm in an algorithm-specific manner (optional)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["command"] {
+      name="command";
+      desc="emergent command line, up to point of parameters";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["repo_url"] {
+      name="repo_url";
+      desc="name of repository to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["queue"] {
+      name="queue";
+      desc="if specified, indicate a particular queue on the computing resource";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["run_time"] {
+      name="run_time";
+      desc="how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["ram_gb"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="ram_gb";
+      desc="how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["n_threads"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="n_threads";
+      desc="number of parallel threads to use for running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["mpi_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_nodes";
+      desc="number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_batches"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_batches";
+      desc="if > 0, use parallel batch mode with this number of batches";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     int_Data @["pb_nodes"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="pb_nodes";
+      desc="if doing parallel batch mode, and cluster has by_node policy, then this is the number of nodes to allocate to the overall job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_svn"] {
+      name="submit_svn";
+      desc="svn revision for the original job submission";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["submit_job"] {
+      name="submit_job";
+      desc="index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   file_list {
+    name="file_list";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["file_name"] {
+      name="file_name";
+      desc="name of file -- does not include any path information";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["tag"] {
+      name="tag";
+      desc="job tag associated with this file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["size"] {
+      name="size";
+      desc="size of file -- with typical suffixes (K = kilobytes, M = megabytes, G = gigabytes)";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["kind"] {
+      name="kind";
+      desc="type of file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_modified"] {
+      name="date_modified";
+      desc="timestamp for when the file was last modified";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["date_created"] {
+      name="date_created";
+      desc="timestamp for when the file was first created";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["svn_file_path"] {
+      name="svn_file_path";
+      desc="path to file in SVN repository, relative to root of svn_repo repository";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["proj_file_path"] {
+      name="proj_file_path";
+      desc="path to file relative to the parent project directory -- e.g., results/filename.dat";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["file_path"] {
+      name="file_path";
+      desc="full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   cluster_info {
+    name="cluster_info";
+    desc=;
+    data {
+     name="data";
+     el_typ=String_Data;
+     el_def=0;
+     String_Data @["queue"] {
+      name="queue";
+      desc="queue that this info relates to";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["job_no"] {
+      name="job_no";
+      desc="job number or total number of actve jobs";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user name";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["state"] {
+      name="state";
+      desc="current scheduler state -- or description of global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["procs"] {
+      name="procs";
+      desc="number of processors for this job or for global state info";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["start_time"] {
+      name="start_time";
+      desc="timestamp for when the job was submitted or started running";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+    };
+    data_flags=AUTO_CALC;
+    auto_load=NO_AUTO_LOAD;
+    auto_load_file=;
+    keygen 4 0=0;
+    row_indexes {
+     name="row_indexes";
+    [0]     };
+   };
+   search_algos {
+    name="search_algos";
+    el_typ=ParamSearchAlgo;
+    el_def=0;
+   };
+   cur_search_algo=NULL;
+   last_submit_time=;
+   notes=;
+   extra_files=;
+   svn_repo=;
+   repo_url=;
+   cluster=;
+   queue=;
+   run_time=;
+   ram_gb=0;
+   n_threads=1;
+   use_mpi=0;
+   mpi_nodes=10;
+   parallel_batch=0;
+   pb_batches=10;
+   pb_nodes=0;
+   nowin_x=0;
+  };
+ };
+ param_sets {
+  name="param_sets";
+  el_typ=ParamSet;
+  el_def=0;
+ };
+ data {
+  name="data";
+  el_typ=DataTable;
+  el_def=0;
+  save_tables=1;
+  DataTable_Group @.gp["InputData"] {
+   name="InputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp["OutputData"] {
+   name="OutputData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+  DataTable_Group @.gp["AnalysisData"] {
+   name="AnalysisData";
+   el_typ=DataTable;
+   el_def=0;
+   save_tables=1;
+  };
+ };
+ programs {
+  name="programs";
+  el_typ=Program;
+  el_def=0;
+  tags=;
+  desc=;
+  Program @["Login"] {
+   name="Login";
+   short_nm=;
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="ProgObjList_15";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name="ProgType_List_1";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["Login"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_15";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_96";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_97";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["Login"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["Login"].vars["media_wiki"]$$;
+     method=taMediaWiki::Login;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="username";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+     };
+     meth_sig="bool Login(taString& wiki_name, taString& username)";
+     meth_desc=" Login to the wiki. Returns true if username specified is already logged in. Otherwise prompts for username/password and returns true if login succeeds.";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["Login"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["Logout"] {
+   name="Logout";
+   short_nm="Logout";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["Logout"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["Logout"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["Logout"].vars["media_wiki"]$$;
+     method=taMediaWiki::Logout;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+     };
+     meth_sig="bool Logout(taString& wiki_name)";
+     meth_desc=" Logout from the wiki.";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["Logout"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["GetDirectoryContents"] {
+   name="GetDirectoryContents";
+   short_nm=;
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="ProgObjList_14";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["results"] {
+     name="results";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["FileName"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_48";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="FileName";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [33] "12ax4s_demo.proj";"CMakeLists.txt";"GuiDialogTest.proj";"SimpleLines5x5.dtbl";"TestUpload.txt";"TestUserData.proj";"actr.proj";"bp_std.proj";"connect_crash.proj";"continuous_delta_lrn.proj";
+"cs_std.proj";"giraffe.jpg";"gsl_tests.proj";"imgproc_test.proj";"jsonBasicDataTableTest.json";"leabra_4d.proj";"leabra_ra.proj";"leabra_ra_ct.proj";"leabra_sele.proj";"leabra_startup.css";
+"leabra_std.proj";"media_wiki_test.plog";"media_wiki_test.proj";"media_wiki_test_autosave.proj";"param_search.proj";"ra3_2.proj";"random_assoc_5x5_25.dtbl";"so_std.proj";"sub_drag_bug.proj";"test.proj";
+"toaster.jpg";"virtenv_test.proj";"visible_test.proj";       };
+      };
+      int_Data @["Size"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_44";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="Size";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [33] 819965;395;217394;1501;7;125405;391373;364179;225504;420960;
+390442;22216;7612;153699;272;141667;228837;402344;208870;2970;
+441997;17005;101405;95953;466501;274443;3563;345788;4559;278762;
+58578;41400;54959;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [33] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;     };
+    };
+   };
+   types {
+    name="ProgType_List_1";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["GetDirectoryContents"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["results"] {
+     name="results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["GetDirectoryContents"].objs["results"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_14";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_92";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_93";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["GetDirectoryContents"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["GetDirectoryContents"].vars["media_wiki"]$$;
+     method=taMediaWiki::GetDirectoryContents;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="results";
+       };
+      };
+     };
+     meth_sig="bool GetDirectoryContents(DataTable* results)";
+     meth_desc=" fill results data table with all of the files contained in the current working directory -- string column 'FileName' has name of file, int column 'Size' has file size -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["GetDirectoryContents"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["UploadFile"] {
+   name="UploadFile";
+   short_nm="pldFl";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="objs";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["UploadFile"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["UploadFile"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["UploadFile"].vars["media_wiki"]$$;
+     method=taMediaWiki::UploadFile;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="local_file_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestUpload.txt\"";
+       expr {
+	expr="\"Test.txt\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_file_name";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"TestUpload3.txt\"";
+       expr {
+	expr="\"TestUpload.txt\"";
+       };
+      };
+     };
+     meth_sig="bool UploadFile(taString& wiki_name, taString& local_file_name, taString& wiki_file_name)";
+     meth_desc=" upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["UploadFile"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["DownloadFile"] {
+   name="DownloadFile";
+   short_nm="DwnFl";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["DownloadFile"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["DownloadFile"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["DownloadFile"].vars["media_wiki"]$$;
+     method=taMediaWiki::DownloadFile;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_file_name";
+       required=1;
+       def_val="\"\"";
+       prev_expr="\"TestUpload.txt\"";
+       expr {
+	expr="\"TestUpload.txt\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="local_file_name";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"TestUpload.txt\"";
+       expr {
+	expr="\"TestDownload.txt\"";
+       };
+      };
+     };
+     meth_sig="bool DownloadFile(taString& wiki_name, taString& wiki_file_name, taString& local_file_name)";
+     meth_desc=" download given file name from wiki, optionally giving it a different file name than what it was on the wiki";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["DownloadFile"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["DeleteFile"] {
+   name="DeleteFile";
+   short_nm="DltFl";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["DeleteFile"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["DeleteFile"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["DeleteFile"].vars["media_wiki"]$$;
+     method=taMediaWiki::DeleteFile;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="file_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestPage\"";
+       expr {
+	expr="\"TestUpload.txt\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="reason";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"DeletePage test\"";
+       expr {
+	expr="\"Testing the DeleteFile method\"";
+       };
+      };
+     };
+     meth_sig="bool DeleteFile(taString& wiki_name, taString& file_name, taString& reason)";
+     meth_desc=" delete given file from wiki, optionally providing a reason for the deletion -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["DeleteFile"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["LinkFile"] {
+   name="LinkFile";
+   short_nm="LnFl";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["LinkFile"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["LinkFile"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["LinkFile"].vars["media_wiki"]$$;
+     method=taMediaWiki::LinkFile;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="file_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"TestUpload.txt\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestUpload.txt\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestDownload.txt\"";
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+     };
+     meth_sig="bool LinkFile(taString& file_name, taString& wiki_name, taString& page_name)";
+     meth_desc=" append given page on the wiki with a link to given uploaded file -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["LinkFile"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["LinkFiles"] {
+   name="LinkFiles";
+   short_nm="LnkFls";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["files"] {
+     name="files";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["FileName"] {
+       name="FileName";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] "LeabraBlank_autosave.proj";"LeabraStd.proj";"Test.txt";"Test3Mod.txt";"Test4Mod.txt";"TestUpload2.proj";"TestUpload3.txt";"media_wiki_test.proj";"testproj.proj";       };
+      };
+      int_Data @["Size"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_54";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+       };
+       name="Size";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] 82980;468522;11;17;19;71553;7;101405;783886;       };
+      };
+      String_Data @["MimeType"] {
+       name="MimeType";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] "text/x-c++";"text/x-c++";"text/plain";"text/plain";"text/plain";"text/x-c++";"text/plain";"text/x-c++";"text/x-c++";       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [9] 0;1;2;3;4;5;6;7;8;     };
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["LinkFiles"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["files"] {
+     name="files";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["LinkFiles"].objs["files"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=NULL;
+     obj=.projects["media_wiki_test"].programs["LinkFiles"].vars["media_wiki"]$$;
+     method=taMediaWiki::QueryFiles;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="files";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="start_nm";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="prefix";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="max_results";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+     meth_sig="bool QueryFiles(DataTable* results, taString& wiki_name, taString& start_nm, taString& prefix, int max_results = -1)";
+     meth_desc=" fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column 'FileName' has name of file, int column 'Size' has file size, string column 'MimeType' has mime type";
+    };
+    MethodCall @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["LinkFiles"].prog_code[0].local_vars["success"]$$;
+     obj=$.projects["media_wiki_test"].programs["LinkFiles"].vars["media_wiki"]$;
+     method=taMediaWiki::LinkFiles;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="files";
+       required=1;
+       def_val=;
+       prev_expr="\"TestUpload.txt\"";
+       expr {
+	expr="files";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestPage\"";
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+     };
+     meth_sig="bool LinkFiles(DataTable* files, taString& wiki_name, taString& page_name)";
+     meth_desc=" append given page on the wiki with links to given data table of uploaded files -- it is recommended that you populate the data table by calling QueryFiles -- returns true on success";
+    };
+    PrintVar @[3] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["LinkFiles"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["CreatePage"] {
+   name="CreatePage";
+   short_nm="CrtPg";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="objs";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["CreatePage"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["CreatePage"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["CreatePage"].vars["media_wiki"]$$;
+     method=taMediaWiki::CreatePage;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_content";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Testing the CreatePage method...\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_category";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"TestCat1 TestCat2\"";
+       };
+      };
+     };
+     meth_sig="bool CreatePage(taString& wiki_name, taString& page_name, taString& page_content, taString& page_category)";
+     meth_desc=" create given page on the wiki and populate it with given content if it does not currently exist -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["CreatePage"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["EditPage"] {
+   name="EditPage";
+   short_nm="dPg";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["EditPage"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["EditPage"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["EditPage"].vars["media_wiki"]$$;
+     method=taMediaWiki::EditPage;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_content";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Testing the EditPage method...\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_category";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"TestCat3 TestCat4\"";
+       };
+      };
+     };
+     meth_sig="bool EditPage(taString& wiki_name, taString& page_name, taString& page_content, taString& page_category)";
+     meth_desc=" append given page on the wiki with given content if it currently exists -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["EditPage"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["FindMakePage"] {
+   name="FindMakePage";
+   short_nm="FnMPg";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["FindMakePage"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["FindMakePage"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["FindMakePage"].vars["media_wiki"]$$;
+     method=taMediaWiki::FindMakePage;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_content";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Testing the FindMakePage method...\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_category";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"TestCat5 TestCat6\"";
+       };
+      };
+     };
+     meth_sig="bool FindMakePage(taString& wiki_name, taString& page_name, taString& page_content, taString& page_category)";
+     meth_desc=" find or create given page on the wiki and populate it with given content -- calls EditPage if the given page already exists on the wiki, otherwise calls CreatePage -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["FindMakePage"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["AddCategories"] {
+   name="AddCategories";
+   short_nm="dCtgrs";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["AddCategories"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["AddCategories"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["AddCategories"].vars["media_wiki"]$$;
+     method=taMediaWiki::AddCategories;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr="\"TestPage\"";
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_category";
+       required=1;
+       def_val="\"\"";
+       prev_expr="\"Testing the FindMakePage method...\"";
+       expr {
+	expr="\"TestCat7 TestCat8\"";
+       };
+      };
+     };
+     meth_sig="bool AddCategories(taString& wiki_name, taString& page_name, taString& page_category)";
+     meth_desc=" append given page on the wiki with given list of space-separated categories -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["AddCategories"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["DeletePage"] {
+   name="DeletePage";
+   short_nm="DltPg";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="objs";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name="types";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="args";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="vars";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["DeletePage"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="functions";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="init_code";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="prog_code";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["DeletePage"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["DeletePage"].vars["media_wiki"]$$;
+     method=taMediaWiki::DeletePage;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"TestPage\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="reason";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Testing the DeletePage method\"";
+       };
+      };
+     };
+     meth_sig="bool DeletePage(taString& wiki_name, taString& page_name, taString& reason)";
+     meth_desc=" delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["DeletePage"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["PublishProject"] {
+   name="PublishProject";
+   short_nm=;
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="ProgObjList_13";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+   };
+   types {
+    name="ProgType_List_1";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["PublishProject"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_13";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_88";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_89";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["PublishProject"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["PublishProject"].vars["media_wiki"]$$;
+     method=taMediaWiki::PublishProject;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="proj_filename";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"media_wiki_test.proj\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="page_content";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Testing the PublishProject method...\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="proj_category";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"Test1 Test2\"";
+       };
+      };
+     };
+     meth_sig="bool PublishProject(taString& wiki_name, taString& proj_filename, taString& page_content, taString& proj_category)";
+     meth_desc=" create/edit the wiki page for this project, upload the project file, then post a link to it on the project's wiki page -- returns true if all steps were completed successfully";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["PublishProject"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["QueryPages"] {
+   name="QueryPages";
+   short_nm="QryPgs";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name="ProgObjList_17";
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["results"] {
+     name="results";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["PageTitle"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_49";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="PageTitle";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [10] "CatTest";"CatTest2";"CreatePage Test";"LeabraBlank.proj";"LeabraStd";"Main Page";"Test1";"TestPage";"foo";"media wiki test";
+       };
+      };
+      int_Data @["PageId"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_45";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="PageId";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [10] 17;18;15;19;2;1;10;3;16;27;
+       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [10] 0;1;2;3;4;5;6;7;8;9;
+     };
+    };
+   };
+   types {
+    name="ProgType_List_1";
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name="ProgVar_List_1";
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["QueryPages"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["results"] {
+     name="results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["QueryPages"].objs["results"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name="Function_List_17";
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name="ProgEl_List_104";
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name="ProgEl_List_105";
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["QueryPages"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["QueryPages"].vars["media_wiki"]$$;
+     method=taMediaWiki::QueryPages;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="results";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="name_space";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="start_nm";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="prefix";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="max_results";
+       required=0;
+       def_val="-1";
+       prev_expr=;
+       expr {
+	expr="-1";
+       };
+      };
+     };
+     meth_sig="bool QueryPages(DataTable* results, taString& wiki_name, taString& name_space, taString& start_nm, taString& prefix, int max_results = -1)";
+     meth_desc=" fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all) -- string column 'PageTitle' has page title, int column 'PageId' has page ID number";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["QueryPages"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["QueryPagesByCategory"] {
+   name="QueryPagesByCategory";
+   short_nm="QrPgBy";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["results"] {
+     name="results";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["PageTitle"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_50";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="PageTitle";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [4] "CatTest";"CatTest2";"LeabraBlank.proj";"media wiki test";       };
+      };
+      int_Data @["PageId"] {
+       UserDataItem_List @*(.user_data_) {
+	name=;
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="PageId";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{        };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [4] 17;18;19;27;       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [4] 0;1;2;3;     };
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["QueryPagesByCategory"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["results"] {
+     name="results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["QueryPagesByCategory"].objs["results"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["QueryPagesByCategory"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["QueryPagesByCategory"].vars["media_wiki"]$$;
+     method=taMediaWiki::QueryPagesByCategory;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr="results";
+       expr {
+	expr="results";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="category";
+       required=1;
+       def_val=;
+       prev_expr="\"\"";
+       expr {
+	expr="\"Test1\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="name_space";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"\"";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="max_results";
+       required=0;
+       def_val="-1";
+       prev_expr="\"\"";
+       expr {
+	expr="-1";
+       };
+      };
+     };
+     meth_sig="bool QueryPagesByCategory(DataTable* results, taString& wiki_name, taString& category, taString& name_space, int max_results = -1)";
+     meth_desc=" fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all) -- string column 'PageTitle' has page title, int column 'PageId' has page ID number";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["QueryPagesByCategory"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["QueryFiles"] {
+   name="QueryFiles";
+   short_nm="QryFls";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["results"] {
+     name="results";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["FileName"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_51";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="FileName";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] "LeabraBlank_autosave.proj";"LeabraStd.proj";"Test.txt";"Test3Mod.txt";"Test4Mod.txt";"TestUpload2.proj";"TestUpload3.txt";"media_wiki_test.proj";"testproj.proj";       };
+      };
+      int_Data @["Size"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_49";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["NARROW"] {
+	 name="NARROW";
+	 value 1 0=1;
+	 val_type_fixed=0;
+	};
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="Size";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] 82980;468522;11;17;19;71553;7;101405;783886;       };
+      };
+      String_Data @["MimeType"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_52";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="MimeType";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [9] "text/x-c++";"text/x-c++";"text/plain";"text/plain";"text/plain";"text/x-c++";"text/plain";"text/x-c++";"text/x-c++";       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [9] 0;1;2;3;4;5;6;7;8;     };
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["QueryFiles"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["results"] {
+     name="results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["QueryFiles"].objs["results"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["QueryFiles"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["QueryFiles"].vars["media_wiki"]$$;
+     method=taMediaWiki::QueryFiles;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr="results";
+       expr {
+	expr="results";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="start_nm";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"\"";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="prefix";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"\"";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=int;
+       type="int";
+       name="max_results";
+       required=0;
+       def_val="-1";
+       prev_expr="\"\"";
+       expr {
+	expr="-1";
+       };
+      };
+     };
+     meth_sig="bool QueryFiles(DataTable* results, taString& wiki_name, taString& start_nm, taString& prefix, int max_results = -1)";
+     meth_desc=" fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column 'FileName' has name of file, int column 'Size' has file size, string column 'MimeType' has mime type";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["QueryFiles"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+  Program @["SearchPages"] {
+   name="SearchPages";
+   short_nm="SrcPgs";
+   tags=;
+   desc=;
+   flags=NO_STOP_STEP;
+   objs {
+    name=;
+    el_typ=taMediaWiki;
+    el_def=0;
+    taMediaWiki @["media_wiki"] {
+     name="media_wiki";
+    };
+    DataTable @["results"] {
+     name="results";
+     desc=;
+     data {
+      name="data";
+      el_typ=String_Data;
+      el_def=0;
+      String_Data @["PageTitle"] {
+       UserDataItem_List @*(.user_data_) {
+	name="UserDataItem_List_53";
+	el_typ=UserDataItem;
+	el_def=0;
+	UserDataItem @["view_panel_wd"] {
+	 name="view_panel_wd";
+	 value 6 0=0.2375296950340271;
+	 val_type_fixed=0;
+	};
+       };
+       name="PageTitle";
+       col_flags=SAVE_ROWS|SAVE_DATA;
+       is_matrix=0;
+       cell_geom{ 1;       };
+       calc_expr {
+	expr=;
+       };
+       dim_names {
+	name=;
+       [0]        };
+       width=0;
+       ar {
+	name=;
+       [3] "test page 1";"CreatePage Test";"media wiki test";       };
+      };
+     };
+     data_flags=SAVE_ROWS|AUTO_CALC;
+     auto_load=NO_AUTO_LOAD;
+     auto_load_file=;
+     keygen 4 0=0;
+     row_indexes {
+      name=;
+     [3] 0;1;2;     };
+    };
+   };
+   types {
+    name=;
+    el_typ=DynEnumType;
+    el_def=0;
+   };
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+   };
+   vars {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @["media_wiki"] {
+     name="media_wiki";
+     var_type=T_Object;
+     object_type=taMediaWiki;
+     object_val=.projects["media_wiki_test"].programs["SearchPages"].objs["media_wiki"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+    ProgVar @["results"] {
+     name="results";
+     var_type=T_Object;
+     object_type=DataTable;
+     object_val=.projects["media_wiki_test"].programs["SearchPages"].objs["results"]$$;
+     objs_ptr=1;
+     flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   functions {
+    name=;
+    el_typ=Function;
+    el_def=0;
+   };
+   init_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+   };
+   prog_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["success"] {
+       name="success";
+       var_type=T_Bool;
+       bool_val=0;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     result_var=.projects["media_wiki_test"].programs["SearchPages"].prog_code[0].local_vars["success"]$$;
+     obj=.projects["media_wiki_test"].programs["SearchPages"].vars["media_wiki"]$$;
+     method=taMediaWiki::SearchPages;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="results";
+       required=1;
+       def_val=;
+       prev_expr="results";
+       expr {
+	expr="results";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="wiki_name";
+       required=1;
+       def_val=;
+       prev_expr="\"test\"";
+       expr {
+	expr="\"test\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="search_str";
+       required=1;
+       def_val=;
+       prev_expr="\"\"";
+       expr {
+	expr="\"Test\"";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=bool;
+       type="bool";
+       name="title_only";
+       required=0;
+       def_val="false";
+       prev_expr="\"\"";
+       expr {
+	expr="true";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="name_space";
+       required=0;
+       def_val="\"\"";
+       prev_expr="\"\"";
+       expr {
+	expr="\"\"";
+       };
+      };
+      ProgArg @[5] {
+       arg_type=int;
+       type="int";
+       name="max_results";
+       required=0;
+       def_val="-1";
+       prev_expr="-1";
+       expr {
+	expr="-1";
+       };
+      };
+     };
+     meth_sig="bool SearchPages(DataTable* results, taString& wiki_name, taString& search_str, bool title_only = false, taString& name_space, int max_results = -1)";
+     meth_desc=" fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all) -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column 'PageTitle' has page title";
+    };
+    PrintVar @[2] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     message=;
+     print_var=$.projects["media_wiki_test"].programs["SearchPages"].prog_code[0].local_vars["success"]$;
+     print_var2=NULL;
+     print_var3=NULL;
+     print_var4=NULL;
+     print_var5=NULL;
+     print_var6=NULL;
+     my_mask=NULL;
+     debug_level=NULL;
+    };
+   };
+   step_prog=NULL;
+   step_n=1;
+  };
+ };
+ viewers {
+  name="viewers";
+  el_typ=MainWindowViewer;
+  el_def=0;
+  MainWindowViewer @["Browser2"] {
+   UserDataItem_List @*(.user_data_) {
+    name="UserDataItem_List_40";
+    el_typ=UserDataItem;
+    el_def=0;
+    UserDataItem @["view_win_lft"] {
+     name="view_win_lft";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_top"] {
+     name="view_win_top";
+     value 6 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_wd"] {
+     name="view_win_wd";
+     value 6 0=1;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_ht"] {
+     name="view_win_ht";
+     value 6 0=0.799482524394989;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_win_iconified"] {
+     name="view_win_iconified";
+     value 1 0=0;
+     val_type_fixed=0;
+    };
+    UserDataItem @["view_splitter_state"] {
+     name="view_splitter_state";
+     value 9 0="AAAA/wAAAAEAAAADAAABAgAAAfwAAAKMAQAAAAcBAAAAAQA=";
+     val_type_fixed=0;
+    };
+   };
+   name="Browser2";
+   m_data=.projects["media_wiki_test"]$$;
+   visible=1;
+   win_name=".projects[\"media_wiki_test\"] - media_wiki_test.proj";
+   m_is_root=0;
+   m_is_viewer_xor_browser=0;
+   m_is_proj_viewer=1;
+   m_is_dialog=0;
+   toolbars {
+    name="toolbars";
+    el_typ=ToolBar;
+    el_def=0;
+    ToolBar @["Application"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_41";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_visible"] {
+       name="view_win_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Application";
+     m_data=NULL;
+     visible=0;
+     lft=0;
+     top=0;
+     o=Horizontal;
+    };
+   };
+   frames {
+    name="frames";
+    el_typ=BrowseViewerTaBase;
+    el_def=0;
+    BrowseViewerTaBase @["Tree"] {
+     name="Tree";
+     m_data=NULL;
+     visible=1;
+     root_typ=LeabraProject;
+     root_md=NULL;
+     m_root=$.projects["media_wiki_test"]$;
+    };
+    PanelViewer @["Panels"] {
+     name="Panels";
+     m_data=NULL;
+     visible=1;
+    };
+    T3PanelViewer @["T3Frames"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_42";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_panel_selected"] {
+       name="view_panel_selected";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="T3Frames";
+     m_data=NULL;
+     visible=1;
+     panels {
+      name="panels";
+      el_typ=T3Panel;
+      el_def=0;
+      T3Panel @["Frame1"] {
+       name="Frame1";
+       m_data=NULL;
+       visible=1;
+       root_view {
+	name="root_view";
+	m_data=NULL;
+	m_transform=NULL;
+	children {
+	 name="children";
+	 el_typ=T3DataViewMain;
+	 el_def=0;
+	};
+       };
+       bg_color {r=0.8: g=0.8: b=0.8: a=1: };
+       text_color {r=0: g=0: b=0: a=1: };
+       headlight_on=1;
+       stereo_view=STEREO_NONE;
+       saved_views {
+	name="saved_views";
+	el_typ=T3SavedView;
+	el_def=0;
+	T3SavedView @["Vw_0"] {
+	 name="Vw_0";
+	 view_saved=1;
+	 pos {x=0: y=0: z=-0.4765596: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=3.52344;
+	};
+	T3SavedView @["Vw_1"] {
+	 name="Vw_1";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_2"] {
+	 name="Vw_2";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_3"] {
+	 name="Vw_3";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_4"] {
+	 name="Vw_4";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_5"] {
+	 name="Vw_5";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_6"] {
+	 name="Vw_6";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_7"] {
+	 name="Vw_7";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_8"] {
+	 name="Vw_8";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+	T3SavedView @["Vw_9"] {
+	 name="Vw_9";
+	 view_saved=0;
+	 pos {x=0: y=0: z=0: };
+	 orient {x=0: y=0: z=1: rot=0: };
+	 focal_dist=0;
+	};
+       };
+      };
+     };
+    };
+   };
+   docks {
+    name="docks";
+    el_typ=ToolBoxDockViewer;
+    el_def=0;
+    ToolBoxDockViewer @["Tools"] {
+     UserDataItem_List @*(.user_data_) {
+      name="UserDataItem_List_43";
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @["view_win_lft"] {
+       name="view_win_lft";
+       value 6 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_top"] {
+       name="view_win_top";
+       value 6 0=0.03492884710431099;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_wd"] {
+       name="view_win_wd";
+       value 6 0=0.06093750149011612;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_ht"] {
+       name="view_win_ht";
+       value 6 0=0.6804656982421875;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_win_iconified"] {
+       name="view_win_iconified";
+       value 1 0=0;
+       val_type_fixed=0;
+      };
+      UserDataItem @["view_visible"] {
+       name="view_visible";
+       value 1 0=1;
+       val_type_fixed=0;
+      };
+     };
+     name="Tools";
+     m_data=NULL;
+     visible=1;
+     win_name=;
+     dock_flags=DV_MOVABLE|DV_FLOATABLE;
+     dock_area=1;
+    };
+   };
+  };
+ };
+ save_view=1;
+ save_as_only=0;
+ auto_name=1;
+ last_change_desc=;
+ networks {
+  name="networks";
+  el_typ=LeabraNetwork;
+  el_def=0;
+ };
 };
