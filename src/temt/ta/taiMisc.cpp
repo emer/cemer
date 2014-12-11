@@ -1371,18 +1371,34 @@ void taiMisc::UpdateCustomKeyBindings() {
     
     // set the context, retrieve that sub list for each set of bindings, do the comparison
     int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
+    // Add new bindings not previously supported
     for (int ctxt=0; ctxt<context_count; ctxt++) {
       KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       for (int i=0; i<default_pairs->size; i++) {
-        KeyActionPair* default_pair = &default_pairs->SafeEl(i);
-        taiMisc::BoundAction default_action = default_pair->action;
-        if (custom_pairs->FindAction(default_action) == -1) {
-          custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), default_action, QKeySequence(default_pair->key_sequence));
-//          taMisc::DebugInfo("update", (String)default_pair->key_sequence.toString());
+        KeyActionPair* pair = &default_pairs->SafeEl(i);
+        taiMisc::BoundAction action = pair->action;
+        if (custom_pairs->FindAction(action) == -1) {
+          custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), action, QKeySequence(pair->key_sequence));
+          taMisc::DebugInfo("update - remove", (String)pair->key_sequence.toString());
         }
       }
     }
+    
+    // Remove custom bindings no longer supported
+    for (int ctxt=0; ctxt<context_count; ctxt++) {
+      KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+      KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+      for (int i=0; i<custom_pairs->size; i++) {
+        KeyActionPair* pair = &custom_pairs->SafeEl(i);
+        taiMisc::BoundAction action = pair->action;
+        if (custom_pairs->FindAction(action)) {
+          custom_bindings->Remove(static_cast<taiMisc::BindingContext>(ctxt), action, QKeySequence(pair->key_sequence));
+          taMisc::DebugInfo("update - add", (String)pair->key_sequence.toString());
+        }
+      }
+    }
+
     SaveCustomKeyBindings();
   }
 }

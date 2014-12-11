@@ -51,6 +51,33 @@ int KeyActionPair_PArray::FindAction(taiMisc::BoundAction action, int start) con
   return -1;
 }
 
+int KeyActionPair_PArray::FindPair(taiMisc::BoundAction action, QKeySequence key_sequence, int start) const {
+  int i;
+  if(start < 0) {               // search backwards if start < 0
+    for(i=size-start; i>=0; i--) {
+      if((FastEl(i).action == action) && (FastEl(i).key_sequence == key_sequence))
+        return i;
+    }
+  }
+  else {
+    for(i=start; i<size; i++) {
+      if(FastEl(i).action == action)
+        return i;
+    }
+  }
+  return -1;
+}
+
+KeyActionPair* KeyActionPair_PArray::GetPair(taiMisc::BoundAction action, QKeySequence key_sequence, int start) const {
+  int idx = FindPair(action, key_sequence, start);
+  if (idx != -1) {
+    return &SafeEl(idx);
+  }
+  else {
+    return NULL;
+  }
+}
+
 taiMisc::BoundAction KeyActionPair_PArray::GetAction(QKeySequence key_sequence) {
   int idx = FindKeySequence(key_sequence);
   if(idx < 0)

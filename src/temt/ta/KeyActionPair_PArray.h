@@ -36,6 +36,10 @@ public:
   // find by key sequence  (start < 0 = from end)
   int   FindAction(taiMisc::BoundAction act, int start=0) const;
   // #IGNORE find by action (start < 0 = from end)
+  int   FindPair(taiMisc::BoundAction act, QKeySequence key_sequence, int start=0) const;
+  // #IGNORE find the pair that matches on action and on sequence
+  KeyActionPair*   GetPair(taiMisc::BoundAction act, QKeySequence key_sequence, int start=0) const;
+  // #IGNORE find the pair that matches on action and on sequence
   
   taiMisc::BoundAction GetAction(QKeySequence key_sequence);
   // #IGNORE get action from key_sequence; isNull if not found

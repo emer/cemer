@@ -42,18 +42,19 @@ public:
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
+  virtual bool                  Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
+  // #IGNORE add a name value pair to the list of key bindings
   virtual void                  Reset();
   // #IGNORE delete key bindings from all contexts
   virtual QKeySequence          KeySequence(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE retrieve the key sequence bound to this context and action (e.g. PROJECTWINDOW_CONTEXT, "view_browse_only")
   virtual taiMisc::BoundAction  Action(taiMisc::BindingContext context,  QKeySequence key_sequence);
   // #IGNORE retrieve the action associated with this key_sequence (if more than one it will find the first - more than one not reasonable)
-  TA_SIMPLE_BASEFUNS(KeyBindings);
-
-//protected:
   virtual KeyActionPair_PArray*   CurrentBindings(taiMisc::BindingContext context);
   // #IGNORE retrieve pointer to list of bindings for the current BindingContext
   
+  TA_SIMPLE_BASEFUNS(KeyBindings);
+
 private:
   void Initialize()  { };
   void Destroy()     { };

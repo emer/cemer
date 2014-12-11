@@ -60,6 +60,18 @@ bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction acti
   return rval;
 }
 
+bool KeyBindings::Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence) {
+  bool rval = false;
+  KeyActionPair_PArray* context_bindings = CurrentBindings(context);
+  if (context_bindings) {
+    KeyActionPair* pair = context_bindings->GetPair(action, key_sequence);
+    if (pair) {
+      context_bindings->RemoveEl(*pair);
+    }
+  }
+  return rval;
+}
+
 void KeyBindings::Reset() {
   menu_bindings.Reset();
   project_window_bindings.Reset();
