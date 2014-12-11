@@ -240,6 +240,7 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_UNDO:
+    case taiMisc::TEXTEDIT_UNDO_II:
       key_event->accept();
       undo();
       return;

@@ -1217,13 +1217,11 @@ void iMainWindowViewer::Constr_ToolsMenu()
           this, SLOT(toolsCloseRemoteServer()));
   connect(toolsChooseKeyBindingsAction, SIGNAL(triggered()),
           this, SLOT(toolsChooseKeyBindings()));
-  
-//  toolsChooseKeyBindingsAction->setEnabled(false);
 }
 
 void iMainWindowViewer::Constr_HelpMenu()
 {
-  String s = taMisc::app_name + " Help on the web";
+  String s = taMisc::app_name + " help on the web (F1)";
   helpHelpAction = AddAction(new iAction("&Help", QKeySequence("F1"), "helpHelpAction"));
   helpHelpAction->setIcon(QIcon(QPixmap(":/images/help_icon.png")));
   helpHelpAction->setToolTip(s);

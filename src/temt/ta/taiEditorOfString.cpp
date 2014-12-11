@@ -188,7 +188,7 @@ bool taiEditorOfString::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() == QEvent::KeyPress) {
     QKeyEvent* e = static_cast<QKeyEvent *>(event);
     bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-    if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
+    if(ctrl_pressed && ((e->key()) || (e->key() == Qt::Key_Enter))) {
       Ok();                     // do it!
       return true;
     }

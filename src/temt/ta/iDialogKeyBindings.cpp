@@ -32,6 +32,7 @@
 #include <QGroupBox>
 #include <QFile>
 #include <QScrollArea>
+#include <QSize>
 
 iDialogKeyBindings* iDialogKeyBindings::New(iMainWindowViewer* par_window_)
 {
@@ -48,7 +49,7 @@ iDialogKeyBindings::iDialogKeyBindings(QWidget* par_window_)
   setModal(true);
   setWindowTitle("Key Binding Preferences");
   setFont(taiM->dialogFont(taiMisc::fonSmall));
-  resize(taiM->dialogSize(taiMisc::hdlg_s));
+//  resize(taiM->dialogSize(taiMisc::hdlg_s));
 }
 
 iDialogKeyBindings::iDialogKeyBindings() {
@@ -66,6 +67,9 @@ void iDialogKeyBindings::Constr() {
   layOuter->setMargin(taiM->vsep_c);
   layOuter->setSpacing(taiM->vspc_c);
   
+  layOuter->setSizeConstraint(QLayout::SetDefaultConstraint);
+  setMinimumSize(400, 500);
+
   // two boxes
   layOuter->addWidget(header_box);
   layOuter->addWidget(body_box);

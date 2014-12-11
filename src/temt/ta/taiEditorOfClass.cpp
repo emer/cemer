@@ -768,7 +768,7 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
   iMainWindowViewer* mvw = viewerWindow();
   if(mvw) {
     mvw->FocusIsMiddlePanel();
-    taMisc::DebugInfo("taiEditorOfClass - would call nav");
+//    taMisc::DebugInfo("taiEditorOfClass - would call nav");
 //    if(mvw->KeyEventFilterWindowNav(obj, e))
 //      return true;
   }
