@@ -954,7 +954,6 @@ void Network::Connect() {
 
   StructUpdate(false);
   --taMisc::no_auto_expand;
-  taMisc::DoneBusy();
 }
 
 void Network::Connect_Sizes() {

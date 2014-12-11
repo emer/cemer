@@ -1203,13 +1203,13 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     net_ex += u->ext * ls->clamp.gain;
   }
   if(net->net_misc.ti) {
-    net_ex += u->ti_ctxt + u->d5b_net;
+    net_ex += u->ti_ctxt;
   }
   if(cifer_thal.on) {
     net_ex += cifer_thal.thal_to_super * u->thal * net_syn;
   }
   if(cifer_d5b.on) {
-    net_ex += cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn
+    net_ex += u->d5b_net + cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn
   }
   if(da_mod.on) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
