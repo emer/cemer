@@ -49,43 +49,47 @@ public:
   // #CAT_Account Logout from the wiki.
 
   /////////////////////////////////////////////////////
-  //            UPLOAD/DOWNLOAD OPERATIONS
+  //            FILE OPERATIONS
 
   static bool   UploadFile(const String& wiki_name, const String& local_file_name,
-                           const String& wiki_file_name="", bool convert_to_camel=true);
-  // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally -- if convert_to_camel is true, destination file name will be converted to CamelCase format
+                           const String& wiki_file_name="");
+  // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
 
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
-                             const String& local_file_name="", bool convert_to_camel=true);
-  // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki -- if convert_to_camel is true, destination file name will be converted to CamelCase format
+                             const String& local_file_name="");
+  // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki
+
+  static bool   DeleteFile(const String& wiki_name, const String& file_name, const String& reason="");
+  // #CAT_File delete given file from wiki, optionally providing a reason for the deletion -- returns true on success
+
+  static bool   GetDirectoryContents(DataTable* results);
+  // #CAT_File fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size -- returns true on success
+
+  static bool   FileExists(const String& wiki_name, const String& file_name);
+  // #CAT_File determine if given file exists on wiki -- returns true if it does, false if it doesn't
 
   /////////////////////////////////////////////////////
   //            QUERY OPERATIONS
 
   static bool   QueryPages(DataTable* results, const String& wiki_name,
-                           const String& name_space="",
-                           const String& start_nm="",
-                           const String& prefix="",
-                           int max_results=-1);
-  // #CAT_Query fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number
+                           const String& name_space="", const String& start_nm="",
+                           const String& prefix="", int max_results=-1);
+  // #CAT_Query fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
 
   static bool   QueryPagesByCategory(DataTable* results, const String& wiki_name,
-                                     const String& category,
-                                     const String& name_space="",
+                                     const String& category, const String& name_space="",
                                      int max_results=-1);
-  // #CAT_Query fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page tiltle, int column "PageId" has page id number
+  // #CAT_Query fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
 
   static bool   QueryFiles(DataTable* results, const String& wiki_name,
-                           const String& start_nm="",
-                           const String& prefix="",
+                           const String& start_nm="", const String& prefix="",
                            int max_results=-1);
-  // #CAT_Query fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all), string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type
+  // #CAT_Query fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type
 
   static bool   SearchPages(DataTable* results, const String& wiki_name,
                             const String& search_str, bool title_only = false,
-                            const String& name_space="",
-                            int max_results=-1);
-  // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all), string column "PageTitle" has page title
+                            const String& name_space="", int max_results=-1);
+  // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all) -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column "PageTitle" has page title
 
   /////////////////////////////////////////////////////
   //            PAGE OPERATIONS
@@ -94,7 +98,7 @@ public:
   // #CAT_Page determine if given page exists on wiki -- returns true if it does, false if it doesn't
 
   static bool   DeletePage(const String& wiki_name, const String& page_name, const String& reason="");
-  // #CAT_Page delete given page from the wiki -- returns true on success
+  // #CAT_Page delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success
 
   static bool   FindMakePage(const String& wiki_name, const String& page_name,
                              const String& page_content="", const String& page_category="");
@@ -108,6 +112,16 @@ public:
                          const String& page_content="", const String& page_category="");
   // #CAT_Page append given page on the wiki with given content if it currently exists -- returns true on success
 
+  static bool   AddCategories(const String& wiki_name, const String& page_name,
+                              const String& page_category);
+  // #CAT_Page append given page on the wiki with given list of space-separated categories -- returns true on success
+
+  static bool   LinkFile(const String& file_name, const String& wiki_name, const String& page_name);
+  // #CAT_Page append given page on the wiki with a link to given uploaded file -- returns true on success
+
+  static bool   LinkFiles(DataTable* files, const String& wiki_name, const String& page_name);
+  // #CAT_Page append given page on the wiki with links to given data table of uploaded files -- it is recommended that you populate the data table by calling QueryFiles -- returns true on success
+
   /////////////////////////////////////////////////////
   //            WIKI OPERATIONS
 
@@ -119,7 +133,7 @@ public:
 
   static bool   PublishProject(const String& wiki_name, const String& proj_filename,
                                const String& page_content="", const String& proj_category="");
-  // #CAT_Wiki create/edit the wiki page for this project, upload all files from the local project directory, then post links to these files on the project's wiki page -- returns true on success
+  // #CAT_Wiki create/edit the wiki page for this project, upload the project file, then post a link to it on the project's wiki page -- returns true if all steps were completed successfully
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);
