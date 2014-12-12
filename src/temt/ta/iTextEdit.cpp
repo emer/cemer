@@ -135,6 +135,7 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_UNDO:
+    case taiMisc::TEXTEDIT_UNDO_II:
       key_event->accept();
       undo();
       return;
@@ -142,15 +143,13 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
       key_event->accept();
       emit lookupKeyPressed();
       return;
-    case taiMisc::TEXTEDIT_IGNORE:
-      key_event->ignore();		// allow this to go up to higher guy
-      return;
     case taiMisc::TEXTEDIT_FIND_IN_TEXT:
       findPrompt();
       return;
     default:
-      inherited::keyPressEvent(key_event);
+      ;
   }
+  inherited::keyPressEvent(key_event);
 }
 
 void iTextEdit::contextMenuEvent(QContextMenuEvent *event) {

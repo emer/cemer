@@ -392,7 +392,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::CONSOLE_CONTEXT, key_event);
 
   if (curOutputLn >= maxLines) {
-    if (action == taiMisc::CONSOLE_ENTER) {
+    if (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter) {
       curOutputLn = 0;
     }
     else if (action == taiMisc::CONSOLE_QUIT_PAGING) {
@@ -413,6 +413,26 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
   QTextCursor::MoveMode mv_mode = QTextCursor::MoveAnchor;
   if(ext_select_on)
     mv_mode = QTextCursor::KeepAnchor;
+
+  // no custom binding for these guys
+  if (key_event->key() == Qt::Key_Return || key_event->key() == Qt::Key_Enter) {
+    key_event->accept();
+    if (waiting_for_key) {
+      key_response = key_event->key();
+      waiting_for_key = false;
+    }
+    else {
+      if(promptDisp) {
+        QString command = getCurrentCommand();
+        if(isCommandComplete(command))
+          execCommand(command, false);
+      }
+      else {
+        displayPrompt(true);
+      }
+    }
+    return;
+  }
 
   switch(action) {
     case taiMisc::CONSOLE_UNDO:         // undo the current command
@@ -449,25 +469,6 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
         key_event->accept();  // we are at the prompt - swallow
       }
       break;
-    case taiMisc::CONSOLE_ENTER:
-    {
-      key_event->accept();
-      if (waiting_for_key) {
-        key_response = key_event->key();
-        waiting_for_key = false;
-      }
-      else {
-        if(promptDisp) {
-          QString command = getCurrentCommand();
-          if(isCommandComplete(command))
-            execCommand(command, false);
-        }
-        else {
-          displayPrompt(true);
-        }
-      }
-      break;
-    }
     case taiMisc::CONSOLE_CLEAR:
       key_event->accept();
       clear();

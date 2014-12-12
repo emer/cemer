@@ -642,6 +642,7 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         key_event->accept();
         return;
       case taiMisc::TREE_DELETE:
+      case taiMisc::TREE_DELETE_II:
         ext_select_on = false;
         if (ISelectable *si = curItem()) {
           if (ISelectableHost *host = si->host()) {

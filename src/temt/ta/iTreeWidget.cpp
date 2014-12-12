@@ -466,23 +466,6 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       e->accept();
       break;
-      //      case Qt::Key_F:
-      //        // if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
-      //        //   editItem(cur_item);     // todo: get column
-      //        // }
-      //        // else {
-      //        newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
-      //        // }
-      //        e->accept();
-      //        break;
-      //      case Qt::Key_B:
-      //        newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
-      //        e->accept();
-      //        break;
-      //      case Qt::Key_Enter:
-      //      case Qt::Key_Return:
-      //        e->ignore();		// pass this on to anyone higher (e.g., a dialog!)
-      //        return;
     case taiMisc::TREE_EDIT_HOME:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = 0;
