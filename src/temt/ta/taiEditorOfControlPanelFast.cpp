@@ -168,7 +168,7 @@ void taiEditorOfControlPanelFast::Constr_Widget_Labels() {
       QTableWidgetItem* twi = new QTableWidgetItem;
       twi->setText(item->caption());
       twi->setStatusTip(item->GetDesc());
-      twi->setToolTip(item->GetDesc());
+      twi->setToolTip(taiMisc::ToolTipPreProcess(item->GetDesc()));
       item_flags = Qt::ItemIsEnabled;
       twi->setFlags((Qt::ItemFlags)item_flags);
       tw->setItem(row, 0, twi);
@@ -228,7 +228,7 @@ void taiEditorOfControlPanelFast::GetImage_Item(int row) {
   }
 
   it->setText(txt);
-  it->setToolTip(txt); // for when over
+  it->setToolTip(taiMisc::ToolTipPreProcess(txt)); // for when over
 
   // default highlighting
   switch (item->mbr->GetDefaultStatus(item->base)) {

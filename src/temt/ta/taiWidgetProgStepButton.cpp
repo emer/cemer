@@ -135,7 +135,7 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
   QToolBar* newbar = new QToolBar();
   newbar->setFont(taiM->menuFont(defSize()));
   QLabel* lbl = new QLabel("Step:");
-  lbl->setToolTip("Run N Step(s) of a program -- select N (1,5,10) in adjacent buttons, and then click on the name of the program shown after N's to Step that given program (this Step label is not a button and does not do anything)");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Run N Step(s) of a program -- select N (1,5,10) in adjacent buttons, and then click on the name of the program shown after N's to Step that given program (this Step label is not a button and does not do anything)"));
   lbl->setFont(taiM->menuFont(defSize()));
   newbar->addWidget(lbl);
 
@@ -144,7 +144,7 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
   glay->setMargin(0); glay->setSpacing(0);
 
   stp1 = new QRadioButton(intstak);
-  stp1->setToolTip("step by single (1) steps");
+  stp1->setToolTip(taiMisc::ToolTipPreProcess("step by single (1) steps"));
 //   QSize sz = stp1->minimumSizeHint();
   // this size is useless!
 //   taMisc::Info("radio sz:", String(sz.width()), String(sz.height()));
@@ -155,13 +155,13 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
   glay->addWidget(stp1, 0, 0, Qt::AlignHCenter);
 
   stp5 = new QRadioButton(intstak);
-  stp5->setToolTip("step by 5 steps per step click");
+  stp5->setToolTip(taiMisc::ToolTipPreProcess("step by 5 steps per step click"));
   stp5->setMaximumSize(radio_width, radio_height);
   connect(stp5, SIGNAL(clicked(bool)), this, SLOT(Step5(bool)) );
   glay->addWidget(stp5, 0, 1, Qt::AlignHCenter);
 
   stp10 = new QRadioButton(intstak);
-  stp10->setToolTip("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}");
+  stp10->setToolTip(taiMisc::ToolTipPreProcess("step by 10 steps per step click, or amount shown if different from 10 (if program step_n != {1,5,10}"));
   stp10->setMaximumSize(radio_width, radio_height);
   connect(stp10, SIGNAL(clicked(bool)), this, SLOT(Step10(bool)) );
   glay->addWidget(stp10, 0, 2, Qt::AlignHCenter);
@@ -203,7 +203,7 @@ QWidget* taiWidgetProgStepButton::GetButtonRep() {
     iAction* act = new iAction(taiWidgetActions::normal, sp->short_nm);
     act->usr_data = (void*)sp;
     act->connect(iAction::ptr_act, this, SLOT(CallFunList(void*)));
-    act->setToolTip(sp->name);
+    act->setToolTip(taiMisc::ToolTipPreProcess(sp->name));
     act->setFont(taiM->menuFont(defSize()));
     tbut->setDefaultAction(act);
     if(i == prg->sub_progs_step.size-1) {

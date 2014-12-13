@@ -41,14 +41,14 @@ iPanelOfProgramBase::iPanelOfProgramBase(taiSigLink* dl_)
 //  lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
 //  lab->setFont(taiM->nameFont(taiMisc::sizSmall));
 //  lab->setText("lines");
-//  lab->setToolTip("how many lines to show in the item editor");
+//  lab->setToolTip(taiMisc::ToolTipPreProcess("how many lines to show in the item editor"));
 //  AddMinibarWidget(lab);
 //  QSpinBox* sp = new QSpinBox;
 //  sp->setFont(taiM->buttonFont(taiMisc::sizSmall));
 //  sp->setValue(pe->editLines()); // assume this is min as well
 //  sp->setMinimum(pe->editLines()); // assume this is min as well
 //  sp->setMaximum(20);// arbitrary
-//  sp->setToolTip(lab->toolTip());
+//  sp->setToolTip(taiMisc::ToolTipPreProcess(lab->toolTip()));
 //  AddMinibarWidget(sp);
 //  connect(sp, SIGNAL(valueChanged(int)), this, SLOT(mb_Lines(int)) );
 
@@ -57,7 +57,7 @@ iPanelOfProgramBase::iPanelOfProgramBase(taiSigLink* dl_)
 //  but->setMaximumHeight(taiM->button_height(taiMisc::sizSmall));
 //  but->setFont(taiM->buttonFont(taiMisc::sizSmall));
 //  but->setText("expert");
-//  but->setToolTip("whether to show items marked 'expert' in the program editor");
+//  but->setToolTip(taiMisc::ToolTipPreProcess("whether to show items marked 'expert' in the program editor"));
 //  but->setChecked(!(taMisc::show_gui & TypeItem::NO_EXPERT));
 //  AddMinibarWidget(but);
 //  connect(but, SIGNAL(clicked(bool)), this, SLOT(mb_Expert(bool)) );

@@ -72,7 +72,7 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblLayLayout = taiM->NewLabel("2/3D:", widg, font_spec);
-  lblLayLayout->setToolTip("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)");
+  lblLayLayout->setToolTip(taiMisc::ToolTipPreProcess("Use 2D or 3D layout of layers (2D is big flat plane, 3D is stacked layer planes)"));
   layDispCheck->addWidget(lblLayLayout);
   cmbLayLayout = dl.Add(new taiWidgetComboBox(true, 
 		TA_NetView.sub_types.FindName("LayerLayout"),
@@ -81,19 +81,19 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   layDispCheck->addSpacing(taiM->hsep_c);
 
   chkLayMove = new QCheckBox("Lay\nMv", widg);
-  chkLayMove->setToolTip("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)");
+  chkLayMove->setToolTip(taiMisc::ToolTipPreProcess("Turn on the layer moving controls when in the manipulation mode (red arrow) of viewer -- these can sometimes interfere with viewing weights, so you can turn them off here (but then you won't be able to move layers around in the GUI)"));
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkLayMove);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   chkNetText = new QCheckBox("Net\nTxt", widg);
-  chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
+  chkNetText->setToolTip(taiMisc::ToolTipPreProcess("Turn on the network text display at the base of the network, showing the current state of various counters and stats"));
   connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblUnitText = taiM->NewLabel("Unit:\nText", widg, font_spec);
-  lblUnitText->setToolTip("What text to display for each unit (values, names)");
+  lblUnitText->setToolTip(taiMisc::ToolTipPreProcess("What text to display for each unit (values, names)"));
   layDispCheck->addWidget(lblUnitText);
   cmbUnitText = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitTextDisplay"),
                                 this, NULL, widg, taiWidget::flgAutoApply));
@@ -101,8 +101,7 @@ iViewPanelOfNetwork::iViewPanelOfNetwork(NetView* dv_)
   layDispCheck->addSpacing(taiM->hsep_c);
 
   lblDispMode = taiM->NewLabel("Style", widg, font_spec);
-  lblDispMode->setToolTip("How to display unit values.  3d Block (default) is optimized\n\
- for maximum speed.");
+  lblDispMode->setToolTip(taiMisc::ToolTipPreProcess("How to display unit values.  3d Block (default) is optimized for maximum speed."));
   layDispCheck->addWidget(lblDispMode);
   cmbDispMode = dl.Add(new taiWidgetComboBox(true, TA_NetView.sub_types.FindName("UnitDisplayMode"),
     this, NULL, widg, taiWidget::flgAutoApply));
@@ -124,7 +123,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc = new QHBoxLayout();  layViewParams->addLayout(layFontsEtc);
 
   lblConType = taiM->NewLabel("Con\nType:", widg, font_spec);
-  lblConType->setToolTip("Display only selected types of connections?");
+  lblConType->setToolTip(taiMisc::ToolTipPreProcess("Display only selected types of connections?"));
   layFontsEtc->addWidget(lblConType);
   cmbConType = dl.Add(new taiWidgetComboBox(true, 
 		TA_NetView.sub_types.FindName("ConType"),
@@ -133,12 +132,12 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   chkShowIconified = new QCheckBox("Show\nIcon", widg);
-  chkShowIconified->setToolTip("Show iconified layers -- if this is off, then iconified layers are not displayed at all -- otherwise they are displayed with their name and optional iconified value, but projections are not displayed in any case");
+  chkShowIconified->setToolTip(taiMisc::ToolTipPreProcess("Show iconified layers -- if this is off, then iconified layers are not displayed at all -- otherwise they are displayed with their name and optional iconified value, but projections are not displayed in any case"));
   connect(chkShowIconified, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkShowIconified);
 
   lblPrjnWdth = taiM->NewLabel("Prjn\nWdth", widg, font_spec);
-  lblPrjnWdth->setToolTip("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select.");
+  lblPrjnWdth->setToolTip(taiMisc::ToolTipPreProcess("Width of projection lines -- .002 is default (very thin!) -- increase if editing projections so they are easier to select."));
   layFontsEtc->addWidget(lblPrjnWdth);
   fldPrjnWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldPrjnWdth->GetRep());
@@ -146,14 +145,14 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitTrans = taiM->NewLabel("Trans\nparency", widg, font_spec);
-  lblUnitTrans->setToolTip("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude.");
+  lblUnitTrans->setToolTip(taiMisc::ToolTipPreProcess("Unit maximum transparency level: 0 = all units opaque; 1 = inactive units are completely invisible.\n .6 = default; transparency is inversely related to value magnitude."));
   layFontsEtc->addWidget(lblUnitTrans);
   fldUnitTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitTrans->GetRep());
   ((iLineEdit*)fldUnitTrans->GetRep())->setCharWidth(6);  layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblUnitFont = taiM->NewLabel("Font\nSize", widg, font_spec);
-  lblUnitFont->setToolTip("Unit text font size (as a proportion of entire network display). .02 is default.");
+  lblUnitFont->setToolTip(taiMisc::ToolTipPreProcess("Unit text font size (as a proportion of entire network display). .02 is default."));
   layFontsEtc->addWidget(lblUnitFont);
   fldUnitFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldUnitFont->GetRep());
@@ -161,7 +160,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblLayFont = taiM->NewLabel("Layer\nFont Sz", widg, font_spec);
-  lblLayFont->setToolTip("Layer name font size (as a proportion of entire network display). .04 is default.");
+  lblLayFont->setToolTip(taiMisc::ToolTipPreProcess("Layer name font size (as a proportion of entire network display). .04 is default."));
   layFontsEtc->addWidget(lblLayFont);
   fldLayFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldLayFont->GetRep());
@@ -169,7 +168,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   lblMinLayFont = taiM->NewLabel("Min Sz", widg, font_spec);
-  lblMinLayFont->setToolTip("Minimum layer name font size (as a proportion of entire network display) -- prevents font from shrinking too small for small layers. .01 is default.");
+  lblMinLayFont->setToolTip(taiMisc::ToolTipPreProcess("Minimum layer name font size (as a proportion of entire network display) -- prevents font from shrinking too small for small layers. .01 is default."));
   layFontsEtc->addWidget(lblMinLayFont);
   fldMinLayFont = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layFontsEtc->addWidget(fldMinLayFont->GetRep());
@@ -177,12 +176,12 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layFontsEtc->addSpacing(taiM->hsep_c);
 
   chkXYSquare = new QCheckBox("XY\nSquare", widg);
-  chkXYSquare->setToolTip("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space).");
+  chkXYSquare->setToolTip(taiMisc::ToolTipPreProcess("Make the X and Y size of network the same, so that unit cubes are always square (but can waste a certain amount of display space)."));
   connect(chkXYSquare, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkXYSquare);
 
   chkLayGp = new QCheckBox("Lay\nGp", widg);
-  chkLayGp->setToolTip("Display boxes around layer groups.");
+  chkLayGp->setToolTip(taiMisc::ToolTipPreProcess("Display boxes around layer groups."));
   connect(chkLayGp, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layFontsEtc->addWidget(chkLayGp);
 
@@ -196,13 +195,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls = new QHBoxLayout();  layDisplayValues->addLayout(layColorScaleCtrls);
 
   chkSnapBord = new QCheckBox("Snap\nBord", widg);
-  chkSnapBord->setToolTip("Whether to display unit snapshot value snap as a border around units");
+  chkSnapBord->setToolTip(taiMisc::ToolTipPreProcess("Whether to display unit snapshot value snap as a border around units"));
   connect(chkSnapBord, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkSnapBord);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblSnapBordWdth = taiM->NewLabel("Bord\nWdth", widg, font_spec);
-  lblSnapBordWdth->setToolTip("Width of snap border lines");
+  lblSnapBordWdth->setToolTip(taiMisc::ToolTipPreProcess("Width of snap border lines"));
   layColorScaleCtrls->addWidget(lblSnapBordWdth);
   fldSnapBordWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldSnapBordWdth->GetRep());
@@ -210,7 +209,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblUnitSpacing = taiM->NewLabel("Unit\nSpace", widg, font_spec);
-  lblUnitSpacing->setToolTip("Spacing between units, as a proportion of the total width of the unit box");
+  lblUnitSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing between units, as a proportion of the total width of the unit box"));
   layColorScaleCtrls->addWidget(lblUnitSpacing);
   fldUnitSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldUnitSpacing->GetRep());
@@ -218,19 +217,19 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   chkWtLines = new QCheckBox("wt\nLines", widg);
-  chkWtLines->setToolTip("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude");
+  chkWtLines->setToolTip(taiMisc::ToolTipPreProcess("Whether to display connection weight values as colored lines, with color and transparency varying as a function of magnitude"));
   connect(chkWtLines, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLines);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   chkWtLineSwt = new QCheckBox("s.wt", widg);
-  chkWtLineSwt->setToolTip("Display the sending weights out of the unit instead of the receiving weights into it");
+  chkWtLineSwt->setToolTip(taiMisc::ToolTipPreProcess("Display the sending weights out of the unit instead of the receiving weights into it"));
   connect(chkWtLineSwt, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScaleCtrls->addWidget(chkWtLineSwt);
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineWdth = taiM->NewLabel("Wdth", widg, font_spec);
-  lblWtLineWdth->setToolTip("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)");
+  lblWtLineWdth->setToolTip(taiMisc::ToolTipPreProcess("Width of weight lines -- 0 = thinnest lines (-1 = no lines, redundant with turning wt_lines off)"));
   layColorScaleCtrls->addWidget(lblWtLineWdth);
   fldWtLineWdth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineWdth->GetRep());
@@ -238,7 +237,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtLineThr = taiM->NewLabel("Thr", widg, font_spec);
-  lblWtLineThr->setToolTip("Threshold for displaying weight lines: weight magnitudes below this value are not shown -- if a layer to project onto is selected (Wt Prjn) then if this value is < 0, intermediate units in the weight projection that are below the K un threshold will be zeroed.");
+  lblWtLineThr->setToolTip(taiMisc::ToolTipPreProcess("Threshold for displaying weight lines: weight magnitudes below this value are not shown -- if a layer to project onto is selected (Wt Prjn) then if this value is < 0, intermediate units in the weight projection that are below the K un threshold will be zeroed."));
   layColorScaleCtrls->addWidget(lblWtLineThr);
   fldWtLineThr = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtLineThr->GetRep());
@@ -248,13 +247,13 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply;
 
   lblWtPrjnLay = taiM->NewLabel("Wt\nPrjn", widg, font_spec);
-  lblWtPrjnLay->setToolTip("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update");
+  lblWtPrjnLay->setToolTip(taiMisc::ToolTipPreProcess("Layer to project weight values onto, from currently selected unit in view -- values are visible on all units in the wt_prjn unit variable if this setting is non-null -- setting this value causes expensive weight projection computation for every update"));
   layColorScaleCtrls->addWidget(lblWtPrjnLay);
   gelWtPrjnLay = dl.Add(new taiWidgetGroupElChooser(&TA_Layer_Group, this, NULL, widg, list_flags));
   layColorScaleCtrls->addWidget(gelWtPrjnLay->GetRep());
 
   lblWtPrjnKUn = taiM->NewLabel("K un", widg, font_spec);
-  lblWtPrjnKUn->setToolTip("Number of top K strongest units to propagate weight projection values through to other layers -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
+  lblWtPrjnKUn->setToolTip(taiMisc::ToolTipPreProcess("Number of top K strongest units to propagate weight projection values through to other layers -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative."));
   layColorScaleCtrls->addWidget(lblWtPrjnKUn);
   fldWtPrjnKUn = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtPrjnKUn->GetRep());
@@ -262,7 +261,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layColorScaleCtrls->addSpacing(taiM->hsep_c);
 
   lblWtPrjnKGp = taiM->NewLabel("K gp", widg, font_spec);
-  lblWtPrjnKGp->setToolTip("Number of top K strongest unit groups (where groups are present) to propagate weight projection values through to other layers (-1 or 0 to turn off this feature) -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative.");
+  lblWtPrjnKGp->setToolTip(taiMisc::ToolTipPreProcess("Number of top K strongest unit groups (where groups are present) to propagate weight projection values through to other layers (-1 or 0 to turn off this feature) -- smaller numbers produce more selective and often interpretable results, though they are somewhat less representative."));
   layColorScaleCtrls->addWidget(lblWtPrjnKGp);
   fldWtPrjnKGp = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layColorScaleCtrls->addWidget(fldWtPrjnKGp->GetRep());
@@ -275,7 +274,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   layiColorBar = new QHBoxLayout();  layDisplayValues->addLayout(layiColorBar);
 
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
-  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
+  chkAutoScale->setToolTip(taiMisc::ToolTipPreProcess("Automatically scale min and max values of colorscale based on values of variable being displayed"));
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layiColorBar->addWidget(chkAutoScale);
 
@@ -308,7 +307,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   histTB->setFloatable(false);
 
   chkHist = new QCheckBox("Hist: Save", histTB);
-  chkHist->setToolTip("Save display value history, which can then be replayed using VCR-style buttons in this toolbar -- value to the right is number of steps to save");
+  chkHist->setToolTip(taiMisc::ToolTipPreProcess("Save display value history, which can then be replayed using VCR-style buttons in this toolbar -- value to the right is number of steps to save"));
   connect(chkHist, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   histTB->addWidget(chkHist);
 
@@ -319,43 +318,43 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   histTB->addSeparator();
 
   actBack_All = histTB->addAction("|<");
-  actBack_All->setToolTip("Back all the way to first saved history of display values");
+  actBack_All->setToolTip(taiMisc::ToolTipPreProcess("Back all the way to first saved history of display values"));
   connect(actBack_All, SIGNAL(triggered()), this, SLOT(hist_back_all()) );
 
   actBack_F = histTB->addAction("<<");
-  actBack_F->setToolTip("Back ff steps in history of display values (edit field on far right to change ff steps to take)");
+  actBack_F->setToolTip(taiMisc::ToolTipPreProcess("Back ff steps in history of display values (edit field on far right to change ff steps to take)"));
   connect(actBack_F, SIGNAL(triggered()), this, SLOT(hist_back_f()) );
 
   actBack = histTB->addAction("<");
-  actBack->setToolTip("Back one step in history of display values");
+  actBack->setToolTip(taiMisc::ToolTipPreProcess("Back one step in history of display values"));
   connect(actBack, SIGNAL(triggered()), this, SLOT(hist_back()) );
 
   actFwd = histTB->addAction(">" );
-  actFwd->setToolTip("Forward one step in history of display values");
+  actFwd->setToolTip(taiMisc::ToolTipPreProcess("Forward one step in history of display values"));
   connect(actFwd, SIGNAL(triggered()), this, SLOT(hist_fwd()) );
 
   actFwd_F = histTB->addAction(">>" );
-  actFwd_F->setToolTip("Forward ff steps in history of display values (edit field on far right to change ff steps to take)");
+  actFwd_F->setToolTip(taiMisc::ToolTipPreProcess("Forward ff steps in history of display values (edit field on far right to change ff steps to take)"));
   connect(actFwd_F, SIGNAL(triggered()), this, SLOT(hist_fwd_f()) );
 
   actFwd_All = histTB->addAction(">|" );
-  actFwd_All->setToolTip("Forward all the way to current display values (will now track current values as they come in)");
+  actFwd_All->setToolTip(taiMisc::ToolTipPreProcess("Forward all the way to current display values (will now track current values as they come in)"));
   connect(actFwd_All, SIGNAL(triggered()), this, SLOT(hist_fwd_all()) );
 
   histTB->addSeparator();
 
   QLabel* lblbk = taiM->NewLabel("Hist, Pos:", histTB, font_spec);
-  lblbk->setToolTip("number of stored display states in the history buffer right now, and current position relative to the last update (pos numbers = further back in time)");
+  lblbk->setToolTip(taiMisc::ToolTipPreProcess("number of stored display states in the history buffer right now, and current position relative to the last update (pos numbers = further back in time)"));
   histTB->addWidget(lblbk);
 
   lblHist = taiM->NewLabel("100, 100", histTB, font_spec);
-  lblHist->setToolTip("number of steps back in history currently viewing");
+  lblHist->setToolTip(taiMisc::ToolTipPreProcess("number of steps back in history currently viewing"));
   histTB->addWidget(lblHist);
 
   histTB->addSeparator();
 
   QLabel* lblff = taiM->NewLabel("ff:", histTB, font_spec);
-  lblff->setToolTip("number of steps to take when going fast-forward or fast-back through history");
+  lblff->setToolTip(taiMisc::ToolTipPreProcess("number of steps to take when going fast-forward or fast-back through history"));
   histTB->addWidget(lblff);
 
   fldHistFF = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
@@ -365,7 +364,7 @@ B_F: Back = sender, Front = receiver, all arrows in the middle of the layer");
   histTB->addSeparator();
 
   actMovie = histTB->addAction("Movie");
-  actMovie->setToolTip("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- uses default 640x480 size with images saved as movie_img_xxx.png -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats");
+  actMovie->setToolTip(taiMisc::ToolTipPreProcess("record individual frames of the netview display from current position through to the end of the history buffer, as movie frames -- uses default 640x480 size with images saved as movie_img_xxx.png -- use mjpeg tools http://mjpeg.sourceforge.net/ (pipe png2yuv into mpeg2enc) to compile the individual PNG frames into an MPEG movie, which can then be transcoded (e.g., using VLC) into any number of other formats"));
   connect(actMovie, SIGNAL(triggered()), this, SLOT(hist_movie()) );
 
   layHistory->addStretch();

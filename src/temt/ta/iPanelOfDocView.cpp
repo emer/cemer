@@ -55,20 +55,20 @@ iPanelOfDocView::iPanelOfDocView()
 
   bak_but = url_bar->addAction("<");
 //   bak_but->setArrowType(Qt::LeftArrow);
-  bak_but->setToolTip("Go backward one step in browsing history");
+  bak_but->setToolTip(taiMisc::ToolTipPreProcess("Go backward one step in browsing history"));
   fwd_but = url_bar->addAction(">");
 //   fwd_but->setArrowType(Qt::RightArrow);
-  fwd_but->setToolTip("Go forward one step in browsing history");
+  fwd_but->setToolTip(taiMisc::ToolTipPreProcess("Go forward one step in browsing history"));
 
 //   url_bar->addSpacing(taiM->hsep_c);
 
   go_but = url_bar->addAction("Go");
-  go_but->setToolTip("Go to currently specified URL (can also just press enter in URL field)");
+  go_but->setToolTip(taiMisc::ToolTipPreProcess("Go to currently specified URL (can also just press enter in URL field)"));
 
 //   url_bar->addSpacing(taiM->hsep_c);
 
   wiki_label = taiM->NewLabel("wiki:", wb_widg, font_spec);
-  wiki_label->setToolTip("name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path");
+  wiki_label->setToolTip(taiMisc::ToolTipPreProcess("name of a wiki, as specified in global preferences, where this object should be stored -- this is used to lookup the wiki name -- if blank then url must be a full URL path"));
   url_bar->addWidget(wiki_label);
 //   url_bar->addSpacing(taiM->hsep_c);
   wiki_edit = new iLineEdit(wb_widg);
@@ -77,7 +77,7 @@ iPanelOfDocView::iPanelOfDocView()
 //   url_bar->addSpacing(taiM->hsep_c);
 
   url_label = taiM->NewLabel("URL:", wb_widg, font_spec);
-  url_label->setToolTip("a URL location for this document -- if blank or 'local' then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location");
+  url_label->setToolTip(taiMisc::ToolTipPreProcess("a URL location for this document -- if blank or 'local' then text field is used as document text -- otherwise if wiki name is set, then this is relative to that wiki, as wiki_url/index.php/Projects/url, otherwise it is a full URL path to a valid location"));
   url_bar->addWidget(url_label);
 //   url_bar->addSpacing(taiM->hsep_c);
   url_edit = new iLineEdit(wb_widg);
@@ -90,23 +90,23 @@ iPanelOfDocView::iPanelOfDocView()
   url_bar->addWidget(prog_bar);
 
   seturl_but = url_bar->addAction("Set");
-  seturl_but->setToolTip("Set current web page to be the URL for this document -- each document is associated with a single URL");
+  seturl_but->setToolTip(taiMisc::ToolTipPreProcess("Set current web page to be the URL for this document -- each document is associated with a single URL"));
 
   // find within item
   url_bar->addSeparator();
   find_lbl = taiM->NewLabel("find:", wb_widg, font_spec);
 //   find_lbl = new QLabel("| find:");
-  find_lbl->setToolTip("Find text string within currently viewed page");
+  find_lbl->setToolTip(taiMisc::ToolTipPreProcess("Find text string within currently viewed page"));
   url_bar->addWidget(find_lbl);
   find_text = new iLineEdit();
   find_text->setCharWidth(16);
   url_bar->addWidget(find_text);
   find_clear = url_bar->addAction("x");
-  find_clear->setToolTip("Clear find text and reset any prior highlighting");
+  find_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear find text and reset any prior highlighting"));
   find_prev = url_bar->addAction("<");
-  find_prev->setToolTip("Find previous occurrence of find: text within current page");
+  find_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find: text within current page"));
   find_next = url_bar->addAction(">");
-  find_next->setToolTip("Find next occurrence of find: text within current page");
+  find_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find: text within current page"));
 
   webview = new iWebView(wb_widg);
   wb_box->addWidget(webview);

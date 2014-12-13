@@ -58,7 +58,7 @@ iViewPanelOfVEWorld::iViewPanelOfVEWorld(VEWorldView* dv_)
   layDispCheck->addSpacing(taiM->hspc_c);
 
   lblDragSize = taiM->NewLabel("Drag Size: ", widg, font_spec);
-  lblDragSize->setToolTip("Size of the 'dragger' controls for manipulating the position, size, and rotation of objects.");
+  lblDragSize->setToolTip(taiMisc::ToolTipPreProcess("Size of the 'dragger' controls for manipulating the position, size, and rotation of objects."));
   layDispCheck->addWidget(lblDragSize);
   fldDragSize = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layDispCheck->addWidget(fldDragSize->GetRep());

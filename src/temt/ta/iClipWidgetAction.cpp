@@ -16,6 +16,7 @@
 #include "iClipWidgetAction.h"
 
 #include <iClipToolWidget>
+#include <taiMisc>
 #include <QApplication>
 #include <QClipboard>
 #include <QDrag>
@@ -42,7 +43,7 @@ QWidget* iClipWidgetAction::createWidget(QWidget* parent) {
   if (!statusTip().isEmpty())
     rval->setStatusTip(statusTip());
   if (!toolTip().isEmpty())
-    rval->setToolTip(toolTip());
+    rval->setToolTip(taiMisc::ToolTipPreProcess(toolTip()));
   return rval;
 }
 

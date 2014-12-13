@@ -124,7 +124,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Svn Revision Log</b>");
-  lbl->setToolTip("shows the log of revisions for files for current repository url (shown in middle panel) -- double click on a revision to view it in the repository file viewer");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("shows the log of revisions for files for current repository url (shown in middle panel) -- double click on a revision to view it in the repository file viewer"));
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -134,7 +134,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lay_lb->addWidget(lb_tb);
   
   lbl = new QLabel("end rev:");
-  lbl->setToolTip("ending revision to list log of commits for -- use -1 for the most recent (head)");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("ending revision to list log of commits for -- use -1 for the most recent (head)"));
   lb_tb->addWidget(lbl);
 
   end_rev_box = new iSpinBox(lbrow);
@@ -143,14 +143,14 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lb_tb->addWidget(end_rev_box);
 
   end_rev_pgup = lb_tb->addAction("^^");
-  end_rev_pgup->setToolTip("page-up on end_rev -- increase end_rev by n_entries");
+  end_rev_pgup->setToolTip(taiMisc::ToolTipPreProcess("page-up on end_rev -- increase end_rev by n_entries"));
   end_rev_pgdn = lb_tb->addAction("vv");
-  end_rev_pgdn->setToolTip("page-down on end_rev -- decrease end_rev by n_entries");
+  end_rev_pgdn->setToolTip(taiMisc::ToolTipPreProcess("page-down on end_rev -- decrease end_rev by n_entries"));
   connect(end_rev_pgup, SIGNAL(triggered()), this, SLOT(endRevPgUp()));
   connect(end_rev_pgdn, SIGNAL(triggered()), this, SLOT(endRevPgDn()));
 
   lbl = new QLabel(" n revs:");
-  lbl->setToolTip("number of revisions to get log data for");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("number of revisions to get log data for"));
   lb_tb->addWidget(lbl);
 
   n_entries_box = new iSpinBox(lbrow);
@@ -222,7 +222,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Svn Repository Files</b>");
-  lbl->setToolTip("shows the files checked into the repository at current url, and subdirectory -- double click on a file to view the file or diff if 'only' flag is set (so only given revision is being shown), or a directory to open it up -- keeps working copy and url coordinated");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("shows the files checked into the repository at current url, and subdirectory -- double click on a file to view the file or diff if 'only' flag is set (so only given revision is being shown), or a directory to open it up -- keeps working copy and url coordinated"));
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -232,7 +232,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lay_fb->addWidget(fb_tb);
   
   lbl = new QLabel("svn url:");
-  lbl->setToolTip("subversion repository url -- typically http:// or https:// url of server hosting the repository");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("subversion repository url -- typically http:// or https:// url of server hosting the repository"));
   fb_tb->addWidget(lbl);
 
   url_text = new iLineEdit(fbrow);
@@ -242,7 +242,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lay_fb->addWidget(tool_bar);
 
   lbl = new QLabel("subdir:");
-  lbl->setToolTip("current subdirectory path within repository");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("current subdirectory path within repository"));
   tool_bar->addWidget(lbl);
 
   subdir_text = new iLineEdit(fbrow);
@@ -251,7 +251,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   sd_up = tool_bar->addAction("Up..");
 
   lbl = new QLabel(" rev:");
-  lbl->setToolTip("current revision to operate on -- use -1 for head (current)");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("current revision to operate on -- use -1 for head (current)"));
   tool_bar->addWidget(lbl);
 
   rev_box = new iSpinBox(fbrow);
@@ -260,7 +260,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   tool_bar->addWidget(rev_box);
 
   rev_only = new iCheckBox(" only", fbrow);
-  rev_only->setToolTip("only show files from specified revision");
+  rev_only->setToolTip(taiMisc::ToolTipPreProcess("only show files from specified revision"));
   tool_bar->addWidget(rev_only);
 
   fb_act_go = tool_bar->addAction("Go");
@@ -310,7 +310,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Working Copy Files</b>");
-  lbl->setToolTip("shows the files in the currently checked-out working copy, and subdirectory -- double click on a file to view the file, or a directory to open it up -- keeps working copy and url coordinated");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("shows the files in the currently checked-out working copy, and subdirectory -- double click on a file to view the file, or a directory to open it up -- keeps working copy and url coordinated"));
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -320,14 +320,14 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   lay_wb->addWidget(tool_bar);
 
   lbl = new QLabel("working copy:");
-  lbl->setToolTip("path to the working copy where repository is checked out");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("path to the working copy where repository is checked out"));
   tool_bar->addWidget(lbl);
 
   wc_text = new iLineEdit(wbrow);
   tool_bar->addWidget(wc_text);
 
   wc_updt = new iCheckBox("view", wbrow);
-  wc_updt->setToolTip("view the working copy files -- this can be somewhat slow and memory intensive for large directories (e.g., emergent/src/temt/ta)");
+  wc_updt->setToolTip(taiMisc::ToolTipPreProcess("view the working copy files -- this can be somewhat slow and memory intensive for large directories (e.g., emergent/src/temt/ta)"));
   tool_bar->addWidget(wc_updt);
 
   wb_act_go = tool_bar->addAction("Go");

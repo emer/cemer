@@ -19,6 +19,7 @@
 #include <ColorScaleSpec>
 #include <ColorScaleColor_List>
 #include <int_Array>
+#include <taiMisc>
 
 #include <QTableView>
 #include <QStandardItem>
@@ -54,7 +55,7 @@ void iBrainViewEditDialog::SetColors()
     m_table_model->setItem(row, col, item);
   }
 
-  m_table_view->horizontalHeader()->setToolTip("Double-click on Color to edit with a color editor dialog");
+  m_table_view->horizontalHeader()->setToolTip(taiMisc::ToolTipPreProcess("Double-click on Color to edit with a color editor dialog"));
 }
 
 void iBrainViewEditDialog::itemClicked(const QModelIndex & index)
@@ -96,11 +97,11 @@ void iBrainViewEditDialog::AddButtons()
 
   QPushButton* btnRandomColors = m_button_box->addButton("RandomColors",
                                                          QDialogButtonBox::ActionRole);
-  btnRandomColors->setToolTip("generates random colors for the currently-selected items (according to the current filter) from a selected color scale");
+  btnRandomColors->setToolTip(taiMisc::ToolTipPreProcess("generates random colors for the currently-selected items (according to the current filter) from a selected color scale"));
 
   QPushButton* btnColorsFromScale = m_button_box->addButton("ColorsFromScale",
                                                             QDialogButtonBox::ActionRole);
-  btnColorsFromScale->setToolTip("generates colors for the currently-selected items (according to the current filter) from a selected color scale");
+  btnColorsFromScale->setToolTip(taiMisc::ToolTipPreProcess("generates colors for the currently-selected items (according to the current filter) from a selected color scale"));
 
   // Connect the button-box buttons to our SLOTs.
   connect(btnRandomColors, SIGNAL(clicked()), this, SLOT(btnRandomColors_clicked()));

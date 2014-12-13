@@ -366,7 +366,7 @@ void taiEditorOfClass::Constr_Methbox_Labels() {
     lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
     lab->setFont(taiM->nameFont(taiMisc::sizSmall));
     lab->setText(md->name + ": ");
-    lab->setToolTip(md->desc);
+    lab->setToolTip(taiMisc::ToolTipPreProcess(md->desc));
     layMethButtons->addWidget(lab);
     methbox_labels.Add(lab);
     methbox_members.Link(md);

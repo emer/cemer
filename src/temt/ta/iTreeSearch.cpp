@@ -43,7 +43,7 @@ void iTreeSearch::Constr() {
 
   srch_label = new QLabel("Find:");
   srch_label->setFont(taiM->nameFont(currentSizeSpec));
-  srch_label->setToolTip("Find text within the above browser: case sensitive if uppercase entered -- if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)");
+  srch_label->setToolTip(taiMisc::ToolTipPreProcess("Find text within the above browser: case sensitive if uppercase entered -- if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)"));
   srch_bar->addWidget(srch_label);
 
   srch_text = new iLineEdit();
@@ -51,15 +51,15 @@ void iTreeSearch::Constr() {
 
   srch_nfound = new QLabel(" 0");
   srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
-  srch_nfound->setToolTip("Number of items found");
+  srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
   srch_bar->addWidget(srch_nfound);
 
   srch_clear = srch_bar->addAction("x");
-  srch_clear->setToolTip("Clear search text and highlighting");
+  srch_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear search text and highlighting"));
   srch_prev = srch_bar->addAction("<");
-  srch_prev->setToolTip("Find previous occurrence of find text within browser");
+  srch_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find text within browser"));
   srch_next = srch_bar->addAction(">");
-  srch_next->setToolTip("Find next occurrence of find text within browser");
+  srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within browser"));
 
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
   connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );

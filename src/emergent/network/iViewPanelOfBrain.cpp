@@ -94,7 +94,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   layViewParams->addLayout(bvControls);
 
   QLabel* label = taiM->NewLabel("View\nPlane:", widg, font_spec);
-  label->setToolTip("Which of the anatomical planes to view.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("Which of the anatomical planes to view."));
   bvControls->addWidget(label);
   m_view_plane_comb = new QComboBox(widg);
   m_view_plane_comb->addItem("AXIAL");
@@ -106,7 +106,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Starting\nSlice:", widg, font_spec);
-  label->setToolTip("The starting slice number to view.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("The starting slice number to view."));
   bvControls->addWidget(label);
   m_slice_strt_sbox = new QSpinBox(widg);
   m_slice_strt_sbox->setRange(1,max_slices);
@@ -126,7 +126,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Lock\n#Slices:", widg, font_spec);
-  label->setToolTip("Lock slice sliders to maintain number of slices.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("Lock slice sliders to maintain number of slices."));
   bvControls->addWidget(label);
   m_lock_slices_chbox = new QCheckBox(widg);
   m_lock_slices_chbox->setCheckState(Qt::Unchecked);
@@ -135,7 +135,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Ending\nSlice:", widg, font_spec);
-  label->setToolTip("The ending slice number to view.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("The ending slice number to view."));
   bvControls->addWidget(label);
   m_slice_end_sbox = new QSpinBox(widg);
   m_slice_end_sbox->setRange(1, max_slices);
@@ -160,7 +160,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
 
   const int unit_trans(60);
   label = taiM->NewLabel("Unit Values\nTransparency:", widg, font_spec);
-  label->setToolTip("The transparency value of unit values.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("The transparency value of unit values."));
   bvControls->addWidget(label);
   m_unit_val_tran_sbox = new QSpinBox(widg);
   m_unit_val_tran_sbox->setRange(1, 100);
@@ -183,7 +183,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
 
   const int slice_trans(90);
   label = taiM->NewLabel("Slice\nTransparency:", widg, font_spec);
-  label->setToolTip("The transparency value of brain slices.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("The transparency value of brain slices."));
   bvControls->addWidget(label);
   m_slice_trans_sbox = new QSpinBox(widg);
   m_slice_trans_sbox->setRange(1, 100);
@@ -222,7 +222,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Areas (regexp):", widg, font_spec);
-  label->setToolTip("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas.");
+  label->setToolTip(taiMisc::ToolTipPreProcess("Select brain areas using a regular expression (wild card) to color according to their color in the atlas -- use the full regexp .*/.*/.*/.*/.* to color all areas."));
   bvControls->addWidget(label);
 
   fldBrainColorRegexp = dl.Add(new taiWidgetFieldRegexp(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
@@ -263,7 +263,7 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   bvControls->addSpacing(taiM->hspc_c);
 
   label = taiM->NewLabel("Atlas label (rexgexp)", widg, font_spec);
-  label->setToolTip("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow");
+  label->setToolTip(taiMisc::ToolTipPreProcess("Select brain areas to draw in opaque square regions -- the same as the display of unit values -- using a regular expression (wild card) -- works best with a small number of areas, and do NOT select all .*/.*/.*/.*/.* -- very slow"));
   bvControls->addWidget(label);
 
   fldBrainAtlasRegexp = dl.Add(new taiWidgetFieldRegexp(&TA_taString, this, dynamic_cast<taiWidget*>(this), widg,0, dynamic_cast<iDialogRegexpPopulator*>(atlas_regexp_pop)));
@@ -282,19 +282,19 @@ iViewPanelOfBrain::iViewPanelOfBrain(BrainView* dv_)
   layDispCheck = new QHBoxLayout();
   layViewParams->addLayout(layDispCheck);
   chkNetText = new QCheckBox("Net\nTxt", widg);
-  chkNetText->setToolTip("Turn on the network text display at the base of the network, showing the current state of various counters and stats");
+  chkNetText->setToolTip(taiMisc::ToolTipPreProcess("Turn on the network text display at the base of the network, showing the current state of various counters and stats"));
   connect(chkNetText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkNetText);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   chkLayMove = new QCheckBox("Manip", widg);
-  chkLayMove->setToolTip("Turn on the manipulation (moving, scaling, rotating the brain view) controls when in the manipulation mode (red arrow) of viewer");
+  chkLayMove->setToolTip(taiMisc::ToolTipPreProcess("Turn on the manipulation (moving, scaling, rotating the brain view) controls when in the manipulation mode (red arrow) of viewer"));
   connect(chkLayMove, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkLayMove);
   layDispCheck->addSpacing(taiM->hsep_c);
 
   chkAutoScale = new QCheckBox("Auto\nScale", widg);
-  chkAutoScale->setToolTip("Automatically scale min and max values of colorscale based on values of variable being displayed");
+  chkAutoScale->setToolTip(taiMisc::ToolTipPreProcess("Automatically scale min and max values of colorscale based on values of variable being displayed"));
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()));
   layDispCheck->addWidget(chkAutoScale);
   layDispCheck->addSpacing(taiM->hsep_c);

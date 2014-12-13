@@ -464,12 +464,12 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSaveAllAction = AddAction(new iAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
   fileOpenSvnBrowserAction = AddAction(new iAction("SVN Browser", QKeySequence(), "fileOpenSvnBrowserAction"));
-  fileOpenSvnBrowserAction->setToolTip("Browse source code in the subversion repository");
+  fileOpenSvnBrowserAction->setToolTip(taiMisc::ToolTipPreProcess("Browse source code in the subversion repository"));
   fileOpenSvnBrowserAction->setIcon(QIcon(QPixmap(":/images/svn_browse_icon.png")));
   fileOpenSvnBrowserAction->setIconText("Browse");
 
   fileSvnCommitAction = AddAction(new iAction("SVN Commit...", QKeySequence(), "fileSvnCommitAction"));
-  fileSvnCommitAction->setToolTip("Save/update this project to the subversion repository");
+  fileSvnCommitAction->setToolTip(taiMisc::ToolTipPreProcess("Save/update this project to the subversion repository"));
   fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   fileSvnCommitAction->setIconText("Commit");
 
@@ -481,7 +481,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileCloseAction->setIconText("Close");
 
   fileOptionsAction = AddAction(new iAction("&Options...", QKeySequence(), "fileOptionsAction"));
-  fileOptionsAction->setToolTip("Set various GUI preferences and other settings");
+  fileOptionsAction->setToolTip(taiMisc::ToolTipPreProcess("Set various GUI preferences and other settings"));
   fileOptionsAction->setIcon(QIcon(QPixmap(":/images/preferences_icon.png")));
   fileOptionsAction->setIconText("Prefs");
 
@@ -692,12 +692,12 @@ void iMainWindowViewer::Constr_ViewMenu()
   // Forward and back buttons -- note: on Win the icons don't show up if Action has text
   historyBackAction = AddAction(new iAction("Back",
       QKeySequence(Qt::ControlModifier + Qt::Key_Left), "historyBackAction"));
-  historyBackAction->setToolTip("Move back in object browsing history\nCtrl + Left");
+  historyBackAction->setToolTip(taiMisc::ToolTipPreProcess("Move back in object browsing history\nCtrl + Left"));
   historyBackAction->setStatusTip(historyBackAction->toolTip());
 
   historyForwardAction = AddAction(new iAction("Forward",
       QKeySequence(Qt::ControlModifier + Qt::Key_Right), "historyForwardAction"));
-  historyForwardAction->setToolTip("Move forward in object browsing history\nCtrl + Right");
+  historyForwardAction->setToolTip(taiMisc::ToolTipPreProcess("Move forward in object browsing history\nCtrl + Right"));
   historyForwardAction->setStatusTip(historyForwardAction->toolTip());
 
   // When window first created, there is no history, so manually disable.
@@ -794,18 +794,18 @@ void iMainWindowViewer::Constr_ControlMenu()
 {
   ctrlStopAction = AddAction(new iAction("Stop", QKeySequence(), "ctrlStopAction"));
   ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
-  ctrlStopAction->setToolTip("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button.");
+  ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button."));
 
   ctrlContAction = AddAction(new iAction("Cont", QKeySequence(), "ctrlContAction"));
   ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
-  ctrlContAction->setToolTip("Continue: continue running the last program that was run, from wherever it was last stopped");
+  ctrlContAction->setToolTip(taiMisc::ToolTipPreProcess("Continue: continue running the last program that was run, from wherever it was last stopped"));
   
   ctrlStepAction = AddAction(new iAction("Step", QKeySequence(), "ctrlStepAction"));
   ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
-  ctrlStepAction->setToolTip("Step: Step again");
+  ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
   
   progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
-  progStatusAction->setToolTip("Current Program status -- click button to see the current Global Backtrace of programs run");
+  progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global Backtrace of programs run"));
 
   // Build menu items.
   ctrlMenu->AddAction(ctrlStopAction);
@@ -1224,13 +1224,13 @@ void iMainWindowViewer::Constr_HelpMenu()
   String s = taMisc::app_name + " help on the web (F1)";
   helpHelpAction = AddAction(new iAction("&Help", QKeySequence("F1"), "helpHelpAction"));
   helpHelpAction->setIcon(QIcon(QPixmap(":/images/help_icon.png")));
-  helpHelpAction->setToolTip(s);
+  helpHelpAction->setToolTip(taiMisc::ToolTipPreProcess(s));
   helpHelpAction->setStatusTip(s);
 
   helpAboutAction = AddAction(new iAction("&About", QKeySequence(), "helpAboutAction"));
   helpFileBugAction = AddAction(new iAction("Report Bug", QKeySequence(), "helpFileBugAction"));
   helpFileBugAction->setIcon(QIcon(QPixmap(":/images/report_bug_icon.png")));
-  helpFileBugAction->setToolTip("Opens web page for reporting a problem or requesting an enhancement");
+  helpFileBugAction->setToolTip(taiMisc::ToolTipPreProcess("Opens web page for reporting a problem or requesting an enhancement"));
 
   // Build menu items.
   helpMenu->AddAction(helpHelpAction);

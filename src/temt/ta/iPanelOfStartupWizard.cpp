@@ -33,6 +33,7 @@
 #include <iTreeWidget>
 
 #include <taMisc>
+#include <taiMisc>
 
 iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
 :inherited(dl_) // usual case: we dynamically set the link, via setDoc
@@ -55,7 +56,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Create New Project -- Choose Starting Template</b>");
-  lbl->setToolTip("Select from one of the following templates as a starting point for creating a new project -- you can also save your own custom templates");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Select from one of the following templates as a starting point for creating a new project -- you can also save your own custom templates"));
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -89,7 +90,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   hb = new QHBoxLayout;
   hb->setMargin(0);
   lbl = new QLabel("<b>Select Recently Opened Project</b>");
-  lbl->setToolTip("Select a project from among the following list of recently opened projects, presented in order of recency");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Select a project from among the following list of recently opened projects, presented in order of recency"));
   hb->addStretch();
   hb->addWidget(lbl);
   hb->addStretch();
@@ -133,7 +134,7 @@ iPanelOfStartupWizard::iPanelOfStartupWizard(taiSigLink* dl_)
   // hb = new QHBoxLayout;
   // hb->setMargin(0);
   // lbl = new QLabel("<b>Open Any Project</b>");
-  // lbl->setToolTip("Click here to pull up a file dialog to choose a project to open anywhere in the file system");
+  // lbl->setToolTip(taiMisc::ToolTipPreProcess("Click here to pull up a file dialog to choose a project to open anywhere in the file system"));
   // hb->addStretch();
   // hb->addWidget(lbl);
   // hb->addStretch();

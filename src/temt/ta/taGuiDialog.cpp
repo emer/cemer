@@ -153,7 +153,7 @@ taGuiWidget* taGuiDialog::AddWidget_impl(QWidget* widg, const String& nm, const 
   widg->setFont(taiM->nameFont(data_host->ctrl_size)); // start with defaults
   // general attributes
   { String att = GetAttribute("tooltip=", attributes);
-    if(att.nonempty()) wid->widget->setToolTip(att); }
+    if(att.nonempty()) wid->widget->setToolTip(taiMisc::ToolTipPreProcess(att)); }
   { String att = GetAttribute("min_width=", attributes);
     if(att.nonempty()) wid->widget->setMinimumWidth((int)att); }
   { String att = GetAttribute("max_width=", attributes);
@@ -217,7 +217,7 @@ taGuiAction* taGuiDialog::AddAction_impl(QAction* act, const String& nm,
       QFont font = act->font(); font.setItalic(att.toBool());
       act->setFont(font); } }
   { String att = GetAttribute("tooltip=", attributes);
-    if(att.nonempty()) act->setToolTip(att); }
+    if(att.nonempty()) act->setToolTip(taiMisc::ToolTipPreProcess(att)); }
   { String att = GetAttribute("checkable=", attributes);
     if(att.nonempty()) act->setCheckable(att.toBool()); }
   { String att = GetAttribute("shortcut=", attributes);

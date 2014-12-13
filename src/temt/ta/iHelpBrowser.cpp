@@ -152,19 +152,19 @@ void iHelpBrowser::init() {
   lay_tv->addWidget(tool_bar);
 
   actBack = tool_bar->addAction("<");
-  actBack->setToolTip("Back one step in browsing history -- not often relevant due to opening new pages for each unique URL");
+  actBack->setToolTip(taiMisc::ToolTipPreProcess("Back one step in browsing history -- not often relevant due to opening new pages for each unique URL"));
   actBack->setStatusTip(actBack->toolTip());
   actForward = tool_bar->addAction(">" );
-  actForward->setToolTip("Forward one step in browsing history  -- not often relevant due to opening new pages for each unique URL");
+  actForward->setToolTip(taiMisc::ToolTipPreProcess("Forward one step in browsing history  -- not often relevant due to opening new pages for each unique URL"));
   actForward->setStatusTip(actForward->toolTip());
   tool_bar->addSeparator();
 
 //   QLabel* lbl = taiM->NewLabel("search", tvw, font_spec);
   QLabel* lbl = new QLabel("search");
-  lbl->setToolTip("Search for object type names to narrow the list below -- will find anything containing the text entered");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search for object type names to narrow the list below -- will find anything containing the text entered"));
   tool_bar->addWidget(lbl);
   filter = new iLineEdit();
-  filter->setToolTip(lbl->toolTip());
+  filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
   tool_bar->addWidget(filter);
 
   tv = new QTreeWidget(tvw);
@@ -194,23 +194,23 @@ void iHelpBrowser::init() {
 
   actGo = tool_bar->addAction("Go");
   actStop = tool_bar->addAction("X");
-  actStop->setToolTip("Stop");
+  actStop->setToolTip(taiMisc::ToolTipPreProcess("Stop"));
 
   // find within item
 //   find_lbl = taiM->NewLabel("| find:", wid_tab, font_spec);
   tool_bar->addSeparator();
   find_lbl = new QLabel("find:");
-  find_lbl->setToolTip("Find text string within currently viewed page");
+  find_lbl->setToolTip(taiMisc::ToolTipPreProcess("Find text string within currently viewed page"));
   tool_bar->addWidget(find_lbl);
   find_text = new iLineEdit();
   find_text->setCharWidth(16);
   tool_bar->addWidget(find_text);
   find_clear = tool_bar->addAction("x");
-  find_clear->setToolTip("Clear find text and reset any prior highlighting");
+  find_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear find text and reset any prior highlighting"));
   find_prev = tool_bar->addAction("<");
-  find_prev->setToolTip("Find previous occurrence of find: text within current page");
+  find_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find: text within current page"));
   find_next = tool_bar->addAction(">");
-  find_next->setToolTip("Find next occurrence of find: text within current page");
+  find_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find: text within current page"));
 
   lay_tab->addWidget(tool_bar);
   tab = new QTabWidget(wid_tab);
@@ -218,7 +218,7 @@ void iHelpBrowser::init() {
   tab->setUsesScrollButtons(true); // otherwise doesn't always, ex. on Mac
   btnAdd = new QToolButton;
   btnAdd->setText("+");
-  btnAdd->setToolTip("add a new empty tab");
+  btnAdd->setToolTip(taiMisc::ToolTipPreProcess("add a new empty tab"));
   tab->setCornerWidget(btnAdd, Qt::TopLeftCorner);
   lay_tab->addWidget(tab);
 

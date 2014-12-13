@@ -489,7 +489,7 @@ void taiMisc::FormatButton(QAbstractButton* but, const String& text,
   but->setMaximumWidth(maxButtonWidth(fontSpec));
   but->setText(text);
 //TODO: may conflict w/ desc text
-//  but->setToolTip(text);
+//  but->setToolTip(taiMisc::ToolTipPreProcess(text));
 }
 
 void taiMisc::LoadDialogDestroyed() {

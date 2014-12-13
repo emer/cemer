@@ -70,7 +70,7 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
 
   pin_act = AddAction(new iAction("&pin", QKeySequence(), "pin"));
   pin_act->setIcon(*pinned);
-  pin_act->setToolTip("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)");
+  pin_act->setToolTip(taiMisc::ToolTipPreProcess("Toggle between being locked to bottom of project window, or not -- lock = locked (click to unlock), pin = unlocked (click to lock)"));
   tb->addAction(pin_act);
     
   tb->addSeparator();
@@ -100,14 +100,14 @@ cssConsoleWindow::cssConsoleWindow(QWidget* parent) : inherited(parent) {
 
   clear_act = new iAction("&Clear", QKeySequence("Ctrl+."), "clear_act");
   clear_act->setIcon(*clear_icon);
-  clear_act->setToolTip("Clear the console window");
+  clear_act->setToolTip(taiMisc::ToolTipPreProcess("Clear the console window"));
   tb->addAction(clear_act);
   edit_menu->AddAction(clear_act);
   connect(clear_act, SIGNAL(Action()), css_con, SLOT(clear()));
     
   select_all_act = new iAction("&Select All", QKeySequence(), "select_all_act");
   select_all_act->setIcon(*select_all_icon);
-  select_all_act->setToolTip("Select all contents of console window");
+  select_all_act->setToolTip(taiMisc::ToolTipPreProcess("Select all contents of console window"));
   tb->addAction(select_all_act);
   edit_menu->AddAction(select_all_act);
   connect(select_all_act, SIGNAL(Action()), css_con, SLOT(selectAll()));

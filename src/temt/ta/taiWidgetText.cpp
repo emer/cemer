@@ -41,7 +41,7 @@ taiWidgetText::taiWidgetText(TypeDef* typ_, IWidgetHost* host_, taiWidget* par, 
 
     btnEdit = new QToolButton(act_par);
     btnEdit->setText("...");
-    btnEdit->setToolTip(tooltip);
+    btnEdit->setToolTip(taiMisc::ToolTipPreProcess(tooltip));
     btnEdit->setFixedHeight(taiM->text_height(defSize()));
     lay->addWidget(btnEdit);
 

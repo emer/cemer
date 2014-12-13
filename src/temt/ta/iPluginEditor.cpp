@@ -71,14 +71,14 @@ void iPluginEditor::init() {
   tool_box->addWidget(tool_bar);
 
   actSave = tool_bar->addAction("Save");
-  actSave->setToolTip("Save source code to files");
+  actSave->setToolTip(taiMisc::ToolTipPreProcess("Save source code to files"));
 
   actCompile = tool_bar->addAction("Compile");
   actCompile->setShortcut(QKeySequence("Ctrl+M"));
-  actCompile->setToolTip("Compile (Make) plugin from current source code -- assumes the build directory exists and has been made previously -- if unsure, use ReBuild first -- does a Save first before compiling");
+  actCompile->setToolTip(taiMisc::ToolTipPreProcess("Compile (Make) plugin from current source code -- assumes the build directory exists and has been made previously -- if unsure, use ReBuild first -- does a Save first before compiling"));
 
   actReBuild = tool_bar->addAction("ReBuild");
-  actReBuild->setToolTip("ReBuild (Make) plugin from current source code, starting everything from scratch at the beginning, including a make clean -- avoids any out-of-date build stuff messing up the compile -- does a Save first before compiling");
+  actReBuild->setToolTip(taiMisc::ToolTipPreProcess("ReBuild (Make) plugin from current source code, starting everything from scratch at the beginning, including a make clean -- avoids any out-of-date build stuff messing up the compile -- does a Save first before compiling"));
 
   split = new iSplitter(main_widg);
   main_vbox->addWidget(split);

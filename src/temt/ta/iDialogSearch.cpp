@@ -97,7 +97,7 @@ void iDialogSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
   search = new iLineEdit(this);
-  search->setToolTip("Enter text to search for in item names, descriptions, and contents.");
+  search->setToolTip(taiMisc::ToolTipPreProcess("Enter text to search for in item names, descriptions, and contents."));
   lay->addWidget(search, 1);
   btnGo = new QToolButton(this);
   btnGo->setText("&Go");
@@ -106,7 +106,7 @@ void iDialogSearch::Constr() {
   lay->addSpacing(taiM->vsep_c);
   btnStop = new QToolButton(this);
   btnStop->setText("X");
-  btnStop->setToolTip("stop search");
+  btnStop->setToolTip(taiMisc::ToolTipPreProcess("stop search"));
   lay->addWidget(btnStop);
   lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);

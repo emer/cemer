@@ -177,7 +177,7 @@ void taiEditorOfUserData::Constr_Widget_Labels() {
       twi = new QTableWidgetItem;
       twi->setText(item_->GetName());
       twi->setStatusTip(item_->GetDesc());
-      twi->setToolTip(item_->GetDesc());
+      twi->setToolTip(taiMisc::ToolTipPreProcess(item_->GetDesc()));
       item_flags = Qt::ItemIsEnabled;
       // item is editable if renamable
       if (item_->canRename())
@@ -215,7 +215,7 @@ void taiEditorOfUserData::GetImage_Item(int row) {
         txt = "<font style=\"background-color: white\">&nbsp;&nbsp;" + txt + "&nbsp;&nbsp;</font>";
     }
     it->setText(txt);
-    it->setToolTip(txt); // for when over
+    it->setToolTip(taiMisc::ToolTipPreProcess(txt)); // for when over
 
     // default highlighting
     switch (mbr->GetDefaultStatus(item)) {
@@ -233,7 +233,7 @@ void taiEditorOfUserData::GetImage_Item(int row) {
     String txt = item_->GetTypeDef()->GetValStr(item_, NULL,
       NULL, TypeDef::SC_DISPLAY, true);
     it->setText(txt);
-    it->setToolTip(txt); // for when over
+    it->setToolTip(taiMisc::ToolTipPreProcess(txt)); // for when over
   }
 }
 

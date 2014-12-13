@@ -117,26 +117,26 @@ void iDialogObjDiffBrowser::Constr() {
 
   QHBoxLayout* lay = new QHBoxLayout();
   btnAllA = new QPushButton("Toggle All &A's", this);
-  btnAllA->setToolTip("Toggle selection of all the selectable actions for the A item -- i.e., make the A equivalent to the B");
+  btnAllA->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection of all the selectable actions for the A item -- i.e., make the A equivalent to the B"));
   btnAllA->setDefault(false);
   btnAllA->setAutoDefault(false);
   lay->addWidget(btnAllA);
 
   btnFiltA = new QPushButton("Set Filtered A's", this);
-  btnFiltA->setToolTip("Set actions on or off for filtered subset of the selectable actions for the A item");
+  btnFiltA->setToolTip(taiMisc::ToolTipPreProcess("Set actions on or off for filtered subset of the selectable actions for the A item"));
   btnFiltA->setDefault(false);
   btnFiltA->setAutoDefault(false);
   lay->addWidget(btnFiltA);
   lay->addStretch();
 
   btnAllB = new QPushButton("Toggle All &B's", this);
-  btnAllB->setToolTip("Toggle selection all the selectable actions for the B item -- i.e., make the B equivalent to the A");
+  btnAllB->setToolTip(taiMisc::ToolTipPreProcess("Toggle selection all the selectable actions for the B item -- i.e., make the B equivalent to the A"));
   btnAllB->setDefault(false);
   btnAllB->setAutoDefault(false);
   lay->addWidget(btnAllB);
 
   btnFiltB = new QPushButton("Set Filtered B's", this);
-  btnFiltB->setToolTip("Set actions on or off for filtered subset of the selectable actions for the B item");
+  btnFiltB->setToolTip(taiMisc::ToolTipPreProcess("Set actions on or off for filtered subset of the selectable actions for the B item"));
   btnFiltB->setDefault(false);
   btnFiltB->setAutoDefault(false);
   lay->addWidget(btnFiltB);
@@ -151,26 +151,26 @@ void iDialogObjDiffBrowser::Constr() {
   items->setSortingEnabled(false);// only 1 order possible
   items->setEditTriggers(QAbstractItemView::DoubleClicked);
   items->headerItem()->setText(COL_NEST, "Nesting");
-  items->headerItem()->setToolTip(COL_NEST, "Nesting level below the original A or B object");
+  items->headerItem()->setToolTip(COL_NEST, taiMisc::ToolTipPreProcess("Nesting level below the original A or B object"));
   items->headerItem()->setText(COL_A_FLG, "A Action");
-  items->headerItem()->setToolTip(COL_A_FLG, "Edit action to perform on the A object -- these actions, if selected, will transform A into B");
+  items->headerItem()->setToolTip(COL_A_FLG, taiMisc::ToolTipPreProcess("Edit action to perform on the A object -- these actions, if selected will transform A into B"));
   items->headerItem()->setText(COL_A_NM, "A Name");
-  items->headerItem()->setToolTip(COL_A_NM, "Name of the item in A -- member name or sub-object name");
+  items->headerItem()->setToolTip(COL_A_NM, taiMisc::ToolTipPreProcess("Name of the item in A -- member name or sub-object name"));
   items->headerItem()->setText(COL_A_VAL, "A Value");
-  items->headerItem()->setToolTip(COL_A_VAL, "Value of the item in B");
+  items->headerItem()->setToolTip(COL_A_VAL, taiMisc::ToolTipPreProcess("Value of the item in B"));
   items->headerItem()->setText(COL_A_VIEW, "View");
-  items->headerItem()->setToolTip(COL_A_VIEW, "View A item in project -- selects this object in the appropriate browser in the main project window");
+  items->headerItem()->setToolTip(COL_A_VIEW, taiMisc::ToolTipPreProcess("View A item in project -- selects this object in the appropriate browser in the main project window"));
 
   items->headerItem()->setText(COL_SEP, " | ");
 
   items->headerItem()->setText(COL_B_FLG, "B Action");
-  items->headerItem()->setToolTip(COL_B_FLG, "Edit action to perform on the B object -- these actions, if selected, will transform B into A (i.e., the opposite of the default 'diff' direction)");
+  items->headerItem()->setToolTip(COL_B_FLG, taiMisc::ToolTipPreProcess("Edit action to perform on the B object -- these actions, if selected, will transform B into A (i.e., the opposite of the default 'diff' direction)"));
   items->headerItem()->setText(COL_B_NM, "B Name");
-  items->headerItem()->setToolTip(COL_B_NM, "Name of the item in B -- member name or sub-object name");
+  items->headerItem()->setToolTip(COL_B_NM, taiMisc::ToolTipPreProcess("Name of the item in B -- member name or sub-object name"));
   items->headerItem()->setText(COL_B_VAL, "B Value");
-  items->headerItem()->setToolTip(COL_B_VAL, "Value of the item in B");
+  items->headerItem()->setToolTip(COL_B_VAL, taiMisc::ToolTipPreProcess("Value of the item in B"));
   items->headerItem()->setText(COL_B_VIEW, "View");
-  items->headerItem()->setToolTip(COL_B_VIEW, "View B item in project -- selects this object in the appropriate browser in the main project window");
+  items->headerItem()->setToolTip(COL_B_VIEW, taiMisc::ToolTipPreProcess("View B item in project -- selects this object in the appropriate browser in the main project window"));
   items->setUniformRowHeights(true);
   items->setIndentation(taMisc::tree_indent);
 

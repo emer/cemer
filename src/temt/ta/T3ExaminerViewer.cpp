@@ -188,7 +188,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   rhs_vbox->addWidget(zoom_wheel);
   zoom_lbl = new QLabel("Zoom", this);
   zoom_lbl->setFont(taiM->buttonFont(taiMisc::sizMedium));
-  zoom_lbl->setToolTip("Wheel above will Zoom the view camera in and out -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
+  zoom_lbl->setToolTip(taiMisc::ToolTipPreProcess("Wheel above will Zoom the view camera in and out -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)"));
   rhs_vbox->addWidget(zoom_lbl);
   
   rhs_vbox->addSpacing(4);
@@ -197,13 +197,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   /////  bot_hbox
   
   vrot_lbl = new QLabel("V.Rot", this);
-  vrot_lbl->setToolTip("Wheel above will rotate the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
+  vrot_lbl->setToolTip(taiMisc::ToolTipPreProcess("Wheel above will rotate the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)"));
   bot_hbox->addWidget(vrot_lbl);
   
   bot_hbox->addSpacing(4);
   
   hrot_lbl = new QLabel("H.Rot", this);
-  hrot_lbl->setToolTip("Wheel to the right will rotate the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
+  hrot_lbl->setToolTip(taiMisc::ToolTipPreProcess("Wheel to the right will rotate the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)"));
   bot_hbox->addWidget(hrot_lbl);
   
   bot_hbox->addWidget(hrot_wheel);
@@ -218,13 +218,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   
   bot_hbox->addWidget(hpan_wheel);
   hpan_lbl = new QLabel("H.Pan", this);
-  hpan_lbl->setToolTip("Wheel to the left will pan (move) the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
+  hpan_lbl->setToolTip(taiMisc::ToolTipPreProcess("Wheel to the left will pan (move) the view horizontally -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)"));
   bot_hbox->addWidget(hpan_lbl);
   
   bot_hbox->addSpacing(4);
   
   vpan_lbl = new QLabel("V.Pan ", this);
-  vpan_lbl->setToolTip("Wheel above will pan (move) the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)");
+  vpan_lbl->setToolTip(taiMisc::ToolTipPreProcess("Wheel above will pan (move) the view vertically -- keyboard arrows and PgUp/PgDn also work here, as does the scroll wheel (hold down Shift or Ctrl to move in finer steps)"));
   bot_hbox->addWidget(vpan_lbl);
   
   Constr_RHS_Buttons();
@@ -254,7 +254,7 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   interact_button->setCheckable(true);
   interact_button->setChecked(false);
   interact_button->setIcon(QPixmap((const char **)pick_xpm));
-  interact_button->setToolTip("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View");
+  interact_button->setToolTip(taiMisc::ToolTipPreProcess("Interact (I key, or ESC to toggle): Allows you to select and manipulate objects in the display \n(ESC toggles between Interact and Camera View"));
   connect(interact_button, SIGNAL(clicked()), this, SLOT(interactbuttonClicked()));
   rhs_button_vbox->addWidget(interact_button);
   
@@ -263,41 +263,41 @@ void T3ExaminerViewer::Constr_RHS_Buttons() {
   view_button->setCheckable(true);
   view_button->setChecked(true);
   view_button->setIcon(QPixmap((const char **)view_xpm));
-  view_button->setToolTip("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)");
+  view_button->setToolTip(taiMisc::ToolTipPreProcess("Camera View (V key, or ESC to toggle): Allows you to move the view around (click and drag to move; \nshift = move in the plane; ESC toggles between Camera View and Interact)"));
   connect(view_button, SIGNAL(clicked()), this, SLOT(viewbuttonClicked()));
   rhs_button_vbox->addWidget(view_button);
   
   view_all_button = new QToolButton(this);
   view_all_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   view_all_button->setIcon(QPixmap((const char **)view_all_xpm));
-  view_all_button->setToolTip("(A key) View All: repositions the camera view to the standard initial view with everything in view");
+  view_all_button->setToolTip(taiMisc::ToolTipPreProcess("(A key) View All: repositions the camera view to the standard initial view with everything in view"));
   connect(view_all_button, SIGNAL(clicked()), this, SLOT(viewallbuttonClicked()));
   rhs_button_vbox->addWidget(view_all_button);
   
   seek_button = new QToolButton(this);
   seek_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   seek_button->setIcon(QPixmap((const char **)seek_xpm));
-  seek_button->setToolTip("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further");
+  seek_button->setToolTip(taiMisc::ToolTipPreProcess("Seek (S key): Click on objects (not text!) in the display and the camera will \nfocus in on the point where you click -- repeated clicks will zoom in further"));
   connect(seek_button, SIGNAL(clicked()), this, SLOT(seekbuttonClicked()));
   rhs_button_vbox->addWidget(seek_button);
   
   snapshot_button = new QToolButton(this);
   snapshot_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   snapshot_button->setIcon(QPixmap((const char **)snapshot_xpm));
-  snapshot_button->setToolTip("Snapshot: save the current viewer image to a file -- PNG format is recommended for most cases as it compresses well and is lossles.  Use EPS to produce a postscript format file that can be converted to PDF or other vector formats for editing.");
+  snapshot_button->setToolTip(taiMisc::ToolTipPreProcess("Snapshot: save the current viewer image to a file -- PNG format is recommended for most cases as it compresses well and is lossles.  Use EPS to produce a postscript format file that can be converted to PDF or other vector formats for editing."));
   connect(snapshot_button, SIGNAL(clicked()), this, SLOT(snapshotbuttonClicked()));
   rhs_button_vbox->addWidget(snapshot_button);
   
   print_button = new QToolButton(this);
   print_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
   print_button->setIcon(QPixmap((const char **)print_xpm));
-  print_button->setToolTip("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality");
+  print_button->setToolTip(taiMisc::ToolTipPreProcess("Print: print the current viewer image to a printer -- uses the bitmap of screen image\n make window as large as possible for better quality"));
   connect(print_button, SIGNAL(clicked()), this, SLOT(printbuttonClicked()));
   rhs_button_vbox->addWidget(print_button);
   
   annote_button = new iMenuButton(this);
   taiM->FormatButton(annote_button, "+", taiMisc::fonBig);
-  annote_button->setToolTip("Add annotations (lines, text, etc) to the view");
+  annote_button->setToolTip(taiMisc::ToolTipPreProcess("Add annotations (lines, text, etc) to the view"));
   
   QMenu* anmenu = new QMenu();
   QAction* tmpact = new QAction("line", this);
@@ -371,7 +371,7 @@ void T3ExaminerViewer::Constr_Bot_Buttons() {
     view_act->setCheckable(true);
     view_act->setChecked(sv->view_saved);
     
-    view_button->setToolTip("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name");
+    view_button->setToolTip(taiMisc::ToolTipPreProcess("Go To View: Restores display to previously saved viewing configuration -- hold mouse down for menu to save view and set view name"));
     //    view_button->setIconSize(QSize(BUTTON_WIDTH, BUTTON_HEIGHT));
     view_button->setDefaultAction(view_act);
     bot_button_hbox->addWidget(view_button);
@@ -419,7 +419,7 @@ int T3ExaminerViewer::addDynButton(const String& label, const String& tooltip) {
   iAction* dyn_act = new iAction(but_no, label, QKeySequence());
   dyn_act->connect(iAction::int_act, this,  SLOT(dynbuttonClicked(int)));
   dyn_act->setParent(dyn_button);
-  dyn_act->setToolTip(tooltip);
+  dyn_act->setToolTip(taiMisc::ToolTipPreProcess(tooltip));
   dyn_button->setDefaultAction(dyn_act);
   dyn_button->setFont(taiM->buttonFont(taiMisc::sizMedium));
   lhs_button_vbox->addWidget(dyn_button);

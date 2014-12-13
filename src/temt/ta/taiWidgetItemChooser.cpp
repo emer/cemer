@@ -66,7 +66,7 @@ taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
     if (!HasFlag(flgReadOnly)) {
       btnEdit = new QToolButton(act_par);
       btnEdit->setIcon( QIcon( QPixmap(":/images/editedit.png") ) );
-      btnEdit->setToolTip("edit this item in another panel");
+      btnEdit->setToolTip(taiMisc::ToolTipPreProcess("edit this item in another panel"));
       connect(btnEdit, SIGNAL(clicked()), this, SLOT(EditPanel()) );
       btnEdit->setFixedHeight(taiM->text_height(defSize()));
       btnEdit->setFocusPolicy(Qt::ClickFocus); // skip over for normal tab chain
@@ -77,7 +77,7 @@ taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
   if (!HasFlag(flgNoHelp)) {
     btnHelp = new QToolButton(act_par);
     btnHelp->setText("?");
-    btnHelp->setToolTip("get Help for this item");
+    btnHelp->setToolTip(taiMisc::ToolTipPreProcess("get Help for this item"));
 //    taiM->FormatButton(btnHelp, _nilString, defSize());
     btnHelp->setFixedHeight(taiM->button_height(defSize()));
     btnHelp->setFocusPolicy(Qt::ClickFocus); // skip over for normal tab chain

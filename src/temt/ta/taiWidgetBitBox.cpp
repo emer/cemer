@@ -115,7 +115,7 @@ void taiWidgetBitBox::AddBoolItem(bool auto_apply, String name, int val,
 {
   iBitCheckBox* bcb = new iBitCheckBox(auto_apply, val, name, m_rep);
   if (desc.nonempty()) {
-    bcb->setToolTip(taiMisc::ToolTipPreProcess(desc));
+    bcb->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
   }
   if(lay->count() > 0)
     lay->addSpacing(taiM->hsep_c);

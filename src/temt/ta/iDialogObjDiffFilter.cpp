@@ -96,7 +96,7 @@ void iDialogObjDiffFilter::Constr() {
   layOuter->addSpacing(taiM->vsep_c);
 
   chkActionOn = new QCheckBox("Action &On", this);
-  chkActionOn->setToolTip("State to set for the action flag for diff items -- on or off");
+  chkActionOn->setToolTip(taiMisc::ToolTipPreProcess("State to set for the action flag for diff items -- on or off"));
   chkActionOn->setCheckState(Qt::Checked);
   layOuter->addWidget(chkActionOn);
 
@@ -106,17 +106,17 @@ void iDialogObjDiffFilter::Constr() {
   lay->addWidget(lbl);
 
   chkAdd = new QCheckBox("&Add", this);
-  chkAdd->setToolTip("Include Add Diffs");
+  chkAdd->setToolTip(taiMisc::ToolTipPreProcess("Include Add Diffs"));
   chkAdd->setCheckState(Qt::Checked);
   lay->addWidget(chkAdd);
 
   chkDel = new QCheckBox("&Del", this);
-  chkDel->setToolTip("Include Del Diffs");
+  chkDel->setToolTip(taiMisc::ToolTipPreProcess("Include Del Diffs"));
   chkDel->setCheckState(Qt::Checked);
   lay->addWidget(chkDel);
 
   chkChg = new QCheckBox("&Chg", this);
-  chkChg->setToolTip("Include Chg Diffs");
+  chkChg->setToolTip(taiMisc::ToolTipPreProcess("Include Chg Diffs"));
   chkChg->setCheckState(Qt::Checked);
   lay->addWidget(chkChg);
   lay->addStretch();
@@ -126,13 +126,13 @@ void iDialogObjDiffFilter::Constr() {
   lay = new QHBoxLayout();
 
   lbl = new QLabel("name contains:");
-  lbl->setToolTip("Text that the name of diff object must contain (or not)");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Text that the name of diff object must contain (or not)"));
   lay->addWidget(lbl);
   editNm = new iLineEdit(this);
   lay->addWidget(editNm);
 
   chkNmNot = new QCheckBox("not!", this);
-  chkNmNot->setToolTip("changes name contains text to NOT contains");
+  chkNmNot->setToolTip(taiMisc::ToolTipPreProcess("changes name contains text to NOT contains"));
   lay->addWidget(chkNmNot);
 
   layOuter->addLayout(lay);
@@ -140,13 +140,13 @@ void iDialogObjDiffFilter::Constr() {
   lay = new QHBoxLayout();
 
   lbl = new QLabel("value contains:");
-  lbl->setToolTip("Text that the value of diff object must contain (or not)");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Text that the value of diff object must contain (or not)"));
   lay->addWidget(lbl);
   editVal = new iLineEdit(this);
   lay->addWidget(editVal);
 
   chkValNot = new QCheckBox("not!", this);
-  chkValNot->setToolTip("changes value contains text to NOT contains");
+  chkValNot->setToolTip(taiMisc::ToolTipPreProcess("changes value contains text to NOT contains"));
   lay->addWidget(chkValNot);
 
   layOuter->addLayout(lay);

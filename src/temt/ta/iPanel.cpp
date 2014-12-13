@@ -50,7 +50,7 @@ iPanel::~iPanel() {
 //     lab->setMaximumHeight(taiM->label_height(taiMisc::sizSmall));
 //     lab->setFont(taiM->nameFont(taiMisc::sizSmall));
 //     lab->setText(md->name + ": " + md->type->GetValStr(md->GetOff(obj), obj, md));
-//     lab->setToolTip(md->desc);
+//     lab->setToolTip(taiMisc::ToolTipPreProcess(md->desc));
 //     AddMinibarWidget(lab);
 //   }
 // }

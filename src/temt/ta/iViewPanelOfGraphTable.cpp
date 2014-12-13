@@ -63,13 +63,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
 
   chkDisplay = new QCheckBox("Disp", widg); chkDisplay->setObjectName("chkDisplay");
-  chkDisplay->setToolTip("Whether to update the display when the underlying data changes");
+  chkDisplay->setToolTip(taiMisc::ToolTipPreProcess("Whether to update the display when the underlying data changes"));
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkManip = new QCheckBox("Manip", widg); chkDisplay->setObjectName("chkManip");
-  chkManip->setToolTip("Whether to enable manipulation of the view object via a transformation box that supports position, scale and rotation manipulations");
+  chkManip->setToolTip(taiMisc::ToolTipPreProcess("Whether to enable manipulation of the view object via a transformation box that supports position, scale and rotation manipulations"));
   connect(chkManip, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkManip);
   layTopCtrls->addSpacing(taiM->hsep_c);
@@ -77,7 +77,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   // todo: fix tool tips on all of these..
 
   lblGraphType = taiM->NewLabel("Graph", widg, font_spec);
-  lblGraphType->setToolTip("How to display the graph");
+  lblGraphType->setToolTip(taiMisc::ToolTipPreProcess("How to display the graph"));
   layTopCtrls->addWidget(lblGraphType);
   cmbGraphType = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("GraphType"),
                                  this, NULL, widg, taiWidget::flgAutoApply));
@@ -85,7 +85,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layTopCtrls->addSpacing(taiM->hsep_c);
 
   lblPlotStyle = taiM->NewLabel("Style", widg, font_spec);
-  lblPlotStyle->setToolTip("How to plot the lines");
+  lblPlotStyle->setToolTip(taiMisc::ToolTipPreProcess("How to plot the lines"));
   layTopCtrls->addWidget(lblPlotStyle);
   cmbPlotStyle = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("PlotStyle"),
                                  this, NULL, widg, taiWidget::flgAutoApply));
@@ -93,13 +93,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkNegDraw =  new QCheckBox("Neg\nDraw", widg); chkNegDraw->setObjectName("chkNegDraw");
-  chkNegDraw->setToolTip("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data");
+  chkNegDraw->setToolTip(taiMisc::ToolTipPreProcess("Whether to draw a line when going in a negative direction (to the left), which may indicate a wrap-around to a new iteration of data"));
   connect(chkNegDraw, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDraw);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
   chkNegDrawZ =  new QCheckBox("Neg\nDraw Z", widg); chkNegDrawZ->setObjectName("chkNegDrawZ");
-  chkNegDrawZ->setToolTip("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data");
+  chkNegDrawZ->setToolTip(taiMisc::ToolTipPreProcess("Whether to draw a line when going in a negative direction of Z (to the front), which may indicate a wrap-around to a new channel of data"));
   connect(chkNegDrawZ, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkNegDrawZ);
   layTopCtrls->addSpacing(taiM->hsep_c);
@@ -113,14 +113,14 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
 
   lblRows = taiM->NewLabel("View\nRows", widg, font_spec);
-  lblRows->setToolTip("Maximum number of rows to display (row height is scaled to fit).");
+  lblRows->setToolTip(taiMisc::ToolTipPreProcess("Maximum number of rows to display (row height is scaled to fit)."));
   layVals->addWidget(lblRows);
   fldRows = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layVals->addWidget(fldRows->GetRep());
   layVals->addSpacing(taiM->hsep_c);
 
   lblLineWidth = taiM->NewLabel("Line\nWidth", widg, font_spec);
-  lblLineWidth->setToolTip("Width to draw lines with.");
+  lblLineWidth->setToolTip(taiMisc::ToolTipPreProcess("Width to draw lines with."));
   layVals->addWidget(lblLineWidth);
   fldLineWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLineWidth->GetRep());
@@ -128,7 +128,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
 
   lblPointSpacing = taiM->NewLabel("Pt\nSpc", widg, font_spec);
-  lblPointSpacing->setToolTip("Spacing of points drawn relative to underlying data points.");
+  lblPointSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing of points drawn relative to underlying data points."));
   layVals->addWidget(lblPointSpacing);
   fldPointSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldPointSpacing->GetRep());
@@ -136,7 +136,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
 
   lblLabelSpacing = taiM->NewLabel("Lbl\nSpc", widg, font_spec);
-  lblLabelSpacing->setToolTip("Spacing of text labels of data point values. -1 means no text labels.");
+  lblLabelSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing of text labels of data point values. -1 means no text labels."));
   layVals->addWidget(lblLabelSpacing);
   fldLabelSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldLabelSpacing->GetRep());
@@ -144,7 +144,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
 
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
-  lblWidth->setToolTip("Width of graph display, in normalized units (default is 1.0 = same as height).");
+  lblWidth->setToolTip(taiMisc::ToolTipPreProcess("Width of graph display, in normalized units (default is 1.0 = same as height)."));
   layVals->addWidget(lblWidth);
   fldWidth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldWidth->GetRep());
@@ -152,7 +152,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
 
   lblDepth = taiM->NewLabel("Depth", widg, font_spec);
-  lblDepth->setToolTip("Depth of graph display, in normalized units (default is 1.0 = same as height).");
+  lblDepth->setToolTip(taiMisc::ToolTipPreProcess("Depth of graph display, in normalized units (default is 1.0 = same as height)."));
   layVals->addWidget(lblDepth);
   fldDepth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldDepth->GetRep());
@@ -160,7 +160,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layVals->addSpacing(taiM->hsep_c);
 
   lblNPlots = taiM->NewLabel("N Plots", widg, font_spec);
-  lblNPlots->setToolTip("Number of different plots available to display in this graph -- can increase to up to 64 -- just takes more room in the control panel");
+  lblNPlots->setToolTip(taiMisc::ToolTipPreProcess("Number of different plots available to display in this graph -- can increase to up to 64 -- just takes more room in the control panel"));
   layVals->addWidget(lblNPlots);
   fldNPlots = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
   layVals->addWidget(fldNPlots->GetRep());
@@ -177,13 +177,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   int list_flags = taiWidget::flgNullOk | taiWidget::flgAutoApply | taiWidget::flgNoHelp;
 
   lblXAxis = taiM->NewLabel("X:", widg, font_spec);
-  lblXAxis->setToolTip("Column of data to plot for the X Axis");
+  lblXAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot for the X Axis"));
   layXAxis->addWidget(lblXAxis);
   lelXAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layXAxis->addWidget(lelXAxis->GetRep());
 
   rncXAxis = new QCheckBox("Row\nNum", widg); rncXAxis->setObjectName("rncXAxis");
-  rncXAxis->setToolTip("Use row number instead of column value for axis value");
+  rncXAxis->setToolTip(taiMisc::ToolTipPreProcess("Use row number instead of column value for axis value"));
   connect(rncXAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layXAxis->addWidget(rncXAxis);
   layXAxis->addSpacing(taiM->hsep_c);
@@ -193,7 +193,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layXAxis->addSpacing(taiM->hsep_c);
 
   lblcellXAxis = taiM->NewLabel("Mtx\nCel", widg, font_spec);
-  lblcellXAxis->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display.");
+  lblcellXAxis->setToolTip(taiMisc::ToolTipPreProcess("Matrix cell -- only for matrix columns -- choose which cell from matrix to display."));
   layXAxis->addWidget(lblcellXAxis);
   cellXAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layXAxis->addWidget(cellXAxis->GetRep());
@@ -204,20 +204,20 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layZAxis = new QHBoxLayout; layWidg->addLayout(layZAxis);
 
   lblZAxis = taiM->NewLabel("Z:", widg, font_spec);
-  lblZAxis->setToolTip("Column of data to plot for the Z Axis");
+  lblZAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot for the Z Axis"));
   layZAxis->addWidget(lblZAxis);
   lelZAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layZAxis->addWidget(lelZAxis->GetRep());
   layZAxis->addSpacing(taiM->hsep_c);
 
   oncZAxis = new iCheckBox("On", widg);
-  oncZAxis->setToolTip("Display a Z axis?");
+  oncZAxis->setToolTip(taiMisc::ToolTipPreProcess("Display a Z axis?"));
   connect(oncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(oncZAxis);
   layZAxis->addSpacing(taiM->hsep_c);
 
   rncZAxis = new QCheckBox("Row\nNum", widg); rncZAxis->setObjectName("rncZAxis");
-  rncZAxis->setToolTip("Use row number instead of column value for axis value");
+  rncZAxis->setToolTip(taiMisc::ToolTipPreProcess("Use row number instead of column value for axis value"));
   connect(rncZAxis, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layZAxis->addWidget(rncZAxis);
   layZAxis->addSpacing(taiM->hsep_c);
@@ -227,7 +227,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layZAxis->addSpacing(taiM->hsep_c);
 
   lblcellZAxis = taiM->NewLabel("Mtx\nCel", widg, font_spec);
-  lblcellZAxis->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display.");
+  lblcellZAxis->setToolTip(taiMisc::ToolTipPreProcess("Matrix cell -- only for matrix columns -- choose which cell from matrix to display."));
   layZAxis->addWidget(lblcellZAxis);
   cellZAxis = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layZAxis->addWidget(cellZAxis->GetRep());
@@ -242,7 +242,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   layCAxis = new QHBoxLayout; layWidg->addLayout(layCAxis);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
-  lblColorMode->setToolTip("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value");
+  lblColorMode->setToolTip(taiMisc::ToolTipPreProcess("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value"));
   layCAxis->addWidget(lblColorMode);
   cmbColorMode = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
         this, NULL, widg, taiWidget::flgAutoApply));
@@ -250,13 +250,13 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   //  layColorScale->addSpacing(taiM->hsep_c);
 
   lblCAxis = taiM->NewLabel("Color\nAxis:", widg, font_spec);
-  lblCAxis->setToolTip("Column of data for COLOR_AXIS color mode");
+  lblCAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for COLOR_AXIS color mode"));
   layCAxis->addWidget(lblCAxis);
   lelCAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layCAxis->addWidget(lelCAxis->GetRep());
 
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
-  lblThresh->setToolTip("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold.");
+  lblThresh->setToolTip(taiMisc::ToolTipPreProcess("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold."));
   layCAxis->addWidget(lblThresh);
   fldThresh = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldThresh->GetRep());
@@ -265,7 +265,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   // Err Spacing
   lblErrSpacing = taiM->NewLabel("Err\nSpc", widg, font_spec);
-  lblErrSpacing->setToolTip("Spacing of error bars relative to data points.");
+  lblErrSpacing->setToolTip(taiMisc::ToolTipPreProcess("Spacing of error bars relative to data points."));
   layCAxis->addWidget(lblErrSpacing);
   fldErrSpacing = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldErrSpacing->GetRep());
@@ -273,7 +273,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layCAxis->addSpacing(taiM->hsep_c);
 
   lblLabelSz = taiM->NewLabel("Lbl\nSz", widg, font_spec);
-  lblLabelSz->setToolTip("Font size for the labels (strings) in the graph -- in normalized units.");
+  lblLabelSz->setToolTip(taiMisc::ToolTipPreProcess("Font size for the labels (strings) in the graph -- in normalized units."));
   layCAxis->addWidget(lblLabelSz);
   fldLabelSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldLabelSz->GetRep());
@@ -281,7 +281,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layCAxis->addSpacing(taiM->hsep_c);
 
   lblPointSz = taiM->NewLabel("Pt\nSz", widg, font_spec);
-  lblPointSz->setToolTip("Size of point symbol markers, in normalized units.");
+  lblPointSz->setToolTip(taiMisc::ToolTipPreProcess("Size of point symbol markers, in normalized units."));
   layCAxis->addWidget(lblPointSz);
   fldPointSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldPointSz->GetRep());
@@ -289,7 +289,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layCAxis->addSpacing(taiM->hsep_c);
 
   lblAxisSz = taiM->NewLabel("Axis\nSz", widg, font_spec);
-  lblAxisSz->setToolTip("Font size for the axis labels in the graph -- in normalized units.");
+  lblAxisSz->setToolTip(taiMisc::ToolTipPreProcess("Font size for the axis labels in the graph -- in normalized units."));
   layCAxis->addWidget(lblAxisSz);
   fldAxisSz = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layCAxis->addWidget(fldAxisSz->GetRep());
@@ -302,7 +302,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layRAxis = new QHBoxLayout; layWidg->addLayout(layRAxis);
 
   lblRAxis = taiM->NewLabel("Raster:", widg, font_spec);
-  lblRAxis->setToolTip("Column of data for the Y axis in RASTER graphs");
+  lblRAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for the Y axis in RASTER graphs"));
   layRAxis->addWidget(lblRAxis);
   lelRAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layRAxis->addWidget(lelRAxis->GetRep());
@@ -313,7 +313,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layRAxis->addSpacing(taiM->hsep_c);
 
   lblBarSpace = taiM->NewLabel("Bar\nSpc", widg, font_spec);
-  lblBarSpace->setToolTip("Spacing between bars in the BAR plot.");
+  lblBarSpace->setToolTip(taiMisc::ToolTipPreProcess("Spacing between bars in the BAR plot."));
   layRAxis->addWidget(lblBarSpace);
   fldBarSpace = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layRAxis->addWidget(fldBarSpace->GetRep());
@@ -321,7 +321,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layRAxis->addSpacing(taiM->hsep_c);
 
   lblBarDepth = taiM->NewLabel("Bar\nDpth", widg, font_spec);
-  lblBarDepth->setToolTip("Depth in Z plane of bars in the BAR plot.");
+  lblBarDepth->setToolTip(taiMisc::ToolTipPreProcess("Depth in Z plane of bars in the BAR plot."));
   layRAxis->addWidget(lblBarDepth);
   fldBarDepth = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layRAxis->addWidget(fldBarDepth->GetRep());
@@ -337,7 +337,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   layColorScale->addWidget(cbar); // stretchfact=1 so it stretches to fill the space
 
   butSetColor = new QPushButton("Colors", widg);
-  butSetColor->setToolTip("Select color pallette for color value plotting (also determines background color).");
+  butSetColor->setToolTip(taiMisc::ToolTipPreProcess("Select color pallette for color value plotting (also determines background color)."));
   butSetColor->setFixedHeight(taiM->button_height(taiMisc::sizSmall));
   layColorScale->addWidget(butSetColor);
   connect(butSetColor, SIGNAL(pressed()), this, SLOT(butSetColor_pressed()) );
@@ -395,7 +395,7 @@ bool iViewPanelOfGraphTable::BuildPlots() {
 
     String lbl = "Y" + String(i+1) + ":";
     lblYAxis[i] = taiM->NewLabel(lbl, widg, font_spec);
-    lblYAxis[i]->setToolTip("Column of data to plot (optional)");
+    lblYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Column of data to plot (optional)"));
     lblYAxis[i]->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lblYAxis[i]);
     lelYAxis[i] = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg,
@@ -406,14 +406,14 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
     oncYAxis[i] = new iCheckBox("On", widg);
-    oncYAxis[i]->setToolTip("Display this column's data or not?");
+    oncYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Display this column's data or not?"));
     oncYAxis[i]->setFixedHeight(row_height);
     connect(oncYAxis[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
     layYAxis[i]->addWidget(oncYAxis[i]);
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
     chkYAltY[i] =  new QCheckBox("Alt\nY", widg); 
-    chkYAltY[i]->setToolTip("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)");
+    chkYAltY[i]->setToolTip(taiMisc::ToolTipPreProcess("Whether to display values on an alternate Y axis for this column of data (otherwise it uses the main Y axis)"));
     chkYAltY[i]->setFixedHeight(row_height);
     connect(chkYAltY[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
     layYAxis[i]->addWidget(chkYAltY[i]);
@@ -426,7 +426,7 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addSpacing(taiM->hsep_c);
 
     lblcellYAxis[i] = taiM->NewLabel("Mtx\nCel", widg, font_spec);
-    lblcellYAxis[i]->setToolTip("Matrix cell -- only for matrix columns -- choose which cell from matrix to display -- enter -1 to display all lines at once.");
+    lblcellYAxis[i]->setToolTip(taiMisc::ToolTipPreProcess("Matrix cell -- only for matrix columns -- choose which cell from matrix to display -- enter -1 to display all lines at once."));
     lblcellYAxis[i]->setFixedHeight(row_height);
     layYAxis[i]->addWidget(lblcellYAxis[i]);
     cellYAxis[i] = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
@@ -436,7 +436,7 @@ bool iViewPanelOfGraphTable::BuildPlots() {
     layYAxis[i]->addWidget(cw);
 
     oncErr[i] = new iCheckBox("Err On", widg);
-    oncErr[i]->setToolTip("Display error bars for this column's data?");
+    oncErr[i]->setToolTip(taiMisc::ToolTipPreProcess("Display error bars for this column's data?"));
     oncErr[i]->setFixedHeight(row_height);
     connect(oncErr[i], SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
     layYAxis[i]->addWidget(oncErr[i]);

@@ -330,11 +330,11 @@ void iDialogItemChooser::Constr(taiWidgetItemChooser* client_) {
   QHBoxLayout* lay = new QHBoxLayout();
   lay->addSpacing(taiM->hspc_c);
   lbl = new QLabel("search", body);
-  lbl->setToolTip("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^");
+  lbl->setToolTip(taiMisc::ToolTipPreProcess("Search for items that contain this text, showing only them -- if starts with a ^ then only look for items in the first column that start with the text after the ^"));
   lay->addWidget(lbl);
   lay->addSpacing(taiM->vsep_c);
   filter = new iLineEdit(body);
-  filter->setToolTip(lbl->toolTip());
+  filter->setToolTip(taiMisc::ToolTipPreProcess(lbl->toolTip()));
   lay->addWidget(filter, 1);
   lay->addSpacing(taiM->hspc_c);
   layOuter->addLayout(lay);
