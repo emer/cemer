@@ -57,7 +57,7 @@ public:
   }
   // #IGNORE dopamine multiplication
 
-  inline void Compute_dWt_CtLeabraXCAL(ConGroup* rcg, Network* rnet, int thr_no) override {
+  inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
     LeabraConGroup* cg = (LeabraConGroup*)rcg;

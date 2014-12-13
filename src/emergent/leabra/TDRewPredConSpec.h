@@ -38,8 +38,7 @@ public:
   }
   // #IGNORE
 
-  inline void Compute_dWt_CtLeabraXCAL(LeabraConGroup* cg, LeabraUnit* su,
-                                       LeabraNetwork* net) override {
+  inline void Compute_dWt(LeabraConGroup* cg, LeabraUnit* su, LeabraNetwork* net) override {
     if(ignore_unlearnable && net->unlearnable_trial) return;
 
     LeabraTdUnit* lsu = (LeabraTdUnit*)su;
