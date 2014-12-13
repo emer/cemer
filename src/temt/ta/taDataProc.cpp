@@ -1443,7 +1443,8 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
     if(src_b->rows > src_a->rows) src_a->EnforceRows(src_b->rows);
     int src_cols = src_b->cols();
     for (int i=0; i < src_cols; i++) {
-      DataCol* src_col = src_b->data.FastEl(i);
+      DataCol* src_col = src_b->data.SafeEl(i);
+      if(!src_col) continue;  // shouldn't happen but appeared to at least once..
       DataCol* new_col = src_a->NewCol(src_col->valType(), src_col->name);
       new_col->CopyFrom(src_col);
     }
@@ -1453,14 +1454,16 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
     dest->StructUpdate(true);
     dest->Reset();
     for(int i=0; i < src_a->data.size; i++) {
-      DataCol* sda = src_a->data.FastEl(i);
+      DataCol* sda = src_a->data.SafeEl(i);
+      if(!sda) continue;
       DataCol* nda = (DataCol*)sda->MakeToken();
       dest->data.Add(nda);
       nda->Copy_NoData(*sda);
     }
     int a_cols = src_a->data.size;
     for(int i=0; i < src_b->data.size; i++) {
-      DataCol* sdb = src_b->data.FastEl(i);
+      DataCol* sdb = src_b->data.SafeEl(i);
+      if(!sdb) continue;
       DataCol* nda = (DataCol*)sdb->MakeToken();
       dest->data.Add(nda);
       nda->Copy_NoData(*sdb);
@@ -1471,16 +1474,18 @@ bool taDataProc::ConcatCols(DataTable* dest, DataTable* src_a, DataTable* src_b)
       dest->AddBlankRow();
       if(src_a->rows > row) {
         for(int i=0;i<src_a->data.size; i++) {
-          DataCol* sda = src_a->data.FastEl(i);
-          DataCol* nda = dest->data.FastEl(i); // todo: change above if uncommented
+          DataCol* sda = src_a->data.SafeEl(i);
+          DataCol* nda = dest->data.SafeEl(i); // todo: change above if uncommented
+          if(!nda || !sda) continue;
           nda->CopyFromRow(row, *sda, row); // just copy
         }
       }
       if(src_b->rows > row) {
         int col_idx = a_cols;
         for(int i=0; i < src_b->data.size; i++) {
-          DataCol* sdb = src_b->data.FastEl(i);
-          DataCol* nda = dest->data.FastEl(col_idx);
+          DataCol* sdb = src_b->data.SafeEl(i);
+          DataCol* nda = dest->data.SafeEl(col_idx);
+          if(!nda || !sdb) continue;
           nda->CopyFromRow(row, *sdb, row); // just copy
           col_idx++;
         }
