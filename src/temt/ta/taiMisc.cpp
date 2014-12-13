@@ -511,6 +511,12 @@ QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
   return rval;
 }
 
+QString taiMisc::ToolTipPreProcess(const String &tip_str) {
+  // make the string rich text so Qt will wrap it
+  String rich_str = String("<span>" + tip_str + "</span>");
+  return rich_str.toQString();
+}
+
 void taiMisc::OnQuitting_impl(CancelOp& cancel_op) {
 // called when quitting -- does all saves
   if(!taMisc::interactive) return;

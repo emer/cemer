@@ -40,6 +40,7 @@ class iNetworkAccessManager; //
 class QAbstractButton; //
 class QProgressDialog; //
 class QKeyEvent; //
+class QString; //
 
 taTypeDef_Of(taiMisc);
 
@@ -385,6 +386,9 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
 #endif
   
+  static QString ToolTipPreProcess(const String& tip_str);  // the only tool tips that get wrapped are rich text so plain text needs to be modified
+  
+
 protected:
   static void   SetWinCursors();
   // #IGNORE sets cursors for all active windows based on busy and record status
@@ -447,6 +451,7 @@ public:
   int           maxButtonWidth(int sizeSpec = 0) const; // maximum width allowed
 
   QLabel*       NewLabel(const String& text, QWidget* parent = NULL, int fontSpec = 0);
+  
   // convenience, for making a label with indicated fontspec
   void          FormatButton(QAbstractButton* but, const String& text,
                              int font_spec = 0); // sets max width, text, and adds a tooltip

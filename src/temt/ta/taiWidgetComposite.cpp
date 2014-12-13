@@ -135,8 +135,8 @@ void taiWidgetComposite::AddChildMember(MemberDef* md) {
 
   if (!desc.empty()) {
     if(add_labels)
-      lbl->setToolTip(desc);
-    ctrl->setToolTip(desc);
+      lbl->setToolTip(taiMisc::ToolTipPreProcess(desc));
+    ctrl->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
 }
 
