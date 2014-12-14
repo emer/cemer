@@ -31,7 +31,7 @@ taTypeDef_Of(KeyBindings);
 class TA_API KeyBindings : public taNBase {
   // ##INLINE ##NO_TOKENS ##CAT_UserData A set of key bindings for shortcuts on menu items and for keyPressEvent interpretation
 INHERITED(taNBase)
-public:  
+public:
   KeyActionPair_PArray       menu_bindings; // #IGNORE
   KeyActionPair_PArray       project_window_bindings; // #IGNORE
   KeyActionPair_PArray       text_edit_bindings; // #IGNORE
@@ -42,7 +42,7 @@ public:
   
   virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE add a name value pair to the list of key bindings
-  virtual bool                  Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence = QKeySequence());
+  virtual bool                  Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
   // #IGNORE remove the pair based on either an action alone (first matching) or on action and key sequence
   virtual void                  Reset();
   // #IGNORE delete key bindings from all contexts
