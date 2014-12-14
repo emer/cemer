@@ -542,8 +542,6 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
 }
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
-  if(lay->lesioned()) return;
-  
   // check for projection monitor
   if(var.contains('.')) {
     if(var.contains('[')) {
@@ -612,8 +610,6 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
-  if(lay->lesioned()) return;
-  
   String range2;
   String range1 = var.between('[', ']');
   String rmdr = var.after(']');
@@ -695,8 +691,6 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerCons(Layer* lay, String var) {
-  if(lay->lesioned()) return;
-  
   String subvar = var.before('.');
   if(subvar == "r") {
     for(int i=0;i<lay->projections.size; i++) {
