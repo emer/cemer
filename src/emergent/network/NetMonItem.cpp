@@ -510,7 +510,7 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
     }
     else if(obj->InheritsFrom(&TA_Unit)) { // special case for UnitVars
       Unit* un = (Unit*)obj;
-      if(un->own_net()->unit_vars_built) {
+      if(!un->lesioned() && un->own_net()->unit_vars_built) {
         md = un->own_net()->unit_vars_built->members.FindName(var);
         if(md) {
           if(name_obj) {
@@ -542,6 +542,8 @@ void NetMonItem::ScanObject_Network(Network* net, String var) {
 }
 
 void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
+  if(lay->lesioned()) return;
+  
   // check for projection monitor
   if(var.contains('.')) {
     if(var.contains('[')) {
@@ -587,7 +589,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
     for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
       for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
         Unit* u = lay->UnitAtCoord(c); // NULL if odd size or not built
-        if(u)
+        if(u && !u->lesioned())
           ScanObject_InObject(u, var, NULL); // don't make a col
       }
     }
@@ -600,7 +602,7 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
         for (c.y = 0; c.y < lay->un_geom.y; ++c.y) {
           for (c.x = 0; c.x < lay->un_geom.x; ++c.x) {
             Unit* u = lay->UnitAtGpCoord(gc, c);
-            if(u)
+            if(u && !u->lesioned())
               ScanObject_InObject(u, var, NULL); // don't make a col
           }
         }
@@ -610,6 +612,8 @@ void NetMonItem::ScanObject_Layer(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
+  if(lay->lesioned()) return;
+  
   String range2;
   String range1 = var.between('[', ']');
   String rmdr = var.after(']');
@@ -691,23 +695,27 @@ void NetMonItem::ScanObject_LayerUnits(Layer* lay, String var) {
 }
 
 void NetMonItem::ScanObject_LayerCons(Layer* lay, String var) {
+  if(lay->lesioned()) return;
+  
   String subvar = var.before('.');
   if(subvar == "r") {
     for(int i=0;i<lay->projections.size; i++) {
       Projection* prjn = lay->projections[i];
+      if(prjn->NotActive()) continue;
       ScanObject_PrjnCons(prjn, var);
     }
   }
   else {                        // must be s
     for(int i=0;i<lay->send_prjns.size; i++) {
       Projection* prjn = lay->send_prjns[i];
+      if(prjn->NotActive()) continue;
       ScanObject_PrjnCons(prjn, var);
     }
   }
 }
 
 void NetMonItem::ScanObject_PrjnCons(Projection* prjn, String var) {
-  if(!prjn->from || !prjn->layer) return;
+  if(prjn->NotActive()) return;
   Layer* lay = NULL;
   String subvar = var.before('.');
   bool recv = true;
@@ -822,6 +830,7 @@ void NetMonItem::ScanObject_ProjectionGroup(Projection_Group* pg, String var) {
 }
 
 void NetMonItem::ScanObject_Projection(Projection* prjn, String var) {
+  if(prjn->NotActive()) return;
   if (ScanObject_InObject(prjn, var, prjn)) return;
 
   Layer* lay = NULL;
@@ -879,6 +888,7 @@ void NetMonItem::ScanObject_UnitGroup(Unit_Group* ug, String var) {
 }
 
 void NetMonItem::ScanObject_Unit(Unit* u, String var) {
+  if(u->lesioned()) return;
   if(ScanObject_InObject(u, var, u)) return;
 
   // otherwise, we only grok the special s. and r. indicating conns

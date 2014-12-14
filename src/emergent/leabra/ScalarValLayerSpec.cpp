@@ -351,7 +351,7 @@ void ScalarValLayerSpec::ClampValue_ugp
   float val = uv->ext;
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
-  uv->act_eq = uv->misc_1 = val;        // record this val
+  uv->act_eq = uv->act_nd = uv->misc_1 = val;        // record this val
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
 
   float avg_act = 0.0f;
@@ -413,8 +413,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   }
   sum_act = MAX(sum_act, scalar.min_sum_act);
   if(scalar.rep == ScalarValSpec::AVG_ACT) {
-    if(nunits > 1)
-      sum_act /= (float)(nunits-1);
+    sum_act /= (float)nunits;
     avg = val_range.Project(avg_act_range.Normalize(sum_act));
   }
   else {
@@ -424,7 +423,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->act_eq = uv->misc_1 = avg;
+  uv->act_eq = uv->act_nd = uv->misc_1 = avg;
   return avg;
 }
 
@@ -458,7 +457,7 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-    uv->act_eq = uv->act = us->clamp_range.Clip(uv->ext);
+    uv->act_eq = uv->act_nd = uv->act = us->clamp_range.Clip(uv->ext);
     uv->ext = 0.0f;
     uv->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   }

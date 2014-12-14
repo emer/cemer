@@ -530,7 +530,10 @@ void Network::BuildUnits() {
   threads.InitAll();
   BuildNullUnit();
   FOREACH_ELEM_IN_GROUP(Layer, l, layers) {
-    if(l->lesioned()) continue;
+    if(l->lesioned()) {
+      l->RemoveUnits();         // unbuilt units won't have unit vars and are dangerous!
+      continue;
+    }
     l->BuildUnits();
   }
 

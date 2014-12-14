@@ -382,7 +382,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // convenience function -- deleteLater all widgets -- does hide first -- prevents bugs
 #endif
   
-  static QString ToolTipPreProcess(const String& tip_str);  // the only tool tips that get wrapped are rich text so plain text needs to be modified
+  static QString ToolTipPreProcess(const String& tip_str);
+  // #IGNORE the only tool tips that get word-wrapped are rich text so plain text needs to be modified
   
 
 protected:
