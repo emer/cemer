@@ -78,6 +78,17 @@ KeyActionPair* KeyActionPair_PArray::GetPair(taiMisc::BoundAction action, QKeySe
   }
 }
 
+KeyActionPair* KeyActionPair_PArray::GetPairFromAction(taiMisc::BoundAction action, int start) const {
+  int idx = FindAction(action, start);
+  if (idx != -1) {
+    return &SafeEl(idx);
+  }
+  else {
+    return NULL;
+  }
+}
+
+
 taiMisc::BoundAction KeyActionPair_PArray::GetAction(QKeySequence key_sequence) {
   int idx = FindKeySequence(key_sequence);
   if(idx < 0)

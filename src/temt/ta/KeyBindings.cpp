@@ -64,9 +64,17 @@ bool KeyBindings::Remove(taiMisc::BindingContext context, taiMisc::BoundAction a
   bool rval = false;
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
-    KeyActionPair* pair = context_bindings->GetPair(action, key_sequence);
-    if (pair) {
-      context_bindings->RemoveEl(*pair);
+    if (key_sequence == NULL) {
+      KeyActionPair* pair = context_bindings->GetPairFromAction(action);
+      if (pair) {
+        context_bindings->RemoveEl(*pair);
+      }
+    }
+    else {
+      KeyActionPair* pair = context_bindings->GetPair(action, key_sequence);
+      if (pair) {
+        context_bindings->RemoveEl(*pair);
+      }
     }
   }
   return rval;

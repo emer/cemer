@@ -40,7 +40,9 @@ public:
   // #IGNORE find the pair that matches on action and on sequence
   KeyActionPair*   GetPair(taiMisc::BoundAction act, QKeySequence key_sequence, int start=0) const;
   // #IGNORE find the pair that matches on action and on sequence
-  
+  KeyActionPair*   GetPairFromAction(taiMisc::BoundAction act, int start=0) const;
+  // #IGNORE find the first pair that matches on action
+
   taiMisc::BoundAction GetAction(QKeySequence key_sequence);
   // #IGNORE get action from key_sequence; isNull if not found
   QKeySequence GetKeySequence(taiMisc::BoundAction action);
