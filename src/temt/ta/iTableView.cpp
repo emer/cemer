@@ -65,7 +65,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   if (event->type() != QEvent::KeyPress) {
     return inherited::eventFilter(obj, event);
   }
-
+  
   QKeyEvent* e = static_cast<QKeyEvent*>(event);
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && e->key() == Qt::Key_Y) {
@@ -79,15 +79,8 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     // don't let this go to edit filter -- we want it
   }
   else {
-    if(taiMisc::KeyEventFilterEmacs_Edit(obj, e)) {
-      return true;
-    }
     if((bool)m_window) {
-
-    taMisc::DebugInfo("iTableView::eventFilter");
-
-//          if(m_window->KeyEventFilterWindowNav(obj, e))
-//        return true;
+      taMisc::DebugInfo("iTableView::eventFilter");
     }
   }
   return inherited::eventFilter(obj, event);

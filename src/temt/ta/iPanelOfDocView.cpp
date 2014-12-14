@@ -34,6 +34,8 @@
 #include <QWebFrame>
 #include <QDesktopServices>
 #include <QKeyEvent>
+#include <QApplication>
+
 
 #if (QT_VERSION >= 0x050000)
 #include <QUrlQuery>
@@ -344,13 +346,13 @@ void iPanelOfDocView::UpdatePanel_impl() {
   }
 }
 
-void iPanelOfDocView::SigEmit_impl(int sls, void* op1_, void* op2_) {
-  inherited::SigEmit_impl(sls, op1_, op2_);
-  if (sls <= SLS_ITEM_UPDATED_ND) {
-    this->m_update_req = true; // so we update next time we show
-    UpdatePanel();
+  void iPanelOfDocView::SigEmit_impl(int sls, void* op1_, void* op2_) {
+    inherited::SigEmit_impl(sls, op1_, op2_);
+    if (sls <= SLS_ITEM_UPDATED_ND) {
+      this->m_update_req = true; // so we update next time we show
+      UpdatePanel();
+    }
   }
-}
 
 /* todo int iPanelOfDocView::EditAction(int ea) {
   int rval = 0;
@@ -375,7 +377,7 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
   if (m_link) {
     m_link->RemoveSigClient(this);
   }
-
+  
   m_doc = doc;
   if (doc) {
     taSigLink* dl = doc->GetSigLink();
@@ -386,16 +388,40 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
     webview->setHtml("(no doc set)");
   }
 }
-
-bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
-  if (event->type() != QEvent::KeyPress) {
+  
+  
+  bool iPanelOfDocView::eventFilter(QObject* obj, QEvent* event) {
+    if (event->type() != QEvent::KeyPress) {
+      return inherited::eventFilter(obj, event);
+    }
+    QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+    QCoreApplication* app = QCoreApplication::instance();
+    switch (key_event->key()) {
+      case Qt::Key_P:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_N:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_F:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_B:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_U:
+      case Qt::Key_Up:              // translate ctrl+up to page up
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
+        return true;                // we absorb this event
+      case Qt::Key_Down:            // translate ctrl+down to page down
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+        return true;
+      case Qt::Key_V:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
+        return true;              // we absorb this event
+    }
     return inherited::eventFilter(obj, event);
   }
-  QKeyEvent* e = static_cast<QKeyEvent *>(event);
-  if(taiMisc::KeyEventFilterEmacs_Edit(obj, e))
-    return true;
-  return inherited::eventFilter(obj, event);
-}
 
 /*void iPanelOfDocView::br_copyAvailable (bool) {
   viewerWindow()->UpdateUi();

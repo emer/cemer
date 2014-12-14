@@ -777,8 +777,6 @@ bool iHelpBrowser::eventFilter(QObject* obj, QEvent* event) {
     return inherited::eventFilter(obj, event);
   }
   QKeyEvent* key_event = static_cast<QKeyEvent*>(event);
-  if(taiMisc::KeyEventFilterEmacs_Edit(obj, key_event))
-    return true;
   
   if((taiMisc::KeyEventCtrlPressed(key_event)) && (key_event->key() == Qt::Key_S)) {
     if(find_text->hasFocus())

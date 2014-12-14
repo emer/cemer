@@ -932,8 +932,6 @@ bool taProject::AutoSave(bool force) {
 
   auto_save_timer.StartTimer(true); // start it up for next time around..
 
-  taMisc::DebugInfo("Saved auto save file:", fnm);
-
   // restore original:
   file_name = orig_fnm;
   MainWindowViewer* vwr = GetDefaultProjectBrowser();

@@ -84,7 +84,6 @@ protected:
   void         SigEmit_impl(int sls, void* op1, void* op2) override;
   void         UpdatePanel_impl() override;
   bool         eventFilter(QObject *obj, QEvent *event) override;
-  // translate emacs keys..
 
 #ifndef __MAKETA__
 protected slots:

@@ -429,6 +429,14 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   QPersistentModelIndex newCurrent = currentIndex();
   
   switch (action) {
+    case taiMisc::TREE_FORWARD:
+      e->accept();
+      QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
+      return;
+    case taiMisc::TREE_BACKWARD:
+      e->accept();
+      QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
+      return;
     case taiMisc::TREE_CLEAR_EXTENDED_SELECTION:
     case taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II:		// s works too
       //      case Qt::Key_Space:
@@ -466,6 +474,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       e->accept();
       break;
+      
     case taiMisc::TREE_EDIT_HOME:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = 0;

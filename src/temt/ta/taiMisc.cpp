@@ -877,133 +877,6 @@ bool taiMisc::KeyEventCtrlPressed(QKeyEvent* e) {
   return ctrl_pressed;
 }
 
-bool taiMisc::KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e) {
-  taMisc::DebugInfo("KeyEventFilterEmacs_Nav");
-  
-#if 0
-  taiMisc::UpdateUiOnCtrlPressed(obj, e);
-  
-    bool ctrl_pressed = KeyEventCtrlPressed(e);
-    if(!ctrl_pressed) return false;
-    QCoreApplication* app = QCoreApplication::instance();
-    switch(e->key()) {
-      case Qt::Key_P:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Up, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_N:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Down, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_F:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_B:
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_U:
-      case Qt::Key_Up:              // translate ctrl+up to page up
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageUp, Qt::NoModifier));
-        return true;                // we absorb this event
-      case Qt::Key_Down:            // translate ctrl+down to page down
-        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-        return true;
-      case Qt::Key_V:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
-          return true;              // we absorb this event
-    }
-#endif
-  return false;
-}
-
-bool taiMisc::KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e) {
-//  taMisc::DebugInfo("KeyEventFilterEmacs_edit");
-  
-#if 0
-
-  if(KeyEventFilterEmacs_Nav(obj, e))
-    return true;
-  
-    bool ctrl_pressed = KeyEventCtrlPressed(e);
-    QCoreApplication* app = QCoreApplication::instance();
-    if(ctrl_pressed) {
-      switch(e->key()) {
-        case Qt::Key_D:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
-          return true;              // we absorb this event
-        case Qt::Key_H:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
-          return true;              // we absorb this event
-        case Qt::Key_K:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
-          return true;              // we absorb this event
-        case Qt::Key_Y:             // this doesn't seem to work to generate paste event
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-          return true;              // we absorb this event
-        case Qt::Key_W:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
-          return true;              // we absorb this event
-        case Qt::Key_Slash:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-          return true;              // we absorb this event
-        case Qt::Key_Minus:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-          return true;              // we absorb this event
-      }
-    }
-    if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-        || e->key() == 0x2211   // weird mac key
-#endif
-      ))
-    { // copy
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-      return true;                // we absorb this event
-    }
-  
-#endif
-  
-  return false;
-}
-
-bool taiMisc::KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e) {
-  
-#if 0
-
-  
-  taiMisc::UpdateUiOnCtrlPressed(obj, e);
-
-  bool ctrl_pressed = KeyEventCtrlPressed(e);
-    QCoreApplication* app = QCoreApplication::instance();
-    if(ctrl_pressed) {
-      switch(e->key()) {
-        case Qt::Key_Y:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
-          return true;              // we absorb this event
-        case Qt::Key_W:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::MetaModifier));
-          return true;              // we absorb this event
-        case Qt::Key_Slash:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-          return true;              // we absorb this event
-        case Qt::Key_Minus:
-          app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
-          return true;              // we absorb this event
-      }
-    }
-    if(e->modifiers() & Qt::AltModifier && (e->key() == Qt::Key_W
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
-                                            || e->key() == 0x2211   // weird mac key
-#endif
-                                            ))
-    { // copy
-      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
-      return true;                // we absorb this event
-    }
-  
-#endif
-  
-  return false;
-}
-
 taiMisc::BoundAction taiMisc::GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event) {
   int key_int = key_event->key();
   
@@ -1222,6 +1095,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_Space));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II, QKeySequence(control_key + Qt::Key_S));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FORWARD, QKeySequence(control_key + Qt::Key_F));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_BACKWARD, QKeySequence(control_key + Qt::Key_B));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_UP, QKeySequence(control_key + Qt::Key_P));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_DOWN, QKeySequence(control_key + Qt::Key_N));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PAGE_UP, QKeySequence(control_key + Qt::Key_Up));
@@ -1241,7 +1116,6 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE, QKeySequence(Qt::AltModifier + Qt::Key_R));
 #endif
 
-  
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_OFF, QKeySequence(Qt::Key_V));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_ON, QKeySequence(Qt::Key_I));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_INTERACTION_MODE_TOGGLE, QKeySequence(Qt::Key_Escape));

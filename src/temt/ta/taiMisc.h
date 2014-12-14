@@ -226,6 +226,8 @@ public:
     TREE_HISTORY_BACKWARD,
     TREE_CLEAR_EXTENDED_SELECTION,
     TREE_CLEAR_EXTENDED_SELECTION_II,
+    TREE_FORWARD,
+    TREE_BACKWARD,
     TREE_CLEAR_SELECTION,
     TREE_MOVE_SELECTION_UP,
     TREE_MOVE_SELECTION_DOWN,
@@ -334,12 +336,6 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // call UpdateUi on iMainWindowViewer associated with given object if the given keyboard event or the global keyboardModifiers status indicates that a ctrl key is pressed -- this enables just-in-time updating of the global cut/copy/paste edit action shortcuts -- should be called in keyboard event processing routines for objects that have such routines and depend on shortcuts..
   static bool   KeyEventCtrlPressed(QKeyEvent* e);
   // #IGNORE process given event to see if the ctrl key was pressed -- uses MetaModifier on Mac = actual Ctrl key..
-  static bool   KeyEventFilterEmacs_Nav(QObject* obj, QKeyEvent* e);
-  // #IGNORE translate emacs navigation key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
-  static bool   KeyEventFilterEmacs_Edit(QObject* obj, QKeyEvent* e);
-  // #IGNORE translate emacs editing (includes nav + copy/paste, undo) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
-  static bool   KeyEventFilterEmacs_Clip(QObject* obj, QKeyEvent* e);
-  // #IGNORE translate emacs copy/paste/undo only (no nav) key sequences into equivalent arrow events and re-post as new events -- returns true if procssed, otherwise false
   static taiMisc::BoundAction GetActionFromKeyEvent(taiMisc::BindingContext context, QKeyEvent* key_event);
   // #IGNORE translate the key_event into the bound action
   static QKeySequence GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
