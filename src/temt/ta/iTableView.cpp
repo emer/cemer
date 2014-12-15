@@ -80,7 +80,7 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
   }
   else {
     if((bool)m_window) {
-      taMisc::DebugInfo("iTableView::eventFilter");
+//      taMisc::DebugInfo("iTableView::eventFilter");
     }
   }
   return inherited::eventFilter(obj, event);
