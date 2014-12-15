@@ -395,6 +395,9 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
       return inherited::eventFilter(obj, event);
     }
     QKeyEvent* key_event = static_cast<QKeyEvent *>(event);
+    if (!taiMisc::KeyEventCtrlPressed(key_event)) {
+      return false;
+    }
     QCoreApplication* app = QCoreApplication::instance();
     switch (key_event->key()) {
       case Qt::Key_P:
