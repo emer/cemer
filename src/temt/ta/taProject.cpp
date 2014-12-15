@@ -546,12 +546,14 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
 {
   String username = taMediaWiki::GetLoggedInUsername(repositoryName);
   
-  // if username not empty ask if they want to stay logged in under that name
+  // TODO - if username not empty ask if they want to stay logged in under that name
   
   bool logged_in = taMediaWiki::Login(repositoryName, username);
-  
   if (logged_in) {
     iDialogPublishDocs dialog(repositoryName);
+    dialog.SetName(QString(this->name.chars()));
+    dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
+    dialog.SetTags(QString("A list of categories, e.g. attention, vision"));
     if (dialog.exec()) {
       // User clicked OK.
       QString name = dialog.getName();
@@ -561,6 +563,13 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
       taMediaWiki::FindMakePage(repositoryName, name, "this is the content", categories);
     }
   }
+}
+
+//static bool   PublishProject(const String& wiki_name, const String& proj_filename,                           const String& page_content="", const String& proj_category="");
+
+void taProject::PublishProjectOnWeb(const String &repositoryName)
+{
+  taMediaWiki::PublishProject(repositoryName, GetFileName(), "the content" , "vision memory");
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {

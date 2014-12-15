@@ -99,7 +99,7 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
   m_tagsEdit = new QLineEdit;
   m_tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (comma or space spearated)");
   m_tagsEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Categories (space as separator):", m_tagsEdit);
+  addLabeledWidget(newHBox(vbox), "&Categories:", m_tagsEdit);
 
   // OK, Cancel buttons
   QDialogButtonBox *buttonBox = new QDialogButtonBox(
@@ -154,4 +154,16 @@ bool iDialogPublishDocs::eventFilter(QObject *obj, QEvent *event)
 
   // Always return false, so the event will get processed further.
   return false;
+}
+
+void iDialogPublishDocs::SetName(const QString& name) {
+  m_nameEdit->setText(name);
+}
+
+void iDialogPublishDocs::SetDesc(const QString& desc) {
+  m_descEdit->setText(desc);
+}
+
+void iDialogPublishDocs::SetTags(const QString& tags) {
+  m_tagsEdit->setText(tags);
 }

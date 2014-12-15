@@ -38,6 +38,10 @@ public:
   QString getName() const;
   QString getDesc() const;
   QString getTags() const;
+  
+  void    SetName(const QString& name);
+  void    SetDesc(const QString& desc);
+  void    SetTags(const QString& tags);
 
 private:
   bool event(QEvent *event) override;
