@@ -419,9 +419,40 @@ void iPanelOfDocView::setDoc(taDoc* doc) {
       case Qt::Key_Down:            // translate ctrl+down to page down
         app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
         return true;
+#ifdef TA_OS_MAC
       case Qt::Key_V:
         app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_PageDown, Qt::NoModifier));
         return true;              // we absorb this event
+#endif
+      case Qt::Key_D:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Delete, Qt::NoModifier));
+        return true;              // we absorb this event
+      case Qt::Key_H:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Backspace, Qt::NoModifier));
+        return true;              // we absorb this event
+      case Qt::Key_K:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Clear, Qt::NoModifier));
+        return true;              // we absorb this event
+      case Qt::Key_Y:             // this doesn't seem to work to generate paste event
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
+        return true;              // we absorb this event
+      case Qt::Key_W:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_X, Qt::ControlModifier));
+        return true;              // we absorb this event
+      case Qt::Key_Slash:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+        return true;              // we absorb this event
+      case Qt::Key_Minus:
+        app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_Z, Qt::ControlModifier));
+        return true;              // we absorb this event
+    }
+    if(key_event->modifiers() & Qt::AltModifier && (key_event->key() == Qt::Key_W
+#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050000)
+                                            || key_event->key() == 0x2211   // weird mac key
+#endif
+                                            )) { // copy
+      app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_C, Qt::ControlModifier));
+      return true;                // we absorb this event
     }
     return inherited::eventFilter(obj, event);
   }
