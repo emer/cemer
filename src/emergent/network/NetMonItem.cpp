@@ -533,6 +533,14 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 }
 
 void NetMonItem::ScanObject_Network(Network* net, String var) {
+  if(var.startsWith("layers.") || var.startsWith(".layers.")) { // go direct to layers
+    var = var.after("layers.");
+    FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
+      if(lay->lesioned()) continue;
+      ScanObject_Layer(lay, var);
+    }
+    return;
+  }
   if (ScanObject_InObject(net, var, net)) return;
 
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
