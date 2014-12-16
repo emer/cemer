@@ -1048,14 +1048,13 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP, QKeySequence(control_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_UNDO, QKeySequence(control_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CLEAR, QKeySequence(control_key + Qt::Key_Period));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_AUTO_COMPLETE, QKeySequence(Qt::Key_Tab));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_BACKSPACE, QKeySequence(Qt::Key_Backspace));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_QUIT_PAGING, QKeySequence(Qt::Key_Q));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CONTINUE_PAGING, QKeySequence(Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_BACKWARD, QKeySequence(Qt::Key_Up));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_FORWARD, QKeySequence(Qt::Key_Down));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_BACKWARD, QKeySequence(control_key + Qt::Key_P));
-  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_FORWARD, QKeySequence(control_key + Qt::Key_N));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_BACKWARD_II, QKeySequence(control_key + Qt::Key_P));
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HISTORY_FORWARD_II, QKeySequence(control_key + Qt::Key_N));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_HOME, QKeySequence(control_key + Qt::Key_A));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_END, QKeySequence(control_key + Qt::Key_E));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CURSOR_FORWARD, QKeySequence(control_key + Qt::Key_F));
@@ -1067,7 +1066,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_KILL, QKeySequence(control_key + Qt::Key_K));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CUT, QKeySequence(control_key + Qt::Key_W));
-    
+  default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_AUTO_COMPLETE, QKeySequence(Qt::Key_Tab));
+  
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_TOGGLE_FOCUS, QKeySequence(control_key + Qt::Key_T));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_EDIT_HOME, QKeySequence(control_key + Qt::Key_A));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_EDIT_END, QKeySequence(control_key + Qt::Key_E));
@@ -1095,7 +1095,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_Space));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II, QKeySequence(control_key + Qt::Key_S));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FORWARD, QKeySequence(control_key + Qt::Key_F));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FORWARD,  (control_key + Qt::Key_F));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_BACKWARD, QKeySequence(control_key + Qt::Key_B));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_UP, QKeySequence(control_key + Qt::Key_P));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_MOVE_SELECTION_DOWN, QKeySequence(control_key + Qt::Key_N));
@@ -1153,9 +1153,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CUT, QKeySequence(control_key + Qt::Key_W));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_UNDO, QKeySequence(control_key + Qt::Key_Minus));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_UNDO_II, QKeySequence(control_key + Qt::Key_Slash));
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_UP, QKeySequence(control_key + Qt::Key_U));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_FIND_IN_TEXT, QKeySequence(control_key + Qt::Key_S));
-  
+  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_UP, QKeySequence(control_key + Qt::Key_U));
 #ifdef TA_OS_MAC
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_COPY_CLEAR, QKeySequence(Qt::AltModifier + 0x2211)); // W
@@ -1189,13 +1188,12 @@ void taiMisc::LoadCustomKeyBindings() {
   QKeySequence ks;
   String enum_tp_nm;
   
-  for (int i=0; i<taiMisc::ACTION_COUNT-1; i++) {
+  for (int i=0; i<taiMisc::ACTION_COUNT; i++) {
     in >> context >> action >> ks;
     int context_val = TA_taiMisc.GetEnumVal((String)context, enum_tp_nm);
     int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);    
     bindings->Add(static_cast<taiMisc::BindingContext>(context_val), static_cast<taiMisc::BoundAction>(action_val), ks);
   }
-  UpdateCustomKeyBindings();
 }
 
 void taiMisc::DefaultCustomKeyBindings() {
@@ -1219,7 +1217,7 @@ void taiMisc::DefaultCustomKeyBindings() {
     context = TA_taiMisc.GetEnumString("BindingContext", ctxt);
     context_pre = context.before("_CONTEXT");  // strip off "_CONTEXT"
     int action_count = static_cast<int>(taiMisc::ACTION_COUNT);
-    for (int i=1; i<action_count; i++) {  // skip 0 for NULL_ACTION
+    for (int i=0; i<action_count; i++) {
       action = TA_taiMisc.GetEnumString("BoundAction", i);
       if (action.startsWith(context_pre)) {
         taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
@@ -1233,7 +1231,7 @@ void taiMisc::DefaultCustomKeyBindings() {
 }
 
 void taiMisc::UpdateCustomKeyBindings() {
-  if (false) { // check version
+  if (true) { // check version
     // compare the default bindings to see if there are actions that aren't in the custom bindings
     // or if there are actions in custom that are no longer in default
     KeyBindings* default_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_DEFAULT));
@@ -1247,9 +1245,10 @@ void taiMisc::UpdateCustomKeyBindings() {
       KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       for (int i=0; i<default_pairs->size; i++) {
         KeyActionPair* pair = &default_pairs->SafeEl(i);
-        if (custom_pairs->FindPair(pair->action, pair->key_sequence) == -1) { // if pairing not found
+        if (custom_pairs->FindAction(pair->action) == -1) { // if pairing not found
           custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence(pair->key_sequence));
-          taMisc::DebugInfo("update - add", (String)pair->key_sequence.toString());
+          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));
+          taMisc::DebugInfo("add", action_str);
         }
       }
     }
@@ -1260,13 +1259,13 @@ void taiMisc::UpdateCustomKeyBindings() {
       KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       for (int i=0; i<custom_pairs->size; i++) {
         KeyActionPair* pair = &custom_pairs->SafeEl(i);
-        if (default_pairs->FindPair(pair->action, pair->key_sequence) == -1) { // if pairing not found
-          custom_bindings->Remove(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence(pair->key_sequence));
-          taMisc::DebugInfo("update - remove", (String)pair->key_sequence.toString());
+        if (default_pairs->FindAction(pair->action) == -1) { // if pairing not found
+          custom_bindings->Remove(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence());  // just check action
+          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));
+          taMisc::DebugInfo("remove", action_str);
         }
       }
     }
-
     SaveCustomKeyBindings();
   }
 }

@@ -474,6 +474,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       clear();
       break;
     case taiMisc::CONSOLE_HISTORY_BACKWARD:
+    case taiMisc::CONSOLE_HISTORY_BACKWARD_II:
       key_event->accept();
       if(history.size() > 0) {
         historyIndex--; if(historyIndex < 0) historyIndex = 0;
@@ -483,6 +484,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       }
       break;
     case taiMisc::CONSOLE_HISTORY_FORWARD:
+    case taiMisc::CONSOLE_HISTORY_FORWARD_II:
       key_event->accept();
       if(history.size() > 0) {
         historyIndex++; if(historyIndex >= history.size()) historyIndex = history.size() -1;

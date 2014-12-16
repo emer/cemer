@@ -1585,6 +1585,7 @@ bool taRootBase::Startup_InitKeyBindings() {
   
   taiMisc::LoadDefaultKeyBindings();
   taiMisc::LoadCustomKeyBindings();
+  taiMisc::UpdateCustomKeyBindings();
   
   return true;
 }

@@ -60,23 +60,23 @@ bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction acti
   return rval;
 }
 
-bool KeyBindings::Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence) {
+bool KeyBindings::Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence, bool check_action_only) {
   bool rval = false;
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
-//  if (context_bindings) {
-//    if (key_sequence == NULL) {
-//      KeyActionPair* pair = context_bindings->GetPairFromAction(action);
-//      if (pair) {
-//        context_bindings->RemoveEl(*pair);
-//      }
-//    }
-//    else {
-//      KeyActionPair* pair = context_bindings->GetPair(action, key_sequence);
-//      if (pair) {
-//        context_bindings->RemoveEl(*pair);
-//      }
-//    }
-//  }
+  if (context_bindings) {
+    if (check_action_only) {
+      KeyActionPair* pair = context_bindings->GetPairFromAction(action);
+      if (pair) {
+        context_bindings->RemoveEl(*pair);
+      }
+    }
+    else {  // must match on action and key_sequence
+      KeyActionPair* pair = context_bindings->GetPair(action, key_sequence);
+      if (pair) {
+        context_bindings->RemoveEl(*pair);
+      }
+    }
+  }
   return rval;
 }
 
