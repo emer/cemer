@@ -200,6 +200,15 @@ public:
     N_AM_VARS,
   };
 
+  enum LeabraThrLayStats {         // stats that require holding threaded layer-level variables for subsequent aggregation
+    NORMERR = N_NetThrLayStats,
+    COSERR,
+    COSDIFF,
+    AVGACTDIFF,
+    TRIALCOSDIFF,
+    N_LeabraThrLayStats,
+  };
+
   LeabraCudaSpec  cuda;         // #CAT_CUDA parameters for NVIDA CUDA GPU implementation -- only applicable for CUDA_COMPILE binaries
   LeabraTimes     times;        // #CAT_Learning time parameters
   LeabraNetStats  lstats;       // #CAT_Statistic leabra network-level statistics parameters

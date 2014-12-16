@@ -918,8 +918,8 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   const int li = active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& lay_sse = net->ThrLayStats(thr_no, li, 0);
-    float& lay_n = net->ThrLayStats(thr_no, li, 1);
+    float& lay_sse = net->ThrLayStats(thr_no, li, 0, Network::SSE);
+    float& lay_n = net->ThrLayStats(thr_no, li, 1, Network::SSE);
 
     sse += lay_sse;
     n_vals += (int)lay_n;
@@ -951,11 +951,11 @@ int Layer::Compute_PRerr(Network* net) {
   const int li = active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& true_pos = net->ThrLayStats(thr_no, li, 0);
-    float& false_pos = net->ThrLayStats(thr_no, li, 1);
-    float& false_neg = net->ThrLayStats(thr_no, li, 2);
-    float& true_neg = net->ThrLayStats(thr_no, li, 3);
-    float& lay_n = net->ThrLayStats(thr_no, li, 4);
+    float& true_pos = net->ThrLayStats(thr_no, li, 0, Network::PRERR);
+    float& false_pos = net->ThrLayStats(thr_no, li, 1, Network::PRERR);
+    float& false_neg = net->ThrLayStats(thr_no, li, 2, Network::PRERR);
+    float& true_neg = net->ThrLayStats(thr_no, li, 3, Network::PRERR);
+    float& lay_n = net->ThrLayStats(thr_no, li, 4, Network::PRERR);
 
     n_vals += (int)lay_n;
     prerr.true_pos += true_pos;

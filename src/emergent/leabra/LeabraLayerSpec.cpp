@@ -600,8 +600,8 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   const int li = lay->active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& lay_nerr = net->ThrLayStats(thr_no, li, 0);
-    float& lay_trg_n = net->ThrLayStats(thr_no, li, 1);
+    float& lay_nerr = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::NORMERR);
+    float& lay_trg_n = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::NORMERR);
 
     nerr += lay_nerr;
     ntrg_act += (int)lay_trg_n;
@@ -643,12 +643,12 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   const int li = lay->active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& lcosv = net->ThrLayStats(thr_no, li, 0);
-    float& lcosvp = net->ThrLayStats(thr_no, li, 1);
-    float& lssm = net->ThrLayStats(thr_no, li, 2);
-    float& lssp = net->ThrLayStats(thr_no, li, 3);
-    float& lsst = net->ThrLayStats(thr_no, li, 4);
-    float& lnvals = net->ThrLayStats(thr_no, li, 5);
+    float& lcosv = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::COSERR);
+    float& lcosvp = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::COSERR);
+    float& lssm = net->ThrLayStats(thr_no, li, 2, LeabraNetwork::COSERR);
+    float& lssp = net->ThrLayStats(thr_no, li, 3, LeabraNetwork::COSERR);
+    float& lsst = net->ThrLayStats(thr_no, li, 4, LeabraNetwork::COSERR);
+    float& lnvals = net->ThrLayStats(thr_no, li, 5, LeabraNetwork::COSERR);
 
     n_vals += lnvals;
     cosv += lcosv;
@@ -690,9 +690,9 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   const int li = lay->active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& lcosv = net->ThrLayStats(thr_no, li, 0);
-    float& lssm = net->ThrLayStats(thr_no, li, 1);
-    float& lsst = net->ThrLayStats(thr_no, li, 2);
+    float& lcosv = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::COSDIFF);
+    float& lssm = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::COSDIFF);
+    float& lsst = net->ThrLayStats(thr_no, li, 2, LeabraNetwork::COSDIFF);
 
     cosv += lcosv;
     ssm += lssm;
@@ -724,8 +724,8 @@ float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) 
   const int li = lay->active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& ladiff = net->ThrLayStats(thr_no, li, 0);
-    float& lnd = net->ThrLayStats(thr_no, li, 1);
+    float& ladiff = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::AVGACTDIFF);
+    float& lnd = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::AVGACTDIFF);
     adiff += ladiff;
     nd += (int)lnd;
   }
@@ -748,9 +748,9 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   const int li = lay->active_lay_idx;
   for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
     // integrate over thread raw data
-    float& lcosv = net->ThrLayStats(thr_no, li, 0);
-    float& lssm = net->ThrLayStats(thr_no, li, 1);
-    float& lsst = net->ThrLayStats(thr_no, li, 2);
+    float& lcosv = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::TRIALCOSDIFF);
+    float& lssm = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::TRIALCOSDIFF);
+    float& lsst = net->ThrLayStats(thr_no, li, 2, LeabraNetwork::TRIALCOSDIFF);
 
     cosv += lcosv;
     ssm += lssm;

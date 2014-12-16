@@ -208,6 +208,12 @@ public:
     NT_RIGHT_MID,               // at right of network, in the middle depth-wise -- foot is raised as when no net text is visible
   };
 
+  enum NetThrLayStats {         // stats that require holding threaded layer-level variables for subsequent aggregation
+    SSE,
+    PRERR,
+    N_NetThrLayStats,
+  };
+
   static taBrainAtlas_List* brain_atlases;  // #NO_SAVE #NO_SHOW_TREE atlases available
 
   BaseSpec_Group specs;         // #CAT_Structure Specifications for network parameters
@@ -309,8 +315,9 @@ public:
   char**       thrs_units_mem;  // #IGNORE actual memory allocation of UnitVars variables, organized by thread -- array of char*[n_thrs_built], pointing to arrays of char[thrs_n_units[thr_no] * unit_vars_size], containing the units processed by a given thread -- this is the primary memory allocation of units
   int**        thrs_lay_unit_idxs; // #IGNORE allocation of units to layers by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_layers_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given layer
   int**        thrs_ungp_unit_idxs; // #IGNORE allocation of units to unit groups by threads -- array of int**[n_thrs_built], pointing to arrays of int[n_ungps_built * 2], containing  start and end thr_un_idx indexes of units processed by a given thread and a given unit group
-  int          n_lay_stats;     // #IGNORE #DEF_6 number of thread-specific layer-level statistics available for stats algorithms
-  float**      thrs_lay_stats;  // #IGNORE thread-specific layer-level stats variables available for stats routines to do efficient initial pre-computation across units at the thread level, followed by a main-thread integration of the thread-specific values -- array of float*[n_thrs_built] of float[n_lay_stats * n_layers_built] -- n_lay_stats is accessed as the inner dimension
+  int          n_lay_stats;     // #IGNORE #DEF_6 number of thread-specific layer-level statistics that require variable memory storage
+  int          n_lay_stats_vars; // #IGNORE #DEF_6 number of thread-specific layer-level statistic variables, per stat, available for stats algorithms
+  float**      thrs_lay_stats;  // #IGNORE thread-specific layer-level stats variables available for stats routines to do efficient initial pre-computation across units at the thread level, followed by a main-thread integration of the thread-specific values -- array of float*[n_thrs_built] of float[n_lay_stats * n_lay_stats_vars * n_layers_built] -- n_lay_stats_vars is accessed as the inner dimension, then n_layers_built, then n_lay_stats as outer
 
   int*          units_n_recv_cgps;  // #IGNORE number of receiving connection groups per unit (flat_idx unit indexing, starts at 1)
   int*          units_n_send_cgps;  // #IGNORE number of sending connection groups per unit (flat_idx unit indexing, starts at 1)
@@ -478,9 +485,11 @@ public:
   inline int    ThrUnGpUnEnd(int thr_no, int lay_no)
   { return thrs_ungp_unit_idxs[thr_no][2*lay_no + 1]; }
   // #CAT_Structure ending thread-specific unit index for given unit group (from active_ungps list) -- this is like the max in a for loop -- valid indexes are < end
-  inline float& ThrLayStats(int thr_no, int lay_idx, int stat_no) 
-  { return thrs_lay_stats[thr_no][lay_idx * n_lay_stats + stat_no]; }
-  // #IGNORE get layer statistic value for given thread, layer (active layer index), and stat number (0..n_lay_stats max)
+  inline float& ThrLayStats(int thr_no, int lay_idx, int stat_var, int stat_type) 
+  { return thrs_lay_stats[thr_no]
+      [stat_type * n_layers_built * n_lay_stats_vars + lay_idx * n_lay_stats_vars +
+       stat_var]; }
+  // #IGNORE get layer statistic value for given thread, layer (active layer index), stat variable number (0..n_lay_stats_vars-1 max), and stat type (SSE, PRERR, etc)
 
   inline int    UnNRecvConGps(int flat_idx) const {
 #ifdef DEBUG

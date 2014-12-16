@@ -96,6 +96,8 @@ void LeabraNetwork::Initialize() {
   unit_vars_type = &TA_LeabraUnitVars;
   con_group_type = &TA_LeabraConGroup;
 
+  n_lay_stats = N_LeabraThrLayStats;
+
   unlearnable_trial = false;
 
   quarter = 0;
@@ -1416,8 +1418,8 @@ void LeabraNetwork::Compute_NormErr_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& lay_nerr = ThrLayStats(thr_no, li, 0);
-    float& lay_trg_n = ThrLayStats(thr_no, li, 1);
+    float& lay_nerr = ThrLayStats(thr_no, li, 0, NORMERR);
+    float& lay_trg_n = ThrLayStats(thr_no, li, 1, NORMERR);
     lay_nerr = 0.0f;
     lay_trg_n = 0.0f;
     
@@ -1471,12 +1473,12 @@ void LeabraNetwork::Compute_CosErr_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& cosv = ThrLayStats(thr_no, li, 0);
-    float& cosvp = ThrLayStats(thr_no, li, 1);
-    float& ssm = ThrLayStats(thr_no, li, 2);
-    float& ssp = ThrLayStats(thr_no, li, 3);
-    float& sst = ThrLayStats(thr_no, li, 4);
-    float& nvals = ThrLayStats(thr_no, li, 5);
+    float& cosv = ThrLayStats(thr_no, li, 0, COSERR);
+    float& cosvp = ThrLayStats(thr_no, li, 1, COSERR);
+    float& ssm = ThrLayStats(thr_no, li, 2, COSERR);
+    float& ssp = ThrLayStats(thr_no, li, 3, COSERR);
+    float& sst = ThrLayStats(thr_no, li, 4, COSERR);
+    float& nvals = ThrLayStats(thr_no, li, 5, COSERR);
 
     cosv = 0.0f;  cosvp = 0.0f;  ssm = 0.0f;  ssp = 0.0f; sst = 0.0f; nvals = 0.0f;
 
@@ -1550,9 +1552,9 @@ void LeabraNetwork::Compute_CosDiff_Thr(int thr_no) {
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
 
-    float& cosv = ThrLayStats(thr_no, li, 0);
-    float& ssm = ThrLayStats(thr_no, li, 1);
-    float& sst = ThrLayStats(thr_no, li, 2);
+    float& cosv = ThrLayStats(thr_no, li, 0, COSDIFF);
+    float& ssm = ThrLayStats(thr_no, li, 1, COSDIFF);
+    float& sst = ThrLayStats(thr_no, li, 2, COSDIFF);
 
     cosv = 0.0f;  ssm = 0.0f;  sst = 0.0f;
 
@@ -1603,8 +1605,8 @@ void LeabraNetwork::Compute_AvgActDiff_Thr(int thr_no) {
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
 
-    float& adiff = ThrLayStats(thr_no, li, 0);
-    float& nd = ThrLayStats(thr_no, li, 1);
+    float& adiff = ThrLayStats(thr_no, li, 0, AVGACTDIFF);
+    float& nd = ThrLayStats(thr_no, li, 1, AVGACTDIFF);
     adiff = 0.0f;  nd = 0.0f;
 
     const int ust = ThrLayUnStart(thr_no, li);
@@ -1653,9 +1655,9 @@ void LeabraNetwork::Compute_TrialCosDiff_Thr(int thr_no) {
   for(int li = 0; li < nlay; li++) {
     Layer* lay = ActiveLayer(li);
 
-    float& cosv = ThrLayStats(thr_no, li, 0);
-    float& ssm = ThrLayStats(thr_no, li, 1);
-    float& sst = ThrLayStats(thr_no, li, 2);
+    float& cosv = ThrLayStats(thr_no, li, 0, TRIALCOSDIFF);
+    float& ssm = ThrLayStats(thr_no, li, 1, TRIALCOSDIFF);
+    float& sst = ThrLayStats(thr_no, li, 2, TRIALCOSDIFF);
 
     cosv = 0.0f;  ssm = 0.0f;  sst = 0.0f;
 

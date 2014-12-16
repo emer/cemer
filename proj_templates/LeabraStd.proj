@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.2.0 rev7661
+// ta_Dump File v3.0 -- code v7.0.3.0 rev7873
 LeabraProject .projects["LeabraStd"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1519,6 +1519,7 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["output_name"] { };
     UserDataItem @["trial_name"] { };
     UserDataItem @["group_name"] { };
+    UserDataItem @["total_trials"] { };
     UserDataItem @["time"] { };
     UserDataItem @["cycle"] { };
     UserDataItem @["tick"] { };
@@ -1603,6 +1604,14 @@ LeabraProject .projects["LeabraStd"] {
    };
 
    Weights_List @.weights = [0] {
+   };
+
+   NetTiming_List NULL = [5] {
+    LeabraNetTiming @[0] { };
+    LeabraNetTiming @[1] { };
+    LeabraNetTiming @[2] { };
+    LeabraNetTiming @[3] { };
+    LeabraNetTiming @[4] { };
    };
   };
  };
@@ -6509,7 +6518,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=3;
+      int_val=6;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7731,6 +7740,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7764,6 +7774,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7797,6 +7808,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7830,6 +7842,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7863,6 +7876,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7896,6 +7910,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7929,6 +7944,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7962,6 +7978,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8254,6 +8271,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8287,6 +8305,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8320,6 +8339,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8353,6 +8373,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8386,6 +8407,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8419,6 +8441,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8452,6 +8475,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8485,6 +8509,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8518,6 +8543,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label="netmax";
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8551,6 +8577,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label="avg_act";
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8584,6 +8611,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label="netrel";
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=INPUT_LAYERS|HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -9465,6 +9493,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=0;
+	   last_max=0;
 	   range=1;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -10495,6 +10525,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=0;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
@@ -10748,6 +10780,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["total_trials"] {
+     name="total_trials";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["time"] {
      name="time";
      value 1 0=1;
@@ -10830,20 +10867,30 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
-       inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+       inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
-       decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+       decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lstats {
+	cos_diff_avg_tau=100;
+	hog_thr=0.3;
+	cos_diff_avg_dt=0.01;
+       };
        lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
      lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
-     decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+     decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lstats {
+      cos_diff_avg_tau=100;
+      hog_thr=0.3;
+      cos_diff_avg_dt=0.01;
+     };
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
@@ -10856,7 +10903,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_con_type=LeabraCon;
      bias_spec {type=LeabraBiasSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
@@ -10882,7 +10928,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
-     learn_qtr=Q4;
      deep5b_qtr=Q4;
      ti_ctxt_qtr=Q4;
      adapt {
@@ -10890,15 +10935,19 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       tau=144;
       vm_gain=0.04;
       spike_gain=0.00805;
+      Ei_dyn=1;
+      Ei_gain=0.001;
+      Ei_tau=50;
       dt=0.006944444;
+      Ei_dt=0.02;
      };
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
      };
-     cifer_thal {on=0: thal_to_super=0.1: thal_thr=0.2: thal_bin=1: };
-     cifer_d5b {on=0: d5b_to_super=0.01: d5b_burst=1: act5b_thr=0.2: ti_5b=0: d5b_repl_ctxt=2: ti_5b_c=1: };
+     cifer_thal {on=0: thal_thr=0.2: thal_bin=1: auto_thal=0: thal_to_super=0.1: };
+     cifer_d5b {on=0: burst=1: ti_rescale=1: ti_scale_mult=1: act5b_thr=0.2: ti_5b=0: d5b_to_super=0.01: ti_5b_c=1: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
@@ -10935,6 +10984,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        diff_scale_p=0;
        wt_scale_p {abs=1: rel=1: };
        learn=1;
+       learn_qtr=Q4;
        lrate=0.02;
        cur_lrate=0.04;
        lrs_mult=1;
@@ -10968,6 +11018,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        diff_scale_p=0;
        wt_scale_p {abs=1: rel=1: };
        learn=1;
+       learn_qtr=Q4;
        lrate=0.02;
        cur_lrate=0.04;
        lrs_mult=1;
@@ -10992,6 +11043,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      diff_scale_p=0;
      wt_scale_p {abs=1: rel=1: };
      learn=1;
+     learn_qtr=Q4;
      lrate=0.02;
      cur_lrate=0.04;
      lrs_mult=1;
@@ -11046,6 +11098,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=0;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -11094,6 +11148,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=2;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -11106,8 +11162,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["LeabraStd"].networks["Network_0"].layers["Input"]$$;
        spec {type=FullPrjnSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
@@ -11125,8 +11179,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["LeabraStd"].networks["Network_0"].layers["Output"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["LeabraStd"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"].children["TopDownCons"]$$: };
        recv_idx=1;
        send_idx=0;
@@ -11180,6 +11232,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=1;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -11192,8 +11246,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["LeabraStd"].networks["Network_0"].layers["Hidden"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["LeabraStd"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$.projects["LeabraStd"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
@@ -11237,8 +11289,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=0;
+   flags=BUILT|INTACT;
+   unit_vars_type=LeabraUnitVars;
+   con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
+   auto_load_wts=NO_AUTO_LOAD;
+   auto_load_file=;
    brain_atlas_name=;
    train_mode=TRAIN;
    wt_update=ON_LINE;
@@ -11257,9 +11313,66 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=2.298735696848069e-314;
-    nibble_chunk=8;
-    min_units=3000;
-    ignore_lay_sync=0;
+   };
+   net_timing {
+    name="net_timing";
+    el_typ=LeabraNetTiming;
+    el_def=0;
+    LeabraNetTiming @[0] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[1] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[2] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[3] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[4] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
@@ -11268,16 +11381,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    max_prjns=2;
    max_disp_size {x=5: y=5: z=3: };
    max_disp_size2d {x=5: y=18: };
-   lthreads {
-    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    n_wake_in_sync=0;
-    run_time_pct=0;
-    sync_time_pct=0;
-    wake_in_sync_pct=2.998380053750518e-311;
-    quarter=1;
-    unit_chunks=32;
+   cuda {
+    min_threads=32;
+    max_threads=1024;
+    cons_per_thread=2;
     timers_on=0;
    };
    times {
@@ -11294,8 +11401,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     cos_err_lrn_thr=-1;
    };
    net_misc {
+    spike=0;
     ti=0;
+    deep5b_cons=0;
+    bias_learn=1;
+    trial_decay=1;
     diff_scale_p=0;
+    diff_scale_q1=0;
     dwt_norm=0;
     lay_gp_inhib=0;
     inhib_cons=0;

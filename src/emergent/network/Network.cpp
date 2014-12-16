@@ -141,7 +141,8 @@ void Network::Initialize() {
   thrs_lay_unit_idxs = NULL;
   thrs_ungp_unit_idxs = NULL;
   thrs_lay_stats = NULL;
-  n_lay_stats = 6;
+  n_lay_stats = N_NetThrLayStats; // derived classes with new stats need to overwrite
+  n_lay_stats_vars = 6;
 
   units_n_recv_cgps = NULL;
   units_n_send_cgps = NULL;
@@ -683,7 +684,7 @@ void Network::AllocUnitConGpThreadMem() {
     net_aligned_malloc((void**)&thrs_units_mem[i], max_thr_n_units * unit_vars_size);
     net_aligned_malloc((void**)&thrs_lay_unit_idxs[i], 2 * n_layers_built * sizeof(int));
     net_aligned_malloc((void**)&thrs_ungp_unit_idxs[i], 2 * n_ungps_built * sizeof(int));
-    net_aligned_malloc((void**)&thrs_lay_stats[i], n_lay_stats * n_layers_built * sizeof(float));
+    net_aligned_malloc((void**)&thrs_lay_stats[i], n_lay_stats * n_layers_built * n_lay_stats_vars * sizeof(float));
 
     net_aligned_malloc((void**)&thrs_units_n_recv_cgps[i], max_thr_n_units * sizeof(int));
     net_aligned_malloc((void**)&thrs_units_n_send_cgps[i], max_thr_n_units * sizeof(int));
@@ -1936,8 +1937,8 @@ void Network::Compute_SSE_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& lay_sse = ThrLayStats(thr_no, li, 0);
-    float& lay_n = ThrLayStats(thr_no, li, 1);
+    float& lay_sse = ThrLayStats(thr_no, li, 0, SSE);
+    float& lay_n = ThrLayStats(thr_no, li, 1, SSE);
     lay_sse = 0.0f;
     lay_n = 0.0f;
     
@@ -1985,11 +1986,11 @@ void Network::Compute_PRerr_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& true_pos = ThrLayStats(thr_no, li, 0);
-    float& false_pos = ThrLayStats(thr_no, li, 1);
-    float& false_neg = ThrLayStats(thr_no, li, 2);
-    float& true_neg = ThrLayStats(thr_no, li, 3);
-    float& lay_n = ThrLayStats(thr_no, li, 4);
+    float& true_pos = ThrLayStats(thr_no, li, 0, PRERR);
+    float& false_pos = ThrLayStats(thr_no, li, 1, PRERR);
+    float& false_neg = ThrLayStats(thr_no, li, 2, PRERR);
+    float& true_neg = ThrLayStats(thr_no, li, 3, PRERR);
+    float& lay_n = ThrLayStats(thr_no, li, 4, PRERR);
     true_pos = 0.0f;   false_pos = 0.0f;    false_neg = 0.0f;    true_neg = 0.0f;
     lay_n = 0.0f;
 
