@@ -61,6 +61,11 @@ void Layer::Initialize() {
   m_prv_layer_flags = LF_NONE;
 
   sse = 0.0f;
+  cnt_err = 0.0f;
+  cur_cnt_err = 0.0f;
+  pct_err = 0.0f;
+  pct_cor = 0.0f;
+
   // prerr = ??
   icon_value = 0.0f;
   units_flat_idx = 0;
@@ -70,6 +75,10 @@ void Layer::Initialize() {
   brain_area = "";
   voxel_fill_pct = 1.0f;
   active_lay_idx = -1;
+  
+#ifdef DMEM_COMPILE
+  dmem_agg_sum.agg_op = MPI_SUM;
+#endif
 }
 
 void Layer::InitLinks() {
@@ -88,7 +97,10 @@ void Layer::InitLinks() {
   taBase::Own(unit_spec, this);
   taBase::Own(dist, this);
   taBase::Own(gp_output_names, this);
+  taBase::Own(avg_sse, this);
   taBase::Own(prerr, this);
+  taBase::Own(sum_prerr, this);
+  taBase::Own(epc_prerr, this);
   taBase::Own(unit_names, this);
 
   AutoNameMyMembers();
@@ -100,6 +112,11 @@ void Layer::InitLinks() {
     SetDefaultPos2d();
   units.pos.z = 0;
   unit_spec.SetDefaultSpec(this);
+
+#ifdef DMEM_COMPILE
+  taBase::Own(dmem_agg_sum, this);
+  DMem_InitAggs();
+#endif
 }
 
 void Layer::CutLinks() {
@@ -877,7 +894,20 @@ void  Layer::Init_Acts(Network* net) {
 }
 
 void Layer::Init_Weights_Layer(Network* net) {
+}
+
+void Layer::Init_Stats(Network* net) {
   sse = 0.0f;
+  avg_sse.ResetAvg();
+  cnt_err = 0.0f;
+  cur_cnt_err = 0.0f;
+  pct_err = 0.0f;
+  pct_cor = 0.0f;
+
+  sum_prerr.InitVals();
+  epc_prerr.InitVals();
+
+  output_name = "";
 }
 
 float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
@@ -896,15 +926,20 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   }
   
   float rval = sse;
-  if(unit_avg && n_vals > 0)
+  if(unit_avg && n_vals > 0) {
     sse /= (float)n_vals;
-  if(sqrt)
+  }
+  if(sqrt) {
     sse = sqrtf(sse);
+  }
   if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
                                   HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }
+  avg_sse.Increment(sse);
+  if(sse > net->stats.cnt_err_tol)
+    cur_cnt_err += 1.0;
   return rval;
 }
 
@@ -934,6 +969,32 @@ int Layer::Compute_PRerr(Network* net) {
     n_vals = 0;
   }
   return n_vals;
+}
+
+void Layer::Compute_EpochSSE(Network* net) {
+  cnt_err = cur_cnt_err;
+  if(avg_sse.n > 0) {
+    pct_err = cnt_err / (float)avg_sse.n;
+    pct_cor = 1.0f - pct_err;
+  }
+  avg_sse.GetAvg_Reset();
+
+  cur_cnt_err = 0.0f;
+}
+
+void Layer::Compute_EpochPRerr(Network* net) {
+  epc_prerr = sum_prerr;
+  epc_prerr.ComputePR();        // make sure, in case of dmem summing
+  sum_prerr.InitVals();         // reset!
+}
+
+void Layer::Compute_EpochStats(Network* net) {
+#ifdef DMEM_COMPILE
+  DMem_ComputeAggs(net->dmem_trl_comm.comm);
+#endif
+  Compute_EpochSSE(net);
+  if(net->stats.prerr)
+    Compute_EpochPRerr(net);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1594,3 +1655,15 @@ bool Layer::ChangeMyType(TypeDef* new_typ) {
 }
 
 
+#ifdef DMEM_COMPILE
+
+void Layer::DMem_InitAggs() {
+  dmem_agg_sum.ScanMembers(GetTypeDef(), (void*)this);
+  dmem_agg_sum.CompileVars();
+}
+
+void Layer::DMem_ComputeAggs(MPI_Comm comm) {
+  dmem_agg_sum.AggVar(comm, MPI_SUM);
+}
+
+#endif

@@ -267,7 +267,11 @@ public:
   float		tau;	        // #CONDSHOW_ON_on #DEF_144 adaptation dynamics time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life)
   float		vm_gain;	// #CONDSHOW_ON_on #MIN_0 #DEF_0.04 gain on the membrane potential v_m driving the adapt adaptation variable -- default of 0.04 reflects 4nS biological value converted into normalized units
   float		spike_gain;	// #CONDSHOW_ON_on #DEF_0.00805;0.004;0.002 value to add to the adapt adaptation variable after spiking -- default of 0.00805 is normalized version of .0805 nA in biological values -- weaker levels often work better (e.g., 0.004)
+  bool          Ei_dyn;         // #CONDSHOW_ON_on does the inhibitory reversal potential (E_i) update dynamically over time in response to activation of the receiving neuron (backpropagating action potentials), or is it static -- dynamics are important when using adaptation, as this compensates for adaptation and allows active neurons to remain active -- only enabeled when activation is on, because it is bad when adaptation is not on
+  float         Ei_gain;        // #CONDSHOW_ON_Ei_dyn&&on #MIN_0 #DEF_0.001 multiplier on postsynaptic cell activation (act_eq), driving increases in E_i reversal potential for Cl- -- this factor determines how strong the e_rev change effect is
+  float         Ei_tau;         // #CONDSHOW_ON_Ei_dyn&&on #MIN_1 #DEF_50 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
   float		dt;		// #READ_ONLY #EXPERT rate = 1 / tau
+  float		Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   float	Compute_dAdapt(float vm, float e_rev_l, float adapt)
   { return dt * (vm_gain * (vm - e_rev_l) - adapt); }

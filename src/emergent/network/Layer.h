@@ -29,6 +29,7 @@
 #include <PRerrVals>
 #include <String_Matrix>
 #include <LayerSpec>
+#include <Average>
 
 // declare all other types mentioned but not required to include:
 class Network; //
@@ -134,7 +135,14 @@ public:
   String                output_name;    // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   String_Matrix         gp_output_names; // #NO_SAVE #SHOW_TREE #CAT_Statistic #CONDTREE_ON_unit_groups output_name's for unit subgroups -- name for the output produced by the network (algorithm/program dependent, e.g., unit name of most active unit)
   float                 sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
+  Average	        avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
+  float                 cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
+  float                 cur_cnt_err;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
+  float                 pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
+  float                 pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
   PRerrVals             prerr;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic precision and recall error values for this layer, for the current pattern
+  PRerrVals             sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
+  PRerrVals             epc_prerr;      // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values over an epoch or similar larger set of external input patterns
   float                 icon_value;     // #NO_SAVE #GUI_READ_ONLY #HIDDEN #CAT_Statistic value to display if layer is iconified (algorithmically determined)
   int                   units_flat_idx; // #NO_SAVE #READ_ONLY starting index for this layer into the network units_flat list, used in threading
   bool                  units_lesioned; // #GUI_READ_ONLY if units were lesioned in this group, don't complain about rebuilding!
@@ -386,10 +394,21 @@ public:
   virtual void  Init_Weights_Layer(Network* net);
   // #CAT_Learning layer-level initialization taking place after Init_Weights on units
 
+  virtual void  Init_Stats(Network* net);
+  // #EXPERT #CAT_Statistic initialize statistic variables on layer -- called by Network Init_Stats
+
   virtual float Compute_SSE(Network* net, int& n_vals, bool unit_avg = false, bool sqrt = false);
   // #CAT_Statistic compute sum squared error of activation vs target over the entire layer -- always returns the actual sse, but unit_avg and sqrt flags determine averaging and sqrt of layer's own sse value -- uses sse_tol so error is 0 if within tolerance on a per unit basis
   virtual int   Compute_PRerr(Network* net);
   // #CAT_Statistic compute precision and recall error statistics over entire layer -- true positive, false positive, and false negative -- returns number of values entering into computation (depends on number of targets) -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r) -- uses sse_tol so error is 0 if within tolerance on a per unit basis -- results are stored in prerr values on layer
+
+  virtual void  Compute_EpochSSE(Network* net);
+  // #CAT_Statistic compute epoch-level sum squared error and related statistics
+  virtual void  Compute_EpochPRerr(Network* net);
+  // #CAT_Statistic compute epoch-level precision and recall statistics
+  virtual void  Compute_EpochStats(Network* net);
+  // #CAT_Statistic compute epoch-level statistics; calls DMem_ComputeAggs (if dmem) and EpochSSE -- specific algos may add more
+
 
   ////////////////////////////////////////////////////////////////////////////////
   //    The following are misc functionality not required for primary computing
@@ -501,6 +520,14 @@ public:
   // #CAT_Structure copy one unit variable to another (un->dest_var = un->src_var) for all units within this layer (must be a float type variable)
   virtual bool  VarToVal(const String& dest_var, float val);
   // #CAT_Structure set variable to given value for all units within this layer (must be a float type variable)
+
+#ifdef DMEM_COMPILE
+  DMemAggVars   dmem_agg_sum;           // #IGNORE aggregation of layer variables using SUM op (currently only OP in use -- add others as needed)
+  virtual void  DMem_InitAggs();
+  // #IGNORE initialize aggregation stuff
+  virtual void  DMem_ComputeAggs(MPI_Comm comm);
+  // #IGNORE aggregate layer variables across procs for trial-level dmem
+#endif
 
   String GetDesc() const       override { return desc; }
   int    GetEnabled() const    override { return !lesioned(); }

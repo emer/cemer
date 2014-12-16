@@ -215,13 +215,18 @@ void ActAdaptSpec::Defaults_init() {
   tau = 144;
   vm_gain = 0.04f;
   spike_gain = 0.00805f;
+  Ei_dyn = true;                // use when adapt is on
+  Ei_gain = 0.001f;
+  Ei_tau = 50.0f;
 
   dt = 1.0f / tau;
+  Ei_dt = 1.0f / Ei_tau;
 }
 
 void ActAdaptSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   dt = 1.0f / tau;
+  Ei_dt = 1.0f / Ei_tau;
 }
 
 void ShortPlastSpec::Initialize() {
@@ -1550,16 +1555,13 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     }
   }
   else {
-    LeabraLayerSpec* ls = (LeabraLayerSpec*)u->Un(net, thr_no)->own_lay()->GetLayerSpec();
-
     float net_eff = u->net * g_bar.e;
     float E_i;
-    if(ls->inhib_misc.Ei_dyn) {
+    if(adapt.on && adapt.Ei_dyn) {
       // update the E_i reversal potential as function of inhibitory current
       // key to assume that this is driven by backpropagating AP's
       E_i = u->E_i;
-      u->E_i += ls->inhib_misc.Ei_gain * u->act_eq
-        + ls->inhib_misc.Ei_dt * (e_rev.i - u->E_i);
+      u->E_i += adapt.Ei_gain * u->act_eq + adapt.Ei_dt * (e_rev.i - u->E_i);
     }
     else {
       E_i = e_rev.i;

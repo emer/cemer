@@ -25,6 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
+TA_BASEFUNS_CTORS_DEFN(LeabraLayStats);
 TA_BASEFUNS_CTORS_DEFN(LayGpInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
@@ -72,7 +73,6 @@ void LayerAvgActSpec::UpdateAfterEdit_impl() {
 
 void LeabraInhibMisc::Initialize() {
   self_fb = 0.0f;
-  Ei_dyn = false;
   fb_up_immed = false;
 
   Defaults_init();
@@ -80,16 +80,11 @@ void LeabraInhibMisc::Initialize() {
 
 void LeabraInhibMisc::Defaults_init() {
   self_tau = 1.4f;
-  Ei_gain = 0.001f;
-  Ei_tau = 50.0f;
-
-  Ei_dt = 1.0f / Ei_tau;
   self_dt = 1.0f / self_tau;
 }
 
 void LeabraInhibMisc::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  Ei_dt = 1.0f / Ei_tau;
   self_dt = 1.0f / self_tau;
 }
 
@@ -109,23 +104,6 @@ void LayerDecaySpec::Initialize() {
 }
 
 void LayerDecaySpec::Defaults_init() {
-  cos_diff_avg_tau = 100.0f;
-
-  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
-}
-
-void LayerDecaySpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
-}
-
-void LayerDecaySpec::UpdtDiffAvg(float& diff_avg, const float cos_diff) {
-  if(diff_avg == 0.0f) {        // first time -- set
-    diff_avg = cos_diff;
-  }
-  else {
-    diff_avg += cos_diff_avg_dt * (cos_diff - diff_avg);
-  }
 }
 
 void LeabraDelInhib::Initialize() {
@@ -141,6 +119,22 @@ void LeabraDelInhib::Defaults_init() {
 
 void LeabraDelInhib::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+}
+
+void LeabraLayStats::Initialize() {
+  Defaults_init();
+}
+
+void LeabraLayStats::Defaults_init() {
+  cos_diff_avg_tau = 100.0f;
+  hog_thr = 0.3f;
+
+  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
+}
+
+void LeabraLayStats::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
 void LayGpInhibSpec::Initialize() {
@@ -171,6 +165,7 @@ void LeabraLayerSpec::UpdateAfterEdit_impl() {
   lay_inhib.UpdateAfterEdit_NoGui();
   unit_gp_inhib.UpdateAfterEdit_NoGui();
   avg_act.UpdateAfterEdit_NoGui();
+  lstats.UpdateAfterEdit_NoGui();
 }
 
 void LeabraLayerSpec::InitLinks() {
@@ -275,7 +270,6 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     }
   }
   Init_Inhib(lay, net);         // initialize inhibition at start..
-  Init_Stats(lay, net);
 }
 
 void LeabraLayerSpec::Init_Inhib(LeabraLayer* lay, LeabraNetwork* net) {
@@ -291,15 +285,22 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_netin_n = 0;
 
   lay->norm_err = 0.0f;
+  lay->avg_norm_err.ResetAvg();
   lay->cos_err = 0.0f;
   lay->cos_err_prv = 0.0f;
   lay->cos_err_vs_prv = 0.0f;
+  lay->avg_cos_err.ResetAvg();
+  lay->avg_cos_err_prv.ResetAvg();
+  lay->avg_cos_err_vs_prv.ResetAvg();
 
   lay->cos_diff = 0.0f;
+  lay->avg_cos_diff.ResetAvg();
   lay->cos_diff_avg = 0.0f;
   lay->cos_diff_avg_lmix = 0.0f;
   lay->avg_act_diff = 0.0f;
+  lay->avg_avg_act_diff.ResetAvg();
   lay->trial_cos_diff = 0.0f;
+  lay->avg_trial_cos_diff.ResetAvg();
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -574,6 +575,8 @@ void LeabraLayerSpec::Quarter_Final_GetPlus(LeabraLayer* lay, LeabraNetwork* net
 ///////////////////////////////////////////////////////////////////////
 //      Trial-level Stats
 
+
+
 void LeabraLayerSpec::LayerAvgAct(DataTable* report_table) {
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
   if(!net) return;
@@ -612,6 +615,8 @@ float LeabraLayerSpec::Compute_NormErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->norm_err = nerr / (float)ntrg_act;
   if(lay->norm_err > 1.0f) lay->norm_err = 1.0f; // shouldn't happen...
 
+  lay->avg_norm_err.Increment(lay->norm_err);
+  
   if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
      (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE)))
     return -1.0f;               // no contributarse
@@ -659,6 +664,9 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   if(dist != 0.0f)
     cosv /= dist;
   lay->cos_err = cosv;
+
+  lay->avg_cos_err.Increment(lay->cos_err);
+
   if(net->net_misc.ti) {
     float pdist = sqrtf(ssp * sst);
     if(pdist != 0.0f) {
@@ -666,6 +674,9 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
     }
     lay->cos_err_prv = cosvp;
     lay->cos_err_vs_prv = lay->cos_err - lay->cos_err_prv;
+
+    lay->avg_cos_err_prv.Increment(lay->cos_err_prv);
+    lay->avg_cos_err_vs_prv.Increment(lay->cos_err_vs_prv);
   }
   return cosv;
 }
@@ -692,7 +703,7 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
     cosv /= dist;
   lay->cos_diff = cosv;
 
-  decay.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
+  lstats.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
   if(lay->layer_type == Layer::HIDDEN) {
     lay->cos_diff_avg_lmix = 1.0f - lay->cos_diff_avg;
   }
@@ -700,6 +711,8 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
     lay->cos_diff_avg_lmix = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
   }
 
+  lay->avg_cos_diff.Increment(lay->cos_diff);
+  
   return cosv;
 }
 
@@ -720,6 +733,9 @@ float LeabraLayerSpec::Compute_AvgActDiff(LeabraLayer* lay, LeabraNetwork* net) 
   if(nd > 0)
     adiff /= (float)nd;
   lay->avg_act_diff = adiff;
+
+  lay->avg_avg_act_diff.Increment(lay->avg_act_diff);
+  
   return adiff;
 }
 
@@ -746,7 +762,43 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
     cosv /= dist;
   lay->trial_cos_diff = cosv;
 
+  lay->avg_trial_cos_diff.Increment(lay->trial_cos_diff);
+  
   return cosv;
+}
+
+void LeabraLayerSpec::Compute_AvgNormErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_norm_err.GetAvg_Reset();
+}
+
+void LeabraLayerSpec::Compute_AvgCosErr(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_cos_err.GetAvg_Reset();
+
+  if(net->net_misc.ti) {
+    lay->avg_cos_err_prv.GetAvg_Reset();
+    lay->avg_cos_err_vs_prv.GetAvg_Reset();
+  }
+}
+
+void LeabraLayerSpec::Compute_AvgCosDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_cos_diff.GetAvg_Reset();
+}
+
+void LeabraLayerSpec::Compute_AvgAvgActDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_avg_act_diff.GetAvg_Reset();
+}
+
+void LeabraLayerSpec::Compute_AvgTrialCosDiff(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_trial_cos_diff.GetAvg_Reset();
+}
+
+void LeabraLayerSpec::Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->Layer::Compute_EpochStats(net);
+  Compute_AvgNormErr(lay, net);
+  Compute_AvgCosErr(lay, net);
+  Compute_AvgCosDiff(lay, net);
+  Compute_AvgAvgActDiff(lay, net);
+  Compute_AvgTrialCosDiff(lay, net);
 }
 
 

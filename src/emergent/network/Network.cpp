@@ -87,13 +87,10 @@ void Network::Initialize() {
 
   sse = 0.0f;
   sum_sse = 0.0f;
-  avg_sse = 0.0f;
   cnt_err = 0.0f;
   pct_err = 0.0f;
   pct_cor = 0.0f;
 
-  cur_sum_sse = 0.0f;
-  avg_sse_n = 0;
   cur_cnt_err = 0.0f;
 
   // prerr = ??
@@ -199,6 +196,7 @@ void Network::InitLinks() {
   taBase::Own(stats, this);
   taBase::Own(threads, this);
 
+  taBase::Own(avg_sse, this);
   taBase::Own(prerr, this);
   taBase::Own(sum_prerr, this);
   taBase::Own(epc_prerr, this);
@@ -294,8 +292,6 @@ void Network::Copy_(const Network& cp) {
   pct_err = cp.pct_err;
   pct_cor = cp.pct_cor;
 
-  cur_sum_sse = cp.cur_sum_sse;
-  avg_sse_n = cp.avg_sse_n;
   cur_cnt_err = cp.cur_cnt_err;
 
   prerr = cp.prerr;
@@ -1677,16 +1673,23 @@ void Network::Init_Counters() {
 void Network::Init_Stats() {
   sse = 0.0f;
   sum_sse = 0.0f;
-  avg_sse = 0.0f;
+  avg_sse.ResetAvg();
   cnt_err = 0.0f;
+  cur_cnt_err = 0.0f;
   pct_err = 0.0f;
   pct_cor = 0.0f;
 
+  sum_prerr.InitVals();
+  epc_prerr.InitVals();
+  
   output_name = "";
 
-  cur_sum_sse = 0.0f;
-  avg_sse_n = 0;
-  cur_cnt_err = 0.0f;
+  // also call at the layer level
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    lay->Init_Stats(this);
+  }
 }
 
 void Network::Init_Timers() {
@@ -1922,24 +1925,7 @@ void Network::Compute_Weights_Thr(int thr_no) {
 
 void Network::Compute_SSE(bool unit_avg, bool sqrt) {
   NET_THREAD_CALL(Network::Compute_SSE_Thr);
-  
-  sse = 0.0f;
-  int n_vals = 0;
-  int lay_vals = 0;
-  const int nlay = n_layers_built;
-  for(int li = 0; li < nlay; li++) {
-    Layer* l = ActiveLayer(li);
-    sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
-    n_vals += lay_vals;
-  }
-  if(unit_avg && n_vals > 0)
-    sse /= (float)n_vals;
-  if(sqrt)
-    sse = sqrtf(sse);
-  cur_sum_sse += sse;
-  avg_sse_n++;
-  if(sse > stats.cnt_err_tol)
-    cur_cnt_err += 1.0;
+  Compute_SSE_Agg(unit_avg, sqrt);
 }
 
 void Network::Compute_SSE_Thr(int thr_no) {
@@ -1967,25 +1953,28 @@ void Network::Compute_SSE_Thr(int thr_no) {
   }
 }
 
-void Network::Compute_PRerr() {
-  NET_THREAD_CALL(Network::Compute_PRerr_Thr);
-
-  prerr.InitVals();
+void Network::Compute_SSE_Agg(bool unit_avg, bool sqrt) {
+  sse = 0.0f;
   int n_vals = 0;
+  int lay_vals = 0;
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     Layer* l = ActiveLayer(li);
-    int lay_vals = l->Compute_PRerr(this);
-    if(lay_vals > 0) {
-      prerr.IncrVals(l->prerr);
-    }
+    sse += l->Compute_SSE(this, lay_vals, unit_avg, sqrt);
     n_vals += lay_vals;
   }
-  if(n_vals > 0) {
-    sum_prerr.IncrVals(prerr);
-    prerr.ComputePR();
-    sum_prerr.ComputePR();
-  }
+  if(unit_avg && n_vals > 0)
+    sse /= (float)n_vals;
+  if(sqrt)
+    sse = sqrtf(sse);
+  avg_sse.Increment(sse);
+  if(sse > stats.cnt_err_tol)
+    cur_cnt_err += 1.0;
+}
+
+void Network::Compute_PRerr() {
+  NET_THREAD_CALL(Network::Compute_PRerr_Thr);
+  Compute_PRerr_Agg();
 }
 
 void Network::Compute_PRerr_Thr(int thr_no) {
@@ -2016,6 +2005,25 @@ void Network::Compute_PRerr_Thr(int thr_no) {
   }
 }
 
+void Network::Compute_PRerr_Agg() {
+  prerr.InitVals();
+  int n_vals = 0;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* l = ActiveLayer(li);
+    int lay_vals = l->Compute_PRerr(this);
+    if(lay_vals > 0) {
+      prerr.IncrVals(l->prerr);
+    }
+    n_vals += lay_vals;
+  }
+  if(n_vals > 0) {
+    sum_prerr.IncrVals(prerr);
+    prerr.ComputePR();
+    sum_prerr.ComputePR();
+  }
+}
+
 void Network::Compute_TrialStats() {
   Compute_SSE(stats.sse_unit_avg, stats.sse_sqrt);
   if(stats.prerr)
@@ -2029,16 +2037,14 @@ void Network::DMem_ShareTrialData(DataTable* dt, int n_rows) {
 }
 
 void Network::Compute_EpochSSE() {
-  sum_sse = cur_sum_sse;
+  sum_sse = avg_sse.sum;
   cnt_err = cur_cnt_err;
-  if(avg_sse_n > 0) {
-    avg_sse = cur_sum_sse / (float)avg_sse_n;
-    pct_err = cnt_err / (float)avg_sse_n;
+  if(avg_sse.n > 0) {
+    pct_err = cnt_err / (float)avg_sse.n;
     pct_cor = 1.0f - pct_err;
   }
+  avg_sse.GetAvg_Reset();
 
-  cur_sum_sse = 0.0f;
-  avg_sse_n = 0;
   cur_cnt_err = 0.0f;
 }
 
@@ -2055,6 +2061,13 @@ void Network::Compute_EpochStats() {
   Compute_EpochSSE();
   if(stats.prerr)
     Compute_EpochPRerr();
+
+  // also call at the layer level
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    Layer* lay = ActiveLayer(li);
+    lay->Compute_EpochStats(this);
+  }
 }
 
 

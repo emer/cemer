@@ -250,14 +250,11 @@ public:
 
   float         sse;            // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW sum squared error over the network, for the current external input pattern
   float         sum_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic total sum squared error over an epoch or similar larger set of external input patterns
-  float         avg_sse;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average sum squared error over an epoch or similar larger set of external input patterns
+  Average	avg_sse;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average sum squared error over an epoch or similar larger set of external input patterns
   float         cnt_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns
+  float         cur_cnt_err;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
   float         pct_err;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was above cnt_err_tol over an epoch or similar larger set of external input patterns (= cnt_err / n)
   float         pct_cor;        // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic epoch-wise average of count of number of times the sum squared error was below cnt_err_tol over an epoch or similar larger set of external input patterns (= 1 - pct_err -- just for convenience for whichever you want to plot)
-
-  float         cur_sum_sse;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current sum_sse -- used during computation of sum_sse
-  int           avg_sse_n;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic number of times cur_sum_sse updated: for computing avg_sse
-  float         cur_cnt_err;    // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic current cnt_err -- used for computing cnt_err
 
   PRerrVals     prerr;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_stats.prerr #CAT_Statistic precision and recall error values for the entire network, for the current external input pattern
   PRerrVals     sum_prerr;      // #NO_SAVE #READ_ONLY #DMEM_AGG_SUM #CAT_Statistic precision and recall error values for the entire network, over an epoch or similar larger set of external input patterns -- these are always up-to-date as the system is aggregating, given the additive nature of the statistics
@@ -804,9 +801,13 @@ public:
   // #CAT_Statistic compute sum squared error of activations vs targets over the entire network -- optionally taking the average over units, and square root of the final results
     virtual void Compute_SSE_Thr(int thr_no);
     // #IGNORE
+    virtual void Compute_SSE_Agg(bool unit_avg = false, bool sqrt = false);
+    // #IGNORE
   virtual void  Compute_PRerr();
   // #CAT_Statistic compute precision and recall error statistics over entire network -- true positive, false positive, and false negative -- precision = tp / (tp + fp) recall = tp / (tp + fn) fmeasure = 2 * p * r / (p + r), specificity, fall-out, mcc.
     virtual void Compute_PRerr_Thr(int thr_no);
+    // #IGNORE
+    virtual void Compute_PRerr_Agg();
     // #IGNORE
 
   virtual Layer* NewLayer();
@@ -1015,7 +1016,7 @@ public:
   // #CAT_DMem block all dmem processors at the trial level until everyone reaches this same point in the program flow -- cordinates all the processors at this point -- important for cases where there are interdependencies among processors, where they need to be coordinated going forward -- does nothing if dmem_nprocs <= 1 or not using dmem
 
 #ifdef DMEM_COMPILE
-  DMemComm      dmem_trl_comm;  // #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials) -- this is the outer subgroup
+  DMemComm      dmem_trl_comm;  // #IGNORE the dmem communicator for the trial-level (each node processes a different set of trials)
   DMemAggVars   dmem_agg_sum;           // #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
   virtual void  DMem_UpdtWtUpdt();
   // #CAT_DMem update wt_update and small_batch parameters for dmem, depending on trl_comm.nprocs

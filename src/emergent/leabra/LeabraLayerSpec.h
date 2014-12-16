@@ -105,13 +105,9 @@ INHERITED(SpecMemberBase)
 public:
   float		self_fb;	// #MIN_0 #DEF_0.5;0.02;0;1 individual unit self feedback inhibition -- can produce proportional activation behavior in individual units for specialized cases (e.g., scalar val or BG units), but not so good for typical hidden layers
  float          self_tau;       // #CONDSHOW_OFF_self_fb:0 #MIN_0 #DEF_1.4 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for integrating unit self feedback inhibitory values -- prevents oscillations that otherwise occur -- relatively rapid 1.4 typically works, but may need to go longer if oscillations are a problem
-  bool          Ei_dyn;         // does the inhibitory reversal potential (E_i) update dynamically over time in response to activation of the receiving neuron (backpropagating action potentials), or is it static -- dynamics are important when using adaptation, as this compensates for adaptation and allows active neurons to remain so
-  float         Ei_gain;        // #CONDSHOW_ON_Ei_dyn #MIN_0 #DEF_0.001 multiplier on postsynaptic cell activation (act_eq), driving increases in E_i reversal potential for Cl- -- this factor determines how strong the e_rev change effect is
-  float         Ei_tau;         // #CONDSHOW_ON_Ei_dyn #MIN_1 #DEF_50 decay time constant for decay of inhibitory reversal potential -- active neurons raise their inhibitory reversal potential, giving them an advantage over inactive neurons
   bool          fb_up_immed;    // should the feedback inhibition rise immediately to the driving value, and then decay with fb_tau time constant?  this is important for spiking activation function.  otherwise, all feedback component changes are goverened by fb_tau, which works better for rate-code case
 
   float		self_dt;        // #READ_ONLY #EXPERT rate = 1 / tau
-  float		Ei_dt;          // #READ_ONLY #EXPERT rate = 1 / tau
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
@@ -152,19 +148,10 @@ class E_API LayerDecaySpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float		trial;		// #AKA_event #MIN_0 #MAX_1 [1 to clear] proportion decay of state vars between trials -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
-  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
-
-  float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua
-
-  void	        UpdtDiffAvg(float& diff_avg, const float cos_diff);
-  // update the running average diff value
 
   String       GetTypeDecoKey() const override { return "LayerSpec"; }
 
   TA_SIMPLE_BASEFUNS(LayerDecaySpec);
-protected:
-  SPEC_DEFAULTS;
-  void	UpdateAfterEdit_impl();
 private:
   void	Initialize();
   void 	Destroy()	{ };
@@ -190,6 +177,39 @@ protected:
 private:
   void	Initialize();
   void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraLayStats);
+
+class E_API LeabraLayStats : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS ##CAT_Leabra leabra layer-level statistics parameters
+INHERITED(SpecMemberBase)
+public:
+  float		cos_diff_avg_tau;  // #DEF_100 #MIN_1 time constant in trials (roughly how long significant change takes, 1.4 x half-life) for computing running average cos_diff value for the layer, cos_diff_avg = cosine difference between act_m and act_p -- this is an important statistic for how much phase-based difference there is between phases in this layer -- it is used in standard X_COS_DIFF modulation of l_mix in LeabraConSpec
+  float         hog_thr;           // #MIN_0 #MAX_1 threshold on unit avg_act (long time-averaged activation), above which the unit is considered to be a 'hog' that is dominating the representational space
+
+  float         cos_diff_avg_dt; // #READ_ONLY #EXPERT rate constant = 1 / cos_diff_avg_taua
+
+  inline void	UpdtDiffAvg(float& diff_avg, const float cos_diff) {
+    if(diff_avg == 0.0f) {        // first time -- set
+      diff_avg = cos_diff;
+    }
+    else {
+      diff_avg += cos_diff_avg_dt * (cos_diff - diff_avg);
+    }
+  }
+  // update the running average diff value
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraLayStats);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
   void	Defaults_init();
 };
 
@@ -225,8 +245,9 @@ public:
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
-  LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials and phases, also time constants..
+  LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
+  LeabraLayStats  lstats;       // #CAT_Statistic layer-level statistics parameters
   LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////
@@ -359,6 +380,19 @@ public:
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of trial activation difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+
+  virtual void	Compute_AvgNormErr(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average norm_err (at an epoch-level timescale)
+  virtual void	Compute_AvgCosErr(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average cos_err (at an epoch-level timescale)
+  virtual void	Compute_AvgCosDiff(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average cos_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgTrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgAvgActDiff(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
+  virtual void	Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute epoch-level statistics (averages)
 
   virtual void	Compute_AbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute the absolute layer-level and relative netinput from different projections into this layer
