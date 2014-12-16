@@ -39,6 +39,7 @@ void NetMonItem::Initialize() {
   variable = "act";
   name_style = AUTO_NAME;
   max_name_len = 6;
+  options = ALL_LAYERS;
   agg.op = Aggregate::NONE;
   data_agg = false;
   select_rows = false;
@@ -148,10 +149,12 @@ String NetMonItem::GetAutoName(taBase* obj) {
     rval = agg.GetAggName() + "_";
     rval.downcase();
   }
-  if(obj->InheritsFrom(&TA_Network)) // special case
+  if(obj->InheritsFrom(&TA_Network)) { // special case
     rval += (var_label.empty() ? variable : var_label);
-  else
+  }
+  else {
     rval += GetObjName(obj) + "_" + (var_label.empty() ? variable : var_label);
+  }
   return rval;
 }
 
@@ -535,16 +538,31 @@ bool NetMonItem::ScanObject_InObject(taBase* obj, String var, taBase* name_obj) 
 void NetMonItem::ScanObject_Network(Network* net, String var) {
   if(var.startsWith("layers.") || var.startsWith(".layers.")) { // go direct to layers
     var = var.after("layers.");
-    FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
-      if(lay->lesioned()) continue;
-      ScanObject_Layer(lay, var);
-    }
+    ScanObject_Network_Layers(net, var);
     return;
   }
   if (ScanObject_InObject(net, var, net)) return;
 
+  ScanObject_Network_Layers(net, var);
+}
+
+void NetMonItem::ScanObject_Network_Layers(Network* net, String var) {
   FOREACH_ELEM_IN_GROUP(Layer, lay, net->layers) {
     if(lay->lesioned()) continue;
+    switch(lay->layer_type) {
+    case Layer::INPUT:
+      if(!HasMonOption(INPUT_LAYERS)) continue;
+      break;
+    case Layer::HIDDEN:
+      if(!HasMonOption(HIDDEN_LAYERS)) continue;
+      break;
+    case Layer::OUTPUT:
+      if(!HasMonOption(OUTPUT_LAYERS)) continue;
+      break;
+    case Layer::TARGET:
+      if(!HasMonOption(TARGET_LAYERS)) continue;
+      break;
+    }
     ScanObject_Layer(lay, var);
   }
 }

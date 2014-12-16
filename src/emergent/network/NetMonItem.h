@@ -55,6 +55,16 @@ public:
     MY_NAME,			// always use my (net monitor item) name; if multiple columns, then add a subscript index for later ones (_1 _2, etc.)
   };
 
+  enum MonOptions {            // #BITS flags for network monitor
+    NMF_NONE            = 0,   // #NO_BIT
+    INPUT_LAYERS        = 0x0001, // for Network layer monitors (variable starts with layers.), include layers with layer_type = INPUT
+    HIDDEN_LAYERS       = 0x0002, // for Network layer monitors (variable starts with layers.), include layers with layer_type = HIDDEN
+    OUTPUT_LAYERS       = 0x0004, // for Network layer monitors (variable starts with layers.), include layers with layer_type = OUTPUT
+    TARGET_LAYERS       = 0x0008, // for Network layer monitors (variable starts with layers.), include layers with layer_type = TARGET
+    ALL_LAYERS          = INPUT_LAYERS | HIDDEN_LAYERS | OUTPUT_LAYERS | TARGET_LAYERS,
+    // #NO_BIT all the layers
+  };
+
   bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
   bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
   TypeDef*		object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
@@ -64,10 +74,11 @@ public:
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
   int			max_name_len;	 // #DEF_6 maximum length for any name segment
+  MonOptions           options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
 
   ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
   bool			matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
-  MatrixGeom		matrix_geom;	// #CONDSHOW_ON_matrix geometry of matrix to create if a matrix type
+  MatrixGeom		matrix_geom;	// #CONDSHOW_ON_matrix&&computed geometry of matrix to create if a matrix type
 
   bool			data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
   DataTableRef		data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
@@ -86,6 +97,18 @@ public:
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
   SimpleMathSpec 	pre_proc_3;	// #EXPERT third step of pre-processing to perform
+
+  inline void           SetMonOption(MonOptions flg)
+  { options = (MonOptions)(options | flg); }
+  // set flag state on
+  inline void           ClearMonOption(MonOptions flg)
+  { options = (MonOptions)(options & ~flg); }
+  // clear flag state (set off)
+  inline bool           HasMonOption(MonOptions flg) const { return (options & flg); }
+  // check if flag is set
+  inline void           SetMonOptionState(MonOptions flg, bool on)
+  { if(on) SetMonOption(flg); else ClearMonOption(flg); }
+  // set flag state according to on bool (if true, set flag, if false, clear it)
   
   String  	GetAutoName(taBase* obj); 
   // get auto-name value based on current values
@@ -137,36 +160,37 @@ protected:
   DataColSpec* 	        AddMatrixCol(const String& valname, ValType vt,
                                      const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
-  bool	 		GetMonVal(int i, Variant& rval); // get the value at i, true if exists
+  bool	 		GetMonVal(int i, Variant& rval); // #IGNORE get the value at i, true if exists
   void 			GetMonVals_Agg(DataTable* db);
-  // special version for agg case
+  // #IGNORE special version for agg case
   void 			GetMonVals_DataAgg(DataTable* db);
-  // special version for data_agg case
+  // #IGNORE special version for data_agg case
 
   // these are for finding the members and building the stat
   // out of the objects and the variable
   
   bool 	ScanObject_InObject(taBase* obj, String var, taBase* name_obj);
-  // if name_obj == NULL, don't make a column for this guy
+  // #IGNORE if name_obj == NULL, don't make a column for this guy
   bool ScanObject_InUserData(taBase* obj, String var, taBase* name_obj);
-  // called when an InObject var is "user_data.xxx[.yyy]"
-  void	ScanObject_Network(Network* net, String var);
-  void	ScanObject_Layer(Layer* lay, String var);
+  // #IGNORE called when an InObject var is "user_data.xxx[.yyy]"
+  void	ScanObject_Network(Network* net, String var); // #IGNORE
+  void	ScanObject_Network_Layers(Network* net, String var); // #IGNORE
+  void	ScanObject_Layer(Layer* lay, String var); // #IGNORE
   void	ScanObject_LayerUnits(Layer* lay, String var);
-  // specific subrange of units within a layer
-  void	ScanObject_Projection(Projection* p, String var);
-  void	ScanObject_ProjectionGroup(Projection_Group* p, String var);
-  void	ScanObject_UnitGroup(Unit_Group* ug, String var);
+  // #IGNORE specific subrange of units within a layer
+  void	ScanObject_Projection(Projection* p, String var); // #IGNORE
+  void	ScanObject_ProjectionGroup(Projection_Group* p, String var); // #IGNORE
+  void	ScanObject_UnitGroup(Unit_Group* ug, String var); // #IGNORE
   void	ScanObject_Unit(Unit* u, String var);
-  // this is only when the object itself is a unit
+  // #IGNORE this is only when the object itself is a unit
 
   // these are only for r. and s. con variables
-  void	ScanObject_LayerCons(Layer* lay, String var);
+  void	ScanObject_LayerCons(Layer* lay, String var); // #IGNORE
   void	ScanObject_PrjnCons(Projection* p, String var);
-  // known to be a connection variable (r.x or s.x); matrix already allocated
+  // #IGNORE known to be a connection variable (r.x or s.x); matrix already allocated
 
-  void	ScanObject_RecvCons(ConGroup* cg, String var);
-  void	ScanObject_SendCons(ConGroup* cg, String var);
+  void	ScanObject_RecvCons(ConGroup* cg, String var); // #IGNORE
+  void	ScanObject_SendCons(ConGroup* cg, String var); // #IGNORE
 
 private:
   void	Initialize();
