@@ -30,6 +30,8 @@
 #include <String_Matrix>
 #include <LayerSpec>
 #include <Average>
+#include <DMemComm>
+#include <DMemAggVars>
 
 // declare all other types mentioned but not required to include:
 class Network; //
