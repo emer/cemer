@@ -63,6 +63,8 @@ public:
     TARGET_LAYERS       = 0x0008, // for Network layer monitors (variable starts with layers.), include layers with layer_type = TARGET
     ALL_LAYERS          = INPUT_LAYERS | HIDDEN_LAYERS | OUTPUT_LAYERS | TARGET_LAYERS,
     // #NO_BIT all the layers
+    NO_INPUT            = HIDDEN_LAYERS | OUTPUT_LAYERS | TARGET_LAYERS,
+    // #NO_BIT all but the input layers
   };
 
   bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
@@ -70,11 +72,11 @@ public:
   TypeDef*		object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
   taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
   MemberDef*		lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
-  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections or prjns gets projection-level variables; can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
+  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specificaly targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
   String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
   NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
   int			max_name_len;	 // #DEF_6 maximum length for any name segment
-  MonOptions           options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
+  MonOptions            options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
 
   ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
   bool			matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)

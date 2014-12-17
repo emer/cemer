@@ -39,7 +39,7 @@ void NetMonItem::Initialize() {
   variable = "act";
   name_style = AUTO_NAME;
   max_name_len = 6;
-  options = ALL_LAYERS;
+  options = NO_INPUT;
   agg.op = Aggregate::NONE;
   data_agg = false;
   select_rows = false;
@@ -92,6 +92,7 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   var_label = cp.var_label;
   name_style = cp.name_style;
   max_name_len = cp.max_name_len;
+  options = cp.options;
   val_type = cp.val_type;
   matrix = cp.matrix;
   matrix_geom = cp.matrix_geom;
