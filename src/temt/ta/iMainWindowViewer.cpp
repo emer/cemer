@@ -550,7 +550,7 @@ void iMainWindowViewer::Constr_FileMenu()
     if (filePublishProjectOnWebMenu) {
       connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     }
-    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb()));
+    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb(const Variat &)));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
   }
