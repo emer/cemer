@@ -1937,10 +1937,7 @@ void Network::Compute_SSE_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& lay_sse = ThrLayStats(thr_no, li, 0, SSE);
-    float& lay_n = ThrLayStats(thr_no, li, 1, SSE);
-    lay_sse = 0.0f;
-    lay_n = 0.0f;
+    float lay_sse = 0.0f;   float lay_n = 0.0f;
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -1951,6 +1948,8 @@ void Network::Compute_SSE_Thr(int thr_no) {
       lay_sse += uv->unit_spec->Compute_SSE(uv, this, thr_no, has_targ);
       if(has_targ) lay_n += 1.0f;
     }
+    ThrLayStats(thr_no, li, 0, SSE) = lay_sse;
+    ThrLayStats(thr_no, li, 1, SSE) = lay_n;
   }
 }
 
@@ -1986,13 +1985,8 @@ void Network::Compute_PRerr_Thr(int thr_no) {
     if(!lay->HasExtFlag(UnitVars::COMP_TARG))
       continue;
 
-    float& true_pos = ThrLayStats(thr_no, li, 0, PRERR);
-    float& false_pos = ThrLayStats(thr_no, li, 1, PRERR);
-    float& false_neg = ThrLayStats(thr_no, li, 2, PRERR);
-    float& true_neg = ThrLayStats(thr_no, li, 3, PRERR);
-    float& lay_n = ThrLayStats(thr_no, li, 4, PRERR);
-    true_pos = 0.0f;   false_pos = 0.0f;    false_neg = 0.0f;    true_neg = 0.0f;
-    lay_n = 0.0f;
+    float true_pos = 0.0f; float false_pos = 0.0f; float false_neg = 0.0f;
+    float true_neg = 0.0f; float lay_n = 0.0f;
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -2003,6 +1997,11 @@ void Network::Compute_PRerr_Thr(int thr_no) {
         (uv, this, thr_no, true_pos, false_pos, false_neg, true_neg);
       if(has_targ) lay_n += 1.0f;
     }
+    ThrLayStats(thr_no, li, 0, PRERR) = true_pos;
+    ThrLayStats(thr_no, li, 1, PRERR) = false_pos;
+    ThrLayStats(thr_no, li, 2, PRERR) = false_neg;
+    ThrLayStats(thr_no, li, 3, PRERR) = true_neg;
+    ThrLayStats(thr_no, li, 4, PRERR) = lay_n;
   }
 }
 
