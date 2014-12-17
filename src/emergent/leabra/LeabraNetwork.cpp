@@ -1781,7 +1781,7 @@ void LeabraNetwork::Compute_PlusStats_Thr(int thr_no) {
   // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
   Compute_AvgActDiff_Thr(thr_no);
   Compute_TrialCosDiff_Thr(thr_no);
-  Compute_HogDeadPcts_Thr(thr_no);
+  //  Compute_HogDeadPcts_Thr(thr_no);  // only in epoch
 }
 
 void LeabraNetwork::Compute_PlusStats_Agg() {
@@ -1794,7 +1794,7 @@ void LeabraNetwork::Compute_PlusStats_Agg() {
   // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
   Compute_AvgActDiff_Agg();
   Compute_TrialCosDiff_Agg();
-  Compute_HogDeadPcts_Agg();
+  //  Compute_HogDeadPcts_Agg();  // only in epoch
 }
 
 void LeabraNetwork::Compute_PlusStats() {
@@ -1876,6 +1876,7 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgExtRew();
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
+  Compute_HogDeadPcts();
 }
 
 static String pct_val_out(float val, float sum) {
