@@ -18,9 +18,10 @@ LeabraProject .projects["LeabraStd"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [2] {
+   EditMbrItem_Group @.mbrs = [3] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
+    EditMbrItem @[2] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -254,10 +255,15 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     String_Data @["train_mode"] { };
+     String_Data @["train_mode"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      int_Data @["group"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
      int_Data @["trial"] { 
@@ -269,9 +275,14 @@ LeabraProject .projects["LeabraStd"] {
      int_Data @["tick"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
+       UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["time"] { };
+     float_Data @["time"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      String_Data @["trial_name"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
@@ -282,32 +293,96 @@ LeabraProject .projects["LeabraStd"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     String_Data @["output_name"] { };
-     float_Data @["rt_cycles"] { };
+     String_Data @["output_name"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["rt_cycles"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      float_Data @["sse"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["norm_err"] { };
-     float_Data @["cos_err"] { };
+     float_Data @["norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
      float_Data @["ext_rew"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["view_panel_wd"] { };
       };
      };
-     float_Data @["Output_lay_sse"] { };
-     float_Data @["Output_lay_norm_err"] { };
-     float_Data @["Output_lay_cos_err"] { };
-     float_Data @["net_cos_diff"] { };
-     float_Data @["net_trial_cos_diff"] { };
-     float_Data @["net_avg_act_diff"] { };
-     float_Data @["Hidden_cos_diff"] { };
-     float_Data @["Output_cos_diff"] { };
-     float_Data @["Hidden_trial_cos_diff"] { };
-     float_Data @["Output_trial_cos_diff"] { };
-     float_Data @["Hidden_avg_act_diff"] { };
-     float_Data @["Output_avg_act_diff"] { };
+     float_Data @["Output_lay_sse"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_norm_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_lay_cos_err"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["net_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_trial_cos_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Hidden_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
+     float_Data @["Output_avg_act_diff"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["view_panel_wd"] { };
+      };
+     };
     };
    };
    DataTable @["EpochOutputData"] { 
@@ -2543,6 +2618,25 @@ LeabraProject .projects["LeabraStd"] {
       saved_value=;
      };
     };
+    EditMbrItem @[2] {
+     label="cycle_qtr";
+     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
+     cust_desc=0;
+     base=.projects["LeabraStd"].networks["Network_0"].times$$;
+     mbr=LeabraTimes::cycle_qtr;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
    };
    mths {
     name="mths";
@@ -4324,7 +4418,7 @@ LeabraProject .projects["LeabraStd"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4355,7 +4449,7 @@ LeabraProject .projects["LeabraStd"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4375,6 +4469,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      String_Data @["train_mode"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_107";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="train_mode";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4400,6 +4504,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
       };
       name="group";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -4409,11 +4518,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -4428,7 +4537,7 @@ LeabraProject .projects["LeabraStd"] {
        };
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4457,6 +4566,11 @@ LeabraProject .projects["LeabraStd"] {
 	value 1 0=1;
 	val_type_fixed=0;
        };
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
       };
       name="tick";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -4474,6 +4588,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["time"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_108";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="time";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4482,11 +4606,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -4496,7 +4620,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4522,7 +4646,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4542,6 +4666,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      String_Data @["output_name"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_109";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="output_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4558,6 +4692,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["rt_cycles"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_110";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="rt_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4580,7 +4724,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4600,6 +4744,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_111";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="norm_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4616,6 +4770,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_112";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="cos_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4638,7 +4802,7 @@ LeabraProject .projects["LeabraStd"] {
        el_def=0;
        UserDataItem @["view_panel_wd"] {
 	name="view_panel_wd";
-	value 6 0=0.1572327017784119;
+	value 6 0=0.156739816069603;
 	val_type_fixed=0;
        };
       };
@@ -4658,6 +4822,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_lay_sse"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_113";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4674,6 +4848,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_lay_norm_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_114";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_norm_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4690,6 +4874,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_lay_cos_err"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_115";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_lay_cos_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4698,14 +4892,24 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["net_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_116";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="net_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4722,6 +4926,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["net_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_117";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="net_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4738,6 +4952,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["net_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_118";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="net_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4754,6 +4978,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Hidden_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_119";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4770,6 +5004,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_120";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4786,6 +5030,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Hidden_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_121";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4802,6 +5056,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_trial_cos_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_122";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_trial_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4818,6 +5082,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Hidden_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_123";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Hidden_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -4834,6 +5108,16 @@ LeabraProject .projects["LeabraStd"] {
       [0]       };
      };
      float_Data @["Output_avg_act_diff"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_124";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["view_panel_wd"] {
+	name="view_panel_wd";
+	value 6 0=0.156739816069603;
+	val_type_fixed=0;
+       };
+      };
       name="Output_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
@@ -5673,11 +5957,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -5704,11 +5988,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["train_mode"] {
@@ -5730,11 +6014,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["group"] {
@@ -5761,11 +6045,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["trial"] {
@@ -5792,11 +6076,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["tick"] {
@@ -5823,11 +6107,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["time"] {
@@ -5849,11 +6133,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["trial_name"] {
@@ -5875,11 +6159,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["group_name"] {
@@ -5901,11 +6185,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      String_Data @["output_name"] {
@@ -5927,11 +6211,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["rt_cycles"] {
@@ -5953,11 +6237,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["sse"] {
@@ -5979,11 +6263,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["norm_err"] {
@@ -6005,11 +6289,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cos_err"] {
@@ -6031,11 +6315,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["ext_rew"] {
@@ -6057,11 +6341,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_sse"] {
@@ -6083,11 +6367,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_norm_err"] {
@@ -6109,11 +6393,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_cos_err"] {
@@ -6135,11 +6419,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -6148,7 +6432,7 @@ LeabraProject .projects["LeabraStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
    DataTable @["TestEpochOutputData"] {
@@ -6182,11 +6466,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      int_Data @["epoch"] {
@@ -6213,11 +6497,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_sse"] {
@@ -6239,11 +6523,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["cnt_err"] {
@@ -6265,11 +6549,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["pct_cor"] {
@@ -6291,11 +6575,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["pct_err"] {
@@ -6317,11 +6601,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_norm_err"] {
@@ -6343,11 +6627,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_cos_err"] {
@@ -6369,11 +6653,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_ext_rew"] {
@@ -6395,11 +6679,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["avg_cycles"] {
@@ -6421,11 +6705,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_tot"] {
@@ -6447,11 +6731,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["epoch_time_usr"] {
@@ -6473,11 +6757,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_avg_sse"] {
@@ -6499,11 +6783,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_cnt_err"] {
@@ -6525,11 +6809,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_pct_cor"] {
@@ -6551,11 +6835,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_pct_err"] {
@@ -6577,11 +6861,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_avg_norm_err"] {
@@ -6603,11 +6887,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
      float_Data @["Output_lay_avg_cos_err"] {
@@ -6629,11 +6913,11 @@ LeabraProject .projects["LeabraStd"] {
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
       ar {
-       name=;
+       name="ar";
       [0]       };
      };
     };
@@ -6642,7 +6926,7 @@ LeabraProject .projects["LeabraStd"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [0]     };
    };
   };
@@ -8979,7 +9263,7 @@ LeabraProject .projects["LeabraStd"] {
      ProgVar @["data_loop_index"] {
       name="data_loop_index";
       var_type=T_Int;
-      int_val=6;
+      int_val=2;
       objs_ptr=0;
       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -9867,7 +10151,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      ProgVar @["update_net_view"] {
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10324,9 +10608,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_256": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_257": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_258": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial"] {
 	name="trial";
@@ -10426,9 +10710,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
@@ -14268,9 +14552,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_208": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_209": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_210": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -14302,9 +14586,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_211": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_212": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_213": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["train_mode"] {
 	name="train_mode";
@@ -14336,9 +14620,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_214": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_215": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_216": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["group"] {
 	name="group";
@@ -14370,9 +14654,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial"] {
 	name="trial";
@@ -14404,9 +14688,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_217": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_218": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_219": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["tick"] {
 	name="tick";
@@ -14438,9 +14722,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_220": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_221": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_222": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["time"] {
 	name="time";
@@ -14472,9 +14756,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_250": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_251": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_252": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["trial_name"] {
 	name="trial_name";
@@ -14506,9 +14790,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_223": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_224": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_225": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["group_name"] {
 	name="group_name";
@@ -14540,9 +14824,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_226": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_227": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_228": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["output_name"] {
 	name="output_name";
@@ -14574,9 +14858,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_229": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_230": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_231": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["rt_cycles"] {
 	name="rt_cycles";
@@ -14608,9 +14892,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_232": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_233": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_234": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["sse"] {
 	name="sse";
@@ -14642,9 +14926,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_235": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_236": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_237": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["norm_err"] {
 	name="norm_err";
@@ -14676,9 +14960,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_238": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_239": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_240": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["cos_err"] {
 	name="cos_err";
@@ -14710,9 +14994,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_241": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_242": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_243": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["ext_rew"] {
 	name="ext_rew";
@@ -14744,9 +15028,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_244": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_245": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_246": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_sse"] {
 	name="lay_sse";
@@ -14778,9 +15062,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_247": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_248": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_249": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_norm_err"] {
 	name="lay_norm_err";
@@ -14812,9 +15096,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_250": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_251": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_252": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_cos_err"] {
 	name="lay_cos_err";
@@ -14846,9 +15130,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_253": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_254": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_255": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -15139,9 +15423,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_235": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_236": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_237": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch"] {
 	name="epoch";
@@ -15173,9 +15457,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_238": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_239": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_240": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_sse"] {
 	name="avg_sse";
@@ -15207,9 +15491,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_241": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_242": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_243": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["cnt_err"] {
 	name="cnt_err";
@@ -15241,9 +15525,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_244": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_245": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_246": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["pct_cor"] {
 	name="pct_cor";
@@ -15275,9 +15559,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_247": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_248": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_249": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["pct_err"] {
 	name="pct_err";
@@ -15309,9 +15593,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_250": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_251": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_252": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_norm_err"] {
 	name="avg_norm_err";
@@ -15343,9 +15627,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_253": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_254": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_255": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_cos_err"] {
 	name="avg_cos_err";
@@ -15377,9 +15661,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_256": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_257": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_258": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_ext_rew"] {
 	name="avg_ext_rew";
@@ -15411,9 +15695,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_259": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_260": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_261": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["avg_cycles"] {
 	name="avg_cycles";
@@ -15445,9 +15729,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_262": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_263": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_264": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_tot"] {
 	name="epoch_time_tot";
@@ -15479,9 +15763,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_265": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_266": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_267": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["epoch_time_usr"] {
 	name="epoch_time_usr";
@@ -15513,9 +15797,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_268": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_269": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_270": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_avg_sse"] {
 	name="lay_avg_sse";
@@ -15547,9 +15831,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_271": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_272": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_273": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_cnt_err"] {
 	name="lay_cnt_err";
@@ -15581,9 +15865,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_274": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_275": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_276": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_pct_cor"] {
 	name="lay_pct_cor";
@@ -15615,9 +15899,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_277": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_278": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_279": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_pct_err"] {
 	name="lay_pct_err";
@@ -15649,9 +15933,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_280": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_281": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_282": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_avg_norm_err"] {
 	name="lay_avg_norm_err";
@@ -15683,9 +15967,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_283": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_284": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_285": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
        NetMonItem @["lay_avg_cos_err"] {
 	name="lay_avg_cos_err";
@@ -15717,9 +16001,9 @@ this program can be extended to do arbitrary things to generate data and apply i
 	 var=NULL;
 	 enable_var=NULL;
 	};
-	pre_proc_1 {name="SimpleMathSpec_286": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_2 {name="SimpleMathSpec_287": opr=NONE: arg=0: lw=-1: hi=1: };
-	pre_proc_3 {name="SimpleMathSpec_288": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
        };
       };
       network=$.projects["LeabraStd"].networks["Network_0"]$;
@@ -17583,11 +17867,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_1";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_1";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GridTableView @["TestTrialOutputData_Grid"] {
@@ -17595,7 +17879,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  m_data=$.projects["LeabraStd"].data.gp["OutputData"]["TestTrialOutputData"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_1";
+	   name="children";
 	   el_typ=GridColView;
 	   el_def=0;
 	   GridColView @["batch"] {
@@ -17799,12 +18083,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_10";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_1";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -17822,7 +18106,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  two_d_font_scale=350;
 	  mat_val_text=0;
 	  colorscale {
-	   name="ColorScale_1";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -17853,7 +18137,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_6";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {

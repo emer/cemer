@@ -22,10 +22,11 @@ LeabraProject .projects["LeabraFlex"] {
     UserDataItem @["user_pinned"] { };
    };
 
-   EditMbrItem_Group @.mbrs = [3] {
+   EditMbrItem_Group @.mbrs = [4] {
     EditMbrItem @[0] { };
     EditMbrItem @[1] { };
     EditMbrItem @[2] { };
+    EditMbrItem @[3] { };
    };
 
    EditMthItem_Group @.mths = [4] {
@@ -246,7 +247,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [12] {
+    DataTableCols @.data = [27] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -258,6 +259,11 @@ LeabraProject .projects["LeabraFlex"] {
       };
      };
      String_Data @["train_mode"] { };
+     int_Data @["group"] { 
+      UserDataItem_List @*(.user_data_) {
+       UserDataItem @["NARROW"] { };
+      };
+     };
      int_Data @["trial"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -268,17 +274,31 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["NARROW"] { };
       };
      };
+     float_Data @["time"] { };
      String_Data @["trial_name"] { };
      String_Data @["group_name"] { };
-     float_Data @["Hidden_minus_cycles"] { };
-     float_Data @["Output_minus_cycles"] { };
+     String_Data @["output_name"] { };
+     float_Data @["rt_cycles"] { };
      float_Data @["sse"] { };
      float_Data @["norm_err"] { };
+     float_Data @["cos_err"] { };
      float_Data @["ext_rew"] { };
+     float_Data @["Output_lay_sse"] { };
+     float_Data @["Output_lay_norm_err"] { };
+     float_Data @["Output_lay_cos_err"] { };
+     float_Data @["net_cos_diff"] { };
+     float_Data @["net_trial_cos_diff"] { };
+     float_Data @["net_avg_act_diff"] { };
+     float_Data @["Hidden_cos_diff"] { };
+     float_Data @["Output_cos_diff"] { };
+     float_Data @["Hidden_trial_cos_diff"] { };
+     float_Data @["Output_trial_cos_diff"] { };
+     float_Data @["Hidden_avg_act_diff"] { };
+     float_Data @["Output_avg_act_diff"] { };
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [18] {
+    DataTableCols @.data = [38] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -289,15 +309,35 @@ LeabraProject .projects["LeabraFlex"] {
        UserDataItem @["NARROW"] { };
       };
      };
-     String_Data @["train_mode"] { };
      float_Data @["avg_sse"] { };
      float_Data @["cnt_err"] { };
+     float_Data @["pct_cor"] { };
+     float_Data @["pct_err"] { };
      float_Data @["avg_norm_err"] { };
+     float_Data @["avg_cos_err"] { };
      float_Data @["avg_ext_rew"] { };
      float_Data @["avg_cycles"] { };
-     float_Data @["avg_avg_act_diff"] { };
      float_Data @["epoch_time_tot"] { };
      float_Data @["epoch_time_usr"] { };
+     float_Data @["Output_lay_avg_sse"] { };
+     float_Data @["Output_lay_cnt_err"] { };
+     float_Data @["Output_lay_pct_cor"] { };
+     float_Data @["Output_lay_pct_err"] { };
+     float_Data @["Output_lay_avg_norm_err"] { };
+     float_Data @["Output_lay_avg_cos_err"] { };
+     float_Data @["net_avg_cos_diff"] { };
+     float_Data @["net_avg_trial_cos_diff"] { };
+     float_Data @["net_avg_avg_act_diff"] { };
+     float_Data @["Hidden_avg_cos_diff"] { };
+     float_Data @["Output_avg_cos_diff"] { };
+     float_Data @["Hidden_avg_trial_cos_diff"] { };
+     float_Data @["Output_avg_trial_cos_diff"] { };
+     float_Data @["Hidden_avg_avg_act_diff"] { };
+     float_Data @["Output_avg_avg_act_diff"] { };
+     float_Data @["Hidden_hog_pct"] { };
+     float_Data @["Output_hog_pct"] { };
+     float_Data @["Hidden_dead_pct"] { };
+     float_Data @["Output_dead_pct"] { };
      float_Data @["Hidden_netmax"] { };
      float_Data @["Output_netmax"] { };
      float_Data @["Hidden_avg_act"] { };
@@ -2402,18 +2442,38 @@ LeabraProject .projects["LeabraFlex"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [18] {
+	 T3DataView_List @.children = [38] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
-	  GraphColView @["train_mode"] { };
 	  GraphColView @["avg_sse"] { };
 	  GraphColView @["cnt_err"] { };
+	  GraphColView @["pct_cor"] { };
+	  GraphColView @["pct_err"] { };
 	  GraphColView @["avg_norm_err"] { };
+	  GraphColView @["avg_cos_err"] { };
 	  GraphColView @["avg_ext_rew"] { };
 	  GraphColView @["avg_cycles"] { };
-	  GraphColView @["avg_avg_act_diff"] { };
 	  GraphColView @["epoch_time_tot"] { };
 	  GraphColView @["epoch_time_usr"] { };
+	  GraphColView @["Output_lay_avg_sse"] { };
+	  GraphColView @["Output_lay_cnt_err"] { };
+	  GraphColView @["Output_lay_pct_cor"] { };
+	  GraphColView @["Output_lay_pct_err"] { };
+	  GraphColView @["Output_lay_avg_norm_err"] { };
+	  GraphColView @["Output_lay_avg_cos_err"] { };
+	  GraphColView @["net_avg_cos_diff"] { };
+	  GraphColView @["net_avg_trial_cos_diff"] { };
+	  GraphColView @["net_avg_avg_act_diff"] { };
+	  GraphColView @["Hidden_avg_cos_diff"] { };
+	  GraphColView @["Output_avg_cos_diff"] { };
+	  GraphColView @["Hidden_avg_trial_cos_diff"] { };
+	  GraphColView @["Output_avg_trial_cos_diff"] { };
+	  GraphColView @["Hidden_avg_avg_act_diff"] { };
+	  GraphColView @["Output_avg_avg_act_diff"] { };
+	  GraphColView @["Hidden_hog_pct"] { };
+	  GraphColView @["Output_hog_pct"] { };
+	  GraphColView @["Hidden_dead_pct"] { };
+	  GraphColView @["Output_dead_pct"] { };
 	  GraphColView @["Hidden_netmax"] { };
 	  GraphColView @["Output_netmax"] { };
 	  GraphColView @["Hidden_avg_act"] { };
@@ -2702,7 +2762,19 @@ LeabraProject .projects["LeabraFlex"] {
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}  span.smwbuiltin,span.smwttactiveinline span.smwbuiltin{font-style:italic} div.smwpre{white-space:pre;font-family:monospace;padding:1em;border:1px dashed #2f6fab;color:black;background-color:#f9f9f9;line-height:1.1em;margin-bottom:0.5em;margin-top:0.5em} #smwfootbr{clear:both} span.smwsortkey{display:none} a.sortheader:hover{text-decoration:none} div.smwtimeline{border:1px solid #AAAAAA;background-color:#F9F9F9;  }span.smwtlevent,span.smwtlband,span.smwtlsize,span.smwtlposition{display:none;speak:none}span.smwtlcomment{font-style:italic;padding:5px} div.smwfact{clear:both;background-color:#F9F9F9;padding:5px;margin-top:1em;border:1px solid #AAAAAA;font-size:95%}div.smwfact td,div.smwfact tr,div.smwfact table{background-color:#F9F9F9}span.smwfactboxhead{font-size:110%;font-weight:bold;float:left}table.smwfacttable{border-top:1px dotted #AAAAAA;width:100%;clear:both}td.smwpropname,th.smwpropname,td.smwspecname{text-align:right;vertical-align:top;padding-right:1em}td.smwprops,td.smwspecs{vertical-align:top;width:75%}div.smwhr hr{background-color:#DDDDDD;color:#DDDDDD} span.smwwarning{color:#888888;font-style:italic;font-size:90%} span.smwsearchicon{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAABC1BMVEU+S114jayTpb6Im7eMn7qhsceBlbOYqcKXp8GDl7N2i6rJ0uCYqcJogKB9kq+KnLipt81qgKF8kK9qgKF4jayntstheJpsgqOSo75RaIxWbpCIm7fAy9tlfJ5keptedZdHXX5bcpWBlbOersajssmVp79lfJ5thKN2i6phd5lTa45GW3lPZ4plfJ5le5xRaYxbcpV3jKt2i6pWbpBKYoVOZolSao2HmrZ4jaxTa45JYYRJYYSHmrZedZdFWnhTa45ieZtVbZCzv9Lm6/Ha4Onp7fKks8rb4uvf5e3h5u7X3um2wtXQ2OTAy9vW3efl6fCmtcrJ0uDGz96jssm5xdaruc6uu8+9yNnt8PXd7KeZAAAAQnRSTlMACfbevtlP8sRPTv2lFfRF2Cz1A7jZLdG4HFbm/q8vBAxjxO/syrHaxk0EByM4NyUrutRNBAI6xeJdADjU4QFO3NoNTLabAAAAeElEQVQIHQXBvQ7BUACA0e+7P020EQsDC4NBYrZJ38BTewcmg8XGomnjRso50QlUuSkA1p9TenF2+oRUH7/DzMoChJJH3n2bEpDS0CS7kAVCntd9txhjBFzp7he86h03qqp6kb2qbm8qABy06Y0A8FjHcTkIANCqf7L2G5qa4UzTAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/searchgray_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwsearch a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29mdHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAALySURBVDgRlcFraNVlHMDx7+95nv/zP+d/LnObeVtz2uyCrRUVDAIHMbIXltUgKRYR7kWvupjYDSEkgkgoKCiJfGeRzqw0CvYuahBWyrZWuWihuWNrZ+e2c87OZf//U1DB8EXU52P27XuV9takiiVS95ZjV+xdjK3uxbO0sFi15ewnlBYO1pZqP9YbTZQSLmeUOF1eNs+fj219QXdt1i2rfXwPlpxKho3qbpme3B7+/N2wUoyKCJcz9VB2ZFfdcKDtxh7p3hiRiMFSDfKFJjadwF/fd+V8pfhmYXK83ynJgLCSKanU47Et18qmDsc1axXtAlPzEekOS7XhSK3SmNt6uuemJnc2K5VDog0rmaptvWXtmgRBLKJNBL/h8DyhPRBqScGKI31dB2c8c2exsHhIW8tKZtmm/MBGFIohZ2oRQaDYkFYECgLAOjBa0ajVk8VSGc+3rGSa+Us18XQ8bIREgSKIC74G5aAdsEAjjCgXioXSYgVTX0bE8Q+zMD0xVs2V7tKtCepNiJRQB1JAClgjwskvvuXCzOypWn2ZeLiEA5wD58DkZs69fO7UyYGBPQ/FYxoi51D8JRBhNl/i05FRWlpaLtzReZbOxiSzRcNcCXIVMErL2E+fffSYNe61/t33pUxbEgeIwOmpGY6/fQxj4mzrTe/vyUz0zzflLU/CeSOgcRhRiqhZPzx+/OjEr998tXdDd2dfPBHT1flc4eL0Lyc6OzeeXt9WHu52Xw5etTk9UP0+f2szsg87XMEhGP4kWiNEXxczmQfERQSpBIXMHKVcka1XO/QP76/rvr9rsOf2IezIu3f/PpY/8lvRewTIGv4mImjPw/MtnvXwYhbtB9jqefzKxaMfj+R74+u6nrh+1xDN8MiO7Gj+8ELZDhv+lcOJRhtTuZRt7Hn9xQ/do88MPnnz0BAPyns73ziRf8fwH/lWu9mF5acPHvggevalXU+137QN9fn4PYb/wfN0M1cKn3tl/7FNbVt6tk9L39k/AH8KLAsrDQkDAAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/search_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a{padding-right:16px;margin-right:2px;color:#000000;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.swmfactboxheadbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a{padding-right:16px;margin-right:2px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAMAAABhq6zVAAAA5FBMVEUAAADb3uv///+gqcBJYqGTmq24v9KJkamboLBtfqOnrbuSmqyqr7yVnK3o6e3n6OrKzdaWna7O0NWMlKiQl6qWm6yRma3DxczEyM+Olqyeo7J+iaamq7qZoLGMlKrg4eiYobqFjqfBxMyQl6hXbaGXnK+hprmcobPEx9BZbaGkqriIkayjp7d1g6iztsSytsZzf6GcobSaobjq6++Umq5abZ6aoLJre6NqeqJ7hqfg4umvtsp0g6h9iaff4el3hKVld6aUoL6wt8meo7SXnbCUm66Jkqnq6+64usRfcqOxs8Dm5+teFG05AAAAAXRSTlMAQObYZgAAAH9JREFUeF4dymMSRDEABOGZ5HFt27Zt3v8+m833r6saSqDl6aSC0ELhXN7r80egVBYZRmOMJ5LAIV0lsy55LRRRKlNYbs0SrDfQpBCybUgh2EXvH4aOPgZDtRkjtY0nmM7m5HtJrtYbYLvb07Z5PJ2hXMybad4fEtrz5TifL4AfAxMLmJTt7hwAAAAASUVORK5CYII=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_iconsmall.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwbrowse a:hover{text-decoration:none;color:#0000FF;padding-right:18px;margin-right:0px;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAAA81BMVEUAAADByOQOLn7///8BInfg5O2xuthsf7ODk8CmqbEnQ4slQYoYNYJqea6BhZaSlJ9kbo5fc6xld62/v8Fnea6BhZdbb6lKY6axsrWIjJe/wMQ6UZOCkMVoeq6Gk79BWZpBWJqCkr4uSo8mRI8PLnqio6plcppIXp+LjprFxsgmQYMrRo4nRJI6TX+ytLyKl8xseah7ir9cbqUDJXeJl8xWbLBue6xPZaeYm6V+hqCLl841S34MLXwsSZJVaasSMYBcaYZUZphLYqBsfrFKYaB3iLcwS5EvSpFjeK1neq4zTpE2ToxQaKlSXoIMKW9idKyur7PDoCJEAAAAAXRSTlMAQObYZgAAAJtJREFUGFdlT8USg1AQ292HQ93d3d3dvf//NYWBHhhyS2ZiAAYCnpC7GoU/al5XsjPs9V9fk8tEPn8q+AlH6jGDxxMrwnQmm8N8oVjShXLljXhS1ANio9kCaK+7yIQ9aUeB4XgyhdkcGZOWA44kxnC0hZ3OeXHDcSTyurJwCg6LGXom7WKFmrVXRb1Ztcawu20YyI+nbbrznP3+D9crFuL3dLY6AAAAAElFTkSuQmCC) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/browse_icon.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwmap a{padding-right:20px;color:#888888;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.smwmap a:hover{padding-right:20px;color:#0000FF;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAANkE3LLaAgAAAzBJREFUOBGlwTtsGwUAgOH/zufHOe9zHBzsJM6DhpRUCWmjCiolKgOiS6VKrWBghSUswEAlJjYGRlQECypQhoIEAqlNuwSiJhSqkJAqbR40pnbjR/w6+x72+Xw+itgqMfF98D8JPCn2thwfDZ9/cXro7LOjfSflgLetpBoP1u9llm7/kbqirn+wyX/pmLz4wvsfXV9PplW30XBcu+m4dtNxrUbTNcyGu7r2sH72jc8/hHmJJwUm3pu79OUvVcO03ZJad1PpirtxL+3e2Uy5v24k3b1EwVWrlltW6+75hS++hgseHvPwjyPv9L72yuyNhddPhTXDIpEqki/p6GaDoOzlsKgjCCJOs4VmWBwd7T+2eDerGwdLqxKPdcltb710cnwgmVHJl3R2EjkkSaTVclG6g9hNh/HhPrySh939Am3BAPPHn7l4tfDuZQ+86RVD8scdbb6wLHvJ5quoWo1sQaOq1ckVdAajCqeOD2M3HBwHDgsGubwp7z3MbYn+8Z6oKAjDK+sJvrm+gVeSmBqP4TgumztZDrIauUONRKpMOqfRdFoUSzXUqondap3wBMJzMURhIRDwismMymC/wpn5CSaPRCiWDXp7giCIfHJllWLZJBLqolypc215i2yxui02/T7d5/PYlWqNnk6ZzZ00uw/yyD4fF85MMTsdY2RAQdOaJA+q5EsmZr2BZdv4vP6qx8nphtw/8qrfHwjrhoUousSjvcT6u7h5a4fFn7fJ5U062/y4Lgz1K+wk8rQQ+HN365IEa7aZ6f4+Mn3uaPJRlopmMRZXiD3dgW40qNUddMnCrNsc5FRUrYZhNUhnD0v1/a9uioBkZVcWq6WD0lg8Qme7TKVqIXqgL9TO2GAIBBerYeP3SeylcgRkmcz24lUwyx4gAM1uvZgkEp898fzkiNinyKzcSVBSTSLhDtqDPsJKO0NRhZCisPLTd3fVxLXPgLwHaAESzYqhZrfVztBQPBobaotGFGYmY4S62wkGZXqVbvb2s+6NHy7fytz/9lPgPpAR+JcE9AIDIE6MHzs9N3/65ZmZqeeeQhCkR+m8/vvab3vLSz8u62rqNvAXkAFqfwOkPI+h92xJFAAAAABJRU5ErkJggg==) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/world.png?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.rdflink{float:right}#bodyContent span.rdflink a{padding-right:20px;color:#888888;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-12-15T00:56:40Z) center right no-repeat!ie}#bodyContent span.rdflink a:hover{text-decoration:none;color:#0000FF;padding-right:20px;margin-right:0px;background:url(data:image/gif;base64,R0lGODlhEQASAIQeAIWjzhpTo0h1tvH0+SpeqUh1tWeMwjlqr+Hp89Ld7cLR5rPG4RpSo8PS53aYyDhpr5Wv1FiBvO/z+KS62uDo8ileqWaMwXWXx7LF4KO62pSu1FeAu9Hc7P///wtHnQtHnSH+FUNyZWF0ZWQgd2l0aCBUaGUgR0lNUAAh+QQBAAAfACwAAAAAEQASAAAFU+AnjuQneKhQriclpSvJSC/qxaNX2/hn/6pY6udRAX03k82Y6dROJKjI01H8VknfDoXNbbmkougEBC+DZDES1aHAcChKZ9nzza89HbGefvfSDh8hADs=) center right no-repeat;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/../images/rdf_flyer.18.gif?2014-12-15T00:56:40Z) center right no-repeat!ie} table.smwb-factbox{border-left:8px solid #DDDDDD;width:100% }tr.smwb-title{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-title td{padding-left:5px;border-bottom:2px solid white}tr.smwb-propvalue{width:100%;background-color:#EEEEEE}tr.smwb-propvalue th{text-align:right;vertical-align:top;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:2px solid white;border-top:2px solid white}tr.smwb-propvalue td{padding-left:0.4em;background-color:#EEEEEE;border:0px solid white;border-bottom:2px solid white;border-top:2px solid white;width:90%}tr.smwb-center{background-color:#DDDDDD}span.smwb-value{} table.smwb-ifactbox{border-right:8px solid #DDDDDD;width:100% }tr.smwb-ititle{font-size:200%;background-color:#DDDDDD;line-height:1.5}tr.smwb-ititle td{padding-left:5px;border-bottom:2px solid white}tr.smwb-ipropvalue{width:100%;background-color:#EEEEEE;text-align:right}tr.smwb-ipropvalue th{text-align:left;font-weight:bold;font-size:120%;background-color:#DDDDDD;padding:0.2em 0.6em;border-bottom:3px solid white;border-top:3px solid white}tr.smwb-ipropvalue td{background-color:#EEEEEE;border-bottom:3px solid white;border-top:3px solid white;padding-right:1em;width:90%}span.smwb-ivalue{} .smw-spinner .text{padding-left:2.1em;font-size:12px;vertical-align:middle} .smw-spinner.left.mw-small-spinner{background-position:left;vertical-align:middle;display:inline-block;padding:0px !important} .smw-spinner.center.mw-small-spinner{vertical-align:middle;display:inline-block;padding:0px !important}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:578aea4183360bf97b768f88a24d775b */
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:2581106f4267d54f61dcdb06e62c25e1 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:2581106f4267d54f61dcdb06e62c25e1 */</style><style>
+.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
+.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
+.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
+.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/emergent/resources/mediawiki.action/images/green-checkmark.png?2014-12-15T00:55:00Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:69d62017dbdb7839a2b048df4cebdee2 */
+#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
+.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
@@ -2825,14 +2897,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -2851,8 +2923,8 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"This page is protected.
-You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
@@ -2866,20 +2938,20 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/emergent/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\">
+			<div id=\"mw-panel\" class=\"collapsible-nav\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
 			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
 			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
 			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
@@ -2887,26 +2959,26 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\">Tools</h3>
-	<div class=\"body\">
+<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
+	<div class=\"body\" style=\"display: block;\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=info\">Page information</a></li>
 			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" rel=\"smw-browse\">Browse properties</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
+<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -2915,7 +2987,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 12,464 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 12,465 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2935,10 +3007,10 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.431 secs. -->
+<!-- Served in 0.410 secs. -->
 	
 
-</body></html>";
+<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
   };
  };
  wizards {
@@ -3020,6 +3092,25 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
     };
     EditMbrItem @[2] {
+     label="cycle_qtr";
+     desc="[Default: true]  one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down";
+     cust_desc=0;
+     base=.projects["LeabraFlex"].networks["Network_0"].times$$;
+     mbr=LeabraTimes::cycle_qtr;
+     is_numeric=0;
+     is_single=1;
+     param_search {
+      srch=NO;
+      min_val=0;
+      max_val=1;
+      next_val=0;
+      incr=0.1000000014901161;
+     };
+     param_set_value {
+      saved_value=;
+     };
+    };
+    EditMbrItem @[3] {
      label="LeabraConSpec_0_lrate";
      desc="[Default: 0.01;0.02]  [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience";
      cust_desc=0;
@@ -4866,6 +4957,29 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["group"] {
+      UserDataItem_List @*(.user_data_) {
+       name="UserDataItem_List_70";
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="group";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
        name="UserDataItem_List_111";
@@ -4912,6 +5026,19 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     float_Data @["time"] {
+      name="time";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      String_Data @["trial_name"] {
       name="trial_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -4938,30 +5065,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     float_Data @["Hidden_minus_cycles"] {
-      name="Hidden_minus_cycles";
+     String_Data @["output_name"] {
+      name="output_name";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name="dim_names";
-      [2] ;;      };
+       name=;
+      [0]       };
       width=0;
      };
-     float_Data @["Output_minus_cycles"] {
-      name="Output_minus_cycles";
+     float_Data @["rt_cycles"] {
+      name="rt_cycles";
       col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=1;
-      cell_geom{ 5;5;      };
+      is_matrix=0;
+      cell_geom{ 1;      };
       calc_expr {
        expr=;
       };
       dim_names {
-       name="dim_names";
-      [2] ;;      };
+       name=;
+      [0]       };
       width=0;
      };
      float_Data @["sse"] {
@@ -4990,6 +5117,19 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     float_Data @["cos_err"] {
+      name="cos_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      float_Data @["ext_rew"] {
       name="ext_rew";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5000,6 +5140,162 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       dim_names {
        name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_sse"] {
+      name="Output_lay_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_norm_err"] {
+      name="Output_lay_norm_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_cos_err"] {
+      name="Output_lay_cos_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_cos_diff"] {
+      name="net_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_trial_cos_diff"] {
+      name="net_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_avg_act_diff"] {
+      name="net_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_cos_diff"] {
+      name="Hidden_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_cos_diff"] {
+      name="Output_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_trial_cos_diff"] {
+      name="Hidden_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_trial_cos_diff"] {
+      name="Output_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_act_diff"] {
+      name="Hidden_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_act_diff"] {
+      name="Output_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
       [0]       };
       width=0;
      };
@@ -5065,19 +5361,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["train_mode"] {
-      name="train_mode";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
      float_Data @["avg_sse"] {
       name="avg_sse";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5104,6 +5387,32 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     float_Data @["pct_cor"] {
+      name="pct_cor";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["pct_err"] {
+      name="pct_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      float_Data @["avg_norm_err"] {
       name="avg_norm_err";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5114,6 +5423,19 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       dim_names {
        name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["avg_cos_err"] {
+      name="avg_cos_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
       [0]       };
       width=0;
      };
@@ -5132,19 +5454,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      float_Data @["avg_cycles"] {
       name="avg_cycles";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     float_Data @["avg_avg_act_diff"] {
-      name="avg_avg_act_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5179,6 +5488,253 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       };
       dim_names {
        name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_avg_sse"] {
+      name="Output_lay_avg_sse";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_cnt_err"] {
+      name="Output_lay_cnt_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_pct_cor"] {
+      name="Output_lay_pct_cor";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_pct_err"] {
+      name="Output_lay_pct_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_avg_norm_err"] {
+      name="Output_lay_avg_norm_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_avg_cos_err"] {
+      name="Output_lay_avg_cos_err";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_avg_cos_diff"] {
+      name="net_avg_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_avg_trial_cos_diff"] {
+      name="net_avg_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["net_avg_avg_act_diff"] {
+      name="net_avg_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_cos_diff"] {
+      name="Hidden_avg_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_cos_diff"] {
+      name="Output_avg_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_trial_cos_diff"] {
+      name="Hidden_avg_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_trial_cos_diff"] {
+      name="Output_avg_trial_cos_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_avg_act_diff"] {
+      name="Hidden_avg_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_avg_act_diff"] {
+      name="Output_avg_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_hog_pct"] {
+      name="Hidden_hog_pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_hog_pct"] {
+      name="Output_hog_pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_dead_pct"] {
+      name="Hidden_dead_pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_dead_pct"] {
+      name="Output_dead_pct";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
       [0]       };
       width=0;
      };
@@ -8425,7 +8981,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=12212: sys=1404: tot=141387972580: }: end={usr=12212: sys=1404: tot=141387972580: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=5300: sys=693: tot=141885326426: }: end={usr=5300: sys=693: tot=141885326426: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -8912,7 +9468,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 4;0;5;3;2;1;      };
      };
     };
     types {
@@ -13164,7 +13720,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["update_net_view"] {
       name="update_net_view";
       var_type=T_Bool;
-      bool_val=0;
+      bool_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -16309,14 +16865,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @["train_mode"] {
-	    name="train_mode";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["train_mode"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
 	   GraphColView @["avg_sse"] {
 	    name="avg_sse";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
@@ -16333,9 +16881,33 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
+	   GraphColView @["pct_cor"] {
+	    name="pct_cor";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["pct_cor"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["pct_err"] {
+	    name="pct_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["pct_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
 	   GraphColView @["avg_norm_err"] {
 	    name="avg_norm_err";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["avg_cos_err"] {
+	    name="avg_cos_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_cos_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -16357,14 +16929,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
 	    data_range {min=0: max=0: };
 	   };
-	   GraphColView @["avg_avg_act_diff"] {
-	    name="avg_avg_act_diff";
-	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_avg_act_diff"]$$;
-	    m_transform=NULL;
-	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
-	    data_range {min=0: max=0: };
-	   };
 	   GraphColView @["epoch_time_tot"] {
 	    name="epoch_time_tot";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_tot"]$$;
@@ -16376,6 +16940,158 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["epoch_time_usr"] {
 	    name="epoch_time_usr";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["epoch_time_usr"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_avg_sse"] {
+	    name="Output_lay_avg_sse";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_sse"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_cnt_err"] {
+	    name="Output_lay_cnt_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_cnt_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_pct_cor"] {
+	    name="Output_lay_pct_cor";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_pct_cor"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_pct_err"] {
+	    name="Output_lay_pct_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_pct_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_avg_norm_err"] {
+	    name="Output_lay_avg_norm_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_norm_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_lay_avg_cos_err"] {
+	    name="Output_lay_avg_cos_err";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_lay_avg_cos_err"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["net_avg_cos_diff"] {
+	    name="net_avg_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["net_avg_trial_cos_diff"] {
+	    name="net_avg_trial_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_trial_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["net_avg_avg_act_diff"] {
+	    name="net_avg_avg_act_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["net_avg_avg_act_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_avg_cos_diff"] {
+	    name="Hidden_avg_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_avg_cos_diff"] {
+	    name="Output_avg_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_avg_trial_cos_diff"] {
+	    name="Hidden_avg_trial_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_trial_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_avg_trial_cos_diff"] {
+	    name="Output_avg_trial_cos_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_trial_cos_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_avg_avg_act_diff"] {
+	    name="Hidden_avg_avg_act_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_avg_act_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_avg_avg_act_diff"] {
+	    name="Output_avg_avg_act_diff";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_avg_act_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_hog_pct"] {
+	    name="Hidden_hog_pct";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_hog_pct"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_hog_pct"] {
+	    name="Output_hog_pct";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_hog_pct"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_dead_pct"] {
+	    name="Hidden_dead_pct";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_dead_pct"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_dead_pct"] {
+	    name="Output_dead_pct";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_dead_pct"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -18166,8 +18882,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     spike=0;
     ti=0;
     deep5b_cons=0;
-    bias_learn=0;
-    trial_decay=0;
+    bias_learn=1;
+    trial_decay=1;
     diff_scale_p=0;
     diff_scale_q1=0;
     dwt_norm=0;

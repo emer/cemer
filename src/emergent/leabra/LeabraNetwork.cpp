@@ -634,7 +634,9 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
 void LeabraNetwork::Cycle_IncrCounters() {
   cycle++;
   tot_cycle++;
-  time += times.time_inc;
+  time = (float)((int)round(time / times.time_inc) + 1) * times.time_inc;
+  // crazy hoops to make sure that time is in precise increments of time_inc -- otherwise
+  // can get significant drift..
 }
 
 ///////////////////////////////////////////////////////
