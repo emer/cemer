@@ -550,7 +550,7 @@ void iMainWindowViewer::Constr_FileMenu()
     if (filePublishProjectOnWebMenu) {
       connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     }
-    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb(const Variat &)));
+    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb(const Variant &)));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
   }
@@ -567,7 +567,7 @@ void iMainWindowViewer::Constr_FileMenu()
   }
 
   // Disable "Publish Project" -- won't be enabled until docs are first published.
-  filePublishProjectOnWebAction->setEnabled(false);
+//  filePublishProjectOnWebAction->setEnabled(false);
 
   // connect(filePrintAction, SIGNAL(activated()), this, SLOT(filePrint()));
   connect(fileOptionsAction, SIGNAL(Action()), this, SLOT(fileOptions()));
