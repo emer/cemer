@@ -39,6 +39,8 @@ void LeabraLayer::Initialize() {
   cos_diff_avg_lmix = 0.0f;
   avg_act_diff = 0.0f;
   trial_cos_diff = 0.0f;
+  hog_pct = 0.0f;
+  dead_pct = 0.0f;
 
   avg_netin_n = 0;
 #ifdef DMEM_COMPILE
@@ -91,6 +93,8 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   cos_diff_avg_lmix = cp.cos_diff_avg_lmix;
   avg_act_diff = cp.avg_act_diff;
   trial_cos_diff = cp.trial_cos_diff;
+  hog_pct = cp.hog_pct;
+  dead_pct = cp.dead_pct;
 
   // this will update spec pointer to new network if we are copied from other guy
   // only if the network is not otherwise already copying too!!

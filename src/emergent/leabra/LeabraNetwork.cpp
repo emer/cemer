@@ -1158,17 +1158,19 @@ void LeabraNetwork::Quarter_Final_Unit_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->Quarter_Final(uv, this, thr_no);
   }
+  if(quarter == 3) {
+    Compute_CosDiff_Thr(thr_no); // more efficient to lump here -- must come before Compute_dWt because cos_diff_avg_lmix is used 
+  }
 }
 
 void LeabraNetwork::Quarter_Final_Layer() {
+  if(quarter == 3) {
+    Compute_CosDiff_Agg();      // aggregate from Unit_Thr
+  }
+  
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->Quarter_Final_Layer(this);
-  }
-  if(quarter == 3) {            // last quarter
-    Compute_CosDiff();
-    Compute_AvgActDiff();
-    Compute_TrialCosDiff();
   }
 }
 
@@ -1484,7 +1486,6 @@ void LeabraNetwork::Compute_CosErr_Thr(int thr_no) {
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool targ_active = false;
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
@@ -1560,7 +1561,6 @@ void LeabraNetwork::Compute_CosDiff_Thr(int thr_no) {
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool targ_active = false;
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
@@ -1611,7 +1611,6 @@ void LeabraNetwork::Compute_AvgActDiff_Thr(int thr_no) {
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool targ_active = false;
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
@@ -1663,7 +1662,6 @@ void LeabraNetwork::Compute_TrialCosDiff_Thr(int thr_no) {
 
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
-    bool targ_active = false;
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
@@ -1698,6 +1696,59 @@ float LeabraNetwork::Compute_TrialCosDiff_Agg() {
   return cosv;
 }
 
+void LeabraNetwork::Compute_HogDeadPcts() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_HogDeadPcts_Thr);
+  Compute_HogDeadPcts_Agg();
+}
+    
+void LeabraNetwork::Compute_HogDeadPcts_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    LeabraLayerSpec* laysp = (LeabraLayerSpec*)lay->spec.SPtr();
+
+    float& hog = ThrLayStats(thr_no, li, 0, HOGDEAD);
+    float& dead = ThrLayStats(thr_no, li, 1, HOGDEAD);
+    float& nu = ThrLayStats(thr_no, li, 2, HOGDEAD);
+
+    hog = 0.0f;  dead = 0.0f;  nu = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      if(uv->act_avg > laysp->lstats.hog_thr) {
+        hog += 1.0f;
+      }
+      else if(uv->act_avg < laysp->lstats.dead_thr) {
+        dead += 1.0f;
+      }
+      nu += 1.0f;
+    }
+  }
+}
+
+void LeabraNetwork::Compute_HogDeadPcts_Agg() {
+  float hog = 0.0f;
+  float dead = 0.0f;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
+    l->Compute_HogDeadPcts(this);
+    hog += l->hog_pct;
+    dead += l->dead_pct;
+  }
+  if(nlay > 0) {
+    hog_pct = hog / (float)nlay;
+    dead_pct = dead / (float)nlay;
+  }
+  else {
+    hog_pct = 0.0f;
+    dead_pct = 0.0f;
+  }
+}
+
 void LeabraNetwork::Compute_TrialStats() {
   taMisc::Warning("do not call Compute_TrialStats() anymore -- it is obsolete -- use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time");
 }
@@ -1727,6 +1778,11 @@ void LeabraNetwork::Compute_PlusStats_Thr(int thr_no) {
     Compute_PRerr_Thr(thr_no);
   Compute_NormErr_Thr(thr_no);
   Compute_CosErr_Thr(thr_no);
+  // Compute_CosDiff_Thr(thr_no);
+  // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
+  Compute_AvgActDiff_Thr(thr_no);
+  Compute_TrialCosDiff_Thr(thr_no);
+  Compute_HogDeadPcts_Thr(thr_no);
 }
 
 void LeabraNetwork::Compute_PlusStats_Agg() {
@@ -1735,6 +1791,11 @@ void LeabraNetwork::Compute_PlusStats_Agg() {
     Compute_PRerr_Agg();
   Compute_NormErr_Agg();
   Compute_CosErr_Agg();
+  // Compute_CosDiff_Agg();
+  // cosdiff must be computed prior to Compute_dWt, in Quarter_Final
+  Compute_AvgActDiff_Agg();
+  Compute_TrialCosDiff_Agg();
+  Compute_HogDeadPcts_Agg();
 }
 
 void LeabraNetwork::Compute_PlusStats() {

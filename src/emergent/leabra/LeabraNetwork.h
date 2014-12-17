@@ -206,6 +206,7 @@ public:
     COSDIFF,
     AVGACTDIFF,
     TRIALCOSDIFF,
+    HOGDEAD,
     N_LeabraThrLayStats,
   };
 
@@ -250,14 +251,16 @@ public:
   Average	avg_cos_err_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on prv (see cos_err_prv) (computed over previous epoch)
   Average	avg_cos_err_vs_prv; // #NO_SAVE #GUI_READ_ONLY #SHOW #CONDSHOW_ON_net_misc.ti #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) error on vs prv (see cos_err_vs_prv) (computed over previous epoch)
 
-  float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
+  float		cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) difference between act_p and act_m activations on this trial -- excludes input layers which are represented in the cos_err measure
   Average	avg_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) diff (computed over previous epoch)
 
-  float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW average act_diff (act_p - act_m) -- this is an important statistic to track overall 'main effect' differences across phases -- excludes input layers
+  float		avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic average act_diff (act_p - act_m) -- this is an important statistic to track overall 'main effect' differences across phases -- excludes input layers
   Average	avg_avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average avg_act_diff (computed over previous epoch)
 
-  float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #VIEW cosine (normalized dot product) activation difference across trials between act_q4 and act_q0 activations on this trial -- excludes input layers which are represented in the cos_err measure
-  Average	avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
+  float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) activation difference across trials between act_q4 and act_q0 activations on this trial -- excludes input layers which are represented in the cos_err measure
+  Average	avg_trial_cos_diff; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
+  float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is above a layer-specific threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
+  float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is below a layer-specific threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
 
   float**       unit_vec_vars;
   // #IGNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
@@ -469,7 +472,7 @@ public:
     virtual void Quarter_Final_Pre();
     // #CAT_QuarterFinal perform computations in layers at end of quarter -- this is a pre-stage that occurs prior to final Quarter_Final_impl -- use this for anything that needs to happen prior to the standard Quarter_Final across units and layers (called by Quarter_Final)
     virtual void Quarter_Final_Unit_Thr(int thr_no);
-    // #CAT_QuarterFinal perform Quarter_Final computations in units at end of quarter (called by Quarter_Final)
+    // #IGNORE #CAT_QuarterFinal perform Quarter_Final computations in units at end of quarter (called by Quarter_Final) -- also does CosDiff_Thr
     virtual void Quarter_Final_Layer();
     // #CAT_QuarterFinal perform computations in layers at end of quarter (called by Quarter_Final)
     virtual void Quarter_Compute_dWt();
@@ -550,6 +553,12 @@ public:
     virtual void Compute_TrialCosDiff_Thr(int thr_no);
     // #IGNORE
     virtual float Compute_TrialCosDiff_Agg();
+    // #IGNORE
+  virtual void	Compute_HogDeadPcts();
+  // #CAT_Statistic compute percentage of units in the network that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
+    virtual void Compute_HogDeadPcts_Thr(int thr_no);
+    // #IGNORE
+    virtual void Compute_HogDeadPcts_Agg();
     // #IGNORE
   void	Compute_TrialStats() override;
   // #CAT_Statistic #OBSOLETE do not call this function anymore -- it is obsolete -- please use Compute_PhaseStats or Compute_MinusStats / Compute_PlusStats for more appropriate stats computation at the right time

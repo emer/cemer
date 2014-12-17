@@ -128,6 +128,7 @@ void LeabraLayStats::Initialize() {
 void LeabraLayStats::Defaults_init() {
   cos_diff_avg_tau = 100.0f;
   hog_thr = 0.3f;
+  dead_thr = 0.01f;
 
   cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
@@ -301,6 +302,8 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_avg_act_diff.ResetAvg();
   lay->trial_cos_diff = 0.0f;
   lay->avg_trial_cos_diff.ResetAvg();
+  lay->hog_pct = 0.0f;
+  lay->dead_pct = 0.0f;
 
   for(int i=0;i<lay->projections.size;i++) {
     LeabraPrjn* prjn = (LeabraPrjn*)lay->projections[i];
@@ -765,6 +768,31 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   lay->avg_trial_cos_diff.Increment(lay->trial_cos_diff);
   
   return cosv;
+}
+
+void LeabraLayerSpec::Compute_HogDeadPcts(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->hog_pct = 0.0f;
+  lay->dead_pct = 0.0f;
+  float hog = 0.0f;
+  float dead = 0.0f;
+  float nu = 0.0f;
+
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lhog = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::HOGDEAD);
+    float& ldead = net->ThrLayStats(thr_no, li, 1, LeabraNetwork::HOGDEAD);
+    float& lnu = net->ThrLayStats(thr_no, li, 2, LeabraNetwork::HOGDEAD);
+
+    hog += lhog;
+    dead += ldead;
+    nu += lnu;
+  }
+
+  if(nu > 0.0f) {
+    lay->hog_pct = hog / nu;
+    lay->dead_pct = dead / nu;
+  }
 }
 
 void LeabraLayerSpec::Compute_AvgNormErr(LeabraLayer* lay, LeabraNetwork* net) {

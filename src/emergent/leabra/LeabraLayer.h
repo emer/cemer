@@ -26,9 +26,6 @@
 #include <LeabraUnGpData_List>
 #include <DMemAggVars>
 
-// NOTE: this is a multiple-inheritence class -- if Layer is ever affected
-// in a way that affects maketa options, then you need to edit this class
-// to cause it to get maketa run on it too
 
 // declare all other types mentioned but not required to include:
 class LeabraUnGpData; // 
@@ -64,6 +61,8 @@ public:
   Average	avg_avg_act_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average avg_act_diff (computed over previous epoch)
   float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) trial-level activation difference between act_q4 and act_q0 on this trial for this layer -- computed by Compute_TrialCosDiff -- must be called after Quarter_Final in plus phase to get act_q4 values
   Average	avg_trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
+  float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
+  float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is below the layerspec dead_thr threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
 
 #ifdef DMEM_COMPILE
@@ -204,6 +203,9 @@ public:
   float Compute_TrialCosDiff(LeabraNetwork* net)
   { return spec->Compute_TrialCosDiff(this, net); }
   // #CAT_Statistic compute cosine (normalized dot product) of trial activaiton difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+  void Compute_HogDeadPcts(LeabraNetwork* net)
+  { spec->Compute_HogDeadPcts(this, net); }
+  // #CAT_Statistic compute percentage of units in the layer that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
 
   void  Compute_EpochStats(Network* net) override
   { return spec->Compute_EpochStats(this, (LeabraNetwork*)net); }
