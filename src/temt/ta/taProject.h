@@ -191,8 +191,6 @@ String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for th
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
-virtual void          PublishDocsOnWeb(const String &repositoryName);
-//
 virtual void          PublishProjectOnWeb(const String &repositoryName);
 //
 

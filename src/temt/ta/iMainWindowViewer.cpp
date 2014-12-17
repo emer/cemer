@@ -172,7 +172,7 @@ void iMainWindowViewer::Init() {
   fileUpdateChangeLogAction = NULL;
   fileSaveAllAction = NULL;
   fileOpenFromWebMenu = NULL;
-  filePublishDocsOnWebMenu = NULL;
+  filePublishProjectOnWebMenu = NULL;
   filePublishProjectOnWebAction = NULL;
   fileCloseAction = NULL;
   fileCloseWindowAction = NULL;
@@ -473,7 +473,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   fileSvnCommitAction->setIconText("Commit");
 
-  // fileOpenFromWebMenu and filePublishDocsOnWebMenu created below as submenus.
+  // fileOpenFromWebMenu and filePublishProjectOnWebMenu created below as submenus.
   filePublishProjectOnWebAction = AddAction(new iAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
 
   fileCloseAction = AddAction(new iAction("Close Project", QKeySequence(), "fileCloseAction"));
@@ -507,7 +507,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->insertSeparator();
   fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
   if (!isRoot()) {
-    filePublishDocsOnWebMenu = fileMenu->AddSubMenu("Publish Project &Docs on Web");
+    filePublishProjectOnWebMenu = fileMenu->AddSubMenu("Publish &Project on Web");
     fileMenu->AddAction(filePublishProjectOnWebAction);
   }
 
@@ -547,8 +547,8 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(fileSvnCommitAction, SIGNAL(Action()), this, SLOT(fileSvnCommit()));
 
     // Connect "publish" options only for project windows.
-    if (filePublishDocsOnWebMenu) {
-      connect(filePublishDocsOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishDocsOnWeb_aboutToShow()));
+    if (filePublishProjectOnWebMenu) {
+      connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     }
     connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb()));
 
@@ -1569,33 +1569,26 @@ void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
   // TODO.
 }
 
-void iMainWindowViewer::filePublishDocsOnWeb_aboutToShow()
+void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
-  filePublishDocsOnWebMenu->Reset();
+  filePublishProjectOnWebMenu->Reset();
 
   for(int i=0;i<taMisc::wikis.size; i++) {
     String wiki_name = taMisc::wikis[i].name;
     String label = wiki_name + "...";
-    filePublishDocsOnWebMenu->AddItem(label, iAction::var_act, this,
-                                      SLOT(filePublishDocsOnWeb(const Variant &)), wiki_name);
+    filePublishProjectOnWebMenu->AddItem(label, iAction::var_act, this,
+                                      SLOT(filePublishProjectOnWeb(const Variant &)), wiki_name);
   }
 }
 
-void iMainWindowViewer::filePublishDocsOnWeb(const Variant &repo)
+void iMainWindowViewer::filePublishProjectOnWeb(const Variant &repo)
 {
   String repositoryName = repo.toString();
 
   taProject *proj = curProject();
   if (!repositoryName.empty() && proj) {
-    proj->PublishDocsOnWeb(repositoryName);
-  }
-}
-
-void iMainWindowViewer::filePublishProjectOnWeb()
-{
-  if (taProject *proj = curProject()) {
-    // TODO: proj->PublishProjectOnWeb();
+    proj->PublishProjectOnWeb(repositoryName);
   }
 }
 

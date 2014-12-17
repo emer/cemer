@@ -30,6 +30,7 @@
 #include <QVBoxLayout>
 #include <QWidget>
 #include <QStatusTipEvent>
+#include <QCheckBox>
 
 namespace // anon
 {
@@ -52,18 +53,15 @@ namespace // anon
 }
 
 iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
-  : inherited()
-  , m_nameEdit(0)
-  , m_descEdit(0)
-  , m_tagsEdit(0)
-  , m_statusBar(0)
+//  : inherited(), nameEdit(0), descEdit(0), tagsEdit(0), statusBar(0), upload_project(0)
+: inherited()
 {
   // Size the dialog.
   resize(taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor));
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
   // Dialog title.
-  QString title("Publish project documentation to: ");
+  QString title("Publish project to: ");
   title.append(repositoryName);
   setWindowTitle(title);
 
@@ -78,29 +76,38 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
   topVbox->addLayout(vbox);
 
   // Add a status bar for instructions.
-  m_statusBar = new QStatusBar;
-  topVbox->addWidget(m_statusBar);
+  statusBar = new QStatusBar;
+  topVbox->addWidget(statusBar);
 
   // All other widgets get added to the inner vbox.
   // Project name
-  m_nameEdit = new QLineEdit;
-  m_nameEdit->setStatusTip("Instructions: Enter a human-readable name for the project (used for wiki page name)");
-  m_nameEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "Project &name:", m_nameEdit);
+  nameEdit = new QLineEdit;
+  nameEdit->setStatusTip("Instructions: Enter a human-readable name for the project (used for wiki page name)");
+  nameEdit->installEventFilter(this);
+  
+  QHBoxLayout* project_box = newHBox(vbox);
+  addLabeledWidget(project_box, "Project &name:", nameEdit);
+
+  // upload project - do it now - default is true
+  upload_project = new QCheckBox;
+  upload_project->setChecked(true);
+  upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
+  addLabeledWidget(project_box, "Upload Project File", upload_project);
 
   // Description
-  m_descEdit = new QTextEdit;
-  m_descEdit->setTabChangesFocus(true);
-  m_descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
-  m_descEdit->installEventFilter(this);
-  addLabeledWidget(vbox, "&Description:", m_descEdit);
+  descEdit = new QTextEdit;
+  descEdit->setTabChangesFocus(true);
+  descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
+  descEdit->installEventFilter(this);
+  addLabeledWidget(vbox, "&Description:", descEdit);
 
   // Tags
-  m_tagsEdit = new QLineEdit;
-  m_tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (comma or space spearated)");
-  m_tagsEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Categories:", m_tagsEdit);
-
+  tagsEdit = new QLineEdit;
+  tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (space spearated)");
+  tagsEdit->installEventFilter(this);
+  addLabeledWidget(newHBox(vbox), "&Categories:", tagsEdit);
+  
+  
   // OK, Cancel buttons
   QDialogButtonBox *buttonBox = new QDialogButtonBox(
     QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
@@ -109,21 +116,26 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }
 
-QString iDialogPublishDocs::getName() const
+QString iDialogPublishDocs::GetName() const
 {
-  return m_nameEdit->text();
+  return nameEdit->text();
 }
 
-QString iDialogPublishDocs::getDesc() const
+QString iDialogPublishDocs::GetDesc() const
 {
-  return m_descEdit->toPlainText();
+  return descEdit->toPlainText();
 }
 
-QString iDialogPublishDocs::getTags() const
+QString iDialogPublishDocs::GetTags() const
 {
-  QString tags = m_tagsEdit->text();
+  QString tags = tagsEdit->text();
 //  return tags.split(QRegExp("[,\\s]+"), QString::SkipEmptyParts);
   return tags;
+}
+
+bool iDialogPublishDocs::GetUploadChoice() const
+{
+  return upload_project->isChecked();
 }
 
 bool iDialogPublishDocs::event(QEvent *event)
@@ -131,7 +143,7 @@ bool iDialogPublishDocs::event(QEvent *event)
   // When a status tip event occurs (e.g., from mouseover), display the tip.
   if (event->type() == QEvent::StatusTip) {
     if (QStatusTipEvent *stev = dynamic_cast<QStatusTipEvent *>(event)) {
-      m_statusBar->showMessage(stev->tip());
+      statusBar->showMessage(stev->tip());
       return true;
     }
   }
@@ -145,11 +157,11 @@ bool iDialogPublishDocs::eventFilter(QObject *obj, QEvent *event)
   // When a widget (obj) comes into focus, display its status tip.
   if (event->type() == QEvent::FocusIn) {
     if (QWidget *widget = dynamic_cast<QWidget *>(obj)) {
-      m_statusBar->showMessage(widget->statusTip());
+      statusBar->showMessage(widget->statusTip());
     }
   }
   else if (event->type() == QEvent::FocusOut) {
-    m_statusBar->clearMessage();
+    statusBar->clearMessage();
   }
 
   // Always return false, so the event will get processed further.
@@ -157,13 +169,13 @@ bool iDialogPublishDocs::eventFilter(QObject *obj, QEvent *event)
 }
 
 void iDialogPublishDocs::SetName(const QString& name) {
-  m_nameEdit->setText(name);
+  nameEdit->setText(name);
 }
 
 void iDialogPublishDocs::SetDesc(const QString& desc) {
-  m_descEdit->setText(desc);
+  descEdit->setText(desc);
 }
 
 void iDialogPublishDocs::SetTags(const QString& tags) {
-  m_tagsEdit->setText(tags);
+  tagsEdit->setText(tags);
 }

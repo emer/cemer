@@ -542,8 +542,10 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 }
 
-void taProject::PublishDocsOnWeb(const String &repositoryName)
+void taProject::PublishProjectOnWeb(const String &repositoryName)
 {
+  //  taMediaWiki::PublishProject(repositoryName, GetFileName(), "the content" , "vision memory");
+  
   String username = taMediaWiki::GetLoggedInUsername(repositoryName);
   
   // TODO - if username not empty ask if they want to stay logged in under that name
@@ -553,23 +555,24 @@ void taProject::PublishDocsOnWeb(const String &repositoryName)
     iDialogPublishDocs dialog(repositoryName);
     dialog.SetName(QString(this->name.chars()));
     dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
-    dialog.SetTags(QString("A list of categories, e.g. attention, vision"));
+    dialog.SetTags(QString("e.g. attention, vision, robotics"));
     if (dialog.exec()) {
       // User clicked OK.
-      QString name = dialog.getName();
-      QString desc = dialog.getDesc();
-      QString categories = dialog.getTags();
-      // to do pass categories after Tom checks in new api
-      taMediaWiki::FindMakePage(repositoryName, name, "this is the content", categories);
+      QString name = dialog.GetName();
+      QString desc = dialog.GetDesc();
+      QString categories = dialog.GetTags();
+      bool upload = dialog.GetUploadChoice();
+      if (upload) {
+        // when the api is updated
+        //        taMediaWiki::FindMakePage(repositoryName, name, GetFileName(), desc, categories);
+                taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+      }
+      else {
+        //        taMediaWiki::FindMakePage(repositoryName, "", name, desc, categories);
+        taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+      }
     }
   }
-}
-
-//static bool   PublishProject(const String& wiki_name, const String& proj_filename,                           const String& page_content="", const String& proj_category="");
-
-void taProject::PublishProjectOnWeb(const String &repositoryName)
-{
-  taMediaWiki::PublishProject(repositoryName, GetFileName(), "the content" , "vision memory");
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {

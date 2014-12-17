@@ -28,29 +28,32 @@ class QStatusBar;
 class QString;
 class QStringList;
 class QTextEdit;
+class QCheckBox;
 
 class TA_API iDialogPublishDocs : public iDialog {
-// This dialog is invoked when user clicks File -> Publish Project Docs on Web
+// This dialog is invoked when user selects File -> PublishProjectOnWeb
   Q_OBJECT
   INHERITED(iDialog)
 public:
   iDialogPublishDocs(const char *repositoryName);
-  QString getName() const;
-  QString getDesc() const;
-  QString getTags() const;
+  QString     GetName() const;
+  QString     GetDesc() const;
+  QString     GetTags() const;
+  bool        GetUploadChoice() const;
   
-  void    SetName(const QString& name);
-  void    SetDesc(const QString& desc);
-  void    SetTags(const QString& tags);
+  void        SetName(const QString& name);
+  void        SetDesc(const QString& desc);
+  void        SetTags(const QString& tags);
 
 private:
-  bool event(QEvent *event) override;
-  bool eventFilter(QObject *obj, QEvent *event) override;
+  bool        event(QEvent *event) override;
+  bool        eventFilter(QObject *obj, QEvent *event) override;
 
-  QLineEdit *m_nameEdit;
-  QTextEdit *m_descEdit;
-  QLineEdit *m_tagsEdit;
-  QStatusBar *m_statusBar;
+  QLineEdit*  nameEdit;
+  QTextEdit*  descEdit;
+  QLineEdit*  tagsEdit;
+  QStatusBar* statusBar;
+  QCheckBox*  upload_project;
 };
 
 #endif // iDialogPublishDocs_h
