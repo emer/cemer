@@ -332,6 +332,8 @@ public slots:
   virtual void  fileOpenFromWeb(const Variant &repo);      // Open Project from Web (in new viewer)
   virtual void  filePublishProjectOnWeb_aboutToShow();
   virtual void  filePublishProjectOnWeb(const Variant &repo); // Publish Project Documentation on Web
+  virtual void  fileUpdateProjectOnWeb(); // Upload a revised (or possibly the first version) of a published project to wiki
+  virtual void  fileUploadFilesForProjectOnWeb(); // Add project files to wiki (e.g. weights files, data files, etc.)
   virtual void  fileClose();    // Close Project (only enabled if viewer)
   virtual void  fileOptions();  // edits taMisc
   virtual void  filePrint();

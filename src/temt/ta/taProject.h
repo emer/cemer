@@ -192,8 +192,10 @@ public:
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
   virtual bool          PublishProjectOnWeb(const String &repositoryName);
+  virtual bool          UpdateProjectOnWeb();
+  virtual bool          UploadFilesForProjectOnWeb();
 
-  int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
+  int                   Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();
   // #CAT_File set the system event logging to record to the project name + .plog -- called for SaveAs and Load -- uses project file_name value
 

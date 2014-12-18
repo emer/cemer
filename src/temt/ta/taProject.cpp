@@ -582,6 +582,14 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
   return was_published;
 }
 
+bool taProject::UpdateProjectOnWeb() {
+  return false;
+}
+
+bool taProject::UploadFilesForProjectOnWeb() {
+  return false;
+}
+
 String taProject::GetProjTemplatePath(ProjLibs library) {
   if(library == SEARCH_LIBS) {
     taMisc::Error("Cannot do SEARCH_LIBS for saving -- program saved in local directory!");

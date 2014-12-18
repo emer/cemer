@@ -553,6 +553,8 @@ void iMainWindowViewer::Constr_FileMenu()
       connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     }
     connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb(const Variant &)));
+    connect(fileUpdateProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUpdateProjectOnWeb()));
+    connect(fileUploadFilesForProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUploadFilesForProjectOnWeb()));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
   }
@@ -1593,6 +1595,24 @@ void iMainWindowViewer::filePublishProjectOnWeb(const Variant &repo)
     proj->PublishProjectOnWeb(repositoryName);
   }
 }
+
+void iMainWindowViewer::fileUpdateProjectOnWeb()
+{
+  taProject *proj = curProject();
+  if (proj) {
+    proj->UpdateProjectOnWeb();  // repository name held by project
+  }
+}
+
+void iMainWindowViewer::fileUploadFilesForProjectOnWeb()
+{
+  taProject *proj = curProject();
+  if (proj) {
+    proj->UploadFilesForProjectOnWeb(); // repository name held by project
+  }
+
+}
+
 
 void iMainWindowViewer::fileClose() {
   if(taMisc::is_saving) {
