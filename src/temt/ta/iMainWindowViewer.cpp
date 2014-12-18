@@ -64,6 +64,7 @@
 #include <taDataAnal>
 #include <taDataGen>
 #include <taImageProc>
+#include <taWikiURL>
 
 #include <QFileInfo>
 #include <QUrl>
@@ -473,9 +474,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   fileSvnCommitAction->setIconText("Commit");
 
-  // fileOpenFromWebMenu and filePublishProjectOnWebMenu created below as submenus.
-  filePublishProjectOnWebAction = AddAction(new iAction("Publish &Project on Web", QKeySequence(), "filePublishProjectOnWebAction"));
-
+  
   fileCloseAction = AddAction(new iAction("Close Project", QKeySequence(), "fileCloseAction"));
   fileCloseAction->setIcon(QIcon(QPixmap(":/images/project_close_icon.png")));
   fileCloseAction->setIconText("Close");
@@ -508,8 +507,11 @@ void iMainWindowViewer::Constr_FileMenu()
   fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
   if (!isRoot()) {
     filePublishProjectOnWebMenu = fileMenu->AddSubMenu("Publish &Project on Web");
-    fileMenu->AddAction(filePublishProjectOnWebAction);
   }
+  fileUpdateProjectOnWebAction = AddAction(new iAction("Update Project on Web", QKeySequence(), "fileUpdateProjectOnWebAction"));
+  fileUploadFilesForProjectOnWebAction = AddAction(new iAction("Upload Project Files to Web", QKeySequence(), "fileUploadFilesForProjectOnWebAction"));
+  fileMenu->AddAction(fileUpdateProjectOnWebAction);
+  fileMenu->AddAction(fileUploadFilesForProjectOnWebAction);
 
   fileMenu->insertSeparator();
   fileMenu->AddAction(fileCloseAction);
@@ -1585,7 +1587,7 @@ void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
 void iMainWindowViewer::filePublishProjectOnWeb(const Variant &repo)
 {
   String repositoryName = repo.toString();
-
+  
   taProject *proj = curProject();
   if (!repositoryName.empty() && proj) {
     proj->PublishProjectOnWeb(repositoryName);
@@ -2863,6 +2865,11 @@ void iMainWindowViewer::UpdateUi() {
     fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
     fileSaveAction->setEnabled(!curProject()->save_as_only);
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
+    
+    // TODO - need to decide if we want a boolean for "published"
+    // TODO - find out about the sync bool on taWikiURL - is it used - in what way
+    fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
+    fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
   }
   emit SetActionsEnabled();
 }

@@ -35,10 +35,12 @@ public:
   virtual void          RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
 
-  virtual taDoc*  NewProjWikiDoc(const String& wiki_name);
+  virtual taDoc*        NewProjWikiDoc(const String& wiki_name);
   // #BUTTON make a new Doc pointing to a wiki page with the same name as the current project -- quick way to get you started toward documenting your projects!
+  virtual taDoc*        PubProjWikiDoc(const String& wiki_name, const String& page_name);
+  // when a project is published call this to create the object that points to the main wiki page for the project - the page will already exist when this is called.
 
-  String       GetTypeDecoKey() const override { return "Doc"; }
+  String                GetTypeDecoKey() const override { return "Doc"; }
   TA_BASEFUNS(Doc_Group);
 private:
   NOCOPY(Doc_Group)

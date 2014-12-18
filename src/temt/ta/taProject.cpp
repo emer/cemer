@@ -542,13 +542,13 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 }
 
-void taProject::PublishProjectOnWeb(const String &repositoryName)
+bool taProject::PublishProjectOnWeb(const String &repositoryName)
 {
-  //  taMediaWiki::PublishProject(repositoryName, GetFileName(), "the content" , "vision memory");
-  
   String username = taMediaWiki::GetLoggedInUsername(repositoryName);
   
   // TODO - if username not empty ask if they want to stay logged in under that name
+  bool was_published = false;
+  String page_name;
   
   bool logged_in = taMediaWiki::Login(repositoryName, username);
   if (logged_in) {
@@ -558,21 +558,28 @@ void taProject::PublishProjectOnWeb(const String &repositoryName)
     dialog.SetTags(QString("e.g. attention, vision, robotics"));
     if (dialog.exec()) {
       // User clicked OK.
-      QString name = dialog.GetName();
+      QString name = dialog.GetName() + "_pub_page";
+      page_name = String(name); // needed for call to create the taDoc
       QString desc = dialog.GetDesc();
       QString categories = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
         // when the api is updated
         //        taMediaWiki::FindMakePage(repositoryName, name, GetFileName(), desc, categories);
-                taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+        was_published = taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
       }
       else {
         //        taMediaWiki::FindMakePage(repositoryName, "", name, desc, categories);
-        taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+        was_published = taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
       }
     }
+    if (was_published) {
+      this->wiki_url.wiki = repositoryName;
+      this->wiki_url.url = page_name;
+      docs.PubProjWikiDoc(repositoryName, page_name);
+    }
   }
+  return was_published;
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {
@@ -606,7 +613,7 @@ String taProject::GetProjTemplatePath(ProjLibs library) {
 }
 
 void taProject::SaveAsTemplate(const String& template_name, const String& desc,
-                          const String& tags, ProjLibs library) {
+                               const String& tags, ProjLibs library) {
   String path = GetProjTemplatePath(library);
   String fname = path + "/" + template_name + ".proj";
   QFileInfo qfi(fname);
@@ -616,7 +623,7 @@ void taProject::SaveAsTemplate(const String& template_name, const String& desc,
     if(chs == 1) return;
   }
   SaveAs(fname);
-
+  
   String infofnm = fname.before(".proj",-1) + ".tmplt"; // template info
   fstream strm;
   strm.open(infofnm, ios::out);

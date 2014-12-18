@@ -74,7 +74,7 @@ public:
     SEARCH_LIBS,                // search through the libraries (for loading)
   };
 
-String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
+  String                proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for the project -- automatically set when loading or saving the project
   String                tags;      // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
@@ -184,15 +184,14 @@ String		proj_dir;  // #NO_SAVE #READ_ONLY #SHOW current working directory for th
   virtual bool          AutoSave(bool force = false);
   // #CAT_File called automatically by the wait process -- if enough time has passed or force is true, save current project to an auto save backup file (file name + _autosave)
 
-  bool         SetFileName(const String& val) override;
-  int          Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
-  int          Save() override;
-  int          SaveAs(const String& fname = "") override;
+  bool                  SetFileName(const String& val) override;
+  int                   Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
+  int                   Save() override;
+  int                   SaveAs(const String& fname = "") override;
   void                  SetSaveView(bool value);
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
-virtual void          PublishProjectOnWeb(const String &repositoryName);
-//
+  virtual bool          PublishProjectOnWeb(const String &repositoryName);
 
   int          Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();

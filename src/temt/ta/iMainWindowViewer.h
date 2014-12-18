@@ -92,6 +92,8 @@ public:
   taiWidgetMenu*              fileMenu;
   taiWidgetMenu*              fileOpenRecentMenu;
   taiWidgetMenu*              fileExportMenu; // submenu -- empty and disabled in base
+  taiWidgetMenu*              fileOpenFromWebMenu;
+  taiWidgetMenu*              filePublishProjectOnWebMenu;
   taiWidgetMenu*              editMenu;
   taiWidgetMenu*              viewMenu;
   taiWidgetMenu*              show_menu;
@@ -121,9 +123,9 @@ public:
   iAction*            fileSvnCommitAction;
   iAction*            fileUpdateChangeLogAction;
   iAction*            fileSaveAllAction;
-  taiWidgetMenu*      fileOpenFromWebMenu;
-  taiWidgetMenu*      filePublishProjectOnWebMenu;
   iAction*            filePublishProjectOnWebAction;
+  iAction*            fileUpdateProjectOnWebAction;
+  iAction*            fileUploadFilesForProjectOnWebAction;
   iAction*            fileCloseAction;
   iAction*            fileOptionsAction;
   iAction*            filePrintAction;

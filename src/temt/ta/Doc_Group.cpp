@@ -38,11 +38,26 @@ void Doc_Group::RestorePanels() {
 taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
   // todo: make a chooser for taMisc::wikis!
   taProject* proj = GET_MY_OWNER(taProject);
-  if(!proj) return NULL;
+  if(!proj)
+    return NULL;
   taDoc* doc = NewEl(1);
   doc->name = "ProjectDoc";
   doc->wiki = wiki_name;
   doc->url = proj->name;
+  doc->web_doc = true;
+  doc->UpdateAfterEdit();
+  tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
+  return doc;
+}
+
+taDoc* Doc_Group::PubProjWikiDoc(const String& wiki_name, const String& page_name) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!proj)
+    return NULL;
+  taDoc* doc = NewEl(1);
+  doc->name = page_name;
+  doc->wiki = wiki_name;
+  doc->url = page_name;
   doc->web_doc = true;
   doc->UpdateAfterEdit();
   tabMisc::DelayedFunCall_gui(doc, "BrowserSelectMe");
