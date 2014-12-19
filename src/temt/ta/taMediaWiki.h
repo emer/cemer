@@ -32,7 +32,7 @@ class DataTable; //
 taTypeDef_Of(taMediaWiki);
 
 class TA_API taMediaWiki : public taNBase {
-  // ##INLINE ##NO_TOKENS media wiki api interface -- all static functions for performing functions we actually want to perform
+  // ##INLINE ##NO_TOKENS MediaWiki API interface -- all static functions for performing functions we actually want to perform via http requests
   INHERITED(taNBase)
 
 public:
@@ -53,20 +53,20 @@ public:
 
   static bool   UploadFile(const String& wiki_name, const String& local_file_name,
                            const String& wiki_file_name="");
-  // #CAT_File upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
+  // #CAT_File Upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
 
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
                              const String& local_file_name="");
-  // #CAT_File download given file name from wiki, optionally giving it a different file name than what it was on the wiki
+  // #CAT_File Download given file name from wiki, optionally giving it a different file name than what it was on the wiki
 
   static bool   DeleteFile(const String& wiki_name, const String& file_name, const String& reason="");
-  // #CAT_File delete given file from wiki, optionally providing a reason for the deletion -- returns true on success
+  // #CAT_File Delete given file from wiki, optionally providing a reason for the deletion -- returns true on success
 
   static bool   GetDirectoryContents(DataTable* results);
-  // #CAT_File fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size -- returns true on success
+  // #CAT_File Fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size -- returns true on success
 
   static bool   FileExists(const String& wiki_name, const String& file_name);
-  // #CAT_File determine if given file exists on wiki -- returns true if it does, false if it doesn't
+  // #CAT_File Determine if given file exists on wiki -- returns true if it does, false if it doesn't
 
   /////////////////////////////////////////////////////
   //            QUERY OPERATIONS
@@ -74,66 +74,67 @@ public:
   static bool   QueryPages(DataTable* results, const String& wiki_name,
                            const String& name_space="", const String& start_nm="",
                            const String& prefix="", int max_results=-1);
-  // #CAT_Query fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
+  // #CAT_Query Fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
 
   static bool   QueryPagesByCategory(DataTable* results, const String& wiki_name,
                                      const String& category, const String& name_space="",
                                      int max_results=-1);
-  // #CAT_Query fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
+  // #CAT_Query Fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number
 
   static bool   QueryFiles(DataTable* results, const String& wiki_name,
                            const String& start_nm="", const String& prefix="",
                            int max_results=-1);
-  // #CAT_Query fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type
+  // #CAT_Query Fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type
 
   static bool   SearchPages(DataTable* results, const String& wiki_name,
                             const String& search_str, bool title_only = false,
                             const String& name_space="", int max_results=-1);
-  // #CAT_Query fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all) -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column "PageTitle" has page title
+  // #CAT_Query Fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all) -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column "PageTitle" has page title
 
   /////////////////////////////////////////////////////
   //            PAGE OPERATIONS
 
   static bool   PageExists(const String& wiki_name, const String& page_name);
-  // #CAT_Page determine if given page exists on wiki -- returns true if it does, false if it doesn't
+  // #CAT_Page Determine if given page exists on wiki -- returns true if it does, false if it doesn't
 
   static bool   DeletePage(const String& wiki_name, const String& page_name, const String& reason="");
-  // #CAT_Page delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success
+  // #CAT_Page Delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success
 
   static bool   FindMakePage(const String& wiki_name, const String& page_name,
                              const String& page_content="", const String& page_category="");
-  // #CAT_Page find or create given page on the wiki and populate it with given content -- calls EditPage if the given page already exists on the wiki, otherwise calls CreatePage -- returns true on success
+  // #CAT_Page Find or create given page on the wiki and populate it with given content -- calls EditPage if the given page already exists on the wiki, otherwise calls CreatePage -- returns true on success
 
   static bool   CreatePage(const String& wiki_name, const String& page_name,
                            const String& page_content="", const String& page_category="");
-  // #CAT_Page create given page on the wiki and populate it with given content if it does not currently exist  -- returns true on success
+  // #CAT_Page Create given page on the wiki and populate it with given content if it does not currently exist  -- returns true on success
 
   static bool   EditPage(const String& wiki_name, const String& page_name,
                          const String& page_content="", const String& page_category="");
-  // #CAT_Page append given page on the wiki with given content if it currently exists -- returns true on success
+  // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success
 
   static bool   AddCategories(const String& wiki_name, const String& page_name,
                               const String& page_category);
-  // #CAT_Page append given page on the wiki with given list of space-separated categories -- returns true on success
+  // #CAT_Page Append given page on the wiki with given list of comma-separated categories -- returns true on success
 
   static bool   LinkFile(const String& file_name, const String& wiki_name, const String& page_name);
-  // #CAT_Page append given page on the wiki with a link to given uploaded file -- returns true on success
+  // #CAT_Page Append given page on the wiki with a link to given uploaded file -- returns true on success
 
   static bool   LinkFiles(DataTable* files, const String& wiki_name, const String& page_name);
-  // #CAT_Page append given page on the wiki with links to given data table of uploaded files -- it is recommended that you populate the data table by calling QueryFiles -- returns true on success
+  // #CAT_Page Append given page on the wiki with links to given data table of uploaded files -- it is recommended that you populate the data table by calling QueryFiles -- returns true on success
 
   /////////////////////////////////////////////////////
   //            WIKI OPERATIONS
 
   static String GetApiURL(const String& wiki_name);
-  // #CAT_Wiki gets the url for the wiki api
+  // #CAT_Wiki Gets the url for the wiki api
 
   static String GetEditToken(const String& wiki_name);
-  // #CAT_Wiki return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query) -- on failure, return an empty String
+  // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
 
-  static bool   PublishProject(const String& wiki_name, const String& proj_filename,
-                               const String& page_content="", const String& proj_category="");
-  // #CAT_Wiki create/edit the wiki page for this project, upload the project file, then post a link to it on the project's wiki page -- returns true if all steps were completed successfully
+  static bool   PublishProject(const String& wiki_name, const String& page_name,
+                               const String& proj_name, const String& proj_filename="",
+                               const String& proj_desc="", const String& proj_category="");
+  // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);

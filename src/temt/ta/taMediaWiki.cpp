@@ -409,18 +409,14 @@ bool taMediaWiki::DeleteFile(const String& wiki_name, const String& file_name, c
   QUrlQuery urq;
   urq.addQueryItem("action", "delete");
   urq.addQueryItem("title", "File:" + file_name);
-  if (!reason.empty()) {
-    urq.addQueryItem("reason", reason);
-  }
+  if (!reason.empty()) { urq.addQueryItem("reason", reason); }
   urq.addQueryItem("format", "xml");
   urq.addQueryItem("token", token);
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "delete");
   url.addQueryItem("title", "File:" + file_name);
-  if (!reason.empty()) {
-    url.addQueryItem("reason", reason);
-  }
+  if (!reason.empty()) { url.addQueryItem("reason", reason); }
   url.addQueryItem("format", "xml");
   url.addQueryItem("token", token);
 #endif
@@ -510,7 +506,7 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name)
   urq.addQueryItem("aifrom", file_name);
   urq.addQueryItem("aiprefix", file_name);
   urq.addQueryItem("aiprop", "timestamp|url|size|mime");
-  urq.addQueryItem("ailimit", QString::number(1));
+  urq.addQueryItem("ailimit", "1");
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
@@ -520,7 +516,7 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name)
   url.addQueryItem("aifrom", file_name);
   url.addQueryItem("aiprefix", file_name);
   url.addQueryItem("aiprop", "timestamp|url|size|mime");
-  url.addQueryItem("ailimit", QString::number(1));
+  url.addQueryItem("ailimit", "1");
 #endif
 
   // Make the network request.
@@ -569,15 +565,9 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
   urq.addQueryItem("list", "allpages");
   urq.addQueryItem("apfrom", start_nm);
   urq.addQueryItem("apprefix", prefix);
-  if (name_space.empty()) {
-    urq.addQueryItem("apnamespace", "0");
-  }
-  else {
-    urq.addQueryItem("apnamespace", "0"); // TODO: convert namespace string to appropriate namespace ID (int)
-  }
-  if (max_results > 0) {
-    urq.addQueryItem("aplimit", QString::number(max_results));
-  }
+  if (name_space.empty()) { urq.addQueryItem("apnamespace", "0"); }
+  else { urq.addQueryItem("apnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
+  if (max_results > 0) { urq.addQueryItem("aplimit", QString::number(max_results)); }
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
@@ -585,15 +575,9 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
   url.addQueryItem("list", "allpages");
   url.addQueryItem("apfrom", start_nm);
   url.addQueryItem("apprefix", prefix);
-  if (name_space.empty()) {
-    url.addQueryItem("apnamespace", "0");
-  }
-  else {
-    url.addQueryItem("apnamespace", "0"); // TODO: convert namespace string to appropriate namespace ID (int)
-  }
-  if (max_results > 0) {
-    url.addQueryItem("aplimit", QString::number(max_results));
-  }
+  if (name_space.empty()) { url.addQueryItem("apnamespace", "0"); }
+  else { url.addQueryItem("apnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
+  if (max_results > 0) { url.addQueryItem("aplimit", QString::number(max_results)); }
 #endif
 
   // Make the network request.
@@ -649,32 +633,20 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
   urq.addQueryItem("format", "xml");
   urq.addQueryItem("list", "categorymembers");
   urq.addQueryItem("cmtitle", "Category:" + category);
-  if (name_space.empty()) {
-    urq.addQueryItem("cmnamespace", "0");
-  }
-  else {
-    urq.addQueryItem("cmnamespace", "0"); // TODO: convert namespace string to appropriate namespace ID (int)
-  }
+  if (name_space.empty()) { urq.addQueryItem("cmnamespace", "0"); }
+  else { urq.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
   urq.addQueryItem("cmtype", "page|subcat");
-  if (max_results > 0) {
-    urq.addQueryItem("cmlimit", QString::number(max_results));
-  }
+  if (max_results > 0) { urq.addQueryItem("cmlimit", QString::number(max_results)); }
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
   url.addQueryItem("list", "categorymembers");
   url.addQueryItem("cmtitle", "Category:" + category);
-  if (name_space.empty()) {
-    url.addQueryItem("cmnamespace", "0");
-  }
-  else {
-    url.addQueryItem("cmnamespace", "0"); // TODO: convert namespace string to appropriate namespace ID (int)
-  }
+  if (name_space.empty()) { url.addQueryItem("cmnamespace", "0"); }
+  else { url.addQueryItem("cmnamespace", "0"); } // TODO: convert namespace string to appropriate namespace ID (int)
   url.addQueryItem("cmtype", "page|subcat");
-  if (max_results > 0) {
-    url.addQueryItem("cmlimit", QString::number(max_results));
-  }
+  if (max_results > 0) { url.addQueryItem("cmlimit", QString::number(max_results)); }
 #endif
 
   // Make the network request.
@@ -733,9 +705,7 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
   urq.addQueryItem("aifrom", start_nm);
   urq.addQueryItem("aiprefix", prefix);
   urq.addQueryItem("aiprop", "timestamp|url|size|mime");
-  if (max_results > 0) {
-    urq.addQueryItem("ailimit", QString::number(max_results));
-  }
+  if (max_results > 0) { urq.addQueryItem("ailimit", QString::number(max_results)); }
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
@@ -745,9 +715,7 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
   url.addQueryItem("aifrom", start_nm);
   url.addQueryItem("aiprefix", prefix);
   url.addQueryItem("aiprop", "timestamp|url|size|mime");
-  if (max_results > 0) {
-    url.addQueryItem("ailimit", QString::number(max_results));
-  }
+  if (max_results > 0) { url.addQueryItem("ailimit", QString::number(max_results)); }
 #endif
 
   // Make the network request.
@@ -807,9 +775,7 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
   urq.addQueryItem("list", "search");
   urq.addQueryItem("srsearch", search_str);
   urq.addQueryItem("srwhat", title_only ? "title" : "text");
-  if (max_results > 0) {
-    urq.addQueryItem("srlimit", QString::number(max_results));
-  }
+  if (max_results > 0) { urq.addQueryItem("srlimit", QString::number(max_results)); }
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
@@ -817,9 +783,7 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
   url.addQueryItem("list", "search");
   url.addQueryItem("srsearch", search_str);
   url.addQueryItem("srwhat", title_only ? "title" : "text");
-  if (max_results > 0) {
-    url.addQueryItem("srlimit", QString::number(max_results));
-  }
+  if (max_results > 0) { url.addQueryItem("srlimit", QString::number(max_results)); }
 #endif
 
   // Make the network request.
@@ -983,18 +947,14 @@ bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, c
   QUrlQuery urq;
   urq.addQueryItem("action", "delete");
   urq.addQueryItem("title", page_name);
-  if (!reason.empty()) {
-    urq.addQueryItem("reason", reason);
-  }
+  if (!reason.empty()) { urq.addQueryItem("reason", reason); }
   urq.addQueryItem("format", "xml");
   urq.addQueryItem("token", token);
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "delete");
   url.addQueryItem("title", page_name);
-  if (!reason.empty()) {
-    url.addQueryItem("reason", reason);
-  }
+  if (!reason.empty()) { url.addQueryItem("reason", reason); }
   url.addQueryItem("format", "xml");
   url.addQueryItem("token", token);
 #endif
@@ -1063,13 +1023,13 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
   if (token.isEmpty()) { return false; }
 
   // Build the request URL.
-  // .../api.php?action=edit&title=<page_name>&section=0&createonly=&text=<page_content>&format=xml&token=<token>
+  // .../api.php?action=edit&title=<page_name>&section=new&preload=Template:Project&createonly=&text=<page_content>&format=xml&token=<token>
   QUrl url(wikiUrl);
 #if (QT_VERSION >= 0x050000)
   QUrlQuery urq;
   urq.addQueryItem("action", "edit");
   urq.addQueryItem("title", page_name);
-  urq.addQueryItem("section", "0");
+  urq.addQueryItem("section", "new");
   urq.addQueryItem("createonly", "");
   urq.addQueryItem("text", page_content);
   urq.addQueryItem("format", "xml");
@@ -1078,7 +1038,7 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 #else
   url.addQueryItem("action", "edit");
   url.addQueryItem("title", page_name);
-  url.addQueryItem("section", "0");
+  url.addQueryItem("section", "new");
   url.addQueryItem("createonly", "");
   url.addQueryItem("text", page_content);
   url.addQueryItem("format", "xml");
@@ -1186,7 +1146,7 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
 
 bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name, const String& page_category)
 {
-  // #CAT_Page Append given page on the wiki with given list of space-separated categories.
+  // #CAT_Page Append given page on the wiki with given list of comma-separated categories.
 
   // Make sure we actually have categories to add.
   if (page_category.empty()) { return false; }
@@ -1204,10 +1164,10 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
   // Build the URL-encoded category list.
   String categories = "";
   String cats = page_category;
-  String_Array* cat_array = cats.split();
+  String_Array* cat_array = cats.split(",");
   int i, cat_sz = cat_array->size;
   for (i = 0; i < cat_sz; i++) {
-    categories += "[[Category:" + cat_array->FastEl(i) + "]]";
+    categories += "[[Category:" + trim(cat_array->FastEl(i)) + "]]";
   }
 
   // Get the edit token for this post request.
@@ -1489,14 +1449,18 @@ String taMediaWiki::GetEditToken(const String& wiki_name)
   return _nilString;
 }
 
-bool taMediaWiki::PublishProject(const String& wiki_name, const String& proj_filename,
-                                 const String& page_content, const String& proj_category)
+bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_name,
+                                 const String& proj_name, const String& proj_filename,
+                                 const String& proj_desc, const String& proj_category)
 {
   // #CAT_Wiki Create or edit the wiki page for this project, upload the project file to the wiki, then post a link to this file on the project's wiki page.
   
-  // Get rid of the file extension to get the project's page name.
-  String page_name = proj_filename.before('.', 0);
-  if (page_name.empty()) { return false; }
+  // TODO: Finish designing the 'Template:Project' page on the wiki, and give it arguments for each variable by replacing that spot with {{{arg_name}}}
+  //       Supply any such arguments in the page_content string.  See the 'Template:Project' and 'Template_Test' pages on the emergent-test wiki for examples.
+  String page_content = "{{Project|name=" + proj_name + "|desc=" + proj_desc + "}}";
+
+  // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
+  if (proj_filename.empty()) { return FindMakePage(wiki_name, page_name, page_content, proj_category); }
 
   // Due to short-circuit evaluation, each of these methods must return true before the next method is called.
   return (FindMakePage(wiki_name, page_name, page_content, proj_category) &&
