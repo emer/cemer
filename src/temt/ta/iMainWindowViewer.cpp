@@ -549,10 +549,7 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(fileSvnCommitAction, SIGNAL(Action()), this, SLOT(fileSvnCommit()));
 
     // Connect "publish" options only for project windows.
-    if (filePublishProjectOnWebMenu) {
-      connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
-    }
-    connect(filePublishProjectOnWebAction, SIGNAL(Action()), this, SLOT(filePublishProjectOnWeb(const Variant &)));
+    connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
     connect(fileUpdateProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUpdateProjectOnWeb()));
     connect(fileUploadFilesForProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUploadFilesForProjectOnWeb()));
 
@@ -2890,6 +2887,10 @@ void iMainWindowViewer::UpdateUi() {
     // TODO - find out about the sync bool on taWikiURL - is it used - in what way
     fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
     fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
+  }
+  else {
+    fileUpdateProjectOnWebAction->setEnabled(false);
+    fileUploadFilesForProjectOnWebAction->setEnabled(false);
   }
   emit SetActionsEnabled();
 }

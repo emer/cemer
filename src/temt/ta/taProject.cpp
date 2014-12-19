@@ -564,13 +564,10 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
       QString categories = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        // when the api is updated
-        //        taMediaWiki::FindMakePage(repositoryName, name, GetFileName(), desc, categories);
-        was_published = taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, GetFileName(), desc, categories);
       }
       else {
-        //        taMediaWiki::FindMakePage(repositoryName, "", name, desc, categories);
-        was_published = taMediaWiki::FindMakePage(repositoryName, name, desc, categories);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, "", desc, categories);
       }
     }
     if (was_published) {
