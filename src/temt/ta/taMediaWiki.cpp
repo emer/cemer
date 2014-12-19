@@ -1455,15 +1455,20 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
 {
   // #CAT_Wiki Create or edit the wiki page for this project, upload the project file to the wiki, then post a link to this file on the project's wiki page.
   
+  // First check to make sure the page doesn't already exist.
+  if (PageExists(wiki_name, page_name)) {
+    taMisc::Warning(page_name, "page already exists on", wiki_name, "wiki! Call FindMakePage to make edits");
+    return false;
+  }
   // TODO: Finish designing the 'Template:Project' page on the wiki, and give it arguments for each variable by replacing that spot with {{{arg_name}}}
   //       Supply any such arguments in the page_content string.  See the 'Template:Project' and 'Template_Test' pages on the emergent-test wiki for examples.
   String page_content = "{{Project|name=" + proj_name + "|desc=" + proj_desc + "}}";
 
   // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
-  if (proj_filename.empty()) { return FindMakePage(wiki_name, page_name, page_content, proj_category); }
+  if (proj_filename.empty()) { return CreatePage(wiki_name, page_name, page_content, proj_category); }
 
   // Due to short-circuit evaluation, each of these methods must return true before the next method is called.
-  return (FindMakePage(wiki_name, page_name, page_content, proj_category) &&
+  return (CreatePage(wiki_name, page_name, page_content, proj_category) &&
           UploadFile(wiki_name, proj_filename, "") &&
           LinkFile(proj_filename, wiki_name, page_name));
 }
