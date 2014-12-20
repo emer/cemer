@@ -445,7 +445,8 @@ void taProject::ProjDirToCurrent() {
 }
 
 bool taProject::SetFileName(const String& val) {
-  if (GetFileName() == val) return true;
+  if (GetFileName() == val)
+    return true;
   inherited::SetFileName(val);
   MainWindowViewer* vwr = GetDefaultProjectBrowser();
   if(vwr) {
@@ -544,6 +545,20 @@ int taProject::SaveAs(const String& fname) {
 
 bool taProject::PublishProjectOnWeb(const String &repositoryName)
 {
+  if (GetFileName().empty()) {
+    int choice = taMisc::Choice("The project must be saved locally before it can be published", "Save", "Cancel");
+    if (choice == 0) {
+      Save();
+    }
+    else {
+      return false;
+    }
+  }
+  
+  if (GetFileName().empty()) { // was the project really saved?
+    return false;
+  }
+      
   String username = taMediaWiki::GetLoggedInUsername(repositoryName);
   
   // TODO - if username not empty ask if they want to stay logged in under that name

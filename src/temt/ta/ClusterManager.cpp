@@ -108,8 +108,9 @@ ClusterManager::BeginSearch(bool prompt_user)
   if (!m_valid) return false; // Ensure proper construction.
   if(!CheckPrefs()) return false;
 
-  saveProject();
-
+  if (!saveProject()) {
+    return false;
+  }
   // Prompt the user if the flag is set; otherwise the user is
   // only prompted if required fields are blank.
   if (prompt_user) {
@@ -337,16 +338,23 @@ ClusterManager::handleException(const SubversionClient::Exception &ex)
   }
 }
 
-void
+bool
 ClusterManager::saveProject()
 {
-  // Save the model locally.
-  m_proj->Save();
-
-  // If filename is still empty, save failed somehow.
-  if (m_proj->file_name.empty()) {
-    taMisc::Error("The project does not have a file name -- please save project locally first.");
+  if (m_proj->GetFileName().empty()) {
+    int choice = taMisc::Choice("The project must be saved locally before it can be run on the cluster", "Save", "Cancel");
+    if (choice == 0) {
+       m_proj->Save();
+    }
+    else {
+      return false;
+    }
   }
+  
+  if (m_proj->GetFileName().empty()) { // was the project really saved?
+    return false;
+  }
+  return true;
 }
 
 bool ClusterManager::HasBasicData(bool err) {

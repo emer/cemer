@@ -92,7 +92,7 @@ protected:
   };
 
   void handleException(const SubversionClient::Exception &ex);
-  void saveProject();
+  bool saveProject();
 
   bool showRepoDialog();
   bool setPaths(bool updt_wc = true);
