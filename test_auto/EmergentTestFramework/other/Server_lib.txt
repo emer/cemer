@@ -77,6 +77,20 @@ Get Json String
     ...                Should Match Regexp       ${value}       "(.*)"
     [return]           ${output}
 
+Get Column Value by Name
+    [Arguments]     ${json}     ${row}  ${columnname}
+    ${object}       Evaluate    json.loads('''${json}''')      json
+    ${row_num}      Convert To Integer                          ${row}
+    :FOR            ${i}        IN                            0        1        2
+    \               ${column}   Set Variable                  ${object["result"]["columns"][${i}]}
+    \               Run Keyword If                                            '${column["name"]}' == '${columnname}'         Exit For Loop
+    [return]        ${column["values"][${row_num}]}
+
+Column Value Should Match
+    [Arguments]     ${json}     ${row}  ${columnname}   ${expected}
+    ${value}        Get Column Value by Name            ${json}         ${row}  ${columnname}
+    Should Match    ${value}         ${expected}
+
 Print
     [Arguments]        ${text}
     Run Keyword If     ${verbose}                Log                ${text}    WARN
