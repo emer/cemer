@@ -78,18 +78,20 @@ Get Json String
     [return]           ${output}
 
 Get Column Value by Name
-    [Arguments]     ${json}     ${row}  ${columnname}
-    ${object}       Evaluate    json.loads('''${json}''')      json
-    ${row_num}      Convert To Integer                          ${row}
-    :FOR            ${i}        IN                            0        1        2
-    \               ${column}   Set Variable                  ${object["result"]["columns"][${i}]}
-    \               Run Keyword If                                            '${column["name"]}' == '${columnname}'         Exit For Loop
+    [Arguments]     ${json}             ${row}                         ${columnname}
+    ${object}       Evaluate            json.loads('''${json}''')      json
+    ${row_num}      Convert To Integer  ${row}
+    ${num_columns}  Evaluate            len(${object["result"]["columns"]})
+    :FOR            ${i}                IN RANGE                       ${num_columns}
+    \               ${column}           Set Variable                   ${object["result"]["columns"][${i}]}
+    \               Run Keyword If      '${column["name"]}' == '${columnname}'         Exit For Loop
     [return]        ${column["values"][${row_num}]}
 
 Column Value Should Match
-    [Arguments]     ${json}     ${row}  ${columnname}   ${expected}
-    ${value}        Get Column Value by Name            ${json}         ${row}  ${columnname}
-    Should Match    ${value}         ${expected}
+    [Arguments]     ${json}                             ${row}          ${columnname}   ${expected}
+    ${value}        Get Column Value by Name            ${json}         ${row}          ${columnname}
+    ${value_str}    Convert To String                   ${value}
+    Should Match    '${value_str}'                      '${expected}'
 
 Print
     [Arguments]        ${text}
