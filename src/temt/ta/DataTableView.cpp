@@ -42,6 +42,7 @@ void DataTableView::Initialize() {
   m_rows = 0;
 
   children.SetBaseType(&TA_DataColView); // subclasses need to set this to their type!
+  children.SetBaseFlag(BF_MISC4);        // prevents unique names enforcement
 }
 
 void DataTableView::InitLinks() {

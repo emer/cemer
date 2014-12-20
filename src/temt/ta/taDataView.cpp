@@ -99,6 +99,11 @@ void taDataView::SetVisible_impl(DataViewAction act) {
 
   if (do_defer_refresh == 0) return;
 
+  if(!isTopLevelView()) {       // only top levels do this..
+    m_defer_refresh = 0;
+    return;
+  }
+  
   DebugInfo("doing deferred refresh:", String(do_defer_refresh), " on: ",
             data()->GetName());
   m_defer_refresh = 0;

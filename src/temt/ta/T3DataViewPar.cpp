@@ -17,6 +17,9 @@
 
 TA_BASEFUNS_CTORS_DEFN(T3DataViewPar);
 
+// NOTE: can do SetBaseFlags(BF_MISC4) to prevent unique name enforcement on children
+// wherever that might be relevant
+
 void T3DataViewPar::InitLinks() {
   inherited::InitLinks();
   taBase::Own(children, this);

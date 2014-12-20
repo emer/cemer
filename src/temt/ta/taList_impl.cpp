@@ -175,20 +175,14 @@ void* taList_impl::El_CopyN_(void* to_, void* fm) {
 void taList_impl::UpdateAfterEdit(){
   inherited_taBase::UpdateAfterEdit();
   if(!el_typ->InheritsFrom(el_base)) el_typ = el_base;
-  if(taMisc::is_loading) {
-    taVersion v512(5, 1, 2);
-    if(taMisc::loading_version < v512) { // enforce unique names prior to 5.1.2
-      MakeElNamesUnique();
-    }
-  }
-  else {
+  if(!taMisc::is_loading) { 
     MakeElNamesUnique();
   }
 }
 
 bool taList_impl::MakeElNamesUnique() {
   static bool in_process = false;
-  if(size == 0) return true;
+  if(size == 0 || HasBaseFlag(BF_MISC4)) return true; // using BF_MISC4 to prevent uniques
   if(el_base->GetInstance()) {
     if(!((taBase*)el_base->GetInstance())->HasName()) return true; // no names!
   }
@@ -243,7 +237,7 @@ bool taList_impl::MakeElNamesUnique() {
 bool taList_impl::MakeElNameUnique(taBase* itm) {
   static bool in_process = false;
   if (!itm || !itm->HasName()) return true; // only if el's actually have names
-  if(HasOption("NO_UNIQUE_NAMES")) return true;        // not this guy
+  if(HasOption("NO_UNIQUE_NAMES") || HasBaseFlag(BF_MISC4)) return true; // using BF_MISC4 to prevent uniques
   if(in_process) return true; // already in this function -- SetName calls this recursively so don't allow that to happen.. I know, it's ugly, but not worth adding whole new SetName interface..
   in_process = true;
   bool unique = true;
