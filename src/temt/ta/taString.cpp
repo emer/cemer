@@ -1077,28 +1077,39 @@ taString& taString::upcase() {
 taString taString::CamelToSnake() {
   makeUnique();
   int found = 0;
-  for (uint n = 1; n < this->length(); ++n) {
+  for (int n = 1; n < this->length(); ++n) {
     if (isupper(mrep->s[n]))
       found++;
   }
 
-  if (found == 0)
+  if (found == 0) {
+    downcase();
     return this;
+  }
   
   taString rval(this->length() + found, 0, ' ');
   rval.makeUnique();
   
   rval[0] = mrep->s[0];
-  uint increment = 0;
-  for (uint n = 1; n < this->length(); ++n) {
-    if (!isupper(mrep->s[n])) {
-      rval[n + increment] = mrep->s[n];
-    }
-    else {
+  int increment = 0;
+  int last_up = -1;
+  if(isupper(mrep->s[0]))
+    last_up = 0;
+  int ln = this->length();
+  for (int n = 1; n < ln; ++n) {
+    if(isupper(mrep->s[n]) && (last_up != n-1) && (rval[n + increment-1] != '_')) {
       rval[n + increment] = '_';
       increment++;
       rval[n + increment] = mrep->s[n];
+      last_up = n;
     }
+    else {
+      rval[n + increment] = mrep->s[n];
+    }
+  }
+  if(increment < found) {
+    rval[ln + increment] = '\0';
+    rval.assertLength();
   }
   
   rval.downcase();

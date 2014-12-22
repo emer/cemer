@@ -3570,13 +3570,15 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set, const String&
 void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
                            String& full_lbl, String& desc) const {
   if (xtra_lbl.empty()) {
-    xtra_lbl = GetName().elidedTo(16);
+    xtra_lbl = GetName().CamelToSnake().elidedTo(16);
     taBase* mbrown = GetMemberOwner(true); // add top-level owner object name
     if(mbrown && mbrown != this) {
-      if(xtra_lbl.empty())
-        xtra_lbl = mbrown->GetName().elidedTo(16);
-      else
-        xtra_lbl = mbrown->GetName().elidedTo(16) + "_" + xtra_lbl;
+      if(xtra_lbl.empty()) {
+        xtra_lbl = mbrown->GetName().CamelToSnake().elidedTo(16);
+      }
+      else {
+        xtra_lbl = mbrown->GetName().CamelToSnake().elidedTo(16) + "_" + xtra_lbl;
+      }
     }
   }
   String lbl = xtra_lbl;
