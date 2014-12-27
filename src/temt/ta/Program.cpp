@@ -624,6 +624,7 @@ bool Program::IsStepProg() {
 bool Program::StopCheck() {
   //NOTE: we call event loop even in non-gui compile, since we can presumably
   // have other ways of stopping, such as something from a socket etc.
+  // if(taMisc::gui_active)
   taiM->ProcessEvents();
   // note: this has to be the full processevents and not RunPending,
   // otherwise it never seems to get the events.

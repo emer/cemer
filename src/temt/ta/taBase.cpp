@@ -3582,7 +3582,7 @@ void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
     }
   }
   String lbl = xtra_lbl;
-  if (lbl.nonempty()) lbl += "__";
+  if (lbl.nonempty()) lbl += "_";
   lbl += mbr->GetLabel();
   full_lbl = taMisc::StringCVar(lbl);
   // desc is the member description

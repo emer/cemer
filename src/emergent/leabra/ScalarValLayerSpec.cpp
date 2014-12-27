@@ -210,6 +210,13 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     }
   }
 
+  LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+  if(us->act_misc.rec_nd) {
+    taMisc::Warning("Scalar val must have UnitSpec.act_misc.rec_nd = false, to record value in act_eq of first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+    us->SetUnique("act_misc", true);
+    us->act_misc.rec_nd = false;
+  }
+  
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative
   if(lay->CheckError(u == NULL, quiet, rval,
@@ -351,7 +358,7 @@ void ScalarValLayerSpec::ClampValue_ugp
   float val = uv->ext;
   if(scalar.clip_val)
     val = val_range.Clip(val);          // first unit has the value to clamp
-  uv->act_eq = uv->act_nd = uv->misc_1 = val;        // record this val
+  uv->act_eq = uv->misc_1 = val;        // record this val
   scalar.InitVal(val, nunits, unit_range.min, unit_range.range);
 
   float avg_act = 0.0f;
@@ -423,7 +430,7 @@ float ScalarValLayerSpec::ReadValue_ugp
   // set the first unit in the group to represent the value
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-  uv->act_eq = uv->act_nd = uv->misc_1 = avg;
+  uv->act_eq = uv->misc_1 = avg;
   return avg;
 }
 
@@ -457,7 +464,7 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
     if(u->lesioned()) continue;
     LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-    uv->act_eq = uv->act_nd = uv->act = us->clamp_range.Clip(uv->ext);
+    uv->act_eq = uv->act = us->clamp_range.Clip(uv->ext);
     uv->ext = 0.0f;
     uv->ClearExtFlag(UnitVars::COMP_TARG_EXT);
   }
