@@ -129,6 +129,16 @@ void iDialogKeyBindings::Constr() {
         taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
         QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
         QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
+        String key_seq_as_string = String(key_seq.toString());
+#ifdef TA_OS_MAC
+        if (key_seq_as_string.contains("Ctrl")) {
+          key_seq_as_string = key_seq_as_string.repl("Ctrl", "command");
+        }
+        else if (key_seq_as_string.contains("Meta")) {
+          key_seq_as_string = key_seq_as_string.repl("Meta", "control");
+        }
+#endif
+        action->setToolTip("Default: " + key_seq_as_string);
         bindings_layout[ctxt]->addRow(action, edit);
         temp_bindings->Add(current_context, current_action, key_seq);
       }
