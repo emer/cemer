@@ -49,7 +49,7 @@ protected:
   virtual void          Constr();
   
   QPushButton*          button_ok;
-  QPushButton*          button_revert;
+  QPushButton*          button_cancel;
   
   KeyBindings*          temp_bindings;
   QFormLayout*          bindings_layout[10];  // make sure the array is big enough for all the contexts

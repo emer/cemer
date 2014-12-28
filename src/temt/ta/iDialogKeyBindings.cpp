@@ -143,12 +143,12 @@ void iDialogKeyBindings::Constr() {
   button_ok->setDefault(true);
   button_layout->addWidget(button_ok);
   button_layout->addSpacing(taiM->vsep_c);
-  button_revert = new QPushButton("&Revert", this);
-  button_layout->addWidget(button_revert);
+  button_cancel = new QPushButton("&Cancel", this);
+  button_layout->addWidget(button_cancel);
   layOuter->addLayout(button_layout);
 
   connect(button_ok, SIGNAL(clicked()), this, SLOT(accept()) );
-  connect(button_revert, SIGNAL(clicked()), this, SLOT(reject()) );
+  connect(button_cancel, SIGNAL(clicked()), this, SLOT(reject()) );
 }
 
 void iDialogKeyBindings::accept() {
