@@ -52,6 +52,7 @@ void ClusterRun::InitLinks() {
 }
 
 void ClusterRun::Initialize() {
+  set_proj_name = false;
   cur_svn_rev = -1;
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
@@ -85,6 +86,18 @@ void ClusterRun::UpdateAfterEdit_impl() {
       repo_url = rep.toString();
     }
   }
+  if(set_proj_name) {
+    if(proj_name.empty()) {
+      taProject* proj = GET_MY_OWNER(taProject);
+      if(proj) {
+        proj_name = taMisc::GetFileFmPath(proj->file_name);
+      }
+    }
+    if(proj_name.contains(".proj")) {
+      proj_name = proj_name.before(".proj");
+    }
+  }
+
   if(taMisc::is_loading) {
     if(jobs_submit.cols() > jobs_running.cols() ||
        jobs_submitted.cols() > jobs_running.cols()) {

@@ -216,6 +216,11 @@ bool ScalarValLayerSpec::CheckConfig_Layer(Layer* ly, bool quiet) {
     us->SetUnique("act_misc", true);
     us->act_misc.rec_nd = false;
   }
+  if(!us->act_misc.avg_nd) {
+    taMisc::Warning("Scalar val must have UnitSpec.act_misc.avg_nd = true, so learning is based on act_nd and NOT act_eq, which is used to record value in first unit.  I changed this for you in spec:", us->name, "make sure this is appropriate for all layers that use this spec");
+    us->SetUnique("act_misc", true);
+    us->act_misc.avg_nd = true;
+  }
   
   // check for conspecs with correct params
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(0);      // taking 1st unit as representative

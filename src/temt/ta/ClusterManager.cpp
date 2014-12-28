@@ -402,6 +402,11 @@ bool ClusterManager::HasBasicData(bool err) {
 const String
 ClusterManager::getFilename()
 {
+  if(m_cluster_run.set_proj_name) {
+    String rval = taMisc::GetDirFmPath(m_proj->file_name) + taMisc::path_sep  +
+      m_cluster_run.proj_name + ".proj";
+    return rval;
+  }
   return m_proj->file_name;
 }
 
