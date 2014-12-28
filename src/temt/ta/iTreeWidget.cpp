@@ -437,8 +437,8 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       e->accept();
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
       return;
-    case taiMisc::TREE_CLEAR_EXTENDED_SELECTION:
-    case taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II:		// s works too
+    case taiMisc::TREE_START_EXTENDED_SELECTION:
+    case taiMisc::TREE_START_EXTENDED_SELECTION_II:		// s works too
       //      case Qt::Key_Space:
       clearSelection();
       // select this guy

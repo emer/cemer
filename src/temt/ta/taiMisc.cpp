@@ -1095,8 +1095,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE, QKeySequence(control_key + Qt::Key_D));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE_II, QKeySequence(control_key + Qt::Key_Backspace));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_Space));
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_EXTENDED_SELECTION_II, QKeySequence(control_key + Qt::Key_S));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_START_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_Space));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_START_EXTENDED_SELECTION_II, QKeySequence(control_key + Qt::Key_S));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_FORWARD,  (control_key + Qt::Key_F));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_BACKWARD, QKeySequence(control_key + Qt::Key_B));
