@@ -107,7 +107,7 @@ public:
   virtual void  ImportData(bool remove_existing = true);
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
-  virtual void  ListJobFiles(bool include_data = false);
+  virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListAllFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu

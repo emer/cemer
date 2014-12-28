@@ -438,10 +438,10 @@ void ClusterRun::Probe() {
   //  AutoUpdateMe();
 }
 
-void ClusterRun::ListJobFiles(bool include_data) {
+void ClusterRun::ListJobFiles() {
   if(!initClusterManager())
     return;
-
+  bool include_data = true;     // doesn't hurt..
   file_list.ResetData();
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
