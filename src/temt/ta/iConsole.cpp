@@ -436,6 +436,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
 
   switch(action) {
     case taiMisc::CONSOLE_UNDO:         // undo the current command
+      ctrlCPressed();
       key_event->accept();
       displayPrompt();
       break;
