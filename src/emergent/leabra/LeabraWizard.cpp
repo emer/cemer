@@ -1899,9 +1899,6 @@ can be sure everything is ok.";
     rcps->send_end = in_stripes + mnt_stripes;
     rcps->UpdateAfterEdit();
   }
-  { PFCUnitSpec* pfcus = PbwmSp("PFCUnits",PFCUnitSpec);
-    pfcus->pfc_maint.maint_last_row = -(out_stripes + 1);
-  }
 
 
   MarkerConSpec* marker_cons = PbwmSp(prefix + "MarkerCons", MarkerConSpec);

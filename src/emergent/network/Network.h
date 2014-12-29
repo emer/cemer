@@ -195,6 +195,7 @@ public:
     NF_NONE             = 0,    // #NO_BIT
     MANUAL_POS          = 0x0001, // disables the automatic cleanup/positioning of layers
     NETIN_PER_PRJN      = 0x0002, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
+    BUILD_INIT_WTS      = 0x0004, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
     BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
   };

@@ -29,10 +29,8 @@ class E_API PFCMaintSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
 INHERITED(SpecMemberBase)
 public:
-  int          maint_first_row;  // what is the first row of unit groups within the layer that supports active maintenance, where deep5b maintains itself over multiple consecutive trials or phases of thalamic gating signal being above threshold (cifer_d5b.burst = false) -- otherwise, burst = true and it always gets the current superficial activations, just like posterior cortex.  Sometimes the first row(s) of a layer contain the input gating stripes, which should generally not have maintenance.  Use negative numbers to count backward from the end row (-1 = last row, -2 = 2nd to last, etc)
-  int          maint_last_row;  // what is the last row of unit groups within the layer that supports active maintenance, where deep5b maintains itself over multiple consecutive trials or phases of thalamic gating signal being above threshold -- otherwise it always gets the current superficial activations, just like posterior cortex.  Typically the last row(s) of a layer contain the output gating stripes, which should generally not have maintenance.  Use negative numbers to count backward from the end row (-1 = last row (i.e., all stripes support maintenance), -2 = 2nd to last, etc)
-  float        maint_d5b_to_super;  // #DEF_0;0.8;1 for units within maint_first_row..maint_last_row engaged in active maintenance: how much the deep5b activation drives extra net input to support maintenance in PFC superficial layer (2/3) neurons -- this is IN ADDITION to cifer_d5b.d5b_to_super, which is all that is used for non-maint units
-  float        d5b_updt_tau;    // time constant for updating deep5b activations (at every phase or trial, depending on cifer.phase) where continuing maintenance is enabled (see d5b_maint_last_row) -- set to a large number to preserve initial gating information, and to a low number to allow rapid updating / drift of representations based on current superficial layer activation
+  float        maint_d5b_to_super;  // #DEF_0;0.8;1 for units in odd numbered rows,  engaged in active maintenance: how much the deep5b activation drives extra net input to support maintenance in PFC superficial layer (2/3) neurons -- this is IN ADDITION to cifer_d5b.d5b_to_super, which is all that is used for non-maint units
+  float        d5b_updt_tau;    // time constant for updating deep5b activations (at every phase or trial, depending on cifer.phase) where continuing maintenance is enabled -- set to a large number to preserve initial gating information, and to a low number to allow rapid updating / drift of representations based on current superficial layer activation
 
   float         d5b_updt_dt;    // #READ_ONLY #EXPERT rate = 1 / tau
 
@@ -51,13 +49,13 @@ private:
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- adds extra maintenance net input in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance -- also has special logic for updating deep5b activations, where repeated thalamic activation causes deep5b to update with the d5b_updt_tau time constant, capturing intrinsic maintenance properties of these neurons
+  // PFC unit spec -- PFC layer is organized into unit groups arranged by rows and columns -- the columns are all treated the same (redundant channels for maintenance and learning), whereas rows alternate by maintenance duration (even = no maint, odd = maint) -- the prototypical organization has 4 rows, with the first set of two being input / maintenance and the second set being output / maintenance -- extra maintenance net input is added in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance -- also has special logic for updating deep5b activations, where repeated thalamic activation causes deep5b to update with the d5b_updt_tau time constant, capturing intrinsic maintenance properties of these neurons
 INHERITED(LeabraUnitSpec)
 public:
   PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
 
   bool  ActiveMaint(LeabraUnit* u);
-  // should active maintenance engaged for this unit -- looks at pfc_maint.maint_last_row compared to unit group Y position coordinate for unit
+  // should active maintenance engaged for this unit? Looks at unit group Y position coordinate for unit -- even = no maint, odd = maint
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;

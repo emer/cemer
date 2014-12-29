@@ -24,8 +24,6 @@ void PFCMaintSpec::Initialize() {
 }
 
 void PFCMaintSpec::Defaults_init() {
-  maint_first_row = 1;
-  maint_last_row = -2;
   maint_d5b_to_super = 0.8f;
   d5b_updt_tau = 10.0f;
   
@@ -52,13 +50,7 @@ void PFCUnitSpec::Defaults_init() {
 bool  PFCUnitSpec::ActiveMaint(LeabraUnit* u) {
   LeabraLayer* lay = (LeabraLayer*)u->own_lay();
   taVector2i ugpos = lay->UnitGpPosFmIdx(u->UnitGpIdx());
-  int fst_row = pfc_maint.maint_first_row;
-  if(fst_row < 0)
-    fst_row = lay->gp_geom.y + fst_row;
-  int lst_row = pfc_maint.maint_last_row;
-  if(lst_row < 0)
-    lst_row = lay->gp_geom.y + lst_row;
-  return ((ugpos.y >= fst_row) && (ugpos.y <= lst_row));
+  return ((ugpos.y % 2) == 1);
 }
 
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
@@ -73,10 +65,13 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
 
 void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(cifer_thal.on) {
+    if(cifer_thal.auto_thal) {
+      u->thal = u->act_eq;
+    }
     if(u->thal < cifer_thal.thal_thr)
-      u->thal = 0.0f;
+      TestWrite(u->thal, 0.0f);
     if(cifer_thal.thal_bin && u->thal > 0.0f)
-      u->thal = 1.0f;
+      TestWrite(u->thal, 1.0f);
   }
 
   if(!cifer_d5b.on) return;

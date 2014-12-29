@@ -63,7 +63,7 @@ void Network::Initialize() {
   unit_vars_type = &TA_UnitVars;
   con_group_type = &TA_ConGroup;
 
-  flags = NF_NONE;
+  flags = BUILD_INIT_WTS;
   auto_build = AUTO_BUILD;
   auto_load_wts = NO_AUTO_LOAD;
 
@@ -325,6 +325,11 @@ void Network::UpdateAfterEdit_impl(){
 
   if(taMisc::is_loading) {
     brain_atlas = brain_atlases->FindName(brain_atlas_name);
+
+    taVersion v704(7, 0, 4);
+    if(taMisc::loading_version < v704) { // default prior to 704 is to build
+      SetNetFlag(BUILD_INIT_WTS);
+    }
   }
   else {
     if(brain_atlas)
@@ -479,6 +484,10 @@ void Network::Build() {
 
   net_timing.SetSize(n_thrs_built + 1);
 
+  if(HasNetFlag(BUILD_INIT_WTS)) {
+    Init_Weights();
+  }
+  
   StructUpdate(false);
   --taMisc::no_auto_expand;
   taMisc::DoneBusy();

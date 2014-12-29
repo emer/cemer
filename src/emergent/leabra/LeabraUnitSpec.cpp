@@ -1696,18 +1696,18 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
     }
   }
 
-  if(cifer_d5b.on) {
-    if(Quarter_Deep5bNow(net->quarter)) {
-      float act5b = u->act_eq;
-      if(act5b < cifer_d5b.act5b_thr) {
-        act5b = 0.0f;
-      }
-      u->deep5b = u->thal * act5b;  // thal is thresholded
+  if(!cifer_d5b.on) return;
+  
+  if(Quarter_Deep5bNow(net->quarter)) {
+    float act5b = u->act_eq;
+    if(act5b < cifer_d5b.act5b_thr) {
+      act5b = 0.0f;
     }
-    else {
-      if(cifer_d5b.burst) {
-        TestWrite(u->deep5b, 0.0f); // turn it off
-      }
+    u->deep5b = u->thal * act5b;  // thal is thresholded
+  }
+  else {
+    if(cifer_d5b.burst) {
+      TestWrite(u->deep5b, 0.0f); // turn it off
     }
   }
 }
