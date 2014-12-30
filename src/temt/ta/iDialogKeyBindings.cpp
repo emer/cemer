@@ -137,6 +137,19 @@ void iDialogKeyBindings::Constr() {
         else if (key_seq_as_string.contains("Meta")) {
           key_seq_as_string = key_seq_as_string.repl("Meta", "control");
         }
+        else if (key_seq_as_string.contains("Alt")) {
+          if (context_label == "TEXTEDIT") {
+            if (action_label == "COPY_CLEAR") {
+              key_seq_as_string = key_seq_as_string.repl("?", "W");
+            }
+            if (action_label == "WORD_FORWARD") {
+              key_seq_as_string = key_seq_as_string.repl("?", "F");
+            }
+            if (action_label == "WORD_BACKWARD") {
+              key_seq_as_string = key_seq_as_string.repl("?", "B");
+            }
+          }
+        }
 #endif
         action->setToolTip("Default: " + key_seq_as_string);
         bindings_layout[ctxt]->addRow(action, edit);
