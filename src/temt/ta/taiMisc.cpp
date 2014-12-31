@@ -1034,18 +1034,21 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_ALL_FRAMES, QKeySequence(control_key + Qt::Key_7));
 #endif
   
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT, QKeySequence(control_key + Qt::Key_J));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT, QKeySequence(control_key + Qt::Key_L));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT, QKeySequence(control_key + Qt::Key_J));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT, QKeySequence(control_key + Qt::Key_B));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT, QKeySequence(control_key + Qt::Key_F));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_PANEL_VIEW_LEFT, QKeySequence(Qt::ShiftModifier + control_key + Qt::Key_B));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_PANEL_VIEW_RIGHT, QKeySequence(Qt::ShiftModifier + control_key + Qt::Key_F));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_DELETE, QKeySequence(control_key + Qt::Key_D));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN, QKeySequence(control_key + Qt::Key_P));
   
 #ifdef TA_OS_MAC  // why both control and alt for shifting focus
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT, QKeySequence(Qt::AltModifier + 0x2206));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT, QKeySequence(Qt::AltModifier + 0xAC));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + 0x2206));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + 0xAC));
 #else
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT, QKeySequence(Qt::AltModifier + Qt::Key_J));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT, QKeySequence(Qt::AltModifier + Qt::Key_L));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + Qt::Key_J));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + Qt::Key_L));
 #endif
   
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP, QKeySequence(meta_key + Qt::Key_C));

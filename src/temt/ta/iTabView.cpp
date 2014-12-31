@@ -451,10 +451,11 @@ void iTabView::UpdateTabName(iPanelBase* pan) { // called by a panel when its ta
   }
 }
 
-void iTabView::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if(ctrl_pressed) {
-    if(e->key() == Qt::Key_P) {
+void iTabView::keyPressEvent(QKeyEvent* key_event) {
+  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
+  switch (action) {
+    case taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN: // move left between regions
+    {
       iPanelBase* dp = curPanel();
       if(dp) {
         if(dp->pinned())
@@ -462,22 +463,12 @@ void iTabView::keyPressEvent(QKeyEvent* e) {
         else
           dp->Pin();
       }
-      e->accept();
+      key_event->accept();
       return;
     }
-    //     else if(e->key() == Qt::Key_T) {
-    //       AddTab(tbPanels->currentIndex());
-    //       e->accept();
-    //       return;
-    //     }
-    // I don't think it is useful to have a command for this -- too obscure and dangerous
-    //     else if(e->key() == Qt::Key_D) {
-    //       CloseTab(tbPanels->currentIndex());
-    //       e->accept();
-    //       return;
-    //     }
+    default:
+      QWidget::keyPressEvent(key_event);
   }
-  QWidget::keyPressEvent(e);
 }
 
 

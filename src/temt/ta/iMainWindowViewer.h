@@ -278,9 +278,6 @@ public:
   virtual bool          ShiftCurTabLeft();
   // shift tab in currently focused panel to the left
 
-  virtual bool          KeyEventFilterWindowNav(QObject* obj, QKeyEvent* e);
-  // process window navigation key events (Ctrl/Alt J, L, Tab) -- returns true if processed
-
   iTreeViewItem*        AssertBrowserItem(taiSigLink* link);
   iTreeViewItem*        BrowserExpandAllItem(taiSigLink* link);
   iTreeViewItem*        BrowserCollapseAllItem(taiSigLink* link);

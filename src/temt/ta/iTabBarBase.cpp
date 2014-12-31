@@ -43,15 +43,16 @@ void iTabBarBase::selectPrevTab() {
   }
 }
 
+// jr - 12/30/14 key press comes to iMainWindowViewer
 void iTabBarBase::keyPressEvent(QKeyEvent* e) {
-  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
-  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
-    if(e->key() == Qt::Key_F)
-      selectNextTab();
-    else
-      selectPrevTab();
-  }
-  else {
-    inherited::keyPressEvent(e);
-  }
+//  bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
+//  if(ctrl_pressed && ((e->key() == Qt::Key_B) || (e->key() == Qt::Key_F))) {
+//    if(e->key() == Qt::Key_F)
+//      selectNextTab();
+//    else
+//      selectPrevTab();
+//  }
+//  else {
+//    inherited::keyPressEvent(e);
+//  }
 }

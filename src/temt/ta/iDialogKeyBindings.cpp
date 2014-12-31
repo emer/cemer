@@ -149,6 +149,14 @@ void iDialogKeyBindings::Constr() {
               key_seq_as_string = key_seq_as_string.repl("?", "B");
             }
           }
+          if (context_label == "PROJECTWINDOW") {
+            if (action_label == "FRAME_LEFT_II") {
+              key_seq_as_string = key_seq_as_string.repl("?", "J");
+            }
+            if (action_label == "FRAME_RIGHT_II") {
+              key_seq_as_string = key_seq_as_string.repl("\xac", "L");
+            }
+          }
         }
 #endif
         action->setToolTip("Default: " + key_seq_as_string);

@@ -1869,29 +1869,6 @@ bool iMainWindowViewer::ShiftCurTabLeft() {
   return true;
 }
 
-bool iMainWindowViewer::KeyEventFilterWindowNav(QObject* obj, QKeyEvent* key_event) {
- 
-  taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
-  
-  switch(action) {
-    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT: // move left between regions
-      MoveFocusLeft();
-      return true;
-    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
-      MoveFocusRight();
-      return true;
-    // these need key bindings
-    case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT: // switch tab
-      ShiftCurTabLeft();
-      return true;
-    case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT: // switch tab
-      ShiftCurTabRight();
-      return true;
-    default:
-      return false;
-  }
-}
-
 iTreeViewItem* iMainWindowViewer::AssertBrowserItem(taiSigLink* link) {
   iTreeView* itv = GetCurTreeView(); // note: use current
   if(!itv) return NULL;
@@ -2197,11 +2174,11 @@ void iMainWindowViewer::keyPressEvent(QKeyEvent* key_event) {
   
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
   switch (action) {
-    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_LEFT: // move left between regions
+    case taiMisc::PROJECTWINDOW_FRAME_LEFT: // move left between regions
       MoveFocusLeft();
       key_event->accept();
       return;
-    case taiMisc::PROJECTWINDOW_MOVE_FOCUS_RIGHT: // move right between regions
+    case taiMisc::PROJECTWINDOW_FRAME_RIGHT: // move right between regions
       MoveFocusRight();
       key_event->accept();
       return;
