@@ -33,6 +33,7 @@ iFrameViewer::~iFrameViewer()
 
 void iFrameViewer::Init() {
   shn_changing = 0;
+  setFocusPolicy(Qt::StrongFocus);
 }
 
 void iFrameViewer::hideEvent(QHideEvent* e) {

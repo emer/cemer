@@ -58,9 +58,3 @@ void iTabBarBase::keyPressEvent(QKeyEvent* key_event) {
       inherited::keyPressEvent(key_event);
   }
 }
-
-void iTabBarBase::mousePressEvent(QMouseEvent* e) {
-  setFocus();
-  return inherited::mousePressEvent(e);
-}
-
