@@ -42,6 +42,8 @@ public slots:
 
 protected:
   void keyPressEvent(QKeyEvent* e) override;
+  void mousePressEvent(QMouseEvent* e) override;
+
 };
 
 #endif // iTabBarBase_h

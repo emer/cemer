@@ -26,6 +26,7 @@
 iPanelSetButton::iPanelSetButton(QWidget* parent) : QToolButton(parent) {
   m_datapanelset = NULL;
   m_idx = -1;
+  setFocusPolicy(Qt::StrongFocus);
 }
 
 void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
