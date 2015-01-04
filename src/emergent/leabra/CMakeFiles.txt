@@ -82,6 +82,7 @@ set(leabra_HEADS_MAKETA
   GPiUnitSpec.h
   InvertUnitSpec.h
   PFCUnitSpec.h
+  PFCPrjnSpec.h
   
   GpCustomPrjnSpecBase.h
   RowColPrjnSpec.h
@@ -93,7 +94,6 @@ set(leabra_HEADS_MAKETA
   HippoEncoderConSpec.h
   CerebGranuleUnitSpec.h
   CerebPfPcConSpec.h
-  PFCPrjnSpec.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -197,6 +197,7 @@ set(leabra_SRCS
   GPiUnitSpec.cpp
   InvertUnitSpec.cpp
   PFCUnitSpec.cpp
+  PFCPrjnSpec.cpp
   
   GpCustomPrjnSpecBase.cpp
   RowColPrjnSpec.cpp
@@ -208,7 +209,6 @@ set(leabra_SRCS
   HippoEncoderConSpec.cpp
   CerebGranuleUnitSpec.cpp
   CerebPfPcConSpec.cpp
-  PFCPrjnSpec.cpp
 )
 
 set(leabra_CUDA
