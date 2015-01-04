@@ -171,6 +171,10 @@ public:
   // save the current camera view information to given saved view
   virtual void          gotoView(int view_no);
   // restore the saved camera view information to the current view
+  virtual void          nextView();
+  // move to the next higher number view
+  virtual void          previousView();
+  // move to the next lower number view
   virtual bool          nameView(int view_no, const String& name);
   // add a new label for given saved view location
   virtual void          updtViewName(int view_no);

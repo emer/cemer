@@ -233,6 +233,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   
   //   quarter->setInteractionModeOn(false);
   setInteractionModeOn(false);  // default start it off!
+  setFocusPolicy(Qt::StrongFocus);
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
@@ -695,7 +696,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
   
   switch (action) {
     case taiMisc::GRAPHICS_INTERACTION_MODE_TOGGLE:
-      if(interactionModeOn()) {
+      if(interactionModeOn()) { 
         setInteractionModeOn(false);
       }
       else {
@@ -787,6 +788,14 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
     case taiMisc::GRAPHICS_ZOOM_OUT:
     case taiMisc::GRAPHICS_ZOOM_OUT_II:
       zoomView(fixed_zoom_delta);
+      key_event->accept();
+      return;
+    case taiMisc::GRAPHICS_VIEW_LEFT:
+      previousView();
+      key_event->accept();
+      return;
+    case taiMisc::GRAPHICS_VIEW_RIGHT:
+      nextView();
       key_event->accept();
       return;
     default:
@@ -1025,6 +1034,22 @@ void T3ExaminerViewer::gotoView(int view_no) {
   cur_view_no = view_no;
   syncViewerMode();
   emit viewSelected(view_no);
+}
+
+void T3ExaminerViewer::nextView() {
+  int next_view_no = cur_view_no + 1;
+  if (next_view_no == saved_views.size) {
+    next_view_no = 0;
+  }
+  gotoviewbuttonClicked(next_view_no);
+}
+
+void T3ExaminerViewer::previousView() {
+  int previous_view_no = cur_view_no - 1;
+  if (previous_view_no == -1) {
+    previous_view_no = saved_views.size - 1;
+  }
+  gotoviewbuttonClicked(previous_view_no);
 }
 
 bool T3ExaminerViewer::nameView(int view_no, const String& label) {

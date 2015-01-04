@@ -1141,6 +1141,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_IN_II, QKeySequence(Qt::Key_Equal));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_OUT, QKeySequence(Qt::Key_Minus));
   default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_ZOOM_OUT_II, QKeySequence(Qt::ShiftModifier + Qt::Key_Underscore));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_VIEW_LEFT, QKeySequence(Qt::ShiftModifier + control_key + Qt::Key_B));
+  default_list->Add(taiMisc::GRAPHICS_CONTEXT, taiMisc::GRAPHICS_VIEW_RIGHT, QKeySequence(Qt::ShiftModifier + control_key + Qt::Key_F));
   
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_LOOKUP, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_UP, QKeySequence(control_key + Qt::Key_P));
