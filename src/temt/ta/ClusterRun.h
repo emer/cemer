@@ -130,7 +130,7 @@ public:
   virtual void  OpenSvnBrowser();
   // #MENU_BUTTON #MENU_ON_OtherFiles open subversion browser for this repository
   virtual void  SaveJobParams();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
   virtual void  ArchiveJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
   virtual void  RemoveJobs();

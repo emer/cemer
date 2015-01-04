@@ -17,7 +17,6 @@
 #define RowColPrjnSpec_h 1
 
 // parent includes:
-#include "network_def.h"
 #include <ProjectionSpec>
 
 // member includes:

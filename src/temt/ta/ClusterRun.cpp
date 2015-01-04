@@ -865,7 +865,12 @@ void ClusterRun::OpenSvnBrowser() {
 
 void ClusterRun::SaveJobParams() {
   int st_row, end_row;
-  if (SelectedRows(jobs_done, st_row, end_row)) {
+  if (SelectedRows(jobs_running, st_row, end_row)) {
+    for (int row = st_row; row <= end_row; ++row) {
+      SaveJobParams_impl(jobs_running, row);
+    }
+  }
+  else if (SelectedRows(jobs_done, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
       SaveJobParams_impl(jobs_done, row);
     }

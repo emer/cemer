@@ -46,6 +46,10 @@ void GpRndTesselPrjnSpec::UpdateAfterEdit_impl() {
 }
 
 void GpRndTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x, int ctr_y) {
+  last_make_cmd = "MakeEllipse( half_width=" + String(half_width)
+    + ", half_height=" + String(half_height)
+    + ", ctr_x=" + String(ctr_x) + ", ctr_y=" + String(ctr_y) + ")";
+  SigEmitUpdated();
   send_gp_offs.Reset();
   int strt_x = ctr_x - half_width;
   int end_x = ctr_x + half_width;
@@ -106,6 +110,9 @@ void GpRndTesselPrjnSpec::MakeEllipse(int half_width, int half_height, int ctr_x
 }
 
 void GpRndTesselPrjnSpec::MakeRectangle(int width, int height, int left, int bottom) {
+  last_make_cmd = "MakeRectangle(width=" + String(width) + ", height=" + String(height)
+    + ", left=" + String(left) + ", bottom=" + String(bottom) + ")";
+  SigEmitUpdated();
   send_gp_offs.Reset();
   int y;
   for(y = bottom; y < bottom + height; y++) {

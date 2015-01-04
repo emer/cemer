@@ -72,6 +72,8 @@ public:
   bool		same_seed;	// use the same random seed each time (same connect pattern)
   RndSeed	rndm_seed;	// #HIDDEN random seed
 
+  String	last_make_cmd; // #READ_ONLY #SHOW shows the last Make.. command that was run (if blank, none or it was done prior to the addition of this feature in version 8.0.0) -- useful for modifying later
+
   void	Connect_impl(Projection* prjn, bool make_cons) override;
 
   virtual void	GetCtrFmRecv(taVector2i& sctr, taVector2i ruc);
