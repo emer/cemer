@@ -13,18 +13,35 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "RepAnal.h"
-#include <taMath_float>
+#ifndef WtBasedRF_h
+#define WtBasedRF_h 1
 
-TA_BASEFUNS_CTORS_DEFN(RepAnal);
+// parent includes:
+#include "network_def.h"
+#include <taNBase>
 
-void RepAnal::Initialize() {
-}
+// member includes:
+#include <DataTable>
+#include <float_Matrix>
+#include <Network>
 
-void RepAnal::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-}
+// declare all other types mentioned but not required to include:
 
-void RepAnal::CheckThisConfig_impl(bool quiet, bool& rval) {
-  inherited::CheckThisConfig_impl(quiet, rval);
-}
+eTypeDef_Of(WtBasedRF);
+
+class E_API WtBasedRF : public taNBase {
+  // #STEM_BASE ##CAT_Network
+INHERITED(taNBase)
+public:
+
+  TA_SIMPLE_BASEFUNS(WtBasedRF);
+protected:
+  void	UpdateAfterEdit_impl();
+  void	CheckThisConfig_impl(bool quiet, bool& rval) override;
+
+private:
+  void Initialize();
+  void Destroy()     { };
+};
+
+#endif // WtBasedRF_h

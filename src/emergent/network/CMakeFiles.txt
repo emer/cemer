@@ -132,7 +132,7 @@ set(network_HEADS_MAKETA
   T3LayerGroupNode.h
   T3NetNode.h
   T3BrainNode.h
-  RepAnal.h
+  WtBasedRF.h
 )
 
 set(network_HEADS_NOMAKETA
@@ -330,7 +330,7 @@ set(network_SRCS
   nifti1_io.c
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
-  RepAnal.cpp
+  WtBasedRF.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})
