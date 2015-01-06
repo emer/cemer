@@ -30,6 +30,7 @@ void PFCPrjnSpec::Initialize() {
 
   row_1to1 = true;
   col_1to1 = true;
+  unit_1to1 = false;
 }
 
 void PFCPrjnSpec::UpdateAfterEdit_impl() {
@@ -177,10 +178,15 @@ void PFCPrjnSpec::Connect_cols(Projection* prjn, bool make_cons,
     break;
   }
 
+  if(unit_1to1) {
+    Connect_unit1to1(prjn, make_cons, rx, ry, recv_x, recv_gps, sy, send_x, send_gps);
+    return;
+  }
+  
   int rgpidx = -1;
   int rnu = 1;
   Unit* ru = NULL;
-  
+
   if(col_1to1 && recv_x == send_x) {
     int sx = rx;
     if(recv_gps) {
@@ -191,7 +197,7 @@ void PFCPrjnSpec::Connect_cols(Projection* prjn, bool make_cons,
       ru = recv_lay->UnitAtCoord(rx, ry);
     }
     for(int ri=0;ri<rnu;ri++) {
-      if(rgpidx >= 0)
+       if(rgpidx >= 0)
         ru = recv_lay->UnitAccess(Layer::ACC_GP, ri, rgpidx);
       if(!ru) continue;
 
@@ -257,6 +263,103 @@ void PFCPrjnSpec::Connect_cols(Projection* prjn, bool make_cons,
             ru->ConnectFrom(su, prjn);
           }
         }
+      }
+    }
+  }
+}
+
+void PFCPrjnSpec::Connect_unit1to1(Projection* prjn, bool make_cons,
+                                   int rx, int ry, int recv_x, bool recv_gps,
+                                   int sy, int send_x, bool send_gps) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  int rgpidx = -1;
+  int rnu = 1;
+  int snu = 1;
+  Unit* ru = NULL;
+  Unit* su = NULL;
+
+  if(recv_gps && !send_gps) {
+    rgpidx = ry * recv_x + rx;
+    rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_GP);
+    snu = send_lay->UnitAccess_NUnits(Layer::ACC_LAY);
+    int mx = MIN(rnu, snu);
+    for(int ri=0;ri<mx;ri++) {
+      ru = recv_lay->UnitAccess(Layer::ACC_GP, ri, rgpidx);
+      if(!ru) continue;
+      su = send_lay->UnitAccess(Layer::ACC_LAY, ri);
+      if(!su) continue;
+
+      if(!make_cons) {
+        su->SendConsAllocInc(1, prjn);
+        ru->RecvConsAllocInc(1, prjn);
+      }
+      else {
+        ru->ConnectFrom(su, prjn);
+      }
+    }
+  }
+  else if(!recv_gps && send_gps) {
+    rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_LAY);
+    snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
+    int mx = MIN(rnu, snu);
+    for(int sx = 0; sx < send_x; sx++) {
+      int sgpidx = sy * send_x + sx;
+      for(int ri=0;ri<mx;ri++) {
+        ru = recv_lay->UnitAccess(Layer::ACC_LAY, ri);
+        if(!ru) continue;
+        su = send_lay->UnitAccess(Layer::ACC_GP, ri, sgpidx);
+        if(!su) continue;
+
+        if(!make_cons) {
+          su->SendConsAllocInc(1, prjn);
+          ru->RecvConsAllocInc(1, prjn);
+        }
+        else {
+          ru->ConnectFrom(su, prjn);
+        }
+      }
+    }
+  }
+  else if(recv_gps && send_gps) {
+    rgpidx = ry * recv_x + rx;
+    rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_GP);
+    snu = send_lay->UnitAccess_NUnits(Layer::ACC_GP);
+    int sx = rx;                // assumes col_1to1 -- only sensible option
+    int sgpidx = sy * send_x + sx;
+    int mx = MIN(rnu, snu);
+    for(int ri=0;ri<mx;ri++) {
+      ru = recv_lay->UnitAccess(Layer::ACC_GP, ri, rgpidx);
+      if(!ru) continue;
+      su = send_lay->UnitAccess(Layer::ACC_GP, ri, sgpidx);
+      if(!su) continue;
+
+      if(!make_cons) {
+        su->SendConsAllocInc(1, prjn);
+        ru->RecvConsAllocInc(1, prjn);
+      }
+      else {
+        ru->ConnectFrom(su, prjn);
+      }
+    }
+  }
+  else if(!recv_gps && !send_gps) {
+    rnu = recv_lay->UnitAccess_NUnits(Layer::ACC_LAY);
+    snu = send_lay->UnitAccess_NUnits(Layer::ACC_LAY);
+    int mx = MIN(rnu, snu);
+    for(int ri=0;ri<mx;ri++) {
+      ru = recv_lay->UnitAccess(Layer::ACC_LAY, ri);
+      if(!ru) continue;
+      su = send_lay->UnitAccess(Layer::ACC_LAY, ri);
+      if(!su) continue;
+
+      if(!make_cons) {
+        su->SendConsAllocInc(1, prjn);
+        ru->RecvConsAllocInc(1, prjn);
+      }
+      else {
+        ru->ConnectFrom(su, prjn);
       }
     }
   }

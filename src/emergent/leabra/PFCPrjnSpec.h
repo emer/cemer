@@ -58,6 +58,7 @@ public:
   GatingRows    send_gate_rows; // #CONDSHOW_ON_send_layer:GATING which GATING rows should send connections
   bool          row_1to1;       // make the row connections one-to-one for selected sender and receiver rows -- for PFC to GATING connections, this means INPUT to INPUT and OUTPUT to OUTPUT -- not relevant for connections with OTHER layer types -- otherwise it is all-to-all
   bool          col_1to1;       // make the column-wise connections one-to-one -- otherwise it is all-to-all
+  bool          unit_1to1;      // for non-learning PFC representations that just have 1-to-1 copies of input representations, this establishes the 1-to-1 unit-level connectivity
   
   void	Connect_impl(Projection* prjn, bool make_cons) override;
 
@@ -68,6 +69,9 @@ public:
   virtual void Connect_cols(Projection* prjn, bool make_cons,
                             int rx, int ry, int recv_x, bool recv_gps,
                             int sy, int send_x, bool send_gps);
+  virtual void Connect_unit1to1(Projection* prjn, bool make_cons,
+                                int rx, int ry, int recv_x, bool recv_gps,
+                                int sy, int send_x, bool send_gps);
   
   TA_SIMPLE_BASEFUNS(PFCPrjnSpec);
 protected:

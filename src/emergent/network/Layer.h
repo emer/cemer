@@ -196,7 +196,7 @@ public:
   { gpidx = uflat_idx / un_geom.n;  unidx = uflat_idx % un_geom.n; }
   // #CAT_Access get unit and group index values from a flat unit index
 
-  inline Unit*  UnitAccess(AccessMode mode, int unidx, int gpidx) const {
+  inline Unit*  UnitAccess(AccessMode mode, int unidx, int gpidx=0) const {
     if(mode == ACC_GP && unit_groups) {
       if(virt_groups) return units.SafeEl(gpidx * un_geom.n + unidx);
       Unit_Group* ug = (Unit_Group*)units.gp.SafeEl(gpidx); if(!ug) return NULL;
