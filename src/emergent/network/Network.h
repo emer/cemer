@@ -198,6 +198,7 @@ public:
     BUILD_INIT_WTS      = 0x0004, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
     BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
+    BUILT_INTACT        = BUILT | INTACT, // #NO_BIT built and intact
   };
 
   enum NetTextLoc {

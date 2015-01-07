@@ -341,6 +341,8 @@ void Projection::CheckSpecs() {
 
 bool Projection::UpdateConSpecs(bool force) {
   if((!(bool)layer) || (!(bool)from)) return false;
+  Network* mynet = GET_MY_OWNER(Network);
+  if(!mynet || !mynet->HasNetFlag(Network::BUILT_INTACT)) return false;
   ConSpec* sp = con_spec.SPtr();
   if(sp) {
     if(TestWarning(!con_type->InheritsFrom(sp->min_obj_type), "UpdateConSpec",

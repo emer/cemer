@@ -232,13 +232,13 @@ void ActAdaptSpec::UpdateAfterEdit_impl() {
 void ShortPlastSpec::Initialize() {
   on = false;
   f_r_ratio = 0.02f;
-  p0 = 0.3f;
-  p0_norm = 0.4f;
   kre = 0.002f;
   Defaults_init();
 }
 
 void ShortPlastSpec::Defaults_init() {
+  p0 = 0.2f;
+  p0_norm = 0.2f;
   rec_tau = 200.0f;
   fac = 0.3f;
   kre_tau = 100.0f;
@@ -279,7 +279,8 @@ void CIFERThalSpec::Defaults_init() {
 void CIFERDeep5bSpec::Initialize() {
   on = false;
   ti_rescale = true;
-  ti_scale_mult = 1.0f;
+  ti_resc_all = false;
+  ti_scale_mult = 100.0f;
   act5b_thr = 0.2f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
@@ -936,8 +937,14 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 
   // finally: renorm ti scale
   if(cifer_d5b.on && cifer_d5b.ti_rescale) {
-    float sc_fact = (1.0f - cifer_d5b.ti_scale_mult * d5b_rel_scale);
-    if(sc_fact < 0.0001f) sc_fact = 0.0001f; // keep it something so we can recover original
+    float sc_fact;
+    if(cifer_d5b.ti_resc_all) {
+      sc_fact = 0.0001f;
+    }
+    else {
+      sc_fact = (1.0f - cifer_d5b.ti_scale_mult * d5b_rel_scale);
+      if(sc_fact < 0.0001f) sc_fact = 0.0001f; // keep it something so we can recover original
+    }
     if(d5b_turned_on)
       u->ti_ctxt *= sc_fact;    // downscale
     else if(d5b_turned_off)
