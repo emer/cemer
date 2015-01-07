@@ -279,8 +279,6 @@ void CIFERThalSpec::Defaults_init() {
 void CIFERDeep5bSpec::Initialize() {
   on = false;
   ti_rescale = true;
-  ti_resc_all = false;
-  ti_scale_mult = 100.0f;
   act5b_thr = 0.2f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
@@ -889,11 +887,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
     if(exclude_d5b && cs->IsDeep5bCon())               // exclude from rel rescaling
       continue;
-    float rel_scale = 0.0f;
-    if(plus_phase && cs->diff_scale_p)
-      rel_scale = cs->wt_scale_p.rel;
-    else
-      rel_scale = cs->wt_scale.rel;
+    float rel_scale = cs->wt_scale.rel;
     
     if(cs->inhib) {
       inhib_net_scale += rel_scale;
@@ -912,8 +906,6 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
       u->bias_scale /= (float)un->n_recv_cons; // one over n scaling for bias!
   }
 
-  float d5b_rel_scale = 0.0f;
-  // float ctxt_rel_scale = 0.0f;
   // now renormalize, each one separately..
   for(int g=0; g< nrg; g++) {
     LeabraConGroup* recv_gp = (LeabraConGroup*)u->RecvConGroup(net, thr_no, g);
@@ -927,9 +919,8 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     }
     else {
       if(net_scale > 0.0f) {
-        recv_gp->scale_eff /= net_scale;
-        if(cs->IsDeep5bCon()) {
-          d5b_rel_scale += recv_gp->scale_eff;
+        if(!(exclude_d5b && cs->IsDeep5bCon())) { // exclude from rel rescaling
+          recv_gp->scale_eff /= net_scale;
         }
       }
     }
@@ -937,14 +928,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 
   // finally: renorm ti scale
   if(cifer_d5b.on && cifer_d5b.ti_rescale) {
-    float sc_fact;
-    if(cifer_d5b.ti_resc_all) {
-      sc_fact = 0.0001f;
-    }
-    else {
-      sc_fact = (1.0f - cifer_d5b.ti_scale_mult * d5b_rel_scale);
-      if(sc_fact < 0.0001f) sc_fact = 0.0001f; // keep it something so we can recover original
-    }
+    float sc_fact= 0.0001f;
     if(d5b_turned_on)
       u->ti_ctxt *= sc_fact;    // downscale
     else if(d5b_turned_off)

@@ -138,8 +138,6 @@ void LeabraConSpec::Initialize() {
   min_obj_type = &TA_LeabraCon;
   inhib = false;
 
-  diff_scale_p = false;
-  
   learn = true;
   learn_qtr = Q4;
   
@@ -210,10 +208,7 @@ void LeabraConSpec::Compute_NetinScale(LeabraConGroup* recv_gp, LeabraLayer* fro
   float savg = from->acts_p_avg_eff;
   float from_sz = (float)from->units.leaves;
   float n_cons = (float)recv_gp->size;
-  if(plus_phase && diff_scale_p)
-    recv_gp->scale_eff = wt_scale_p.FullScale(savg, from_sz, n_cons);
-  else
-    recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
+  recv_gp->scale_eff = wt_scale.FullScale(savg, from_sz, n_cons);
 }
 
 void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
@@ -223,9 +218,6 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   if(!InheritsFrom(&TA_LeabraBiasSpec)) { // bias spec doesn't count
     if(wt_sig.dwt_norm) {
       net->net_misc.dwt_norm = true;
-    }
-    if(diff_scale_p) {
-      net->net_misc.diff_scale_p = true;
     }
   }
   if(fast_wts.on) {
