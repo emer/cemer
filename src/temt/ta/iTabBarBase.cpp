@@ -16,6 +16,7 @@
 #include "iTabBarBase.h"
 
 #include <taiMisc>
+#include <taMisc>
 
 #include <QKeyEvent>
 
@@ -25,7 +26,12 @@ iTabBarBase::iTabBarBase(QWidget* parent_) : inherited(parent_) {
 
 void iTabBarBase::selectNextTab() {
   int dx = 1;
-  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+  int index = currentIndex();
+  if (currentIndex() == count() - 1) {  // wrap
+    index = -1;
+  }
+  for (index = index + dx; index >= 0 && index < count();
+       index += dx) {
     if (isTabEnabled(index)) {
       setCurrentIndex(index);
       break;
@@ -35,7 +41,11 @@ void iTabBarBase::selectNextTab() {
 
 void iTabBarBase::selectPrevTab() {
   int dx = -1;
-  for (int index = currentIndex() + dx; index >= 0 && index < count(); index += dx) {
+  int index = currentIndex();
+  if (currentIndex() == 0) {  // wrap
+    index = count();
+  }
+  for (index = index + dx; index >= 0 && index < count(); index += dx) {
     if (isTabEnabled(index)) {
       setCurrentIndex(index);
       break;
