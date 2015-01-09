@@ -430,10 +430,12 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
   
   switch (action) {
     case taiMisc::TREE_FORWARD:
+    case taiMisc::TREE_FORWARD_II:
       e->accept();
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Right, Qt::NoModifier));
       return;
     case taiMisc::TREE_BACKWARD:
+    case taiMisc::TREE_BACKWARD_II:
       e->accept();
       QCoreApplication::postEvent(this, new QKeyEvent(QEvent::KeyPress, Qt::Key_Left, Qt::NoModifier));
       return;
@@ -453,14 +455,17 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       e->accept();
       return;			// don't continue
     case taiMisc::TREE_CLEAR_SELECTION:
+    case taiMisc::TREE_CLEAR_SELECTION_II:
       clearExtSelection();
       e->accept();
       break;
     case taiMisc::TREE_MOVE_SELECTION_UP:
+    case taiMisc::TREE_MOVE_SELECTION_UP_II:
       newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
       e->accept();
       break;
     case taiMisc::TREE_MOVE_SELECTION_DOWN:
+    case taiMisc::TREE_MOVE_SELECTION_DOWN_II:
       newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
       e->accept();
       break;
@@ -476,6 +481,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       break;
       
     case taiMisc::TREE_EDIT_HOME:
+    case taiMisc::TREE_EDIT_HOME_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = 0;
         edit_start_kill = false;
@@ -484,6 +490,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       e->accept();
       break;
     case taiMisc::TREE_EDIT_END:
+    case taiMisc::TREE_EDIT_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = -1;
         edit_start_kill = false;
@@ -492,6 +499,7 @@ void iTreeWidget::keyPressEvent(QKeyEvent* e) {
       e->accept();
       break;
     case taiMisc::TREE_EDIT_DELETE_TO_END:
+    case taiMisc::TREE_EDIT_DELETE_TO_END_II:
       if(cur_item && cur_item->flags() & Qt::ItemIsEditable) {
         edit_start_pos = 0;
         edit_start_kill = true;
