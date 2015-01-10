@@ -24,6 +24,7 @@
 #include <DataTable>
 #include <float_Matrix>
 #include <Network>
+#include <RetinaProc>
 
 // declare all other types mentioned but not required to include:
 
@@ -33,7 +34,34 @@ class E_API WtBasedRF : public taNBase {
   // #STEM_BASE ##CAT_Network
 INHERITED(taNBase)
 public:
+  NetworkRef        network;
+  // the network to operate on -- all layers (except lesioned or iconified) are computed, with each layer getting a column of the data table
+  LayerRef          trg_layer;
+  // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table. There is a single matrix column the same dimensions as the original image and shows the reconstructed image values.
+  LayerRef          snd_layer;
+  // #PROJ_SCOPE the layer projecting to the target layer.
+  RetinaProcRef     v1_retinaProc;
+  // #READ_ONLY #HIDDEN #NO_SAVE the retina proc for the v1 layer - needed to get filter values
+  
+  DataTable         v1Gabor_GridFilters;
+  // #READ_ONLY #HIDDEN #NO_SAVE table of the filter values applied to the image
+  DataTable         trg_layer_wts;
+  // #READ_ONLY #HIDDEN #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
+  DataTableRef      rf_data;
+  // a single column data table containing the results of the receptive field computation (is completely configured by this object!) -- one row per unit of the trg_layer
 
+  String            GetDisplayName() const override;
+  virtual void      ConfigDataTable(DataTable* dt, Network* net, Layer* tlay);
+  // #CAT_WtBasedRF configure data table based on current network (called internally for rf_data)
+  virtual void      InitAll(DataTable* dt, Network* net, Layer* tlay, Layer* slay, V1RetinaProc* rproc);
+  virtual void      InitData();
+
+  virtual bool      ComputeV2RF();
+  // #BUTTON #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
+  
+  virtual bool      ComputeHigherLayerRF();
+  // #BUTTON #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V3 representational analysis uses the values computed for V2)
+  
   TA_SIMPLE_BASEFUNS(WtBasedRF);
 protected:
   void	UpdateAfterEdit_impl();
