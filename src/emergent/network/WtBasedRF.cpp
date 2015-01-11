@@ -102,8 +102,7 @@ bool WtBasedRF::ComputeV2RF() {
   // config the rf_data table
   rf_data->StructUpdate(true);
   rf_data->Reset();                  // nuke cols -- ensure matching
-//  int rows = trg_layer_wts.rows;
-  int rows = 10;
+  int rows = trg_layer_wts.rows;
   taVector2i snd_layer_grp_geom = snd_layer->gp_geom;
   DataCol* rf_data_values_col;
   DataCol* rf_data_count_col;
@@ -130,38 +129,67 @@ bool WtBasedRF::ComputeV2RF() {
     }
   }
   
-  // multiply the weights by the filter values
-  float_Matrix* summed_matrix = new float_Matrix();
-  float_Matrix* temp_matrix = new float_Matrix();
-  int filter_size_x = 6;
-  int filter_size_y = 6;
-  summed_matrix->SetGeom(2, filter_size_x, filter_size_y);
-  temp_matrix->SetGeom(2, filter_size_x, filter_size_y);
+  int filter_size_x;
+  int filter_size_y;
+  DataCol* filter_col = v1Gabor_GridFilters.GetColData("Filter");
+  if(TestError(!filter_col, "ComputeV2RF", "filter column not found in v1Gabor_GridFilters table"))
+    return false;
+  filter_col->Get2DCellGeom(filter_size_x, filter_size_y);
   
-  float weight = .5;
+  float_Matrix* sum_matrix = new float_Matrix(); // sums of filter * weights
+  float_Matrix* tmp_matrix = new float_Matrix(); // filter * weights (gets added to running sum)
+  float_Matrix* marker_matrix = new float_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
+  float_Matrix* count_matrix = new float_Matrix(); // tracks the number of values that are summed for each unit of the original image
+  sum_matrix->SetGeom(2, filter_size_x, filter_size_y);
+  tmp_matrix->SetGeom(2, filter_size_x, filter_size_y);
+  marker_matrix->SetGeom(2, filter_size_x, filter_size_y);
+  *marker_matrix = 1;
+  count_matrix->SetGeom(2, snd_layer_grp_geom.x, snd_layer_grp_geom.y); // same size as rf_data
   
-  for (int dim_3=0; dim_3<trg_layer_mg.dim(3); dim_3++) {
-    for (int dim_2=0; dim_2<trg_layer_mg.dim(2); dim_2++) {
-      for (int dim_1=0; dim_1<trg_layer_mg.dim(1); dim_1++) {
-        for (int dim_0=0; dim_0<trg_layer_mg.dim(0); dim_0++) {
-          int filter_no = dim_0 + 2*dim_1;
-//          taMisc::DebugInfo(String(dim_0), String(dim_1), String(dim_2), String(dim_3));
-          for (int i=0; i<temp_matrix->size; i++) {
-            temp_matrix->FastEl1d(i) = filter[filter_no].FastEl1d(i) * weight;
+  for (int wts_row=0; wts_row<trg_layer_wts.rows-1; wts_row++) {
+    Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
+    int unit_no = 0;  //
+    ConGroup* recv_cons = trg_layer_unit->FindRecvConGroupFrom(snd_layer);
+    int dim_0;  // filter angle
+    int dim_1;  // filter on_center/off_center
+    for (int dim_3=0; dim_3<trg_layer_mg.dim(3); dim_3++) {
+      for (int dim_2=0; dim_2<trg_layer_mg.dim(2); dim_2++) {
+        *sum_matrix = 0;  //reset
+        for (dim_1=0; dim_1<trg_layer_mg.dim(1); dim_1++) {
+          for (dim_0=0; dim_0<trg_layer_mg.dim(0); dim_0++) {
+            int filter_no = dim_0 + 2*dim_1;
+            DataCol* wts_col = trg_layer_wts.GetColData(0);  // only one column
+            float weight = wts_col->GetValAsFloatMDims(wts_row, dim_0, dim_1, dim_2, dim_3);
+            //            taMisc::DebugInfo((String)weight);
+            for (int i=0; i<tmp_matrix->size; i++) {
+              tmp_matrix->FastEl1d(i) = filter[filter_no].FastEl1d(i) * weight;
+            }
+            *sum_matrix += *tmp_matrix; //
           }
         }
+        Unit* snd_layer_unit = recv_cons->SafeUn(unit_no);
+        taVector2i snd_layer_log_pos;
+        snd_layer_unit->LayerLogPos(snd_layer_log_pos);
+        unit_no = unit_no + (dim_0 * dim_1);  // the first unit of each group gets us what we need - jump to next group
+        snd_layer_log_pos.x = snd_layer_log_pos.x/dim_0;
+        snd_layer_log_pos.y = snd_layer_log_pos.y/dim_1;
+        // write the sum values to the rf_data table
+        rf_data_values_col->WriteFmSubMatrix(wts_row, sum_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+        // up the count for those cells of rf_data we just added to
+        count_matrix->WriteFmSubMatrix(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
       }
     }
+    rf_data_count_col->SetValAsMatrix(count_matrix, wts_row);
+    // can't divide by zero
+    count_matrix[count_matrix == 0] = 1;
+    rf_data_values_col->WriteFmSubMatrix(wts_row, count_matrix, taMatrix::DIV, 0, 0);
   }
-  
-  
-  
-  
-  summed_matrix = temp_matrix;
-  rf_data_values_col->WriteFmSubMatrix(0, summed_matrix, taMatrix::ADD, 0,0);
-  
   delete [] filter;
   filter = NULL;
+  delete sum_matrix;
+  delete tmp_matrix;
+  delete marker_matrix;
+  delete count_matrix;
   return true;
 }
 
