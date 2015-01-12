@@ -45,22 +45,20 @@ public:
   
   DataTable         v1Gabor_GridFilters;
   // #READ_ONLY #HIDDEN #NO_SAVE table of the filter values applied to the image
-  DataTable         trg_layer_wts;
-  // #READ_ONLY #HIDDEN #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
+  DataTableRef      trg_layer_wts;
+  // #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
   DataTableRef      rf_data;
-  // a single column data table containing the results of the receptive field computation (is completely configured by this object!) -- one row per unit of the trg_layer
+  // data table containing the results of the receptive field computation (is completely configured by this object!) -- one row per unit of the trg_layer
 
   String            GetDisplayName() const override;
-  virtual void      ConfigDataTable(DataTable* dt, Network* net, Layer* tlay);
-  // #CAT_WtBasedRF configure data table based on current network (called internally for rf_data)
-  virtual void      InitAll(DataTable* dt, Network* net, Layer* tlay, Layer* slay, V1RetinaProc* rproc);
-  virtual void      InitData();
+  virtual void      InitAll(DataTable* dt, Network* net, Layer* tlay, Layer* slay, V1RetinaProc* rproc, DataTable* wts);
 
-  virtual bool      ComputeV2RF();
+  virtual bool      ComputeRF();
   // #BUTTON #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
-  
+  virtual bool      ComputeV2RF();
+  // #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
   virtual bool      ComputeHigherLayerRF();
-  // #BUTTON #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V3 representational analysis uses the values computed for V2)
+  // #CAT_WtBasedRF compute the rf_data for layers beyond V2. These calculations use the RF computations from all layers below (e.g. the V3 representational analysis uses the values computed for V2)
   
   TA_SIMPLE_BASEFUNS(WtBasedRF);
 protected:
