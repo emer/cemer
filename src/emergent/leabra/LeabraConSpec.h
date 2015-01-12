@@ -404,7 +404,7 @@ public:
       if(dwt > 0.0f)	dwt *= (1.0f - fwt);
       else		dwt *= fwt;
       fwt += dwt;
-      swt = fwt;                // keep sync'd -- not tech necc..
+      // swt = fwt;                // keep sync'd -- not tech necc..
       wt = SigFmLinWt(fwt);
       dwt = 0.0f;
     }
@@ -440,6 +440,10 @@ public:
   inline virtual void 	Compute_dWt_Norm(LeabraConGroup* cg, LeabraNetwork* net,
                                          int thr_no);
   // #IGNORE compute dwt normalization
+
+  inline virtual void Compute_EpochWeights(LeabraConGroup* cg, LeabraNetwork* net,
+                                           int thr_no) { };
+  // #IGNORE compute epoch-level weights
 
   /////////////////////////////////////
   // 	Bias Weights

@@ -25,12 +25,37 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(Deep5bStdSync);
+
+class E_API Deep5bStdSync : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra slowly synchronize deep weights with std weights in analogous projection, at epoch granularity
+INHERITED(SpecMemberBase)
+public:
+  bool          on;             // do sync
+  float         sync_tau;       // #CONDSHOW_ON_on time constant for syncing, at the epoch time-scale
+
+  float         sync_dt;        // #READ_ONLY 1/tau
+ 
+  String       GetTypeDecoKey() const override { return "ConSpec"; }
+
+  TA_SIMPLE_BASEFUNS(Deep5bStdSync);
+protected:
+  SPEC_DEFAULTS;
+  void UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(Deep5bConSpec);
 
 class E_API Deep5bConSpec : public LeabraConSpec {
   // deep layer 5b connection spec -- sends deep5b activation values instead of usual act values -- used e.g., in projections to thalamus
 INHERITED(LeabraConSpec)
 public:
+  Deep5bStdSync         std_sync;  // slowly synchronize deep weights with std weights in analogous projection, at epoch granularity
+
   // special!
   bool  DoesStdNetin() override { return false; }
   bool  IsDeep5bCon() override { return true; }
@@ -87,8 +112,12 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
-  override void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no);
-  
+  void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) override;
+
+  void Compute_EpochWeights(LeabraConGroup* cg, LeabraNetwork* net,
+                            int thr_no) override;
+  // #IGNORE compute epoch-level weights
+
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(Deep5bConSpec);

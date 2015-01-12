@@ -1868,6 +1868,7 @@ void LeabraNetwork::Compute_AvgTrialCosDiff() {
 }
 
 void LeabraNetwork::Compute_EpochStats() {
+  Compute_EpochWeights();
   inherited::Compute_EpochStats();
   Compute_AvgCycles();
   Compute_AvgNormErr();
@@ -1879,6 +1880,20 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
   Compute_HogDeadPcts();
+}
+
+void LeabraNetwork::Compute_EpochWeights() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_EpochWeights_Thr);
+}
+
+void LeabraNetwork::Compute_EpochWeights_Thr(int thr_no) {
+  const int nscg = ThrNSendConGps(thr_no);
+  for(int i=0; i<nscg; i++) {
+    LeabraConGroup* scg = (LeabraConGroup*)ThrSendConGroup(thr_no, i);
+    if(scg->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)scg->con_spec;
+    cs->Compute_EpochWeights(scg, this, thr_no);
+  }
 }
 
 static String pct_val_out(float val, float sum) {

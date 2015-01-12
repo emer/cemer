@@ -598,6 +598,10 @@ public:
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;
+  virtual void  Compute_EpochWeights();
+  // #CAT_Learning perform any epoch-level weight updates or adjustments..
+    virtual void  Compute_EpochWeights_Thr(int thr_no);
+    // #IGNORE
 
   virtual String   TimingReport(DataTable& dt, bool print = true);
   // #CAT_Statistic report detailed timing data to data table, and print a summary -- only collected if thread.get_timing engaged (e.g., call threads.get_timing)
