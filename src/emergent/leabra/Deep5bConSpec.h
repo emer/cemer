@@ -87,6 +87,8 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
+  override void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no);
+  
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
   TA_SIMPLE_BASEFUNS(Deep5bConSpec);

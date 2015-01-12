@@ -57,6 +57,18 @@ inline void ConSpec::Init_dWt(ConGroup* cg, Network* net, int thr_no) {
   CON_GROUP_LOOP(cg, C_Init_dWt(dwts[i]));
 }
 
+inline void ConSpec::Init_Weights_sym_r(ConGroup* cg, Network* net, int thr_no) {
+  if(cg->prjn->layer->units_flat_idx < cg->prjn->from->units_flat_idx)
+    return;    // higher copies from lower, so if we're lower, bail..
+  ApplySymmetry_r(cg, net, thr_no);
+}
+
+inline void ConSpec::Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) {
+  if(cg->prjn->layer->units_flat_idx < cg->prjn->from->units_flat_idx)
+    return;    // higher copies from lower, so if we're lower, bail..
+  ApplySymmetry_s(cg, net, thr_no);
+}
+
 inline float ConSpec::Compute_Netin(ConGroup* cg, Network* net, int thr_no) {
   float rval=0.0f;
   float* wts = cg->OwnCnVar(WT);

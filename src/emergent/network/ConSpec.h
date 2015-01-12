@@ -130,11 +130,9 @@ public:
   inline virtual void   Init_Weights(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Learning initialize weight state variables (ie. at beginning of training)
 
-  inline virtual void   Init_Weights_sym_r(ConGroup* cg, Network* net, int thr_no)
-  { ApplySymmetry_r(cg, net, thr_no); }
+  inline virtual void   Init_Weights_sym_r(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Structure apply symmetry after weight init, recv based
-  inline virtual void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no)
-  { ApplySymmetry_s(cg, net, thr_no); }
+  inline virtual void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no);
   // #CAT_Structure apply symmetry after weight init, sender based
   inline virtual void   Init_Weights_post(ConGroup* cg, Network* net, int thr_no)
   { };

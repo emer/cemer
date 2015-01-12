@@ -1605,8 +1605,6 @@ void Network::Init_Weights_sym(int thr_no) {
     for(int i=0; i<nrcg; i++) {
       ConGroup* rcg = ThrRecvConGroup(thr_no, i);
       if(rcg->NotActive()) continue;
-      if(rcg->prjn->layer->units_flat_idx < rcg->prjn->from->units_flat_idx)
-        continue;                 // higher copies from lower, so if we're lower, bail..
       rcg->con_spec->Init_Weights_sym_r(rcg, this, thr_no);
     }
   }
@@ -1615,8 +1613,6 @@ void Network::Init_Weights_sym(int thr_no) {
     for(int i=0; i<nscg; i++) {
       ConGroup* scg = ThrSendConGroup(thr_no, i);
       if(scg->NotActive()) continue;
-      if(scg->prjn->layer->units_flat_idx < scg->prjn->from->units_flat_idx)
-        continue;                 // higher copies from lower, so if we're lower, bail..
       scg->con_spec->Init_Weights_sym_s(scg, this, thr_no);
     }
   }

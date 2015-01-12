@@ -465,12 +465,12 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSaveAllAction = AddAction(new iAction("Save A&ll Projects", QKeySequence(), "fileSaveAllAction"));
 
   fileOpenSvnBrowserAction = AddAction(new iAction("SVN Browser", QKeySequence(), "fileOpenSvnBrowserAction"));
-  fileOpenSvnBrowserAction->setToolTip(taiMisc::ToolTipPreProcess("Browse source code in the subversion repository"));
+  fileOpenSvnBrowserAction->setToolTip(taiMisc::ToolTipPreProcess("open a subversion browser for the directory that this project is in"));
   fileOpenSvnBrowserAction->setIcon(QIcon(QPixmap(":/images/svn_browse_icon.png")));
   fileOpenSvnBrowserAction->setIconText("Browse");
 
   fileSvnCommitAction = AddAction(new iAction("SVN Commit...", QKeySequence(), "fileSvnCommitAction"));
-  fileSvnCommitAction->setToolTip(taiMisc::ToolTipPreProcess("Save/update this project to the subversion repository"));
+  fileSvnCommitAction->setToolTip(taiMisc::ToolTipPreProcess("commit this project file (saves first) into svn (only if already added to svn repository -- use SvnBrowser to do that if necessary)"));
   fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   fileSvnCommitAction->setIconText("Commit");
 
