@@ -32,7 +32,9 @@ void ThalUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
+      float& thal = ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal;
+      if(snd_val > thal)        // max..  thal was reset in Send_NetinDelta
+        thal = snd_val;
     }
   }
 }

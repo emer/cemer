@@ -1014,6 +1014,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
   if(net->n_thrs_built == 1) {
     net->send_pct_tot++;        // only safe for non-thread case
   }
+  TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
   float act_ts = u->act;
   // if(syn_delay.on) {
   //   if(!u->act_buf)
@@ -1305,7 +1306,7 @@ void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnitVars* u, LeabraNetwork* net
 }
 
 ///////////////////////////////////////////////////////////////////////
-//      Cycle Step 2: inhibition
+//      Cycle Step 3: activation -- rate code
 
 void LeabraUnitSpec::Compute_ApplyInhib
 (LeabraUnitVars* u, LeabraNetwork* net, int thr_no, LeabraLayerSpec* lspec,
@@ -1321,10 +1322,6 @@ void LeabraUnitSpec::Compute_ApplyInhib
     u->gi_ex = gi_ex;
   }
 }
-
-
-///////////////////////////////////////////////////////////////////////
-//      Cycle Step 3: activation -- rate code
 
 void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
