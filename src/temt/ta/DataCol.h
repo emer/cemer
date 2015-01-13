@@ -341,6 +341,10 @@ public:
                                 int off0=0, int off1=0, int off2=0,
                                 int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix for making larger patterns out of smaller ones (sub-matricies) and vice-versa: read from matrix cell in this table at given row to dest sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
+  virtual void  WriteFmSubMatrix2DWrap(int row, const taMatrix* submat_src,
+                                 taMatrix::RenderOp render_op = taMatrix::COPY,
+                                 int off0=0, int off1=0);
+  // #CAT_SubMatrix for making larger patterns out of smaller ones where both are 2D and you want the submatrix to wrap rather than clip: write to matrix cell in this table at given row from source sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets in this matrix -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost.
 
   /////////////////////////
   //    misc funs

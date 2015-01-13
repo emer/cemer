@@ -717,6 +717,16 @@ void DataCol::WriteFmSubMatrix(int row,
   }
 }
 
+void DataCol::WriteFmSubMatrix2DWrap(int row, const taMatrix* src,
+                               taMatrix::RenderOp render_op, int off0, int off1) {
+  taMatrix* mat = GetValAsMatrix(row);
+  if(mat) {
+    taBase::Ref(mat);
+    mat->WriteFmSubMatrix2DWrap(src, render_op, off0, off1);
+    taBase::unRefDone(mat);
+  }
+}
+
 void DataCol::ReadToSubMatrix(int row,
     taMatrix* dest, taMatrix::RenderOp render_op,
     int off0, int off1, int off2,

@@ -79,6 +79,7 @@ void ISelectableHost::AddDynActions(taiWidgetActions* menu, int dyn_list,
   for (int i = 0; i < (int)dyn_actions[dyn_list].count(); ++i) {
     iAction* act = dyn_actions[dyn_list].FastEl(i);
     menu->AddAction(act);
+    taMisc::DebugInfo(act->label());
     
     // rohrlich - would be nice if all the context menu items were added in one place!
     // see taiWidgetMethod::AddToMenu 

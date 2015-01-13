@@ -487,6 +487,9 @@ public:
                                       int off3=0, int off4=0, int off5=0, int off6=0);
   // #CAT_SubMatrix read from each frame of this matrix to dest sub-matrix (typically of smaller cell size than this one, but must have same number of dimensions and frame count will be set to be same as this matrix), using given render operation to combine source and destination values, starting at given offsets in this matrix (safely manages range issues, clipping out of bounds) -- uses Variant interface, so type conversion between matricies is automatic, with some overhead cost
 
+  virtual void  WriteFmSubMatrix2DWrap(const taMatrix* src, RenderOp render_op, int off0, int off1);
+ // #CAT_SubMatrix write to this 2D matrix from source 2D sub-matrix (typically of smaller size), using given render operation to combine source and destination values, starting at given offsets and wraps around if source matrix exceeds bounds of destination matrix
+
   ///////////////////////////////////////
   // alloc management
 

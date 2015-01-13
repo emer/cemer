@@ -129,37 +129,9 @@ void iDialogKeyBindings::Constr() {
         taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
         QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
         QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
-        String key_seq_as_string = String(key_seq.toString());
-#ifdef TA_OS_MAC
-        if (key_seq_as_string.contains("Ctrl")) {
-          key_seq_as_string = key_seq_as_string.repl("Ctrl", "command");
-        }
-        else if (key_seq_as_string.contains("Meta")) {
-          key_seq_as_string = key_seq_as_string.repl("Meta", "control");
-        }
-        else if (key_seq_as_string.contains("Alt")) {
-          if (context_label == "TEXTEDIT") {
-            if (action_label == "COPY_CLEAR") {
-              key_seq_as_string = key_seq_as_string.repl("?", "W");
-            }
-            if (action_label == "WORD_FORWARD") {
-              key_seq_as_string = key_seq_as_string.repl("?", "F");
-            }
-            if (action_label == "WORD_BACKWARD") {
-              key_seq_as_string = key_seq_as_string.repl("?", "B");
-            }
-          }
-          if (context_label == "PROJECTWINDOW") {
-            if (action_label == "FRAME_LEFT_II") {
-              key_seq_as_string = key_seq_as_string.repl("?", "J");
-            }
-            if (action_label == "FRAME_RIGHT_II") {
-              key_seq_as_string = key_seq_as_string.repl("\xac", "L");
-            }
-          }
-        }
-#endif
-        action->setToolTip("Default: " + key_seq_as_string);
+        // get the most readable form of the key sequence
+        String key_seq_str = taiMisc::GetSequenceFromActionFriendly(current_context, current_action);
+        action->setToolTip("Default: " + key_seq_str);
         bindings_layout[ctxt]->addRow(action, edit);
         temp_bindings->Add(current_context, current_action, key_seq);
       }

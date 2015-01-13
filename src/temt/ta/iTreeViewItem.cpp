@@ -24,6 +24,7 @@
 
 #include <SigLinkSignal>
 #include <taMisc>
+#include <taiMisc>
 
 
 
@@ -234,13 +235,13 @@ void iTreeViewItem::DecorateDataNode() {
 }
 
 void iTreeViewItem::dropped(const QMimeData* mime, const QPoint& pos,
-    int key_mods, WhereIndicator where)
+                            int key_mods, WhereIndicator where)
 {
   DropHandler(mime, pos, key_mods, where);
 }
 
 void iTreeViewItem::QueryEditActionsS_impl_(int& allowed, int& forbidden,
-  GuiContext sh_typ) const
+                                            GuiContext sh_typ) const
 {
   if (dn_flags & DNF_IS_MEMBER) {
     forbidden |= (iClipData::EA_CUT | iClipData::EA_DELETE);
@@ -252,13 +253,20 @@ void iTreeViewItem::FillContextMenu_impl(taiWidgetActions* menu,
                                          GuiContext sh_typ) {
   TypeDef* td = GetDataTypeDef();
   // if(td && td->InheritsFrom(&TA_taList_impl)) {
-    // only really needed for list guys
-    menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,
-                  iAction::men_act, treeView(), SLOT(mnuFindFromHere(iAction*)), this);
+  // only really needed for list guys
+  String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND);
+  String menu_item_str = "Find from here (" + key_seq + ")...";
+  
+  //  menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,
+  menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
+                iAction::men_act, treeView(), SLOT(mnuFindFromHere(iAction*)), this);
   // }
   // if(td) {
-    menu->AddItem("Replace in selected (Alt+R)...", taiWidgetMenu::use_default,
-                  iAction::men_act, treeView(), SLOT(mnuReplaceFromHere(iAction*)), this);
+  //  key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND_REPLACE);
+  //  menu_item_str = "Replace in selected (" + key_seq + ")...";
+  
+  menu->AddItem("Replace in selected (Alt+R)...", taiWidgetMenu::use_default,
+                iAction::men_act, treeView(), SLOT(mnuReplaceFromHere(iAction*)), this);
   // }
   IObjectSelectable::FillContextMenu_impl(menu, sh_typ);
 }

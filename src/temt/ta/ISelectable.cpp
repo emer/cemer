@@ -23,6 +23,7 @@
 #include <iMainWindowViewer>
 #include <taProject>
 #include <taMisc>
+#include <taiMisc>
 #include <iTreeView>
 #include <iTreeWidgetItem>
 
@@ -235,7 +236,9 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
     mel->setData(sh_typ);
   }
   if (ea & iClipData::EA_DUPE) {
-    mel = menu->AddItem("Duplicate  (Ctrl+M)", taiWidgetMenu::use_default,
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE);
+    String menu_item_str = "Duplicate (" + key_seq + ")";
+    mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_DUPE;
     mel->setData(sh_typ);
@@ -279,7 +282,9 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   }
 
   if (ea & iClipData::EA_DELETE) {
-    mel = menu->AddItem("&Delete  (Ctrl+D)", taiWidgetMenu::use_default,
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE);
+    String menu_item_str = "&Delete (" + key_seq + ")";
+    mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
     mel->usr_data = iClipData::EA_DELETE;
     mel->setData(sh_typ);

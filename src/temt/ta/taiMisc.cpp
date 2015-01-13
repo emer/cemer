@@ -902,6 +902,51 @@ QKeySequence taiMisc::GetSequenceFromAction(taiMisc::BindingContext context, tai
   return bindings->KeySequence(context, action);
 }
 
+String taiMisc::GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action) {
+  String friendly_str;
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+  friendly_str = bindings->KeySequence(context, action).toString();
+  
+#ifdef TA_OS_MAC
+  if (friendly_str.contains("Ctrl")) {
+    friendly_str = friendly_str.repl("Ctrl", "command");
+  }
+  else if (friendly_str.contains("Meta")) {
+    friendly_str = friendly_str.repl("Meta", "control");
+  }
+  else if (friendly_str.contains("Alt")) {
+    if (context == taiMisc::TEXTEDIT_CONTEXT) {
+      if (action == taiMisc::TEXTEDIT_COPY_CLEAR) {
+        friendly_str = friendly_str.repl("?", "W");
+      }
+      if (action == taiMisc::TEXTEDIT_WORD_FORWARD) {
+        friendly_str = friendly_str.repl("?", "F");
+      }
+      if (action == taiMisc::TEXTEDIT_WORD_BACKWARD) {
+        friendly_str = friendly_str.repl("?", "B");
+      }
+    }
+    if (context == taiMisc::PROJECTWINDOW_CONTEXT) {
+      if (action == taiMisc::PROJECTWINDOW_FRAME_LEFT_II) {
+        friendly_str = friendly_str.repl("?", "J");
+      }
+      if (action == taiMisc::PROJECTWINDOW_FRAME_RIGHT_II) {
+        friendly_str = friendly_str.repl("\xac", "L");
+      }
+    }
+    if (context == taiMisc::TREE_CONTEXT) {
+      if (action == taiMisc::TREE_FIND) {
+        friendly_str = friendly_str.repl("?", "F");
+      }
+      if (action == taiMisc::taiMisc::TREE_FIND_REPLACE) {
+        friendly_str = friendly_str.repl("?", "R");
+      }
+    }
+  }
+#endif
+  return friendly_str;
+}
+
 void taiMisc::ScrollTo_SA(QAbstractScrollArea* sa, int scr_pos) {
   sa->verticalScrollBar()->setValue(scr_pos);
 }
