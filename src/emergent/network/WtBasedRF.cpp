@@ -20,6 +20,8 @@
 #include <V1RegionSpec>
 #include <LeabraV1LayerSpec>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(WtBasedRF);
 
 void WtBasedRF::Initialize() {
@@ -133,7 +135,7 @@ bool WtBasedRF::ComputeV2RF() {
   count_matrix->SetGeom(2, snd_layer_grp_geom.x, snd_layer_grp_geom.y); // same size as rf_data
   
   bool all_good = true;
-  for (int wts_row=0; wts_row<trg_layer_wts->rows-1; wts_row++) {
+    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
     if(TestError(!trg_layer_unit, "ComputeV2RF", "trg_layer_unit is null")) {
       all_good = false;
@@ -178,9 +180,9 @@ bool WtBasedRF::ComputeV2RF() {
           snd_layer_log_pos.x = snd_layer_log_pos.x/dim_0;
           snd_layer_log_pos.y = snd_layer_log_pos.y/dim_1;
           // write the sum values to the rf_data table
-          rf_data_values_col->WriteFmSubMatrix(wts_row, sum_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+          rf_data_values_col->WriteFmSubMatrix2DWrap(wts_row, sum_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
           // up the count for those cells of rf_data we just added to
-          count_matrix->WriteFmSubMatrix(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+          count_matrix->WriteFmSubMatrix2DWrap(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
         }
       }
       rf_data_count_col->SetValAsMatrix(count_matrix, wts_row);
@@ -190,7 +192,7 @@ bool WtBasedRF::ComputeV2RF() {
           count_matrix->Set_Flat(1.0, i);
         }
       }
-      rf_data_values_col->WriteFmSubMatrix(wts_row, count_matrix, taMatrix::DIV, 0, 0);
+      rf_data_values_col->WriteFmSubMatrix2DWrap(wts_row, count_matrix, taMatrix::DIV, 0, 0);
     }
     else {
       delete[] filter;
