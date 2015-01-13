@@ -126,8 +126,8 @@ bool WtBasedRF::ComputeV2RF() {
   
   float_Matrix* sum_matrix = new float_Matrix(); // sums of filter * weights
   float_Matrix* tmp_matrix = new float_Matrix(); // filter * weights (gets added to running sum)
-  float_Matrix* marker_matrix = new float_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
-  float_Matrix* count_matrix = new float_Matrix(); // tracks the number of values that are summed for each unit of the original image
+  int_Matrix* marker_matrix = new int_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
+  int_Matrix* count_matrix = new int_Matrix(); // tracks the number of values that are summed for each unit of the original image
   sum_matrix->SetGeom(2, filter_size_x, filter_size_y);
   tmp_matrix->SetGeom(2, filter_size_x, filter_size_y);
   marker_matrix->SetGeom(2, filter_size_x, filter_size_y);
@@ -135,7 +135,8 @@ bool WtBasedRF::ComputeV2RF() {
   count_matrix->SetGeom(2, snd_layer_grp_geom.x, snd_layer_grp_geom.y); // same size as rf_data
   
   bool all_good = true;
-    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+    *count_matrix = 0;
     Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
     if(TestError(!trg_layer_unit, "ComputeV2RF", "trg_layer_unit is null")) {
       all_good = false;
