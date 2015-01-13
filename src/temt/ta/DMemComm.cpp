@@ -27,6 +27,7 @@ void DMemComm::Initialize() {
   group = MPI_GROUP_NULL;
   nprocs = taMisc::dmem_nprocs;
   this_proc = taMisc::dmem_proc;
+  my_reduce = ThreadedAllReduce::getSingleton(comm);
 }
 
 void DMemComm::Destroy() {

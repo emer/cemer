@@ -25,6 +25,7 @@
 
 #ifdef DMEM_COMPILE
 #include <mpi.h>
+#include "ThreadedAllReduce.h"
 
 #include <int_Array>
 
@@ -42,6 +43,8 @@ public:
   int		nprocs;		// #IGNORE number of processors in comm
   int_Array	ranks;		// #IGNORE proc numbers of members of the group
   int		this_proc;	// #IGNORE the rank of this processor within communicator
+
+  ThreadedAllReduce * my_reduce;  // #IGNORE own implementation of AllReduce
 
   void	CommAll();
   // #CAT_DMem use all the processors (world group)

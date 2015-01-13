@@ -1123,6 +1123,8 @@ set(ta_HEADS_NOMAKETA_NOMOC
   SoGroup.h
   SoPtr.h
   SoOffscreenRendererQt.h
+
+  ThreadedAllReduce.h
 )
 
 # all headers that need maketa run on them
@@ -2223,6 +2225,8 @@ set(ta_SRCS_NOMAKETA
   SoGroup.cpp
   SoPtr.cpp
   SoOffscreenRendererQt.cpp
+
+  ThreadedAllReduce.cpp
 )
 
 set(ta_SRCS_UI

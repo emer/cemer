@@ -2322,13 +2322,20 @@ void Network::DMem_InitAggs() {
   dmem_agg_sum.CompileVars();
 }
 
+
 void Network::DMem_SumDWts(MPI_Comm comm) {
   wt_sync_time.StartTimer(false); // don't reset
   static float_Array values;
   static float_Array results;
+  double timer1s, timer1e, timer2s, timer2e;
+  static double timerabs = 0;
 
+
+  timer1s = MPI_Wtime();
   int np = 0; MPI_Comm_size(comm, &np);
+  int this_proc = 0; MPI_Comm_rank(comm, &this_proc);
   if(np <= 1) return;
+
 
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
 
@@ -2368,9 +2375,14 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
   }
 
   results.SetSize(cidx);
-  DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-               "Network::SumDWts", "Allreduce");
-
+  timer2s = MPI_Wtime();
+  if (/*use_reduce_replacement */ 0) {
+      dmem_trl_comm.my_reduce->allreduce(values.el, results.el, cidx);
+  } else {
+      DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
+                   "Network::SumDWts", "Allreduce");
+  }
+  timer2e = MPI_Wtime();
   cidx = 0;
   FOREACH_ELEM_IN_GROUP(Layer, lay, layers) {
     if(lay->lesioned()) continue;
@@ -2403,6 +2415,14 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
       }
     }
   }
+  timer1e = MPI_Wtime();
+  if (this_proc == 0) {
+      printf("P%i: Computing MPI dmem after %fs resulting in %.1f%% time spent in syncing: Transmitted %i Mb in %fs / %fs = %.1f %.2fGbit/s\n", this_proc,
+             (timer1s - timerabs), ((timer1e-timer1s)/(timer1s - timerabs)) * 100.0,
+             (cidx*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
+             ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (cidx*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
+  }
+  timerabs = timer1s;
   wt_sync_time.EndTimer();
 }
 
