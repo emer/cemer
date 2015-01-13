@@ -1,4 +1,4 @@
-#include "reduce_replacement.hpp"
+#include "ThreadedAllReduce.h"
 
 
 void * thread_recv(void * data) {
@@ -56,15 +56,27 @@ void * thread_recv(void * data) {
     }
 
     free(recv_data);
+    return NULL;
 }
 
-AllReduce::AllReduce(MPI_Comm mpi_ctx, int nThreads) {
+void * thread_spawn(void* data) { 
+    struct spawn_thread_struct * thread_data = (struct spawn_thread_struct *)data; 
+ 
+    thread_data->obj_ctx->allreduce(thread_data->send_buff, thread_data->recv_buff, thread_data->len, thread_data->tag);
+    //for (int i = 0; i < reps; i++) { 
+    //    myreduce->allreduce(&(data2_send[thr_no*(nItems2/nThreads)]), &(data2_recv_thr[thr_no*(nItems2/nThreads)]), nItems2 / nThreads, thr_no); 
+    //} 
+    return NULL;
+} 
+
+ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
     char * proc_name;
     int proc_name_len;
     int portno;
     struct sockaddr_in serv_addr, cli_addr;
 
     proc_name = (char *) calloc(MPI_MAX_PROCESSOR_NAME, sizeof(char));
+    thread_ids = (pthread_t *)calloc(nThreads, sizeof(pthread_t));
     this->mpi_ctx = mpi_ctx;
     this->nThreads = nThreads;
     MPI_Comm_size(mpi_ctx, &dmem_nprocs);
@@ -81,7 +93,10 @@ AllReduce::AllReduce(MPI_Comm mpi_ctx, int nThreads) {
         for (int i = 0; i < dmem_nprocs; i++) {
             printf("P%i: rank %i is running on %s\n", dmem_proc, i, &dmem_proc_names[MPI_MAX_PROCESSOR_NAME*i]);
         }
+        base_port = 16000 + (rand() % 32000);
+        printf("Baseport is %i\n", base_port);
     }
+    MPI_Bcast(&base_port, 1, MPI_INT, 0, mpi_ctx);
 
     /** Setup TCP/IP server (incoming) sockets */
     serverfds = (int *)calloc(nThreads, sizeof(int));
@@ -140,7 +155,7 @@ AllReduce::AllReduce(MPI_Comm mpi_ctx, int nThreads) {
     
 }
 
-AllReduce::~AllReduce() {
+ThreadedAllReduce::~ThreadedAllReduce() {
 
     for (int i = 0; i < nThreads; i++) {
         if (connectedC[i]) {
@@ -158,10 +173,18 @@ AllReduce::~AllReduce() {
     free(connectedS);
     free(connectedC);
     free(serv_addrs);
+    free(thread_ids);
 }
 
+ThreadedAllReduce * ThreadedAllReduce::getSingleton(MPI_Comm mpi_ctx, int nThreads ) {
+    static ThreadedAllReduce * singleton = NULL;
+    if (singleton != NULL)
+        return singleton;
+    singleton = new ThreadedAllReduce(mpi_ctx, nThreads);
+    return singleton;
+}
 
-void AllReduce::allreduce(float * src, float * dst, size_t len, int tag) {
+void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len, int tag) {
     pthread_t recv_threadid;
     struct recv_thread_struct recv_struct;
     size_t seg_len = len / dmem_nprocs; // For efficiency we sub-divide the length into dmem_nprocs chunks of equal size;
@@ -251,4 +274,47 @@ void AllReduce::allreduce(float * src, float * dst, size_t len, int tag) {
     
     pthread_join(recv_threadid, &value_ptr);
 
+}
+
+/**
+ * This is the version that spawns a number of threads for you and handles all of the thread stuff.
+ **/
+void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len) {
+
+    void * value_ptr;
+    double timer1s, timer1e; 
+    size_t remainder_len;
+    struct spawn_thread_struct * thread_data = (struct spawn_thread_struct *)calloc(nThreads,sizeof(struct spawn_thread_struct));
+
+    remainder_len = len % (nThreads*dmem_nprocs);
+    len = len - remainder_len;
+
+    timer1s = MPI_Wtime(); 
+    
+    for (int j = 0; j < nThreads; j++) { 
+        thread_data[j].tag = j; 
+        //myreduce->allreduce(&(data2_send[thr_no*(nItems2/nThreads)]), &(data2_recv_thr[thr_no*(nItems2/nThreads)]), nItems2 / nThreads, thr_no);
+        thread_data[j].len = len / nThreads;
+        thread_data[j].recv_buff = &(dst[j*len/nThreads]);
+        thread_data[j].send_buff = &(src[j*len/nThreads]);
+        thread_data[j].obj_ctx = this;
+        pthread_create(&(thread_ids[j]), NULL,  &thread_spawn, (void *) &thread_data[j]); 
+    } 
+         
+    for (int j = 0; j < nThreads; j++) { 
+        pthread_join(thread_ids[j], &value_ptr); 
+    }
+    MPI_Barrier(mpi_ctx); 
+
+    if (remainder_len != 0) {
+        MPI_Allreduce(&(src[len]), &(dst[len]), remainder_len, MPI_FLOAT, MPI_SUM, mpi_ctx);
+    }
+         
+    timer1e = MPI_Wtime();
+ 
+    if (dmem_proc == 0) {
+        printf("P%i: ThreadedAllReduce reduce in %f seconds at a rate of %f Gbit/s\n", dmem_proc, (timer1e - timer1s),
+               ((len*sizeof(float)*8.0)/(timer1e - timer1s) / 1024.0 / 1024.0 / 1024.0)); 
+    }
+    
 }
