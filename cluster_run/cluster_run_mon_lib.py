@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -13,6 +13,8 @@ import xml.etree.ElementTree as ET
 # STANDARD USER CONFIGURABLE PARAMETERS
 
 # THESE SHOULD BE SET IN A CALLING PROGRAM
+
+submit_mode = "cluster"
 
 # name of queue -- used for a few things -- replace with actual!
 clust_queue = ""
@@ -70,6 +72,59 @@ showq_args = ""
 # efficient way to do it
 # options are pyshowq, moab
 showq_parser = "moab"
+
+# Specifies the availability region of Amazon AWS EC2  
+ec2_region = ""
+
+# Specifies the machine image to use when launching a new Amazon AWS EC2 instance
+ec2_ami = ""
+
+# Specifies which named SSH key to use when launching a new Amazon AWS EC2 instance
+ec2_ssh_key = ""
+
+# Specifies the Amazon AWS API user identity. This determines under whos account things get submitted and billed. This should remain private.
+ec2_api_user = ""
+
+# Specifies the Amazon AWS API password. This needs to be kept secret to prevent missues of the AWS account.
+
+ec2_api_key = ""
+
+ec2_instances = """{ "instances": [
+                              {
+                               "name": "c4.large",
+                               "cpus": 2,
+                               "memory": 3.5,
+                               "mpi": false
+                              },
+                              {
+                               "name": "c4.xlarge",
+                               "cpus": 4,
+                               "memory": 7.0,
+                               "mpi": false
+                              },
+                              {
+                               "name": "c4.2xlarge",
+                               "cpus": 8,
+                               "memory": 14,
+                               "mpi": false
+                              },
+                              {
+                               "name": "c4.4xlarge",
+                               "cpus": 16,
+                               "memory": 30,
+                               "mpi": false
+                              },
+                              {
+                               "name": "c4.8xlarge",
+                               "cpus": 36,
+                               "memory": 60,
+                               "mpi": true
+                              }
+                              
+                             ]
+                 }"""
+
+
 
 # number of runtime minutes during which the script will continue to update the 
 # output info from the job (job_out, dat_files)
@@ -940,11 +995,88 @@ class SubversionPoller(object):
         # save any changes to current jobs files
         self._save_cur_files()
 
+    def _choose_ec2_instance_type (self, cpus, memory, mpi):
+        instance_types = json.loads(ec2_instances)
+        for i in range(0, len(instance_types["instances"])):
+        	if instance_types["instances"][i]["cpus"] > cpus:
+        		if instance_types["instances"][i]["memory"] > memory:
+        			if (mpi < 2) or instance_types["instances"][i]["mpi"]:
+        				return instance_types["instances"][i]["name"]
+        return instance_types["instances"][-1]["name"]
+    
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
             print "\nNo project file was submitted along with job submit commit -- unable to run"
             return
+        if (submit_mode == "cluster"):
+            self._start_job_cluster(filename, rev, row);
+        elif (submit_mode == "ec2_control"):
+            self._start_job_ec2_control(filename, rev, row)
+            
+    
+    def _start_job_ec2_control(self, filename, rev, row):
+        proj = self.model_files[0]  
+        proj = os.path.abspath(proj)
+        self.cur_proj_file = proj
 
+        cmd = self.jobs_submit.get_val(row, "command")
+        params = self.jobs_submit.get_val(row, "params")
+        run_time = self.jobs_submit.get_val(row, "run_time")
+        n_threads = self.jobs_submit.get_val(row, "n_threads")
+        mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
+        ram_gb = self.jobs_submit.get_val(row, "ram_gb")
+        pb_batches = self.jobs_submit.get_val(row, "pb_batches")
+        pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
+        submit_svn = str(rev)
+        submit_job = str(row)
+        tag = '_'.join((submit_svn, submit_job))
+
+        self._get_tag_proj_file(tag)
+
+        shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
+
+        cmdsub = []
+        
+        ec2launch = "ec2-run-instances " + ec2_ami + " -n 1 -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
+        ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+        ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+        
+        # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
+        if mpi_nodes <= 1:
+            cmdsub = ec2launch.split()
+            print "cmd: " + str(cmdsub)
+            result = check_output(cmdsub)
+            # result = "INSTANCE i-40312c4f ami-12334"
+            
+            print result
+        
+            instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
+            instance = instancere.search(result)
+            status_info = instance.group(1)
+            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
+        
+            status = 'SUBMITTED'
+        else:
+            print "We don't yet suppoer submitting MPI"
+            status = "CANCELED"
+
+        
+        # grab current submit info
+        self.jobs_running.append_row_from(self.jobs_submit, row)
+        run_row = self.jobs_running.n_rows()-1
+        
+        self.jobs_running.set_val(run_row, "job_no", job_no) 
+        self.jobs_running.set_val(run_row, "submit_svn", submit_svn)
+        self.jobs_running.set_val(run_row, "submit_job", submit_job)
+        self.jobs_running.set_val(run_row, "command", cmd)
+        self.jobs_running.set_val(run_row, "params", params)
+        self.jobs_running.set_val(run_row, "tag", tag)
+        self.jobs_running.set_val(run_row, "status", status)
+        self.jobs_running.set_val(run_row, "status_info", status_info)
+        return
+    
+    def _start_job_cluster(self, filename, rev, row):
+      
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
         self.cur_proj_file = proj
@@ -1177,10 +1309,14 @@ class SubversionPoller(object):
 
 
     def _query_job_queue(self, row, status, force_updt = False):
-        if qstat_parser == "moab":
-            self._query_job_queue_moab(row, status, force_updt)
-        elif qstat_parser == "sge":
-            self._query_job_queue_sge(row, status, force_updt)
+        if submit_mode == "cluster":
+            if qstat_parser == "moab":
+                self._query_job_queue_moab(row, status, force_updt)
+            elif qstat_parser == "sge":
+                self._query_job_queue_sge(row, status, force_updt)
+        elif submit_mode == "ec2_controll":
+            pass
+        
 
     def _query_job_queue_moab(self, row, status, force_updt = False):
         job_no = self.jobs_running.get_val(row, "job_no")
@@ -1544,10 +1680,14 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _get_cluster_info(self):
-        if showq_parser == 'pyshowq':
-            self._get_cluster_info_pyshowq()
-        elif showq_parser == 'moab':
-            self._get_cluster_info_moab()
+        if submit_mode == "cluster":
+            if showq_parser == 'pyshowq':
+                self._get_cluster_info_pyshowq()
+            elif showq_parser == 'moab':
+                self._get_cluster_info_moab()
+        elif submit_mode == "ec2_control":
+            # There is nothing we can do on the control server side here
+            pass
 
     def _get_cluster_info_pyshowq(self):
         if showq_args != '':
@@ -1672,6 +1812,7 @@ class SubversionPoller(object):
 nohup_filename = 'nohup_running_cluster_run_mon.txt'
 
 def main():
+    
     # Delete the nohup file, if it exists.
     if os.path.isfile(nohup_filename):
         print 'Removing nohup file: %s' % nohup_filename
