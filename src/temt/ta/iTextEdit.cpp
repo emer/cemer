@@ -60,13 +60,13 @@ void iTextEdit::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::TEXTEDIT_CONTEXT, key_event);
 
   switch(action) {
-    case taiMisc::TEXTEDIT_DESELECT:
+    case taiMisc::TEXTEDIT_START_SELECT:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       return;
-    case taiMisc::TEXTEDIT_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::TEXTEDIT_CLEAR_SELECTION:
       key_event->accept();
       clearExtSelection();
       return;
