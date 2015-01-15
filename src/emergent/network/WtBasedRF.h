@@ -35,26 +35,25 @@ class E_API WtBasedRF : public taNBase {
 INHERITED(taNBase)
 public:
   NetworkRef        network;
-  // the network to operate on -- all layers (except lesioned or iconified) are computed, with each layer getting a column of the data table
+  // the network to operate on
   LayerRef          trg_layer;
-  // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table. There is a single matrix column the same dimensions as the original image and shows the reconstructed image values.
+  // #PROJ_SCOPE the target layer to compute receptive fields for: each unit in the layer gets a row of the data table. There is a "values" matrix column the same dimensions as the original image that shows the reconstructed image values. A second column for internal use keeps track of the number of values summed so that we can average the values for each pixel of the image.
+  DataTableRef      trg_layer_wts;
+  // #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
   LayerRef          snd_layer;
   // #PROJ_SCOPE the layer projecting to the target layer.
   RetinaProcRef     v1_retinaProc;
   // #READ_ONLY #HIDDEN #NO_SAVE the retina proc for the v1 layer - needed to get filter values
-  
   DataTable         v1Gabor_GridFilters;
   // #READ_ONLY #HIDDEN #NO_SAVE table of the filter values applied to the image
-  DataTableRef      trg_layer_wts;
-  // #NO_SAVE auxiliary data table in same format as rf_data for holding the sum of target unit activation-weighted activations: rf_data is sum_data / wt_array followed by normalization
-  DataTableRef      rf_data;
-  // data table containing the results of the receptive field computation (is completely configured by this object!) -- one row per unit of the trg_layer
-
+  DataTableRef      dt_trg_rf;
+  // data table that will contain the results of the receptive field computation (is completely configured by this object!) -- one row per unit of the trg_layer.
+  DataTableRef      dt_snd_rf;
+  // data table containing the results of a previous computation of a wt based receptive field (e.g. This might be V2 and the target now is V3 or V4)
+  
   String            GetDisplayName() const override;
-  virtual void      InitAll(DataTable* dt, Network* net, Layer* tlay, Layer* slay, V1RetinaProc* rproc, DataTable* wts);
-
-  virtual bool      ComputeRF();
-  // #BUTTON #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
+  virtual void      InitV2RF(Network* net, DataTable* dt_rf, DataTable* wts,  Layer* tlay, Layer* slay, V1RetinaProc* rproc);
+  virtual void      InitHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts,  Layer* tlay, Layer* slay);
   virtual bool      ComputeV2RF();
   // #CAT_WtBasedRF compute the rf_data based on V2 wts and V1 filters
   virtual bool      ComputeHigherLayerRF();

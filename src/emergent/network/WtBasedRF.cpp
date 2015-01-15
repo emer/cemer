@@ -35,48 +35,55 @@ void WtBasedRF::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   CheckError(!trg_layer, quiet, rval,"trg_layer is NULL");
   CheckError(!snd_layer, quiet, rval,"snd_layer is NULL");
-  String projection_name = "Fm_" + snd_layer->name;
-  Projection* projection = trg_layer->projections.FindLeafName(projection_name);
-  CheckError(!projection, quiet, rval,"projection " + projection_name + " not found. The projection name should be in the form Fm_NameOfLayer");
+  String prjn_name = "Fm_" + snd_layer->name;
+  Projection* prjn = trg_layer->projections.FindLeafName(prjn_name);
+  CheckError(!prjn, quiet, rval, "projection " + prjn_name + " not found. The projection name should be in the form Fm_NameOfLayer");
 }
 
 String WtBasedRF::GetDisplayName() const {
   String rval = name;
   if(network) rval += " fm net: " + network->name;
-  if(rf_data) rval += " to data: " + rf_data->name;
+  if(dt_trg_rf) rval += " to data: " + dt_trg_rf->name;
   if(trg_layer) rval += " trg lay: " + trg_layer->name;
   return rval;
 }
 
-void WtBasedRF::InitAll(DataTable* dt, Network* net, Layer* tlay, Layer* slay, V1RetinaProc* rproc, DataTable* wts) {
-  rf_data = dt;
+void WtBasedRF::InitV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc) {
   network = net;
+  dt_trg_rf = dt_trg;
+  trg_layer_wts = wts;
   trg_layer = tlay;
   snd_layer = slay;
   v1_retinaProc = rproc;
-  trg_layer_wts = wts;
   
-  if(!network || !rf_data || !trg_layer || !snd_layer || !v1_retinaProc || !trg_layer_wts)
+  if(!network || !dt_trg_rf || !trg_layer || !snd_layer || !v1_retinaProc || !trg_layer_wts || !v1_retinaProc)
     return;
-  rf_data->ResetData();
+  dt_trg_rf->ResetData();
 }
 
-bool WtBasedRF::ComputeRF() {
-  if (!trg_layer || !snd_layer)
-    return false;
+void WtBasedRF::InitHigherLayerRF(Network* net, DataTable* dt_trg, DataTable* dt_snd, DataTable* wts, Layer* tlay, Layer* slay) {
+  network = net;
+  dt_trg_rf = dt_trg;
+  dt_snd_rf = dt_snd;
+  trg_layer_wts = wts;
+  trg_layer = tlay;
+  snd_layer = slay;
   
-  LayerSpec* spec = snd_layer->GetLayerSpec();
-  if (spec->InheritsFrom(&TA_LeabraV1LayerSpec)) {
-    return ComputeV2RF();
-  }
-  else {
-    return ComputeHigherLayerRF();
-  }
+  if(!network || !dt_trg_rf || !dt_snd_rf || !trg_layer || !snd_layer || !trg_layer_wts)
+    return;
+  dt_trg_rf->ResetData();
 }
 
 bool WtBasedRF::ComputeV2RF() {
   if (!trg_layer || !snd_layer)
     return false;
+  
+  LayerSpec* spec = snd_layer->GetLayerSpec();
+  if (!spec->InheritsFrom(&TA_LeabraV1LayerSpec)) {
+    taMisc::Error("If the analysis_mode is SEND_LAYER_V1 the sending layer must have a spec that is or derives from LeabraV1LayerSpec");
+    return false;
+  }
+  
   // build weights table
   trg_layer_wts->StructUpdate(true);
   trg_layer_wts->Reset();
@@ -84,6 +91,9 @@ bool WtBasedRF::ComputeV2RF() {
   taVector2i snd_layer_unit_grp_geom = snd_layer->un_geom;
   String prjn_name = "Fm_" + snd_layer->name;
   Projection* prjn = trg_layer->projections.FindLeafName(prjn_name);
+  if(TestError(!prjn, "ComputeV2RF", "projection " + prjn_name + " not found. The projection name should be in the form Fm_NameOfLayer")) {
+    return false;
+  }
   TiledGpRFPrjnSpec* tiled_prjn_spec = dynamic_cast<TiledGpRFPrjnSpec*>(prjn->GetPrjnSpec());
   DataCol* dc = trg_layer_wts->data.SafeEl(0);
   MatrixGeom trg_layer_mg;
@@ -91,20 +101,19 @@ bool WtBasedRF::ComputeV2RF() {
   dc->ChangeColCellGeom(trg_layer_mg);
   trg_layer_wts->StructUpdate(false);
 
-  // config the rf_data table
-  rf_data->StructUpdate(true);
-  rf_data->Reset();
-  int rows = trg_layer_wts->rows;
+  // config the dt_trg_rf table
+  dt_trg_rf->StructUpdate(true);
+  dt_trg_rf->Reset();
+  int wt_rows = trg_layer_wts->rows;
   taVector2i snd_layer_grp_geom = snd_layer->gp_geom;
-  DataCol* rf_data_values_col;
-  DataCol* rf_data_count_col;
-  // column of calculated image values
-  rf_data_values_col = rf_data->FindMakeColMatrix("values", VT_FLOAT, 2, snd_layer_grp_geom.x, snd_layer_grp_geom.y);
+  DataCol* dt_trg_rf_values_col;
+  DataCol* dt_trg_rf_count_col;
+  // column of calculated image values - the snd_layer_grp_geom is the size of the image
+  dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, snd_layer_grp_geom.x, snd_layer_grp_geom.y);
   // column to keep track of the number of values summed so we can correctly average
-  rf_data_count_col = rf_data->FindMakeColMatrix("count", VT_FLOAT, 2, snd_layer_grp_geom.x, snd_layer_grp_geom.y);
-  rf_data->EnforceRows(rows);
-  rf_data->StructUpdate(false);
-  
+  dt_trg_rf_count_col = dt_trg_rf->FindMakeColMatrix("count", VT_FLOAT, 2, snd_layer_grp_geom.x, snd_layer_grp_geom.y);
+  dt_trg_rf->EnforceRows(wt_rows);
+  dt_trg_rf->StructUpdate(false);
   
   V1RegionSpec* region_spec = dynamic_cast<V1RegionSpec*>(v1_retinaProc->regions.SafeEl(0));
   region_spec->GridGaborFilters(&v1Gabor_GridFilters);
@@ -120,22 +129,21 @@ bool WtBasedRF::ComputeV2RF() {
     filter[row] = v1Gabor_GridFilters.GetValAsMatrixColName("Filter", row);
   }
 
-  int filter_size_x;
-  int filter_size_y;
-  filter_col->Get2DCellGeom(filter_size_x, filter_size_y);
+  taVector2i filter_size;
+  filter_col->Get2DCellGeom(filter_size.x, filter_size.y);
   
   float_Matrix* sum_matrix = new float_Matrix(); // sums of filter * weights
   float_Matrix* tmp_matrix = new float_Matrix(); // filter * weights (gets added to running sum)
   int_Matrix* marker_matrix = new int_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
   int_Matrix* count_matrix = new int_Matrix(); // tracks the number of values that are summed for each unit of the original image
-  sum_matrix->SetGeom(2, filter_size_x, filter_size_y);
-  tmp_matrix->SetGeom(2, filter_size_x, filter_size_y);
-  marker_matrix->SetGeom(2, filter_size_x, filter_size_y);
+  sum_matrix->SetGeom(2, filter_size.x, filter_size.y);
+  tmp_matrix->SetGeom(2, filter_size.x, filter_size.y);
+  marker_matrix->SetGeom(2, filter_size.x, filter_size.y);
   *marker_matrix = 1;
-  count_matrix->SetGeom(2, snd_layer_grp_geom.x, snd_layer_grp_geom.y); // same size as rf_data
+  count_matrix->SetGeom(2, snd_layer_grp_geom.x, snd_layer_grp_geom.y); // same size as dt_trg_rf
   
   bool all_good = true;
-  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
     if(TestError(!trg_layer_unit, "ComputeV2RF", "trg_layer_unit is null")) {
@@ -180,20 +188,20 @@ bool WtBasedRF::ComputeV2RF() {
           unit_no = unit_no + (trg_layer_mg.dim(0) * trg_layer_mg.dim(1));  // first unit of each group is what we need - jump to next group
           snd_layer_log_pos.x = snd_layer_log_pos.x/dim_0;
           snd_layer_log_pos.y = snd_layer_log_pos.y/dim_1;
-          // write the sum values to the rf_data table
-          rf_data_values_col->WriteFmSubMatrix2DWrap(wts_row, sum_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
-          // up the count for those cells of rf_data we just added to
+          // write the sum values to the dt_trg_rf table
+          dt_trg_rf_values_col->WriteFmSubMatrix2DWrap(wts_row, sum_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+          // up the count for those cells of dt_trg_rf we just added to
           count_matrix->WriteFmSubMatrix2DWrap(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
         }
       }
-      rf_data_count_col->SetValAsMatrix(count_matrix, wts_row);
+      dt_trg_rf_count_col->SetValAsMatrix(count_matrix, wts_row);
       // can't divide by zero
       for (int i=0; i<count_matrix->size; i++) {
         if (count_matrix->taMatrix::SafeElAsFloat_Flat(i) == 0.0) {
           count_matrix->Set_Flat(1.0, i);
         }
       }
-      rf_data_values_col->WriteFmSubMatrix2DWrap(wts_row, count_matrix, taMatrix::DIV, 0, 0);
+      dt_trg_rf_values_col->WriteFmSubMatrix2DWrap(wts_row, count_matrix, taMatrix::DIV, 0, 0);
     }
     else {
       delete[] filter;
@@ -214,5 +222,89 @@ bool WtBasedRF::ComputeV2RF() {
 }
 
 bool	WtBasedRF::ComputeHigherLayerRF() {
+  // build weights table
+  trg_layer_wts->StructUpdate(true);
+  trg_layer_wts->Reset();
+  trg_layer->WeightsToTable(trg_layer_wts, snd_layer);
+  taVector2i snd_layer_unit_grp_geom = snd_layer->un_geom;
+  String prjn_name = "Fm_" + snd_layer->name;
+  Projection* prjn = trg_layer->projections.FindLeafName(prjn_name);
+  if(TestError(!prjn, "ComputeHigherLayerRF", "projection " + prjn_name + " not found. The projection name should be in the form Fm_NameOfLayer")) {
+    return false;
+  }
+  TiledGpRFPrjnSpec* tiled_prjn_spec = dynamic_cast<TiledGpRFPrjnSpec*>(prjn->GetPrjnSpec());
+  DataCol* dc = trg_layer_wts->data.SafeEl(0);
+  MatrixGeom trg_layer_mg;
+  trg_layer_mg.SetGeom(4, snd_layer_unit_grp_geom.x, snd_layer_unit_grp_geom.y, tiled_prjn_spec->send_gp_size.x, tiled_prjn_spec->send_gp_size.y);
+  dc->ChangeColCellGeom(trg_layer_mg);
+  trg_layer_wts->StructUpdate(false);
+  
+  // config the dt_trg_rf table
+  dt_trg_rf->StructUpdate(true);
+  dt_trg_rf->Reset();
+  int wt_rows = trg_layer_wts->rows;
+  taVector2i snd_layer_grp_geom = snd_layer->gp_geom;
+  DataCol* dt_trg_rf_values_col;
+  DataCol* dt_trg_rf_count_col;
+  // column of calculated image values - get the size of the image from the previously generated rf data table
+  DataCol* snd_values_col = dt_snd_rf->GetColData("values");
+  taVector2i image_size;
+  snd_values_col->Get2DCellGeom(image_size.x, image_size.y);
+  dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, image_size.x, image_size.y);
+  // column to keep track of the number of values summed so we can correctly average
+  dt_trg_rf_count_col = dt_trg_rf->FindMakeColMatrix("count", VT_FLOAT, 2, image_size.x, image_size.y);
+  dt_trg_rf->EnforceRows(wt_rows);
+  dt_trg_rf->StructUpdate(false);
+  
+  float_Matrix* sum_matrix = new float_Matrix(); // sums of sending layer values multiplied by target layer weights
+  float_Matrix* tmp_matrix = new float_Matrix(); // multiplication of sending layer values and target layer weights for one connection
+  int_Matrix* marker_matrix = new int_Matrix(); // all 1's - used to mark the large count matrix for averaging of summed values
+  int_Matrix* count_matrix = new int_Matrix(); // tracks the number of values that are summed for each unit of the original image - use for averaging
+  sum_matrix->SetGeom(2, image_size.x, image_size.y);
+  tmp_matrix->SetGeom(2, image_size.x, image_size.y);
+  marker_matrix->SetGeom(2, image_size.x, image_size.y);
+  *marker_matrix = 1;
+  count_matrix->SetGeom(2, image_size.x, image_size.y); // same size as dt_trg_rf
+  
+  bool all_good = true;
+  for (int wts_row=0; wts_row<1; wts_row++) {
+//    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+    *count_matrix = 0;
+    *sum_matrix = 0;
+    // get the target layer unit so we can find the sending units it recvs from
+    Unit* trg_layer_unit = trg_layer->UnitAccess(Layer::ACC_LAY, wts_row, 0);
+    if(TestError(!trg_layer_unit, "ComputeHigherLayerRF", "trg_layer_unit is null")) {
+      all_good = false;
+    }
+    ConGroup* recv_cons = trg_layer_unit->FindRecvConGroupFrom(snd_layer);
+    if(TestError(!recv_cons, "ComputeHigherLayerRF", "recv_cons is null")) {
+      all_good = false;
+    }
+    if (all_good) {
+            for (int u=0; u<recv_cons->size; u++) {
+              Unit* snd_unit = recv_cons->SafeUn(u);
+              taVector2i snd_layer_log_pos;
+              snd_unit->LayerLogPos(snd_layer_log_pos);
+              taMisc::DebugInfo((String)snd_layer_log_pos.x, (String)snd_layer_log_pos.y );
+            }
+//TODO - FINISH 
+
+      
+      
+      
+    }
+    else {
+      delete sum_matrix;
+      delete tmp_matrix;
+      delete marker_matrix;
+      delete count_matrix;
+      return false;
+    }
+  }
+  delete sum_matrix;
+  delete tmp_matrix;
+  delete marker_matrix;
+  delete count_matrix;
+  
   return true;
 }
