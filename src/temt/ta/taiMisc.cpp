@@ -1217,8 +1217,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_LOOKUP, QKeySequence(control_key + Qt::Key_L));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_UP, QKeySequence(control_key + Qt::Key_P));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_DOWN, QKeySequence(control_key + Qt::Key_N));
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DESELECT, QKeySequence(control_key + Qt::Key_Space));
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CLEAR_EXTENDED_SELECTION, QKeySequence(control_key + Qt::Key_G));
+  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_START_SELECT, QKeySequence(control_key + Qt::Key_Space));
+  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CLEAR_SELECTION, QKeySequence(control_key + Qt::Key_G));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_HOME, QKeySequence(control_key + Qt::Key_A));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_END, QKeySequence(control_key + Qt::Key_E));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CURSOR_FORWARD, QKeySequence(control_key + Qt::Key_F));
@@ -1226,7 +1226,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DELETE, QKeySequence(control_key + Qt::Key_D));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_BACKSPACE, QKeySequence(control_key + Qt::Key_H));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_DELETE_TO_END, QKeySequence(control_key + Qt::Key_K));
-  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_SELECT_ALL, QKeySequence(control_key + Qt::Key_U));
+  default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_SELECT_ALL, QKeySequence(meta_key + Qt::Key_A));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_CUT, QKeySequence(control_key + Qt::Key_W));
   default_list->Add(taiMisc::TEXTEDIT_CONTEXT, taiMisc::TEXTEDIT_UNDO, QKeySequence(control_key + Qt::Key_Minus));
