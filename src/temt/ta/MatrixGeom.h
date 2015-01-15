@@ -174,7 +174,7 @@ protected:
   int           elprod[TA_MATRIX_DIMS_MAX]; // products of el's -- updated by UAE -- must be called!
 
   inline int    SafeIndex_(int d, const int dim) const
-  { if(d < 0) d += dim; if(d<0 || d>dim+1) d = -1; return d; }
+  { if(d < 0) d += dim; if(d<0 || d>dim-1) d = -1; return d; }
   // wrap negative values and do range checking
   inline int    IndexFmDims_(const int* d) const {
     int rval = d[0];
