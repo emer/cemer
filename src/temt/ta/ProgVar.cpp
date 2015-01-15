@@ -80,6 +80,7 @@ void ProgVar::SetFlagsByOwnership() {
   if(is_global) {
     ClearVarFlag(LOCAL_VAR);
     ClearVarFlag(FUN_ARG);
+    ClearVarFlag(PGRM_ARG);
     if(!objs_ptr && var_type == T_Object && object_type && object_type->InheritsFrom(&TA_taMatrix)) {
       if(!HasVarFlag(QUIET)) {
         TestWarning(true, "ProgVar", "for Matrix* ProgVar named:",name,
