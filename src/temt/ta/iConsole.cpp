@@ -501,7 +501,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       setTextCursor(cursor);
       ext_select_on = true;
       break;
-    case taiMisc::CONSOLE_CLEAR_EXTENDED_SELECTION:
+    case taiMisc::CONSOLE_CLEAR_SELECTION:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
