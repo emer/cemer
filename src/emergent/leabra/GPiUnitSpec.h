@@ -66,7 +66,7 @@ public:
 
   // no learning in this one..
   void 	Compute_dWt(UnitVars* u, Network* net, int thr_no) override { };
-  void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override { };
+  void	Compute_dWt_Norm(UnitVars* u, Network* net, int thr_no) { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;

@@ -812,7 +812,7 @@ void LeabraNetwork::Compute_Inhib_LayGp() {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 3: Activation
 
-void LeabraNetwork::Compute_Act_Thr(int thr_no) override {
+void LeabraNetwork::Compute_Act_Thr(int thr_no) {
   if(net_misc.spike) {
     Compute_Act_Spike_Thr(thr_no);
   }
