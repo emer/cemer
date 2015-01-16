@@ -270,6 +270,7 @@ void CIFERThalSpec::Initialize() {
   thal_bin = true;
   auto_thal = false;
   thal_to_super = 0.0f;
+  super_d5b_off = false;
   Defaults_init();
 }
 
@@ -1014,7 +1015,6 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
   if(net->n_thrs_built == 1) {
     net->send_pct_tot++;        // only safe for non-thread case
   }
-  TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
   float act_ts = u->act;
   // if(syn_delay.on) {
   //   if(!u->act_buf)
@@ -1127,7 +1127,10 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 
 void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  if(lay->hard_clamped) return;
+  if(lay->hard_clamped) {
+    TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
+    return;
+  }
 
   Compute_NetinRaw(u, net, thr_no);
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
@@ -1154,7 +1157,9 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
 
   if(Quarter_Deep5bNow(net->quarter)) {
     Send_Deep5bNetin_Post(u, net, thr_no);
-  }    
+  }
+
+  TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
 }
 
 float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
@@ -1171,8 +1176,10 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   if(net->net_misc.ti) {
     net_ex += u->ti_ctxt;
   }
-  if(cifer_thal.on) {
-    net_ex += cifer_thal.thal_to_super * u->thal * net_syn;
+  if(cifer_thal.on && cifer_thal.thal_to_super > 0.0f) {
+    if(!(cifer_thal.super_d5b_off && Quarter_Deep5bNow(net->quarter))) {
+      net_ex += cifer_thal.thal_to_super * u->thal * net_syn;
+    }
   }
   if(cifer_d5b.on) {
     net_ex += u->d5b_net + cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn
