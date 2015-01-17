@@ -316,6 +316,7 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
       // the number of values summed is greater for some cells
       *sum_matrix /= *count_matrix;
       dt_trg_rf_values_col->SetValAsMatrix(sum_matrix, wts_row);
+      dt_trg_rf_count_col->SetValAsMatrix(count_matrix, wts_row);
     }
     else {
       delete sum_matrix;
