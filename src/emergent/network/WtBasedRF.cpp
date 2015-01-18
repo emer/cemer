@@ -25,6 +25,7 @@
 TA_BASEFUNS_CTORS_DEFN(WtBasedRF);
 
 void WtBasedRF::Initialize() {
+  trg_wt_threshold = 0; // don't exclude any values
 }
 
 void WtBasedRF::UpdateAfterEdit_impl() {
@@ -48,13 +49,14 @@ String WtBasedRF::GetDisplayName() const {
   return rval;
 }
 
-bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc) {
+bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Layer* tlay, Layer* slay, V1RetinaProc* rproc, float wt_threshold) {
   network = net;
   dt_trg_rf = dt_trg;
   trg_layer_wts = wts;
   trg_layer = tlay;
   snd_layer = slay;
   v1_retinaProc = rproc;
+  trg_wt_threshold = wt_threshold;
   
   if(!network || !dt_trg_rf || !trg_layer_wts || !trg_layer || !snd_layer || !v1_retinaProc)
     return false;
@@ -148,6 +150,9 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
               int filter_no = dim_0;
               DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
               float weight = wts_col->GetValAsFloatMDims(wts_row, dim_0, dim_1, dim_2, dim_3);
+              if (weight < trg_wt_threshold) {
+                weight = 0;
+              }
               if (dim_1 == 0) {
                 *tmp_matrix = filter[filter_no] * weight;
               }
