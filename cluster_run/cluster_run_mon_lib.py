@@ -1,9 +1,10 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
 import xml.etree.ElementTree as ET
+
 # if you need to install locally, non-root, this kind of thing should work:
 # put it in the wrapper function
 # sys.path.append('/projects/oreillyr/python/site-packages')
@@ -137,7 +138,7 @@ job_update_window = 3
 job_done_retries = 5
 
 # set to true for more debugging info
-debug = False
+debug = True
 #debug = True
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
@@ -703,6 +704,50 @@ class SubversionPoller(object):
             r'^\s*[AUGR]\s+(%s/[^/]+/submit/.*)' % esc_repo_dir)
         self.mod_re_comp = re.compile(
             r'^\s*[AUGR]\s+(%s/[^/]+/models/.*)' % esc_repo_dir)
+        
+    @staticmethod
+    def _get_local_server_name(): 
+        return SubversionPoller._get_local_server_name_ec2()
+    
+    @staticmethod
+    def _get_local_server_name_ec2():
+        # one can retrieve the instance-id from an Amazon EC2 instance by querying a special URL
+        response = urllib2.urlopen('http://169.254.169.254/latest/meta-data/instance-id')
+        html = response.read()
+        return html
+    
+    def _is_for_local_server(self, job_id):
+        if (submit_mode == "cluster"):
+            # If we are running on a static cluster with a real job scheduler,
+            # then we only run on one node and all jobs are for us
+            return True
+        elif (submit_mode == "ec2_compute"):
+            # Check if current job is for our compute server.
+            return self._is_for_local_server_ec2(job_id)
+        elif (submit_mode == "ec2_control"):
+            return True
+    
+    def _is_for_local_server_ec2(self, job_id):
+        job_instance = job_id.split("_")
+        #print "Checking if " + job_instance[0] + " is for us " + self._get_local_server_name_ec2(   )
+        return job_instance[0] == self._get_local_server_name_ec2()
+
+    def _get_all_submit_files(self):
+        submit_files = []
+        print "Trying to get all submit files on startup"
+        print "Base repo dir: " + self.repo_dir
+        for f in os.listdir(self.repo_dir):
+            #print "Working through: " + f
+            if os.path.isdir(os.path.join(self.repo_dir,f)):
+                tmp_dir = os.path.join(self.repo_dir,f) 
+                #print "processing dir: " + f + " and checking " + tmp_dir + " for " + os.path.join(tmp_dir, "submit/jobs_submit.dat")
+                if os.path.isfile(os.path.join(tmp_dir, "submit/jobs_submit.dat")):
+                    #print "We have a new submit file: " + self.repo_dir + f + "submit/jobs_submit.dat"
+                    submit_files.append(os.path.join(tmp_dir, "submit/jobs_submit.dat"))
+        
+        # print (str(submit_files))
+        return submit_files
+
 
     def get_initial_wc(self):
         # Either checkout or update the directory.
@@ -732,6 +777,20 @@ class SubversionPoller(object):
         # and to query the job scheduler regarding submitted jobs.
         print '\nPolling the Subversion server every %d seconds ' \
               '(hit Ctrl-C to quit) ...' % self.delay
+        
+        if (submit_mode == "ec2_compute"):
+            # When running on a dynamic cloud computing cluster, rather than a static cluster, we are booting up the
+            # instance after the job submission, the files have therefore obviously already been committed by
+            # the time we start this script. So we need to check through all old submissions as well to see if any of them are
+            # for us.
+            
+            #Run through all submission files on first launch to make sure we catch everything that happened before the script was launched. 
+            sub_files = self._get_all_submit_files(); 
+            for filename in sub_files: 
+                if debug: 
+                    print '\nProcessing %s' % filename 
+                self._process_new_submission(filename) 
+        
         while True:
             # If running in background and the nohup "keep running" file
             # was deleted, then exit.
@@ -824,10 +883,23 @@ class SubversionPoller(object):
         for row in reversed(range(self.jobs_running.n_rows())):
             status = self.jobs_running.get_val(row, "status")
             tag = self.jobs_running.get_val(row, "tag")
+            
+            # If we are running this script on many instances, as we are using it for
+            # for job submission, check if this job is actually for us.
+            job_id = self.jobs_running.get_val(row,"job_no")
+            if not self._is_for_local_server(job_id):
+                continue
+            
             # print "updating status of job tag: %s status: %s" % (tag, status)
 
             if status == 'SUBMITTED' or status == 'QUEUED':
-                self._query_job_queue(row, status, force_updt)
+                if (submit_mode == "cluster"):
+                    self._query_job_queue(row, status, force_updt)
+                elif (submit_mode == "ec2_compute"):
+                    self._launch_ec2_job(row, filename)
+                elif (submit_mode == "ec2_control"):
+                    # We don't do anything with submitted or queued jobs on the control server
+                    pass
             elif status == 'RUNNING' or ('ABSENT_' in status):
                 self._query_job_queue(row, status, force_updt)   # always update status!
                 self._update_running_job(row, force_updt)
@@ -967,21 +1039,16 @@ class SubversionPoller(object):
 
         for row in range(self.jobs_submit.n_rows()):
             status = self.jobs_submit.get_val(row, "status")
+            
+            job_id = self.jobs_submit.get_val(row,"job_no") 
+             
+            if not self._is_for_local_server(job_id):
+                continue 
 
             if status == 'REQUESTED':
                 self._start_job(filename, rev, row)
             elif status == 'CANCELLED':
                 self._cancel_job(filename, rev, row)
-            elif status == 'GETDATA':
-                self._getdata_job(filename, rev, row)
-            elif status == 'GETFILES':
-                self._getfiles_job(filename, rev, row)
-            elif status == 'REMOVEFILES':
-                self._removefiles_job(filename, rev, row)
-            elif status == 'REMOVEJOB':
-                self._remove_job(filename, rev, row)
-            elif status == 'CLEANJOBFILES':
-                self._clean_job_files(filename, rev, row)
             elif status == 'ARCHIVEJOB':
                 self._move_job_to_archive(filename, rev, row)
             elif status == 'UPDTRUN':
@@ -992,6 +1059,19 @@ class SubversionPoller(object):
                 self._query_running_jobs(self.cur_running_file, True)  # True = force updt
                 if debug:
                     print "probed for project root %s" % self.cur_proj_root
+            
+            if (submit_mode == "cluster" or submit_mode == "ec2_compute"):
+                if status == 'GETDATA':
+                    self._getdata_job(filename, rev, row)
+                elif status == 'GETFILES':
+                    self._getfiles_job(filename, rev, row)
+                elif status == 'REMOVEFILES':
+                    self._removefiles_job(filename, rev, row)
+                elif status == 'REMOVEJOB':
+                    self._remove_job(filename, rev, row)
+                elif status == 'CLEANJOBFILES':
+                    self._clean_job_files(filename, rev, row)
+            
         # save any changes to current jobs files
         self._save_cur_files()
 
@@ -1036,19 +1116,19 @@ class SubversionPoller(object):
         shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
 
         cmdsub = []
-        
-        ec2launch = "ec2-run-instances " + ec2_ami + " -n 1 -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
-        ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
-        ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
-        
+                      
         # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
         if mpi_nodes <= 1:
+            ec2launch = "ec2-run-instances " + ec2_ami + " -n 1 -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
+            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+            
             cmdsub = ec2launch.split()
             print "cmd: " + str(cmdsub)
             result = check_output(cmdsub)
-            # result = "INSTANCE i-40312c4f ami-12334"
+            # result = "INSTANCE i-5eb16b50 ami-12334"
             
-            print result
+            # print result
         
             instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
             instance = instancere.search(result)
@@ -1057,8 +1137,33 @@ class SubversionPoller(object):
         
             status = 'SUBMITTED'
         else:
-            print "We don't yet suppoer submitting MPI"
-            status = "CANCELED"
+            print "Mpi_nodes: " + str(mpi_nodes)
+            ec2launch = "ec2-run-instances " + ec2_ami + " -n " + str(mpi_nodes) + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
+            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+            
+            cmdsub = ec2launch.split()
+            print "cmd: " + str(cmdsub)
+            # result = check_output(cmdsub)
+            result = "RESERVATION r-a20b79ad843784070933\n"
+            result += "INSTANCE i-c42481ca ami-59174069 ip-172-31-6-243.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.243 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
+            result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal true\n"
+            result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
+            result += "GROUP sg-b8f680ddSSH-ucb\n"
+            result += "PRIVATEIPADDRESS 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal\n"
+            result += "INSTANCE i-c42481cb ami-59174069 ip-172-31-6-244.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.244 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
+            result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal true\n"
+            result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
+            result += "GROUP sg-b8f680ddSSH-ucb\n"
+            result += "PRIVATEIPADDRESS 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal\n"
+            print result
+        
+            instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
+            instance = instancere.search(result)
+            status_info = instance.group(1)
+            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
+            
+            status = "SUBMITTED"
 
         
         # grab current submit info
@@ -1156,6 +1261,76 @@ class SubversionPoller(object):
         self.jobs_running.set_val(run_row, "tag", tag)
         self.jobs_running.set_val(run_row, "status", status)
         self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
+        
+    def _launch_ec2_job(self, row, filename):
+ 
+        print "file name: " + filename
+        parsere = re.compile("(.*/(.*?)/)submit/jobs_running.dat")
+        projre = parsere.match(filename)
+        self.cur_proj_file = projre.group(1) + "models/"  + projre.group(2) + ".proj"
+        self.cur_proj_root = projre.group(1)
+        #proj = self.model_files[0]  
+        proj = os.path.abspath(self.cur_proj_file)
+        
+        cmd = self.jobs_running.get_val(row, "command")
+        params = self.jobs_running.get_val(row, "params")
+        run_time = self.jobs_running.get_val(row, "run_time")
+        n_threads = self.jobs_running.get_val(row, "n_threads")
+        mpi_nodes = self.jobs_running.get_val(row, "mpi_nodes")
+        ram_gb = self.jobs_running.get_val(row, "ram_gb")
+        pb_batches = self.jobs_running.get_val(row, "pb_batches")
+        pb_nodes = self.jobs_running.get_val(row, "pb_nodes")
+        tag = self.jobs_running.get_val(row, "tag")
+        job_no = self.jobs_running.get_val(row, "job_no")
+
+        self._get_tag_proj_file(tag)
+
+        shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
+
+        cmd = cmd.replace("<TAG>", "_" + tag)  # leading ubar added here only
+        cmd = cmd.replace("<PROJ_FILENAME>", self.cur_tag_proj_file)
+
+        cmdsub = []
+        if mpi_nodes <= 1:
+            cmdsub = cmd.split()
+            #cmdsub = [cmd, params]
+            print "Non MPI mode"
+            #Nothing to do here.
+        else:
+            print "We don't yet support submitting MPI"
+            
+
+        # if pb, put a wrapper on it!
+        #if pb_batches > 0 and pb_nodes > 0:
+        #    cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
+        #    if debug:
+        #        print 'command: %s' % cmdsub
+
+        
+        
+        job_out_file = "/tmp/JOB." + job_no + ".out"
+        job_err_file = "/tmp/JOB." + job_no + ".err"
+ 
+        print "Cmd to execute: " + str(cmdsub)
+        pid = subprocess.Popen(cmdsub, stdout=open(job_out_file,"w"), stderr=open(job_err_file,"w")).pid
+        job_no = job_no + "." + str(pid)
+        
+        status = 'RUNNING'
+        stdt = datetime.now()
+        start_time = stdt.strftime(time_format)
+        
+        ## grab current submit info
+        #self.jobs_running.append_row_from(self.jobs_submit, row)
+        #run_row = self.jobs_running.n_rows()-1
+         
+        self.jobs_running.set_val(row, "command", cmd)
+        self.jobs_running.set_val(row, "job_no", job_no)
+        self.jobs_running.set_val(row, "status", status)
+        self.jobs_running.set_val(row, "job_out_file", job_out_file)
+        self.jobs_running.set_val(row, "start_time", start_time)
+        
+        self._save_cur_files()
+        self.got_submit = True
 
     def _cancel_job(self, filename, rev, row):
         job_no = self.jobs_submit.get_val(row, "job_no")
@@ -1239,6 +1414,19 @@ class SubversionPoller(object):
                 try: os.remove(fullf)  # for good measure, just nuke it directly
                 except: pass
 
+    def _getdata_job_tag(self, tag):
+        runrow = self.jobs_running.find_val("tag", tag)
+        if runrow >= 0:
+            dat_files = self.jobs_running.get_val(runrow, "dat_files")
+            self._svn_add_dat_files(tag, dat_files)
+        else:
+            donerow = self.jobs_done.find_val("tag", tag)
+            if donerow >= 0:
+                dat_files = self.jobs_done.get_val(donerow, "dat_files")
+                self._svn_add_dat_files(tag, dat_files)
+            else:
+                print "getdata_job: tag %s not found in either jobs running or done" % tag
+                
     # get data files for given job
     def _getdata_job(self, filename, rev, row):
         tag = self.jobs_submit.get_val(row, "tag")
@@ -1254,6 +1442,19 @@ class SubversionPoller(object):
             else:
                 print "getdata_job: tag %s not found in either jobs running or done" % tag
 
+    def _getfiles_job_tag(self, tag):
+        runrow = self.jobs_running.find_val("tag", tag)
+        if runrow >= 0:
+            other_files = self.jobs_running.get_val(runrow, "other_files")
+            self._svn_add_dat_files(tag, other_files)
+        else:
+            donerow = self.jobs_done.find_val("tag", tag)
+            if donerow >= 0:
+                other_files = self.jobs_done.get_val(donerow, "dat_files")
+                self._svn_add_dat_files(tag, other_files)
+            else:
+                print "getdata_job: tag %s not found in either jobs running or done" % tag
+    
     def _getfiles_job(self, filename, rev, row):
         other_files = self.jobs_submit.get_val(row, "other_files")
         self._svn_add_dat_files("no tag", other_files)
@@ -1304,6 +1505,12 @@ class SubversionPoller(object):
         end_time = stdt.strftime(time_format)
         self.jobs_running.set_val(row, "status", status)
         self.jobs_running.set_val(row, "end_time", end_time)
+        if (submit_mode == "ec2_compute"):
+            # On the dynamic cloud cluster, we will likely shutdown the instance once the job is done
+            # so we can't recover the data later on, so we need to commit it back to the SVN repository
+            # unconditionally to have data saved.
+            self._getdata_job_tag(tag) 
+            self._getfiles_job_tag(tag)
         if debug:
             print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
 
@@ -1315,6 +1522,8 @@ class SubversionPoller(object):
             elif qstat_parser == "sge":
                 self._query_job_queue_sge(row, status, force_updt)
         elif submit_mode == "ec2_controll":
+            pass
+        elif submit_mode == "ec2_compute":
             pass
         
 
@@ -1537,6 +1746,8 @@ class SubversionPoller(object):
         # first load job_out info
         start_time = self.jobs_running.get_val(row, "start_time")
         job_out_file = self.jobs_running.get_val(row, "job_out_file")
+        job_no = self.jobs_running.get_val(row, "job_no") 
+        job_no_split = job_no.split(".")
         tag = self.jobs_running.get_val(row, "tag")
 
         # datetime.strptime is only in 2.5
@@ -1554,6 +1765,23 @@ class SubversionPoller(object):
             all_files = self._get_dat_files(tag)
             self.jobs_running.set_val(row, "dat_files", all_files[0])
             self.jobs_running.set_val(row, "other_files", all_files[1])
+        
+        if (submit_mode == "ec2_compute"):
+            print "Checking if job is done..."
+            # As we don't have a job scheduler, check if the jobs still are running, or if they terminated
+            
+            if len(job_no_split) < 2: 
+                # We don't have a PID for the job, so no way to check if it is still running or has terminated
+                # so assume it died before we were able to execute it. 
+                self._job_is_done(row, "KILLED") 
+            else: 
+                try:
+                    # Test if we can send a signal (null signal) to the process with PID
+                    # If we succeed, then the job is still running.
+                    os.kill(int(job_no_split[1]),0) 
+                except OSError:
+                    # The process is no longer running. Presume it completed and mark it as done.
+                    self._job_is_done(row, "DONE")
 
     def _update_running_jobs(self, force_updt = False):
         for filename in self.all_running_files:
