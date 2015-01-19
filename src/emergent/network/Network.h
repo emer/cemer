@@ -198,7 +198,7 @@ public:
     BUILD_INIT_WTS      = 0x0004, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
     BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
     INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
-    BUILT_INTACT        = BUILT | INTACT, // #NO_BIT built and intact
+    BUILT_INTACT        = BUILT | INTACT // #NO_BIT built and intact
   };
 
   enum NetTextLoc {
@@ -222,7 +222,7 @@ public:
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   Weights_List  weights;        // #CAT_Structure saved weights objects
 
-  NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
+  NetFlags      flags;          // #CAT_Structure #NO_SAVE flags controlling various aspects of network function
 
   TypeDef*      unit_vars_type; // #CAT_Structure #TYPE_UnitVars type of unit variables object to create in the network -- there can only be ONE type of UnitVars in the entire network, because it is allocated globally!
   TypeDef*      con_group_type; // #CAT_Structure #TYPE_ConGroup type of connection group objects to create in the network -- there can only be ONE type of ConGroup in the entire network, because it is allocated globally!
@@ -718,7 +718,7 @@ public:
   virtual void  SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
-  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+  // #BUTTON #MENU #EXT_wts #GHOST_OFF_flags:BUILT,INTACT #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  SaveToWeights(Weights* wts);
   // #BUTTON #MENU #NULL_OK #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
@@ -752,7 +752,7 @@ public:
     virtual void  Init_dWt_Thr(int thr_no);
     // #IGNORE
   virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+  // #BUTTON #MENU #CONFIRM #GHOST_OFF_flags:BUILT,INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
     virtual void  Init_Weights_Thr(int thr_no);
     // #IGNORE
     virtual void Init_Weights_sym(int thr_no);

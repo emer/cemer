@@ -330,6 +330,8 @@ void Network::UpdateAfterEdit_impl(){
     if(taMisc::loading_version < v704) { // default prior to 704 is to build
       SetNetFlag(BUILD_INIT_WTS);
     }
+    ClearNetFlag(BUILT);
+    ClearNetFlag(INTACT);
   }
   else {
     if(brain_atlas)
