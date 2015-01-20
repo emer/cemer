@@ -22,7 +22,6 @@
 
 #include <tabMisc>
 #include <taMisc>
-#include <iDialogColorChooser>
 
 TA_BASEFUNS_CTORS_DEFN(Projection);
 
