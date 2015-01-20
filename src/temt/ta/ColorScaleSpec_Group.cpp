@@ -139,50 +139,30 @@ void ColorScaleSpec_Group::NewDefaults() {
   cs->background.UpdateAfterEdit_NoGui();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "P_DarkLight";
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
-  cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-
-  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "P_DarkLight_brite";
+  cs->name = "C_DarkLight_brite";
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(.3f, .3f, .3f));
   cs->clr.Add(new RGBA(.6f, .6f, .6f));
   cs->clr.Add(new RGBA(.8f, .8f, .8f));
   cs->clr.Add(new RGBA(1, 1, 1));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
+  cs->background.name = "grey80";
+  cs->background.UpdateAfterEdit_NoGui();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "P_LightDark";
+  cs->name = "C_DarkLightDark";
+  cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
+  cs->background.name = "grey80";
+  cs->background.UpdateAfterEdit_NoGui();
 
   cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "P_DarkLightDark";
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
-  cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
-  cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-
-  cs = (ColorScaleSpec*)NewEl(1, &TA_ColorScaleSpec);
-  cs->name = "P_LightDarkLight";
+  cs->name = "C_LightDarkLight";
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
   cs->clr.Add(new RGBA(0.0, 0.0, 0.0));
   cs->clr.Add(new RGBA(1.0, 1.0, 1.0));
-  cs->background.r = 1.0f;
-  cs->background.g = 1.0f;
-  cs->background.b = 1.0f;
-
+  cs->background.name = "grey80";
+  cs->background.UpdateAfterEdit_NoGui();
 }
 
 #define CSSMG_COLS 5
