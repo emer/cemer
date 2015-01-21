@@ -194,7 +194,8 @@ bool Projection::ChangeMyType(TypeDef* new_typ) {
   return inherited::ChangeMyType(new_typ);
 }
 
-DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
+DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
+                                      bool recv_wts) {
   if(!(bool)from) return NULL;
   Network* net = layer->own_net;
   bool new_table = false;
@@ -209,18 +210,39 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_) {
   String col_nm = col_nm_;
   if(col_nm.empty()) col_nm = from->name;
 
+  taVector2i log_pos;
   int idx;
-  DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
-                                      from->flat_geom.x, from->flat_geom.y);
+  if(recv_wts) {
+    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
+                                        from->flat_geom.x, from->flat_geom.y);
+    FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
+      ConGroup* cg = ru->RecvConGroupPrjn(this);
+      if(cg == NULL)
+        break;
+      dt->AddBlankRow();
+      int wi;
+      for(wi=0;wi<cg->size;wi++) {
+        Unit* ou = cg->Un(wi, net);
+        ou->LayerLogPos(log_pos);
+        scol->SetMatrixVal(cg->Cn(wi,ConGroup::WT,net), -1, log_pos.x, log_pos.y);
+      }
+    }
+  }
+  else {
+    DataCol* scol = dt->FindMakeColName(col_nm, idx, VT_FLOAT, 2,
+                                      layer->flat_geom.x, layer->flat_geom.y);
 
-  FOREACH_ELEM_IN_GROUP(Unit, ru, layer->units) {
-    ConGroup* cg = ru->FindRecvConGroupFrom(from);
-    if(cg == NULL)
-      break;
-    dt->AddBlankRow();
-    int wi;
-    for(wi=0;wi<cg->size;wi++) {
-      scol->SetValAsFloatM(cg->Cn(wi,ConGroup::WT,net), -1, wi);
+    FOREACH_ELEM_IN_GROUP(Unit, ru, from->units) {
+      ConGroup* cg = ru->SendConGroupPrjn(this);
+      if(cg == NULL)
+        break;
+      dt->AddBlankRow();
+      int wi;
+      for(wi=0;wi<cg->size;wi++) {
+        Unit* ou = cg->Un(wi, net);
+        ou->LayerLogPos(log_pos);
+        scol->SetMatrixVal(cg->Cn(wi,ConGroup::WT,net), -1, log_pos.x, log_pos.y);
+      }
     }
   }
   dt->StructUpdate(false);
