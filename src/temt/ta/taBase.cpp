@@ -1953,13 +1953,34 @@ void taBase::UpdateAfterEdit_NoGui() {
 }
 
 void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
-  if (handled) return; // note: really shouldn't have been handled already if we are called...
+  if (handled)
+    return; // note: really shouldn't have been handled already if we are called...
+  
+  bool child_deleted = false;
+  // Remove a couple of legacy colorscales and rename any starting with "P_"
+  if (child->GetTypeDef() == &TA_ColorScaleSpec) {
+    if (child->GetName().startsWith("P_")) {
+      String name = child->GetName();
+      if (name == "P_DarkLight" || name == "P_LightDark") {
+        ColorScaleSpec_Group* grp = dynamic_cast<ColorScaleSpec_Group*>(this);
+        grp->RemoveEl_(child);
+        child_deleted = true;
+      }
+      else {
+        name.repl("P_", "C_");
+        child->SetName(name);
+      }
+    }
+  }
+  
   // only notify and UAE if it is an owned member object (but not list/group items)
-  taBase* mo = child->GetMemberOwner(false);
-  if(mo == this) {
-    handled = true;
-    SigEmit(SLS_CHILD_ITEM_UPDATED); // this is trapped by some..
-    UpdateAfterEdit();          // if a child has been updated, we need to get parent notified.. -- if this has a parent, it will kick up to it too..
+  if (!child_deleted) {  // it may have been deleted in an upgrade - see above
+    taBase* mo = child->GetMemberOwner(false);
+    if(mo == this) {
+      handled = true;
+      SigEmit(SLS_CHILD_ITEM_UPDATED); // this is trapped by some..
+      UpdateAfterEdit();          // if a child has been updated, we need to get parent notified.. -- if this has a parent, it will kick up to it too..
+    }
   }
 }
 
