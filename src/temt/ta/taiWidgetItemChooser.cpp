@@ -21,6 +21,7 @@
 #include <QToolButton>
 #include <QTreeWidgetItem>
 
+#include <taMisc>
 #include <taiMisc>
 
 taiWidgetItemChooser::taiWidgetItemChooser(TypeDef* typ_,
@@ -174,6 +175,12 @@ bool taiWidgetItemChooser::OpenChooser() {
   }
   delete ic;
   // return focus to rep and window
+
+  if (!rep()) {
+    taMisc::DebugInfo("m_but is null - please add comment on how to reproduce this problem to bug 2187");
+    return false;
+  }
+  
   rep()->window()->setFocus();
   rep()->setFocus();
   return rval;
