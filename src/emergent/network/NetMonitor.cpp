@@ -128,7 +128,7 @@ NetMonItem* NetMonitor::AddObject(taBase* obj, const String& variable) {
 }
 
 NetMonItem* NetMonitor::AddNetMax() {
-  NetMonItem* nmi = AddObject(network, "avg_netin.max");
+  NetMonItem* nmi = AddObject(network, "layers.avg_netin.max");
   nmi->var_label = "netmax";
   nmi->UpdateAfterEdit();
   return nmi;
@@ -142,7 +142,7 @@ NetMonItem* NetMonitor::AddNetRel() {
 }
 
 NetMonItem* NetMonitor::AddLayActAvg() {
-  NetMonItem* nmi = AddObject(network, "acts_p_avg");
+  NetMonItem* nmi = AddObject(network, "layers.acts_p_avg");
   nmi->var_label = "avg_act";
   nmi->UpdateAfterEdit();
   return nmi;

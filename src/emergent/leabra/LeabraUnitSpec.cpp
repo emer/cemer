@@ -778,7 +778,7 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   }
   else {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    float eff_dt = act_avg.l_dn_dt * lay->acts_p_avg_eff;
+    float eff_dt = act_avg.l_dn_dt * lay->acts_p_avg;  // lay->acts_p_avg_eff;
     u->avg_l += eff_dt * (lval - u->avg_l); // mult down
   }
 }
