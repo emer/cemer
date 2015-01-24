@@ -1074,6 +1074,8 @@ void NetView::Render_pre() {
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
 
+  scale.SetColorSpec(scale.spec);  // Call set to force the saved color to be restored
+
   if(vw && vw->interactionModeOn()) {
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);

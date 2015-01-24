@@ -367,6 +367,7 @@ void GridTableView::Render_pre() {
     node_so()->addChild(ecb);
   }
 
+  colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
   UpdatePanel();                // otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
 }

@@ -659,6 +659,8 @@ void GraphTableView::Render_pre() {
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), GraphTableView_MouseCB, this);
   node_so()->addChild(ecb);
+  
+  colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
 
   inherited::Render_pre();
 }
