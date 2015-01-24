@@ -1060,6 +1060,9 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DELETE, QKeySequence(control_key + Qt::Key_D));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence("F3"));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP, QKeySequence("F8"));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE, QKeySequence("F9"));
+  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP, QKeySequence("F10"));
 
 #ifdef TA_OS_MAC
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY, QKeySequence(meta_key + Qt::Key_1));
@@ -1093,7 +1096,7 @@ void taiMisc::LoadDefaultKeyBindings() {
 #else
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_LEFT_II, QKeySequence(Qt::AltModifier + Qt::Key_J));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + Qt::Key_L));
-#endif
+#endif  
   
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP, QKeySequence(meta_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_UNDO, QKeySequence(control_key + Qt::Key_C));

@@ -678,7 +678,7 @@ void iMainWindowViewer::Constr_EditMenu()
 
 void iMainWindowViewer::Constr_ViewMenu()
 {
-  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(0);
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
 
   viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
   viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
@@ -793,21 +793,23 @@ void iMainWindowViewer::Constr_WindowMenu()
 
 void iMainWindowViewer::Constr_ControlMenu()
 {
-  ctrlStopAction = AddAction(new iAction("Stop", QKeySequence(), "ctrlStopAction"));
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+
+  ctrlStopAction = AddAction(new iAction("Stop", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP)), "ctrlStopAction"));
   ctrlStopAction->setIcon(QIcon(QPixmap(":/images/stop_icon.png")));
   ctrlStopAction->setToolTip(taiMisc::ToolTipPreProcess("Stop: stop whatever program is currently running -- execution can be resumed with the Cont continue button."));
 
-  ctrlContAction = AddAction(new iAction("Cont", QKeySequence(), "ctrlContAction"));
+  ctrlContAction = AddAction(new iAction("Cont", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE)), "ctrlContAction"));
   ctrlContAction->setIcon(QIcon(QPixmap(":/images/play_icon.png")));
   ctrlContAction->setToolTip(taiMisc::ToolTipPreProcess("Continue: continue running the last program that was run, from wherever it was last stopped"));
   
-  ctrlStepAction = AddAction(new iAction("Step", QKeySequence(), "ctrlStepAction"));
+  ctrlStepAction = AddAction(new iAction("Step", QKeySequence(bindings->KeySequence(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP)), "ctrlStepAction"));
   ctrlStepAction->setIcon(QIcon(QPixmap(":/images/step_icon.png")));
   ctrlStepAction->setToolTip(taiMisc::ToolTipPreProcess("Step: Step again"));
   
   progStatusAction = AddAction(new iAction("Program Status", QKeySequence(), "progStatusAction"));
   progStatusAction->setToolTip(taiMisc::ToolTipPreProcess("Current Program status -- click button to see the current Global Backtrace of programs run"));
-
+  
   // Build menu items.
   ctrlMenu->AddAction(ctrlStopAction);
   ctrlMenu->AddAction(ctrlContAction);
