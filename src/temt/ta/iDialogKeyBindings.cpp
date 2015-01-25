@@ -160,7 +160,7 @@ void iDialogKeyBindings::accept() {
 #if (QT_VERSION >= 0x050200)
   String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
   QFile file(filename);
-  if (!file.open(QIODevice::WriteOnly)) {
+  if (!file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
     return;
   }
   QDataStream out(&file);

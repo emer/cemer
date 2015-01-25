@@ -1098,6 +1098,8 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_FRAME_RIGHT_II, QKeySequence(Qt::AltModifier + Qt::Key_L));
 #endif  
   
+//  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_XYZ, QKeySequence(Qt::Key_Question));
+
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_STOP, QKeySequence(meta_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_UNDO, QKeySequence(control_key + Qt::Key_C));
   default_list->Add(taiMisc::CONSOLE_CONTEXT, taiMisc::CONSOLE_CLEAR, QKeySequence(control_key + Qt::Key_Period));
@@ -1237,6 +1239,7 @@ void taiMisc::LoadCustomKeyBindings() {
     DefaultCustomKeyBindings();  // create the default custom key bindings file (file in prefs dir)
   }
   if (!in_file.open(QIODevice::ReadOnly)) {
+    taMisc::Info("Unable to load custom key bindings");
     return;
   }
   
@@ -1252,7 +1255,7 @@ void taiMisc::LoadCustomKeyBindings() {
   for (int i=0; i<taiMisc::ACTION_COUNT; i++) {
     in >> context >> action >> ks;
     int context_val = TA_taiMisc.GetEnumVal((String)context, enum_tp_nm);
-    int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);    
+    int action_val = TA_taiMisc.GetEnumVal((String)action, enum_tp_nm);
     bindings->Add(static_cast<taiMisc::BindingContext>(context_val), static_cast<taiMisc::BoundAction>(action_val), ks);
   }
 }
@@ -1260,7 +1263,7 @@ void taiMisc::LoadCustomKeyBindings() {
 void taiMisc::DefaultCustomKeyBindings() {
   String filename = taMisc::GetCustomKeyFilename();
   QFile file(filename);
-  if (!file.open(QIODevice::WriteOnly)) {
+  if (!file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
     return;
   }
   QDataStream out(&file);
@@ -1308,8 +1311,7 @@ void taiMisc::UpdateCustomKeyBindings() {
         KeyActionPair* pair = &default_pairs->SafeEl(i);
         if (custom_pairs->FindAction(pair->action) == -1) { // if pairing not found
           custom_bindings->Add(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence(pair->key_sequence));
-          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));
-          taMisc::DebugInfo("add", action_str);
+//          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
         }
       }
     }
@@ -1318,12 +1320,11 @@ void taiMisc::UpdateCustomKeyBindings() {
     for (int ctxt=0; ctxt<context_count; ctxt++) {
       KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
       KeyActionPair_PArray* custom_pairs = custom_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
-      for (int i=0; i<custom_pairs->size; i++) {
+      for (int i=custom_pairs->size-1; i>=0; i--) {  // start at end of list
         KeyActionPair* pair = &custom_pairs->SafeEl(i);
         if (default_pairs->FindAction(pair->action) == -1) { // if pairing not found
+//          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));  // for debug
           custom_bindings->Remove(static_cast<taiMisc::BindingContext>(ctxt), pair->action, QKeySequence());  // just check action
-          String action_str = TA_taiMisc.GetEnumString("BoundAction", static_cast<int>(pair->action));
-          taMisc::DebugInfo("remove", action_str);
         }
       }
     }
@@ -1334,7 +1335,7 @@ void taiMisc::UpdateCustomKeyBindings() {
 void taiMisc::SaveCustomKeyBindings() {
   String filename = taMisc::prefs_dir + PATH_SEP + "custom_keys";
   QFile file(filename);
-  if (!file.open(QIODevice::WriteOnly)) {
+  if (!file.open(QIODevice::Truncate | QIODevice::WriteOnly)) {
     return;
   }
   QDataStream out(&file);
