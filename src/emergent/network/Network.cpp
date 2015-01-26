@@ -2418,11 +2418,13 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
     }
   }
   timer1e = MPI_Wtime();
-  if (this_proc == 0) {
-      printf("P%i: Computing MPI dmem after %fs resulting in %.1f%% time spent in syncing: Transmitted %i Mb in %fs / %fs = %.1f %.2fGbit/s\n", this_proc,
-             (timer1s - timerabs), ((timer1e-timer1s)/(timer1s - timerabs)) * 100.0,
-             (cidx*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
-             ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (cidx*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
+  if (false && this_proc == 0) {
+    // todo: best to just add stats params to Network object to record this, which can
+    // then be logged -- print statements go into .out file of jobs and clutter that massively
+    printf("P%i: Computing MPI dmem after %fs resulting in %.1f%% time spent in syncing: Transmitted %i Mb in %fs / %fs = %.1f %.2fGbit/s\n", this_proc,
+           (timer1s - timerabs), ((timer1e-timer1s)/(timer1s - timerabs)) * 100.0,
+           (cidx*sizeof(float)/1024/1024), (timer2e - timer2s), (timer1e - timer1s),
+           ((timer2e-timer2s)/(timer1e - timer1s)*100.0), (cidx*sizeof(float)*8.0/(timer2e-timer2s)/1024.0/1024.0/1024.0));
   }
   timerabs = timer1s;
   wt_sync_time.EndTimer();
