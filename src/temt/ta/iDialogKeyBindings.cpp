@@ -21,6 +21,7 @@
 #include <EnumSpace>
 #include <TypeDef>
 #include <KeyBindings>
+#include <KeyBindings_List>
 
 #include <QVBoxLayout>
 #include <QGridLayout>
@@ -93,7 +94,7 @@ void iDialogKeyBindings::Constr() {
   body_box->setLayout(body_layout);
   
   String filename = taMisc::GetCustomKeyFilename();  // this file contains the current user set bindings
-
+  KeyBindings* default_bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::KEY_BINDINGS_DEFAULT));
   taMisc::KeyBindingSet current_key_set = taMisc::current_key_bindings;
   taMisc::SetKeyBindingSet(taMisc::KEY_BINDINGS_CUSTOM);
 
@@ -129,6 +130,17 @@ void iDialogKeyBindings::Constr() {
         taiMisc::BoundAction current_action = taiMisc::BoundAction(i);
         QKeySequence key_seq = taiMisc::GetSequenceFromAction(current_context, current_action);
         QKeySequenceEdit* edit = new QKeySequenceEdit(key_seq);
+        
+        // if different from default - highlight - would be nice if it also worked when you edit, probably need to subclass QKeySequenceEdit
+        KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
+        QKeySequence default_key_seq = default_pairs->GetKeySequence(current_action);
+        if (key_seq.matches(default_key_seq) == 0) {
+            edit->setStyleSheet("background-color:yellow;");
+        }
+        else {
+          edit->setStyleSheet("background-color:white;");
+        }
+        
         // get the most readable form of the key sequence
         String key_seq_str = taiMisc::GetSequenceFromActionFriendly(current_context, current_action);
         action->setToolTip("Default: " + key_seq_str);
