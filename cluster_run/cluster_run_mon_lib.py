@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -368,7 +368,7 @@ class DataTable(object):
             if t == DataTable.ColumnType.INT: return int(v)
             if t == DataTable.ColumnType.FLOAT: return float(v)
         except:
-            print 'Value [%s] and type %s mismatch.' % (v, t)
+            logging.error('Value [%s] and type %s mismatch.' % (v, t))
             return False
     
     # PRIVATE METHODS
@@ -382,7 +382,7 @@ class DataTable(object):
         elif col_type is DataTable.ColumnType.FLOAT:
             encoded_val = val
         else:
-            print "Column type '%s' is not supported and cannot be encoded." % col_type
+            logging.error("Column type '%s' is not supported and cannot be encoded." % col_type)
             return False
             
         return encoded_val
@@ -397,7 +397,7 @@ class DataTable(object):
         elif col_type is DataTable.ColumnType.FLOAT:
             decoded_val = val
         else:
-            print "Column type '%s' is not supported and cannot be decoded." % col_type
+            logging.error("Column type '%s' is not supported and cannot be decoded." % col_type)
             return False                    
         return decoded_val
             
@@ -411,7 +411,7 @@ class DataTable(object):
         elif col_type is DataTable.ColumnType.FLOAT:
             val = float(0)
         else:
-            print "Column type '%s' is not supported and cannot be blank." % col_type
+            logging.error("Column type '%s' is not supported and cannot be blank." % col_type)
             return False
         return val
     
@@ -500,7 +500,7 @@ class DataTable(object):
         try:
             del self._rows[row_num]
         except:
-            print "remove_row: Row number %d doesn't exist" % row_num
+            logging.warning("remove_row: Row number %d doesn't exist" % row_num)
     
     # returns the data section (rows) of the data table
     # output: list, list of rows
@@ -512,7 +512,7 @@ class DataTable(object):
         try:
             return self._header[idx]['type']
         except:
-            print "Column index %s is out of range." % idx
+            logging.warning("Column index %s is out of range." % idx)
             return False
     
     # returns the name of a column given its index
@@ -520,7 +520,7 @@ class DataTable(object):
         try:
             return self._header[idx]['name']
         except:
-            print "Column index %s is out of range." % idx
+            logging.warning("Column index %s is out of range." % idx)
             return False
     
     # returns the index of a column given its name  
@@ -528,7 +528,7 @@ class DataTable(object):
         for i in range(len(self._header)):
             if self.get_col_name(i) == col_name:
                 return i
-        print "Column '%s' doesn't exist." % col_name
+        logging.warning("Column '%s' doesn't exist." % col_name)
         return False
 
     # adds a new column to the data table in memory
@@ -539,7 +539,7 @@ class DataTable(object):
                 r.append('')
             return True
         else:
-            print "Column '%s' (%s) already exists." % (col_name, col_type)
+            logging.warning("Column '%s' (%s) already exists." % (col_name, col_type))
             return False   
     
     # validates a value with regard to a column
@@ -562,7 +562,7 @@ class DataTable(object):
             row = self._rows[row_num]
             str_val = row[col_idx]
         except:
-            print "No cell found under column '%s' at row number %s." % (col_name, row_num)
+            logging.warning("No cell found under column '%s' at row number %s." % (col_name, row_num))
             return False
         
         return self.get_typed_val(str_val, self.get_col_type(col_idx))
@@ -578,10 +578,10 @@ class DataTable(object):
                 self._rows[row_num][col_idx] = str(val)
                 return True
             except:
-                print "Row number %s doesn't exist, col_idx: %s." % (row_num, col_idx)
+                logging.warning("Row number %s doesn't exist, col_idx: %s." % (row_num, col_idx))
                 return False
         else:
-            print "Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx)
+            logging.warning("Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx))
             return False
         
     # find the (first) index of item incol name (-1 if not found)
@@ -597,7 +597,7 @@ class DataTable(object):
                     return i
             return -1    # not found
         else:
-            print "Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx)
+            logging.warning("Col named %s doesn't exist, col_idx: %s." % (col_name, col_idx))
         return -1
 
     def set_header(self, header):
@@ -734,7 +734,7 @@ class SubversionPoller(object):
 
     def _get_all_submit_files(self):
         submit_files = []
-        print "Trying to get all submit files on startup"
+        logging.info("Trying to get all submit files on startup")
         print "Base repo dir: " + self.repo_dir
         for f in os.listdir(self.repo_dir):
             #print "Working through: " + f
@@ -775,8 +775,8 @@ class SubversionPoller(object):
     def poll(self, nohup_file=''):
         # Enter the loop to check for updates to job submission files
         # and to query the job scheduler regarding submitted jobs.
-        print '\nPolling the Subversion server every %d seconds ' \
-              '(hit Ctrl-C to quit) ...' % self.delay
+        logging.info('\nPolling the Subversion server every %d seconds ' \
+              '(hit Ctrl-C to quit) ...' % self.delay)
         
         if (submit_mode == "ec2_compute"):
             # When running on a dynamic cloud computing cluster, rather than a static cluster, we are booting up the
@@ -788,7 +788,7 @@ class SubversionPoller(object):
             sub_files = self._get_all_submit_files(); 
             for filename in sub_files: 
                 if debug: 
-                    print '\nProcessing %s' % filename 
+                    logging.info('\nProcessing %s' % filename) 
                 self._process_new_submission(filename) 
         
         while True:
@@ -814,7 +814,7 @@ class SubversionPoller(object):
             #    will be added to the self.all_submit_files set.
             for filename in sub_files:
                 if debug:
-                    print '\nProcessing %s' % filename
+                    logging.info('\nProcessing %s' % filename)
                 self._process_new_submission(filename)
 
             # Remaining steps are done on *all* running files seen so far.
@@ -937,15 +937,15 @@ class SubversionPoller(object):
         if os.path.exists(self.cur_running_file): # Load running into current
             self.jobs_running.load_from_file(self.cur_running_file)
         else:
-            print "ERROR: jobs running file should exist at this point! %s" % self.cur_running_file
+            logging.error("ERROR: jobs running file should exist at this point! %s" % self.cur_running_file)
         if os.path.exists(self.cur_done_file):    # Load done into current
             self.jobs_done.load_from_file(self.cur_done_file)
         else:
-            print "ERROR: jobs done file should exist at this point! %s" % self.cur_done_file
+            logging.error("ERROR: jobs done file should exist at this point! %s" % self.cur_done_file)
         if os.path.exists(self.cur_archive_file):    # Load done into current
             self.jobs_archive.load_from_file(self.cur_archive_file)
         else:
-            print "ERROR: jobs archive file should exist at this point! %s" % self.cur_archive_file
+            logging.error("ERROR: jobs archive file should exist at this point! %s" % self.cur_archive_file)
 
     def _save_cur_files(self):
         self.jobs_running.write(self.cur_running_file)
@@ -977,7 +977,7 @@ class SubversionPoller(object):
     def _init_jobs_running(self):
         if os.path.exists(self.cur_running_file):
             if debug:
-                print "loading existing running file: %s" % self.cur_running_file
+                logging.info("loading existing running file: %s" % self.cur_running_file)
             self.jobs_running.load_from_file(self.cur_running_file)
         else:
             # create new and save and add to svn
@@ -989,7 +989,7 @@ class SubversionPoller(object):
     def _init_jobs_done(self):
         if os.path.exists(self.cur_done_file):
             if debug:
-                print "loading existing done file: %s" % self.cur_done_file
+                logging.info("loading existing done file: %s" % self.cur_done_file)
             self.jobs_done.load_from_file(self.cur_done_file)
         else:
             # create new and save and add to svn
@@ -1001,7 +1001,7 @@ class SubversionPoller(object):
     def _init_jobs_archive(self):
         if os.path.exists(self.cur_archive_file):
             if debug:
-                print "loading existing archive file: %s" % self.cur_archive_file
+                logging.info("loading existing archive file: %s" % self.cur_archive_file)
             self.jobs_archive.load_from_file(self.cur_archive_file)
         else:
             # create new and save and add to svn
@@ -1076,6 +1076,7 @@ class SubversionPoller(object):
         self._save_cur_files()
 
     def _choose_ec2_instance_type (self, cpus, memory, mpi):
+        # return "t2.micro"
         instance_types = json.loads(ec2_instances)
         for i in range(0, len(instance_types["instances"])):
         	if instance_types["instances"][i]["cpus"] > cpus:
@@ -1086,7 +1087,7 @@ class SubversionPoller(object):
     
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
-            print "\nNo project file was submitted along with job submit commit -- unable to run"
+            logging.error("\nNo project file was submitted along with job submit commit -- unable to run")
             return
         if (submit_mode == "cluster"):
             self._start_job_cluster(filename, rev, row);
@@ -1140,28 +1141,32 @@ class SubversionPoller(object):
             print "Mpi_nodes: " + str(mpi_nodes)
             ec2launch = "ec2-run-instances " + ec2_ami + " -n " + str(mpi_nodes) + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
             ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
-            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key + " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']"); 
             
             cmdsub = ec2launch.split()
             print "cmd: " + str(cmdsub)
-            # result = check_output(cmdsub)
-            result = "RESERVATION r-a20b79ad843784070933\n"
-            result += "INSTANCE i-c42481ca ami-59174069 ip-172-31-6-243.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.243 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
-            result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal true\n"
-            result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
-            result += "GROUP sg-b8f680ddSSH-ucb\n"
-            result += "PRIVATEIPADDRESS 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal\n"
-            result += "INSTANCE i-c42481cb ami-59174069 ip-172-31-6-244.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.244 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
-            result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal true\n"
-            result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
-            result += "GROUP sg-b8f680ddSSH-ucb\n"
-            result += "PRIVATEIPADDRESS 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal\n"
+            result = check_output(cmdsub)
+            # result = "RESERVATION r-a20b79ad843784070933\n"
+            #result += "INSTANCE i-c42481ca ami-59174069 ip-172-31-6-243.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.243 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
+            # result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal true\n"
+            # result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
+            # result += "GROUP sg-b8f680ddSSH-ucb\n"
+            # result += "PRIVATEIPADDRESS 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal\n"
+            # result += "INSTANCE i-c42481cb ami-59174069 ip-172-31-6-244.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.244 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
+            # result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal true\n"
+            # result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
+            # result += "GROUP sg-b8f680ddSSH-ucb\n"
+            # result += "PRIVATEIPADDRESS 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal\n"
+
+            #result = "INSTANCE i-d617b7d8 ami-12334"
             print result
         
             instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
             instance = instancere.search(result)
+            print instance
             status_info = instance.group(1)
             job_no = instance.group(1) + "_" + str(random.getrandbits(32))
+            print job_no
             
             status = "SUBMITTED"
 
@@ -1264,7 +1269,7 @@ class SubversionPoller(object):
         
     def _launch_ec2_job(self, row, filename):
  
-        print "file name: " + filename
+        logging.warning("file name: " + filename)
         parsere = re.compile("(.*/(.*?)/)submit/jobs_running.dat")
         projre = parsere.match(filename)
         self.cur_proj_file = projre.group(1) + "models/"  + projre.group(2) + ".proj"
@@ -1297,8 +1302,52 @@ class SubversionPoller(object):
             print "Non MPI mode"
             #Nothing to do here.
         else:
-            print "We don't yet support submitting MPI"
+            logging.info( "Working out the nodes on which to run MPI")
+
+            cmd = "mpirun -np " + str(mpi_nodes) + " -machinefile /tmp/machinefile." + str(job_no) + " " + cmd
+
+            cmdsub = cmd.split()
             
+            # Check if we have an EC2 api key and user?
+            try:
+                ec2_api_key
+            except:
+                ec2_api_key = ""
+            if len(ec2_api_key) == 0:
+                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
+                user_data = ast.literal_eval(base64.b64decode(user_data_str))
+                ec2_api_user = user_data[0]
+                ec2_api_key = user_data[1]
+                ec2_region = user_data[2]
+                print user_data
+                
+
+            # Get our EC2 registration id, to query all instances launched in this reservation request
+            # As these are the ones we want to group together into MPI network
+            res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
+
+            ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
+
+            cmdsub2 = ec2getinstances.split()
+            logging.info("Getting relevant instances cmd: " + str(cmdsub2))
+            result = check_output(cmdsub2)
+            
+            logging.info(result)
+            
+            ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
+            logging.info("IP: " + str(ipaddressres))
+
+            machinefile = open("/tmp/machinefile." + str(job_no), 'w')
+            for machine in ipaddressres:
+                machinefile.write(machine + "\n")
+                accept_host_key = "ssh-keyscan " + machine + " >> ~/.ssh/known_hosts"
+                os.system(accept_host_key)
+                probe_ssh = "ssh " + machine + " -C echo"
+                logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
+                if (os.system(probe_ssh) != 0):
+                    logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
+                    return
+                                                                                                                                        
 
         # if pb, put a wrapper on it!
         #if pb_batches > 0 and pb_nodes > 0:
@@ -1311,7 +1360,7 @@ class SubversionPoller(object):
         job_out_file = "/tmp/JOB." + job_no + ".out"
         job_err_file = "/tmp/JOB." + job_no + ".err"
  
-        print "Cmd to execute: " + str(cmdsub)
+        logging.info("Cmd to execute: " + str(cmdsub))
         pid = subprocess.Popen(cmdsub, stdout=open(job_out_file,"w"), stderr=open(job_err_file,"w")).pid
         job_no = job_no + "." + str(pid)
         
@@ -1512,7 +1561,7 @@ class SubversionPoller(object):
             self._getdata_job_tag(tag) 
             self._getfiles_job_tag(tag)
         if debug:
-            print "job: %s ended with status: %s at time: %s" % (tag, status, end_time)
+            logging.info("job: %s ended with status: %s at time: %s" % (tag, status, end_time))
 
 
     def _query_job_queue(self, row, status, force_updt = False):
@@ -2040,7 +2089,7 @@ class SubversionPoller(object):
 nohup_filename = 'nohup_running_cluster_run_mon.txt'
 
 def main():
-    
+    logging.basicConfig(level=logging.DEBUG)
     # Delete the nohup file, if it exists.
     if os.path.isfile(nohup_filename):
         print 'Removing nohup file: %s' % nohup_filename
@@ -2089,7 +2138,8 @@ def main():
         poller.poll() # Infinite loop.
 
 def main_background():
-    print '\nStarting background run at %s' % datetime.now()
+    logging.basicConfig(filename='/tmp/emergent_poller.log',level=logging.DEBUG)
+    logging.info('\nStarting background run at %s' % datetime.now())
 
     username    = sys.argv[1]
     repo_dir    = sys.argv[2]
@@ -2105,6 +2155,6 @@ def main_background():
         pass
     poller.poll(nohup_filename) # Infinite loop.
 
-    print '\nStopping background run at %s' % datetime.now()
+    logging.warning('\nStopping background run at %s' % datetime.now())
 
 #############################################################################
