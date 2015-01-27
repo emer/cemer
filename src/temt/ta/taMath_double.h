@@ -466,8 +466,8 @@ public:
   static double vec_correl(const double_Matrix* vec, const double_Matrix* oth_vec);
   // #CAT_Distance compute the correlation of this vector with the oth vector
   static double vec_inner_prod(const double_Matrix* vec, const double_Matrix* oth_vec,
-                               bool norm = false);
-  // #CAT_Distance compute the inner product of this vector and the oth vector
+                               bool norm = false, bool zero_mean = false);
+  // #CAT_Distance compute the inner product of this vector and the oth vector, optionally with normalization and/or zeroing the means of the vectors
   static double vec_cross_entropy(const double_Matrix* vec, const double_Matrix* oth_vec);
   // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
   static double vec_dist(const double_Matrix* vec, const double_Matrix* oth_vec,
@@ -484,6 +484,8 @@ public:
   // #CAT_Norm normalize vector to total given length (1.0), returns scaling factor
   static double vec_norm_sum(double_Matrix* vec, double sum=1.0, double min_val=0.0);
   // #CAT_Norm normalize vector to total given sum (1.0) and min_val (0), returns scaling factor
+  static double vec_norm_mean(double_Matrix* vec, double trg_mean=0.0);
+  // #CAT_Norm normalize vector to given mean value by adding (trg_mean - mean) to each element -- returns normalizing factor
   static double vec_norm_max(double_Matrix* vec, double max=1.0);
   // #CAT_Norm normalize vector to given maximum value, returns scaling factor
   static double vec_norm_abs_max(double_Matrix* vec, double max=1.0);

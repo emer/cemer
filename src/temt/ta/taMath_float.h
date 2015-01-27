@@ -453,8 +453,8 @@ public:
   static float  vec_correl(const float_Matrix* vec, const float_Matrix* oth_vec);
   // #CAT_Distance compute the correlation of this vector with the oth vector
   static float  vec_inner_prod(const float_Matrix* vec, const float_Matrix* oth_vec,
-                               bool norm = false);
-  // #CAT_Distance compute the inner product of this vector and the oth vector
+                               bool norm = false, bool zero_mean = false);
+  // #CAT_Distance compute the inner product of this vector and the oth vector, optionally with normalization and/or zeroing the means of the vectors
   static float  vec_cross_entropy(const float_Matrix* vec, const float_Matrix* oth_vec);
   // #CAT_Distance compute cross entropy between this and other vector, this is 'p' other is 'q'
   static float  vec_dist(const float_Matrix* vec, const float_Matrix* oth_vec,
@@ -471,6 +471,8 @@ public:
   // #CAT_Norm normalize vector to total given length (1.0), returns scaling factor
   static float  vec_norm_sum(float_Matrix* vec, float sum=1.0f, float min_val=0.0f);
   // #CAT_Norm normalize vector to total given sum (1.0) and min_val (0), returns scaling factor
+  static float vec_norm_mean(float_Matrix* vec, float trg_mean=0.0);
+  // #CAT_Norm normalize vector to given mean value by adding (trg_mean - mean) to each element -- returns normalizing factor
   static float  vec_norm_max(float_Matrix* vec, float max=1.0f);
   // #CAT_Norm normalize vector to given maximum value, returns scaling factor
   static float  vec_norm_abs_max(float_Matrix* vec, float max=1.0f);

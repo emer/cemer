@@ -1809,9 +1809,22 @@ double taMath_double::vec_correl(const double_Matrix* vec, const double_Matrix* 
     return 0.0;
 }
 
-double taMath_double::vec_inner_prod(const double_Matrix* vec, const double_Matrix* oth, bool norm) {
+double taMath_double::vec_inner_prod(const double_Matrix* vec, const double_Matrix* oth,
+                                     bool norm, bool zero_mean) {
   if(!vec_check_same_size(vec, oth)) return -1.0;
   double rval = 0.0;
+
+  double_Matrix vecn;
+  double_Matrix othn;
+  if(zero_mean) {
+    vecn = *vec;
+    othn = *oth;
+    vec = &vecn;
+    oth = &othn;
+    vec_norm_mean((double_Matrix*)vec, 0.0);
+    vec_norm_mean((double_Matrix*)oth, 0.0);
+  }    
+  
   TA_FOREACH_INDEX_TWO(ai, *vec, bi, *oth) {
     if(FOREACH_itr_b.Done()) bi = oth->IterFirstIndex(FOREACH_itr_b); // start over
     rval += vec->FastEl_Flat(ai) * oth->FastEl_Flat(bi);
@@ -1952,6 +1965,24 @@ double taMath_double::vec_norm_sum(double_Matrix* vec, double sum, double min_va
     }
   }
   return scale;
+}
+
+double taMath_double::vec_norm_mean(double_Matrix* vec, double trg_mean) {
+  if(!vec_check_type(vec)) return 0.0;
+  if(vec->size == 0)    return 0.0;
+  double act_mean = vec_mean(vec);
+  double fact = trg_mean - act_mean;
+  if(vec->ElView()) {
+    TA_FOREACH_INDEX(i, *vec) {
+      vec->FastEl_Flat(i) += fact;
+    }
+  }
+  else { // optimized
+    for(int i=0; i<vec->size; i++) {
+      vec->FastEl_Flat(i) += fact;
+    }
+  }
+  return fact;
 }
 
 double taMath_double::vec_norm_max(double_Matrix* vec, double max) {
