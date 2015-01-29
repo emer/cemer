@@ -139,8 +139,10 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
             continue;
           }
         }
-        UnitGroupView* act_ugv = static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
+        UnitGroupView* act_ugv =
+          static_cast<UnitGroupView*>(((T3UnitGroupNode*)pobj)->dataView());
         Layer* lay = act_ugv->layer(); //cache
+        Network* net = lay->own_net;
         float disp_scale = lay->disp_scale;
         
         SbVec3f pt = pp->getObjectPoint(pobj);
@@ -149,13 +151,55 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           Unit* unit = lay->UnitAtDispCoord(xp, yp);
-          
-          if (unit) {
-            MemberDef* md = nv->unit_disp_md;
-            if (md) {
-              MemberDef* u_md = unit->FindMember(md->name);
-              if (u_md) {
-                nv->last_sel_unit_val = u_md->GetValStr((void*)unit);
+          if (unit && nv->unit_disp_md) {
+            if(nv->unit_con_md) {
+              // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
+              // todo: could perhaps put this in a common method or something..
+              bool check_prjn = (nv->prjn_starts_with.nonempty());
+              String sr = nv->unit_disp_md->name.before(".");
+              bool is_send = (sr == "s");
+              String nm = nv->unit_disp_md->name.after(".");
+              if (is_send) {
+                for(int g=0;g<unit->NRecvConGps();g++) {
+                  ConGroup* tcong = unit->RecvConGroup(g);
+                  if(check_prjn && tcong->prjn &&
+                     !tcong->prjn->name.startsWith(nv->prjn_starts_with))
+                    continue;
+                  MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+                  if (!act_md)  continue;
+                  int con = tcong->FindConFromIdx(nv->unit_src);
+                  if (con < 0) continue;
+                  // have to use safe b/c could be PtrCon and other side might be gone..
+                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net);
+                  break;                // once you've got one, done!
+                }
+              }
+              else {
+                for(int g=0;g<unit->NSendConGps();g++) {
+                  ConGroup* tcong = unit->SendConGroup(g);
+                  if(check_prjn && tcong->prjn && tcong->prjn->IsActive() &&
+                     !tcong->prjn->name.startsWith(nv->prjn_starts_with))
+                    continue;
+                  MemberDef* act_md = tcong->ConType()->members.FindName(nm);
+                  if (!act_md)  continue;
+                  int con = tcong->FindConFromIdx(nv->unit_src);
+                  if (con < 0) continue;
+                  // have to use safe b/c could be PtrCon and other side might be gone..
+                  nv->last_sel_unit_val = (String)tcong->SafeFastCn(con, act_md->idx, net);
+                  break;                // once you've got one, done!
+                }
+              }
+            }
+            else {
+              // see UnitGroupView::UpdateUnitViewBase_Unit_impl for relevant code
+              if(nv->unit_disp_md->name == "snap" || nv->unit_disp_md->name == "wt_prjn") {
+                nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)unit);
+              }
+              else {
+                UnitVars* uv = unit->GetUnitVars();
+                if(uv) {
+                  nv->last_sel_unit_val = nv->unit_disp_md->GetValStr((void*)uv);
+                }
               }
             }
           }
@@ -334,6 +378,7 @@ void NetView::Initialize() {
 
   unit_con_md = false;
   con_type = ANY_CON;
+  prjn_starts_with = "";
   unit_disp_md = NULL;
   unit_disp_idx = -1;
   n_counters = 0;
@@ -1570,6 +1615,24 @@ void NetView::setUnitDisp(int value) {
 }
 
 void NetView::setUnitDispMd(MemberDef* md) {
+  switch(con_type) {
+  case NetView::ANY_CON:
+    prjn_starts_with = "";
+    break;
+  case NetView::STD_CON:
+    prjn_starts_with = "Fm_";
+    break;
+  case NetView::CTXT_CON:
+    prjn_starts_with = "Ctxt_";
+    break;
+  case NetView::DEEP5B_CON:
+    prjn_starts_with = "Deep5b_";
+    break;
+  case NetView::MARKER_CON:
+    prjn_starts_with = "Marker_";
+    break;
+  }
+
   if(md == unit_disp_md) return;
   unit_disp_md = md;
   unit_disp_idx = membs.FindEl(md);

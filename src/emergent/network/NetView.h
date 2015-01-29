@@ -147,7 +147,7 @@ public:
   static NetView*       New(Network* net, T3Panel*& fr); // create a new instance and add to viewer
 
   bool                  display;        // whether to update the display when values change (under control of programs)
-  LayerLayout   	      lay_layout;     // how to display layers -- 2d or 3d
+  LayerLayout           lay_layout;     // how to display layers -- 2d or 3d
   bool                  lay_mv;         // whether to display layer move controls when the arrow button is pressed (can get in the way of viewing weights)
   bool                  net_text;       // whether to display text box below network with counters etc
   bool                  show_iconified; // show iconified layers -- otherwise they are removed entirely
@@ -161,6 +161,7 @@ public:
 
   bool                  unit_con_md;    // #NO_SAVE #NO_COPY #READ_ONLY true if memberdef is from a connection as opposed to a direct unit var
   ConType               con_type;       // what type of connections should be shown (where there are multiple connections between two units)
+  String                prjn_starts_with; // #NO_SAVE #NO_COPY #READ_ONLY based on the con_type setting, what the projection name should start with
   MemberDef*            unit_disp_md;   // #NO_SAVE #NO_COPY #READ_ONLY memberdef (if any) of Unit (or Connection) to display
   int                   unit_disp_idx;  // #NO_SAVE #NO_COPY #READ_ONLY index of memberdef (if any) of Unit (or Connection) to display
   int                   n_counters;     // #NO_SAVE #NO_COPY #READ_ONLY number of counter variables on the network object

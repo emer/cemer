@@ -81,8 +81,8 @@ protected:
   LayerView*            m_lv;
   void          UpdateUnitViewBase_Unit_impl(int midx, MemberDef* disp_md); // for unit members
   void          UpdateUnitViewBase_Sub_impl(int midx, MemberDef* disp_md); // for unit submembers
-  void          UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm,
-                                            Unit* src_u, int con_type);
+  void          UpdateUnitViewBase_Con_impl
+    (int midx, bool is_send, String nm, Unit* src_u, const String& prjn_starts_with);
   // for cons
   void         DoActionChildren_impl(DataViewAction acts) override;
   virtual void          Render_impl_children(); // #IGNORE we trap this in DoActionChildren

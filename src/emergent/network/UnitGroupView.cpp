@@ -181,7 +181,7 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
     }
     else if ((nm=="s") || (nm == "r")) {
       UpdateUnitViewBase_Con_impl(midx, (nm=="s"), disp_md->name.after('.'), src_u,
-                                  nv->con_type);
+                                  nv->prjn_starts_with);
     }
     else { // sub-member of unit -- not supported anymore!
       UpdateUnitViewBase_Sub_impl(midx, disp_md);
@@ -189,24 +189,9 @@ void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
   }
 }
 
-void UnitGroupView::UpdateUnitViewBase_Con_impl(int midx, bool is_send, String nm,
-                                                Unit* src_u, int con_type) {
+void UnitGroupView::UpdateUnitViewBase_Con_impl
+(int midx, bool is_send, String nm, Unit* src_u, const String& prjn_starts_with) {
   if(!src_u) return;
-  String prjn_starts_with;
-  switch(con_type) {
-  case NetView::STD_CON:
-    prjn_starts_with = "Fm_";
-    break;
-  case NetView::CTXT_CON:
-    prjn_starts_with = "Ctxt_";
-    break;
-  case NetView::DEEP5B_CON:
-    prjn_starts_with = "Deep5b_";
-    break;
-  case NetView::MARKER_CON:
-    prjn_starts_with = "Marker_";
-    break;
-  }
   bool check_prjn = (prjn_starts_with.nonempty());
     
   Layer* lay = this->layer(); //cache
