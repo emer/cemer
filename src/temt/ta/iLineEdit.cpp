@@ -185,56 +185,68 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
   
   switch (action) {
     case taiMisc::TEXTEDIT_START_SELECT:
+    case taiMisc::TEXTEDIT_START_SELECT_II:
       key_event->accept();
       deselect();
       ext_select_on = true;
       return;
     case taiMisc::TEXTEDIT_CLEAR_SELECTION:
+    case taiMisc::TEXTEDIT_CLEAR_SELECTION_II:
       key_event->accept();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_HOME:
+    case taiMisc::TEXTEDIT_HOME_II:
       key_event->accept();
       home(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_END:
+    case taiMisc::TEXTEDIT_END_II:
       key_event->accept();
       end(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_CURSOR_FORWARD:
+    case taiMisc::TEXTEDIT_CURSOR_FORWARD_II:
       key_event->accept();
       cursorForward(ext_select_on, 1);
       return;
     case taiMisc::TEXTEDIT_CURSOR_BACKWARD:
+    case taiMisc::TEXTEDIT_CURSOR_BACKWARD_II:
       key_event->accept();
       cursorBackward(ext_select_on, 1);
       return;
     case taiMisc::TEXTEDIT_DELETE:
+    case taiMisc::TEXTEDIT_DELETE_II:
       key_event->accept();
       del();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_BACKSPACE:
+    case taiMisc::TEXTEDIT_BACKSPACE_II:
       key_event->accept();
       backspace();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_DELETE_TO_END:
+    case taiMisc::TEXTEDIT_DELETE_TO_END_II:
       key_event->accept();
       end(true);                // mark
       cut();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_SELECT_ALL:
+    case taiMisc::TEXTEDIT_SELECT_ALL_II:
       key_event->accept();
       selectAll();
       return;
     case taiMisc::TEXTEDIT_PASTE:
+    case taiMisc::TEXTEDIT_PASTE_II:
       key_event->accept();
       paste();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_CUT:
+    case taiMisc::TEXTEDIT_CUT_II:
       key_event->accept();
       cut();
       clearExtSelection();
@@ -245,19 +257,23 @@ void iLineEdit::keyPressEvent(QKeyEvent* key_event)
       undo();
       return;
     case taiMisc::TEXTEDIT_COPY_CLEAR:
+    case taiMisc::TEXTEDIT_COPY_CLEAR_II:
       key_event->accept();
       copy();
       clearExtSelection();
       return;
     case taiMisc::TEXTEDIT_WORD_FORWARD:
+    case taiMisc::TEXTEDIT_WORD_FORWARD_II:
       key_event->accept();
       cursorWordForward(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_WORD_BACKWARD:
+    case taiMisc::TEXTEDIT_WORD_BACKWARD_II:
       key_event->accept();
       cursorWordBackward(ext_select_on);
       return;
     case taiMisc::TEXTEDIT_LOOKUP:
+    case taiMisc::TEXTEDIT_LOOKUP_II:
       key_event->accept();
       doLookup();
       return;

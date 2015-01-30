@@ -57,10 +57,12 @@ void iTabBarBase::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
   switch (action) {
     case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT_II: // switch tab
       selectPrevTab();
       key_event->accept();
       return;
     case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT_II: // switch tab
       selectNextTab();
       key_event->accept();
       return;

@@ -2177,19 +2177,23 @@ void iMainWindowViewer::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
   switch (action) {
     case taiMisc::PROJECTWINDOW_FRAME_LEFT: // move left between regions
+    case taiMisc::PROJECTWINDOW_FRAME_LEFT_II:
       MoveFocusLeft();
       key_event->accept();
       return;
     case taiMisc::PROJECTWINDOW_FRAME_RIGHT: // move right between regions
+    case taiMisc::PROJECTWINDOW_FRAME_RIGHT_II:
       MoveFocusRight();
       key_event->accept();
       return;
       // these need key bindings
     case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_LEFT_II:
       ShiftCurTabLeft();
       key_event->accept();
       return;
     case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT: // switch tab
+    case taiMisc::PROJECTWINDOW_SHIFT_TAB_RIGHT_II:
       ShiftCurTabRight();
       key_event->accept();
       return;
