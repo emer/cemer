@@ -280,6 +280,7 @@ void CIFERThalSpec::Defaults_init() {
 void CIFERDeep5bSpec::Initialize() {
   on = false;
   ti_rescale = true;
+  self_rescale = false;
   act5b_thr = 0.2f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
@@ -863,9 +864,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
                      !Quarter_Deep5bNow(net->quarter-1));
     d5b_turned_off = (net->quarter >= 1 && !Quarter_Deep5bNow(net->quarter) &&
                       Quarter_Deep5bNow(net->quarter-1));
-    if(cifer_d5b.ti_rescale) {
-      exclude_d5b = true;        // always exclude!
-    }
+    exclude_d5b = true;        // always exclude!
   }
 
   if(init_netin) {
@@ -914,7 +913,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     Projection* prjn = (Projection*) recv_gp->prjn;
     LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cs->inhib) {
+    if(cifer_d5b.on && cifer_d5b.self_rescale && prjn->from_type == Projection::SELF) {
+      if(d5b_turned_on)
+        recv_gp->scale_eff = 0.0f; // turn it off
+      else
+        recv_gp->scale_eff /= net_scale;
+    }
+    else if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
     }
