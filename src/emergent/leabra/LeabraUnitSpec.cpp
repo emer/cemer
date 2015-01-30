@@ -1261,7 +1261,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   //   act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
   // }
 
-  if(act_ts > opt_thresh.send) {
+  if(act_ts !=- 0.0f) {         // we send negative guys too!!
     float act_delta = act_ts - u->d5b_sent;
     if(fabsf(act_delta) > opt_thresh.delta) {
       const int nsg = u->NSendConGps(net, thr_no); 
@@ -1277,7 +1277,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
       u->d5b_sent = act_ts;     // cache the last sent value
     }
   }
-  else if(u->d5b_sent > opt_thresh.send) {
+  else if(u->d5b_sent != 0.0f) {
     float act_delta = - u->d5b_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {
@@ -1698,12 +1698,17 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       act5b = 0.0f;
     }
     u->deep5b = u->thal * act5b;  // thal is thresholded
-    if(cifer_d5b.zero_norm && u->deep5b == 0.0f) {
+    if(cifer_d5b.zero_norm && u->deep5b < cifer_d5b.act5b_thr) {
       LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-      // the following is a very rough approximation:
-      float n_zero_units = (float)lay->units.size * (1.0f - lay->acts_p_avg);
+      // zeros go to average, but there are fewer of them, so we upweight
+      // .5 .5 .5 .5 0 0 0 0 = .25 avg
+      // .5 .5 .5 .5 -.5 -.5 -.5 -.5 = 0 -- .25 / .5 = .5 but we use / .25
+      // problem is that we don't know actual number of zeros, and approx is only
+      // valid for 1's and zeros..
+      
+      const float neg_avg = -lay->acts.avg / (1.0f - lay->acts_p_avg);
       // distribute current average activity across all estimated zero units..
-      u->deep5b = -lay->acts.avg / n_zero_units;
+      u->deep5b = neg_avg;
     }
   }
   else {

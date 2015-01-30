@@ -1552,7 +1552,9 @@ float LeabraNetwork::Compute_CosDiff() {
 void LeabraNetwork::Compute_CosDiff_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
-    Layer* lay = ActiveLayer(li);
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    const float avg_m = lay->acts_m.avg;
+    const float avg_p = lay->acts_p.avg;
 
     float cosv = 0.0f;  float ssm = 0.0f;  float sst = 0.0f;
 
@@ -1561,9 +1563,11 @@ void LeabraNetwork::Compute_CosDiff_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
-      cosv += uv->act_p * uv->act_m;
-      ssm += uv->act_m * uv->act_m;
-      sst += uv->act_p * uv->act_p;
+      const float act_p = (uv->act_p - avg_p); // zero mean!
+      const float act_m = (uv->act_m - avg_m);
+      cosv += act_p * act_m;
+      ssm += act_m * act_m;
+      sst += act_p * act_p;
     }
     ThrLayStats(thr_no, li, 0, COSDIFF) = cosv;
     ThrLayStats(thr_no, li, 1, COSDIFF) = ssm;
@@ -1653,7 +1657,9 @@ float LeabraNetwork::Compute_TrialCosDiff() {
 void LeabraNetwork::Compute_TrialCosDiff_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
-    Layer* lay = ActiveLayer(li);
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    const float avg_p = lay->acts_p.avg;
+    const float avg_q0 = lay->acts_p_avg; // use running average -- best we've got
     
     float cosv = 0.0f;  float ssm = 0.0f;  float sst = 0.0f;
 
@@ -1662,9 +1668,11 @@ void LeabraNetwork::Compute_TrialCosDiff_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
-      cosv += uv->act_p * uv->act_q0;
-      ssm += uv->act_q0 * uv->act_q0;
-      sst += uv->act_p * uv->act_p;
+      const float act_p = uv->act_p - avg_p; // zero mean
+      const float act_q0 = uv->act_q0 - avg_q0;
+      cosv += act_p * act_q0;
+      ssm += act_q0 * act_q0;
+      sst += act_p * act_p;
     }
 
     ThrLayStats(thr_no, li, 0, TRIALCOSDIFF) = cosv;
