@@ -455,6 +455,7 @@ void iTabView::keyPressEvent(QKeyEvent* key_event) {
   taiMisc::BoundAction action = taiMisc::GetActionFromKeyEvent(taiMisc::PROJECTWINDOW_CONTEXT, key_event);
   switch (action) {
     case taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN: // move left between regions
+    case taiMisc::PROJECTWINDOW_TOGGLE_PANEL_PIN_II: // move left between regions
     {
       iPanelBase* dp = curPanel();
       if(dp) {

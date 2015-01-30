@@ -98,71 +98,86 @@ void iTableView::keyPressEvent(QKeyEvent* key_event) {
   
   switch (action) {
     case taiMisc::DATATABLE_DELETE:
+    case taiMisc::DATATABLE_DELETE_II:
       RowColOp(OP_ROW | OP_DELETE);
       key_event->accept();
       return;
     case taiMisc::DATATABLE_SELECT:
+    case taiMisc::DATATABLE_SELECT_II:
       selectCurCell();
       ext_select_on = true;
       key_event->accept();
       break;
     case taiMisc::DATATABLE_CLEAR_SELECTION:
+    case taiMisc::DATATABLE_CLEAR_SELECTION_II:
       clearExtSelection();
       key_event->accept();
       break;
     case taiMisc::DATATABLE_MOVE_FOCUS_UP:
+    case taiMisc::DATATABLE_MOVE_FOCUS_UP_II:
       newCurrent = moveCursor(MoveUp, QApplication::keyboardModifiers());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_MOVE_FOCUS_DOWN:
+    case taiMisc::DATATABLE_MOVE_FOCUS_DOWN_II:
       newCurrent = moveCursor(MoveDown, QApplication::keyboardModifiers());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_MOVE_FOCUS_LEFT:
+    case taiMisc::DATATABLE_MOVE_FOCUS_LEFT_II:
       newCurrent = moveCursor(MoveLeft, QApplication::keyboardModifiers());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_MOVE_FOCUS_RIGHT:
+    case taiMisc::DATATABLE_MOVE_FOCUS_RIGHT_II:
       newCurrent = moveCursor(MoveRight, QApplication::keyboardModifiers());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_INSERT:
+    case taiMisc::DATATABLE_INSERT_II:
       RowColOp(OP_ROW | OP_INSERT);
       key_event->accept();
       break;
     case taiMisc::DATATABLE_INSERT_AFTER:
+    case taiMisc::DATATABLE_INSERT_AFTER_II:
       RowColOp(OP_ROW | OP_INSERT_AFTER);
       key_event->accept();
       break;
     case taiMisc::DATATABLE_DUPLICATE:
+    case taiMisc::DATATABLE_DUPLICATE_II:
       RowColOp(OP_ROW | OP_DUPLICATE);
       key_event->accept();
       break;
     case taiMisc::DATATABLE_EDIT_HOME:
+    case taiMisc::DATATABLE_EDIT_HOME_II:
       edit_start_pos = 0;
       edit_start_kill = false;
       edit(currentIndex());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_EDIT_END:
+    case taiMisc::DATATABLE_EDIT_END_II:
       edit_start_pos = -1;
       edit_start_kill = false;
       edit(currentIndex());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_DELETE_TO_END:
+    case taiMisc::DATATABLE_DELETE_TO_END_II:
       edit_start_pos = 0;
       edit_start_kill = true;
       edit(currentIndex());
       key_event->accept();
       break;
     case taiMisc::DATATABLE_PAGE_UP:
+    case taiMisc::DATATABLE_PAGE_UP_II:
     {
       newCurrent = moveCursor(MovePageUp, QApplication::keyboardModifiers());
       key_event->accept();
       break;
     }
     case taiMisc::DATATABLE_PAGE_DOWN:
+    case taiMisc::DATATABLE_PAGE_DOWN_II:
       newCurrent = moveCursor(MovePageDown, QApplication::keyboardModifiers());
       key_event->accept();
       break;

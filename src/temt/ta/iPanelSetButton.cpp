@@ -41,6 +41,7 @@ void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
   
   switch(action) {
     case taiMisc::PROJECTWINDOW_PANEL_VIEW_LEFT:
+    case taiMisc::PROJECTWINDOW_PANEL_VIEW_LEFT_II:
     {
       int prv_idx = m_idx -1;
       if(prv_idx < 0) prv_idx = m_datapanelset->panels.size-1;
@@ -57,6 +58,7 @@ void iPanelSetButton::keyPressEvent(QKeyEvent* key_event) {
       return;
     }
     case taiMisc::PROJECTWINDOW_PANEL_VIEW_RIGHT:
+    case taiMisc::PROJECTWINDOW_PANEL_VIEW_RIGHT_II:
     {
       int nxt_idx = m_idx +1;
       if(nxt_idx >= m_datapanelset->panels.size) nxt_idx = 0;
