@@ -55,7 +55,7 @@ qstat_args = ""  # here is where you put the -j if needed
 # options are sge for sge, moab for moab/torque
 qstat_parser = "moab"
 
-# qdel-like command -- for killing a job
+# qdel-like command -- for kililng a job
 # killjob is a special command that also deletes the JOB.* files -- see pykilljob
 # be sure to use the _f version that does not prompt!
 # in emergent/cluster_run directory
@@ -79,6 +79,11 @@ ec2_region = ""
 
 # Specifies the machine image to use when launching a new Amazon AWS EC2 instance
 ec2_ami = ""
+
+# Specifies the placement group to use when launching a set of new MPI Amazon AWS EC2 instances
+ec2_placement_group = ""
+
+ec2_use_spot = True
 
 # Specifies which named SSH key to use when launching a new Amazon AWS EC2 instance
 ec2_ssh_key = ""
@@ -898,8 +903,7 @@ class SubversionPoller(object):
                 elif (submit_mode == "ec2_compute"):
                     self._launch_ec2_job(row, filename)
                 elif (submit_mode == "ec2_control"):
-                    # We don't do anything with submitted or queued jobs on the control server
-                    pass
+                    self._update_ec2_spot_instances(row, filename)
             elif status == 'RUNNING' or ('ABSENT_' in status):
                 self._query_job_queue(row, status, force_updt)   # always update status!
                 self._update_running_job(row, force_updt)
@@ -1076,7 +1080,8 @@ class SubversionPoller(object):
         self._save_cur_files()
 
     def _choose_ec2_instance_type (self, cpus, memory, mpi):
-        # return "t2.micro"
+        #return "t2.micro"
+        return "c4.large"
         instance_types = json.loads(ec2_instances)
         for i in range(0, len(instance_types["instances"])):
         	if instance_types["instances"][i]["cpus"] > cpus:
@@ -1119,45 +1124,35 @@ class SubversionPoller(object):
         cmdsub = []
                       
         # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
-        if mpi_nodes <= 1:
-            ec2launch = "ec2-run-instances " + ec2_ami + " -n 1 -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
+        if ec2_use_spot:
+            ec2launch = "ec2-request-spot-instances " + ec2_ami + " -p 0.1 " + " -k " + ec2_ssh_key + " --region " + ec2_region
+            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+            cmdsub = ec2launch.split()
+            print "cmd: " + str(cmdsub)
+            result = check_output(cmdsub)
+            #result = "SPOTINSTANCEREQUEST    sir-034bzmhr    0.100000    one-time    Linux/UNIX    open    2015-01-28T21:17:56+0000"
+            print result
+            instancere = re.compile("^SPOTINSTANCEREQUEST\s*(sir-\w+)\s+.*", re.MULTILINE)
+            instance = instancere.search(result)
+            print instance
+            status_info = instance.group(1)
+            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
+        else:
+            ec2launch = "ec2-run-instances " + ec2_ami + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
             ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
             ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
             
-            cmdsub = ec2launch.split()
-            print "cmd: " + str(cmdsub)
-            result = check_output(cmdsub)
-            # result = "INSTANCE i-5eb16b50 ami-12334"
-            
-            # print result
-        
-            instancere = re.compile("^INSTANCE\s*(.*?)\s*ami-.*", re.MULTILINE)
-            instance = instancere.search(result)
-            status_info = instance.group(1)
-            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
-        
-            status = 'SUBMITTED'
-        else:
-            print "Mpi_nodes: " + str(mpi_nodes)
-            ec2launch = "ec2-run-instances " + ec2_ami + " -n " + str(mpi_nodes) + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
-            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
-            ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key + " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']"); 
+            if mpi_nodes <= 1:
+                ec2launch += " -n 1"            
+            else:
+                print "Mpi_nodes: " + str(mpi_nodes)
+                ec2launch += " -n " + str(mpi_nodes) + " --placement-group " + ec2_placement_group
+                ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']") 
             
             cmdsub = ec2launch.split()
             print "cmd: " + str(cmdsub)
             result = check_output(cmdsub)
-            # result = "RESERVATION r-a20b79ad843784070933\n"
-            #result += "INSTANCE i-c42481ca ami-59174069 ip-172-31-6-243.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.243 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
-            # result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal true\n"
-            # result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
-            # result += "GROUP sg-b8f680ddSSH-ucb\n"
-            # result += "PRIVATEIPADDRESS 172.31.6.243 ip-172-31-6-243.us-west-2.compute.internal\n"
-            # result += "INSTANCE i-c42481cb ami-59174069 ip-172-31-6-244.us-west-2.compute.internal pending standard_key 0 c4.large 2015-01-16T22:51:20+0000 us-west-2c monitoring-disabled 172.31.6.244 vpc-5564f43d subnet-5764f43f ebs hvm xen 999394d7-1a6c-45ef-a99f-6cc77c69462d sg-b8f680dd default false\n"
-            # result += "NIC eni-f2a8a5ab subnet-5764f43f vpc-5564f43d 843784070933 in-use 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal true\n"
-            # result += "NICATTACHMENT eni-attach-55caa05d0 attaching 2015-01-16T22:51:20+0000 true\n"
-            # result += "GROUP sg-b8f680ddSSH-ucb\n"
-            # result += "PRIVATEIPADDRESS 172.31.6.244 ip-172-31-6-244.us-west-2.compute.internal\n"
-
             #result = "INSTANCE i-d617b7d8 ami-12334"
             print result
         
@@ -1166,9 +1161,8 @@ class SubversionPoller(object):
             print instance
             status_info = instance.group(1)
             job_no = instance.group(1) + "_" + str(random.getrandbits(32))
-            print job_no
-            
-            status = "SUBMITTED"
+        
+        status = "SUBMITTED"
 
         
         # grab current submit info
@@ -1266,6 +1260,31 @@ class SubversionPoller(object):
         self.jobs_running.set_val(run_row, "tag", tag)
         self.jobs_running.set_val(run_row, "status", status)
         self.jobs_running.set_val(run_row, "job_out_file", job_out_file)
+        
+    def _update_ec2_spot_instances(self, row, filename):
+        job_no = self.jobs_running.get_val(row, "job_no")
+        job_no_split = job_no.split("_")
+        if job_no[:4] == "sir-":
+            logging.info(job_no + " needs some spot instance dealing")
+            ec2getspotinstance = "ec2-describe-spot-instance-requests -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter spot-instance-request-id=" + job_no_split[0]
+            logging.info("Spott check: " + ec2getspotinstance)
+            cmdsub2 = ec2getspotinstance.split()
+            logging.info("Getting relevant instances cmd: " + str(cmdsub2))
+            result = check_output(cmdsub2)
+                   
+            logging.info(result)
+            
+            instancere = re.compile("^SPOTINSTANCEREQUEST.*(i-\w+)\s+ami-.*", re.MULTILINE)
+            instance = instancere.search(result)
+            if instance:
+                logging.info("Spot instance: " + instance.group(1));
+                job_no = instance.group(1) + "_" + job_no_split[1]
+                self.jobs_running.set_val(row, "job_no",job_no)
+                
+                #self._save_cur_files()
+                self.got_submit = True
+            else:
+                logging.info("We don't yet have an instance for this spot request")
         
     def _launch_ec2_job(self, row, filename):
  
@@ -1382,6 +1401,14 @@ class SubversionPoller(object):
         self.got_submit = True
 
     def _cancel_job(self, filename, rev, row):
+        if (submit_mode == "cluster"):
+            self._cancel_job_cluster(filename, rev, row);
+        elif (submit_mode == "ec2_control"):
+            self._cancel_job_ec2_control(filename, rev, row)
+        elif (submit_mode == "ec2_compute"):
+            self._cancel_job_ec2_compute(filename, rev, row)
+        
+    def _cancel_job_cluster(self, filename, rev, row):
         job_no = self.jobs_submit.get_val(row, "job_no")
         if qdel_args != '':
             cmd = [qdel_cmd, qdel_args, job_no]
@@ -1390,6 +1417,22 @@ class SubversionPoller(object):
         del_out = check_output(cmd)
         if debug:
             print "killed job: %s output: %s" % (job_no, del_out)
+        # update jobs running so that job is correctly marked at KILLED instead of DONE
+        runrow = self.jobs_running.find_val("job_no", job_no)
+        if runrow >= 0:
+            status = 'CANCELLED'
+            self.jobs_running.set_val(runrow, "status", status)
+        # we don't actually do anything with this output..
+        
+    def _cancel_job_ec2_compute(self, filename, rev, row):
+        job_no = self.jobs_submit.get_val(row, "job_no")
+        if not self._is_for_local_server(job_no):
+            return
+        job_no_split = job_no.split(".")
+        if (len(job_no_split < 2)):
+            logging.warning("Could not cancel job, because we don't have a pid")
+            return
+        os.kill(int(job_no_split[1]),9)
         # update jobs running so that job is correctly marked at KILLED instead of DONE
         runrow = self.jobs_running.find_val("job_no", job_no)
         if runrow >= 0:
@@ -1463,6 +1506,30 @@ class SubversionPoller(object):
                 try: os.remove(fullf)  # for good measure, just nuke it directly
                 except: pass
 
+    def _getdata_job_out_tag(self, tag):
+        logging.info("Trying to submit job out file to SVN")
+        runrow = self.jobs_running.find_val("tag", tag)
+        if runrow >= 0:
+            job_files = self.jobs_running.get_val(runrow, "job_out_file")
+        else:
+            donerow = self.jobs_done.find_val("tag", tag)
+            if donerow >= 0:
+                job_files = self.jobs_done.get_val(donerow, "job_out_file")
+            else:
+                logging.warn("getdata_job_out: tag %s not found in either jobs running or done" % tag)
+                return
+        logging.info("Supposidly submitting " +  job_files + " to SVN")
+        resdir = self.cur_proj_root + "/results/"
+        if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
+            shutil.copy(job_files, resdir)
+        self._svn_add_dat_files(tag, os.path.basename(job_files))
+        
+        job_files = job_files[:-3] + "err"
+        logging.info("Supposidly submitting " +  job_files + " to SVN")
+        if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
+            shutil.copy(job_files, resdir)
+        self._svn_add_dat_files(tag, os.path.basename(job_files))
+
     def _getdata_job_tag(self, tag):
         runrow = self.jobs_running.find_val("tag", tag)
         if runrow >= 0:
@@ -1517,7 +1584,7 @@ class SubversionPoller(object):
         resdir = self.cur_proj_root + "/results/"
         for df in dats:
             fdf = resdir + df
-            # print "dat file: %s" % fdf
+            logging.info("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]
@@ -1560,6 +1627,8 @@ class SubversionPoller(object):
             # unconditionally to have data saved.
             self._getdata_job_tag(tag) 
             self._getfiles_job_tag(tag)
+            self._getdata_job_out_tag(tag)
+            
         if debug:
             logging.info("job: %s ended with status: %s at time: %s" % (tag, status, end_time))
 
@@ -1570,7 +1639,9 @@ class SubversionPoller(object):
                 self._query_job_queue_moab(row, status, force_updt)
             elif qstat_parser == "sge":
                 self._query_job_queue_sge(row, status, force_updt)
-        elif submit_mode == "ec2_controll":
+        elif submit_mode == "ec2_control":
+            job_no = self.jobs_running.get_val(row, "job_no")
+            logging.info("Dealing with " + job_no)
             pass
         elif submit_mode == "ec2_compute":
             pass
