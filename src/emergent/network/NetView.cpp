@@ -32,6 +32,7 @@
 #include <T3LayerNode>
 #include <T3UnitGroupNode>
 #include <QKeyEvent>
+#include <QApplication>
 #include <taSvg>
 
 #include <taMisc>
@@ -90,7 +91,12 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   T3Panel* fr = nv->GetFrame();
   SoMouseButtonEvent* mouseevent = (SoMouseButtonEvent*)ecb->getEvent();
   SoMouseButtonEvent::Button but = mouseevent->getButton();
-  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but)) return; // only releases
+  if(!SoMouseButtonEvent::isButtonReleaseEvent(mouseevent, but))
+    return; // only releases
+  bool inspect_mode = false;
+  if (QApplication::keyboardModifiers().testFlag(Qt::AltModifier) == true) {
+    inspect_mode = true;
+  }
   bool got_one = false;
   for(int i=0;i<fr->root_view.children.size;i++) {
     taDataView* dv = fr->root_view.children[i];
@@ -205,7 +211,9 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
           }
           
           if(unit && tnv->unit_src != unit) {
-            tnv->setUnitSrc(NULL, unit);
+            if (!inspect_mode) {
+              tnv->setUnitSrc(NULL, unit);
+            }
             tnv->InitDisplay();   // this is apparently needed here!!
             tnv->UpdateDisplay();
           }
