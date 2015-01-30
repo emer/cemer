@@ -1870,7 +1870,7 @@ double taMath_double::vec_dist(const double_Matrix* vec, const double_Matrix* ot
   case CORREL:
     return vec_correl(vec, oth);
   case INNER_PROD:
-    return vec_inner_prod(vec, oth, norm);
+    return vec_inner_prod(vec, oth, norm, norm);
   case CROSS_ENTROPY:
     return vec_cross_entropy(vec, oth);
   }

@@ -1742,7 +1742,7 @@ float taMath_float::vec_dist(const float_Matrix* vec, const float_Matrix* oth,
   case CORREL:
     return vec_correl(vec, oth);
   case INNER_PROD:
-    return vec_inner_prod(vec, oth, norm);
+    return vec_inner_prod(vec, oth, norm, norm);
   case CROSS_ENTROPY:
     return vec_cross_entropy(vec, oth);
   }

@@ -430,7 +430,7 @@ void UnitGroupView::Render_impl_children() {
       SoAsciiText* at = unit_so->captionNode(false);
       if (nv->unit_text_disp == NetView::UTD_NONE) {
         if (at)
-          at->string.setValue( "");
+          at->string.setValue(" ");
       }
       else { // text of some kind
         unit_so->transformCaption(font_xform);
@@ -446,7 +446,10 @@ void UnitGroupView::Render_impl_children() {
           mfs->setValue(val_str.chars());
           break;
         case NetView::UTD_NAMES:
-          mfs->setValue(unit->name.chars());
+          if(unit->name.empty())
+            mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+          else
+            mfs->setValue(unit->name.chars());
           break;
         case NetView::UTD_BOTH:
           const char* strs[2];
@@ -622,7 +625,10 @@ void UnitGroupView::Render_impl_blocks() {
           mfs->setValue(val_str.chars());
           break;
         case NetView::UTD_NAMES:
-          mfs->setValue(unit_name.chars());
+          if(unit_name.empty())
+            mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+          else
+            mfs->setValue(unit_name.chars());
           break;
         case NetView::UTD_BOTH:
           const char* strs[2];
@@ -1013,7 +1019,10 @@ void UnitGroupView::Render_impl_outnm() {
     txt->justification = SoAsciiText::CENTER;
     un_txt->addChild(txt);
     SoMFString* mfs = &(txt->string);
-    mfs->setValue(lay->output_name.chars());
+    if(lay->output_name.empty())
+      mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+    else
+      mfs->setValue(lay->output_name.chars());
   }
 
   float szx = (float)lay->flat_geom.x / nv->eff_max_size.x;
@@ -1050,6 +1059,9 @@ void UnitGroupView::UpdateUnitValues_outnm() {
 //   if(lay->unit_groups)
 //     mfs->setValue(ugrp->output_name.chars());
 //   else
+  if(lay->output_name.empty())
+    mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
+  else
     mfs->setValue(lay->output_name.chars());
 }
 

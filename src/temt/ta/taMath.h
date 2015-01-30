@@ -106,8 +106,8 @@ public:
     HAMMING,                    // Hamming distance: sum[abs(x-y)]
     COVAR,                      // covariance: sum[(x-<x>)(y-<y>)]
     CORREL,                     // correlation: sum[(x-<x>)(y-<y>)] / sqrt(sum[x^2 y^2])
-    INNER_PROD,                 // inner product: sum[x y]
-    CROSS_ENTROPY               // cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
+    INNER_PROD,                 // inner product: sum[x y] -- when normalized this becomes the cosine angle between two vectors -- normalization also subtracts the mean of the vectors, so that the full range of angles can be produced
+    CROSS_ENTROPY,              // cross entropy: sum[x ln(x/y) + (1-x)ln((1-x)/(1-y))]
   };
 
   static bool   dist_larger_further(DistMetric metric);

@@ -279,8 +279,8 @@ void CIFERThalSpec::Defaults_init() {
 
 void CIFERDeep5bSpec::Initialize() {
   on = false;
+  zero_norm = true;
   ti_rescale = true;
-  self_rescale = false;
   act5b_thr = 0.2f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
@@ -913,13 +913,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     Projection* prjn = (Projection*) recv_gp->prjn;
     LeabraLayer* from = (LeabraLayer*) prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
-    if(cifer_d5b.on && cifer_d5b.self_rescale && prjn->from_type == Projection::SELF) {
-      if(d5b_turned_on)
-        recv_gp->scale_eff = 0.0f; // turn it off
-      else
-        recv_gp->scale_eff /= net_scale;
-    }
-    else if(cs->inhib) {
+    if(cs->inhib) {
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
     }
@@ -1704,6 +1698,13 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       act5b = 0.0f;
     }
     u->deep5b = u->thal * act5b;  // thal is thresholded
+    if(cifer_d5b.zero_norm && u->deep5b == 0.0f) {
+      LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+      // the following is a very rough approximation:
+      float n_zero_units = (float)lay->units.size * (1.0f - lay->acts_p_avg);
+      // distribute current average activity across all estimated zero units..
+      u->deep5b = -lay->acts.avg / n_zero_units;
+    }
   }
   else {
     if(cifer_d5b.burst) {
