@@ -436,11 +436,13 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
 
   switch(action) {
     case taiMisc::CONSOLE_UNDO:         // undo the current command
+    case taiMisc::CONSOLE_UNDO_II:
       ctrlCPressed();
       key_event->accept();
       displayPrompt();
       break;
     case taiMisc::CONSOLE_AUTO_COMPLETE:         // auto complete current command
+    case taiMisc::CONSOLE_AUTO_COMPLETE_II:
     {
       key_event->accept();
       QString command = getCurrentCommand();
@@ -463,6 +465,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       break;
     }
     case taiMisc::CONSOLE_BACKSPACE:
+    case taiMisc::CONSOLE_BACKSPACE_II:
       if(cursorInCurrentCommand()) {       // don't backup into prompt
         inherited::keyPressEvent(key_event);
       }
@@ -471,6 +474,7 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       }
       break;
     case taiMisc::CONSOLE_CLEAR:
+    case taiMisc::CONSOLE_CLEAR_II:
       key_event->accept();
       clear();
       break;
@@ -496,43 +500,51 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       break;
       // these deselects don't work - rohrlich 11/20/14
     case taiMisc::CONSOLE_DESELECT:
+    case taiMisc::CONSOLE_DESELECT_II:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = true;
       break;
     case taiMisc::CONSOLE_CLEAR_SELECTION:
+    case taiMisc::CONSOLE_CLEAR_SELECTION_II:
       key_event->accept();
       cursor.clearSelection();
       setTextCursor(cursor);
       ext_select_on = false;
       break;
     case taiMisc::CONSOLE_HOME:
+    case taiMisc::CONSOLE_HOME_II:
       key_event->accept();
       gotoPrompt(cursor, ext_select_on);
       setTextCursor(cursor);
       break;
     case taiMisc::CONSOLE_END:
+    case taiMisc::CONSOLE_END_II:
       key_event->accept();
       gotoEnd(cursor, ext_select_on);
       setTextCursor(cursor);
       break;
     case taiMisc::CONSOLE_CURSOR_FORWARD:
+    case taiMisc::CONSOLE_CURSOR_FORWARD_II:
       key_event->accept();
       cursor.movePosition(QTextCursor::NextCharacter, mv_mode);
       setTextCursor(cursor);
       break;
     case taiMisc::CONSOLE_CURSOR_BACKWARD:
+    case taiMisc::CONSOLE_CURSOR_BACKWARD_II:
       key_event->accept();
       cursor.movePosition(QTextCursor::PreviousCharacter, mv_mode);
       setTextCursor(cursor);
       break;
     case taiMisc::CONSOLE_DELETE:
+    case taiMisc::CONSOLE_DELETE_II:
       key_event->accept();
       cursor.deleteChar();
       setTextCursor(cursor);
       break;
     case taiMisc::CONSOLE_KILL:
+    case taiMisc::CONSOLE_KILL_II:
     {
       key_event->accept();
       cursor.movePosition(QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
@@ -544,11 +556,13 @@ void iConsole::keyPressEvent(QKeyEvent* key_event)
       break;
     }
     case taiMisc::CONSOLE_PASTE:
+    case taiMisc::CONSOLE_PASTE_II:
       key_event->accept();
       inherited::paste();         // don't go to end first!
       ext_select_on = false;
       break;
     case taiMisc::CONSOLE_CUT:
+    case taiMisc::CONSOLE_CUT_II:
       key_event->accept();
       cut();
       ext_select_on = false;
