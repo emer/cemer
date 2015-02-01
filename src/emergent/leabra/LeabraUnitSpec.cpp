@@ -1261,9 +1261,9 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   //   act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
   // }
 
-  if(act_ts !=- 0.0f) {         // we send negative guys too!!
+  if(act_ts != 0.0f) {         // we send negative guys too!!
     float act_delta = act_ts - u->d5b_sent;
-    if(fabsf(act_delta) > opt_thresh.delta) {
+    if(fabsf(act_delta) > opt_thresh.delta || u->d5b_sent == 0.0f) {
       const int nsg = u->NSendConGps(net, thr_no); 
       for(int g=0; g< nsg; g++) {
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
@@ -1698,18 +1698,7 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       act5b = 0.0f;
     }
     u->deep5b = u->thal * act5b;  // thal is thresholded
-    if(cifer_d5b.zero_norm && u->deep5b < cifer_d5b.act5b_thr) {
-      LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-      // zeros go to average, but there are fewer of them, so we upweight
-      // .5 .5 .5 .5 0 0 0 0 = .25 avg
-      // .5 .5 .5 .5 -.5 -.5 -.5 -.5 = 0 -- .25 / .5 = .5 but we use / .25
-      // problem is that we don't know actual number of zeros, and approx is only
-      // valid for 1's and zeros..
-      
-      const float neg_avg = -lay->acts.avg / (1.0f - lay->acts_p_avg);
-      // distribute current average activity across all estimated zero units..
-      u->deep5b = neg_avg;
-    }
+    // zero_norm enforced in LeabraNetwork::Compute_CycleStats_Post
   }
   else {
     if(cifer_d5b.burst) {
