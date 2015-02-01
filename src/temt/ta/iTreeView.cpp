@@ -619,6 +619,12 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         InsertDefaultEl(true);            // after
         key_event->accept();
         return;
+      case taiMisc::TREE_NEW_DEFAULT_ELEMENT_ABOVE:
+      case taiMisc::TREE_NEW_DEFAULT_ELEMENT_ABOVE_II:
+        ext_select_on = false;
+        InsertDefaultEl(false);            // above
+        key_event->accept();
+        return;
       case taiMisc::TREE_NEW_ELEMENT_ABOVE:
       case taiMisc::TREE_NEW_ELEMENT_ABOVE_II:
         ext_select_on = false;
