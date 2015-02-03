@@ -100,30 +100,35 @@ ec2_instances = """{ "instances": [
                                "name": "c4.large",
                                "cpus": 2,
                                "memory": 3.5,
+                               "spotprice": 0.03,
                                "mpi": false
                               },
                               {
                                "name": "c4.xlarge",
                                "cpus": 4,
                                "memory": 7.0,
+                               "spotprice": 0.06,
                                "mpi": false
                               },
                               {
                                "name": "c4.2xlarge",
                                "cpus": 8,
                                "memory": 14,
+                               "spotprice": 0.10,
                                "mpi": false
                               },
                               {
                                "name": "c4.4xlarge",
                                "cpus": 16,
                                "memory": 30,
+                               "spotprice": 0.20,
                                "mpi": false
                               },
                               {
                                "name": "c4.8xlarge",
                                "cpus": 36,
                                "memory": 60,
+                               "spotprice": 0.40,
                                "mpi": true
                               }
                               
@@ -784,6 +789,24 @@ class SubversionPoller(object):
               '(hit Ctrl-C to quit) ...' % self.delay)
         
         if (submit_mode == "ec2_compute"):
+            global ec2_api_user
+            global ec2_api_key
+            global ec2_region
+            # Check if we have an EC2 api key and user?
+            try:
+                ec2_api_key
+            except:
+                ec2_api_key = ""
+            if len(ec2_api_key) == 0:    
+                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
+                user_data = ast.literal_eval(base64.b64decode(user_data_str))
+                ec2_api_user = user_data[0]
+                ec2_api_key = user_data[1]
+                ec2_region = user_data[2]
+                logging.info(user_data)
+            
+            logging.info("ec2_api_key: " + ec2_api_user)
+            
             # When running on a dynamic cloud computing cluster, rather than a static cluster, we are booting up the
             # instance after the job submission, the files have therefore obviously already been committed by
             # the time we start this script. So we need to check through all old submissions as well to see if any of them are
@@ -1081,14 +1104,14 @@ class SubversionPoller(object):
 
     def _choose_ec2_instance_type (self, cpus, memory, mpi):
         #return "t2.micro"
-        return "c4.large"
         instance_types = json.loads(ec2_instances)
+        return instance_types["instances"][0]
         for i in range(0, len(instance_types["instances"])):
         	if instance_types["instances"][i]["cpus"] > cpus:
         		if instance_types["instances"][i]["memory"] > memory:
         			if (mpi < 2) or instance_types["instances"][i]["mpi"]:
-        				return instance_types["instances"][i]["name"]
-        return instance_types["instances"][-1]["name"]
+        				return instance_types["instances"][i]
+        return instance_types["instances"][-1]
     
     def _start_job(self, filename, rev, row):
         if len(self.model_files) != 1:   # no project committed!
@@ -1122,12 +1145,21 @@ class SubversionPoller(object):
         shutil.copy(proj, self.cur_tag_proj_file)  # we get our own private copy of proj
 
         cmdsub = []
-                      
+        
+        ec2instance = self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+                  
         # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
-        if ec2_use_spot:
-            ec2launch = "ec2-request-spot-instances " + ec2_ami + " -p 0.1 " + " -k " + ec2_ssh_key + " --region " + ec2_region
-            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+        if ec2_use_spot:    
+            ec2launch = "ec2-request-spot-instances " + ec2_ami + " -p " + str(ec2instance["spotprice"])  + " -k " + ec2_ssh_key + " --region " + ec2_region
+            ec2launch += " -t " + ec2instance["name"]
             ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
+            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']")
+            ec2launch += " --launch-group " + "mpi_cluster_" + str(random.getrandbits(16))
+            if mpi_nodes <= 1:
+                ec2launch += " -n 1"            
+            else:
+                print "Mpi_nodes: " + str(mpi_nodes)
+                ec2launch += " -n " + str(mpi_nodes) + " --placement-group " + ec2_placement_group
             cmdsub = ec2launch.split()
             print "cmd: " + str(cmdsub)
             result = check_output(cmdsub)
@@ -1140,15 +1172,15 @@ class SubversionPoller(object):
             job_no = instance.group(1) + "_" + str(random.getrandbits(32))
         else:
             ec2launch = "ec2-run-instances " + ec2_ami + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
-            ec2launch += " -t " + self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
+            ec2launch += " -t " + ec2instance["name"]
             ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
-            
+            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']")
             if mpi_nodes <= 1:
                 ec2launch += " -n 1"            
             else:
                 print "Mpi_nodes: " + str(mpi_nodes)
                 ec2launch += " -n " + str(mpi_nodes) + " --placement-group " + ec2_placement_group
-                ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']") 
+                 
             
             cmdsub = ec2launch.split()
             print "cmd: " + str(cmdsub)
@@ -1327,18 +1359,7 @@ class SubversionPoller(object):
 
             cmdsub = cmd.split()
             
-            # Check if we have an EC2 api key and user?
-            try:
-                ec2_api_key
-            except:
-                ec2_api_key = ""
-            if len(ec2_api_key) == 0:
-                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
-                user_data = ast.literal_eval(base64.b64decode(user_data_str))
-                ec2_api_user = user_data[0]
-                ec2_api_key = user_data[1]
-                ec2_region = user_data[2]
-                print user_data
+            
                 
 
             # Get our EC2 registration id, to query all instances launched in this reservation request
@@ -1520,15 +1541,21 @@ class SubversionPoller(object):
                 return
         logging.info("Supposidly submitting " +  job_files + " to SVN")
         resdir = self.cur_proj_root + "/results/"
-        if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
-            shutil.copy(job_files, resdir)
-        self._svn_add_dat_files(tag, os.path.basename(job_files))
+        try:
+            if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
+                shutil.copy(job_files, resdir)
+            self._svn_add_dat_files(tag, os.path.basename(job_files))
+        except IOError:
+            logging.error("Could not copy out file")
         
         job_files = job_files[:-3] + "err"
         logging.info("Supposidly submitting " +  job_files + " to SVN")
-        if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
-            shutil.copy(job_files, resdir)
-        self._svn_add_dat_files(tag, os.path.basename(job_files))
+        try:
+            if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
+                shutil.copy(job_files, resdir)
+            self._svn_add_dat_files(tag, os.path.basename(job_files))
+        except IOError:
+            logging.error("Could not copy err file")
 
     def _getdata_job_tag(self, tag):
         runrow = self.jobs_running.find_val("tag", tag)
@@ -1628,6 +1655,14 @@ class SubversionPoller(object):
             self._getdata_job_tag(tag) 
             self._getfiles_job_tag(tag)
             self._getdata_job_out_tag(tag)
+            
+            ec2terminate = "ec2-terminate-instances " + self._get_local_server_name_ec2()
+            ec2terminate += " -O " + ec2_api_user + " -W " + ec2_api_key + " --region " + ec2_region
+            
+            cmdsub = ec2terminate.split()
+            logging.info("cmd: " + str(cmdsub))
+            result = check_output(cmdsub)
+            logging.info("cmd result: " + result)
             
         if debug:
             logging.info("job: %s ended with status: %s at time: %s" % (tag, status, end_time))
