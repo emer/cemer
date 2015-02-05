@@ -9,3 +9,5 @@ The ubuntu-motu-emergent script is a single version that handles the qt version 
 As of this date we are still using qt4 for the ubuntu 12.04 packages and that is the main reason for continuing with qt4 on ubuntu
 
 Make directories for each release, precise, trusty, etc in your home directory on grey before running BuildEmergent-ubuntu.sh for the .deb files that will be copied over.
+
+Something I noticed but haven't fixed - if you have an emergent directory the checkout might not get the right files. I noticed that it ignored the tag and got the trunk code. SO, toss the emergent directory before starting to be safe

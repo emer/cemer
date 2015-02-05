@@ -49,7 +49,12 @@ for REPO in $REPOS; do
       # Include all found packages in the output (multiversion).
       dpkg-scanpackages --multiversion ${SUBDIR} /dev/null | grep -v -E 'Depends:[^a-z]$' > ${SUBDIR}/Packages
       gzip -f ${SUBDIR}/Packages
+      dpkg-scanpackages --multiversion ${SUBDIR} /dev/null | grep -v -E 'Depends:[^a-z]$' > ${SUBDIR}/Packages
     done
+    cd ${DIST_ROOT}/dists/${DIST}
+    apt-ftparchive -c release-${DIST}.conf release . > Release
+    rm Release.gpg
+    gpg -b -o Release.gpg Release
   done
 done
 
