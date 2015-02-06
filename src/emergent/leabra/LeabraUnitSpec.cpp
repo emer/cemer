@@ -280,7 +280,8 @@ void CIFERThalSpec::Defaults_init() {
 void CIFERDeep5bSpec::Initialize() {
   on = false;
   zero_norm = true;
-  ti_rescale = true;
+  ffcc_off = true;
+  ti_off = false;
   act5b_thr = 0.2f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
@@ -855,15 +856,16 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   bool exclude_d5b = false;
   bool d5b_turned_on = false;   // deep5b just turned on
   bool d5b_turned_off = false;   // deep5b just turned off
+  bool d5b_on = false;
   if((plus_phase && net->net_misc.diff_scale_p) ||
      (net->quarter == 1 && net->net_misc.diff_scale_q1)) {
     init_netin = true;
   }
+  LeabraLayer* d5b_from = NULL; // layer that d5b projects from, when present
   if(cifer_d5b.on) {
-    d5b_turned_on = (net->quarter >= 1 && Quarter_Deep5bNow(net->quarter) &&
-                     !Quarter_Deep5bNow(net->quarter-1));
-    d5b_turned_off = (net->quarter >= 1 && !Quarter_Deep5bNow(net->quarter) &&
-                      Quarter_Deep5bNow(net->quarter-1));
+    d5b_on = Quarter_Deep5bNow(net->quarter);
+    d5b_turned_on = (net->quarter >= 1 && d5b_on && !Quarter_Deep5bNow(net->quarter-1));
+    d5b_turned_off = (net->quarter >= 1 && !d5b_on && Quarter_Deep5bNow(net->quarter-1));
     exclude_d5b = true;        // always exclude!
   }
 
@@ -885,8 +887,10 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
-    if(exclude_d5b && cs->IsDeep5bCon())               // exclude from rel rescaling
+    if(exclude_d5b && cs->IsDeep5bCon()) { // exclude from rel rescaling
+      d5b_from = from;
       continue;
+    }
     float rel_scale = cs->wt_scale.rel;
     
     if(cs->inhib) {
@@ -918,16 +922,26 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
         recv_gp->scale_eff /= inhib_net_scale;
     }
     else {
-      if(net_scale > 0.0f) {
-        if(!(exclude_d5b && cs->IsDeep5bCon())) { // exclude from rel rescaling
+      if(net_scale == 0.0f) continue;
+      if(exclude_d5b) {         // cifer is on
+        if(cs->IsDeep5bCon()) { // exclude from rel rescaling
+          // nop
+        }
+        else if(cifer_d5b.ffcc_off && from == d5b_from && d5b_on) {
+          recv_gp->scale_eff = 0.0f;
+        }
+        else {
           recv_gp->scale_eff /= net_scale;
         }
+      }
+      else {
+        recv_gp->scale_eff /= net_scale;
       }
     }
   }
 
   // finally: renorm ti scale
-  if(cifer_d5b.on && cifer_d5b.ti_rescale) {
+  if(cifer_d5b.on && cifer_d5b.ti_off) {
     float sc_fact= 0.0001f;
     if(d5b_turned_on)
       u->ti_ctxt *= sc_fact;    // downscale
