@@ -24,6 +24,8 @@ void Deep5bClampUnitSpec::Initialize() {
 }
 
 void Deep5bClampUnitSpec::Defaults_init() {
+  cifer_d5b.on = true;
+  deep5b_qtr = Q4;
 }
 
 void Deep5bClampUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
