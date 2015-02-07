@@ -33,7 +33,8 @@ set(leabra_HEADS_MAKETA
 
   LeabraTICtxtConSpec.h
   Deep5bConSpec.h
-  Deep5bUnitSpec.h
+  Deep5bCopyUnitSpec.h
+  Deep5bClampUnitSpec.h
   ThalUnitSpec.h
 
   MarkerConSpec.h
@@ -148,7 +149,8 @@ set(leabra_SRCS
 
   LeabraTICtxtConSpec.cpp
   Deep5bConSpec.cpp
-  Deep5bUnitSpec.cpp
+  Deep5bCopyUnitSpec.cpp
+  Deep5bClampUnitSpec.cpp
   ThalUnitSpec.cpp
 
   MarkerConSpec.cpp

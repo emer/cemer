@@ -266,7 +266,7 @@ void SynDelaySpec::Initialize() {
 
 void CIFERThalSpec::Initialize() {
   on = false;
-  thal_thr = 0.2f;
+  thal_thr = 0.1f;
   thal_bin = true;
   auto_thal = false;
   thal_to_super = 0.0f;
@@ -279,10 +279,7 @@ void CIFERThalSpec::Defaults_init() {
 
 void CIFERDeep5bSpec::Initialize() {
   on = false;
-  zero_norm = true;
-  ffcc_off = true;
-  ti_off = false;
-  act5b_thr = 0.2f;
+  act5b_thr = 0.1f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
   ti_5b_c = 1.0f - ti_5b;
@@ -853,20 +850,9 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   bool plus_phase = (net->phase == LeabraNetwork::PLUS_PHASE);
   bool init_netin = false;
   // NOTE: *everyone* has to init netins when scales change across quarters, because any existing netin has already been weighted at the previous scaled -- no way to rescale that aggregate -- just have to start over..
-  bool exclude_d5b = false;
-  bool d5b_turned_on = false;   // deep5b just turned on
-  bool d5b_turned_off = false;   // deep5b just turned off
-  bool d5b_on = false;
   if((plus_phase && net->net_misc.diff_scale_p) ||
      (net->quarter == 1 && net->net_misc.diff_scale_q1)) {
     init_netin = true;
-  }
-  LeabraLayer* d5b_from = NULL; // layer that d5b projects from, when present
-  if(cifer_d5b.on) {
-    d5b_on = Quarter_Deep5bNow(net->quarter);
-    d5b_turned_on = (net->quarter >= 1 && d5b_on && !Quarter_Deep5bNow(net->quarter-1));
-    d5b_turned_off = (net->quarter >= 1 && !d5b_on && Quarter_Deep5bNow(net->quarter-1));
-    exclude_d5b = true;        // always exclude!
   }
 
   if(init_netin) {
@@ -887,8 +873,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
-    if(exclude_d5b && cs->IsDeep5bCon()) { // exclude from rel rescaling
-      d5b_from = from;
+    if(cs->IsDeep5bCon()) { // exclude from rel rescaling
       continue;
     }
     float rel_scale = cs->wt_scale.rel;
@@ -923,30 +908,10 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     }
     else {
       if(net_scale == 0.0f) continue;
-      if(exclude_d5b) {         // cifer is on
-        if(cs->IsDeep5bCon()) { // exclude from rel rescaling
-          // nop
-        }
-        else if(cifer_d5b.ffcc_off && from == d5b_from && d5b_on) {
-          recv_gp->scale_eff = 0.0f;
-        }
-        else {
-          recv_gp->scale_eff /= net_scale;
-        }
-      }
-      else {
+      if(!cs->IsDeep5bCon()) { // exclude from rel rescaling
         recv_gp->scale_eff /= net_scale;
       }
     }
-  }
-
-  // finally: renorm ti scale
-  if(cifer_d5b.on && cifer_d5b.ti_off) {
-    float sc_fact= 0.0001f;
-    if(d5b_turned_on)
-      u->ti_ctxt *= sc_fact;    // downscale
-    else if(d5b_turned_off)
-      u->ti_ctxt /= sc_fact;    // upscale
   }
 }
 
@@ -1712,7 +1677,6 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       act5b = 0.0f;
     }
     u->deep5b = u->thal * act5b;  // thal is thresholded
-    // zero_norm enforced in LeabraNetwork::Compute_CycleStats_Post
   }
   else {
     if(cifer_d5b.burst) {

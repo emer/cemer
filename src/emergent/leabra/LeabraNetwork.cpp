@@ -966,9 +966,6 @@ void LeabraNetwork::Compute_ActEqStats_Thr(int thr_no) {
 
 void LeabraNetwork::Compute_CycleStats_Post() {
   // integrate all the data from thread-specific guys
-
-  Compute_D5bZeroNorm();
-  
   const bool updt_clamped = (cycle == 0 || cycle == 3 * times.quarter);
   // this is when we should update clamped layers
 
@@ -1041,46 +1038,6 @@ void LeabraNetwork::Compute_OutputName() {
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(lay->lesioned()) continue;
     lay->Compute_OutputName(this);
-  }
-}
-
-void LeabraNetwork::Compute_D5bZeroNorm() {
-  // this is only place we can do this!  if it works, make it less hacky with
-  // appropriate thr-level data
-  
-  const int nlay = n_layers_built;
-  for(int li = 0; li < nlay; li++) {
-    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-    if(!us->cifer_d5b.on || !us->cifer_d5b.zero_norm)
-      continue;
-    if(!us->Quarter_Deep5bNow(quarter))
-      continue;
-    
-    float d5b_sum = 0.0f;
-    int d5b_zero = 0;
-
-    FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-      if(u->lesioned()) continue;
-      LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-      if(uv->deep5b < us->cifer_d5b.act5b_thr) {
-        d5b_zero++;
-      }
-      else {
-        d5b_sum += uv->deep5b;
-      }
-    }
-
-    if(d5b_zero > 0) {
-      float neg_d5b = -d5b_sum / (float)d5b_zero;
-      FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
-        if(u->lesioned()) continue;
-        LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
-        if(uv->deep5b < us->cifer_d5b.act5b_thr) {
-          uv->deep5b = neg_d5b;
-        }
-      }
-    }
   }
 }
 

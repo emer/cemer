@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Deep5bUnitSpec_h
-#define Deep5bUnitSpec_h 1
+#ifndef Deep5bCopyUnitSpec_h
+#define Deep5bCopyUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,12 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 
-// todo: actually change this to Deep5bUnitSpec!
+eTypeDef_Of(Deep5bCopyUnitSpec);
 
-eTypeDef_Of(Deep5bUnitSpec);
-
-class E_API Deep5bUnitSpec : public LeabraUnitSpec {
-  // units that continuously copy deep5b activation values from a one-to-one receiving projection -- should typically just be used for visualization convenience -- use Deep5bConSpec to send deep5b activations to the d5b_net of other layers
+class E_API Deep5bCopyUnitSpec : public LeabraUnitSpec {
+  // #AKA_Deep5bUnitSpec units that continuously copy deep5b activation values from a one-to-one receiving projection -- should typically just be used for visualization convenience -- use Deep5bConSpec to send deep5b activations to the d5b_net of other layers
 INHERITED(LeabraUnitSpec)
 public:
   virtual void Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
@@ -47,11 +45,11 @@ public:
 
   bool  CheckConfig_Unit(Unit* u, bool quiet=false) override;
 
-  TA_SIMPLE_BASEFUNS(Deep5bUnitSpec);
+  TA_SIMPLE_BASEFUNS(Deep5bCopyUnitSpec);
 private:
   void  Initialize();
   void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // Deep5bUnitSpec_h
+#endif // Deep5bCopyUnitSpec_h

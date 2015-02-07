@@ -453,9 +453,6 @@ public:
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax -- fast layer level computation
   virtual void	Compute_CycleStats_Post();
   // #CAT_Cycle compute cycle-level stats -- acts AvgMax, OutputName, etc -- network-level post-step
-    virtual void Compute_D5bZeroNorm();
-    // #IGNORE implement cifer_d5b.zero_norm -- called in CycleStats_Post
-
     virtual void  Compute_OutputName();
     // #CAT_Statistic compute the output name for layers and the network, based on the unit names of the most-active units in each target layer -- only works if you provide names to the units -- called automatically in Compute_CycleStats_Post()
     virtual void  Compute_RTCycles();
