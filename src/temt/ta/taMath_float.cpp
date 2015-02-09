@@ -1200,7 +1200,7 @@ void taMath_float::vec_histogram(float_Matrix* vec, const float_Matrix* oth, flo
   vec->Reset();
   float_Array tmp;
   tmp.SetSize(oth->IterCount());
-  TA_FOREACH_INDEX(i, *vec) {
+  TA_FOREACH_INDEX(i, *oth) {
     tmp[FOREACH_itr.count] = oth->FastEl_Flat(i);
   }
   tmp.Sort();

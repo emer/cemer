@@ -1047,6 +1047,10 @@ public:
   // #MENU_BUTTON #MENU #MENU_SEP_BEFORE #MENU_ON_View #CAT_Display move grid view to display starting at given row number -- operates on first grid view found -- use GridTableView::ViewRow_At on specific view if needed
   virtual bool GraphViewGotoRow(int row_no);
   // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display move graph view to display starting at given row number -- operates on first graph view found -- use GraphTableView::ViewRow_At on specific view if needed
+  virtual bool GraphViewDefaultStyles();
+  // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display set plots to use the default plot styles
+  virtual bool GraphViewLineStyle();
+  // #MENU_BUTTON #MENU #MENU_ON_View #CAT_Display set line styles for plots in the graph view
   virtual void  ScrollEditorsToBottom();
   // #IGNORE scroll all data table editors to the bottom -- called when new blank row added
 

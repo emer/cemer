@@ -161,8 +161,11 @@ public:
 
   virtual void          CopyFromView(GraphTableView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner
-  virtual void          DefaultPlotStyles();
-  // #BUTTON set the default plot styles for all plots
+  virtual void          DefaultPlotStyles(int start_y=1, int end_y=-1);
+  // #BUTTON set the default plot styles for given range of Y plots (all by default -- -1 = end) -- iterates through colors: black, red, blue, green, purple, orange, brown, chartreuse; and in parallel point sytles circle, square, diamond, triangle_up, triangle_down, plus, cross, star; and then as an outer loop line styles (solid, dot, dash, dash-dot)
+  virtual void          SetLineStyle(GraphPlotView::LineStyle line_style,
+                                     int start_y=1, int end_y=-1);
+  // #BUTTON set the line style for given range of Y plots (all by default -- -1 = end) 
 
   void          SaveImageSVG(const String& svg_fname) override;
 

@@ -1204,7 +1204,7 @@ void taMath_double::vec_histogram(double_Matrix* vec, const double_Matrix* oth, 
   vec->Reset();
   double_Array tmp;
   tmp.SetSize(oth->IterCount());
-  TA_FOREACH_INDEX(i, *vec) {
+  TA_FOREACH_INDEX(i, *oth) {
     tmp[FOREACH_itr.count] = oth->FastEl_Flat(i);
   }
   tmp.Sort();

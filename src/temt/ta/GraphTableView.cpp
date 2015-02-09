@@ -117,6 +117,20 @@ bool DataTable::GraphViewGotoRow(int row_no) {
   return true;
 }
 
+bool DataTable::GraphViewDefaultStyles() {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->CallFun("DefaultPlotStyles");
+  return true;
+}
+
+bool DataTable::GraphViewLineStyle() {
+  GraphTableView* gv = FindGraphView();
+  if(!gv) return false;
+  gv->CallFun("SetLineStyle");
+  return true;
+}
+
 // Add a new GraphTableView object to the frame for the given DataTable.
 GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
   NewViewHelper new_net_view(fr, dt, "table");
@@ -547,7 +561,7 @@ void GraphTableView::LoadObsoletePlotData() {
   errbars[7]->CopyFromView(&err_8);
 }
 
-void GraphTableView::DefaultPlotStyles() {
+void GraphTableView::DefaultPlotStyles(int start_y, int end_y) {
   const char* colors[] = {"black", "red", "blue", "green3", "purple", "orange", "brown", "chartreuse"};
   int n_colors = 8;
   const int styles[] = {GraphPlotView::CIRCLE, GraphPlotView::SQUARE,
@@ -557,11 +571,28 @@ void GraphTableView::DefaultPlotStyles() {
                         GraphPlotView::STAR};
   int n_styles = 8;
 
-  for(int i=0; i<plots.size; i++) {
+  if(end_y < 0)
+    end_y = plots.size+end_y+1;
+  end_y = MIN(end_y, plots.size);
+  
+  for(int i=start_y-1; i<end_y; i++) {
     GraphPlotView* gpv = plots[i];
     gpv->color.setColorName(colors[i % n_colors]);
     gpv->point_style = (GraphPlotView::PointStyle)styles[i % n_styles];
     gpv->line_style = (GraphPlotView::LineStyle)(i / n_colors);
+    gpv->UpdateAfterEdit_NoGui();
+  }
+}
+
+void GraphTableView::SetLineStyle(GraphPlotView::LineStyle line_style,
+                                  int start_y, int end_y) {
+  if(end_y < 0)
+    end_y = plots.size+end_y+1;
+  end_y = MIN(end_y, plots.size);
+  
+  for(int i=start_y-1; i<end_y; i++) {
+    GraphPlotView* gpv = plots[i];
+    gpv->line_style = line_style;
     gpv->UpdateAfterEdit_NoGui();
   }
 }
@@ -2089,8 +2120,8 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   bool matz = false;
   if((mat_cell >= 0) && (matrix_mode == Z_INDEX)) matz = true;
 
-  float bar_wd_plt = bar_width * x_axis.axis_length / x_axis.range.Range();
-  float bar_off_plt = bar_off * x_axis.axis_length / x_axis.range.Range();
+  float bar_wd_plt = bar_width * x_axis.axis_length / (float)view_range.Range();
+  float bar_off_plt = bar_off * x_axis.axis_length / (float)view_range.Range();
 
   String svg_labels;
   String svg_bars;
