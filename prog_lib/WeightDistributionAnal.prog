@@ -1,0 +1,723 @@
+// ta_Dump File v3.0 -- code v7.0.4.0 rev7991
+Program .projects[1].programs.gp[1].gp[0][6] { 
+ ProgObjList @.objs = [2] {
+  DataTable @[0] { 
+   DataTableCols @.data = [2] {
+    float_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+    float_Data @[1] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+  };
+  DataTable @[1] { 
+   DataTableCols @.data = [1] {
+    float_Data @[0] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @[0] { };
+     };
+    };
+   };
+  };
+ };
+
+ ProgType_List @.types = [0] {
+ };
+
+ ProgVar_List @.args = [5] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+  ProgVar @[2] { };
+  ProgVar @[3] { };
+  ProgVar @[4] { };
+ };
+
+ ProgVar_List @.vars = [2] {
+  ProgVar @[0] { };
+  ProgVar @[1] { };
+ };
+
+ Function_List @.functions = [1] {
+  Function @[0] { 
+   ProgVar_List @.args = [1] {
+    ProgVar @[0] { };
+   };
+
+   ProgEl_List @.fun_code = [9] {
+    LocalVars @[0] { 
+     ProgVar_List @.local_vars = [2] {
+      ProgVar @[0] { };
+      ProgVar @[1] { };
+     };
+    };
+    MethodCall @[1] { 
+     ProgArg_List @.meth_args = [3] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+     };
+    };
+    AssignExpr @[2] { };
+    MathCall @[3] { 
+     ProgArg_List @.meth_args = [5] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+      ProgArg @[2] { };
+      ProgArg @[3] { };
+      ProgArg @[4] { };
+     };
+    };
+    MethodCall @[4] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    MethodCall @[5] { 
+     ProgArg_List @.meth_args = [2] {
+      ProgArg @[0] { };
+      ProgArg @[1] { };
+     };
+    };
+    MethodCall @[6] { 
+     ProgArg_List @.meth_args = [1] {
+      ProgArg @[0] { };
+     };
+    };
+    CssExpr @[7] { };
+    CssExpr @[8] { };
+   };
+  };
+ };
+
+ ProgEl_List @.init_code = [0] {
+ };
+
+ ProgEl_List @.prog_code = [2] {
+  LocalVars @[0] { 
+   ProgVar_List @.local_vars = [0] {
+   };
+  };
+  FunctionCall @[1] { 
+   ProgArg_List @.fun_args = [1] {
+    ProgArg @[0] { };
+   };
+  };
+ };
+};
+Program .projects[1].programs.gp[1].gp[0][6] {
+ name="WeightDistributionAnal";
+ short_nm="WtDstAnl";
+ tags="Analysis, Weights, Distribution, Histogram";
+ desc="analyze the distribution of weights for a given projection -- histogram, etc";
+ flags=NO_STOP_STEP;
+ objs {
+  name="objs";
+  el_typ=DataTable;
+  el_def=0;
+  DataTable @[0] {
+   name="WeightsHist";
+   desc=;
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1445378214120865;
+       val_type_fixed=0;
+      };
+     };
+     name="wt_val";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [0]      };
+     width=86;
+    };
+    float_Data @[1] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1697479039430618;
+       val_type_fixed=0;
+      };
+     };
+     name="count";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=0;
+     cell_geom{      };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name=;
+     [0]      };
+     width=101;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [19] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;   };
+  };
+  DataTable @[1] {
+   name="WeightsTable";
+   desc=;
+   data {
+    name="data";
+    el_typ=float_Data;
+    el_def=0;
+    float_Data @[0] {
+     UserDataItem_List @*(.user_data_) {
+      name=;
+      el_typ=UserDataItem;
+      el_def=0;
+      UserDataItem @[0] {
+       name="view_panel_wd";
+       value 6 0=0.1706484705209732;
+       val_type_fixed=0;
+      };
+     };
+     name="wts";
+     col_flags=SAVE_ROWS|SAVE_DATA;
+     is_matrix=1;
+     cell_geom{ 24;30;     };
+     calc_expr {
+      expr=;
+     };
+     dim_names {
+      name="dim_names";
+     [2] ;;     };
+     width=0;
+    };
+   };
+   data_flags=AUTO_CALC;
+   auto_load=NO_AUTO_LOAD;
+   auto_load_file=;
+   keygen 4 0=0;
+   row_indexes {
+    name="row_indexes";
+   [576] 0;1;2;3;4;5;6;7;8;9;
+10;11;12;13;14;15;16;17;18;19;
+20;21;22;23;24;25;26;27;28;29;
+30;31;32;33;34;35;36;37;38;39;
+40;41;42;43;44;45;46;47;48;49;
+50;51;52;53;54;55;56;57;58;59;
+60;61;62;63;64;65;66;67;68;69;
+70;71;72;73;74;75;76;77;78;79;
+80;81;82;83;84;85;86;87;88;89;
+90;91;92;93;94;95;96;97;98;99;
+100;101;102;103;104;105;106;107;108;109;
+110;111;112;113;114;115;116;117;118;119;
+120;121;122;123;124;125;126;127;128;129;
+130;131;132;133;134;135;136;137;138;139;
+140;141;142;143;144;145;146;147;148;149;
+150;151;152;153;154;155;156;157;158;159;
+160;161;162;163;164;165;166;167;168;169;
+170;171;172;173;174;175;176;177;178;179;
+180;181;182;183;184;185;186;187;188;189;
+190;191;192;193;194;195;196;197;198;199;
+200;201;202;203;204;205;206;207;208;209;
+210;211;212;213;214;215;216;217;218;219;
+220;221;222;223;224;225;226;227;228;229;
+230;231;232;233;234;235;236;237;238;239;
+240;241;242;243;244;245;246;247;248;249;
+250;251;252;253;254;255;256;257;258;259;
+260;261;262;263;264;265;266;267;268;269;
+270;271;272;273;274;275;276;277;278;279;
+280;281;282;283;284;285;286;287;288;289;
+290;291;292;293;294;295;296;297;298;299;
+300;301;302;303;304;305;306;307;308;309;
+310;311;312;313;314;315;316;317;318;319;
+320;321;322;323;324;325;326;327;328;329;
+330;331;332;333;334;335;336;337;338;339;
+340;341;342;343;344;345;346;347;348;349;
+350;351;352;353;354;355;356;357;358;359;
+360;361;362;363;364;365;366;367;368;369;
+370;371;372;373;374;375;376;377;378;379;
+380;381;382;383;384;385;386;387;388;389;
+390;391;392;393;394;395;396;397;398;399;
+400;401;402;403;404;405;406;407;408;409;
+410;411;412;413;414;415;416;417;418;419;
+420;421;422;423;424;425;426;427;428;429;
+430;431;432;433;434;435;436;437;438;439;
+440;441;442;443;444;445;446;447;448;449;
+450;451;452;453;454;455;456;457;458;459;
+460;461;462;463;464;465;466;467;468;469;
+470;471;472;473;474;475;476;477;478;479;
+480;481;482;483;484;485;486;487;488;489;
+490;491;492;493;494;495;496;497;498;499;
+500;501;502;503;504;505;506;507;508;509;
+510;511;512;513;514;515;516;517;518;519;
+520;521;522;523;524;525;526;527;528;529;
+530;531;532;533;534;535;536;537;538;539;
+540;541;542;543;544;545;546;547;548;549;
+550;551;552;553;554;555;556;557;558;559;
+560;561;562;563;564;565;566;567;568;569;
+570;571;572;573;574;575;   };
+  };
+ };
+ types {
+  name="types";
+  el_typ=DynEnumType;
+  el_def=0;
+ };
+ args {
+  name="args";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="weights_file";
+   var_type=T_String;
+   string_val="wts/lvis_CU3D_100_std_train.00.00_1000.wts.gz";
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="wts_prjn";
+   var_type=T_Object;
+   object_type=Projection;
+   object_val=.projects[1].networks[0].layers.gp[2][1].projections[0]$$<LeabraPrjn,Fm_V1_med>;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[2] {
+   name="min_wt";
+   var_type=T_Real;
+   real_val=0.05;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[3] {
+   name="max_wt";
+   var_type=T_Real;
+   real_val=1;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[4] {
+   name="hist_bin";
+   var_type=T_Real;
+   real_val=0.05;
+   objs_ptr=0;
+   flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL|PGRM_ARG;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ vars {
+  name="vars";
+  el_typ=ProgVar;
+  el_def=0;
+  ProgVar @[0] {
+   name="WeightsHist";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[1].programs.gp[1].gp[0][6].objs[0]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+  ProgVar @[1] {
+   name="WeightsTable";
+   var_type=T_Object;
+   object_type=DataTable;
+   object_val=.projects[1].programs.gp[1].gp[0][6].objs[1]$$;
+   objs_ptr=1;
+   flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+   reference=0;
+   desc=;
+   init_from=NULL;
+  };
+ };
+ functions {
+  name="functions";
+  el_typ=Function;
+  el_def=0;
+  Function @[0] {
+   desc=;
+   flags=0;
+   orig_prog_code=;
+   name="WeightDistribHist";
+   return_type=T_Int;
+   object_type=taOBase;
+   args {
+    name=;
+    el_typ=ProgVar;
+    el_def=0;
+    ProgVar @[0] {
+     name="prjn";
+     var_type=T_Object;
+     object_type=Projection;
+     object_val=NULL;
+     objs_ptr=0;
+     flags=SAVE_VAL|LOCAL_VAR|FUN_ARG|USED|EDIT_VAL;
+     reference=0;
+     desc=;
+     init_from=NULL;
+    };
+   };
+   fun_code {
+    name=;
+    el_typ=ProgCode;
+    el_def=0;
+    LocalVars @[0] {
+     desc=;
+     flags=0;
+     orig_prog_code=;
+     local_vars {
+      name="local_vars";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @[0] {
+       name="hist_vec";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|NEW_OBJ|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @[1] {
+       name="wts_all";
+       var_type=T_Object;
+       object_type=float_Matrix;
+       object_val=NULL;
+       objs_ptr=0;
+       flags=SAVE_VAL|LOCAL_VAR|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+    };
+    MethodCall @[1] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="prjn->WeightsToTable()";
+     result_var=NULL;
+     obj=.projects[1].programs.gp[1].gp[0][6].functions[0].args[0]$$;
+     method=Projection::WeightsToTable;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=DataTable_ptr;
+       type="DataTable*";
+       name="dt";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="WeightsTable";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=0;
+       def_val="\"\"";
+       prev_expr=;
+       expr {
+	expr="\"wts\"";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=bool;
+       type="bool";
+       name="recv_wts";
+       required=0;
+       def_val="true";
+       prev_expr=;
+       expr {
+	expr="true";
+       };
+      };
+     };
+     meth_sig="DataTable_ptr WeightsToTable(DataTable* dt, taString& col_nm, bool recv_wts = true)";
+     meth_desc=" copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer -- recv prjn if recv_wts is true, else sending weights";
+    };
+    AssignExpr @[2] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="wts_all = WeightsTable[\"wts\"][:,:,:].flatten()";
+     result_var=.projects[1].programs.gp[1].gp[0][6].functions[0].fun_code[0].local_vars[1]$$;
+     expr {
+      expr="WeightsTable[\"wts\"][:,:,:].Flatten()";
+     };
+    };
+    MathCall @[3] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="taMath_float::vec_histogram()";
+     result_var=NULL;
+     object_type=taMath_float;
+     method=taMath_float::vec_histogram;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=float_Matrix_ptr;
+       type="float_Matrix*";
+       name="hist_vec";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="hist_vec";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=const_float_Matrix_ptr;
+       type="float_Matrix*";
+       name="src_vec";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="wts_all";
+       };
+      };
+      ProgArg @[2] {
+       arg_type=float;
+       type="float";
+       name="bin_size";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="hist_bin";
+       };
+      };
+      ProgArg @[3] {
+       arg_type=float;
+       type="float";
+       name="min_val";
+       required=0;
+       def_val="0.0";
+       prev_expr=;
+       expr {
+	expr="min_wt";
+       };
+      };
+      ProgArg @[4] {
+       arg_type=float;
+       type="float";
+       name="max_val";
+       required=0;
+       def_val="0.0";
+       prev_expr=;
+       expr {
+	expr="max_wt";
+       };
+      };
+     };
+    };
+    MethodCall @[4] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="WeightsHist.FindMakeColMatrix()";
+     result_var=NULL;
+     obj=.projects[1].programs.gp[1].gp[0][6].vars[0]$$;
+     method=DataTable::FindMakeCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"wt_val\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=taBase::ValType;
+       type="taBase::ValType";
+       name="val_type";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taBase::VT_FLOAT";
+       };
+      };
+     };
+     meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+     meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+    };
+    MethodCall @[5] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="WeightsHist.FindMakeColMatrix()";
+     result_var=NULL;
+     obj=$.projects[1].programs.gp[1].gp[0][6].vars[0]$;
+     method=DataTable::FindMakeCol;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=const_taString_ref;
+       type="taString&";
+       name="col_nm";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="\"count\"";
+       };
+      };
+      ProgArg @[1] {
+       arg_type=taBase::ValType;
+       type="taBase::ValType";
+       name="val_type";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="taBase::VT_FLOAT";
+       };
+      };
+     };
+     meth_sig="DataCol_ptr FindMakeCol(taString& col_nm, taBase::ValType val_type)";
+     meth_desc=" insures that a scalar column of the given name and val type exists, and return that col.";
+    };
+    MethodCall @[6] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="WeightsHist.EnforceRows(shape(hist_vec))";
+     result_var=NULL;
+     obj=$.projects[1].programs.gp[1].gp[0][6].vars[0]$;
+     method=DataTable::EnforceRows;
+     meth_args {
+      name="meth_args";
+      el_typ=ProgArg;
+      el_def=0;
+      ProgArg @[0] {
+       arg_type=int;
+       type="int";
+       name="n_rows";
+       required=1;
+       def_val=;
+       prev_expr=;
+       expr {
+	expr="shape(hist_vec)[0]";
+       };
+      };
+     };
+     meth_sig="void EnforceRows(int n_rows)";
+     meth_desc=" ensure that there are exactly n_rows in the table, removing or adding as needed";
+    };
+    CssExpr @[7] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="WeightsHist[\"count\"][:] = hist_vec;";
+     expr {
+      expr="WeightsHist[\"count\"][:] = hist_vec;";
+     };
+    };
+    CssExpr @[8] {
+     desc=;
+     flags=CAN_REVERT_TO_CODE;
+     orig_prog_code="WeightsHist[wt_val][:] = [0.0, 1.0, 0.05];";
+     expr {
+      expr="WeightsHist[\"wt_val\"][:] = ((float_Matrix)[(min_wt/hist_bin):(max_wt/hist_bin)].Expand()) * hist_bin;";
+     };
+    };
+   };
+  };
+ };
+ init_code {
+  name="init_code";
+  el_typ=ProgCode;
+  el_def=0;
+ };
+ prog_code {
+  name="prog_code";
+  el_typ=ProgCode;
+  el_def=0;
+  LocalVars @[0] {
+   desc=;
+   flags=0;
+   orig_prog_code=;
+   local_vars {
+    name="ProgVar_List_0";
+    el_typ=ProgVar;
+    el_def=0;
+   };
+  };
+  FunctionCall @[1] {
+   desc=;
+   flags=CAN_REVERT_TO_CODE;
+   orig_prog_code="WeightDistrib(wts_prjn)";
+   result_var=NULL;
+   fun=.projects[1].programs.gp[1].gp[0][6].functions[0]$$;
+   fun_args {
+    name="fun_args";
+    el_typ=ProgArg;
+    el_def=0;
+    ProgArg @[0] {
+     arg_type=Projection;
+     type="Projection*";
+     name="prjn";
+     required=1;
+     def_val=;
+     prev_expr=;
+     expr {
+      expr="wts_prjn";
+     };
+    };
+   };
+  };
+ };
+ step_prog=NULL;
+ step_n=1;
+};
