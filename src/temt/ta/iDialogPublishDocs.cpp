@@ -103,7 +103,7 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
 
   // Tags
   tagsEdit = new QLineEdit;
-  tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (space spearated)");
+  tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (comma spearated!!!)");
   tagsEdit->installEventFilter(this);
   addLabeledWidget(newHBox(vbox), "&Categories:", tagsEdit);
   

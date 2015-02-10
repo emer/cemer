@@ -1462,7 +1462,7 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   }
   // TODO: Finish designing the 'Template:Project' page on the wiki, and give it arguments for each variable by replacing that spot with {{{arg_name}}}
   //       Supply any such arguments in the page_content string.  See the 'Template:Project' and 'Template_Test' pages on the emergent-test wiki for examples.
-  String page_content = "{{Project|name=" + proj_name + "|desc=" + proj_desc + "}}";
+  String page_content = "{{PublishedProject|name=" + proj_name + "|desc=" + proj_desc + "}}";
 
   // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
   if (proj_filename.empty()) { return CreatePage(wiki_name, page_name, page_content, proj_category); }

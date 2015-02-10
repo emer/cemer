@@ -78,7 +78,7 @@ void iDialogKeyBindings::Constr() {
   // instruction box
   QHBoxLayout* header_layout = new QHBoxLayout();
 #if (QT_VERSION >= 0x050200)
-  String instruction_str = "To Set:    Press a key or key combination and tab out \nTo Clear: Press any single modifier key";
+  String instruction_str = "To Set:    Press a key or key combination and tab out \nTo Clear: Press any single modifier key \nHover over label for user friendly version of key sequence";
 #else
   String instruction_str = "Only available since QT5.2";
 #endif
@@ -114,7 +114,7 @@ void iDialogKeyBindings::Constr() {
     scroll_area->setWidget(a_tab);  // each tab has a scrollarea
     
     tab_widget->addTab(scroll_area, context_label);
-
+    
     // add all of the actions that can be bound to keys
     bindings_layout[ctxt] = new QFormLayout;
     bindings_layout[ctxt]->setLabelAlignment(Qt::AlignLeft);
@@ -135,7 +135,7 @@ void iDialogKeyBindings::Constr() {
         KeyActionPair_PArray* default_pairs = default_bindings->CurrentBindings(static_cast<taiMisc::BindingContext>(ctxt));
         QKeySequence default_key_seq = default_pairs->GetKeySequence(current_action);
         if (key_seq.matches(default_key_seq) == 0) {
-            edit->setStyleSheet("background-color:yellow;");
+          edit->setStyleSheet("background-color:yellow;");
         }
         else {
           edit->setStyleSheet("background-color:white;");
@@ -143,7 +143,15 @@ void iDialogKeyBindings::Constr() {
         
         // get the most readable form of the key sequence
         String key_seq_str = taiMisc::GetSequenceFromActionFriendly(current_context, current_action);
-        action->setToolTip("Default: " + key_seq_str);
+        KeyActionPair* pair = default_pairs->GetPairFromAction(current_action);
+        String help_str;
+        if (pair) {
+          help_str = pair->tooltip;
+          if (help_str.nonempty()) {
+            help_str = "   (" + help_str  + ")";
+          }
+        }
+        action->setToolTip("Default: " + key_seq_str + help_str);
         bindings_layout[ctxt]->addRow(action, edit);
         temp_bindings->Add(current_context, current_action, key_seq);
       }
@@ -161,7 +169,7 @@ void iDialogKeyBindings::Constr() {
   button_cancel = new QPushButton("&Cancel", this);
   button_layout->addWidget(button_cancel);
   layOuter->addLayout(button_layout);
-
+  
   connect(button_ok, SIGNAL(clicked()), this, SLOT(accept()) );
   connect(button_cancel, SIGNAL(clicked()), this, SLOT(reject()) );
 }

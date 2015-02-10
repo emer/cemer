@@ -32,6 +32,7 @@ class TA_API KeyActionPair {
 public:
   taiMisc::BoundAction      action; // #IGNORE
   QKeySequence              key_sequence; //
+  String                    tooltip; // this is a place to add an explanation for action names that might be less obvious than something like "delete" - the friendly version of the key sequence will be added to this for the full tooltip
   
   // only compare the action
   bool	operator>(const KeyActionPair& kap) { return action > kap.action; }
@@ -42,7 +43,7 @@ public:
   bool	operator==(const KeyActionPair& kap) { return ((action == kap.action) && (key_sequence == kap.key_sequence)); }
   
   KeyActionPair(const KeyActionPair& cp) { action = cp.action; key_sequence = cp.key_sequence; }
-  KeyActionPair(QKeySequence a_key_sequence, taiMisc::BoundAction act) { key_sequence = a_key_sequence; action = act; }
+  KeyActionPair(QKeySequence a_key_sequence, taiMisc::BoundAction act, String tool_tip = "") { key_sequence = a_key_sequence; action = act; tooltip = tool_tip; }
   KeyActionPair()	{ };
   ~KeyActionPair()	{ };
 };

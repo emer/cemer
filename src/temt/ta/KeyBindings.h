@@ -40,7 +40,7 @@ public:
   KeyActionPair_PArray       tree_bindings; // #IGNORE 
   KeyActionPair_PArray       graphics_bindings; // #IGNORE 
   
-  virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence);
+  virtual bool                  Add(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence, String tool_tip = "");
   // #IGNORE add a name value pair to the list of key bindings
   virtual bool                  Remove(taiMisc::BindingContext context, taiMisc::BoundAction action, QKeySequence key_sequence, bool check_action_only = true);
   // #IGNORE remove the pair based on either an action alone (first matching) or on action and key sequence

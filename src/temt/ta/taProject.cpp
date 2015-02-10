@@ -573,7 +573,7 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
     dialog.SetTags(QString("e.g. attention, vision, robotics"));
     if (dialog.exec()) {
       // User clicked OK.
-      QString name = dialog.GetName() + "_pub_page";
+      QString name = dialog.GetName();
       page_name = String(name); // needed for call to create the taDoc
       QString desc = dialog.GetDesc();
       QString categories = dialog.GetTags();

@@ -46,14 +46,14 @@ KeyActionPair_PArray* KeyBindings::CurrentBindings(taiMisc::BindingContext conte
   }
 }
 
-bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction action,  QKeySequence key_sequence) {
+bool KeyBindings::Add(taiMisc::BindingContext context, taiMisc::BoundAction action,  QKeySequence key_sequence, String tool_tip) {
   bool rval = false;
   KeyActionPair_PArray* context_bindings = CurrentBindings(context);
   if (context_bindings) {
     // okay to bind 2 key sequences to the same action
     // NOT okay to have the same key sequence bound to 2 actions
     if ((context_bindings->FindKeySequence(key_sequence) == -1)) {
-      context_bindings->Add(KeyActionPair(key_sequence, action));
+      context_bindings->Add(KeyActionPair(key_sequence, action, tool_tip));
       rval = true;
     }
   }
