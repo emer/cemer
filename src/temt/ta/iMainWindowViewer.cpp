@@ -717,7 +717,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   toolBarMenu = viewMenu->AddSubMenu("Toolbars");
 
   viewMenu->insertSeparator();
-  viewResetViewAction = AddAction(new iAction("Reset Frames", QKeySequence(), "viewResetViewAction"));
+  viewResetViewAction = AddAction(new iAction("Reset Frames", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_RESET_FRAMES), "viewResetViewAction"));
   viewMenu->AddAction(viewResetViewAction);
 
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,

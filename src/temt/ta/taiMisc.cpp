@@ -1072,6 +1072,7 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_T3, QKeySequence(meta_key + Qt::Key_5));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_AND_T3, QKeySequence(meta_key + Qt::Key_6));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_ALL_FRAMES, QKeySequence(meta_key + Qt::Key_7));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_RESET_FRAMES, QKeySequence(meta_key + Qt::Key_8), "reset frames to default widths");
 #else
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY, QKeySequence(control_key + Qt::Key_1));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_ONLY, QKeySequence(control_key + Qt::Key_2));
