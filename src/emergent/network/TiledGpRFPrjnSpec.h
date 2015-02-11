@@ -47,8 +47,6 @@ public:
   float         gauss_ctr_mv;           // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN how much the center of the gaussian moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field
   MinMaxRange	wt_range;
   // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- for bimodal, min and max are the two means of the bimodal distribution
-  float         bimod_var;
-  // #CONDSHOW_ON_init_wts&&wts_type:BIMODAL_PERMUTED gaussian variance around bimodal values
   float         p_high;
   // #CONDSHOW_ON_init_wts&&wts_type:BIMODAL_PERMUTED probability of generating high values for bimodal permuted case
 

@@ -32,7 +32,6 @@ void TiledGpRFPrjnSpec::Initialize() {
   gauss_ctr_mv = 0.5f;
   wt_range.min = 0.1f;
   wt_range.max = 0.9f;
-  bimod_var = 0.02f;
   p_high = 0.25f;
 }
 
@@ -406,15 +405,13 @@ void TiledGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGroup*
   
   for(int i=0; i<cg->size; i++) {
     int hilo = high_low_wts[i];
-    float mn;
+    float wt;
     if(hilo == 1) {
-      mn = wt_range.max;
+      wt = wt_range.max;
     }
     else {
-      mn = wt_range.min;
+      wt = wt_range.min;
     }
-    float wt = Random::UniformMeanRange(mn, bimod_var);
-    
     SetCnWt(cg, i, net, wt);
   }
 }
