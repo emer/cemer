@@ -376,6 +376,7 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;         // enable the CIFER deep5b mechanisms
   bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep5b activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
+  float         minus_scale;    // #CONDSHOW_ON_on #MIN_0 extra scaling factor to apply to deep5b activations in the minus phase -- can down-scale minus phase activations, relative to the plus phase, for example
   float	        act5b_thr; // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act
   float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
   float         d5b_to_super;   // #CONDSHOW_ON_on #DEF_0 gain on modulation of superficial (2/3 = act) netin by deep5b activations: netin += d5b_to_super * deep5b

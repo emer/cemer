@@ -1585,6 +1585,22 @@ void Layer::UnitLogPos(Unit* un, int& x, int& y) const {
   }
 }
 
+void Layer::UnitInGpLogPos(Unit* un, int& x, int& y) const {
+  Unit_Group* own_sgp = un->own_subgp();
+  if(own_sgp || !unit_groups) {
+    x = un->pos.x;
+    y = un->pos.y;
+  }
+  else {
+    if(unit_groups && virt_groups) {
+      int gpidx = un->idx / un_geom.n;
+      int unidx = un->idx % un_geom.n;
+      y = unidx / un_geom.x;
+      x = unidx % un_geom.x;
+    }
+  }
+}
+
 Unit* Layer::UnitAtDispCoord(int x, int y) const {
   if(unit_groups && !virt_groups) {
     // unit group can have its own position -- need to search through each one

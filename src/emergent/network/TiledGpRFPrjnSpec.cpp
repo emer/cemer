@@ -17,15 +17,39 @@
 #include <Network>
 #include <int_Array>
 #include <taMath_float>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
 
 void TiledGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
   send_gp_skip = 2;
+  send_gp_start = 0;
   wrap = false;
   reciprocal = false;
+  wts_type = GAUSSIAN;
   gauss_sig = 1.0f;
+  gauss_ctr_mv = 0.5f;
+  wt_range.min = 0.1f;
+  wt_range.max = 0.9f;
+  bimod_var = 0.02f;
+  p_high = 0.25f;
+}
+
+void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+
+  if(taMisc::is_loading) {
+    taVersion v705(7, 0, 5);
+    if(taMisc::loading_version < v705) { // set send_gp_start to prev val
+      if(wrap) {
+        send_gp_start = -send_gp_skip;
+      }
+      else {
+        send_gp_start = 0;
+      }
+    }
+  }
 }
 
 void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
@@ -41,6 +65,10 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     return;
   }
 
+  if(wts_type == BIMODAL_PERMUTED) {
+    high_low_wts.Reset();       // keep it fresh
+  }
+  
   if(reciprocal) {
     Connect_Reciprocal(prjn, make_cons);
     return;
@@ -61,8 +89,7 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       taVector2i su_st;
-      if(wrap)        su_st = (ruc-1) * send_gp_skip;
-      else            su_st = ruc * send_gp_skip;
+      su_st = send_gp_start + ruc * send_gp_skip;
 
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
@@ -108,8 +135,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) {
     for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
       for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
         taVector2i su_st;
-        if(wrap)  su_st = (ruc-1) * send_gp_skip;
-        else      su_st = ruc * send_gp_skip;
+        su_st = send_gp_start + ruc * send_gp_skip;
 
         taVector2i suc;
         taVector2i suc_wrp;
@@ -140,8 +166,7 @@ void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) {
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       taVector2i su_st;
-      if(wrap)        su_st = (ruc-1) * send_gp_skip;
-      else            su_st = ruc * send_gp_skip;
+      su_st = send_gp_start + ruc * send_gp_skip;
 
       taVector2i suc;
       taVector2i suc_wrp;
@@ -222,8 +247,7 @@ int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
       taVector2i su_st;
-      if(wrap)  su_st = (ruc-1) * send_gp_skip;
-      else      su_st = ruc * send_gp_skip;
+      su_st = send_gp_start + ruc * send_gp_skip;
 
       taVector2i suc;
       taVector2i suc_wrp;
@@ -299,26 +323,99 @@ bool TiledGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
 
-void TiledGpRFPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru, float dist,
-                                    int cg_idx) {
-  Network* net = prjn->layer->own_net;
-  float gaus = taMath_float::gauss_den_nonorm(dist, gauss_sig);
-  float wt_val = wt_range.min + gaus * wt_range.Range();
-  cg->Cn(cg_idx,ConGroup::WT,net) = wt_val;
-}
-
 void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                                           Network* net, int thr_no) {
-  // Layer* recv_lay = (Layer*)prjn->layer;
-  // Layer* send_lay = (Layer*)prjn->from.ptr();
-
-  // for(int i=0; i<cg->size; i++) {
-  //   int su_x = i % rf_width.x;
-  //   int su_y = i / rf_width.x;
-
-  //   float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
-  //   float wt = expf(-0.5 * dst / sig_sq);
-
-  //   SetCnWt(cg, i, net, wt_val);
-  // }
+  if(wts_type == GAUSSIAN) {
+    Init_Weights_Gaussian(prjn, cg, net, thr_no);
+  }
+  else {
+    Init_Weights_BimodalPermuted(prjn, cg, net, thr_no);
+  }    
 }
+
+void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
+                                              Network* net, int thr_no) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  // todo: need to fix for reciprocal?
+
+  taVector2i full_size = send_lay->un_geom * send_gp_size;
+  taVector2f half_size = full_size;
+  half_size *= 0.5f;
+
+  float eff_sig = gauss_sig * (float)half_size.x;
+  
+  taVector2i ru_pos;
+  Unit* ru = cg->ThrOwnUn(net, thr_no);
+  ru->UnitGpLogPos(ru_pos);
+
+  taVector2f rugpctr = recv_lay->un_geom;
+  rugpctr *= 0.5f;
+  taVector2f ru_nrm_pos = gauss_ctr_mv * (((taVector2f)ru_pos - rugpctr) / rugpctr);
+
+  taVector2f s_ctr = (ru_nrm_pos * half_size) + half_size;
+  
+  for(int i=0; i<cg->size; i++) {
+    // note: these are organized within unit group first, then by groups
+    int ug_idx = i / send_lay->un_geom.n; // which unit group, ordinally
+    int un_idx = i % send_lay->un_geom.n; // index in unit group
+
+    int un_x = un_idx % send_lay->un_geom.x;
+    int un_y = un_idx / send_lay->un_geom.x;
+
+    int ug_x = ug_idx % send_gp_size.x;
+    int ug_y = ug_idx / send_gp_size.x;
+
+    int su_x = ug_x * send_lay->un_geom.x + un_x;
+    int su_y = ug_y * send_lay->un_geom.y + un_y;
+
+    float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
+    float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+    wt = wt_range.min + wt_range.range * wt;
+    
+    SetCnWt(cg, i, net, wt);
+  }
+}
+
+void TiledGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGroup* cg,
+                                                     Network* net, int thr_no) {
+  Layer* recv_lay = prjn->layer;
+  Layer* send_lay = prjn->from;
+
+  // todo: need to fix for reciprocal?
+
+  taVector2i full_size = send_lay->un_geom * send_gp_size;
+  int n_sz = full_size.Product();
+  
+  if(high_low_wts.size != n_sz) {
+    high_low_wts.SetSize(n_sz);
+    int n_on = (int)((float)n_sz * p_high);
+    if(n_on == 0) n_on = 1;
+    if(n_on > n_sz) n_on = n_sz;
+    int i;
+    for(i=0; i<n_on; i++) {
+      high_low_wts[i] = 1;
+    }
+    for(;i<n_sz;i++) {
+      high_low_wts[i] = 0;
+    }
+  }
+
+  high_low_wts.Permute();
+  
+  for(int i=0; i<cg->size; i++) {
+    int hilo = high_low_wts[i];
+    float mn;
+    if(hilo == 1) {
+      mn = wt_range.max;
+    }
+    else {
+      mn = wt_range.min;
+    }
+    float wt = Random::UniformMeanRange(mn, bimod_var);
+    
+    SetCnWt(cg, i, net, wt);
+  }
+}
+
