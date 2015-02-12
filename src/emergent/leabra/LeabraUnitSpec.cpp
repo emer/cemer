@@ -1241,9 +1241,9 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   //   act_ts = u->act_buf->CircSafeEl(0); // get first logical element..
   // }
 
-  if(act_ts != 0.0f) {         // we send negative guys too!!
+  if(act_ts > opt_thresh.send) {
     float act_delta = act_ts - u->d5b_sent;
-    if(fabsf(act_delta) > opt_thresh.delta || u->d5b_sent == 0.0f) {
+    if(fabsf(act_delta) > opt_thresh.delta) {
       const int nsg = u->NSendConGps(net, thr_no); 
       for(int g=0; g< nsg; g++) {
         LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
@@ -1257,7 +1257,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
       u->d5b_sent = act_ts;     // cache the last sent value
     }
   }
-  else if(u->d5b_sent != 0.0f) {
+  else if(u->d5b_sent > opt_thresh.send) {
     float act_delta = - u->d5b_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {

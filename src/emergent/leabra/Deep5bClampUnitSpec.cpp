@@ -31,7 +31,7 @@ void Deep5bClampUnitSpec::Defaults_init() {
 void Deep5bClampUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
   inherited::Compute_NetinRaw(u, net, thr_no);
-  if(Quarter_Deep5bNow(net->quarter)) {
+  if(net->phase == LeabraNetwork::PLUS_PHASE) {
     u->net_raw = 0.0f;          // zero the regular netins
   }
 }
