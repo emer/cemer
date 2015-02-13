@@ -158,7 +158,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
         if((xp >= 0) && (xp < lay->disp_geom.x) && (yp >= 0) && (yp < lay->disp_geom.y)) {
           Unit* unit = lay->UnitAtDispCoord(xp, yp);
           if (unit && nv->unit_disp_md) {
-            if(nv->unit_con_md) {
+            if(nv->unit_con_md && nv->unit_src) {
               // see UnitGroupView::UpdateUnitViewBase_Con_impl for relevant code
               // todo: could perhaps put this in a common method or something..
               bool check_prjn = (nv->prjn_starts_with.nonempty());
