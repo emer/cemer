@@ -241,6 +241,7 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
   
   switch (action) {
     case taiMisc::DATATABLE_TOGGLE_FOCUS:
+    case taiMisc::DATATABLE_TOGGLE_FOCUS_II:
       if(obj->inherits("iDataTableView")) {
         tvTable->clearExtSelection();
         if(m_cell) {
@@ -256,6 +257,8 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
       return true;
     case taiMisc::DATATABLE_EDIT_HOME:
     case taiMisc::DATATABLE_EDIT_END:
+    case taiMisc::DATATABLE_EDIT_HOME_II:
+    case taiMisc::DATATABLE_EDIT_END_II:
       if(m_cell && obj->inherits("iDataTableView")) {
         tvCell->tv->setFocus();
         tvCell->tv->selectCurCell();
