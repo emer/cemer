@@ -1919,6 +1919,7 @@ class SubversionPoller(object):
 
             all_files = self._get_dat_files(tag)
             prev_dat_files = self.jobs_running.get_val(row, "dat_files")
+            prev_dat_files = prev_dat_files.replace("\t", " ")  # somehow getting tab
             dat_files = all_files[0]
             if dat_files != prev_dat_files:
                 logging.info("dat_files updated to: %s from: %s" % (dat_files, prev_dat_files))
