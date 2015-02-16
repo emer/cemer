@@ -103,7 +103,7 @@ public:
   virtual void  Kill();
   // #BUTTON #CONFIRM kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  GetData();
-  // #BUTTON tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
+  // this is now done automatically: tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
   virtual void  ImportData(bool remove_existing = true);
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
