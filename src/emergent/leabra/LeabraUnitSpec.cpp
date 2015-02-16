@@ -280,7 +280,6 @@ void CIFERThalSpec::Defaults_init() {
 void CIFERDeep5bSpec::Initialize() {
   on = false;
   act5b_thr = 0.1f;
-  minus_scale = 1.0f;
   d5b_to_super = 0.0f;
   ti_5b = 0.0f;
   ti_5b_c = 1.0f - ti_5b;
@@ -1678,9 +1677,6 @@ void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* ne
       act5b = 0.0f;
     }
     u->deep5b = u->thal * act5b;  // thal is thresholded
-    if(net->phase != LeabraNetwork::PLUS_PHASE) {
-      u->deep5b *= cifer_d5b.minus_scale;
-    }
   }
   else {
     if(cifer_d5b.burst) {
