@@ -119,10 +119,10 @@ public:
     MENU_CONTEXT,
     PROJECTWINDOW_CONTEXT,
     TREE_CONTEXT,
-    GRAPHICS_CONTEXT,
     TEXTEDIT_CONTEXT,
-    DATATABLE_CONTEXT,           // data tables
     CONSOLE_CONTEXT,
+    DATATABLE_CONTEXT,           // data tables
+    GRAPHICS_CONTEXT,
     CONTEXT_COUNT
   };
   

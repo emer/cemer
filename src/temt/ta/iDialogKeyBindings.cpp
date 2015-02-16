@@ -57,7 +57,6 @@ iDialogKeyBindings::iDialogKeyBindings() {
 }
 
 iDialogKeyBindings::~iDialogKeyBindings() {
-  delete temp_bindings;
 }
 
 void iDialogKeyBindings::Constr() {
@@ -69,7 +68,7 @@ void iDialogKeyBindings::Constr() {
   layOuter->setSpacing(taiM->vspc_c);
   
   layOuter->setSizeConstraint(QLayout::SetDefaultConstraint);
-  setMinimumSize(400, 500);
+  setMinimumSize(400, 700 );
 
   // two boxes
   layOuter->addWidget(header_box);
@@ -98,7 +97,6 @@ void iDialogKeyBindings::Constr() {
   taMisc::KeyBindingSet current_key_set = taMisc::current_key_bindings;
   taMisc::SetKeyBindingSet(taMisc::KEY_BINDINGS_CUSTOM);
 
-  temp_bindings = new KeyBindings();  // build a list of current bindings for modification and saving
   String context_label;
   String action_label;
   int context_count = static_cast<int>(taiMisc::CONTEXT_COUNT);
@@ -153,7 +151,6 @@ void iDialogKeyBindings::Constr() {
         }
         action->setToolTip("Default: " + key_seq_str + help_str);
         bindings_layout[ctxt]->addRow(action, edit);
-        temp_bindings->Add(current_context, current_action, key_seq);
       }
     }
   }
