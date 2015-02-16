@@ -1451,7 +1451,7 @@ String taMediaWiki::GetEditToken(const String& wiki_name)
 
 bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_name,
                                  const String& proj_name, const String& proj_filename,
-                                 const String& proj_desc, const String& proj_category)
+                                 const String& proj_descripton, const String& proj_category)
 {
   // #CAT_Wiki Create or edit the wiki page for this project, upload the project file to the wiki, then post a link to this file on the project's wiki page.
   
@@ -1460,9 +1460,11 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
     taMisc::Warning(page_name, "page already exists on", wiki_name, "wiki! Call FindMakePage to make edits");
     return false;
   }
+  
   // TODO: Finish designing the 'Template:Project' page on the wiki, and give it arguments for each variable by replacing that spot with {{{arg_name}}}
   //       Supply any such arguments in the page_content string.  See the 'Template:Project' and 'Template_Test' pages on the emergent-test wiki for examples.
-  String page_content = "{{PublishedProject|name=" + proj_name + "|desc=" + proj_desc + "}}";
+  String emer_version = taMisc::version;
+  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|emer_version=" + emer_version + "|emer_proj_author=" + "O'Reilly" + "|emer_proj_version=1.0}}";
 
   // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
   if (proj_filename.empty()) { return CreatePage(wiki_name, page_name, page_content, proj_category); }
