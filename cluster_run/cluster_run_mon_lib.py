@@ -1918,7 +1918,11 @@ class SubversionPoller(object):
                 self.jobs_running.set_val(row, "job_out", job_out)
 
             all_files = self._get_dat_files(tag)
-            self.jobs_running.set_val(row, "dat_files", all_files[0])
+            prev_dat_files = self.jobs_running.get_val(row, "dat_files")
+            if all_files[0] != prev_dat_files:
+                self.jobs_running.set_val(row, "dat_files", all_files[0])
+                # always get the data files whenever they change -- GetData is obsolete..
+                self._getdata_job_tag(tag)
             self.jobs_running.set_val(row, "other_files", all_files[1])
         
         if (submit_mode == "ec2_compute"):
