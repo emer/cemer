@@ -1609,7 +1609,6 @@ void iMainWindowViewer::fileUploadFilesForProjectOnWeb()
   if (proj) {
     proj->UploadFilesForProjectOnWeb(); // repository name held by project
   }
-
 }
 
 

@@ -251,8 +251,12 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
 
   // Get the custom destination file name, if the user has specified one.
   String dst_filename;
-  if (wiki_file_name.empty()) { dst_filename = local_file_name; }
-  else { dst_filename = wiki_file_name; }
+  if (wiki_file_name.empty()) {
+    dst_filename = local_file_name;
+  }
+  else {
+    dst_filename = wiki_file_name;
+  }
 
   QUrl url(wikiUrl);
 
@@ -269,19 +273,16 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("File upload failed with error code:", qPrintable(err_code), "(", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
           taMisc::Info(dst_filename, "successfully uploaded to", wiki_name, "wiki!");
-          
           return true;
         }
       }
     }
   }
   taMisc::Error("File upload request failed");
-  
   return false;
 }
 
@@ -1468,14 +1469,19 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   
   String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|emer_version = " + emer_version + "|emer_proj_author = " + proj_authors + "|emer_proj_version = " + version + "|keyword = " + keywords + "}}";
   
-  // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords
-  // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
-  if (proj_filename.empty()) {
-    return CreatePage(wiki_name, page_name, page_content, proj_category);
-  }
+  // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
+
+  bool page_created = CreatePage(wiki_name, page_name, page_content, proj_category);
+  if (!page_created)
+    return false;
   
-  // Due to short-circuit evaluation, each of these methods must return true before the next method is called.
-  return (CreatePage(wiki_name, page_name, page_content, proj_category) &&
-          UploadFile(wiki_name, proj_filename, "") &&
-          LinkFile(proj_filename, wiki_name, page_name));
+  // If project filename empty, the user does not want to upload the project file
+  if (!proj_filename.empty()) {
+    bool loaded_and_linked = UploadFile(wiki_name, proj_filename, "");
+    if (loaded_and_linked) {
+      loaded_and_linked = LinkFile(proj_filename, wiki_name, page_name);
+    }
+    return loaded_and_linked;
+  }
+  return true;
 }

@@ -607,13 +607,17 @@ bool taProject::UploadFilesForProjectOnWeb() {
   if (browser) {
     if (QWidget *widget = browser->widget()) {
       QFileDialog file_dlg(widget);
-      file_dlg.setFileMode(QFileDialog::AnyFile);
+      file_dlg.setFileMode(QFileDialog::ExistingFiles);
       QStringList fileNames;
       if (file_dlg.exec()) {
         fileNames = file_dlg.selectedFiles();
       }
       if (!fileNames.empty()) {
         rval = true;
+        for (int i=0; i<fileNames.size(); i++) {
+          taMisc::DebugInfo((String)fileNames.at(i));
+          taMediaWiki::UploadFile(wiki_url.wiki, fileNames.at(i));
+        }
       }
     }
   }
