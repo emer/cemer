@@ -147,7 +147,7 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
-  bool		sg4;		// #DEF_false #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
+  bool		sg4;		// #DEF_true #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
   bool		spc4;		// #DEF_false #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
@@ -335,7 +335,7 @@ public:
   // #CONDSHOW_ON_region.ocularity:BINOCULAR&&!v1b_filters:0 #READ_ONLY #SHOW size of one 'hypercolumn' of features for V1 binocular disparity output -- disp order: near, focus, far -- [v1s_feats.n or x][tot_disps]
 
   /////////// Complex
-  ComplexFilters v1c_filters; 	// which complex cell filtering to perform
+  ComplexFilters v1c_filters; 	// which complex cell filtering to perform -- length sum is required for end stop, so you cannot just have end stop by itself.  the order of options here is the order in which they are output to the unit group (length sum = 1st row, then end stop for 2nd & 3rd rows, then v1s for 4th and 5th)
   V1ComplexSpec v1c_specs;	// #CONDSHOW_OFF_v1c_filters:0 specs for V1 complex filters -- comes after V1 binocular processing 
   RenormMode	v1c_renorm;	// #CONDSHOW_OFF_v1c_filters:0 #DEF_NO_RENORM how to renormalize the output of v1c filters, prior to kwta -- currently only applies to length sum
   V1KwtaSpec	v1ls_kwta;	// #CONDSHOW_OFF_v1c_filters:0 k-winner-take-all inhibitory dynamics for length sum level

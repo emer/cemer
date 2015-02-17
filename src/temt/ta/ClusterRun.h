@@ -107,6 +107,17 @@ public:
   virtual void  ImportData(bool remove_existing = true);
   // #BUTTON import the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- imports each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
+  virtual void  SaveJobParams();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
+  virtual void  ArchiveJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
+  virtual void  RemoveJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done or jobs_archive data tables, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
+  virtual void  RemoveKilledJobs();
+  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
+  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
+  // #MENU_BUTTON #MENU_ON_Jobs #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
+
   virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListAllFiles();
@@ -121,6 +132,7 @@ public:
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the non-data files associated with jobs selected in the jobs_done or jobs_archive lists -- these are typically larger files such as weight files, which it is good to clean up eventually
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
+
   virtual void  ListOtherUserFiles(const String& user_name);
   // #MENU_BUTTON #MENU_ON_OtherFiles #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  ListOtherProjFiles(const String& proj_name);
@@ -129,16 +141,6 @@ public:
   // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
   virtual void  OpenSvnBrowser();
   // #MENU_BUTTON #MENU_ON_OtherFiles open subversion browser for this repository
-  virtual void  SaveJobParams();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
-  virtual void  ArchiveJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM move jobs selected in the jobs_done data table into the jobs_archive table
-  virtual void  RemoveJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove jobs selected in the jobs_done or jobs_archive data tables, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this) -- for cleaning up old unneeded jobs
-  virtual void  RemoveKilledJobs();
-  // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
-  virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
-  // #MENU_BUTTON #MENU_ON_Jobs #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
 
   ////////////////////////////////////////////
   // useful helper routines for above

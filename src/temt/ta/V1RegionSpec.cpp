@@ -197,7 +197,7 @@ void V1BinocularSpec::UpdateAfterEdit_impl() {
 }
 
 void V1ComplexSpec::Initialize() {
-  sg4 = false;
+  sg4 = true;
   spc4 = false;
   len_sum_len = 1;
   es_thr = 0.2f;
