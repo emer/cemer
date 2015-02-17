@@ -132,7 +132,7 @@ public:
   // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make post requests to the API directly through a URL query) -- on failure, return an empty String
 
   static bool   PublishProject(const String& wiki_name, const String& page_name,
-                               const String& proj_name, const String& proj_filename="",
+                               const String& proj_name, const String& proj_filename="", const String& proj_authors="",
                                const String& proj_desc="", const String& proj_category="");
   // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
 

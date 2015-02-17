@@ -37,11 +37,13 @@ class TA_API iDialogPublishDocs : public iDialog {
 public:
   iDialogPublishDocs(const char *repositoryName);
   QString     GetName() const;
+  QString     GetAuthors() const;
   QString     GetDesc() const;
   QString     GetTags() const;
   bool        GetUploadChoice() const;
   
   void        SetName(const QString& name);
+  void        SetAuthors(const QString& author);
   void        SetDesc(const QString& desc);
   void        SetTags(const QString& tags);
 
@@ -50,6 +52,7 @@ private:
   bool        eventFilter(QObject *obj, QEvent *event) override;
 
   QLineEdit*  nameEdit;
+  QLineEdit*  authorEdit;
   QTextEdit*  descEdit;
   QLineEdit*  tagsEdit;
   QStatusBar* statusBar;

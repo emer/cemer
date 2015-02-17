@@ -44,6 +44,7 @@ taTypeDef_Of(taImageProc);
 
 #include <QDir>
 #include <QFileInfo>
+#include <QFileDialog>
 
 #include <css_machine.h>
 #include <css_qtconsole.h>
@@ -569,20 +570,22 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
   if (logged_in) {
     iDialogPublishDocs dialog(repositoryName);
     dialog.SetName(QString(this->name.chars()));
+    dialog.SetAuthors(QString(""));
     dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
-    dialog.SetTags(QString("e.g. attention, vision, robotics"));
+    dialog.SetTags(QString(""));
     if (dialog.exec()) {
       // User clicked OK.
       QString name = dialog.GetName();
       page_name = String(name); // needed for call to create the taDoc
+      QString authors = dialog.GetAuthors();
       QString desc = dialog.GetDesc();
-      QString categories = dialog.GetTags();
+      QString keywords = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, GetFileName(), desc, categories);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, GetFileName(), authors, desc, keywords);
       }
       else {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, "", desc, categories);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, "", authors, desc, keywords);
       }
     }
     if (was_published) {
@@ -599,7 +602,22 @@ bool taProject::UpdateProjectOnWeb() {
 }
 
 bool taProject::UploadFilesForProjectOnWeb() {
-  return false;
+  bool rval = false;
+  MainWindowViewer* browser = GetDefaultProjectBrowser();
+  if (browser) {
+    if (QWidget *widget = browser->widget()) {
+      QFileDialog file_dlg(widget);
+      file_dlg.setFileMode(QFileDialog::AnyFile);
+      QStringList fileNames;
+      if (file_dlg.exec()) {
+        fileNames = file_dlg.selectedFiles();
+      }
+      if (!fileNames.empty()) {
+        rval = true;
+      }
+    }
+  }
+  return rval;
 }
 
 String taProject::GetProjTemplatePath(ProjLibs library) {

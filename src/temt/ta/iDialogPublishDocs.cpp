@@ -87,6 +87,12 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
   
   QHBoxLayout* project_box = newHBox(vbox);
   addLabeledWidget(project_box, "Project &name:", nameEdit);
+  
+  // author
+  authorEdit = new QLineEdit;
+  authorEdit->setStatusTip("Enter one or more author names (comma separated)");
+  authorEdit->installEventFilter(this);
+  addLabeledWidget(newHBox(vbox), "&Authors:", authorEdit);
 
   // upload project - do it now - default is true
   upload_project = new QCheckBox;
@@ -103,9 +109,9 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
 
   // Tags
   tagsEdit = new QLineEdit;
-  tagsEdit->setStatusTip("Instructions: Enter categories relevant to this project (comma spearated!!!)");
+  tagsEdit->setStatusTip("Instructions: Enter keywords (comma spearated) to help users find your project when searching or browsing");
   tagsEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Categories:", tagsEdit);
+  addLabeledWidget(newHBox(vbox), "&Keywords:", tagsEdit);
   
   
   // OK, Cancel buttons
@@ -119,6 +125,11 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
 QString iDialogPublishDocs::GetName() const
 {
   return nameEdit->text();
+}
+
+QString iDialogPublishDocs::GetAuthors() const
+{
+  return authorEdit->text();
 }
 
 QString iDialogPublishDocs::GetDesc() const
@@ -170,6 +181,10 @@ bool iDialogPublishDocs::eventFilter(QObject *obj, QEvent *event)
 
 void iDialogPublishDocs::SetName(const QString& name) {
   nameEdit->setText(name);
+}
+
+void iDialogPublishDocs::SetAuthors(const QString& author) {
+  authorEdit->setText(author);
 }
 
 void iDialogPublishDocs::SetDesc(const QString& desc) {

@@ -2869,7 +2869,8 @@ void iMainWindowViewer::UpdateUi() {
     // TODO - need to decide if we want a boolean for "published"
     // TODO - find out about the sync bool on taWikiURL - is it used - in what way
     fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
-    fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
+//    fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
+    fileUploadFilesForProjectOnWebAction->setEnabled(true);
   }
   else {
     fileUpdateProjectOnWebAction->setEnabled(false);

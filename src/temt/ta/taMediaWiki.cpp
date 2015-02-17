@@ -1450,9 +1450,11 @@ String taMediaWiki::GetEditToken(const String& wiki_name)
 }
 
 bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_name,
-                                 const String& proj_name, const String& proj_filename,
-                                 const String& proj_descripton, const String& proj_category)
+                                 const String& proj_name, const String& proj_filename, const String& proj_authors,
+                                 const String& proj_descripton, const String& keywords)
 {
+  String proj_category = "PublishedProject";
+  
   // #CAT_Wiki Create or edit the wiki page for this project, upload the project file to the wiki, then post a link to this file on the project's wiki page.
   
   // First check to make sure the page doesn't already exist.
@@ -1461,14 +1463,17 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
     return false;
   }
   
-  // TODO: Finish designing the 'Template:Project' page on the wiki, and give it arguments for each variable by replacing that spot with {{{arg_name}}}
-  //       Supply any such arguments in the page_content string.  See the 'Template:Project' and 'Template_Test' pages on the emergent-test wiki for examples.
-  String emer_version = taMisc::version;
-  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|emer_version=" + emer_version + "|emer_proj_author=" + "O'Reilly" + "|emer_proj_version=1.0}}";
-
+  String emer_version = " " + taMisc::version;
+  String version = " 1.0";
+  
+  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|emer_version = " + emer_version + "|emer_proj_author = " + proj_authors + "|emer_proj_version = " + version + "|keyword = " + keywords + "}}";
+  
+  // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords
   // If the project filename is empty, the user does not want to upload the project file. Just create/edit the project page.
-  if (proj_filename.empty()) { return CreatePage(wiki_name, page_name, page_content, proj_category); }
-
+  if (proj_filename.empty()) {
+    return CreatePage(wiki_name, page_name, page_content, proj_category);
+  }
+  
   // Due to short-circuit evaluation, each of these methods must return true before the next method is called.
   return (CreatePage(wiki_name, page_name, page_content, proj_category) &&
           UploadFile(wiki_name, proj_filename, "") &&
