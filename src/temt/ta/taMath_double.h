@@ -222,10 +222,15 @@ public:
   // #CAT_Probability incomplete gamma function
   static double gamma_q(double a, double x);
   // #CAT_Probability incomplete gamma function (complement of p)
-  static double beta(double z, double w);
+  static double beta(double a, double b);
   // #CAT_Probability beta function
   static double beta_i(double a, double b, double x);
   // #CAT_Probability incomplete beta function
+
+  static double beta_den(double x, double a, double b);
+  // #CAT_Probability beta probability density function evaluated at 0 < x < 1 for shape parameters a, b
+  static double beta_dev(double a, double b);
+  // #CAT_Probability return a beta distribution deviate, characterized by parameters a > 0, b > 0 -- uses gamma_dev 
 
   static double binom_den(int n, int j, double p);
   // #CAT_Probability binomial probability function
@@ -245,8 +250,8 @@ public:
   // #CAT_Probability gamma probability distribution: j events, l lambda, t time
   static double gamma_cum(int j, double l, double t);
   // #CAT_Probability gamma cumulative: j events, l lambda, t time
-  static double gamma_dev(int j);
-  // #CAT_Probability gamma deviate: how long to wait until j events with  unit lambda
+  static double gamma_dev(double k, double lambda = 1.0);
+  // #CAT_Probability gamma deviate: how long to wait until k events with given lambda variance
 
   static double gauss_den(double x);
   // #CAT_Probability gaussian (normal) distribution with uniform standard deviation: 1 / sqrt(2 * PI) * exp(-x^2 / 2)

@@ -267,6 +267,35 @@ float taMath_float::beta_i(float a, float b, float x) {
     return 1.0-bt*betacf_float(b,a,1.0-x)/b;
 }
 
+float taMath_float::beta_den(float x, float a, float b) {
+  if(x < 0.0 || x > 1.0) {
+    return 0 ;
+  }
+  else {
+    float p;
+
+    float gab = gamma_ln(a + b);
+    float ga = gamma_ln(a);
+    float gb = gamma_ln(b);
+      
+    if (x == 0.0 || x == 1.0) {
+      p = exp (gab - ga - gb) * pow (x, a - 1) * pow (1 - x, b - 1);
+    }
+    else {
+      p = exp (gab - ga - gb + log(x) * (a - 1)  + log1p(-x) * (b - 1));
+    }
+
+    return p;
+  }
+}
+
+float taMath_float::beta_dev(float a, float b) {
+  float x1 = gamma_dev(a, 1.0);
+  float x2 = gamma_dev(b, 1.0);
+
+  return x1 / (x1 + x2);
+}
+
 
 /**********************************
   the binomial distribution
@@ -399,32 +428,72 @@ float taMath_float::gamma_cum(int j, float l, float t) {
   return gamma_p(j, l * t);
 }
 
-float taMath_float::gamma_dev(int ia) {
-  int j;
-  float am,e,s,v1,v2,x,y;
+// our new gamma_dev uses gsl version, as described here:
 
-  if (ia < 1) { fprintf(stderr, "ia < 1 in gamma_dev()\n"); return 0; }
-  if (ia < 6) {
-    x=1.0;
-    for (j=1;j<=ia;j++) x *= MTRnd::genrand_res53();
-    x = -log(x);
+/* New version based on Marsaglia and Tsang, "A Simple Method for
+ * generating gamma variables", ACM Transactions on Mathematical
+ * Software, Vol 26, No 3 (2000), p363-372.
+ *
+ * Implemented by J.D.Lamb@btinternet.com, minor modifications for GSL
+ * by Brian Gough
+ */
+
+float taMath_float::gamma_dev(const float a, const float b) {
+  if (a < 1) {
+    float u = MTRnd::genrand_res53();
+    return gamma_dev(1.0 + a, b) * pow (u, 1.0 / a);
   }
-  else {
-    do {
+
+  {
+    float x, v, u;
+    float d = a - 1.0 / 3.0;
+    float c = (1.0 / 3.0) / sqrt (d);
+
+    while (true) {
       do {
-        do {
-          v1=2.0*MTRnd::genrand_res53()-1.0;
-          v2=2.0*MTRnd::genrand_res53()-1.0;
-        } while (v1*v1+v2*v2 > 1.0);
-        y=v2/v1;
-        am=ia-1;
-        s=sqrt(2.0*am+1.0);
-        x=s*y+am;
-      } while (x <= 0.0);
-      e=(1.0+y*y)*exp(am*log(x/am)-s*y);
-    } while (MTRnd::genrand_res53() > e);
+        x = gauss_dev();
+        v = 1.0 + c * x;
+      }
+      while (v <= 0);
+
+      v = v * v * v;
+      u = MTRnd::genrand_res53();
+
+      if (u < 1 - 0.0331 * x * x * x * x) 
+        break;
+
+      if (log (u) < 0.5 * x * x + d * (1 - v + log (v)))
+        break;
+    }
+    
+    return b * d * v;
   }
-  return x;
+
+  // int j;
+  // float am,e,s,v1,v2,x,y;
+
+  // if (ia < 1) { fprintf(stderr, "ia < 1 in gamma_dev()\n"); return 0; }
+  // if (ia < 6) {
+  //   x=1.0;
+  //   for (j=1;j<=ia;j++) x *= MTRnd::genrand_res53();
+  //   x = -log(x);
+  // }
+  // else {
+  //   do {
+  //     do {
+  //       do {
+  //         v1=2.0*MTRnd::genrand_res53()-1.0;
+  //         v2=2.0*MTRnd::genrand_res53()-1.0;
+  //       } while (v1*v1+v2*v2 > 1.0);
+  //       y=v2/v1;
+  //       am=ia-1;
+  //       s=sqrt(2.0*am+1.0);
+  //       x=s*y+am;
+  //     } while (x <= 0.0);
+  //     e=(1.0+y*y)*exp(am*log(x/am)-s*y);
+  //   } while (MTRnd::genrand_res53() > e);
+  // }
+  // return x;
 }
 
 /**********************************

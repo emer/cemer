@@ -24,11 +24,14 @@ double Random::Binom(int n, double p) {
 double Random::Poisson(double l) {
   return taMath_double::poisson_dev(l);
 }
-double Random::Gamma(double var, int j)  {
-  return var * taMath_double::gamma_dev(j);
+double Random::Gamma(double var, double j)  {
+  return taMath_double::gamma_dev(j, var);
 }
 double Random::Gauss(double stdev) {
   return stdev * taMath_double::gauss_dev();
+}
+double Random::Beta(double a, double b)  {
+  return taMath_double::beta_dev(a, b);
 }
 
 double Random::BinomDen(int n, int j, double p) {
@@ -44,6 +47,9 @@ double Random::GammaDen(int j, double l, double t)  {
 }
 double Random::GaussDen(double x, double stdev) {
   return taMath_double::gauss_den_sig(x, stdev);
+}
+double Random::BetaDen(double x, double a, double b) {
+  return taMath_double::beta_den(x, a, b);
 }
 
 double Random::Gen() const {
@@ -61,6 +67,8 @@ double Random::Gen() const {
     return mean + Gamma(var, (int)par);
   case GAUSSIAN:
     return mean + Gauss(var);
+  case BETA:
+    return mean + Beta(var, par);
   }
   return 0.0f;
 }
@@ -80,6 +88,8 @@ double Random::Density(double x) const {
     return GammaDen((int)par, var, x - mean);
   case GAUSSIAN:
     return GaussDen(x-mean, var);
+  case BETA:
+    return BetaDen(x-mean, var, par);
   }
   return 0.0f;
 }

@@ -36,15 +36,16 @@ public:
     UNIFORM,                    // uniform with var = range on either side of the mean
     BINOMIAL,                   // binomial with var = p, par = n
     POISSON,                    // poisson with lambda = var
-    GAMMA,                      // gamma with var and par = stages
+    GAMMA,                      // gamma with var scaling parameter and par = k stages
     GAUSSIAN,                   // normal with var
-    NONE                        // just the mean
+    BETA,                       // beta with var = a and par = b shape parameters
+    NONE,                       // just the mean
   };
 
   Type          type;           // type of random variable to generate
   double        mean;           // mean of random distribution
   double        var;            // #CONDSHOW_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
-  double        par;            // #CONDSHOW_ON_type:GAMMA,BINOMIAL extra parameter for distribution (depends on each one)
+  double        par;            // #CONDSHOW_ON_type:GAMMA,BINOMIAL,BETA extra parameter for distribution (depends on each one)
 
   double        Gen() const;
   // generate a random variable according to current parameters
@@ -77,10 +78,12 @@ public:
   // #CAT_Float binomial with n trials (par) each of probability p (var)
   static double Poisson(double l);
   // #CAT_Float poisson with parameter l (var)
-  static double Gamma(double var, int j);
+  static double Gamma(double var, double j);
   // #CAT_Float gamma with given variance, number of exponential stages (par)
   static double Gauss(double stdev);
   // #CAT_Float gaussian (normal) random number with given standard deviation
+  static double Beta(double a, double b);
+  // #CAT_Float beta random number with two shape parameters a > 0 and b > 0
 
   static double UniformDen(double x, double range)
   { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
@@ -93,6 +96,8 @@ public:
   // #CAT_Float gamma density at time t with given number of stages (par), lambda (var)
   static double GaussDen(double x, double stdev);
   // #CAT_Float gaussian (normal) density for given standard deviation (0 mean)
+  static double BetaDen(double x, double a, double b);
+  // #CAT_Float beta density at value 0 < x < 1 for shape parameters a, b
 
 
   static bool   BoolProb(double p) { return (ZeroOne() < p); }
