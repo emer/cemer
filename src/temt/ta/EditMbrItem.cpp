@@ -36,6 +36,10 @@ void EditMbrItem::InitLinks() {
 
 void EditMbrItem::Copy_(const EditMbrItem& cp) {
   mbr = cp.mbr;
+  is_numeric = cp.is_numeric;
+  is_single = cp.is_single;
+  param_search = cp.param_search;
+  param_set_value = cp.param_set_value;
 }
 
 void EditMbrItem::UpdateAfterEdit_impl() {
