@@ -63,8 +63,6 @@ void taMediaWiki::Initialize()
 
 String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 {
-  // #CAT_Account Get the name of the currently logged-in user.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return ""; }
@@ -103,8 +101,6 @@ String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
 
 bool taMediaWiki::Login(const String &wiki_name, const String &username)
 {
-  // #CAT_Account Log the given username into the wiki, prompting user for password.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -211,8 +207,6 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
 
 bool taMediaWiki::Logout(const String &wiki_name)
 {
-  // #CAT_Account Logout from the wiki.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -236,11 +230,8 @@ bool taMediaWiki::Logout(const String &wiki_name)
 /////////////////////////////////////////////////////
 //              FILE OPERATIONS
 
-bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name,
-                             const String& wiki_file_name)
+bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name)
 {
-  // #CAT_File Upload given file to the wiki, optionally giving it a different file name on the wiki relative to what it is locally.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -252,12 +243,6 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   }
   else {
     dst_filename = wiki_file_name;
-  }
-
-  // See if the file is already on the wiki
-  if (FileExists(wiki_name, dst_filename)) {
-    taMisc::Error("Wiki file " + dst_filename + " already on wiki");
-    return false;
   }
   
   // Get the edit token for this post request.
@@ -272,14 +257,14 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
       QXmlStreamReader reader(reply);
     
-    //        QString data = (QString) reply->readAll();
-    //        qDebug() << data;
+            QString data = (QString) reply->readAll();
+            qDebug() << data;
 
       while (!reader.atEnd()) {
         if (reader.readNext() == QXmlStreamReader::StartElement) {
           QXmlStreamAttributes attrs = reader.attributes();
           
-          // TODO Rohrlich 2/21/15 check for warnings - for example - file previously deleted
+          // TODO: Rohrlich 2/21/15 check for warnings - for example - file previously deleted
         }
       }
     }
@@ -289,8 +274,6 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
                                const String& local_file_name)
 {
-  // #CAT_File Download given file name from the wiki, optionally giving it a different file name locally relative to what it is on the wiki.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -387,8 +370,6 @@ bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_
 
 bool taMediaWiki::DeleteFile(const String& wiki_name, const String& file_name, const String& reason)
 {
-  // #CAT_File Delete given file from wiki, optionally providing a reason for the deletion.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -451,8 +432,6 @@ bool taMediaWiki::DeleteFile(const String& wiki_name, const String& file_name, c
 
 bool taMediaWiki::GetDirectoryContents(DataTable* results)
 {
-  // #CAT_File Fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size.
-
   // Make sure we have a valid data table to write to.
   if (!results) {
     taMisc::Warning("taMediaWiki::GetDirectoryContents -- results data table is NULL -- must supply a valid data table!");
@@ -483,14 +462,22 @@ bool taMediaWiki::GetDirectoryContents(DataTable* results)
     fn_col->SetVal(fn, -1);
     sz_col->SetVal(sz, -1);
   }
-
   return true;
+}
+
+// TODO: Rohrlich 2/21/15
+// in addition to project page existing - check that it has category etc - i.e. not conincidence of page name
+bool taMediaWiki::IsPublished(const String& wiki_name, const String& project_name) {
+  if (PageExists(wiki_name, project_name)) {
+    return true;
+  }
+  else {
+    return false;
+  }
 }
 
 bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, bool quiet)
 {
-  // #CAT_File Determine if given file exists on the wiki.
-  
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -521,8 +508,8 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, b
   if (QNetworkReply *reply = request.httpGet(url)) {
     QXmlStreamReader reader(reply);
     
-    //        QString data = (QString) reply->readAll();
-    //        qDebug() << data;
+//            QString data = (QString) reply->readAll();
+//            qDebug() << data;
     
     while (!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -540,8 +527,14 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, b
             if (!quiet) {
               taMisc::Error("Wiki file " + file_name + " not found");
             }
-            return false;
+            return true;
           }
+          else if (attrs.hasAttribute("pageid")) {
+            taMisc::DebugInfo("pageid");
+          }
+        }
+        if (reader.name() == "result") {
+          taMisc::DebugInfo("result");
         }
       }
     }
@@ -556,8 +549,6 @@ bool taMediaWiki::QueryPages(DataTable* results, const String& wiki_name,
                              const String& name_space, const String& start_nm,
                              const String& prefix, int max_results)
 {
-  // #CAT_Query Fill results data table with pages in given name space, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number.
-  
   // Make sure we have a valid data table to write to.
   if (!results) {
     taMisc::Warning("taMediaWiki::QueryPages -- results data table is NULL -- must supply a valid data table!");
@@ -625,8 +616,6 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
                                        const String& category, const String& name_space,
                                        int max_results)
 {
-  // #CAT_Query Fill results data table with pages in given category, starting at given name, and with each name starting with given prefix (empty = all) -- string column "PageTitle" has page title, int column "PageId" has page ID number.
-  
   // Make sure we have a valid data table to write to.
   if (!results) {
     taMisc::Warning("taMediaWiki::QueryPagesByCategory -- results data table is NULL -- must supply a valid data table!");
@@ -696,8 +685,6 @@ bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
                              const String& start_nm, const String& prefix,
                              int max_results)
 {
-  // #CAT_Query Fill results data table with files uploaded to wiki, starting at given name, and with each name starting with given prefix (empty = all) -- string column "FileName" has name of file, int column "Size" has file size, string column "MimeType" has mime type.
-  
   // Make sure we have a valid data table to write to.
   if (!results) {
     taMisc::Warning("taMediaWiki::QueryFiles -- results data table is NULL -- must supply a valid data table!");
@@ -768,8 +755,6 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
                               const String& search_str, bool title_only,
                               const String& name_space, int max_results)
 {
-  // #CAT_Query Fill results data table with the pages matching the given search string -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column "PageTitle" has page title.
-
   // Make sure we have a valid data table to write to.
   if (!results) {
     taMisc::Warning("taMediaWiki::SearchPages -- results data table is NULL -- must supply a valid data table!");
@@ -831,8 +816,6 @@ bool taMediaWiki::SearchPages(DataTable* results, const String& wiki_name,
 
 bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
 {
-  // #CAT_Page Determine if given page exists on the wiki.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -945,8 +928,6 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
 
 bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, const String& reason)
 {
-  // #CAT_Page Delete given page from the wiki.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1010,8 +991,6 @@ bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, c
 bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
                                const String& page_content, const String& page_category)
 {
-  // #CAT_Page Find or create given page on the wiki and populate it with given content.
-
   // If given page exists on wiki...
   if(PageExists(wiki_name, page_name)) {
     // Append page with given content.
@@ -1027,8 +1006,6 @@ bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
 bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
                              const String& page_content, const String& page_category)
 {
-  // #CAT_Page Create a page on the wiki with given name, and populate it with given content.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1099,8 +1076,6 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
                            const String& page_content, const String& page_category)
 {
-  // #CAT_Page Append given page on the wiki with given content.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1167,8 +1142,6 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
 
 bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name, const String& page_category)
 {
-  // #CAT_Page Append given page on the wiki with given list of comma-separated categories.
-
   // Make sure we actually have categories to add.
   if (page_category.empty()) { return false; }
 
@@ -1245,8 +1218,6 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
 
 bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, const String& page_name)
 {
-  // #CAT_Page Append given page on the wiki with a link to given uploaded file.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1321,8 +1292,6 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
 
 bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const String& page_name)
 {
-  // #CAT_Page Append given page on the wiki with links to given list of uploaded files.
-
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1410,8 +1379,6 @@ bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const Str
 
 String taMediaWiki::GetApiURL(const String& wiki_name)
 {
-  // #CAT_Wiki Get the URL for the wiki API.
-
   // Get the URL corresponding to wiki_name.
   bool appendIndexPhp = false;
   String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
@@ -1427,8 +1394,6 @@ String taMediaWiki::GetApiURL(const String& wiki_name)
 
 String taMediaWiki::GetEditToken(const String& wiki_name)
 {
-  // #CAT_Wiki Return a String containing an unencoded edit token for the wiki (need to percent-encode this to make push requests to the API directly through a URL query, as in CreatePage).
-  
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return _nilString; }
@@ -1475,8 +1440,6 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
                                  const String& proj_descripton, const String& keywords)
 {
   String proj_category = "PublishedProject";
-  
-  // #CAT_Wiki Create or edit the wiki page for this project, upload the project file to the wiki, then post a link to this file on the project's wiki page.
   
   // First check to make sure the page doesn't already exist.
   if (PageExists(wiki_name, page_name)) {

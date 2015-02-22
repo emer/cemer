@@ -171,23 +171,31 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   reset();
 #if (QT_VERSION >= 0x040800)
   QHttpMultiPart *multiPart = new QHttpMultiPart(QHttpMultiPart::FormDataType);
-  QHttpPart actionPart, filenamePart, filePart, formatPart, tokenPart;
 
+  QHttpPart actionPart;
   actionPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"action\""));
   actionPart.setBody("upload");
 
+  QHttpPart filenamePart;
   filenamePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"filename\""));
   filenamePart.setBody(wiki_filename);
 
+  QHttpPart formatPart;
   formatPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"format\""));
   formatPart.setBody("xml");
 
+  QHttpPart tokenPart;
   tokenPart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"token\""));
   tokenPart.setBody(token);
 
-  String fileDisp = ((String) "form-data; name=\"file\"; filename=\"") << ((String) wiki_filename) << ((String) "\"");
+  QHttpPart ignorePart;
+  ignorePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant("form-data; name=\"ignorewarnings\""));
+  ignorePart.setBody("");
+  
+  QHttpPart filePart;
   filePart.setHeader(QNetworkRequest::ContentTypeHeader, "application/octet-stream");
-  filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(fileDisp.chars()));
+  String file_disposition = ((String) "form-data; name=\"file\"; filename=\"") << ((String) wiki_filename) << ((String) "\"");
+  filePart.setHeader(QNetworkRequest::ContentDispositionHeader, QVariant(file_disposition.chars()));
   QFile *file = new QFile(local_filename);
   if (!file->open(QIODevice::ReadOnly)) {
     taMisc::Warning("iSynchronousNetRequest: could not open file", local_filename);
@@ -200,6 +208,7 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   multiPart->append(filenamePart);
   multiPart->append(filePart);
   multiPart->append(formatPart);
+  multiPart->append(ignorePart);
   multiPart->append(tokenPart);
 
   // Make HTTP POST request, wait for reply.

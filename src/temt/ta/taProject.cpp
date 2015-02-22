@@ -26,6 +26,7 @@
 #include <ClusterRun>
 #include <iSubversionBrowser>
 #include <iSvnFileListModel>
+#include <iDialogChoice>
 
 #include <ctime>
 
@@ -616,7 +617,16 @@ bool taProject::UploadFilesForProjectOnWeb() {
         rval = true;
         for (int i=0; i<fileNames.size(); i++) {
           taMisc::DebugInfo((String)fileNames.at(i));
-          taMediaWiki::UploadFile("test", fileNames.at(i));
+          if (taMediaWiki::FileExists("test", fileNames.at(i))) {
+            String info = "File " + fileNames.at(i) + " already on wiki. Upload revision?";
+            int choice = taMisc::Choice(info, "Upload Revision", "Cancel");
+            if (choice == 0) {
+              taMediaWiki::UploadFile("test", fileNames.at(i), true); // true - update new revision
+            }
+          }
+          else { // 1st upload
+            taMediaWiki::UploadFile("test", fileNames.at(i), false); 
+          }
         }
       }
     }

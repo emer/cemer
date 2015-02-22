@@ -51,8 +51,7 @@ public:
   /////////////////////////////////////////////////////
   //            FILE OPERATIONS
 
-  static bool   UploadFile(const String& wiki_name, const String& local_file_name,
-                           const String& wiki_file_name="");
+  static bool   UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
   // #CAT_File Upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
 
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
@@ -64,9 +63,6 @@ public:
 
   static bool   GetDirectoryContents(DataTable* results);
   // #CAT_File Fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size -- returns true on success
-
-  static bool   FileExists(const String& wiki_name, const String& file_name, bool quiet = true);
-  // #CAT_File Determine if given file exists on wiki -- returns true if it does, false if it doesn't
 
   /////////////////////////////////////////////////////
   //            QUERY OPERATIONS
@@ -91,11 +87,18 @@ public:
                             const String& name_space="", int max_results=-1);
   // #CAT_Query Fill results data table with pages containing given search string, starting at given name, and with each name starting with given prefix (empty = all) -- if title_only is true, only search for matches in page titles; else, search for matches in page contents -- string column "PageTitle" has page title
 
-  /////////////////////////////////////////////////////
-  //            PAGE OPERATIONS
+  static bool   FileExists(const String& wiki_name, const String& file_name, bool quiet = true);
+  // #CAT_File Determine if given file exists on wiki -- returns true if it does, false if it doesn't
 
   static bool   PageExists(const String& wiki_name, const String& page_name);
   // #CAT_Page Determine if given page exists on wiki -- returns true if it does, false if it doesn't
+
+  static bool   IsPublished(const String& wiki_name, const String& project_name);
+  // #CAT_Page Is this project published on this wiki
+
+  /////////////////////////////////////////////////////
+  //            PAGE OPERATIONS
+
 
   static bool   DeletePage(const String& wiki_name, const String& page_name, const String& reason="");
   // #CAT_Page Delete given page from the wiki, optionally providing a reason for the deletion -- returns true on success
