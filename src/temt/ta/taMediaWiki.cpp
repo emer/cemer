@@ -496,7 +496,7 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, b
 #else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
-  urq.addQueryItem("titles", full_file_name);
+  url.addQueryItem("titles", full_file_name);
 #endif
   
   
