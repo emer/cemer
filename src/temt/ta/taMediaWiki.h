@@ -65,7 +65,7 @@ public:
   static bool   GetDirectoryContents(DataTable* results);
   // #CAT_File Fill results data table with all of the files contained in the current working directory -- string column "FileName" has name of file, int column "Size" has file size -- returns true on success
 
-  static bool   FileExists(const String& wiki_name, const String& file_name);
+  static bool   FileExists(const String& wiki_name, const String& file_name, bool quiet = true);
   // #CAT_File Determine if given file exists on wiki -- returns true if it does, false if it doesn't
 
   /////////////////////////////////////////////////////

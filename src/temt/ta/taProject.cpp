@@ -616,7 +616,7 @@ bool taProject::UploadFilesForProjectOnWeb() {
         rval = true;
         for (int i=0; i<fileNames.size(); i++) {
           taMisc::DebugInfo((String)fileNames.at(i));
-          taMediaWiki::UploadFile(wiki_url.wiki, fileNames.at(i));
+          taMediaWiki::UploadFile("test", fileNames.at(i));
         }
       }
     }

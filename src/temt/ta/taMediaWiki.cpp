@@ -245,45 +245,45 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
 
-  // Get the edit token for this post request.
-  String token = GetEditToken(wiki_name);
-  if (token.empty()) { return false; }
-
   // Get the custom destination file name, if the user has specified one.
   String dst_filename;
   if (wiki_file_name.empty()) {
-    dst_filename = local_file_name;
+    dst_filename = local_file_name.after('/', -1);
   }
   else {
     dst_filename = wiki_file_name;
   }
 
+  // See if the file is already on the wiki
+  if (FileExists(wiki_name, dst_filename)) {
+    taMisc::Error("Wiki file " + dst_filename + " already on wiki");
+    return false;
+  }
+  
+  // Get the edit token for this post request.
+  String token = GetEditToken(wiki_name);
+  if (token.empty()) { return false; }
+  
   QUrl url(wikiUrl);
-
+  
   // Make the multi-part network request (see iSynchronousNetRequest.cpp for implementation).
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
-    QXmlStreamReader reader(reply);
+      QXmlStreamReader reader(reply);
     
-    while (!reader.atEnd()) {
-      if (reader.readNext() == QXmlStreamReader::StartElement) {
-        QXmlStreamAttributes attrs = reader.attributes();
-        if (reader.hasError()) {
-          QString err_code = attrs.value("code").toString();
-          QString err_info = attrs.value("info").toString();
-          taMisc::Error("File upload failed with error code:", qPrintable(err_code), "(", qPrintable(err_info), ")");
-          return false;
-        }
-        else {
-          taMisc::Info(dst_filename, "successfully uploaded to", wiki_name, "wiki!");
-          return true;
+    //        QString data = (QString) reply->readAll();
+    //        qDebug() << data;
+
+      while (!reader.atEnd()) {
+        if (reader.readNext() == QXmlStreamReader::StartElement) {
+          QXmlStreamAttributes attrs = reader.attributes();
+          
+          // TODO Rohrlich 2/21/15 check for warnings - for example - file previously deleted
         }
       }
     }
-  }
-  taMisc::Error("File upload request failed");
-  return false;
+  return true;
 }
 
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
@@ -487,54 +487,66 @@ bool taMediaWiki::GetDirectoryContents(DataTable* results)
   return true;
 }
 
-bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name)
+bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, bool quiet)
 {
   // #CAT_File Determine if given file exists on the wiki.
-
+  
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
-
+  
+  String full_file_name = "File:" + file_name;
+  
   // Build the request URL.
-  // .../api.php?action=query&format=xml&list=allimages&aisort=name&aifrom=<file_name>&aiprefix=<file_name>&aiprop=timestamp|url|size|mime&ailimit=1
+  // .../api.php?action=query&format=xml&titles=<page_name>
   QUrl url(wikiUrl);
 #if (QT_VERSION >= 0x050000)
   QUrlQuery urq;
   urq.addQueryItem("action", "query");
   urq.addQueryItem("format", "xml");
-  urq.addQueryItem("list", "allimages");
-  urq.addQueryItem("aisort", "name");
-  urq.addQueryItem("aifrom", file_name);
-  urq.addQueryItem("aiprefix", file_name);
-  urq.addQueryItem("aiprop", "timestamp|url|size|mime");
-  urq.addQueryItem("ailimit", "1");
+  urq.addQueryItem("titles", full_file_name);
   url.setQuery(urq);
 #else
   url.addQueryItem("action", "query");
   url.addQueryItem("format", "xml");
-  url.addQueryItem("list", "allimages");
-  url.addQueryItem("aisort", "name");
-  url.addQueryItem("aifrom", file_name);
-  url.addQueryItem("aiprefix", file_name);
-  url.addQueryItem("aiprop", "timestamp|url|size|mime");
-  url.addQueryItem("ailimit", "1");
+  urq.addQueryItem("titles", full_file_name);
 #endif
-
-  // Make the network request.
-  // Note: The reply will be deleted when the request goes out of scope.
+  
+  
+  // Default the normalized name to the provided page name;
+  // will be changed if normalization was performed by the server.
+  String normalizedName = full_file_name;
+  
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
     QXmlStreamReader reader(reply);
-    // Find the <img> tag.
-    while (findNextElement(reader, "img")) {
-      QXmlStreamAttributes attrs = reader.attributes();
-      // Get the file name, and compare it to the one we're looking for.
-      String fn = String(attrs.value("name").toString());
-      return (fn == file_name);
+    
+    //        QString data = (QString) reply->readAll();
+    //        qDebug() << data;
+    
+    while (!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        // Check for a <page> element
+        if (reader.name() == "page") {
+          QXmlStreamAttributes attrs = reader.attributes();
+          // Check if the page name is marked as invalid or missing.
+          if (attrs.hasAttribute("invalid")) {
+            // For example, the page name "_" is invalid.
+            taMisc::Warning("Wike file name " + file_name + " is invalid");
+            return false;
+          }
+          else if (attrs.hasAttribute("missing")) {
+            // This is the normal case when a page does NOT exist.
+            if (!quiet) {
+              taMisc::Error("Wiki file " + file_name + " not found");
+            }
+            return false;
+          }
+        }
+      }
     }
   }
-
-  return false;
+  return true;
 }
 
 /////////////////////////////////////////////////////
@@ -678,6 +690,8 @@ bool taMediaWiki::QueryPagesByCategory(DataTable* results, const String& wiki_na
   return false;
 }
 
+// TODO - rohrlich - 2/21/15 - not good for taMediaWiki to know about DataTable -
+// better to return a set of strings that the caller can put into DataTable or display in other form.
 bool taMediaWiki::QueryFiles(DataTable* results, const String& wiki_name,
                              const String& start_nm, const String& prefix,
                              int max_results)
@@ -842,11 +856,17 @@ bool taMediaWiki::PageExists(const String& wiki_name, const String& page_name)
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpGet(url)) {
+    
+    
     // Default the normalized name to the provided page name;
     // will be changed if normalization was performed by the server.
     String normalizedName = page_name;
 
     QXmlStreamReader reader(reply);
+    
+//    QString data = (QString) reply->readAll();
+//    qDebug() << data;
+
     int pageCount = 0;
     while (!reader.atEnd()) {
       if (reader.readNext() == QXmlStreamReader::StartElement) {
@@ -1479,9 +1499,12 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   if (!proj_filename.empty()) {
     bool loaded_and_linked = UploadFile(wiki_name, proj_filename, "");
     if (loaded_and_linked) {
-      loaded_and_linked = LinkFile(proj_filename, wiki_name, page_name);
+      String only_filename = proj_filename.after('/', -1);
+      loaded_and_linked = LinkFile(only_filename, wiki_name, page_name);
     }
-    return loaded_and_linked;
+    if (!loaded_and_linked) {
+      taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", wiki_name, "wiki");
+    }
   }
-  return true;
+  return true; // return true if project page created - even if upload of project file fails
 }

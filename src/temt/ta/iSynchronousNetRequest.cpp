@@ -207,6 +207,10 @@ QNetworkReply * iSynchronousNetRequest::httpPost(const QUrl &url, const char *lo
   m_reply = m_netManager->post(request, multiPart);
   multiPart->setParent(m_reply);
   waitForReply();
+  
+//  QString data = (QString) m_reply->readAll();
+//  qDebug() << data;
+
   return getReplyIfSuccess();
 #else
   // todo: we should probably issue an error message or something. Dream is still on 4.5!
