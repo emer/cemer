@@ -507,11 +507,13 @@ void iMainWindowViewer::Constr_FileMenu()
   fileOpenFromWebMenu = fileMenu->AddSubMenu("Open Project from &Web");
   if (!isRoot()) {
     filePublishProjectOnWebMenu = fileMenu->AddSubMenu("Publish &Project on Web");
+    fileUpdateProjectOnWebMenu = fileMenu->AddSubMenu("Update Project on Web");
+    fileUploadFilesForProjectOnWebMenu = fileMenu->AddSubMenu("Upload Project Files to Web");
   }
-  fileUpdateProjectOnWebAction = AddAction(new iAction("Update Project on Web", QKeySequence(), "fileUpdateProjectOnWebAction"));
-  fileUploadFilesForProjectOnWebAction = AddAction(new iAction("Upload Project Files to Web", QKeySequence(), "fileUploadFilesForProjectOnWebAction"));
-  fileMenu->AddAction(fileUpdateProjectOnWebAction);
-  fileMenu->AddAction(fileUploadFilesForProjectOnWebAction);
+//  fileUpdateProjectOnWebAction = AddAction(new iAction("Update Project on Web", QKeySequence(), "fileUpdateProjectOnWebAction"));
+//  fileUploadFilesForProjectOnWebAction = AddAction(new iAction("Upload Project Files to Web", QKeySequence(), "fileUploadFilesForProjectOnWebAction"));
+//  fileMenu->AddAction(fileUpdateProjectOnWebAction);
+//  fileMenu->AddAction(fileUploadFilesForProjectOnWebAction);
 
   fileMenu->insertSeparator();
   fileMenu->AddAction(fileCloseAction);
@@ -550,8 +552,10 @@ void iMainWindowViewer::Constr_FileMenu()
 
     // Connect "publish" options only for project windows.
     connect(filePublishProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(filePublishProjectOnWeb_aboutToShow()));
-    connect(fileUpdateProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUpdateProjectOnWeb()));
-    connect(fileUploadFilesForProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUploadFilesForProjectOnWeb()));
+    connect(fileUpdateProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileUpdateProjectOnWeb_aboutToShow()));
+    connect(fileUploadFilesForProjectOnWebMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(fileUploadFilesForProjectOnWeb_aboutToShow()));
+//    connect(fileUpdateProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUpdateProjectOnWeb()));
+//    connect(fileUploadFilesForProjectOnWebAction, SIGNAL(Action()), this, SLOT(fileUploadFilesForProjectOnWeb()));
 
     connect(fileCloseAction, SIGNAL(Action()), this, SLOT(fileClose()));
   }
@@ -1553,17 +1557,14 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
   fileOpenFromWebMenu->Reset();
-
   String wiki_name = "Emergent repository";
   String label = wiki_name + "...";
   
   for(int i=0;i<taMisc::wikis.size; i++) {
     String wiki_name = taMisc::wikis[i].name;
     String label = wiki_name + "...";
-    fileOpenFromWebMenu->AddItem(label, iAction::var_act, this,
-                                      SLOT(fileOpenFromWeb(const Variant &)), wiki_name);
+    fileOpenFromWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileOpenFromWeb(const Variant &)), wiki_name);
   }
-
 }
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
@@ -1576,12 +1577,10 @@ void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
 {
   // Clear and rebuild submenu.
   filePublishProjectOnWebMenu->Reset();
-
   for(int i=0;i<taMisc::wikis.size; i++) {
     String wiki_name = taMisc::wikis[i].name;
     String label = wiki_name + "...";
-    filePublishProjectOnWebMenu->AddItem(label, iAction::var_act, this,
-                                      SLOT(filePublishProjectOnWeb(const Variant &)), wiki_name);
+    filePublishProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(filePublishProjectOnWeb(const Variant &)), wiki_name);
   }
 }
 
@@ -1595,19 +1594,45 @@ void iMainWindowViewer::filePublishProjectOnWeb(const Variant &repo)
   }
 }
 
-void iMainWindowViewer::fileUpdateProjectOnWeb()
+void iMainWindowViewer::fileUpdateProjectOnWeb_aboutToShow()
 {
-  taProject *proj = curProject();
-  if (proj) {
-    proj->UpdateProjectOnWeb();  // repository name held by project
+  // Clear and rebuild submenu.
+  fileUpdateProjectOnWebMenu->Reset();
+  for(int i=0;i<taMisc::wikis.size; i++) {
+    String wiki_name = taMisc::wikis[i].name;
+    String label = wiki_name + "...";
+    fileUpdateProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUpdateProjectOnWeb(const Variant &)), wiki_name);
   }
 }
 
-void iMainWindowViewer::fileUploadFilesForProjectOnWeb()
+void iMainWindowViewer::fileUpdateProjectOnWeb(const Variant &repo)
 {
+  String repositoryName = repo.toString();
+
   taProject *proj = curProject();
   if (proj) {
-    proj->UploadFilesForProjectOnWeb(); // repository name held by project
+    proj->UpdateProjectOnWeb(repositoryName);  // repository name held by project
+  }
+}
+
+void iMainWindowViewer::fileUploadFilesForProjectOnWeb_aboutToShow()
+{
+  // Clear and rebuild submenu.
+  fileUploadFilesForProjectOnWebMenu->Reset();
+  for(int i=0;i<taMisc::wikis.size; i++) {
+    String wiki_name = taMisc::wikis[i].name;
+    String label = wiki_name + "...";
+    fileUploadFilesForProjectOnWebMenu->AddItem(label, iAction::var_act, this, SLOT(fileUploadFilesForProjectOnWeb(const Variant &)), wiki_name);
+  }
+}
+
+void iMainWindowViewer::fileUploadFilesForProjectOnWeb(const Variant &repo)
+{
+  String repositoryName = repo.toString();
+
+  taProject *proj = curProject();
+  if (proj) {
+    proj->UploadFilesForProjectOnWeb(repositoryName); // repository name held by project
   }
 }
 
@@ -2864,16 +2889,15 @@ void iMainWindowViewer::UpdateUi() {
     fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
     fileSaveAction->setEnabled(!curProject()->save_as_only);
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
-    
-    // TODO - need to decide if we want a boolean for "published"
-    // TODO - find out about the sync bool on taWikiURL - is it used - in what way
-    fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
+//    fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
 //    fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
-    fileUploadFilesForProjectOnWebAction->setEnabled(true);
+    // rohrlich 2/22/15 - the wiki_url info only get saved if the user saves after publish - so always enable so they can get back to project
+//    fileUpdateProjectOnWebAction->setEnabled(true);
+//    fileUploadFilesForProjectOnWebAction->setEnabled(true);
   }
   else {
-    fileUpdateProjectOnWebAction->setEnabled(false);
-    fileUploadFilesForProjectOnWebAction->setEnabled(false);
+//    fileUpdateProjectOnWebAction->setEnabled(false);
+//    fileUploadFilesForProjectOnWebAction->setEnabled(false);
   }
   emit SetActionsEnabled();
 }

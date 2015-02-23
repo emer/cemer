@@ -256,10 +256,9 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
   iSynchronousNetRequest request;
   if (QNetworkReply *reply = request.httpPost(url, local_file_name, dst_filename, token)) {
       QXmlStreamReader reader(reply);
-    
-            QString data = (QString) reply->readAll();
-            qDebug() << data;
-
+//            QString data = (QString) reply->readAll();
+//            qDebug() << data;
+//
       while (!reader.atEnd()) {
         if (reader.readNext() == QXmlStreamReader::StartElement) {
           QXmlStreamAttributes attrs = reader.attributes();
@@ -269,6 +268,19 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
       }
     }
   return true;
+}
+
+bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_name, const String& local_file_name, bool new_revision, const String& wiki_file_name)
+{
+  bool rval = false;
+  if (IsPublished(wiki_name, proj_name)) {
+    rval = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
+  }
+  if (rval) {
+    String non_path_filename = local_file_name.after('/', -1);
+    rval = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
+  }
+  return rval;
 }
 
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
@@ -1462,8 +1474,8 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   if (!proj_filename.empty()) {
     bool loaded_and_linked = UploadFile(wiki_name, proj_filename, "");
     if (loaded_and_linked) {
-      String only_filename = proj_filename.after('/', -1);
-      loaded_and_linked = LinkFile(only_filename, wiki_name, page_name);
+      String non_path_filename = proj_filename.after('/', -1);
+      loaded_and_linked = LinkFile(non_path_filename, wiki_name, page_name);  // link the file to the project page
     }
     if (!loaded_and_linked) {
       taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", wiki_name, "wiki");

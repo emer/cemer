@@ -192,8 +192,8 @@ public:
   // #CAT_File determines whether or not the current view settings will be saved with the project
 
   virtual bool          PublishProjectOnWeb(const String &repositoryName);
-  virtual bool          UpdateProjectOnWeb();
-  virtual bool          UploadFilesForProjectOnWeb();
+  virtual bool          UpdateProjectOnWeb(const String &repositoryName);
+  virtual bool          UploadFilesForProjectOnWeb(const String &repositoryName);
 
   int                   Load(const String& fname="", taBase** loaded_obj_ptr = NULL) override;
   virtual void          OpenProjectLog();

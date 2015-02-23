@@ -269,6 +269,7 @@ void taProject::Dump_Load_post() {
     bool startup_run = programs.RunStartupProgs();      // run startups now..
     if(!taMisc::gui_active && startup_run) taiMC_->Quit();
   }
+  ;
 }
 
 void taProject::DoView() {
@@ -569,27 +570,28 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
   
   bool logged_in = taMediaWiki::Login(repositoryName, username);
   if (logged_in) {
-    iDialogPublishDocs dialog(repositoryName);
+    iDialogPublishDocs dialog(repositoryName, this->name);
     dialog.SetName(QString(this->name.chars()));
     dialog.SetAuthors(QString(""));
     dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
     dialog.SetTags(QString(""));
     if (dialog.exec()) {
       // User clicked OK.
-      QString name = dialog.GetName();
+//      QString proj_name = dialog.GetName();
       page_name = String(name); // needed for call to create the taDoc
       QString authors = dialog.GetAuthors();
       QString desc = dialog.GetDesc();
       QString keywords = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, GetFileName(), authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, this->name, GetFileName(), authors, desc, keywords);
       }
       else {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, name, "", authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repositoryName, page_name, this->name, "", authors, desc, keywords);
       }
     }
     if (was_published) {
+      // rohrlich 2/22/15 - this info is lost if the user doesn't save
       this->wiki_url.wiki = repositoryName;
       this->wiki_url.url = page_name;
       docs.PubProjWikiDoc(repositoryName, page_name);
@@ -598,11 +600,19 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
   return was_published;
 }
 
-bool taProject::UpdateProjectOnWeb() {
+bool taProject::UpdateProjectOnWeb(const String &repositoryName) {
+  String proj_name = this->name;
+  String proj_file_name = GetFileName();
+  if (taMediaWiki::IsPublished(repositoryName, proj_name)) {
+    taMediaWiki::UploadFile(repositoryName, proj_file_name, true); // true - update new revision
+  }
+  else {
+    taMisc::Error("Project named \"" + proj_name + "\" not found on wiki \"" + repositoryName + "\"");
+  }
   return false;
 }
 
-bool taProject::UploadFilesForProjectOnWeb() {
+bool taProject::UploadFilesForProjectOnWeb(const String &repositoryName) {
   bool rval = false;
   MainWindowViewer* browser = GetDefaultProjectBrowser();
   if (browser) {
@@ -621,11 +631,11 @@ bool taProject::UploadFilesForProjectOnWeb() {
             String info = "File " + fileNames.at(i) + " already on wiki. Upload revision?";
             int choice = taMisc::Choice(info, "Upload Revision", "Cancel");
             if (choice == 0) {
-              taMediaWiki::UploadFile("test", fileNames.at(i), true); // true - update new revision
+              taMediaWiki::UploadFileAndLink(repositoryName, this->name, fileNames.at(i), true); // true - update new revision
             }
           }
           else { // 1st upload
-            taMediaWiki::UploadFile("test", fileNames.at(i), false); 
+            taMediaWiki::UploadFileAndLink(repositoryName, this->name, fileNames.at(i), false);
           }
         }
       }

@@ -52,8 +52,11 @@ public:
   //            FILE OPERATIONS
 
   static bool   UploadFile(const String& wiki_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
-  // #CAT_File Upload given file name to wiki, optionally giving it a different file name on the wiki relative to what it is locally
+  // #CAT_File Upload file to wiki, optionally giving it a different file name on the wiki
 
+  static bool   UploadFileAndLink(const String& wiki_name, const String& proj_name, const String& local_file_name, bool new_revision, const String& wiki_file_name="");
+  // #CAT_File Upload file to wiki and link to specific project page - fails if project doesn't exist
+  
   static bool   DownloadFile(const String& wiki_name, const String& wiki_file_name,
                              const String& local_file_name="");
   // #CAT_File Download given file name from wiki, optionally giving it a different file name than what it was on the wiki

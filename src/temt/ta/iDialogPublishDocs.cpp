@@ -52,7 +52,7 @@ namespace // anon
   }
 }
 
-iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
+iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name)
 //  : inherited(), nameEdit(0), descEdit(0), tagsEdit(0), statusBar(0), upload_project(0)
 : inherited()
 {
@@ -62,7 +62,7 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
 
   // Dialog title.
   QString title("Publish project to: ");
-  title.append(repositoryName);
+  title.append(repo_name);
   setWindowTitle(title);
 
   // Create a marginless layout to hold the status bar,
@@ -82,6 +82,7 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repositoryName)
   // All other widgets get added to the inner vbox.
   // Project name
   nameEdit = new QLineEdit;
+  nameEdit->setEnabled(false);
   nameEdit->setStatusTip("Instructions: Enter a human-readable name for the project (used for wiki page name)");
   nameEdit->installEventFilter(this);
   

@@ -94,6 +94,8 @@ public:
   taiWidgetMenu*              fileExportMenu; // submenu -- empty and disabled in base
   taiWidgetMenu*              fileOpenFromWebMenu;
   taiWidgetMenu*              filePublishProjectOnWebMenu;
+  taiWidgetMenu*              fileUpdateProjectOnWebMenu;
+  taiWidgetMenu*              fileUploadFilesForProjectOnWebMenu;
   taiWidgetMenu*              editMenu;
   taiWidgetMenu*              viewMenu;
   taiWidgetMenu*              show_menu;
@@ -289,7 +291,7 @@ public:
   // edit this guy in a new panel, making a tab viewer if necessary
   int                   GetEditActions();
   // after a change in selection, update the available edit actions (cut, copy, etc.)
-  iPanelViewer*           GetTabViewer(bool force = false);
+  iPanelViewer*         GetTabViewer(bool force = false);
   // get the tab viewer, or make one if force
 
   void                  setFrameGeometry(const iRect& r);
@@ -329,8 +331,10 @@ public slots:
   virtual void  fileOpenFromWeb(const Variant &repo);      // Open Project from Web (in new viewer)
   virtual void  filePublishProjectOnWeb_aboutToShow();
   virtual void  filePublishProjectOnWeb(const Variant &repo); // Publish Project Documentation on Web
-  virtual void  fileUpdateProjectOnWeb(); // Upload a revised (or possibly the first version) of a published project to wiki
-  virtual void  fileUploadFilesForProjectOnWeb(); // Add project files to wiki (e.g. weights files, data files, etc.)
+  virtual void  fileUpdateProjectOnWeb_aboutToShow();
+  virtual void  fileUpdateProjectOnWeb(const Variant &repo); // Upload a revised (or possibly the first version) of a published project to wiki
+  virtual void  fileUploadFilesForProjectOnWeb_aboutToShow();
+  virtual void  fileUploadFilesForProjectOnWeb(const Variant &repo); // Add project files to wiki (e.g. weights files, data files, etc.)
   virtual void  fileClose();    // Close Project (only enabled if viewer)
   virtual void  fileOptions();  // edits taMisc
   virtual void  filePrint();
