@@ -546,7 +546,7 @@ int taProject::SaveAs(const String& fname) {
   return rval;
 }
 
-bool taProject::PublishProjectOnWeb(const String &repositoryName)
+bool taProject::PublishProjectOnWeb(const String &repo_name)
 {
   if (GetFileName().empty()) {
     int choice = taMisc::Choice("The project must be saved locally before it can be published", "Save", "Cancel");
@@ -562,15 +562,15 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
     return false;
   }
       
-  String username = taMediaWiki::GetLoggedInUsername(repositoryName);
+  String username = taMediaWiki::GetLoggedInUsername(repo_name);
   
   // TODO - if username not empty ask if they want to stay logged in under that name
   bool was_published = false;
   String page_name;
   
-  bool logged_in = taMediaWiki::Login(repositoryName, username);
+  bool logged_in = taMediaWiki::Login(repo_name, username);
   if (logged_in) {
-    iDialogPublishDocs dialog(repositoryName, this->name);
+    iDialogPublishDocs dialog(repo_name, this->name);
     dialog.SetName(QString(this->name.chars()));
     dialog.SetAuthors(QString(""));
     dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
@@ -584,58 +584,64 @@ bool taProject::PublishProjectOnWeb(const String &repositoryName)
       QString keywords = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, this->name, GetFileName(), authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), authors, desc, keywords);
       }
       else {
-        was_published = taMediaWiki::PublishProject(repositoryName, page_name, this->name, "", authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", authors, desc, keywords);
       }
     }
     if (was_published) {
       // rohrlich 2/22/15 - this info is lost if the user doesn't save
-      this->wiki_url.wiki = repositoryName;
+      this->wiki_url.wiki = repo_name;
       this->wiki_url.url = page_name;
-      docs.PubProjWikiDoc(repositoryName, page_name);
+      docs.PubProjWikiDoc(repo_name, page_name);
     }
   }
   return was_published;
 }
 
-bool taProject::UpdateProjectOnWeb(const String &repositoryName) {
+bool taProject::UpdateProjectOnWeb(const String &repo_name) {
   String proj_name = this->name;
   String proj_file_name = GetFileName();
-  if (taMediaWiki::IsPublished(repositoryName, proj_name)) {
-    taMediaWiki::UploadFile(repositoryName, proj_file_name, true); // true - update new revision
+  if (taMediaWiki::IsPublished(repo_name, proj_name)) {
+    taMediaWiki::UploadFile(repo_name, proj_file_name, true); // true - update new revision
   }
   else {
-    taMisc::Error("Project named \"" + proj_name + "\" not found on wiki \"" + repositoryName + "\"");
+    taMisc::Error("Project named \"" + proj_name + "\" not found on wiki \"" + repo_name + "\"");
   }
   return false;
 }
 
-bool taProject::UploadFilesForProjectOnWeb(const String &repositoryName) {
+bool taProject::UploadFilesForProjectOnWeb(const String &repo_name) {
+  if (!taMediaWiki::IsPublished(repo_name, this->name)) {
+    taMisc::Error("Project \"" + this->name + "\" not published. Publish the project before linking files to it.");
+    return false;
+  }
+  
   bool rval = false;
   MainWindowViewer* browser = GetDefaultProjectBrowser();
   if (browser) {
     if (QWidget *widget = browser->widget()) {
       QFileDialog file_dlg(widget);
       file_dlg.setFileMode(QFileDialog::ExistingFiles);
-      QStringList fileNames;
+      QStringList file_name_list;
       if (file_dlg.exec()) {
-        fileNames = file_dlg.selectedFiles();
+        file_name_list = file_dlg.selectedFiles();
       }
-      if (!fileNames.empty()) {
+      if (!file_name_list.empty()) {
         rval = true;
-        for (int i=0; i<fileNames.size(); i++) {
-          taMisc::DebugInfo((String)fileNames.at(i));
-          if (taMediaWiki::FileExists("test", fileNames.at(i))) {
-            String info = "File " + fileNames.at(i) + " already on wiki. Upload revision?";
+        for (int i=0; i<file_name_list.size(); i++) {
+          String non_path_file_name = file_name_list.at(i);
+          non_path_file_name = non_path_file_name.after('/', -1);
+          if (taMediaWiki::FileExists(repo_name, non_path_file_name)) {
+            String info = "File " + file_name_list.at(i) + " already on wiki. Upload revision?";
             int choice = taMisc::Choice(info, "Upload Revision", "Cancel");
             if (choice == 0) {
-              taMediaWiki::UploadFileAndLink(repositoryName, this->name, fileNames.at(i), true); // true - update new revision
+              rval = taMediaWiki::UploadFileAndLink(repo_name, this->name, file_name_list.at(i), true); // true - update new revision
             }
           }
           else { // 1st upload
-            taMediaWiki::UploadFileAndLink(repositoryName, this->name, fileNames.at(i), false);
+            rval = taMediaWiki::UploadFileAndLink(repo_name, this->name, file_name_list.at(i), false);
           }
         }
       }

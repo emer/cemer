@@ -272,15 +272,14 @@ bool taMediaWiki::UploadFile(const String& wiki_name, const String& local_file_n
 
 bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_name, const String& local_file_name, bool new_revision, const String& wiki_file_name)
 {
-  bool rval = false;
-  if (IsPublished(wiki_name, proj_name)) {
-    rval = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
-  }
-  if (rval) {
+  bool proceed = false;
+  proceed = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
+
+  if (proceed) {
     String non_path_filename = local_file_name.after('/', -1);
-    rval = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
+    proceed = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
   }
-  return rval;
+  return proceed;
 }
 
 bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_name,
@@ -539,7 +538,7 @@ bool taMediaWiki::FileExists(const String& wiki_name, const String& file_name, b
             if (!quiet) {
               taMisc::Error("Wiki file " + file_name + " not found");
             }
-            return true;
+            return false;
           }
           else if (attrs.hasAttribute("pageid")) {
             taMisc::DebugInfo("pageid");
