@@ -2137,7 +2137,7 @@ void LeabraNetwork::Cuda_UpdateConParams() {
       cudai->ConParam_h(uncn, LeabraConSpecCuda::S_MIX) = cs->xcal.s_mix;
       cudai->ConParam_h(uncn, LeabraConSpecCuda::M_MIX) = cs->xcal.m_mix;
       cudai->ConParam_h(uncn, LeabraConSpecCuda::THR_L_MIX) = cs->xcal.thr_l_mix;
-      cudai->ConParam_h(uncn, LeabraConSpecCuda::THR_MAX) = cs->xcal.thr_max;
+      // cudai->ConParam_h(uncn, LeabraConSpecCuda::THR_MAX) = cs->xcal.thr_max;
       cudai->ConParam_h(uncn, LeabraConSpecCuda::CUR_LRATE) = cs->cur_lrate;
 
       if(first) {

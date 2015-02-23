@@ -108,7 +108,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
   VECF su_act_mult_v(su_act_mult);
   VECF s_mix(xcal.s_mix);
   VECF m_mix(xcal.m_mix);
-  VECF thr_max(xcal.thr_max);
+  VECF thr_max(1.0f);
 
   const int sz = cg->size;
   const int parsz = cg->vec_chunked_size;
@@ -178,7 +178,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   const int sz = cg->size;
 
   if(xcal.raw_l_mix) {
-    const float su_act_mult = xcal.thr_l_mix * su_avg_m;
+    const float su_act_mult = xcal.thr_l_mult * xcal.thr_l_mix * su_avg_m;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
       float lrate_eff = clrate;
@@ -193,7 +193,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   else {                        // X_COS_DIFF
     const float efflmix = xcal.thr_l_mix * rlay->cos_diff_avg_lmix;
     const float effmmix = 1.0f - efflmix;
-    const float su_act_mult = efflmix * su_avg_m;
+    const float su_act_mult = xcal.thr_l_mult * efflmix * su_avg_m;
 
 #if TA_VEC_USE
     LeabraNetwork* lnet = (LeabraNetwork*)net;

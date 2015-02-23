@@ -66,7 +66,7 @@ void XCalLearnSpec::Initialize() {
 void XCalLearnSpec::Defaults_init() {
   raw_l_mix = false;
   thr_l_mix = 0.05f;
-  thr_max = 1.0f;
+  thr_l_mult = 1.0f;
   s_mix = 0.9f;
   d_rev = 0.10f;
   d_thr = 0.0001f;

@@ -76,7 +76,7 @@ public:
   bool          raw_l_mix;      // #DEF_false does thr_l_mix specify the actual amount that the long-term average activation  (self organizing, BCM-style) contributes to the floating threshold, or instead should the default COS_DIFF model be used, where we  multiply thr_l_mix by 1 - layer.cos_diff_avg (only for HIDDEN layers -- TARGET layers automatically get l_mix = 0 -- all error-driven learning under this mechanism -- actual val is in layer.cos_diff_avg_lmix) -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), so the effective lmix value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this mix tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
   float		thr_l_mix;	// #DEF_0.001:1.0 [0.05 max std, .01 for raw_l_mix] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning -- if units should have highly non-uniform distributions of activity, then this value should be set lower to reduce the homeostatic forces
   float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
-  float         thr_max;        // #DEF_1 #MIN_1 maximum for the final computed floating threshold value that use used in the XCAL equation -- given that activations can only go to 1, the threshold should not go much higher than that -- but some amount higher can be useful for driving the weights down for units that are persistently over-active
+  float         thr_l_mult;     // #DEF_1 #MIN_0 multiplier on thr_l long-term floating average value that enters into the BCM-style self-organizing learning mechanism -- allows projection-specific modulation of this value
   float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
   float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
@@ -369,7 +369,7 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float lthr = su_act_mult * ru_avg_l;
     float effthr = xcal.thr_m_mix * srm + lthr;
-    effthr = MIN(effthr, xcal.thr_max);
+    if(effthr > 1.0f) effthr = 1.0f;
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
@@ -383,7 +383,7 @@ public:
     float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
     float lthr = su_act_mult * ru_avg_l;
     float effthr = effmmix * srm + lthr;
-    effthr = MIN(effthr, xcal.thr_max);
+    if(effthr > 1.0f) effthr = 1.0f;
     dwt += clrate * xcal.dWtFun(sm_mix, effthr);
   }
   // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
