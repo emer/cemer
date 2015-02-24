@@ -277,7 +277,7 @@ bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_
 
   if (proceed) {
     String non_path_filename = local_file_name.after('/', -1);
-    proceed = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
+    proceed = LinkFileII(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
   }
   return proceed;
 }
@@ -1385,6 +1385,70 @@ bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const Str
   return false;
 }
 
+bool taMediaWiki::LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name)
+{
+  // Make sure wiki name is valid before doing anything else.
+  String wikiUrl = GetApiURL(wiki_name);
+  if (wikiUrl.empty()) { return false; }
+  
+  if (!IsPublished(wiki_name, proj_name)) {
+    taMisc::Warning("Project", proj_name, "not found on", wiki_name, "wiki! Make sure you've published it first.");
+    return false;
+  }
+  
+  String full_file_name = "File:" + file_name;
+  String proj_line_property = "[[EmerProjName::" + proj_name + "]]";
+  
+  // Get the edit token for this post request.
+  QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
+  if (token.isEmpty()) { return false; }
+
+  QUrl url(wikiUrl);
+#if (QT_VERSION >= 0x050000)
+  QUrlQuery urq;
+  urq.addQueryItem("action", "edit");
+  urq.addQueryItem("title", full_file_name);
+  urq.addQueryItem("nocreate", "");
+  urq.addQueryItem("appendtext", proj_line_property);
+  urq.addQueryItem("format", "xml");
+  urq.addQueryItem("token", token);
+  url.setQuery(urq);
+#else
+  url.addQueryItem("action", "edit");
+  url.addQueryItem("title", full_file_name);
+  url.addQueryItem("nocreate", "");
+  url.addQueryItem("appendtext", proj_line_property);
+  url.addQueryItem("format", "xml");
+  url.addQueryItem("token", token);
+#endif
+  
+  // Make the network request.
+  // Note: The reply will be deleted when the request goes out of scope.
+  iSynchronousNetRequest request;
+  if (QNetworkReply *reply = request.httpPost(url)) {
+    QXmlStreamReader reader(reply);
+    while(!reader.atEnd()) {
+      if (reader.readNext() == QXmlStreamReader::StartElement) {
+        if(reader.hasError()) {
+          QXmlStreamAttributes attrs = reader.attributes();
+          QString err_code = attrs.value("code").toString();
+          QString err_info = attrs.value("info").toString();
+          taMisc::Error("File link failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
+          
+          return false;
+        }
+        else {
+          taMisc::Info("Successfully linked", file_name, "file to", proj_name, "page on", wiki_name, "wiki!");
+          
+          return true;
+        }
+      }
+    }
+  }
+  taMisc::Warning("File link request failed -- check the wiki/page names");
+  return false;
+}
+
 /////////////////////////////////////////////////////
 //            WIKI OPERATIONS
 
@@ -1461,7 +1525,7 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   String emer_version = " " + taMisc::version;
   String version = " 1.0";
   
-  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|emer_version = " + emer_version + "|emer_proj_author = " + proj_authors + "|emer_proj_version = " + version + "|keyword = " + keywords + "}}";
+  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + proj_authors + "|EmerProjVersion = " + version + "|EmerProjKeyword = " + keywords + "}}";
   
   // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
 
@@ -1474,7 +1538,7 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
     bool loaded_and_linked = UploadFile(wiki_name, proj_filename, "");
     if (loaded_and_linked) {
       String non_path_filename = proj_filename.after('/', -1);
-      loaded_and_linked = LinkFile(non_path_filename, wiki_name, page_name);  // link the file to the project page
+      loaded_and_linked = LinkFileII(non_path_filename, wiki_name, proj_name);  // link the file to the project page
     }
     if (!loaded_and_linked) {
       taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", wiki_name, "wiki");

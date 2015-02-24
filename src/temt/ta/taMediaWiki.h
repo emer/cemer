@@ -124,7 +124,10 @@ public:
 
   static bool   LinkFile(const String& file_name, const String& wiki_name, const String& page_name);
   // #CAT_Page Append given page on the wiki with a link to given uploaded file -- returns true on success
-
+  
+  static bool   LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name);
+  // #CAT_Page Add the project name to the the files page so that the project page can find files containing the project page (as property - look at the code)
+  
   static bool   LinkFiles(DataTable* files, const String& wiki_name, const String& page_name);
   // #CAT_Page Append given page on the wiki with links to given data table of uploaded files -- it is recommended that you populate the data table by calling QueryFiles -- returns true on success
 
