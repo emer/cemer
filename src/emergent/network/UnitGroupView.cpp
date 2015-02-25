@@ -118,6 +118,11 @@ void UnitGroupView::InitDisplay() {
 }
 
 float UnitGroupView::GetUnitDisplayVal(const taVector2i& co, void*& base) {
+  Layer* lay = this->layer(); //cache
+  if(!lay) return 0.0f;
+  Network* net = lay->own_net;
+  if(!net->HasNetFlag(Network::BUILT_INTACT)) return 0.0f; 
+
   NetView* nv = getNetView();
   float val = nv->scale.zero;
   if(nv->unit_disp_idx < 0) return val;
@@ -171,6 +176,10 @@ float UnitGroupView::GetUnitDisplayVal_Idx(const taVector2i& co, int midx, void*
 void UnitGroupView::UpdateUnitViewBases(Unit* src_u) {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
+  Network* net = lay->own_net;
+
+  if(!net->HasNetFlag(Network::BUILT_INTACT)) return; 
+  
   NetView* nv = getNetView();
   AllocUnitViewData();
   for(int midx=0;midx<nv->membs.size;midx++) {
