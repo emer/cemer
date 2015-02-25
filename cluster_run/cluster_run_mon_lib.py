@@ -803,6 +803,7 @@ class SubversionPoller(object):
                 ec2_api_user = user_data[0]
                 ec2_api_key = user_data[1]
                 ec2_region = user_data[2]
+                
                 logging.info(user_data)
             
             logging.info("ec2_api_key: " + ec2_api_user)
@@ -1105,7 +1106,7 @@ class SubversionPoller(object):
     def _choose_ec2_instance_type (self, cpus, memory, mpi):
         #return "t2.micro"
         instance_types = json.loads(ec2_instances)
-        return instance_types["instances"][0]
+        return instance_types["instances"][1]
         for i in range(0, len(instance_types["instances"])):
         	if instance_types["instances"][i]["cpus"] > cpus:
         		if instance_types["instances"][i]["memory"] > memory:
@@ -1149,11 +1150,12 @@ class SubversionPoller(object):
         ec2instance = self._choose_ec2_instance_type(n_threads, ram_gb, mpi_nodes)
                   
         # ec2launch = "ec2-run-instances ami-59174069 -n 1 -g sg-b8f680dd -k standard_key -t t2.micro --region us-west-2 -O AKIAJ4SCF5FBPXL5OITQ -W WaqVJLFaKMTLG34fB1hOoHKTxjvP628lYEdbtMm/"
-        if ec2_use_spot:    
+        if ec2_use_spot:
+            job_id = str(random.getrandbits(32))
             ec2launch = "ec2-request-spot-instances " + ec2_ami + " -p " + str(ec2instance["spotprice"])  + " -k " + ec2_ssh_key + " --region " + ec2_region
             ec2launch += " -t " + ec2instance["name"]
             ec2launch += " -O " + ec2_api_user + " -W " + ec2_api_key
-            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "']")
+            ec2launch += " -d " + base64.b64encode("['" + ec2_api_user + "', '" + ec2_api_key + "', '" + ec2_region + "', '" + job_id + "']")
             ec2launch += " --launch-group " + "mpi_cluster_" + str(random.getrandbits(16))
             if mpi_nodes <= 1:
                 ec2launch += " -n 1"            
@@ -1169,7 +1171,7 @@ class SubversionPoller(object):
             instance = instancere.search(result)
             print instance
             status_info = instance.group(1)
-            job_no = instance.group(1) + "_" + str(random.getrandbits(32))
+            job_no = instance.group(1) + "_" + job_id
         else:
             ec2launch = "ec2-run-instances " + ec2_ami + " -g " + ec2_security + " -k " + ec2_ssh_key + " --region " + ec2_region
             ec2launch += " -t " + ec2instance["name"]
@@ -1317,6 +1319,89 @@ class SubversionPoller(object):
                 self.got_submit = True
             else:
                 logging.info("We don't yet have an instance for this spot request")
+                
+    def _get_mpi_launch_group_ec2(self, row, filename):
+        job_no = self.jobs_running.get_val(row, "job_no")
+        status_info = self.jobs_running.get_val(row, "status_info")
+        
+        #Check if we used spot instances or full instances to run these jobs, as there are different ways to figure
+        #out which ip addressess to add to the MPI machinefile
+        if status_info.startswith("sir-"):
+            #we are using spot instances
+
+            #We have written a unique random token in to the user data to define the group of machines
+            #belonging to a single request group.
+            user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
+            user_data = ast.literal_eval(base64.b64decode(user_data_str))
+            desired_token = user_data[3]
+
+            logging.info ( "We are dealing with a spot request, need to try and piece things together for job token " + desired_token + "!" )
+
+            #Enumerate all currently running instances to then probe the token written to the user data.
+            ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region
+            cmdsub2 = ec2getinstances.split()
+            result = check_output(cmdsub2)
+            logging.info(result)
+                
+            instances = re.findall(r"INSTANCE\s*(.*?)\s*ami-.*", result)
+            logging.info("Instance ID: " + str(instances))
+                
+            for machine in instances:
+                #Probe user data for each instance
+                ec2describeinstance = "ec2-describe-instance-attribute -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --user-data " + machine
+                cmdsub2 = ec2describeinstance.split()
+                logging.info("Getting user data for instance cmd: " + str(cmdsub2))
+                result = check_output(cmdsub2)
+                logging.info(result)
+                #Result data should be in the form of
+                #result = "userData  i-7e3daab7  WydBS0lBSjRTQ0Y1RkJQWEw1T0lUUScsICdXYXFWSkxGYUtNVExHMzRmQjFoT29IS1R4anZQNjI4bFlFZGJ0TW0vJywgJ3VzLXdlc3QtMicsICcxMDk4NTAxMjAxJ10="
+
+                userdre = re.compile("^userData\s+i-.*?\s+(.*)", re.MULTILINE)
+                userde = userdre.search(result)
+                user_data_str = userde.group(1)
+                if len(user_data_str) > 0:
+                    user_data = ast.literal_eval(base64.b64decode(user_data_str))
+                    logging.info(str(user_data))
+                    if len(user_data) > 3:
+                        job_id = user_data[3]
+                        logging.info("Job_token: " + job_id)
+                    else:
+                        #couldn't extract job token
+                        job_id = -1
+                else:
+                    job_id = -1
+
+                if (job_id == desired_token):
+                    logging.info("Found an instance (" + machine + ") that is for our MPI group")
+
+                    ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " " + machine
+                    cmdsub2 = ec2getinstances.split()
+                    result = check_output(cmdsub2)
+                    #logging.info(result)
+
+                    ipre = re.compile("^PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", re.MULTILINE)
+                    iip = ipre.search(result)
+
+                    logging.info("Instance " + machine + " has IP " + iip.group(1))
+
+            else:
+
+                # Get our EC2 registration id, to query all instances launched in this reservation request
+                # As these are the ones we want to group together into MPI network
+                res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
+
+                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
+
+                cmdsub2 = ec2getinstances.split()
+                logging.info("Getting relevant instances cmd: " + str(cmdsub2))
+                result = check_output(cmdsub2)
+            
+                logging.info(result)
+            
+                ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
+                logging.info("IP: " + str(ipaddressres))
+
+        
         
     def _launch_ec2_job(self, row, filename):
  
@@ -1338,6 +1423,7 @@ class SubversionPoller(object):
         pb_nodes = self.jobs_running.get_val(row, "pb_nodes")
         tag = self.jobs_running.get_val(row, "tag")
         job_no = self.jobs_running.get_val(row, "job_no")
+        status_info = self.jobs_running.get_val(row, "status_info")
 
         self._get_tag_proj_file(tag)
 
@@ -1359,41 +1445,115 @@ class SubversionPoller(object):
 
             cmdsub = cmd.split()
             
-            
+            #Check if we used spot instances or full instances to run these jobs, as there are different ways to figure
+            #out which ip addressess to add to the MPI machinefile
+            if status_info.startswith("sir-"):
+                #we are using spot instances
+
+                #We have written a unique random token in to the user data to define the group of machines
+                #belonging to a single request group.
+                user_data_str = urllib2.urlopen('http://169.254.169.254/latest/user-data').read()
+                user_data = ast.literal_eval(base64.b64decode(user_data_str))
+                desired_token = user_data[3]
+
+                logging.info ( "We are dealing with a spot request, need to try and piece things together for job token " + desired_token + "!" )
+
+                #Enumerate all currently running instances to then probe the token written to the user data.
+                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region
+                cmdsub2 = ec2getinstances.split()
+                result = check_output(cmdsub2)
+                logging.info(result)
                 
+                instances = re.findall(r"INSTANCE\s*(.*?)\s*ami-.*", result)
+                logging.info("Instance ID: " + str(instances))
+                
+                machinefile = open("/tmp/machinefile." + str(job_no), 'w')
+                for machine in instances:
+                    #Probe user data for each instance
+                    ec2describeinstance = "ec2-describe-instance-attribute -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --user-data " + machine
+                    cmdsub2 = ec2describeinstance.split()
+                    logging.info("Getting user data for instance cmd: " + str(cmdsub2))
+                    result = check_output(cmdsub2)
+                    logging.info(result)
+                    #Result data should be in the form of
+                    #result = "userData  i-7e3daab7  WydBS0lBSjRTQ0Y1RkJQWEw1T0lUUScsICdXYXFWSkxGYUtNVExHMzRmQjFoT29IS1R4anZQNjI4bFlFZGJ0TW0vJywgJ3VzLXdlc3QtMicsICcxMDk4NTAxMjAxJ10="
 
-            # Get our EC2 registration id, to query all instances launched in this reservation request
-            # As these are the ones we want to group together into MPI network
-            res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
+                    userdre = re.compile("^userData\s+i-.*?\s+(.*)", re.MULTILINE)
+                    userde = userdre.search(result)
+                    user_data_str = userde.group(1)
+                    if len(user_data_str) > 0:
+                        user_data = ast.literal_eval(base64.b64decode(user_data_str))
+                        logging.info(str(user_data))
+                        if len(user_data) > 3:
+                            job_id = user_data[3]
+                            logging.info("Job_token: " + job_id)
+                        else:
+                            #couldn't extract job token
+                            job_id = -1
+                    else:
+                        job_id = -1
 
-            ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
+                    if (job_id == desired_token):
+                        logging.info("Found an instance (" + machine + ") that is for our MPI group")
 
-            cmdsub2 = ec2getinstances.split()
-            logging.info("Getting relevant instances cmd: " + str(cmdsub2))
-            result = check_output(cmdsub2)
+                        ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " " + machine
+                        cmdsub2 = ec2getinstances.split()
+                        result = check_output(cmdsub2)
+                        #logging.info(result)
+
+                        ipre = re.compile("^PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", re.MULTILINE)
+                        iip = ipre.search(result)
+
+                        logging.info("Instance " + machine + " has IP " + iip.group(1))
+
+                        machinefile.write(iip.group(1) + "\n")
+
+                        #For MPI, we need to ssh into all those machines. As these are new machines, we need to make sure
+                        #The host keys are accepted and we can connect to them
+                        accept_host_key = "ssh-keyscan " + iip.group(1) + " >> ~/.ssh/known_hosts"
+                        os.system(accept_host_key)
+                        #As all of these machine boot up independently, we need to check if the other machines are up already.
+                        probe_ssh = "ssh " + iip.group(1) + " -C echo"
+                        logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
+                        if (os.system(probe_ssh) != 0):
+                            logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
+                            return
+                        
+
+            else:
+
+                # Get our EC2 registration id, to query all instances launched in this reservation request
+                # As these are the ones we want to group together into MPI network
+                res_id = urllib2.urlopen('http://169.254.169.254/latest/meta-data/reservation-id').read()
+
+                ec2getinstances = "ec2-describe-instances -W " + ec2_api_key + " -O " + ec2_api_user + " --region " + ec2_region + " --filter reservation-id=" + str(res_id)
+
+                cmdsub2 = ec2getinstances.split()
+                logging.info("Getting relevant instances cmd: " + str(cmdsub2))
+                result = check_output(cmdsub2)
             
-            logging.info(result)
+                logging.info(result)
             
-            ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
-            logging.info("IP: " + str(ipaddressres))
+                ipaddressres = re.findall(r"PRIVATEIPADDRESS\s*(.*?)\s*ip-.*?", result)
+                logging.info("IP: " + str(ipaddressres))
 
-            machinefile = open("/tmp/machinefile." + str(job_no), 'w')
-            for machine in ipaddressres:
-                machinefile.write(machine + "\n")
-                accept_host_key = "ssh-keyscan " + machine + " >> ~/.ssh/known_hosts"
-                os.system(accept_host_key)
-                probe_ssh = "ssh " + machine + " -C echo"
-                logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
-                if (os.system(probe_ssh) != 0):
-                    logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
-                    return
+                machinefile = open("/tmp/machinefile." + str(job_no), 'w')
+                for machine in ipaddressres:
+                    machinefile.write(machine + "\n")
+                    accept_host_key = "ssh-keyscan " + machine + " >> ~/.ssh/known_hosts"
+                    os.system(accept_host_key)
+                    probe_ssh = "ssh " + machine + " -C echo"
+                    logging.info("Testing if we can ssh into MPI node: " + probe_ssh)
+                    if (os.system(probe_ssh) != 0):
+                        logging.warning("We don't seem to be able to SSH into this machine yet, so don't submit the job yet")
+                        return
                                                                                                                                         
 
         # if pb, put a wrapper on it!
-        #if pb_batches > 0 and pb_nodes > 0:
-        #    cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
-        #    if debug:
-        #        print 'command: %s' % cmdsub
+        if pb_batches > 0 and pb_nodes > 0:
+            cmdsub = [pb_qsub_cmd, "--node_pool", str(pb_nodes), str(pb_batches), "1"] + cmdsub
+            if debug:
+                print 'command: %s' % cmdsub
 
         
         
