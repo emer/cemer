@@ -92,7 +92,8 @@ int main(int argc, char ** argv) {
     for (int i = 0; i < nItems2; i++)
         data2_send[i] = i * 2.5 + rand();
     
-
+    //Make sure all MPI processes have completed initialisation and are ready before starting the benchmarking
+    MPI_Barrier( MPI_COMM_WORLD );
     timer1s = MPI_Wtime();
     for (int i = 0; i < reps; i++)
         MPI_Allreduce(data2_send, data2_recv, nItems2, MPI_FLOAT, MPI_SUM, MPI_COMM_WORLD);
@@ -132,6 +133,8 @@ int main(int argc, char ** argv) {
     /**
        Test our own AllReduce implementation in single threaded mode
     **/
+    //Make sure all MPI processes have completed initialisation and are ready before starting the benchmarking
+    MPI_Barrier( MPI_COMM_WORLD );
     timer1s = MPI_Wtime();
     for (int i = 0; i < reps; i++)
         myreduce->allreduce(data2_send, data2_recv_thr, nItems2, 0);
@@ -153,6 +156,8 @@ int main(int argc, char ** argv) {
        Test our own AllReduce implementation in threaded mode
     **/
     bzero((char *) data2_recv_thr, nItems2*sizeof(float));
+    //Make sure all MPI processes have completed initialisation and are ready before starting the benchmarking
+    MPI_Barrier( MPI_COMM_WORLD );
     timer1s = MPI_Wtime();
     for (int i = 0; i < reps; i++)
         myreduce->allreduce(data2_send, data2_recv_thr, nItems2);
