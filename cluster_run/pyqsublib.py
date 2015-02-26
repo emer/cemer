@@ -2,7 +2,7 @@
 from subprocess import call,Popen,PIPE
 import os, time, re, string
 
-DEBUG = False
+DEBUG = True
 
 ###################################################################################
 class ClusterJobManager:
@@ -343,6 +343,109 @@ class PBSJobManager( ClusterJobManager ):
 
     def checkSubmission( self, job ):
         print "checking PBS job submission..."
+
+##########################################################################################################################
+class SlurmJobManager( ClusterJobManager ):
+    '''Cluster job manager interface for Slurm'''
+    def __init__(self, verbose=False, quick=False):
+        ClusterJobManager.__init__(self, verbose, quick)
+        self.job_launcher = 'srun'
+        self.subCmd = ["sbatch -H"]
+        
+    def generateJobScript( self, job ):
+        if False == ClusterJobManager.validateJob(self, job): 
+            return False
+
+        file = open(self.script_filename,"w")
+        file.write("#!/bin/sh\n")
+        file.write("#SBATCH -t %s\n" % job.wallTime() )
+        self.subCmd.append("-t %s" % job.wallTime())
+        file.write("#SBATCH -N %d\n" % job.numNodes())
+        file.write("#SBATCH --ntasks-per-node=%d\n" % job.numCores())
+        file.write("#SBATCH --output=JOB.%j.out\n")
+        if job.memorySize() != None:
+            file.write("#SBATCH --mem=%s\n" % job.memorySize() )
+            self.subCmd.append("--mem=%s" % job.memorySize() )
+            
+        # determine queue...user argument overrides
+        if job.queueName() == '':
+            job.setQueue('blanca-ccn')
+
+        file.write("#SBATCH --qos=%s\n" % job.queueName() )
+        self.subCmd.append("--qos=%s" % job.queueName() )
+            
+
+        if job.isArrayJob():
+            file.write("#SBATCH --array=%d-%d\n" % (job.taskStart(), job.numTasks()))
+            file.write("TASK_ID=$SLURM_ARRAY_TASK_ID\n")
+
+        file.write("\n")
+
+        #file.write("export DISPLAY=:0.0\n\n")
+        file.write("# change to working dir\n")
+        file.write("cd $PBS_O_WORKDIR\n")
+        file.write("\n")
+
+        file.write("%s %s" % (self.job_launcher, job.userCmd()))
+        file.write("\n")
+        file.close()
+        return True
+
+    def submitJob( self, job ):
+        if False == ClusterJobManager.validateJob(self, job): 
+            return False
+
+        cmd = ['chmod','a+x', self.script_filename]
+        if DEBUG:
+            print cmd
+        Popen(cmd)
+        cmd = ['sbatch', '-H',  self.script_filename]
+        if DEBUG:
+            print cmd
+        stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        
+        self.job_id = re.search('([0-9]+)', stdoutstr).group()
+        cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
+        if DEBUG:
+            print cmd
+        Popen(cmd)
+        if job.isArrayJob():
+            cmd =['qalter', '-o', 'JOB.'+ self.job_id +'.out', '-N', 'JOB.'+self.job_id+'.sh', self.job_id+'[]']
+            if DEBUG:
+                print cmd
+            Popen(cmd)
+            time.sleep(5)
+            cmd = ['scontrol', 'release', self.job_id+'[]']
+            if DEBUG:
+                print cmd
+            Popen(cmd)
+        else:
+            cmd = ['scontrol', 'update', 'JobId=' + self.job_id, 'name=' + 'JOB.'+ self.job_id + '.sh']
+            if DEBUG:
+                print cmd
+            Popen(cmd)
+            time.sleep(5)
+            cmd = ['scontrol', 'release', self.job_id]
+            if DEBUG:
+                print cmd
+            Popen(cmd)
+        print "created: JOB.%s.sh" % (self.job_id)
+    
+        # checkjob doesn't seem to work well on RC
+        #if not self.quick:
+            #time.sleep(5)
+            #if job.isArrayJob():
+            #    print Popen(['checkjob', self.job_id+'[]', '|','grep','-A1','Allocated'],stdout=PIPE).communicate()[0]
+            #else:
+            #    print Popen(['checkjob', self.job_id, '|', 'grep', '-A1', 'Allocated'],stdout=PIPE).communicate()[0]
+            #print Popen(['cat', 'JOB.' + self.job_id + '.out'],stdout=PIPE).communicate()[0]
+    
+        return True
+
+    def checkSubmission( self, job ):
+        print "checking Slurm job submission..."
+
+
 
 #####################################################################################
 

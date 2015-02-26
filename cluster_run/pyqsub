@@ -157,6 +157,8 @@ if __name__ == "__main__":
     # create the proper job manager (PBS or SGE)        
     if ( os.environ.get("SGE_ROOT") ):
         jm = SGEJobManager( opts.verbose, opts.quick )
+    elif (os.environ.get("SLURM_ROOT") ):
+        jm = SlurmJobManager( opts.verbose, opts.quick )
     else:
         jm = PBSJobManager( opts.verbose, opts.quick )
 
