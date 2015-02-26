@@ -58,10 +58,10 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
   return rval;
 }
 
-void ProjectionSpec::SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val) {
+void ProjectionSpec::SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val, int thr_no) {
   ConSpec* cs = cg->GetConSpec();
   if(add_rnd_var) {
-    cs->C_Init_Weight_AddRndVar(wt_val);
+    cs->C_Init_Weight_AddRndVar(wt_val, thr_no);
   }
   cs->C_ApplyLimits(wt_val);
   cg->Cn(cn_idx,ConGroup::WT,net) = wt_val;

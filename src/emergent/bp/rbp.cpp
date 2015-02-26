@@ -57,7 +57,7 @@ void RBpUnitSpec::Initialize() {
 void RBpUnitSpec::Init_Acts(Unit* u, Network* net) {
   BpUnitSpec::Init_Acts(u, net);
   RBpUnit* ru = (RBpUnit*)u;
-  ru->act = initial_act.Gen();
+  ru->act = initial_act.Gen(thr_no);
   // set initial net value too..
   ru->net = sig.Inverse(SigmoidSpec::Clip(act_range.Normalize(ru->act)));
   ru->prv_act = ru->act;
@@ -384,10 +384,10 @@ void NoisyRBpUnitSpec::UpdateAfterEdit_impl() {
   sqrt_dt = sqrtf(dt);
 }
 
-void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_no) {
+void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thr_no) {
   if(time_avg == ACTIVATION) {
     u->act_raw =
-      act_range.Project(SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen()*sqrt_dt));
+      act_range.Project(SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen(thr_no)*sqrt_dt));
     u->da = u->act_raw - u->prv_act;
     u->act = u->prv_act + dt * u->da;
   }
@@ -395,7 +395,7 @@ void NoisyRBpUnitSpec::Compute_Act_impl(RBpUnit* u, BpNetwork* net, int thread_n
     u->da = u->net - u->prv_net;
     u->net = u->prv_net + dt * u->da;
     u->act = u->act_raw =
-      act_range.Project(SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen()*sqrt_dt));
+      act_range.Project(SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen(thr_no)*sqrt_dt));
   }
 }
 

@@ -104,19 +104,19 @@ class E_API TopoWtsPrjnSpec: public FullPrjnSpec {
   void Connect_impl(Projection* prjn, bool make_cons) override;
   // enables flexibility whether to use unit group indexing (default) or not
   virtual void InitWeights_SendFlatRecvFlat(Projection* prjn, ConGroup* cg,
-                                            Unit* ru, Network* net);
+                                            Unit* ru, Network* net, int thr_no);
   // uses flat idx'ing of both send and recv layers (just unit positions)
   virtual void InitWeights_SendGpsRecvGps(Projection* prjn, ConGroup* cg,
-                                          Unit* ru, Network* net);
+                                          Unit* ru, Network* net, int thr_no);
   // gp idx'ing of both send and recv layers
   virtual void InitWeights_SendGpsRecvFlat(Projection* prjn, ConGroup* cg,
-                                           Unit* ru, Network* net);
+                                           Unit* ru, Network* net, int thr_no);
   // gp idx'ing of send layer, flat idx'ing of recv
   virtual void InitWeights_SendFlatRecvGps(Projection* prjn, ConGroup* cg,
-                                           Unit* ru, Network* net);
+                                           Unit* ru, Network* net, int thr_no);
   // flat idx'ing of send layer, gp idx'ing of recv
   virtual void SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
-                           Network* net, float dist, int cg_idx, bool dbl_add);
+                           Network* net, float dist, int cg_idx, bool dbl_add, int thr_no);
   // actually set the weight value from distance value -- used by above four main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
   virtual float ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru, int i, float ri_x, float ri_y,

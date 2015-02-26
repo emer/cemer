@@ -68,6 +68,6 @@ void TiledGpRFOneToOnePrjnSpec::Init_Weights_Prjn
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    SetCnWt(cg, i, net, wt);
+    SetCnWt(cg, i, net, wt, thr_no);
   }
 }

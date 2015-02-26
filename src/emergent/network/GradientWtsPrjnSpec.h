@@ -48,13 +48,13 @@ public:
                           int thr_no) override;
 
   virtual void	InitWeights_RecvGps(Projection* prjn, ConGroup* cg,
-                                    Unit* ru, Network* net);
+                                    Unit* ru, Network* net, int thr_no);
   // for recv unit group case
   virtual void 	InitWeights_RecvFlat(Projection* prjn, ConGroup* cg,
-                                     Unit* ru, Network* net);
+                                     Unit* ru, Network* net, int thr_no);
   // for flat recv layer case (just unit positions)
   virtual void 	SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
-                            Network* net, float dist, int cg_idx);
+                            Network* net, float dist, int cg_idx, int thr_no);
   // actually set the weight value from distance value -- util used by both of above main routines -- can overload to implement different gradient functions -- cg_idx is index within con group, and dist is computed normalized distance value (0-1)
 
   TA_SIMPLE_BASEFUNS(GradientWtsPrjnSpec);

@@ -96,7 +96,7 @@ public:
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i]);
+        C_Init_Weight_Rnd(wts[i], thr_no);
         C_Init_dWt(dwts[i]);
         pdws[i] = 0.0f;
       }
@@ -436,7 +436,7 @@ public:
 
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
-        C_Init_Weight_Rnd(wts[i]);
+        C_Init_Weight_Rnd(wts[i], thr_no);
         C_Init_dWt(dwts[i]);
         pdws[i] = 0.0f;
         lrs[i] = lrate;

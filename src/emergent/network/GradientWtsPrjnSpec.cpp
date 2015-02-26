@@ -43,14 +43,14 @@ void GradientWtsPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                                             Network* net, int thr_no) {
   Unit* ru = cg->OwnUn(net);
   if(use_gps && prjn->layer->unit_groups)
-    InitWeights_RecvGps(prjn, cg, ru, net);
+    InitWeights_RecvGps(prjn, cg, ru, net, thr_no);
   else
-    InitWeights_RecvFlat(prjn, cg, ru, net);
+    InitWeights_RecvFlat(prjn, cg, ru, net, thr_no);
 }
 
 
 void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
-                                      Network* net, float dist, int cg_idx) {
+                                      Network* net, float dist, int cg_idx, int thr_no) {
   float wt_val = wt_range.min;
   if(grad_type == LINEAR) {
     if(invert)
@@ -65,7 +65,7 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
     else
       wt_val = wt_range.min + gaus * wt_range.Range();
   }
-  SetCnWt(cg, cg_idx, net, wt_val);
+  SetCnWt(cg, cg_idx, net, wt_val, thr_no);
 }
 
 ///////////////////////////////////////////////
@@ -80,7 +80,7 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
 //      -1.33   -1      -.66    -.33 wrp_x < .5  flt
 
 void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConGroup* cg, Unit* ru,
-                                              Network* net) {
+                                              Network* net, int thr_no) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
   Unit* lru = (Unit*)ru;
@@ -146,12 +146,12 @@ void GradientWtsPrjnSpec::InitWeights_RecvGps(Projection* prjn, ConGroup* cg, Un
 
     dist /= max_dist;           // keep it normalized
 
-    SetWtFmDist(prjn, cg, ru, net, dist, i);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, thr_no);
   }
 }
 
 void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConGroup* cg, Unit* ru,
-                                               Network* net) {
+                                               Network* net, int thr_no) {
   Layer* recv_lay = (Layer*)prjn->layer;
   Layer* send_lay = (Layer*)prjn->from.ptr();
   taVector2i ru_pos;
@@ -216,7 +216,7 @@ void GradientWtsPrjnSpec::InitWeights_RecvFlat(Projection* prjn, ConGroup* cg, U
 
     dist /= max_dist;           // keep it normalized
 
-    SetWtFmDist(prjn, cg, ru, net, dist, i);
+    SetWtFmDist(prjn, cg, ru, net, dist, i, thr_no);
   }
 }
 

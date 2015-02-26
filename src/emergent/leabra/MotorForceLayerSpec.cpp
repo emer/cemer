@@ -124,7 +124,7 @@ float MotorForceLayerSpec::ReadForce(LeabraLayer* lay, LeabraNetwork* net, float
   if(wt_sum > 0.0f)
     force /= wt_sum;
   if(add_noise)
-    force += force_noise.Gen();
+    force += force_noise.Gen(thr_no);
   return force;
 }
 

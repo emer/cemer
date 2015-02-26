@@ -460,6 +460,7 @@ public:
     VM_NOISE,			// noise in the value of v_m (membrane potential) -- IMPORTANT: this should NOT be used for rate-code (NXX1) activations, because they do not depend directly on the vm -- this then has no effect
     NETIN_NOISE,		// noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
     ACT_NOISE,			// noise in the activations
+    AVG_S_NOISE,                // noise in the avg_s short-term time average values (plus phase) -- added only at the end of settling in the plus phase
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things

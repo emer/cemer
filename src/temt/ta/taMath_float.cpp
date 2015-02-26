@@ -289,9 +289,9 @@ float taMath_float::beta_den(float x, float a, float b) {
   }
 }
 
-float taMath_float::beta_dev(float a, float b) {
-  float x1 = gamma_dev(a, 1.0);
-  float x2 = gamma_dev(b, 1.0);
+float taMath_float::beta_dev(float a, float b, int thr_no) {
+  float x1 = gamma_dev(a, 1.0, thr_no);
+  float x2 = gamma_dev(b, 1.0, thr_no);
 
   return x1 / (x1 + x2);
 }
@@ -311,7 +311,7 @@ float taMath_float::binom_cum(int n, int k, float p) {
   return beta_i(k, n-k + 1, p);
 }
 
-float taMath_float::binom_dev(int n, float pp) {
+float taMath_float::binom_dev(int n, float pp, int thr_no) {
   int j;
   static int nold=(-1);
   float am,em,g,angle,p,bnl,sq,t,y;
@@ -322,13 +322,13 @@ float taMath_float::binom_dev(int n, float pp) {
   if (n < 25) {
     bnl=0.0;
     for (j=1;j<=n;j++)
-      if (MTRnd::genrand_res53() < p) bnl += 1.0;
+      if (MTRnd::genrand_res53(thr_no) < p) bnl += 1.0;
   }
   else if (am < 1.0) {
     g=exp(-am);
     t=1.0;
     for (j=0;j<=n;j++) {
-      t *= MTRnd::genrand_res53();
+      t *= MTRnd::genrand_res53(thr_no);
       if (t < g) break;
     }
     bnl=(j <= n ? j : n);
@@ -348,14 +348,14 @@ float taMath_float::binom_dev(int n, float pp) {
     sq=sqrt(2.0*am*pc);
     do {
       do {
-        angle=pi*MTRnd::genrand_res53();
+        angle=pi*MTRnd::genrand_res53(thr_no);
         y=tan(angle);
         em=sq*y+am;
       } while (em < 0.0 || em >= (en+1.0));
       em=floor(em);
       t=1.2*sq*(1.0+y*y)*exp(oldg-gamma_ln(em+1.0)
           -gamma_ln(en-em+1.0)+em*plog+(en-em)*pclog);
-    } while (MTRnd::genrand_res53() > t);
+    } while (MTRnd::genrand_res53(thr_no) > t);
     bnl=em;
   }
   if (p != pp) bnl=n-bnl;
@@ -379,7 +379,7 @@ float taMath_float::poisson_cum(int j, float x) {
     return 0;
 }
 
-float taMath_float::poisson_dev(float xm) {
+float taMath_float::poisson_dev(float xm, int thr_no) {
   static float sq,alxm,g,oldm=(-1.0);
   float em,t,y;
 
@@ -392,7 +392,7 @@ float taMath_float::poisson_dev(float xm) {
     t=1.0;
     do {
       em += 1.0;
-      t *= MTRnd::genrand_res53();
+      t *= MTRnd::genrand_res53(thr_no);
     } while (t > g);
   }
   else {
@@ -404,12 +404,12 @@ float taMath_float::poisson_dev(float xm) {
     }
     do {
       do {
-        y=tan(pi*MTRnd::genrand_res53());
+        y=tan(pi*MTRnd::genrand_res53(thr_no));
         em=sq*y+xm;
       } while (em < 0.0);
       em=floor(em);
       t=0.9*(1.0+y*y)*exp(em*alxm-gamma_ln(em+1.0)-g);
-    } while (MTRnd::genrand_res53() > t);
+    } while (MTRnd::genrand_res53(thr_no) > t);
   }
   return em;
 }
@@ -438,10 +438,10 @@ float taMath_float::gamma_cum(int j, float l, float t) {
  * by Brian Gough
  */
 
-float taMath_float::gamma_dev(const float a, const float b) {
+float taMath_float::gamma_dev(const float a, const float b, int thr_no) {
   if (a < 1) {
-    float u = MTRnd::genrand_res53();
-    return gamma_dev(1.0 + a, b) * pow (u, 1.0 / a);
+    float u = MTRnd::genrand_res53(thr_no);
+    return gamma_dev(1.0 + a, b, thr_no) * pow (u, 1.0 / a);
   }
 
   {
@@ -451,13 +451,13 @@ float taMath_float::gamma_dev(const float a, const float b) {
 
     while (true) {
       do {
-        x = gauss_dev();
+        x = gauss_dev(thr_no);
         v = 1.0 + c * x;
       }
       while (v <= 0);
 
       v = v * v * v;
-      u = MTRnd::genrand_res53();
+      u = MTRnd::genrand_res53(thr_no);
 
       if (u < 1 - 0.0331 * x * x * x * x) 
         break;
@@ -468,32 +468,6 @@ float taMath_float::gamma_dev(const float a, const float b) {
     
     return b * d * v;
   }
-
-  // int j;
-  // float am,e,s,v1,v2,x,y;
-
-  // if (ia < 1) { fprintf(stderr, "ia < 1 in gamma_dev()\n"); return 0; }
-  // if (ia < 6) {
-  //   x=1.0;
-  //   for (j=1;j<=ia;j++) x *= MTRnd::genrand_res53();
-  //   x = -log(x);
-  // }
-  // else {
-  //   do {
-  //     do {
-  //       do {
-  //         v1=2.0*MTRnd::genrand_res53()-1.0;
-  //         v2=2.0*MTRnd::genrand_res53()-1.0;
-  //       } while (v1*v1+v2*v2 > 1.0);
-  //       y=v2/v1;
-  //       am=ia-1;
-  //       s=sqrt(2.0*am+1.0);
-  //       x=s*y+am;
-  //     } while (x <= 0.0);
-  //     e=(1.0+y*y)*exp(am*log(x/am)-s*y);
-  //   } while (MTRnd::genrand_res53() > e);
-  // }
-  // return x;
 }
 
 /**********************************
@@ -605,8 +579,8 @@ float taMath_float::gauss_inv_lim(float p) {
 }
 
 
-float taMath_float::gauss_dev() {
-  return static_cast<float>(MTRnd::genrand_gauss_dev_double());
+float taMath_float::gauss_dev(int thr_no) {
+  return static_cast<float>(MTRnd::genrand_gauss_dev_double(thr_no));
 }
 
 /**********************************
@@ -1579,9 +1553,9 @@ String taMath_float::vec_stats(const float_Matrix* vec) {
   return rval;
 }
 
-int taMath_float::vec_prob_choose(float_Matrix* vec) {
+int taMath_float::vec_prob_choose(float_Matrix* vec, int thr_no) {
   if(!vec_check_type(vec)) return -1;
-  float rndval = Random::ZeroOne();
+  float rndval = Random::ZeroOne(thr_no);
   float psum = 0.0;
   TA_FOREACH_INDEX(i, *vec) {
     psum += vec->FastEl_Flat(i);
@@ -1616,7 +1590,7 @@ bool taMath_float::vec_regress_lin(const float_Matrix* x_vec, const float_Matrix
   return rval;
 }
 
-bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev) {
+bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev, int thr_no) {
   if(!vec_check_type(vec)) return false;
   if(vec->size == 0) return false;
 
@@ -1647,7 +1621,7 @@ bool taMath_float::vec_jitter_gauss(float_Matrix* vec, float stdev) {
     el = tmp[i];
     if(el != 0) {
       while (new_index < 0 || new_index > vec_size) {
-        jitter = int(Random::Gauss(stdev)+0.5f);
+        jitter = int(Random::Gauss(stdev, thr_no)+0.5f);
         new_index = jitter+i;
         if (vec->FastEl_Flat(new_index) != 0)
           new_index = -1;

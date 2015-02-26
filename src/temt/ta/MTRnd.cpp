@@ -62,10 +62,23 @@
 */
 
 // Initialize the static MT-RNG state instance.
-MTRndState MTRnd::state;
+
+MTRndState* MTRnd::states = NULL;
+int MTRnd::n_states = 0;
+
+void MTRnd::alloc_states() {
+  if(states)
+    delete [] states;
+  n_states = taMisc::thread_defaults.cpus;
+  n_states = MAX(1, n_states);
+  states = new MTRndState[n_states]; // note -- never deleted!
+}
 
 /* initializes mt[N] with a seed */
-void MTRnd::seed(uint s) {
+void MTRnd::seed(uint s, int thr_no) {
+  if(states == NULL)
+    alloc_states();
+  MTRndState& state = get_state(thr_no);
   state.reset();
   state.mt[0] = s & 0xffffffffUL;
   for (state.mti = 1; state.mti < N; state.mti++) {
@@ -78,24 +91,35 @@ void MTRnd::seed(uint s) {
     state.mt[state.mti] &= 0xffffffffUL;
     /* for >32 bit machines */
   }
+  if(thr_no == 0)
+    seed_to_threads(s);
 }
 
-uint MTRnd::seed_time_pid() {
-//NOTE: this is a bit simpler than the 3.2 version
+uint MTRnd::seed_time_pid(int thr_no) {
+  //NOTE: this is a bit simpler than the 3.2 version
   int pid = taMisc::ProcessId();
   int tc = taMisc::TickCount(); // ms since system started
   ulong sdval = (ulong)tc * (ulong)pid;
   sdval = sdval & 0xffffffffUL;
-  seed(sdval);          // use microseconds..
+  seed(sdval, thr_no);          // use microseconds..
   return sdval;
+}
+
+void MTRnd::seed_to_threads(uint s) {
+  for(int i=1; i<n_states; i++) {
+    ulong sdval = (ulong)sdval + (ulong)(i * 7); // lame magic number 7.. :)
+    sdval = sdval & 0xffffffffUL;
+    seed(sdval, i); 
+  }
 }
 
 /* initialize by an array with array-length */
 /* init_key is the array for initializing keys */
 /* key_length is its length */
-void MTRnd::seed_array(uint init_key[], int key_length) {
+void MTRnd::seed_array(uint init_key[], int key_length, int thr_no) {
   int i, j, k;
   seed(19650218UL);
+  MTRndState& state = get_state(thr_no);
   i=1; j=0;
   k = (N>key_length ? N : key_length);
   for (; k; k--) {
@@ -117,22 +141,20 @@ void MTRnd::seed_array(uint init_key[], int key_length) {
   state.mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
 }
 
-const MTRndState &
-MTRnd::get_state()
-{
-  // Returns a reference to private data, but it's const so less risk.
-  return state;
-}
-
 void
-MTRnd::set_state(const MTRndState &newState)
+MTRnd::set_state(const MTRndState &newState, int thr_no)
 {
+  MTRndState& state = get_state(thr_no);
   state.reset();
   state = newState;
+  if(thr_no == 0) {
+    seed_to_threads(state.mt[0]);
+  }
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
-uint MTRnd::genrand_int32() {
+uint MTRnd::genrand_int32(int thr_no) {
+  MTRndState& state = get_state(thr_no);
   ulong y;
   static ulong mag01[2]={0x0UL, MATRIX_A};
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
@@ -169,48 +191,49 @@ uint MTRnd::genrand_int32() {
 }
 
 /* generates a random number on [0,0x7fffffff]-interval */
-int MTRnd::genrand_int31() {
-  return (int)(genrand_int32()>>1);
+int MTRnd::genrand_int31(int thr_no) {
+  return (int)(genrand_int32(thr_no)>>1);
 }
 
 /* generates a random number on [0,1]-real-interval */
-double MTRnd::genrand_real1() {
-  return genrand_int32()*(1.0/4294967295.0);
+double MTRnd::genrand_real1(int thr_no) {
+  return genrand_int32(thr_no)*(1.0/4294967295.0);
   /* divided by 2^32-1 */
 }
 
 /* generates a random number on [0,1)-real-interval */
-double MTRnd::genrand_real2() {
-  return genrand_int32()*(1.0/4294967296.0);
+double MTRnd::genrand_real2(int thr_no) {
+  return genrand_int32(thr_no)*(1.0/4294967296.0);
   /* divided by 2^32 */
 }
 
 /* generates a random number on (0,1)-real-interval */
-double MTRnd::genrand_real3() {
-  return (((double)genrand_int32()) + 0.5)*(1.0/4294967296.0);
+double MTRnd::genrand_real3(int thr_no) {
+  return (((double)genrand_int32(thr_no)) + 0.5)*(1.0/4294967296.0);
   /* divided by 2^32 */
 }
 
 /* generates a random number on [0,1) with 53-bit resolution*/
-double MTRnd::genrand_res53() {
-  ulong a=genrand_int32()>>5, b=genrand_int32()>>6;
+double MTRnd::genrand_res53(int thr_no) {
+  ulong a=genrand_int32(thr_no)>>5, b=genrand_int32(thr_no)>>6;
   return(a*67108864.0+b)*(1.0/9007199254740992.0);
 }
 /* These real versions are due to Isaku Wada, 2002/01/09 added */
 
 double
-MTRnd::genrand_gauss_dev_double()
+MTRnd::genrand_gauss_dev_double(int thr_no)
 {
+  MTRndState& state = get_state(thr_no);
+  
   if (state.is_gauss_double_cached) {
     state.is_gauss_double_cached = false;
     return state.cached_gauss_double;
   }
 
   double fac, r, v1, v2;
-  do
-  {
-    v1 = 2.0 * MTRnd::genrand_res53() - 1.0;
-    v2 = 2.0 * MTRnd::genrand_res53() - 1.0;
+  do {
+    v1 = 2.0 * MTRnd::genrand_res53(thr_no) - 1.0;
+    v2 = 2.0 * MTRnd::genrand_res53(thr_no) - 1.0;
     r = v1 * v1 + v2 * v2;
   }
   while (r >= 1.0 || r == 0);

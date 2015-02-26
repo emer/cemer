@@ -18,20 +18,20 @@
 
 TA_BASEFUNS_CTORS_DEFN(Random);
 
-double Random::Binom(int n, double p) {
-  return taMath_double::binom_dev(n,p);
+double Random::Binom(int n, double p, int thr_no) {
+  return taMath_double::binom_dev(n,p,thr_no);
 }
-double Random::Poisson(double l) {
-  return taMath_double::poisson_dev(l);
+double Random::Poisson(double l, int thr_no) {
+  return taMath_double::poisson_dev(l,thr_no);
 }
-double Random::Gamma(double var, double j)  {
-  return taMath_double::gamma_dev(j, var);
+double Random::Gamma(double var, double j, int thr_no)  {
+  return taMath_double::gamma_dev(j, var, thr_no);
 }
-double Random::Gauss(double stdev) {
-  return stdev * taMath_double::gauss_dev();
+double Random::Gauss(double stdev, int thr_no) {
+  return stdev * taMath_double::gauss_dev(thr_no);
 }
-double Random::Beta(double a, double b)  {
-  return taMath_double::beta_dev(a, b);
+double Random::Beta(double a, double b, int thr_no)  {
+  return taMath_double::beta_dev(a, b, thr_no);
 }
 
 double Random::BinomDen(int n, int j, double p) {
@@ -52,23 +52,23 @@ double Random::BetaDen(double x, double a, double b) {
   return taMath_double::beta_den(x, a, b);
 }
 
-double Random::Gen() const {
+double Random::Gen(int thr_no) const {
   if(var == 0.0f) return mean;
   switch(type) {
   case NONE:
     return mean;
   case UNIFORM:
-    return UniformMeanRange(mean, var);
+    return UniformMeanRange(mean, var, thr_no);
   case BINOMIAL:
-    return mean + Binom((int)par, var);
+    return mean + Binom((int)par, var, thr_no);
   case POISSON:
-    return mean + Poisson(var);
+    return mean + Poisson(var, thr_no);
   case GAMMA:
-    return mean + Gamma(var, (int)par);
+    return mean + Gamma(var, (int)par, thr_no);
   case GAUSSIAN:
-    return mean + Gauss(var);
+    return mean + Gauss(var, thr_no);
   case BETA:
-    return mean + Beta(var, par);
+    return mean + Beta(var, par, thr_no);
   }
   return 0.0f;
 }

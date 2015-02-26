@@ -26,8 +26,9 @@ void RndSeed::Initialize() {
 }
 
 void RndSeed::GetCurrent() {
-  // Get the RNG's current state data.
+  // Get the RNG's current state data. 
   const MTRndState &state = MTRnd::get_state();
+  // NOTE: only saving / restoring the non-threaded guy
 
   // Save that state data to this object.
   seed.SetSize(MTRnd::N);

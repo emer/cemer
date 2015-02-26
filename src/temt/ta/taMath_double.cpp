@@ -326,9 +326,9 @@ double taMath_double::beta_den(double x, double a, double b) {
   }
 }
 
-double taMath_double::beta_dev(double a, double b) {
-  double x1 = gamma_dev(a, 1.0);
-  double x2 = gamma_dev(b, 1.0);
+double taMath_double::beta_dev(double a, double b, int thr_no) {
+  double x1 = gamma_dev(a, 1.0, thr_no);
+  double x2 = gamma_dev(b, 1.0, thr_no);
 
   return x1 / (x1 + x2);
 }
@@ -348,7 +348,7 @@ double taMath_double::binom_cum(int n, int k, double p) {
   return beta_i(k, n-k + 1, p);
 }
 
-double taMath_double::binom_dev(int n, double pp) {
+double taMath_double::binom_dev(int n, double pp, int thr_no) {
   int j;
   static int nold=(-1);
   double am,em,g,angle,p,bnl,sq,t,y;
@@ -359,13 +359,13 @@ double taMath_double::binom_dev(int n, double pp) {
   if (n < 25) {
     bnl=0.0;
     for (j=1;j<=n;j++)
-      if (MTRnd::genrand_res53() < p) bnl += 1.0;
+      if (MTRnd::genrand_res53(thr_no) < p) bnl += 1.0;
   }
   else if (am < 1.0) {
     g=exp(-am);
     t=1.0;
     for (j=0;j<=n;j++) {
-      t *= MTRnd::genrand_res53();
+      t *= MTRnd::genrand_res53(thr_no);
       if (t < g) break;
     }
     bnl=(j <= n ? j : n);
@@ -385,14 +385,14 @@ double taMath_double::binom_dev(int n, double pp) {
     sq=sqrt(2.0*am*pc);
     do {
       do {
-        angle=pi*MTRnd::genrand_res53();
+        angle=pi*MTRnd::genrand_res53(thr_no);
         y=tan(angle);
         em=sq*y+am;
       } while (em < 0.0 || em >= (en+1.0));
       em=floor(em);
       t=1.2*sq*(1.0+y*y)*exp(oldg-gamma_ln(em+1.0)
                              -gamma_ln(en-em+1.0)+em*plog+(en-em)*pclog);
-    } while (MTRnd::genrand_res53() > t);
+    } while (MTRnd::genrand_res53(thr_no) > t);
     bnl=em;
   }
   if (p != pp) bnl=n-bnl;
@@ -416,7 +416,7 @@ double taMath_double::poisson_cum(int j, double x) {
     return 0;
 }
 
-double taMath_double::poisson_dev(double xm) {
+double taMath_double::poisson_dev(double xm, int thr_no) {
   static double sq,alxm,g,oldm=(-1.0);
   double em,t,y;
 
@@ -429,7 +429,7 @@ double taMath_double::poisson_dev(double xm) {
     t=1.0;
     do {
       em += 1.0;
-      t *= MTRnd::genrand_res53();
+      t *= MTRnd::genrand_res53(thr_no);
     } while (t > g);
   }
   else {
@@ -441,12 +441,12 @@ double taMath_double::poisson_dev(double xm) {
     }
     do {
       do {
-        y=tan(pi*MTRnd::genrand_res53());
+        y=tan(pi*MTRnd::genrand_res53(thr_no));
         em=sq*y+xm;
       } while (em < 0.0);
       em=floor(em);
       t=0.9*(1.0+y*y)*exp(em*alxm-gamma_ln(em+1.0)-g);
-    } while (MTRnd::genrand_res53() > t);
+    } while (MTRnd::genrand_res53(thr_no) > t);
   }
   return em;
 }
@@ -476,10 +476,10 @@ double taMath_double::gamma_cum(int j, double l, double t) {
  * by Brian Gough
  */
 
-double taMath_double::gamma_dev(const double a, const double b) {
+double taMath_double::gamma_dev(const double a, const double b, int thr_no) {
   if (a < 1) {
-    double u = MTRnd::genrand_res53();
-    return gamma_dev(1.0 + a, b) * pow (u, 1.0 / a);
+    double u = MTRnd::genrand_res53(thr_no);
+    return gamma_dev(1.0 + a, b, thr_no) * pow (u, 1.0 / a);
   }
 
   {
@@ -489,13 +489,13 @@ double taMath_double::gamma_dev(const double a, const double b) {
 
     while (true) {
       do {
-        x = gauss_dev();
+        x = gauss_dev(thr_no);
         v = 1.0 + c * x;
       }
       while (v <= 0);
 
       v = v * v * v;
-      u = MTRnd::genrand_res53();
+      u = MTRnd::genrand_res53(thr_no);
 
       if (u < 1 - 0.0331 * x * x * x * x) 
         break;
@@ -506,34 +506,6 @@ double taMath_double::gamma_dev(const double a, const double b) {
     
     return b * d * v;
   }
-
-  // int j;
-  // double am,e,s,v1,v2,x,y;
-
-  // if (ia < 1) { fprintf(stderr, "ia < 1 in gamma_dev()\n"); return 0; }
-  // if (ia < 6) {
-  //   x=1.0;
-  //   for (j=1;j<=ia;j++) x *= MTRnd::genrand_res53();
-  //   x = -log(x);
-  // }
-  // else {
-  //   do {
-  //     do {
-  //       do {
-  //         v1=2.0*MTRnd::genrand_res53()-1.0;
-  //         v2=2.0*MTRnd::genrand_res53()-1.0;
-  //       } while (v1*v1+v2*v2 > 1.0);
-  //       y=v2/v1;
-  //       am=ia-1;
-  //       s=sqrt(2.0*am+1.0);
-  //       x=s*y+am;
-  //     } while (x <= 0.0);
-  //     e=(1.0+y*y)*exp(am*log(x/am)-s*y);
-  //   } while (MTRnd::genrand_res53() > e);
-  // }
-  // return x;
-
-
 }
 
 
@@ -646,8 +618,8 @@ double taMath_double::gauss_inv_lim(double p) {
 }
 
 
-double taMath_double::gauss_dev() {
-  return MTRnd::genrand_gauss_dev_double();
+double taMath_double::gauss_dev(int thr_no) {
+  return MTRnd::genrand_gauss_dev_double(thr_no);
 }
 
 /**********************************
@@ -1647,9 +1619,9 @@ String taMath_double::vec_stats(const double_Matrix* vec) {
   return rval;
 }
 
-int taMath_double::vec_prob_choose(double_Matrix* vec) {
+int taMath_double::vec_prob_choose(double_Matrix* vec, int thr_no) {
   if(!vec_check_type(vec)) return -1;
-  double rndval = Random::ZeroOne();
+  double rndval = Random::ZeroOne(thr_no);
   double psum = 0.0;
   TA_FOREACH_INDEX(i, *vec) {
     psum += vec->FastEl_Flat(i);
@@ -1748,7 +1720,7 @@ bool taMath_double::vec_regress_multi_lin_polynomial(double_Matrix* dx, double_M
 }
 
 
-bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
+bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev, int thr_no) {
   if(!vec_check_type(vec)) return false;
   if(vec->size == 0) return false;
 
@@ -1779,7 +1751,7 @@ bool taMath_double::vec_jitter_gauss(double_Matrix* vec, double stdev) {
     el = tmp[i];
     if(el != 0) {
       while (new_index < 0 || new_index > vec_size) {
-        jitter = int(Random::Gauss(stdev)+0.5f);
+        jitter = int(Random::Gauss(stdev,thr_no)+0.5f);
         new_index = jitter+i;
         if (vec->FastEl_Flat(new_index) != 0)
           new_index = -1;

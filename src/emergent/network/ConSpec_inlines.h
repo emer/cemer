@@ -46,7 +46,7 @@ inline void ConSpec::Init_Weights(ConGroup* cg, Network* net, int thr_no) {
 
   if(rnd.type != Random::NONE) {
     for(int i=0; i<cg->size; i++) {
-      C_Init_Weight_Rnd(wts[i]);
+      C_Init_Weight_Rnd(wts[i], thr_no);
       C_Init_dWt(dwts[i]);
     }
   }
@@ -121,7 +121,7 @@ inline void ConSpec::Compute_Weights(ConGroup* cg, Network* net, int thr_no) {
 }
 
 inline void ConSpec::B_Init_Weights(UnitVars* uv, Network* net, int thr_no) {
-  C_Init_Weight_Rnd(uv->bias_wt);
+  C_Init_Weight_Rnd(uv->bias_wt, thr_no);
   C_Init_dWt(uv->bias_dwt);
 }
 

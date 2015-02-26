@@ -961,8 +961,6 @@ void Network::Connect() {
   CountCons();
   UpdtAfterNetMod();
 
-  // Init_Weights(); // not doing -- slow for large nets -- this is separate now
-
   StructUpdate(false);
   --taMisc::no_auto_expand;
 }
@@ -1537,9 +1535,7 @@ void Network::Init_Weights() {
 
   needs_wt_sym = false;          // will get set to true if needed
 
-  // can't actually do this threaded because random number gen is not thread safe,
-  // for the time being..
-  NET_THREAD_LOOP(Network::Init_Weights_Thr);
+  NET_THREAD_CALL(Network::Init_Weights_Thr);
 
   if(needs_wt_sym) {
     // taMisc::Info("Starting Init_Weights_sym...");

@@ -47,43 +47,44 @@ public:
   double        var;            // #CONDSHOW_OFF_type:NONE 'varibility' parameter for the random numbers (gauss = standard deviation, not variance; uniform = half-range)
   double        par;            // #CONDSHOW_ON_type:GAMMA,BINOMIAL,BETA extra parameter for distribution (depends on each one)
 
-  double        Gen() const;
-  // generate a random variable according to current parameters
+  double        Gen(int thr_no = 0) const;
+  // generate a random variable according to current parameters -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
   double        Density(double x) const;
   // get density of random variable according to current params
 
   ////////////////////////////////////////////////////////////////////////
   // various handy static random number generation functions:
 
-  static int    IntZeroN(int n)
-  { if(n > 0) return (int)(MTRnd::genrand_int32() % (uint)n); return 0; }
-  // #CAT_Int uniform random integer in the range between 0 and n, exclusive of n: [0,n)
-  static int    IntMinMax(int min, int max)
-  { return min + IntZeroN(max - min); }
-  // #CAT_Int uniform random integer in range between min and max, exclusive of max: [min,max)
-  static int    IntMeanRange(int mean, int range)
-  { return mean + (IntZeroN(2 * range + 1) - range); }
-  // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range]
+  static int    IntZeroN(int n, int thr_no = 0)
+  { if(n > 0) return (int)(MTRnd::genrand_int32(thr_no) % (uint)n); return 0; }
+  // #CAT_Int uniform random integer in the range between 0 and n, exclusive of n: [0,n) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static int    IntMinMax(int min, int max, int thr_no = 0)
+  { return min + IntZeroN(max - min, thr_no); }
+  // #CAT_Int uniform random integer in range between min and max, exclusive of max: [min,max) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static int    IntMeanRange(int mean, int range, int thr_no = 0)
+  { return mean + (IntZeroN(2 * range + 1, thr_no) - range); }
+  // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range] -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
-  static double ZeroOne()               { return MTRnd::genrand_res53(); }
-  // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!)
-  static double UniformMinMax(double min, double max)
-  { return min + (max - min) * ZeroOne(); }
-  // #CAT_Float uniform random number between min and max values inclusive (Do not use for generating integers - will not include max!)
-  static double UniformMeanRange(double mean, double range)
-  { return mean + range * 2.0 * (ZeroOne() - 0.5); }
-  // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range]
+  static double ZeroOne(int thr_no = 0)
+  { return MTRnd::genrand_res53(thr_no); }
+  // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double UniformMinMax(double min, double max, int thr_no = 0)
+  { return min + (max - min) * ZeroOne(thr_no); }
+  // #CAT_Float uniform random number between min and max values inclusive (Do not use for generating integers - will not include max!) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double UniformMeanRange(double mean, double range, int thr_no = 0)
+  { return mean + range * 2.0 * (ZeroOne(thr_no) - 0.5); }
+  // #CAT_Float uniform random number with given range on either size of the mean: [mean - range, mean + range] -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
-  static double Binom(int n, double p);
-  // #CAT_Float binomial with n trials (par) each of probability p (var)
-  static double Poisson(double l);
-  // #CAT_Float poisson with parameter l (var)
-  static double Gamma(double var, double j);
-  // #CAT_Float gamma with given variance, number of exponential stages (par)
-  static double Gauss(double stdev);
-  // #CAT_Float gaussian (normal) random number with given standard deviation
-  static double Beta(double a, double b);
-  // #CAT_Float beta random number with two shape parameters a > 0 and b > 0
+  static double Binom(int n, double p, int thr_no = 0);
+  // #CAT_Float binomial with n trials (par) each of probability p (var) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double Poisson(double l, int thr_no = 0);
+  // #CAT_Float poisson with parameter l (var) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double Gamma(double var, double j, int thr_no = 0);
+  // #CAT_Float gamma with given variance, number of exponential stages (par) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double Gauss(double stdev, int thr_no = 0);
+  // #CAT_Float gaussian (normal) random number with given standard deviation -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
+  static double Beta(double a, double b, int thr_no = 0);
+  // #CAT_Float beta random number with two shape parameters a > 0 and b > 0 -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
   static double UniformDen(double x, double range)
   { double rval = 0.0; if(fabs(x) <= range) rval = 1.0 / (2.0 * range); return rval; }
@@ -100,8 +101,8 @@ public:
   // #CAT_Float beta density at value 0 < x < 1 for shape parameters a, b
 
 
-  static bool   BoolProb(double p) { return (ZeroOne() < p); }
-  // #CAT_Bool boolean true/false with given probability
+  static bool   BoolProb(double p, int thr_no = 0) { return (ZeroOne(thr_no) < p); }
+  // #CAT_Bool boolean true/false with given probability -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
   void  Initialize();
   void  Destroy()                { };

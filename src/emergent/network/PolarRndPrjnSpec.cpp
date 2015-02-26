@@ -215,7 +215,7 @@ void PolarRndPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                                          Network* net, int thr_no) {
   Unit* ru = cg->OwnUn(net);
   for(int i=0; i<cg->size; i++) {
-    SetCnWt(cg, i, net, GetDistProb(prjn, ru, cg->Un(i,net)));
+    SetCnWt(cg, i, net, GetDistProb(prjn, ru, cg->Un(i,net)), thr_no);
   }
 }
 

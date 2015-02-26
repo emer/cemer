@@ -357,7 +357,7 @@ void BpContextSpec::UpdateAfterEdit_impl() {
 
 void BpContextSpec::Init_Acts(UnitVars* u, Network* net, int thr_no) {
   BpUnitSpec::Init_Acts(u, net, thr_no);
-  u->act = initial_act.Gen();
+  u->act = initial_act.Gen(thr_no);
 }
 
 void BpContextSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
@@ -445,10 +445,10 @@ void NoisyBpUnitSpec::Initialize() {
 
 void NoisyBpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
   if(u->ext_flag & UnitVars::EXT)
-    u->act = act_range.Clip(u->ext + noise.Gen());
+    u->act = act_range.Clip(u->ext + noise.Gen(thr_no));
   else   // need to keep in SigmoidSpec clipped range!
     u->act = act_range.min + act_range.range *
-      SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen());
+      SigmoidSpec::Clip(sig.Eval(u->net) + noise.Gen(thr_no));
 }
 
 
@@ -463,7 +463,7 @@ void StochasticBpUnitSpec::Compute_Act(UnitVars* u, Network* net, int thr_no) {
     u->act = u->ext;
   else {
     float prob =  sig.Eval(u->net);
-    float nw_act = (Random::ZeroOne() < prob) ? 1.0f : 0.0f;
+    float nw_act = (Random::ZeroOne(thr_no) < prob) ? 1.0f : 0.0f;
     u->act = act_range.Project(nw_act);
   }
 }

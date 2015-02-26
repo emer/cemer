@@ -195,7 +195,7 @@ void CerebConj2PrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / (gauss_sigma * gauss_sigma));
 
-    SetCnWt(cg, i, net, wt);
+    SetCnWt(cg, i, net, wt, thr_no);
   }
 }
 

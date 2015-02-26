@@ -594,7 +594,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
 
   Init_Netins(u, net, thr_no);
 
-  u->act = act_init.Gen();
+  u->act = act_init.Gen(thr_no);
   u->net = 0.0f;               // these are not done in netins -- need to nuke
 
   u->act_eq = u->act;
@@ -625,7 +625,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->ti_ctxt = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
-  u->v_m = v_m_init.Gen();
+  u->v_m = v_m_init.Gen(thr_no);
   u->v_m_eq = u->v_m;
   u->adapt = 0.0f;
   u->gi_syn = 0.0f;
@@ -803,7 +803,7 @@ void LeabraUnitSpec::Trial_DecayState(LeabraUnitVars* u, LeabraNetwork* net, int
 void LeabraUnitSpec::Trial_NoiseInit(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(noise_type != NO_NOISE && noise_adapt.trial_fixed &&
      (noise.type != Random::NONE)) {
-    u->noise = noise.Gen();
+    u->noise = noise.Gen(thr_no);
   }
 }
 
@@ -1481,10 +1481,10 @@ void LeabraUnitSpec::Compute_ClampSpike(LeabraUnitVars* u, LeabraNetwork* net, i
   bool fire_now = false;
   switch(spike_misc.clamp_type) {
   case SpikeMiscSpec::POISSON:
-    if(Random::Poisson(spike_p) > 0.0f) fire_now = true;
+    if(Random::Poisson(spike_p, thr_no) > 0.0f) fire_now = true;
     break;
   case SpikeMiscSpec::UNIFORM:
-    fire_now = Random::BoolProb(spike_p);
+    fire_now = Random::BoolProb(spike_p, thr_no);
     break;
   case SpikeMiscSpec::REGULAR: {
     if(spike_p > 0.0f) {
@@ -1636,7 +1636,7 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnitVars* u, LeabraNetwork* net, int t
     rval = u->noise; // u->noise is trial-level generated value
   }
   else {
-    rval = noise.Gen();
+    rval = noise.Gen(thr_no);
     u->noise = rval;
   }
 
@@ -1712,6 +1712,7 @@ void LeabraUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int th
 
 void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
+
   float use_act;
   if(act_misc.rec_nd) {
     use_act = u->act_nd;
@@ -1732,6 +1733,9 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     u->act_m = use_act;
     break;
   case 3:
+    if((noise_type == AVG_S_NOISE) && (noise.type != Random::NONE)) {
+      u->avg_s += Compute_Noise(u, net, thr_no);
+    }
     u->act_q4 = use_act;
     u->act_p = use_act;
     u->act_dif = u->act_p - u->act_m;

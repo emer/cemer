@@ -588,10 +588,10 @@ void taPtrList_impl::PopAll() {
     Pop_();
 }
 
-void taPtrList_impl::Permute() {
+void taPtrList_impl::Permute(int thr_no) {
   int i, nv;
   for(i=0; i<size; i++) {
-    nv = (int) ((MTRnd::genrand_int32() % (size - i)) + i); // get someone from the future
+    nv = (int) ((MTRnd::genrand_int32(thr_no) % (size - i)) + i); // get someone from the future
     SwapIdx(i, nv);
   }
 }

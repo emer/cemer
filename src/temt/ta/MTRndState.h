@@ -26,8 +26,8 @@
 
 taTypeDef_Of(MTRndState);
 
-class TA_API MTRndState
-{
+class TA_API MTRndState {
+  // state vector for MTRnd random number generator
 public:
   MTRndState();
   void reset(); // Call when seeding the RNG to reset all state.

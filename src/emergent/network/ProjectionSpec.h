@@ -58,7 +58,7 @@ public:
     virtual int ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
     // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  virtual void  SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val);
+  virtual void  SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val, int thr_no);
   // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
 
   virtual void  Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,

@@ -1006,11 +1006,11 @@ int taMatrix::defAlignment() const {
   return Qt::AlignRight; // most mats are numeric, so this is the default
 }
 
-void taMatrix::Permute() {
+void taMatrix::Permute(int thr_no) {
   int i, nv;
   void* tmp = El_GetTmp_();
   for(i=0; i<size; i++) {
-    nv = (int) ((MTRnd::genrand_int32() % (size - i)) + i); // get someone from the future
+    nv = (int) ((MTRnd::genrand_int32(thr_no) % (size - i)) + i); // get someone from the future
     El_Copy_(tmp, FastEl_Flat_(i));
     El_Copy_(FastEl_Flat_(i), FastEl_Flat_(nv));  // swap with yourself
     El_Copy_(FastEl_Flat_(nv), tmp);

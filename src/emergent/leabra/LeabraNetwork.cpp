@@ -383,9 +383,7 @@ void LeabraNetwork::Trial_Init_Specs() {
 }
 
 void LeabraNetwork::Trial_Init_Unit() {
-  // todo: we have to do this non-threaded for now because of the noise generator problem.
-  // (using LOOP instead of CALL)
-  NET_THREAD_LOOP(LeabraNetwork::Trial_Init_Unit_Thr);
+  NET_THREAD_CALL(LeabraNetwork::Trial_Init_Unit_Thr);
 }
 
 void LeabraNetwork::Trial_Init_Unit_Thr(int thr_no) {

@@ -171,13 +171,13 @@ void CsUnitSpec::Init_Acts(Unit* u, Network* net) {
   cu->da = 0.0f;
   cu->prv_net = 0.0f;
   cu->clmp_net = 0.0f;
-  cu->act = act_range.Clip(initial_act.Gen());
+  cu->act = act_range.Clip(initial_act.Gen(thr_no));
 }
 
 void CsUnitSpec::DecayState(CsUnit* u, CsNetwork* net) {
   //  u->Init_InputData();
   CsUnit* cu = (CsUnit*)u;
-  float trgact = act_range.Clip(initial_act.Gen());
+  float trgact = act_range.Clip(initial_act.Gen(thr_no));
   cu->act -= state_decay * (cu->act - trgact);
   cu->da = 0.0f;
   //  cu->prv_net -= state_decay * cu->prv_net;
@@ -263,7 +263,7 @@ void CsUnitSpec::Compute_Act(Unit* u, Network* net, int thread_no) {
         float noise_anneal = 1.0f;
         if((cycle != -1) && use_annealing)
           noise_anneal = noise_sched.GetVal(cycle);
-        u->act += sqrt_step * noise_anneal * noise.Gen();
+        u->act += sqrt_step * noise_anneal * noise.Gen(thr_no);
       }
       // don't call Compute_Act_impl
     }
@@ -393,7 +393,7 @@ void CsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
 
   float x = (u->act - act_range.min) / (act_range.max - u->act);
   u->da = u->net - (logf(x) / (gain_sharp * gain)); // inverse logistic
-  u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen();
+  u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen(thr_no);
 }
 
 void SigmoidUnitSpec::Initialize() {
@@ -418,12 +418,12 @@ void SigmoidUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
     u->net = u->prv_net + step * u->da;
     u->prv_net = u->net;
     float new_act = act_range.Project(1.0f / (1.0f + expf(-gain * gain_sharp * u->net)));
-    u->act = new_act + sqrt_step * noise_anneal * noise.Gen();
+    u->act = new_act + sqrt_step * noise_anneal * noise.Gen(thr_no);
   }
   else {
     float new_act = act_range.Project(1.0f / (1.0f + expf(-gain * gain_sharp * u->net)));
     u->da = new_act - u->act;
-    u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen();
+    u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen(thr_no);
   }
 }
 
@@ -445,7 +445,7 @@ void BoltzUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
   }
 
   float prob = (1.0f / (1.0f + expf((-1.0 / (temp_anneal * temp)) * u->net)));
-  float nw_act = (Random::ZeroOne() < prob) ? act_range.max : act_range.min;
+  float nw_act = (Random::ZeroOne(thr_no) < prob) ? act_range.max : act_range.min;
   u->da = nw_act - u->act;
   u->act = nw_act;
 }
@@ -473,7 +473,7 @@ void IACUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
     u->da = (u->net * (act_range.max - u->act)) - (decay * (u->act - rest));
   else
     u->da = (u->net * (u->act - act_range.min)) - (decay * (u->act - rest));
-  u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen();
+  u->act += step * u->da + sqrt_step * noise_anneal * noise.Gen(thr_no);
 }
 
 void LinearCsUnitSpec::Initialize() {
@@ -492,7 +492,7 @@ void LinearCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
   u->da = u->net - u->prv_net; // change is on net inputs
   u->net = u->prv_net + step * u->da;
   u->prv_net = u->net;
-  u->act = u->net + sqrt_step * noise_anneal * noise.Gen();
+  u->act = u->net + sqrt_step * noise_anneal * noise.Gen(thr_no);
 }
 
 void ThreshLinCsUnitSpec::Initialize() {
@@ -513,7 +513,7 @@ void ThreshLinCsUnitSpec::Compute_Act_impl(CsUnit* u, int cycle, int) {
   u->net = u->prv_net + step * u->da;
   u->prv_net = u->net;
   float new_act = (u->net > threshold) ? u->net - threshold : 0.0f;
-  u->act = new_act + sqrt_step * noise_anneal * noise.Gen();
+  u->act = new_act + sqrt_step * noise_anneal * noise.Gen(thr_no);
 }
 
 
