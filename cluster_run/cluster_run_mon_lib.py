@@ -1834,6 +1834,8 @@ class SubversionPoller(object):
                 self._query_job_queue_moab(row, status, force_updt)
             elif qstat_parser == "sge":
                 self._query_job_queue_sge(row, status, force_updt)
+            elif qstat_parser == "slurm":
+                self._query_job_queue_slurm(row, status, force_updt)
         elif submit_mode == "ec2_control":
             job_no = self.jobs_running.get_val(row, "job_no")
             logging.info("Dealing with " + job_no)
@@ -1997,6 +1999,90 @@ class SubversionPoller(object):
             elif status == 'CANCELLED':
                 self._job_is_done(row, 'KILLED')
         # done
+
+    def _query_job_queue_slurm(self, row, status, force_updt = False):
+        job_no = self.jobs_running.get_val(row, "job_no")
+        tag = self.jobs_running.get_val(row, "tag")
+        if qstat_args != '':
+            cmd = [qstat_cmd] + qstat_args + [job_no]
+        else:
+            cmd = [qstat_cmd, job_no]
+        logging.info("qstat cmd: " + str(cmd))
+        q_out = check_output(cmd)
+        logging.info("q_out")
+
+        # regexp for output of qstat that tells you that the job is running
+        qstat_running_re = r"\s*JobState=RUNNING.*"
+        # use this for "split" command to get misc running info
+        qstat_running_info_split = "usage"
+        # regexp for output of qstat that tells you that the job is still queued
+        qstat_queued_re = r"\s*JobState=PENDING.*"
+        # use this for "split" command to get misc queued info
+        qstat_queued_info_split = "Reason="
+
+        re_running = re.compile(qstat_running_re)
+        re_queued = re.compile(qstat_queued_re)
+
+        got_status = False
+
+        # todo: trap output for when scheduler just isn't working properly
+        # need to be robust to this and not mark a job as killed..
+
+        for l in q_out.splitlines():
+            if re_running.match(l):
+                got_status = True
+                just_started = False
+                if status != 'RUNNING' and status != 'CANCELLED':
+                    just_started = True
+                    self.status_change = True
+                    status = 'RUNNING'
+                    stdt = datetime.now()
+                    start_time = stdt.strftime(time_format)
+                    self.jobs_running.set_val(row, "status", status)
+                    self.jobs_running.set_val(row, "start_time", start_time)
+                    # print "qstat job status update -- tag: %s now: %s start: %s info: %s" % (tag, status, start_time, status_info)
+                # don't get status_info all the time, because it always changes
+                # and leads to excessive checkins of jobs_running table
+                if just_started or force_updt:
+                    status_info = l.split(qstat_running_info_split)[1]
+                    status_info = status_info.strip(' \t\n\r')
+                    self.jobs_running.set_val(row, "status_info", status_info)
+                break
+            if re_queued.match(l):
+                # cannot go from running or cancelled back to queued.. 
+                if status != 'RUNNING' and status != 'CANCELLED':
+                    status = 'QUEUED'
+                    status_info = l.split(qstat_queued_info_split)[1]
+                    status_info = status_info.strip(' \t\n\r')
+                    self.jobs_running.set_val(row, "status", status)
+                    self.jobs_running.set_val(row, "status_info", status_info)
+                    # print "qstat job status update -- tag: %s now: %s info: %s" % (tag, status, status_info)
+                got_status = True
+                break
+        if not got_status:
+            # always check the job out file to see what happened to it..
+            job_out_file = self.jobs_running.get_val(row, "job_out_file")
+            job_out = self._get_job_out(job_out_file)
+            if len(job_out) > 0:
+                self.jobs_running.set_val(row, "job_out", job_out)
+            if 'ABSENT_' in status:
+                abs_cnt = int(status.split('_')[1])
+                abs_cnt += 1
+                if abs_cnt > job_done_retries:
+                    self._job_is_done(row, 'DONE')
+                else:
+                    status = 'ABSENT_' + str(abs_cnt)
+                    self.jobs_running.set_val(row, "status", status)
+            elif status == 'SUBMITTED' or status == 'REQUESTED' or status == 'DONE':
+                pass    # don't do anything
+            elif status == 'RUNNING' or status == 'QUEUED':
+                status = 'ABSENT_1'
+                self.jobs_running.set_val(row, "status", status)
+            elif status == 'CANCELLED':
+                self._job_is_done(row, 'KILLED')
+        # done
+
+
 
     def _get_job_out(self, job_out_file):
         job_out = ''
@@ -2235,6 +2321,8 @@ class SubversionPoller(object):
                 self._get_cluster_info_pyshowq()
             elif showq_parser == 'moab':
                 self._get_cluster_info_moab()
+            elif showq_parser == "slurm":
+                self._get_cluster_info_slurm()
         elif submit_mode == "ec2_control":
             # There is nothing we can do on the control server side here
             pass
@@ -2348,6 +2436,40 @@ class SubversionPoller(object):
                 self.cluster_info.set_val(row, "queue", queue)
                 self.cluster_info.set_val(row, "state", "<summary>")
                 self.cluster_info.set_val(row, "procs", proc_sum)
+        if self.cluster_info.n_rows() > 0:
+            self.cluster_info.write(self.cluster_info_file)
+        # done
+        
+        
+    def _get_cluster_info_slurm(self):
+        
+        logging.info("Getting cluster info from slurm")
+        cmd = [showq_cmd] + showq_args
+        logging.info("Cmd:" + str(cmd))
+        show_out = check_output(cmd)
+        
+        # always read from file to get current format, then reset
+        self.cluster_info.load_from_file(self.cluster_info_file)
+        self.cluster_info.reset_data();
+
+        for l in show_out.splitlines():
+            scols = l.split()   # splits on whitespace anyway
+            
+            if len(scols) > 11:  # detailed data
+                job_no = scols[0]
+                user = scols[3]
+                state = scols[4]
+                procs = scols[8]
+                start_time = "Some time"
+
+                queue = scols[1]
+                row = self.cluster_info.add_blank_row()
+                self.cluster_info.set_val(row, "queue", queue)
+                self.cluster_info.set_val(row, "job_no", job_no)
+                self.cluster_info.set_val(row, "user", user)
+                self.cluster_info.set_val(row, "state", state)
+                self.cluster_info.set_val(row, "procs", procs)
+                self.cluster_info.set_val(row, "start_time", start_time)
         if self.cluster_info.n_rows() > 0:
             self.cluster_info.write(self.cluster_info_file)
         # done
