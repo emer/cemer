@@ -463,7 +463,7 @@ public:
     ACT_NOISE,			// noise in the activations
     NET_MULT_NOISE,             // multiplicative net-input noise: multiply net input by the noise term
     DROPOUT_NOISE,              // if (uniform 0-1) noise is < drop_thr then multiply net input by 0 -- drop that unit out -- makes most sense with trial fixed
-    AVG_S_NOISE,                // noise in the avg_s short-term time average values (plus phase) -- added only at the end of settling in the plus phase
+    AVG_S_NOISE,                // noise in the avg_s short-term time average values (plus phase) -- multiplies avg_s at the end of settling in the plus phase
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things

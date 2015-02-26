@@ -1744,7 +1744,9 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     break;
   case 3:
     if((noise_type == AVG_S_NOISE) && (noise.type != Random::NONE)) {
-      u->avg_s += Compute_Noise(u, net, thr_no);
+      float noise = Compute_Noise(u, net, thr_no);
+      if(noise < noise_adapt.drop_thr)
+        u->avg_s *= 0.1f;
     }
     u->act_q4 = use_act;
     u->act_p = use_act;
