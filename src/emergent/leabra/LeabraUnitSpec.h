@@ -429,6 +429,7 @@ public:
   };
 
   bool		trial_fixed;	// keep the same noise value over the entire trial -- prevents noise from being washed out and produces a stable effect that can be better used for learning -- this is strongly recommended for most learning situations
+  float         drop_thr;       // probability of dropping units for DROPOUT_NOISE
   AdaptMode 	mode;		// how to adapt noise variance over time
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -460,6 +461,8 @@ public:
     VM_NOISE,			// noise in the value of v_m (membrane potential) -- IMPORTANT: this should NOT be used for rate-code (NXX1) activations, because they do not depend directly on the vm -- this then has no effect
     NETIN_NOISE,		// noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
     ACT_NOISE,			// noise in the activations
+    NET_MULT_NOISE,             // multiplicative net-input noise: multiply net input by the noise term
+    DROPOUT_NOISE,              // if (uniform 0-1) noise is < drop_thr then multiply net input by 0 -- drop that unit out -- makes most sense with trial fixed
     AVG_S_NOISE,                // noise in the avg_s short-term time average values (plus phase) -- added only at the end of settling in the plus phase
   };
 

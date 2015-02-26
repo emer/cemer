@@ -307,6 +307,7 @@ void DaModSpec::Defaults_init() {
 
 void NoiseAdaptSpec::Initialize() {
   trial_fixed = true;
+  drop_thr = 0.1f;
   mode = FIXED_NOISE;
   Defaults_init();
 }
@@ -1131,6 +1132,15 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // add after all the other stuff is done..
   if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     u->net += Compute_Noise(u, net, thr_no);
+  }
+  if((noise_type == NET_MULT_NOISE) && (noise.type != Random::NONE)) {
+    float noise = Compute_Noise(u, net, thr_no);
+    u->net *= MIN(1.0f, noise); // don't increase
+  }
+  if((noise_type == DROPOUT_NOISE) && (noise.type != Random::NONE)) {
+    float noise = Compute_Noise(u, net, thr_no);
+    if(noise < noise_adapt.drop_thr)
+      u->net = 0.0f;
   }
 
   if(Quarter_Deep5bNow(net->quarter)) {
