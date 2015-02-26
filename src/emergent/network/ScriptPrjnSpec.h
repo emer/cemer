@@ -52,8 +52,8 @@ public:
   void	Copy_(const ScriptPrjnSpec& cp);
   TA_BASEFUNS(ScriptPrjnSpec);
 protected:
-  void UpdateAfterEdit_impl() override;
-  void CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void  UpdateAfterEdit_impl() override;
+  void  CheckThisConfig_impl(bool quiet, bool& rval) override;
 private:
   void	Initialize();
   void 	Destroy();
