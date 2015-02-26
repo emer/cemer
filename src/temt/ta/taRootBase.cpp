@@ -1999,7 +1999,7 @@ bool taRootBase::Startup_Run() {
     return true;
   }
 #endif
-
+  
   // if in server mode, make it now!
   if (taMisc::args.FindName("Server") >= 0) {
     TemtServer* server = (TemtServer*)instance()->objs.New(1, &TA_TemtServer);
@@ -2013,21 +2013,29 @@ bool taRootBase::Startup_Run() {
       return false;
     }
   }
-
-
+  
+  QLocale sys_locale = QLocale::system();
+  if (sys_locale.language() != QLocale::English) {
+    QString language = sys_locale.languageToString(sys_locale.language());
+    
+    String msg = "Emergent detected that your system language is " + String(language) +
+    ". If this locale setting uses a comma as a decimal symbol programs may freeze the application. Until this is fixed you can go to you system settings and change the language to English to work around the problem.";
+    taMisc::Error(msg);
+  }
+  
   // first thing to do upon entering event loop:
   QTimer::singleShot(0, root_adapter, SLOT(Startup_ProcessArgs()));
-
+  
   if(!taMisc::gui_active && taMisc::interactive) {
     QTimer::singleShot(0, cssMisc::TopShell, SLOT(Shell_NoConsole_Run()));
   }
-
+  
   // Give the root window focus.
   QTimer::singleShot(0, root_adapter, SLOT(FocusRootWinAtStartup()));
-
+  
   // now everyone goes into the event loop
   taiMC_->Exec();
-
+  
   Cleanup_Main();
   return true;
 }
