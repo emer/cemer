@@ -2019,8 +2019,12 @@ bool taRootBase::Startup_Run() {
     QString language = sys_locale.languageToString(sys_locale.language());
     
     String msg = "Emergent detected that your system language is " + String(language) +
-    ". If this locale setting uses a comma as a decimal symbol programs may freeze the application. Until this is fixed you can go to you system settings and change the language to English to work around the problem.";
-    taMisc::Error(msg);
+    ". If this locale setting uses '.' as a numeric group separator emergent may freeze. Change application locale to English/United States? This will only apply to the emergent application.";
+    
+    int choice = taMisc::Choice(msg, "Continue", "Change Locale");
+    if (choice == 1) {
+      QLocale::setDefault(QLocale(QLocale::English, QLocale::UnitedStates));
+    }
   }
   
   // first thing to do upon entering event loop:
