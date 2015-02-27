@@ -349,7 +349,7 @@ class SlurmJobManager( ClusterJobManager ):
     '''Cluster job manager interface for Slurm'''
     def __init__(self, verbose=False, quick=False):
         ClusterJobManager.__init__(self, verbose, quick)
-        self.job_launcher = 'srun'
+        self.job_launcher = 'mpirun'
         self.subCmd = ["sbatch -H"]
         
     def generateJobScript( self, job ):
@@ -361,7 +361,7 @@ class SlurmJobManager( ClusterJobManager ):
         file.write("#SBATCH -t %s\n" % job.wallTime() )
         self.subCmd.append("-t %s" % job.wallTime())
         file.write("#SBATCH -N %d\n" % job.numNodes())
-        file.write("#SBATCH --ntasks-per-node=%d\n" % job.numCores())
+        file.write("#SBATCH --cpus-per-task=%d\n" % job.numCores())
         file.write("#SBATCH --output=JOB.%j.out\n")
         if job.memorySize() != None:
             file.write("#SBATCH --mem=%s\n" % job.memorySize() )

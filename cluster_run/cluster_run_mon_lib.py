@@ -2014,7 +2014,7 @@ class SubversionPoller(object):
         # regexp for output of qstat that tells you that the job is running
         qstat_running_re = r"\s*JobState=RUNNING.*"
         # use this for "split" command to get misc running info
-        qstat_running_info_split = "usage"
+        qstat_running_info_split = "Reason="
         # regexp for output of qstat that tells you that the job is still queued
         qstat_queued_re = r"\s*JobState=PENDING.*"
         # use this for "split" command to get misc queued info
