@@ -343,6 +343,33 @@ private:
   void	Defaults_init() { }; // note: does NOT do any init -- these vals are not really subject to defaults in the usual way, so don't mess with them
 };
 
+
+eTypeDef_Of(LeabraDropoutSpec);
+
+class E_API LeabraDropoutSpec : public SpecMemberBase {
+  // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
+INHERITED(SpecMemberBase)
+public:
+  bool		avg_s_on;	// is dropout of avg_s short term (plus phase) learning signal active?  this is done at the end of the plus phase, and is useful for breaking up positive feedback dynamics
+  float         avg_thr;        // #CONDSHOW_ON_avg_s_on #MIN_0 threshold on act_avg long-term average activation required for engaging dropout -- this can be used to ensure that only over-active neurons experience dropout
+  float         avg_s_p;        // #CONDSHOW_ON_avg_s_on probability of dropout of avg_s values per unit, for those that exceed the avg_thr threshold
+  float         avg_s_drop;      // #CONDSHOW_ON_avg_s_on multiplier on avg_s to apply for dropping out -- how far does it drop?
+  bool          net_on;         // is random dropout of net input active?
+  float         net_p;          // #CONDSHOW_ON_net_on probability of dropout of net inputs values per unit
+  float         net_drop;       // #CONDSHOW_ON_net_on multiplier on net input to apply for dropping out -- how far does it drop?
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraDropoutSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
+
 eTypeDef_Of(CIFERThalSpec);
 
 class E_API CIFERThalSpec : public SpecMemberBase {
@@ -462,8 +489,6 @@ public:
     NETIN_NOISE,		// noise in the net input (g_e) -- this should be used for rate coded activations (NXX1)
     ACT_NOISE,			// noise in the activations
     NET_MULT_NOISE,             // multiplicative net-input noise: multiply net input by the noise term
-    DROPOUT_NOISE,              // if (uniform 0-1) noise is < drop_thr then multiply net input by 0 -- drop that unit out -- makes most sense with trial fixed
-    AVG_S_NOISE,                // noise in the avg_s short-term time average values (plus phase) -- multiplies avg_s at the end of settling in the plus phase
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
@@ -493,6 +518,7 @@ public:
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
   CIFERThalSpec	 cifer_thal;	// #CAT_Learning cortical information flow via extra range (CIFER) thalamic parameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
   CIFERDeep5bSpec cifer_d5b;	// #CAT_Learning cortical information flow via extra range (CIFER) deep5b arameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)

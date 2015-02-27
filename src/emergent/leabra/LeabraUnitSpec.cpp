@@ -34,6 +34,7 @@ TA_BASEFUNS_CTORS_DEFN(OptThreshSpec);
 TA_BASEFUNS_CTORS_DEFN(ActAdaptSpec);
 TA_BASEFUNS_CTORS_DEFN(ShortPlastSpec);
 TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(CIFERThalSpec);
@@ -262,6 +263,21 @@ void ShortPlastSpec::UpdateAfterEdit_impl() {
 void SynDelaySpec::Initialize() {
   on = false;
   delay = 4;
+}
+
+void LeabraDropoutSpec::Initialize() {
+  avg_s_on = true;
+  net_on = false;
+
+  Defaults_init();
+}
+
+void LeabraDropoutSpec::Defaults_init() {
+  avg_thr = 0.2f;
+  avg_s_p = 0.005f;
+  avg_s_drop = 0.2f;
+  net_p = 0.1f;
+  net_drop = 0.9f;
 }
 
 void CIFERThalSpec::Initialize() {
@@ -1130,17 +1146,16 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   }
 
   // add after all the other stuff is done..
-  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
+  if((noise_type == NETIN_NOISE) && (noise.type != Random::NONE)) {
     u->net += Compute_Noise(u, net, thr_no);
   }
-  if((noise_type == NET_MULT_NOISE) && (noise.type != Random::NONE)) {
-    float noise = Compute_Noise(u, net, thr_no);
-    u->net *= MIN(1.0f, noise); // don't increase
+  else if((noise_type == NET_MULT_NOISE) && (noise.type != Random::NONE)) {
+    u->net *= Compute_Noise(u, net, thr_no);
   }
-  if((noise_type == DROPOUT_NOISE) && (noise.type != Random::NONE)) {
-    float noise = Compute_Noise(u, net, thr_no);
-    if(noise < noise_adapt.drop_thr)
-      u->net = 0.0f;
+  if(dropout.net_on) {
+    if(Random::BoolProb(dropout.net_p, thr_no)) {
+      u->net *= dropout.net_drop;
+    }
   }
 
   if(Quarter_Deep5bNow(net->quarter)) {
@@ -1743,10 +1758,10 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     u->act_m = use_act;
     break;
   case 3:
-    if((noise_type == AVG_S_NOISE) && (noise.type != Random::NONE)) {
-      float noise = Compute_Noise(u, net, thr_no);
-      if(noise < noise_adapt.drop_thr)
-        u->avg_s *= 0.1f;
+    if(dropout.avg_s_on && u->act_avg >= dropout.avg_thr) {
+      if(Random::BoolProb(dropout.avg_s_p, thr_no)) {
+        u->avg_s *= dropout.avg_s_drop;
+      }
     }
     u->act_q4 = use_act;
     u->act_p = use_act;
