@@ -360,7 +360,7 @@ bool taMediaWiki::DownloadFile(const String& wiki_name, const String& wiki_file_
               }
               else { taMisc::Error("File download request returned a bad response or null file"); }
             }
-#if (QT_VERSION	> 0x040500)    
+#if (QT_VERSION	> 0x040800)
             else { taMisc::Error("File download request failed with error:", qPrintable(downReply->error())); }
 #else
             else { taMisc::Error("File download request failed with an error"); }
