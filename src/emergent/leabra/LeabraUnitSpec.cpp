@@ -273,7 +273,7 @@ void LeabraDropoutSpec::Initialize() {
 }
 
 void LeabraDropoutSpec::Defaults_init() {
-  avg_thr = 0.2f;
+  avg_thr = 0.3f;
   avg_s_p = 0.005f;
   avg_s_drop = 0.2f;
   net_p = 0.1f;

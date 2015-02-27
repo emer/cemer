@@ -1535,7 +1535,9 @@ void Network::Init_Weights() {
 
   needs_wt_sym = false;          // will get set to true if needed
 
-  NET_THREAD_CALL(Network::Init_Weights_Thr);
+  // todo: not clear if random numberes are working yet..
+  NET_THREAD_LOOP(Network::Init_Weights_Thr);
+  //  NET_THREAD_CALL(Network::Init_Weights_Thr);
 
   if(needs_wt_sym) {
     // taMisc::Info("Starting Init_Weights_sym...");
