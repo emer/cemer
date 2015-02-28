@@ -37,6 +37,7 @@ TA_BASEFUNS_CTORS_DEFN(SynDelaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
 TA_BASEFUNS_CTORS_DEFN(CIFERThalSpec);
 TA_BASEFUNS_CTORS_DEFN(CIFERDeep5bSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
@@ -176,25 +177,50 @@ void LeabraActAvgSpec::Initialize() {
 }
 
 void LeabraActAvgSpec::Defaults_init() {
-  l_up_inc = 0.1f;
-  l_dn_tau = 2.5f;
   ss_tau = 2.0f;
   s_tau = 2.0f;
   m_tau = 10.0f;
-  
-  l_dn_dt = 1.0f / l_dn_tau;
+  m_in_s = 0.1f;
+
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
+  s_in_s = 1.0f - m_in_s;
 }
 
 
 void LeabraActAvgSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  l_dn_dt = 1.0f / l_dn_tau;
   ss_dt = 1.0f / ss_tau;
   s_dt = 1.0f / s_tau;
   m_dt = 1.0f / m_tau;
+  s_in_s = 1.0f - m_in_s;
+}
+
+void LeabraAvgLSpec::Initialize() {
+  Defaults_init();
+}
+
+void LeabraAvgLSpec::Defaults_init() {
+  init = 0.4f;
+  max = 1.5f;
+  min = 0.2f;
+  tau = 100.0f;
+  lrn_max = 0.05f;
+  lrn_min = 0.01f;
+  net_thr = 0.8f;
+  err_mod = false;
+  act_thr = 0.2f;
+  
+  dt = 1.0f / tau;
+  lrn_fact = (lrn_max - lrn_min) / (max - min);
+}
+
+
+void LeabraAvgLSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  dt = 1.0f / tau;
+  lrn_fact = (lrn_max - lrn_min) / (max - min);
 }
 
 void LeabraChannels::Initialize() {
@@ -266,16 +292,12 @@ void SynDelaySpec::Initialize() {
 }
 
 void LeabraDropoutSpec::Initialize() {
-  avg_s_on = true;
   net_on = false;
 
   Defaults_init();
 }
 
 void LeabraDropoutSpec::Defaults_init() {
-  avg_thr = 0.3f;
-  avg_s_p = 0.005f;
-  avg_s_drop = 0.2f;
   net_p = 0.1f;
   net_drop = 0.9f;
 }
@@ -523,8 +545,10 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->da = 0.0f;
   u->avg_ss = 0.15f;
   u->avg_s = 0.15f;
+  u->avg_s_eff = 0.15f;
   u->avg_m = 0.15f;
-  u->avg_l = 0.15f;
+  u->avg_l = avg_l.init;
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   u->act_avg = 0.15f;
   u->thal = 0.0f;
   u->thal_prv = 0.0f;
@@ -583,6 +607,7 @@ void LeabraUnitSpec::Init_Weights(UnitVars* ru, Network* rnet, int thr_no) {
 void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->act_avg = act_misc.avg_init;
   u->avg_l = act_misc.avg_init;
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
 }
 
 void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -631,7 +656,9 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->da = 0.0f;
   u->avg_ss = act_misc.avg_init;
   u->avg_s = act_misc.avg_init;
+  u->avg_s_eff = u->avg_s;
   u->avg_m = act_misc.avg_init;
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
   u->thal = 0.0f;
@@ -788,14 +815,21 @@ void LeabraUnitSpec::Trial_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   float lval = u->avg_m;
-  if(lval > opt_thresh.send) {          // active, even just a bit
-    u->avg_l += lval * act_avg.l_up_inc; // additive up
+  if(lval > avg_l.act_thr) { // above threshold, raise it up
+    float max_eff = avg_l.max;
+    if(lay->netin.max < avg_l.net_thr) {
+      max_eff *= avg_l.net_thr - lay->netin.max;
+    }
+    u->avg_l += avg_l.dt * (max_eff - u->avg_l);
   }
   else {
-    LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    float eff_dt = act_avg.l_dn_dt * lay->acts_p_avg;  // lay->acts_p_avg_eff;
-    u->avg_l += eff_dt * (lval - u->avg_l); // mult down
+    u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
+  }
+  u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
+  if(avg_l.err_mod) {
+    u->avg_l_lrn *= lay->cos_diff_avg_lrn;
   }
 }
 
@@ -1722,6 +1756,8 @@ void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->avg_ss += dt.integ * act_avg.ss_dt * (ru_act - u->avg_ss);
   u->avg_s += dt.integ * act_avg.s_dt * (u->avg_ss - u->avg_s);
   u->avg_m += dt.integ * act_avg.m_dt * (u->avg_s - u->avg_m);
+
+  u->avg_s_eff = act_avg.s_in_s * u->avg_s + act_avg.m_in_s * u->avg_m;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1758,11 +1794,6 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     u->act_m = use_act;
     break;
   case 3:
-    if(dropout.avg_s_on && u->act_avg >= dropout.avg_thr) {
-      if(Random::BoolProb(dropout.avg_s_p, thr_no)) {
-        u->avg_s *= dropout.avg_s_drop;
-      }
-    }
     u->act_q4 = use_act;
     u->act_p = use_act;
     u->act_dif = u->act_p - u->act_m;

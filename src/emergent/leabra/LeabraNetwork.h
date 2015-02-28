@@ -185,8 +185,8 @@ public:
     AVG_M,
     AVG_L,
     THAL,
+    AVG_L_LRN,
     ACT_Q0,
-    COS_DIFF_LMIX,              // from recv layer
     N_VEC_VARS,
   };
   // ACT_M, // note: could add these to unit vec vars if needed
@@ -263,7 +263,7 @@ public:
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is below a layer-specific threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
 
   float**       unit_vec_vars;
-  // #IGNORE vectorized versions of unit variables -- 2d matrix outer dim is N_VEC_VARS, and inner is flat_units.size -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
+  // #IGNORE vectorized versions of unit variables stored in separate memory for each thread -- n_thrs pointers to N_VEC_VARS * n_units floats -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
   float**       thrs_send_d5bnet_tmp;
   // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
   char**        thrs_lay_avg_max_vals;

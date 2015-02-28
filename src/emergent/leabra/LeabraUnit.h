@@ -100,12 +100,18 @@ public:
   inline float& avg_s()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_s; }
   // #CAT_UnitVar short time-scale activation average -- tracks the most recent activation states (integrates over avg_ss values), and represents the plus phase for learning in XCAL algorithms
+  inline float& avg_s_eff()
+  { return ((LeabraUnitVars*)GetUnitVars())->avg_s_eff; }
+  // #CAT_UnitVar effective short time-scale activation average that is actually used for learning -- typically includes a small contribution from avg_m in addition to mostly avg_s -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place
   inline float& avg_m()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_m; }
   // #CAT_UnitVar medium time-scale activation average -- integrates over avg_s values, and represents the minus phase for learning in XCAL algorithms
   inline float& avg_l()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_l; }
   // #CAT_UnitVar long time-scale average of medium-time scale (trial level) activation, used for the BCM-style floating threshold in XCAL
+  inline float& avg_l_lrn()
+  { return ((LeabraUnitVars*)GetUnitVars())->avg_l_lrn; }
+  // #CAT_UnitVar how much to learn based on the long-term floating threshold (avg_l) for BCM-style Hebbian learning -- is modulated level of avg_l itself (stronger hebbian as average activation goes higher) and optionally the average amount of error experienced in the layer (to retain a common proportionality with the level of error-driven learning across layers)
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation

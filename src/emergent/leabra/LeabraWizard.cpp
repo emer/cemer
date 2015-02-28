@@ -791,8 +791,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   //////  Cons
   pvlv_cons->UpdateAfterEdit();
   pvlv_cons->lrate = 0.002f;    // best for pbwm
-  pvlv_cons->xcal.raw_l_mix = true;
-  pvlv_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
+  // pvlv_cons->xcal.raw_l_mix = true;
+  // pvlv_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
   pvlv_cons->rnd.mean = 0.01f;
   pvlv_cons->rnd.var = 0.0f;
   pvlv_cons->wt_limits.sym = false;
@@ -803,8 +803,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   vsmatrix_cons->wt_scale.abs = 4.0f;
 
   fix_cons->UpdateAfterEdit();
-  fix_cons->xcal.raw_l_mix = true;
-  fix_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
+  // fix_cons->xcal.raw_l_mix = true;
+  // fix_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
   fix_cons->learn = false;
   fix_cons->rnd.mean = 0.9f;
   fix_cons->rnd.var = 0.0f;
@@ -1477,8 +1477,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   fix_cons->SetUnique("lrate", true);
   fix_cons->lrate = 0.0f;
   fix_cons->SetUnique("xcal", true);
-  fix_cons->xcal.raw_l_mix = true;
-  fix_cons->xcal.thr_l_mix = 0.0f;
+  // fix_cons->xcal.raw_l_mix = true;
+  // fix_cons->xcal.thr_l_mix = 0.0f;
   fix_cons->SetUnique("learn", true);
   fix_cons->learn = false;
 

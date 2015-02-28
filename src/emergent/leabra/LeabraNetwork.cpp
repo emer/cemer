@@ -1158,7 +1158,7 @@ void LeabraNetwork::Quarter_Final_Unit_Thr(int thr_no) {
     ((LeabraUnitSpec*)uv->unit_spec)->Quarter_Final(uv, this, thr_no);
   }
   if(quarter == 3) {
-    Compute_CosDiff_Thr(thr_no); // more efficient to lump here -- must come before Compute_dWt because cos_diff_avg_lmix is used 
+    Compute_CosDiff_Thr(thr_no); // more efficient to lump here -- must come before Compute_dWt because cos_diff_avg_lrn is used 
   }
 }
 
@@ -1245,23 +1245,24 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
   float* avg_s = UnVecVar(thr_no, AVG_S);
   float* avg_m = UnVecVar(thr_no, AVG_M);
   float* avg_l = UnVecVar(thr_no, AVG_L);
+  float* avg_l_lrn = UnVecVar(thr_no, AVG_L_LRN);
   float* thal =  UnVecVar(thr_no, THAL);
 #ifdef CUDA_COMPILE
-  float* cos_diff_lmix =  UnVecVar(thr_no, COS_DIFF_LMIX);
   float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
 #endif
 
-  // each thread copies all into their own local mem
+  // each thread copies all unit vars into their *own* thread-local mem in unit_vec_vars
   for(int i=1; i<units_flat.size; i++) {
-    LeabraUnit* un = (LeabraUnit*)units_flat[i];
-    avg_s[i] = un->avg_s();
-    avg_m[i] = un->avg_m();
-    avg_l[i] = un->avg_l();
-    thal[i] = un->thal();
+    LeabraUnitVars* u = (LeabraUnitVars*)UnUnitVars(i);
+    avg_s[i] = u->avg_s_eff;    // key!
+    avg_m[i] = u->avg_m;
+    avg_l[i] = u->avg_l;
+    avg_l_lrn[i] = u->avg_l_lrn;
+    thal[i] = u->thal;
 #ifdef CUDA_COMPILE
-    act_q0[i] = un->act_q0();
+    act_q0[i] = u->act_q0;
+    LeabraUnit* un = (LeabraUnit*)UnFmIdx(i);
     LeabraLayer* rlay = un->own_lay();
-    cos_diff_lmix[i] = rlay->cos_diff_avg_lmix;
 #endif
   }
 }

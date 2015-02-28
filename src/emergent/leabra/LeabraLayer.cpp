@@ -36,7 +36,7 @@ void LeabraLayer::Initialize() {
   cos_err_vs_prv = 0.0f;
   cos_diff = 0.0f;
   cos_diff_avg = 0.0f;
-  cos_diff_avg_lmix = 0.0f;
+  cos_diff_avg_lrn = 0.0f;
   avg_act_diff = 0.0f;
   trial_cos_diff = 0.0f;
   hog_pct = 0.0f;
@@ -90,7 +90,7 @@ void LeabraLayer::Copy_(const LeabraLayer& cp) {
   cos_err_vs_prv = cp.cos_err_vs_prv;
   cos_diff = cp.cos_diff;
   cos_diff_avg = cp.cos_diff_avg;
-  cos_diff_avg_lmix = cp.cos_diff_avg_lmix;
+  cos_diff_avg_lrn = cp.cos_diff_avg_lrn;
   avg_act_diff = cp.avg_act_diff;
   trial_cos_diff = cp.trial_cos_diff;
   hog_pct = cp.hog_pct;

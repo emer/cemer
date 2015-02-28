@@ -215,13 +215,12 @@ class E_API LeabraActAvgSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra rate constants for averaging over activations -- only used in XCAL learning rules
 INHERITED(SpecMemberBase)
 public:
-  float		l_up_inc;	// #AKA_l_up_dt #DEF_0.05:0.25 [0.1 std] amount to increment the long time-average activation (avg_l) at the trial level, after multiplying by the minus phase activation -- this is an additive increase for all units with act_m > opt_thresh.send -- larger values drive higher long time-average values, which acts as the threshold for XCAL self-organizing BCM-style learning, meaning that learning will shift to weight decreases more quickly as activity persists -- if weights are steadily decreasing too much, then lower values are needed -- typically works best with the highest value that does not result in excessive weight loss
-  float		l_dn_tau;	// #DEF_2.5 time constant in trials (roughly, how long it takes for value to change significantly -- 1.4x the half-life) for decreases in long time-average activation (avg_l), which occur when activity < opt_thresh.send -- the resulting rate constant value (1/tau) is multiplied by layer acts_m_avg layer activity, to keep things normalized relative to the expected sparseness of activity in a layer -- therfore it is important to make the layer avg_act.init value accurate
   float		ss_tau;	        // #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the super-short time-scale avg_ss value -- this is provides a pre-integration step before integrating into the avg_s short time scale
   float		s_tau;		// #DEF_2;20 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the short time-scale avg_s value from the super-short avg_ss value (cascade mode) -- avg_s represents the plus phase learning signal that reflects the most recent past information
   float		m_tau;		// #DEF_10;100 #MIN_1 time constant in cycles, which should be milliseconds typically (roughly, how long it takes for value to change significantly -- 1.4x the half-life), for continuously updating the medium time-scale avg_m value from the short avg_s value (cascade mode) -- avg_m represents the minus phase learning signal that reflects the expectation representation prior to experiencing the outcome (in addition to the outcome)
+  float		m_in_s;		// #DEF_0.1 #MIN_0 #MAX_1 how much of the medium term average activation to include at the short (plus phase) avg_s_eff variable that is actually used in learning -- important to ensure that when unit turns off in plus phase (short time scale), enough medium-phase trace remains so that learning signal doesn't just go all the way to 0, at which point no learning would take place -- typically need faster time constant for updating s such that this trace of the m signal is lost
 
-  float		l_dn_dt;	// #READ_ONLY #EXPERT rate = 1 / tau
+  float		s_in_s;		// #READ_ONLY #EXPERT 1-m_in_s
   float		ss_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
   float		s_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
   float		m_dt;		// #READ_ONLY #EXPERT rate = 1 / tau
@@ -229,6 +228,42 @@ public:
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(LeabraActAvgSpec);
+protected:
+  SPEC_DEFAULTS;
+  void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
+eTypeDef_Of(LeabraAvgLSpec);
+
+class E_API LeabraAvgLSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra parameters for computing the long-term floating average value, avg_l, which is used for driving BCM-style hebbian learning in XCAL -- this form of learning increases contrast of weights and generally decreases overall activity of neuron, to prevent "hog" units
+INHERITED(SpecMemberBase)
+public:
+  float         init;           // #DEF_0.4 #MIN_0 #MAX_1 initial avg_l value at start of training
+  float         max;            // #DEF_1.5 #MIN_0 maximum avg_l value -- when unit activation is greater than act_thr, then we increase avg_l in a soft-bounded way toward this max value
+  float         min;            // #DEF_0.2 #MIN_0 miniumum avg_l value -- when unit activation is less than act_thr, then we decrease avg_l in a soft-bounded way toward this min value
+  float         tau;            // #DEF_100 #MIN_1 time constant for updating avg_l -- rate of approaching soft exponential bound to max / min
+  float         lrn_max;        // #DEF_0.05 #MIN_0 maximum avg_l_lrn value -- if avg_l is at its maximum value, then avg_l_lrn will be at this maximum value -- used to increase the amount of self-organizing learning, which will then bring down average activity of units
+  float         lrn_min;        // #DEF_0.01 #MIN_0 miniumum avg_l_lrn -- if avg_l is at its minimum value, then avg_l_lrn will be at this minimum value -- neurons that are not overly active may not need to increase the contrast of their weights as much
+  float         net_thr;        // #DEF_0.8 #MIN_0 value of the maximum netinput received by any unit in the layer, below which the max avg_l adaptation value is down-modulated by 1-netmax -- this is a feedback mechanism to ensure that the weights do not get too weak due to excessively high avg_l values -- set to 0 to disable
+  bool          err_mod;        // #DEF_false if true, then we multiply avg_l_lrn factor by layer.cos_diff_avg_lrn to make hebbian term roughly proportional to amount of error driven learning signal across layers -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), and cos_diff_avg_lrn = 1 - cos_diff_avg (and 0 for non-HIDDEN layers), so the effective lrn value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this error level tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
+  float         act_thr;        // #DEF_0.2 threshold of minus-phase activation value for whether to increase or decrease the avg_l value
+  
+  float		dt;	        // #READ_ONLY #EXPERT rate = 1 / tau
+  float         lrn_fact;       // #READ_ONLY #EXPERT (lrn_max - lrn_min) / (max - min)
+
+  inline float  GetLrn(const float avg_l) {
+    return lrn_min + lrn_fact * (avg_l - min);
+  }
+  // get the avg_l_lrn value for given avg_l value
+  
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraAvgLSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -350,10 +385,6 @@ class E_API LeabraDropoutSpec : public SpecMemberBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
 INHERITED(SpecMemberBase)
 public:
-  bool		avg_s_on;	// is dropout of avg_s short term (plus phase) learning signal active?  this is done at the end of the plus phase, and is useful for breaking up positive feedback dynamics
-  float         avg_thr;        // #CONDSHOW_ON_avg_s_on #MIN_0 threshold on act_avg long-term average activation required for engaging dropout -- this can be used to ensure that only over-active neurons experience dropout
-  float         avg_s_p;        // #CONDSHOW_ON_avg_s_on probability of dropout of avg_s values per unit, for those that exceed the avg_thr threshold
-  float         avg_s_drop;      // #CONDSHOW_ON_avg_s_on multiplier on avg_s to apply for dropping out -- how far does it drop?
   bool          net_on;         // is random dropout of net input active?
   float         net_p;          // #CONDSHOW_ON_net_on probability of dropout of net inputs values per unit
   float         net_drop;       // #CONDSHOW_ON_net_on multiplier on net input to apply for dropping out -- how far does it drop?
@@ -511,6 +542,7 @@ public:
   RandomSpec	act_init;	// #CAT_Activation what to initialize the activation to (mean = 0 var = 0 std)
   LeabraDtSpec	dt;		// #CAT_Activation time constants (rate of updating): membrane potential (vm) and net input (net)
   LeabraActAvgSpec act_avg;	// #CAT_Activation time constants (rate of updating) for computing activation averages -- used in XCAL learning rules
+  LeabraAvgLSpec   avg_l;	// #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
   Quarters      deep5b_qtr;     // #CAT_Learning quarters during which deep5b activations should be updated and sent as d5b_net netinput to other neurons

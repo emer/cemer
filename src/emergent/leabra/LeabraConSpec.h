@@ -73,12 +73,7 @@ class E_API XCalLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra CtLeabra temporally eXtended Contrastive Attractor Learning (XCAL) specs
 INHERITED(SpecMemberBase)
 public:
-  bool          raw_l_mix;      // #DEF_false does thr_l_mix specify the actual amount that the long-term average activation  (self organizing, BCM-style) contributes to the floating threshold, or instead should the default COS_DIFF model be used, where we  multiply thr_l_mix by 1 - layer.cos_diff_avg (only for HIDDEN layers -- TARGET layers automatically get l_mix = 0 -- all error-driven learning under this mechanism -- actual val is in layer.cos_diff_avg_lmix) -- cos_diff_avg computes the running average of the cos diff value between act_m and act_p (no diff is 1, max diff is 0), so the effective lmix value is high when there are large error signals (differences) in a layer, and low when error signals are low, producing a more consistent mix overall -- typically this mix tends to be stable for a given layer, so this is really just a quick shortcut for setting layer-specific mixes by hand (which the brain can do) -- cos_diff_avg_tau rate constant is in LayerSpec.decay settings
-  float		thr_l_mix;	// #DEF_0.001:1.0 [0.05 max std, .01 for raw_l_mix] #MIN_0 #MAX_1 amount that long time-scale average contributes to the adaptive learning threshold -- this is the self-organizing BCM-like homeostatic component of learning -- remainder is thr_m_mix -- medium (trial-wise) time scale contribution, which reflects pure error-driven learning -- if units should have highly non-uniform distributions of activity, then this value should be set lower to reduce the homeostatic forces
-  float		thr_m_mix;	// #READ_ONLY = 1 - thr_l_mix -- contribution of error-driven learning
-  float         thr_l_mult;     // #DEF_1 #MIN_0 multiplier on thr_l long-term floating average value that enters into the BCM-style self-organizing learning mechanism -- allows projection-specific modulation of this value
-  float		s_mix;		// #DEF_0.9 #MIN_0 #MAX_1 how much the short (plus phase) versus medium (trial) time-scale factor contributes to the synaptic activation term for learning -- s_mix just makes sure that plus-phase states are sufficiently long/important (e.g., dopamine) to drive strong positive learning to these states -- if 0 then svm term is also negated -- but vals < 1 are needed to ensure that when unit is off in plus phase (short time scale) that enough medium-phase trace remains to drive appropriate learning
-  float		m_mix;		// #READ_ONLY 1-s_mix -- amount that medium time scale value contributes to synaptic activation level: see s_mix for details
+  float         m_lrn;          // #DEF_1 #MIN_0 multiplier on learning based on the medium-term floating average threshold which produces error-driven learning -- this is typically 1 when error-driven learning is being used, and 0 when pure hebbian learning is used -- note that the long-term floating average threshold is provided by the receiving unit
   float		d_rev;		// #DEF_0.1 #MIN_0 proportional point within LTD range where magnitude reverses to go back down to zero at zero -- err-driven svm component does better with smaller values, and BCM-like mvl component does better with larger values -- 0.1 is a compromise
   float		d_thr;		// #DEF_0.0001;0.01 #MIN_0 minimum LTD threshold value below which no weight change occurs -- small default value is mainly to optimize computation for the many values close to zero associated with inactive synapses
   float		d_rev_ratio;	// #HIDDEN #READ_ONLY -(1-d_rev)/d_rev -- multiplication factor in learning rule -- builds in the minus sign!
@@ -362,37 +357,21 @@ public:
 
   inline void 	C_Compute_dWt_CtLeabraXCAL
     (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
-     const float ru_avg_l, const float su_avg_s,
-     const float su_avg_m, const float su_act_mult) 
+     const float su_avg_s, const float su_avg_m, const float ru_avg_l,
+     const float ru_avg_l_lrn) 
   { float srs = ru_avg_s * su_avg_s;
     float srm = ru_avg_m * su_avg_m;
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float lthr = su_act_mult * ru_avg_l;
-    float effthr = xcal.thr_m_mix * srm + lthr;
-    if(effthr > 1.0f) effthr = 1.0f;
-    dwt += clrate * xcal.dWtFun(sm_mix, effthr);
+    dwt += clrate * (ru_avg_l_lrn * xcal.dWtFun(srs, ru_avg_l) +
+                     xcal.m_lrn * xcal.dWtFun(srs, srm));
   }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version 
-
-  inline void 	C_Compute_dWt_CtLeabraXCAL_cosdiff
-    (float& dwt, const float clrate, const float ru_avg_s, const float ru_avg_m,
-     const float ru_avg_l, const float su_avg_s, const float su_avg_m,
-     const float su_act_mult, const float effmmix) 
-  { float srs = ru_avg_s * su_avg_s;
-    float srm = ru_avg_m * su_avg_m;
-    float sm_mix = xcal.s_mix * srs + xcal.m_mix * srm;
-    float lthr = su_act_mult * ru_avg_l;
-    float effthr = effmmix * srm + lthr;
-    if(effthr > 1.0f) effthr = 1.0f;
-    dwt += clrate * xcal.dWtFun(sm_mix, effthr);
-  }
-  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL) -- separate computation of sr averages -- trial-wise version, X_COS_DIFF version
+  // #IGNORE compute temporally eXtended Contrastive Attractor Learning (XCAL)
 
 #ifdef TA_VEC_USE
-  inline void Compute_dWt_CtLeabraXCAL_cosdiff_vec
-    (LeabraConGroup* cg, float* dwts, float* avg_s, float* avg_m, float* avg_l, float* thal,
+  inline void Compute_dWt_CtLeabraXCAL_vec
+    (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
+     float* ru_avg_l_lrn, float* ru_thal,
      const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
-     const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult);
+     const float su_avg_s, const float su_avg_m);
   // #IGNORE vectorized version
 #endif
 

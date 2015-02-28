@@ -297,7 +297,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = 0.0f;
   lay->avg_cos_diff.ResetAvg();
   lay->cos_diff_avg = 0.0f;
-  lay->cos_diff_avg_lmix = 0.0f;
+  lay->cos_diff_avg_lrn = 0.0f;
   lay->avg_act_diff = 0.0f;
   lay->avg_avg_act_diff.ResetAvg();
   lay->trial_cos_diff = 0.0f;
@@ -708,10 +708,10 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
 
   lstats.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
   if(lay->layer_type == Layer::HIDDEN) {
-    lay->cos_diff_avg_lmix = 1.0f - lay->cos_diff_avg;
+    lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
   }
   else {
-    lay->cos_diff_avg_lmix = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
+    lay->cos_diff_avg_lrn = 0.0f; // no mix for TARGET layers; irrelevant for INPUT
   }
 
   lay->avg_cos_diff.Increment(lay->cos_diff);

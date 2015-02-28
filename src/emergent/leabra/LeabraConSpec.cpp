@@ -30,6 +30,7 @@ SMARTREF_OF_CPP(LeabraConSpec);
 
 eTypeDef_Of(ExtRewLayerSpec);
 
+
 void WtScaleSpec::Initialize() {
   rel = 1.0f;
   abs = 1.0f;
@@ -64,21 +65,14 @@ void XCalLearnSpec::Initialize() {
 }
 
 void XCalLearnSpec::Defaults_init() {
-  raw_l_mix = false;
-  thr_l_mix = 0.05f;
-  thr_l_mult = 1.0f;
-  s_mix = 0.9f;
+  m_lrn = 1.0f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
-  m_mix = 1.0f - s_mix;
-  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = -(1.0f - d_rev) / d_rev;
 }
 
 void XCalLearnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  m_mix = 1.0f - s_mix;
-  thr_m_mix = 1.0f - thr_l_mix;
   d_rev_ratio = (1.0f - d_rev) / d_rev;
   if(d_rev > 0.0f)
     d_rev_ratio = -(1.0f - d_rev) / d_rev;

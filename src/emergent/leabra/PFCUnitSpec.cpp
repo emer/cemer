@@ -40,7 +40,7 @@ void PFCUnitSpec::Initialize() {
 }
 
 void PFCUnitSpec::Defaults_init() {
-  act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
+  // act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   cifer_thal.on = true;
   cifer_thal.thal_thr = 0.1f;
   cifer_thal.thal_bin = true;

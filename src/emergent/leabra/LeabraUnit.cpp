@@ -66,6 +66,8 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // avg_s = cp.avg_s;
   // avg_m = cp.avg_m;
   // avg_l = cp.avg_l;
+  // thr_l_mix = cp.thr_l_mix;
+  // thr_m_mix = cp.thr_m_mix;
   // act_avg = cp.act_avg;
   // thal = cp.thal;
   // thal_prv = cp.thal_prv;

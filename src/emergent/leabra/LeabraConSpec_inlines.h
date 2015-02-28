@@ -98,55 +98,51 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 
 #ifdef TA_VEC_USE
 
-inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_cosdiff_vec
-(LeabraConGroup* cg, float* dwts, float* avg_s, float* avg_m, float* avg_l, float* thal,
+inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
+(LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
+ float* ru_avg_l_lrn, float* ru_thal,
  const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
- const float su_avg_s, const float su_avg_m, const float effmmix, const float su_act_mult) {
+ const float su_avg_s, const float su_avg_m) {
   VECF su_avg_s_v(su_avg_s);
   VECF su_avg_m_v(su_avg_m);
-  VECF effmmix_v(effmmix);
-  VECF su_act_mult_v(su_act_mult);
-  VECF s_mix(xcal.s_mix);
-  VECF m_mix(xcal.m_mix);
-  VECF thr_max(1.0f);
 
   const int sz = cg->size;
   const int parsz = cg->vec_chunked_size;
   int i;
   for(i=0; i<parsz; i += TA_VEC_SIZE) {
     const int ru_idx = cg->UnIdx(i);
-    VECF ru_avg_s;     VECF ru_avg_m;      VECF ru_avg_l;
-    ru_avg_s.load(avg_s + ru_idx);
-    ru_avg_m.load(avg_m + ru_idx);
-    ru_avg_l.load(avg_l + ru_idx);
+    VECF ru_avg_s_v; VECF ru_avg_m_v;
+    // VECF ru_avg_l; // VECF ru_avg_l_lrn;
+    ru_avg_s_v.load(ru_avg_s + ru_idx);
+    ru_avg_m_v.load(ru_avg_m + ru_idx);
+    //    ru_avg_l.load(avg_l + ru_idx);
+    //    ru_avg_l_lrn.load(avg_l_lrn + ru_idx);
 
-    VECF srs = ru_avg_s * su_avg_s_v;
-    VECF srm = ru_avg_m * su_avg_m_v;
-    VECF sm_mix = s_mix * srs + m_mix * srm;
+    VECF srs = ru_avg_s_v * su_avg_s_v;
+    VECF srm = ru_avg_m_v * su_avg_m_v;
     
-    VECF lthr = su_act_mult_v * ru_avg_l;
-    VECF effthr = effmmix_v * srm + lthr;
-    effthr = min(thr_max, effthr);
-
     for(int j=0; j< TA_VEC_SIZE; j++) {
-      const float sm_mix_j = sm_mix[j];
-      const float effthr_j = effthr[j];
+      const float srs_j = srs[j];
+      const float srm_j = srm[j];
+      const float ru_avg_l_j = ru_avg_l[ru_idx+j];
+      const float ru_avg_l_lrn_j = ru_avg_l_lrn[ru_idx+j];
       float lrate_eff = clrate;
       if(cifer_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx+j]);
+        lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx+j]);
       }
-      dwts[i+j] += lrate_eff * xcal.dWtFun(sm_mix_j, effthr_j);
+      dwts[i+j] += lrate_eff * (ru_avg_l_lrn_j * xcal.dWtFun(srs_j, ru_avg_l_j) +
+                                xcal.m_lrn * xcal.dWtFun(srs_j, srm_j));
     }
   }
   for(;i<sz;i++) {              // get the remainder
     const int ru_idx = cg->UnIdx(i);
     float lrate_eff = clrate;
     if(cifer_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * thal[ru_idx]);
+      lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx]);
     }
-    C_Compute_dWt_CtLeabraXCAL_cosdiff
-      (dwts[i], lrate_eff, avg_s[ru_idx], avg_m[ru_idx], avg_l[ru_idx],
-       su_avg_s, su_avg_m, su_act_mult, effmmix);
+    C_Compute_dWt_CtLeabraXCAL
+      (dwts[i], lrate_eff, ru_avg_s[ru_idx], ru_avg_m[ru_idx], su_avg_s, su_avg_m,
+       ru_avg_l[ru_idx], ru_avg_l_lrn[ru_idx]);
   }
 }
 
@@ -161,7 +157,6 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
   const bool cifer_on = cifer.on;
-  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
   float clrate = cur_lrate;
 
   float bg_lrate;
@@ -171,53 +166,35 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
     fg_lrate = cifer.fg_lrate;
   }
 
-  const float su_avg_s = su->avg_s;
+  const float su_avg_s = su->avg_s_eff;
   const float su_avg_m = su->avg_m;
   float* dwts = cg->OwnCnVar(DWT);
 
   const int sz = cg->size;
 
-  if(xcal.raw_l_mix) {
-    const float su_act_mult = xcal.thr_l_mult * xcal.thr_l_mix * su_avg_m;
-    for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
-      float lrate_eff = clrate;
-      if(cifer_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
-      }
-      C_Compute_dWt_CtLeabraXCAL
-        (dwts[i], lrate_eff, ru->avg_s, ru->avg_m, ru->avg_l,
-         su_avg_s, su_avg_m, su_act_mult);
-    }
-  }
-  else {                        // X_COS_DIFF
-    const float efflmix = xcal.thr_l_mix * rlay->cos_diff_avg_lmix;
-    const float effmmix = 1.0f - efflmix;
-    const float su_act_mult = xcal.thr_l_mult * efflmix * su_avg_m;
-
 #if TA_VEC_USE
-    LeabraNetwork* lnet = (LeabraNetwork*)net;
-    float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
-    float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
-    float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
-    float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
-    Compute_dWt_CtLeabraXCAL_cosdiff_vec
-      (cg, dwts, avg_s, avg_m, avg_l, thal,
-       cifer_on, clrate, bg_lrate, fg_lrate,
-       su_avg_s, su_avg_m, effmmix, su_act_mult);
+  LeabraNetwork* lnet = (LeabraNetwork*)net;
+  float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
+  float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
+  float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
+  float* avg_l_lrn = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L_LRN);
+  float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
+  Compute_dWt_CtLeabraXCAL_vec
+    (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, thal,
+     cifer_on, clrate, bg_lrate, fg_lrate,
+     su_avg_s, su_avg_m);
 #else
-    for(int i=0; i<sz; i++) {
-      LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-      float lrate_eff = clrate;
-      if(cifer_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
-      }
-      C_Compute_dWt_CtLeabraXCAL_cosdiff
-        (dwts[i], lrate_eff, ru->avg_s, ru->avg_m, ru->avg_l,
-         su_avg_s, su_avg_m, su_act_mult, effmmix);
+  for(int i=0; i<sz; i++) {
+    LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
+    float lrate_eff = clrate;
+    if(cifer_on) {
+      lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
     }
-#endif
+    C_Compute_dWt_CtLeabraXCAL
+      (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
+       ru->avg_l, ru->avg_l_lrn);
   }
+#endif
 }
 
 /////////////////////////////////////
