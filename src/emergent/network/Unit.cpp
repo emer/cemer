@@ -286,8 +286,14 @@ bool Unit::Snapshot(const String& var, SimpleMathSpec& math_op, bool arg_is_snap
     }
   }
   else {
-    MemberDef* md = NULL;
-    val = GetValFromPath(var, md, true); // true = warn
+    UnitVars* uv = GetUnitVars();
+    MemberDef* md = net->unit_vars_type->members.FindName(var);
+    if(!md) {
+      // if(TestWarning(!md, "Snapshot", "variable named:", var,
+      //                "not found in unit variables")) {
+      return false;
+    }
+    val = *((float*)md->GetOff(uv));
     if(val.isNull() || val.isInvalid()) return false;  // already warned
   }
   if(math_op.opr == SimpleMathSpec::NONE) {
