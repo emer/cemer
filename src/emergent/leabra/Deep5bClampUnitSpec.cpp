@@ -35,3 +35,9 @@ void Deep5bClampUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net
     u->net_raw = 0.0f;          // zero the regular netins
   }
 }
+
+void Deep5bClampUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int thr_no) {
+  inherited::Trial_Init_SRAvg(u, net, thr_no);
+  u->avg_l_lrn = 0.0f;        // no self organizing in clamped layers!
+}
