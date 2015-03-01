@@ -172,7 +172,8 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
 
   const int sz = cg->size;
 
-#if TA_VEC_USE
+#if 0 // TA_VEC_USE
+  // at this point, code is so simple that this vec version probably not worth it..
   LeabraNetwork* lnet = (LeabraNetwork*)net;
   float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
   float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);

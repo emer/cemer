@@ -1290,9 +1290,9 @@ void LeabraNetwork::Compute_dWt_Thr(int thr_no) {
   if(threads.get_timing)
     ((LeabraNetTiming*)net_timing[thr_no])->dwt.StartTimer(true); // reset
 
-  Compute_dWt_VecVars_Thr(thr_no);
-
-  threads.SyncSpin(thr_no);
+  // note: not currently using
+  // Compute_dWt_VecVars_Thr(thr_no);
+  // threads.SyncSpin(thr_no);
 
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
