@@ -381,6 +381,8 @@ class SlurmJobManager( ClusterJobManager ):
 
         file.write("\n")
 
+        file.write(". /projects/oreillyr/bin/emergent_setup.sh\n")
+
         #file.write("export DISPLAY=:0.0\n\n")
         file.write("# change to working dir\n")
         file.write("cd $PBS_O_WORKDIR\n")
