@@ -204,12 +204,12 @@ void LeabraAvgLSpec::Initialize() {
 void LeabraAvgLSpec::Defaults_init() {
   init = 0.4f;
   max = 1.5f;
-  min = 0.2f;
-  tau = 100.0f;
+  min = 0.1f;
+  tau = 10.0f;
   lrn_max = 0.05f;
-  lrn_min = 0.01f;
-  net_thr = 0.8f;
-  err_mod = false;
+  lrn_min = 0.005f;
+  err_mod = true;
+  err_min = 0.04f;
   act_thr = 0.2f;
   
   dt = 1.0f / tau;
@@ -818,18 +818,15 @@ void LeabraUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   float lval = u->avg_m;
   if(lval > avg_l.act_thr) { // above threshold, raise it up
-    float max_eff = avg_l.max;
-    if(lay->netin.max < avg_l.net_thr) {
-      max_eff *= avg_l.net_thr - lay->netin.max;
-    }
-    u->avg_l += avg_l.dt * (max_eff - u->avg_l);
+    u->avg_l += avg_l.dt * (avg_l.max - u->avg_l);
   }
   else {
     u->avg_l += avg_l.dt * (avg_l.min - u->avg_l);
   }
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   if(avg_l.err_mod) {
-    u->avg_l_lrn *= lay->cos_diff_avg_lrn;
+    float eff_err = MAX(lay->cos_diff_avg_lrn, avg_l.err_min);
+    u->avg_l_lrn *= eff_err;
   }
   if(lay->layer_type != Layer::HIDDEN)
     u->avg_l_lrn = 0.0f;        // no self organizing in non-hidden layers!
