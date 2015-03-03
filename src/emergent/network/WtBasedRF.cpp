@@ -222,8 +222,8 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   count_matrix->SetGeom(2, image_size.x, image_size.y); // same size as dt_trg_rf
   
   bool all_good = true;
-  for (int wts_row=0; wts_row<1; wts_row++) {
-//  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+//  for (int wts_row=0; wts_row<1; wts_row++) {
+  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
