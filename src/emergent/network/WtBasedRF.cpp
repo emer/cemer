@@ -117,8 +117,8 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   *marker_matrix = 1;
   count_matrix->SetGeom(2, dt_trg_rf_count_col->GetCellGeom(0), dt_trg_rf_count_col->GetCellGeom(1));
   
-  for (int wts_row=0; wts_row<10; wts_row++) {
-//  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+//  for (int wts_row=0; wts_row<10; wts_row++) {
+  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     int row = 0;
     int col = 0;
@@ -192,9 +192,9 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   DataCol* dt_trg_rf_values_col;
   DataCol* dt_trg_rf_count_col;
   // column of calculated image values - get the size of the image from the previously generated rf data table
-  DataCol* snd_values_col = dt_snd_rf->GetColData("values");
+  DataCol* dt_snd_rf_values_col = dt_snd_rf->GetColData("values");
   taVector2i image_size;
-  snd_values_col->Get2DCellGeom(image_size.x, image_size.y);
+  dt_snd_rf_values_col->Get2DCellGeom(image_size.x, image_size.y);
   dt_trg_rf_values_col = dt_trg_rf->FindMakeColMatrix("values", VT_FLOAT, 2, image_size.x, image_size.y);
   // column to keep track of the number of values summed so we can correctly average
   dt_trg_rf_count_col = dt_trg_rf->FindMakeColMatrix("count", VT_INT, 2, image_size.x, image_size.y);
@@ -212,8 +212,8 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   count_matrix->SetGeom(2, image_size.x, image_size.y); // same size as dt_trg_rf
   
   bool all_good = true;
-  for (int wts_row=0; wts_row<10; wts_row++) {
-//  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+//  for (int wts_row=0; wts_row<1; wts_row++) {
+  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
@@ -230,23 +230,20 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
         Unit* snd_unit = recv_cons->SafeUn(u);
         taVector2i snd_layer_log_pos;
         snd_unit->LayerLogPos(snd_layer_log_pos);
-        //              taMisc::DebugInfo((String)snd_layer_log_pos.x, (String)snd_layer_log_pos.y );
-        int snd_total_cols = snd_layer_grp_geom.x * snd_layer_unit_grp_geom.x;
-        int snd_flat_pos = (snd_layer_log_pos.x * snd_total_cols) + snd_layer_log_pos.y;
-        //              taMisc::DebugInfo((String)flat_pos);
-        DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
+        taVector2i snd_layer_unit_grp_log_pos;
+        snd_unit->UnitGpLogPos(snd_layer_unit_grp_log_pos);
         
+        DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
         float weight = wts_col->GetValAsVarM(wts_row, u).toFloat();
         
-        DataCol* dt_snd_rf_values_col = dt_snd_rf->GetColData("values");
-        float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_flat_pos);
+        float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(snd_values_matrix);
         *tmp_matrix = *snd_values_matrix * weight;
         taBase::unRefDone(snd_values_matrix);
         *sum_matrix += *tmp_matrix;
         
         DataCol* dt_snd_rf_count_col = dt_snd_rf->GetColData("count");
-        marker_matrix = (int_Matrix*)dt_snd_rf_count_col->GetValAsMatrix(snd_flat_pos);
+        marker_matrix = (int_Matrix*)dt_snd_rf_count_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(marker_matrix);
         for (int i=0; i<marker_matrix->size; i++) {
           if (marker_matrix->taMatrix::SafeElAsVar_Flat(i) > 0) {
