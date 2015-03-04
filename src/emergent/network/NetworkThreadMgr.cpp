@@ -44,14 +44,20 @@ void NetworkThreadTask::SyncSpin(int usec_wait) {
   const int cur_step = (int)mg->sync_step;
 #endif
 
-  const int nxt_step = cur_step+1;
-  const int trg = nxt_step * mg->tasks.size;
+  int nxt_step = cur_step+1;
+  int trg = nxt_step * mg->tasks.size;
 
   // acquire vs. ordered is not really a big deal here -- generating a release is
   // essentially automatic whenever a volitile variable is written to anyway
   int cur_cnt = mg->sync_ctr.fetchAndAddOrdered(1);
+
+  while(cur_cnt > trg) { // oops, this is not good -- we got ahead of the game!
+    nxt_step++;
+    trg = nxt_step * mg->tasks.size;
+  }
+  
   if(cur_cnt == trg) { // we were the last guy
-    // mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
+    mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
     return;
   }
 
