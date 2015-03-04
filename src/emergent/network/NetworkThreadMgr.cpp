@@ -66,7 +66,7 @@ void NetworkThreadTask::SyncSpin0(int usec_wait) {
 #if (QT_VERSION >= 0x050000)
     cur_cnt = mg->sync_ctr0.loadAcquire();
 #else
-    cur_cnt = (int)mg->sync_ctr;
+    cur_cnt = (int)mg->sync_ctr0;
 #endif
   }
   mg->sync_step0.testAndSetOrdered(cur_step, nxt_step);
@@ -107,7 +107,7 @@ void NetworkThreadTask::SyncSpin1(int usec_wait) {
 #if (QT_VERSION >= 0x050000)
     cur_cnt = mg->sync_ctr1.loadAcquire();
 #else
-    cur_cnt = (int)mg->sync_ctr;
+    cur_cnt = (int)mg->sync_ctr1;
 #endif
   }
   mg->sync_step1.testAndSetOrdered(cur_step, nxt_step);
@@ -148,7 +148,7 @@ void NetworkThreadTask::SyncSpin2(int usec_wait) {
 #if (QT_VERSION >= 0x050000)
     cur_cnt = mg->sync_ctr2.loadAcquire();
 #else
-    cur_cnt = (int)mg->sync_ctr;
+    cur_cnt = (int)mg->sync_ctr2;
 #endif
   }
   mg->sync_step2.testAndSetOrdered(cur_step, nxt_step);
