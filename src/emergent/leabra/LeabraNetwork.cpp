@@ -579,48 +579,48 @@ void LeabraNetwork::Cycle_Run_Thr(int thr_no) {
     tot_cyc = times.quarter;
   for(int cyc = 0; cyc < tot_cyc; cyc++) {
     Send_Netin_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 0);
 
     Compute_NetinInteg_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 1);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.StartTimer(true); // reset
 
     Compute_NetinStats_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 2);
     if(thr_no == 0) {
       Compute_NetinStats_Post();
     }
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 0);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->netin_stats.EndIncrAvg();
 
     Compute_Inhib_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 1);
 
     Compute_Act_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 2);
 
     if(thr_no == 0) {           // do this well before, so addn'l sync not needed
       Compute_CycleStats_Pre();
     }
 
     Compute_Act_Post_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 0);
 
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.StartTimer(true); // reset
 
     Compute_CycleStats_Thr(thr_no);
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 1);
     
     if(thr_no == 0) {
       Compute_CycleStats_Post();
     }
 
-    threads.SyncSpin(thr_no);
+    threads.SyncSpin(thr_no, 2);
     if(threads.get_timing)
       ((LeabraNetTiming*)net_timing[thr_no])->cycstats.EndIncrAvg();
 
