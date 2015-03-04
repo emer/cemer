@@ -19,6 +19,9 @@
 #if (QT_VERSION == 0x050300)
 #include <QtGui/5.3.0/QtGui/qpa/qplatformnativeinterface.h>
 #endif
+#if (QT_VERSION == 0x050401)
+#include <QtGui/5.4.1/QtGui/qpa/qplatformnativeinterface.h>
+#endif
 
 void TurnOffTouchEventsForWindow(QWindow* qtWindow) {
   if(!qtWindow) return;
