@@ -51,7 +51,7 @@ void NetworkThreadTask::SyncSpin(int usec_wait) {
   // essentially automatic whenever a volitile variable is written to anyway
   int cur_cnt = mg->sync_ctr.fetchAndAddOrdered(1);
   if(cur_cnt == trg) { // we were the last guy
-    mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
+    // mg->sync_step.testAndSetOrdered(cur_step, nxt_step);
     return;
   }
 
