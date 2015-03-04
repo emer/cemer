@@ -209,7 +209,7 @@ void LeabraAvgLSpec::Defaults_init() {
   lrn_max = 0.05f;
   lrn_min = 0.005f;
   err_mod = true;
-  err_min = 0.04f;
+  err_min = 0.03f;
   act_thr = 0.2f;
   
   dt = 1.0f / tau;
@@ -1607,16 +1607,16 @@ void LeabraUnitSpec::Compute_Vm(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
       // midpoint method: take a half-step:
       float I_net_1 =
         (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff)) +
-        (gc_i * (E_i - v_m_eff));
+        (gc_i * (E_i - v_m_eff)) - u->adapt;
       v_m_eff += .5f * dt.integ * dt.vm_dt * I_net_1; // go half way
       float I_net = (net_eff * (e_rev.e - v_m_eff)) + (gc_l * (e_rev.l - v_m_eff))
-        + (gc_i * (E_i - v_m_eff));
+        + (gc_i * (E_i - v_m_eff)) - u->adapt;
       // add spike current if relevant
       if(spike_misc.ex) {
         I_net += g_bar.l * spike_misc.exp_slope *
           taMath_float::exp_fast((v_m_eff - act.thr) / spike_misc.exp_slope);
       }
-      u->v_m += dt.integ * dt.vm_dt * (I_net - u->adapt);
+      u->v_m += dt.integ * dt.vm_dt * I_net;
       if(taMisc::gui_active) {
         u->I_net = I_net;
       }
