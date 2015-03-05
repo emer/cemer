@@ -419,14 +419,13 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
   }
 }
 
-void ClusterRun::Probe() {
+void ClusterRun::SelectCluster() {
   if(!initClusterManager())
     return;
-  String clust = m_cm->ChooseCluster("Choose a cluster to probe");
+  String clust = m_cm->ChooseCluster("Select a cluster to use for this project:");
   if(clust.empty()) return;
   cluster = clust;
-  initClusterManager(); // re-init with new cluster info!
-  FormatTables();               // ensure tables are formatted properly
+  Update();
   
   jobs_submit.ResetData();
   int dst_row = jobs_submit.AddBlankRow();
