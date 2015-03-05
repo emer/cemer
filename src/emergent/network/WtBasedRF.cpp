@@ -213,7 +213,7 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
   
   bool all_good = true;
 //  for (int wts_row=0; wts_row<1; wts_row++) {
-  for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
+    for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
     *sum_matrix = 0;
     // get the target layer unit so we can find the sending units it recvs from
@@ -228,14 +228,11 @@ bool WtBasedRF::ComputeHigherLayerRF(Network* net, DataTable* dt_trg, DataTable*
     if (all_good) {
       for (int u=0; u<recv_cons->size; u++) {
         Unit* snd_unit = recv_cons->SafeUn(u);
-        taVector2i snd_layer_log_pos;
-        snd_unit->LayerLogPos(snd_layer_log_pos);
         taVector2i snd_layer_unit_grp_log_pos;
         snd_unit->UnitGpLogPos(snd_layer_unit_grp_log_pos);
         
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
-        float weight = wts_col->GetValAsVarM(wts_row, u).toFloat();
-        
+        float weight = wts_col->GetValAsVarM(wts_row, snd_unit->idx).toFloat();
         float_Matrix* snd_values_matrix = (float_Matrix*)dt_snd_rf_values_col->GetValAsMatrix(snd_unit->idx);
         taBase::Ref(snd_values_matrix);
         *tmp_matrix = *snd_values_matrix * weight;
