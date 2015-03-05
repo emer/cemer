@@ -102,8 +102,6 @@ if(HPCPROF_BUILD)
   add_definitions(-DHPCPROF_COMPILE)
 endif(HPCPROF_BUILD)
 
-
-
 ##############################
 # CUDA (set -DCUDA_BUILD flag at compile time)
 IF(CUDA_BUILD)

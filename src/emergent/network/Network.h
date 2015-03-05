@@ -242,6 +242,7 @@ public:
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
+  bool             alt_mpi;    // #CAT_MPI use alternative custom allreduce function instead of standard MPI
   NetTiming_List net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)

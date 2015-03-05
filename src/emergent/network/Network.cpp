@@ -72,6 +72,8 @@ void Network::Initialize() {
   small_batch_n = 10;
   small_batch_n_eff = 10;
 
+  alt_mpi = false;
+
   batch = 0;
   epoch = 0;
   group = 0;
@@ -2376,11 +2378,12 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   results.SetSize(cidx);
   timer2s = MPI_Wtime();
-  if (/*use_reduce_replacement */ 0) {
-      dmem_trl_comm.my_reduce->allreduce(values.el, results.el, cidx);
-  } else {
-      DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
-                   "Network::SumDWts", "Allreduce");
+  if(alt_mpi) {
+    dmem_trl_comm.my_reduce->allreduce(values.el, results.el, cidx);
+  }
+  else {
+    DMEM_MPICALL(MPI_Allreduce(values.el, results.el, cidx, MPI_FLOAT, MPI_SUM, comm),
+		 "Network::SumDWts", "Allreduce");
   }
   timer2e = MPI_Wtime();
   cidx = 0;
