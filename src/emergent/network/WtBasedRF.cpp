@@ -130,6 +130,9 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
         DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
         float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
         if (weight != 0) {
+          if (weight < wt_threshold) {
+            weight = 0;
+          }
           if (row % 2 == 0) { // 2 for on-center/off-center
             *tmp_matrix = filter[col % filter_angles] * weight;
           }
