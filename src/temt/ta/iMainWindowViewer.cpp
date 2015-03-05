@@ -345,7 +345,7 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   ProjDirToCurrent();
 #ifdef TA_OS_MAC
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
-  setFocus();
+  // setFocus();
 #endif
 // doesn't work here: https://bugreports.qt-project.org/browse/QTBUG-38815
 // #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)

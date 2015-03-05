@@ -152,18 +152,18 @@ void iDialogChoice::done(int r) {
 }
 
 int iDialogChoice::exec() {
+#ifdef RESTORE_PREV_ACTIVE_WINDOW
   // we're losing focus here so need to restore it!!
-// #ifdef TA_OS_MAC
   QPointer<QWidget> m_prev_active = QApplication::activeWindow();
-// #endif
+#endif
   int rval = inherited::exec();
-  //#ifdef TA_OS_MAC
+#ifdef RESTORE_PREV_ACTIVE_WINDOW
   if((bool)m_prev_active) {
 //     QApplication::setActiveWindow(m_prev_active);
     // note: above does NOT work! -- likely source of bug in cocoa 4.6.0
     m_prev_active->activateWindow();
   }
-// #endif
+#endif
   return rval;
 }
 
