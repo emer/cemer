@@ -89,17 +89,23 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   QHBoxLayout* project_box = newHBox(vbox);
   addLabeledWidget(project_box, "Project &name:", nameEdit);
   
-  // author
-  authorEdit = new QLineEdit;
-  authorEdit->setStatusTip("Enter one or more author names (comma separated)");
-  authorEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Authors:", authorEdit);
-
   // upload project - do it now - default is true
   upload_project = new QCheckBox;
   upload_project->setChecked(true);
   upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
   addLabeledWidget(project_box, "Upload Project File", upload_project);
+
+  // author
+  authorEdit = new QLineEdit;
+  authorEdit->setStatusTip("Enter name of primary author");
+  authorEdit->installEventFilter(this);
+  QHBoxLayout* author_box = newHBox(vbox);
+  addLabeledWidget(author_box, "Project &author:", authorEdit);
+
+  emailEdit = new QLineEdit;
+  emailEdit->setStatusTip("Enter an email address for correspondence - typically author's email");
+  emailEdit->installEventFilter(this);
+  addLabeledWidget(author_box, "&Email:", emailEdit);
 
   // Description
   descEdit = new QTextEdit;
@@ -128,9 +134,14 @@ QString iDialogPublishDocs::GetName() const
   return nameEdit->text();
 }
 
-QString iDialogPublishDocs::GetAuthors() const
+QString iDialogPublishDocs::GetAuthor() const
 {
   return authorEdit->text();
+}
+
+QString iDialogPublishDocs::GetEmail() const
+{
+  return emailEdit->text();
 }
 
 QString iDialogPublishDocs::GetDesc() const
@@ -184,8 +195,12 @@ void iDialogPublishDocs::SetName(const QString& name) {
   nameEdit->setText(name);
 }
 
-void iDialogPublishDocs::SetAuthors(const QString& author) {
+void iDialogPublishDocs::SetAuthor(const QString& author) {
   authorEdit->setText(author);
+}
+
+void iDialogPublishDocs::SetEmail(const QString& email) {
+  emailEdit->setText(email);
 }
 
 void iDialogPublishDocs::SetDesc(const QString& desc) {

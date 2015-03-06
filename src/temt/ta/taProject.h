@@ -78,6 +78,10 @@ public:
   String                tags;      // #EDIT_DIALOG list of comma separated tags that indicate the basic function of this project -- should be listed in hierarchical order, with most important/general tags first -- these are used for searching the online project library if this project is uploaded
   taProjVersion         version;
   // project version numbering information -- useful for keeping track of changes over time (recorded in change log automatically with SaveNoteChanges)
+  String                author;
+  // the project author - by default the one saved in emergent preferences
+  String                email;
+  // email address for comments, questions about the project - typically the author's email address - by default the one saved in emergent preferences
   taLicense             license; // license for this project -- to be determined by the original creator of the project -- if this is not you, then you must abide by the constraints of the original license, if specified -- do ViewLicense button to see the applicable license information for this project
   taWikiURL             wiki_url; // url to synchronize project to/from wiki -- see taMisc::wiki_url for base url in case of relative location
   Doc_Group             docs; // documents, typically linked to other objects

@@ -344,6 +344,9 @@ String          taMisc::compress_sfx = ".gz";
 bool            taMisc::record_on = false;
 String          taMisc::record_script;
 
+String          taMisc::project_author = "";
+String          taMisc::author_email = "";
+
 // NOTE: we quote all filenames in case they have spaces
 #ifdef TA_OS_WIN
 //NOTE: Notepad could possibly really screw up files, because of crlf

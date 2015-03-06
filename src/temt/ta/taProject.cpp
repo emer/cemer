@@ -126,6 +126,12 @@ void taProject::InitLinks_impl() {
 //   FindMakeNewDataProc(&TA_taMath_float, "math_float")->SetUserData("NO_CLIP", true);
 //   FindMakeNewDataProc(&TA_taMath_double, "math_double")->SetUserData("NO_CLIP", true);
 
+  if (author.empty()) {
+    author = taMisc::project_author;
+  }
+  if (email.empty()) {
+    email = taMisc::author_email;
+  }
 }
 
 void taProject::InitLinks_post() {
@@ -572,22 +578,23 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   if (logged_in) {
     iDialogPublishDocs dialog(repo_name, this->name);
     dialog.SetName(QString(this->name.chars()));
-    dialog.SetAuthors(QString(""));
+    dialog.SetAuthor(QString(this->author.chars()));
+    dialog.SetEmail(QString(this->email.chars()));
     dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
     dialog.SetTags(QString(""));
     if (dialog.exec()) {
       // User clicked OK.
-//      QString proj_name = dialog.GetName();
       page_name = String(name); // needed for call to create the taDoc
-      QString authors = dialog.GetAuthors();
+      QString author = dialog.GetAuthor();
+      QString email = dialog.GetEmail();
       QString desc = dialog.GetDesc();
       QString keywords = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), author, desc, keywords);
       }
       else {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", authors, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", author, desc, keywords);
       }
     }
     if (was_published) {
