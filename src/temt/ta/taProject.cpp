@@ -591,10 +591,10 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       QString keywords = dialog.GetTags();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), author, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), author, email, desc, keywords);
       }
       else {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", author, desc, keywords);
+        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", author, email, desc, keywords);
       }
     }
     if (was_published) {

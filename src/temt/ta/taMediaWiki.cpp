@@ -1511,8 +1511,8 @@ String taMediaWiki::GetEditToken(const String& wiki_name)
 }
 
 bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_name,
-                                 const String& proj_name, const String& proj_filename, const String& proj_authors,
-                                 const String& proj_descripton, const String& keywords)
+                                 const String& proj_name, const String& proj_filename, const String& proj_author,
+                                 const String& proj_email, const String& proj_descripton, const String& keywords)
 {
   String proj_category = "PublishedProject";
   
@@ -1525,7 +1525,7 @@ bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_nam
   String emer_version = " " + taMisc::version;
   String version = " 1.0";
   
-  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + proj_authors + "|EmerProjVersion = " + version + "|EmerProjKeyword = " + keywords + "}}";
+  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + proj_author + "|EmerProjEmail = " + proj_email + "|EmerProjVersion = " + version + "|EmerProjKeyword = " + keywords + "}}";
   
   // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
 

@@ -142,7 +142,7 @@ public:
 
   static bool   PublishProject(const String& wiki_name, const String& page_name,
                                const String& proj_name, const String& proj_filename="", const String& proj_authors="",
-                               const String& proj_desc="", const String& proj_category="");
+                               const String& proj_email="", const String& proj_desc="", const String& proj_category="");
   // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
 
 protected:
