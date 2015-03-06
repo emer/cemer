@@ -117,35 +117,49 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
   *marker_matrix = 1;
   count_matrix->SetGeom(2, dt_trg_rf_count_col->GetCellGeom(0), dt_trg_rf_count_col->GetCellGeom(1));
   
-//  for (int wts_row=0; wts_row<10; wts_row++) {
+//  for (int wts_row=0; wts_row<1; wts_row++) {
   for (int wts_row=0; wts_row<trg_layer_wts->rows; wts_row++) {
     *count_matrix = 0;
-    int row = 0;
-    int col = 0;
     taVector2i snd_layer_units;
     snd_layer_units.x = snd_layer_unit_grp_geom.x * snd_layer_grp_geom.x;
     snd_layer_units.y = snd_layer_unit_grp_geom.y * snd_layer_grp_geom.y;
-    for (row=0; row<snd_layer_units.y; row++) {
-      for (col=0; col<snd_layer_units.x; col++) {
-        DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
-        float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
-        if (weight != 0) {
-          if (weight < wt_threshold) {
-            weight = 0;
+    
+    for (int row_grp=0; row_grp<snd_layer_grp_geom.y; row_grp++) {
+      for (int col_grp=0; col_grp<snd_layer_grp_geom.x; col_grp++) {
+        for (int row_unit=0; row_unit<snd_layer_unit_grp_geom.y; row_unit++) {
+          for (int col_unit=0; col_unit<snd_layer_unit_grp_geom.x; col_unit++) {
+            // we only concern ourselves with the V1s (simple) filters for now
+            // if this is all that is enabled the snd_layer_unit_grp_geom will be 4 x 2 (2 rows of simple filter)
+            // but if the V1c (complex) filters are enable we could have as many as 5 rows per V1 unit group.
+            // The V1s filters are in the last 2 rows of each unit group so rows 3 & 4 (zero based) when there are 5 rows
+            DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
+            if ((row_unit == snd_layer_unit_grp_geom.y - 1) || (col_unit == snd_layer_unit_grp_geom.y - 2)) {
+              int row = (row_grp * snd_layer_unit_grp_geom.y) + row_unit;
+              int col = (col_grp * snd_layer_unit_grp_geom.x) + col_unit;
+              float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
+              if (weight != 0) {
+                if (weight < wt_threshold) {
+                  weight = 0;
+                }
+                if (row % 2 == 0) { // 2 for on-center/off-center
+                  *tmp_matrix = filter[col % filter_angles] * weight;
+                }
+                else {
+                  *tmp_matrix = filter[col % filter_angles] * -weight;
+                }
+                taVector2i snd_layer_log_pos; // log means logical
+                snd_layer_log_pos.x = (col/filter_angles) * space;
+                snd_layer_log_pos.y = (row/snd_layer_unit_grp_geom.y) * space;
+                // write the sum values to the dt_trg_rf table
+                dt_trg_rf_values_col->WriteFmSubMatrix2DWrap(wts_row, tmp_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+                // up the count for those cells of dt_trg_rf we just added to
+                count_matrix->WriteFmSubMatrix2DWrap(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
+              }
+            }
+            else {
+              continue;
+            }
           }
-          if (row % 2 == 0) { // 2 for on-center/off-center
-            *tmp_matrix = filter[col % filter_angles] * weight;
-          }
-          else {
-            *tmp_matrix = filter[col % filter_angles] * -weight;
-          }
-          taVector2i snd_layer_log_pos; // log means logical
-          snd_layer_log_pos.x = (col/filter_angles) * space;
-          snd_layer_log_pos.y = (row/2) * space; // 2 for on-center/off-center
-          // write the sum values to the dt_trg_rf table
-          dt_trg_rf_values_col->WriteFmSubMatrix2DWrap(wts_row, tmp_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
-          // up the count for those cells of dt_trg_rf we just added to
-          count_matrix->WriteFmSubMatrix2DWrap(marker_matrix, taMatrix::ADD, snd_layer_log_pos.x, snd_layer_log_pos.y);
         }
       }
     }
