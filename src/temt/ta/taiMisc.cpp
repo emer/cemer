@@ -1077,13 +1077,13 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP, QKeySequence("F10"));
 
 #ifdef TA_OS_MAC
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY, QKeySequence(meta_key + Qt::Key_1));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_ONLY, QKeySequence(meta_key + Qt::Key_2));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_PANELS, QKeySequence(meta_key + Qt::Key_3));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_T3_ONLY, QKeySequence(meta_key + Qt::Key_4));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_T3, QKeySequence(meta_key + Qt::Key_5));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_AND_T3, QKeySequence(meta_key + Qt::Key_6));
-  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_ALL_FRAMES, QKeySequence(meta_key + Qt::Key_7));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_ONLY, QKeySequence(meta_key + Qt::Key_1));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_EDITOR_ONLY, QKeySequence(meta_key + Qt::Key_2));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_AND_EDITOR, QKeySequence(meta_key + Qt::Key_3));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VISUALIZER_ONLY, QKeySequence(meta_key + Qt::Key_4));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_AND_VISUALIZER, QKeySequence(meta_key + Qt::Key_5));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_EDITOR_AND_VISUALIZER, QKeySequence(meta_key + Qt::Key_6));
+  default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_ALL_FRAMES, QKeySequence(meta_key + Qt::Key_7));
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_RESET_FRAMES, QKeySequence(meta_key + Qt::Key_8), "reset frames to default widths");
 #else
   default_list->Add(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY, QKeySequence(control_key + Qt::Key_1));

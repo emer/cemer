@@ -684,13 +684,13 @@ void iMainWindowViewer::Constr_ViewMenu()
 {
   KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
 
-  viewBrowseOnlyAction = AddAction(new iAction("viewBrowseOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_ONLY), "viewBrowseOnlyAction"));
-  viewPanelsOnlyAction = AddAction(new iAction("viewPanelsOnly", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_ONLY), "viewPanelsOnlyAction"));
-  viewBrowseAndPanelsAction = AddAction(new iAction("viewBrowseAndPanels", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_PANELS), "viewBrowseAndPanelsAction"));
-  viewT3OnlyAction = AddAction(new iAction("viewT3Only", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_T3_ONLY), "viewT3OnlyAction"));
-  viewBrowseAndT3Action = AddAction(new iAction("viewBrowseAndT3", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_BROWSE_AND_T3), "viewBrowseAndT3Action"));
-  viewPanelsAndT3Action = AddAction(new iAction("viewPanelsAndT3", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_PANELS_AND_T3), "viewPanelsAndT3Action"));
-  viewAllFramesAction = AddAction(new iAction("viewAllFrames", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VIEW_ALL_FRAMES), "viewAllFramesAction"));
+  viewBrowseOnlyAction = AddAction(new iAction("Navigator Only", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_ONLY), "viewBrowseOnlyAction"));
+  viewPanelsOnlyAction = AddAction(new iAction("Editor Only", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_EDITOR_ONLY), "viewPanelsOnlyAction"));
+  viewBrowseAndPanelsAction = AddAction(new iAction("Navigator and Editor", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_AND_EDITOR), "viewBrowseAndPanelsAction"));
+  viewT3OnlyAction = AddAction(new iAction("Visualizer Only", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_VISUALIZER_ONLY), "viewT3OnlyAction"));
+  viewBrowseAndT3Action = AddAction(new iAction("Navigator and Visualizer", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_NAVIGATOR_AND_VISUALIZER), "viewBrowseAndT3Action"));
+  viewPanelsAndT3Action = AddAction(new iAction("Editor and Visualizer", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_EDITOR_AND_VISUALIZER), "viewPanelsAndT3Action"));
+  viewAllFramesAction = AddAction(new iAction("All Frames", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_ALL_FRAMES), "viewAllFramesAction"));
 
   viewRefreshAction = AddAction(new iAction("&Refresh", QKeySequence("F5"), "viewRefreshAction"));
 
@@ -722,6 +722,13 @@ void iMainWindowViewer::Constr_ViewMenu()
 
   viewMenu->insertSeparator();
   viewResetViewAction = AddAction(new iAction("Reset Frames", bindings->KeySequence(taiMisc::PROJECTWINDOW_CONTEXT, taiMisc::PROJECTWINDOW_RESET_FRAMES), "viewResetViewAction"));
+  viewMenu->AddAction(viewBrowseOnlyAction);
+  viewMenu->AddAction(viewPanelsOnlyAction);
+  viewMenu->AddAction(viewBrowseAndPanelsAction);
+  viewMenu->AddAction(viewT3OnlyAction);
+  viewMenu->AddAction(viewBrowseAndT3Action);
+  viewMenu->AddAction(viewPanelsAndT3Action);
+  viewMenu->AddAction(viewAllFramesAction);
   viewMenu->AddAction(viewResetViewAction);
 
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
@@ -2883,21 +2890,19 @@ void iMainWindowViewer::UpdateUi() {
   }
 
   viewSetSaveViewAction->setEnabled(curProject() != NULL);
+  viewBrowseOnlyAction->setEnabled(curProject() != NULL);
+  viewPanelsOnlyAction->setEnabled(curProject() != NULL);
+  viewBrowseAndPanelsAction->setEnabled(curProject() != NULL);
+  viewT3OnlyAction->setEnabled(curProject() != NULL);
+  viewBrowseAndT3Action->setEnabled(curProject() != NULL);
+  viewPanelsAndT3Action->setEnabled(curProject() != NULL);
+  viewAllFramesAction->setEnabled(curProject() != NULL);
   viewResetViewAction->setEnabled(curProject() != NULL);
 
   if (curProject()) {
     fileOpenSvnBrowserAction->setEnabled(!curProject()->GetDir().empty());
     fileSaveAction->setEnabled(!curProject()->save_as_only);
     viewSetSaveViewAction->setChecked(curProject()->save_view);  // keep menu insync in case someone else set the property
-//    fileUpdateProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
-//    fileUploadFilesForProjectOnWebAction->setEnabled(curProject()->wiki_url.wiki.nonempty());
-    // rohrlich 2/22/15 - the wiki_url info only get saved if the user saves after publish - so always enable so they can get back to project
-//    fileUpdateProjectOnWebAction->setEnabled(true);
-//    fileUploadFilesForProjectOnWebAction->setEnabled(true);
-  }
-  else {
-//    fileUpdateProjectOnWebAction->setEnabled(false);
-//    fileUploadFilesForProjectOnWebAction->setEnabled(false);
   }
   emit SetActionsEnabled();
 }
