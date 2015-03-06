@@ -40,6 +40,7 @@ void EditMbrItem::Copy_(const EditMbrItem& cp) {
   is_single = cp.is_single;
   param_search = cp.param_search;
   param_set_value = cp.param_set_value;
+  notes = cp.notes;
 }
 
 void EditMbrItem::UpdateAfterEdit_impl() {

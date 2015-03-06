@@ -37,6 +37,8 @@ public:
   bool                  is_single;   // #READ_ONLY is this a single item, not a composite item
   EditParamSearch       param_search; // #CONDSHOW_ON_is_single specifications for parameter searching, only for numeric items
   ParamSetItem          param_set_value;  // if the panel is a param set panel display the saved value
+  String                notes;            // #EDIT_DIALOG you can record notes here about this parameter
+    
   ///////////////////////////////////
   //        Param Search
 
