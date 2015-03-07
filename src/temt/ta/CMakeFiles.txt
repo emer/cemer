@@ -752,6 +752,7 @@ set(ta_HEADS_MAKETA_NOMOC
   ParamSet_Group.h
   KeyBindings.h
   KeyBindings_List.h
+  taProjPubInfo.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -1959,6 +1960,7 @@ set(ta_SRCS_MAKETA
   KeyBindings_List.cpp
   KeyActionPair.cpp
   KeyActionPair_PArray.cpp
+  taProjPubInfo.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*

@@ -1301,8 +1301,7 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
   return false;
 }
 
-bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const String& page_name)
-{
+bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const String& page_name) {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1385,8 +1384,7 @@ bool taMediaWiki::LinkFiles(DataTable* files, const String& wiki_name, const Str
   return false;
 }
 
-bool taMediaWiki::LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name)
-{
+bool taMediaWiki::LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name) {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1452,8 +1450,7 @@ bool taMediaWiki::LinkFileII(const String& file_name, const String& wiki_name, c
 /////////////////////////////////////////////////////
 //            WIKI OPERATIONS
 
-String taMediaWiki::GetApiURL(const String& wiki_name)
-{
+String taMediaWiki::GetApiURL(const String& wiki_name) {
   // Get the URL corresponding to wiki_name.
   bool appendIndexPhp = false;
   String wiki_url = taMisc::GetWikiURL(wiki_name, appendIndexPhp);
@@ -1467,8 +1464,7 @@ String taMediaWiki::GetApiURL(const String& wiki_name)
   return wiki_url + "/api.php";
 }
 
-String taMediaWiki::GetEditToken(const String& wiki_name)
-{
+String taMediaWiki::GetEditToken(const String& wiki_name) {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return _nilString; }
@@ -1510,39 +1506,37 @@ String taMediaWiki::GetEditToken(const String& wiki_name)
   return _nilString;
 }
 
-bool taMediaWiki::PublishProject(const String& wiki_name, const String& page_name,
-                                 const String& proj_name, const String& proj_filename, const String& proj_author,
-                                 const String& proj_email, const String& proj_descripton, const String& keywords)
-{
+bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
   String proj_category = "PublishedProject";
   
   // First check to make sure the page doesn't already exist.
-  if (PageExists(wiki_name, page_name)) {
-    taMisc::Warning(page_name, "page already exists on", wiki_name, "wiki! Call FindMakePage to make edits");
+  if (PageExists(pub_info->wiki_name, pub_info->page_name)) {
+    taMisc::Warning(pub_info->page_name, "page already exists on", pub_info->wiki_name, "wiki! Call FindMakePage to make edits");
     return false;
   }
   
   String emer_version = " " + taMisc::version;
-  String version = " 1.0";
+//  String version = " 1.0";
   
-  String page_content = "{{PublishedProject|name=" + proj_name + "|emer_proj_overview=" + proj_descripton + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + proj_author + "|EmerProjEmail = " + proj_email + "|EmerProjVersion = " + version + "|EmerProjKeyword = " + keywords + "}}";
+  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
   
   // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
-
-  bool page_created = CreatePage(wiki_name, page_name, page_content, proj_category);
+  
+  bool page_created = CreatePage(pub_info->wiki_name, pub_info->page_name, page_content, proj_category);
   if (!page_created)
     return false;
   
   // If project filename empty, the user does not want to upload the project file
-  if (!proj_filename.empty()) {
-    bool loaded_and_linked = UploadFile(wiki_name, proj_filename, "");
+  if (!pub_info->proj_filename.empty()) {
+    bool loaded_and_linked = UploadFile(pub_info->wiki_name, pub_info->proj_filename, "");
     if (loaded_and_linked) {
-      String non_path_filename = proj_filename.after('/', -1);
-      loaded_and_linked = LinkFileII(non_path_filename, wiki_name, proj_name);  // link the file to the project page
+      String non_path_filename = pub_info->proj_filename.after('/', -1);
+      loaded_and_linked = LinkFileII(non_path_filename, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
     }
     if (!loaded_and_linked) {
-      taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", wiki_name, "wiki");
+      taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", pub_info->wiki_name, "wiki");
     }
   }
   return true; // return true if project page created - even if upload of project file fails
 }
+

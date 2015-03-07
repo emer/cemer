@@ -592,12 +592,22 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       QString keywords = dialog.GetTags();
       QString version = dialog.GetVersion();
       bool upload = dialog.GetUploadChoice();
+      
+      taProjPubInfo* pub_info = new taProjPubInfo();
+      pub_info->wiki_name = repo_name;
+      pub_info->page_name = page_name;
+      pub_info->proj_name = this->name;
       if (upload) {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), author, email, desc, keywords);
+        pub_info->proj_filename = GetFileName();
       }
       else {
-        was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, "", author, email, desc, keywords);
+        pub_info->proj_filename = "";
       }
+      pub_info->proj_author = author;
+      pub_info->proj_email = email;
+      pub_info->proj_desc = desc;
+      pub_info->proj_keywords = keywords;
+      was_published = taMediaWiki::PublishProject(pub_info);
     }
     if (was_published) {
       // rohrlich 2/22/15 - this info is lost if the user doesn't save
