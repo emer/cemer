@@ -126,15 +126,15 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       memb_set->memb_el.Add(md);
       bool added_search = false;
       if(item->is_single && sele->InheritsFrom(&TA_ClusterRun)) {
-        MemberDef* psmd = TA_EditMbrItem.members.FindName("param_search");
-        if (psmd) {
+        MemberDef* ps_md = TA_EditMbrItem.members.FindName("param_search");
+        if (ps_md) {
           added_search = true;
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
           mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
-          mash_widg->AddChildMember(psmd);
+          mash_widg->AddChildMember(ps_md);
           mash_widg->EndLayout();
           
           memb_set->widget_el.Add(mash_widg);
@@ -149,15 +149,15 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
       // if this panel is a param set panel
       bool added_param_set = false;
       if(sele->InheritsFrom(&TA_ParamSet)) {
-        MemberDef* psmd = TA_EditMbrItem.members.FindName("param_set_value");
-        if (psmd) {
+        MemberDef* psv_md = TA_EditMbrItem.members.FindName("param_set_value");
+        if (psv_md) {
           added_param_set = true;
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
           mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
-          mash_widg->AddChildMember(psmd);
+          mash_widg->AddChildMember(psv_md);
           mash_widg->EndLayout();
           
           memb_set->widget_el.Add(mash_widg);
@@ -174,14 +174,26 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         }
       }
       
+      // standard control panel
       if(!added_search && !added_param_set) {
-        taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
-        memb_set->widget_el.Add(mb_dat);
-        QWidget* data = mb_dat->GetRep();
+        MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
+        if (note_md) {
+          taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
+          mash_widg->SetMemberDef(md);
+          mash_widg->add_labels = false;
+          mash_widg->InitLayout();
+          mash_widg->AddChildMember(md);
+          mash_widg->AddChildMember(note_md);
+          mash_widg->EndLayout();
+
+//          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+        memb_set->widget_el.Add(mash_widg);
+        QWidget* data = mash_widg->GetRep();
         help_text = item->GetDesc();
         String new_lbl = item->caption();
-        AddNameWidget(-1, new_lbl, help_text, data, mb_dat, md);
+        AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
         ++dat_cnt;
+        }
       }
     }
     def_grp = false;

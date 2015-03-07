@@ -32,6 +32,7 @@ void EditMbrItem::InitLinks() {
   inherited::InitLinks();
   taBase::Own(param_search, this);
   taBase::Own(param_set_value, this);
+  taBase::Own(notes, this);
 }
 
 void EditMbrItem::Copy_(const EditMbrItem& cp) {
