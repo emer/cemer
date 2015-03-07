@@ -45,6 +45,7 @@ public:
 protected:
   void         GetWinState_impl() override; // set gui state; only called if mapped
   void         SetWinState_impl() override; // fetch gui state; only called if mapped
+  void         UpdateAfterEdit_impl() override;
 
 private:
   NOCOPY(FrameViewer)

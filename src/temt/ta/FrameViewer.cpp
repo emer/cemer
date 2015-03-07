@@ -16,6 +16,8 @@
 #include "FrameViewer.h"
 #include <iFrameViewer>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(FrameViewer);
 
 
@@ -34,3 +36,19 @@ void FrameViewer::SetWinState_impl() {
   wid->SetWinState();
 }
 
+void FrameViewer::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(taMisc::is_loading) {
+    // revision 8066 renamed the project window frames to Navigator, Editor, Visualizer
+    // this code updates old project files when reloaded
+    if (name == "Tree") {
+      SetName("Navigator");
+    }
+    else if (name == "Panels") {
+      SetName("Editor");
+    }
+    else if (name == "T3Frames") {
+      SetName("Visualizer");
+    }
+  }
+}

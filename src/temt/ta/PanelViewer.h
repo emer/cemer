@@ -29,7 +29,7 @@ class iTabBarBase; //
 taTypeDef_Of(PanelViewer);
 
 class TA_API PanelViewer : public FrameViewer {
-  // #NO_TOKENS ##DEF_NAME_ROOT_Panels ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
+  // #NO_TOKENS ##DEF_NAME_ROOT_Editor ##DEF_NAME_STYLE_2 the base type for browser frames (tree of objects or classes)
 INHERITED(FrameViewer)
 friend class iPanelBase;
 public:
