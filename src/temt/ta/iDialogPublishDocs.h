@@ -41,6 +41,7 @@ public:
   QString     GetEmail() const;
   QString     GetDesc() const;
   QString     GetTags() const;
+  QString     GetVersion() const;
   bool        GetUploadChoice() const;
   
   void        SetName(const QString& name);
@@ -48,6 +49,7 @@ public:
   void        SetEmail(const QString& email);
   void        SetDesc(const QString& desc);
   void        SetTags(const QString& tags);
+  void        SetVersion(const QString& tags);
 
 private:
   bool        event(QEvent *event) override;
@@ -58,6 +60,7 @@ private:
   QLineEdit*  emailEdit;
   QTextEdit*  descEdit;
   QLineEdit*  tagsEdit;
+  QLineEdit*  versionEdit;
   QStatusBar* statusBar;
   QCheckBox*  upload_project;
 };

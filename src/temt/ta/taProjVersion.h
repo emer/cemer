@@ -37,7 +37,7 @@ public:
   void          Set(int mj, int mn, int st = 0) { major = mj; minor = mn; step = st; }
   void          SetFromString(String ver); // parse, mj.mn.st
   const String  GetString()
-  { return String(major).cat(".").cat(String(minor)).cat(".").cat(String(step)).cat(".");}
+  { return String(major).cat(".").cat(String(minor)).cat(".").cat(String(step));}
 
   void          Clear() {major = minor = step = 0;} // reset version info to 0
   bool          GtEq(int mj, int mn, int st = 0); // true if the version is greater than or equal to the indicated version

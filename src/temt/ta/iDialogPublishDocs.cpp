@@ -83,12 +83,17 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   // Project name
   nameEdit = new QLineEdit;
   nameEdit->setEnabled(false);
-  nameEdit->setStatusTip("Instructions: Enter a human-readable name for the project (used for wiki page name)");
+  nameEdit->setStatusTip("");
   nameEdit->installEventFilter(this);
   
   QHBoxLayout* project_box = newHBox(vbox);
   addLabeledWidget(project_box, "Project &name:", nameEdit);
   
+  versionEdit = new QLineEdit;
+  versionEdit->setEnabled(true);
+  versionEdit->setStatusTip("Current project version number e.g. 2.0.1");
+  addLabeledWidget(project_box, "Version:", versionEdit);
+
   // upload project - do it now - default is true
   upload_project = new QCheckBox;
   upload_project->setChecked(true);
@@ -156,6 +161,11 @@ QString iDialogPublishDocs::GetTags() const
   return tags;
 }
 
+QString iDialogPublishDocs::GetVersion() const
+{
+  return versionEdit->text();
+}
+
 bool iDialogPublishDocs::GetUploadChoice() const
 {
   return upload_project->isChecked();
@@ -210,3 +220,8 @@ void iDialogPublishDocs::SetDesc(const QString& desc) {
 void iDialogPublishDocs::SetTags(const QString& tags) {
   tagsEdit->setText(tags);
 }
+
+void iDialogPublishDocs::SetVersion(const QString& version) {
+  versionEdit->setText(version);
+}
+

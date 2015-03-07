@@ -580,8 +580,9 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
     dialog.SetName(QString(this->name.chars()));
     dialog.SetAuthor(QString(this->author.chars()));
     dialog.SetEmail(QString(this->email.chars()));
-    dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later."));
+    dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later on the wiki."));
     dialog.SetTags(QString(""));
+    dialog.SetVersion(QString(this->version.GetString().chars()));
     if (dialog.exec()) {
       // User clicked OK.
       page_name = String(name); // needed for call to create the taDoc
@@ -589,6 +590,7 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       QString email = dialog.GetEmail();
       QString desc = dialog.GetDesc();
       QString keywords = dialog.GetTags();
+      QString version = dialog.GetVersion();
       bool upload = dialog.GetUploadChoice();
       if (upload) {
         was_published = taMediaWiki::PublishProject(repo_name, page_name, this->name, GetFileName(), author, email, desc, keywords);
