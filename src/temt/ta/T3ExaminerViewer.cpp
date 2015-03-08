@@ -141,30 +141,35 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   t3ev_config_wheel(hrot_wheel);
   hrot_start_val = THUMB_INIT_VAL;
   hrot_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
+  hrot_wheel->setToolTip(taiMisc::ToolTipPreProcess("Key equivalent - left/right arrow keys"));
   connect(hrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(hrotwheelChanged(int)));
   
   vrot_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vrot_wheel);
   vrot_start_val = THUMB_INIT_VAL;
   vrot_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  vrot_wheel->setToolTip(taiMisc::ToolTipPreProcess("Key equivalent - up/down arrow keys"));
   connect(vrot_wheel, SIGNAL(valueChanged(int)), this, SLOT(vrotwheelChanged(int)));
   
   zoom_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(zoom_wheel);
   zoom_start_val = THUMB_INIT_VAL;
   zoom_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  zoom_wheel->setToolTip(taiMisc::ToolTipPreProcess("Key equivalent '+' key and '-' key"));
   connect(zoom_wheel, SIGNAL(valueChanged(int)), this, SLOT(zoomwheelChanged(int)));
   
   hpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Horizontal, this);
   t3ev_config_wheel(hpan_wheel);
   hpan_start_val = THUMB_INIT_VAL;
   hpan_wheel->setMaximumSize(WHEEL_LENGTH, WHEEL_WIDTH);
+  hpan_wheel->setToolTip(taiMisc::ToolTipPreProcess("Key equivalent - shift + left/right arrow keys"));
   connect(hpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(hpanwheelChanged(int)));
   
   vpan_wheel = new iThumbWheel(0, THUMB_MAX_VAL, THUMB_PAGE_STEP, THUMB_INIT_VAL, Qt::Vertical, this);
   t3ev_config_wheel(vpan_wheel);
   vpan_start_val = THUMB_INIT_VAL;
   vpan_wheel->setMaximumSize(WHEEL_WIDTH, WHEEL_LENGTH);
+  vpan_wheel->setToolTip(taiMisc::ToolTipPreProcess("Key equivalent - shift + up/down arrow keys"));
   connect(vpan_wheel, SIGNAL(valueChanged(int)), this, SLOT(vpanwheelChanged(int)));
   
   /////  lhs_vbox
