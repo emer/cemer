@@ -868,7 +868,7 @@ void iMainWindowViewer::Constr_DataMenu() {
       }
       
       if (show) {
-        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
+        String label = mdef->name + "..."; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Copy")) {
           String actionString = "dataProcess" + mdef->name + "Action";
           dataProcCopyActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
@@ -929,7 +929,7 @@ void iMainWindowViewer::Constr_DataMenu() {
       TypeSpace* args = &mdef->arg_types;
       // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
       if (show) {
-        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
+        String label = mdef->name + "..."; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Stats")) {
           String actionString = "dataAnal" + mdef->name + "Action";
           dataAnalStatsActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
@@ -1008,7 +1008,7 @@ void iMainWindowViewer::Constr_DataMenu() {
       }
       
       if (show) {
-        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
+        String label = mdef->name + "..."; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Basic")) {
           String actionString = "dataGen" + mdef->name + "Action";
           dataGenBasicActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
@@ -1091,7 +1091,7 @@ void iMainWindowViewer::Constr_DataMenu() {
       TypeSpace* args = &mdef->arg_types;
       // if there were methods we didn't want to show (perhaps they require a spec) put that logic here
       if (show) {
-        String label = mdef->name + "…"; taMisc::SpaceLabel(label);
+        String label = mdef->name + "..."; taMisc::SpaceLabel(label);
         if (mdef->HasOption("CAT_Transform")) {
           String actionString = "imageProc" + mdef->name + "Action";
           imageProcTransformActions.Add(new iAction(mdef->name, label, QKeySequence(), actionString));  // put the method name into usr_data - needed for later call to actual method
