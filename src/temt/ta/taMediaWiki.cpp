@@ -277,7 +277,7 @@ bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_
 
   if (proceed) {
     String non_path_filename = local_file_name.after('/', -1);
-    proceed = LinkFileII(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
+    proceed = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
   }
   return proceed;
 }
@@ -1227,7 +1227,7 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
   return false;
 }
 
-bool taMediaWiki::LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name) {
+bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, const String& proj_name) {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return false; }
@@ -1358,8 +1358,9 @@ bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
     return false;
   }
   
+  String first_pub = "3-15-15";
   String emer_version = " " + taMisc::version;
-  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
+  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
   
   // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
   
@@ -1372,7 +1373,7 @@ bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
     bool loaded_and_linked = UploadFile(pub_info->wiki_name, pub_info->proj_filename, "");
     if (loaded_and_linked) {
       String non_path_filename = pub_info->proj_filename.after('/', -1);
-      loaded_and_linked = LinkFileII(non_path_filename, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
+      loaded_and_linked = LinkFile(non_path_filename, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
     }
     if (!loaded_and_linked) {
       taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", pub_info->wiki_name, "wiki");

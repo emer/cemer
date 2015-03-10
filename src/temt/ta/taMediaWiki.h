@@ -123,7 +123,7 @@ public:
                               const String& page_category);
   // #CAT_Page Append given page on the wiki with given list of comma-separated categories -- returns true on success
   
-  static bool   LinkFileII(const String& file_name, const String& wiki_name, const String& proj_name);
+  static bool   LinkFile(const String& file_name, const String& wiki_name, const String& proj_name);
   // #CAT_Page Add the project name to the the files page so that the project page can find files containing the project page (as property - look at the code)
   
   /////////////////////////////////////////////////////
