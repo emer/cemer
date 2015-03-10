@@ -266,9 +266,7 @@ void taProject::Dump_Load_post() {
   inherited::Dump_Load_post();
   if(taMisc::is_undo_loading)
     return; // none of this.
-  if (taMisc::project_log) {
-    OpenProjectLog();
-  }
+  OpenProjectLog();
   DoView();
   setDirty(false);              // nobody should start off dirty!
   if(!taMisc::interactive) {
@@ -539,9 +537,7 @@ int taProject::SaveAs(const String& fname) {
     if(!fnm.contains("_recover") && !fnm.contains("_autosave")) {
       CleanFiles();
     }
-    if (taMisc::project_log) {
-      OpenProjectLog();
-    }
+    OpenProjectLog();
   }
   else { // if the save wasn't successful reset the save_as_only flag
     save_as_only = tmp_save_as_only;
@@ -735,12 +731,14 @@ int taProject::Load(const String& fname, taBase** loaded_obj_ptr) {
 
 void taProject::OpenProjectLog() {
   if(!taMisc::gui_active) return; //  only for gui..
-  if(file_name.empty()) return;
-  String log_fn = file_name;
-  if(log_fn.contains(".proj"))
-    log_fn = log_fn.before(".proj",-1);
-  log_fn += ".plog";
-  taMisc::SetLogFile(log_fn);
+  if (taMisc::project_log) {  // only if the user wants a log file!!
+    if(file_name.empty()) return;
+    String log_fn = file_name;
+    if(log_fn.contains(".proj"))
+      log_fn = log_fn.before(".proj",-1);
+    log_fn += ".plog";
+    taMisc::SetLogFile(log_fn);
+  }
 }
 
 bool taProject::CleanFiles() {
