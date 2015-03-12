@@ -426,12 +426,10 @@ bool taMediaWiki::DeleteFile(const String& wiki_name, const String& file_name, c
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("File deletion failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
           taMisc::DebugInfo("Successfully deleted", file_name, "file on", wiki_name, "wiki!");
-          
           return true;
         }
       }
@@ -984,12 +982,10 @@ bool taMediaWiki::DeletePage(const String& wiki_name, const String& page_name, c
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("Page deletion failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
           taMisc::Info("Successfully deleted", page_name, "page on", wiki_name, "wiki!");
-          
           return true;
         }
       }
@@ -1066,7 +1062,6 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("Page creation failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
@@ -1134,8 +1129,10 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("Page edit failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
+        }
+        else {
+          return true;
         }
       }
     }
@@ -1144,9 +1141,10 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   return false;
 }
 
-bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& proj_name, const String& proj_version, const String& emer_version) {
-  String content;
-  return EditPage(wiki_name, proj_name, content);
+bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& proj_filename, const String& proj_version, const String& emer_version) {
+  String content = "[[EmerVersion::" + emer_version + "]][[EmerProjVersion::" + proj_version + "]]";
+  String prefixed_filename = "File:" + proj_filename;
+  return EditPage(wiki_name, prefixed_filename, content);
 }
 
 #if 0
@@ -1211,12 +1209,10 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("Add category failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
           taMisc::Info("Successfully added categories to", page_name, "page on", wiki_name, "wiki!");
-          
           return true;
         }
       }
@@ -1275,12 +1271,10 @@ bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, con
           QString err_code = attrs.value("code").toString();
           QString err_info = attrs.value("info").toString();
           taMisc::Error("File link failed with error code: ", qPrintable(err_code), " (", qPrintable(err_info), ")");
-          
           return false;
         }
         else {
           taMisc::Info("Successfully linked", file_name, "file to", proj_name, "page on", wiki_name, "wiki!");
-          
           return true;
         }
       }
@@ -1352,8 +1346,8 @@ String taMediaWiki::GetEditToken(const String& wiki_name) {
 bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
   String proj_category = "PublishedProject";
   String first_pub = String(QDate::currentDate().toString(Qt::TextDate));
-  String emer_version = " " + taMisc::version;
-//  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
+  String emer_version = taMisc::version;  // use the version currently running
+  
   String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email  + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
   
   bool page_created = CreatePage(pub_info->wiki_name, pub_info->page_name, page_content, proj_category);
@@ -1362,12 +1356,16 @@ bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
   
   // If project filename empty, the user does not want to upload the project file
   if (!pub_info->proj_filename.empty()) {
+    String filename_only;  // no path
     bool loaded_and_linked = UploadFile(pub_info->wiki_name, pub_info->proj_filename, "");
     if (loaded_and_linked) {
-      String non_path_filename = pub_info->proj_filename.after('/', -1);
-      loaded_and_linked = LinkFile(non_path_filename, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
+      filename_only = pub_info->proj_filename.after('/', -1);
+      loaded_and_linked = LinkFile(filename_only, pub_info->wiki_name, pub_info->proj_name);  // link the file to the project page
     }
-    if (!loaded_and_linked) {
+    if (loaded_and_linked) {
+      AppendVersionInfo(pub_info->wiki_name, filename_only, pub_info->proj_version, emer_version);
+    }
+    else {
       taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", pub_info->wiki_name, "wiki");
     }
   }

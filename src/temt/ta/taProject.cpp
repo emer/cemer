@@ -606,6 +606,7 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       pub_info->wiki_name = repo_name;
       pub_info->page_name = page_name;
       pub_info->proj_name = this->name;
+      pub_info->proj_version = version;
       // rohrlich - 3/11/2015 - require project file when publishing
 //      if (upload) {
         pub_info->proj_filename = GetFileName();

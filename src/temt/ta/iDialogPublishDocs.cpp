@@ -103,13 +103,13 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
 
   // author
   authorEdit = new QLineEdit;
-  authorEdit->setStatusTip("Enter name of primary author");
+  authorEdit->setStatusTip("Enter name of primary author (set default in preferences)");
   authorEdit->installEventFilter(this);
   QHBoxLayout* author_box = newHBox(vbox);
   addLabeledWidget(author_box, "Project &author:", authorEdit);
 
   emailEdit = new QLineEdit;
-  emailEdit->setStatusTip("Enter an email address for correspondence - typically author's email");
+  emailEdit->setStatusTip("Enter an email address for correspondence (set default in preferences) - typically author's email");
   emailEdit->installEventFilter(this);
   addLabeledWidget(author_box, "&Email:", emailEdit);
 
