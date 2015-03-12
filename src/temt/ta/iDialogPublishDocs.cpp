@@ -95,10 +95,11 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   addLabeledWidget(project_box, "Version:", versionEdit);
 
   // upload project - do it now - default is true
-  upload_project = new QCheckBox;
-  upload_project->setChecked(true);
-  upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
-  addLabeledWidget(project_box, "Upload Project File", upload_project);
+  // rohrlich - 3/11/2015 - require project file when publishing
+//  upload_project = new QCheckBox;
+//  upload_project->setChecked(true);
+//  upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
+//  addLabeledWidget(project_box, "Upload Project File", upload_project);
 
   // author
   authorEdit = new QLineEdit;
@@ -112,19 +113,18 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   emailEdit->installEventFilter(this);
   addLabeledWidget(author_box, "&Email:", emailEdit);
 
-  // Description
-  descEdit = new QTextEdit;
-  descEdit->setTabChangesFocus(true);
-  descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
-  descEdit->installEventFilter(this);
-  addLabeledWidget(vbox, "&Description:", descEdit);
-
   // Tags
   tagsEdit = new QLineEdit;
   tagsEdit->setStatusTip("Instructions: Enter keywords (comma spearated) to help users find your project when searching or browsing");
   tagsEdit->installEventFilter(this);
   addLabeledWidget(newHBox(vbox), "&Keywords:", tagsEdit);
   
+  // Description
+  descEdit = new QTextEdit;
+  descEdit->setTabChangesFocus(true);
+  descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
+  descEdit->installEventFilter(this);
+  addLabeledWidget(vbox, "&Description:", descEdit);
   
   // OK, Cancel buttons
   QDialogButtonBox *buttonBox = new QDialogButtonBox(

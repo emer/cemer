@@ -1005,7 +1005,7 @@ bool taMediaWiki::FindMakePage(const String& wiki_name, const String& page_name,
   // If given page exists on wiki...
   if(PageExists(wiki_name, page_name)) {
     // Append page with given content.
-    return EditPage(wiki_name, page_name, page_content, page_category);
+    return EditPage(wiki_name, page_name, page_content);
   }
   // If given page does not exist on wiki...
   else {
@@ -1071,11 +1071,7 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
         }
         else {
           taMisc::Info("Successfully created", page_name, "page on", wiki_name, "wiki!");
-          
-          if (!page_category.empty()) {
-            return AddCategories(wiki_name, page_name, page_category);
-          }
-          else { return true; }
+          return true;
         }
       }
     }
@@ -1085,11 +1081,13 @@ bool taMediaWiki::CreatePage(const String& wiki_name, const String& page_name,
 }
 
 bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
-                           const String& page_content, const String& page_category)
+                           const String& page_content, bool append)
 {
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
-  if (wikiUrl.empty()) { return false; }
+  if (wikiUrl.empty()) {
+    return false;
+  }
 
   // Also make sure the page exists on the wiki before moving on.
   if (!PageExists(wiki_name, page_name)) {
@@ -1099,7 +1097,9 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
 
   // Get the edit token for this post request.
   QByteArray token = QUrl::toPercentEncoding(GetEditToken(wiki_name));
-  if (token.isEmpty()) { return false; }
+  if (token.isEmpty()) {
+    return false;
+  }
 
   // Build the request URL.
   // .../api.php?action=edit&title=<page_name>&nocreate=&appendtext=<page_content>&format=xml&token=<token>
@@ -1121,7 +1121,7 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   url.addQueryItem("format", "xml");
   url.addQueryItem("token", token);
 #endif
-
+  
   // Make the network request.
   // Note: The reply will be deleted when the request goes out of scope.
   iSynchronousNetRequest request;
@@ -1137,13 +1137,6 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
           
           return false;
         }
-        else {
-          taMisc::Info("Successfully edited", page_name, "page on", wiki_name, "wiki!");
-          if (!page_category.empty()) {
-            return AddCategories(wiki_name, page_name, page_category);
-          }
-          else { return true; }
-        }
       }
     }
   }
@@ -1151,6 +1144,12 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   return false;
 }
 
+bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& proj_name, const String& proj_version, const String& emer_version) {
+  String content;
+  return EditPage(wiki_name, proj_name, content);
+}
+
+#if 0
 bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name, const String& page_category)
 {
   // Make sure we actually have categories to add.
@@ -1226,6 +1225,7 @@ bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name
   taMisc::Warning("Add category request failed -- check the wiki/page names");
   return false;
 }
+#endif
 
 bool taMediaWiki::LinkFile(const String& file_name, const String& wiki_name, const String& proj_name) {
   // Make sure wiki name is valid before doing anything else.
@@ -1351,18 +1351,10 @@ String taMediaWiki::GetEditToken(const String& wiki_name) {
 
 bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
   String proj_category = "PublishedProject";
-  
-  // First check to make sure the page doesn't already exist.
-  if (PageExists(pub_info->wiki_name, pub_info->page_name)) {
-    taMisc::Warning(pub_info->page_name, "page already exists on", pub_info->wiki_name, "wiki! Call FindMakePage to make edits");
-    return false;
-  }
-  
-  String first_pub = "3-15-15";
+  String first_pub = String(QDate::currentDate().toString(Qt::TextDate));
   String emer_version = " " + taMisc::version;
-  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
-  
-  // TODO: rohrlich 2-16-15 - deal with proj_category which is now the same for all "PublishedProject" - using keywords - probably can just delete
+//  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerVersion = " + emer_version + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email + "|EmerProjVersion = " + pub_info->proj_version + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
+  String page_content = "{{PublishedProject|name=" + pub_info->proj_name + "|emer_proj_overview=" + pub_info->proj_desc + "|EmerProjAuthor = " + pub_info->proj_author + "|EmerProjEmail = " + pub_info->proj_email  + "|EmerProjFirstPub = " + first_pub + "|EmerProjKeyword = " + pub_info->proj_keywords + "}}";
   
   bool page_created = CreatePage(pub_info->wiki_name, pub_info->page_name, page_content, proj_category);
   if (!page_created)

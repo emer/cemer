@@ -550,6 +550,16 @@ int taProject::SaveAs(const String& fname) {
 
 bool taProject::PublishProjectOnWeb(const String &repo_name)
 {
+  // First check to make sure the page doesn't already exist.
+  String proj_filename = GetFileName();
+  proj_filename = "File:" + proj_filename.after('/', -1);
+
+  if (taMediaWiki::IsPublished(repo_name, proj_filename)) {
+    String msg = "The project " + GetFileName() + " is already published on  wiki \"" + repo_name + "\""  ;
+    taMisc::Error(msg);
+    return false;
+  }
+
   if (GetFileName().empty()) {
     int choice = taMisc::Choice("The project must be saved locally before it can be published", "Save", "Cancel");
     if (choice == 0) {
@@ -576,8 +586,8 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
     dialog.SetName(QString(this->name.chars()));
     dialog.SetAuthor(QString(this->author.chars()));
     dialog.SetEmail(QString(this->email.chars()));
-    dialog.SetDesc(QString("A brief description of the project. You will be able to expand/edit later on the wiki."));
-    dialog.SetTags(QString(""));
+    dialog.SetDesc(QString("A brief description of the project. You will be able to edit later on the wiki."));
+    dialog.SetTags(QString("comma separated, please"));
     dialog.SetVersion(QString(this->version.GetString().chars()));
     if (dialog.exec()) {
       // User clicked OK.
@@ -586,19 +596,23 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       QString email = dialog.GetEmail();
       QString desc = dialog.GetDesc();
       QString keywords = dialog.GetTags();
+      if (keywords == "comma separated, please") {
+        keywords = "";
+      }
       QString version = dialog.GetVersion();
-      bool upload = dialog.GetUploadChoice();
+//      bool upload = dialog.GetUploadChoice();
       
       taProjPubInfo* pub_info = new taProjPubInfo();
       pub_info->wiki_name = repo_name;
       pub_info->page_name = page_name;
       pub_info->proj_name = this->name;
-      if (upload) {
+      // rohrlich - 3/11/2015 - require project file when publishing
+//      if (upload) {
         pub_info->proj_filename = GetFileName();
-      }
-      else {
-        pub_info->proj_filename = "";
-      }
+//      }
+//      else {
+//        pub_info->proj_filename = "";
+//      }
       pub_info->proj_author = author;
       pub_info->proj_email = email;
       pub_info->proj_desc = desc;

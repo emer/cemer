@@ -116,12 +116,18 @@ public:
   // #CAT_Page Create given page on the wiki and populate it with given content if it does not currently exist  -- returns true on success
 
   static bool   EditPage(const String& wiki_name, const String& page_name,
-                         const String& page_content="", const String& page_category="");
-  // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success
+                         const String& page_content, bool append = true);
+  // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success - if append is false content is prepended
 
+  static bool   AppendVersionInfo(const String& wiki_name, const String& page_name,
+                         const String& proj_version, const String& emer_version);
+  // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success - if append is false content is prepended
+
+#if 0
   static bool   AddCategories(const String& wiki_name, const String& page_name,
                               const String& page_category);
   // #CAT_Page Append given page on the wiki with given list of comma-separated categories -- returns true on success
+#endif
   
   static bool   LinkFile(const String& file_name, const String& wiki_name, const String& proj_name);
   // #CAT_Page Add the project name to the the files page so that the project page can find files containing the project page (as property - look at the code)
