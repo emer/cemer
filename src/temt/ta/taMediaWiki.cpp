@@ -1104,7 +1104,10 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   urq.addQueryItem("action", "edit");
   urq.addQueryItem("title", page_name);
   urq.addQueryItem("nocreate", "");
-  urq.addQueryItem("appendtext", page_content);
+  if (append)
+    urq.addQueryItem("appendtext", page_content);
+  else
+    urq.addQueryItem("prependtext", page_content);
   urq.addQueryItem("format", "xml");
   urq.addQueryItem("token", token);
   url.setQuery(urq);
@@ -1112,7 +1115,10 @@ bool taMediaWiki::EditPage(const String& wiki_name, const String& page_name,
   url.addQueryItem("action", "edit");
   url.addQueryItem("title", page_name);
   url.addQueryItem("nocreate", "");
-  url.addQueryItem("appendtext", page_content);
+  if (append)
+    url.addQueryItem("appendtext", page_content);
+  else
+    url.addQueryItem("prependtext", page_content);
   url.addQueryItem("format", "xml");
   url.addQueryItem("token", token);
 #endif
