@@ -52,19 +52,26 @@ namespace // anon
   }
 }
 
-iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name)
-//  : inherited(), nameEdit(0), descEdit(0), tagsEdit(0), statusBar(0), upload_project(0)
+iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_name, bool new_pub)
 : inherited()
 {
   // Size the dialog.
   resize(taiM->dialogSize(taiMisc::dlgSmall | taiMisc::dlgHor));
   setFont(taiM->dialogFont(taiM->ctrl_size));
 
-  // Dialog title.
-  QString title("Publish project to: ");
-  title.append(repo_name);
+  // Dialog title
+  QString title;
+  if (new_pub) {
+    title = "Publish project to: ";
+    title.append(repo_name);
+  }
+  else {
+    String tmp(proj_name);
+    tmp = "Update published project '" + tmp + "'";
+    title.append(tmp.chars());
+  }
   setWindowTitle(title);
-
+  
   // Create a marginless layout to hold the status bar,
   // plus an inner layout (with margins) to hold everything else.
   QVBoxLayout *topVbox = new QVBoxLayout(this);
@@ -101,35 +108,38 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
 //  upload_project->setStatusTip("You can upload the project when you publish or just create the wiki page and later upload the project. You can always upload a new version of the project");
 //  addLabeledWidget(project_box, "Upload Project File", upload_project);
 
-  // author
-  authorEdit = new QLineEdit;
-  authorEdit->setStatusTip("Enter name of primary author (set default in preferences)");
-  authorEdit->installEventFilter(this);
-  QHBoxLayout* author_box = newHBox(vbox);
-  addLabeledWidget(author_box, "Project &author:", authorEdit);
-
-  emailEdit = new QLineEdit;
-  emailEdit->setStatusTip("Enter an email address for correspondence (set default in preferences) - typically author's email");
-  emailEdit->installEventFilter(this);
-  addLabeledWidget(author_box, "&Email:", emailEdit);
-
-  // Tags
-  tagsEdit = new QLineEdit;
-  tagsEdit->setStatusTip("Instructions: Enter keywords (comma spearated) to help users find your project when searching or browsing");
-  tagsEdit->installEventFilter(this);
-  addLabeledWidget(newHBox(vbox), "&Keywords:", tagsEdit);
-  
-  // Description
-  descEdit = new QTextEdit;
-  descEdit->setTabChangesFocus(true);
-  descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
-  descEdit->installEventFilter(this);
-  addLabeledWidget(vbox, "&Description:", descEdit);
+  if (new_pub) {
+    authorEdit = new QLineEdit;
+    authorEdit->setStatusTip("Enter name of primary author (set default in preferences)");
+    authorEdit->installEventFilter(this);
+    QHBoxLayout* author_box = newHBox(vbox);
+    addLabeledWidget(author_box, "Project &author:", authorEdit);
+    
+    emailEdit = new QLineEdit;
+    emailEdit->setStatusTip("Enter an email address for correspondence (set default in preferences) - typically author's email");
+    emailEdit->installEventFilter(this);
+    addLabeledWidget(author_box, "&Email:", emailEdit);
+    
+    // Tags
+    tagsEdit = new QLineEdit;
+    tagsEdit->setStatusTip("Instructions: Enter keywords (comma spearated) to help users find your project when searching or browsing");
+    tagsEdit->installEventFilter(this);
+    addLabeledWidget(newHBox(vbox), "&Keywords:", tagsEdit);
+    
+    // Description
+    descEdit = new QTextEdit;
+    descEdit->setTabChangesFocus(true);
+    descEdit->setStatusTip("Instructions: Enter a brief description of the project (more detail can be added later on the wiki)");
+    descEdit->installEventFilter(this);
+    addLabeledWidget(vbox, "&Description:", descEdit);
+  }
   
   // OK, Cancel buttons
   QDialogButtonBox *buttonBox = new QDialogButtonBox(
     QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   vbox->addWidget(buttonBox);
+  this->adjustSize();
+  
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }

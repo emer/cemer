@@ -555,9 +555,13 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   proj_filename = "File:" + proj_filename.after('/', -1);
 
   if (taMediaWiki::IsPublished(repo_name, proj_filename)) {
-    String msg = "The project " + GetFileName() + " is already published on  wiki \"" + repo_name + "\""  ;
-    taMisc::Error(msg);
-    return false;
+    int choice = taMisc::Choice("The project " + GetFileName() + " is already published on  wiki \"" + repo_name + ".\" Would you like to upload a new version?", "Upload", "Cancel");
+    if (choice == 0) {
+      return UpdateProjectOnWeb(repo_name);
+    }
+    else {
+      return false;
+    }
   }
 
   if (GetFileName().empty()) {
@@ -582,7 +586,7 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   
   bool logged_in = taMediaWiki::Login(repo_name, username);
   if (logged_in) {
-    iDialogPublishDocs dialog(repo_name, this->name);
+    iDialogPublishDocs dialog(repo_name, this->name, true);
     dialog.SetName(QString(this->name.chars()));
     dialog.SetAuthor(QString(this->author.chars()));
     dialog.SetEmail(QString(this->email.chars()));
@@ -632,14 +636,40 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
 
 bool taProject::UpdateProjectOnWeb(const String &repo_name) {
   String proj_name = this->name;
-  String proj_file_name = GetFileName();
-  if (taMediaWiki::IsPublished(repo_name, proj_name)) {
-    taMediaWiki::UploadFile(repo_name, proj_file_name, true); // true - update new revision
-  }
-  else {
+  String proj_filename = GetFileName();
+  String proj_filename_only = proj_filename.after('/', -1);
+  
+  String emer_version = taMisc::version;
+  if (!taMediaWiki::IsPublished(repo_name, proj_name)) {
     taMisc::Error("Project named \"" + proj_name + "\" not found on wiki \"" + repo_name + "\"");
+    return false;
   }
-  return false;
+  
+  String username = taMediaWiki::GetLoggedInUsername(repo_name);
+  bool logged_in = taMediaWiki::Login(repo_name, username);
+  if (!logged_in) {
+    return false;
+  }
+  
+  // just project name and version for already published project
+  iDialogPublishDocs dialog(repo_name, this->name, false); // false = update
+  dialog.SetName(QString(this->name.chars()));
+  dialog.SetVersion(QString(this->version.GetString().chars()));
+  if (dialog.exec()) {
+    QString version = dialog.GetVersion();
+  }
+  
+  bool rval = taMediaWiki::UploadFile(repo_name, proj_filename, false); // true - update new revision
+  if (rval == false) {
+    taMisc::Error("Upload failure");
+    return false;
+  }
+  rval = taMediaWiki::AppendVersionInfo(repo_name, proj_filename_only, this->version.GetString(), emer_version);
+  if (rval == false) {
+    taMisc::Error("AppendVersionInfo failure");
+    return false;
+  }
+  return true;
 }
 
 bool taProject::UploadFilesForProjectOnWeb(const String &repo_name) {
@@ -661,9 +691,9 @@ bool taProject::UploadFilesForProjectOnWeb(const String &repo_name) {
       if (!file_name_list.empty()) {
         rval = true;
         for (int i=0; i<file_name_list.size(); i++) {
-          String non_path_file_name = file_name_list.at(i);
-          non_path_file_name = non_path_file_name.after('/', -1);
-          if (taMediaWiki::FileExists(repo_name, non_path_file_name)) {
+          String file_name_only = file_name_list.at(i);
+          file_name_only = file_name_only.after('/', -1);
+          if (taMediaWiki::FileExists(repo_name, file_name_only)) {
             String info = "File " + file_name_list.at(i) + " already on wiki. Upload revision?";
             int choice = taMisc::Choice(info, "Upload Revision", "Cancel");
             if (choice == 0) {
