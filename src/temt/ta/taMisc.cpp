@@ -303,6 +303,8 @@ NamedURL        taMisc::wiki4_url;
 NamedURL        taMisc::wiki5_url;
 NamedURL        taMisc::wiki6_url;
 
+String  taMisc::pub_proj_page = "PublishedProjects";
+
 NameVar_PArray  taMisc::wikis;
 
 #ifndef NO_TA_BASE

@@ -1576,8 +1576,13 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
 {
-  String repositoryName = repo.toString();
-  // TODO.
+  String wikiName = repo.toString();
+  String wikiUrl = taMisc::GetWikiURL(wikiName);
+  if (wikiUrl.empty()) {
+    return;
+  }
+  String url = wikiUrl + taMisc::pub_proj_page;
+  httpUrlHandler(QUrl(url));
 }
 
 void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
@@ -2148,7 +2153,7 @@ void iMainWindowViewer::taUrlHandler(const QUrl& url) {
 
 void iMainWindowViewer::httpUrlHandler(const QUrl& url) {
   String urlString = url.toString();
-  if (urlString.contains("bugzilla")) {
+  if ((urlString.contains("bugzilla")) || urlString.contains("PublishedProject")) {
     QDesktopServices::openUrl(url);    // user's default browser
   }
   else {

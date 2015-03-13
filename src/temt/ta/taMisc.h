@@ -349,6 +349,8 @@ public:
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File wiki name for web application help such that appending the name of the object in question will produce help for that specific object or topic
   static String         web_help_general;
   // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url for general web application help, not associated with a specific object
+  static String         pub_proj_page;
+  // #NO_SAVE #READ_ONLY #SHOW #EXPERT #CAT_File url to search for and download published projects
 
   static NamedURL       wiki1_url;
   // #SAVE #CAT_File short name and url for wiki project repository, for sync'ing local project and other information (just base address without index.php or anything like that) -- full url is looked up by name to refer to specific sites
