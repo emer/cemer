@@ -671,8 +671,9 @@ bool taProject::UpdateProjectOnWeb(const String &repo_name) {
   iDialogPublishDocs dialog(repo_name, this->name, false); // false = update
   dialog.SetName(QString(this->name.chars()));
   dialog.SetVersion(QString(this->version.GetString().chars()));
+  QString version;
   if (dialog.exec()) {
-    QString version = dialog.GetVersion();
+    version = dialog.GetVersion();
   }
   
   bool rval = taMediaWiki::UploadFile(repo_name, proj_filename, false); // true - update new revision
@@ -680,7 +681,7 @@ bool taProject::UpdateProjectOnWeb(const String &repo_name) {
     taMisc::Error("Upload failure");
     return false;
   }
-  rval = taMediaWiki::AppendVersionInfo(repo_name, proj_filename_only, this->version.GetString(), emer_version);
+  rval = taMediaWiki::AppendVersionInfo(repo_name, proj_filename_only, version, emer_version);
   if (rval == false) {
     taMisc::Error("AppendVersionInfo failure");
     return false;

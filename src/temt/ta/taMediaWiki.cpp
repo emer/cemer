@@ -276,8 +276,9 @@ bool taMediaWiki::UploadFileAndLink(const String& wiki_name, const String& proj_
   proceed = UploadFile(wiki_name, local_file_name, new_revision, wiki_file_name);
 
   if (proceed) {
-    String non_path_filename = local_file_name.after('/', -1);
-    proceed = LinkFile(non_path_filename, wiki_name, proj_name);  // link the file to the project page  }
+    String filename_only = local_file_name.after('/', -1);
+    proceed = LinkFile(filename_only, wiki_name, proj_name);  // link the file to the project page
+    AppendFileType(wiki_name, filename_only, "other");  // "other" means not a .proj file - we could add .wts, .dat etc
   }
   return proceed;
 }
@@ -1153,6 +1154,12 @@ bool taMediaWiki::AppendVersionInfo(const String& wiki_name, const String& proj_
   return EditPage(wiki_name, prefixed_filename, content);
 }
 
+bool taMediaWiki::AppendFileType(const String& wiki_name, const String& proj_filename, const String& file_type) {
+  String content = "[[EmerFileType::" + file_type + "]]";
+  String prefixed_filename = "File:" + proj_filename;
+  return EditPage(wiki_name, prefixed_filename, content);
+}
+
 #if 0
 bool taMediaWiki::AddCategories(const String& wiki_name, const String& page_name, const String& page_category)
 {
@@ -1370,6 +1377,7 @@ bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
     }
     if (loaded_and_linked) {
       AppendVersionInfo(pub_info->wiki_name, filename_only, pub_info->proj_version, emer_version);
+      AppendFileType(pub_info->wiki_name, filename_only, "project");
     }
     else {
       taMisc::Error("Project page created BUT upload of project file or linking of uploaded project file has failed ", pub_info->wiki_name, "wiki");

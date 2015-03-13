@@ -120,9 +120,13 @@ public:
   // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success - if append is false content is prepended
 
   static bool   AppendVersionInfo(const String& wiki_name, const String& page_name,
-                         const String& proj_version, const String& emer_version);
-  // #CAT_Page Append given page on the wiki with given content if it currently exists -- returns true on success - if append is false content is prepended
-
+                                  const String& proj_version, const String& emer_version);
+  // #CAT_Page Append page with both project version and emergent program version
+  
+  static bool   AppendFileType(const String& wiki_name, const String& page_name,
+                                  const String& file_type);
+  // #CAT_Page Append page content with EmerFileType - "project" or "other"
+  
 #if 0
   static bool   AddCategories(const String& wiki_name, const String& page_name,
                               const String& page_category);
