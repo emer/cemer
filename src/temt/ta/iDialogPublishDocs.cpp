@@ -138,8 +138,9 @@ iDialogPublishDocs::iDialogPublishDocs(const char *repo_name, const char *proj_n
   QDialogButtonBox *buttonBox = new QDialogButtonBox(
     QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
   vbox->addWidget(buttonBox);
-  this->adjustSize();
-  
+  if (!new_pub) {
+    this->adjustSize();
+  }
   connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
   connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 }

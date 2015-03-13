@@ -588,8 +588,18 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
   if (logged_in) {
     iDialogPublishDocs dialog(repo_name, this->name, true);
     dialog.SetName(QString(this->name.chars()));
-    dialog.SetAuthor(QString(this->author.chars()));
-    dialog.SetEmail(QString(this->email.chars()));
+    if (!this->author.empty()) {
+      dialog.SetAuthor(QString(this->author.chars()));
+    }
+    else {
+      dialog.SetAuthor(QString("Set default in preferences."));
+    }
+    if (!this->email.empty()) {
+      dialog.SetEmail(QString(this->email.chars()));
+    }
+    else {
+      dialog.SetEmail(QString("Set default in preferences."));
+    }
     dialog.SetDesc(QString("A brief description of the project. You will be able to edit later on the wiki."));
     dialog.SetTags(QString("comma separated, please"));
     dialog.SetVersion(QString(this->version.GetString().chars()));
@@ -597,7 +607,13 @@ bool taProject::PublishProjectOnWeb(const String &repo_name)
       // User clicked OK.
       page_name = String(name); // needed for call to create the taDoc
       QString author = dialog.GetAuthor();
+      if (author == "Set default in preferences.") {
+        author = "";
+      }
       QString email = dialog.GetEmail();
+      if (email == "Set default in preferences.") {
+        email = "";
+      }
       QString desc = dialog.GetDesc();
       QString keywords = dialog.GetTags();
       if (keywords == "comma separated, please") {
