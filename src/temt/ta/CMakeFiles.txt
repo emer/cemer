@@ -991,6 +991,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iHelpBrowser.h
   iTypeInfoBrowser.h
   iSvnFileListModel.h
+  iFileSystemModel.h
   iSvnRevLogModel.h
 
   iT3PanelViewer.h
@@ -2115,6 +2116,7 @@ set(ta_SRCS_NOMAKETA
   iHelpBrowser.cpp
   iTypeInfoBrowser.cpp
   iSvnFileListModel.cpp
+  iFileSystemModel.cpp
   iSvnRevLogModel.cpp
   iSubversionBrowser.cpp
 

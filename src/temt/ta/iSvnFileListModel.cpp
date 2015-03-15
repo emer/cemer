@@ -508,11 +508,16 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
       break;
     }
     case 1: {
-      if(idx < 0 || isdir)
-        return QString("--");
-      QString szstr = static_cast<const char *>
-        (taMisc::GetSizeString(sz, 3, true)); // 3 prec, power of 2
-      return szstr;
+      if(role == Qt::EditRole) {
+        return sz;
+      }
+      else {
+        if(idx < 0 || isdir)
+          return QString("--");
+        QString szstr = static_cast<const char *>
+          (taMisc::GetSizeString(sz, 3, true)); // 3 prec, power of 2
+        return szstr;
+      }
       break;
     }
     case 2: {
@@ -522,9 +527,14 @@ QVariant iSvnFileListModel::data(const QModelIndex& index, int role) const {
     }
     case 3: {
       if(idx < 0) return QVariant();
-      QDateTime dm = QDateTime::fromTime_t(file_times[idx]);
-      QString dmstr = dm.toString("yyyy MM/dd hh:mm:ss");
-      return dmstr;
+      if(role == Qt::EditRole) {
+        return file_times[idx];
+      }
+      else {
+        QDateTime dm = QDateTime::fromTime_t(file_times[idx]);
+        QString dmstr = dm.toString("yyyy MM/dd hh:mm:ss");
+        return dmstr;
+      }
       break;
     }
     case 4: {

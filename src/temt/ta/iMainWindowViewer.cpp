@@ -115,7 +115,7 @@ iMainWindowViewer::~iMainWindowViewer() {
   menu = NULL;
 }
 
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
+#if defined(TA_OS_MAC) && (QT_VERSION == 0x050200)
 // defined in mac_objc_code.mm objective C file:
 // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
 extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);
@@ -347,10 +347,6 @@ void iMainWindowViewer::showEvent(QShowEvent* e) {
   // per this bug with 2.8.x on mac, we need to regain focus:  https://bugreports.qt-project.org/browse/QTBUG-22911
   // setFocus();
 #endif
-// doesn't work here: https://bugreports.qt-project.org/browse/QTBUG-38815
-// #if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
-//   TurnOffTouchEventsForWindow(windowHandle());
-// #endif
 }
 
 void iMainWindowViewer::hideEvent(QHideEvent* e) {
@@ -2789,7 +2785,7 @@ void iMainWindowViewer::this_SaveView(iAction* me) {
 }
 
 void iMainWindowViewer::UpdateUi() {
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
+#if defined(TA_OS_MAC) && (QT_VERSION == 0x050200)
   // this is the only place it seems to work..
   TurnOffTouchEventsForWindow(windowHandle());
 #endif

@@ -2,11 +2,13 @@
 
 #include <QWidget>
 
-#if (QT_VERSION >= 0x050200)
+#if (QT_VERSION == 0x050200)
 
 // this is from  https://bugreports.qt-project.org/browse/QTBUG-28126
 // doing the reverse of what they say -- turning the accept OFF
 // here's my bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
+
+// this is now fixed in 5.4.0 so we don't need it anymore!!
 
 #include <Cocoa/Cocoa.h>
 #include <QGuiApplication>

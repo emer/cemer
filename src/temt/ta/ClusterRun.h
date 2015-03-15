@@ -137,6 +137,8 @@ public:
   // #MENU_BUTTON #MENU_ON_OtherFiles #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  ListOtherProjFiles(const String& proj_name);
   // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
+  virtual void  ListOtherClusterFiles(const String& cluster_name);
+  // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other cluster name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  GetOtherFiles();
   // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
   virtual void  OpenSvnBrowser();

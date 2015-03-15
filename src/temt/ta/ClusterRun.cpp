@@ -817,6 +817,23 @@ void ClusterRun::ListOtherProjFiles(const String& proj_name) {
   ListOtherSvn();               // use defaults
 }
 
+void ClusterRun::ListOtherClusterFiles(const String& cluster_name) {
+  if(!initClusterManager())
+    return;
+
+  String url = m_cm->GetFullUrl();
+  if(TestError(url.empty(), "ListOtherClusterFiles", "our url is empty -- do probe or update first"))
+    return;
+  String clust_nm = m_cm->getClusterName();
+  String us_user = m_cm->getUsername();
+  String wc_path = m_cm->GetWcResultsPath();
+
+  wc_path.gsub(clust_nm, cluster_name);
+
+  InitOtherSvn(wc_path, url);
+  ListOtherSvn();               // use defaults
+}
+
 void ClusterRun::GetOtherFiles() {
   if(!initClusterManager())
     return;

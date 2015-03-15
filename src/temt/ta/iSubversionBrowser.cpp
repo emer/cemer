@@ -17,7 +17,7 @@
 
 #include <iSvnFileListModel>
 #include <iSvnRevLogModel>
-#include <QFileSystemModel>
+#include <iFileSystemModel>
 #include <iLineEdit>
 #include <iTableView>
 #include <QVBoxLayout>
@@ -66,7 +66,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 
   svn_log_model = new iSvnRevLogModel(this);
   svn_file_model = new iSvnFileListModel(this);
-  svn_wc_model = new QFileSystemModel(this);
+  svn_wc_model = new iFileSystemModel(this);
 
   QWidget* body = new QWidget;
   setCentralWidget(body);
@@ -267,6 +267,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 
   file_table = new iTableView(fbrow);
   svn_file_sort = new QSortFilterProxyModel(this);
+  svn_file_sort->setSortRole(Qt::EditRole);
   svn_file_sort->setSourceModel(svn_file_model);
 
   file_table->setModel(svn_file_sort);
@@ -334,6 +335,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 
   wc_table = new iTableView(wbrow);
   svn_wc_sort = new QSortFilterProxyModel(this);
+  svn_wc_sort->setSortRole(Qt::EditRole);
   svn_wc_sort->setSourceModel(svn_wc_model);
 
   wc_table->setModel(svn_wc_sort);

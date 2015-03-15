@@ -32,7 +32,7 @@
 #include <QStatusBar>
 #include <QDesktopServices>
 
-#if defined(TA_OS_MAC) && (QT_VERSION >= 0x050200)
+#if defined(TA_OS_MAC) && (QT_VERSION == 0x050200)
 // defined in mac_objc_code.mm objective C file:
 // per bug ticket: https://bugreports.qt-project.org/browse/QTBUG-38815
 extern void TurnOffTouchEventsForWindow(QWindow* qtWindow);

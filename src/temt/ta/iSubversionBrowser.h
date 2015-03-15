@@ -29,7 +29,7 @@
 class iSvnFileListModel; //
 class iSvnRevLogModel; //
 class QSortFilterProxyModel; //
-class QFileSystemModel; //
+class iFileSystemModel; //
 class iLineEdit; //
 class iTableView; //
 class iSpinBox; //
@@ -130,7 +130,7 @@ protected slots:
 protected:
   iSvnRevLogModel*       svn_log_model;
   iSvnFileListModel*     svn_file_model;
-  QFileSystemModel*      svn_wc_model;
+  iFileSystemModel*      svn_wc_model;
   QSortFilterProxyModel* svn_log_sort;
   QSortFilterProxyModel* svn_file_sort;
   QSortFilterProxyModel* svn_wc_sort;
