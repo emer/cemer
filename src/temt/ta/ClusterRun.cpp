@@ -827,8 +827,11 @@ void ClusterRun::ListOtherClusterFiles(const String& cluster_name) {
   String clust_nm = m_cm->getClusterName();
   String us_user = m_cm->getUsername();
   String wc_path = m_cm->GetWcResultsPath();
+  String proj_path = wc_path.after(us_user,-1);
 
+  url.gsub(clust_nm, cluster_name);
   wc_path.gsub(clust_nm, cluster_name);
+  url += proj_path;
 
   InitOtherSvn(wc_path, url);
   ListOtherSvn();               // use defaults

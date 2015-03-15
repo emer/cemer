@@ -67,6 +67,7 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
   svn_log_model = new iSvnRevLogModel(this);
   svn_file_model = new iSvnFileListModel(this);
   svn_wc_model = new iFileSystemModel(this);
+  svn_wc_model->setReadOnly(false);
 
   QWidget* body = new QWidget;
   setCentralWidget(body);
@@ -340,6 +341,9 @@ iSubversionBrowser::iSubversionBrowser(QWidget* parent)
 
   wc_table->setModel(svn_wc_sort);
   lay_wb->addWidget(wc_table);
+  wc_table->setDragEnabled(true);
+  wc_table->setAcceptDrops(true);
+  wc_table->setDropIndicatorShown(true);
 
   header = wc_table->horizontalHeader();
   // Don't highlight the header cells when a selection is made (looks dumb).
