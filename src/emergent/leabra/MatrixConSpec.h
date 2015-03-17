@@ -31,7 +31,7 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for learning in the matrix 
 INHERITED(SpecMemberBase)
 public:
-  float         da_learn_thr;   // Threshold on dopamine magnitude required to drive learning of matrix weights, and consequent clearing of the accumulated trace of gating activations -- set this high enough that it filters out small random DA fluctuations, but not the significant learning events
+  float         da_reset_tr;   // amount of dopamine to completely reset the trace
   float         otr_lrate;       // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations -- should generally be less in proportion to average number gating / total stripes
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
@@ -80,19 +80,19 @@ public:
   inline void C_Compute_dWt_Matrix_Tr
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
-    if(fabs(mtx_da) >= matrix.da_learn_thr) {
-      dwt += cur_lrate * mtx_da * tr;
-      tr = 0.0f;                      // and reset trace
+
+    dwt += cur_lrate * mtx_da * tr;
+    float reset_factor = (matrix.da_reset_tr - fabs(mtx_da)) / matrix.da_reset_tr;
+    if(reset_factor < 0.0f) reset_factor = 0.0f;
+    tr *= reset_factor;
+
+    if(ru_thal > 0.0f) {              // gated
+      ntr = ru_thal * ru_act * su_act;
     }
     else {
-      if(ru_thal > 0.0f) {              // gated
-        ntr = ru_thal * ru_act * su_act;
-      }
-      else {
-        ntr = otr_lr * ru_act * su_act; // other alternative non-gated
-      }
-      tr += ntr;                       // just keep accumulating..
+      ntr = otr_lr * ru_act * su_act; // other alternative non-gated
     }
+    tr += ntr;                       // just keep accumulating..
   }
   // #IGNORE
 
