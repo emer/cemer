@@ -130,7 +130,9 @@ iViewPanelOfGridTable* GridTableView::lvp() {
 
 void GridTableView::Initialize() {
   view_rows = 10;
-  col_n = 5;
+  view_cols = 5;
+  page_cols = view_cols; // default to view size
+  page_rows = view_rows; // default to view size
 
   width = 1.0f;
   grid_on = true;
@@ -191,7 +193,8 @@ void GridTableView::CutLinks() {
 }
 
 void GridTableView::Copy_(const GridTableView& cp) {
-  col_n = cp.col_n;
+  view_cols = cp.view_cols;
+  page_cols = cp.page_cols;
   col_range = cp.col_range;
   width = cp.width;
   grid_on = cp.grid_on;
@@ -440,13 +443,13 @@ void GridTableView::MakeViewRangeValid() {
 
   int cols = vis_cols.size;
   if (col_range.min >= cols) {
-    col_range.min = MAX(0, (cols - col_n - 1));
+    col_range.min = MAX(0, (cols - view_cols - 1));
   }
   if(cols == 0) {
     col_range.max = -1;
     return;
   }
-  col_range.max = col_range.min + col_n-1;
+  col_range.max = col_range.min + view_cols-1;
   col_range.MaxLT(cols - 1); // keep it less than max
 }
 
@@ -598,7 +601,7 @@ void GridTableView::SetScrollBars() {
   SoScrollBar* csb = node_so->ColScrollBar();
 //   csb->setMinimum(0);
 //   csb->setSingleStep(1);
-  int eff_col_n = MIN(col_n, vis_cols.size);
+  int eff_col_n = MIN(view_cols, vis_cols.size);
   csb->setMaximum(vis_cols.size - eff_col_n);
   csb->setPageStep(eff_col_n);
   csb->setValue(col_range.min);
@@ -1203,7 +1206,7 @@ void GridTableView::ColBackAll() {
 }
 void GridTableView::ColBackPg() {
   int cur_col = col_range.min;
-  int goto_col = cur_col - col_n;
+  int goto_col = cur_col - page_cols;
   goto_col = MAX(0, goto_col);
   ViewCol_At(goto_col);
 }
@@ -1216,19 +1219,19 @@ void GridTableView::ColBack1() {
 void GridTableView::ColFwd1() {
   int cur_col = col_range.min;
   int goto_col = cur_col + 1;
-  goto_col = MIN(vis_cols.size-col_n, goto_col);
+  goto_col = MIN(vis_cols.size-view_cols, goto_col);
 
   ViewCol_At(goto_col);
 }
 void GridTableView::ColFwdPg() {
   int cur_col = col_range.min;
-  int goto_col = cur_col + col_n;
-  goto_col = MIN(vis_cols.size-col_n, goto_col);
+  int goto_col = cur_col + page_cols;
+  goto_col = MIN(vis_cols.size-view_cols, goto_col);
 
   ViewCol_At(goto_col);
 }
 void GridTableView::ColFwdAll() {
-  ViewCol_At(vis_cols.size - col_n);
+  ViewCol_At(vis_cols.size - view_cols);
 }
 
 // callback for view transformer dragger

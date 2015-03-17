@@ -40,7 +40,7 @@ class TA_API iViewPanelOfGridTable: public iViewPanelOfDataTable {
   Q_OBJECT
 INHERITED(iViewPanelOfDataTable)
 public:
-  QHBoxLayout*            layTopCtrls;
+  QHBoxLayout*              layTopCtrls;
   QCheckBox*                chkDisplay;
   QCheckBox*                chkManip;
   QCheckBox*                chkHeaders;
@@ -50,7 +50,7 @@ public:
   taiWidgetField*           fldFontScale;
   QPushButton*              butRefresh;
 
-  QHBoxLayout*            layVals;
+  QHBoxLayout*              layVals;
   QLabel*                   lblRows;
   taiWidgetFieldIncr*       fldRows; // number of rows to display
   QLabel*                   lblCols;
@@ -62,7 +62,7 @@ public:
   QLabel*                   lblTxtMax;
   taiWidgetField*           fldTxtMax;
 
-  QHBoxLayout*            layMatrix;
+  QHBoxLayout*              layMatrix;
   QCheckBox*                chkValText;
   QLabel*                   lblTrans;
   taiWidgetField*           fldTrans; // mat_trans parency
@@ -77,20 +77,26 @@ public:
   QLabel*                   lblBlockSpace;
   taiWidgetField*           fldBlockSpace;
 
-  QHBoxLayout*            layColorScale;
+  QHBoxLayout*              layColorScale;
   QCheckBox*                chkAutoScale;
   iColorScaleBar*           cbar;             // colorbar
   QPushButton*              butSetColor;
-
-  QHBoxLayout*            layClickVals;
+  
+  QHBoxLayout*              layClickVals;
   QCheckBox*                chkClickVals;
   QLabel*                   lblLMBVal;
   taiWidgetField*           fldLMBVal;
   QLabel*                   lblMMBVal;
   taiWidgetField*           fldMMBVal;
 
-  QHBoxLayout*            layRowNav;
-  QToolBar*                rowNavTB;
+  QHBoxLayout*              layPageVals;         // how many rows/cols to move when "<<" or ">>" clicked
+  QLabel*                   lblRowPageVal;
+  taiWidgetFieldIncr*       fldRowPageVal;
+  QLabel*                   lblColPageVal;
+  taiWidgetFieldIncr*       fldColPageVal;
+
+  QHBoxLayout*              layRowNav;
+  QToolBar*                 rowNavTB;
   QLabel*                   lblRowGoto;
   taiWidgetField*           fldRowGoto;
   QAction*                  actRowGoto;
@@ -101,8 +107,8 @@ public:
   QAction*                  actRowFwdPg;
   QAction*                  actRowFwdAll;
 
-  QHBoxLayout*            layColNav;
-  QToolBar*                colNavTB;
+  QHBoxLayout*              layColNav;
+  QToolBar*                 colNavTB;
   QLabel*                   lblColGoto;
   taiWidgetField*           fldColGoto;
   QAction*                  actColGoto;
@@ -151,6 +157,11 @@ protected slots:
   void          butSetColor_pressed();
 
   void          cbar_scaleValueChanged();
+
+private:
+static const int margin_top_bottom = 3; // valid
+static const int margin_left_right = 5; // valid
+
 };
 
 #endif // iViewPanelOfGridTable_h

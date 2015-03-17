@@ -40,41 +40,41 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   int font_spec = taiMisc::fonMedium;
 
   layTopCtrls = new QHBoxLayout; layWidg->addLayout(layTopCtrls);
-//   layTopCtrls->setSpacing(2);        // plenty of room
+  layTopCtrls->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
   // note: check boxes require spacing after them apparently, at least on mac..
 
-  chkDisplay = new QCheckBox("Disp", widg); chkDisplay->setObjectName("chkDisplay");
+  chkDisplay = new QCheckBox("Disp  ", widg); chkDisplay->setObjectName("chkDisplay");
   chkDisplay->setToolTip(taiMisc::ToolTipPreProcess("Whether to update the display when the underlying data changes"));
   connect(chkDisplay, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkDisplay);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
-  chkManip = new QCheckBox("Manip", widg); chkDisplay->setObjectName("chkManip");
+  chkManip = new QCheckBox("Manip  ", widg); chkDisplay->setObjectName("chkManip");
   chkManip->setToolTip(taiMisc::ToolTipPreProcess("Whether to enable manipulation of the view object via a transformation box that supports position, scale and rotation manipulations"));
   connect(chkManip, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkManip);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
-  chkHeaders =  new QCheckBox("Hdrs", widg ); chkHeaders->setObjectName("chkHeaders");
+  chkHeaders =  new QCheckBox("Hdrs  ", widg ); chkHeaders->setObjectName("chkHeaders");
   chkHeaders->setToolTip(taiMisc::ToolTipPreProcess("Whether to display a top row of headers indicating the name of the columns"));
   connect(chkHeaders, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkHeaders);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
-  chkRowNum =  new QCheckBox("Row\n#", widg); chkRowNum->setObjectName("chkRowNum");
+  chkRowNum =  new QCheckBox("Row #  ", widg); chkRowNum->setObjectName("chkRowNum");
   chkRowNum->setToolTip(taiMisc::ToolTipPreProcess("Whether to display the row number as the first column"));
   connect(chkRowNum, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chkRowNum);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
-  chk2dFont =  new QCheckBox("2d\nFont", widg); chk2dFont->setObjectName("chk2dFont");
+  chk2dFont =  new QCheckBox("2d Font  ", widg); chk2dFont->setObjectName("chk2dFont");
   chk2dFont->setToolTip(taiMisc::ToolTipPreProcess("Whether to use a two-dimensional font that is easier to read but does not obey 3d transformations of the display"));
   connect(chk2dFont, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layTopCtrls->addWidget(chk2dFont);
   layTopCtrls->addSpacing(taiM->hsep_c);
 
-  lblFontScale = taiM->NewLabel("Font\nScale", widg, font_spec);
+  lblFontScale = taiM->NewLabel("  Font Scale", widg, font_spec);
   lblFontScale->setToolTip(taiMisc::ToolTipPreProcess("Scaling of the 2d font to make it roughly the same size as the 3d font -- adjust this to change the size of the 2d text (has no effect if 2d Font is not clicked"));
   layTopCtrls->addWidget(lblFontScale);
   fldFontScale = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
@@ -90,6 +90,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
 
   layVals = new QHBoxLayout; layWidg->addLayout(layVals);
   layVals->setSpacing(2);       // plenty of room
+  layVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
   lblRows = taiM->NewLabel("Rows", widg, font_spec);
   lblRows->setToolTip(taiMisc::ToolTipPreProcess("Maximum number of rows to display (row height is scaled to fit)."));
@@ -102,7 +103,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layVals->addWidget(lblCols);
   fldCols = dl.Add(new taiWidgetFieldIncr(&TA_int, this, NULL, widg));
   layVals->addWidget(fldCols->GetRep());
-
+  
   lblWidth = taiM->NewLabel("Width", widg, font_spec);
   lblWidth->setToolTip(taiMisc::ToolTipPreProcess("Width of grid log display, in normalized units (default is 1.0 = same as height)."));
   layVals->addWidget(lblWidth);
@@ -127,14 +128,15 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layVals->addStretch();
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
   layMatrix->setSpacing(2);     // plenty of room
-
-  chkValText =  new QCheckBox("Val\nTxt", widg); chkValText->setObjectName( "chkValText");
+  layMatrix->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
+  
+  chkValText =  new QCheckBox("Show\nValues  ", widg); chkValText->setObjectName( "chkValText");
   chkValText->setToolTip(taiMisc::ToolTipPreProcess("Whether to display text of the matrix block values."));
   connect(chkValText, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layMatrix->addWidget(chkValText);
   layMatrix->addSpacing(taiM->hsep_c);
 
-  lblTrans = taiM->NewLabel("Trans-\nparency", widg, font_spec);
+  lblTrans = taiM->NewLabel("Transparency", widg, font_spec);
   lblTrans->setToolTip(taiMisc::ToolTipPreProcess("Maximum transparency of the grid blocks (0 = fully opaque, 1 = fully transparent)\nBlocks with smaller magnitude values are more transparent."));
   layMatrix->addWidget(lblTrans);
   fldTrans = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
@@ -187,8 +189,9 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ////////////////////////////////////////////////////////////////////////////
   //    Colorscale etc
   layColorScale = new QHBoxLayout; layWidg->addLayout(layColorScale);
+  layColorScale->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
-  chkAutoScale = new QCheckBox("auto\nscale", widg);
+  chkAutoScale = new QCheckBox("Auto\nScale  ", widg);
   connect(chkAutoScale, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layColorScale->addWidget(chkAutoScale);
   layColorScale->addSpacing(taiM->hsep_c);
@@ -207,8 +210,9 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ////////////////////////////////////////////////////////////////////////////
   layClickVals = new QHBoxLayout; layWidg->addLayout(layClickVals);
   layClickVals->setSpacing(2);  // plenty of room
+  layClickVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
-  chkClickVals =  new QCheckBox("Click\nVals", widg); chkClickVals->setObjectName( "chkClickVals");
+  chkClickVals =  new QCheckBox("Click\nValues  ", widg); chkClickVals->setObjectName( "chkClickVals");
   chkClickVals->setToolTip(taiMisc::ToolTipPreProcess("If on, then clicking on cell values in the grid view display in interact mode (red arrow) will change the values."));
   connect(chkClickVals, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
   layClickVals->addWidget(chkClickVals);
@@ -221,7 +225,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->addWidget(fldLMBVal->GetRep());
   ((iLineEdit*)fldLMBVal->GetRep())->setCharWidth(8);
 
-  lblMMBVal = taiM->NewLabel("Middle Click\nValue", widg, font_spec);
+  lblMMBVal = taiM->NewLabel("  Middle Click\n  Value", widg, font_spec);
   lblMMBVal->setToolTip(taiMisc::ToolTipPreProcess("Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on)."));
   layClickVals->addWidget(lblMMBVal);
   fldMMBVal = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
@@ -231,13 +235,35 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
+  // Row and column page size controls
+  layPageVals = new QHBoxLayout; layWidg->addLayout(layPageVals);
+  layClickVals->setSpacing(2);  // plenty of room
+  layPageVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
+
+  lblRowPageVal = taiM->NewLabel("Row Paging \nValue ", widg, font_spec);
+  lblRowPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of rows to move when >> or << is clicked"));
+  layPageVals->addWidget(lblRowPageVal);
+  fldRowPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
+  layPageVals->addWidget(fldRowPageVal->GetRep());
+  ((iLineEdit*)fldRowPageVal->GetRep())->setCharWidth(8);
+
+  lblColPageVal = taiM->NewLabel("  Column Paging \n  Value ", widg, font_spec);
+  lblColPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of columns to move when >> or << is clicked"));
+  layPageVals->addWidget(lblColPageVal);
+  fldColPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
+  layPageVals->addWidget(fldColPageVal->GetRep());
+  ((iLineEdit*)fldColPageVal->GetRep())->setCharWidth(8);
+
+  layPageVals->addStretch();
+  
+  ////////////////////////////////////////////////////////////////////////////
   layRowNav = new QHBoxLayout; layWidg->addLayout(layRowNav);
-  //  layRowNav->setSpacing(2); // plenty of room
+  layRowNav->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
   rowNavTB = new QToolBar(widg);
   layRowNav->addWidget(rowNavTB);
 
-  lblRowGoto = taiM->NewLabel("Row: 00000 Goto", widg, font_spec);
+  lblRowGoto = taiM->NewLabel("Row: 00000   Goto", widg, font_spec);
   lblRowGoto->setToolTip(taiMisc::ToolTipPreProcess("Row number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible row in grid view"));
   rowNavTB->addWidget(lblRowGoto);
   fldRowGoto = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
@@ -279,12 +305,12 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
 
   ////////////////////////////////////////////////////////////////////////////
   layColNav = new QHBoxLayout; layWidg->addLayout(layColNav);
-  //  layColNav->setSpacing(2); // plenty of room
+  layColNav->setContentsMargins(margin_left_right, -1, margin_left_right, margin_top_bottom);
 
   colNavTB = new QToolBar(widg);
   layColNav->addWidget(colNavTB);
 
-  lblColGoto = taiM->NewLabel("Col: 000 Goto", widg, font_spec);
+  lblColGoto = taiM->NewLabel("Col: 000   Goto", widg, font_spec);
   lblColGoto->setToolTip(taiMisc::ToolTipPreProcess("Col number to go to when the Go button is pressed -- rest of buttons provide one-click movment of the visible col in grid view"));
   colNavTB->addWidget(lblColGoto);
   fldColGoto = dl.Add(new taiWidgetField(&TA_int, this, NULL, widg));
@@ -352,7 +378,9 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->two_d_font = chk2dFont->isChecked();
   glv->two_d_font_scale = (float)fldFontScale->GetValue();
   glv->view_rows = (int)fldRows->GetValue();
-  glv->col_n = (int)fldCols->GetValue();
+  glv->page_rows = (int)fldRowPageVal->GetValue();
+  glv->view_cols = (int)fldCols->GetValue();
+  glv->page_cols = (int)fldColPageVal->GetValue();
   glv->setWidth((float)fldWidth->GetValue());
   glv->text_size_range.min = fldTxtMin->GetValue();
   glv->text_size_range.max = fldTxtMax->GetValue();
@@ -391,7 +419,9 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
   fldFontScale->GetImage((String)glv->two_d_font_scale);
 
   fldRows->GetImage((String)glv->view_rows);
-  fldCols->GetImage((String)glv->col_n);
+  fldRowPageVal->GetImage((String)glv->page_rows);
+  fldCols->GetImage((String)glv->view_cols);
+  fldColPageVal->GetImage((String)glv->page_cols);
   fldWidth->GetImage((String)glv->width);
   fldTxtMin->GetImage((String)glv->text_size_range.min);
   fldTxtMax->GetImage((String)glv->text_size_range.max);
@@ -410,6 +440,8 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
   chkClickVals->setChecked(glv->click_vals);
   fldLMBVal->GetImage((String)glv->lmb_val);
   fldMMBVal->GetImage((String)glv->mmb_val);
+  
+  fldRowPageVal->GetImage((String)glv->page_rows);
 
   String rwtxt = "Row: " + taMisc::LeadingZeros(glv->view_range.min, 5) + " Goto";
   lblRowGoto->setText(rwtxt);

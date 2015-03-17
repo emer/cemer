@@ -726,6 +726,7 @@ void iMainWindowViewer::Constr_ViewMenu()
   viewMenu->AddAction(viewPanelsAndT3Action);
   viewMenu->AddAction(viewAllFramesAction);
   viewMenu->AddAction(viewResetViewAction);
+  viewMenu->insertSeparator();
 
   viewSetSaveViewAction = viewMenu->AddItem("Save View State", taiWidgetMenu::toggle,
       iAction::men_act, this, SLOT(this_SaveView(iAction*)));

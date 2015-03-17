@@ -57,6 +57,7 @@ void DataTableView::CutLinks() {
 
 void DataTableView::Copy_(const DataTableView& cp) {
   view_rows = cp.view_rows;
+  page_rows = cp.page_rows;
   view_range = cp.view_range;
   display_on = cp.display_on;
   manip_ctrl_on = cp.manip_ctrl_on;
@@ -360,7 +361,7 @@ void DataTableView::RowBackAll() {
 }
 void DataTableView::RowBackPg() {
   int cur_row = view_range.min;
-  int goto_row = cur_row - view_rows;
+  int goto_row = cur_row - page_rows;
   goto_row = MAX(0, goto_row);
   ViewRow_At(goto_row);
 }
@@ -379,7 +380,7 @@ void DataTableView::RowFwd1() {
 }
 void DataTableView::RowFwdPg() {
   int cur_row = view_range.min;
-  int goto_row = cur_row + view_rows;
+  int goto_row = cur_row + page_rows;
   goto_row = MIN(rows()-view_rows, goto_row);
 
   ViewRow_At(goto_row);
