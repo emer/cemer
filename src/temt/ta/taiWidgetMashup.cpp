@@ -79,6 +79,10 @@ void taiWidgetMashup::GetValue() {
   GetValue_impl(NULL);
 }
 
+void taiWidgetMashup::ResetBases() {
+  memb_bases.Reset();
+}
+
 void taiWidgetMashup::SetBases(taBase* b1, taBase* b2, taBase* b3,
                                taBase* b4, taBase* b5, taBase* b6) {
   memb_bases.Reset();

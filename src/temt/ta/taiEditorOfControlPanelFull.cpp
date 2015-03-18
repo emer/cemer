@@ -135,6 +135,10 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
           mash_widg->AddChildMember(ps_md);
+          MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
+          if (note_md) {
+            mash_widg->AddChildMember(note_md);
+          }
           mash_widg->EndLayout();
           
           memb_set->widget_el.Add(mash_widg);
@@ -158,7 +162,11 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
           mash_widg->AddChildMember(psv_md);
-          mash_widg->EndLayout();
+          MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
+          if (note_md) {
+            mash_widg->AddChildMember(note_md);
+          }
+         mash_widg->EndLayout();
           
           memb_set->widget_el.Add(mash_widg);
           QWidget* data = mash_widg->GetRep();
@@ -174,8 +182,8 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
         }
       }
       
-      // standard control panel
-      if(!added_search && !added_param_set) {
+      // standard control panel or on cluster panel but not searchable (i.e. not single)
+      if (!added_search && !added_param_set){
         MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
         if (note_md) {
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
@@ -183,16 +191,18 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           mash_widg->add_labels = false;
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
-          mash_widg->AddChildMember(note_md);
+          if (note_md) {
+            mash_widg->AddChildMember(note_md);
+          }
           mash_widg->EndLayout();
-
-//          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
-        memb_set->widget_el.Add(mash_widg);
-        QWidget* data = mash_widg->GetRep();
-        help_text = item->GetDesc();
-        String new_lbl = item->caption();
-        AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
-        ++dat_cnt;
+          
+          //          taiWidget* mb_dat = md->im->GetWidgetRep(this, NULL, body);
+          memb_set->widget_el.Add(mash_widg);
+          QWidget* data = mash_widg->GetRep();
+          help_text = item->GetDesc();
+          String new_lbl = item->caption();
+          AddNameWidget(-1, new_lbl, help_text, data, mash_widg, md);
+          ++dat_cnt;
         }
       }
     }
@@ -249,7 +259,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
   }
 
   //  cur_row = 0;
-  int itm_idx = 0;
+  int itm_idx = 0;;
   for (int j = 0; j < membs.size; ++j) {
     taiMemberWidgets* ms = membs.FastEl(j);
     for (int i = 0; i < ms->widget_el.size; ++i) {
@@ -262,7 +272,11 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
       else {
         taiWidgetMashup* mash_widg = dynamic_cast<taiWidgetMashup*>(mb_dat);
         if(mash_widg) {
-          mash_widg->SetBases(item->base, item);
+          mash_widg->SetBases(NULL);
+          mash_widg->AddBase(item->base);
+          for (int el=1; el<mash_widg->memb_el.size; el++) {
+            mash_widg->AddBase(item);
+          }
           mash_widg->GetImage();
         }
         else {
@@ -270,7 +284,7 @@ void taiEditorOfControlPanelFull::GetImage_Membs_def() {
         }
       }
       ++itm_idx;
-//      cur_row++;
+//      cur_row++
     }
   }
 }
