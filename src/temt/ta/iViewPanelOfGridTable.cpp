@@ -246,12 +246,20 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->setSpacing(2);  // plenty of room
   layPageVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
+  chkPageVals =  new QCheckBox("Custom\nPaging   ", widg); chkClickVals->setObjectName( "chkPageVals");
+  chkPageVals->setToolTip(taiMisc::ToolTipPreProcess("Turn on to set paging size to something other than the default. The default paging size is the number of visible rows and columns"));
+  connect(chkPageVals, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  layPageVals->addWidget(chkPageVals);
+  layPageVals->addSpacing(taiM->hsep_c);
+
   lblRowPageVal = taiM->NewLabel("Row Paging  ", widg, font_spec);
   lblRowPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of rows to move when >> or << is clicked"));
   layPageVals->addWidget(lblRowPageVal);
   fldRowPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
   layPageVals->addWidget(fldRowPageVal->GetRep());
   ((iLineEdit*)fldRowPageVal->GetRep())->setCharWidth(8);
+  
+  fldRowPageVal->GetRep()->setEnabled(false);
 
   lblColPageVal = taiM->NewLabel("  Column Paging ", widg, font_spec);
   lblColPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of columns to move when >> or << is clicked"));
@@ -384,9 +392,7 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->two_d_font = chk2dFont->isChecked();
   glv->two_d_font_scale = (float)fldFontScale->GetValue();
   glv->view_rows = (int)fldRows->GetValue();
-  glv->page_rows = (int)fldRowPageVal->GetValue();
   glv->view_cols = (int)fldCols->GetValue();
-  glv->page_cols = (int)fldColPageVal->GetValue();
   glv->setWidth((float)fldWidth->GetValue());
   glv->text_size_range.min = fldTxtMin->GetValue();
   glv->text_size_range.max = fldTxtMax->GetValue();
@@ -401,7 +407,19 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->click_vals = chkClickVals->isChecked();
   glv->lmb_val = (float)fldLMBVal->GetValue();
   glv->mmb_val = (float)fldMMBVal->GetValue();
-
+  glv->use_custom_paging = chkPageVals->isChecked();
+  
+  fldRowPageVal->GetRep()->setEnabled(glv->use_custom_paging);
+  fldColPageVal->GetRep()->setEnabled(glv->use_custom_paging);
+  if (glv->use_custom_paging) {
+    glv->page_rows = (int)fldRowPageVal->GetValue();
+    glv->page_cols = (int)fldColPageVal->GetValue();
+  }
+  else {
+    glv->page_rows = glv->view_rows;
+    glv->page_cols = glv->view_cols;
+  }
+  
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
 }
 
@@ -557,4 +575,3 @@ void iViewPanelOfGridTable::cbar_scaleValueChanged() {
   Changed();
 //  glv->setScaleData(false, cbar->min(), cbar->max());
 }
-

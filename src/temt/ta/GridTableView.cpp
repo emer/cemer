@@ -133,6 +133,7 @@ void GridTableView::Initialize() {
   view_cols = 5;
   page_cols = view_cols; // default to view size
   page_rows = view_rows; // default to view size
+  use_custom_paging = false;
 
   width = 1.0f;
   grid_on = true;

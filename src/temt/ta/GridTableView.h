@@ -72,6 +72,7 @@ public:
   bool          click_vals;     // If on, then clicking on cell values in the grid view display in interact mode (red arrow) will change the values
   float         lmb_val;        // left mouse button value: Value that will be set in the cell if you click with the left mouse button (if Click Vals is on)
   float         mmb_val;        // middle mouse button value: Value that will be set in the cell if you click with the middle mouse button (if Click Vals is on)
+  bool          use_custom_paging; // if false the row and col page size equal view_rows and view_cols; if true, page_rows and page_cols
 
   String        last_sel_col_nm; // #READ_ONLY #SHOW #NO_SAVE column name of the last selected point in graph to view values (if empty, then none)
   bool          last_sel_got;    // #READ_ONLY #SHOW #NO_SAVE got a last sel value

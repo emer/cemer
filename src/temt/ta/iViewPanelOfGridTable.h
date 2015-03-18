@@ -91,6 +91,7 @@ public:
   taiWidgetField*           fldMMBVal;
 
   QHBoxLayout*              layPageVals;         // how many rows/cols to move when "<<" or ">>" clicked
+  QCheckBox*                chkPageVals;
   QLabel*                   lblRowPageVal;
   taiWidgetFieldIncr*       fldRowPageVal;
   QLabel*                   lblColPageVal;
@@ -155,14 +156,12 @@ protected slots:
   virtual void          ColFwdPg();
   virtual void          ColFwdAll();
 
-  void          butSetColor_pressed();
-
-  void          cbar_scaleValueChanged();
+  void                  butSetColor_pressed();
+  void                  cbar_scaleValueChanged();
 
 private:
-static const int margin_top_bottom = 3; // valid
-static const int margin_left_right = 5; // valid
-
+ static const int margin_top_bottom = 3; // valid
+ static const int margin_left_right = 5; // valid
 };
 
 #endif // iViewPanelOfGridTable_h
