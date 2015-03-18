@@ -124,8 +124,8 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   fldTxtMax = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
   layVals->addWidget(fldTxtMax->GetRep());
   ((iLineEdit*)fldTxtMax->GetRep())->setCharWidth(8);
-
   layVals->addStretch();
+  
   layMatrix = new QHBoxLayout; layWidg->addLayout(layMatrix);
   layMatrix->setSpacing(2);     // plenty of room
   layMatrix->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
@@ -144,7 +144,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ((iLineEdit*)fldTrans->GetRep())->setCharWidth(8);
   layMatrix->addSpacing(taiM->hsep_c);
 
-  lblGridMarg = taiM->NewLabel("Grid\nMarg", widg, font_spec);
+  lblGridMarg = taiM->NewLabel("Grid\nMargin", widg, font_spec);
   lblGridMarg->setToolTip(taiMisc::ToolTipPreProcess("Margin (spacing) between grids of blocks in normalized units -- this is the outer-most of the two forms of spacing (see Mat Spc for inner one)."));
   layMatrix->addWidget(lblGridMarg);
   fldGridMarg = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
@@ -159,32 +159,38 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layMatrix->addWidget(fldGridLine->GetRep());
   ((iLineEdit*)fldGridLine->GetRep())->setCharWidth(8);
   layMatrix->addSpacing(taiM->hsep_c);
-
-  lblBlockHeight = taiM->NewLabel("Blk\nHgt", widg, font_spec);
-  lblBlockHeight->setToolTip(taiMisc::ToolTipPreProcess("Maximum height of matrix grid blocks (in Z dimension), as a proportion of their overall X-Y size."));
-  layMatrix->addWidget(lblBlockHeight);
-  fldBlockHeight = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
-  layMatrix->addWidget(fldBlockHeight->GetRep());
-  ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
-  layMatrix->addSpacing(taiM->hsep_c);
-
-  lblBlockSpace = taiM->NewLabel("Blk\nSpc", widg, font_spec);
-  lblBlockSpace->setToolTip(taiMisc::ToolTipPreProcess("Space between matrix grid blocks, as a proportion of their overall X-Y size."));
-  layMatrix->addWidget(lblBlockSpace);
-  fldBlockSpace = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
-  layMatrix->addWidget(fldBlockSpace->GetRep());
-  ((iLineEdit*)fldBlockSpace->GetRep())->setCharWidth(8);
-  layMatrix->addSpacing(taiM->hsep_c);
-
-  lblRot = taiM->NewLabel("Mat\nRot", widg, font_spec);
-  lblRot->setToolTip(taiMisc::ToolTipPreProcess("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns."));
-  layMatrix->addWidget(lblRot);
-  fldRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
-  layMatrix->addWidget(fldRot->GetRep());
-  ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
-  // layMatrix->addSpacing(taiM->hsep_c);
-
+  
   layMatrix->addStretch();
+
+  layMatrix_II = new QHBoxLayout; layWidg->addLayout(layMatrix_II);  // split into 2 rows
+  layMatrix_II->setSpacing(2);     // plenty of room
+  layMatrix_II->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
+
+  lblBlockHeight = taiM->NewLabel("Block\nHeight", widg, font_spec);
+  lblBlockHeight->setToolTip(taiMisc::ToolTipPreProcess("Maximum height of matrix grid blocks (in Z dimension), as a proportion of their overall X-Y size."));
+  layMatrix_II->addWidget(lblBlockHeight);
+  fldBlockHeight = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix_II->addWidget(fldBlockHeight->GetRep());
+  ((iLineEdit*)fldBlockHeight->GetRep())->setCharWidth(8);
+  layMatrix_II->addSpacing(taiM->hsep_c);
+
+  lblBlockSpace = taiM->NewLabel("Block\nSpace", widg, font_spec);
+  lblBlockSpace->setToolTip(taiMisc::ToolTipPreProcess("Space between matrix grid blocks, as a proportion of their overall X-Y size."));
+  layMatrix_II->addWidget(lblBlockSpace);
+  fldBlockSpace = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix_II->addWidget(fldBlockSpace->GetRep());
+  ((iLineEdit*)fldBlockSpace->GetRep())->setCharWidth(8);
+  layMatrix_II->addSpacing(taiM->hsep_c);
+
+  lblRot = taiM->NewLabel("Matrix\nRotation", widg, font_spec);
+  lblRot->setToolTip(taiMisc::ToolTipPreProcess("Rotation (in degrees) of the matrix in the Z axis, producing a denser stacking of patterns."));
+  layMatrix_II->addWidget(lblRot);
+  fldRot = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
+  layMatrix_II->addWidget(fldRot->GetRep());
+  ((iLineEdit*)fldRot->GetRep())->setCharWidth(8);
+  // layMatrix_II->addSpacing(taiM->hsep_c);
+
+  layMatrix_II->addStretch();
 
   ////////////////////////////////////////////////////////////////////////////
   //    Colorscale etc
@@ -218,7 +224,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->addWidget(chkClickVals);
   layClickVals->addSpacing(taiM->hsep_c);
 
-  lblLMBVal = taiM->NewLabel("Left Click\nValue", widg, font_spec);
+  lblLMBVal = taiM->NewLabel(" Left Click\n Value", widg, font_spec);
   lblLMBVal->setToolTip(taiMisc::ToolTipPreProcess("Value that will be set in the cell if you click with the left mouse button (if Click Vals is on)."));
   layClickVals->addWidget(lblLMBVal);
   fldLMBVal = dl.Add(new taiWidgetField(&TA_float, this, NULL, widg));
@@ -240,14 +246,14 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layClickVals->setSpacing(2);  // plenty of room
   layPageVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
-  lblRowPageVal = taiM->NewLabel("Row Paging \nValue ", widg, font_spec);
+  lblRowPageVal = taiM->NewLabel("Row Paging  ", widg, font_spec);
   lblRowPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of rows to move when >> or << is clicked"));
   layPageVals->addWidget(lblRowPageVal);
   fldRowPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));
   layPageVals->addWidget(fldRowPageVal->GetRep());
   ((iLineEdit*)fldRowPageVal->GetRep())->setCharWidth(8);
 
-  lblColPageVal = taiM->NewLabel("  Column Paging \n  Value ", widg, font_spec);
+  lblColPageVal = taiM->NewLabel("  Column Paging ", widg, font_spec);
   lblColPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of columns to move when >> or << is clicked"));
   layPageVals->addWidget(lblColPageVal);
   fldColPageVal = dl.Add(new taiWidgetFieldIncr(&TA_float, this, NULL, widg));

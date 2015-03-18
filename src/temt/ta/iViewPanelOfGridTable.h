@@ -63,6 +63,7 @@ public:
   taiWidgetField*           fldTxtMax;
 
   QHBoxLayout*              layMatrix;
+  QHBoxLayout*              layMatrix_II;  // split into 2 rows
   QCheckBox*                chkValText;
   QLabel*                   lblTrans;
   taiWidgetField*           fldTrans; // mat_trans parency
