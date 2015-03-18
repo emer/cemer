@@ -166,11 +166,10 @@ void taiMisc::Busy_(bool busy) {
   if (!taMisc::gui_active)    return;
   if (busy) {
     ++busy_count;       // keep track of number of times called
-  //  if (cssiSession::block_in_event == true) // already busy
-  //    return;
-  //  cssiSession::block_in_event = true;
-    if (busy_count == 1) SetWinCursors();
-  } else {
+    if (busy_count == 1)
+      SetWinCursors();
+  }
+  else {
     if(--busy_count == 0) {
       RestoreWinCursors(); //added 4.0
     }
