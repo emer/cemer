@@ -26,12 +26,13 @@
 eTypeDef_Of(ThalUnitSpec);
 
 class E_API ThalUnitSpec  : public LeabraUnitSpec {
-  // Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to
+  // Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to -- also if cifer_d5b is active, we only recv d5b_netin in the plus phase, like Deep5bClampUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
   virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // send the act value as thal to sending projections: every cycle
 
+  void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void	Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 

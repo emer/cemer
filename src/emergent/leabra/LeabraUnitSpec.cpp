@@ -307,8 +307,7 @@ void CIFERThalSpec::Initialize() {
   thal_thr = 0.1f;
   thal_bin = true;
   auto_thal = false;
-  thal_to_super = 0.0f;
-  super_d5b_off = false;
+  super_net_mod = 0.0f;
   Defaults_init();
 }
 
@@ -911,6 +910,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 
   float net_scale = 0.0f;
   float inhib_net_scale = 0.0f;
+  float d5b_net_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   
   // important: count all projections so it is uniform across all units
@@ -923,13 +923,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     LeabraLayer* from = (LeabraLayer*) recv_gp->prjn->from.ptr();
     LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
     cs->Compute_NetinScale(recv_gp, from, plus_phase); // sets recv_gp->scale_eff
-    if(cs->IsDeep5bCon()) { // exclude from rel rescaling
-      continue;
-    }
     float rel_scale = cs->wt_scale.rel;
     
     if(cs->inhib) {
       inhib_net_scale += rel_scale;
+    }
+    else if(cs->IsDeep5bCon()) {
+      d5b_net_scale += rel_scale;
     }
     else {
       n_active_cons++;
@@ -956,11 +956,13 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
     }
+    else if(!cs->IsDeep5bCon()) { // exclude from rel rescaling
+      if(d5b_net_scale > 0.0f)
+        recv_gp->scale_eff /= d5b_net_scale;
+    }
     else {
-      if(net_scale == 0.0f) continue;
-      if(!cs->IsDeep5bCon()) { // exclude from rel rescaling
+      if(net_scale > 0.0f)
         recv_gp->scale_eff /= net_scale;
-      }
     }
   }
 }
@@ -1212,10 +1214,8 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   if(net->net_misc.ti) {
     net_ex += u->ti_ctxt;
   }
-  if(cifer_thal.on && cifer_thal.thal_to_super > 0.0f) {
-    if(!(cifer_thal.super_d5b_off && Quarter_Deep5bNow(net->quarter))) {
-      net_ex += cifer_thal.thal_to_super * u->thal * net_syn;
-    }
+  if(cifer_thal.on && cifer_thal.super_net_mod > 0.0f) {
+    net_ex -= cifer_thal.super_net_mod * (1.0f - u->thal) * net_syn;
   }
   if(cifer_d5b.on) {
     net_ex += u->d5b_net + cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn

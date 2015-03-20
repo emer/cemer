@@ -30,7 +30,7 @@ class E_API Deep5bClampUnitSpec : public LeabraUnitSpec {
 INHERITED(LeabraUnitSpec)
 public:
   void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   TA_SIMPLE_BASEFUNS(Deep5bClampUnitSpec);
 private:

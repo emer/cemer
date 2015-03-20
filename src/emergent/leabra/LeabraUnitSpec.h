@@ -411,8 +411,7 @@ public:
   float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
   bool          thal_bin;       // #CONDSHOW_ON_on #DEF_true make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
   bool          auto_thal;      // #CONDSHOW_ON_on for layers without a need for an explicit thalamic layer (e.g., they only have a single channel of information flow), just drive thalamus activity directly from superficial layer activations
-  float         thal_to_super;  // #CONDSHOW_ON_on #MIN_0 #DEF_0 gain on modulation of superficial (2/3 = act) netin by thalamic drive -- thal only increases netin otherwise recv'd: netin = (1 + thal_to_super * thal) * netin_raw
-  bool          super_d5b_off;  // #CONDSHOW_ON_on turn off the extra super netinput whenever cifer deep5b projections are active -- an alternative / additional compensation mechanism like ti_off
+  float         super_net_mod;  // #CONDSHOW_ON_on #MIN_0 #DEF_0:0.1 gain on modulation of superficial layers (2/3, = act variable) netin by thalamic drive -- units that do NOT have thal input get a decreased netin in proportion to this variable: netin = (1 - super_net_mod * (1-thal)) * netin_raw -- decrease used to prevent excessive netin for thal receiving units
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

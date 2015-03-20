@@ -25,6 +25,14 @@ void ThalUnitSpec::Initialize() {
 void ThalUnitSpec::Defaults_init() {
 }
 
+void ThalUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
+                                           int thr_no) {
+  inherited::Compute_NetinRaw(u, net, thr_no);
+  if(cifer_d5b.on && net->phase == LeabraNetwork::PLUS_PHASE) {
+    u->net_raw = 0.0f;          // zero the regular netins
+  }
+}
+
 void ThalUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
