@@ -335,6 +335,7 @@ public slots:
   virtual void  fileUpdateProjectOnWeb(const Variant &repo); // Upload a revised (or possibly the first version) of a published project to wiki
   virtual void  fileUploadFilesForProjectOnWeb_aboutToShow();
   virtual void  fileUploadFilesForProjectOnWeb(const Variant &repo); // Add project files to wiki (e.g. weights files, data files, etc.)
+  virtual bool  WikiSupportsPublishProject(const String &repo);
   virtual void  fileClose();    // Close Project (only enabled if viewer)
   virtual void  fileOptions();  // edits taMisc
   virtual void  filePrint();

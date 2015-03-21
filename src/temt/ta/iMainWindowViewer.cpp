@@ -55,6 +55,7 @@
 #include <KeyBindings>
 #include <KeyBindings_List>
 #include <iDialogKeyBindings>
+#include <taMediaWiki>
 
 #include <taMisc>
 #include <taiMisc>
@@ -1573,8 +1574,12 @@ void iMainWindowViewer::fileOpenFromWeb_aboutToShow()
 
 void iMainWindowViewer::fileOpenFromWeb(const Variant &repo)
 {
-  String wikiName = repo.toString();
-  String wikiUrl = taMisc::GetWikiURL(wikiName);
+  String wiki_name = repo.toString();
+  
+  if (!WikiSupportsPublishProject(wiki_name))
+    return  ;
+  
+  String wikiUrl = taMisc::GetWikiURL(wiki_name);
   if (wikiUrl.empty()) {
     return;
   }
@@ -1595,11 +1600,11 @@ void iMainWindowViewer::filePublishProjectOnWeb_aboutToShow()
 
 void iMainWindowViewer::filePublishProjectOnWeb(const Variant &repo)
 {
-  String repositoryName = repo.toString();
+  String wiki_name = repo.toString();
   
   taProject *proj = curProject();
-  if (!repositoryName.empty() && proj) {
-    proj->PublishProjectOnWeb(repositoryName);
+  if (proj && WikiSupportsPublishProject(wiki_name)) {
+    proj->PublishProjectOnWeb(wiki_name);
   }
 }
 
@@ -1616,11 +1621,11 @@ void iMainWindowViewer::fileUpdateProjectOnWeb_aboutToShow()
 
 void iMainWindowViewer::fileUpdateProjectOnWeb(const Variant &repo)
 {
-  String repositoryName = repo.toString();
+  String wiki_name = repo.toString();
 
   taProject *proj = curProject();
-  if (proj) {
-    proj->UpdateProjectOnWeb(repositoryName);  // repository name held by project
+  if (proj && WikiSupportsPublishProject(wiki_name)) {
+    proj->UpdateProjectOnWeb(wiki_name);  // repository name held by project
   }
 }
 
@@ -1637,14 +1642,21 @@ void iMainWindowViewer::fileUploadFilesForProjectOnWeb_aboutToShow()
 
 void iMainWindowViewer::fileUploadFilesForProjectOnWeb(const Variant &repo)
 {
-  String repositoryName = repo.toString();
+  String wiki_name = repo.toString();
 
   taProject *proj = curProject();
-  if (proj) {
-    proj->UploadFilesForProjectOnWeb(repositoryName); // repository name held by project
+  if (proj && WikiSupportsPublishProject(wiki_name)) {
+    proj->UploadFilesForProjectOnWeb(wiki_name); // repository name held by project
   }
 }
 
+bool iMainWindowViewer::WikiSupportsPublishProject(const String &wiki_name) {
+  if (!taMediaWiki::PubProjPagesInstalled(wiki_name)) {
+    taMisc::Confirm("The Publish to Web feature requires the installation of some pages before projects can be published. Installation and usage information can be found at 'https://grey.colorado.edu/emergent/index.php/Publish_to_web_implementation'");
+    return false;
+  }
+  return true;
+}
 
 void iMainWindowViewer::fileClose() {
   if(taMisc::is_saving) {

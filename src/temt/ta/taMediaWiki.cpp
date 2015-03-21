@@ -66,7 +66,7 @@ String taMediaWiki::GetLoggedInUsername(const String &wiki_name)
   // Make sure wiki name is valid before doing anything else.
   String wikiUrl = GetApiURL(wiki_name);
   if (wikiUrl.empty()) { return ""; }
-
+  
   // Build the request URL.
   // .../api.php?action=query&format=xml&meta=userinfo
   QUrl url(wikiUrl);
@@ -170,13 +170,12 @@ bool taMediaWiki::Login(const String &wiki_name, const String &username)
         return true;
       }
       else if (result == "NotExists") {
-        taMisc::Warning("Username not recognized on", wiki_name, "wiki:",
-          qPrintable(qUsername));
+        taMisc::Confirm("Username", qPrintable(qUsername), " not recognized on wiki ", wiki_name);
         return false;
       }
       else if (result == "WrongPass") {
-        taMisc::Warning("Incorrect password for user", qPrintable(qUsername),
-          "on", wiki_name, "wiki.");
+        taMisc::Confirm("Incorrect password for user", qPrintable(qUsername),
+          "on wiki", wiki_name);
         return false;
       }
       else if (result == "NeedToken") {
@@ -1386,3 +1385,9 @@ bool taMediaWiki::PublishProject(taProjPubInfo* pub_info) {
   return true; // return true if project page created - even if upload of project file fails
 }
 
+bool taMediaWiki::PubProjPagesInstalled(const String& wiki_name) {
+  if (PageExists(wiki_name, "Category:PublishedProject"))
+    return true;
+  
+  return false;
+}

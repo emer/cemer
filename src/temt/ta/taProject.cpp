@@ -550,6 +550,12 @@ int taProject::SaveAs(const String& fname) {
 
 bool taProject::PublishProjectOnWeb(const String &repo_name)
 {
+  // Is pub to project supported on this wiki?
+//  if (!PageExists(jaskdfl)) {
+//    taMisc::Error("The publish project feature requires the installation of some pages on your wiki. Your wiki administrator can find the installation instructions at ......");
+//    return false;
+//  }
+  
   // First check to make sure the page doesn't already exist.
   String proj_filename = GetFileName();
   proj_filename = "File:" + proj_filename.after('/', -1);

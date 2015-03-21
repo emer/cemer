@@ -147,6 +147,9 @@ public:
 
   static bool   PublishProject(taProjPubInfo* pub_info);
   // #CAT_Wiki Create/edit the wiki page for this project with given content and categories -- if a project filename is specified, upload the project file and post a link to it on the project's wiki page -- returns true if all steps were completed successfully
+  
+  static bool   PubProjPagesInstalled(const String& wiki_name);
+  //  #CAT_Wiki Are the pages that support the PublishProject featured installed on this wiki? Actually only checks for one crucial page!
 
 protected:
   TA_BASEFUNS_NOCOPY(taMediaWiki);
