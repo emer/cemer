@@ -34,6 +34,9 @@ class iTreeView; //
 class iTreeViewItem; //
 class QToolBar; //
 class QLabel; //
+class iActionMenuButton; //
+class iMenuButton; //
+class QMenu; //
 
 
 class TA_API iTreeSearch: public QWidget {
@@ -42,24 +45,37 @@ class TA_API iTreeSearch: public QWidget {
 friend class iTreeView;
 friend class iTreeViewItem;
 public:
+  enum SearchMode {
+    TEXT = 0,   // display text only, ignore case
+    DEEP,       // object name, val, description, members, etc.
+  };
+
   iTreeView*            tree_view; // pointer to the tree view that we operate on
 
   QToolBar*             srch_bar;
-  QLabel*               srch_label;
   iLineEdit*            srch_text;
   QLabel*               srch_nfound;
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
+  
+  iActionMenuButton*    srch_mode_button;
+  QMenu*                srch_mode_menu;
+  QAction*              find_action;
+  QAction*              find_deep_action;
+  
+  enum SearchMode       search_mode;
+
+
 
   taBase_RefList        found_items; // full list of items found
-#ifndef __MAKETA__
+#ifndef __MAKETA__i
   QList<iTreeViewItem*> srch_found; // list of items found
 #endif
   int                   cur_item; // currrent item
 
-  void                  search();
-  // perform search based on current search text
+  void                  Search(iTreeSearch::SearchMode mode);
+  // search using either the simple text mode for searching the visible strings in the tree or the deep search that checks object name, val, description, etc. and can handle conjunction of search terms
   void                  unHighlightFound();
   // un-highlight all items
   void                  highlightFound();
@@ -77,6 +93,8 @@ public slots:
   void                  treeview_to_updt();
   void                  srch_next_clicked();
   void                  srch_prev_clicked();
+  void                  TextFindSelected();
+  void                  DeepFindSelected();
 
 private:
   void Constr();                // construct widget

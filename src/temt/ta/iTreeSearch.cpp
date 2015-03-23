@@ -30,6 +30,9 @@
 #include <QToolBar>
 #include <QAction>
 #include <QToolButton>
+#include <iActionMenuButton>
+#include <iMenuButton>
+
 
 
 void iTreeSearch::Constr() {
@@ -41,10 +44,17 @@ void iTreeSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
 
-  srch_label = new QLabel("Find:");
-  srch_label->setFont(taiM->nameFont(currentSizeSpec));
-  srch_label->setToolTip(taiMisc::ToolTipPreProcess("Find text within the above browser: case sensitive if uppercase entered -- if multiple words entered, then searches for conjunction of all of them -- searches very broadly and in a case insensitive manner (multiple terms help narrow things down)"));
-  srch_bar->addWidget(srch_label);
+  srch_mode_button = new iActionMenuButton();
+  srch_bar->addWidget(srch_mode_button);
+  
+  find_action = new QAction("Find", this);
+  find_deep_action = new QAction("Find Deep", this);
+  
+  srch_mode_menu = new QMenu(this);
+  srch_mode_button->setMenu(srch_mode_menu);
+  srch_mode_button->setDefaultAction(find_action);
+  srch_mode_button->setFont(taiM->nameFont(currentSizeSpec));
+  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want"));
 
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
@@ -60,12 +70,18 @@ void iTreeSearch::Constr() {
   srch_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find text within browser"));
   srch_next = srch_bar->addAction(">");
   srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within browser"));
+  
+  srch_mode_menu->addAction(find_action);
+  srch_mode_menu->addAction(find_deep_action);
 
   connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
   connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
   connect(srch_prev, SIGNAL(triggered()), this, SLOT(srch_prev_clicked()) );
   connect(srch_text, SIGNAL(returnPressed()), this, SLOT(srch_text_entered()) );
   connect(tree_view, SIGNAL(TreeStructToUpdate()), this, SLOT(treeview_to_updt()) );
+  
+  connect(find_action, SIGNAL(triggered()), this, SLOT(TextFindSelected()));
+  connect(find_deep_action, SIGNAL(triggered()), this, SLOT(DeepFindSelected()));
 }
 
 iTreeSearch::iTreeSearch(QWidget* parent) : QWidget(parent) {
@@ -82,7 +98,7 @@ iTreeSearch::~iTreeSearch() {
 
 }
 
-void iTreeSearch::search() {
+void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
   unHighlightFound();
   srch_found.clear();
   found_items.Reset();
@@ -100,7 +116,8 @@ void iTreeSearch::search() {
   }
   String_Array srch;
   srch.Split(ftxt, " ");
-
+  
+  bool text_only = (mode == iTreeSearch::TEXT);
   QTreeWidgetItemIterator it(tree_view, QTreeWidgetItemIterator::All);
   QTreeWidgetItem* item_;
   taBase_PtrList sub_srch;
@@ -120,21 +137,20 @@ void iTreeSearch::search() {
     if(!tree_view->isItemExpanded(item)) {
       // do full recursive search if not already expanded
       sub_srch.Reset();
-      tab->Search(ftxt, sub_srch, NULL, true, case_sens); // go with defaults for now
+      tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens); // go with defaults for now
       for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
         taBase* fnd = sub_srch.FastEl(k);
         found_items.Add(fnd);
       }
       sub_srch.Reset();
     }
-    else if(tab->SearchTestItem_impl(srch, true, case_sens)) {
-      // otherwise just test this one item
+    else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens)) {       // otherwise just test this one item
       srch_found.append(item);
       found_items.Add(tab);
     }
     ++it;
   }
-
+  
   // only highlight for small number of hits
   if(found_items.size < 25 && found_items.size > srch_found.count()) {
     for(int i=0;i<found_items.size; i++) {
@@ -148,7 +164,7 @@ void iTreeSearch::search() {
       }
     }
   }
-
+  
   highlightFound();
   cur_item = 0;
   selectCurrent();
@@ -178,7 +194,7 @@ void iTreeSearch::selectCurrent() {
 
   taBase* fnd = found_items.FastEl(cur_item);
   if(!fnd) return;
-  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
+//  taMisc::Info("find item:", String(cur_item+1), "path:", fnd->GetPathNames());
   taiSigLink* lnk = (taiSigLink*)fnd->GetSigLink();
   if(!lnk) return;
   iTreeViewItem* fitm = tree_view->AssertItem(lnk);
@@ -194,7 +210,7 @@ void iTreeSearch::selectCurrent() {
 }
 
 void iTreeSearch::srch_text_entered() {
-  search();
+  Search(search_mode);
 }
 
 void iTreeSearch::srch_clear_clicked() {
@@ -225,5 +241,14 @@ void iTreeSearch::srch_prev_clicked() {
     cur_item = 0;
   selectCurrent();
 }
+
+void iTreeSearch::TextFindSelected() {
+  search_mode = TEXT;
+}
+
+void iTreeSearch::DeepFindSelected() {
+  search_mode = DEEP;
+}
+
 
 

@@ -126,7 +126,7 @@ public:
 #endif
 
   void SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
-                     taBase_PtrList* owners = NULL,
+                     taBase_PtrList* owners = NULL, bool text_only = true,
                      bool contains = true, bool case_sensitive = false,
                      bool obj_name = true, bool obj_type = true,
                      bool obj_desc = true, bool obj_val = true,

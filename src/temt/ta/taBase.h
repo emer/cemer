@@ -1316,7 +1316,7 @@ public:
   { return (GetName() == nm); }
 
   virtual void          Search(const String& srch, taBase_PtrList& items,
-                               taBase_PtrList* owners = NULL,
+                               taBase_PtrList* owners = NULL, bool text_only = true,
                                bool contains = true, bool case_sensitive = false,
                                bool obj_name = true, bool obj_type = true,
                                bool obj_desc = true, bool obj_val = true,
@@ -1324,7 +1324,7 @@ public:
   // #CAT_ObjectMgmt search for objects using srch string (which is split by whitespace into separate terms if applicable -- all terms must match), from this point down the structural hierarchy (my members, and their members and objects in lists, etc).  items are linked into items list, and all owners of items found are linked into owners list (if present -- can be used as a lookup table for expanding owners to browse found items).  contains = use "contains" for all matches instead of exact match, rest are values to search in (obj_desc includes DisplayName as well as any explicit description), obj_val is only for value members and inline members
 
   virtual void          SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
-                                      taBase_PtrList* owners = NULL,
+                                      taBase_PtrList* owners = NULL, bool text_only = true,
                                       bool contains = true, bool case_sensitive = false,
                                       bool obj_name = true, bool obj_type = true,
                                       bool obj_desc = true, bool obj_val = true,
@@ -1335,7 +1335,7 @@ public:
                                            bool contains, bool case_sensitive);
   // #IGNORE Search test string according to searching criteria
 
-  virtual bool          SearchTestItem_impl(const String_Array& srch,
+  virtual bool          SearchTestItem_impl(const String_Array& srch, bool text_only = true,
                                     bool contains = true, bool case_sensitive = false,
                                     bool obj_name = true, bool obj_type = true,
                                     bool obj_desc = true, bool obj_val = true,

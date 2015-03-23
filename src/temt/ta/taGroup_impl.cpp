@@ -200,19 +200,19 @@ int taGroup_impl::AddToControlPanelSearch(const String& memb_contains, ControlPa
 }
 
 void taGroup_impl::SearchIn_impl(const String_Array& srch, taBase_PtrList& items,
-                                 taBase_PtrList* owners,
+                                 taBase_PtrList* owners, bool text_only,
                                  bool contains, bool case_sensitive,
                                  bool obj_name, bool obj_type,
                                  bool obj_desc, bool obj_val,
                                  bool mbr_name, bool type_desc) {
   int st_sz = items.size;
-  inherited::SearchIn_impl(srch, items, owners, contains, case_sensitive,
+  inherited::SearchIn_impl(srch, items, owners, text_only, contains, case_sensitive,
                            obj_name, obj_type,
                            obj_desc, obj_val, mbr_name, type_desc);
   bool already_added_me = false;
   if(items.size > st_sz)
     already_added_me = true;
-  gp.SearchIn_impl(srch, items, owners, contains, case_sensitive, obj_name, obj_type,
+  gp.SearchIn_impl(srch, items, owners, text_only, contains, case_sensitive, obj_name, obj_type,
                    obj_desc, obj_val, mbr_name, type_desc);
   if(owners && (items.size > st_sz) && !already_added_me) { // we added somebody somewhere..
     owners->Link(this);
