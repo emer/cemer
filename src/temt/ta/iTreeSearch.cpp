@@ -36,6 +36,7 @@
 
 
 void iTreeSearch::Constr() {
+  search_mode = TEXT;  //  default
   taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
 
   QHBoxLayout* lay = new QHBoxLayout(this);
