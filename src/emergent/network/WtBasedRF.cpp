@@ -133,7 +133,7 @@ bool WtBasedRF::ComputeV2RF(Network* net, DataTable* dt_trg, DataTable* wts, Lay
             // but if the V1c (complex) filters are enable we could have as many as 5 rows per V1 unit group.
             // The V1s filters are in the last 2 rows of each unit group so rows 3 & 4 (zero based) when there are 5 rows
             DataCol* wts_col = trg_layer_wts->GetColData(0);  // only one column
-            if ((row_unit == snd_layer_unit_grp_geom.y - 1) || (col_unit == snd_layer_unit_grp_geom.y - 2)) {
+            if ((row_unit == snd_layer_unit_grp_geom.y - 1) || (row_unit == snd_layer_unit_grp_geom.y - 2)) {
               int row = (row_grp * snd_layer_unit_grp_geom.y) + row_unit;
               int col = (col_grp * snd_layer_unit_grp_geom.x) + col_unit;
               float weight = wts_col->GetValAsFloatMDims(wts_row, col, row);
