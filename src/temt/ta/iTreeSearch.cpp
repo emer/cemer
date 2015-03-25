@@ -55,7 +55,7 @@ void iTreeSearch::Constr() {
   srch_mode_button->setMenu(srch_mode_menu);
   srch_mode_button->setDefaultAction(find_action);
   srch_mode_button->setFont(taiM->nameFont(currentSizeSpec));
-  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want"));
+  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find or Find Deep - the first mode only searches the text of the tree items - the deep search also looks at the object name, value, description, members and so on. In most cases the former is probably what you want. Find ignores case. Find Deep is case sensitive if the search string has any uppercase letter."));
 
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
