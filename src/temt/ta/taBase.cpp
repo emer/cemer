@@ -2500,7 +2500,12 @@ bool taBase::SearchTestItem_impl(const String_Array& srch, bool text_only,
     
     if (text_only) {
       String text = GetDisplayName();
-      cur_matched = text.contains_ci(sstr);
+      if (case_sensitive) {
+        cur_matched = text.contains(sstr);
+      }
+      else {
+        cur_matched = text.contains_ci(sstr);
+      }
     }
     else {  // deep search
       if(sstr.contains('=')) {
