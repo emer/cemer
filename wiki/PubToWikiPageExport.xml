@@ -1,0 +1,343 @@
+<mediawiki xmlns="http://www.mediawiki.org/xml/export-0.8/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mediawiki.org/xml/export-0.8/ http://www.mediawiki.org/xml/export-0.8.xsd" version="0.8" xml:lang="en">
+  <siteinfo>
+    <sitename>emergent-test</sitename>
+    <base>https://grey.colorado.edu/emergent-test/index.php/Main_Page</base>
+    <generator>MediaWiki 1.22.14</generator>
+    <case>case-sensitive</case>
+    <namespaces>
+      <namespace key="-2" case="case-sensitive">Media</namespace>
+      <namespace key="-1" case="first-letter">Special</namespace>
+      <namespace key="0" case="case-sensitive" />
+      <namespace key="1" case="case-sensitive">Talk</namespace>
+      <namespace key="2" case="first-letter">User</namespace>
+      <namespace key="3" case="first-letter">User talk</namespace>
+      <namespace key="4" case="case-sensitive">Emergent-test</namespace>
+      <namespace key="5" case="case-sensitive">Emergent-test talk</namespace>
+      <namespace key="6" case="case-sensitive">File</namespace>
+      <namespace key="7" case="case-sensitive">File talk</namespace>
+      <namespace key="8" case="first-letter">MediaWiki</namespace>
+      <namespace key="9" case="first-letter">MediaWiki talk</namespace>
+      <namespace key="10" case="case-sensitive">Template</namespace>
+      <namespace key="11" case="case-sensitive">Template talk</namespace>
+      <namespace key="12" case="case-sensitive">Help</namespace>
+      <namespace key="13" case="case-sensitive">Help talk</namespace>
+      <namespace key="14" case="case-sensitive">Category</namespace>
+      <namespace key="15" case="case-sensitive">Category talk</namespace>
+      <namespace key="102" case="case-sensitive">Property</namespace>
+      <namespace key="103" case="case-sensitive">Property talk</namespace>
+      <namespace key="106" case="case-sensitive">Form</namespace>
+      <namespace key="107" case="case-sensitive">Form talk</namespace>
+      <namespace key="108" case="case-sensitive">Concept</namespace>
+      <namespace key="109" case="case-sensitive">Concept talk</namespace>
+      <namespace key="500" case="case-sensitive">EmergentProject</namespace>
+      <namespace key="501" case="case-sensitive">EmergentProject talk</namespace>
+    </namespaces>
+  </siteinfo>
+  <page>
+    <title>PublishedProjects</title>
+    <ns>0</ns>
+    <id>160</id>
+    <revision>
+      <id>924</id>
+      <parentid>853</parentid>
+      <timestamp>2015-03-13T00:42:40Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <text xml:space="preserve" bytes="446">__NOTOC__
+
+== Projects Recently Published or Updated - of {{PAGESINCATEGORY:PublishedProject|pages}} total ==
+
+&lt;DynamicPageList&gt;
+category             = PublishedProject
+count                 = 10
+order                  = descending
+order method     = lastedit
+&lt;/DynamicPageList&gt;
+
+== Search for a Project ==
+&lt;div style=&quot;left;width:0em&quot;&gt;
+&lt;inputbox&gt;
+type=fulltext
+break=no
+searchbuttonlabel=Search
+&lt;/inputbox&gt;
+&lt;/div&gt;
+
+{{#ask: [[EmerProjKeyword]] 
+}}</text>
+      <sha1>dgmemts2c03r2uifjs4f9vqmkj28kxu</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Category:PublishedProject</title>
+    <ns>14</ns>
+    <id>175</id>
+    <revision>
+      <id>975</id>
+      <parentid>615</parentid>
+      <timestamp>2015-03-18T01:04:25Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <text xml:space="preserve" bytes="66">{{#default_form:form-name}}
+This is the PublishedProject category.</text>
+      <sha1>fzgapsev4fg4zp7l9wjecohzkiljdal</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerFileType</title>
+    <ns>102</ns>
+    <id>257</id>
+    <revision>
+      <id>932</id>
+      <timestamp>2015-03-13T15:21:25Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjAuthor</title>
+    <ns>102</ns>
+    <id>163</id>
+    <revision>
+      <id>595</id>
+      <timestamp>2015-02-24T02:55:25Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjEmail</title>
+    <ns>102</ns>
+    <id>208</id>
+    <revision>
+      <id>704</id>
+      <timestamp>2015-03-04T23:05:09Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Email]].&quot;</comment>
+      <text xml:space="preserve" bytes="47">This is a property of type [[Has type::Email]].</text>
+      <sha1>exzr75bcppvbrao1fwl2ozsn64zfgin</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjFirstPub</title>
+    <ns>102</ns>
+    <id>223</id>
+    <revision>
+      <id>858</id>
+      <parentid>773</parentid>
+      <timestamp>2015-03-11T03:35:06Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjKeyword</title>
+    <ns>102</ns>
+    <id>164</id>
+    <revision>
+      <id>596</id>
+      <timestamp>2015-02-24T02:59:23Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjName</title>
+    <ns>102</ns>
+    <id>166</id>
+    <revision>
+      <id>598</id>
+      <timestamp>2015-02-24T03:00:30Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerProjVersion</title>
+    <ns>102</ns>
+    <id>165</id>
+    <revision>
+      <id>597</id>
+      <timestamp>2015-02-24T02:59:46Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Property:EmerVersion</title>
+    <ns>102</ns>
+    <id>162</id>
+    <revision>
+      <id>593</id>
+      <timestamp>2015-02-24T02:54:30Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <comment>Created page with &quot;This is a property of type [[Has type::Text]].&quot;</comment>
+      <text xml:space="preserve" bytes="46">This is a property of type [[Has type::Text]].</text>
+      <sha1>e9l4lxsaidmyd6062gydncspht400ia</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Template:InfoboxEmerProject</title>
+    <ns>10</ns>
+    <id>206</id>
+    <revision>
+      <id>984</id>
+      <parentid>953</parentid>
+      <timestamp>2015-03-25T00:59:51Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <minor/>
+      <comment>Rohrlich moved page [[Template:Infobox emergent project]] to [[Template:InfoboxEmerProject]] without leaving a redirect</comment>
+      <text xml:space="preserve" bytes="948">&lt;noinclude&gt;
+This is the &quot;Infobox emergent project&quot; template.
+It should be called in the following format:
+&lt;pre&gt;
+{{Infobox emergent project
+|author=
+|email=
+|project_version=
+|keyword=
+|first_pub=
+|emergent_version=
+}}
+&lt;/pre&gt;
+Edit the page to see the template text.
+&lt;/noinclude&gt;&lt;includeonly&gt;{| style=&quot;width: 30em; font-size: 90%; border: 1px solid #aaaaaa; background-color: #f9f9f9; color: black; margin-bottom: 0.5em; margin-left: 1em; padding: 0.2em; float: right; clear: right; text-align:left;&quot;
+! style=&quot;text-align: center; background-color:#ccccff;&quot; colspan=&quot;2&quot; |&lt;big&gt;{{PAGENAME}}&lt;/big&gt;
+|-
+! Author
+|  [[EmerProjAuthor::{{{author|}}}]] 
+|-
+! Email
+|  [[EmerProjEmail::{{{email|}}}]] 
+|-
+! Version
+|  [[EmerProjVersion::{{{project_version|}}}]]
+|-
+! Emergent Version
+|  [[EmerVersion::{{{emergent_version|}}}]]
+|-
+! Keywords
+|  [[EmerProjKeyword::{{{keyword|}}}]]
+|-
+! First Published
+|  [[EmerProjFirstPub::{{{first_pub|}}}]]
+|}
+&lt;/includeonly&gt;</text>
+      <sha1>0t5xjlww1rknkx547oq3xr1xwv53com</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+  <page>
+    <title>Template:PublishedProject</title>
+    <ns>10</ns>
+    <id>161</id>
+    <revision>
+      <id>985</id>
+      <parentid>974</parentid>
+      <timestamp>2015-03-25T01:05:03Z</timestamp>
+      <contributor>
+        <username>Rohrlich</username>
+        <id>2</id>
+      </contributor>
+      <text xml:space="preserve" bytes="747">__NOTOC__
+
+&lt;includeonly&gt;
+{{InfoboxEmerProject
+| author={{{EmerProjAuthor|}}}
+| email={{{EmerProjEmail|}}}
+| project_version={{#show: File:{{ROOTPAGENAME}}.proj | ?EmerProjVersion }}
+| emergent_version={{#show: File:{{ROOTPAGENAME}}.proj | ?EmerVersion }}
+| keyword={{{EmerProjKeyword|}}}
+| first_pub={{{EmerProjFirstPub|}}}
+}}
+
+== Project Overview ==
+{{{emer_proj_overview|}}}
+
+== Release Notes &amp; Instructions ==
+Release note information - what has changed from one version to the next, etc.
+
+== Project File ==
+{{#ask:
+[[EmerProjName::{{ROOTPAGENAME}}]] [[EmerFileType::project]]
+| format=list
+}}
+
+== Other Files ==
+{{#ask:
+[[EmerProjName::{{ROOTPAGENAME}}]] [[EmerFileType::other]]
+| format=list
+}}
+
+[[Category:PublishedProject]]
+
+&lt;/includeonly&gt;</text>
+      <sha1>qtgs6pawh6fjpi6lfujns3oubaiglcq</sha1>
+      <model>wikitext</model>
+      <format>text/x-wiki</format>
+    </revision>
+  </page>
+</mediawiki>

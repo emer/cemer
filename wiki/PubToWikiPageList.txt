@@ -1,0 +1,13 @@
+PublishedProjects
+Category:PublishedProject
+Property:EmerFileType
+Property:EmerProjAuthor
+Property:EmerProjEmail
+Property:EmerProjFirstPub
+Property:EmerProjKeyword
+Property:EmerProjName
+Property:EmerProjVersion
+Property:EmerVersion
+Template:InfoboxEmerProject
+Template:PublishedProject
+
