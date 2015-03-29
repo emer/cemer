@@ -120,6 +120,7 @@ void taRootBase::Initialize() {
   openProject = false;
   rootview_pos.SetXY(0.0f, 0.0f);
   rootview_size.SetXY(0.9f, 0.6f);
+  cluster_runnner = NULL;
 #ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif

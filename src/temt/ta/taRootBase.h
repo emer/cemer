@@ -78,7 +78,7 @@ public:
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
   
-  ClusterRun*           cluster_runnner = NULL; // #NO_SHOW the cluster view needs a reliable way to call back to this object
+  ClusterRun*           cluster_runnner; // #NO_SHOW the cluster view needs a reliable way to call back to this object
 
   void          OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application
