@@ -26,6 +26,7 @@
 #include <iComboBox>
 #include <taiMemberOfDynEnum>
 #include <iDataTableEditor>
+#include <iStdDataTableView>
 
 #include <taMisc>
 #include <taiMisc>
@@ -634,10 +635,16 @@ bool taGuiDialog::AddDataTable(DataTable* dt, const String& nm, const String& pa
   if(parent.nonempty()) {
     taGuiWidget* par = FindWidget(parent, true);
     if(!par) return false;
-    widg = new iDataTableEditor(par->widget);
+    iStdDataTableView* table_view = new iStdDataTableView();
+    widg = new iDataTableEditor(table_view, par->widget);
+    
+//    widg = new iDataTableEditor(par->widget);
   }
-  else
-    widg = new iDataTableEditor();
+  else {
+    iStdDataTableView* table_view = new iStdDataTableView();
+    widg = new iDataTableEditor(table_view, NULL);
+    //    widg = new iDataTableEditor();
+  }
   widg->setDataTable(dt);
   taGuiWidget* w = AddWidget_impl(widg, nm, "DataTable", layout, attributes, _nilVariant);
   return (bool)w;

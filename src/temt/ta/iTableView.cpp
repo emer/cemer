@@ -232,14 +232,14 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
   iAction* act = NULL;
   // generic col guys
   if (ca == CA_COL_HDR) {
+    act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
+    act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
+    menu->AddSep();
     if (!isFixedColCount()) {
-      act = menu->AddItem("Resize Width to Content", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT) );
-      act = menu->AddItem("Resize All Widths to Content", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_COL | OP_RESIZE_TO_CONTENT_ALL) );
-      menu->AddSep();
       act = menu->AddItem("Delete Columns", taiWidgetMenu::normal, iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_COL | OP_DELETE) );
       act = menu->AddItem("Duplicate Columns", taiWidgetMenu::normal, iAction::int_act,
@@ -263,13 +263,14 @@ void iTableView::FillContextMenu_impl(ContextArea ca,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DUPLICATE) );
       act = menu->AddItem("Delete Rows (Ctrl+D)", taiWidgetMenu::normal, iAction::int_act,
                           this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE) );
-      act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
-      act = menu->AddItem("Show All Rows", taiWidgetMenu::normal,
-                          iAction::int_act,
-                          this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
+      menu->AddSep();
     }
+    act = menu->AddItem("Show Only Selected Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_DELETE_UNSELECTED) );
+    act = menu->AddItem("Show All Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_SHOW_ALL) );
     menu->AddSep();
   }
   

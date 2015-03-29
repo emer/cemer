@@ -17,6 +17,7 @@
 #include <DataTable>
 #include <iMatrixTableView>
 #include <iDataTableView>
+#include <iClusterTableView>
 #include <iSplitter>
 #include <iMatrixEditor>
 #include <iMatrixTableModel>
@@ -34,7 +35,7 @@
 #include <QKeyEvent>
 
 
-iDataTableEditor::iDataTableEditor(QWidget* parent)
+iDataTableEditor::iDataTableEditor(iDataTableView* table_view, QWidget* parent)
 :inherited(parent)
 {
   m_cell_par = NULL;
@@ -43,7 +44,7 @@ iDataTableEditor::iDataTableEditor(QWidget* parent)
   splMain = new iSplitter(this);
   splMain->setOrientation(Qt::Vertical);
   layOuter->addWidget(splMain);
-  tvTable = new iDataTableView();
+  tvTable = table_view;
   tvCell = new iMatrixEditor();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);

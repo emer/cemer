@@ -18,7 +18,7 @@
 #include <iDataTableEditor>
 #include <iMatrixEditor>
 #include <iClipData>
-#include <iDataTableView>
+#include <iStdDataTableView>
 #include <iDataTableColHeaderView>
 #include <iMainWindowViewer>
 #include <taSigLinkItr>
@@ -148,7 +148,10 @@ void iPanelOfDataTable::UpdatePanel_impl() {
 }
 
 void iPanelOfDataTable::Render_impl() {
-  dte = new iDataTableEditor();
+  if (dte == NULL) {
+    iStdDataTableView* table_view = new iStdDataTableView();
+    dte = new iDataTableEditor(table_view, NULL);
+  }
   setCentralWidget(dte);
 
   dte->setDataTable(dt());

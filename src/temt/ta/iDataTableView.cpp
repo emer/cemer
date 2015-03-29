@@ -272,28 +272,4 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
     taiWidgetMenu* menu, const CellRange& sel)
 {
   inherited::FillContextMenu_impl(ca, menu, sel);
-  DataTable* tab = this->dataTable(); // may not exist
-  if (!tab) return;
-  // only do col items if one selected only
-  if ((ca == CA_COL_HDR) && (sel.width() == 1)) {
-    DataCol* col = tab->GetColData(sel.col_fr, true);
-    if (col) {
-      taiSigLink* link = (taiSigLink*)col->GetSigLink();
-      if (link) link->FillContextMenu(menu);
-    }
-  }
-  if (ca == CA_ROW_HDR) {
-    iAction* act = NULL;
-    menu->AddSep();
-    act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE));
-    act->setEnabled(sel.height() > 1);  // enable if compare state is on
-
-    act = menu->AddItem("Clear Compare Rows", taiWidgetMenu::normal,
-                        iAction::int_act,
-                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_COMPARE));
-    act->setEnabled(tab->CompareRowsState());  // enable if compare state is on
-
-  }
 }

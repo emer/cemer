@@ -57,18 +57,18 @@ INHERITED(QWidget)
 public:
   QVBoxLayout*          layOuter;
   QSplitter*            splMain;
-  iDataTableView*         tvTable; // the main table
-  iMatrixEditor*          tvCell; // a matrix cell in the table (only shown if needed)
+  iDataTableView*       tvTable; // the main table
+  iMatrixEditor*        tvCell; // a matrix cell in the table (only shown if needed)
 
   DataTable*            dt() const {return m_dt;}
   void                  setDataTable(DataTable* dt); // only called once
-  iDataTableModel*       dtm() const;
+  iDataTableModel*      dtm() const;
 
   virtual void          ScrollToBottom(); // scroll table to last row
 
   void                  Refresh(); // for manual refresh
 
-  iDataTableEditor(QWidget* parent = NULL);
+  iDataTableEditor(iDataTableView* table_view, QWidget* parent = NULL);
   ~iDataTableEditor();
 
 public slots:

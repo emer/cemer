@@ -37,6 +37,7 @@
 #include <taDoc>
 #include <taiWidgetTokenChooser>
 #include <KeyBindings_List>
+#include <ClusterRun>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -157,12 +158,16 @@ void taRootBase::InitLinks() {
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
   taBase::Own(sidebar_paths, this);
+  taBase::Own(cluster_runnner, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
   AddDocs(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
+  if (cluster_runnner) {
+    cluster_runnner->CutLinks();
+  }
   sidebar_paths.CutLinks();
   recent_paths.CutLinks();
   recent_files.CutLinks();
@@ -2360,4 +2365,8 @@ void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj, Stri
       obj_one->DiffCompare(obj_two);
     }
   }
+}
+
+void taRootBase::RegisterClusterRun(ClusterRun* runner) {
+  cluster_runnner = runner;
 }

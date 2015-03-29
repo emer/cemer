@@ -13,27 +13,30 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#ifndef iPanelOfDataTable_Mbr_h
-#define iPanelOfDataTable_Mbr_h 1
+#ifndef iClusterTableView_h
+#define iClusterTableView_h 1
 
 // parent includes:
-#include <iPanelOfDataTable>
-
+#include <iDataTableView>
 // member includes:
 
 // declare all other types mentioned but not required to include:
+class Variant; //
 
-
-class TA_API iPanelOfDataTable_Mbr : public iPanelOfDataTable {
-  Q_OBJECT			// use this for member data tables that you want to have an edit panel for -- does a few things differently
-INHERITED(iPanelOfDataTable)
+class TA_API iClusterTableView: public iDataTableView {
+  // widget with some customizations to display submatrix views
+  INHERITED(iDataTableView)
+  Q_OBJECT
 public:
-  String       panel_type() const override; // this string is on the subpanel button for this panel
- iPanelOfDataTable_Mbr(taiSigLink* dl_) : iPanelOfDataTable(dl_) { };
-  ~iPanelOfDataTable_Mbr();
+  iClusterTableView(QWidget* parent = NULL);
   
 protected:
-  void         Render_impl() override;
+  void                  FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
+  bool                  isFixedColCount() const override { return true; }
+  bool                  isFixedRowCount() const override { return true; }
+
+protected slots:
+  void                  DoClusterOp(const Variant& var); // based on selection
 };
 
-#endif // iPanelOfDataTable_Mbr_h
+#endif // iClusterTableView_h

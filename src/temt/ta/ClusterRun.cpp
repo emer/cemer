@@ -18,17 +18,16 @@
 #include <taSigLinkItr>
 #include <iDataTableEditor>
 #include <iPanelOfDataTable>
-#include <iDataTableView>
+#include <iClusterTableView>
 #include <taDataProc>
 #include <DataTable_Group>
 #include <taProject>
 #include <SubversionClient>
 #include <iSubversionBrowser>
 #include <ParamSet>
-
+#include <taRootBase>
 #include <taSigLinkItr>
 #include <iPanelSet>
-
 #include <taMisc>
 
 #include <QRegExp>
@@ -154,6 +153,8 @@ void ClusterRun::Run() {
 bool ClusterRun::Update() {
   if(!initClusterManager())
     return false;
+  
+  taRootBase::instance()->RegisterClusterRun(this);  // register so iClusterViewTable can callback
   FormatTables();            // ensure data tables are formatted properly!
 
   // Update the working copy and load the running/done tables.
@@ -1070,6 +1071,10 @@ void ClusterRun::FormatJobTable(DataTable& dt) {
 
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
+  // TODO - make all columns readonly or add means to make table guireadonly
+  // and use this to ghost the column menu items that don't make sense for readonly
+//  dc->SetColFlag(DataCol::READ_ONLY);
+  
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
   dc = dt.FindMakeCol("params", VT_STRING);
@@ -1690,4 +1695,8 @@ bool ClusterRun::WaitProcAutoUpdate() {
     return true;
   }
   return true;
+}
+
+void ClusterRun::DoClusterOp(String do_this) {
+  CallFun(do_this);
 }

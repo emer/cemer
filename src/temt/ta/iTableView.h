@@ -52,8 +52,6 @@ public:
   QPointer<iMainWindowViewer> m_window; // used for tab processing etc
 #endif
 
-  virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
-  virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
   virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
   virtual void          selectCurCell();           // call clearExtSelection and then select current index
 
@@ -122,9 +120,10 @@ public:
   bool                  event(QEvent* ev) override;
   void                  keyPressEvent(QKeyEvent* e) override;
   bool                  eventFilter(QObject* obj, QEvent* event) override;
-  virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
-                                             const CellRange& sel);
+  virtual void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel);
   virtual void          RowColOp_impl(int op_code, const CellRange& sel) {}
+  virtual bool          isFixedRowCount() const { return false; } // true, ex. for tab mat cells with fixed rows
+  virtual bool          isFixedColCount() const { return false; } // true, ex. for tab mat cells with fixed geom
 
  public slots:
   virtual void          this_customContextMenuRequested(const QPoint& pos);

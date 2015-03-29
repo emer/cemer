@@ -181,7 +181,7 @@ public:
   // get a timestamp string for the current time 
   virtual void  AddJobRow(const String& cmd, const String& params, int& cmd_id);
   // add a new job row with given command and arbitrary id number, which is typically the iteration of the search algorithm -- it is always incremented here, and can be incremented by pb_batches for parallel batch mode
-    virtual void  AddJobRow_impl(const String& cmd, const String& params, int cmd_id);
+  virtual void  AddJobRow_impl(const String& cmd, const String& params, int cmd_id);
     // #IGNORE impl
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
@@ -204,7 +204,9 @@ public:
   // get the run command and params based on the currently selected search args in this control panel, and other parameters -- if use_cur_vals, then it passes the current values of the items, otherwise it uses the next_val setting, which should be set by the search algorithm prior to calling this function
   virtual void  CreateCurJob(int cmd_id = 0);
   // AddJobRow for the current parameter values as listed in the control panel, optionally with given command id number
-
+  virtual void  DoClusterOp(String do_this);
+  // execute the specified method - called by the view
+  
   // MISC impl
 
   virtual void  FormatJobTable(DataTable& dt);
@@ -234,14 +236,14 @@ public:
 
   // view panel sets etc
 
-  virtual iPanelSet* FindMyPanelSet();
+  virtual iPanelSet*  FindMyPanelSet();
   // #IGNORE find my panel set, which contains all the more specific view panels (diff data tables)
-  virtual bool       ViewPanelNumber(int panel_no);
+  virtual bool        ViewPanelNumber(int panel_no);
   // #CAT_Display select the edit/middle panel view of this object to be the given number (0 = ControlPanel, 1 = jobs_running, 2 = jobs_done, 3 = jobs_archive, 4 = file_list, 5 = cluster_info, 6 = Properties)
 
-  virtual void      AutoUpdateMe(bool clear_sels = true);
+  virtual void        AutoUpdateMe(bool clear_sels = true);
   // set this cluster run to auto-update to the next revision after one that was just committed -- if clear_sels then clear all selections in tables (action is done -- generally should be true)
-  static bool       WaitProcAutoUpdate();
+  static bool         WaitProcAutoUpdate();
   // auto update to given target revision 
 
   SIMPLE_COPY(ClusterRun);

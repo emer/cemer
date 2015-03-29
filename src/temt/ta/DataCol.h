@@ -403,7 +403,7 @@ public:
   void          ChangeColCellGeom(const MatrixGeom& new_geom);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void          ChangeColCellGeom_gui(const MatrixGeom& new_geom);
-  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom #LABEL_ChangeColCellGeom change the cell geom of a mat col, or change from scalar to mat, without loss of data
+  // #CAT_ObjectMgmt #BUTTON #MENU #DYN1 #INIT_ARGVAL_ON_cell_geom #LABEL_ChangeColCellGeom #GHOST_OFF_is_matrix change the cell geom of a mat col, or change from scalar to mat, without loss of data
   void          ChangeColCellGeomNs(int dims = 1, int d0=0, int d1=0, int d2=0,
                                       int d3=0, int d4=0, int d5=0, int d6=0);
   // #CAT_ObjectMgmt change the cell geom of a mat col, or change from scalar to mat, without loss of data -- separate numbers input instead of overall geom object

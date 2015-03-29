@@ -13,24 +13,27 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "iPanelOfDataTable_Mbr.h"
-#include <DataTable>
-#include <iDataTableEditor>
-#include <iClusterTableView>
+#ifndef iStdDataTableView_h
+#define iStdDataTableView_h 1
 
-String iPanelOfDataTable_Mbr::panel_type() const {
-  DataTable* dat = dt();
-  if(dat) {
-    return dat->name;
-  }
-  return "DataTable";
-}
+// parent includes:
+#include <iDataTableView>
 
-iPanelOfDataTable_Mbr::~iPanelOfDataTable_Mbr() {
-}
+// member includes:
 
-void iPanelOfDataTable_Mbr::Render_impl() {
-  iClusterTableView* table_view = new iClusterTableView();  
-  dte = new iDataTableEditor(table_view, NULL);
-  inherited::Render_impl();
-}
+// declare all other types mentioned but not required to include:
+
+
+class TA_API iStdDataTableView: public iDataTableView {
+  // widget with some customizations to display submatrix views
+  INHERITED(iDataTableView)
+  Q_OBJECT
+public:
+  iStdDataTableView(QWidget* parent = NULL);
+  
+protected:
+  void                  FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
+
+};
+
+#endif // iStdTableView_h

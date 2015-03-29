@@ -33,44 +33,36 @@ class TA_API iDataTableView: public iTableView {
       Q_OBJECT
       friend class iDataTableEditor;
 public:
-  bool                  gui_edit_op; // true if doing a gui editing operation
+  bool                      gui_edit_op; // true if doing a gui editing operation
 
-  iDataTableColHeaderView* col_header;
-  iDataTableRowHeaderView* row_header;
+  iDataTableColHeaderView*  col_header;
+  iDataTableRowHeaderView*  row_header;
 
-  DataTable*            dataTable() const;
-
-  bool         isFixedRowCount() const override {return false;}
-  bool         isFixedColCount() const override {return false;}
+  DataTable*                dataTable() const;
 
   iDataTableView(QWidget* parent = NULL);
 
 public: // cliphandler i/f
-  void         EditAction(int ea) override;
-  void         GetEditActionsEnabled(int& ea) override;
-
-  void         ViewAction(int ea) override;
+  void                  EditAction(int ea) override;
+  void                  GetEditActionsEnabled(int& ea) override;
+  void                  ViewAction(int ea) override;
 
 #ifndef __MAKETA__
   signals:
   void                  sig_currentChanged(const QModelIndex& current);
-  void                  sig_dataChanged(const QModelIndex& topLeft,
-      const QModelIndex & bottomRight); // #IGNORE
+  void                  sig_dataChanged(const QModelIndex& topLeft, const QModelIndex & bottomRight); // #IGNORE
 #endif
 
 protected:
-  void         currentChanged(const QModelIndex& current,
-      const QModelIndex& previous) override;
+  void         currentChanged(const QModelIndex& current, const QModelIndex& previous) override;
 #if (QT_VERSION >= 0x050000)
   void         dataChanged(const QModelIndex& topLeft,
       const QModelIndex & bottomRight, const QVector<int> &roles = QVector<int>()) override;
 #else
-  void         dataChanged(const override QModelIndex& topLeft,
-      const QModelIndex & bottomRight);
+  void         dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
 #endif
 // refresh mat cell if in here
-  void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu,
-      const CellRange& sel) override;
+  void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
   void         RowColOp_impl(int op_code, const CellRange& sel) override;
 
 };
