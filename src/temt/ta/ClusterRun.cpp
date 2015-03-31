@@ -492,7 +492,7 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
   }
 }
 
-void ClusterRun::ListAllFiles() {
+void ClusterRun::ListLocalFiles() {
   FormatTables();               // ensure tables are formatted properly
   file_list.ResetData();
 

@@ -47,7 +47,7 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act = menu->AddItem("List Job Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListJobFiles");
     act->setEnabled((tab->name == "jobs_running" || tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
 
-    act = menu->AddItem("List All Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListAllFiles");
+    act = menu->AddItem("List Local Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "ListLocalFiles");
     act->setEnabled((tab->name == "jobs_running" || tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() >= 0);
     
     menu->AddSep();

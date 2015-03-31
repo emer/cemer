@@ -120,8 +120,8 @@ public:
 
   virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
-  virtual void  ListAllFiles();
-  // #MENU_BUTTON #MENU_ON_Files list all the files currently in the results subdirectory of this project's svn repository -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
+  virtual void  ListLocalFiles();
+  // #MENU_BUTTON #MENU_ON_Files list the project files (e.g. .dat files and .wts files) that have been transferred to your local svn repository
   virtual void  GetFiles();
   // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
   virtual void  CleanJobFiles();
