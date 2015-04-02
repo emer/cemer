@@ -43,10 +43,14 @@ INHERITED(DataTableView)
 public:
   static GridTableView* New(DataTable* dt, T3Panel*& fr);
 
-  int           view_cols;      // number of columns to display: determines sizes of everything automatically from this
+protected:
+  int           view_cols;      // number of columns to display: determines sizes of everything automatically from this - protected to force use of set method by other classes
+  
+public:
   int           page_cols;      // number of columns to jump (page) when << or >> are clicked
   int_Array     vis_cols;       // #READ_ONLY #NO_SAVE indicies of visible columns
   MinMaxInt     col_range;      // column range to display, in terms of the visible columns (contained in vis_cols index list)
+  bool          need_scale_update;  // we only want to do this expensive operation when we need to
 
   float         width;          // how wide to make the display (height is always 1.0)
   bool          grid_on;        // #DEF_true whether to show grid lines
@@ -110,6 +114,9 @@ public:
   virtual void  ColFwd1();
   virtual void  ColFwdPg();
   virtual void  ColFwdAll();
+  
+  virtual void  SetViewCols(int count); // method because we need to know if the value has changed
+  virtual int   GetViewCols() { return view_cols; } // view_cols is protected so this is for outsiders
 
   iViewPanelOfGridTable* lvp();
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}

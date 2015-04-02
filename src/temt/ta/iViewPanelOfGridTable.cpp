@@ -392,7 +392,7 @@ void iViewPanelOfGridTable::GetValue_impl() {
   glv->two_d_font = chk2dFont->isChecked();
   glv->two_d_font_scale = (float)fldFontScale->GetValue();
   glv->view_rows = (int)fldRows->GetValue();
-  glv->view_cols = (int)fldCols->GetValue();
+  glv->SetViewCols((int)fldCols->GetValue());
   glv->setWidth((float)fldWidth->GetValue());
   glv->text_size_range.min = fldTxtMin->GetValue();
   glv->text_size_range.max = fldTxtMax->GetValue();
@@ -417,7 +417,7 @@ void iViewPanelOfGridTable::GetValue_impl() {
   }
   else {
     glv->page_rows = glv->view_rows;
-    glv->page_cols = glv->view_cols;
+    glv->page_cols = glv->GetViewCols();  // glv->view_cols is protected
   }
   
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
@@ -444,7 +444,7 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
 
   fldRows->GetImage((String)glv->view_rows);
   fldRowPageVal->GetImage((String)glv->page_rows);
-  fldCols->GetImage((String)glv->view_cols);
+  fldCols->GetImage((String)glv->GetViewCols());
   fldColPageVal->GetImage((String)glv->page_cols);
   fldWidth->GetImage((String)glv->width);
   fldTxtMin->GetImage((String)glv->text_size_range.min);
@@ -465,7 +465,9 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
   fldLMBVal->GetImage((String)glv->lmb_val);
   fldMMBVal->GetImage((String)glv->mmb_val);
   
+  chkPageVals->setChecked(glv->use_custom_paging);
   fldRowPageVal->GetImage((String)glv->page_rows);
+  fldColPageVal->GetImage((String)glv->page_cols);
 
   String rwtxt = "Row: " + taMisc::LeadingZeros(glv->view_range.min, 5) + " Goto";
   lblRowGoto->setText(rwtxt);
@@ -575,3 +577,4 @@ void iViewPanelOfGridTable::cbar_scaleValueChanged() {
   Changed();
 //  glv->setScaleData(false, cbar->min(), cbar->max());
 }
+

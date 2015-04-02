@@ -135,6 +135,8 @@ void GridTableView::Initialize() {
   page_rows = view_rows; // default to view size
   use_custom_paging = false;
 
+  need_scale_update = true;
+  
   width = 1.0f;
   grid_on = true;
   header_on = true;
@@ -436,6 +438,7 @@ void GridTableView::MakeViewRangeValid() {
   inherited::MakeViewRangeValid();
 
   // get the list of visible columns
+//  vis_cols_prior.Copy(vis_cols);  // save for comparison
   vis_cols.Reset();
   for(int i=0;i<children.size;i++) {
     GridColView* cvs = (GridColView*)colView(i);
@@ -562,21 +565,25 @@ void GridTableView::GetScaleRange() {
     colorscale.FixRangeZero();
     return;
   }
-  bool got_one = false;
-  MinMax sc_rg;
-  for(int col = col_range.min; col<=col_range.max; ++col) {
-    GridColView* cvs = (GridColView*)colVis(col);
-    if(!cvs || !cvs->scale_on)
-      continue;
-    DataCol* da = cvs->dataCol();
-    if(!da->isNumeric() || !da->is_matrix) continue;
-    da->GetMinMaxScale(sc_rg);
-    sc_rg.SymRange();           // keep range symmetric around zero!
-    if(!got_one)
-      colorscale.SetMinMax(sc_rg.min, sc_rg.max);
-    else
-      colorscale.UpdateMinMax(sc_rg.min, sc_rg.max);
-    got_one = true;
+    
+  if (need_scale_update) {
+    bool got_one = false;
+    MinMax sc_rg;
+    for(int col = col_range.min; col<=col_range.max; ++col) {
+      GridColView* cvs = (GridColView*)colVis(col);
+      if(!cvs || !cvs->scale_on)
+        continue;
+      DataCol* da = cvs->dataCol();
+      if(!da->isNumeric() || !da->is_matrix) continue;
+      da->GetMinMaxScale(sc_rg);
+      sc_rg.SymRange();           // keep range symmetric around zero!
+      if(!got_one)
+        colorscale.SetMinMax(sc_rg.min, sc_rg.max);
+      else
+        colorscale.UpdateMinMax(sc_rg.min, sc_rg.max);
+      got_one = true;
+    }
+    need_scale_update = false; // just did it
   }
 }
 
@@ -1185,6 +1192,9 @@ void GridTableView::setWidth(float wdth) {
 }
 
 void GridTableView::setScaleData(bool auto_scale_, float min_, float max_) {
+  if (colorscale.auto_scale != auto_scale_) {
+    need_scale_update = true;
+  }
   colorscale.SetScaleData(auto_scale_, min_, max_);
 }
 
@@ -1199,6 +1209,7 @@ void GridTableView::VScroll(bool left) {
 void GridTableView::ViewCol_At(int start) {
   if (start < 0) start = 0;
   col_range.min = start;
+  need_scale_update = true;
   UpdateDisplay();              // takes care of keeping col in range
 }
 
@@ -1233,6 +1244,14 @@ void GridTableView::ColFwdPg() {
 }
 void GridTableView::ColFwdAll() {
   ViewCol_At(vis_cols.size - view_cols);
+}
+
+
+void GridTableView::SetViewCols(int count) {
+    if (view_cols != count) {
+      need_scale_update = true;
+    }
+    view_cols = count;
 }
 
 // callback for view transformer dragger
