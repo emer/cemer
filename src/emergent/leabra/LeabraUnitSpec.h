@@ -400,22 +400,23 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(DeepSpec);
 
-eTypeDef_Of(CIFERThalSpec);
-
-class E_API CIFERThalSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep5b activation
+class E_API DeepSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the CIFER thalamus mechanisms
-  float	        thal_thr;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2 threshold on thal value -- thal values less than this threshold will be set to 0 on the unit, and as a result deep5b will be 0 -- above this level (and act5b_thr), deep5b = thal * act or 1 depending on binary_5b flag
-  bool          thal_bin;       // #CONDSHOW_ON_on #DEF_true make thalamus binary depending on whether it is above threshold or not (1.0 or 0.0) -- otherwise, thalamus retains its graded activation value for deep5b = thal * act_eq computation
-  bool          auto_thal;      // #CONDSHOW_ON_on for layers without a need for an explicit thalamic layer (e.g., they only have a single channel of information flow), just drive thalamus activity directly from superficial layer activations
-  float         super_net_mod;  // #CONDSHOW_ON_on #MIN_0 #DEF_0:0.1 gain on modulation of superficial layers (2/3, = act variable) netin by thalamic drive -- units that do NOT have thal input get a decreased netin in proportion to this variable: netin = (1 - super_net_mod * (1-thal)) * netin_raw -- decrease used to prevent excessive netin for thal receiving units
-
+  bool          on;         // enable the DeepLeabra mechanisms
+  bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep_raw activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
+  float	        thr;        // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq
+  float         net_scale;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_net inputs from deep-to-deep projections in computing deep_raw
+  float         ctxt_scale; // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to neurons -- determines how much direct temporal integration (TI) context a neuron receives
+  float         thal_to_deep; // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
+  float         thal_to_super;  // #CONDSHOW_ON_on how much to add to net input from thal input from thalamus -- input is * current act
+  
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(CIFERThalSpec);
+  TA_SIMPLE_BASEFUNS(DeepSpec);
 protected:
   SPEC_DEFAULTS;
 
@@ -425,23 +426,35 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(CIFERDeep5bSpec);
+eTypeDef_Of(DeepNormSpec);
 
-class E_API CIFERDeep5bSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for Cortical Information Flow via Extra Range theory, simulating effects of thalamic drive on cortical neurons, including superficial and deep components of a Unit-level microcolumn -- thalamic input modulates superficial netin and is used thresholded to determine deep5b activation
+class E_API DeepNormSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables
 INHERITED(SpecMemberBase)
 public:
-  bool          on;         // enable the CIFER deep5b mechanisms
-  bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep5b activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
-  float	        act5b_thr; // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2 threshold on act_eq value for deep5b neurons to fire -- neurons below this level have deep5b = 0 -- above this level, deep5b = thal * act
-  float         ti_5b;          // #CONDSHOW_ON_on #MIN_0 #MAX_1 how much of deep5b to use for TI context information -- 1-ti_5b comes from act_eq -- biologically both sources of info can be mixed into layer 6 context signal
-  float         d5b_to_super;   // #CONDSHOW_ON_on #DEF_0 gain on modulation of superficial (2/3 = act) netin by deep5b activations: netin += d5b_to_super * deep5b
+  float	        gain;           // #MIN_0 gain multiplier on normalized values
+  float         contrast;       // #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
+  float         avg_ctxt;       // #MIN_0 estimated average context values, for purpose of computing the gain and contrast terms from target strong and weak deep_raw values
+  float         max_deep_net;   // #MIN_0 estimated maximum deep-to-deep netinput values, for purpose of computing the gain and contrast terms from target strong and weak deep_raw values
+  float         strong_trg;     // #MIN_0 #DEF_1 target normalized value for strong deep_raw activations, given other constraints above -- helps determine the appropriate gain value
+  float         weak_trg;       // #MIN_0 #DEF_0.5 target normalized value for weak deep_raw activations, given other constraints above -- helps determine the appropriate contrast value
+  
+  float         ComputeNorm(float raw, float ctxt)
+  { return gain * (raw + contrast) / (ctxt + contrast); }
+  // computed normalized value from current raw and context values
 
-  float         ti_5b_c;        // #HIDDEN #READ_ONLY 1.0 - ti_5b
+  void          ComputeGain()
+  { gain = strong_trg * (avg_ctxt + contrast) / (1.0f + max_deep_net + contrast); }
+  // update gain parameter based on target strong value and other params
+
+  void          ComputeContrast(float thr)
+  { contrast = gain * thr / (weak_trg - gain); }
+  // update contrast parameter based on target weak value and other params
+
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(CIFERDeep5bSpec);
+  TA_SIMPLE_BASEFUNS(DeepNormSpec);
 protected:
   SPEC_DEFAULTS;
   void	UpdateAfterEdit_impl();
@@ -544,14 +557,13 @@ public:
   LeabraAvgLSpec   avg_l;	// #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  Quarters      deep5b_qtr;     // #CAT_Learning quarters during which deep5b activations should be updated and sent as d5b_net netinput to other neurons
-  Quarters      ti_ctxt_qtr;    // #CAT_Learning quarters after which temporal integration context information should be updated
+  Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
-  SynDelaySpec	syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
+  SynDelaySpec	 syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
-  CIFERThalSpec	 cifer_thal;	// #CAT_Learning cortical information flow via extra range (CIFER) thalamic parameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
-  CIFERDeep5bSpec cifer_d5b;	// #CAT_Learning cortical information flow via extra range (CIFER) deep5b arameters -- uses thalmic input to drive a foreground active processing pattern (in deep5b acts) on top of distributed corticocortical background activations (in superficial acts)
+  DeepSpec	 deep;  	// #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
+  DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -608,12 +620,9 @@ public:
   ///////////////////////////////////////////////////////////////////////
   //	QuarterInit -- at start of new gamma-quarter
 
-  inline  bool Quarter_Deep5bNow(int qtr)
-  { return deep5b_qtr & (1 << qtr); }
+  inline  bool Quarter_DeepNow(int qtr)
+  { return deep_qtr & (1 << qtr); }
   // #CAT_Activation test whether to send deep5b netintput and compute deep5b activations at given quarter (pass net->quarter as arg)
-  inline  bool Quarter_SendTICtxtNow(int qtr)
-  { return ti_ctxt_qtr & (1 << qtr); }
-  // #CAT_Activation test whether to send TI context at end of given quarter (pass net->quarter as arg)
 
   virtual void Quarter_Init_Unit(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation quarter unit-level initialization functions: Init_TargFlags, Init_PrvNet, NetinScale
@@ -655,12 +664,14 @@ public:
     virtual void Compute_NetinInteg_Spike_i(LeabraUnitVars* uv, LeabraNetwork* net,
                                             int thr_no);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
-  virtual void	Send_Deep5bNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+  virtual void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
+  virtual void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                                   int thr_no);
-  // #CAT_TI send deep5b netinputs through Deep5bConSpec connections
-  virtual void	Send_Deep5bNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
+  // #CAT_TI send deep5b netinputs through SendDeepRawConSpec connections
+  virtual void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
                                          int thr_no);
-  // #CAT_TI send context netinputs through Deep5bConSpec connections -- post processing rollup
+  // #CAT_TI send context netinputs through SendDeepRawConSpec connections -- post processing rollup
 
   inline float Compute_EThresh(LeabraUnitVars* uv);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
@@ -738,10 +749,7 @@ public:
   //	Post Activation Step
 
   virtual void 	Compute_Act_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Activation post-processing step after activations are computed -- calls Compute_CIFER (applies threshold to the thal variable), and Compute_SRAvg by default
-    virtual void Compute_Act_ThalDeep5b(LeabraUnitVars* uv, LeabraNetwork* net,
-                                        int thr_no);
-    // #CAT_Activation update thal and deep5b activations according to cifer specs -- apply threshold to thal variable at this point, and compute deep5b = thal * act_eq (although deep5b has different synapses, it recv's through the depressed synapses from 2/3 act, so we use act_eq)
+  // #CAT_Activation post-processing step after activations are computed -- calls  Compute_SRAvg by default
     virtual void Compute_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
     // #CAT_Learning compute sending-receiving running activation averages (avg_ss, avg_s, avg_m) -- only for this unit (SR name is a hold-over from connection-level averaging that is no longer used) -- unit level only, used for XCAL -- called by Compute_Act_Post
 
@@ -760,16 +768,37 @@ public:
     // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in Quarter_Final function
 
   ///////////////////////////////////////////////////////////////////////
-  //	LeabraTI / CIFER thalmocortical computations
+  //	Deep Leabra Computations -- called during Quarter_Init
 
-  virtual void	Send_TICtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+  virtual bool Compute_DeepTest(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep should Compute_DeepStep* functions be run now?
+
+  virtual void Compute_DeepStep1(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep first step of computing deep layer update: send deep ctxt
+  virtual void Compute_DeepStep2(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep second step of computing deep layer update: ctxt post, compute deep norm, send deep norm
+  virtual void Compute_DeepStep3(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep third step of computing deep layer update: deep norm post
+
+  virtual void	Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                                   int thr_no);
-  // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections
-  virtual void	Send_TICtxtNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
-                                  int thr_no);
-  // #CAT_TI send context netinputs through LeabraTICtxtConSpec connections -- post processing rollup
-  virtual void	ClearTICtxt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at discontinuities of experience
+  // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections
+  virtual void	Send_DeepCtxtNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
+                                        int thr_no);
+  // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections -- post processing rollup
+
+  virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
+    
+  virtual void	Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net,
+                                   int thr_no);
+  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections
+  virtual void	Send_DeepNormNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
+                                        int thr_no);
+  // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
+  
+  virtual void	ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
 
 
   ///////////////////////////////////////////////////////////////////////

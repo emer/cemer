@@ -219,8 +219,8 @@ public:
   void	Compute_AvgAbsRelNetin(LeabraNetwork* net) { spec->Compute_AvgAbsRelNetin(this, net); }
   // #CAT_Statistic compute the average absolute layer-level and relative netinput from different projections into this layer (over an epoch-level timescale)
 
-  void	ClearTICtxt(LeabraNetwork* net)	{ spec->ClearTICtxt(this, net); }
-  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at discontinuities of experience
+  void	ClearDeepActs(LeabraNetwork* net)	{ spec->ClearDeepActs(this, net); }
+  // #CAT_TI clear the deep lamina variables -- can be useful to do at discontinuities of experience
 
   ////////////////////////////////////////////
   //	Misc structural routines

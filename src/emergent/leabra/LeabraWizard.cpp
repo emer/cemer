@@ -37,7 +37,7 @@ void LeabraWizard::Initialize() {
 #include <GpRndTesselPrjnSpec>
 
 #include <TwoDValLayerSpec>
-#include <LeabraTICtxtConSpec>
+#include <DeepCtxtConSpec>
 #include <MarkerConSpec>
 #include <LayerActUnitSpec>
 #include <LeabraContextLayerSpec>
@@ -63,11 +63,11 @@ void LeabraWizard::Initialize() {
 #include <PatchUnitSpec>
 #include <GPiUnitSpec>
 #include <InvertUnitSpec>
-#include <ThalUnitSpec>
+#include <ThalSendUnitSpec>
 #include <PFCUnitSpec>
-#include <Deep5bCopyUnitSpec>
+#include <DeepCopyUnitSpec>
 #include <MatrixConSpec>
-#include <Deep5bConSpec>
+#include <SendDeepRawConSpec>
 
 #include <TopoWtsPrjnSpec>
 
@@ -387,7 +387,7 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
 
-  net->net_misc.ti = true;
+  net->net_misc.deep = true;
 
   ti_ctxt->SetUnique("wt_scale", true);
   ti_ctxt->wt_scale.rel = 1.0f;
@@ -1373,31 +1373,31 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
   FMChild(GPiUnitSpec, gpi_units, pbwm_units, "GPiUnits");
   FMChild(InvertUnitSpec, gpinv_units, pbwm_units, "GPInvert");
-  FMChild(ThalUnitSpec, thal_units, pbwm_units, "ThalUnits");
+  FMChild(ThalSendUnitSpec, thal_units, pbwm_units, "ThalUnits");
   FMChild(PFCUnitSpec, pfc_units, pbwm_units, "PFCUnits");
-  FMChild(Deep5bCopyUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
+  FMChild(DeepCopyUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
 
   ////////////	ConSpecs
 
   FMSpec(LeabraConSpec, lrn_cons, pbwmspgp, prefix + "LrnCons");
   FMChild(MatrixConSpec, mtx_cons_go, lrn_cons, "MatrixConsGo");
   FMChild(MatrixConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
-  FMChild(Deep5bConSpec, d5b_lrn_cons, lrn_cons, "Deep5bLrn");
+  FMChild(SendDeepRawConSpec, d5b_lrn_cons, lrn_cons, "Deep5bLrn");
   FMChild(LeabraConSpec, to_pfc, lrn_cons, "ToPFC");
-  FMChild(Deep5bConSpec, pfcd_mnt_out, lrn_cons, "PFCdMntToOut");
+  FMChild(SendDeepRawConSpec, pfcd_mnt_out, lrn_cons, "PFCdMntToOut");
 
   FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
   FMChild(MarkerConSpec, marker_cons, fix_cons, prefix + "MarkerCons");
   FMChild(LeabraConSpec, in_to_mtx, fix_cons, "InputToMatrixBias");
   FMChild(LeabraConSpec, pfc_to_mtx, fix_cons, "PFCToMatrix");
-  FMChild(Deep5bConSpec, pfcd_out_bias_mtx, fix_cons, "PFCdOutBiasMtx");
+  FMChild(SendDeepRawConSpec, pfcd_out_bias_mtx, fix_cons, "PFCdOutBiasMtx");
   FMChild(LeabraConSpec, in_to_thal, fix_cons, "InputToThal");
   FMChild(LeabraConSpec, gp_inhib_to_thal, fix_cons, "GPinhibToThal");
   FMChild(LeabraConSpec, pfc_to_thal, fix_cons, "PFCToThal");
-  FMChild(Deep5bConSpec, pfcd_mnt_bias_thal, fix_cons, "PFCdMntBiasThal");
-  FMChild(Deep5bConSpec, pfcd_out_bias_thal, fix_cons, "PFCdOutBiasThal");
-  FMChild(Deep5bConSpec, pfcd_patch, fix_cons, "PFCdPatch");
+  FMChild(SendDeepRawConSpec, pfcd_mnt_bias_thal, fix_cons, "PFCdMntBiasThal");
+  FMChild(SendDeepRawConSpec, pfcd_out_bias_thal, fix_cons, "PFCdOutBiasThal");
+  FMChild(SendDeepRawConSpec, pfcd_patch, fix_cons, "PFCdPatch");
 
   ////////////	LayerSpecs
 
@@ -1435,10 +1435,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   pbwm_units->bias_spec.SetSpec(fix_bias);
 
-  matrix_units->SetUnique("cifer_thal", true);
-  matrix_units->cifer_thal.on = true;
-  matrix_units->cifer_thal.thal_thr = 0.1f;
-  matrix_units->cifer_thal.thal_bin = false;
+  matrix_units->SetUnique("deep", true);
+  matrix_units->deep.on = true;
+  // matrix_units->cifer_thal.thal_thr = 0.1f;
+  // matrix_units->cifer_thal.thal_bin = false;
 
   matrix_units->SetUnique("noise_type", true);
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
@@ -1447,14 +1447,11 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->SetUnique("noise_adapt", true);
   matrix_units->noise_adapt.trial_fixed = true;
 
-  pfc_units->SetUnique("cifer_thal", true);
-  pfc_units->cifer_thal.on = true;
-  pfc_units->cifer_thal.thal_thr = 0.1f;
-  pfc_units->cifer_thal.thal_bin = true;
+  pfc_units->SetUnique("deep", true);
+  pfc_units->deep.on = true;
+  // pfc_units->cifer_thal.thal_thr = 0.1f;
+  // pfc_units->cifer_thal.thal_bin = true;
 
-  pfc_units->SetUnique("cifer_d5b", true);
-  pfc_units->cifer_d5b.on = true;
-  pfc_units->cifer_d5b.act5b_thr = 0.2f;
 
   ////////////	ConSpecs
 
@@ -1868,13 +1865,13 @@ can be sure everything is ok.";
   gpinvert->SetUnitSpec(PbwmSp("GPInvert",InvertUnitSpec));
   gpinvert->SetLayerSpec(PbwmSp("GPiLayer",LeabraLayerSpec));
 
-  thal->SetUnitSpec(PbwmSp("ThalUnits",ThalUnitSpec));
+  thal->SetUnitSpec(PbwmSp("ThalUnits",ThalSendUnitSpec));
   thal->SetLayerSpec(PbwmSp("ThalLayer",LeabraLayerSpec));
 
   pfc->SetUnitSpec(PbwmSp("PFCUnits",PFCUnitSpec));
   pfc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfcd->SetUnitSpec(PbwmSp("PFCdUnits",Deep5bCopyUnitSpec));
+  pfcd->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
   pfcd->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1917,7 +1914,7 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_go, pfc, gponetoone,
                     PbwmSp("PFCToMatrix", LeabraConSpec));
   net->FindMakePrjn(matrix_go, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasMtx", Deep5bConSpec));
+                    PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
 
   net->FindMakePrjn(matrix_nogo, gpi, gponetoone, marker_cons);
   net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
@@ -1926,9 +1923,9 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_nogo, pfc, gponetoone,
                     PbwmSp("PFCToMatrix", LeabraConSpec));
   net->FindMakePrjn(matrix_nogo, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasMtx", Deep5bConSpec));
+                    PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
 
-  net->FindMakePrjn(patch, pfc, gponetoone, PbwmSp("PFCdPatch", Deep5bConSpec));
+  net->FindMakePrjn(patch, pfc, gponetoone, PbwmSp("PFCdPatch", SendDeepRawConSpec));
 
   net->FindMakePrjn(gpi, matrix_go, gponetoone, fix_cons);
   net->FindMakePrjn(gpi, matrix_nogo, gponetoone, fix_cons);
@@ -1937,13 +1934,13 @@ can be sure everything is ok.";
 
   net->FindMakePrjn(thal, gpinvert, onetoone, marker_cons);
   net->FindMakePrjn(thal, pfc, gponetoone, PbwmSp("PFCToThal", LeabraConSpec));
-  net->FindMakePrjn(thal, pfc, gponetoone, PbwmSp("PFCdMntBiasThal", Deep5bConSpec));
+  net->FindMakePrjn(thal, pfc, gponetoone, PbwmSp("PFCdMntBiasThal", SendDeepRawConSpec));
   net->FindMakePrjn(thal, pfc, PbwmSp("PFCdMntToOutPrjn_thal",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasThal", Deep5bConSpec));
+                    PbwmSp("PFCdOutBiasThal", SendDeepRawConSpec));
 
   net->FindMakePrjn(pfc, thal, gponetoone, marker_cons);
   net->FindMakePrjn(pfc, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdMntToOut", Deep5bConSpec));
+                    PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
 
   net->FindMakePrjn(pfcd, pfc, onetoone, marker_cons);
 
@@ -1972,7 +1969,7 @@ can be sure everything is ok.";
     Layer* ol = (Layer*)output_lays[i];
 
     net->FindMakePrjn(ol, pfc, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-                      PbwmSp("Deep5bLrn", Deep5bConSpec));
+                      PbwmSp("Deep5bLrn", SendDeepRawConSpec));
     // todo: need reciprocal connection!
     // net->FindMakePrjn(pfc, ol, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
     //                   PbwmSp("ToPFC", LeabraConSpec));
@@ -1983,7 +1980,7 @@ can be sure everything is ok.";
     Layer* hl = (Layer*)hidden_lays[i];
 
     net->FindMakePrjn(hl, pfc, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-                      PbwmSp("Deep5bLrn", Deep5bConSpec));
+                      PbwmSp("Deep5bLrn", SendDeepRawConSpec));
     // todo: need reciprocal connection!
     // net->FindMakePrjn(pfc, hl, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
     //                   PbwmSp("ToPFC", LeabraConSpec));

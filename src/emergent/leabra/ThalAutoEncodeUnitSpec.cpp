@@ -13,31 +13,33 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "Deep5bClampUnitSpec.h"
+#include "ThalAutoEncodeUnitSpec.h"
 
 #include <LeabraNetwork>
 
-TA_BASEFUNS_CTORS_DEFN(Deep5bClampUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(ThalAutoEncodeUnitSpec);
 
-void Deep5bClampUnitSpec::Initialize() {
+void ThalAutoEncodeUnitSpec::Initialize() {
   Defaults_init();
 }
 
-void Deep5bClampUnitSpec::Defaults_init() {
-  cifer_d5b.on = true;
-  deep5b_qtr = Q4;
+void ThalAutoEncodeUnitSpec::Defaults_init() {
+  deep.on = true;
+  deep_qtr = Q4;
 }
 
-void Deep5bClampUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
+void ThalAutoEncodeUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
+  u->deep_norm = u->deep_norm_net; // always get from net
   inherited::Compute_NetinRaw(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) { // note: using plus phase here..
-    u->net_raw = 0.0f;          // zero the regular netins
+    u->net_raw = u->deep_raw_net;          // only gets from deep!
   }
 }
 
-void Deep5bClampUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net,
+void ThalAutoEncodeUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
   inherited::Trial_Init_SRAvg(u, net, thr_no);
   u->avg_l_lrn = 0.0f;        // no self organizing in clamped layers!
 }
+

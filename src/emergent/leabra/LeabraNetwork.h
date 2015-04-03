@@ -125,8 +125,7 @@ class E_API LeabraNetMisc : public taOBase {
 INHERITED(taOBase)
 public:
   bool          spike;         // #READ_ONLY #SHOW using discrete spiking -- all units must be either rate code or spiking, to optimize the computation -- updated in Trial_Init_Specs call
-  bool          ti;            // #READ_ONLY #SHOW LeabraTI (temporal integration) processing and learning mechanisms are engaged, because LeabraTICtxtConSpec SELF prjns are present in layers to perform optimized single-layer TI context activation at end of plus phase -- updated in Trial_Init_Specs call
-  bool          deep5b_cons; // #READ_ONLY #SHOW Deep5bConSpec prjns are present in layers to send deep5b activations instead of superficial activations -- updated in Trial_Init_Specs call
+  bool          deep;         // #READ_ONLY #SHOW deep processing is active -- updated in Trial_Init_Specs call
   bool		bias_learn;     // #READ_ONLY #SHOW do any of the bias connections have learning enabled?  if true, then an extra unit-level computational step is required -- bias learning is now OFF by default, as it has no obvious benefits in large models, but may be useful for smaller networks
   bool          trial_decay;   // #READ_ONLY #SHOW at least one layer spec has a non-zero level of trial decay -- if all layers have 0 trial decay, then the net input does not need to be reset between trials, yielding significantly faster performance
   bool          diff_scale_p;   // #READ_ONLY #SHOW a unitspec such as the hippocampus ThetaPhase units rescales inputs in plus phase -- this requires initializing the net inputs between these phases
@@ -264,7 +263,7 @@ public:
 
   float**       unit_vec_vars;
   // #IGNORE vectorized versions of unit variables stored in separate memory for each thread -- n_thrs pointers to N_VEC_VARS * n_units floats -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
-  float**       thrs_send_d5bnet_tmp;
+  float**       thrs_send_deepnet_tmp;
   // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
   char**        thrs_lay_avg_max_vals;
   // #IGNORE AvgMaxValsRaw data for layers, by thread
@@ -283,8 +282,8 @@ public:
   { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
 
-  inline float* ThrSendD5bNetTmp(int thr_no) const 
-  { return thrs_send_d5bnet_tmp[thr_no]; }
+  inline float* ThrSendDeepNetTmp(int thr_no) const 
+  { return thrs_send_deepnet_tmp[thr_no]; }
   // #IGNORE temporary sending deep5b netinput memory for given thread 
 
   inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
@@ -481,13 +480,15 @@ public:
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	LeabraTI Special code
+  //	DeepLeabra Updating -- called during Quarter_Init
 
-  virtual void Send_TICtxtNetin_Thr(int thr_no);
-  // #CAT_TI send TI context netinput -- calls corresponding functions at unit level, first basic send, then _Post that rolls-up send
+  virtual void Compute_Deep_Thr(int thr_no);
+  // #IGNORE update deep variables, using the proper sequence of unit-level calls
 
-  virtual void ClearTICtxt();
-  // #CAT_TI clear the TI context state from all units in the network -- can be useful to do at discontinuities of experience
+  virtual void ClearDeepActs();
+  // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
+    virtual void ClearDeepActs_Thr(int thr_no);
+    // #IGNORE clear all the deep lamina variables -- can be useful to do at discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

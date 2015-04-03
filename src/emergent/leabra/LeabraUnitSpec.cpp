@@ -16,8 +16,9 @@
 #include "LeabraUnitSpec.h"
 #include <LeabraNetwork>
 #include <LeabraBiasSpec>
-#include <LeabraTICtxtConSpec>
-#include <Deep5bConSpec>
+#include <DeepCtxtConSpec>
+#include <SendDeepRawConSpec>
+#include <SendDeepNormConSpec>
 #include <taProject>
 #include <taMath_double>
 #include <DataTable>
@@ -38,8 +39,8 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
-TA_BASEFUNS_CTORS_DEFN(CIFERThalSpec);
-TA_BASEFUNS_CTORS_DEFN(CIFERDeep5bSpec);
+TA_BASEFUNS_CTORS_DEFN(DeepSpec);
+TA_BASEFUNS_CTORS_DEFN(DeepNormSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
 TA_BASEFUNS_CTORS_DEFN(NoiseAdaptSpec);
 
@@ -302,34 +303,35 @@ void LeabraDropoutSpec::Defaults_init() {
   net_drop = 0.9f;
 }
 
-void CIFERThalSpec::Initialize() {
+void DeepSpec::Initialize() {
   on = false;
-  thal_thr = 0.1f;
-  thal_bin = true;
-  auto_thal = false;
-  super_net_mod = 0.0f;
-  Defaults_init();
-}
-
-void CIFERThalSpec::Defaults_init() {
-}
-
-void CIFERDeep5bSpec::Initialize() {
-  on = false;
-  act5b_thr = 0.1f;
-  d5b_to_super = 0.0f;
-  ti_5b = 0.0f;
-  ti_5b_c = 1.0f - ti_5b;
-  Defaults_init();
-}
-
-void CIFERDeep5bSpec::Defaults_init() {
   burst = true;
+  thr = 0.5f;
+  net_scale = 0.5f;
+  ctxt_scale = 0.3f;
+  thal_to_deep = 0.5f;
+  thal_to_super = 0.0f;
+  Defaults_init();
 }
 
-void CIFERDeep5bSpec::UpdateAfterEdit_impl() {
+void DeepSpec::Defaults_init() {
+}
+
+void DeepNormSpec::Initialize() {
+  gain = 1.0f;
+  contrast = 1.0f;
+  avg_ctxt = 0.5f;
+  max_deep_net = 0.5f;
+  strong_trg = 1.0f;
+  weak_trg = 0.5f;
+  Defaults_init();
+}
+
+void DeepNormSpec::Defaults_init() {
+}
+
+void DeepNormSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  ti_5b_c = 1.0f - ti_5b;
 }
 
 void DaModSpec::Initialize() {
@@ -362,8 +364,7 @@ void LeabraUnitSpec::Initialize() {
 
   act_fun = NOISY_XX1;
 
-  deep5b_qtr = QNULL;
-  ti_ctxt_qtr = QNULL;
+  deep_qtr = QNULL;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;
@@ -442,6 +443,8 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
 
+  deep_norm.ComputeContrast(deep.thr);
+  
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
@@ -549,11 +552,13 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   u->act_avg = 0.15f;
+  u->deep_raw = 0.0f;
+  u->deep_norm = 1.0f;
+  u->deep_ctxt = 0.0f;
+  u->deep_norm_net = 0.0f;
+  u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
   u->thal_prv = 0.0f;
-  u->deep5b = 0.0f;
-  u->d5b_net = 0.0f;
-  u->ti_ctxt = 0.0f;
   u->lrnmod = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -577,7 +582,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
-  u->d5b_sent = 0.0f;
+  u->deep_sent = 0.0f;
 
   u->misc_1 = 0.0f;
   u->spk_t = -1;
@@ -613,10 +618,10 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
-  u->d5b_sent = 0.0f;
-  u->d5b_net = 0.0f;
+  u->deep_sent = 0.0f;
+  u->deep_raw_net = 0.0f;
+  u->deep_norm_net = 0.0f;
   // u->gi_syn = 0.0f;
-  // u->ti_ctxt = 0.0f;
 
   // u->net = 0.0f;
 
@@ -660,12 +665,14 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
+  u->deep_raw = 0.0f;
+  u->deep_norm = 1.0f;
+  u->deep_ctxt = 0.0f;
+  u->deep_norm_net = 0.0f;
+  u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
   u->thal_prv = 0.0f;
-  u->deep5b = 0.0f;
   u->lrnmod = 0.0f;
-  u->d5b_net = 0.0f;
-  u->ti_ctxt = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
   u->v_m = v_m_init.Gen(thr_no);
@@ -797,6 +804,9 @@ void LeabraUnitSpec::Trial_Init_Specs(LeabraNetwork* net) {
     TestWarning(net->net_misc.spike, "Trial_Init_Specs",
                 "detected a mix of SPIKE and NOISY_XX1 activation functions -- due to code optimizations, must all be either one or the other!");
   }
+  if(deep.on) {
+    net->net_misc.deep = true;
+  }
   if(bias_spec)
     ((LeabraConSpec*)bias_spec.SPtr())->Trial_Init_Specs(net);
 }
@@ -888,7 +898,7 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* ne
 void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no) {
   u->net_prv_q = u->net;
-  if(Quarter_Deep5bNow(net->quarter)) {
+  if(Quarter_DeepNow(net->quarter)) {
     u->thal_prv = u->thal;        // only grab prv at start of quarter where deep5b is updating
   }
 }
@@ -910,7 +920,9 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
 
   float net_scale = 0.0f;
   float inhib_net_scale = 0.0f;
-  float d5b_net_scale = 0.0f;
+  float deep_raw_scale = 0.0f;
+  float deep_norm_scale = 0.0f;
+  float deep_ctxt_scale = 0.0f;
   int n_active_cons = 0;        // track this for bias weight scaling!
   
   // important: count all projections so it is uniform across all units
@@ -928,8 +940,14 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     if(cs->inhib) {
       inhib_net_scale += rel_scale;
     }
-    else if(cs->IsDeep5bCon()) {
-      d5b_net_scale += rel_scale;
+    else if(cs->IsDeepRawCon()) {
+      deep_raw_scale += rel_scale;
+    }
+    else if(cs->IsDeepNormCon()) {
+      deep_norm_scale += rel_scale;
+    }
+    else if(cs->IsDeepCtxtCon()) {
+      deep_ctxt_scale += rel_scale;
     }
     else {
       n_active_cons++;
@@ -956,9 +974,17 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
       if(inhib_net_scale > 0.0f)
         recv_gp->scale_eff /= inhib_net_scale;
     }
-    else if(!cs->IsDeep5bCon()) { // exclude from rel rescaling
-      if(d5b_net_scale > 0.0f)
-        recv_gp->scale_eff /= d5b_net_scale;
+    else if(cs->IsDeepRawCon()) {
+      if(deep_raw_scale > 0.0f)
+        recv_gp->scale_eff /= deep_raw_scale;
+    }
+    else if(cs->IsDeepNormCon()) {
+      if(deep_norm_scale > 0.0f)
+        recv_gp->scale_eff /= deep_norm_scale;
+    }
+    else if(cs->IsDeepCtxtCon()) {
+      if(deep_ctxt_scale > 0.0f)
+        recv_gp->scale_eff /= deep_ctxt_scale;
     }
     else {
       if(net_scale > 0.0f)
@@ -1087,8 +1113,8 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
 
-  if(Quarter_Deep5bNow(net->quarter)) {
-    Send_Deep5bNetin(u, net, thr_no);
+  if(Quarter_DeepNow(net->quarter)) {
+    Send_DeepRawNetin(u, net, thr_no);
   }    
 }
 
@@ -1165,10 +1191,20 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   Compute_NetinRaw(u, net, thr_no);
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
+  if(deep.on) {                 // apply attention directly to netin (for now)
+    u->net_raw *= u->deep_norm;
+  }
+
   float net_syn = u->net_raw;
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
   // this could modify net_syn if it wants..
   float net_tot = net_syn + net_ex;
+
+  if(dropout.net_on) {
+    if(Random::BoolProb(dropout.net_p, thr_no)) {
+      net_tot *= dropout.net_drop;
+    }
+  }
 
   if(act_fun == SPIKE) {
     // todo: need a mech for inhib spiking
@@ -1187,14 +1223,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   else if((noise_type == NET_MULT_NOISE) && (noise.type != Random::NONE)) {
     u->net *= Compute_Noise(u, net, thr_no);
   }
-  if(dropout.net_on) {
-    if(Random::BoolProb(dropout.net_p, thr_no)) {
-      u->net *= dropout.net_drop;
-    }
-  }
 
-  if(Quarter_Deep5bNow(net->quarter)) {
-    Send_Deep5bNetin_Post(u, net, thr_no);
+  if(deep.on && Quarter_DeepNow(net->quarter)) {
+    Compute_DeepRaw(u, net, thr_no);
+    Send_DeepRawNetin_Post(u, net, thr_no);
   }
 
   TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
@@ -1211,14 +1243,13 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   if(u->HasExtFlag(UnitVars::EXT)) {
     net_ex += u->ext * ls->clamp.gain;
   }
-  if(net->net_misc.ti) {
-    net_ex += u->ti_ctxt;
-  }
-  if(cifer_thal.on && cifer_thal.super_net_mod > 0.0f) {
-    net_ex -= cifer_thal.super_net_mod * (1.0f - u->thal) * net_syn;
-  }
-  if(cifer_d5b.on) {
-    net_ex += u->d5b_net + cifer_d5b.d5b_to_super * u->deep5b; // not * net_syn
+  if(deep.on) {
+    if(deep.thal_to_super > 0.0f) {
+      net_ex += deep.thal_to_super * u->thal * u->act_eq;
+    }
+    if(deep.ctxt_scale > 0.0f) {
+      net_ex += deep.ctxt_scale * u->deep_ctxt;
+    }
   }
   if(da_mod.on) {
     if(net->phase == LeabraNetwork::PLUS_PHASE) {
@@ -1288,10 +1319,19 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
   // u->gi_syn = MAX(u->gi_syn, 0.0f); // negative netin doesn't make any sense
 }
 
-void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
+void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  float draw = (u->act_eq >= deep.thr) ? u->act_eq : 0.0f;
+  // todo: could have a binarizing option
+  draw += u->act_eq * (deep.net_scale * u->deep_norm_net +
+                       deep.thal_to_deep * u->thal);
+  // using the less catch-22 version, doesn't depend on having passed threshold
+  u->deep_raw = draw;
+}
+
+void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                          int thr_no) {
-  float act_ts = u->deep5b;
-  // note: no delay for 5b
+  float act_ts = u->deep_raw;
+  // note: no delay for deep
   // if(syn_delay.on) {
   //   if(!u->act_buf)
   //     Init_ActBuff(u);
@@ -1299,7 +1339,7 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
   // }
 
   if(act_ts > opt_thresh.send) {
-    float act_delta = act_ts - u->d5b_sent;
+    float act_delta = act_ts - u->deep_sent;
     if(fabsf(act_delta) > opt_thresh.delta) {
       const int nsg = u->NSendConGps(net, thr_no); 
       for(int g=0; g< nsg; g++) {
@@ -1307,30 +1347,30 @@ void LeabraUnitSpec::Send_Deep5bNetin(LeabraUnitVars* u, LeabraNetwork* net,
         if(send_gp->NotActive()) continue;
         LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         if(tol->hard_clamped)      continue;
-        if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
-        Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-        sp->Send_D5bNetDelta(send_gp, net, thr_no, act_delta);
+        if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeepRawCon()) continue;
+        SendDeepRawConSpec* sp = (SendDeepRawConSpec*)send_gp->GetConSpec();
+        sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);
       }
-      u->d5b_sent = act_ts;     // cache the last sent value
+      u->deep_sent = act_ts;     // cache the last sent value
     }
   }
-  else if(u->d5b_sent > opt_thresh.send) {
-    float act_delta = - u->d5b_sent; // un-send the last above-threshold activation to get back to 0
+  else if(u->deep_sent > opt_thresh.send) {
+    float act_delta = - u->deep_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       if(tol->hard_clamped)        continue;
-      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeep5bCon()) continue;
-      Deep5bConSpec* sp = (Deep5bConSpec*)send_gp->GetConSpec();
-      sp->Send_D5bNetDelta(send_gp, net, thr_no, act_delta);
+      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeepRawCon()) continue;
+      SendDeepRawConSpec* sp = (SendDeepRawConSpec*)send_gp->GetConSpec();
+      sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);
     }
-    u->d5b_sent = 0.0f;         // now it effectively sent a 0..
+    u->deep_sent = 0.0f;         // now it effectively sent a 0..
   }
 }
 
-void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
+void LeabraUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
                                          int thr_no) {
   int nt = net->n_thrs_built;
   int flat_idx = u->UnFlatIdx(net, thr_no);
@@ -1339,13 +1379,13 @@ void LeabraUnitSpec::Send_Deep5bNetin_Post(LeabraUnitVars* u, LeabraNetwork* net
 #endif
   float net_delta = 0.0f;
   for(int j=0;j<nt;j++) {
-    float& ndval = net->ThrSendD5bNetTmp(j)[flat_idx];
+    float& ndval = net->ThrSendDeepNetTmp(j)[flat_idx];
     net_delta += ndval;
 #ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
 #endif
   }
-  u->d5b_net += net_delta;
+  u->deep_raw_net += net_delta;
 }
 
 ///////////////////////////////////////////////////////////////////////
@@ -1709,38 +1749,7 @@ float LeabraUnitSpec::Compute_Noise(LeabraUnitVars* u, LeabraNetwork* net, int t
 }
 
 void LeabraUnitSpec::Compute_Act_Post(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  Compute_Act_ThalDeep5b(u, net, thr_no);
   Compute_SRAvg(u, net, thr_no);
-}
-
-void LeabraUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net,
-                                            int thr_no) {
-  if(cifer_thal.on) {
-    if(cifer_thal.auto_thal) {
-      u->thal = u->act_eq;
-    }
-    if(u->thal < cifer_thal.thal_thr) {
-      TestWrite(u->thal, 0.0f);
-    }
-    if(cifer_thal.thal_bin && u->thal > 0.0f) {
-      TestWrite(u->thal, 1.0f);
-    }
-  }
-
-  if(!cifer_d5b.on) return;
-  
-  if(Quarter_Deep5bNow(net->quarter)) {
-    float act5b = u->act_eq;
-    if(act5b < cifer_d5b.act5b_thr) {
-      act5b = 0.0f;
-    }
-    u->deep5b = u->thal * act5b;  // thal is thresholded
-  }
-  else {
-    if(cifer_d5b.burst) {
-      TestWrite(u->deep5b, 0.0f); // turn it off
-    }
-  }
 }
 
 void LeabraUnitSpec::Compute_SRAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1800,7 +1809,7 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     break;
   }
 
-  if(Quarter_Deep5bNow(net->quarter)) {
+  if(Quarter_DeepNow(net->quarter)) {
     // just ending a quarter where deep5b was updating -- save this thal as previous thal
     u->thal_prv = u->thal;
   }
@@ -1812,37 +1821,56 @@ void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnitVars* u, LeabraNetwork* net, i
 }
 
 
-/////////////////////////////////////////////////
-//              Leabra TI
+///////////////////////////////////////////////////////////////////////
+//      Quarter Deep Updates -- called during Quarter_Init
 
-void LeabraUnitSpec::Send_TICtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
-                                      int thr_no) {
+bool LeabraUnitSpec::Compute_DeepTest(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep.on) return false;
+  int qtr_eff = net->quarter;
+  if(qtr_eff == 0)
+    qtr_eff = 3;                // wrap around backward..
+  return Quarter_DeepNow(qtr_eff);
+}
 
-  if(!Quarter_SendTICtxtNow(net->quarter)) return;
+void LeabraUnitSpec::Compute_DeepStep1(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  Send_DeepCtxtNetin(u, net, thr_no);
+}
 
-  float act_ts = u->act_eq;
-  if(cifer_d5b.on) {
-    act_ts *= cifer_d5b.ti_5b_c;
-    act_ts += cifer_d5b.ti_5b * u->deep5b;
-  }
+void LeabraUnitSpec::Compute_DeepStep2(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  Send_DeepCtxtNetin_Post(u, net, thr_no);
+  Compute_DeepNorm(u, net, thr_no);
+  Send_DeepNormNetin(u, net, thr_no);
+}
 
+void LeabraUnitSpec::Compute_DeepStep3(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  Send_DeepNormNetin_Post(u, net, thr_no);
+}
+
+
+void LeabraUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                        int thr_no) {
+  float act_ts = u->deep_raw;
   if(act_ts > opt_thresh.send) {
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsTICtxtCon()) continue;
-      LeabraTICtxtConSpec* sp = (LeabraTICtxtConSpec*)send_gp->GetConSpec();
-      sp->Send_TICtxtNetin(send_gp, net, thr_no, act_ts);
+      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeepCtxtCon()) continue;
+      DeepCtxtConSpec* sp = (DeepCtxtConSpec*)send_gp->GetConSpec();
+      sp->Send_DeepCtxtNetin(send_gp, net, thr_no, act_ts);
     }
   }
 }
 
-void LeabraUnitSpec::Send_TICtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
+void LeabraUnitSpec::Send_DeepCtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
                                             int thr_no) {
-  if(!Quarter_SendTICtxtNow(net->quarter)) return;
-
   int flat_idx = u->UnFlatIdx(net, thr_no);
   int nt = net->n_thrs_built;
 #ifdef CUDA_COMPILE
@@ -1856,13 +1884,53 @@ void LeabraUnitSpec::Send_TICtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* net
     ndval = 0.0f;             // zero immediately..
 #endif
   }
-  u->ti_ctxt = nw_nt;
+  u->deep_ctxt = nw_nt;
 }
 
-void LeabraUnitSpec::ClearTICtxt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  u->deep5b = 0.0f;
-  u->d5b_net = 0.0f;
-  u->ti_ctxt = 0.0f;
+void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  u->deep_norm = deep_norm.ComputeNorm(u->deep_raw, u->deep_ctxt);
+}
+
+void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                      int thr_no) {
+  float act_ts = u->deep_norm;
+  if(act_ts > opt_thresh.send) {
+    const int nsg = u->NSendConGps(net, thr_no); 
+    for(int g=0; g< nsg; g++) {
+      LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+      if(send_gp->NotActive()) continue;
+      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeepNormCon()) continue;
+      SendDeepNormConSpec* sp = (SendDeepNormConSpec*)send_gp->GetConSpec();
+      sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+    }
+  }
+}
+
+void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
+                                             int thr_no) {
+  int flat_idx = u->UnFlatIdx(net, thr_no);
+  int nt = net->n_thrs_built;
+#ifdef CUDA_COMPILE
+  nt = 1;                       // cuda is always 1 thread for this..
+#endif
+  float nw_nt = 0.0f;
+  for(int j=0;j<nt;j++) {
+    float& ndval = net->ThrSendNetinTmp(j)[flat_idx];
+    nw_nt += ndval;
+#ifndef CUDA_COMPILE
+    ndval = 0.0f;             // zero immediately..
+#endif
+  }
+  u->deep_norm_net = nw_nt;
+}
+
+void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  u->deep_raw = 0.0f;
+  u->deep_ctxt = 0.0f;
+  u->deep_norm = 0.0f;
+  u->deep_raw_net = 0.0f;
+  u->deep_norm_net = 0.0f;
 }
 
 

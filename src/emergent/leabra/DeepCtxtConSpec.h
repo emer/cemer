@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef LeabraTICtxtConSpec_h
-#define LeabraTICtxtConSpec_h 1
+#ifndef DeepCtxtConSpec_h
+#define DeepCtxtConSpec_h 1
 
 // parent includes:
 #include <LeabraConSpec>
@@ -24,20 +24,20 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(LeabraTICtxtConSpec);
+eTypeDef_Of(DeepCtxtConSpec);
 
-class E_API LeabraTICtxtConSpec : public LeabraConSpec {
-  // leabra TI (temporal integration) context con spec -- use for SELF projection in a layer to implement LeabraTI context activation and learning, and in projections to/from other layers -- control relative contribution to net input by setting wt_scale.rel, just like regular connections
+class E_API DeepCtxtConSpec : public LeabraConSpec {
+  // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
 INHERITED(LeabraConSpec)
 public:
   // special!
   bool  DoesStdNetin() override { return false; }
   bool  DoesStdDwt() override { return false; }
-  bool  IsTICtxtCon() override { return true; }
+  bool  IsDeepCtxtCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
  
-  inline void Send_TICtxtNetin(LeabraConGroup* cg, LeabraNetwork* net,
-                               int thr_no, const float su_act) {
+  inline void Send_DeepCtxtNetin(LeabraConGroup* cg, LeabraNetwork* net,
+                                 int thr_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
     float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
@@ -52,10 +52,9 @@ public:
   inline float Compute_Netin(ConGroup* cg, Network* net, int thr_no) override
   { return 0.0f; }
 
-  // everything can use one dwt with post-soft-bound because no hebbian term
   inline void C_Compute_dWt_Delta(float& dwt, const float ru_avg_s, const float ru_avg_m,
                                   const float su_act_q0)
-  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_act_q0; }
+  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_act_q0; } // todo: use another sending var?
   // #IGNORE
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
@@ -76,10 +75,10 @@ public:
 
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
-  TA_SIMPLE_BASEFUNS(LeabraTICtxtConSpec);
+  TA_SIMPLE_BASEFUNS(DeepCtxtConSpec);
 private:
   void Initialize();
   void Destroy()     { };
 };
 
-#endif // LeabraTICtxtConSpec_h
+#endif // DeepCtxtConSpec_h

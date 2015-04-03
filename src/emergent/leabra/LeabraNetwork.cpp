@@ -72,8 +72,7 @@ void LeabraNetStats::Initialize() {
 
 void LeabraNetMisc::Initialize() {
   spike = false;
-  ti = false;
-  deep5b_cons = false;
+  deep = false;
   bias_learn = false;
   trial_decay = false;
   diff_scale_p = false;
@@ -126,7 +125,7 @@ void LeabraNetwork::Initialize() {
   trial_cos_diff = 0.0f;
 
   unit_vec_vars = NULL;
-  thrs_send_d5bnet_tmp = NULL;
+  thrs_send_deepnet_tmp = NULL;
   thrs_lay_avg_max_vals = NULL;
   thrs_ungp_avg_max_vals = NULL;
   
@@ -211,11 +210,11 @@ void LeabraNetwork::AllocSendNetinTmp() {
   // temporary storage for sender-based netinput computation
   if(n_units_built == 0 || threads.n_threads == 0) return;
 
-  net_aligned_malloc((void**)&thrs_send_d5bnet_tmp, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_send_deepnet_tmp, n_thrs_built * sizeof(float*));
 
 #ifndef NUMA_COMPILE
   for(int i=0; i<n_thrs_built; i++) {
-    net_aligned_malloc((void**)&thrs_send_d5bnet_tmp[i],
+    net_aligned_malloc((void**)&thrs_send_deepnet_tmp[i],
                        n_units_built * sizeof(float));
   }
 #endif
@@ -229,12 +228,12 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
   if(!unit_vec_vars) return;
 
   for(int i=0; i<n_thrs_built; i++) {
-    net_free((void**)&thrs_send_d5bnet_tmp[i]);
+    net_free((void**)&thrs_send_deepnet_tmp[i]);
     net_free((void**)&unit_vec_vars[i]);
     net_free((void**)&thrs_lay_avg_max_vals[i]);
     net_free((void**)&thrs_ungp_avg_max_vals[i]);
   }
-  net_free((void**)&thrs_send_d5bnet_tmp);
+  net_free((void**)&thrs_send_deepnet_tmp);
   net_free((void**)&unit_vec_vars);
   net_free((void**)&thrs_lay_avg_max_vals);
   net_free((void**)&thrs_ungp_avg_max_vals);
@@ -242,7 +241,7 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
 
 void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
   inherited::InitSendNetinTmp_Thr(thr_no);
-  memset(thrs_send_d5bnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+  memset(thrs_send_deepnet_tmp[thr_no], 0, n_units_built * sizeof(float));
 }
 
 void LeabraNetwork::BuildNullUnit() {
@@ -361,8 +360,7 @@ void LeabraNetwork::Trial_Init_Counters() {
 
 void LeabraNetwork::Trial_Init_Specs() {
   net_misc.spike = false;
-  net_misc.ti = false;
-  net_misc.deep5b_cons = false;
+  net_misc.deep = false;
   net_misc.bias_learn = false;
   net_misc.trial_decay = false;
   net_misc.diff_scale_p = false;
@@ -416,6 +414,10 @@ void LeabraNetwork::Quarter_Init() {
   Compute_NetinScale_Senders(); // second phase after recv-based NetinScale
   // put it after Quarter_Init_Layer to allow for mods to netin scale in that guy..
   Compute_HardClamp_Layer();
+
+  if(net_misc.deep) {
+    NET_THREAD_CALL(LeabraNetwork::Compute_Deep_Thr);
+  }
 }
 
 void LeabraNetwork::Quarter_Init_Counters() {
@@ -1148,9 +1150,6 @@ void LeabraNetwork::Quarter_Final_Pre() {
 }
 
 void LeabraNetwork::Quarter_Final_Unit_Thr(int thr_no) {
-  if(net_misc.ti) {
-    Send_TICtxtNetin_Thr(thr_no);
-  }
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
@@ -1184,41 +1183,44 @@ void LeabraNetwork::Quarter_Final_Counters() {
   quarter++;                    // always shows +1 at end of quarter
 }
 
+
 ///////////////////////////////////////////////////////////////////////
-//      LeabraTI context updating
+//      DeepLeabra updates
 
-void LeabraNetwork::Send_TICtxtNetin_Thr(int thr_no) {
-#ifdef CUDA_COMPILE
-  Cuda_Send_TICtxtNetin();
-  const int nu = units_flat.size;
-  // always need to roll up the netinput into unit vals
-  for(int i=1;i<nu;i++) {   // 0 = dummy idx
-    LeabraUnit* u = (LeabraUnit*)units_flat[i];
-    u->Send_TICtxtNetin_Post(this);
-  }
-  return;
-#endif
-
+void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
+  // takes 3 sequential steps to do full deep update
   const int nu = ThrNUnits(thr_no);
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_TICtxtNetin(uv, this, thr_no);
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepStep1(uv, this, thr_no);
   }
-
-  threads.SyncSpin(thr_no);
+  threads.SyncSpin(thr_no, 0);
 
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_TICtxtNetin_Post(uv, this, thr_no);
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepStep2(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 1);
+
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepStep3(uv, this, thr_no);
   }
 }
 
-void LeabraNetwork::ClearTICtxt() {
-  FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
-    if(!lay->lesioned())
-      lay->ClearTICtxt(this);
+void LeabraNetwork::ClearDeepActs() {
+  NET_THREAD_CALL(LeabraNetwork::ClearDeepActs_Thr);
+}
+
+void LeabraNetwork::ClearDeepActs_Thr(int thr_no) {
+  const int nu = ThrNUnits(thr_no);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->ClearDeepActs(uv, this, thr_no);
   }
 }
 
@@ -1487,7 +1489,7 @@ void LeabraNetwork::Compute_CosErr_Thr(int thr_no) {
       cosv += uv->targ * uv->act_m;
       ssm += uv->act_m * uv->act_m;
       sst += uv->targ * uv->targ;
-      if(net_misc.ti) {
+      if(net_misc.deep) {
         cosvp += uv->targ * uv->act_q0;
         ssp += uv->act_q0 * uv->act_q0;
       }
@@ -1513,7 +1515,7 @@ float LeabraNetwork::Compute_CosErr_Agg() {
     cosv += l->Compute_CosErr(this, lay_vals);
     if(lay_vals > 0) {
       n_lays++;
-      if(net_misc.ti) {
+      if(net_misc.deep) {
         cosvp += l->cos_err_prv;
         cosvsp += l->cos_err_vs_prv;
       }
@@ -1524,7 +1526,7 @@ float LeabraNetwork::Compute_CosErr_Agg() {
     cos_err = cosv;
     avg_cos_err.Increment(cos_err);
 
-    if(net_misc.ti) {
+    if(net_misc.deep) {
       cosvp /= (float)n_lays;
       cos_err_prv = cosvp;
       avg_cos_err_prv.Increment(cos_err_prv);
@@ -1855,7 +1857,7 @@ void LeabraNetwork::Compute_AvgNormErr() {
 void LeabraNetwork::Compute_AvgCosErr() {
   avg_cos_err.GetAvg_Reset();
 
-  if(net_misc.ti) {
+  if(net_misc.deep) {
     avg_cos_err_prv.GetAvg_Reset();
     avg_cos_err_vs_prv.GetAvg_Reset();
   }

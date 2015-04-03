@@ -13,20 +13,20 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "LeabraTICtxtConSpec.h"
+#include "DeepCtxtConSpec.h"
 
-TA_BASEFUNS_CTORS_DEFN(LeabraTICtxtConSpec);
+TA_BASEFUNS_CTORS_DEFN(DeepCtxtConSpec);
 
-void LeabraTICtxtConSpec::Initialize() {
+void DeepCtxtConSpec::Initialize() {
   SetUnique("wt_scale", true);
-  wt_scale.rel = 3.0;           // good default
+  wt_scale.rel = 1.0;
 }
 
-void LeabraTICtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
+void DeepCtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {
   nm = "Ctxt_" + nm;
 }
 
-void LeabraTICtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
+void DeepCtxtConSpec::Trial_Init_Specs(LeabraNetwork* net) {
   inherited::Trial_Init_Specs(net);
-  net->net_misc.ti = true;
+  // net->net_misc.ti = true;
 }

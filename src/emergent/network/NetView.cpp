@@ -1633,8 +1633,8 @@ void NetView::setUnitDispMd(MemberDef* md) {
   case NetView::CTXT_CON:
     prjn_starts_with = "Ctxt_";
     break;
-  case NetView::DEEP5B_CON:
-    prjn_starts_with = "Deep5b_";
+  case NetView::DEEP_CON:
+    prjn_starts_with = "Deep_";
     break;
   case NetView::MARKER_CON:
     prjn_starts_with = "Marker_";

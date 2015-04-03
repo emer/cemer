@@ -13,27 +13,27 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "ThalUnitSpec.h"
+#include "ThalSendUnitSpec.h"
 
 #include <LeabraNetwork>
 
-TA_BASEFUNS_CTORS_DEFN(ThalUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(ThalSendUnitSpec);
 
-void ThalUnitSpec::Initialize() {
+void ThalSendUnitSpec::Initialize() {
 }
 
-void ThalUnitSpec::Defaults_init() {
+void ThalSendUnitSpec::Defaults_init() {
 }
 
-void ThalUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
+void ThalSendUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
   inherited::Compute_NetinRaw(u, net, thr_no);
-  if(cifer_d5b.on && net->phase == LeabraNetwork::PLUS_PHASE) {
-    u->net_raw = 0.0f;          // zero the regular netins
+  if(deep.on && net->phase == LeabraNetwork::PLUS_PHASE) {
+    u->net_raw = u->deep_raw_net;          // only use deep_raw_net
   }
 }
 
-void ThalUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ThalSendUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   const float snd_val = u->act_eq;
   const int nsg = u->NSendConGps(net, thr_no); 
   for(int g=0; g<nsg; g++) {
@@ -47,12 +47,12 @@ void ThalUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   }
 }
 
-void ThalUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ThalSendUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Rate(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }
 
-void ThalUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void ThalSendUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Spike(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }

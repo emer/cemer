@@ -115,21 +115,27 @@ public:
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
+  inline float& deep_raw()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw; }
+  // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area - this is then normalized in deep_nrm values
+  inline float& deep_norm()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
+  // #NO_SAVE #CAT_Activation normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
+  inline float& deep_ctxt()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
+  // #NO_SAVE #CAT_Activation local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
+  inline float& deep_norm_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_net; }
+  // #NO_SAVE #CAT_Activation net input from deep_norm activation of other areas, reflecting e.g., the layer 6 cortico-cortical projections that are the source of the top-down deep-to-deep pathway in the cortex, or the layer 6 corticothalamic projections into the thalamus
+  inline float& deep_raw_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_net; }
+  // #NO_SAVE #CAT_Activation net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
-  // #NO_SAVE #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #NO_SAVE #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& thal_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->thal_prv; }
-  // #NO_SAVE #CAT_UnitVar previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
-  inline float& deep5b()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep5b; }
-  // #NO_SAVE #VIEW_HOT #CAT_UnitVar deep layer 5b activation values -- these reflect the output gating signal modulated by the thal and act values of the unit (microcolumn) -- deep5b is thresholded and represents the active foreground channel of information, while act reflects superficial layer 2/3 background information -- see cifer params in LeabraUnitSpec
-  inline float& d5b_net()
-  { return ((LeabraUnitVars*)GetUnitVars())->d5b_net; }
-  // #NO_SAVE #CAT_UnitVar net input from deep layer 5b activation values
-  inline float& ti_ctxt()
-  { return ((LeabraUnitVars*)GetUnitVars())->ti_ctxt; }
-  // #VIEW_HOT #NO_SAVE #CAT_UnitVar leabra TI context netinput value -- computed from LeabraTICtxtConspec connection -- computed from sending act or deep5b values (see cifer flags), which then project to layer 6 which integrates the contextualized value -- this is just added into overall net input
+  // #NO_SAVE #CAT_UnitVar previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& lrnmod()
   { return ((LeabraUnitVars*)GetUnitVars())->lrnmod; }
   // #NO_SAVE #CAT_UnitVar learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
@@ -195,9 +201,9 @@ public:
   inline float& gi_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_raw; }
   // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar raw inhib net input received from sending units (increments the deltas in send_delta)
-  inline float& d5b_sent()
-  { return ((LeabraUnitVars*)GetUnitVars())->d5b_sent; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar last deep5b activation value sent (only send when diff is over threshold)
+  inline float& deep_sent()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_sent; }
+  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar last deep activation value sent (only send when diff is over threshold)
 
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }

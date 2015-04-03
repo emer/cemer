@@ -317,13 +317,15 @@ public:
                                    bool plus_phase = false);
   // #IGNORE compute recv_gp->scale_eff based on params in from layer
   inline virtual bool  DoesStdNetin() { return true; }
-  // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required (as for TICtxt and Deep5b)
+  // #IGNORE does this connection send standard netinput? if so, it will be included in the CUDA send netin computation -- otherwise a separate function is required
   inline virtual bool  DoesStdDwt() { return true; }
-  // #IGNORE does this connection compute a standard XCAL dWt function? if so, it will be included in the CUDA Compute_dWt computation -- otherwise a separate function is required (as for TICtxt)
-  inline virtual bool  IsTICtxtCon() { return false; }
-  // #IGNORE is this a TI context connection (LeabraTICtctConSpec) -- optimized check for higher speed
-  inline virtual bool  IsDeep5bCon() { return false; }
-  // #IGNORE is this a deep5b connection (Deep5bConSpec) -- optimized check for higher speed
+  // #IGNORE does this connection compute a standard XCAL dWt function? if so, it will be included in the CUDA Compute_dWt computation -- otherwise a separate function is required
+  inline virtual bool  IsDeepCtxtCon() { return false; }
+  // #IGNORE is this a deep context connection (DeepCtxtConSpec) -- optimized check for higher speed
+  inline virtual bool  IsDeepRawCon() { return false; }
+  // #IGNORE is this a send deep_raw connection (SendDeepRawConSpec) -- optimized check for higher speed
+  inline virtual bool  IsDeepNormCon() { return false; }
+  // #IGNORE is this a send deep_norm connection (SendDeepNormConSpec) -- optimized check for higher speed
 
   inline void 	C_Send_NetinDelta(const float wt, float* send_netin_vec,
                                   const int ru_idx, const float su_act_delta_eff)

@@ -31,11 +31,12 @@ set(leabra_HEADS_MAKETA
 
   LeabraWizard.h
 
-  LeabraTICtxtConSpec.h
-  Deep5bConSpec.h
-  Deep5bCopyUnitSpec.h
-  Deep5bClampUnitSpec.h
-    ThalUnitSpec.h
+  DeepCtxtConSpec.h
+  SendDeepRawConSpec.h
+  SendDeepNormConSpec.h
+  DeepCopyUnitSpec.h
+  ThalAutoEncodeUnitSpec.h
+  ThalSendUnitSpec.h
 
   MarkerConSpec.h
   LeabraDeltaConSpec.h
@@ -147,11 +148,12 @@ set(leabra_SRCS
 
   LeabraWizard.cpp
 
-  LeabraTICtxtConSpec.cpp
-  Deep5bConSpec.cpp
-  Deep5bCopyUnitSpec.cpp
-  Deep5bClampUnitSpec.cpp
-    ThalUnitSpec.cpp
+  DeepCtxtConSpec.cpp
+  SendDeepRawConSpec.cpp
+  SendDeepNormConSpec.cpp
+  DeepCopyUnitSpec.cpp
+  ThalAutoEncodeUnitSpec.cpp
+  ThalSendUnitSpec.cpp
 
   MarkerConSpec.cpp
   LeabraDeltaConSpec.cpp

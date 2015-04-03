@@ -657,7 +657,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
     cosv += lcosv;
     ssm += lssm;
     sst += lsst;
-    if(net->net_misc.ti) {
+    if(net->net_misc.deep) {
       cosvp += lcosvp;
       ssp += lssp;
     }
@@ -670,7 +670,7 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
 
   lay->avg_cos_err.Increment(lay->cos_err);
 
-  if(net->net_misc.ti) {
+  if(net->net_misc.deep) {
     float pdist = sqrtf(ssp * sst);
     if(pdist != 0.0f) {
       cosvp /= pdist;
@@ -802,7 +802,7 @@ void LeabraLayerSpec::Compute_AvgNormErr(LeabraLayer* lay, LeabraNetwork* net) {
 void LeabraLayerSpec::Compute_AvgCosErr(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_cos_err.GetAvg_Reset();
 
-  if(net->net_misc.ti) {
+  if(net->net_misc.deep) {
     lay->avg_cos_err_prv.GetAvg_Reset();
     lay->avg_cos_err_vs_prv.GetAvg_Reset();
   }
@@ -908,10 +908,10 @@ void LeabraLayerSpec::Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* ne
   }
 }
 
-void LeabraLayerSpec::ClearTICtxt(LeabraLayer* lay, LeabraNetwork* net) {
+void LeabraLayerSpec::ClearDeepActs(LeabraLayer* lay, LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraUnit, u, lay->units) {
     if(u->lesioned()) continue;
-    ((LeabraUnitSpec*)u->GetUnitSpec())->ClearTICtxt
+    ((LeabraUnitSpec*)u->GetUnitSpec())->ClearDeepActs
       ((LeabraUnitVars*)u->GetUnitVars(), net, u->ThrNo());
   }
 }

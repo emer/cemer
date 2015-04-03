@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef ThalUnitSpec_h
-#define ThalUnitSpec_h 1
+#ifndef ThalSendUnitSpec_h
+#define ThalSendUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,10 +23,10 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(ThalUnitSpec);
+eTypeDef_Of(ThalSendUnitSpec);
 
-class E_API ThalUnitSpec  : public LeabraUnitSpec {
-  // Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to -- also if cifer_d5b is active, we only recv d5b_netin in the plus phase, like Deep5bClampUnitSpec
+class E_API ThalSendUnitSpec  : public LeabraUnitSpec {
+  // #AKA_ThalUnitSpec Models the dorsal and ventral (TRN) thalamus as it interacts with cortex (mainly secondary cortical areas, not primary sensory areas) -- simply sends current activation to thal variable in units we project to -- also if deep.on is active, we only recv deep_raw_net in the plus phase, like ThalAutoEncodeUnitSpec
 INHERITED(LeabraUnitSpec)
 public:
   virtual void  Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
@@ -41,7 +41,7 @@ public:
   void	Compute_dWt_Norm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) { };
   void	Compute_Weights(UnitVars* u, Network* net, int thr_no) override { };
 
-  TA_SIMPLE_BASEFUNS(ThalUnitSpec);
+  TA_SIMPLE_BASEFUNS(ThalSendUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -50,4 +50,4 @@ private:
   void  Defaults_init();
 };
 
-#endif // ThalUnitSpec_h
+#endif // ThalSendUnitSpec_h

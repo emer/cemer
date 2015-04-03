@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Deep5bConSpec_h
-#define Deep5bConSpec_h 1
+#ifndef SendDeepRawConSpec_h
+#define SendDeepRawConSpec_h 1
 
 // parent includes:
 #include <LeabraConSpec>
@@ -25,46 +25,22 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(Deep5bStdSync);
+eTypeDef_Of(SendDeepRawConSpec);
 
-class E_API Deep5bStdSync : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra slowly synchronize deep weights with std weights in analogous projection, at epoch granularity
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // do sync
-  float         sync_tau;       // #CONDSHOW_ON_on time constant for syncing, at the epoch time-scale
-
-  float         sync_dt;        // #READ_ONLY 1/tau
- 
-  String       GetTypeDecoKey() const override { return "ConSpec"; }
-
-  TA_SIMPLE_BASEFUNS(Deep5bStdSync);
-protected:
-  SPEC_DEFAULTS;
-  void UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
-eTypeDef_Of(Deep5bConSpec);
-
-class E_API Deep5bConSpec : public LeabraConSpec {
-  // deep layer 5b connection spec -- sends deep5b activation values instead of usual act values -- used e.g., in projections to thalamus
+class E_API SendDeepRawConSpec : public LeabraConSpec {
+  // #AKA_Deep5bConSpec sends deep_raw activation values instead of usual act values -- stored into deep_net var on recv unit -- used e.g., in projections to thalamus
 INHERITED(LeabraConSpec)
 public:
-  Deep5bStdSync         std_sync;  // slowly synchronize deep weights with std weights in analogous projection, at epoch granularity
 
   // special!
   bool  DoesStdNetin() override { return false; }
-  bool  IsDeep5bCon() override { return true; }
+  bool  IsDeepRawCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
 #ifdef TA_VEC_USE
-  inline void Send_D5bNetDelta_vec
+  inline void Send_DeepRawNetDelta_vec
     (LeabraConGroup* cg, const float su_act_delta_eff,
-     float* send_d5bnet_vec, const float* wts)
+     float* send_deepnet_vec, const float* wts)
   {
     VECF sa(su_act_delta_eff);
     const int sz = cg->size;
@@ -74,7 +50,7 @@ public:
       VECF wt;  wt.load(wts+i);
       VECF dp = wt * sa;
       VECF rnet;
-      float* stnet = send_d5bnet_vec + cg->UnIdx(i);
+      float* stnet = send_deepnet_vec + cg->UnIdx(i);
       rnet.load(stnet);
       rnet += dp;
       rnet.store(stnet);
@@ -82,26 +58,26 @@ public:
 
     // remainder of non-vector chunkable ones
     for(; i<sz; i++) {
-      send_d5bnet_vec[cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
+      send_deepnet_vec[cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
     }
   }
 #endif
 
-  inline void 	C_Send_D5bNetDelta(const float wt, float* send_d5bnet_vec,
-                                   const int ru_idx, const float su_act_delta_eff)
-  { send_d5bnet_vec[ru_idx] += wt * su_act_delta_eff; }
+  inline void 	C_Send_DeepRawNetDelta(const float wt, float* send_deepnet_vec,
+                                       const int ru_idx, const float su_act_delta_eff)
+  { send_deepnet_vec[ru_idx] += wt * su_act_delta_eff; }
   // #IGNORE
 
-  inline void Send_D5bNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
-                               int thr_no, const float su_act_delta) {
+  inline void Send_DeepRawNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
+                                   int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_d5bnet_vec = net->ThrSendD5bNetTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepNetTmp(thr_no);
 #ifdef TA_VEC_USE
-    Send_D5bNetDelta_vec(cg, su_act_delta_eff, send_d5bnet_vec, wts);
+    Send_DeepRawNetDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_D5bNetDelta(wts[i], send_d5bnet_vec,
-                                          cg->UnIdx(i), su_act_delta_eff));
+    CON_GROUP_LOOP(cg, C_Send_DeepRawNetDelta(wts[i], send_deepnet_vec,
+                                              cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
@@ -114,16 +90,12 @@ public:
 
   void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) override;
 
-  void Compute_EpochWeights(LeabraConGroup* cg, LeabraNetwork* net,
-                            int thr_no) override;
-  // #IGNORE compute epoch-level weights
-
   void  GetPrjnName(Projection& prjn, String& nm) override;
 
-  TA_SIMPLE_BASEFUNS(Deep5bConSpec);
+  TA_SIMPLE_BASEFUNS(SendDeepRawConSpec);
 private:
   void Initialize();
   void Destroy()     { };
 };
 
-#endif // Deep5bConSpec_h
+#endif // SendDeepRawConSpec_h

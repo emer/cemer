@@ -402,8 +402,8 @@ public:
   virtual void	Compute_AvgAbsRelNetin(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute time-average relative netinput from different projections into this layer (e.g., every epoch)
 
-  virtual void	ClearTICtxt(LeabraLayer* lay, LeabraNetwork* net);
-  // #CAT_TI clear the ti_ctxt context variables -- can be useful to do at discontinuities of experience
+  virtual void	ClearDeepActs(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Deep clear the deep layer variables -- can be useful to do at discontinuities of experience
 
   ////////////////////////////////////////////
   //	Misc structural routines

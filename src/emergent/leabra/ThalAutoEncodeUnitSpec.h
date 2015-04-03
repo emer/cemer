@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef Deep5bClampUnitSpec_h
-#define Deep5bClampUnitSpec_h 1
+#ifndef ThalAutoEncodeUnitSpec_h
+#define ThalAutoEncodeUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -23,20 +23,20 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(Deep5bClampUnitSpec);
+eTypeDef_Of(ThalAutoEncodeUnitSpec);
 
-class E_API Deep5bClampUnitSpec : public LeabraUnitSpec {
-  // When deep5b_qtr is active (typically the plus phase), these units are exclusively driven by their d5b_net netinput, and otherwise they are just like regular neurons -- used for simulating thalamic relay cells as auto-encoder layers hard-clamped to deep5b drivers in the plus phase
+class E_API ThalAutoEncodeUnitSpec : public LeabraUnitSpec {
+  // #AKA_Deep5bClampUnitSpec When deep_qtr is active (typically the plus phase), these units are exclusively driven by their deep_raw_net netinput, and otherwise they are just like regular neurons -- used for simulating thalamic relay cells as auto-encoder layers hard-clamped to deep_raw drivers in the plus phase
 INHERITED(LeabraUnitSpec)
 public:
   void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void  Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
-  TA_SIMPLE_BASEFUNS(Deep5bClampUnitSpec);
+  TA_SIMPLE_BASEFUNS(ThalAutoEncodeUnitSpec);
 private:
   void  Initialize();
   void  Destroy()     { };
   void	Defaults_init();
 };
 
-#endif // Deep5bClampUnitSpec_h
+#endif // ThalAutoEncodeUnitSpec_h

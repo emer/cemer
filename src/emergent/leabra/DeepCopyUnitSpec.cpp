@@ -13,19 +13,19 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "Deep5bCopyUnitSpec.h"
+#include "DeepCopyUnitSpec.h"
 #include <LeabraNetwork>
 
-TA_BASEFUNS_CTORS_DEFN(Deep5bCopyUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(DeepCopyUnitSpec);
 
-void Deep5bCopyUnitSpec::Initialize() {
+void DeepCopyUnitSpec::Initialize() {
   Defaults_init();
 }
 
-void Deep5bCopyUnitSpec::Defaults_init() {
+void DeepCopyUnitSpec::Defaults_init() {
 }
 
-bool Deep5bCopyUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+bool DeepCopyUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)un;
   bool rval = inherited::CheckConfig_Unit(un, quiet);
 
@@ -45,7 +45,7 @@ bool Deep5bCopyUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void Deep5bCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net,
+void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net,
                                          int thr_no) {
   LeabraConGroup* cg = (LeabraConGroup*)u->RecvConGroupSafe(net, thr_no, 0);
   LeabraUnitVars* su = (LeabraUnitVars*)cg->UnVars(0, net);
@@ -54,17 +54,17 @@ void Deep5bCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* n
     u->act = 0.0f;
     return;
   }
-  u->act = su->deep5b;
+  u->act = su->deep_raw;
   u->act_eq = u->act_nd = u->act;
   TestWrite(u->da, 0.0f);
   // u->AddToActBuf(syn_delay); // todo:
 }
 
-void Deep5bCopyUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DeepCopyUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_ActFmSource(u, net, thr_no);
 }
 
-void Deep5bCopyUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void DeepCopyUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   Compute_ActFmSource(u, net, thr_no);
 }
 
