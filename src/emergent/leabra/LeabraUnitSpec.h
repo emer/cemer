@@ -406,13 +406,13 @@ class E_API DeepSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
 INHERITED(SpecMemberBase)
 public:
-  bool          on;         // enable the DeepLeabra mechanisms
-  bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep_raw activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
+  bool          on;         // enable the DeepLeabra mechanisms, including attentional modulation by deep_norm, temporal integration via deep_ctxt context connections, and thalamic-based auto-encoder driven by deep_raw projections
   float	        thr;        // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq
   float         net_scale;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_net inputs from deep-to-deep projections in computing deep_raw
   float         ctxt_scale; // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to neurons -- determines how much direct temporal integration (TI) context a neuron receives
   float         thal_to_deep; // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
   float         thal_to_super;  // #CONDSHOW_ON_on how much to add to net input from thal input from thalamus -- input is * current act
+  bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep_raw activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
@@ -432,24 +432,27 @@ class E_API DeepNormSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables
 INHERITED(SpecMemberBase)
 public:
-  float	        gain;           // #MIN_0 gain multiplier on normalized values
-  float         contrast;       // #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
-  float         avg_ctxt;       // #MIN_0 estimated average context values, for purpose of computing the gain and contrast terms from target strong and weak deep_raw values
-  float         max_deep_net;   // #MIN_0 estimated maximum deep-to-deep netinput values, for purpose of computing the gain and contrast terms from target strong and weak deep_raw values
-  float         strong_trg;     // #MIN_0 #DEF_1 target normalized value for strong deep_raw activations, given other constraints above -- helps determine the appropriate gain value
-  float         weak_trg;       // #MIN_0 #DEF_0.5 target normalized value for weak deep_raw activations, given other constraints above -- helps determine the appropriate contrast value
+  bool          on;             // enable normalization of the deep_raw values into deep_norm attentional modulation factors -- otherwise deep_norm is always set to 1.0
+  float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
+  float	        gain;           // #READ_ONLY #SHOW #CONDSHOW_ON_on #MIN_0 gain multiplier on normalized values -- computed from strong_trg based on max_ctxt and max_deep_net values -- use GraphDeepNet to 
+  float         strong_trg;     // #CONDSHOW_ON_on #MIN_0 #DEF_1 target normalized value for strong deep_raw activations, given other constraints above -- helps determine the appropriate gain value
+  float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 estimated minimum context values, for purpose of computing the gain term from target strong deep_raw values -- smaller context = higher deep_norm values, so we need min to keep max deep_raw normalized at proper value
+  float         max_deep_net;   // #CONDSHOW_ON_on #MIN_0 estimated maximum deep-to-deep netinput values, for purpose of computing the gain and contrast terms from target strong and weak deep_raw values
+  // float         weak_trg;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.5 target normalized value for weak deep_raw activations, given other constraints above -- helps determine the appropriate contrast value
   
   float         ComputeNorm(float raw, float ctxt)
-  { return gain * (raw + contrast) / (ctxt + contrast); }
+  { return (gain * (raw + contrast)) / (ctxt + contrast); }
   // computed normalized value from current raw and context values
 
-  void          ComputeGain()
-  { gain = strong_trg * (avg_ctxt + contrast) / (1.0f + max_deep_net + contrast); }
-  // update gain parameter based on target strong value and other params
+  float         ComputeGain()
+  { gain = strong_trg * (min_ctxt + contrast) / (1.0f + max_deep_net + contrast);
+    return gain; }
+  // compute gain parameter based on target strong value and other params -- called in UAE
 
-  void          ComputeContrast(float thr)
-  { contrast = gain * thr / (weak_trg - gain); }
-  // update contrast parameter based on target weak value and other params
+  // this seems to not work..
+  // float         ComputeContrast(float thr)
+  // { return (gain * thr - weak_trg * min_ctxt) / (weak_trg - gain); }
+  // compute contrast parameter based on target weak value and other params
 
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
@@ -840,6 +843,9 @@ public:
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the spike alpha function for conductance integration over time window given in spike parameters -- last data point is the sum over the whole window (total conductance of a single spike) -- force_alpha means use explicit alpha function even when rise=0 (otherewise it simulates actual recursive exp decay used in optimized code)
 //   virtual void	GraphSLNoiseAdaptFun(DataTable* graph_data, float incr = 0.05f);
 //   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the short and long-term noise adaptation function, which integrates both short-term and long-term performance values
+  virtual void	GraphDeepNormFun(DataTable* graph_data, float deep_ctxt = 0.5,
+                                 float incr = .01);
+  // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the deep_norm function from min to max deep_raw values (min = deep.thr, max as given in params), using given deep_ctxt as the context value (see deep_norm.min_ctxt for default value in computing gain, context params)
   virtual void TimeExp(int mode, int nreps=100000000);
   // #EXPERT time how long it takes to compute various forms of exp() function: mode=0 = double sum ctrl (baseline), mode=1 = std double exp(), mode=2 = taMath_double::exp_fast, mode=3 = float sum ctrl (float baseline), mode=4 = expf, mode=5 = taMath_float::exp_fast -- this is the dominant cost in spike alpha function computation, so we're interested in optimizing it..
 

@@ -57,8 +57,8 @@ public:
   void   Init_Weights_sym_s(ConGroup* cg, Network* net, int thr_no) override;
 
   inline void C_Compute_dWt_Delta(float& dwt, const float ru_avg_s, const float ru_avg_m,
-                                  const float su_act_q0)
-  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_act_q0; } // todo: use another sending var?
+                                  const float su_deep_norm)
+  { dwt += cur_lrate * (ru_avg_s - ru_avg_m) * su_deep_norm; }
   // #IGNORE
 
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
@@ -68,12 +68,12 @@ public:
     LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
 
     float* dwts = cg->OwnCnVar(DWT);
-    const float su_act_q0 = su->act_q0; // prior trial activation..
+    const float su_deep_norm = su->deep_norm; // should be last deep_norm
 
     const int sz = cg->size;
     for(int i=0; i<sz; i++) {
       LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-      C_Compute_dWt_Delta(dwts[i], ru->avg_s, ru->avg_m, su_act_q0); // using avgs..
+      C_Compute_dWt_Delta(dwts[i], ru->avg_s, ru->avg_m, su_deep_norm); // using avgs..
     }
   }
 

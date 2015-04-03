@@ -30,7 +30,7 @@ void ThalAutoEncodeUnitSpec::Defaults_init() {
 
 void ThalAutoEncodeUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
-  u->deep_norm = u->deep_norm_net; // always get from net
+  TestWrite(u->deep_norm, u->deep_norm_net); // always get from net
   inherited::Compute_NetinRaw(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) { // note: using plus phase here..
     u->net_raw = u->deep_raw_net;          // only gets from deep!

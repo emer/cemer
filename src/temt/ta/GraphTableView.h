@@ -254,16 +254,17 @@ protected:
 
   void          LoadObsoletePlotData(); // #IGNORE
 
-  void         OnWindowBind_impl(iT3Panel* vw) override;
-  void         Clear_impl() override;
-  void         Render_pre() override; // #IGNORE
-  void         Render_impl() override; // #IGNORE
-  void         Render_post() override; // #IGNORE
+  void          OnWindowBind_impl(iT3Panel* vw) override;
+  void          Clear_impl() override;
+  void          Render_pre() override; // #IGNORE
+  void          Render_impl() override; // #IGNORE
+  void          Render_post() override; // #IGNORE
 
-  void         UpdateFromDataTable_this(bool first) override;
-  void         SigRecvUpdateView_impl() override;
+  void          UpdateFromDataTable_this(bool first) override;
+  void          SigRecvUpdateView_impl() override;
+  void          AllocPlotData();
 
-  void         UpdateAfterEdit_impl() override;
+  void          UpdateAfterEdit_impl() override;
 private:
   void  Initialize();
   void  Destroy() {CutLinks();}

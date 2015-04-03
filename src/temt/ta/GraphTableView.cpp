@@ -150,9 +150,11 @@ void GraphTableView::Initialize() {
   view_rows = 10000;
   tot_plots = 16;
 
+  x_axis.on = false;
   x_axis.axis = GraphAxisBase::X;
   x_axis.color.name = taMisc::t3d_text_color;
   x_axis.color.UpdateAfterEdit_NoGui(); // needed to pick up color name
+  z_axis.on = false;
   z_axis.axis = GraphAxisBase::Z;
   z_axis.color.name = taMisc::t3d_text_color;
   z_axis.color.UpdateAfterEdit_NoGui(); // needed to pick up color name
@@ -332,14 +334,18 @@ void GraphTableView::CopyFromView(GraphTableView* cp) {
   T3DataViewMain::CopyFromViewFrame(cp);
 }
 
-void GraphTableView::UpdateAfterEdit_impl(){
-  inherited::UpdateAfterEdit_impl();
-
+void GraphTableView::AllocPlotData() {
   if(plots.size != tot_plots) {
     errbars.SetSize(tot_plots);     // always keep sync'd
     plots.SetSize(tot_plots);
     DefaultPlotStyles();
   }
+}  
+
+void GraphTableView::UpdateAfterEdit_impl(){
+  inherited::UpdateAfterEdit_impl();
+
+  AllocPlotData();
 
   if(point_size <= 0.0f)
     point_size = 0.01f;
@@ -951,6 +957,7 @@ void GraphTableView::FindDefaultPlot1() {
 
 
 void GraphTableView::InitFromUserData() {
+  AllocPlotData();
   FindDefaultXZAxes();
   FindDefaultPlot1();
 
@@ -1036,9 +1043,12 @@ void GraphTableView::InitFromUserData() {
 
 void GraphTableView::UpdateFromDataTable_this(bool first) {
   inherited::UpdateFromDataTable_this(first);
+  if(!first) {
+    UpdateAfterEdit_impl();
+    return;
+  }
+  InitFromUserData();           // need to init before UAE
   UpdateAfterEdit_impl();
-  if(!first) return;
-  InitFromUserData();
 }
 
 void GraphTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {

@@ -318,20 +318,23 @@ void DeepSpec::Defaults_init() {
 }
 
 void DeepNormSpec::Initialize() {
+  on = false;
   gain = 1.0f;
   contrast = 1.0f;
-  avg_ctxt = 0.5f;
+  min_ctxt = 0.5f;
   max_deep_net = 0.5f;
   strong_trg = 1.0f;
-  weak_trg = 0.5f;
+  // weak_trg = 0.5f;
   Defaults_init();
 }
 
 void DeepNormSpec::Defaults_init() {
+  ComputeGain();
 }
 
 void DeepNormSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+  ComputeGain();
 }
 
 void DaModSpec::Initialize() {
@@ -443,8 +446,6 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   noise_adapt.UpdateAfterEdit_NoGui();
   CreateNXX1Fun(act, nxx1_fun, noise_conv);
 
-  deep_norm.ComputeContrast(deep.thr);
-  
   e_rev_sub_thr.e = e_rev.e - act.thr;
   e_rev_sub_thr.l = e_rev.l - act.thr;
   e_rev_sub_thr.i = e_rev.i - act.thr;
@@ -553,6 +554,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   u->act_avg = 0.15f;
   u->deep_raw = 0.0f;
+  u->deep_raw_prv = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
@@ -666,6 +668,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   // not avg_l
   // not act_avg
   u->deep_raw = 0.0f;
+  u->deep_raw_prv = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
@@ -1855,6 +1858,7 @@ void LeabraUnitSpec::Compute_DeepStep3(LeabraUnitVars* u, LeabraNetwork* net, in
 
 void LeabraUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                         int thr_no) {
+  u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
   float act_ts = u->deep_raw;
   if(act_ts > opt_thresh.send) {
     const int nsg = u->NSendConGps(net, thr_no); 
@@ -1888,7 +1892,12 @@ void LeabraUnitSpec::Send_DeepCtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 }
 
 void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  u->deep_norm = deep_norm.ComputeNorm(u->deep_raw, u->deep_ctxt);
+  if(deep_norm.on) {
+    u->deep_norm = deep_norm.ComputeNorm(u->deep_raw, u->deep_ctxt);
+  }
+  else {
+    TestWrite(u->deep_norm, 1.0f);
+  }
 }
 
 void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
@@ -1927,6 +1936,7 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->deep_raw = 0.0f;
+  u->deep_raw_prv = 0.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm = 0.0f;
   u->deep_raw_net = 0.0f;
@@ -2098,6 +2108,36 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
+}
+
+void LeabraUnitSpec::GraphDeepNormFun(DataTable* graph_data, 
+                                      float deep_ctxt, float incr) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_DeepNormFun", true);
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* rw = graph_data->FindMakeColName("deep_raw", idx, VT_FLOAT);
+  DataCol* nm = graph_data->FindMakeColName("deep_norm", idx, VT_FLOAT);
+
+  float deep_raw_max = 1.0f + deep_norm.max_deep_net;
+  incr = MAX(0.001f, incr);	// must be pos
+
+  for(float x = 0.0f; x <= deep_raw_max; x += incr) {
+    float draw = (x >= deep.thr) ? x : 0.0f;
+    float y = deep_norm.ComputeNorm(draw, deep_ctxt);
+    graph_data->AddBlankRow();
+    rw->SetValAsFloat(x, -1);
+    nm->SetValAsFloat(y, -1);
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
+
+  // float ctrst = deep_norm.ComputeContrast(deep.thr);
+  // float gain = deep_norm.ComputeGain();
+  // taMisc::Info("computed contrast:", String(ctrst), "and gain:", String(gain));
 }
 
 void LeabraUnitSpec::TimeExp(int mode, int nreps) {

@@ -93,7 +93,7 @@ public:
   // #CAT_UnitVar net input from the previous trial -- this is used for delayed inhibition as specified in del_inhib on layer spec
   inline float& da()
   { return ((LeabraUnitVars*)GetUnitVars())->da; }
-  // #NO_SAVE #NO_SAVE #CAT_UnitVar delta activation: change in act_nd from one cycle to next -- can be useful to track where changes are taking place -- only updated when gui active
+  // #CAT_UnitVar delta activation: change in act_nd from one cycle to next -- can be useful to track where changes are taking place -- only updated when gui active
   inline float& avg_ss()
   { return ((LeabraUnitVars*)GetUnitVars())->avg_ss; }
   // #CAT_UnitVar super-short time-scale activation average -- provides the lowest-level time integration -- for spiking this integrates over spikes before subsequent averaging, and it is also useful for rate-code to provide a longer time integral overall
@@ -117,100 +117,103 @@ public:
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
   inline float& deep_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw; }
-  // #NO_SAVE #VIEW_HOT #CAT_Activation deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area - this is then normalized in deep_nrm values
+  // #VIEW_HOT #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area - this is then normalized in deep_nrm values
+  inline float& deep_raw_prv()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_prv; }
+  // #CAT_UnitVar previous value of the deep layer raw activation values -- used for temporal context learning
   inline float& deep_norm()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
-  // #NO_SAVE #CAT_Activation normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
+  // #CAT_UnitVar normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
-  // #NO_SAVE #CAT_Activation local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
+  // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
   inline float& deep_norm_net()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_net; }
-  // #NO_SAVE #CAT_Activation net input from deep_norm activation of other areas, reflecting e.g., the layer 6 cortico-cortical projections that are the source of the top-down deep-to-deep pathway in the cortex, or the layer 6 corticothalamic projections into the thalamus
+  // #CAT_UnitVar net input from deep_norm activation of other areas, reflecting e.g., the layer 6 cortico-cortical projections that are the source of the top-down deep-to-deep pathway in the cortex, or the layer 6 corticothalamic projections into the thalamus
   inline float& deep_raw_net()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_net; }
-  // #NO_SAVE #CAT_Activation net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
+  // #CAT_UnitVar net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
-  // #NO_SAVE #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& thal_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->thal_prv; }
-  // #NO_SAVE #CAT_UnitVar previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #CAT_UnitVar previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
   inline float& lrnmod()
   { return ((LeabraUnitVars*)GetUnitVars())->lrnmod; }
-  // #NO_SAVE #CAT_UnitVar learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
+  // #CAT_UnitVar learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 
   inline float& gc_i()
   { return ((LeabraUnitVars*)GetUnitVars())->gc_i; }
-  // #NO_SAVE #CAT_UnitVar total inhibitory conductance -- does NOT include the g_bar.i
+  // #CAT_UnitVar total inhibitory conductance -- does NOT include the g_bar.i
   inline float& I_net()
   { return ((LeabraUnitVars*)GetUnitVars())->I_net; }
-  // #NO_SAVE #CAT_UnitVar net current produced by all channels -- only updated when gui is active
+  // #CAT_UnitVar net current produced by all channels -- only updated when gui is active
   inline float& v_m()
   { return ((LeabraUnitVars*)GetUnitVars())->v_m; }
-  // #NO_SAVE #CAT_UnitVar membrane potential -- integrates I_net current over time -- is reset by spiking (even when using rate code activations -- see v_m_eq)
+  // #CAT_UnitVar membrane potential -- integrates I_net current over time -- is reset by spiking (even when using rate code activations -- see v_m_eq)
   inline float& v_m_eq()
   { return ((LeabraUnitVars*)GetUnitVars())->v_m_eq; }
-  // #NO_SAVE #CAT_UnitVar equilibrium membrane potential -- this is NOT reset by spiking, so it reaches equilibrium values asymptotically -- it is used for rate code activation in sub-threshold range (whenever v_m_eq < act.thr) -- the gelin activation function does not otherwise provide useful dynamics in this subthreshold range
+  // #CAT_UnitVar equilibrium membrane potential -- this is NOT reset by spiking, so it reaches equilibrium values asymptotically -- it is used for rate code activation in sub-threshold range (whenever v_m_eq < act.thr) -- the gelin activation function does not otherwise provide useful dynamics in this subthreshold range
   inline float& adapt()
   { return ((LeabraUnitVars*)GetUnitVars())->adapt; }
-  // #NO_SAVE #CAT_UnitVar adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
+  // #CAT_UnitVar adaptation factor -- driven by both sub-threshold membrane potential and spiking activity -- subtracts directly from the membrane potential on every time step
   inline float& gi_syn()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_syn; }
-  // #NO_SAVE #CAT_UnitVar aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
+  // #CAT_UnitVar aggregated synaptic inhibition (from inhib connections) -- time integral of gi_raw -- this is added with layer-level inhibition (fffb) to get the full inhibition in gc.i
   inline float& gi_self()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_self; }
-  // #NO_SAVE #CAT_UnitVar self inhibitory current -- requires temporal integration dynamics and thus its own variable
+  // #CAT_UnitVar self inhibitory current -- requires temporal integration dynamics and thus its own variable
   inline float& gi_ex()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_ex; }
-  // #NO_SAVE #CAT_UnitVar extra inhibitory current, e.g., from previous trial or phase -- only updated when gui active
+  // #CAT_UnitVar extra inhibitory current, e.g., from previous trial or phase -- only updated when gui active
   inline float& E_i()
   { return ((LeabraUnitVars*)GetUnitVars())->E_i; }
-  // #NO_SAVE #CAT_UnitVar inhibitory reversal potential -- this adapts with activity, producing advantage for active neurons
+  // #CAT_UnitVar inhibitory reversal potential -- this adapts with activity, producing advantage for active neurons
   inline float& syn_tr()
   { return ((LeabraUnitVars*)GetUnitVars())->syn_tr; }
-  // #NO_SAVE #CAT_UnitVar presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
+  // #CAT_UnitVar presynaptic (sending) synapse value: total amount of transmitter ready to release = number of vesicles ready to release (syn_nr) x probability of release (syn_pr) (controlled by short-term-plasticity equations, stp) -- this multiplies activations to produce net sending effect
   inline float& syn_nr()
   { return ((LeabraUnitVars*)GetUnitVars())->syn_nr; }
-  // #NO_SAVE #CAT_UnitVar presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)
+  // #CAT_UnitVar presynaptic (sending) synapse value: number of vesicles ready to release at next spike -- vesicles are depleated when released, resulting in short-term depression of net synaptic efficacy, and recover with both activity dependent and independent rate constants (controlled by short-term-plasticity equations, stp)
   inline float& syn_pr()
   { return ((LeabraUnitVars*)GetUnitVars())->syn_pr; }
-  // #NO_SAVE #CAT_UnitVar presynaptic (sending) synapse value: probability of vesicle release at next spike -- probability varies as a function of local calcium available to drive the release process -- this increases with recent synaptic activity (controlled by short-term-plasticity equations, stp)
+  // #CAT_UnitVar presynaptic (sending) synapse value: probability of vesicle release at next spike -- probability varies as a function of local calcium available to drive the release process -- this increases with recent synaptic activity (controlled by short-term-plasticity equations, stp)
   inline float& syn_kre()
   { return ((LeabraUnitVars*)GetUnitVars())->syn_kre; }
-  // #NO_SAVE #CAT_UnitVar presynaptic (sending) synapse value: dynamic time constant for rate of recovery of number of vesicles ready to release -- this dynamic time constant increases with each action potential, and decays back down over time, and makes the response to higher-frequency spike trains more linear (controlled by short-term-plasticity equations, stp)
+  // #CAT_UnitVar presynaptic (sending) synapse value: dynamic time constant for rate of recovery of number of vesicles ready to release -- this dynamic time constant increases with each action potential, and decays back down over time, and makes the response to higher-frequency spike trains more linear (controlled by short-term-plasticity equations, stp)
   inline float& noise()
   { return ((LeabraUnitVars*)GetUnitVars())->noise; }
-  // #NO_SAVE #CAT_UnitVar noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
+  // #CAT_UnitVar noise value added to unit (noise_type on unit spec determines where it is added) -- this can be used in learning in some cases
   inline float& dav()
   { return ((LeabraUnitVars*)GetUnitVars())->dav; }
-  // #NO_SAVE #VIEW_HOT #CAT_UnitVar dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
+  // #VIEW_HOT #CAT_UnitVar dopamine value (da is delta activation) which modulates activations (e.g., via accom and hyst currents) to then drive learning
   inline float& sev()
   { return ((LeabraUnitVars*)GetUnitVars())->sev; }
-  // #NO_SAVE #CAT_UnitVar serotonin value 
+  // #CAT_UnitVar serotonin value 
 
   inline float& bias_scale()
   { return ((LeabraUnitVars*)GetUnitVars())->bias_scale; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar bias weight scaling factor
+  // #NO_VIEW #EXPERT #CAT_UnitVar bias weight scaling factor
 
   inline float& act_sent()
   { return ((LeabraUnitVars*)GetUnitVars())->act_sent; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar last activation value sent (only send when diff is over threshold)
+  // #NO_VIEW #EXPERT #CAT_UnitVar last activation value sent (only send when diff is over threshold)
   inline float& net_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->net_raw; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar raw net input received from sending units (send delta delta's are added to this value)
+  // #NO_VIEW #EXPERT #CAT_UnitVar raw net input received from sending units (send delta delta's are added to this value)
   inline float& gi_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_raw; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar raw inhib net input received from sending units (increments the deltas in send_delta)
+  // #NO_VIEW #EXPERT #CAT_UnitVar raw inhib net input received from sending units (increments the deltas in send_delta)
   inline float& deep_sent()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_sent; }
-  // #NO_VIEW #NO_SAVE #EXPERT #CAT_UnitVar last deep activation value sent (only send when diff is over threshold)
+  // #NO_VIEW #EXPERT #CAT_UnitVar last deep activation value sent (only send when diff is over threshold)
 
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }
-  // #NO_SAVE #CAT_UnitVar miscellaneous variable for other algorithms that need it
+  // #CAT_UnitVar miscellaneous variable for other algorithms that need it
   inline int& spk_t()
   { return ((LeabraUnitVars*)GetUnitVars())->spk_t; }
-  // #NO_SAVE #CAT_UnitVar time in tot_cycle units when spiking last occurred (-1 for not yet)
+  // #CAT_UnitVar time in tot_cycle units when spiking last occurred (-1 for not yet)
 
  // TODO: move these to a subclass, with fixed max_delay of float[] guys right inline
 
