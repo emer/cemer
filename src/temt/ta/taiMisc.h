@@ -449,8 +449,8 @@ static iMainWindowViewer* FindMainWinParent(QObject* obj);
   // #IGNORE translate the key_event into the bound action
   static QKeySequence GetSequenceFromAction(taiMisc::BindingContext context, taiMisc::BoundAction action);
   // #IGNORE get the key sequence bound to this action - will get the first it comes to (but shouldn't be more than one)
-  static String GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action);
-  // #IGNORE get the key sequence bound to this action - and convert to human friendly and platform specific string
+  static String GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action, int kb_set);
+  // #IGNORE get the key sequence bound to this action - and convert to human friendly and platform specific string  -- kb_set should be taMisc::KeyBindingSet but I don't want to include taMisc!! kb_set = 0 is KEY_BINDINGS_DEFAULT
 #endif
   static void   LoadDefaultKeyBindings();
   // #IGNORE add all of the default key/action bindings - these are set in code

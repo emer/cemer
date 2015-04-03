@@ -913,9 +913,9 @@ QKeySequence taiMisc::GetSequenceFromAction(taiMisc::BindingContext context, tai
   return bindings->KeySequence(context, action);
 }
 
-String taiMisc::GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action) {
+String taiMisc::GetSequenceFromActionFriendly(taiMisc::BindingContext context, taiMisc::BoundAction action, int kb_set) {
   String friendly_str;
-  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(kb_set);
   friendly_str = bindings->KeySequence(context, action).toString();
   
 #ifdef TA_OS_MAC

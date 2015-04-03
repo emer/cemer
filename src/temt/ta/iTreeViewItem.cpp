@@ -254,7 +254,8 @@ void iTreeViewItem::FillContextMenu_impl(taiWidgetActions* menu,
   TypeDef* td = GetDataTypeDef();
   // if(td && td->InheritsFrom(&TA_taList_impl)) {
   // only really needed for list guys
-  String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND);
+  int kb_set = (static_cast<int>(taMisc::current_key_bindings));
+  String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_FIND, kb_set);
   String menu_item_str = "Find from here (" + key_seq + ")...";
   
   //  menu->AddItem("Find from here (Alt+F)...", taiWidgetMenu::use_default,

@@ -218,7 +218,11 @@ void ISelectable::FillContextMenu(ISelectable_PtrList& sel_items,
 void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   int ea, GuiContext sh_typ)
 {
-  if (ea == 0) return;
+  if (ea == 0)
+    return;
+  
+  int kb_set = (static_cast<int>(taMisc::current_key_bindings));
+
   if (menu->count() > 0)
     menu->AddSep();
 //  cut copy paste link delete
@@ -236,7 +240,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
     mel->setData(sh_typ);
   }
   if (ea & iClipData::EA_DUPE) {
-    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE);
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DUPLICATE, kb_set);
     String menu_item_str = "Duplicate (" + key_seq + ")";
     mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);
@@ -282,7 +286,7 @@ void ISelectable::FillContextMenu_EditItems_impl(taiWidgetActions* menu,
   }
 
   if (ea & iClipData::EA_DELETE) {
-    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE);
+    String key_seq = taiMisc::GetSequenceFromActionFriendly(taiMisc::TREE_CONTEXT, taiMisc::TREE_DELETE, kb_set);
     String menu_item_str = "&Delete (" + key_seq + ")";
     mel = menu->AddItem(menu_item_str, taiWidgetMenu::use_default,
         iAction::men_act, clipHandlerObj(), ISelectableHost::edit_menu_action_slot, this);

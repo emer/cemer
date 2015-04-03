@@ -140,7 +140,8 @@ void iDialogKeyBindings::Constr() {
         }
         
         // get the most readable form of the key sequence
-        String key_seq_str = taiMisc::GetSequenceFromActionFriendly(current_context, current_action);
+        int kb_set = taMisc::KEY_BINDINGS_DEFAULT;
+        String key_seq_str = taiMisc::GetSequenceFromActionFriendly(current_context, current_action, kb_set);
         KeyActionPair* pair = default_pairs->GetPairFromAction(current_action);
         String help_str;
         if (pair) {
