@@ -565,7 +565,7 @@ void GridTableView::GetScaleRange() {
     colorscale.FixRangeZero();
     return;
   }
-    
+  
   if (need_scale_update) {
     bool got_one = false;
     MinMax sc_rg;

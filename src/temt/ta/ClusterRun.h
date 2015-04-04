@@ -74,9 +74,9 @@ public:
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
   int           mpi_nodes;      // #CONDSHOW_ON_use_mpi number of nodes to use for mpi run
   bool          parallel_batch; // use parallel batch processing -- run multiple runs of the same model in parallel across nodes or procs (not using mpi -- just embarassingly parallel separate runs), each on a different batch iteration (e.g., different initial random weights) -- this will submit a different job for each batch here on the client (so they can all be tracked directly), unless the cluster has allocate_by_node checked, in which case the params will be sent up to the server to manage as a single meta-job
-  int           pb_batches;     // #CONDSHOW_ON_parallel_batch number of parallel batches to run per job -- beware that this can result in very large processor counts if doing in context of a parameter search on top, as this batch multiplier operates on each job submitted
-  int           pb_nodes;       // #CONDSHOW_ON_parallel_batch if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / procs_per_node -- setting this value to 0 will default to this allocation number
-  bool          nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
+  int            pb_batches;     // #CONDSHOW_ON_parallel_batch number of parallel batches to run per job -- beware that this can result in very large processor counts if doing in context of a parameter search on top, as this batch multiplier operates on each job submitted
+  int            pb_nodes;       // #CONDSHOW_ON_parallel_batch if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / procs_per_node -- setting this value to 0 will default to this allocation number
+  bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
 
 protected:
   bool initClusterManager(bool check_prefs = true);
@@ -101,7 +101,7 @@ public:
   virtual void  Cont();
   // #BUTTON Continue the search process by submitting the next batch of jobs.
   virtual void  Kill();
-  // #BUTTON #CONFIRM kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
+  // #BUTTON #CONFIRM #GHOST_OFF_rows_selected kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  GetData();
   // this is now done automatically: tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
   virtual void  ImportData(bool remove_existing = true);

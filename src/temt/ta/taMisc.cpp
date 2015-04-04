@@ -222,6 +222,7 @@ int     taMisc::indent_spc = 2;
 int     taMisc::display_height = 25;
 int     taMisc::undo_depth = 100;
 int     taMisc::undo_data_max_cells = 10000;
+int     taMisc::auto_save_data_max_cells = 1000000;
 float   taMisc::undo_new_src_thr = 0.3f;
 bool    taMisc::undo_debug = false;
 int     taMisc::auto_save_interval = 120;

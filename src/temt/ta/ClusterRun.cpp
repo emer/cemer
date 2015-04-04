@@ -1603,7 +1603,6 @@ bool ClusterRun::SelectedRows(DataTable& dt, int& st_row, int& end_row) {
   if(!ed || !ed->tvTable) return false;
   bool rval = ed->tvTable->SelectedRows(st_row, end_row);
   if(!rval) {
-    // taMisc::Info("no items selected");
     return false;
   }
   // taMisc::Info("start row:", String(st_row), "end row:", String(end_row));
