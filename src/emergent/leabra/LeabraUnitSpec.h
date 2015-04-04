@@ -408,11 +408,11 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;         // enable the DeepLeabra mechanisms, including attentional modulation by deep_norm, temporal integration via deep_ctxt context connections, and thalamic-based auto-encoder driven by deep_raw projections
   float	        thr;        // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq
-  float         net_scale;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_net inputs from deep-to-deep projections in computing deep_raw
-  float         ctxt_scale; // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to neurons -- determines how much direct temporal integration (TI) context a neuron receives
-  float         thal_to_deep; // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
-  float         thal_to_super;  // #CONDSHOW_ON_on how much to add to net input from thal input from thalamus -- input is * current act
-  bool          burst;      // #CONDSHOW_ON_on #DEF_true do deep_raw activations burst fire only during quarters when they are being computed, or do they otherwise exhibit persistent activation over time (= false -- this should generally only be true for neurons capable of active maintenance, such as in the PFC, which has other mechanisms to determine which neurons are burst and which are maintenance -- see PFCMaintSpec)
+  float         d_to_d;     // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_norm_net inputs from deep-to-deep projections in computing deep_raw
+  float         d_to_s;     // #CONDSHOW_ON_on #MIN_0 how much of the deep_norm_net signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
+  float         ctxt_to_s;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons -- determines how much direct recurrent temporal integration (TI) context a neuron receives
+  float         thal_to_d;  // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
+  float         thal_to_s;  // #CONDSHOW_ON_on how much to add to superficial net input from thal input from thalamus
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

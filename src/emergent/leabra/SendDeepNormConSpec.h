@@ -42,7 +42,7 @@ public:
                                  int thr_no, const float su_act) {
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
+    float* send_netin_vec = net->ThrSendDeepNetTmp(thr_no);
     CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
                                          cg->UnIdx(i), su_act_eff));
   }

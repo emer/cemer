@@ -1202,7 +1202,7 @@ void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
     if(uv->lesioned()) continue;
     ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepStep2(uv, this, thr_no);
   }
-  threads.SyncSpin(thr_no, 1);
+  threads.SyncSpin(thr_no, 0);
 
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);

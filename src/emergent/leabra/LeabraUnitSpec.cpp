@@ -305,12 +305,12 @@ void LeabraDropoutSpec::Defaults_init() {
 
 void DeepSpec::Initialize() {
   on = false;
-  burst = true;
   thr = 0.5f;
-  net_scale = 0.5f;
-  ctxt_scale = 0.3f;
-  thal_to_deep = 0.5f;
-  thal_to_super = 0.0f;
+  d_to_d = 0.5f;
+  d_to_s = 0.1f;
+  ctxt_to_s = 0.3f;
+  thal_to_d = 0.5f;
+  thal_to_s = 0.0f;
   Defaults_init();
 }
 
@@ -1194,11 +1194,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   Compute_NetinRaw(u, net, thr_no);
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
-  if(deep.on) {                 // apply attention directly to netin (for now)
-    u->net_raw *= u->deep_norm;
-  }
-
   float net_syn = u->net_raw;
+  if(deep.on) {                 // apply attention directly to netin (for now)
+    net_syn *= u->deep_norm;
+  }
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
   // this could modify net_syn if it wants..
   float net_tot = net_syn + net_ex;
@@ -1247,11 +1246,14 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
     net_ex += u->ext * ls->clamp.gain;
   }
   if(deep.on) {
-    if(deep.thal_to_super > 0.0f) {
-      net_ex += deep.thal_to_super * u->thal * u->act_eq;
+    if(deep.d_to_s > 0.0f) {
+      net_ex += deep.d_to_s * u->deep_norm_net;
     }
-    if(deep.ctxt_scale > 0.0f) {
-      net_ex += deep.ctxt_scale * u->deep_ctxt;
+    if(deep.ctxt_to_s > 0.0f) {
+      net_ex += deep.ctxt_to_s * u->deep_ctxt;
+    }
+    if(deep.thal_to_s > 0.0f) {
+      net_ex += deep.thal_to_s * u->thal;
     }
   }
   if(da_mod.on) {
@@ -1325,8 +1327,8 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
 void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float draw = (u->act_eq >= deep.thr) ? u->act_eq : 0.0f;
   // todo: could have a binarizing option
-  draw += u->act_eq * (deep.net_scale * u->deep_norm_net +
-                       deep.thal_to_deep * u->thal);
+  draw += u->act_eq * (deep.d_to_d * u->deep_norm_net +
+                       deep.thal_to_d * u->thal);
   // using the less catch-22 version, doesn't depend on having passed threshold
   u->deep_raw = draw;
 }
@@ -1415,6 +1417,14 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
+    if(deep.on && net->cycle == 1) { // apply deep_norm attentional modulation to inputs!
+      u->act_eq *= u->deep_norm;
+      u->act_nd = u->act_eq;
+      u->act = u->act_eq;
+    }
+    if(deep.on && Quarter_DeepNow(net->quarter)) {
+      Compute_DeepRaw(u, net, thr_no);
+    }
     return; // don't re-compute
   }
 
@@ -1832,6 +1842,8 @@ bool LeabraUnitSpec::Compute_DeepTest(LeabraUnitVars* u, LeabraNetwork* net, int
   int qtr_eff = net->quarter;
   if(qtr_eff == 0)
     qtr_eff = 3;                // wrap around backward..
+  else
+    qtr_eff--;
   return Quarter_DeepNow(qtr_eff);
 }
 
@@ -1925,7 +1937,7 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 #endif
   float nw_nt = 0.0f;
   for(int j=0;j<nt;j++) {
-    float& ndval = net->ThrSendNetinTmp(j)[flat_idx];
+    float& ndval = net->ThrSendDeepNetTmp(j)[flat_idx];
     nw_nt += ndval;
 #ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
