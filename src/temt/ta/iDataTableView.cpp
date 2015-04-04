@@ -45,13 +45,9 @@ iDataTableView::iDataTableView(QWidget* parent)
 
   row_header = new iDataTableRowHeaderView(this); // subclass header
   this->setVerticalHeader(row_header);
-  
-  rows_selected = false;
 }
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
-  int st_row, end_row;
-  rows_selected = SelectedRows(st_row, end_row);
   inherited::currentChanged(current, previous);
   emit sig_currentChanged(current);
 }

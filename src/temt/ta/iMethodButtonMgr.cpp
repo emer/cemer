@@ -23,8 +23,6 @@
 
 #include <SigLinkSignal>
 #include <taiMisc>
-#include <taMisc>
-
 
 iMethodButtonMgr::iMethodButtonMgr(QObject* parent)
 :inherited(parent)

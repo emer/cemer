@@ -101,7 +101,7 @@ public:
   virtual void  Cont();
   // #BUTTON Continue the search process by submitting the next batch of jobs.
   virtual void  Kill();
-  // #BUTTON #CONFIRM #GHOST_OFF_rows_selected kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
+  // #BUTTON #CONFIRM kill running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  GetData();
   // this is now done automatically: tell the cluster to check in the data for the selected rows in the jobs_running or jobs_done data table (looks in running first, then done for selected rows) -- do Update to get data locally after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval) -- then do ImportData on selected jobs to import data into project
   virtual void  ImportData(bool remove_existing = true);

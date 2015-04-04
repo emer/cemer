@@ -42,8 +42,6 @@ public:
 
   iDataTableView(QWidget* parent = NULL);
   
-  bool                      rows_selected;  // are any rows currently selected
-
 public: // cliphandler i/f
   void                  EditAction(int ea) override;
   void                  GetEditActionsEnabled(int& ea) override;
