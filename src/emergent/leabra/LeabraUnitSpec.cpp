@@ -1917,7 +1917,7 @@ void LeabraUnitSpec::Send_DeepCtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(deep_norm.on) {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    float max_raw = lay->am_deep_raw.max + deep.d_to_d * lay->am_deep_norm_net.max;
+    float max_raw = lay->am_deep_raw.max; // + deep.d_to_d * lay->am_deep_norm_net.max;
     if(max_raw < deep.thr)
       max_raw = deep.thr;
     float dctxt = MAX(u->deep_ctxt, 0.02f);
