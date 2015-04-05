@@ -434,6 +434,8 @@ INHERITED(SpecMemberBase)
 public:
   bool          on;             // enable normalization of the deep_raw values into deep_norm attentional modulation factors -- otherwise deep_norm is always set to 1.0
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
+  float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
+  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
   float	        gain;           // #READ_ONLY #SHOW #CONDSHOW_ON_on #MIN_0 gain multiplier on normalized values -- computed from strong_trg based on max_ctxt and max_deep_net values -- use GraphDeepNet to 
   float         strong_trg;     // #CONDSHOW_ON_on #MIN_0 #DEF_1 target normalized value for strong deep_raw activations, given other constraints above -- helps determine the appropriate gain value
   float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 estimated minimum context values, for purpose of computing the gain term from target strong deep_raw values -- smaller context = higher deep_norm values, so we need min to keep max deep_raw normalized at proper value
@@ -443,6 +445,13 @@ public:
   float         ComputeNorm(float raw, float ctxt)
   { return (gain * (raw + contrast)) / (ctxt + contrast); }
   // computed normalized value from current raw and context values
+
+  float         ComputeNormAuto(float raw, float ctxt, float lay_avg_ctxt,
+                                float max_raw)
+  { float nrm_gain = strong_trg * (lay_avg_ctxt + contrast) / (max_raw + contrast);
+    float ctxt_eff = ctxt_fm_lay * lay_avg_ctxt + ctxt_fm_ctxt * ctxt;
+    return (nrm_gain * (raw + contrast)) / (ctxt_eff + contrast); }
+  // computed normalized value using auto renormalized gain computed from layer ctxt, raw values, from current raw and context values
 
   float         ComputeGain()
   { gain = strong_trg * (min_ctxt + contrast) / (1.0f + max_deep_net + contrast);
@@ -779,9 +788,11 @@ public:
   virtual void Compute_DeepStep1(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep first step of computing deep layer update: send deep ctxt
   virtual void Compute_DeepStep2(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep second step of computing deep layer update: ctxt post, compute deep norm, send deep norm
+  // #CAT_Deep second step of computing deep layer update: ctxt post
   virtual void Compute_DeepStep3(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep third step of computing deep layer update: deep norm post
+  // #CAT_Deep third step of computing deep layer update: compute deep norm, send deep norm
+  virtual void Compute_DeepStep4(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep fourth step of computing deep layer update: deep norm post
 
   virtual void	Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net,
                                   int thr_no);

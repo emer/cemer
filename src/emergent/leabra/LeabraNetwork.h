@@ -196,6 +196,9 @@ public:
     AM_ACT,
     AM_ACT_EQ,
     AM_UN_G_I,
+    AM_DEEP_RAW,
+    AM_DEEP_CTXT,
+    AM_DEEP_NORM_NET,
     N_AM_VARS,
   };
 
@@ -485,6 +488,11 @@ public:
   virtual void Compute_Deep_Thr(int thr_no);
   // #IGNORE update deep variables, using the proper sequence of unit-level calls
 
+    virtual void Compute_DeepStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
+    virtual void Compute_DeepStats_Post();
+    // #IGNORE compute layer and unit-group level stats on net input levels -- needed for inhibition
+  
   virtual void ClearDeepActs();
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
     virtual void ClearDeepActs_Thr(int thr_no);
