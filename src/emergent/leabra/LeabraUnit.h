@@ -121,12 +121,12 @@ public:
   inline float& deep_raw_prv()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_prv; }
   // #CAT_UnitVar previous value of the deep layer raw activation values -- used for temporal context learning
-  inline float& deep_norm()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
-  // #CAT_UnitVar normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
   // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
+  inline float& deep_norm()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
+  // #CAT_UnitVar normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons
   inline float& deep_norm_net()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_net; }
   // #CAT_UnitVar net input from deep_norm activation of other areas, reflecting e.g., the layer 6 cortico-cortical projections that are the source of the top-down deep-to-deep pathway in the cortex, or the layer 6 corticothalamic projections into the thalamus
