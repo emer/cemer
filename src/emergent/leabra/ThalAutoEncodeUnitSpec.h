@@ -29,8 +29,11 @@ class E_API ThalAutoEncodeUnitSpec : public LeabraUnitSpec {
   // #AKA_Deep5bClampUnitSpec When deep_qtr is active (typically the plus phase), these units are exclusively driven by their deep_raw_net netinput, and otherwise they are just like regular neurons -- used for simulating thalamic relay cells as auto-encoder layers hard-clamped to deep_raw drivers in the plus phase
 INHERITED(LeabraUnitSpec)
 public:
-  void	Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
-  void  Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+
+  void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+    
 
   TA_SIMPLE_BASEFUNS(ThalAutoEncodeUnitSpec);
 private:

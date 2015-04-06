@@ -26,11 +26,11 @@ void ThalAutoEncodeUnitSpec::Initialize() {
 void ThalAutoEncodeUnitSpec::Defaults_init() {
   deep.on = true;
   deep_qtr = Q4;
+  deep_norm.on = true;
 }
 
 void ThalAutoEncodeUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
-  TestWrite(u->deep_norm, u->deep_norm_net); // always get from net
   inherited::Compute_NetinRaw(u, net, thr_no);
   if(net->phase == LeabraNetwork::PLUS_PHASE) { // note: using plus phase here..
     u->net_raw = u->deep_raw_net;          // only gets from deep!
@@ -41,5 +41,12 @@ void ThalAutoEncodeUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* 
                                            int thr_no) {
   inherited::Trial_Init_SRAvg(u, net, thr_no);
   u->avg_l_lrn = 0.0f;        // no self organizing in clamped layers!
+}
+
+void ThalAutoEncodeUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  if(u->deep_norm_net > 0.0f)
+    u->deep_norm = u->deep_norm_net; // this will then be renormalized..
 }
 
