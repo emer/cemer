@@ -1190,7 +1190,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
   float net_syn = u->net_raw;
-  if(deep.on) {                 // apply attention directly to netin and act (later)
+  if(deep_norm.on) {                 // apply attention directly to netin and act (later)
     net_syn *= u->deep_norm;
   }
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
@@ -1473,7 +1473,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += Compute_Noise(u, net, thr_no);
   }
-  if(deep.on) {                 // apply attention directly to act and netin
+  if(deep_norm.on) {                 // apply attention directly to act and netin
     new_act *= u->deep_norm;
   }
   u->act_nd = act_range.Clip(new_act);
