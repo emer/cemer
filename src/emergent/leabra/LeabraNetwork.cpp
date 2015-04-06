@@ -50,6 +50,7 @@ void LeabraTimes::Initialize() {
   quarter = 25;
   cycle_qtr = true;
   time_inc = 0.001f;
+  deep_iters = 2;
 
   minus = 3 * quarter;
   plus = quarter;
@@ -1402,65 +1403,66 @@ void LeabraNetwork::Compute_DeepNormStats_PostPost() {
 }
 
 void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
-  // takes 3 sequential steps to do full deep update
   const int nu = ThrNUnits(thr_no);
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
-  }
-  threads.SyncSpin(thr_no, 0);
-
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin_Post(uv, this, thr_no);
-  }
-  threads.SyncSpin(thr_no, 1);
-
-  if(quarter == 0) {            // cannonical case, just do it now..
-    Compute_DeepStats_Thr(thr_no);
-    threads.SyncSpin(thr_no, 2);
-    if(thr_no == 0) {
-      Compute_DeepStats_Post();
+  for(int deep_cyc = 0; deep_cyc < times.deep_iters; deep_cyc++) {
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
     }
     threads.SyncSpin(thr_no, 0);
-  }
 
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepNorm(uv, this, thr_no);
-  }
-  threads.SyncSpin(thr_no, 1);
-  
-  if(quarter == 0) {            // cannonical case, just do it now..
-    Compute_DeepNormStats_Thr(thr_no);
-    threads.SyncSpin(thr_no, 2);
-    if(thr_no == 0) {
-      Compute_DeepNormStats_Post();
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin_Post(uv, this, thr_no);
     }
-    threads.SyncSpin(thr_no, 2);
-  }
+    threads.SyncSpin(thr_no, 1);
 
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    // this also does the normalization of deep_norm
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin(uv, this, thr_no);
-  }
-  threads.SyncSpin(thr_no, 3);
-  
-  if(quarter == 0) {            // cannonical case, just do it now..
-    if(thr_no == 0) {
-      Compute_DeepNormStats_PostPost();
+    if(quarter == 0) {            // cannonical case, just do it now..
+      Compute_DeepStats_Thr(thr_no);
+      threads.SyncSpin(thr_no, 2);
+      if(thr_no == 0) {
+        Compute_DeepStats_Post();
+      }
+      threads.SyncSpin(thr_no, 0);
     }
-  }
 
-  for(int i=0; i<nu; i++) {
-    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-    if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin_Post(uv, this, thr_no);
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepNorm(uv, this, thr_no);
+    }
+    threads.SyncSpin(thr_no, 1);
+  
+    if(quarter == 0) {            // cannonical case, just do it now..
+      Compute_DeepNormStats_Thr(thr_no);
+      threads.SyncSpin(thr_no, 2);
+      if(thr_no == 0) {
+        Compute_DeepNormStats_Post();
+      }
+      threads.SyncSpin(thr_no, 2);
+    }
+
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      // this also does the normalization of deep_norm
+      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin(uv, this, thr_no);
+    }
+    threads.SyncSpin(thr_no, 3);
+  
+    if(quarter == 0) {            // cannonical case, just do it now..
+      if(thr_no == 0) {
+        Compute_DeepNormStats_PostPost();
+      }
+    }
+
+    for(int i=0; i<nu; i++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+      if(uv->lesioned()) continue;
+      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin_Post(uv, this, thr_no);
+    }
   }
 }
 

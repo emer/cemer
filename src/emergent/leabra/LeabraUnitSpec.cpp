@@ -309,6 +309,7 @@ void DeepSpec::Initialize() {
   d_to_d = 0.5f;
   d_to_s = 0.1f;
   ctxt_to_s = 0.3f;
+  ctxt_rel = false;
   thal_to_d = 0.5f;
   thal_to_s = 0.0f;
   Defaults_init();
@@ -944,7 +945,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     else if(cs->IsDeepNormCon()) {
       deep_norm_scale += rel_scale;
     }
-    else if(cs->IsDeepCtxtCon()) {
+    else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       deep_ctxt_scale += rel_scale;
     }
     else {
@@ -980,7 +981,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
       if(deep_norm_scale > 0.0f)
         recv_gp->scale_eff /= deep_norm_scale;
     }
-    else if(cs->IsDeepCtxtCon()) {
+    else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       if(deep_ctxt_scale > 0.0f)
         recv_gp->scale_eff /= deep_ctxt_scale;
     }
@@ -1885,6 +1886,10 @@ void LeabraUnitSpec::Send_DeepCtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 }
 
 void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep_norm.on) {
+    TestWrite(u->deep_norm, 1.0f);
+    return;
+  }
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
@@ -1896,6 +1901,9 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
 
 void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                       int thr_no) {
+  if(!deep_norm.on) {
+    return;
+  }
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
@@ -1918,6 +1926,9 @@ void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
                                              int thr_no) {
+  if(!deep_norm.on) {
+    return;
+  }
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   int flat_idx = u->UnFlatIdx(net, thr_no);
