@@ -32,6 +32,7 @@ public:
   void Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
+  bool DeepNormCopied() override { return true; }
   void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
     
 

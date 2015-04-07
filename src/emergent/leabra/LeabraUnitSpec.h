@@ -415,6 +415,13 @@ public:
   float         thal_to_d;  // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
   float         thal_to_s;  // #CONDSHOW_ON_on how much to add to superficial net input from thal input from thalamus
   
+  float         ComputeDeepRaw(float act, float deep_norm_net, float thal,
+                               float max_deep_norm_net) {
+    if(act < thr) return 0.0f;
+    return act * ((1.0f + d_to_d * deep_norm_net + thal_to_d * thal) /
+                  (1.0f + d_to_d * max_deep_norm_net + thal_to_d));
+  }
+
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(DeepSpec);
@@ -437,9 +444,11 @@ public:
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
   float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
   float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
+  float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
   
   inline float  ComputeGain(float max_raw, float avg_ctxt)
-  { return (avg_ctxt + contrast) / (max_raw + contrast); }
+  { avg_ctxt = MAX(avg_ctxt, min_ctxt);
+    return (avg_ctxt + contrast) / (max_raw + contrast); }
   // compute gain parameter based on max_raw
 
   inline float  ComputeNorm(float raw, float ctxt)
@@ -784,6 +793,9 @@ public:
                                         int thr_no);
   // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections -- post processing rollup
 
+  virtual bool DeepNormCopied() { return false; }
+  // #CAT_Deep is the deep_norm value actually copied from another layer (e.g., ThalAutoEncodeUnitSpec) -- if true, then the deep_norm_off value on the layer is just set to 0, so it doesn't get miscomputed based on values that are not otherwise accurate
+  
   virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
     

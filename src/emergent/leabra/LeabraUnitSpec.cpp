@@ -320,9 +320,10 @@ void DeepSpec::Defaults_init() {
 
 void DeepNormSpec::Initialize() {
   on = false;
-  contrast = 2.0f;
+  contrast = 3.0f;
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
+  min_ctxt = 0.1f;
   Defaults_init();
 }
 
@@ -1192,7 +1193,12 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
 
   float net_syn = u->net_raw;
   if(deep_norm.on) {                 // apply attention directly to netin and act (later)
-    net_syn *= u->deep_norm;
+    if(u->deep_norm > 0.0f) {
+      net_syn *= u->deep_norm;
+    }
+    else {
+      net_syn *= lay->deep_norm_off;
+    }
   }
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
   // this could modify net_syn if it wants..
@@ -1321,11 +1327,9 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
 }
 
 void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  float draw = (u->act_eq >= deep.thr) ? u->act_eq : 0.0f;
-  // todo: could have a binarizing option
-  draw += u->act_eq * (deep.d_to_d * u->deep_norm_net +
-                       deep.thal_to_d * u->thal);
-  // using the less catch-22 version, doesn't depend on having passed threshold
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  float draw = deep.ComputeDeepRaw(u->act_eq, u->deep_norm_net, u->thal,
+                                   lay->am_deep_norm_net.max);
   u->deep_raw = draw;
 }
 
@@ -1475,7 +1479,13 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
   if(deep_norm.on) {                 // apply attention directly to act and netin
-    new_act *= u->deep_norm;
+    if(u->deep_norm > 0.0f) {
+      new_act *= u->deep_norm;
+    }
+    else {
+      LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+      new_act *= lay->deep_norm_off;
+    }
   }
   u->act_nd = act_range.Clip(new_act);
 
@@ -1893,9 +1903,13 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  float dctxt = MAX(u->deep_ctxt, 0.02f);
-  float lctxt = MAX(lay->am_deep_ctxt.avg, 0.02f);
-  float nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
+  float dctxt = u->deep_ctxt;
+  float lctxt = lay->am_deep_ctxt.avg;
+  float nw_nrm = 0.0f;
+  if(u->deep_raw > 0.0f) {
+    // deep_norm only fires for units that have deep_raw firing!
+    nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
+  }
   u->deep_norm = nw_nrm;
 }
 

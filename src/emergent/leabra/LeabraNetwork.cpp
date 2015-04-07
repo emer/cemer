@@ -1267,6 +1267,22 @@ void LeabraNetwork::Compute_DeepStats_Post() {
     am_deep_raw.CalcAvg();
     am_deep_ctxt.CalcAvg();
     am_deep_norm_net.CalcAvg();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+    if(us->deep_norm.on) {
+      if(us->DeepNormCopied()) {
+        lay->deep_norm_off = 0.0f;
+      }
+      else {
+        float lctxt = lay->am_deep_ctxt.avg;
+        // use layer context for both, and then renormalize
+        lay->deep_norm_off = us->deep_norm.ComputeNormLayCtxt(0.0f, lctxt, lctxt);
+        if(lay->am_deep_norm.max > 0.0f)
+          lay->deep_norm_off /= lay->am_deep_norm.max;
+      }
+    }
+    else {
+      lay->deep_norm_off = 1.0f;
+    }
   }
 
   // then by unit groups

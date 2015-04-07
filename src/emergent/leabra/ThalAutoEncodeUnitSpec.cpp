@@ -46,7 +46,8 @@ void ThalAutoEncodeUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* 
 void ThalAutoEncodeUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!Compute_DeepTest(u, net, thr_no))
     return;
-  if(u->deep_norm_net > 0.0f)
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  if(lay->am_deep_norm_net.max > 0.0f)
     u->deep_norm = u->deep_norm_net; // this will then be renormalized..
 }
 

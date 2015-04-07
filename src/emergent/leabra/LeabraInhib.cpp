@@ -45,6 +45,7 @@ void LeabraInhib::Inhib_Initialize() {
   acts_p_avg = .1f;
   acts_p_avg_eff = 1.f;
   un_g_i.cmpt = false;          // don't compute by default
+  deep_norm_off = 1.0f;
 }
 
 void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
@@ -56,6 +57,7 @@ void LeabraInhib::Inhib_Init_Acts(LeabraLayerSpec*) {
   am_deep_ctxt.InitVals();
   am_deep_norm_net.InitVals();
   am_deep_norm.InitVals();
+  deep_norm_off = 1.0f;
 }
 
 void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
@@ -72,5 +74,6 @@ void LeabraInhib::Inhib_Copy_(const LeabraInhib& cp) {
   am_deep_ctxt = cp.am_deep_ctxt;
   am_deep_norm_net = cp.am_deep_norm_net;
   am_deep_norm = cp.am_deep_norm;
+  deep_norm_off = cp.deep_norm_off;
 }
 
