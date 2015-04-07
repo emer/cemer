@@ -58,6 +58,8 @@ void GraphAxisBase::Initialize() {
   tick_incr = 1;
   act_n_ticks = 11;
   units = 1.;
+  show_axis_label = true;
+  show_alt_axis_label = true;
 }
 
 void GraphAxisBase::Destroy() {
@@ -380,32 +382,34 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
                                  bool ticks_only, String* rnd_svg) {
   iVec3f fm = off;
   iVec3f to = off;
-
+  
   // axis line itself
   to.x += axis_length;
   t3ax->addLine(fm, to);
-
+  
   if(rnd_svg && ticks_only) {
     *rnd_svg << "M " << taSvg::Coords(fm)
-             << "L " << taSvg::Coords(to);
+    << "L " << taSvg::Coords(to);
   }
-
+  
   bool use_str_labels = false;
-
+  
   if(!ticks_only) {
     // units legend
     if(units != 1.0) {
       fm.x = off.x + axis_length + UNIT_LEGEND_OFFSET;
       fm.y = off.y + -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
       String label = "x " + String(units,"%.5g");
-      t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
-
-      if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                t3ax->fontSize(), taSvg::LEFT);
+      if (show_axis_label) {
+        t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+        
+        if(rnd_svg) {
+          *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                  t3ax->fontSize(), taSvg::LEFT);
+        }
       }
     }
-
+    
     if(!col_name.empty()) {
       fm.x = off.x + .5f * axis_length;
       fm.y = off.y + -(GraphTableView::tick_size + TICK_OFFSET + 1.5f * t3ax->fontSize());
@@ -419,25 +423,27 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
           label = "Row Number";
         }
       }
-      t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
-
-      if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                t3ax->fontSize(), taSvg::CENTER);
+      if (show_axis_label) {
+        t3ax->addLabel(label.chars(), fm, SoAsciiText::CENTER);
+        
+        if(rnd_svg) {
+          *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                  t3ax->fontSize(), taSvg::CENTER);
+        }
       }
     }
   }
-
+  
   // ticks
   fm = off;
   to = off;
   fm.y = off.y + -(.5f * GraphTableView::tick_size);
   to.y = off.y + (.5f * GraphTableView::tick_size);
-
+  
   float y_lab_off = (TICK_OFFSET + t3ax->fontSize());
-
+  
   DataCol* da = GetDAPtr();
-
+  
   int i;
   float val;
   String label;
@@ -445,12 +451,12 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
     fm.x = off.x + DataToPlot(val);
     to.x = off.x + DataToPlot(val);
     t3ax->addLine(fm, to);
-
+    
     if(rnd_svg && ticks_only) {
       *rnd_svg << "M " << taSvg::Coords(fm)
-               << "L " << taSvg::Coords(to);
+      << "L " << taSvg::Coords(to);
     }
-
+    
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
@@ -465,8 +471,8 @@ void GraphAxisBase::RenderAxis_X(T3Axis* t3ax, const iVec3f& off,
       }
       if(label.nonempty()) {
         t3ax->addLabel(label.chars(),
-                     iVec3f(fm.x, fm.y - y_lab_off, fm.z),
-                     SoAsciiText::CENTER);
+                       iVec3f(fm.x, fm.y - y_lab_off, fm.z),
+                       SoAsciiText::CENTER);
         if(rnd_svg) {
           // todo: get font size from graph
           *rnd_svg << taSvg::Text(label, fm.x, fm.y-y_lab_off, fm.z, color.color(),
@@ -481,69 +487,77 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
                                  int n_ax, bool ticks_only, String* rnd_svg) {
   iVec3f fm = off;
   iVec3f to = off;
-
+  
   // axis line itself
   to.y = off.y + axis_length;
   t3ax->addLine(fm, to);
-
+  
   if(rnd_svg && ticks_only) {
     *rnd_svg << "M " << taSvg::Coords(fm)
-             << "L " << taSvg::Coords(to);
+    << "L " << taSvg::Coords(to);
   }
-
+  
   if(!ticks_only) {
     // units legend
     if(units != 1.0) {
       fm.y = off.y + axis_length + UNIT_LEGEND_OFFSET;
       String label = "x " + String(units,"%.5g");
-      if(n_ax > 0) {
+      if(n_ax > 0) {  // alt Y axis
         fm.x = off.x + TICK_OFFSET;
-        t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
-        if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  t3ax->fontSize(), taSvg::LEFT);
+        if (show_alt_axis_label) {
+          t3ax->addLabel(label.chars(), fm, SoAsciiText::LEFT);
+          if(rnd_svg) {
+            *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                    t3ax->fontSize(), taSvg::LEFT);
+          }
         }
       }
       else {
-        fm.x = off.x + -TICK_OFFSET;
-        t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
-        if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  t3ax->fontSize(), taSvg::RIGHT);
+        if (show_axis_label) {
+          fm.x = off.x + -TICK_OFFSET;
+          t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+          if(rnd_svg) {
+            *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                    t3ax->fontSize(), taSvg::RIGHT);
+          }
         }
       }
     }
-
+    
     if(!col_name.empty()) {
       SbRotation rot;
       rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
       fm.y = off.y + .5f * axis_length;
       String label = col_name; taMisc::SpaceLabel(label);
-      if(n_ax > 0) {
+      if(n_ax > 0) {  // alt Y axis
         fm.x = off.x + GraphTableView::tick_size + TICK_OFFSET + 1.3f * t3ax->fontSize();
-        t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
-        if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  t3ax->fontSize(), taSvg::CENTER, true); // vertical
+        if (show_alt_axis_label) {
+          t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+          if(rnd_svg) {
+            *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                    t3ax->fontSize(), taSvg::CENTER, true); // vertical
+          }
         }
       }
       else {
         fm.x = off.x + -GraphTableView::tick_size - TICK_OFFSET - 1.3f * t3ax->fontSize();
-        t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
-        if(rnd_svg) {
-          *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                  t3ax->fontSize(), taSvg::CENTER, true); // vertical
+        if (show_axis_label) {
+          t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+          if(rnd_svg) {
+            *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                    t3ax->fontSize(), taSvg::CENTER, true); // vertical
+          }
         }
       }
     }
   }
-
+  
   // ticks
   fm = off;
   to = off;
   fm.x = off.x -(GraphTableView::tick_size / 2.0f);
   to.x = off.x + (GraphTableView::tick_size / 2.0f);
-
+  
   int i;
   float val;
   String label;
@@ -551,12 +565,12 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
     fm.y = off.y + DataToPlot(val);
     to.y = off.y + DataToPlot(val);
     t3ax->addLine(fm, to);
-
+    
     if(rnd_svg && ticks_only) {
       *rnd_svg << "M " << taSvg::Coords(fm)
-               << "L " << taSvg::Coords(to);
+      << "L " << taSvg::Coords(to);
     }
-
+    
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)
@@ -587,18 +601,18 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
                                  bool ticks_only, String* rnd_svg) {
   iVec3f fm = off;
   iVec3f to = off;
-
+  
   // axis line itself
   to.z = off.z + axis_length;
   t3ax->addLine(fm, to);
-
+  
   if(rnd_svg && ticks_only) {
     *rnd_svg << "M " << taSvg::Coords(fm)
-             << "L " << taSvg::Coords(to);
+    << "L " << taSvg::Coords(to);
   }
-
+  
   bool use_str_labels = false;
-
+  
   if(!ticks_only) {
     // units legend
     if(units != 1.0) {
@@ -606,17 +620,19 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
       fm.y = off.y + -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
       fm.x = off.x + -(TICK_OFFSET + 2.0f * t3ax->fontSize());
       String label = "x " + String(units,"%.5g");
-      t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
-
-      if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                t3ax->fontSize(), taSvg::LEFT);
+      if (show_axis_label) {
+        t3ax->addLabel(label.chars(), fm, SoAsciiText::RIGHT);
+        
+        if(rnd_svg) {
+          *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                  t3ax->fontSize(), taSvg::LEFT);
+        }
       }
     }
     if(!col_name.empty()) {
       SbRotation rot;
       rot.setValue(SbVec3f(0.0, 1.0f, 0.0f), .5f * taMath_float::pi);
-
+      
       fm.z = off.z + .5f * axis_length;
       fm.y = off.y + -(.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
       fm.x = off.x + -(TICK_OFFSET + 2.5f * t3ax->fontSize());
@@ -630,25 +646,27 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
           label = "Row Number";
         }
       }
-      t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
-
-      if(rnd_svg) {
-        *rnd_svg << taSvg::Text(label, fm, color.color(),
-                                t3ax->fontSize(), taSvg::CENTER);
+      if (show_axis_label) {
+        t3ax->addLabelRot(label.chars(), fm, SoAsciiText::CENTER, rot);
+        
+        if(rnd_svg) {
+          *rnd_svg << taSvg::Text(label, fm, color.color(),
+                                  t3ax->fontSize(), taSvg::CENTER);
+        }
       }
     }
   }
-
+  
   // ticks
   fm = off;
   to = off;
   fm.x = off.x - (.5f * GraphTableView::tick_size);
   to.x = off.x + (.5f * GraphTableView::tick_size);
-
+  
   float y_lab_off = (.5f * GraphTableView::tick_size + TICK_OFFSET + t3ax->fontSize());
-
+  
   DataCol* da = GetDAPtr();
-
+  
   int i;
   float val;
   String label;
@@ -656,12 +674,12 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
     fm.z = off.z + DataToPlot(val);
     to.z = off.z + DataToPlot(val);
     t3ax->addLine(fm, to);
-
+    
     if(rnd_svg && ticks_only) {
       *rnd_svg << "M " << taSvg::Coords(fm)
-               << "L " << taSvg::Coords(to);
+      << "L " << taSvg::Coords(to);
     }
-
+    
     if(!ticks_only) {
       float lab_val = val / units;
       if (fabsf(val / tick_incr) < range_zero_label_range)

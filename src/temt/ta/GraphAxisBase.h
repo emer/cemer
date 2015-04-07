@@ -49,6 +49,8 @@ public:
   int                   n_cells;        // #READ_ONLY #NO_COPY number of cells if a matrix
   int                   matrix_cell;    // #CONDSHOW_ON_is_matrix if column is a matrix, this is the cell within that matrix to plot -- specify -1 for all lines (only valid for data lines, not X or Z axes)
   FixedMinMax           fixed_range;    // fixed min/max range values for display (if not fixed, automatically set to min/max of data)
+  bool                  show_axis_label;  // the axis label - display it?
+  bool                  show_alt_axis_label;  // only pertains to the alt Y axis label - display it?
 
   RGBA                  color;          // #NO_AUTO_NAME color of the line and points
 

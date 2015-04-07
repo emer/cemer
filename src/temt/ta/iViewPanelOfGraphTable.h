@@ -73,6 +73,13 @@ public:
   QLabel*                   lblNPlots;
   taiWidgetField*           fldNPlots;
 
+  QHBoxLayout*            layAxisLabelChks;
+  QLabel*                   lblAxisLabelChks;
+  QCheckBox*                chkXAxisLabel; // show or hide X axis label
+  QCheckBox*                chkYAxisLabel; // show or hide Y axis label
+  QCheckBox*                chkAltYAxisLabel; // show or hide Y alt axis label
+  QCheckBox*                chkZAxisLabel; // show or hide Z axis label
+
   QHBoxLayout*            layXAxis;
   QLabel*                   lblXAxis;
   taiWidgetListElChooser*   lelXAxis; // list element chooser

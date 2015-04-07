@@ -169,7 +169,30 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   layVals->addStretch();
 
-  //    Axes
+  //    A series of checkboxes for show/hide axes labels
+  layAxisLabelChks = new QHBoxLayout;
+  layWidg->addLayout(layAxisLabelChks);
+  
+  lblAxisLabelChks =  taiM->NewLabel("Axes Labels:  ", widg, font_spec);
+  layAxisLabelChks->addWidget(lblAxisLabelChks);
+  lblAxisLabelChks->setToolTip(taiMisc::ToolTipPreProcess("Check to have axis label appear"));
+
+  chkXAxisLabel = new QCheckBox("X    ", widg); chkXAxisLabel->setObjectName("chkXAxisLabel");
+  layAxisLabelChks->addWidget(chkXAxisLabel);
+  connect(chkXAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  chkYAxisLabel = new QCheckBox("Y    ", widg); chkYAxisLabel->setObjectName("chkYAxisLabel");
+  layAxisLabelChks->addWidget(chkYAxisLabel);
+  connect(chkYAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  chkAltYAxisLabel = new QCheckBox("Alt_Y    ", widg); chkAltYAxisLabel->setObjectName("chkAltYAxisLabel");
+  layAxisLabelChks->addWidget(chkAltYAxisLabel);
+  connect(chkAltYAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  chkZAxisLabel = new QCheckBox("Z    ", widg); chkZAxisLabel->setObjectName("chkZAxisLabel");
+  layAxisLabelChks->addWidget(chkZAxisLabel);
+  connect(chkZAxisLabel, SIGNAL(clicked(bool)), this, SLOT(Apply_Async()) );
+  
+  layAxisLabelChks->addSpacing(taiM->hsep_c);
+  layAxisLabelChks->addStretch();
+//    Axes
 
   // X AXis
   layXAxis = new QHBoxLayout; layWidg->addLayout(layXAxis);
@@ -484,6 +507,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   rncXAxis->setChecked(glv->x_axis.row_num);
   pdtXAxis->GetImage_(&(glv->x_axis.fixed_range));
   cellXAxis->GetImage((String)glv->x_axis.matrix_cell);
+  chkXAxisLabel->setChecked(glv->x_axis.show_axis_label);
 
   lelZAxis->GetImage(&(glv->children), glv->z_axis.GetColPtr());
   oncZAxis->setReadOnly(glv->z_axis.GetColPtr() == NULL);
@@ -491,6 +515,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
   rncZAxis->setChecked(glv->z_axis.row_num);
   pdtZAxis->GetImage_(&(glv->z_axis.fixed_range));
   cellZAxis->GetImage((String)glv->z_axis.matrix_cell);
+  chkZAxisLabel->setChecked(glv->z_axis.show_axis_label);
 
   lelZAxis->SetFlag(taiWidget::flgReadOnly, !glv->z_axis.on);
   rncZAxis->setAttribute(Qt::WA_Disabled, !glv->z_axis.on);
@@ -511,6 +536,10 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
     lelErr[i]->GetImage(&(glv->children), glv->errbars[i]->GetColPtr());
     oncErr[i]->setReadOnly(glv->errbars[i]->GetColPtr() == NULL);
     oncErr[i]->setChecked(glv->errbars[i]->on);
+    
+    // set each but all set by single checkbox
+    chkYAxisLabel->setChecked(glv->plots[i]->show_axis_label);
+    chkAltYAxisLabel->setChecked(glv->plots[i]->show_alt_axis_label);
   }
 
   fldErrSpacing->GetImage((String)glv->err_spacing);
@@ -561,6 +590,7 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   pdtXAxis->GetValue_(&(glv->x_axis.fixed_range));
   glv->x_axis.SetColPtr((GraphColView*)lelXAxis->GetValue());
   glv->x_axis.matrix_cell = (int)cellXAxis->GetValue();
+  glv->x_axis.show_axis_label = chkXAxisLabel->isChecked();
 
   // if setting a col for 1st time, we automatically turn on (since it would be ro)
   GraphColView* tcol = (GraphColView*)lelZAxis->GetValue();
@@ -571,9 +601,10 @@ void iViewPanelOfGraphTable::GetValue_impl() {
   glv->z_axis.row_num = rncZAxis->isChecked();
   glv->z_axis.SetColPtr(tcol);
   glv->z_axis.matrix_cell = (int)cellZAxis->GetValue();
+  glv->z_axis.show_axis_label = chkZAxisLabel->isChecked();
 
   int pltsz = MIN(max_plots, glv->plots.size);
-
+  
   for(int i=0;i<pltsz; i++) {
     tcol = (GraphColView*)lelYAxis[i]->GetValue();
     if (tcol && !glv->plots[i]->GetColPtr())
@@ -583,21 +614,25 @@ void iViewPanelOfGraphTable::GetValue_impl() {
     glv->plots[i]->alt_y = chkYAltY[i]->isChecked();
     glv->plots[i]->SetColPtr(tcol);
     glv->plots[i]->matrix_cell = (int)cellYAxis[i]->GetValue();
-
+    
     tcol = (GraphColView*)lelErr[i]->GetValue();
     if (tcol && !glv->errbars[i]->GetColPtr())
       oncErr[i]->setChecked(true);
     glv->errbars[i]->on = oncErr[i]->isChecked();
     glv->errbars[i]->SetColPtr(tcol);
-  }
 
+    // set each but all set by single checkbox
+    glv->plots[i]->show_axis_label = chkYAxisLabel->isChecked();
+    glv->plots[i]->show_alt_axis_label = chkAltYAxisLabel->isChecked();
+}
+  
   glv->err_spacing = (int)fldErrSpacing->GetValue();
   glv->label_font_size = (float)fldLabelSz->GetValue();
   glv->point_size = (float)fldPointSz->GetValue();
   glv->axis_font_size = (float)fldAxisSz->GetValue();
   glv->bar_space = (float)fldBarSpace->GetValue();
   glv->bar_depth = (float)fldBarDepth->GetValue();
-
+  
   cmbColorMode->GetEnumValue(i); glv->color_mode = (GraphTableView::ColorMode)i;
   glv->color_axis.SetColPtr((GraphColView*)lelCAxis->GetValue());
 
