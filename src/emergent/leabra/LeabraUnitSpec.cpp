@@ -307,10 +307,10 @@ void DeepSpec::Initialize() {
   on = false;
   thr = 0.5f;
   d_to_d = 0.5f;
-  d_to_s = 0.1f;
+  d_to_s = 0.0f;
   ctxt_to_s = 0.3f;
   ctxt_rel = false;
-  thal_to_d = 0.5f;
+  thal_to_d = 0.0f;
   thal_to_s = 0.0f;
   Defaults_init();
 }
@@ -450,6 +450,10 @@ void LeabraUnitSpec::UpdateAfterEdit_impl() {
   //  thr_sub_e_rev_i = g_bar.i * (act.thr - e_rev.i);
   thr_sub_e_rev_i = (act.thr - e_rev.i);
   thr_sub_e_rev_e = (act.thr - e_rev.e);
+
+  if(deep.on && deep_qtr == QNULL) { // doesn't make sense to not have any deep raw..
+    deep_qtr = Q4;
+  }
 }
 
 void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {

@@ -23,7 +23,7 @@ void SendDeepNormConSpec::Initialize() {
 }
 
 void SendDeepNormConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Deep_" + nm;
+  nm = "Deep_Norm_" + nm;
 }
 
 void SendDeepNormConSpec::Trial_Init_Specs(LeabraNetwork* net) {

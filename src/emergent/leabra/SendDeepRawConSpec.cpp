@@ -23,7 +23,7 @@ void SendDeepRawConSpec::Initialize() {
 }
 
 void SendDeepRawConSpec::GetPrjnName(Projection& prjn, String& nm) {
-  nm = "Deep_" + nm;
+  nm = "Deep_Raw_" + nm;
 }
 
 void SendDeepRawConSpec::Trial_Init_Specs(LeabraNetwork* net) {

@@ -110,6 +110,12 @@ iMainWindowViewer::~iMainWindowViewer() {
   //   if(isVisible())
   //     hide();                  // prevents crash later on mac..
   taiMisc::active_wins.RemoveEl(this);
+#ifdef TA_OS_MAC
+  if(isRoot()) {
+    if(main_menu_bar)
+      delete main_menu_bar;
+  }
+#endif
   //TODO: need to delete menu, but just doing a delete causes an exception (prob because Qt
   // has already deleted the menu items
   if (menu) menu->deleteLater();
@@ -134,6 +140,7 @@ void iMainWindowViewer::Init() {
   cur_main_focus = LEFT_BROWSER;
   cur_sub_focus = MAIN_TREE;
   menu = NULL;
+  main_menu_bar = NULL;
   body = NULL;
   last_clip_handler = NULL;
   last_sel_server = NULL;
@@ -387,7 +394,8 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
   // create a taiWidgetMenu wrapper around the window's provided menubar
 #ifdef TA_OS_MAC
   if(isRoot()) {
-    menu = new taiWidgetMenuBar(this, taiMisc::fonBig, new QMenuBar(0));
+    main_menu_bar = new QMenuBar(0);
+    menu = new taiWidgetMenuBar(this, taiMisc::fonBig, main_menu_bar);
     // no parent = application-wide menu bar, instead of window specific
   }
   else {
