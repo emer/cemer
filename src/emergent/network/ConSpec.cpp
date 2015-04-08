@@ -95,9 +95,11 @@ void ConSpec::ApplySymmetry_r(ConGroup* cg, Network* net, int thr_no) {
     int con_idx = -1;
     ConGroup* rrcg = ConGroup::FindRecipRecvCon(con_idx, cg->Un(i,net), ru,
                                                 cg->prjn->layer);
-    ConSpec* rrcs = rrcg->GetConSpec();
-    if(rrcg && con_idx >= 0 && rrcs && rrcs->wt_limits.sym) {
-      cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
+    if(rrcg && con_idx >= 0) {
+      ConSpec* rrcs = rrcg->GetConSpec();
+      if(rrcs && rrcs->wt_limits.sym) {
+        cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
+      }
     }
   }
 }
@@ -109,9 +111,11 @@ void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
     int con_idx = -1;
     ConGroup* rscg = ConGroup::FindRecipSendCon(con_idx, cg->Un(i,net), su,
                                                 cg->prjn->from.ptr());
-    ConSpec* rscs = rscg->GetConSpec();
-    if(rscg && con_idx >= 0 && rscs && rscs->wt_limits.sym) {
-      cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
+    if(rscg && con_idx >= 0) {
+      ConSpec* rscs = rscg->GetConSpec();
+      if(rscs && rscs->wt_limits.sym) {
+        cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
+      }
     }
   }
 }
