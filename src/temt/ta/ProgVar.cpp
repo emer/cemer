@@ -326,27 +326,27 @@ void ProgVar::CheckChildConfig_impl(bool quiet, bool& rval) {
 //   }
 }
 
-void ProgVar::GetSelectText(MemberDef* mbr, String xtra_lbl,
-    String& full_lbl, String& eff_desc) const
+void ProgVar::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
+                                  String& full_lbl, String& eff_desc) const
 {
   // when do seledit of the data member, use our var name, and desc
   const String& mn = mbr->name;
+  String lbl = xtra_lbl;
   if ((mn == "int_val") || (mn == "real_val") || (mn == "string_val") ||
     (mn == "bool_val") || (mn == "object_val") || (mn == "dyn_enum_val"))
   {
-    if (xtra_lbl.empty()) { //note: typically is empty
+    if (lbl.empty()) { //note: typically is empty
       Program* prog = GET_MY_OWNER(Program);
       if (prog)
-        xtra_lbl = prog->GetName().elidedTo(16);
+        lbl = prog->GetName().elidedTo(16);
     }
-    String lbl = xtra_lbl;
     if (lbl.nonempty()) lbl += "_";
     lbl += GetName().elidedTo(16); 	// var name, not the member name
     full_lbl = taMisc::StringCVar(lbl);
     eff_desc = GetDesc();		// always use our desc, not default
   }
   else { // something else, just do default
-    inherited::GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
+    inherited::GetControlPanelText(mbr, xtra_lbl, full_lbl, eff_desc);
   }
 }
 

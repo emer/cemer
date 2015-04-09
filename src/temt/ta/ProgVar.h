@@ -127,8 +127,8 @@ public:
   bool  SetValStr(const String& val, void* par = NULL, MemberDef* md = NULL,
                   TypeDef::StrContext sc = TypeDef::SC_DEFAULT,
                   bool force_inline = false) override;
-  void GetSelectText(MemberDef* mbr, String xtra_lbl,
-                     String& full_lbl, String& desc) const override;
+  void   GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
+                             String& full_lbl, String& desc) const override;
   String GetDesc() const override { return desc; }
   String GetDisplayName() const override;
   String GetTypeDecoKey() const override { return "ProgVar"; }

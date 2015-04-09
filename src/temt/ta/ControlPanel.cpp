@@ -255,7 +255,7 @@ bool ControlPanel::SelectMember(taBase* base, MemberDef* mbr,
   if (!base) return false;
   String eff_desc = dscr; // non-const
   String full_lbl;
-  base->GetSelectText(mbr, xtra_lbl, full_lbl, eff_desc);
+  base->GetControlPanelText(mbr, xtra_lbl, full_lbl, eff_desc);
   bool rval = SelectMember_impl(base, mbr, full_lbl, eff_desc, sub_gp_nm);
   ReShowEdit(true); //forced
   return rval;
@@ -265,7 +265,7 @@ bool ControlPanel::SelectMemberPrompt(taBase* base, MemberDef* mbr) {
   if (!base) return false;
   String eff_desc; // = desc -- this is our desc -- not relevant
   String full_lbl;
-  base->GetSelectText(mbr, _nilString, full_lbl, eff_desc);
+  base->GetControlPanelText(mbr, _nilString, full_lbl, eff_desc);
 
   taGuiDialog dlg;
   dlg.Reset();

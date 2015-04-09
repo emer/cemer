@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7835
+// ta_Dump File v3.0 -- code v7.8.0.0 rev8125
 BpProject .projects["bp_xor"] { 
  Doc_Group @.docs = [0] {
  };
@@ -1171,9 +1171,9 @@ BpProject .projects["bp_xor"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
-    T3PanelViewer @["T3Frames"] { 
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
+    T3PanelViewer @["Visualizer"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_panel_selected"] { };
      };
@@ -1461,6 +1461,8 @@ BpProject .projects["bp_xor"] {
   minor=0;
   step=0;
  };
+ author=;
+ email=;
  license {
   owner="Regents of the University of Colorado";
   license=NO_LIC;
@@ -3070,6 +3072,8 @@ BpProject .projects["bp_xor"] {
     el_def=0;
    };
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
    last_submit_time=;
    notes=;
    extra_files=;
@@ -3204,7 +3208,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;0;0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -3230,7 +3234,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;0;0;0;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -3256,7 +3260,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;1;2;3;      };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -3272,7 +3276,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] "01";"10";"00";"11";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -3288,7 +3292,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] ;;;;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -3304,7 +3308,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0.28507328;0.26648036;0.26226702;0.26035857;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3313,7 +3317,7 @@ BpProject .projects["bp_xor"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [4] 0;1;2;3;    };
    };
    DataTable @["TestTrialOutputData"] {
     name="TestTrialOutputData";
@@ -3346,7 +3350,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;0;0;0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -3372,7 +3376,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;0;0;0;      };
      };
      int_Data @["trial"] {
       UserDataItem_List @*(.user_data_) {
@@ -3398,7 +3402,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0;1;2;3;      };
      };
      String_Data @["trial_name"] {
       name="trial_name";
@@ -3414,7 +3418,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] "00";"01";"10";"11";      };
      };
      String_Data @["group_name"] {
       name="group_name";
@@ -3430,7 +3434,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] ;;;;      };
      };
      float_Data @["sse"] {
       name="sse";
@@ -3446,7 +3450,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [4] 0.26790592;0.24104178;0.23540115;0.25669867;      };
      };
      float_Data @["Input_act"] {
       name="Input_act";
@@ -3462,7 +3466,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [2 1 0]       };
+      [2 1 4] 0;0;0;1;1;0;1;1;      };
      };
      float_Data @["Output_act"] {
       name="Output_act";
@@ -3478,7 +3482,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [1 1 0]       };
+      [1 1 4] 0.5175963;0.50903994;0.51481843;0.50665438;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3487,7 +3491,7 @@ BpProject .projects["bp_xor"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [4] 0;1;2;3;    };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -3525,7 +3529,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      int_Data @["epoch"] {
       UserDataItem_List @*(.user_data_) {
@@ -3556,7 +3560,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["avg_sse"] {
       UserDataItem_List @*(.user_data_) {
@@ -3582,7 +3586,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0.26854479;      };
      };
      float_Data @["cnt_err"] {
       UserDataItem_List @*(.user_data_) {
@@ -3608,7 +3612,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 4;      };
      };
      float_Data @["epoch_time_tot"] {
       UserDataItem_List @*(.user_data_) {
@@ -3634,7 +3638,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
      float_Data @["epoch_time_usr"] {
       UserDataItem_List @*(.user_data_) {
@@ -3660,7 +3664,7 @@ BpProject .projects["bp_xor"] {
       width=0;
       ar {
        name="ar";
-      [0]       };
+      [1] 0;      };
      };
     };
     data_flags=SAVE_ROWS|AUTO_CALC;
@@ -3669,7 +3673,7 @@ BpProject .projects["bp_xor"] {
     keygen 4 0=0;
     row_indexes {
      name="row_indexes";
-    [0]     };
+    [1] 0;    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -3863,10 +3867,10 @@ BpProject .projects["bp_xor"] {
      el_def=0;
      RndSeed @["rnd_seed"] {
       name="rnd_seed";
-      seed{ -1543574532;-1143994057;175374059;1335645626;1319888331;-2007973193;-1358778769;1013065224;-1018476240;-616223704;-535138303;2020426453;1068159408;-2073302403;-58033367;-726527583;153003770;155822771;1162814385;-333298557;1605207700;646895070;669003436;-1960806925;679706925;-532804646;-1950298697;1293550980;-1696900459;-1440314192;-1285634984;-772955743;-1045530870;-725104722;1315462243;-1488263987;-1431827249;415351302;1265681028;-1992758368;1660725522;-407969880;1063109025;1677954480;-401498111;899887863;409619105;2051447476;-1650923879;-1292308904;1345991604;-1835711588;929381258;-527214681;159668202;-1280775799;1298958095;964282047;-610230123;1214882153;1659196996;931722870;-1171758388;-1435420283;1562767747;-2134582645;-329479857;-1760569537;-1306881963;572162456;1324841278;2084474146;506096151;874719836;1544483478;-1478916898;317663000;-1511111483;-817847855;1607940649;1965120024;302968110;18035064;-1403798357;1100931073;160325717;1963753183;-35333139;276767550;-1430841905;1770082107;1979731005;479080456;201669509;1200466135;-266853683;2143812006;-1240408508;2005215232;-302493240;-1488263045;2118482210;322012725;449794128;2012577784;1093058214;450991949;-200022324;-1777871081;549787830;-587848132;-2024944054;151972568;444088233;-719220961;-979930497;1919453024;-1286122822;1606425358;-1498499998;-1340831144;916111355;2141720961;-919836677;-1712276140;111655275;-1739363659;-603584078;-110588843;2008245359;1636269544;-1170907536;-1279834754;836879985;-1705196517;1949941604;-1711763359;2064315032;-1789618201;-219383068;895687855;-1220740968;-1337032880;-1537663511;2107150663;-1277573329;-289559981;422117923;-1303932061;-1748824358;-892439602;638018936;1551909104;-1812883282;1706641526;2032289422;1680956935;217403131;1894349989;407761235;-366304929;1823466989;-588971330;-2080622028;1831067122;-695034748;1498218729;1463125039;287032526;-437722129;575617222;67984585;359410937;-1634861078;1800478518;-818495390;1010094069;265496922;1491499828;626063772;-1312098496;1580457919;862319788;400397459;317934007;-462420756;157211141;-2026131020;-257850486;-1008978230;1790062347;-188814927;910194170;-1738058141;-1230635513;-225385028;441900063;-118853632;-24851211;-556891179;1323403830;-848038020;1991023845;-1404310849;-1044528547;-176947741;1522534958;-1367331750;-961243256;-752472664;539854921;-1780164960;-795647810;-1978314650;1160395850;771419502;1393658686;-1943427148;-181825112;403176530;1064070966;-540686549;1924397990;-398481214;-1145840123;1442404516;1683179259;-1901278331;1204325415;-2111200797;-80394325;1962290735;-1894197490;-1321843547;1236760013;-1946179993;883667909;-1319806298;1319798690;-984432834;413669633;-893753514;1814708859;-1818917611;-1781018105;2007861742;-1345236159;-302402202;391814865;964002414;-2027203488;720289189;2133925909;-921150239;1115658280;-102499796;1126030475;-1248600717;2129581975;313808177;-485239207;150977671;-2072338103;-239090018;-1405197831;-387384304;2069274505;-1052460621;1531736956;-748521890;-1883539265;297715872;369281072;-443896831;1372647388;-489232316;-821517289;985886969;-379595693;-375548761;-1070372404;-1869510972;569647928;-1565336013;-1462705295;541542524;760083978;-1967952623;-1112656737;-1137850350;-158302350;-1018379848;1360167659;818078071;-439573479;-1572558487;-1985078433;2044760538;-1532706927;1619673386;-6768093;700223437;-889949681;298675179;205084647;1576750676;-1855691333;-350542800;-914779053;1535530181;12080778;-2066743383;-678468945;169081621;1691569539;-765057147;1243500314;67611108;-2043868110;-1600421841;304916481;361616038;825815744;-2002745597;-325333591;305012567;1784212889;727979583;-568492253;1686849769;324005074;1979896357;9317760;-1930332979;1483660793;-363901913;637816708;719127653;-347092437;-255710437;861067724;-1697506607;1157923221;-1624550213;1501458261;1942086013;-410168506;1597294740;658366757;1558815222;1369118417;-1860873873;-604539295;-878041077;-507112310;1877109872;-210484487;-1853081593;443533407;-823269918;688397357;1216492586;-629761695;848164629;-1999652427;1817720224;1458000627;1900362985;1212231928;-943942482;-978174285;1504636131;-789157730;1736330342;-158841575;208940729;1776710005;617470013;1402599051;1450450925;-1336285800;-292748993;-336684502;1220658348;-1016189247;818693643;543196889;-1439803872;-1555157266;493408417;1382513163;1902674297;-708031008;-1803667688;-1694586676;-193931055;1514925670;995831600;-1047900290;1216758496;921292117;1114865946;-211393479;144610933;-1102513475;-1875630608;-293635056;-1170792426;1215716732;958777578;-86802452;2020696550;1399931071;1954953875;4931384;-1123226953;1185314825;-1641962295;-1979471687;-371546518;523295249;-1787813030;261098334;830196669;336234553;1352483110;838440205;-677985076;1937206871;-997945445;-2041773914;1714751075;939784282;-68212941;-1281153118;-990690349;2113147588;-289810834;2081222583;861731461;-77396687;1748422771;1045119156;-1908613953;1968127309;1831132345;1924238934;-577062638;1988894325;-2034230907;-1641786619;234128006;1962620578;-640759020;-622432039;-1119538743;-1266726433;-1781896454;-119345758;236579664;-1638422436;-1539195677;304803731;-1238683186;1766118220;-1604938702;-456775486;-683385096;27971035;361393212;-651374206;-783043908;-672743885;488684233;-379698137;-1851512817;-477248515;683885331;1836295005;1485812011;1722179954;-1209008320;-736622356;-1664323794;-564499904;1214171476;-1535709841;32899816;1643466608;-983379330;1074590267;1246928077;-501937560;-506633948;454440273;864183268;86142692;-1406548507;615822613;-3755972;-1553055281;-1001280298;-1081463041;-1986727736;-903537750;-1441768282;-1836821842;1898359767;1360089962;-1385746892;-1393941684;1684450757;-2329516;-828541100;-1067538859;1622517745;907719604;2090875913;-275777234;1549886920;644135765;156329874;-1433861980;-1510991479;1278376163;-1194810057;671452407;-782119294;77628405;-1314574662;1664346282;1806389386;8268779;246749388;1967912594;-1343097578;170485500;1263959941;804910382;-837461183;319903014;678555675;-483446843;-1197944515;-385988869;-1860912647;1318171945;-846798101;1509797804;232056422;-1189773724;48854629;-281361151;279694835;-1432072695;115584898;894358134;-1074515781;-898024405;1209935351;1743757886;1125628940;-866441133;1119467971;-1543692866;1206540641;-1159092970;-1156458725;-942325739;-16248601;-1787514834;-897249385;-119448672;275276940;651336058;-1349592735;1801896271;-1910569977;-477739717;596396379;2132256299;258411223;945117209;-629136092;1082231211;1097682011;1550928844;-1461805268;-2058982030;-2090197123;338847337;160406204;714779260;-1918525123;-2107877587;257920734;-1002820118;451203138;-1719173536;-507162367;-1170142686;284434681;1220887959;1999355017;-203543548;1147674656;-2094180253;1540802980;1294589305;-2024695111;773660969;-61077360;283840355;-1481765004;-2111028748;-1602441611;63931995;-1606174896;319829956;1771693759;2103818594;-1089658500;2039260964;1744027912;      };
+      seed{ 1386655567;-2102007865;1563418043;-375323547;2125156930;745688948;-775263030;-560759724;-669278885;2004954049;2023752394;-265503454;-893106415;-1829327833;1316272039;2011056781;1517049164;2004802674;-1809087375;-500052878;656744873;-2008500030;-1127242794;-2023483717;-1514866667;-1244975060;791978048;725973339;-170421245;1749115933;-1390183638;-1979711769;95100281;-1449696802;1763465198;-557410194;1390901285;228174425;-835135933;-1563113625;745191425;379199886;967195440;-1835922917;-843817719;1899564831;1181484292;-697259992;-1583457241;-1546836022;-525157862;-288764656;-740158541;1586164901;-1975891734;-1738871873;-231594295;-1408145429;1457041447;315348281;1612030137;-2137857835;774292497;2091873268;-1644569367;960162808;810471706;-323655291;-474654686;932998730;-473752200;-115444530;1126222377;1865886225;1287006362;1070987378;-1803679930;-361217503;63195576;736923111;1100323699;1213486667;1064936836;1529737575;823776146;-1838703889;1833170135;1940922053;1817118636;939826330;-774491364;-457784682;944734757;-284744202;-2032855289;-125386152;-542482105;-987642827;-36876368;-1282654974;-1913056924;-815959133;2082422406;1518004906;146872543;-1936251036;2005017000;33143064;-1690575132;1764886315;817384960;-59455889;355865868;-219301331;-1884351848;-616775371;316154050;-702890241;1369847266;1721679366;-1769752517;-182636554;-18806493;-1131759077;1124191577;604118069;2002812519;964719805;1532113937;834345681;-1478332937;-958365908;-387230449;951056961;-836664021;-946605745;-1835802748;-1684019609;-517672093;-1049467541;809413268;-1408335631;-1352668307;-908113318;-1202653523;-1631716708;-832278808;1500022346;-2044190933;-1935655742;-453330858;1776498464;-854824547;364722671;1093780197;-567678833;2144316376;-824906182;487423515;-2054409146;-702217356;-1749676652;-281894192;-270391070;-1237218711;-405020708;1470540449;-261033529;-1706211588;1416425695;-638331328;-1699584998;1553618468;402704966;-193379252;-1953547558;1911017448;-99108706;-1519199325;-1421815752;1771516310;-1588502456;195598312;-634972353;-276871324;37636956;409729030;-1166143207;-425643165;699901341;-2141168465;-1135073792;1563169162;1989365656;1457932575;768468889;610025761;1797741514;2100550365;-241625709;-1797287272;1541357963;-1142049220;2130842945;-839802100;1510038712;-768108853;790070711;114798851;1005089280;632748754;1093228461;-890330192;-1012506252;420357065;976859172;-654195956;947780804;1331011118;1169657958;612636799;1488101880;284633371;2050993030;-224728029;-1805891199;844438673;1540677400;-871405887;1734303087;-945702068;-1019924974;-400996707;-1357550785;880932091;-633537806;1156643585;107349997;1408890479;193009749;642193273;-706018130;1207201331;1304837293;-27132720;-1162171596;129987396;1511251659;2073493674;-1164195984;-1991265548;2146517513;-994224604;-1059136160;773608461;579018528;591620256;1492510753;-1960987230;1078675747;-3863186;-1226268154;-963112806;-1156616604;469050694;-980145241;-1605632834;559895351;-1465563969;-1742191458;1155436186;-1873004746;-1067934572;1256429476;427106859;-844333302;-1169624927;-536662940;-1093360455;2066354654;-1404934893;1841232334;-1464772923;-925320034;-1631752179;1713257992;-144684117;319996519;1430311619;-290784853;1554475114;601519706;1123867814;1013542408;-1548570034;654247203;-1001274633;2051178349;-564063546;1320867300;-2123304571;293702256;1145147230;53504170;-1094564286;637401201;1581153991;-1612055727;840209395;1425042196;-172262017;126082851;1734722823;750842519;1075021261;1927411383;-953697014;-837392694;-413720693;569850343;-1109952413;1813342342;-384598651;1502035233;-571392284;-685215384;-980155523;1773522941;15526836;-1987554483;-762894731;941708249;-772524311;-1088232033;-1729061569;599699296;1907724848;-1288312922;313993478;241264305;1194933801;1324412701;1858622306;-178396570;-655007695;-1566066925;446321679;-1236782522;-1656866256;101693719;-1847437711;-1883985986;1177406092;928079874;-678824916;1583578862;-927466321;528661825;-22842101;-2091485809;-924854519;598356571;-342519215;-1785815611;-1742422033;-323973394;-1029686801;-1381357685;1946741629;1307460957;-140272962;948318980;861619720;1706355357;741477634;1807955265;1883456440;802601590;-1430603768;-2006059155;1154877255;1832867355;1371988928;1503733156;1027352729;44361438;1118692632;769967456;1854029924;-1399032226;-510267438;-130713604;1716047907;1527402739;-1090424060;-817194775;-1700163618;-2115600551;2039804789;1178149459;-802787862;-44429442;1329398499;1439372989;2003736000;-787718214;-1020606829;303261799;-749186757;2111243441;405211914;-241846643;1420101026;-1600883220;1865475716;1934303512;621375869;-2132759310;264285266;-1585848323;-1578248129;-784730442;-1411894257;1753382856;1549663477;-1742773779;1364429813;-1886925585;-474370003;1892491731;-859456632;1613587078;-514646029;-2123166879;-1221559615;-685257822;-1408007879;-1065905924;1992142161;-674942393;-1198572916;-122021441;-1118452506;728806319;828935367;1057426240;-242437634;833462160;-1596717680;-1449175461;427930591;2022133694;-1186418913;86940982;301985300;49128363;-234547393;672483445;-1956694797;242998752;-1849988308;563013875;-1699679059;1066086874;-460433710;-464184506;2081337611;-573557563;-389232142;-1569413398;-173014178;1942559368;-750138651;1845240983;-1675053304;-1622502707;413512839;1252882976;-1884038685;-759865180;1255768771;1511549547;1031452596;-475672601;1810369240;-1740019070;1215661670;-1675876470;486236816;1759311033;-282392958;-67396656;1466787627;-1803210881;-413097153;-954235749;764193256;-993774983;2042705428;-977365700;-1429693745;1939327446;247968457;1660296260;-1575152079;-1514139880;-1903107780;409275761;-1104754543;1185468156;-1672867633;1037129696;1388219744;1753068102;1374705413;58686103;-1475924329;1154883534;-232172111;420025153;-1364630611;485883156;1829277422;1432833366;-880405409;1800357465;-816588090;-1014251832;-892736729;-1367602363;2078962709;-131431945;637328216;1837933517;112774546;-1008058703;1976959058;165645784;-1996255150;-1462582869;-60237111;-436572721;-786202726;-1954989444;-1466727466;2123069637;-1912370314;-1389159705;114371453;-1925771402;-1976946966;1041673135;647718195;-1394853304;-568681636;826156454;-1087065430;1711171189;526287346;-1720596311;250917031;564400916;159202582;-1212947999;-1357931581;432651866;1340884408;-308902604;573439979;1032305904;1429863658;-1230533134;-593464852;-640754552;1315989525;1654113827;-505978966;1170813166;1578710925;864082047;-987077793;6910353;-564696709;37082783;-1586379261;1793108398;-583361707;748310841;1927843529;295788341;1192292151;1814841501;748168156;-835001315;-970846168;-79403446;1421372961;-1567451915;-598870327;-1688569335;-1336996945;707408538;-1846516964;-1766577359;-1835509637;-725439718;1477239867;1489966913;2145742496;807391462;-1046314208;-1220511182;1696851796;1296679918;662582961;1256673084;1028975225;424297766;-1520918424;-994703811;1490659042;-597469956;44433929;-1126915844;      };
       mti=624;
       is_gauss_double_cached=0;
-      cached_gauss_double=-0.0531442841422318;
+      cached_gauss_double=-0.1479626882052033;
      };
     };
     types {
@@ -3962,7 +3966,7 @@ BpProject .projects["bp_xor"] {
      ProgVar @["epoch"] {
       name="epoch";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -4312,7 +4316,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
 	flags=0;
 	orig_prog_code=;
 	cond {
-	 expr="network.avg_sse <= err_stopcrit";
+	 expr="network.avg_sse.avg <= err_stopcrit";
 	};
        };
       };
@@ -4401,7 +4405,7 @@ goes <= this value, stop training (set to -1 to disable stopping criterion, and 
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=3;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -5111,6 +5115,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5144,6 +5149,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5177,6 +5183,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5210,6 +5217,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5243,6 +5251,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5276,6 +5285,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5568,6 +5578,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5601,6 +5612,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5634,6 +5646,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5667,6 +5680,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5700,6 +5714,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -5733,6 +5748,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -6477,7 +6493,7 @@ this program can be extended to do arbitrary things to generate data and apply i
      ProgVar @["trial"] {
       name="trial";
       var_type=T_Int;
-      int_val=0;
+      int_val=3;
       objs_ptr=0;
       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -7153,6 +7169,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7186,6 +7203,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7219,6 +7237,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7252,6 +7271,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7285,6 +7305,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7318,6 +7339,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7351,6 +7373,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7384,6 +7407,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7676,6 +7700,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7709,6 +7734,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7742,6 +7768,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7775,6 +7802,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=AUTO_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7808,6 +7836,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -7841,6 +7870,7 @@ this program can be extended to do arbitrary things to generate data and apply i
 	var_label=;
 	name_style=MY_NAME;
 	max_name_len=6;
+	options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
 	val_type=VT_FLOAT;
 	matrix=0;
 	matrix_geom{ 	};
@@ -8295,20 +8325,20 @@ this program can be extended to do arbitrary things to generate data and apply i
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
      visible=1;
      root_typ=BpProject;
      root_md=NULL;
      m_root=$.projects["bp_xor"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
      visible=1;
     };
-    T3PanelViewer @["T3Frames"] {
+    T3PanelViewer @["Visualizer"] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_51";
       el_typ=UserDataItem;
@@ -8319,7 +8349,7 @@ this program can be extended to do arbitrary things to generate data and apply i
        val_type_fixed=0;
       };
      };
-     name="T3Frames";
+     name="Visualizer";
      m_data=NULL;
      visible=1;
      panels {
@@ -8551,7 +8581,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   el_def=0;
 	  };
 	  view_rows=10000;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=0: };
+	  page_rows=-1;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -8579,7 +8610,9 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -8596,7 +8629,9 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   is_matrix=0;
 	   n_cells=1;
 	   matrix_cell=0;
-	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -8618,7 +8653,9 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=0.2685448: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8638,6 +8675,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8657,6 +8696,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8676,6 +8717,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green": r=0: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8695,7 +8738,9 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
-	    color {name="violet": r=0.9333333: g=0.509804: b=0.9333333: a=1: desc="": };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
+	    color {name="violet": r=0.9333334: g=0.509804: b=0.9333334: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
 	    line_style=SOLID;
@@ -8714,6 +8759,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8733,6 +8780,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8752,6 +8801,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8771,6 +8822,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8790,6 +8843,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8809,6 +8864,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8828,6 +8885,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8847,6 +8906,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8866,6 +8927,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8885,6 +8948,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8904,6 +8969,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8928,6 +8995,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8947,6 +9016,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8966,6 +9037,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -8985,6 +9058,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9004,6 +9079,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9023,6 +9100,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9042,6 +9121,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9061,6 +9142,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9080,6 +9163,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9099,6 +9184,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9118,6 +9205,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9137,6 +9226,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9156,6 +9247,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9175,6 +9268,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9194,6 +9289,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9213,6 +9310,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9236,6 +9335,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -9265,6 +9366,8 @@ taTransform @*(.m_transform) {scale={x=0.6936167: y=0.693616: z=0.6936163: }: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -9387,11 +9490,14 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	   el_def=0;
 	  };
 	  view_rows=4;
-	  view_range {min=0: max=-1: };
+	  view_range {min=0: max=3: };
+	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
-	  col_n=3;
+	  view_cols=5;
+	  page_cols=5;
 	  col_range {min=5: max=7: };
+	  need_scale_update=1;
 	  width=1;
 	  grid_on=1;
 	  header_on=1;
@@ -9423,6 +9529,7 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	  click_vals=0;
 	  lmb_val=1;
 	  mmb_val=0;
+	  use_custom_paging=0;
 	 };
 	};
        };
@@ -9511,11 +9618,11 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
        m_data=NULL;
        visible=1;
        root_view {
-	name="T3DataViewRoot_1";
+	name="root_view";
 	m_data=NULL;
 	m_transform=NULL;
 	children {
-	 name="T3DataView_List_1";
+	 name="children";
 	 el_typ=T3DataViewMain;
 	 el_def=0;
 	 GraphTableView @["EpochOutputData_Graph"] {
@@ -9523,7 +9630,7 @@ taTransform @*(.m_transform) {scale={x=0.7107291: y=0.7107295: z=0.7107289: }: r
 	  m_data=$.projects["bp_xor"].data.gp["OutputData"]["EpochOutputData"]$;
 taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_1";
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @["batch"] {
@@ -9577,17 +9684,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_11";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_1";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=-1: };
+	  page_rows=0;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -9605,7 +9713,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name="GraphAxisView_9";
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -9616,13 +9724,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
 	  };
 	  z_axis {
-	   name="GraphAxisView_10";
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -9633,6 +9743,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -9640,7 +9752,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  tot_plots=16;
 	  plots {
-	   name="GraphPlotView_List_1";
+	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
@@ -9655,6 +9767,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9674,6 +9788,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9693,6 +9809,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9712,6 +9830,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9731,6 +9851,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9750,6 +9872,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9769,6 +9893,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9788,6 +9914,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9807,6 +9935,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9826,6 +9956,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9845,6 +9977,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9864,6 +9998,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9883,6 +10019,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9902,6 +10040,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9921,6 +10061,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9940,6 +10082,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9949,7 +10093,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  errbars {
-	   name="GraphPlotView_List_1";
+	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
@@ -9964,6 +10108,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -9983,6 +10129,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10002,6 +10150,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10021,6 +10171,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10040,6 +10192,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10059,6 +10213,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10078,6 +10234,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10097,6 +10255,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10116,6 +10276,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10135,6 +10297,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10154,6 +10318,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10173,6 +10339,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10192,6 +10360,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10211,6 +10381,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10230,6 +10402,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10249,6 +10423,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -10261,7 +10437,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_bar_width=0.02;
 	  color_mode=VALUE_COLOR;
 	  color_axis {
-	   name="GraphAxisView_11";
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -10272,13 +10448,15 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale_1";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -10290,7 +10468,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name="GraphAxisView_12";
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -10301,6 +10479,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -10321,7 +10501,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        headlight_on=1;
        stereo_view=STEREO_NONE;
        saved_views {
-	name="T3SavedView_List_4";
+	name="saved_views";
 	el_typ=T3SavedView;
 	el_def=0;
 	T3SavedView @["Vw_0"] {
@@ -10420,7 +10600,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04029692336916924;
+       value 6 0=0.04031830281019211;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
@@ -10770,7 +10950,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=BUILT|INTACT;
    unit_vars_type=BpUnitVars;
    con_group_type=ConGroup;
    auto_build=AUTO_BUILD;
@@ -10795,6 +10974,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=527765651431424;
    };
+   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=NetTiming;

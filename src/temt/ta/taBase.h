@@ -1419,8 +1419,8 @@ public:
   virtual bool          AddToParamSet(MemberDef* member, ParamSet* ctrl_panel,
                                           const String& extra_label = "", const String& sub_gp_nm = "");
   // #MENU #MENU_ON_ParamSet #MENU #CAT_Display #NULL_OK_1 #NULL_TEXT_1_NewParamSet select an object member to be added to a project param_set
-  virtual void          GetSelectText(MemberDef* mbr, String extra_label,
-    String& lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical lbl and (if empty) desc -- NOTE: routine is in ta_seledit.cpp
+  virtual void          GetControlPanelText(MemberDef* mbr, const String& extra_label,
+    String& full_lbl, String& desc) const; // #IGNORE supply extra_label (optional); provides the canonical full label and (if empty) desc
 
   ///////////////////////////////////////////////////////////////////////////
   //    User Data: optional configuration settings for objects

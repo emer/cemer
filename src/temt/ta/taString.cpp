@@ -1105,6 +1105,8 @@ taString taString::CamelToSnake() {
     }
     else {
       rval[n + increment] = mrep->s[n];
+      if(isupper(mrep->s[n]))
+        last_up = n;
     }
   }
   if(increment < found) {

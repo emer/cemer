@@ -3600,23 +3600,14 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set, const String&
   return param_set->SelectMember(this, member, extra_label, "", sub_gp_nm);
 }
 
-void taBase::GetSelectText(MemberDef* mbr, String xtra_lbl,
-                           String& full_lbl, String& desc) const {
-  if (xtra_lbl.empty()) {
-    xtra_lbl = GetName().CamelToSnake().elidedTo(16);
-    taBase* mbrown = GetMemberOwner(true); // add top-level owner object name
-    if(mbrown && mbrown != this) {
-      if(xtra_lbl.empty()) {
-        xtra_lbl = mbrown->GetName().CamelToSnake().elidedTo(16);
-      }
-      else {
-        xtra_lbl = mbrown->GetName().CamelToSnake().elidedTo(16) + "_" + xtra_lbl;
-      }
-    }
-  }
+void taBase::GetControlPanelText(MemberDef* mbr, const String& xtra_lbl,
+                                  String& full_lbl, String& desc) const {
   String lbl = xtra_lbl;
+  if (lbl.empty()) {
+    lbl = GetDisplayName().CamelToSnake().elidedTo(48); //16
+  }
   if (lbl.nonempty()) lbl += "_";
-  lbl += mbr->GetLabel();
+  lbl += mbr->GetLabel().CamelToSnake();
   full_lbl = taMisc::StringCVar(lbl);
   // desc is the member description
 //   if (desc.empty())
