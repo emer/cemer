@@ -55,11 +55,16 @@ public:
   DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been archived -- already analyzed but possibly still relevant to look at
   DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
   DataTable     cluster_info;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
+  DataTable     jobs_running_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_running, for each specific directory
+  DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
+  DataTable     jobs_archive_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
   ParamSearchAlgo_List search_algos; // #SHOW_TREE #EXPERT Possible search algorithms to run on the cluster
   ParamSearchAlgoRef cur_search_algo; // The current search algorithm in use -- if not set, then jobs will just use current parameters, for manual param searching
 
   bool          set_proj_name;  // set the project name to use -- overrides the default which is to use the actual name of the project -- this can be useful for running multiple variants of the same project with different local file names, all under a common cluster-run project name, so they can all share the same results etc
   String        proj_name;      // #CONDSHOW_ON_set_proj_name project name to use in lieu of the actual project name, when set_proj_name is active
+  String        clusters;       // space-separated list of cluster names to include in listing jobs for this project
+  String        users;          // space-separated list of user names to include in listing jobs for this project
   int           cur_svn_rev;    // #READ_ONLY #SHOW #NO_SAVE #METHBOX_LABEL the current svn revision that we've updated to (-1 if not yet updated)
   String        last_submit_time; // #READ_ONLY #SHOW #SAVE time stamp when jobs were last submitted -- important also for ensuring that there is a diff to trigger svn commit of project!
   String        notes;          // notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results
@@ -79,7 +84,7 @@ public:
   bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
 
 protected:
-  bool initClusterManager(bool check_prefs = true);
+  bool InitClusterManager(bool check_prefs = true);
   ClusterManager*       m_cm;
   SubversionClient*     svn_other; // other user or project svn client
   String                svn_other_wc_path; // working copy path
@@ -209,8 +214,8 @@ public:
   
   // MISC impl
 
-  virtual void  FormatJobTable(DataTable& dt);
-  // all job tables have the same format -- this ensures it
+  virtual void  FormatJobTable(DataTable& dt, bool clust_user = false);
+  // all job tables have the same format -- this ensures it -- clust_user adds cluster and user fields, for user-visible jobs tables
   virtual void  FormatFileListTable(DataTable& dt);
   // for file_list table
   virtual void  FormatClusterInfoTable(DataTable& dt);
@@ -233,6 +238,11 @@ public:
   // initialize the svn_other subversion setup for accessing other subversion info
   virtual void  ListOtherSvn(int rev=-1, bool recurse=true);
   // list files in other svn at given revision (-1 for current), and wether to recurse into subdirectories
+
+  virtual bool  AddCluster(const String& clust_nm);
+  // add given cluster to list of active clusters in use
+  virtual bool  AddUser(const String& user_nm);
+  // add given user to list of active users in use
 
   // view panel sets etc
 

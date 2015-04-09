@@ -20,6 +20,7 @@
 #include <DataTable>
 #include <taGuiDialog>
 #include <taGuiLayout>
+#include <taDataProc>
 
 #include <SubversionClient>
 
@@ -70,7 +71,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   }
 
   if(HasBasicData(false))
-    setPaths(false);                 // always get paths if possible, but not if not..
+    SetPaths(false);                 // always get paths if possible, but not if not..
   m_valid = true;
 }
 
@@ -83,7 +84,7 @@ ClusterManager::~ClusterManager()
 
 void ClusterManager::Init() {
   if(HasBasicData(false))       // no err if not
-    setPaths(false);
+    SetPaths(false);
 }
 
 bool ClusterManager::CheckPrefs() {
@@ -108,40 +109,40 @@ ClusterManager::BeginSearch(bool prompt_user)
   if (!m_valid) return false; // Ensure proper construction.
   if(!CheckPrefs()) return false;
 
-  if (!saveProject()) {
+  if (!SaveProject()) {
     return false;
   }
   // Prompt the user if the flag is set; otherwise the user is
   // only prompted if required fields are blank.
   if (prompt_user) {
     // Prompt user; quit early if they cancel the dialog.
-    if (!showRepoDialog()) return false;
+    if (!ShowRepoDialog()) return false;
   }
 
-  taMisc::Info("Running project", getFilename(),
-               "\n  on cluster", getClusterName(),
-               "\n  using repository", getRepoUrl(),
+  taMisc::Info("Running project", GetFilename(),
+               "\n  on cluster", GetClusterName(),
+               "\n  using repository", GetRepoUrl(),
                "\n  Notes:", m_cluster_run.notes);
 
   try {
-    updateWorkingCopy(); // creates the working copy if needed.
-    runSearchAlgo();
+    UpdateWorkingCopy(); // creates the working copy if needed.
+    RunSearchAlgo();
 
     int tot_jobs_req = m_cluster_run.jobs_submit.rows;
     if(!m_cluster_run.ValidateJob(tot_jobs_req))
       return false;
 
-    saveSubmitTable();
-    saveCopyOfProject();
-    saveExtraFiles();
-    commitFiles("Ready to run on cluster: " + m_cluster_run.notes);
+    SaveSubmitTable();
+    SaveCopyOfProject();
+    SaveExtraFiles();
+    CommitFiles("Ready to run on cluster: " + m_cluster_run.notes);
     return true;
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not run on cluster:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
+    HandleException(ex);
   }
 
   // There's a "return true" at the end of the try block, so the only way to
@@ -156,16 +157,16 @@ ClusterManager::CommitJobSubmissionTable()
   if(!CheckPrefs()) return false;
 
   try {
-    initClusterInfoTable();
-    saveSubmitTable();
-    commitFiles("Submitting new jobs_submit.dat: " + m_cluster_run.notes);
+    InitClusterInfoTable();
+    SaveSubmitTable();
+    CommitFiles("Submitting new jobs_submit.dat: " + m_cluster_run.notes);
     return true;
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not submit jobs table:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
+    HandleException(ex);
   }
   return false;
 }
@@ -175,7 +176,7 @@ ClusterManager::UpdateTables()
 {
   if (!m_valid) return false; // Ensure proper construction.
   if (!CheckPrefs()) return false;
-  if(!setPaths()) return false;
+  if(!SetPaths()) return false;
 
   try {
     // Get old revisions of the two tables in the working copy.
@@ -183,7 +184,7 @@ ClusterManager::UpdateTables()
     int old_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
     int old_rev_done = GetLastChangedRevision(m_done_dat_filename, quiet);
 
-    updateWorkingCopy();
+    UpdateWorkingCopy();
 
     // Get new revisions.
     int new_rev_run = GetLastChangedRevision(m_running_dat_filename, quiet);
@@ -192,10 +193,13 @@ ClusterManager::UpdateTables()
     bool updated = (new_rev_run  > old_rev_run) ||
                    (new_rev_done > old_rev_done);
 
-    bool ok1 = loadTable(m_running_dat_filename, m_cluster_run.jobs_running);
-    bool ok2 = loadTable(m_done_dat_filename, m_cluster_run.jobs_done);
-    bool ok3 = loadTable(m_archive_dat_filename, m_cluster_run.jobs_archive);
-    bool ok4 = loadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
+    bool ok1 = LoadAllTables(m_running_dat_filename, m_cluster_run.jobs_running,
+                             m_cluster_run.jobs_running_tmp);
+    bool ok2 = LoadAllTables(m_done_dat_filename, m_cluster_run.jobs_done,
+                             m_cluster_run.jobs_done_tmp);
+    bool ok3 = LoadAllTables(m_archive_dat_filename, m_cluster_run.jobs_archive,
+                             m_cluster_run.jobs_archive_tmp);
+    bool ok4 = LoadTable(m_cluster_info_filename, m_cluster_run.cluster_info);
 
     // Return true as long as one of the files was updated and loaded --
     // in that case, the search algo will probably want to do something.
@@ -205,7 +209,7 @@ ClusterManager::UpdateTables()
     taMisc::Error("Could not update working copy:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
+    HandleException(ex);
   }
   return false;
 }
@@ -217,16 +221,16 @@ ClusterManager::RemoveFiles(String_PArray& files, bool force, bool keep_local)
   if(!CheckPrefs()) return false;
 
   try {
-    updateWorkingCopy();
+    UpdateWorkingCopy();
     m_svn_client->Delete(files, force, keep_local);
-    commitFiles("removing files");
+    CommitFiles("removing files");
     return true;
   }
   catch (const ClusterManager::Exception &ex) {
     taMisc::Error("Could not remove files:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
+    HandleException(ex);
   }
   return false;
 }
@@ -251,7 +255,7 @@ ClusterManager::GetProjectAtRev(int rev) {
     taMisc::Error("Could not get project at revision:", ex.what());
   }
   catch (const SubversionClient::Exception &ex) {
-    handleException(ex);
+    HandleException(ex);
   }
   return false;
 }
@@ -318,7 +322,7 @@ ClusterManager::GetLastChangedRevision(const String &path, bool quiet)
 }
 
 void
-ClusterManager::handleException(const SubversionClient::Exception &ex)
+ClusterManager::HandleException(const SubversionClient::Exception &ex)
 {
   switch (ex.GetErrorCode()) {
   case SubversionClient::EMER_OPERATION_CANCELLED:
@@ -339,7 +343,7 @@ ClusterManager::handleException(const SubversionClient::Exception &ex)
 }
 
 bool
-ClusterManager::saveProject()
+ClusterManager::SaveProject()
 {
   if (m_proj->GetFileName().empty()) {
     int choice = taMisc::Choice("The project must be saved locally before it can be run on the cluster", "Save", "Cancel");
@@ -388,7 +392,7 @@ bool ClusterManager::HasBasicData(bool err) {
     }
     return false;
   }
-  if(m_username.empty() && getUsername().empty()) {
+  if(m_username.empty() && GetUsername().empty()) {
     if(err) {
       taMisc::Error("Cluster Manager:",m_cluster_run.name,
                     "username is empty -- this is derived from svn repository data");
@@ -400,7 +404,7 @@ bool ClusterManager::HasBasicData(bool err) {
 
 
 const String
-ClusterManager::getFilename()
+ClusterManager::GetFilename()
 {
   if(m_cluster_run.set_proj_name) {
     String rval = taMisc::GetDirFmPath(m_proj->file_name) + taMisc::path_sep  +
@@ -411,13 +415,13 @@ ClusterManager::getFilename()
 }
 
 const String
-ClusterManager::getUsername()
+ClusterManager::GetUsername()
 {
   // Get username if we haven't already.
   if (m_username.empty()) {
     // Get username from cache, or prompt user.
     std::string user = m_svn_client->GetUsername(
-      getRepoUrl().chars(),
+      GetRepoUrl().chars(),
       SubversionClient::CHECK_CACHE_THEN_PROMPT_USER);
     m_username = user.c_str();
 
@@ -430,35 +434,35 @@ ClusterManager::getUsername()
 }
 
 const String
-ClusterManager::getClusterName()
+ClusterManager::GetClusterName()
 {
   return m_cluster_run.cluster;
 }
 
 const String
-ClusterManager::getSvnRepo()
+ClusterManager::GetSvnRepo()
 {
   return m_cluster_run.svn_repo;
 }
 
 const String
-ClusterManager::getRepoUrl()
+ClusterManager::GetRepoUrl()
 {
   return m_cluster_run.repo_url;
 }
 
 bool
-ClusterManager::setPaths(bool updt_wc) {
+ClusterManager::SetPaths(bool updt_wc) {
   String prv_path = m_wc_path;
 
   if(!CheckPrefs()) return false;
-  if(!HasBasicData(true)) return false; // this triggers err output -- if you don't want it, then test HasBasicData(false) in advance of calling setPaths
+  if(!HasBasicData(true)) return false; // this triggers err output -- if you don't want it, then test HasBasicData(false) in advance of calling SetPaths
 
-  String username = getUsername();
-  String filename = getFilename();
-  String cluster = getClusterName();
-  String svn_repo = getSvnRepo();
-  String repo_url = getRepoUrl();
+  String username = GetUsername();
+  String filename = GetFilename();
+  String cluster = GetClusterName();
+  String svn_repo = GetSvnRepo();
+  String repo_url = GetRepoUrl();
 
   // Create a URL to the user's directory in the repo.
   const char *opt_slash = repo_url.endsWith('/') ? "" : "/";
@@ -518,21 +522,21 @@ ClusterManager::setPaths(bool updt_wc) {
     taMisc::Info("Repository is at", m_repo_user_url, "local checkout:", m_wc_proj_path);
     // make sure we've got a complete working copy here..
     try {
-      updateWorkingCopy(); // creates the working copy if needed.
+      UpdateWorkingCopy(); // creates the working copy if needed.
     }
     catch (const SubversionClient::Exception &ex) {
-      handleException(ex);
+      HandleException(ex);
     }
   }
   return true;
 }
 
 int
-ClusterManager::updateWorkingCopy()
+ClusterManager::UpdateWorkingCopy()
 {
   // If the user already has a working copy, update it.  Otherwise, create
   // it on the server and check it out.
-  if(!setPaths()) return -1;
+  if(!SetPaths()) return -1;
   QFileInfo fi_wc(m_wc_path.chars());
   if (!fi_wc.exists()) {
     // This could be the first time the user has used Click-to-cluster.
@@ -540,7 +544,7 @@ ClusterManager::updateWorkingCopy()
 
     // Create the directory on the repository, if not already present.
     String comment = "Creating cluster directory for user ";
-    comment += getUsername();
+    comment += GetUsername();
     m_svn_client->TryMakeUrlDir(m_repo_user_url.chars(), comment.chars());
 
     // Check out a working copy (possibly just an empty directory if we
@@ -554,7 +558,7 @@ ClusterManager::updateWorkingCopy()
     taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
   }
 
-  initClusterInfoTable();
+  InitClusterInfoTable();
   
   // We could check if these directories already exist, but it's easier
   // to just try to create them all and ignore any creation errors.
@@ -566,7 +570,7 @@ ClusterManager::updateWorkingCopy()
 }
 
 void
-ClusterManager::runSearchAlgo()
+ClusterManager::RunSearchAlgo()
 {
   if (!m_cluster_run.cur_search_algo) {
     taMisc::Info(m_cluster_run.name, "no search algorithm set -- running on current values");
@@ -584,8 +588,67 @@ ClusterManager::runSearchAlgo()
   }
 }
 
+bool ClusterManager::MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
+                                         const String& clust, const String& user) {
+  int cur_row = sum_tab.rows;
+  taDataProc::CopyCommonColData(&sum_tab, &src_tab);
+  int n_rows = sum_tab.rows;
+  for(int i=cur_row; i<n_rows; i++) {
+    sum_tab.SetVal(clust, "cluster", i);
+    sum_tab.SetVal(user, "user", i);
+  }
+  return true;
+}
+
+String ClusterManager::FilePathDiffUser(const String& filename, const String& new_user) {
+  String us_user = GetUsername();
+  String rval = filename.before(us_user, -1); // must be from end!!!
+  rval += new_user;
+  rval += filename.after(us_user,-1);
+  return rval;
+}
+
+String ClusterManager::FilePathDiffCluster(const String& filename, const String& new_clust) {
+  String clust_nm = GetClusterName();
+  String rval = filename;
+  rval.gsub(clust_nm, new_clust);
+  return rval;
+}
+
+
 bool
-ClusterManager::loadTable(const String &filename, DataTable &table)
+ClusterManager::LoadAllTables(const String &filename, DataTable& sum_table,
+                              DataTable& tmp_table)
+{
+  String_Array clusts;
+  clusts.Split(m_cluster_run.clusters, " ");
+  String_Array users;
+  users.Split(m_cluster_run.users, " ");
+
+  sum_table.StructUpdate(true);
+  tmp_table.StructUpdate(true);
+  sum_table.ResetData();
+  
+  for(int cl = 0; cl < clusts.size; cl++) {
+    String clust = clusts[cl];
+    String fnc = FilePathDiffCluster(filename, clust);
+    for(int us = 0; us < users.size; us++) {
+      String user = users[us];
+      String fnu = FilePathDiffUser(fnc, user);
+      // taMisc::Info("fnu:", fnu);
+      bool ok = LoadTable(fnu, tmp_table);
+      if(ok) {
+        MergeTableToSummary(sum_table, tmp_table, clust, user);
+      }
+    }
+  }
+  sum_table.StructUpdate(false);
+  tmp_table.StructUpdate(false);
+  return true;
+}
+
+bool
+ClusterManager::LoadTable(const String &filename, DataTable &table)
 {
   // Ensure the file exists.
   if (!QFileInfo(filename.chars()).exists()) {
@@ -606,30 +669,30 @@ ClusterManager::loadTable(const String &filename, DataTable &table)
 }
 
 void
-ClusterManager::saveSubmitTable()
+ClusterManager::SaveSubmitTable()
 {
   // Save the datatable and add it to source control (if not already).
-  if(!setPaths()) return;
-  deleteFile(m_submit_dat_filename);
+  if(!SetPaths()) return;
+  DeleteFile(m_submit_dat_filename);
   m_cluster_run.jobs_submit.SaveData(m_submit_dat_filename);
   m_svn_client->Add(m_submit_dat_filename.chars());
 }
 
 void
-ClusterManager::saveDoneTable()
+ClusterManager::SaveDoneTable()
 {
   // Save the datatable and add it to source control (if not already).
-  if(!setPaths()) return;
-  deleteFile(m_done_dat_filename);
+  if(!SetPaths()) return;
+  DeleteFile(m_done_dat_filename);
   m_cluster_run.jobs_done.SaveData(m_done_dat_filename);
   m_svn_client->Add(m_done_dat_filename.chars());
 }
 
 void
-ClusterManager::initClusterInfoTable()
+ClusterManager::InitClusterInfoTable()
 {
   // Save a cluster info table to get format into server
-  if(!setPaths()) return;
+  if(!SetPaths()) return;
   QFileInfo fi_wc(m_cluster_info_filename.chars());
   if(!fi_wc.exists()) {
     m_cluster_run.cluster_info.SaveData(m_cluster_info_filename);
@@ -638,20 +701,20 @@ ClusterManager::initClusterInfoTable()
 }
 
 void
-ClusterManager::saveCopyOfProject()
+ClusterManager::SaveCopyOfProject()
 {
   // Save any changes to the project (from dialog or search algo).
   m_proj->Save();
 
   // Copy the project from its local path to our cluster working copy.
   // Delete first, since QFile::copy() won't overwrite.
-  deleteFile(m_proj_copy_filename);
+  DeleteFile(m_proj_copy_filename);
   QFile::copy(m_proj->file_name, m_proj_copy_filename);
   m_svn_client->Add(m_proj_copy_filename.chars());
 }
 
 void
-ClusterManager::saveExtraFiles()
+ClusterManager::SaveExtraFiles()
 {
   String_Array files;
   files.FmDelimString(m_cluster_run.extra_files);
@@ -661,17 +724,17 @@ ClusterManager::saveExtraFiles()
     String srcfn = files[i];
     String fnm = taMisc::GetFileFmPath(srcfn); // just get the file name
     String wc_fnm = m_wc_models_path + "/" + fnm;
-    deleteFile(wc_fnm);
+    DeleteFile(wc_fnm);
     QFile::copy(srcfn, wc_fnm);
     m_svn_client->Add(wc_fnm.chars());
   }
 }
 
 void
-ClusterManager::commitFiles(const String &commit_msg)
+ClusterManager::CommitFiles(const String &commit_msg)
 {
   // Ensure the working copy has been set.
-  if(!setPaths()) return;
+  if(!SetPaths()) return;
 
   // Check in all files and directories that were created or updated.
   m_cur_svn_rev = m_svn_client->Checkin(commit_msg);
@@ -679,7 +742,7 @@ ClusterManager::commitFiles(const String &commit_msg)
 }
 
 void
-ClusterManager::deleteFile(const String &filename)
+ClusterManager::DeleteFile(const String &filename)
 {
   QString q_filename = filename.toQString();
   if (QFile::exists(q_filename)) {
@@ -688,7 +751,7 @@ ClusterManager::deleteFile(const String &filename)
 }
 
 bool
-ClusterManager::showRepoDialog()
+ClusterManager::ShowRepoDialog()
 {
   taGuiDialog dlg;
   dlg.win_title = "Run on cluster";

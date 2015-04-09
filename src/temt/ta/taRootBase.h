@@ -78,8 +78,6 @@ public:
   char_Array            filedlg_setary; // #NO_SHOW settings for the file dialog -- persisted
   taVector2i            filedlg_size;   // #NO_SHOW size for the file dialog -- persisted
   
-  ClusterRun*           cluster_runnner; // #NO_SHOW the cluster view needs a reliable way to call back to this object
-
   void          OpenRemoteServer(ushort port = 5360);
   // #MENU #MENU_ON_Server Open a Server for remote TCP-based control of this application
   void          CloseRemoteServer();
@@ -178,9 +176,6 @@ public:
   virtual void  ConsoleNewStdin(int n_lines);
   // notification that the console has received new input lines
 
-  void   RegisterClusterRun(ClusterRun* runner);
-  // #IGNORE clusterrun registers itself so the view table can callback
-  
 #ifdef DMEM_COMPILE
   static bool   Run_GuiDMem();
   // #IGNORE run the gui under dmem: requires special code..

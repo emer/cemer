@@ -120,7 +120,6 @@ void taRootBase::Initialize() {
   openProject = false;
   rootview_pos.SetXY(0.0f, 0.0f);
   rootview_size.SetXY(0.9f, 0.6f);
-  cluster_runnner = NULL;
 #ifdef TA_OS_LINUX
   fpe_enable = FPE_0; //GetFPEFlags(fegetexcept());
 #endif
@@ -159,16 +158,12 @@ void taRootBase::InitLinks() {
   taBase::Own(recent_files, this);
   taBase::Own(recent_paths, this);
   taBase::Own(sidebar_paths, this);
-  taBase::Own(cluster_runnner, this);
   taiMimeFactory_List::setInstance(&mime_factories);
   AddTemplates(); // note: ok that this will be called here, before subclass has finished its own
   AddDocs(); // note: ok that this will be called here, before subclass has finished its own
 }
 
 void taRootBase::CutLinks() {
-  if (cluster_runnner) {
-    cluster_runnner->CutLinks();
-  }
   sidebar_paths.CutLinks();
   recent_paths.CutLinks();
   recent_files.CutLinks();
@@ -2368,6 +2363,3 @@ void taRootBase::ChooseForDiffCompare(String type_name, taProject* cur_prj, Stri
   }
 }
 
-void taRootBase::RegisterClusterRun(ClusterRun* runner) {
-  cluster_runnner = runner;
-}

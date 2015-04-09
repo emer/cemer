@@ -50,12 +50,12 @@ public:
   String ChooseCluster(const String& prompt);
   // prompt the user to choose a cluster name -- just pulls up a simple combo-edit chooser dialog
 
-  void commitFiles(const String &commit_msg);
+  void  CommitFiles(const String &commit_msg);
   // commit current working copy files
-  int updateWorkingCopy();
+  int   UpdateWorkingCopy();
   // update current working copy files -- returns the current svn revision number
 
-  int   GetCurSvnRev() const { return m_cur_svn_rev; }
+  int    GetCurSvnRev() const { return m_cur_svn_rev; }
   // get the current svn revision number
   String GetFullUrl() const { return m_repo_user_url; }
   // get the full url to repository
@@ -78,11 +78,17 @@ public:
   bool  HasBasicData(bool err = false);
   // check that the current config has all the basic data needed to set paths and manage svn files: username, filename, clustername, svn repo, repo url -- if err then issue error for missing items
 
-  const String getUsername();
-  const String getFilename();
-  const String getClusterName();
-  const String getSvnRepo();
-  const String getRepoUrl();
+  const String GetUsername();
+  const String GetFilename();
+  const String GetClusterName();
+  const String GetSvnRepo();
+  const String GetRepoUrl();
+
+  String FilePathDiffUser(const String& filename, const String& new_user);
+  // translate current user name -> new_user in filename
+  String FilePathDiffCluster(const String& filename, const String& new_clust);
+  // translate current cluster name -> new_clust in filename
+  
 
 protected:
   // This exception class only used internally.
@@ -91,19 +97,22 @@ protected:
     explicit Exception(const char *msg);
   };
 
-  void handleException(const SubversionClient::Exception &ex);
-  bool saveProject();
+  void HandleException(const SubversionClient::Exception &ex);
+  bool SaveProject();
 
-  bool showRepoDialog();
-  bool setPaths(bool updt_wc = true);
-  void runSearchAlgo();
-  void initClusterInfoTable();
-  bool loadTable(const String &filename, DataTable &table);
-  void saveSubmitTable();
-  void saveCopyOfProject();
-  void saveExtraFiles();
-  void saveDoneTable();
-  void deleteFile(const String &filename);
+  bool ShowRepoDialog();
+  bool SetPaths(bool updt_wc = true);
+  void RunSearchAlgo();
+  void InitClusterInfoTable();
+  bool LoadTable(const String &filename, DataTable &table);
+  bool MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
+                           const String& clust, const String& user);
+  bool LoadAllTables(const String &filename, DataTable& sum_table, DataTable& tmp_table);
+  void SaveSubmitTable();
+  void SaveCopyOfProject();
+  void SaveExtraFiles();
+  void SaveDoneTable();
+  void DeleteFile(const String &filename);
 
   ClusterRun &m_cluster_run;
   bool m_valid;

@@ -88,8 +88,12 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
 }
 
 void iClusterTableView::DoClusterOp(const Variant& var) {
-  ClusterRun* runner = taRootBase::instance()->cluster_runnner;
-  if (runner) {
-    runner->DoClusterOp(var.toString());
+  DataTable* tab = this->dataTable(); // may not exist
+  if (!tab) return;
+  taProject* proj = GET_OWNER(tab, taProject);
+  if(!proj) return;
+  ClusterRun* cr = (ClusterRun*)proj->FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
+  if (cr) {
+    cr->DoClusterOp(var.toString());
   }
 }

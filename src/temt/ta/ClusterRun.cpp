@@ -107,7 +107,25 @@ void ClusterRun::UpdateAfterEdit_impl() {
   }
 }
 
-bool ClusterRun::initClusterManager(bool check_prefs) {
+bool ClusterRun::AddCluster(const String& clust_nm) {
+  if(clusters.contains(clust_nm))
+    return false;
+  if(!clusters.empty())
+    clusters << " ";
+  clusters << clust_nm;
+  return true;
+}
+
+bool ClusterRun::AddUser(const String& user_nm) {
+  if(users.contains(user_nm))
+    return false;
+  if(!users.empty())
+    users << " ";
+  users << user_nm;
+  return true;
+}
+
+bool ClusterRun::InitClusterManager(bool check_prefs) {
   if(check_prefs) {
     if(!ClusterManager::CheckPrefs())
       return false;
@@ -116,6 +134,8 @@ bool ClusterRun::initClusterManager(bool check_prefs) {
     m_cm = new ClusterManager(*this);
   else
     m_cm->Init();
+  AddCluster(cluster);
+  AddUser(m_cm->GetUsername());
   return true;
 }
 
@@ -124,7 +144,7 @@ void ClusterRun::NewSearchAlgo(TypeDef *type) {
 }
 
 void ClusterRun::Run() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   FormatTables();               // ensure tables are formatted properly
   jobs_submit.ResetData();      // clear the submission table
@@ -151,10 +171,9 @@ void ClusterRun::Run() {
 }
 
 bool ClusterRun::Update() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return false;
   
-  taRootBase::instance()->RegisterClusterRun(this);  // register so iClusterViewTable can callback
   FormatTables();            // ensure data tables are formatted properly!
 
   // Update the working copy and load the running/done tables.
@@ -185,7 +204,7 @@ bool ClusterRun::Update() {
 }
 
 void ClusterRun::SortClusterInfoTable() {
-  String usrname = m_cm->getUsername();
+  String usrname = m_cm->GetUsername();
   if(usrname.nonempty()) {
     for(int i=0; i<cluster_info.rows; i++) {
       String usr = cluster_info.GetValAsString("user", i);
@@ -200,7 +219,7 @@ void ClusterRun::SortClusterInfoTable() {
 }
 
 void ClusterRun::UpdtRunning() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   
   jobs_submit.ResetData();
@@ -214,7 +233,7 @@ void ClusterRun::UpdtRunning() {
 }
 
 void ClusterRun::Cont() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Create the next batch of jobs.
@@ -226,7 +245,7 @@ void ClusterRun::Cont() {
 }
 
 void ClusterRun::Kill() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to kill.
@@ -248,7 +267,7 @@ void ClusterRun::Kill() {
 }
 
 void ClusterRun::GetData() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to process
@@ -277,7 +296,7 @@ void ClusterRun::GetData() {
 }
 
 void ClusterRun::ImportData(bool remove_existing) {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
 
@@ -421,7 +440,7 @@ void ClusterRun::AddParamsToTable(DataTable* dat, const String& tag,
 }
 
 void ClusterRun::SelectCluster() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   String clust = m_cm->ChooseCluster("Select a cluster to use for this project:");
   if(clust.empty()) return;
@@ -439,7 +458,7 @@ void ClusterRun::SelectCluster() {
 }
 
 void ClusterRun::ListJobFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   bool include_data = true;     // doesn't hurt..
   file_list.ResetData();
@@ -536,7 +555,7 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, Stri
     table.SetVal("Weights", "kind",  row);
 
   if(tag.empty()) {
-    String fnm = taMisc::GetFileFmPath(m_cm->getFilename());
+    String fnm = taMisc::GetFileFmPath(m_cm->GetFilename());
     if(fnm.contains(".proj"))
       fnm = fnm.before(".proj", -1);
     tag = fl.between(fnm, String(".")); // this usually works..
@@ -566,7 +585,7 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, Stri
 
 
 void ClusterRun::GetFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to process
@@ -590,7 +609,7 @@ void ClusterRun::GetFiles() {
 }
 
 void ClusterRun::CleanJobFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to process
@@ -610,7 +629,7 @@ void ClusterRun::CleanJobFiles() {
 }
 
 void ClusterRun::RemoveFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to process
@@ -663,7 +682,7 @@ void ClusterRun::RemoveFiles() {
 }
 
 void ClusterRun::RemoveNonDataFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   // Get the (inclusive) range of rows to process
@@ -688,7 +707,7 @@ void ClusterRun::RemoveNonDataFiles() {
 }
 
 void ClusterRun::GetProjAtRev() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   int svn_rev = -1;
@@ -775,13 +794,13 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
 }
 
 void ClusterRun::ListOtherUserFiles(const String& user_name) {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   String url = m_cm->GetFullUrl();
   if(TestError(url.empty(), "ListOtherUserFiles", "our url is empty -- do probe or update first"))
     return;
-  String us_user = m_cm->getUsername();
+  String us_user = m_cm->GetUsername();
   String wc_path = m_cm->GetWcResultsPath();
   String proj_path = wc_path.after(us_user,-1);
 
@@ -799,14 +818,14 @@ void ClusterRun::ListOtherUserFiles(const String& user_name) {
 }
 
 void ClusterRun::ListOtherProjFiles(const String& proj_name) {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   String url = m_cm->GetFullUrl();
   if(TestError(url.empty(), "ListOtherProjFiles", "our url is empty -- do probe or update first"))
     return;
-  String us_user = m_cm->getUsername();
-  String cur_proj = taMisc::GetFileFmPath(m_cm->getFilename());
+  String us_user = m_cm->GetUsername();
+  String cur_proj = taMisc::GetFileFmPath(m_cm->GetFilename());
   cur_proj = cur_proj.before(".proj");
   String wc_path = m_cm->GetWcResultsPath();
   String proj_path = wc_path.after(us_user,-1);
@@ -819,14 +838,14 @@ void ClusterRun::ListOtherProjFiles(const String& proj_name) {
 }
 
 void ClusterRun::ListOtherClusterFiles(const String& cluster_name) {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   String url = m_cm->GetFullUrl();
   if(TestError(url.empty(), "ListOtherClusterFiles", "our url is empty -- do probe or update first"))
     return;
-  String clust_nm = m_cm->getClusterName();
-  String us_user = m_cm->getUsername();
+  String clust_nm = m_cm->GetClusterName();
+  String us_user = m_cm->GetUsername();
   String wc_path = m_cm->GetWcResultsPath();
   String proj_path = wc_path.after(us_user,-1);
 
@@ -839,7 +858,7 @@ void ClusterRun::ListOtherClusterFiles(const String& cluster_name) {
 }
 
 void ClusterRun::GetOtherFiles() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   String wc_path = m_cm->GetWcResultsPath();
@@ -874,10 +893,10 @@ void ClusterRun::GetOtherFiles() {
 }
 
 void ClusterRun::OpenSvnBrowser() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   String url = m_cm->GetFullUrl();
-  String us_user = m_cm->getUsername();
+  String us_user = m_cm->GetUsername();
   String wc_path = m_cm->GetWcResultsPath();
   String wc_root = wc_path.through(us_user,-1);
   iSubversionBrowser::OpenBrowser(url, wc_root);
@@ -938,7 +957,7 @@ void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
 }
 
 void ClusterRun::ArchiveJobs() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   int st_row, end_row;
@@ -956,7 +975,7 @@ void ClusterRun::ArchiveJobs() {
 }
 
 void ClusterRun::RemoveJobs() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
 
   int st_row, end_row;
@@ -994,7 +1013,7 @@ void ClusterRun::RemoveJobs() {
 }
 
 void ClusterRun::RemoveKilledJobs() {
-  if(!initClusterManager())
+  if(!InitClusterManager())
     return;
   jobs_submit.ResetData();
   file_list.ResetData();
@@ -1047,15 +1066,25 @@ void ClusterRun::RemoveAllFilesInList() {
 void ClusterRun::FormatTables() {
   jobs_submit.name = "jobs_submit";
   jobs_submitted.name = "jobs_submitted";
+
   jobs_running.name = "jobs_running";
   jobs_done.name = "jobs_done";
   jobs_archive.name = "jobs_archive";
 
+  jobs_running_tmp.name = "jobs_running_tmp";
+  jobs_done_tmp.name = "jobs_done_tmp";
+  jobs_archive_tmp.name = "jobs_archive_tmp";
+
   FormatJobTable(jobs_submit);
   FormatJobTable(jobs_submitted);
-  FormatJobTable(jobs_running);
-  FormatJobTable(jobs_done);
-  FormatJobTable(jobs_archive);
+
+  FormatJobTable(jobs_running, true); // extra fields
+  FormatJobTable(jobs_done, true);
+  FormatJobTable(jobs_archive, true);
+
+  FormatJobTable(jobs_running_tmp);
+  FormatJobTable(jobs_done_tmp);
+  FormatJobTable(jobs_archive_tmp);
 
   file_list.name = "file_list";
   FormatFileListTable(file_list);
@@ -1064,11 +1093,28 @@ void ClusterRun::FormatTables() {
   FormatClusterInfoTable(cluster_info);
 }
 
-void ClusterRun::FormatJobTable(DataTable& dt) {
+void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   DataCol* dc;
+  int idx;
 
   dt.ClearDataFlag(DataTable::SAVE_ROWS);
 
+  if(clust_user) {
+    dc = dt.FindMakeCol("cluster", VT_STRING);
+    dc->desc = "cluster where this job was submitted / run";
+    idx = dt.FindColNameIdx(dc->name);
+    if(idx != 0) {
+      dt.MoveCol(idx, 0);
+    }
+
+    dc = dt.FindMakeCol("user", VT_STRING);
+    dc->desc = "user who ran this job";
+    idx = dt.FindColNameIdx(dc->name);
+    if(idx != 1) {
+      dt.MoveCol(idx, 1);
+    }
+  }
+  
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
   // TODO - make all columns readonly or add means to make table guireadonly
@@ -1633,7 +1679,7 @@ void ClusterRun::ClearAllSelections() {
 ///////////////////////////
 
 String ClusterRun::GetSvnPath() {
-  if(!initClusterManager(false)) // fail silently, don't check prefs..
+  if(!InitClusterManager(false)) // fail silently, don't check prefs..
     return _nilString;
   return m_cm->GetWcProjPath();
 }
