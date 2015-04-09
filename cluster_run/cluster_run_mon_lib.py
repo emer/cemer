@@ -148,8 +148,8 @@ job_update_window = 3
 job_done_retries = 5
 
 # set to true for more debugging info
-debug = True
 #debug = True
+debug = False
 
 # END OF STANDARD USER CONFIGURABLE PARAMETERS
 #############################################################################
@@ -744,7 +744,8 @@ class SubversionPoller(object):
 
     def _get_all_submit_files(self):
         submit_files = []
-        logging.info("Trying to get all submit files on startup")
+        if debug:
+            logging.info("Trying to get all submit files on startup")
         print "Base repo dir: " + self.repo_dir
         for f in os.listdir(self.repo_dir):
             #print "Working through: " + f
@@ -785,8 +786,9 @@ class SubversionPoller(object):
     def poll(self, nohup_file=''):
         # Enter the loop to check for updates to job submission files
         # and to query the job scheduler regarding submitted jobs.
-        logging.info('\nPolling the Subversion server every %d seconds ' \
-              '(hit Ctrl-C to quit) ...' % self.delay)
+        if debug:
+            logging.info('\nPolling the Subversion server every %d seconds ' \
+                             '(hit Ctrl-C to quit) ...' % self.delay)
         
         if (submit_mode == "ec2_compute"):
             global ec2_api_user
@@ -1688,7 +1690,8 @@ class SubversionPoller(object):
                 except: pass
 
     def _getdata_job_out_tag(self, tag):
-        logging.info("Trying to submit job out file to SVN")
+        if debug:
+            logging.info("Trying to submit job out file to SVN")
         runrow = self.jobs_running.find_val("tag", tag)
         if runrow >= 0:
             job_files = self.jobs_running.get_val(runrow, "job_out_file")
@@ -1699,7 +1702,8 @@ class SubversionPoller(object):
             else:
                 logging.warn("getdata_job_out: tag %s not found in either jobs running or done" % tag)
                 return
-        logging.info("Supposidly submitting " +  job_files + " to SVN")
+        if debug:
+            logging.info("Supposidly submitting " +  job_files + " to SVN")
         resdir = self.cur_proj_root + "/results/"
         try:
             if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
@@ -1709,7 +1713,8 @@ class SubversionPoller(object):
             logging.error("Could not copy out file")
         
         job_files = job_files[:-3] + "err"
-        logging.info("Supposidly submitting " +  job_files + " to SVN")
+        if debug:
+            logging.info("Supposidly submitting " +  job_files + " to SVN")
         try:
             if (job_files[0] == '/' and not job_files.startswith(self.cur_proj_root)):
                 shutil.copy(job_files, resdir)
@@ -1771,7 +1776,8 @@ class SubversionPoller(object):
         resdir = self.cur_proj_root + "/results/"
         for df in dats:
             fdf = resdir + df
-            logging.info("Checking if dat file: %s exists to commit to SVN" % fdf)
+            if debug:
+                logging.info("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]
@@ -1820,9 +1826,11 @@ class SubversionPoller(object):
             ec2terminate += " -O " + ec2_api_user + " -W " + ec2_api_key + " --region " + ec2_region
             
             cmdsub = ec2terminate.split()
-            logging.info("cmd: " + str(cmdsub))
+            if debug:
+                logging.info("cmd: " + str(cmdsub))
             result = check_output(cmdsub)
-            logging.info("cmd result: " + result)
+            if debug:
+                logging.info("cmd result: " + result)
             
         if debug:
             logging.info("job: %s ended with status: %s at time: %s" % (tag, status, end_time))
@@ -1838,7 +1846,8 @@ class SubversionPoller(object):
                 self._query_job_queue_slurm(row, status, force_updt)
         elif submit_mode == "ec2_control":
             job_no = self.jobs_running.get_val(row, "job_no")
-            logging.info("Dealing with " + job_no)
+            if debug:
+                logging.info("Dealing with " + job_no)
             pass
         elif submit_mode == "ec2_compute":
             pass
@@ -2007,9 +2016,11 @@ class SubversionPoller(object):
             cmd = [qstat_cmd] + qstat_args + [job_no]
         else:
             cmd = [qstat_cmd, job_no]
-        logging.info("qstat cmd: " + str(cmd))
+        if debug:
+            logging.info("qstat cmd: " + str(cmd))
         q_out = check_output(cmd)
-        logging.info("q_out")
+        if debug:
+            logging.info("q_out")
 
         # regexp for output of qstat that tells you that the job is running
         qstat_running_re = r"\s*JobState=RUNNING.*"
@@ -2443,9 +2454,11 @@ class SubversionPoller(object):
         
     def _get_cluster_info_slurm(self):
         
-        logging.info("Getting cluster info from slurm")
+        if debug:
+            logging.info("Getting cluster info from slurm")
         cmd = [showq_cmd] + showq_args
-        logging.info("Cmd:" + str(cmd))
+        if debug:
+            logging.info("Cmd:" + str(cmd))
         show_out = check_output(cmd)
         
         # always read from file to get current format, then reset
@@ -2533,7 +2546,7 @@ def main():
         poller.poll() # Infinite loop.
 
 def main_background():
-    logging.basicConfig(filename='/tmp/emergent_poller.log',level=logging.DEBUG)
+    logging.basicConfig(filename='cluster_run_mon.log',level=logging.DEBUG)
     logging.info('\nStarting background run at %s' % datetime.now())
 
     username    = sys.argv[1]
