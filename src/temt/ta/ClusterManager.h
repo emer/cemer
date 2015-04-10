@@ -83,7 +83,8 @@ public:
   const String GetClusterName();
   const String GetSvnRepo();
   const String GetRepoUrl();
-
+  const String GetRepoUserUrl(const String& user, const String& clust);
+  
   String FilePathDiffUser(const String& filename, const String& new_user);
   // translate current user name -> new_user in filename
   String FilePathDiffCluster(const String& filename, const String& new_clust);
@@ -100,6 +101,11 @@ protected:
   void HandleException(const SubversionClient::Exception &ex);
   bool SaveProject();
 
+  int  UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
+                              const String& user, const String& clust,
+                              bool main_svn);
+  // implementation of wc update
+  
   bool ShowRepoDialog();
   bool SetPaths(bool updt_wc = true);
   void RunSearchAlgo();
@@ -114,10 +120,11 @@ protected:
   void SaveDoneTable();
   void DeleteFile(const String &filename);
 
-  ClusterRun &m_cluster_run;
+  ClusterRun& m_cluster_run;
   bool m_valid;
-  SubversionClient *m_svn_client;
-  taProject *m_proj;
+  SubversionClient* m_svn_client;
+  SubversionClient* m_svn_other; // other user or cluster svn client
+  taProject* m_proj;
 
   int    m_cur_svn_rev;
   String m_username;

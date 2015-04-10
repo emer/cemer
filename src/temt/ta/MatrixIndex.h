@@ -74,13 +74,13 @@ public:
   MatrixIndex*  operator/=(const MatrixIndex& ad);
 
   MatrixIndex*  operator+(const MatrixIndex& ad) const
-    { MatrixIndex* r = new MatrixIndex(this); *r += ad; return r; }
+    { MatrixIndex* r = new MatrixIndex(*this); *r += ad; return r; }
   MatrixIndex*  operator-(const MatrixIndex& ad) const
-    { MatrixIndex* r = new MatrixIndex(this); *r -= ad; return r; }
+    { MatrixIndex* r = new MatrixIndex(*this); *r -= ad; return r; }
   MatrixIndex*  operator*(const MatrixIndex& ad) const
-  { MatrixIndex* r = new MatrixIndex(this); *r *= ad; return r; }
+  { MatrixIndex* r = new MatrixIndex(*this); *r *= ad; return r; }
   MatrixIndex*  operator/(const MatrixIndex& ad) const
-    { MatrixIndex* r = new MatrixIndex(this); *r /= ad; return r; }
+    { MatrixIndex* r = new MatrixIndex(*this); *r /= ad; return r; }
 
   bool operator==(const MatrixIndex& other) const
   { return Equal(other); }

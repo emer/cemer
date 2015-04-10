@@ -96,13 +96,13 @@ public:
   MatrixGeom*   operator/=(const MatrixGeom& ad);
 
   MatrixGeom*   operator+(const MatrixGeom& ad) const
-    { MatrixGeom* r = new MatrixGeom(this); *r += ad; return r; }
+    { MatrixGeom* r = new MatrixGeom(*this); *r += ad; return r; }
   MatrixGeom*   operator-(const MatrixGeom& ad) const
-    { MatrixGeom* r = new MatrixGeom(this); *r -= ad; return r; }
+    { MatrixGeom* r = new MatrixGeom(*this); *r -= ad; return r; }
   MatrixGeom*   operator*(const MatrixGeom& ad) const
-  { MatrixGeom* r = new MatrixGeom(this); *r *= ad; return r; }
+  { MatrixGeom* r = new MatrixGeom(*this); *r *= ad; return r; }
   MatrixGeom*   operator/(const MatrixGeom& ad) const
-    { MatrixGeom* r = new MatrixGeom(this); *r /= ad; return r; }
+    { MatrixGeom* r = new MatrixGeom(*this); *r /= ad; return r; }
 
   bool operator==(const MatrixGeom& other) const
   { return Equal(other); }

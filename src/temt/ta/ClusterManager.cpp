@@ -42,6 +42,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   : m_cluster_run(cluster_run)
   , m_valid(false)      // set true if all goes well
   , m_svn_client(0)     // initialized in ctor body
+  , m_svn_other(0)
   , m_proj(0)           // initialized in ctor body
   , m_cur_svn_rev(-1)
   , m_username()
@@ -64,6 +65,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   // Create Subversion client.
   try {
     m_svn_client = new SubversionClient;
+    m_svn_other = new SubversionClient;
   }
   catch (const SubversionClient::Exception &ex) {
     taMisc::Error("Error creating SubversionClient.\n", ex.what());
@@ -79,6 +81,8 @@ ClusterManager::~ClusterManager()
 {
   delete m_svn_client;
   m_svn_client = 0;
+  delete m_svn_other;
+  m_svn_other = 0;
 }
 
 
@@ -451,6 +455,14 @@ ClusterManager::GetRepoUrl()
   return m_cluster_run.repo_url;
 }
 
+const String
+ClusterManager::GetRepoUserUrl(const String& user, const String& clust) {
+  String repo_url = GetRepoUrl();
+  const char* opt_slash = repo_url.endsWith('/') ? "" : "/";
+  String uurl = repo_url + opt_slash + clust + '/' + user;
+  return uurl;
+}
+
 bool
 ClusterManager::SetPaths(bool updt_wc) {
   String prv_path = m_wc_path;
@@ -466,7 +478,7 @@ ClusterManager::SetPaths(bool updt_wc) {
 
   // Create a URL to the user's directory in the repo.
   const char *opt_slash = repo_url.endsWith('/') ? "" : "/";
-  m_repo_user_url = repo_url + opt_slash + cluster + '/' + username;
+  m_repo_user_url = GetRepoUserUrl(username, cluster);
 
   // Create paths for files/directories in the working copy:
   // taMisc::cluster_svn_path/
@@ -532,41 +544,89 @@ ClusterManager::SetPaths(bool updt_wc) {
 }
 
 int
-ClusterManager::UpdateWorkingCopy()
+ClusterManager::UpdateWorkingCopy() {
+  if(!SetPaths()) return -1;
+
+  String clust_nm = GetClusterName();
+  String username = GetUsername();
+
+  String_Array clusts;
+  clusts.Split(m_cluster_run.clusters, " ");
+  String_Array users;
+  users.Split(m_cluster_run.users, " ");
+
+  for(int cl = 0; cl < clusts.size; cl++) {
+    String clust = clusts[cl];
+    String fnc = FilePathDiffCluster(m_wc_path, clust);
+    for(int us = 0; us < users.size; us++) {
+      String user = users[us];
+      String fnu = FilePathDiffUser(fnc, user);
+
+      bool main_svn = ((clust == clust_nm) && (user == username));
+      if(main_svn) {
+        m_cur_svn_rev = UpdateWorkingCopy_impl(m_svn_client, m_wc_path, user,
+                                               clust, main_svn);
+      }
+      else {
+        m_svn_other->SetWorkingCopyPath(fnu);
+        taMisc::Info("other checkout:", fnu);
+        int rev = UpdateWorkingCopy_impl(m_svn_other, fnu, user,
+                                         clust, main_svn);
+      }
+    }
+  }
+  return m_cur_svn_rev;
+}
+
+int
+ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
+                                       const String& user, const String& clust,
+                                       bool main_svn)
 {
   // If the user already has a working copy, update it.  Otherwise, create
   // it on the server and check it out.
-  if(!SetPaths()) return -1;
-  QFileInfo fi_wc(m_wc_path.chars());
+  int rev_rval = 0;
+  QFileInfo fi_wc(wc_path.chars());
   if (!fi_wc.exists()) {
-    // This could be the first time the user has used Click-to-cluster.
-    taMisc::Info("Working copy not found; will try to create at", m_wc_path);
+    String uurl = GetRepoUserUrl(user, clust);
+    if(main_svn) {
+      // This could be the first time the user has used Click-to-cluster.
+      taMisc::Info("Working copy not found; will try to create at:", wc_path);
 
-    // Create the directory on the repository, if not already present.
-    String comment = "Creating cluster directory for user ";
-    comment += GetUsername();
-    m_svn_client->TryMakeUrlDir(m_repo_user_url.chars(), comment.chars());
+      // Create the directory on the repository, if not already present.
+      String comment = "Creating cluster directory for user: ";
+      comment += user;
+      sc->TryMakeUrlDir(uurl.chars(), comment.chars());
+    }
 
     // Check out a working copy (possibly just an empty directory if we
     // just created it for the first time).
-    m_cur_svn_rev = m_svn_client->Checkout(m_repo_user_url, m_wc_path);
-    taMisc::Info("Working copy checked out for revision", String(m_cur_svn_rev));
+    rev_rval = sc->Checkout(uurl, wc_path);
+    if(main_svn) {
+      taMisc::Info("Working copy checked out for revision", String(rev_rval));
+    }
   }
   else {
     // Update the existing wc.
-    m_cur_svn_rev = m_svn_client->Update();
-    taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
+    rev_rval = sc->Update();
+    if(main_svn) {
+      taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
+    }
   }
 
-  InitClusterInfoTable();
+  if(main_svn) {
+    InitClusterInfoTable();
+  }
   
   // We could check if these directories already exist, but it's easier
   // to just try to create them all and ignore any creation errors.
-  m_svn_client->TryMakeDir(m_wc_proj_path);
-  m_svn_client->TryMakeDir(m_wc_submit_path);
-  m_svn_client->TryMakeDir(m_wc_models_path);
-  m_svn_client->TryMakeDir(m_wc_results_path);
-  return m_cur_svn_rev;
+  if(main_svn) {
+    sc->TryMakeDir(m_wc_proj_path);
+    sc->TryMakeDir(m_wc_submit_path);
+    sc->TryMakeDir(m_wc_models_path);
+    sc->TryMakeDir(m_wc_results_path);
+  }
+  return rev_rval;
 }
 
 void

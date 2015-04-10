@@ -85,6 +85,7 @@ public:
 
 protected:
   bool InitClusterManager(bool check_prefs = true);
+
   ClusterManager*       m_cm;
   SubversionClient*     svn_other; // other user or project svn client
   String                svn_other_wc_path; // working copy path
