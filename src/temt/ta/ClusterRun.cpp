@@ -342,6 +342,8 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
   String dat_files;
   String params;
   String notes;
+  String user = m_cm->GetUsername();
+  String clust = cluster;
   if(table.name == "file_list") {
     dat_files = table.GetValAsString("file_name", row);
     if(!dat_files.contains(".dat")) return; // not a dat file!
@@ -369,12 +371,15 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
     dat_files = table.GetValAsString("dat_files", row);
     params = table.GetValAsString("params", row);
     notes = table.GetValAsString("notes", row);
+    user = table.GetValAsString("user", row);
+    clust = table.GetValAsString("cluster", row);
   }
   if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
     return;
   String tag_svn = tag.before("_");
   String tag_job = tag.after("_");
   String res_path = m_cm->GetWcResultsPath();
+  res_path = m_cm->GetWcPath_UserClust(res_path, user, clust);
   String_Array files;
   files.FmDelimString(dat_files, " ");
   for(int i=0; i< files.size; i++) {
@@ -791,30 +796,6 @@ void ClusterRun::ListOtherSvn(int rev, bool recurse) {
     file_list.SetVal(svn_other_url, "svn_file_path", row);
   }
   ViewPanelNumber(4);
-}
-
-void ClusterRun::ListOtherUserFiles(const String& user_name) {
-  if(!InitClusterManager())
-    return;
-
-  String url = m_cm->GetFullUrl();
-  if(TestError(url.empty(), "ListOtherUserFiles", "our url is empty -- do probe or update first"))
-    return;
-  String us_user = m_cm->GetUsername();
-  String wc_path = m_cm->GetWcResultsPath();
-  String proj_path = wc_path.after(us_user,-1);
-
-  String wc_sub = wc_path.after(svn_repo);
-  String wc_base = wc_path.through(svn_repo);
-
-  wc_sub.gsub(us_user, user_name); // we don't actually use the wc anyway..
-  wc_path = wc_base + "/" + wc_sub;
-
-  url.gsub(us_user, user_name);
-  url += proj_path;
-
-  InitOtherSvn(wc_path, url);
-  ListOtherSvn();               // use defaults
 }
 
 void ClusterRun::ListOtherProjFiles(const String& proj_name) {

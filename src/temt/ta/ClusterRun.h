@@ -139,8 +139,6 @@ public:
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
 
-  virtual void  ListOtherUserFiles(const String& user_name);
-  // #MENU_BUTTON #MENU_ON_OtherFiles #MENU_SEP_BEFORE list the files checked into svn for given other user name, for this same project -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  ListOtherProjFiles(const String& proj_name);
   // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
   virtual void  ListOtherClusterFiles(const String& cluster_name);

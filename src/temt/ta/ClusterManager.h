@@ -83,13 +83,13 @@ public:
   const String GetClusterName();
   const String GetSvnRepo();
   const String GetRepoUrl();
-  const String GetRepoUserUrl(const String& user, const String& clust);
   
-  String FilePathDiffUser(const String& filename, const String& new_user);
-  // translate current user name -> new_user in filename
-  String FilePathDiffCluster(const String& filename, const String& new_clust);
-  // translate current cluster name -> new_clust in filename
-  
+  const String GetRepoUrl_UserClust(const String& user, const String& clust);
+  // get the svn repository URL for current project with specific user and cluster
+  const String GetWcPath_UserClust(const String& wc_path,
+                                   const String& user, const String& clust);
+  // get the svn working copy path for specific user and cluster -- wc_path can be any specific path from various GetWc*Path methods
+
 
 protected:
   // This exception class only used internally.

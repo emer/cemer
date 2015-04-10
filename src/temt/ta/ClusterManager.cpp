@@ -456,11 +456,23 @@ ClusterManager::GetRepoUrl()
 }
 
 const String
-ClusterManager::GetRepoUserUrl(const String& user, const String& clust) {
+ClusterManager::GetRepoUrl_UserClust(const String& user, const String& clust) {
   String repo_url = GetRepoUrl();
   const char* opt_slash = repo_url.endsWith('/') ? "" : "/";
   String uurl = repo_url + opt_slash + clust + '/' + user;
   return uurl;
+}
+
+const String
+ClusterManager::GetWcPath_UserClust(const String& wc_path,
+                                    const String& user, const String& clust) {
+  String us_user = GetUsername();
+  String rval = wc_path.before(us_user, -1); // must be from end!!!
+  rval += user;
+  rval += wc_path.after(us_user,-1);
+  String clust_nm = GetClusterName();
+  rval.gsub(clust_nm, clust);
+  return rval;
 }
 
 bool
@@ -477,8 +489,7 @@ ClusterManager::SetPaths(bool updt_wc) {
   String repo_url = GetRepoUrl();
 
   // Create a URL to the user's directory in the repo.
-  const char *opt_slash = repo_url.endsWith('/') ? "" : "/";
-  m_repo_user_url = GetRepoUserUrl(username, cluster);
+  m_repo_user_url = GetRepoUrl_UserClust(username, cluster);
 
   // Create paths for files/directories in the working copy:
   // taMisc::cluster_svn_path/
@@ -557,10 +568,9 @@ ClusterManager::UpdateWorkingCopy() {
 
   for(int cl = 0; cl < clusts.size; cl++) {
     String clust = clusts[cl];
-    String fnc = FilePathDiffCluster(m_wc_path, clust);
     for(int us = 0; us < users.size; us++) {
       String user = users[us];
-      String fnu = FilePathDiffUser(fnc, user);
+      String wcp = GetWcPath_UserClust(m_wc_path, user, clust);
 
       bool main_svn = ((clust == clust_nm) && (user == username));
       if(main_svn) {
@@ -568,9 +578,8 @@ ClusterManager::UpdateWorkingCopy() {
                                                clust, main_svn);
       }
       else {
-        m_svn_other->SetWorkingCopyPath(fnu);
-        taMisc::Info("other checkout:", fnu);
-        int rev = UpdateWorkingCopy_impl(m_svn_other, fnu, user,
+        m_svn_other->SetWorkingCopyPath(wcp);
+        int rev = UpdateWorkingCopy_impl(m_svn_other, wcp, user,
                                          clust, main_svn);
       }
     }
@@ -588,7 +597,7 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
   int rev_rval = 0;
   QFileInfo fi_wc(wc_path.chars());
   if (!fi_wc.exists()) {
-    String uurl = GetRepoUserUrl(user, clust);
+    String uurl = GetRepoUrl_UserClust(user, clust);
     if(main_svn) {
       // This could be the first time the user has used Click-to-cluster.
       taMisc::Info("Working copy not found; will try to create at:", wc_path);
@@ -601,16 +610,22 @@ ClusterManager::UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_pa
 
     // Check out a working copy (possibly just an empty directory if we
     // just created it for the first time).
+    taMisc::Info("Checking out repository url:", uurl, "to wc path:", wc_path,
+                 "can take a while..");
+    taMisc::Busy();
     rev_rval = sc->Checkout(uurl, wc_path);
+    taMisc::DoneBusy();
     if(main_svn) {
       taMisc::Info("Working copy checked out for revision", String(rev_rval));
     }
   }
   else {
     // Update the existing wc.
+    taMisc::Busy();
     rev_rval = sc->Update();
+    taMisc::DoneBusy();
     if(main_svn) {
-      taMisc::Info("Working copy was updated to revision", String(m_cur_svn_rev));
+      taMisc::Info("Working copy was updated to revision", String(rev_rval));
     }
   }
 
@@ -660,24 +675,8 @@ bool ClusterManager::MergeTableToSummary(DataTable& sum_tab, DataTable& src_tab,
   return true;
 }
 
-String ClusterManager::FilePathDiffUser(const String& filename, const String& new_user) {
-  String us_user = GetUsername();
-  String rval = filename.before(us_user, -1); // must be from end!!!
-  rval += new_user;
-  rval += filename.after(us_user,-1);
-  return rval;
-}
-
-String ClusterManager::FilePathDiffCluster(const String& filename, const String& new_clust) {
-  String clust_nm = GetClusterName();
-  String rval = filename;
-  rval.gsub(clust_nm, new_clust);
-  return rval;
-}
-
-
 bool
-ClusterManager::LoadAllTables(const String &filename, DataTable& sum_table,
+ClusterManager::LoadAllTables(const String& filename, DataTable& sum_table,
                               DataTable& tmp_table)
 {
   String_Array clusts;
@@ -686,24 +685,22 @@ ClusterManager::LoadAllTables(const String &filename, DataTable& sum_table,
   users.Split(m_cluster_run.users, " ");
 
   sum_table.StructUpdate(true);
-  tmp_table.StructUpdate(true);
+  // tmp_table.StructUpdate(true);
   sum_table.ResetData();
   
   for(int cl = 0; cl < clusts.size; cl++) {
     String clust = clusts[cl];
-    String fnc = FilePathDiffCluster(filename, clust);
     for(int us = 0; us < users.size; us++) {
       String user = users[us];
-      String fnu = FilePathDiffUser(fnc, user);
-      // taMisc::Info("fnu:", fnu);
-      bool ok = LoadTable(fnu, tmp_table);
+      String wcp = GetWcPath_UserClust(filename, user, clust);
+      bool ok = LoadTable(wcp, tmp_table);
       if(ok) {
         MergeTableToSummary(sum_table, tmp_table, clust, user);
       }
     }
   }
   sum_table.StructUpdate(false);
-  tmp_table.StructUpdate(false);
+  // tmp_table.StructUpdate(false);
   return true;
 }
 
