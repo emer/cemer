@@ -601,21 +601,61 @@ void ClusterRun::GetFiles() {
 
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
-  if (SelectedRows(file_list, st_row, end_row)) {
-    String_Array files;
-    for (int row = st_row; row <= end_row; ++row) {
-      String fl = file_list.GetValAsString("file_name", row);
-      files.Add(fl);
+  if(!SelectedRows(file_list, st_row, end_row)) {
+    taMisc::Warning("No rows selected -- no files fetched");
+    return;
+  }
+
+  String wc_path = m_cm->GetWcResultsPath();
+
+  String_Array sub_files;
+  for (int row = st_row; row <= end_row; ++row) {
+    String fl = file_list.GetValAsString("file_name", row);
+    String fp = file_list.GetValAsString("file_path", row);
+    if(taMisc::FileExists(fp)) {
+      String local_fl = wc_path + "/" + fl;
+      taMisc::Info("Copying local file from:", fp, "to:", local_fl, "and adding to svn");
+      if(QFile::copy(fp, local_fl)) {
+        taMisc::Busy();
+        m_cm->AddFile(local_fl);
+        m_cm->CommitFiles(String("added file from another svn project / cluster / user to this project's results files: ") + fl);
+        taMisc::DoneBusy();
+      }
     }
-    String files_str = files.ToDelimString(" ");
+    else {
+      if(CheckLocalClustUser(file_list, row, false)) { // false = no warnings
+        // not-local, current user and cluster, just get it from cluster
+        taMisc::Info("Getting remote svn file from cluster:", fl);
+        sub_files.Add(fl);
+      }
+      else {
+        // not-local, not current user etc -- copy it to us
+        String svnp = file_list.GetValAsString("svn_file_path", row);
+        String local_fl = wc_path + "/" + fl;
+        taMisc::Info("Getting non-local svn file from:", svnp, "to:", local_fl,
+                     "and adding to local svn");
+        taMisc::Busy();
+        try {
+          svn_other->SaveFile(svnp, local_fl);
+        }
+        catch (const SubversionClient::Exception &ex) {
+          taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
+          taMisc::DoneBusy();
+          return;
+        }
+        m_cm->AddFile(local_fl);
+        m_cm->CommitFiles(String("added file from another svn project / cluster / user to this project's results files: ") + fl);
+        taMisc::DoneBusy();
+      }
+    }
+  }
+  if(sub_files.size > 0) {
+    String files_str = sub_files.ToDelimString(" ");
     jobs_submit.ResetData();
     SubmitGetFiles(files_str);
     // Commit the table.
     m_cm->CommitJobSubmissionTable();
     AutoUpdateMe();
-  }
-  else {
-    taMisc::Warning("No rows selected -- no files fetched");
   }
 }
 
@@ -822,61 +862,6 @@ void ClusterRun::ListOtherProjFiles(const String& proj_name) {
 
   InitOtherSvn(wc_path, url);
   ListOtherSvn();               // use defaults
-}
-
-void ClusterRun::ListOtherClusterFiles(const String& cluster_name) {
-  if(!InitClusterManager())
-    return;
-
-  String url = m_cm->GetFullUrl();
-  if(TestError(url.empty(), "ListOtherClusterFiles", "our url is empty -- do probe or update first"))
-    return;
-  String clust_nm = m_cm->GetClusterName();
-  String us_user = m_cm->GetUsername();
-  String wc_path = m_cm->GetWcResultsPath();
-  String proj_path = wc_path.after(us_user,-1);
-
-  url.gsub(clust_nm, cluster_name);
-  wc_path.gsub(clust_nm, cluster_name);
-  url += proj_path;
-
-  InitOtherSvn(wc_path, url);
-  ListOtherSvn();               // use defaults
-}
-
-void ClusterRun::GetOtherFiles() {
-  if(!InitClusterManager())
-    return;
-
-  String wc_path = m_cm->GetWcResultsPath();
-
-  // Get the (inclusive) range of rows to process
-  int st_row, end_row;
-  if (SelectedRows(file_list, st_row, end_row)) {
-    String_Array files;
-    for (int row = st_row; row <= end_row; ++row) {
-      String fl = file_list.GetValAsString("file_name", row);
-      String svnp = file_list.GetValAsString("svn_file_path", row);
-      String furl = svnp + "/" + fl;
-      String ofl = wc_path + "/" + fl;
-      if(taMisc::FileExists(ofl)) {
-        taMisc::Error("In attempt to saving file from url:", furl, "to:", ofl,
-                      "target file already exists!  Please double check and remove target file if you want to replace");
-        continue;
-      }
-      taMisc::Info("saving file from url:", furl, "to:", ofl);
-      try {
-        svn_other->SaveFile(furl, ofl);
-      }
-      catch (const SubversionClient::Exception &ex) {
-        taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
-        return;
-      }
-    }
-  }
-  else {
-    taMisc::Warning("No rows selected -- no files fetched");
-  }
 }
 
 void ClusterRun::OpenSvnBrowser() {
@@ -1497,18 +1482,22 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
   }
 }
 
-bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row) {
+bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row, bool warn) {
   String clust = table.GetValAsString("cluster", tab_row);
   String user = table.GetValAsString("user", tab_row);
   String tag = table.GetValAsString("tag", tab_row);
   if(clust != cluster) {
-    taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
-                 "must select that cluster instead of:", cluster);
+    if(warn) {
+      taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
+                   "must select that cluster instead of:", cluster);
+    }
     return false;
   }
   if(user != m_cm->GetUsername()) {
-    taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
-                 "for user:", user, "cannot modify other user's data!");
+    if(warn) {
+      taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
+                   "for user:", user, "cannot modify other user's data!");
+    }
     return false;
   }
   return true;

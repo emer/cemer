@@ -24,6 +24,7 @@ class ClusterRun;
 class DataTable;
 class taProject;
 
+// note: this is not processed by maketa!
 
 class TA_API ClusterManager {
   // The ClusterManager class handles all Subversion operations and doesn't know anything about the contents of the job DataTables. The ClusterRun class (and its search algorithm) take care of everything DataTable related and for the most part do no Subversion operations.
@@ -50,6 +51,8 @@ public:
   String ChooseCluster(const String& prompt);
   // prompt the user to choose a cluster name -- just pulls up a simple combo-edit chooser dialog
 
+  void  AddFile(const String& file_path);
+  // add a file from working copy to svn
   void  CommitFiles(const String &commit_msg);
   // commit current working copy files
   int   UpdateWorkingCopy();
@@ -99,6 +102,8 @@ protected:
   };
 
   void HandleException(const SubversionClient::Exception &ex);
+
+public:
   bool SaveProject();
 
   int  UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,

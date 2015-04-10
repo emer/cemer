@@ -127,9 +127,9 @@ public:
   virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
   virtual void  ListLocalFiles();
-  // #MENU_BUTTON #MENU_ON_Files list the project files (e.g. .dat files and .wts files) that have been transferred to your local svn repository
+  // #MENU_BUTTON #MENU_ON_Files list all of the project files (e.g. .dat files and .wts files) that have been transferred to your local svn repository, for the current user and cluster
   virtual void  GetFiles();
-  // #MENU_BUTTON #MENU_ON_Files tell the cluster to check in the files selected in file_list tab -- you can then do Update after enough time for the cluster to have checked in the data (depends on size of data and cluster responsiveness and poll interval), and then access the files as you wish
+  // #MENU_BUTTON #MENU_ON_Files get the files shown in the file_list tab -- if these are not local files but are in current cluster, then tell the cluster to check in the files, and they will then be downloaded to the local working copy directory (via auto-update) -- otherwise if not local it will attempt to copy down from svn and add to local svn directory -- if already local, but they are in a different directory (e.g., from a different user / cluster, or project), then they will be copied locally, and checked into the current user / cluster project svn repository
   virtual void  CleanJobFiles();
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM #MENU_SEP_BEFORE remove all the job management files associated with the jobs selected in jobs_done or jobs_archive lists -- these are the JOB.* files and the tagged copy of the project that was used to launch the job(s) -- they are also automatically removed when a job is moved to archived
   virtual void  RemoveFiles();
@@ -138,15 +138,10 @@ public:
   // #MENU_BUTTON #MENU_ON_Files #CONFIRM remove all the non-data files associated with jobs selected in the jobs_done or jobs_archive lists -- these are typically larger files such as weight files, which it is good to clean up eventually
   virtual void  GetProjAtRev();
   // #MENU_BUTTON #MENU_ON_Files #MENU_SEP_BEFORE get project file at selected revision (must have one and only one job row selected in any of the jobs tables -- searches in running, done, then archive) -- saves file to projname_rev.proj -- you can then load that and revert project to it by saving back to original project file name if that is in fact what you want to do
-
   virtual void  ListOtherProjFiles(const String& proj_name);
-  // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
-  virtual void  ListOtherClusterFiles(const String& cluster_name);
-  // #MENU_BUTTON #MENU_ON_OtherFiles list the files checked into svn for given other cluster name -- once the files are displayed, you can select files and click on GetOtherFiles to copy those files to your directory
-  virtual void  GetOtherFiles();
-  // #MENU_BUTTON #MENU_ON_OtherFiles get selected files in file_list from ListOtherUserFiles or ListOtherProjFiles
+  // #MENU_BUTTON #MENU_ON_Files list the files checked into svn for given other project name -- once the files are displayed, you can select files and click on GetFiles to copy those files to your directory
   virtual void  OpenSvnBrowser();
-  // #MENU_BUTTON #MENU_ON_OtherFiles open subversion browser for this repository
+  // #MENU_BUTTON #MENU_ON_Files open subversion browser for this repository
 
   ////////////////////////////////////////////
   // useful helper routines for above
@@ -191,7 +186,7 @@ public:
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
 
-  virtual bool  CheckLocalClustUser(const DataTable& table, int row);
+  virtual bool  CheckLocalClustUser(const DataTable& table, int row, bool warn = true);
   // make sure that given row of table is for current cluster and user -- otherwise issue info message and return false -- submit functions can only operate on current user and cluster
   virtual void  SubmitGetData(const DataTable& table, int row);
   // add to jobs_submit for get data for job at the given row of the given table

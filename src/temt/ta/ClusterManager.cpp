@@ -788,6 +788,12 @@ ClusterManager::SaveExtraFiles()
 }
 
 void
+ClusterManager::AddFile(const String& file_path)
+{
+  m_svn_client->Add(file_path.chars());
+}
+
+void
 ClusterManager::CommitFiles(const String &commit_msg)
 {
   // Ensure the working copy has been set.
