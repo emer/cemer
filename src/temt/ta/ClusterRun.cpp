@@ -493,16 +493,18 @@ void ClusterRun::ListJobFiles() {
 }
 
 void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) {
-  String tag = table.GetVal("tag", row).toString();
-  String dat_files = table.GetVal("dat_files", row).toString();
-  String other_files = table.GetVal("other_files", row).toString();
+  String tag = table.GetValAsString("tag", row);
+  String dat_files = table.GetValAsString("dat_files", row);
+  String other_files = table.GetValAsString("other_files", row);
+  String user = table.GetValAsString("user", row);
+  String clust = table.GetValAsString("cluster", row);
   {                             // other files
     String_Array files;
     files.FmDelimString(other_files, " ");
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      GetFileInfo(fl, file_list, frow, tag);
+      GetFileInfo(fl, file_list, frow, tag, user, clust);
     }
   }
   if(include_data) {
@@ -511,7 +513,7 @@ void ClusterRun::SelectFiles_impl(DataTable& table, int row, bool include_data) 
     for(int i=0; i< files.size; i++) {
       String fl = files[i];
       int frow = file_list.AddBlankRow();
-      GetFileInfo(fl, file_list, frow, tag);
+      GetFileInfo(fl, file_list, frow, tag, user, clust);
     }
   }
 }
@@ -534,15 +536,17 @@ void ClusterRun::ListLocalFiles() {
     if(fli.isFile()) {
       int frow = file_list.AddBlankRow();
       String tag;
-      GetFileInfo(files[i].filePath(), file_list, frow, tag);
+      GetFileInfo(files[i].filePath(), file_list, frow, tag, m_cm->GetUsername(), cluster);
     }
   }
   ViewPanelNumber(4);
 }
 
-void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, String& tag) {
+void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, String& tag,
+                             const String& user, const String& clust) {
   String fl = taMisc::GetFileFmPath(path);
   String wc_res_path = m_cm->GetWcResultsPath();
+  wc_res_path = m_cm->GetWcPath_UserClust(wc_res_path, user, clust);
   String repo_path = wc_res_path.from(svn_repo + "/");
 
   String flpath = wc_res_path + "/" + fl;
@@ -551,6 +555,8 @@ void ClusterRun::GetFileInfo(const String& path, DataTable& table, int row, Stri
   table.SetVal(flpath, "file_path",  row);
   table.SetVal(repo_path + "/" + fl, "svn_file_path",  row);
   table.SetVal("results/" + fl, "proj_file_path",  row);
+  table.SetVal(user, "user", row);
+  table.SetVal(clust, "cluster", row);
 
   if(fl.endsWith(".dat") || fl.endsWith(".dat.gz"))
     table.SetVal("Data", "kind",  row);
@@ -598,7 +604,7 @@ void ClusterRun::GetFiles() {
   if (SelectedRows(file_list, st_row, end_row)) {
     String_Array files;
     for (int row = st_row; row <= end_row; ++row) {
-      String fl = file_list.GetVal("file_name", row).toString();
+      String fl = file_list.GetValAsString("file_name", row);
       files.Add(fl);
     }
     String files_str = files.ToDelimString(" ");
@@ -643,9 +649,9 @@ void ClusterRun::RemoveFiles() {
     String_PArray files;
     String_Array rmt_files;
     for (int row = end_row; row >= st_row; --row) {
-      String fpath = file_list.GetVal("file_path", row).toString();
+      String fpath = file_list.GetValAsString("file_path", row);
       if(!taMisc::FileExists(fpath)) {
-        String fl = file_list.GetVal("file_name", row).toString();
+        String fl = file_list.GetValAsString("file_name", row);
         rmt_files.Add(fl);
       }
       else {
@@ -849,8 +855,8 @@ void ClusterRun::GetOtherFiles() {
   if (SelectedRows(file_list, st_row, end_row)) {
     String_Array files;
     for (int row = st_row; row <= end_row; ++row) {
-      String fl = file_list.GetVal("file_name", row).toString();
-      String svnp = file_list.GetVal("svn_file_path", row).toString();
+      String fl = file_list.GetValAsString("file_name", row);
+      String svnp = file_list.GetValAsString("svn_file_path", row);
       String furl = svnp + "/" + fl;
       String ofl = wc_path + "/" + fl;
       if(taMisc::FileExists(ofl)) {
@@ -961,7 +967,7 @@ void ClusterRun::RemoveJobs() {
 
   int st_row, end_row;
   if (SelectedRows(jobs_done, st_row, end_row)) {
-    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list?", "Ok", "Cancel");
+    int chs = taMisc::Choice("RemoveJobs: Are you sure you want to remove: " + String(1 + end_row - st_row) + " jobs from the jobs_done list (can only be your jobs, on current cluster)?", "Ok", "Cancel");
     if(chs == 1) return;
     jobs_submit.ResetData();
     file_list.ResetData();
@@ -999,7 +1005,7 @@ void ClusterRun::RemoveKilledJobs() {
   jobs_submit.ResetData();
   file_list.ResetData();
   for (int row = jobs_done.rows-1; row >= 0; --row) {
-    String status = jobs_done.GetVal("status", row).toString();
+    String status = jobs_done.GetValAsString("status", row);
     if(status != "KILLED") continue;
     // SelectFiles_impl(jobs_done, row, true); // include data
     SubmitRemoveJob(jobs_done, row);
@@ -1016,9 +1022,9 @@ void ClusterRun::RemoveAllFilesInList() {
   String_PArray files;
   String_Array rmt_files;
   for(int i=0;i<file_list.rows; i++) {
-    String fpath = file_list.GetVal("file_path", i).toString();
+    String fpath = file_list.GetValAsString("file_path", i);
     if(!taMisc::FileExists(fpath)) {
-      String fl = file_list.GetVal("file_name", i).toString();
+      String fl = file_list.GetValAsString("file_name", i);
       rmt_files.Add(fl);
     }
     else {
@@ -1196,6 +1202,20 @@ void ClusterRun::FormatFileListTable(DataTable& dt) {
   DataCol* dc;
 
   dt.ClearDataFlag(DataTable::SAVE_ROWS);
+
+  dc = dt.FindMakeCol("cluster", VT_STRING);
+  dc->desc = "cluster where this job was submitted / run";
+  int idx = dt.FindColNameIdx(dc->name);
+  if(idx != 0) {
+    dt.MoveCol(idx, 0);
+  }
+
+  dc = dt.FindMakeCol("user", VT_STRING);
+  dc->desc = "user who ran this job";
+  idx = dt.FindColNameIdx(dc->name);
+  if(idx != 1) {
+    dt.MoveCol(idx, 1);
+  }
 
   dc = dt.FindMakeCol("file_name", VT_STRING);
   dc->desc = "name of file -- does not include any path information";
@@ -1477,9 +1497,28 @@ ClusterRun::AddJobRow(const String& cmd, const String& params, int& cmd_id) {
   }
 }
 
+bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row) {
+  String clust = table.GetValAsString("cluster", tab_row);
+  String user = table.GetValAsString("user", tab_row);
+  String tag = table.GetValAsString("tag", tab_row);
+  if(clust != cluster) {
+    taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
+                 "must select that cluster instead of:", cluster);
+    return false;
+  }
+  if(user != m_cm->GetUsername()) {
+    taMisc::Info("not processing job tag:", tag, "on cluster:", clust,
+                 "for user:", user, "cannot modify other user's data!");
+    return false;
+  }
+  return true;
+}
+
 void
 ClusterRun::CancelJob(int running_row)
 {
+  if(!CheckLocalClustUser(jobs_running, running_row))
+    return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("CANCELLED", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, jobs_running, "job_no", running_row);
@@ -1490,6 +1529,8 @@ ClusterRun::CancelJob(int running_row)
 void
 ClusterRun::SubmitGetData(const DataTable& table, int tab_row)
 {
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("GETDATA", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
@@ -1500,6 +1541,8 @@ ClusterRun::SubmitGetData(const DataTable& table, int tab_row)
 void
 ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
 {
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("REMOVEJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
@@ -1510,6 +1553,8 @@ ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
 void
 ClusterRun::SubmitArchiveJob(const DataTable& table, int tab_row)
 {
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("ARCHIVEJOB", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
@@ -1520,6 +1565,8 @@ ClusterRun::SubmitArchiveJob(const DataTable& table, int tab_row)
 void
 ClusterRun::SubmitCleanJobFiles(const DataTable& table, int tab_row)
 {
+  if(!CheckLocalClustUser(table, tab_row))
+    return;
   int dst_row = jobs_submit.AddBlankRow();
   jobs_submit.SetVal("CLEANJOBFILES", "status", dst_row);
   jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);

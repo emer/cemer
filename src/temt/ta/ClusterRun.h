@@ -53,7 +53,7 @@ public:
   DataTable     jobs_running;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that are currently running
   DataTable     jobs_done;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have finished running
   DataTable     jobs_archive;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER jobs that have been archived -- already analyzed but possibly still relevant to look at
-  DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
+ DataTable     file_list;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER list of files -- used for various operations -- transferring and deleting
   DataTable     cluster_info;   // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER cluster status information and list of jobs currently running, etc
   DataTable     jobs_running_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_running, for each specific directory
   DataTable     jobs_done_tmp;  // #NO_SAVE #HIDDEN #HIDDEN_CHOOSER temporary jobs_done, for each specific directory
@@ -153,7 +153,8 @@ public:
 
   virtual void ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row);
   // #IGNORE actually do the import -- row is row in given table (jobs_running or jobs_done) with info for data files
-  virtual void GetFileInfo(const String& path, DataTable& table, int row, String& tag);
+  virtual void GetFileInfo(const String& path, DataTable& table, int row, String& tag,
+                           const String& user, const String& clust);
   // #IGNORE get file info from given full path to file into file_list formatted data table at given row -- if tag is empty it will attempt to set it from the file name, and set it, also returning it
   virtual void SelectFiles_impl(DataTable& table, int row, bool include_data);
   // #IGNORE add files from row in table to file_list
@@ -189,6 +190,9 @@ public:
     // #IGNORE impl
   virtual void  CancelJob(int running_row);
   // cancel a job at the given row of the jobs_running data table
+
+  virtual bool  CheckLocalClustUser(const DataTable& table, int row);
+  // make sure that given row of table is for current cluster and user -- otherwise issue info message and return false -- submit functions can only operate on current user and cluster
   virtual void  SubmitGetData(const DataTable& table, int row);
   // add to jobs_submit for get data for job at the given row of the given table
   virtual void  SubmitRemoveJob(const DataTable& table, int row);
