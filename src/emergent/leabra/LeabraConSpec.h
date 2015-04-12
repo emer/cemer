@@ -211,19 +211,19 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(CIFERLrateSpec);
+eTypeDef_Of(DeepLrateSpec);
 
-class E_API CIFERLrateSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
+class E_API DeepLrateSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning rate specs for DeepLeabra -- effective learning rate can be enhanced for units receiving deep attentional modulation vs. those without
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the CIFER differentia learning rates based on thalamic modulation signal
-  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations -- this is the baseline learning rate prior to adding in contribution of thalamic term: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
-  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground activations, as a function of thalamic activation level: lrate_eff = lrate * (bg_lrate + fg_lrate * thal)
+  bool          on;             // enable the deep attentional differential learning rates based on deep_norm modulation signal
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations -- this is the baseline learning rate prior to adding in contribution of deep_norm term: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_norm)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground activations, as a function of deep_norm activation level: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_norm)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  TA_SIMPLE_BASEFUNS(CIFERLrateSpec);
+  TA_SIMPLE_BASEFUNS(DeepLrateSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -267,7 +267,7 @@ public:
   XCalLearnSpec	xcal;		// #CAT_Learning #CONDSHOW_ON_learn XCAL (eXtended Contrastive Attractor Learning) learning parameters
   WtSigSpec	wt_sig;		// #CAT_Learning #CONDSHOW_ON_learn sigmoidal weight function for contrast enhancement: high gain makes weights more binary & discriminative
   FastWtsSpec   fast_wts;       // #CAT_Learning #CONDSHOW_ON_learn fast weights specifications -- parameters for how fast and slowly adapting weights learning
-  CIFERLrateSpec cifer;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
+  DeepLrateSpec deep;		// #CAT_Learning #CONDSHOW_ON_learn learning rate specs for Cortical Information Flow via Extra Range theory -- effective learning rate can be enhanced for units receiving thalamic modulation vs. those without
 
   FunLookup	wt_sig_fun;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes wt sigmoidal fun 
   FunLookup	wt_sig_fun_inv;	// #HIDDEN #NO_SAVE #NO_INHERIT #CAT_Learning computes inverse of wt sigmoidal fun
@@ -372,7 +372,7 @@ public:
   inline void Compute_dWt_CtLeabraXCAL_vec
     (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
      float* ru_avg_l_lrn, float* ru_thal,
-     const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
+     const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
      const float su_avg_s, const float su_avg_m);
   // #IGNORE vectorized version
 #endif

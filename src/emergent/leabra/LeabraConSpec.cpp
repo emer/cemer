@@ -24,7 +24,7 @@ TA_BASEFUNS_CTORS_DEFN(WtScaleSpec);
 TA_BASEFUNS_CTORS_DEFN(XCalLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(WtSigSpec);
 TA_BASEFUNS_CTORS_DEFN(FastWtsSpec);
-TA_BASEFUNS_CTORS_DEFN(CIFERLrateSpec);
+TA_BASEFUNS_CTORS_DEFN(DeepLrateSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraConSpec);
 SMARTREF_OF_CPP(LeabraConSpec);
 
@@ -115,14 +115,14 @@ void FastWtsSpec::UpdateAfterEdit_impl() {
   slow_lrate = 1.0f / fast_lrate;
 }
 
-void CIFERLrateSpec::Initialize() {
+void DeepLrateSpec::Initialize() {
   on = false;
   bg_lrate = 1.0f;
   fg_lrate = 0.0f;
   Defaults_init();
 }
 
-void CIFERLrateSpec::Defaults_init() {
+void DeepLrateSpec::Defaults_init() {
 }
 
 

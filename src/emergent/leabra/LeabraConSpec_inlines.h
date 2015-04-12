@@ -101,7 +101,7 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
 (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
  float* ru_avg_l_lrn, float* ru_thal,
- const bool cifer_on, const float clrate, const float bg_lrate, const float fg_lrate,
+ const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
  const float su_avg_s, const float su_avg_m) {
   VECF su_avg_s_v(su_avg_s);
   VECF su_avg_m_v(su_avg_m);
@@ -127,7 +127,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
       const float ru_avg_l_j = ru_avg_l[ru_idx+j];
       const float ru_avg_l_lrn_j = ru_avg_l_lrn[ru_idx+j];
       float lrate_eff = clrate;
-      if(cifer_on) {
+      if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx+j]);
       }
       dwts[i+j] += lrate_eff * (ru_avg_l_lrn_j * xcal.dWtFun(srs_j, ru_avg_l_j) +
@@ -137,7 +137,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
   for(;i<sz;i++) {              // get the remainder
     const int ru_idx = cg->UnIdx(i);
     float lrate_eff = clrate;
-    if(cifer_on) {
+    if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx]);
     }
     C_Compute_dWt_CtLeabraXCAL
@@ -156,14 +156,14 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
-  const bool cifer_on = cifer.on;
+  const bool deep_on = deep.on;
   float clrate = cur_lrate;
 
   float bg_lrate;
   float fg_lrate;
-  if(cifer_on) {
-    bg_lrate = cifer.bg_lrate;
-    fg_lrate = cifer.fg_lrate;
+  if(deep_on) {
+    bg_lrate = deep.bg_lrate;
+    fg_lrate = deep.fg_lrate;
   }
 
   const float su_avg_s = su->avg_s_eff;
@@ -182,13 +182,13 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
   Compute_dWt_CtLeabraXCAL_vec
     (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, thal,
-     cifer_on, clrate, bg_lrate, fg_lrate,
+     deep_on, clrate, bg_lrate, fg_lrate,
      su_avg_s, su_avg_m);
 #else
   for(int i=0; i<sz; i++) {
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
     float lrate_eff = clrate;
-    if(cifer_on) {
+    if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
     }
     C_Compute_dWt_CtLeabraXCAL
