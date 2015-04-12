@@ -122,7 +122,11 @@ public:
   virtual void  RemoveKilledJobs();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM remove ALL jobs in the jobs_done data table with a status of KILLED, including all their data that has been checked in (according to the local contents of the repository -- good idea to do an Update before running this)
   virtual void  NewSearchAlgo(TypeDef *type = &TA_GridSearch);
-  // #MENU_BUTTON #MENU_ON_Jobs #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
+  // #MENU_BUTTON #MENU_ON_Jobs #MENU_SEP_BEFORE #TYPE_0_ParamSearchAlgo Choose a search algorithm to use in this cluster run.
+  virtual bool  AddCluster(const String& clust_nm);
+  // #MENU_BUTTON #MENU_ON_Jobs add given cluster to list of active clusters in use -- jobs from these clusters will be displayed in all the jobs* tables -- any cluster you visit will also automatically be added to the list, which is also visible / editable in the Properties tab, in clusters field (space separated list)
+  virtual bool  AddUser(const String& user_nm);
+  // #MENU_BUTTON #MENU_ON_Jobs add given user to list of active users -- jobs from these users will be displayed in the jobs* tables -- note that access to other user's data is strictly read only.  current list of users is also visible / editable in the Properties tab, in users field (space separated list)
 
   virtual void  ListJobFiles();
   // #MENU_BUTTON #MENU_ON_Files list all the other_files associated with jobs selected in the jobs_running or jobs_done or jobs_archive data table (looks in running first, then done, then archive for selected rows) -- if include_data is selected, then it includes the dat_files too -- you can then go to the file_list tab to select the specific files you want to operate on for other operations in this menu
@@ -236,11 +240,6 @@ public:
   // initialize the svn_other subversion setup for accessing other subversion info
   virtual void  ListOtherSvn(int rev=-1, bool recurse=true);
   // list files in other svn at given revision (-1 for current), and wether to recurse into subdirectories
-
-  virtual bool  AddCluster(const String& clust_nm);
-  // add given cluster to list of active clusters in use
-  virtual bool  AddUser(const String& user_nm);
-  // add given user to list of active users in use
 
   // view panel sets etc
 
