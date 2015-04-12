@@ -631,9 +631,11 @@ void ClusterRun::GetFiles() {
       else {
         // not-local, not current user etc -- copy it to us
         String svnp = file_list.GetValAsString("svn_file_path", row);
+        String svnurl = taMisc::GetDirFmPath(svnp);
         String local_fl = wc_path + "/" + fl;
         taMisc::Info("Getting non-local svn file from:", svnp, "to:", local_fl,
                      "and adding to local svn");
+        InitOtherSvn(wc_path, m_cm->GetFullUrl()); // just use current..
         taMisc::Busy();
         try {
           svn_other->SaveFile(svnp, local_fl);
@@ -802,8 +804,8 @@ void ClusterRun::InitOtherSvn(const String& svn_wc_path, const String& svn_url) 
   svn_other->SetWorkingCopyPath(svn_wc_path.chars());
   svn_other_wc_path = svn_other->GetWorkingCopyPath().c_str();
   svn_other_url = svn_url;
-  taMisc::Info("ClusterRun Other SVN set to url:", svn_other_url, "working copy:",
-               svn_other_wc_path);
+  // taMisc::Info("ClusterRun Other SVN set to url:", svn_other_url, "working copy:",
+  //              svn_other_wc_path);
 }
 
 void ClusterRun::ListOtherSvn(int rev, bool recurse) {
