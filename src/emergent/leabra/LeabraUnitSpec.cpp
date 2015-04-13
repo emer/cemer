@@ -1422,7 +1422,12 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
 
   if((net->cycle >= 0) && lay->hard_clamped) {
     if(deep.on && net->cycle == 1) { // apply deep_norm attentional modulation to inputs!
-      u->act_eq *= u->deep_norm;
+      if(u->deep_norm > 0.0f) {
+        u->act_eq *= u->deep_norm;
+      }
+      else {
+        u->act_eq *= lay->deep_norm_off;
+      }
       u->act_nd = u->act_eq;
       u->act = u->act_eq;
     }
@@ -1969,7 +1974,7 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
   u->deep_ctxt = 0.0f;
-  u->deep_norm = 0.0f;
+  u->deep_norm = 1.0f;
   u->deep_raw_net = 0.0f;
   u->deep_norm_net = 0.0f;
 }
