@@ -100,7 +100,7 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
 (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
- float* ru_avg_l_lrn, float* ru_thal,
+ float* ru_avg_l_lrn, float* ru_deep,
  const bool deep_on, const float clrate, const float bg_lrate, const float fg_lrate,
  const float su_avg_s, const float su_avg_m) {
   VECF su_avg_s_v(su_avg_s);
@@ -128,7 +128,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
       const float ru_avg_l_lrn_j = ru_avg_l_lrn[ru_idx+j];
       float lrate_eff = clrate;
       if(deep_on) {
-        lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx+j]);
+        lrate_eff *= (bg_lrate + fg_lrate * ru_deep[ru_idx+j]);
       }
       dwts[i+j] += lrate_eff * (ru_avg_l_lrn_j * xcal.dWtFun(srs_j, ru_avg_l_j) +
                                 xcal.m_lrn * xcal.dWtFun(srs_j, srm_j));
@@ -138,7 +138,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
     const int ru_idx = cg->UnIdx(i);
     float lrate_eff = clrate;
     if(deep_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * ru_thal[ru_idx]);
+      lrate_eff *= (bg_lrate + fg_lrate * ru_deep[ru_idx]);
     }
     C_Compute_dWt_CtLeabraXCAL
       (dwts[i], lrate_eff, ru_avg_s[ru_idx], ru_avg_m[ru_idx], su_avg_s, su_avg_m,
@@ -179,9 +179,9 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
   float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
   float* avg_l = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L);
   float* avg_l_lrn = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_L_LRN);
-  float* thal = lnet->UnVecVar(thr_no, LeabraNetwork::THAL);
+  float* deep = lnet->UnVecVar(thr_no, LeabraNetwork::DEEP);
   Compute_dWt_CtLeabraXCAL_vec
-    (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, thal,
+    (cg, dwts, avg_s, avg_m, avg_l, avg_l_lrn, deep,
      deep_on, clrate, bg_lrate, fg_lrate,
      su_avg_s, su_avg_m);
 #else
@@ -189,7 +189,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no)
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
     float lrate_eff = clrate;
     if(deep_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * ru->thal);
+      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_norm);
     }
     C_Compute_dWt_CtLeabraXCAL
       (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,

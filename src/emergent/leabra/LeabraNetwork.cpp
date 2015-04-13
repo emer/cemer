@@ -1519,7 +1519,7 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
   float* avg_m = UnVecVar(thr_no, AVG_M);
   float* avg_l = UnVecVar(thr_no, AVG_L);
   float* avg_l_lrn = UnVecVar(thr_no, AVG_L_LRN);
-  float* thal =  UnVecVar(thr_no, THAL);
+  float* deep =  UnVecVar(thr_no, DEEP);
 #ifdef CUDA_COMPILE
   float* act_q0 =  UnVecVar(thr_no, ACT_Q0);
 #endif
@@ -1531,7 +1531,7 @@ void LeabraNetwork::Compute_dWt_VecVars_Thr(int thr_no) {
     avg_m[i] = u->avg_m;
     avg_l[i] = u->avg_l;
     avg_l_lrn[i] = u->avg_l_lrn;
-    thal[i] = u->thal;
+    deep[i] = u->deep_norm;
 #ifdef CUDA_COMPILE
     act_q0[i] = u->act_q0;
     LeabraUnit* un = (LeabraUnit*)UnFmIdx(i);

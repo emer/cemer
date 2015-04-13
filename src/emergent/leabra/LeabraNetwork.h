@@ -184,7 +184,7 @@ public:
     AVG_S,
     AVG_M,
     AVG_L,
-    THAL,
+    DEEP,
     AVG_L_LRN,
     ACT_Q0,
     N_VEC_VARS,
