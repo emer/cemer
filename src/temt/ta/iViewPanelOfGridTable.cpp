@@ -243,7 +243,7 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   ////////////////////////////////////////////////////////////////////////////
   // Row and column page size controls
   layPageVals = new QHBoxLayout; layWidg->addLayout(layPageVals);
-  layClickVals->setSpacing(2);  // plenty of room
+  layPageVals->setSpacing(2);  // plenty of room
   layPageVals->setContentsMargins(margin_left_right, margin_top_bottom, margin_left_right, margin_top_bottom);
 
   chkPageVals =  new QCheckBox("Custom\nPaging   ", widg); chkClickVals->setObjectName( "chkPageVals");
@@ -259,8 +259,6 @@ iViewPanelOfGridTable::iViewPanelOfGridTable(GridTableView* tlv)
   layPageVals->addWidget(fldRowPageVal->GetRep());
   ((iLineEdit*)fldRowPageVal->GetRep())->setCharWidth(8);
   
-  fldRowPageVal->GetRep()->setEnabled(false);
-
   lblColPageVal = taiM->NewLabel("  Column Paging ", widg, font_spec);
   lblColPageVal->setToolTip(taiMisc::ToolTipPreProcess("The number of columns to move when >> or << is clicked"));
   layPageVals->addWidget(lblColPageVal);
