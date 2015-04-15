@@ -1205,7 +1205,7 @@ cssCPtr_String::operator taBase*() const {
 cssCPtr_String::operator TypeDef*() const {
   if(ptr_cnt > 0) { CvtErr("taBase*"); return NULL; }
   String& nm = GetStringRef();
-  TypeDef* td = taMisc::types.FindName(nm);
+  TypeDef* td = taMisc::FindTypeName(nm);
   if(td == NULL) {
     cssMisc::Error(prog, "Could not find type:", nm);
     return NULL;

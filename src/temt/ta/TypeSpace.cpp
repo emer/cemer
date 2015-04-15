@@ -75,7 +75,8 @@ TypeDef* TypeSpace::FindTypeR(const String& fqname) const {
     TypeDef* td = FindName(fqname.before("::"));
     if (!td) return NULL;
     return td->sub_types.FindTypeR(fqname.after("::"));
-  } else {
+  }
+  else {
     return FindName(fqname);
   }
 }

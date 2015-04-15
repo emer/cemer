@@ -254,7 +254,7 @@ int yylex()
       if(cssLex::Buf.before(3) == "TA_") {
 	// parse as a type name
 	String nm = cssLex::Buf.after("TA_");
-	TypeDef* td = taMisc::types.FindName(nm);
+	TypeDef* td = taMisc::FindTypeName(nm);
 	if(td != NULL) {
 	  cssTA* tatd = new cssTypeDef((void*)td, 1, &TA_TypeDef);
 	  yylval.el = cssMisc::cur_top->AddLiteral(tatd);

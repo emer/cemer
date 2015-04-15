@@ -427,7 +427,7 @@ static cssEl* cssElCFun_make_matrix_stub(int na, cssEl* arg[]) {
       if(arg[i] == cssBI::semicolon_mark || arg[i] == cssBI::comma_mark) continue;
       // check for type name and intercept as typedef
       if(arg[i]->name.nonempty()) {
-	TypeDef* td = taMisc::types.FindName(arg[i]->name);
+	TypeDef* td = taMisc::FindTypeName(arg[i]->name);
 	if(td) {
 	  imat->Set_Flat((Variant)td, c++);
 	}
@@ -1844,7 +1844,7 @@ static cssEl* cssElCFun_Token_stub(int, cssEl* arg[]) {
 }
 
 static cssEl* cssElCFun_Type_stub(int, cssEl* arg[]) {
-  TypeDef* td = taMisc::types.FindName(arg[1]->GetStr());
+  TypeDef* td = taMisc::FindTypeName(arg[1]->GetStr());
   if(td == NULL) {
     cssMisc::Error(arg[0]->prog, "Could not find type:", arg[1]->GetStr());
     return &cssMisc::Void;
@@ -2811,7 +2811,7 @@ char* css_scoped_generator(const char* text, int state) {
   if(state == 0) {
     par_path = text;
     par_path = par_path.before("::",-1);
-    par_td = taMisc::types.FindName(par_path);
+    par_td = taMisc::FindTypeName(par_path);
     mb_name = text;
     mb_name = mb_name.after("::", -1);
     item_idx = 0;

@@ -312,31 +312,7 @@ String TypeDef::GetTypeEnumString() const {
 
 
 TypeDef* TypeDef::FindGlobalTypeName(const String& nm, bool err_not_found) {
-  if(nm.contains("::")) {
-    String typnm = nm.before("::");
-    String subnm = nm.after("::");
-    TypeDef* typ = taMisc::types.FindName(typnm);
-    if(!typ) {
-      if(err_not_found) {
-        taMisc::Error("FindGlobalTypeName: type named:", typnm, "not found!");
-      }
-      return NULL;
-    }
-    TypeDef* sub = typ->FindSubType(subnm);
-    if(!sub) {
-      if(err_not_found) {
-        taMisc::Error("FindGlobalTypeName: sub type named:", subnm,
-                      "not found in parent class of type:", typnm);
-      }
-      return NULL;
-    }
-    return sub;
-  }
-  TypeDef* typ = taMisc::types.FindName(nm);
-  if(!typ && err_not_found) {
-    taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
-  }
-  return typ;
+  return taMisc::FindTypeName(nm, err_not_found);
 }
 
 void TypeDef::AddNewGlobalType(bool make_derived) {
@@ -1998,7 +1974,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       *((void**)base) = NULL;
     }
     else if(DerivesFrom(TA_TypeDef)) {
-      TypeDef* td = taMisc::types.FindTypeR(val);
+      TypeDef* td = taMisc::FindTypeName(val);
       if(td != NULL)
         *((TypeDef**)base) = td;
     }
@@ -2006,7 +1982,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       String fqtypnm = val.before("::", -1); // before final ::
       String mbnm = val.after("::", -1); // after final ::
       if(!fqtypnm.empty() && !mbnm.empty()) {
-        TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+        TypeDef* td = taMisc::FindTypeName(fqtypnm);
         if(td != NULL) {
           MemberDef* md = td->members.FindName(mbnm);
           if(md != NULL)
@@ -2018,7 +1994,7 @@ void TypeDef::SetValStr(const String& val, void* base, void* par, MemberDef* mem
       String fqtypnm = val.before("::", -1); // before final ::
       String mthnm = val.after("::", -1);
       if(!fqtypnm.empty() && !mthnm.empty()) {
-        TypeDef* td = taMisc::types.FindTypeR(fqtypnm);
+        TypeDef* td = taMisc::FindTypeName(fqtypnm);
         if(td != NULL) {
           MethodDef* md = td->methods.FindName(mthnm);
           if(md != NULL)

@@ -617,7 +617,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
   float wrp_x, wrp_y;
   if(wrap_reflect==WRAP) {
     if(x2x) {
-      if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) {
+      if((sre.x - srs.x != 0) && (rre.x - rrs.x != 0)) {
 	if(ri_x > .5f) 	{ wrp_x = (float)(si_pos.x + si_geom.x) / mxs_x; }
 	else           	{ wrp_x = (float)(si_pos.x - si_geom.x) / mxs_x; }
       }
@@ -625,7 +625,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
       else { wrp_x = 0.0f; } // x2x mapping geom == 1 -> don't wrap!
     }
     else if(x2y) {
-      if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) {
+      if((sre.x - srs.x != 0) && (rre.y - rrs.y != 0)) {
 	if(ri_y > .5f) 	{ wrp_x = (float)(si_pos.x + si_geom.x) / mxs_x; }
 	else           	{ wrp_x = (float)(si_pos.x - si_geom.x) / mxs_x; }
       }
@@ -634,7 +634,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
     }
     else					{ wrp_x = (float)si_pos.x / mxs_x; } // not using_sx at all so no wrap in x-dimension
     if(y2y) {
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) {
+      if((sre.y - srs.y != 0) && (rre.y - rrs.y != 0)) {
 	if(ri_y > .5f)  { wrp_y = (float)(si_pos.y + si_geom.y) / mxs_y; }
 	else            { wrp_y = (float)(si_pos.y - si_geom.y) / mxs_y; }
       }
@@ -642,7 +642,7 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
       else { wrp_y = 0.0f; } // x2x mapping geom == 1 -> don't wrap!
     }
     else if(y2x) {
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) {
+      if((sre.y - srs.y != 0) && (rre.x - rrs.x != 0)) {
 	if(ri_x > .5f)  { wrp_y = (float)(si_pos.y + si_geom.y) / mxs_y; }
 	else            { wrp_y = (float)(si_pos.y - si_geom.y) / mxs_y; }
       }
@@ -654,58 +654,58 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
 
   switch ( topo_pattern ) {
   case X2X :	// the usual x to x case
-    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { dist = 0.0f; } // only one un/gp in x-dimension -> min distance -> max wts.
+    if((sre.x - srs.x == 0) || (rre.x - rrs.x == 0)) { dist = 0.0f; } // only one un/gp in x-dimension -> min distance -> max wts.
     else { dist = fabsf(si_x - ri_x); }
     if(wrap_reflect==WRAP) {
-      if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) {
+      if((sre.x - srs.x != 0) && (rre.x - rrs.x != 0)) {
 	float wrp_dist = fabsf(wrp_x - ri_x);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     break;
   case X2Y :	// the send_x to recv_y case
-    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.y - rrs.y) < 0.011f) { dist = 0.0f; } // geom in send x or recv y == 1 -> min dist (-> max wt)
+    if((sre.x - srs.x == 0) || (rre.y - rrs.y == 0)) { dist = 0.0f; } // geom in send x or recv y == 1 -> min dist (-> max wt)
     else { dist = fabsf(si_x - ri_y); }
     if(wrap_reflect==WRAP) {
-      if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) {
+      if((sre.x - srs.x != 0) && (rre.y - rrs.y != 0)) {
 	float wrp_dist = fabsf(wrp_x - ri_y);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     break;
   case Y2Y :	// i.e. the usual y to y case
-    if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.y - rrs.y) < 0.011f) { dist = 0.0f; } // geom in y-dimension == 1 -> min dist (-> max wt)
+    if((sre.y - srs.y == 0) || (rre.y - rrs.y == 0)) { dist = 0.0f; } // geom in y-dimension == 1 -> min dist (-> max wt)
     else { dist = fabsf(si_y - ri_y); }
     if(wrap_reflect==WRAP) {
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) {
+      if((sre.y - srs.y != 0) && (rre.y - rrs.y != 0)) {
 	float wrp_dist = fabsf(wrp_y - ri_y);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     break;
   case Y2X :	// the send_y to recv_x case
-    if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { dist = 0.0f; } // geom in y-dimension == 1 -> min dist (-> max wt)
+    if((sre.y - srs.y == 0) || (rre.x - rrs.x == 0)) { dist = 0.0f; } // geom in y-dimension == 1 -> min dist (-> max wt)
     else { dist = fabsf(si_y - ri_x); }
     if(wrap_reflect==WRAP) {
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) {
+      if((sre.y - srs.y != 0) && (rre.x - rrs.x != 0)) {
 	float wrp_dist = fabsf(wrp_y - ri_x);
 	if(wrp_dist < dist) dist = wrp_dist;
       }
     }
     break;
   case X2X_Y2Y : // x maps to x and y maps to y
-    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { // either send or recv has geom in x-dimension == 1 -> x2x dist is misleading
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) { dist = fabsf(si_y - ri_y); } // dist in y2y mapping is governing
+    if((sre.x - srs.x == 0) || (rre.x - rrs.x == 0)) { // either send or recv has geom in x-dimension == 1 -> x2x dist is misleading
+      if((sre.y - srs.y != 0) && (rre.y - rrs.y != 0)) { dist = fabsf(si_y - ri_y); } // dist in y2y mapping is governing
       else { dist = 0.0f; }	// both mappings have geom == 1 -> min dist (-> max wt)
     }
     else { // x2x mapping geom > 1
-      if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.y - rrs.y) < 0.011f) { dist = fabsf(si_x - ri_x); } // only x2x dist matters!
+      if((sre.y - srs.y == 0) || (rre.y - rrs.y == 0)) { dist = fabsf(si_x - ri_x); } // only x2x dist matters!
       else { dist = taMath_float::euc_dist(si_x, si_y, ri_x, ri_y); } // both x2x and y2y components matter
     }
     if(wrap_reflect == WRAP) {
       // case: both x2x, y2y mapping geom >1
-      if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f &&
-	 fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f >= 0.011f) {
+      if((sre.x - srs.x != 0) && (rre.x - rrs.x != 0) &&
+	 (sre.y - srs.y != 0) && (rre.y - rrs.y != 0) >= 0.011f) {
 	// test everything..
 	float wrp_dist = taMath_float::euc_dist(wrp_x, si_y, ri_x, ri_y);
 	if(wrp_dist < dist) { dist = wrp_dist; }
@@ -715,12 +715,12 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
 	if(wrp_dist < dist) { dist = wrp_dist; }
       }
       // case: only x2x mapping geom >1
-      else if(fabsf(sre.x - srs.x) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) {
+      else if((sre.x - srs.x != 0) && (rre.x - rrs.x != 0)) {
 	float wrp_dist = fabsf(wrp_x - ri_x);
 	if(wrp_dist < dist) { dist = wrp_dist; } 	// whichever way gets you closer1
       }
       // case: only y2y mapping geom >1
-      else if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.y - rrs.y) >= 0.011f) {
+      else if((sre.y - srs.y != 0) && (rre.y - rrs.y != 0)) {
 	float wrp_dist = fabsf(wrp_y - ri_y);
 	if(wrp_dist < dist) { dist = wrp_dist; } // whatever gets you closest!
       }
@@ -728,13 +728,13 @@ float TopoWtsPrjnSpec::ComputeTopoDist(Projection* prjn, ConGroup* cg, Unit* ru,
     }
     break;
   case X2Y_Y2X :	// send_x maps to recv_y and send_y maps to recv_x
-    if(fabsf(sre.x - srs.x) < 0.011f || fabsf(rre.y - rrs.y) < 0.011f) { // geom in x-to-y mapping == 1
-      if(fabsf(sre.y - srs.y) >= 0.011f && fabsf(rre.x - rrs.x) >= 0.011f) { dist = fabsf(si_y - ri_x); } // ..it's all about y2x!
+    if((sre.x - srs.x == 0) || (rre.y - rrs.y == 0)) { // geom in x-to-y mapping == 1
+      if((sre.y - srs.y != 0) && (rre.x - rrs.x != 0)) { dist = fabsf(si_y - ri_x); } // ..it's all about y2x!
       else { dist = 0.0f; }	// geom in both x2y and y2x mappings == 1 -> min dist (-> max wt)
     }
     else { // x2y mapping geom > 1
       //if(sre.y - srs.y == 0) { dist = taMath_float::euc_dist(si_x, 0.0f, ri_x, 0.0f); }
-      if(fabsf(sre.y - srs.y) < 0.011f || fabsf(rre.x - rrs.x) < 0.011f) { dist = fabsf(si_x - ri_y); } // ..all about x2y
+      if((sre.y - srs.y == 0) || (rre.x - rrs.x == 0)) { dist = fabsf(si_x - ri_y); } // ..all about x2y
       else { dist = taMath_float::euc_dist(si_x, si_y, ri_y, ri_x); } // both x2y and y2x matter
     }
     // TODO: adapt the X2X_Y2Y to here...

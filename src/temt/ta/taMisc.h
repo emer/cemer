@@ -613,8 +613,8 @@ public:
   /////////////////////////////////////////////////
   //    Global state management
 
-  static TypeDef* FindTypeName(const String& typ_nm);
-  // #CAT_GlobalState looks up typedef by name on global list of types, using AKA to find replacement types if original name not found
+  static TypeDef* FindTypeName(const String& typ_nm, bool err_not_found = true);
+  // #CAT_GlobalState looks up typedef by name on global list of types, using AKA to find replacement types if original name not found -- will give an error message if not found unless otherwise turned off
   static MethodDef* FindRegFunName(const String& name, int& idx);
   // #CAT_GlobalState find registered function on given list by name, idx is index of fun within list of registered functions (reg_funs)
   static MethodDef* FindRegFunAddr(ta_void_fun funa, int& idx);

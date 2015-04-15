@@ -1018,17 +1018,39 @@ void taMisc::EditFile(const String& filename) {
 /////////////////////////////////////////////////
 //      Global state management
 
-TypeDef* taMisc::FindTypeName(const String& typ_nm) {
-  TypeDef* td = taMisc::types.FindName(typ_nm);
-  if(td != NULL) return td;
+TypeDef* taMisc::FindTypeName(const String& nm, bool err_not_found) {
+  if(nm.contains("::")) {
+    String typnm = nm.before("::");
+    String subnm = nm.after("::");
+    TypeDef* typ = FindTypeName(typnm, err_not_found);
+    if(!typ) {
+      if(err_not_found) {
+        taMisc::Error("taMisc::FindTypeName: type named:", typnm, "not found!");
+      }
+      return NULL;
+    }
+    TypeDef* sub = typ->FindSubType(subnm);
+    if(!sub) {
+      if(err_not_found) {
+        taMisc::Error("taMisc::FindTypeName: sub type named:", subnm,
+                      "not found in parent class of type:", typnm);
+      }
+      return NULL;
+    }
+    return sub;
+  }
+  TypeDef* typ = taMisc::types.FindName(nm);
+  if(typ != NULL) return typ;
   for(int i=0; i<taMisc::aka_types.size; i++) {
     TypeDef* aka = taMisc::aka_types.FastEl(i);
     String aka_nm = aka->OptionAfter("AKA_");
-    if(aka_nm == typ_nm) {
+    if(aka_nm == nm) {
       return aka;
     }
   }
-  taMisc::Warning("Unknown type:",typ_nm);
+  if(!typ && err_not_found) {
+    taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
+  }
   return NULL;
 }
 

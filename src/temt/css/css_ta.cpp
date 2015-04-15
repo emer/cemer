@@ -1052,7 +1052,7 @@ void* cssTA_Matrix::GetVoidPtrOfType(const String& std) const {
     cssMisc::Error(prog, "Null pointer for conversion to:",std,"from:",GetTypeName());
     return NULL;
   }
-  TypeDef* td = taMisc::types.FindName(std);
+  TypeDef* td = taMisc::FindTypeName(std);
   if(!td) {
     cssMisc::Error(prog, "GetVoidPtrOfType: Type name:",std,"not found in list of types");
     return NULL;
@@ -2187,7 +2187,7 @@ String cssTypeDef::GetStr() const {
 
 void cssTypeDef::operator=(const String& s) {
   if(ptr_cnt == 1) {
-    TypeDef* td = taMisc::types.FindName(s);
+    TypeDef* td = taMisc::FindTypeName(s);
     if(td)
       ptr = (void*)td;
   }

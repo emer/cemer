@@ -118,7 +118,7 @@ int QcssConsole::autocompleteScoped(String cmd_b4, String cmd, QStringList& lst)
   mb_name = mb_name.after("::", -1);
   int len = mb_name.length();
 //  taBase* parent = NULL;
-  TypeDef* par_td = taMisc::types.FindName(par_path);
+  TypeDef* par_td = taMisc::FindTypeName(par_path);
   if (par_td == NULL) {
     cssProgSpace* src_prog = cssMisc::cur_top->GetSrcProg();
     cssElPtr elp = cssMisc::cur_top->types.FindName(par_path);

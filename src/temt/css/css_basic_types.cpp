@@ -345,9 +345,9 @@ cssString::operator taBase*() const {
 }
 
 cssString::operator TypeDef*() const {
-  TypeDef* td = taMisc::types.FindName(val);
+  TypeDef* td = taMisc::FindTypeName(val, false); // no err
   if(td == NULL) {
-    cssMisc::Error(prog, "Could not find type:", val);
+    cssMisc::Error(prog, "Could not find type:", val); // this err..
     return NULL;
   }
   return td;

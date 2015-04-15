@@ -61,7 +61,7 @@ bool taPlugin::InitPlugin() {
   state_classname = name + "PluginState";
   state_classname[0] = (char) toupper(state_classname[0]);
 
-  TypeDef* pst = taMisc::types.FindName(state_classname);
+  TypeDef* pst = taMisc::FindTypeName(state_classname);
   if (pst && pst->DerivesFrom(&TA_taFBase))
     state_type = pst;
   if (state_type && tabMisc::root) {
