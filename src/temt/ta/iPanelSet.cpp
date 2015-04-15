@@ -171,7 +171,9 @@ void iPanelSet::UpdateMethodButtons() {
 
 void iPanelSet::setCurrentPanelId_impl(int id) {
   iPanelBase* pn = panels.PosSafeEl(id);
-  if (!pn) return; //shouldn't happen
+  if (!pn)
+    return; //shouldn't happen
+  emit qt_sig_PanelChanged(id);
   wsSubPanels->setCurrentWidget(pn);
   QAbstractButton* but = buttons->button(id);
   // for when called programmatically:

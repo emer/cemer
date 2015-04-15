@@ -35,42 +35,47 @@ class TA_API iPanelSet: public iPanelSetBase { //  contains 0 or more sub-data-p
   Q_OBJECT
 INHERITED(iPanelSetBase)
 public:
-//QVBoxLayout*          layDetail;
-  QFrame*                 frmButtons;
-  QHBoxLayout*            layButtons;
-  QButtonGroup*             buttons; // one QPushButton for each (note: not a widget)
-  QStackedLayout*           layMinibar; // if any panels use the minibar, created
-  taiEditorOfClass*      method_box_mgr; // edh object that manages the method box!
+  QFrame*               frmButtons;
+  QHBoxLayout*          layButtons;
+  QButtonGroup*         buttons; // one QPushButton for each (note: not a widget)
+  QStackedLayout*       layMinibar; // if any panels use the minibar, created
+  taiEditorOfClass*     method_box_mgr; // edh object that manages the method box!
 
   void                  setPanelAvailable(iPanelBase* pn); // dynamically show/hide a btn/pn
-
   void                  SetMenu(QWidget* menu); // sets the menu (s/b a menubar; or toolbar on mac)
   void                  AddSubPanel(iPanel* pn);
   void                  AllSubPanelsAdded(); // call after all subpanels added, to finalize layout
   void                  AddSubPanelDynamic(iPanel* pn); // call this after fully built to dynamically add a new frame
-  void                  SetMethodBox(QWidget* meths,
-                                     taiEditorOfClass* mgr);
+  void                  SetMethodBox(QWidget* meths, taiEditorOfClass* mgr);
   // sets a box that contains methods, on bottom, along with manager of those buttons
   void                  UpdateMethodButtons();
   // update the method buttons, by calling on manager
 
-  QWidget*     firstTabFocusWidget() override;
+  QWidget*              firstTabFocusWidget() override;
 
   iPanelSet(taiSigLink* dl_);
   ~iPanelSet();
+  
+#ifndef __MAKETA__
+signals:
+  void                  qt_sig_PanelChanged(int panel_id);
+#endif // ndef __MAKETA__
+  
+
 
 public: // ISigLinkClient interface
-  void*        This() override {return (void*)this;}
-//  void               SigLinkDestroying(taSigLink* dl) override {} // nothing for us; subpanels handle
-  TypeDef*     GetTypeDef() const override {return &TA_iPanelSet;}
+  void*        This() override { return (void*)this; }
+//  void          SigLinkDestroying(taSigLink* dl) override {} // nothing for us; subpanels handle
+  TypeDef*     GetTypeDef() const override { return &TA_iPanelSet; }
+  
 protected:
   void         SigEmit_impl(int sls, void* op1, void* op2) override; // dyn subpanel detection
 
 protected:
   void         setCurrentPanelId_impl(int id) override;
-  void                  AddMinibar();
-  void                  AddMinibarCtrls();
-  void                  AddMinibarCtrl(iPanel* pn);
+  void         AddMinibar();
+  void         AddMinibarCtrls();
+  void         AddMinibarCtrl(iPanel* pn);
 };
 
 #endif // iPanelSet_h

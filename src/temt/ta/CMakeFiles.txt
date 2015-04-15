@@ -911,6 +911,7 @@ set(ta_HEADS_NOMAKETA_MOC
   taGuiAction_QObj.h
   taSigLink_QObj.h
   ISelectableHost_QObj.h
+  ClusterRun_QObj.h
 
   taApplication.h
 
@@ -2037,6 +2038,7 @@ set(ta_SRCS_NOMAKETA
   taGuiAction_QObj.cpp
   taSigLink_QObj.cpp
   ISelectableHost_QObj.cpp
+  ClusterRun_QObj.cpp
 
   taApplication.cpp
 

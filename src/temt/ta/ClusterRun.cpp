@@ -14,6 +14,7 @@
 //   Lesser General Public License for more details.
 
 #include "ClusterRun.h"
+#include <ClusterRun_QObj>
 #include <ClusterManager>
 #include <taSigLinkItr>
 #include <iDataTableEditor>
@@ -32,6 +33,9 @@
 
 #include <QRegExp>
 #include <QDir>
+
+#include <QObject> //
+
 
 TA_BASEFUNS_CTORS_DEFN(ClusterRun);
 SMARTREF_OF_CPP(ClusterRun); // ClusterRunRef
@@ -64,6 +68,20 @@ void ClusterRun::Initialize() {
   m_cm = 0;
   svn_other = NULL;
   auto_edit = false;
+  
+  cur_table = NULL;
+  cur_panel = PANEL_CONTROL;
+//  enable_kill = false;
+//  enable_get = false;
+//  enable_import = false;
+//  enable_remove = false;
+  enable_kill = true;
+  enable_get = true;
+  enable_import = true;
+  enable_remove = true;
+  
+  qt_object_helper = new ClusterRun_QObj(this);
+  helper_is_connected = false;
 }
 
 void ClusterRun::Destroy() {
@@ -1255,7 +1273,6 @@ void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
 
   dc = dt.FindMakeCol("start_time", VT_STRING);
   dc->desc = "timestamp for when the job was submitted or started running";
-
 }
 
 String
@@ -1650,11 +1667,20 @@ iDataTableEditor* ClusterRun::DataTableEditor(DataTable& dt) {
   // String strm;
   // dt.ListSigClients(strm);
   // taMisc::ConsoleOutput(strm);
+  if (!helper_is_connected) {
+    iPanelSet* ps = FindMyPanelSet();
+    QObject::connect(ps, SIGNAL(qt_sig_PanelChanged(int)), qt_object_helper, SLOT(UpdateEnabling(int)));
+    helper_is_connected = true;
+  }
+  
   taSigLink* dl = dt.sig_link();
   if(dl) {
     taSigLinkItr itr;
     iPanelOfDataTable* el;
     FOR_DLC_EL_OF_TYPE(iPanelOfDataTable, el, dl, itr) {
+      if (el->dte) {
+        QObject::connect(el->dte->tvTable, SIGNAL(sig_currentChanged(const QModelIndex&)), qt_object_helper, SLOT(SelectionChanged(const QModelIndex&)));
+      }
       return el->dte;
     }
   }
@@ -1761,6 +1787,54 @@ bool ClusterRun::WaitProcAutoUpdate() {
   return true;
 }
 
+void ClusterRun::SetCurDataTable(PanelId panel_id) {
+  if (panel_id == PANEL_RUNNING) {
+    cur_table = &jobs_running;
+  }
+  else if (panel_id == PANEL_DONE) {
+    cur_table = &jobs_done;
+  }
+  else if (panel_id == PANEL_ARCHIVE) {
+    cur_table = &jobs_archive;
+  }
+  else if (panel_id == PANEL_FILES) {
+    cur_table = &file_list;
+  }
+  else if (panel_id == PANEL_INFO) {
+    cur_table = &cluster_info;
+  }
+  else {
+    cur_table = NULL;
+  }
+}
+
 void ClusterRun::DoClusterOp(String do_this) {
   CallFun(do_this);
+}
+
+void ClusterRun::UpdateUI(int panel_id) {
+  cur_panel = static_cast<PanelId>(panel_id);
+  SetCurDataTable(cur_panel);
+  
+  enable_get = true;
+  enable_remove = true;
+  enable_kill = true;
+  enable_import = true;
+//  enable_get = false;
+//  enable_remove = false;
+//  enable_kill = false;
+//  enable_import = false;
+  
+//  if (cur_table != NULL && cur_table != &cluster_info) {
+//    int st_row;
+//    int end_row;
+//    bool some_selection = SelectedRows(*cur_table, st_row, end_row);
+//    if (some_selection) {
+//      enable_kill = (cur_table == &jobs_running);
+//      enable_import = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
+//    }
+//  }
+
+  iPanelSet* ps = FindMyPanelSet();
+  ps->UpdateMethodButtons();
 }
