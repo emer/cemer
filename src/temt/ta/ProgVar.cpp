@@ -853,13 +853,13 @@ TypeDef* ProgVar::GetTypeDefFromString(const String& tstr) {
   TypeDef* td = NULL;
   if(vtype.contains("::")) {
     String tn = vtype.before("::");
-    td = taMisc::FindTypeName(tn);
+    td = taMisc::FindTypeName(tn, false); // no err
     if(td) {
       td = td->FindSubType(vtype.after("::"));
     }
   }
   else {
-    td = taMisc::FindTypeName(vtype);
+    td = taMisc::FindTypeName(vtype, false); // no err
   }
   return td;
 }
