@@ -122,7 +122,7 @@ void iLineEdit::setCharWidth(int num) {
     QString s; s.reserve(num);
     // just use numbers, which are probably of about average width
     for (int i = 0; i < num; ++i) {
-      s.append(QChar('0' + (i % 10)));
+      s.append('0');
     }
     setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Preferred);
     int w = fm.size(Qt::TextSingleLine, s).width();
