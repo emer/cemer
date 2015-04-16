@@ -113,7 +113,6 @@ public:
   virtual void  ColFwdAll();
   
   virtual void  SetViewCols(int count); // method because we need to know if the value has changed
-  virtual int   GetViewCols() { return view_cols; } // view_cols is protected so this is for outsiders
 
   iViewPanelOfGridTable* lvp();
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}

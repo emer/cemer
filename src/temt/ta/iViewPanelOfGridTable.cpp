@@ -415,7 +415,7 @@ void iViewPanelOfGridTable::GetValue_impl() {
   }
   else {
     glv->page_rows = glv->view_rows;
-    glv->page_cols = glv->GetViewCols();  // glv->view_cols is protected
+    glv->page_cols = glv->view_cols;
   }
   
   glv->UpdateDisplay(false); // don't update us, because logic will do that anyway
@@ -442,7 +442,7 @@ void iViewPanelOfGridTable::UpdatePanel_impl() {
 
   fldRows->GetImage((String)glv->view_rows);
   fldRowPageVal->GetImage((String)glv->page_rows);
-  fldCols->GetImage((String)glv->GetViewCols());
+  fldCols->GetImage((String)glv->view_cols);
   fldColPageVal->GetImage((String)glv->page_cols);
   fldWidth->GetImage((String)glv->width);
   fldTxtMin->GetImage((String)glv->text_size_range.min);
