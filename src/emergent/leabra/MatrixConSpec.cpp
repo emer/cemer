@@ -19,6 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(MatrixLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(MatrixConSpec);
 
 void MatrixLearnSpec::Initialize() {
+  use_thal = true;
   Defaults_init();
 }
 
