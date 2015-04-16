@@ -31,8 +31,9 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for learning in the matrix 
 INHERITED(SpecMemberBase)
 public:
-  float         da_reset_tr;   // amount of dopamine to completely reset the trace
-  float         otr_lrate;       // #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations -- should generally be less in proportion to average number gating / total stripes
+  float         da_reset_tr;    // amount of dopamine to completely reset the trace
+  bool          use_thal;       // include thalamic modulation in the trace value -- this should be true for PBWM use of matrix con specs, but other cases may not use thalamic gating, and should have this off
+  float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less in proportion to average number gating / total stripes
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -49,7 +50,7 @@ private:
 eTypeDef_Of(MatrixConSpec);
 
 class E_API MatrixConSpec : public LeabraConSpec {
-  // Learning of matrix input connections based on sender * receiver activation product and thal gating activation signal, which accumulate in an ongoing synaptic trace over time, until they are multiplied by a later dopamine dav value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = dav * tr; tr = thal * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
+  // Learning of matrix input connections based on sender * receiver activation product and (optionally) thal gating activation signal, which accumulate in an ongoing synaptic trace over time, until they are multiplied by a later dopamine dav value that is typically driven by primary value (US) outcome at end of a sequence of actions -- dwt = dav * tr; tr = [thal] * su * ru - otr_lrate * su * ru, representing a contrast between gated activations that go one way, and other non-gated activations that go the opposite way (which supports engagement of alternative gating strategies, and avoids overall reductions in weights) -- the trace is reset when this weight change is computed, as a result of an over-threshold level of dopamine.  Patch units shunt dopamine from actively maintaining stripes / information processing channels, to prevent this clearing.
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
@@ -77,7 +78,10 @@ public:
     }
   }
 
-  inline void C_Compute_dWt_Matrix_Tr
+  // TODO: need to build in a temporal asymmetry here, so that gating activations
+  // register before dopamine when it makes sense for them to?
+  
+  inline void C_Compute_dWt_Matrix_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
 
@@ -96,6 +100,20 @@ public:
   }
   // #IGNORE
 
+  inline void C_Compute_dWt_Matrix_NoThal
+    (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
+     const float ru_act, const float su_act) {
+
+    dwt += cur_lrate * mtx_da * tr;
+    float reset_factor = (matrix.da_reset_tr - fabs(mtx_da)) / matrix.da_reset_tr;
+    if(reset_factor < 0.0f) reset_factor = 0.0f;
+    tr *= reset_factor;
+
+    ntr = ru_act * su_act;
+    tr += ntr;                       // just keep accumulating..
+  }
+  // #IGNORE
+
   inline void Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) override {
     LeabraNetwork* net = (LeabraNetwork*)rnet;
     if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
@@ -110,18 +128,33 @@ public:
     
     const int sz = cg->size;
     if(nogo) {
-      for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], trs[i], otr_lr,
-                                -ru->dav, ru->thal, ru->act_eq, su->act_eq);
-        // only diff is -dav for nogo
+      if(matrix.use_thal) {
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                  -ru->dav, ru->thal, ru->act_eq, su->act_eq);
+        }
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                      -ru->dav, ru->act_eq, su->act_eq);
+        }
       }
     }
     else {
-      for(int i=0; i<sz; i++) {
-        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-        C_Compute_dWt_Matrix_Tr(dwts[i], ntrs[i], trs[i], otr_lr,
-                                ru->dav, ru->thal, ru->act_eq, su->act_eq);
+      if(matrix.use_thal) {
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                  ru->dav, ru->thal, ru->act_eq, su->act_eq);
+        }
+      }
+      else {
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                      ru->dav, ru->act_eq, su->act_eq);
+        }
       }
     }
   }

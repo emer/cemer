@@ -69,7 +69,7 @@ public:
   AvgMaxVals    am_deep_ctxt;   // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_ctxt values for the layer
   AvgMaxVals    am_deep_norm_net; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_norm net input values for the layer
   AvgMaxVals    am_deep_norm;   // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_norm values for the layer
-  float         deep_norm_off;  // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation deep_norm value for units that have deep_raw = 0
+  float         deep_norm_def;  // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation default deep_norm value for units that have deep_raw = 0
 
   void	Inhib_SetVals(float val)	{ i_val.g_i = val; i_val.g_i_orig = val; }
   // set computed inhibition values -- sets original too

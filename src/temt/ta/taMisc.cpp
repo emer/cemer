@@ -1856,8 +1856,8 @@ void taMisc::AddUserDataSchema(const String& type_name, UserDataItemBase* item) 
   // are created (static data gets created in "random" order in C++)
   // so we will add now if the type exists, otherwise we add to a deferred list
   TypeDef* typ = NULL;
-  if (&types) {
-    typ = types.FindName(type_name);
+  if (types.size > 0) {
+    typ = FindTypeName(type_name);
   }
   if (typ) {
     typ->AddUserDataSchema(item);
@@ -1880,7 +1880,7 @@ void taMisc::AddDeferredUserDataSchema() {
     type_name = deferred_schema_names->Pop();
     //note: has an extra refn, so not deleted on Pop
     UserDataItemBase* item = deferred_schema_items->Pop();
-    TypeDef* typ = types.FindName(type_name);
+    TypeDef* typ = FindTypeName(type_name);
     if (typ) {
       typ->AddUserDataSchema(item);
     }

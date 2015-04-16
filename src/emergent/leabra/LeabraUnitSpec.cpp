@@ -1201,7 +1201,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
       net_syn *= u->deep_norm;
     }
     else {
-      net_syn *= lay->deep_norm_off;
+      net_syn *= lay->deep_norm_def;
     }
   }
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
@@ -1426,7 +1426,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
         u->act_eq *= u->deep_norm;
       }
       else {
-        u->act_eq *= lay->deep_norm_off;
+        u->act_eq *= lay->deep_norm_def;
       }
       u->act_nd = u->act_eq;
       u->act = u->act_eq;
@@ -1493,7 +1493,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     }
     else {
       LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-      new_act *= lay->deep_norm_off;
+      new_act *= lay->deep_norm_def;
     }
   }
   u->act_nd = act_range.Clip(new_act);

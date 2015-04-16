@@ -794,7 +794,7 @@ public:
   // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections -- post processing rollup
 
   virtual bool DeepNormCopied() { return false; }
-  // #CAT_Deep is the deep_norm value actually copied from another layer (e.g., ThalAutoEncodeUnitSpec) -- if true, then the deep_norm_off value on the layer is just set to 0, so it doesn't get miscomputed based on values that are not otherwise accurate
+  // #CAT_Deep is the deep_norm value actually copied from another layer (e.g., ThalAutoEncodeUnitSpec) -- if true, then the deep_norm_def value on the layer is just set to 0, so it doesn't get miscomputed based on values that are not otherwise accurate
   
   virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep compute deep_norm values from deep_raw and deep_ctxt values
