@@ -1049,7 +1049,9 @@ TypeDef* taMisc::FindTypeName(const String& nm, bool err_not_found) {
     }
   }
   if(!typ && err_not_found) {
-    taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
+    if(!(nm.contains("null") || nm.contains("NULL"))) {
+      taMisc::Error("FindGlobalTypeName: type named:", nm, "not found!");
+    }
   }
   return NULL;
 }
