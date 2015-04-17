@@ -69,12 +69,11 @@ void ClusterRun::Initialize() {
   svn_other = NULL;
   auto_edit = false;
   
-  cur_table = NULL;
-  cur_panel = PANEL_CONTROL;
 //  enable_kill = false;
 //  enable_get = false;
 //  enable_import = false;
 //  enable_remove = false;
+  
   enable_kill = true;
   enable_get = true;
   enable_import = true;
@@ -218,6 +217,7 @@ bool ClusterRun::Update() {
     cur_search_algo->ProcessResults();
   }
   SigEmitUpdated();
+  UpdateUI();
   return has_updates;
 }
 
@@ -478,6 +478,7 @@ void ClusterRun::SelectCluster() {
   m_cm->CommitJobSubmissionTable();
   // this is not worth the risks if things are not configured properly:
   //  AutoUpdateMe();
+  UpdateUI();
 }
 
 void ClusterRun::ListJobFiles() {
@@ -1787,24 +1788,24 @@ bool ClusterRun::WaitProcAutoUpdate() {
   return true;
 }
 
-void ClusterRun::SetCurDataTable(PanelId panel_id) {
+DataTable* ClusterRun::GetCurDataTable(PanelId panel_id) {
   if (panel_id == PANEL_RUNNING) {
-    cur_table = &jobs_running;
+    return &jobs_running;
   }
   else if (panel_id == PANEL_DONE) {
-    cur_table = &jobs_done;
+    return &jobs_done;
   }
   else if (panel_id == PANEL_ARCHIVE) {
-    cur_table = &jobs_archive;
+    return &jobs_archive;
   }
   else if (panel_id == PANEL_FILES) {
-    cur_table = &file_list;
+    return &file_list;
   }
   else if (panel_id == PANEL_INFO) {
-    cur_table = &cluster_info;
+    return &cluster_info;
   }
   else {
-    cur_table = NULL;
+    return NULL;
   }
 }
 
@@ -1812,18 +1813,20 @@ void ClusterRun::DoClusterOp(String do_this) {
   CallFun(do_this);
 }
 
-void ClusterRun::UpdateUI(int panel_id) {
-  cur_panel = static_cast<PanelId>(panel_id);
-  SetCurDataTable(cur_panel);
+void ClusterRun::UpdateUI() {
+  iPanelSet* ps = FindMyPanelSet();
+  PanelId cur_panel = static_cast<PanelId>(ps->cur_panel_id);
+  DataTable* cur_table = GetCurDataTable(cur_panel);
   
-  enable_get = true;
-  enable_remove = true;
-  enable_kill = true;
-  enable_import = true;
 //  enable_get = false;
 //  enable_remove = false;
 //  enable_kill = false;
 //  enable_import = false;
+  
+  enable_kill = true;
+  enable_get = true;
+  enable_import = true;
+  enable_remove = true;
   
 //  if (cur_table != NULL && cur_table != &cluster_info) {
 //    int st_row;
@@ -1834,7 +1837,5 @@ void ClusterRun::UpdateUI(int panel_id) {
 //      enable_import = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
 //    }
 //  }
-
-  iPanelSet* ps = FindMyPanelSet();
   ps->UpdateMethodButtons();
 }

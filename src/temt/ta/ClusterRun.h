@@ -48,14 +48,6 @@ class TA_API ClusterRun : public ControlPanel {
   // interface for running simulations remotely on a cluster-like computing resource (including cloud computing systems) through an SVN-based file exchange protocol -- cluster-side job control script must also be running
   INHERITED(ControlPanel)
 public:
-//  enum ClusterTable {
-//    TABLE_NONE,
-//    TABLE_RUNNING,
-//    TABLE_DONE,
-//    TABLE_ARCHIVE,
-//    TABLE_FILES,
-//    TABLE_INFO
-//  };
   
   enum PanelId {
     PANEL_CONTROL,
@@ -105,8 +97,6 @@ public:
   bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
   
   // this group is all about enabling method buttons
-  DataTable*      cur_table;  // which table is currently displayed or NULL (none)
-  PanelId         cur_panel;  // which panel is currently displayed
   bool            enable_kill;    // whether to enable the kill action
   bool            enable_import;    // whether to enable import action
   bool            enable_get;    // whether to enable the get action
@@ -279,9 +269,9 @@ public:
   // set this cluster run to auto-update to the next revision after one that was just committed -- if clear_sels then clear all selections in tables (action is done -- generally should be true)
   static bool         WaitProcAutoUpdate();
   // auto update to given target revision
-  virtual void        UpdateUI(int panel_id);
+  virtual void        UpdateUI();
   // a chance to enable/disable buttons when panel changes or selection changes
-  virtual void        SetCurDataTable(PanelId panel_id);
+  virtual DataTable*        GetCurDataTable(PanelId panel_id);
 
   
   SIMPLE_COPY(ClusterRun);

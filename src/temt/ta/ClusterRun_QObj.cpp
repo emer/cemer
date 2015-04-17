@@ -18,10 +18,9 @@
 #include <taMisc>
 
 void ClusterRun_QObj::UpdateEnabling(int panel_id) {
-  master->UpdateUI(panel_id);
+  master->UpdateUI();
 }
 
 void ClusterRun_QObj::SelectionChanged(const QModelIndex &index) {
-  // only the selection has changed, just pass in the current panel
-  master->UpdateUI(master->cur_panel);
+  master->UpdateUI();
 }
