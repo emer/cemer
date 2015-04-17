@@ -33,7 +33,7 @@
 
 #include <QRegExp>
 #include <QDir>
-#include <QGuiApplication>
+#include <QApplication>
 
 #include <QObject> //
 
@@ -1725,7 +1725,7 @@ bool ClusterRun::WaitProcAutoUpdate() {
   if(delay < 10) {
     return false;
   }
-  if(QGuiApplication::modalWindow() != NULL) {
+  if(QApplication::activeModalWidget() != NULL) {
     taMisc::Info("ClusterRun: modal window is now open, cancelling auto-update");
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;

@@ -320,6 +320,7 @@ void DeepSpec::Defaults_init() {
 
 void DeepNormSpec::Initialize() {
   on = false;
+  raw_val = GROUP_AVG;
   contrast = 3.0f;
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
@@ -1920,12 +1921,16 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
-  float deep_raw = 0.0f;
-  
-  if(lay->unit_groups) {
+  float deep_raw = u->deep_raw; // default to UNIT
+  if(deep_norm.raw_val != DeepNormSpec::UNIT && lay->unit_groups) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraInhib* gpdata = (LeabraInhib*)lay->UnGpDataUn(un);
-    deep_raw = gpdata->am_deep_raw.max; // everyone in our unit group gets max of any unit.. 
+    if(deep_norm.raw_val == DeepNormSpec::GROUP_AVG) {
+      deep_raw = gpdata->am_deep_raw.avg;
+    }
+    else {                                // GROUP_MAX
+      deep_raw = gpdata->am_deep_raw.max;
+    }
   }
 
   float dctxt = u->deep_ctxt;

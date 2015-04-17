@@ -440,7 +440,14 @@ class E_API DeepNormSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt variables -- a
 INHERITED(SpecMemberBase)
 public:
+  enum DeepRawVal { // value to use for deep_raw in computing deep_norm
+    UNIT,           // use the unit deep_raw value -- produces a very specific attentional mask for deep_norm values -- may not generalize very well to new inputs
+    GROUP_MAX,      // use the max deep_raw across the unit group -- provides a broader deep_norm attentional mask and is the most lenient allocation of attention to anything that had some strong activation -- falls back on unit if no unit groups
+    GROUP_AVG,      // use the average deep_raw across the unit group -- provides a broader deep_norm attentional mask and, while weighting overall level of contribution within unit group -- falls back on unit if no unit groups
+  };
+
   bool          on;             // enable normalization of the deep_raw, deep_norm_net, and deep_ctxt values into deep_norm attentional modulation factors -- automatically normalized based on layer vals to max at 1.0 -- if off, then deep_norm is always set to 1.0 -- requires deep.on for this to work!!
+  DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues -- only applicable for layers with unit groups (otherwise UNIT is the only option used)
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
   float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
   float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
