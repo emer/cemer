@@ -69,15 +69,10 @@ void ClusterRun::Initialize() {
   svn_other = NULL;
   auto_edit = false;
   
-//  enable_kill = false;
-//  enable_get = false;
-//  enable_import = false;
-//  enable_remove = false;
-  
-  enable_kill = true;
-  enable_get = true;
-  enable_import = true;
-  enable_remove = true;
+  enable_kill = false;
+  enable_get = false;
+  enable_import = false;
+  enable_remove = false;
   
   qt_object_helper = new ClusterRun_QObj(this);
   helper_is_connected = false;
@@ -1818,24 +1813,14 @@ void ClusterRun::UpdateUI() {
   PanelId cur_panel = static_cast<PanelId>(ps->cur_panel_id);
   DataTable* cur_table = GetCurDataTable(cur_panel);
   
-//  enable_get = false;
-//  enable_remove = false;
-//  enable_kill = false;
-//  enable_import = false;
+  enable_get = false;
+  enable_remove = false;
+  enable_kill = false;
+  enable_import = false;
   
-  enable_kill = true;
-  enable_get = true;
-  enable_import = true;
-  enable_remove = true;
-  
-//  if (cur_table != NULL && cur_table != &cluster_info) {
-//    int st_row;
-//    int end_row;
-//    bool some_selection = SelectedRows(*cur_table, st_row, end_row);
-//    if (some_selection) {
-//      enable_kill = (cur_table == &jobs_running);
-//      enable_import = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
-//    }
-//  }
+  if (cur_table != NULL && cur_table != &cluster_info) {
+    enable_kill = (cur_table == &jobs_running);
+    enable_import = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
+  }
   ps->UpdateMethodButtons();
 }
