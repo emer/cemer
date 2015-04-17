@@ -20,16 +20,16 @@
 #include <LeabraUnitSpec>
 
 // member includes:
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(PFCMaintSpec);
 
 class E_API PFCMaintSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep_raw activations, which are gated by thalamic circuit
 INHERITED(SpecMemberBase)
 public:
-  float        maint_d5b_to_super;  // #DEF_0;0.8;1 for units in odd numbered rows,  engaged in active maintenance: how much the deep5b activation drives extra net input to support maintenance in PFC superficial layer (2/3) neurons -- this is IN ADDITION to cifer_d5b.d5b_to_super, which is all that is used for non-maint units
   float        d5b_updt_tau;    // time constant for updating deep5b activations (at every phase or trial, depending on cifer.phase) where continuing maintenance is enabled -- set to a large number to preserve initial gating information, and to a low number to allow rapid updating / drift of representations based on current superficial layer activation
 
   float         d5b_updt_dt;    // #READ_ONLY #EXPERT rate = 1 / tau
@@ -52,10 +52,40 @@ class E_API PFCUnitSpec : public LeabraUnitSpec {
   // PFC unit spec -- PFC layer is organized into unit groups arranged by rows and columns -- the columns are all treated the same (redundant channels for maintenance and learning), whereas rows alternate by maintenance duration (even = no maint, odd = maint) -- the prototypical organization has 4 rows, with the first set of two being input / maintenance and the second set being output / maintenance -- extra maintenance net input is added in proportion to deep5b activations, which in turn are thalamically gated -- automatically a localist, one-to-one form of maintenance -- also has special logic for updating deep5b activations, where repeated thalamic activation causes deep5b to update with the d5b_updt_tau time constant, capturing intrinsic maintenance properties of these neurons
 INHERITED(LeabraUnitSpec)
 public:
-  PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on deep5b activations, which are in turn gated by thalamic circuit
 
-  bool  ActiveMaint(LeabraUnit* u);
-  // should active maintenance engaged for this unit? Looks at unit group Y position coordinate for unit -- even = no maint, odd = maint
+  enum DynVals {                // the different values stored in dyn_table -- for rapid access
+    DYN_NAME,
+    DYN_DESC,
+    DYN_GAIN,
+    DYN_INIT,
+    DYN_RISE_TAU,
+    DYN_RISE_DT,
+    DYN_DECAY_TAU,
+    DYN_DECAY_DT,
+  };
+  
+
+  // PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on 
+  // deep5b activations, which are in turn gated by thalamic circuit
+  int           n_dyns;         // number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
+  DataTable     dyn_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
+
+  inline float  GetDynVal(DynVals val, int row) {
+    return dyn_table.GetValAsFloat(val, row);
+  }
+  // get specific dyn value for given row
+  inline void   SetDynVal(const Variant& vl, DynVals val, int row) {
+    dyn_table.SetVal(vl, val, row);
+  }
+  // set specific dyn value for given row
+  
+  virtual void  FormatDynTable();
+  // #IGNORE format the dyn table
+  virtual void  InitDynTable();
+  // default initial dynamics table
+  virtual void  UpdtDynTable();
+  // update the dt values from the tau values
+  // todo: graph dynamics
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
@@ -64,6 +94,8 @@ public:
   TA_SIMPLE_BASEFUNS(PFCUnitSpec);
 protected:
   SPEC_DEFAULTS;
+  void  UpdateAfterEdit_impl();
+  
 private:
   void	Initialize();
   void	Destroy()		{ };

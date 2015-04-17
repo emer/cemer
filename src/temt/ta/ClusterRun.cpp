@@ -33,6 +33,7 @@
 
 #include <QRegExp>
 #include <QDir>
+#include <QGuiApplication>
 
 #include <QObject> //
 
@@ -279,36 +280,7 @@ void ClusterRun::Kill() {
   }
 }
 
-void ClusterRun::GetData() {
-  if(!InitClusterManager())
-    return;
-
-  // Get the (inclusive) range of rows to process
-  int st_row, end_row;
-  if (SelectedRows(jobs_running, st_row, end_row)) {
-    jobs_submit.ResetData();
-    for (int row = st_row; row <= end_row; ++row) {
-      SubmitGetData(jobs_running, row); 
-    }
-    // Commit the table.
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe(false);        // keep selected so we can do Import
-  }
-  else if (SelectedRows(jobs_done, st_row, end_row)) {
-    jobs_submit.ResetData();
-    for (int row = st_row; row <= end_row; ++row) {
-      SubmitGetData(jobs_done, row); 
-    }
-    // Commit the table.
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe(false);
-  }
-  else {
-    taMisc::Warning("No rows selected -- no data fetched");
-  }
-}
-
-void ClusterRun::ImportData(bool remove_existing) {
+void ClusterRun::LoadData(bool remove_existing) {
   if(!InitClusterManager())
     return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
@@ -323,22 +295,22 @@ void ClusterRun::ImportData(bool remove_existing) {
   int st_row, end_row;
   if (SelectedRows(jobs_running, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
-      ImportData_impl(dgp, jobs_running, row); 
+      LoadData_impl(dgp, jobs_running, row); 
     }
   }
   else if (SelectedRows(jobs_done, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
-      ImportData_impl(dgp, jobs_done, row); 
+      LoadData_impl(dgp, jobs_done, row); 
     }
   }
   else if (SelectedRows(jobs_archive, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
-      ImportData_impl(dgp, jobs_archive, row); 
+      LoadData_impl(dgp, jobs_archive, row); 
     }
   }
   else if (SelectedRows(file_list, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
-      ImportData_impl(dgp, file_list, row); 
+      LoadData_impl(dgp, file_list, row); 
     }
   }
   else {
@@ -347,9 +319,9 @@ void ClusterRun::ImportData(bool remove_existing) {
   ClearAllSelections();       // done
 }
 
-void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
+void ClusterRun::LoadData_impl(DataTable_Group* dgp, const DataTable& table, int row) {
   String tag = table.GetValAsString("tag", row);
-  if(TestWarning(tag.empty(), "ImportData", "tag is empty for row:", String(row),
+  if(TestWarning(tag.empty(), "LoadData", "tag is empty for row:", String(row),
                  "in table", table.name))
     return;
   String dat_files;
@@ -387,7 +359,7 @@ void ClusterRun::ImportData_impl(DataTable_Group* dgp, const DataTable& table, i
     user = table.GetValAsString("user", row);
     clust = table.GetValAsString("cluster", row);
   }
-  if(TestWarning(dat_files.empty(), "ImportData", "dat_files is empty for tag:", tag))
+  if(TestWarning(dat_files.empty(), "LoadData", "dat_files is empty for tag:", tag))
     return;
   String tag_svn = tag.before("_");
   String tag_job = tag.after("_");
@@ -1531,18 +1503,6 @@ ClusterRun::CancelJob(int running_row)
 }
 
 void
-ClusterRun::SubmitGetData(const DataTable& table, int tab_row)
-{
-  if(!CheckLocalClustUser(table, tab_row))
-    return;
-  int dst_row = jobs_submit.AddBlankRow();
-  jobs_submit.SetVal("GETDATA", "status", dst_row);
-  jobs_submit.CopyCell("job_no", dst_row, table, "job_no", tab_row);
-  jobs_submit.CopyCell("tag", dst_row, table, "tag", tab_row);
-  jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
-}
-
-void
 ClusterRun::SubmitRemoveJob(const DataTable& table, int tab_row)
 {
   if(!CheckLocalClustUser(table, tab_row))
@@ -1764,6 +1724,12 @@ bool ClusterRun::WaitProcAutoUpdate() {
   int delay = wait_proc_last_updt.secsTo(curtime);
   if(delay < 10) {
     return false;
+  }
+  if(QGuiApplication::modalWindow() != NULL) {
+    taMisc::Info("ClusterRun: modal window is now open, cancelling auto-update");
+    wait_proc_updt = NULL;
+    wait_proc_trg_rev = -1;
+    return false;               // don't update while a window is open!
   }
   wait_proc_updt->Update();
   wait_proc_updt->SigEmitUpdated();

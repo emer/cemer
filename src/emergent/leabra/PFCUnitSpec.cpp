@@ -24,7 +24,6 @@ void PFCMaintSpec::Initialize() {
 }
 
 void PFCMaintSpec::Defaults_init() {
-  maint_d5b_to_super = 0.8f;
   d5b_updt_tau = 10.0f;
   
   d5b_updt_dt = 1.0f / d5b_updt_tau;
@@ -44,19 +43,76 @@ void PFCUnitSpec::Defaults_init() {
   deep.on = true;
 }
 
-bool  PFCUnitSpec::ActiveMaint(LeabraUnit* u) {
-  LeabraLayer* lay = (LeabraLayer*)u->own_lay();
-  taVector2i ugpos = lay->UnitGpPosFmIdx(u->UnitGpIdx());
-  return ((ugpos.y % 2) == 1);
+void  PFCUnitSpec::FormatDynTable() {
+  DataCol* dc;
+  
+  dc = dyn_table.FindMakeCol("name", VT_STRING);
+  dc->desc = "name for this dynamic profile";
+
+  dc = dyn_table.FindMakeCol("desc", VT_STRING);
+  dc->desc = "description of this dynamic profile";
+
+  dc = dyn_table.FindMakeCol("gain", VT_FLOAT);
+  dc->desc = "overall gain multiplier on strength of maintenance";
+
+  dc = dyn_table.FindMakeCol("init", VT_FLOAT);
+  dc->desc = "initial value at point when gating starts";
+
+  dc = dyn_table.FindMakeCol("rise_tau", VT_FLOAT);
+  dc->desc = "time constant for rise in deep_raw maintenance activation (per quarter when deep is updated)";
+  dc = dyn_table.FindMakeCol("rise_dt", VT_FLOAT);
+  dc->desc = "rate = 1 / tau -- automatically computed from tau";
+
+  dc = dyn_table.FindMakeCol("decay_tau", VT_FLOAT);
+  dc->desc = "time constant for decay in deep_raw maintenance activation (per quarter when deep is updated)";
+  dc = dyn_table.FindMakeCol("decay_dt", VT_FLOAT);
+  dc->desc = "rate = 1 / tau -- automatically computed from tau";
+
+  dyn_table.EnforceRows(n_dyns);
+}
+
+void  PFCUnitSpec::InitDynTable() {
+  n_dyns = 5;
+  FormatDynTable();
+  SetDynVal("phasic", DYN_NAME, 0);
+  SetDynVal("immediate phasic response to gating event", DYN_DESC, 0);
+  SetDynVal(1.0f, DYN_GAIN, 0);
+  SetDynVal(1.0f, DYN_INIT, 0);
+  SetDynVal(0.0f, DYN_RISE_TAU, 0);
+  SetDynVal(1.0f, DYN_DECAY_TAU, 0);
+}
+
+void  PFCUnitSpec::UpdtDynTable() {
+  dyn_table.StructUpdate(true);
+  FormatDynTable();
+  for(int i=0; i<dyn_table.rows; i++) {
+    float tau = GetDynVal(DYN_RISE_TAU, i);
+    float dt = 1.0f;
+    if(tau > 0.0f)
+      dt = 1.0f / tau;
+    SetDynVal(dt, DYN_RISE_DT, i);
+
+    tau = GetDynVal(DYN_DECAY_TAU, i);
+    dt = 1.0f;
+    if(tau > 0.0f)
+      dt = 1.0f / tau;
+    SetDynVal(dt, DYN_DECAY_DT, i);
+  }
+  dyn_table.StructUpdate(false);
+}
+
+void PFCUnitSpec::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  UpdtDynTable();
 }
 
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) {
   float net_ex = inherited::Compute_NetinExtras(uv, net, thr_no, net_syn);
-  bool act_mnt = ActiveMaint((LeabraUnit*)uv->Un(net, thr_no));
-  if(act_mnt) {
-    net_ex += pfc_maint.maint_d5b_to_super * uv->deep_raw;
-  }
+  // bool act_mnt = ActiveMaint((LeabraUnit*)uv->Un(net, thr_no));
+  // if(act_mnt) {
+  //   net_ex += pfc_maint.maint_d5b_to_super * uv->deep_raw;
+  // }
   return net_ex;
 }
 
