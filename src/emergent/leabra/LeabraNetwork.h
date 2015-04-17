@@ -268,8 +268,10 @@ public:
 
   float**       unit_vec_vars;
   // #IGNORE vectorized versions of unit variables stored in separate memory for each thread -- n_thrs pointers to N_VEC_VARS * n_units floats -- note that mem access is more efficient if vars are inner dimension, but vectorization load operator only operates on contiguous memory..  can try it both ways and see..
-  float**       thrs_send_deepnet_tmp;
-  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep5b netinput computation -- float*[threads] array of float[n_units]
+  float**       thrs_send_deeprawnet_tmp;
+  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep_raw netinput computation -- float*[threads] array of float[n_units]
+  float**       thrs_send_deepnormnet_tmp;
+  // #IGNORE #CAT_Threads temporary storage for threaded sender-based deep_norm netinput computation -- float*[threads] array of float[n_units]
   char**        thrs_lay_avg_max_vals;
   // #IGNORE AvgMaxValsRaw data for layers, by thread
   char**        thrs_ungp_avg_max_vals;
@@ -287,9 +289,13 @@ public:
   { return unit_vec_vars[thr_no] + var * n_units_built; }
   // #IGNORE get start of given unit vector variable array
 
-  inline float* ThrSendDeepNetTmp(int thr_no) const 
-  { return thrs_send_deepnet_tmp[thr_no]; }
-  // #IGNORE temporary sending deep5b netinput memory for given thread 
+  inline float* ThrSendDeepRawNetTmp(int thr_no) const 
+  { return thrs_send_deeprawnet_tmp[thr_no]; }
+  // #IGNORE temporary sending deep_raw netinput memory for given thread 
+
+  inline float* ThrSendDeepNormNetTmp(int thr_no) const 
+  { return thrs_send_deepnormnet_tmp[thr_no]; }
+  // #IGNORE temporary sending deep_norm netinput memory for given thread 
 
   inline AvgMaxValsRaw* ThrLayAvgMax(int thr_no, int lay_idx, AvgMaxVars var) 
   { return (AvgMaxValsRaw*)(thrs_lay_avg_max_vals[thr_no] +

@@ -1005,15 +1005,22 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
   if(!(ls->clamp.hard && lay->HasExtFlag(UnitVars::EXT))) {
     return;
   }
-  u->net = u->ext;
-  u->thal = u->ext;             // thalamus is external input
-  u->act_eq = clamp_range.Clip(u->ext);
-  u->act_nd = u->act_eq;
-  u->act = u->act_eq;
+  float ext_in = u->ext;
+  if(net->cycle > 0 && deep_norm.on) { // apply deep_norm attentional modulation to inputs!
+    if(u->deep_norm > 0.0f) {
+      ext_in *= u->deep_norm;
+    }
+    else {
+      ext_in *= lay->deep_norm_def;
+    }
+  }
+  u->net = u->thal = ext_in;
+  ext_in = clamp_range.Clip(ext_in);
+  u->act_eq = u->act_nd = u->act = ext_in;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
-    u->v_m = act.thr + u->act_eq / act.gain;
+    u->v_m = act.thr + ext_in / act.gain;
   u->v_m_eq = u->v_m;
   u->da = u->I_net = 0.0f;
 
@@ -1117,7 +1124,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
 
-  if(Quarter_DeepNow(net->quarter)) {
+  if(deep.on && Quarter_DeepNow(net->quarter)) {
     Send_DeepRawNetin(u, net, thr_no);
   }    
 }
@@ -1388,7 +1395,7 @@ void LeabraUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* ne
 #endif
   float net_delta = 0.0f;
   for(int j=0;j<nt;j++) {
-    float& ndval = net->ThrSendDeepNetTmp(j)[flat_idx];
+    float& ndval = net->ThrSendDeepRawNetTmp(j)[flat_idx];
     net_delta += ndval;
 #ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
@@ -1421,7 +1428,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
-    if(deep.on && net->cycle == 1) { // apply deep_norm attentional modulation to inputs!
+    if(deep_norm.on && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
       if(u->deep_norm > 0.0f) {
         u->act_eq *= u->deep_norm;
       }
@@ -1912,12 +1919,21 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+
+  float deep_raw = 0.0f;
+  
+  if(lay->unit_groups) {
+    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    LeabraInhib* gpdata = (LeabraInhib*)lay->UnGpDataUn(un);
+    deep_raw = gpdata->am_deep_raw.max; // everyone in our unit group gets max of any unit.. 
+  }
+
   float dctxt = u->deep_ctxt;
   float lctxt = lay->am_deep_ctxt.avg;
   float nw_nrm = 0.0f;
-  if(u->deep_raw > 0.0f) {
-    // deep_norm only fires for units that have deep_raw firing!
-    nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
+  if(deep_raw > 0.0f) {
+    // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
+    nw_nrm = deep_norm.ComputeNormLayCtxt(deep_raw, dctxt, lctxt);
   }
   u->deep_norm = nw_nrm;
 }
@@ -1961,7 +1977,7 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 #endif
   float nw_nt = 0.0f;
   for(int j=0;j<nt;j++) {
-    float& ndval = net->ThrSendDeepNetTmp(j)[flat_idx];
+    float& ndval = net->ThrSendDeepNormNetTmp(j)[flat_idx];
     nw_nt += ndval;
 #ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..

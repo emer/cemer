@@ -126,7 +126,8 @@ void LeabraNetwork::Initialize() {
   trial_cos_diff = 0.0f;
 
   unit_vec_vars = NULL;
-  thrs_send_deepnet_tmp = NULL;
+  thrs_send_deeprawnet_tmp = NULL;
+  thrs_send_deepnormnet_tmp = NULL;
   thrs_lay_avg_max_vals = NULL;
   thrs_ungp_avg_max_vals = NULL;
   
@@ -211,11 +212,14 @@ void LeabraNetwork::AllocSendNetinTmp() {
   // temporary storage for sender-based netinput computation
   if(n_units_built == 0 || threads.n_threads == 0) return;
 
-  net_aligned_malloc((void**)&thrs_send_deepnet_tmp, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_send_deeprawnet_tmp, n_thrs_built * sizeof(float*));
+  net_aligned_malloc((void**)&thrs_send_deepnormnet_tmp, n_thrs_built * sizeof(float*));
 
 #ifndef NUMA_COMPILE
   for(int i=0; i<n_thrs_built; i++) {
-    net_aligned_malloc((void**)&thrs_send_deepnet_tmp[i],
+    net_aligned_malloc((void**)&thrs_send_deeprawnet_tmp[i],
+                       n_units_built * sizeof(float));
+    net_aligned_malloc((void**)&thrs_send_deepnormnet_tmp[i],
                        n_units_built * sizeof(float));
   }
 #endif
@@ -229,12 +233,14 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
   if(!unit_vec_vars) return;
 
   for(int i=0; i<n_thrs_built; i++) {
-    net_free((void**)&thrs_send_deepnet_tmp[i]);
+    net_free((void**)&thrs_send_deeprawnet_tmp[i]);
+    net_free((void**)&thrs_send_deepnormnet_tmp[i]);
     net_free((void**)&unit_vec_vars[i]);
     net_free((void**)&thrs_lay_avg_max_vals[i]);
     net_free((void**)&thrs_ungp_avg_max_vals[i]);
   }
-  net_free((void**)&thrs_send_deepnet_tmp);
+  net_free((void**)&thrs_send_deeprawnet_tmp);
+  net_free((void**)&thrs_send_deepnormnet_tmp);
   net_free((void**)&unit_vec_vars);
   net_free((void**)&thrs_lay_avg_max_vals);
   net_free((void**)&thrs_ungp_avg_max_vals);
@@ -242,7 +248,8 @@ void LeabraNetwork::FreeUnitConGpThreadMem() {
 
 void LeabraNetwork::InitSendNetinTmp_Thr(int thr_no) {
   inherited::InitSendNetinTmp_Thr(thr_no);
-  memset(thrs_send_deepnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+  memset(thrs_send_deeprawnet_tmp[thr_no], 0, n_units_built * sizeof(float));
+  memset(thrs_send_deepnormnet_tmp[thr_no], 0, n_units_built * sizeof(float));
 }
 
 void LeabraNetwork::BuildNullUnit() {
@@ -1459,7 +1466,7 @@ void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
       }
       threads.SyncSpin(thr_no, 2);
     }
-
+    
     for(int i=0; i<nu; i++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
       if(uv->lesioned()) continue;
@@ -1472,6 +1479,7 @@ void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
       if(thr_no == 0) {
         Compute_DeepNormStats_PostPost();
       }
+      threads.SyncSpin(thr_no, 0);
     }
 
     for(int i=0; i<nu; i++) {
@@ -1479,6 +1487,7 @@ void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin_Post(uv, this, thr_no);
     }
+    threads.SyncSpin(thr_no, 1);
   }
 }
 
