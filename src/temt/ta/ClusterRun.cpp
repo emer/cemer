@@ -71,9 +71,9 @@ void ClusterRun::Initialize() {
   auto_edit = false;
   
   enable_kill = false;
-  enable_get = false;
-  enable_import = false;
-  enable_remove = false;
+  enable_load = false;
+//  enable_get = false;
+//  enable_remove = false;
   
   qt_object_helper = new ClusterRun_QObj(this);
   helper_is_connected = false;
@@ -1779,14 +1779,14 @@ void ClusterRun::UpdateUI() {
   PanelId cur_panel = static_cast<PanelId>(ps->cur_panel_id);
   DataTable* cur_table = GetCurDataTable(cur_panel);
   
-  enable_get = false;
-  enable_remove = false;
   enable_kill = false;
-  enable_import = false;
+  enable_load = false;
+//  enable_get = false;
+//  enable_remove = false;
   
   if (cur_table != NULL && cur_table != &cluster_info) {
     enable_kill = (cur_table == &jobs_running);
-    enable_import = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
+    enable_load = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
   }
   ps->UpdateMethodButtons();
 }

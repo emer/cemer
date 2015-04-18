@@ -98,9 +98,9 @@ public:
   
   // this group is all about enabling method buttons
   bool            enable_kill;    // whether to enable the kill action
-  bool            enable_import;    // whether to enable import action
-  bool            enable_get;    // whether to enable the get action
-  bool            enable_remove;    // whether to enable the remove action
+  bool            enable_load;    // whether to enable import action
+//  bool            enable_get;    // whether to enable the get action
+//  bool            enable_remove;    // whether to enable the remove action
   
 protected:
   bool InitClusterManager(bool check_prefs = true);
@@ -126,7 +126,7 @@ public:
   virtual void  Kill();
   // #BUTTON #CONFIRM #GHOST_ON_enable_kill:false running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  LoadData(bool remove_existing = true);
-  // #BUTTON #GHOST_ON_enable_import:false load the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
+  // #BUTTON #GHOST_ON_enable_load:false load the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
 
   virtual void  SaveJobParams();
   // #MENU_BUTTON #MENU_ON_Jobs #CONFIRM save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field

@@ -76,7 +76,7 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
     
     act = menu->AddItem("Remove Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveFiles");
-    act->setEnabled((tab->name == "file_list") && sel.height() > 0);
+    act->setEnabled((tab->name == "file_list" || tab->name == "jobs_archive" || tab->name == "jobs_done" ) && sel.height() > 0);
     
     act = menu->AddItem("Remove Non Data Files", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "RemoveNonDataFiles");
     act->setEnabled((tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() > 0);
