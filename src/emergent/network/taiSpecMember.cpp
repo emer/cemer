@@ -95,7 +95,7 @@ taiWidget* taiSpecMember::GetArbitrateDataRep(IWidgetHost* host_, taiWidget* par
     rval->data = rdat;
     rval->AddChildWidget(rdat->GetRep());
     rval->EndLayout();
-    rval->but_rep->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess("click this button to override the parent settings for this parameter -- if this is not checked, then whatever parameter is set on the parent spec will be automatically inherited by this child spec")));
+    rval->but_rep->setToolTip(taiMisc::ToolTipPreProcess("click this button to override the parent settings for this parameter -- if this is not checked, then whatever parameter is set on the parent spec will be automatically inherited by this child spec"));
     return rval;
   }
 }
