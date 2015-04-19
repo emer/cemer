@@ -407,7 +407,7 @@ class E_API DeepSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;         // enable the DeepLeabra mechanisms, including temporal integration via deep_ctxt context connections, thalamic-based auto-encoder driven by deep_raw projections, and attentional modulation by deep_norm (requires deep_norm.on)
-  float	        thr;        // #CONDSHOW_ON_on #MIN_0 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq
+  float	        thr;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq -- value is specified as distance between average and maximum act_eq values within layer (e.g., 0 = average, 1 = max)
   float         d_to_d;     // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_norm_net inputs from deep-to-deep projections in computing deep_raw
   float         d_to_s;     // #CONDSHOW_ON_on #MIN_0 how much of the deep_norm_net signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
   float         ctxt_to_s;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons (from DeepCtxtConSpec connections) -- determines how much direct recurrent temporal integration (TI) context a neuron receives
@@ -417,7 +417,6 @@ public:
   
   float         ComputeDeepRaw(float act, float deep_norm_net, float thal,
                                float max_deep_norm_net) {
-    if(act < thr) return 0.0f;
     return act * ((1.0f + d_to_d * deep_norm_net + thal_to_d * thal) /
                   (1.0f + d_to_d * max_deep_norm_net + thal_to_d));
   }

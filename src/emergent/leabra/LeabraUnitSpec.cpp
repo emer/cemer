@@ -308,7 +308,7 @@ void DeepSpec::Initialize() {
   thr = 0.5f;
   d_to_d = 0.5f;
   d_to_s = 0.0f;
-  ctxt_to_s = 0.3f;
+  ctxt_to_s = 0.15f;
   ctxt_rel = false;
   thal_to_d = 0.0f;
   thal_to_s = 0.0f;
@@ -1340,8 +1340,12 @@ void LeabraUnitSpec::Compute_NetinInteg_Spike_i(LeabraUnitVars* u, LeabraNetwork
 
 void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-  float draw = deep.ComputeDeepRaw(u->act_eq, u->deep_norm_net, u->thal,
-                                   lay->am_deep_norm_net.max);
+  float thr_cmp = lay->acts.avg + deep.thr * (lay->acts.max - lay->acts.avg);
+  float draw = 0.0f;
+  if(u->act_eq >= thr_cmp) {
+    draw = deep.ComputeDeepRaw(u->act_eq, u->deep_norm_net, u->thal,
+                               lay->am_deep_norm_net.max);
+  }
   u->deep_raw = draw;
 }
 
