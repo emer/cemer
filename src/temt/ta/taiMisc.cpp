@@ -512,7 +512,9 @@ QLabel* taiMisc::NewLabel(const String& text, QWidget* parent, int fontSpec) {
 
 QString taiMisc::ToolTipPreProcess(const String &tip_str) {
   // make the string rich text so Qt will wrap it
-  String rich_str = String("<span>" + tip_str + "</span>");
+  String htmlstr = tip_str;
+  htmlstr.xml_esc();
+  String rich_str = String("<span>") + htmlstr + "</span>";
   return rich_str.toQString();
 }
 

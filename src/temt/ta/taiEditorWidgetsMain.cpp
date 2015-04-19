@@ -53,10 +53,10 @@ iLabel* taiEditorWidgetsMain::MakeInitEditLabel(const String& name, QWidget* par
 
 
   if (!desc.empty()) {
-    label->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
+    label->setToolTip(taiMisc::ToolTipPreProcess(desc));
     label->setStatusTip(desc);
     if (buddy_widg != NULL) {
-      buddy_widg->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
+      buddy_widg->setToolTip(taiMisc::ToolTipPreProcess(desc));
       buddy_widg->setStatusTip(desc);
     }
   }
@@ -100,7 +100,7 @@ int taiEditorWidgetsMain::AddSectionLabel(int row, QWidget* wid, const String& d
   wid->setPalette(pal); 
 
   if (!desc.empty()) {
-    wid->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
+    wid->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
   QHBoxLayout* layH = new QHBoxLayout();
 
@@ -192,7 +192,7 @@ void taiEditorWidgetsMain::AddMultiRowName(iEditGrid* multi_body, int row, const
   pal.setColor(QPalette::Background, colorOfRow(row));
   label->setPalette(pal); 
   if (!desc.empty()) {
-    label->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
+    label->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
   multi_body->setRowNameWidget(row, label);
   label->show(); //required to show when rebuilding
@@ -204,7 +204,7 @@ void taiEditorWidgetsMain::AddMultiColName(iEditGrid* multi_body, int col, const
   label->setFont(taiM->nameFont(ctrl_size));
   label->setFixedHeight(taiM->label_height(ctrl_size));
   if (!desc.empty()) {
-    label->setToolTip(taiMisc::ToolTipPreProcess(taiMisc::ToolTipPreProcess(desc)));
+    label->setToolTip(taiMisc::ToolTipPreProcess(desc));
   }
   multi_body->setColNameWidget(col, label);
   label->show(); //required to show when rebuilding

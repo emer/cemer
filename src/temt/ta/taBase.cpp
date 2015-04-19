@@ -1958,6 +1958,7 @@ void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   
   bool child_deleted = false;
   // Remove a couple of legacy colorscales and rename any starting with "P_"
+  // todo: surely this is not the best place for this!?
   if (child->GetTypeDef() == &TA_ColorScaleSpec) {
     if (child->GetName().startsWith("P_")) {
       String name = child->GetName();

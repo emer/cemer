@@ -15,6 +15,8 @@
 
 #include "PFCUnitSpec.h"
 #include <LeabraNetwork>
+#include <taProject>
+#include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(PFCMaintSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
@@ -35,6 +37,7 @@ void PFCMaintSpec::UpdateAfterEdit_impl() {
 }
 
 void PFCUnitSpec::Initialize() {
+  InitDynTable();
   Defaults_init();
 }
 
@@ -74,26 +77,63 @@ void  PFCUnitSpec::FormatDynTable() {
 void  PFCUnitSpec::InitDynTable() {
   n_dyns = 5;
   FormatDynTable();
-  SetDynVal("phasic", DYN_NAME, 0);
-  SetDynVal("immediate phasic response to gating event", DYN_DESC, 0);
-  SetDynVal(1.0f, DYN_GAIN, 0);
-  SetDynVal(1.0f, DYN_INIT, 0);
-  SetDynVal(0.0f, DYN_RISE_TAU, 0);
-  SetDynVal(1.0f, DYN_DECAY_TAU, 0);
+
+  int cur = 0;
+  SetDynVal("phasic", DYN_NAME, cur);
+  SetDynVal("immediate phasic response to gating event", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_GAIN, cur);
+  SetDynVal(1.0f, DYN_INIT, cur);
+  SetDynVal(0.0f, DYN_RISE_TAU, cur);
+  SetDynVal(1.0f, DYN_DECAY_TAU, cur);
+
+  cur++;
+  SetDynVal("maint_flat", DYN_NAME, cur);
+  SetDynVal("maintained, flat stable sustained activation", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_GAIN, cur);
+  SetDynVal(1.0f, DYN_INIT, cur);
+  SetDynVal(0.0f, DYN_RISE_TAU, cur);
+  SetDynVal(0.0f, DYN_DECAY_TAU, cur);
+
+  cur++;
+  SetDynVal("maint_rise", DYN_NAME, cur);
+  SetDynVal("maintained, rising value over time", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_GAIN, cur);
+  SetDynVal(0.0f, DYN_INIT, cur);
+  SetDynVal(10.0f, DYN_RISE_TAU, cur);
+  SetDynVal(0.0f, DYN_DECAY_TAU, cur);
+
+  cur++;
+  SetDynVal("maint_decay", DYN_NAME, cur);
+  SetDynVal("maintained, decaying value over time", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_GAIN, cur);
+  SetDynVal(1.0f, DYN_INIT, cur);
+  SetDynVal(0.0f, DYN_RISE_TAU, cur);
+  SetDynVal(10.0f, DYN_DECAY_TAU, cur);
+
+  cur++;
+  SetDynVal("maint_updn", DYN_NAME, cur);
+  SetDynVal("maintained, rising then falling alue over time", DYN_DESC, cur);
+  SetDynVal(1.0f, DYN_GAIN, cur);
+  SetDynVal(0.0f, DYN_INIT, cur);
+  SetDynVal(5.0f, DYN_RISE_TAU, cur);
+  SetDynVal(10.0f, DYN_DECAY_TAU, cur);
+
+  UpdtDynTable();
 }
 
 void  PFCUnitSpec::UpdtDynTable() {
+  // taMisc::Info("updt dyn table");
   dyn_table.StructUpdate(true);
   FormatDynTable();
   for(int i=0; i<dyn_table.rows; i++) {
     float tau = GetDynVal(DYN_RISE_TAU, i);
-    float dt = 1.0f;
+    float dt = 0.0f;
     if(tau > 0.0f)
       dt = 1.0f / tau;
     SetDynVal(dt, DYN_RISE_DT, i);
 
     tau = GetDynVal(DYN_DECAY_TAU, i);
-    dt = 1.0f;
+    dt = 0.0f;
     if(tau > 0.0f)
       dt = 1.0f / tau;
     SetDynVal(dt, DYN_DECAY_DT, i);
@@ -104,6 +144,57 @@ void  PFCUnitSpec::UpdtDynTable() {
 void PFCUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdtDynTable();
+}
+
+void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
+  taProject* proj = GET_MY_OWNER(taProject);
+  if(!graph_data) {
+    graph_data = proj->GetNewAnalysisDataTable(name + "_PFCDyns", true);
+  }
+  int idx;
+  graph_data->StructUpdate(true);
+  graph_data->ResetData();
+  DataCol* rw = graph_data->FindMakeColName("trial", idx, VT_FLOAT);
+
+  for(int nd=0; nd < n_dyns; nd++) {
+    graph_data->FindMakeColName("deep_raw_" + String(nd), idx, VT_FLOAT);
+  }
+
+  float_Array vals;
+  vals.SetSize(n_dyns);
+  
+  graph_data->AddBlankRow();
+  rw->SetValAsFloat(0, -1);
+  for(int nd=0; nd < n_dyns; nd++) {
+    float init = GetDynVal(DYN_INIT, nd);
+    vals[nd] = init;
+    graph_data->SetValAsFloat(vals[nd], nd+1, -1);
+  }
+  
+  for(int x = 1; x <= n_trials; x++) {
+    graph_data->AddBlankRow();
+    rw->SetValAsFloat(x, -1);
+    for(int nd=0; nd < n_dyns; nd++) {
+      float gain = GetDynVal(DYN_GAIN, nd);
+      float rise_tau = GetDynVal(DYN_RISE_TAU, nd);
+      float rise_dt = GetDynVal(DYN_RISE_DT, nd);
+      float decay_dt = GetDynVal(DYN_DECAY_DT, nd);
+      float cur = vals[nd];
+      float nw = cur;
+      if(x-1 < rise_tau) {
+        nw += rise_dt;
+      }
+      else {
+        nw -= decay_dt;
+      }
+      if(nw > 1.0f) nw = 1.0f;
+      if(nw < 0.0f) nw = 0.0f;
+      vals[nd] = nw;
+      graph_data->SetValAsFloat(vals[nd], nd+1, -1);
+    }
+  }
+  graph_data->StructUpdate(false);
+  graph_data->FindMakeGraphView();
 }
 
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
