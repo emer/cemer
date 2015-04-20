@@ -16,6 +16,7 @@
 #include "ColorScaleSpec.h"
 #include <ColorScaleColor>
 #include <ColorScaleColor_List>
+#include <ColorScaleSpec_Group>
 
 TA_BASEFUNS_CTORS_DEFN(ColorScaleSpec);
 SMARTREF_OF_CPP(ColorScaleSpec); // ColorScaleSpecRef
@@ -100,4 +101,19 @@ String ColorScaleSpec::GetColText(const KeyString& key, int itm_idx) const
     else return _nilString; // nothing for this item
   }
   return inherited::GetColText(key, itm_idx);
+}
+
+void ColorScaleSpec::UpdateAfterEdit() {
+  // Remove a couple of legacy colorscales and rename any starting with "P_"
+  if (GetName().startsWith("P_")) {
+    String name = GetName();
+    if (name == "P_DarkLight" || name == "P_LightDark") {
+      ColorScaleSpec_Group* grp = dynamic_cast<ColorScaleSpec_Group*>(owner);
+      grp->RemoveEl_(this);
+    }
+    else {
+      name.repl("P_", "C_");
+      SetName(name);
+    }
+  }
 }

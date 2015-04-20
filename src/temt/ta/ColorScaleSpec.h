@@ -45,6 +45,8 @@ public:
   static const KeyString key_clr4; // #IGNORE
   String GetColText(const KeyString& key, int itm_idx) const override;  // #IGNORE
 
+  void  UpdateAfterEdit() override;
+
   void  InitLinks() override;
   TA_BASEFUNS(ColorScaleSpec);
 private:
