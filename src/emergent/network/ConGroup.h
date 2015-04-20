@@ -341,7 +341,9 @@ public:
   // todo: need to ifdef these out for CUDA
 
   void  TransformWeights(const SimpleMathSpec& trans);
-  // #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
+  // #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this, to keep other weight values synchronized
+  void  RescaleWeights(const float rescale_factor);
+  // #CAT_Learning rescale the weight values by multiplying by rescaling factor -- must call Init_Weights_post at network level after running this, to keep other weight values synchronized
   void  AddNoiseToWeights(const Random& noise_spec);
   // #CAT_Learning add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   int   PruneCons(Unit* un, const SimpleMathSpec& pre_proc,

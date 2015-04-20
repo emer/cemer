@@ -587,17 +587,34 @@ int ConGroup::VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
 void ConGroup::TransformWeights(const SimpleMathSpec& trans) {
   if(!prjn || !prjn->layer || !prjn->layer->own_net) return;
   Network* net = prjn->layer->own_net;
+  ConSpec* cs = GetConSpec();
   for(int i=0; i < size; i++) {
     float& wt = Cn(i, WT,net);
     wt = trans.Evaluate(wt);
+    cs->C_ApplyLimits(wt);
+  }
+}
+
+void ConGroup::RescaleWeights(const float rescale_factor) {
+  if(!prjn || !prjn->layer || !prjn->layer->own_net) return;
+  Network* net = prjn->layer->own_net;
+  ConSpec* cs = GetConSpec();
+  for(int i=0; i < size; i++) {
+    float& wt = Cn(i, WT,net);
+    wt *= rescale_factor;
+    cs->C_ApplyLimits(wt);
   }
 }
 
 void ConGroup::AddNoiseToWeights(const Random& noise_spec) {
   if(!prjn || !prjn->layer || !prjn->layer->own_net) return;
   Network* net = prjn->layer->own_net;
-  for(int i=0; i < size; i++)
-    Cn(i, WT, net) += noise_spec.Gen();
+  ConSpec* cs = GetConSpec();
+  for(int i=0; i < size; i++) {
+    float& wt = Cn(i, WT, net);
+    wt += noise_spec.Gen();
+    cs->C_ApplyLimits(wt);
+  }
 }
 
 int ConGroup::PruneCons(Unit* un, const SimpleMathSpec& pre_proc,

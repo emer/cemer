@@ -230,6 +230,8 @@ public: //
 
   virtual void  TransformWeights(const SimpleMathSpec& trans, Projection* prjn = NULL);
   // #MENU #MENU_SEP_BEFORE #CAT_Learning apply given transformation to weights -- must call Init_Weights_post at network level after running this!
+  virtual void  RescaleWeights(const float rescale_factor, Projection* prjn = NULL);
+  // #MENU #MENU_SEP_BEFORE #CAT_Learning rescale weights by multiplying by given factor -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec, Projection* prjn = NULL);
   // #MENU #CAT_Learning add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   virtual int   PruneCons(const SimpleMathSpec& pre_proc, Relation::Relations rel,

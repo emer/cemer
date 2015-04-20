@@ -96,8 +96,8 @@ public:
   RandomSpec    rnd;            // #CAT_ConSpec Weight randomization specification.  Note that NONE means no value at all, not the mean, and should be used if some other source is setting the weights, e.g., from a projectionspec or loading from a file etc
   WeightLimits  wt_limits;      // #CAT_ConSpec limits on weight sign, symmetry
 
-  inline void           C_ApplyLimits(float& wt)
-  { wt_limits.ApplyLimits(wt); }
+  inline float&         C_ApplyLimits(float& wt)
+  { wt_limits.ApplyLimits(wt); return wt; }
   // #IGNORE #CAT_Learning apply weight limits to single connection
   inline virtual void   ApplyLimits(ConGroup* cg, Network* net, int thr_no);
   // #IGNORE #CAT_Learning apply weight limits (sign, magnitude) -- automatically enforced during Init_Weights -- this is if needed outside of that

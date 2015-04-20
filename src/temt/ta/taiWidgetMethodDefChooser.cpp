@@ -40,9 +40,9 @@ void taiWidgetMethodDefChooser::btnHelp_clicked() {
 }
 
 int taiWidgetMethodDefChooser::GetDefaultView() {
-  if (!targ_typ->name.contains("Base"))
-    return 1;
-  else
+  // if (!targ_typ->name.contains("Base"))
+  //   return 1;
+  // else
     return 0;
 }
 

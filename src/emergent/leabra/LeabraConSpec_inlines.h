@@ -148,15 +148,20 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
 
 #endif
 
-inline void LeabraConSpec::Compute_dWt(ConGroup* rcg, Network* rnet, int thr_no) {
+inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no) {
   LeabraNetwork* net = (LeabraNetwork*)rnet;
   if(!learn || (ignore_unlearnable && net->unlearnable_trial)) return;
-  LeabraConGroup* cg = (LeabraConGroup*)rcg;
+  LeabraConGroup* cg = (LeabraConGroup*)scg;
   LeabraUnitVars* su = (LeabraUnitVars*)cg->ThrOwnUnVars(net, thr_no);
   LeabraUnitSpec* us = (LeabraUnitSpec*)su->unit_spec;
   if(su->avg_s < us->opt_thresh.xcal_lrn && su->avg_m < us->opt_thresh.xcal_lrn) return;
   // no need to learn!
-  const bool deep_on = deep.on;
+  bool deep_on = deep.on;
+  if(deep_on) {
+    LeabraUnitSpec* rus = (LeabraUnitSpec*)cg->prjn->layer->GetUnitSpec();
+    if(!rus->deep_norm.on)
+      deep_on = false;          // only applicable to deep_norm active layers
+  }
   float clrate = cur_lrate;
 
   float bg_lrate;
@@ -284,10 +289,10 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
 
 #endif
 
-inline void LeabraConSpec::Compute_Weights(ConGroup* rcg, Network* net, int thr_no) {
+inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_no) {
   if(!learn) return;
 
-  LeabraConGroup* cg = (LeabraConGroup*)rcg;
+  LeabraConGroup* cg = (LeabraConGroup*)scg;
 
   float* wts = cg->OwnCnVar(WT);
   float* dwts = cg->OwnCnVar(DWT);

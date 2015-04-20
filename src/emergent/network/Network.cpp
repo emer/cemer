@@ -2808,6 +2808,7 @@ void Network::TransformWeights(const SimpleMathSpec& trans) {
     if(!l->lesioned())
       l->TransformWeights(trans);
   }
+  Init_Weights_post();
   SendWeightsToGPU();
   UpdateAllViews();
   taMisc::DoneBusy();
@@ -2820,6 +2821,7 @@ void Network::AddNoiseToWeights(const Random& noise_spec) {
     if(!l->lesioned())
       l->AddNoiseToWeights(noise_spec);
   }
+  Init_Weights_post();
   SendWeightsToGPU();
   UpdateAllViews();
   taMisc::DoneBusy();

@@ -675,6 +675,15 @@ void Unit::TransformWeights(const SimpleMathSpec& trans, Projection* prjn) {
   }
 }
 
+void Unit::RescaleWeights(const float rescale_factor, Projection* prjn) {
+  const int rsz = NRecvConGps();
+  for(int g = 0; g < rsz; g++) {
+    ConGroup* cg = RecvConGroup(g);
+    if(cg->NotActive() || ((prjn) && (cg->prjn != prjn))) continue;
+    cg->RescaleWeights(rescale_factor);
+  }
+}
+
 void Unit::AddNoiseToWeights(const Random& noise_spec, Projection* prjn) {
   const int rsz = NRecvConGps();
   for(int g = 0; g < rsz; g++) {

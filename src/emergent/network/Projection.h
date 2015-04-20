@@ -127,6 +127,8 @@ public:
 
   virtual void  TransformWeights(const SimpleMathSpec& trans);
   // #MENU #MENU_SEP_BEFORE #CAT_Weights apply given transformation to weights -- must call Init_Weights_post at network level after running this!
+  virtual void  RescaleWeights(const float rescale_factor);
+  // #MENU #MENU_SEP_BEFORE #CAT_Weights rescale weights by multiplying by given factor -- must call Init_Weights_post at network level after running this!
   virtual void  AddNoiseToWeights(const Random& noise_spec);
   // #MENU #CAT_Weights add noise to weights using given noise specification -- must call Init_Weights_post at network level after running this!
   virtual int   PruneCons(const SimpleMathSpec& pre_proc,

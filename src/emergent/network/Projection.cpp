@@ -463,6 +463,12 @@ void Projection::TransformWeights(const SimpleMathSpec& trans) {
   }
 }
 
+void Projection::RescaleWeights(const float rescale_factor) {
+  FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
+    u->RescaleWeights(rescale_factor, this);
+  }
+}
+
 void Projection::AddNoiseToWeights(const Random& noise_spec) {
   FOREACH_ELEM_IN_GROUP(Unit, u, layer->units) {
     u->AddNoiseToWeights(noise_spec, this);
