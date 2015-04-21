@@ -56,18 +56,16 @@ public:
   enum DynVals {                // the different values stored in dyn_table -- for rapid access
     DYN_NAME,
     DYN_DESC,
-    DYN_GAIN,
     DYN_INIT,
     DYN_RISE_TAU,
     DYN_RISE_DT,
     DYN_DECAY_TAU,
     DYN_DECAY_DT,
   };
-  
 
   // PFCMaintSpec          pfc_maint; // specifications for maintenance in PFC, based on 
   // deep5b activations, which are in turn gated by thalamic circuit
-  int           n_dyns;         // number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
+  int           n_dyns;         // #DEF_5 number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
   DataTable     dyn_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
 
   inline float  GetDynVal(DynVals val, int row) {
@@ -78,18 +76,36 @@ public:
     dyn_table.SetVal(vl, val, row);
   }
   // set specific dyn value for given row
+
+  inline float   UpdtDynVal(const float cur_val, const float prv_val, int row) {
+    if(prv_val == 0.0f) {       // no init val can be 0!
+      return GetDynVal(DYN_INIT, row);
+    }
+    float rise_tau = GetDynVal(DYN_RISE_TAU, row);
+    float rise_dt = GetDynVal(DYN_RISE_DT, row);
+    float decay_dt = GetDynVal(DYN_DECAY_DT, row);
+    float nw = cur_val;
+    float del = cur_val - prv_val;
+    if(rise_tau > 0.0f && (del > 0.0f || cur_val == GetDynVal(DYN_INIT, row))) {
+      nw += rise_dt;            // keep going up -- will max pegged at 1
+    }
+    else {
+      nw -= decay_dt;
+    }
+    if(nw > 1.0f) nw = 1.0f;
+    if(nw < 0.001f) nw = 0.001f;
+    return nw;
+  }
+  // update dynamic value as function of current value and time since gating
   
   virtual void  FormatDynTable();
   // #IGNORE format the dyn table
   virtual void  InitDynTable();
   // default initial dynamics table
   virtual void  UpdtDynTable();
-  // update the dt values from the tau values
-  // todo: graph dynamics
+  // #BUTTON update the dt values from the tau values
 
-  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
-                            int thr_no, float& net_syn) override;
-  void  Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)

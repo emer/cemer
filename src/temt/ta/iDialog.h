@@ -27,10 +27,12 @@ class TA_API iDialog : public QDialog
 public:
   explicit iDialog(QWidget *parent = 0, Qt::WindowFlags f = 0);
 
+#ifdef RESTORE_PREV_ACTIVE_WINDOW
   // Note: QDialog::exec() is not virtual, so this is not an override.
   // Make it virtual from this point forward, in case subclasses need
   // to override for some reason.
   virtual int exec();
+#endif
 
 protected:
   void keyPressEvent(QKeyEvent* key_event) override;

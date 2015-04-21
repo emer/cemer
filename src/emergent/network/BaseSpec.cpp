@@ -284,7 +284,7 @@ String BaseSpec::WhereUsed() {
     if(!sown->InheritsFrom(&TA_SpecPtr_impl)) continue;
     taBase* ownown = sown->GetOwner();
     if(ownown)
-      rval += ownown->GetPathNames() + "\n";
+      rval += ownown->GetPathNames() + " \n";
   }
   return rval;
 }

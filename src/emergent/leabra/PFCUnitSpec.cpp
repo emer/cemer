@@ -37,12 +37,12 @@ void PFCMaintSpec::UpdateAfterEdit_impl() {
 }
 
 void PFCUnitSpec::Initialize() {
-  InitDynTable();
   Defaults_init();
 }
 
 void PFCUnitSpec::Defaults_init() {
   // act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
+  InitDynTable();
   deep.on = true;
 }
 
@@ -54,9 +54,6 @@ void  PFCUnitSpec::FormatDynTable() {
 
   dc = dyn_table.FindMakeCol("desc", VT_STRING);
   dc->desc = "description of this dynamic profile";
-
-  dc = dyn_table.FindMakeCol("gain", VT_FLOAT);
-  dc->desc = "overall gain multiplier on strength of maintenance";
 
   dc = dyn_table.FindMakeCol("init", VT_FLOAT);
   dc->desc = "initial value at point when gating starts";
@@ -81,7 +78,6 @@ void  PFCUnitSpec::InitDynTable() {
   int cur = 0;
   SetDynVal("phasic", DYN_NAME, cur);
   SetDynVal("immediate phasic response to gating event", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_GAIN, cur);
   SetDynVal(1.0f, DYN_INIT, cur);
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(1.0f, DYN_DECAY_TAU, cur);
@@ -89,7 +85,6 @@ void  PFCUnitSpec::InitDynTable() {
   cur++;
   SetDynVal("maint_flat", DYN_NAME, cur);
   SetDynVal("maintained, flat stable sustained activation", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_GAIN, cur);
   SetDynVal(1.0f, DYN_INIT, cur);
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(0.0f, DYN_DECAY_TAU, cur);
@@ -97,15 +92,13 @@ void  PFCUnitSpec::InitDynTable() {
   cur++;
   SetDynVal("maint_rise", DYN_NAME, cur);
   SetDynVal("maintained, rising value over time", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_GAIN, cur);
-  SetDynVal(0.0f, DYN_INIT, cur);
+  SetDynVal(0.1f, DYN_INIT, cur);
   SetDynVal(10.0f, DYN_RISE_TAU, cur);
   SetDynVal(0.0f, DYN_DECAY_TAU, cur);
 
   cur++;
   SetDynVal("maint_decay", DYN_NAME, cur);
   SetDynVal("maintained, decaying value over time", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_GAIN, cur);
   SetDynVal(1.0f, DYN_INIT, cur);
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(10.0f, DYN_DECAY_TAU, cur);
@@ -113,8 +106,7 @@ void  PFCUnitSpec::InitDynTable() {
   cur++;
   SetDynVal("maint_updn", DYN_NAME, cur);
   SetDynVal("maintained, rising then falling alue over time", DYN_DESC, cur);
-  SetDynVal(1.0f, DYN_GAIN, cur);
-  SetDynVal(0.0f, DYN_INIT, cur);
+  SetDynVal(0.1f, DYN_INIT, cur);
   SetDynVal(5.0f, DYN_RISE_TAU, cur);
   SetDynVal(10.0f, DYN_DECAY_TAU, cur);
 
@@ -137,6 +129,11 @@ void  PFCUnitSpec::UpdtDynTable() {
     if(tau > 0.0f)
       dt = 1.0f / tau;
     SetDynVal(dt, DYN_DECAY_DT, i);
+
+    float init = GetDynVal(DYN_INIT, i);
+    if(init == 0.0f) {          // init must be a minimum val -- uses 0 to detect start
+      SetDynVal(.1f, DYN_INIT, i);
+    }
   }
   dyn_table.StructUpdate(false);
 }
@@ -160,86 +157,53 @@ void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
     graph_data->FindMakeColName("deep_raw_" + String(nd), idx, VT_FLOAT);
   }
 
-  float_Array vals;
-  vals.SetSize(n_dyns);
+  float_Matrix vals;
+  vals.SetGeom(2, 2, n_dyns);     // prev and cur
+  vals.InitVals(0.0f);
   
-  graph_data->AddBlankRow();
-  rw->SetValAsFloat(0, -1);
-  for(int nd=0; nd < n_dyns; nd++) {
-    float init = GetDynVal(DYN_INIT, nd);
-    vals[nd] = init;
-    graph_data->SetValAsFloat(vals[nd], nd+1, -1);
-  }
-  
-  for(int x = 1; x <= n_trials; x++) {
+  for(int x = 0; x <= n_trials; x++) {
     graph_data->AddBlankRow();
     rw->SetValAsFloat(x, -1);
     for(int nd=0; nd < n_dyns; nd++) {
-      float gain = GetDynVal(DYN_GAIN, nd);
-      float rise_tau = GetDynVal(DYN_RISE_TAU, nd);
-      float rise_dt = GetDynVal(DYN_RISE_DT, nd);
-      float decay_dt = GetDynVal(DYN_DECAY_DT, nd);
-      float cur = vals[nd];
-      float nw = cur;
-      if(x-1 < rise_tau) {
-        nw += rise_dt;
-      }
-      else {
-        nw -= decay_dt;
-      }
-      if(nw > 1.0f) nw = 1.0f;
-      if(nw < 0.0f) nw = 0.0f;
-      vals[nd] = nw;
-      graph_data->SetValAsFloat(vals[nd], nd+1, -1);
+      float& cur = vals.FastEl2d(0, nd);
+      float& prv = vals.FastEl2d(1, nd);
+      float nw = UpdtDynVal(cur, prv, nd);
+      graph_data->SetValAsFloat(nw, nd+1, -1);
+      prv = cur;
+      cur = nw;
     }
   }
   graph_data->StructUpdate(false);
   graph_data->FindMakeGraphView();
 }
 
-float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
-                            int thr_no, float& net_syn) {
-  float net_ex = inherited::Compute_NetinExtras(uv, net, thr_no, net_syn);
-  // bool act_mnt = ActiveMaint((LeabraUnit*)uv->Un(net, thr_no));
-  // if(act_mnt) {
-  //   net_ex += pfc_maint.maint_d5b_to_super * uv->deep_raw;
-  // }
-  return net_ex;
+void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(u->thal == 0.0f) {
+    TestWrite(u->deep_raw, 0.0f); // not gated, off..
+    TestWrite(u->thal_prv, 0.0f); // clear any processed signal
+    return;
+  }
+  // thal > 0 at this point..
+  if(u->thal_prv == -0.001f) {     // we've already processed the current thal signal
+    return;
+  }
+
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
+  int unidx = un->idx % lay->un_geom.n;
+  int dyn_row = unidx % n_dyns;
+
+  if(u->thal_prv == 0.0f && u->thal > 0.0f) { // just gated
+    u->deep_raw = GetDynVal(DYN_INIT, dyn_row);
+    u->thal_prv = -0.001f;      // mark as processed
+    return;
+  }
+  // must be continued maintenance at this point
+  float cur_val = u->deep_raw;
+  float prv_val = u->deep_raw_prv;
+  float nw_val = UpdtDynVal(cur_val, prv_val, dyn_row);
+  u->deep_raw = nw_val;
+  u->thal_prv = -0.001f;      // mark as processed
 }
 
-void PFCUnitSpec::Compute_Act_ThalDeep5b(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  // if(cifer_thal.on) {
-  //   if(cifer_thal.auto_thal) {
-  //     u->thal = u->act_eq;
-  //   }
-  //   if(u->thal < cifer_thal.thal_thr)
-  //     TestWrite(u->thal, 0.0f);
-  //   if(cifer_thal.thal_bin && u->thal > 0.0f)
-  //     TestWrite(u->thal, 1.0f);
-  // }
-
-  // if(!cifer_d5b.on) return;
-
-  // bool act_mnt = ActiveMaint((LeabraUnit*)u->Un(net, thr_no));
-  
-  // if(Quarter_Deep5bNow(net->quarter)) {
-  //   float act5b = u->act_eq;
-  //   if(act5b < cifer_d5b.act5b_thr) {
-  //     act5b = 0.0f;
-  //   }
-  //   act5b *= u->thal;
-
-  //   if(act_mnt && u->thal_prv > 0.0f && u->thal > 0.0f) { // ongoing maintenance
-  //     u->deep5b += pfc_maint.d5b_updt_dt * (act5b - u->deep5b);
-  //   }
-  //   else {                        // first update or off..
-  //     u->deep5b = act5b;
-  //   }
-  // }
-  // else {
-  //   if(cifer_d5b.burst && !act_mnt) {
-  //     u->deep5b = 0.0f;         // turn it off! only if not maint!
-  //   }
-  // }
-}
 
