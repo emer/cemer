@@ -305,7 +305,7 @@ void LeabraDropoutSpec::Defaults_init() {
 
 void DeepSpec::Initialize() {
   on = false;
-  thr = 0.5f;
+  thr = 0.2f;
   d_to_d = 0.5f;
   d_to_s = 0.0f;
   ctxt_to_s = 0.15f;
@@ -320,11 +320,11 @@ void DeepSpec::Defaults_init() {
 
 void DeepNormSpec::Initialize() {
   on = false;
-  raw_val = GROUP_AVG;
-  contrast = 3.0f;
+  raw_val = GROUP_MAX;
+  contrast = 1.0f;
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
-  min_ctxt = 0.1f;
+  min_ctxt = 0.05f;
   Defaults_init();
 }
 
@@ -1940,7 +1940,7 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
   float dctxt = u->deep_ctxt;
   float lctxt = lay->am_deep_ctxt.avg;
   float nw_nrm = 0.0f;
-  if(deep_raw > 0.0f) {
+  if(deep_raw > opt_thresh.send) {
     // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
     nw_nrm = deep_norm.ComputeNormLayCtxt(deep_raw, dctxt, lctxt);
   }

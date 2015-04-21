@@ -450,7 +450,7 @@ public:
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
   float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
   float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
-  float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
+  float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
   
   inline float  ComputeGain(float max_raw, float avg_ctxt)
   { avg_ctxt = MAX(avg_ctxt, min_ctxt);
