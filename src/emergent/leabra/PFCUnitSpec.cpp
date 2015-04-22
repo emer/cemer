@@ -194,7 +194,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   int dyn_row = unidx % n_dyns;
 
   if(u->thal_prv == 0.0f && u->thal > 0.0f) { // just gated
-    u->deep_raw = GetDynVal(DYN_INIT, dyn_row);
+    u->deep_raw = u->act_eq * GetDynVal(DYN_INIT, dyn_row);
     u->thal_prv = -0.001f;      // mark as processed
     return;
   }
@@ -206,4 +206,35 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   u->thal_prv = -0.001f;      // mark as processed
 }
 
+float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+                                          int thr_no, float& net_syn) {
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)u->Un(net, thr_no)->own_lay()->GetLayerSpec();
 
+  float net_ex = 0.0f;
+  if(bias_spec) {
+    net_ex += u->bias_scale * u->bias_wt;
+  }
+  if(u->HasExtFlag(UnitVars::EXT)) {
+    net_ex += u->ext * ls->clamp.gain;
+  }
+  if(deep.on) {
+    if(deep.d_to_s > 0.0f) {
+      net_ex += deep.d_to_s * u->deep_raw; // this is only diff from LeabraUnitSpec!
+    }
+    if(deep.ctxt_to_s > 0.0f) {
+      net_ex += deep.ctxt_to_s * u->deep_ctxt;
+    }
+    if(deep.thal_to_s > 0.0f) {
+      net_ex += deep.thal_to_s * u->thal;
+    }
+  }
+  if(da_mod.on) {
+    if(net->phase == LeabraNetwork::PLUS_PHASE) {
+      net_ex += da_mod.plus * u->dav * net_syn;
+    }
+    else {                      // MINUS_PHASE
+      net_ex += da_mod.minus * u->dav * net_syn;
+    }
+  }
+  return net_ex;
+}

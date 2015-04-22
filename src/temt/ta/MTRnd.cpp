@@ -153,6 +153,7 @@ MTRnd::set_state(const MTRndState &newState, int thr_no)
 }
 
 /* generates a random number on [0,0xffffffff]-interval */
+
 uint MTRnd::genrand_int32(int thr_no) {
   MTRndState& state = get_state(thr_no);
   ulong y;
@@ -163,7 +164,7 @@ uint MTRnd::genrand_int32(int thr_no) {
     int kk;
 
     if (state.mti == N+1)   /* if init_genrand() has not been called, */
-      seed_time_pid();  // (5489UL); a default initial seed is used
+      seed_time_pid(thr_no);  // (5489UL); a default initial seed is used
 
     for (kk=0;kk<N-M;kk++) {
       y = (state.mt[kk]&UPPER_MASK)|(state.mt[kk+1]&LOWER_MASK);

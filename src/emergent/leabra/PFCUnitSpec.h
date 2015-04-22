@@ -105,6 +105,8 @@ public:
   virtual void  UpdtDynTable();
   // #BUTTON update the dt values from the tau values
 
+  float Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+                            int thr_no, float& net_syn) override;
   void  Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
 
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
