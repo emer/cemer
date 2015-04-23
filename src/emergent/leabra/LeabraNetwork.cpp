@@ -80,6 +80,7 @@ void LeabraNetMisc::Initialize() {
   dwt_norm = false;
   lay_gp_inhib = false;
   inhib_cons = false;
+  td_mod = false;
 }
 
 void RelNetinSched::Initialize() {
@@ -153,6 +154,7 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
 
 void LeabraNetwork::CheckInhibCons() {
   net_misc.inhib_cons = false;
+  net_misc.td_mod = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->CheckInhibCons(this);
@@ -161,7 +163,7 @@ void LeabraNetwork::CheckInhibCons() {
 
 void LeabraNetwork::Build() {
   CheckInhibCons();
-  if(net_misc.inhib_cons) {
+  if(net_misc.inhib_cons || net_misc.td_mod) {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::Build();
@@ -698,6 +700,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
+    AvgMaxValsRaw* am_td_net = ThrLayAvgMax(thr_no, li, AM_TD_NET);
+    am_td_net->InitVals();
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -706,6 +710,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
+      am_td_net->UpdtVals(uv->td_net, flat_idx); 
     }
   }
 
@@ -717,6 +722,8 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_NET);
     am_net->InitVals();
+    AvgMaxValsRaw* am_td_net = ThrUnGpAvgMax(thr_no, li, AM_TD_NET);
+    am_td_net->InitVals();
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -725,6 +732,7 @@ void LeabraNetwork::Compute_NetinStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_net->UpdtVals(uv->net, flat_idx); 
+      am_td_net->UpdtVals(uv->td_net, flat_idx); 
     }
   }
 }
@@ -740,12 +748,17 @@ void LeabraNetwork::Compute_NetinStats_Post() {
       continue;
     AvgMaxVals& netin = lay->netin;
     netin.InitVals();
+    AvgMaxVals& td_netin = lay->td_netin;
+    td_netin.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
+      AvgMaxValsRaw* am_td_net = ThrLayAvgMax(i, li, AM_TD_NET);
+      td_netin.UpdtFmAvgMaxRaw(*am_td_net);
     }
     netin.CalcAvg();
+    td_netin.CalcAvg();
   }
 
   // then by unit groups
@@ -758,12 +771,17 @@ void LeabraNetwork::Compute_NetinStats_Post() {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
     AvgMaxVals& netin = gpd->netin;
     netin.InitVals();
+    AvgMaxVals& td_netin = gpd->td_netin;
+    td_netin.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_NET);
       netin.UpdtFmAvgMaxRaw(*am_net);
+      AvgMaxValsRaw* am_td_net = ThrUnGpAvgMax(i, li, AM_TD_NET);
+      td_netin.UpdtFmAvgMaxRaw(*am_td_net);
     }
     netin.CalcAvg();
+    td_netin.CalcAvg();
   }
 }
 

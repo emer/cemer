@@ -48,6 +48,9 @@ SMARTREF_OF_CPP(LeabraUnitSpec);
 
 
 void LeabraActFunSpec::Initialize() {
+  td_mod = false;
+  td_thr = 0.2f;
+  td_gain = 2.0f;
   Defaults_init();
 }
 
@@ -546,6 +549,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_q4 = 0.0f;
   u->act_m = 0.0f;
   u->act_p = 0.0f;
+  u->td_net = 0.0f;
   u->act_dif = 0.0f;
   u->net_prv_q = 0.0f;
   u->net_prv_trl = 0.0f;
@@ -623,6 +627,7 @@ void LeabraUnitSpec::Init_ActAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_
 
 void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->act_sent = 0.0f;
+  u->td_net = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
   u->deep_sent = 0.0f;
@@ -721,6 +726,7 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
   if(decay > 0.0f) {            // no need to reset netin if not decaying at all
     u->act -= decay * (u->act - act_init.mean);
     u->net -= decay * u->net;
+    u->td_net -= decay * u->td_net;
     u->act_eq -= decay * (u->act_eq - act_init.mean);
     u->act_nd -= decay * (u->act_nd - act_init.mean);
     u->gc_i -= decay * u->gc_i;
@@ -928,7 +934,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   float deep_raw_scale = 0.0f;
   float deep_norm_scale = 0.0f;
   float deep_ctxt_scale = 0.0f;
-  int n_active_cons = 0;        // track this for bias weight scaling!
+  float td_scale = 0.0f;
   
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
@@ -954,8 +960,10 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       deep_ctxt_scale += rel_scale;
     }
+    else if(act.td_mod && recv_gp->prjn->direction != Projection::FM_INPUT) {
+      td_scale += rel_scale;
+    }
     else {
-      n_active_cons++;
       net_scale += rel_scale;
     }
   }
@@ -990,6 +998,10 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       if(deep_ctxt_scale > 0.0f)
         recv_gp->scale_eff /= deep_ctxt_scale;
+    }
+    else if(act.td_mod && recv_gp->prjn->direction != Projection::FM_INPUT) {
+      if(td_scale > 0.0f)
+        recv_gp->scale_eff /= td_scale;
     }
     else {
       if(net_scale > 0.0f)
@@ -1139,6 +1151,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
 #endif
   float net_delta = 0.0f;
   float gi_delta = 0.0f;
+  float td_net = 0.0f;
   if(net->NetinPerPrjn()) {
     const int nrg = u->NRecvConGps(net, thr_no); 
     for(int g=0; g< nrg; g++) {
@@ -1154,13 +1167,25 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
       }
       LeabraConSpec* cs = (LeabraConSpec*)recv_gp->GetConSpec();
       // todo? incorporate finer-grained inhib here?
-      if(cs->inhib)
-	gi_delta += g_net_delta;
-      else
-	net_delta += g_net_delta;
-
       recv_gp->net_raw += g_net_delta; // note: direct assignment to raw, no time integ
+      if(cs->inhib) {
+        gi_delta += g_net_delta;
+      }
+      else {
+        if(act.td_mod) {
+          if(recv_gp->prjn->direction != Projection::FM_INPUT) {
+            td_net += recv_gp->net_raw;
+          }
+          else {
+            net_delta += g_net_delta;
+          }
+        }
+        else {
+          net_delta += g_net_delta;
+        }
+      }
     }
+    u->td_net = td_net;
   }
   else {
     for(int j=0;j<nt;j++) {
@@ -1499,6 +1524,16 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += Compute_Noise(u, net, thr_no);
   }
+
+  if(act.td_mod) {
+    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
+    float td_thr = thr->td_netin.avg +
+      act.td_thr * (thr->td_netin.max - thr->td_netin.avg);
+    float td_net = act.td_gain * (u->td_net - td_thr);
+    new_act *= (1.0f + td_net); // needs to be multiplicative else adding to everyone
+  }
+  
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
     if(u->deep_norm > 0.0f) {
       new_act *= u->deep_norm;

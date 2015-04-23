@@ -133,6 +133,7 @@ public:
   bool		dwt_norm;       // #READ_ONLY #SHOW dwt_norm is being used -- this must be done as a separate step -- LeabraConSpec will set this flag if LeabraConSpec::wt_sig.dwt_norm flag is on, and off if not -- updated in Trial_Init_Specs call
   bool          lay_gp_inhib;     // #READ_ONLY #SHOW layer group level inhibition is active for some layer groups -- may cause some problems with asynchronous threading operation -- updated in Trial_Init_Specs call
   bool		inhib_cons;     // #READ_ONLY #SHOW inhibitory connections are being used in this network -- detected during buildunits_threads to determine how netinput is computed -- sets NETIN_PER_PRJN flag
+  bool          td_mod;         // #READ_ONLY #SHOW top-down modulatory mechanism is in effect
   bool          lrate_updtd;
   // #IGNORE flag used to determine when the learning rate was updated -- e.g., needed for CUDA to update parameters 
 
@@ -193,6 +194,7 @@ public:
 
   enum AvgMaxVars { // variables that we collect average and max values of -- thread optimized -- coordintate with LeabraInhib.h
     AM_NET,
+    AM_TD_NET,
     AM_ACT,
     AM_ACT_EQ,
     AM_UN_G_I,
