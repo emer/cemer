@@ -103,8 +103,7 @@ public:
     virtual void Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net);
     // #CAT_ExtRew used in above routines: clamp norew_val values for when no reward information is present
 
-  // overrides:
-  void	Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net);
+  void	Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) override;
 
   void	HelpConfig();	// #BUTTON get help message for configuring this spec
   bool  CheckConfig_Layer(Layer* lay, bool quiet=false);

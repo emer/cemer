@@ -177,7 +177,7 @@ void TdLayerSpec::Compute_CycleStats(LeabraLayer* lay, LeabraNetwork* net, int t
   inherited::Compute_CycleStats(lay, net, thread_no);
 }
 
-void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+void TdLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->hard_clamped = true;
     lay->SetExtFlag(Unit::EXT);
@@ -189,6 +189,6 @@ void TdLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
     lay->hard_clamped = false;
     lay->UnSetExtFlag(Unit::EXT);
   }
-  inherited::Compute_HardClamp(lay, net);
+  inherited::Compute_HardClamp_Layer(lay, net);
 }
 

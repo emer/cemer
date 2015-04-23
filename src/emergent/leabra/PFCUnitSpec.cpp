@@ -22,18 +22,11 @@ TA_BASEFUNS_CTORS_DEFN(PFCMaintSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMaintSpec::Initialize() {
+  thal_thr = 0.1f;
   Defaults_init();
 }
 
 void PFCMaintSpec::Defaults_init() {
-  d5b_updt_tau = 10.0f;
-  
-  d5b_updt_dt = 1.0f / d5b_updt_tau;
-}
-
-void PFCMaintSpec::UpdateAfterEdit_impl() {
-  inherited::UpdateAfterEdit_impl();
-  d5b_updt_dt = 1.0f / d5b_updt_tau;
 }
 
 void PFCUnitSpec::Initialize() {
@@ -44,6 +37,9 @@ void PFCUnitSpec::Defaults_init() {
   // act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   InitDynTable();
   deep.on = true;
+  deep_norm.on = true;
+  deep_norm.mod = false;
+  deep_norm.raw_val = DeepNormSpec::UNIT;
 }
 
 void  PFCUnitSpec::FormatDynTable() {
@@ -131,7 +127,7 @@ void  PFCUnitSpec::UpdtDynTable() {
     SetDynVal(dt, DYN_DECAY_DT, i);
 
     float init = GetDynVal(DYN_INIT, i);
-    if(init == 0.0f) {          // init must be a minimum val -- uses 0 to detect start
+    if(init == 0.0f) {          // init must be a minimum val -- deep_raw = 0 is non-gated
       SetDynVal(.1f, DYN_INIT, i);
     }
   }
@@ -141,6 +137,50 @@ void  PFCUnitSpec::UpdtDynTable() {
 void PFCUnitSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   UpdtDynTable();
+}
+
+void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  const float thal_thr = pfc_maint.thal_thr;
+  if(u->thal < thal_thr) {
+    TestWrite(u->deep_raw, 0.0f); // not gated, off..
+    TestWrite(u->thal_prv, 0.0f); // clear any processed signal
+    TestWrite(u->misc_1, 0.0f);
+    return;
+  }
+  // thal > 0 at this point..
+  if(u->thal_prv == -0.001f) {     // we've already processed the current thal signal
+    return;
+  }
+
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
+  int unidx = un->idx % lay->un_geom.n;
+  int dyn_row = unidx % n_dyns;
+
+  if(u->thal_prv < thal_thr && u->thal > thal_thr) { // just gated
+    if(u->act_eq < opt_thresh.send) {            // not active enough for gating
+      TestWrite(u->deep_raw, 0.0f);
+      TestWrite(u->misc_1, 0.0f);
+    }
+    else {
+      u->deep_raw = u->act_eq * GetDynVal(DYN_INIT, dyn_row);
+    }
+    u->thal_prv = -0.001f;      // mark as processed
+    u->misc_1 = u->act_eq;
+    return;
+  }
+
+  if(u->deep_raw == 0.0f) {      // not gated, bail
+    u->thal_prv = -0.001f;      // mark as processed
+    return;
+  }
+  
+  // must be continued maintenance at this point
+  float cur_val = u->deep_raw;
+  float prv_val = u->deep_raw_pprv;
+  float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
+  u->deep_raw = nw_val;
+  u->thal_prv = -0.001f;      // mark as processed
 }
 
 void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
@@ -167,7 +207,13 @@ void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
     for(int nd=0; nd < n_dyns; nd++) {
       float& cur = vals.FastEl2d(0, nd);
       float& prv = vals.FastEl2d(1, nd);
-      float nw = UpdtDynVal(cur, prv, nd);
+      float nw;
+      if(x == 0) {
+        nw = GetDynVal(DYN_INIT, nd);
+      }
+      else {
+        nw = UpdtDynVal(cur, prv, 1.0f, nd);
+      }
       graph_data->SetValAsFloat(nw, nd+1, -1);
       prv = cur;
       cur = nw;
@@ -177,64 +223,3 @@ void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
   graph_data->FindMakeGraphView();
 }
 
-void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(u->thal == 0.0f) {
-    TestWrite(u->deep_raw, 0.0f); // not gated, off..
-    TestWrite(u->thal_prv, 0.0f); // clear any processed signal
-    return;
-  }
-  // thal > 0 at this point..
-  if(u->thal_prv == -0.001f) {     // we've already processed the current thal signal
-    return;
-  }
-
-  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-  int unidx = un->idx % lay->un_geom.n;
-  int dyn_row = unidx % n_dyns;
-
-  if(u->thal_prv == 0.0f && u->thal > 0.0f) { // just gated
-    u->deep_raw = u->act_eq * GetDynVal(DYN_INIT, dyn_row);
-    u->thal_prv = -0.001f;      // mark as processed
-    return;
-  }
-  // must be continued maintenance at this point
-  float cur_val = u->deep_raw;
-  float prv_val = u->deep_raw_prv;
-  float nw_val = UpdtDynVal(cur_val, prv_val, dyn_row);
-  u->deep_raw = nw_val;
-  u->thal_prv = -0.001f;      // mark as processed
-}
-
-float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
-                                          int thr_no, float& net_syn) {
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)u->Un(net, thr_no)->own_lay()->GetLayerSpec();
-
-  float net_ex = 0.0f;
-  if(bias_spec) {
-    net_ex += u->bias_scale * u->bias_wt;
-  }
-  if(u->HasExtFlag(UnitVars::EXT)) {
-    net_ex += u->ext * ls->clamp.gain;
-  }
-  if(deep.on) {
-    if(deep.d_to_s > 0.0f) {
-      net_ex += deep.d_to_s * u->deep_raw; // this is only diff from LeabraUnitSpec!
-    }
-    if(deep.ctxt_to_s > 0.0f) {
-      net_ex += deep.ctxt_to_s * u->deep_ctxt;
-    }
-    if(deep.thal_to_s > 0.0f) {
-      net_ex += deep.thal_to_s * u->thal;
-    }
-  }
-  if(da_mod.on) {
-    if(net->phase == LeabraNetwork::PLUS_PHASE) {
-      net_ex += da_mod.plus * u->dav * net_syn;
-    }
-    else {                      // MINUS_PHASE
-      net_ex += da_mod.minus * u->dav * net_syn;
-    }
-  }
-  return net_ex;
-}

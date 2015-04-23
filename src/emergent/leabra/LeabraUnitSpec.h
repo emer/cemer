@@ -409,7 +409,7 @@ public:
   bool          on;         // enable the DeepLeabra mechanisms, including temporal integration via deep_ctxt context connections, thalamic-based auto-encoder driven by deep_raw projections, and attentional modulation by deep_norm (requires deep_norm.on)
   float	        thr;        // #CONDSHOW_ON_on #MIN_0 #MAX_1 #DEF_0.1;0.2;0.5 threshold on act_eq value for deep_raw neurons to fire -- neurons below this level have deep_raw = 0 -- above this level, deep_raw = act_eq -- value is specified as distance between average and maximum act_eq values within layer (e.g., 0 = average, 1 = max)
   float         d_to_d;     // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_norm_net inputs from deep-to-deep projections in computing deep_raw
-  float         d_to_s;     // #CONDSHOW_ON_on #MIN_0 how much of the deep_norm_net signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
+  float         d_to_s;     // #CONDSHOW_ON_on #MIN_0 how much of the deep_norm signal should be added to superficial neuron net-input -- this represents a form of TI-like context information because the deep projections are delayed in time
   float         ctxt_to_s;  // #CONDSHOW_ON_on #MIN_0 how much to weight the deep_ctxt as an input to superficial neurons (from DeepCtxtConSpec connections) -- determines how much direct recurrent temporal integration (TI) context a neuron receives
   bool          ctxt_rel;   // #CONDSHOW_ON_on should the DeepCtxtConSpec context projections wt_scale.rel be normalized along with all of the standard corticocortical connections for the superficial neurons -- when ctxt_to_s is relatively strong, this is a good idea -- when it is weaker, it is not so necessary, and it can be cleaner to not do it
   float         thal_to_d;  // #CONDSHOW_ON_on how much to drive deep_raw from thal input from thalamus -- provides extra attentional modulation from larger-scale thalamic attentional layers
@@ -446,6 +446,7 @@ public:
   };
 
   bool          on;             // enable normalization of the deep_raw, deep_norm_net, and deep_ctxt values into deep_norm attentional modulation factors -- automatically normalized based on layer vals to max at 1.0 -- if off, then deep_norm is always set to 1.0 -- requires deep.on for this to work!!
+  bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial act and net variables -- turn this off to allow layer to compute deep_norm values but not apply them to itself..
   DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues -- only applicable for layers with unit groups (otherwise UNIT is the only option used)
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
   float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values

@@ -23,11 +23,8 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ScalarValBias);
-
 TA_BASEFUNS_CTORS_DEFN(ScalarValSpec);
-
 TA_BASEFUNS_CTORS_DEFN(ScalarValLayerSpec);
-
 
 void ScalarValSpec::Initialize() {
   rep = LOCALIST;
@@ -59,7 +56,10 @@ void ScalarValSpec::InitRange(float umin, float urng) {
 void ScalarValSpec::InitVal(float sval, int ugp_size, float umin, float urng) {
   InitRange(umin, urng);
   val = sval;
-  incr = range / (float)(ugp_size - 1); // count end..
+  if(ugp_size > 1)
+    incr = range / (float)(ugp_size - 1); // count end..
+  else
+    incr = 0.0f;
   //  incr -= .000001f;         // round-off tolerance..
 }
 
@@ -352,7 +352,7 @@ void ScalarValLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net
 void ScalarValLayerSpec::ClampValue_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx, float rescale) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;        // must be at least a few units..
+  if(nunits < 1) return;        // must be at least a few units..
   LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, 0, gpidx);
   LeabraUnitVars* uv = (LeabraUnitVars*)u->GetUnitVars();
   LeabraUnitSpec* us = (LeabraUnitSpec*)u->GetUnitSpec();
@@ -405,7 +405,7 @@ float ScalarValLayerSpec::ClampAvgAct(int ugp_size) {
 float ScalarValLayerSpec::ReadValue_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return 0.0f;   // must be at least a few units..
+  if(nunits < 1) return 0.0f;   // must be at least a few units..
 
   scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
   float avg = 0.0f;
@@ -446,7 +446,7 @@ void ScalarValLayerSpec::ReadValue(LeabraLayer* lay, LeabraNetwork* net) {
 void ScalarValLayerSpec::Compute_ExtToPlus_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;
+  if(nunits < 1) return;
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
@@ -463,7 +463,7 @@ void ScalarValLayerSpec::Compute_ExtToPlus_ugp
 void ScalarValLayerSpec::Compute_ExtToAct_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;
+  if(nunits < 1) return;
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
@@ -478,7 +478,7 @@ void ScalarValLayerSpec::Compute_ExtToAct_ugp
 void ScalarValLayerSpec::HardClampExt_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;
+  if(nunits < 1) return;
   LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);
@@ -495,7 +495,7 @@ void ScalarValLayerSpec::HardClampExt(LeabraLayer* lay, LeabraNetwork* net) {
 void ScalarValLayerSpec::LabelUnits_ugp
 (LeabraLayer* lay, LeabraNetwork* net, Layer::AccessMode acc_md, int gpidx) {
   int nunits = lay->UnitAccess_NUnits(acc_md);
-  if(nunits < 2) return;        // must be at least a few units..
+  if(nunits < 1) return;        // must be at least a few units..
   scalar.InitVal(0.0f, nunits, unit_range.min, unit_range.range);
   for(int i=0;i<nunits;i++) {
     LeabraUnit* u = (LeabraUnit*)lay->UnitAccess(acc_md, i, gpidx);

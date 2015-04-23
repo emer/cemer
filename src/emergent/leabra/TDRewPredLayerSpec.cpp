@@ -154,7 +154,7 @@ void TDRewPredLayerSpec::Quarter_Final_Layer(LeabraLayer* lay, LeabraNetwork* ne
   Compute_TdPlusPhase(lay, net);
 }
 
-void TDRewPredLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+void TDRewPredLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->SetExtFlag(Unit::EXT);
     Compute_ClampPrev(lay, net);

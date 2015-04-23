@@ -304,7 +304,7 @@ void ExtRewLayerSpec::Compute_NoRewAct(LeabraLayer* lay, LeabraNetwork* net) {
      );
 }
 
-void ExtRewLayerSpec::Compute_HardClamp(LeabraLayer* lay, LeabraNetwork* net) {
+void ExtRewLayerSpec::Compute_HardClamp_Layer(LeabraLayer* lay, LeabraNetwork* net) {
   if(net->phase == LeabraNetwork::MINUS_PHASE) {
     lay->SetExtFlag(UnitVars::EXT);
     Compute_NoRewAct(lay, net); // no reward in minus

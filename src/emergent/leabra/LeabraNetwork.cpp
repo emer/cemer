@@ -50,7 +50,6 @@ void LeabraTimes::Initialize() {
   quarter = 25;
   cycle_qtr = true;
   time_inc = 0.001f;
-  deep_iters = 2;
 
   minus = 3 * quarter;
   plus = quarter;
@@ -1195,7 +1194,7 @@ void LeabraNetwork::Quarter_Final_Counters() {
 ///////////////////////////////////////////////////////////////////////
 //      DeepLeabra updates
 
-void LeabraNetwork::Compute_DeepStats_Thr(int thr_no) {
+void LeabraNetwork::Compute_DeepRawStats_Thr(int thr_no) {
   // first go by layers
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
@@ -1206,8 +1205,6 @@ void LeabraNetwork::Compute_DeepStats_Thr(int thr_no) {
     am_raw->InitVals();
     AvgMaxValsRaw* am_ctxt = ThrLayAvgMax(thr_no, li, AM_DEEP_CTXT);
     am_ctxt->InitVals();
-    AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_DEEP_NORM_NET);
-    am_net->InitVals();
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -1217,7 +1214,6 @@ void LeabraNetwork::Compute_DeepStats_Thr(int thr_no) {
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_raw->UpdtVals(uv->deep_raw, flat_idx); 
       am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
-      am_net->UpdtVals(uv->deep_norm_net, flat_idx); 
     }
   }
 
@@ -1231,8 +1227,6 @@ void LeabraNetwork::Compute_DeepStats_Thr(int thr_no) {
     am_raw->InitVals();
     AvgMaxValsRaw* am_ctxt = ThrUnGpAvgMax(thr_no, li, AM_DEEP_CTXT);
     am_ctxt->InitVals();
-    AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_DEEP_NORM_NET);
-    am_net->InitVals();
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -1242,12 +1236,11 @@ void LeabraNetwork::Compute_DeepStats_Thr(int thr_no) {
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_raw->UpdtVals(uv->deep_raw, flat_idx); 
       am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
-      am_net->UpdtVals(uv->deep_norm_net, flat_idx); 
     }
   }
 }
 
-void LeabraNetwork::Compute_DeepStats_Post() {
+void LeabraNetwork::Compute_DeepRawStats_Post() {
   // integrate all the data from thread-specific guys
 
   // first go by layers
@@ -1260,36 +1253,15 @@ void LeabraNetwork::Compute_DeepStats_Post() {
     am_deep_raw.InitVals();
     AvgMaxVals& am_deep_ctxt = lay->am_deep_ctxt;
     am_deep_ctxt.InitVals();
-    AvgMaxVals& am_deep_norm_net = lay->am_deep_norm_net;
-    am_deep_norm_net.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_raw = ThrLayAvgMax(i, li, AM_DEEP_RAW);
       am_deep_raw.UpdtFmAvgMaxRaw(*am_raw);
       AvgMaxValsRaw* am_ctxt = ThrLayAvgMax(i, li, AM_DEEP_CTXT);
       am_deep_ctxt.UpdtFmAvgMaxRaw(*am_ctxt);
-      AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_DEEP_NORM_NET);
-      am_deep_norm_net.UpdtFmAvgMaxRaw(*am_net);
     }
     am_deep_raw.CalcAvg();
     am_deep_ctxt.CalcAvg();
-    am_deep_norm_net.CalcAvg();
-    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
-    if(us->deep_norm.on) {
-      if(us->DeepNormCopied()) {
-        lay->deep_norm_def = 0.0f;
-      }
-      else {
-        float lctxt = lay->am_deep_ctxt.avg;
-        // use layer context for both, and then renormalize
-        lay->deep_norm_def = us->deep_norm.ComputeNormLayCtxt(0.0f, lctxt, lctxt);
-        if(lay->am_deep_norm.max > 0.0f)
-          lay->deep_norm_def /= lay->am_deep_norm.max;
-      }
-    }
-    else {
-      lay->deep_norm_def = 1.0f;
-    }
   }
 
   // then by unit groups
@@ -1304,20 +1276,15 @@ void LeabraNetwork::Compute_DeepStats_Post() {
     am_deep_raw.InitVals();
     AvgMaxVals& am_deep_ctxt = gpd->am_deep_ctxt;
     am_deep_ctxt.InitVals();
-    AvgMaxVals& am_deep_norm_net = gpd->am_deep_norm_net;
-    am_deep_norm_net.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_raw = ThrUnGpAvgMax(i, li, AM_DEEP_RAW);
       am_deep_raw.UpdtFmAvgMaxRaw(*am_raw);
       AvgMaxValsRaw* am_ctxt = ThrUnGpAvgMax(i, li, AM_DEEP_CTXT);
       am_deep_ctxt.UpdtFmAvgMaxRaw(*am_ctxt);
-      AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_DEEP_NORM_NET);
-      am_deep_norm_net.UpdtFmAvgMaxRaw(*am_net);
     }
     am_deep_raw.CalcAvg();
     am_deep_ctxt.CalcAvg();
-    am_deep_norm_net.CalcAvg();
   }
 }
 
@@ -1378,6 +1345,22 @@ void LeabraNetwork::Compute_DeepNormStats_Post() {
       am_deep_norm.UpdtFmAvgMaxRaw(*am_norm);
     }
     am_deep_norm.CalcAvg();
+    LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
+    if(us->deep_norm.on) {
+      if(us->DeepNormCopied()) {
+        lay->deep_norm_def = 0.0f;
+      }
+      else {
+        float lctxt = lay->am_deep_ctxt.avg;
+        // use layer context for both, and then renormalize
+        lay->deep_norm_def = us->deep_norm.ComputeNormLayCtxt(0.0f, lctxt, lctxt);
+        if(lay->am_deep_norm.max > 0.0f)
+          lay->deep_norm_def /= lay->am_deep_norm.max;
+      }
+    }
+    else {
+      lay->deep_norm_def = 1.0f;
+    }
   }
 
   // then by unit groups
@@ -1425,70 +1408,161 @@ void LeabraNetwork::Compute_DeepNormStats_PostPost() {
   }
 }
 
+void LeabraNetwork::Compute_DeepNormNetStats_Thr(int thr_no) {
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    AvgMaxValsRaw* am_net = ThrLayAvgMax(thr_no, li, AM_DEEP_NORM_NET);
+    am_net->InitVals();
+    
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_net->UpdtVals(uv->deep_norm_net, flat_idx); 
+    }
+  }
+
+  // then unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    AvgMaxValsRaw* am_net = ThrUnGpAvgMax(thr_no, li, AM_DEEP_NORM_NET);
+    am_net->InitVals();
+    
+    const int ust = ThrUnGpUnStart(thr_no, li);
+    const int ued = ThrUnGpUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
+      am_net->UpdtVals(uv->deep_norm_net, flat_idx); 
+    }
+  }
+}
+
+void LeabraNetwork::Compute_DeepNormNetStats_Post() {
+  // integrate all the data from thread-specific guys
+
+  // first go by layers
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    // if(lay->hard_clamped)
+    // continue;
+    AvgMaxVals& am_deep_norm_net = lay->am_deep_norm_net;
+    am_deep_norm_net.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_net = ThrLayAvgMax(i, li, AM_DEEP_NORM_NET);
+      am_deep_norm_net.UpdtFmAvgMaxRaw(*am_net);
+    }
+    am_deep_norm_net.CalcAvg();
+  }
+
+  // then by unit groups
+  const int nugs = n_ungps_built;
+  for(int li = 0; li < nugs; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveUnGpLayer(li);
+    // if(lay->hard_clamped)
+    //   continue;
+    int ugidx = ActiveUnGp(li);
+    LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
+    AvgMaxVals& am_deep_norm_net = gpd->am_deep_norm_net;
+    am_deep_norm_net.InitVals();
+
+    for(int i=0; i < n_thrs_built; i++) {
+      AvgMaxValsRaw* am_net = ThrUnGpAvgMax(i, li, AM_DEEP_NORM_NET);
+      am_deep_norm_net.UpdtFmAvgMaxRaw(*am_net);
+    }
+    am_deep_norm_net.CalcAvg();
+  }
+}
+
 void LeabraNetwork::Compute_Deep_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
-  for(int deep_cyc = 0; deep_cyc < times.deep_iters; deep_cyc++) {
-    for(int i=0; i<nu; i++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-      if(uv->lesioned()) continue;
-      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
-    }
-    threads.SyncSpin(thr_no, 0);
 
-    for(int i=0; i<nu; i++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-      if(uv->lesioned()) continue;
-      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin_Post(uv, this, thr_no);
-    }
-    threads.SyncSpin(thr_no, 1);
-
-    if(quarter == 0) {            // cannonical case, just do it now..
-      Compute_DeepStats_Thr(thr_no);
-      threads.SyncSpin(thr_no, 2);
-      if(thr_no == 0) {
-        Compute_DeepStats_Post();
-      }
-      threads.SyncSpin(thr_no, 0);
-    }
-
-    for(int i=0; i<nu; i++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-      if(uv->lesioned()) continue;
-      ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepNorm(uv, this, thr_no);
-    }
-    threads.SyncSpin(thr_no, 1);
+  bool deep_updt = false;
   
-    if(quarter == 0) {            // cannonical case, just do it now..
-      Compute_DeepNormStats_Thr(thr_no);
-      threads.SyncSpin(thr_no, 2);
-      if(thr_no == 0) {
-        Compute_DeepNormStats_Post();
-      }
-      threads.SyncSpin(thr_no, 2);
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    if(!deep_updt) {
+      deep_updt = ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepTest(uv, this, thr_no);
     }
-    
-    for(int i=0; i<nu; i++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-      if(uv->lesioned()) continue;
-      // this also does the normalization of deep_norm
-      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin(uv, this, thr_no);
-    }
-    threads.SyncSpin(thr_no, 3);
-  
-    if(quarter == 0) {            // cannonical case, just do it now..
-      if(thr_no == 0) {
-        Compute_DeepNormStats_PostPost();
-      }
-      threads.SyncSpin(thr_no, 0);
-    }
-
-    for(int i=0; i<nu; i++) {
-      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
-      if(uv->lesioned()) continue;
-      ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin_Post(uv, this, thr_no);
-    }
-    threads.SyncSpin(thr_no, 1);
   }
+  threads.SyncSpin(thr_no, 0);
+
+  if(!deep_updt) return;        // nobody updating, bail
+
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 1);
+
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepCtxtNetin_Post(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 2);
+
+  Compute_DeepRawStats_Thr(thr_no);
+  threads.SyncSpin(thr_no, 0);
+  if(thr_no == 0) {
+    Compute_DeepRawStats_Post();
+  }
+  threads.SyncSpin(thr_no, 1);
+
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepNorm(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 2);
+  
+  Compute_DeepNormStats_Thr(thr_no);
+  threads.SyncSpin(thr_no, 0);
+  if(thr_no == 0) {
+    Compute_DeepNormStats_Post();
+  }
+  threads.SyncSpin(thr_no, 1);
+    
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    // this also does the normalization of deep_norm
+    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 2);
+  
+  if(thr_no == 0) {
+    Compute_DeepNormStats_PostPost();
+  }
+  threads.SyncSpin(thr_no, 0);
+
+  for(int i=0; i<nu; i++) {
+    LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
+    if(uv->lesioned()) continue;
+    ((LeabraUnitSpec*)uv->unit_spec)->Send_DeepNormNetin_Post(uv, this, thr_no);
+  }
+  threads.SyncSpin(thr_no, 1);
+
+  Compute_DeepNormNetStats_Thr(thr_no);
+  threads.SyncSpin(thr_no, 2);
+  if(thr_no == 0) {
+    Compute_DeepNormNetStats_Post();
+  }
+  threads.SyncSpin(thr_no, 0);
 }
 
 void LeabraNetwork::ClearDeepActs() {

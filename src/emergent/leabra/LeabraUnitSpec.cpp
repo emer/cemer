@@ -320,6 +320,7 @@ void DeepSpec::Defaults_init() {
 
 void DeepNormSpec::Initialize() {
   on = false;
+  mod = true;
   raw_val = GROUP_MAX;
   contrast = 1.0f;
   ctxt_fm_lay = 0.5f;
@@ -558,6 +559,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_avg = 0.15f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
+  u->deep_raw_pprv = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
@@ -671,6 +673,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   // not act_avg
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
+  u->deep_raw_pprv = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
@@ -903,9 +906,6 @@ void LeabraUnitSpec::Quarter_Init_TargFlags(LeabraUnitVars* u, LeabraNetwork* ne
 void LeabraUnitSpec::Quarter_Init_PrvVals(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no) {
   u->net_prv_q = u->net;
-  if(Quarter_DeepNow(net->quarter)) {
-    u->thal_prv = u->thal;        // only grab prv at start of quarter where deep5b is updating
-  }
 }
 
 void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1007,7 +1007,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
     return;
   }
   float ext_in = u->ext;
-  if(net->cycle > 0 && deep_norm.on) { // apply deep_norm attentional modulation to inputs!
+  if(net->cycle > 0 && deep_norm.on && deep_norm.mod) { // apply deep_norm attentional modulation to inputs!
     if(u->deep_norm > 0.0f) {
       ext_in *= u->deep_norm;
     }
@@ -1204,7 +1204,7 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
   float net_syn = u->net_raw;
-  if(deep_norm.on) {                 // apply attention directly to netin and act (later)
+  if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
     if(u->deep_norm > 0.0f) {
       net_syn *= u->deep_norm;
     }
@@ -1261,7 +1261,7 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   }
   if(deep.on) {
     if(deep.d_to_s > 0.0f) {
-      net_ex += deep.d_to_s * u->deep_norm_net;
+      net_ex += deep.d_to_s * u->deep_norm;
     }
     if(deep.ctxt_to_s > 0.0f) {
       net_ex += deep.ctxt_to_s * u->deep_ctxt;
@@ -1433,7 +1433,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
-    if(deep_norm.on && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
+    if(deep_norm.on && deep_norm.mod && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
       if(u->deep_norm > 0.0f) {
         u->act_eq *= u->deep_norm;
       }
@@ -1499,7 +1499,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   if((noise_type == ACT_NOISE) && (noise.type != Random::NONE) && (net->cycle >= 0)) {
     new_act += Compute_Noise(u, net, thr_no);
   }
-  if(deep_norm.on) {                 // apply attention directly to act and netin
+  if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
     if(u->deep_norm > 0.0f) {
       new_act *= u->deep_norm;
     }
@@ -1881,7 +1881,11 @@ void LeabraUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
                                         int thr_no) {
   if(!Compute_DeepTest(u, net, thr_no))
     return;
+
+  u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
+  u->thal_prv = u->thal;
+
   float act_ts = u->deep_raw;
   if(act_ts > opt_thresh.send) {
     const int nsg = u->NSendConGps(net, thr_no); 
@@ -1998,6 +2002,7 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
+  u->deep_raw_pprv = 0.0f;
   u->deep_ctxt = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_raw_net = 0.0f;
