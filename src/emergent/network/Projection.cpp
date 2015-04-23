@@ -39,6 +39,7 @@ void Projection::Initialize() {
   recv_n = 1;
   send_n = 1;
   projected = false;
+  dir_fixed = false;
   direction = DIR_UNKNOWN;
   m_prv_con_spec = NULL;
   prjn_clr.Set(1.0f, .9f, .5f); // very light orange
@@ -108,6 +109,7 @@ void Projection::Copy_(const Projection& cp) {
 //   recv_n = cp.recv_n;
 //   send_n = cp.send_n;
 //   projected = cp.projected;
+  dir_fixed = cp.dir_fixed;
   direction = cp.direction;
 
   m_prv_con_spec = cp.m_prv_con_spec;

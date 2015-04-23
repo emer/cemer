@@ -1055,6 +1055,8 @@ void Layer::PropagateOutputDistance() {
 
 void Layer::Compute_PrjnDirections() {
   FOREACH_ELEM_IN_GROUP(Projection, p, projections) {
+    if(p->dir_fixed && p->direction != Projection::DIR_UNKNOWN)
+      continue;
     if(p->NotActive()) {
       p->direction = Projection::DIR_UNKNOWN;
       continue;

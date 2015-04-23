@@ -246,7 +246,7 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
     p->CheckInhibCons(net);
   }
   LeabraUnitSpec* us = (LeabraUnitSpec*)GetUnitSpec();
-  if(us->act.td_mod)
+  if(us->top_down_mod.on)
     net->net_misc.td_mod = true;
 }
 

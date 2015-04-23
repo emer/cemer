@@ -39,6 +39,7 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
+TA_BASEFUNS_CTORS_DEFN(TopDownModSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepNormSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
@@ -48,9 +49,6 @@ SMARTREF_OF_CPP(LeabraUnitSpec);
 
 
 void LeabraActFunSpec::Initialize() {
-  td_mod = false;
-  td_thr = 0.2f;
-  td_gain = 2.0f;
   Defaults_init();
 }
 
@@ -306,6 +304,16 @@ void LeabraDropoutSpec::Defaults_init() {
   net_drop = 0.9f;
 }
 
+void TopDownModSpec::Initialize() {
+  on = false;
+  Defaults_init();
+}
+
+void TopDownModSpec::Defaults_init() {
+  thr = 0.2f;
+  gain = 2.0f;
+}
+
 void DeepSpec::Initialize() {
   on = false;
   thr = 0.2f;
@@ -465,11 +473,11 @@ void LeabraUnitSpec::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);
   LeabraNetwork* net = GET_MY_OWNER(LeabraNetwork);
   if(net) {
-    if(dt.integ != 1000.0f * net->times.time_inc) {
-      taMisc::Warning("unit time integration constant dt.integ of:", (String)dt.integ,
-                      "does not match network phases.time_inc increment of:",
-                      (String)net->times.time_inc, "time_inc should be 0.001 * dt.integ");
-    }
+    // if(dt.integ != 1000.0f * net->times.time_inc) {
+    //   taMisc::Warning("unit time integration constant dt.integ of:", (String)dt.integ,
+    //                   "does not match network phases.time_inc increment of:",
+    //                   (String)net->times.time_inc, "time_inc should be 0.001 * dt.integ");
+    // }
   }
 }
 
@@ -960,7 +968,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       deep_ctxt_scale += rel_scale;
     }
-    else if(act.td_mod && recv_gp->prjn->direction != Projection::FM_INPUT) {
+    else if(top_down_mod.on && recv_gp->prjn->direction != Projection::FM_INPUT) {
       td_scale += rel_scale;
     }
     else {
@@ -999,7 +1007,7 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
       if(deep_ctxt_scale > 0.0f)
         recv_gp->scale_eff /= deep_ctxt_scale;
     }
-    else if(act.td_mod && recv_gp->prjn->direction != Projection::FM_INPUT) {
+    else if(top_down_mod.on && recv_gp->prjn->direction != Projection::FM_INPUT) {
       if(td_scale > 0.0f)
         recv_gp->scale_eff /= td_scale;
     }
@@ -1172,7 +1180,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         gi_delta += g_net_delta;
       }
       else {
-        if(act.td_mod) {
+        if(top_down_mod.on) {
           if(recv_gp->prjn->direction != Projection::FM_INPUT) {
             td_net += recv_gp->net_raw;
           }
@@ -1525,12 +1533,12 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
-  if(act.td_mod) {
+  if(top_down_mod.on) {
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
     float td_thr = thr->td_netin.avg +
-      act.td_thr * (thr->td_netin.max - thr->td_netin.avg);
-    float td_net = act.td_gain * (u->td_net - td_thr);
+      top_down_mod.thr * (thr->td_netin.max - thr->td_netin.avg);
+    float td_net = top_down_mod.gain * (u->td_net - td_thr);
     new_act *= (1.0f + td_net); // needs to be multiplicative else adding to everyone
   }
   

@@ -488,6 +488,8 @@ void Network::Build() {
 
   net_timing.SetSize(n_thrs_built + 1);
 
+  Compute_PrjnDirections();
+  
   if(HasNetFlag(BUILD_INIT_WTS)) {
     Init_Weights();
   }

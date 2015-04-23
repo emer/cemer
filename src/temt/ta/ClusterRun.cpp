@@ -199,6 +199,7 @@ bool ClusterRun::Update() {
   bool has_updates = m_cm->UpdateTables();
   cur_svn_rev = m_cm->GetCurSvnRev();
   SortClusterInfoTable();
+  jobs_running.Sort("tag", true);
   jobs_done.Sort("tag", true);  // also sort jobs done by tag
   jobs_archive.Sort("tag", true);  // also sort jobs done by tag
 

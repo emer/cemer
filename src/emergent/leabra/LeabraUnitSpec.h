@@ -44,9 +44,6 @@ class E_API LeabraActFunSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra activation function specifications, using the gelin (g_e linear) activation function by default
 INHERITED(SpecMemberBase)
 public:
-  bool          td_mod;         // top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied to activations post-inhibition computation
-  float         td_thr;         // #CONDSHOW_ON_td_mod threshold between average and max td_net for whether the top-down input has a net positive or negative effect on activations
-  float         td_gain;        // #CONDSHOW_ON_td_mod gain of top-down modulation of activation
   float		thr;		// #DEF_0.5 threshold value Theta (Q) for firing output activation (.5 is more accurate value based on AdEx biological parameters and normalization -- see BioParams button)
   float		gain;		// #DEF_100;40 #MIN_0 gain (gamma) of the rate-coded activation functions -- 100 is default for gelin = true with NOISY_XX1, but 40 is closer to the actual spiking behavior of the AdEx model -- use lower values for more graded signals, generaly in lower input/sensory layers of the network
   float		nvar;		// #DEF_0.005;0.01 #MIN_0 variance of the Gaussian noise kernel for convolving with XX1 in NOISY_XX1 and NOISY_LINEAR -- determines the level of curvature of the activation function near the threshold -- increase for more graded responding there -- note that this is not actual stochastic noise, just constant convolved gaussian smoothness to the activation function
@@ -403,6 +400,28 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(TopDownModSpec);
+
+class E_API TopDownModSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
+INHERITED(SpecMemberBase)
+public:
+  bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
+  float         thr;        // #CONDSHOW_ON_on threshold between average and max td_net for whether the top-down input has a net positive or negative effect on activations
+  float         gain;       // #CONDSHOW_ON_on gain of top-down modulation of activation
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(TopDownModSpec);
+protected:
+  SPEC_DEFAULTS;
+  // void	UpdateAfterEdit_impl();
+private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
@@ -580,11 +599,12 @@ public:
   LeabraAvgLSpec   avg_l;	// #CAT_Activation parameters for computing the avg_l long-term floating average that drives BCM-style hebbian learning
   LeabraChannels g_bar;		// #CAT_Activation [Defaults: 1, .1, 1] maximal conductances for channels
   LeabraChannels e_rev;		// #CAT_Activation [Defaults: 1, .3, .25] reversal potentials for each channel
-  Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   ActAdaptSpec 	adapt;		// #CAT_Activation activation-driven adaptation factor that drives spike rate adaptation dynamics based on both sub- and supra-threshold membrane potentials
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	 syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
+  TopDownModSpec top_down_mod;  // #CAT_Activation top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
+  Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec	 deep;  	// #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
