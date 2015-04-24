@@ -407,7 +407,7 @@ class E_API TopDownModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
-  float         thr;        // #CONDSHOW_ON_on threshold between average and max td_net for whether the top-down input has a net positive or negative effect on activations
+  float         thr;        // #CONDSHOW_ON_on #DEF_0.4 threshold between average and max td_net for whether the top-down input has a net positive or negative effect on activations
   float         gain;       // #CONDSHOW_ON_on gain of top-down modulation of activation
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }

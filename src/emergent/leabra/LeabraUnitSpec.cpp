@@ -310,7 +310,7 @@ void TopDownModSpec::Initialize() {
 }
 
 void TopDownModSpec::Defaults_init() {
-  thr = 0.2f;
+  thr = 0.4f;
   gain = 2.0f;
 }
 
@@ -1534,12 +1534,14 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
   }
 
   if(top_down_mod.on) {
+    new_act = act_range.Clip(new_act);
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
     LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
     float td_thr = thr->td_netin.avg +
       top_down_mod.thr * (thr->td_netin.max - thr->td_netin.avg);
     float td_net = top_down_mod.gain * (u->td_net - td_thr);
-    new_act *= (1.0f + td_net); // needs to be multiplicative else adding to everyone
+    new_act += td_net * new_act * (act_range.max - new_act);
+    //    new_act *= (1.0f + td_net); // needs to be multiplicative else adding to everyone
   }
   
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin

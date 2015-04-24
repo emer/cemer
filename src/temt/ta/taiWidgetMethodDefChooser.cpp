@@ -43,7 +43,7 @@ int taiWidgetMethodDefChooser::GetDefaultView() {
   // if (!targ_typ->name.contains("Base"))
   //   return 1;
   // else
-    return 0;
+  return 1;
 }
 
 void taiWidgetMethodDefChooser::BuildCategories_impl() {
