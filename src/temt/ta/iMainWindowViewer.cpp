@@ -594,6 +594,8 @@ void iMainWindowViewer::Constr_FileMenu()
 
 void iMainWindowViewer::Constr_EditMenu()
 {
+  KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+
   // so standard we don't offer custom key binding
   editUndoAction = AddAction(new iAction("&Undo", QKeySequence::Undo, "editUndoAction"));
   editUndoAction->setIcon(QIcon(QPixmap(":/images/editundo.png")));
@@ -609,9 +611,9 @@ void iMainWindowViewer::Constr_EditMenu()
   QPixmap editpaste(":/images/editpaste.png");
   editPasteAction = AddAction(new iAction(iClipData::EA_PASTE, "&Paste", QKeySequence::Paste, "editPasteAction"));
   editPasteAction->setIcon(QIcon(editpaste));
-  editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", QKeySequence::Paste, "editPasteIntoAction"));
+  editPasteIntoAction = AddAction(new iAction(iClipData::EA_PASTE_INTO, "&Paste Into", bindings->KeySequence(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO), "editPasteIntoAction"));
   editPasteIntoAction->setIcon(QIcon(editpaste));
-  editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", QKeySequence(), "editPasteAssignAction"));
+  editPasteAssignAction = AddAction(new iAction(iClipData::EA_PASTE_ASSIGN, "&Paste Assign", bindings->KeySequence(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_ASSIGN), "editPasteAssignAction"));
   editPasteAssignAction->setIcon(QIcon(editpaste));
   editPasteAppendAction = AddAction(new iAction(iClipData::EA_PASTE_APPEND, "&Paste Append", QKeySequence(), "editPasteAppendAction"));
   editPasteAppendAction->setIcon(QIcon(editpaste));
@@ -2863,9 +2865,22 @@ void iMainWindowViewer::UpdateUi() {
     if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
     
     editPasteAction->setEnabled(ea & iClipData::EA_PASTE);
-    editPasteIntoAction->setVisible(ea & iClipData::EA_PASTE_INTO);
-    editPasteAssignAction->setVisible(ea & iClipData::EA_PASTE_ASSIGN);
-    editPasteAppendAction->setVisible(ea & iClipData::EA_PASTE_APPEND);
+    bool enable = false;
+    enable = ea & iClipData::EA_PASTE_INTO;
+    if (enable) {
+      editPasteIntoAction->setVisible(true);
+      editPasteIntoAction->setEnabled(true);
+    }
+    enable = ea & iClipData::EA_PASTE_ASSIGN;
+    if (enable) {
+      editPasteAssignAction->setVisible(true);
+      editPasteAssignAction->setEnabled(true);
+    }
+    enable = ea & iClipData::EA_PASTE_APPEND;
+    if (enable) {
+      editPasteAppendAction->setVisible(true);
+      editPasteAppendAction->setEnabled(true);
+    }
   }
 
   // linking is currently not really used, so we'll not show by default
