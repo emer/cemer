@@ -104,6 +104,13 @@ protected:
   void HandleException(const SubversionClient::Exception &ex);
 
 public:
+  enum EmerVersion {
+    VERSION_CURRENT,
+    VERSION_STABLE,
+    VERSION_SPECIFIC,
+    VERSION_COUNT
+  };
+  
   bool SaveProject();
 
   int  UpdateWorkingCopy_impl(SubversionClient* sc, const String& wc_path,
@@ -124,6 +131,7 @@ public:
   void SaveExtraFiles();
   void SaveDoneTable();
   void DeleteFile(const String &filename);
+  String GetEmerVersionString(int idx);
 
   ClusterRun& m_cluster_run;
   bool m_valid;

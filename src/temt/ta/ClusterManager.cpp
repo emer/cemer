@@ -25,6 +25,7 @@
 #include <SubversionClient>
 
 #include <taMisc>
+#include <taiMisc>
 
 #include <QBoxLayout>
 #include <QComboBox>
@@ -859,6 +860,33 @@ ClusterManager::ShowRepoDialog()
   if (idx1 >= 0) combo1->setCurrentIndex(idx1);
   dlg.AddStretch(row);
 
+  row = "emer_version_row";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("version_lbl", widget, row, "label=* Emergent Version: ;");
+  
+  QComboBox *combo_version = new QComboBox;
+  {
+    // Get the hbox for this row so we can add our combobox to it.
+    taGuiLayout *hboxEmer = dlg.FindLayout(row);
+    if (!hboxEmer) return false;
+    QBoxLayout *hbox = hboxEmer->layout;
+    if (!hbox) return false;
+    
+    for (int idx = 0; idx < ClusterManager::VERSION_COUNT; ++idx) {
+      String label = GetEmerVersionString(idx);
+      combo_version->addItem(label);
+    }
+    hbox->addWidget(combo_version);
+  }
+  int idx_version = combo_version->findText(0);
+  if (idx_version >= 0)
+    combo_version->setCurrentIndex(idx_version);
+  
+  dlg.AddIntField(&m_cluster_run.emer_revision, "", widget, row,
+                     "tooltip=Enter the specific emergent revision to run; If you selected Current or Stable the revision number will be shown");
+  dlg.AddStretch(row);
+  
   row = "repoRow";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
@@ -1010,4 +1038,18 @@ ClusterManager::ChooseCluster(const String& prompt) {
   
   String rval = combo1->itemText(combo1->currentIndex());
   return rval;
+}
+
+String ClusterManager::GetEmerVersionString(int idx) {
+  EmerVersion version = static_cast<EmerVersion>(idx);
+  if (version == VERSION_CURRENT)
+    return "Current";
+  else if (version == VERSION_STABLE)
+    return "Stable";
+  else if (version == VERSION_SPECIFIC)
+    return "Revision #";
+  else {
+    taMisc::Error("ClusterManager::GetEmerVersionString - programmer error - case not found");
+    return "Current";
+  }
 }

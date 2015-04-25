@@ -87,6 +87,7 @@ public:
   String        cluster;        // #METHBOX_LABEL name of cluster to run job on -- see Preferences / Options settings for list of valid names -- easiest to use SelectCluster to switch between clusters, and when you Run a job you can pick from a dropdown list
   String        queue;          // if specified, indicate a particular queue on the computing resource
   String        run_time;       // how long will the jobs take to run -- syntax is number followed by unit indicator -- m=minutes, h=hours, d=days -- e.g., 30m, 12h, or 2d -- typically the job will be killed if it exceeds this amount of time, so be sure to not underestimate
+  int           emer_revision;  // the version of emergent on which to run the model,
   int           ram_gb;         // how many gigabytes of ram is required?  0 means do not specify this parameter for the job submission -- for large memory jobs, it can be important to specify this to ensure proper allocation of resources -- the status_info field can often show you how much a job has used in the past
   int           n_threads;      // number of parallel threads to use for running
   bool          use_mpi;        // use message-passing-inteface distributed memory executable to run across multiple nodes?
