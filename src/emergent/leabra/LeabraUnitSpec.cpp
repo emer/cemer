@@ -311,7 +311,8 @@ void TopDownModSpec::Initialize() {
 
 void TopDownModSpec::Defaults_init() {
   thr = 0.4f;
-  gain = 2.0f;
+  gain = 0.0f;
+  min_thr = 0.1f;
 }
 
 void DeepSpec::Initialize() {
@@ -1539,7 +1540,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
     float td_thr = thr->td_netin.avg +
       top_down_mod.thr * (thr->td_netin.max - thr->td_netin.avg);
-    if(td_thr > 0.0f) {
+    if(td_thr > top_down_mod.min_thr) {
       float td_net = ((u->td_net + top_down_mod.gain) / (td_thr + top_down_mod.gain));
       new_act *= td_net;
       //  * new_act * (act_range.max - new_act);
