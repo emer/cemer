@@ -406,14 +406,30 @@ class E_API TopDownModSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
 INHERITED(SpecMemberBase)
 public:
+  enum SoftBoundType {
+    NO_SB,                      // no soft bounding
+    DIR_SB,                     // directional soft-bounding: 1-act for up, act for dn
+    BIDIR_SB,                   // bidirectional soft-bounding: act * (1-act)
+  };
+
   bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
+  SoftBoundType sb;         // #CONDSHOW_ON_on type of soft bounding to prevent excessive activations up or down
   float         range;      // #CONDSHOW_ON_on range to map the distance between average and max top-down netinputs onto, in terms of multiplicative factors that apply to the activations of units in a layer -- this is around the half-range of actual dynamic range of multiplicative factors, assuming that min is roughly equally far below average as max is above it
-  float         avg;        // #CONDSHOW_ON_on value that top-down netinputs at the average level should be assigned to
+  float         avg;        // #CONDSHOW_ON_on #DEF_1 value that top-down netinputs at the average level should be assigned to
   float         lay_pct;    // #CONDSHOW_ON_on for layers with unit group inhibition, proportion that layer-level values contribute to avg and max top-down netinput values used in computing top-down modulation factors
   float         min;        // #CONDSHOW_ON_on minimum max top-down netinput value before starting to apply modulation
 
-  inline float  NormNetMod(float td_net, float avg_net, float max_net) {
-    return range * ((td_net - avg_net) / (max_net - avg_net)) + avg;
+  inline float  NormNetMod(const float td_net, const float avg_net, const float max_net,
+                           const float act) {
+    float mod = range * ((td_net - avg_net) / (max_net - avg_net));
+    if(sb == DIR_SB) {
+      if(mod > 0.0f)   mod *= 2.0f * (1.0f - act);
+      else             mod *= 2.0f * act;
+    }
+    else if(sb == BIDIR_SB) {
+      mod *= 4.0f * act * (1.0f - act);
+    }
+    return mod + avg;
   }
   // normalized top-down netinput modulation factor -- transforms specific top-down netinput value into normalized value used to multiply activations
   
