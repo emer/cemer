@@ -58,6 +58,7 @@ void ClusterRun::InitLinks() {
 void ClusterRun::Initialize() {
   set_proj_name = false;
   cur_svn_rev = -1;
+  emer_revision = -1;           // todo: what is appropriate default here?
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
