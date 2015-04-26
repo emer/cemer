@@ -407,10 +407,16 @@ class E_API TopDownModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
-  float         thr;        // #CONDSHOW_ON_on #DEF_0.4 threshold between average and max td_net for whether the top-down input has a net positive or negative effect on activations
-  float         gain;       // #CONDSHOW_ON_on gain of top-down modulation of activation
-  float         min_thr;    // #CONDSHOW_ON_on minimum threshold value
+  float         range;      // #CONDSHOW_ON_on range to map the distance between average and max top-down netinputs onto, in terms of multiplicative factors that apply to the activations of units in a layer -- this is around the half-range of actual dynamic range of multiplicative factors, assuming that min is roughly equally far below average as max is above it
+  float         avg;        // #CONDSHOW_ON_on value that top-down netinputs at the average level should be assigned to
+  float         lay_pct;    // #CONDSHOW_ON_on for layers with unit group inhibition, proportion that layer-level values contribute to avg and max top-down netinput values used in computing top-down modulation factors
+  float         min;        // #CONDSHOW_ON_on minimum max top-down netinput value before starting to apply modulation
 
+  inline float  NormNetMod(float td_net, float avg_net, float max_net) {
+    return range * ((td_net - avg_net) / (max_net - avg_net)) + avg;
+  }
+  // normalized top-down netinput modulation factor -- transforms specific top-down netinput value into normalized value used to multiply activations
+  
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 
   TA_SIMPLE_BASEFUNS(TopDownModSpec);

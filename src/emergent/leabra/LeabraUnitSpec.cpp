@@ -310,9 +310,10 @@ void TopDownModSpec::Initialize() {
 }
 
 void TopDownModSpec::Defaults_init() {
-  thr = 0.4f;
-  gain = 0.0f;
-  min_thr = 0.1f;
+  range = 0.4f;
+  avg = 0.8f;
+  lay_pct = 0.5f;
+  min = 0.01f;
 }
 
 void DeepSpec::Initialize() {
@@ -1534,17 +1535,36 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
+  // logic for td_net norm function:
+  // first, normalize everything by max
+  // val = net / max
+  // avg' = avg / max
+  //
+  // then subtract avg and rescale to range, and add trg avg
+  // range * ((val - avg') / (1 - avg')) + trg_avg
+  // range * [((net - avg) / max) / ((max - avg) / max)] + trg_avg
+  // range * [(net - avg) / (max - avg)] + trg_avg
+  
   if(top_down_mod.on) {
     new_act = act_range.Clip(new_act);
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    LeabraLayer* lay = (LeabraLayer*)un->own_lay();
     LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
-    float td_thr = thr->td_netin.avg +
-      top_down_mod.thr * (thr->td_netin.max - thr->td_netin.avg);
-    if(td_thr > top_down_mod.min_thr) {
-      float td_net = ((u->td_net + top_down_mod.gain) / (td_thr + top_down_mod.gain));
-      new_act *= td_net;
-      //  * new_act * (act_range.max - new_act);
-      //    new_act *= (1.0f + td_net);
+    float avg_net, max_net;
+    if(lay != thr) {
+      avg_net = (top_down_mod.lay_pct * lay->td_netin.avg +
+                 (1.0f - top_down_mod.lay_pct) * thr->td_netin.avg);
+      max_net = (top_down_mod.lay_pct * lay->td_netin.max +
+                 (1.0f - top_down_mod.lay_pct) * thr->td_netin.max);
+    }
+    else {
+      avg_net = thr->td_netin.avg;
+      max_net = thr->td_netin.max;
+    }
+
+    if(max_net > top_down_mod.min) {
+      float norm = top_down_mod.NormNetMod(u->td_net, avg_net, max_net);
+      new_act *= norm;
     }
   }
   
