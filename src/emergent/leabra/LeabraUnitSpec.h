@@ -427,11 +427,11 @@ public:
     float td_thr = avg_net + thr * (max_net - avg_net);
     float mod = gain * (td_net - td_thr);
     if(sb == DIR_SB) {
-      if(mod > 0.0f)   mod *= 2.0f * (1.0f - act);
-      else             mod *= 2.0f * act;
+      if(mod > 0.0f)   mod *= (1.0f - act);
+      else             mod *= act;
     }
     else if(sb == BIDIR_SB) {
-      mod *= 4.0f * act * (1.0f - act);
+      mod *= act * (1.0f - act);
     }
     return act * (1.0f + mod);
   }
