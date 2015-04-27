@@ -311,8 +311,8 @@ void TopDownModSpec::Initialize() {
 
 void TopDownModSpec::Defaults_init() {
   sb = DIR_SB;
-  range = 0.4f;
-  avg = 0.8f;
+  thr = 0.4f;
+  gain = 1.0f;
   lay_pct = 0.5f;
   min = 0.1f;
 }
@@ -1536,16 +1536,6 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
-  // logic for td_net norm function:
-  // first, normalize everything by max
-  // val = net / max
-  // avg' = avg / max
-  //
-  // then subtract avg and rescale to range, and add trg avg
-  // range * ((val - avg') / (1 - avg')) + trg_avg
-  // range * [((net - avg) / max) / ((max - avg) / max)] + trg_avg
-  // range * [(net - avg) / (max - avg)] + trg_avg
-  
   if(top_down_mod.on) {
     new_act = act_range.Clip(new_act);
     LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
@@ -1564,8 +1554,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     }
 
     if(max_net > top_down_mod.min) {
-      float norm = top_down_mod.NormNetMod(u->td_net, avg_net, max_net, new_act);
-      new_act *= norm;
+      new_act = top_down_mod.NormNetMod(u->td_net, avg_net, max_net, new_act);
     }
   }
   
