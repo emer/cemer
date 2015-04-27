@@ -21,6 +21,7 @@
 #include <taMisc>
 #include <tabMisc>
 #include <taRootBase>
+#include <taString>
 #include <css_machine.h>
 #include <css_ta.h>
 #include <css_c_ptr_types.h>
@@ -419,19 +420,19 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   path_own_obj = NULL;
   path_own_typ = NULL;
   path_md = NULL;
-
+  
   String txt = cur_txt.before(cur_pos);
   String extra_txt = cur_txt.from(cur_pos);
   String append_at_end;
   String prepend_before;
-
+  
   String base_path;             // path to base element(s) if present
   String lookup_seed;           // start of text to seed lookup process
   String rval = _nilString;
-
+  
   int lookup_type = -1; // 1 = var name (no path, delim), 2 = obj memb/meth,
-  // 3 = type scoped, 4 = array index
-
+  // 3 = type scoped, 4 = array index, 5 = call program, 6 = call function
+  
   int_Array delim_pos;
   int delims_used = 0;
   int expr_start = 0;
@@ -446,7 +447,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     expr_start = i+1;           // anything else is a bust
     break;
   }
-
+  
   int xtra_st = extra_txt.length();
   for(int i=0;i<extra_txt.length(); i++) {
     c = extra_txt[i];
@@ -457,7 +458,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   if(xtra_st < extra_txt.length()) {
     append_at_end = extra_txt.from(xtra_st);
   }
-
+  
   if(delim_pos.size > 0) {
     if(txt[delim_pos[0]] == '.') { // path sep = .
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
@@ -485,7 +486,18 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     // todo: []
   }
   else {
-    if(path_base || path_base_typ) {
+    String trimmed_txt = trim(txt);
+    if (trimmed_txt == "Call") {
+      lookup_type = 5;
+      txt = "Call ";
+      expr_start = 5;
+    }
+    if (trimmed_txt == "FunCall") {
+      lookup_type = 6;
+      txt = "FunCall ";
+      expr_start = 8;
+    }
+    else if(path_base || path_base_typ) {
       lookup_type = 2;
     }
     else {
@@ -494,227 +506,249 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     lookup_seed = txt.from(expr_start);
     prepend_before = txt.before(expr_start);
   }
-
+  
   String path_prepend_before;   // for path operations
   if(delim_pos.size > 0) {
     path_prepend_before = txt.through(delim_pos[0]);
   }
-
+  
   switch(lookup_type) {
-  case 1: {// lookup variables
-    taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
+    case 1: {                       // lookup variables
+      taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
-    varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
-    if(own_pel) {
-      LocalVars* pvs = own_pel->FindLocalVarList();
-      if(pvs) {
-        varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
+      varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
+      if(own_pel) {
+        LocalVars* pvs = own_pel->FindLocalVarList();
+        if(pvs) {
+          varlkup->setNewObj2(&(pvs->local_vars), " New Local Var");
+        }
       }
+      varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
+      expr_lookup_cur_base = own_pel;
+      varlkup->type_list.Link(&TA_ProgVar);
+      varlkup->type_list.Link(&TA_DynEnumItem);
+      varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
+      bool okc = varlkup->OpenChooser();
+      if(okc && varlkup->token()) {
+        rval = prepend_before + varlkup->token()->GetName();
+        new_pos = rval.length();
+        rval += append_at_end;
+      }
+      delete varlkup;
+      expr_lookup_cur_base = NULL;
+      break;
     }
-    varlkup->item_filter = (item_filter_fun)ProgExprBase::ExprLookupVarFilter;
-    expr_lookup_cur_base = own_pel;
-    varlkup->type_list.Link(&TA_ProgVar);
-    varlkup->type_list.Link(&TA_DynEnumItem);
-    varlkup->GetImageScoped(NULL, &TA_ProgVar, own_prg, &TA_Program);
-    bool okc = varlkup->OpenChooser();
-    if(okc && varlkup->token()) {
-      rval = prepend_before + varlkup->token()->GetName();
-      new_pos = rval.length();
-      rval += append_at_end;
-    }
-    delete varlkup;
-    expr_lookup_cur_base = NULL;
-    break;
-  }
-  case 2: {                     // members/methods
-    String path_var, path_rest;
-    TypeDef* lookup_td = NULL;
-    taList_impl* tal = NULL;
-    taBase* base_base = NULL;
-    TypeDef* own_td = NULL;
-    if(path_base) {
-      base_base = path_base;
-      path_rest = base_path;
-      own_td = path_base_typ;
-    }
-    else if(path_base_typ) {
-      own_td = path_base_typ;
-      path_rest = base_path;
-    }
-    else {
-      if(delim_pos.size > delims_used) {
-        // note: any ref to base path needs to subtract expr_start relative to delim_pos!
-        path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
-        if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
-          path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
-        else
-          path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+      
+    case 2: {                     // members/methods
+      String path_var, path_rest;
+      TypeDef* lookup_td = NULL;
+      taList_impl* tal = NULL;
+      taBase* base_base = NULL;
+      TypeDef* own_td = NULL;
+      if(path_base) {
+        base_base = path_base;
+        path_rest = base_path;
+        own_td = path_base_typ;
+      }
+      else if(path_base_typ) {
+        own_td = path_base_typ;
+        path_rest = base_path;
       }
       else {
-        path_var = base_path;
-      }
-      ProgVar* st_var = NULL;
-      if(own_fun)
-        st_var = own_fun->FindVarName(path_var);
-      if(!st_var)
-        st_var = own_prg->FindVarName(path_var);
-      if(st_var) {
-        if(st_var->var_type == ProgVar::T_Object) {
-          if(!st_var->object_type) {
-            taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
-                         "because it is an Object* but has no type set yet!");
-          }
-          else {
-            own_td = st_var->object_type;
-            if(path_rest.empty()) {
-              lookup_td = st_var->object_type;
+        if(delim_pos.size > delims_used) {
+          // note: any ref to base path needs to subtract expr_start relative to delim_pos!
+          path_var = base_path.before(delim_pos.SafeEl(-1)-expr_start); // use last one = first in list
+          if(delim_pos.size > delims_used+1 && delim_pos.SafeEl(-2) == delim_pos.SafeEl(-1)+1)
+            path_rest = base_path.after(delim_pos.SafeEl(-2)-expr_start);
+          else
+            path_rest = base_path.after(delim_pos.SafeEl(-1)-expr_start);
+        }
+        else {
+          path_var = base_path;
+        }
+        ProgVar* st_var = NULL;
+        if(own_fun)
+          st_var = own_fun->FindVarName(path_var);
+        if(!st_var)
+          st_var = own_prg->FindVarName(path_var);
+        if(st_var) {
+          if(st_var->var_type == ProgVar::T_Object) {
+            if(!st_var->object_type) {
+              taMisc::Info("Var lookup: cannot lookup anything about variable:", path_var,
+                           "because it is an Object* but has no type set yet!");
             }
             else {
-              base_base = st_var->object_val;
+              own_td = st_var->object_type;
+              if(path_rest.empty()) {
+                lookup_td = st_var->object_type;
+              }
+              else {
+                base_base = st_var->object_val;
+              }
             }
           }
+          else if(st_var->var_type == ProgVar::T_String) {
+            lookup_td = &TA_taString;
+          }
+          else if(st_var->var_type == ProgVar::T_DynEnum) {
+            lookup_td = &TA_DynEnum;
+          }
         }
-        else if(st_var->var_type == ProgVar::T_String) {
-          lookup_td = &TA_taString;
-        }
-        else if(st_var->var_type == ProgVar::T_DynEnum) {
-          lookup_td = &TA_DynEnum;
+        else {
+          taMisc::Info("Var lookup: cannot find variable:", path_var,
+                       "as start of lookup path:", base_path);
         }
       }
-      else {
-        taMisc::Info("Var lookup: cannot find variable:", path_var,
-                     "as start of lookup path:", base_path);
+      if(base_base && !lookup_td) {
+        MemberDef* md = NULL;
+        taBase* mb_tab = base_base->FindFromPath(path_rest, md);
+        if(mb_tab) {
+          lookup_td = mb_tab->GetTypeDef();
+          if(lookup_td->InheritsFrom(&TA_taList_impl))
+            tal = (taList_impl*)mb_tab;
+        }
+        else {
+          if(md) lookup_td = md->type;
+        }
       }
-    }
-    if(base_base && !lookup_td) {
-      MemberDef* md = NULL;
-      taBase* mb_tab = base_base->FindFromPath(path_rest, md);
-      if(mb_tab) {
-        lookup_td = mb_tab->GetTypeDef();
-        if(lookup_td->InheritsFrom(&TA_taList_impl))
-          tal = (taList_impl*)mb_tab;
-      }
-      else {
+      if(!lookup_td && own_td) {
+        int net_base_off=0;
+        ta_memb_ptr net_mbr_off=0;
+        MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
+                                                      net_mbr_off, path_rest, false);
+        // no warn
         if(md) lookup_td = md->type;
       }
+      if(!lookup_td) {
+        taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
+                     path_var);
+      }
+      if(tal) {
+        if(tal->InheritsFrom(&TA_taGroup_impl)) {
+          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser(lookup_td, NULL, NULL, NULL,
+                                                                        0, lookup_seed);
+          lilkup->GetImage((taGroup_impl*)tal, NULL);
+          bool okc = lilkup->OpenChooser();
+          if(okc && lilkup->item()) {
+            path_own_obj = lilkup->item();
+            path_own_typ = path_own_obj->GetTypeDef();
+            rval = path_prepend_before + path_own_obj->GetName();
+            new_pos = rval.length();
+            rval += append_at_end;
+          }
+          delete lilkup;
+        }
+        else {
+          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser(lookup_td, NULL, NULL, NULL,
+                                                                      0, lookup_seed);
+          lilkup->GetImage(tal, NULL);
+          bool okc = lilkup->OpenChooser();
+          if(okc && lilkup->item()) {
+            path_own_obj = lilkup->item();
+            path_own_typ = path_own_obj->GetTypeDef();
+            rval = path_prepend_before + path_own_obj->GetName();
+            new_pos = rval.length();
+            rval += append_at_end;
+          }
+          delete lilkup;
+        }
+      }
+      else if(lookup_td) {
+        TypeItem* lookup_md = NULL;
+        if(path_base || path_base_typ) {          // can only lookup members, not methods
+          taiWidgetMemberDefChooser* mdlkup = new taiWidgetMemberDefChooser(lookup_td, NULL, NULL,
+                                                                            NULL, 0, lookup_seed);
+          mdlkup->GetImage((MemberDef*)NULL, lookup_td);
+          bool okc = mdlkup->OpenChooser();
+          if(okc && mdlkup->md()) {
+            lookup_md = mdlkup->md();
+          }
+          delete mdlkup;
+        }
+        else {
+          taiWidgetMemberMethodDefChooser* mdlkup =  new taiWidgetMemberMethodDefChooser(lookup_td, NULL, NULL,
+                                                                                         NULL, 0, lookup_seed);
+          mdlkup->GetImage((MemberDef*)NULL, lookup_td);
+          bool okc = mdlkup->OpenChooser();
+          if(okc && mdlkup->md()) {
+            lookup_md = mdlkup->md();
+          }
+          delete mdlkup;
+        }
+        if(lookup_md) {
+          rval = path_prepend_before + lookup_md->name;
+          if(lookup_md->TypeInfoKind() == TypeItem::TIK_METHOD)
+            rval += "()";
+          new_pos = rval.length();
+          rval += append_at_end;
+          path_own_typ = lookup_td;
+          if(lookup_md->TypeInfoKind() == TypeItem::TIK_MEMBER) {
+            path_md = (MemberDef*)lookup_md;
+          }
+        }
+      }
+      break;
     }
-    if(!lookup_td && own_td) {
-      int net_base_off=0;
-      ta_memb_ptr net_mbr_off=0;
-      MemberDef* md = TypeDef::FindMemberPathStatic(own_td, net_base_off,
-                                                    net_mbr_off, path_rest, false);
-      // no warn
-      if(md) lookup_td = md->type;
-    }
-    if(!lookup_td) {
-      taMisc::Info("Var lookup: cannot find path:", path_rest, "in variable:",
-                   path_var);
-    }
-    if(tal) {
-      if(tal->InheritsFrom(&TA_taGroup_impl)) {
-        taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser(lookup_td, NULL, NULL, NULL,
-                                                          0, lookup_seed);
-        lilkup->GetImage((taGroup_impl*)tal, NULL);
-        bool okc = lilkup->OpenChooser();
-        if(okc && lilkup->item()) {
-          path_own_obj = lilkup->item();
-          path_own_typ = path_own_obj->GetTypeDef();
-          rval = path_prepend_before + path_own_obj->GetName();
+      
+    case 3: {                      // enums
+      TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
+      if(lookup_td) {
+        taiWidgetEnumStaticChooser* eslkup =  new taiWidgetEnumStaticChooser(lookup_td, NULL, NULL,
+                                                                             NULL, 0, lookup_seed);
+        eslkup->GetImage((MemberDef*)NULL, lookup_td);
+        bool okc = eslkup->OpenChooser();
+        if(okc && eslkup->md()) {
+          rval = path_prepend_before + eslkup->md()->name;
+          if(eslkup->md()->TypeInfoKind() == TypeItem::TIK_METHOD)
+            rval += "()";
           new_pos = rval.length();
           rval += append_at_end;
         }
-        delete lilkup;
+        delete eslkup;
       }
-      else {
-        taiWidgetListElChooser* lilkup = new taiWidgetListElChooser(lookup_td, NULL, NULL, NULL,
-                                                        0, lookup_seed);
-        lilkup->GetImage(tal, NULL);
-        bool okc = lilkup->OpenChooser();
-        if(okc && lilkup->item()) {
-          path_own_obj = lilkup->item();
-          path_own_typ = path_own_obj->GetTypeDef();
-          rval = path_prepend_before + path_own_obj->GetName();
-          new_pos = rval.length();
-          rval += append_at_end;
+      else {                      // now try for local enums
+        ProgType* pt = own_prg->types.FindName(base_path);
+        if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
+          taiWidgetTokenChooser* varlkup =  new taiWidgetTokenChooser(&TA_DynEnumItem, NULL, NULL,
+                                                                      NULL, 0, lookup_seed);
+          varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumBase); // scope to this guy
+          bool okc = varlkup->OpenChooser();
+          if(okc && varlkup->token()) {
+            rval = prepend_before + varlkup->token()->GetName();
+            new_pos = rval.length();
+            rval += append_at_end;
+          }
+          delete varlkup;
         }
-        delete lilkup;
       }
+      break;
     }
-    else if(lookup_td) {
-      TypeItem* lookup_md = NULL;
-      if(path_base || path_base_typ) {          // can only lookup members, not methods
-        taiWidgetMemberDefChooser* mdlkup = new taiWidgetMemberDefChooser(lookup_td, NULL, NULL,
-                                                            NULL, 0, lookup_seed);
-        mdlkup->GetImage((MemberDef*)NULL, lookup_td);
-        bool okc = mdlkup->OpenChooser();
-        if(okc && mdlkup->md()) {
-          lookup_md = mdlkup->md();
-        }
-        delete mdlkup;
-      }
-      else {
-        taiWidgetMemberMethodDefChooser* mdlkup =  new taiWidgetMemberMethodDefChooser(lookup_td, NULL, NULL,
-                                                                         NULL, 0, lookup_seed);
-        mdlkup->GetImage((MemberDef*)NULL, lookup_td);
-        bool okc = mdlkup->OpenChooser();
-        if(okc && mdlkup->md()) {
-          lookup_md = mdlkup->md();
-        }
-        delete mdlkup;
-      }
-      if(lookup_md) {
-        rval = path_prepend_before + lookup_md->name;
-        if(lookup_md->TypeInfoKind() == TypeItem::TIK_METHOD)
-          rval += "()";
-        new_pos = rval.length();
-        rval += append_at_end;
-        path_own_typ = lookup_td;
-        if(lookup_md->TypeInfoKind() == TypeItem::TIK_MEMBER) {
-          path_md = (MemberDef*)lookup_md;
-        }
-      }
+    case 4: {
+      taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
+      break;
     }
-    break;
-  }
-  case 3: {
-    TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
-    if(lookup_td) {
-      taiWidgetEnumStaticChooser* eslkup =  new taiWidgetEnumStaticChooser(lookup_td, NULL, NULL,
-                                                             NULL, 0, lookup_seed);
-      eslkup->GetImage((MemberDef*)NULL, lookup_td);
-      bool okc = eslkup->OpenChooser();
-      if(okc && eslkup->md()) {
-        rval = path_prepend_before + eslkup->md()->name;
-        if(eslkup->md()->TypeInfoKind() == TypeItem::TIK_METHOD)
-          rval += "()";
-        new_pos = rval.length();
-        rval += append_at_end;
+      
+    case 5: {                 // Programs
+      taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0);
+      pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
+      bool okc = pgrm_look_up->OpenChooser();
+      if(okc && pgrm_look_up->token()) {
+        rval = prepend_before + pgrm_look_up->token()->GetName();
       }
-      delete eslkup;
+      delete pgrm_look_up;
     }
-    else {                      // now try for local enums
-      ProgType* pt = own_prg->types.FindName(base_path);
-      if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
-        taiWidgetTokenChooser* varlkup =  new taiWidgetTokenChooser(&TA_DynEnumItem, NULL, NULL,
-                                                            NULL, 0, lookup_seed);
-        varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumBase); // scope to this guy
-        bool okc = varlkup->OpenChooser();
-        if(okc && varlkup->token()) {
-          rval = prepend_before + varlkup->token()->GetName();
-          new_pos = rval.length();
-          rval += append_at_end;
-        }
-        delete varlkup;
+      
+    case 6: {                 // Functions
+      taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0);
+      func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
+      bool okc = func_look_up->OpenChooser();
+      if(okc && func_look_up->token()) {
+        rval = prepend_before + func_look_up->token()->GetName();
       }
+      delete func_look_up;
     }
-    break;
   }
-  case 4: {
-    taMisc::Info("lookup an array index from path:", base_path, "seed:", lookup_seed);
-    break;
-  }
-  }
-
+  
   return rval;
 }
 
