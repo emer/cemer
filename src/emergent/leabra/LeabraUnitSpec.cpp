@@ -310,7 +310,6 @@ void TopDownModSpec::Initialize() {
 }
 
 void TopDownModSpec::Defaults_init() {
-  sb = DIR_SB;
   thr = 0.6f;
   gain = 3.0f;
   lay_pct = 0.5f;

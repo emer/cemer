@@ -406,13 +406,7 @@ class E_API TopDownModSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
 INHERITED(SpecMemberBase)
 public:
-  enum SoftBoundType {
-    DIR_SB,                     // directional soft-bounding: 1-act for up, act for dn
-    BIDIR_SB,                   // bidirectional soft-bounding: act * (1-act)
-  };
-
   bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
-  SoftBoundType sb;         // #CONDSHOW_ON_on type of soft bounding to prevent excessive activations up or down
   float         thr;        // #CONDSHOW_ON_on threshold between average and max where the pivot point between increased activation and decreased activation multiplier will go -- 0 = at the average, 1 = at the max
   float         gain;       // #CONDSHOW_ON_on multiplier on difference between netin and threshold -- determines the range of multipliers
   float         lay_pct;    // #CONDSHOW_ON_on for layers with unit group inhibition, proportion that layer-level values contribute to avg and max top-down netinput values used in computing top-down modulation factors
@@ -421,14 +415,7 @@ public:
   inline float  NetMod(const float td_net, const float avg_net, const float max_net,
                        const float act) {
     float td_thr = avg_net + thr * (max_net - avg_net);
-    float mod = gain * (td_net - td_thr);
-    if(sb == DIR_SB) {
-      if(mod > 0.0f)   mod *= (1.0f - act);
-      else             mod *= act;
-    }
-    else if(sb == BIDIR_SB) {
-      mod *= act * (1.0f - act);
-    }
+    float mod = gain * (td_net - td_thr) * act * (1.0f - act);
     return act + mod;
   }
   // modulate activation by top-down netinput modulation factor -- returns modulated activation
