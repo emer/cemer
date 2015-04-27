@@ -407,7 +407,6 @@ class E_API TopDownModSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   enum SoftBoundType {
-    NO_SB,                      // no soft bounding
     DIR_SB,                     // directional soft-bounding: 1-act for up, act for dn
     BIDIR_SB,                   // bidirectional soft-bounding: act * (1-act)
   };
@@ -419,11 +418,8 @@ public:
   float         lay_pct;    // #CONDSHOW_ON_on for layers with unit group inhibition, proportion that layer-level values contribute to avg and max top-down netinput values used in computing top-down modulation factors
   float         min;        // #CONDSHOW_ON_on minimum max top-down netinput value before starting to apply modulation
 
-  inline float  NormNetMod(const float td_net, const float avg_net, const float max_net,
-                           const float act) {
-    // this renormalizes range to same value regardless:
-    // float mod = range * ((td_net - avg_net) / (max_net - avg_net));
-    // this preserves dynamic range based on actual values:
+  inline float  NetMod(const float td_net, const float avg_net, const float max_net,
+                       const float act) {
     float td_thr = avg_net + thr * (max_net - avg_net);
     float mod = gain * (td_net - td_thr);
     if(sb == DIR_SB) {
@@ -433,9 +429,9 @@ public:
     else if(sb == BIDIR_SB) {
       mod *= act * (1.0f - act);
     }
-    return act * (1.0f + mod);
+    return act + mod;
   }
-  // normalized top-down netinput modulation factor -- transforms specific top-down netinput value into normalized value used to multiply activations
+  // modulate activation by top-down netinput modulation factor -- returns modulated activation
   
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
 

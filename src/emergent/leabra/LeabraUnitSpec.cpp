@@ -311,8 +311,8 @@ void TopDownModSpec::Initialize() {
 
 void TopDownModSpec::Defaults_init() {
   sb = DIR_SB;
-  thr = 0.4f;
-  gain = 1.0f;
+  thr = 0.6f;
+  gain = 3.0f;
   lay_pct = 0.5f;
   min = 0.1f;
 }
@@ -1554,7 +1554,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     }
 
     if(max_net > top_down_mod.min) {
-      new_act = top_down_mod.NormNetMod(u->td_net, avg_net, max_net, new_act);
+      new_act = top_down_mod.NetMod(u->td_net, avg_net, max_net, new_act);
     }
   }
   
