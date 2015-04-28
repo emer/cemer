@@ -863,28 +863,28 @@ ClusterManager::ShowRepoDialog()
   row = "emer_version_row";
   dlg.AddSpace(space, vbox);
   dlg.AddHBoxLayout(row, vbox);
-  dlg.AddLabel("version_lbl", widget, row, "label=* Emergent Version: ;");
+  dlg.AddLabel("version_lbl", widget, row, "label=* Executable Cmd: ;");
   
-  QComboBox *combo_version = new QComboBox;
-  {
-    // Get the hbox for this row so we can add our combobox to it.
-    taGuiLayout *hboxEmer = dlg.FindLayout(row);
-    if (!hboxEmer) return false;
-    QBoxLayout *hbox = hboxEmer->layout;
-    if (!hbox) return false;
+  // QComboBox *combo_version = new QComboBox;
+  // {
+  //   // Get the hbox for this row so we can add our combobox to it.
+  //   taGuiLayout *hboxEmer = dlg.FindLayout(row);
+  //   if (!hboxEmer) return false;
+  //   QBoxLayout *hbox = hboxEmer->layout;
+  //   if (!hbox) return false;
     
-    for (int idx = 0; idx < ClusterManager::VERSION_COUNT; ++idx) {
-      String label = GetEmerVersionString(idx);
-      combo_version->addItem(label);
-    }
-    hbox->addWidget(combo_version);
-  }
-  int idx_version = combo_version->findText(0);
-  if (idx_version >= 0)
-    combo_version->setCurrentIndex(idx_version);
+  //   for (int idx = 0; idx < ClusterManager::VERSION_COUNT; ++idx) {
+  //     String label = GetEmerVersionString(idx);
+  //     combo_version->addItem(label);
+  //   }
+  //   hbox->addWidget(combo_version);
+  // }
+  // int idx_version = combo_version->findText(0);
+  // if (idx_version >= 0)
+  //   combo_version->setCurrentIndex(idx_version);
   
-  dlg.AddIntField(&m_cluster_run.emer_revision, "", widget, row,
-                     "tooltip=Enter the specific emergent revision to run; If you selected Current or Stable the revision number will be shown");
+  dlg.AddStringField(&m_cluster_run.exe_cmd, "", widget, row,
+                     "tooltip=Enter name of executable to run -- can be an absolute path or just an executable name that will be found on default path");
   dlg.AddStretch(row);
   
   row = "repoRow";

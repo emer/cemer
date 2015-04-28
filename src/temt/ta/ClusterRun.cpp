@@ -58,7 +58,7 @@ void ClusterRun::InitLinks() {
 void ClusterRun::Initialize() {
   set_proj_name = false;
   cur_svn_rev = -1;
-  emer_revision = -1;           // todo: what is appropriate default here?
+  exe_cmd = taMisc::app_name;
   ram_gb = 0;
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
@@ -1570,7 +1570,7 @@ ClusterRun::CountJobs(const DataTable &table, const String &status_regexp)
 
 void ClusterRun::RunCommand(String& cmd, String& params, bool use_cur_vals) {
   // Start command with either "emergent" or "emergent_mpi".
-  cmd = taMisc::app_name;
+  cmd = exe_cmd;
   if(nowin_x)
     cmd += "_x";
   if (use_mpi) {
