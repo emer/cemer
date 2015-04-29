@@ -1603,6 +1603,19 @@ void Layer::UnitInGpLogPos(Unit* un, int& x, int& y) const {
   }
 }
 
+int Layer::UnitInGpUnIdx(Unit* un) const {
+  Unit_Group* own_sgp = un->own_subgp();
+  if(own_sgp || !unit_groups) {
+    return un->idx;      // just basic index
+  }
+  else {
+    if(unit_groups && virt_groups) {
+      return un->idx % un_geom.n;
+    }
+  }
+  return un->idx;               // bad fallback..
+}
+
 Unit* Layer::UnitAtDispCoord(int x, int y) const {
   if(unit_groups && !virt_groups) {
     // unit group can have its own position -- need to search through each one

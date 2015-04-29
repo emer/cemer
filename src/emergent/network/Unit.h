@@ -267,6 +267,8 @@ public: //
   // #CAT_Structure get logical position of unit within layer, taking into account (virtual) unit groups etc relative to layer flat_geom (no display spacing) -- calls Layer::UnitLogPos on own_lay
   void          UnitGpLogPos(taVector2i& log_pos);
   // #CAT_Structure get logical position of unit within (virtual) unit group -- calls Layer::UnitInGpLogPos on own_lay
+  int           UnitGpUnIdx();
+  // #CAT_Structure get unit index of unit within (virtual) unit group -- calls Layer::UnitInGpUnIdx on own_lay
   void          LayerDispPos(taVector2i& disp_pos);
   // #CAT_Structure get display position of this unit within the layer, taking into account (virtual) unit groups etc relative to layer disp_geom (includes display spacing) -- calls Layer::UnitDispPos on own_lay
   void          AddRelPos(taVector3i& rel_pos);

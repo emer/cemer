@@ -13,13 +13,13 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#include "GPiUnitSpec.h"
+#include "GPiInvUnitSpec.h"
 
 #include <LeabraNetwork>
 
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(GPiUnitSpec);
+TA_BASEFUNS_CTORS_DEFN(GPiInvUnitSpec);
 TA_BASEFUNS_CTORS_DEFN(GPiMiscSpec);
 
 void GPiMiscSpec::Initialize() {
@@ -39,25 +39,25 @@ void GPiMiscSpec::UpdateAfterEdit_impl() {
   tot_gain = net_gain + nogo;
 }  
 
-void GPiUnitSpec::Initialize() {
+void GPiInvUnitSpec::Initialize() {
 }
 
-void GPiUnitSpec::Defaults_init() {
+void GPiInvUnitSpec::Defaults_init() {
 }
 
-void GPiUnitSpec::HelpConfig() {
-  String help = "GPiUnitSpec Computation:\n\
+void GPiInvUnitSpec::HelpConfig() {
+  String help = "GPiInvUnitSpec Computation:\n\
  - Computes BG output as a positive activation signal with competition inhibition\n\
  select best gating candidate -- should receive inputs from MatrixGo and NoGo layers.\n\
  NoGo is indicated just by the presence of NoGo in the layer name.\n\
- \nGPiUnitSpec Configuration:\n\
+ \nGPiInvUnitSpec Configuration:\n\
  - Use the Wizard PBWM button to automatically configure layers.\n\
  - Recv cons should be standard, with no learning.\n\
  - Should send back to Matrix Go and NoGo to deliver thal gating signal to drive learning.";
   taMisc::Confirm(help);
 }
 
-bool GPiUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
+bool GPiInvUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   LeabraUnit* u = (LeabraUnit*)un;
   if(!inherited::CheckConfig_Unit(un, quiet)) return false;
 
@@ -69,7 +69,7 @@ bool GPiUnitSpec::CheckConfig_Unit(Unit* un, bool quiet) {
   return rval;
 }
 
-void GPiUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   int nt = net->n_thrs_built;
   int flat_idx = u->UnFlatIdx(net, thr_no);
 #ifdef CUDA_COMPILE
@@ -110,7 +110,7 @@ void GPiUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->net_raw = gpi_net;
 }
 
-void GPiUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   float snd_val;
   if(gpi.thr_act) {
     if(u->act_eq <= gpi.gate_thr) u->act_eq = 0.0f;
@@ -130,12 +130,12 @@ void GPiUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   }
 }
 
-void GPiUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Rate(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }
 
-void GPiUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void GPiInvUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   inherited::Compute_Act_Spike(u, net, thr_no);
   Send_Thal(u, net, thr_no);
 }

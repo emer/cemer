@@ -239,6 +239,8 @@ public:
   // #CAT_Access get *logical* position for unit within its (virtual) subgroup
   void          UnitInGpLogPos(Unit* un, int& x, int& y) const;
   // #CAT_Access get *logical* position for unit within its (virtual) subgroup
+  int           UnitInGpUnIdx(Unit* un) const;
+  // #CAT_Access get unit index of unit within (virtual) unit group
   int           UnitIdxFmPos(taVector2i& pos) const
   { return pos.y * un_geom.x + pos.x; }
   // #CAT_Access get unit index from position for unit within a subgroup or unit in a layer without any subgroups

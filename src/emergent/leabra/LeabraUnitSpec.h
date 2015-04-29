@@ -400,38 +400,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(TopDownModSpec);
-
-class E_API TopDownModSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
-INHERITED(SpecMemberBase)
-public:
-  bool          on;         // turn on: top-down connections are modulatory on bottom-up -- goes into a separate td_net variable, applied multiplicatively to activations post-inhibition computation -- actual td_net value used has value between max and average (determined by thr) subtracted, and multiplied by gain, before used as multiplier
-  float         thr;        // #CONDSHOW_ON_on threshold between average and max where the pivot point between increased activation and decreased activation multiplier will go -- 0 = at the average, 1 = at the max
-  float         gain;       // #CONDSHOW_ON_on multiplier on difference between netin and threshold -- determines the range of multipliers
-  float         lay_pct;    // #CONDSHOW_ON_on for layers with unit group inhibition, proportion that layer-level values contribute to avg and max top-down netinput values used in computing top-down modulation factors
-  float         min;        // #CONDSHOW_ON_on minimum max top-down netinput value before starting to apply modulation
-
-  inline float  NetMod(const float td_net, const float avg_net, const float max_net,
-                       const float act) {
-    float td_thr = avg_net + thr * (max_net - avg_net);
-    float mod = gain * (td_net - td_thr) * act * (1.0f - act);
-    return act + mod;
-  }
-  // modulate activation by top-down netinput modulation factor -- returns modulated activation
-  
-  String       GetTypeDecoKey() const override { return "UnitSpec"; }
-
-  TA_SIMPLE_BASEFUNS(TopDownModSpec);
-protected:
-  SPEC_DEFAULTS;
-  // void	UpdateAfterEdit_impl();
-private:
-  void	Initialize();
-  void	Destroy()	{ };
-  void	Defaults_init();
-};
-
 eTypeDef_Of(DeepSpec);
 
 class E_API DeepSpec : public SpecMemberBase {
@@ -613,7 +581,6 @@ public:
   ShortPlastSpec stp;           // #CAT_Activation short term presynaptic plasticity specs -- can implement full range between facilitating vs. depresssion
   SynDelaySpec	 syn_delay;	// #CAT_Activation synaptic delay -- if active, activation sent to other units is delayed by a given amount
   LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
-  TopDownModSpec top_down_mod;  // #CAT_Activation top-down connections in standard superficial unit connections work by multiplicative modulation instead of additive contribution to net input -- td_net contains top-down netin -- requires that projections have been properly labeled as FM_INPUT or FM_OUTPUT etc -- auto done at build
   Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec	 deep;  	// #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
   DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables

@@ -39,7 +39,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraDropoutSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDtSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraActAvgSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraAvgLSpec);
-TA_BASEFUNS_CTORS_DEFN(TopDownModSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepSpec);
 TA_BASEFUNS_CTORS_DEFN(DeepNormSpec);
 TA_BASEFUNS_CTORS_DEFN(DaModSpec);
@@ -302,18 +301,6 @@ void LeabraDropoutSpec::Initialize() {
 void LeabraDropoutSpec::Defaults_init() {
   net_p = 0.1f;
   net_drop = 0.9f;
-}
-
-void TopDownModSpec::Initialize() {
-  on = false;
-  Defaults_init();
-}
-
-void TopDownModSpec::Defaults_init() {
-  thr = 0.6f;
-  gain = 3.0f;
-  lay_pct = 0.5f;
-  min = 0.1f;
 }
 
 void DeepSpec::Initialize() {
@@ -579,7 +566,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
-  u->thal_prv = 0.0f;
+  u->thal_cnt = 0.0f;
   u->lrnmod = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -694,7 +681,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
-  u->thal_prv = 0.0f;
+  u->thal_cnt = 0.0f;
   u->lrnmod = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -944,7 +931,6 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
   float deep_raw_scale = 0.0f;
   float deep_norm_scale = 0.0f;
   float deep_ctxt_scale = 0.0f;
-  float td_scale = 0.0f;
   
   // important: count all projections so it is uniform across all units
   // in the layer!  if a unit does not have a connection in a given projection,
@@ -969,9 +955,6 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     }
     else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       deep_ctxt_scale += rel_scale;
-    }
-    else if(top_down_mod.on && recv_gp->prjn->direction != Projection::FM_INPUT) {
-      td_scale += rel_scale;
     }
     else {
       net_scale += rel_scale;
@@ -1008,10 +991,6 @@ void LeabraUnitSpec::Compute_NetinScale(LeabraUnitVars* u, LeabraNetwork* net, i
     else if(!deep.ctxt_rel && cs->IsDeepCtxtCon()) {
       if(deep_ctxt_scale > 0.0f)
         recv_gp->scale_eff /= deep_ctxt_scale;
-    }
-    else if(top_down_mod.on && recv_gp->prjn->direction != Projection::FM_INPUT) {
-      if(td_scale > 0.0f)
-        recv_gp->scale_eff /= td_scale;
     }
     else {
       if(net_scale > 0.0f)
@@ -1182,17 +1161,7 @@ void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int
         gi_delta += g_net_delta;
       }
       else {
-        if(top_down_mod.on) {
-          if(recv_gp->prjn->direction != Projection::FM_INPUT) {
-            td_net += recv_gp->net_raw;
-          }
-          else {
-            net_delta += g_net_delta;
-          }
-        }
-        else {
-          net_delta += g_net_delta;
-        }
+        net_delta += g_net_delta;
       }
     }
     u->td_net = td_net;
@@ -1535,28 +1504,6 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
-  if(top_down_mod.on) {
-    new_act = act_range.Clip(new_act);
-    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-    LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-    LeabraInhib* thr = ((LeabraUnitSpec*)u->unit_spec)->GetInhib(un);
-    float avg_net, max_net;
-    if(lay != thr) {
-      avg_net = (top_down_mod.lay_pct * lay->td_netin.avg +
-                 (1.0f - top_down_mod.lay_pct) * thr->td_netin.avg);
-      max_net = (top_down_mod.lay_pct * lay->td_netin.max +
-                 (1.0f - top_down_mod.lay_pct) * thr->td_netin.max);
-    }
-    else {
-      avg_net = thr->td_netin.avg;
-      max_net = thr->td_netin.max;
-    }
-
-    if(max_net > top_down_mod.min) {
-      new_act = top_down_mod.NetMod(u->td_net, avg_net, max_net, new_act);
-    }
-  }
-  
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
     if(u->deep_norm > 0.0f) {
       new_act *= u->deep_norm;
@@ -1909,11 +1856,6 @@ void LeabraUnitSpec::Quarter_Final_RecVals(LeabraUnitVars* u, LeabraNetwork* net
     Compute_ActTimeAvg(u, net, thr_no);
     break;
   }
-
-  if(Quarter_DeepNow(net->quarter)) {
-    // just ending a quarter where deep5b was updating -- save this thal as previous thal
-    u->thal_prv = u->thal;
-  }
 }
 
 void LeabraUnitSpec::Compute_ActTimeAvg(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1942,7 +1884,6 @@ void LeabraUnitSpec::Send_DeepCtxtNetin(LeabraUnitVars* u, LeabraNetwork* net,
 
   u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
-  u->thal_prv = u->thal;
 
   float act_ts = u->deep_raw;
   if(act_ts > opt_thresh.send) {

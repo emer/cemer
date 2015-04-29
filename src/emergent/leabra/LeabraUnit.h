@@ -141,10 +141,10 @@ public:
   // #CAT_UnitVar net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
-  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
-  inline float& thal_prv()
-  { return ((LeabraUnitVars*)GetUnitVars())->thal_prv; }
-  // #CAT_UnitVar previous thalamic activation value (updated at end of phase or trial depending on cifer.phase), driven by a ThalSendUnitSpec -- used by cifer params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
+  inline float& thal_cnt()
+  { return ((LeabraUnitVars*)GetUnitVars())->thal_cnt; }
+  // #CAT_UnitVar counter for thalamic activation value -- increments for active maintenance in PFCUnitSpec
   inline float& lrnmod()
   { return ((LeabraUnitVars*)GetUnitVars())->lrnmod; }
   // #CAT_UnitVar learning modulation variable -- set by LearnModUnitSpec units (or possibly other types) -- used for special learning modulation variable, e.g., to represent the special status of the US/PV in the PVLV model as a learning enabler -- see LearnModDeltaConSpec and LearnModHebbConSpec 

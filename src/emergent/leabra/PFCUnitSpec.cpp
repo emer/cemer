@@ -15,18 +15,20 @@
 
 #include "PFCUnitSpec.h"
 #include <LeabraNetwork>
+#include <MarkerConSpec>
 #include <taProject>
 #include <taMisc>
 
-TA_BASEFUNS_CTORS_DEFN(PFCMaintSpec);
+TA_BASEFUNS_CTORS_DEFN(PFCMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
-void PFCMaintSpec::Initialize() {
+void PFCMiscSpec::Initialize() {
   thal_thr = 0.1f;
+  out_gate = false;
   Defaults_init();
 }
 
-void PFCMaintSpec::Defaults_init() {
+void PFCMiscSpec::Defaults_init() {
 }
 
 void PFCUnitSpec::Initialize() {
@@ -36,6 +38,7 @@ void PFCUnitSpec::Initialize() {
 void PFCUnitSpec::Defaults_init() {
   // act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   InitDynTable();
+  deep_qtr = Q4;
   deep.on = true;
   deep_norm.on = true;
   deep_norm.mod = false;
@@ -68,7 +71,10 @@ void  PFCUnitSpec::FormatDynTable() {
 }
 
 void  PFCUnitSpec::InitDynTable() {
-  n_dyns = 5;
+  if(pfc.out_gate)
+    n_dyns = 1;
+  else
+    n_dyns = 5;
   FormatDynTable();
 
   int cur = 0;
@@ -78,6 +84,9 @@ void  PFCUnitSpec::InitDynTable() {
   SetDynVal(0.0f, DYN_RISE_TAU, cur);
   SetDynVal(1.0f, DYN_DECAY_TAU, cur);
 
+  if(pfc.out_gate)
+    return;
+  
   cur++;
   SetDynVal("maint_flat", DYN_NAME, cur);
   SetDynVal("maintained, flat stable sustained activation", DYN_DESC, cur);
@@ -110,7 +119,6 @@ void  PFCUnitSpec::InitDynTable() {
 }
 
 void  PFCUnitSpec::UpdtDynTable() {
-  // taMisc::Info("updt dyn table");
   dyn_table.StructUpdate(true);
   FormatDynTable();
   for(int i=0; i<dyn_table.rows; i++) {
@@ -140,48 +148,101 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
 }
 
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  const float thal_thr = pfc_maint.thal_thr;
-  if(u->thal < thal_thr) {
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  int unidx = un->UnitGpUnIdx();
+  int dyn_row = unidx % n_dyns;
+
+  if(u->thal < pfc.thal_thr || u->thal_cnt <= 0.0f) {
+    // we are not gating, and nor are we maintaining
     TestWrite(u->deep_raw, 0.0f); // not gated, off..
-    TestWrite(u->thal_prv, 0.0f); // clear any processed signal
+    TestWrite(u->thal_cnt, -1.0f); // clear any processed signal
     TestWrite(u->misc_1, 0.0f);
     return;
   }
-  // thal > 0 at this point..
-  if(u->thal_prv == -0.001f) {     // we've already processed the current thal signal
-    return;
-  }
-
-  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
-  LeabraLayer* lay = (LeabraLayer*)un->own_lay();
-  int unidx = un->idx % lay->un_geom.n;
-  int dyn_row = unidx % n_dyns;
-
-  if(u->thal_prv < thal_thr && u->thal > thal_thr) { // just gated
+  // now we are either gating or maintaining
+  
+  if(u->thal >= pfc.thal_thr) {
+    // new gating signal -- doesn't hurt to continuously update here..
+    TestWrite(u->thal_cnt, 0.0f);     // reset count
     if(u->act_eq < opt_thresh.send) {            // not active enough for gating
       TestWrite(u->deep_raw, 0.0f);
       TestWrite(u->misc_1, 0.0f);
     }
     else {
       u->deep_raw = u->act_eq * GetDynVal(DYN_INIT, dyn_row);
+      u->misc_1 = u->act_eq;
     }
-    u->thal_prv = -0.001f;      // mark as processed
-    u->misc_1 = u->act_eq;
-    return;
-  }
-
-  if(u->deep_raw == 0.0f) {      // not gated, bail
-    u->thal_prv = -0.001f;      // mark as processed
     return;
   }
   
-  // must be continued maintenance at this point
-  float cur_val = u->deep_raw;
-  float prv_val = u->deep_raw_pprv;
-  float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
-  u->deep_raw = nw_val;
-  u->thal_prv = -0.001f;      // mark as processed
+  // now we are continuing to maintain, do nothing at this point..
+  // todo: could update deep_raw in some in some way, but not really..
 }
+
+void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+  int unidx = un->UnitGpUnIdx();
+  int dyn_row = unidx % n_dyns;
+
+  if(u->thal_cnt <= 0.0f) {
+    TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+    TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
+    return;
+  }
+
+  if(pfc.out_gate) {
+    // out gating is transient, now turn it off, and clear other guys
+    TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+    TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
+    TestWrite(u->thal_cnt, -1.0f);
+    ClearOtherMaint(u, net, thr_no); // send clear to others..
+  }
+  else {
+    // compute deep_norm based on current values..
+    float dctxt = u->deep_ctxt;
+    float lctxt = lay->am_deep_ctxt.avg;
+    float nw_nrm = 0.0f;
+    if(u->deep_raw > opt_thresh.send) {
+      // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
+      nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
+    }
+    u->deep_norm = nw_nrm;
+
+    // now update maintenance for next time!
+    u->thal_cnt += 1.0f;
+    float cur_val = u->deep_raw;
+    float prv_val = u->deep_raw_pprv;
+    float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
+    u->deep_raw = nw_val;
+  }
+}
+
+float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+                                          int thr_no, float& net_syn) {
+
+  float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
+  if(u->thal >= pfc.thal_thr) { // our gate is open
+    net_ex += u->deep_raw_net;  // add in the gated deep inputs!
+  }
+  return net_ex;
+}
+
+void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  const int nsg = u->NSendConGps(net, thr_no); 
+  for(int g=0; g<nsg; g++) {
+    LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+    if(send_gp->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+    if(!cs->InheritsFrom(TA_MarkerConSpec)) continue;
+    for(int j=0;j<send_gp->size; j++) {
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal_cnt = -1.0f; // terminate!
+    }
+  }
+}
+
 
 void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
   taProject* proj = GET_MY_OWNER(taProject);

@@ -70,7 +70,7 @@ void LeabraUnit::Copy_(const LeabraUnit& cp) {
   // thr_m_mix = cp.thr_m_mix;
   // act_avg = cp.act_avg;
   // thal = cp.thal;
-  // thal_prv = cp.thal_prv;
+  // thal_cnt = cp.thal_cnt;
   // deep5b = cp.deep5b;
   // d5b_net = cp.d5b_net;
   // ti_ctxt = cp.ti_ctxt;

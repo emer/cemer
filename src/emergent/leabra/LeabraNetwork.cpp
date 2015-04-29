@@ -80,7 +80,6 @@ void LeabraNetMisc::Initialize() {
   dwt_norm = false;
   lay_gp_inhib = false;
   inhib_cons = false;
-  td_mod = false;
 }
 
 void RelNetinSched::Initialize() {
@@ -154,7 +153,6 @@ void LeabraNetwork::UpdateAfterEdit_impl() {
 
 void LeabraNetwork::CheckInhibCons() {
   net_misc.inhib_cons = false;
-  net_misc.td_mod = false;
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
       lay->CheckInhibCons(this);
@@ -163,7 +161,7 @@ void LeabraNetwork::CheckInhibCons() {
 
 void LeabraNetwork::Build() {
   CheckInhibCons();
-  if(net_misc.inhib_cons || net_misc.td_mod) {
+  if(net_misc.inhib_cons) {
     SetNetFlag(NETIN_PER_PRJN);	// inhib cons use per-prjn inhibition
   }
   inherited::Build();

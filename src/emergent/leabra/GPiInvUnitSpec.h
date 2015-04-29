@@ -13,8 +13,8 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //   GNU General Public License for more details.
 
-#ifndef GPiUnitSpec_h
-#define GPiUnitSpec_h 1
+#ifndef GPiInvUnitSpec_h
+#define GPiInvUnitSpec_h 1
 
 // parent includes:
 #include <LeabraUnitSpec>
@@ -48,10 +48,10 @@ private:
   void  Defaults_init();
 };
 
-eTypeDef_Of(GPiUnitSpec);
+eTypeDef_Of(GPiInvUnitSpec);
 
-class E_API GPiUnitSpec : public LeabraUnitSpec {
-  // GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates Go and NoGo inputs, computing netin = Go - go_nogo.nogo * NoGo -- also sends act to thal field on Matrix layers that it sends to, to drive credit assignment learning in Matrix
+class E_API GPiInvUnitSpec : public LeabraUnitSpec {
+  // #AKA_GpiUnitSpec Inverted GPi globus pallidus internal segment, analogous with SNr -- major output pathway of the basal ganglia.  This integrates Go and NoGo inputs, computing netin = Go - go_nogo.nogo * NoGo -- unlike real GPi units are typically off, and the most active wins through inhibitory competition -- also sends act to thal field on layers that it sends to -- can be used directly as a sole SNrThal gating layer, or indrectly with InvertUnitSpec to mimic actual non-inverted GPi in a projection to thalamus layer
 INHERITED(LeabraUnitSpec)
 public:
   GPiMiscSpec    gpi;      // parameters controlling the gpi functionality: how to weight the Go vs. NoGo pathway inputs, and gating threshold
@@ -72,7 +72,7 @@ public:
   bool  CheckConfig_Unit(Unit* un, bool quiet=false) override;
   void  HelpConfig();   // #BUTTON get help message for configuring this spec
 
-  TA_SIMPLE_BASEFUNS(GPiUnitSpec);
+  TA_SIMPLE_BASEFUNS(GPiInvUnitSpec);
 protected:
   SPEC_DEFAULTS;
 private:
@@ -81,4 +81,4 @@ private:
   void	Defaults_init();
 };
 
-#endif // GPiUnitSpec_h
+#endif // GPiInvUnitSpec_h

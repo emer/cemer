@@ -245,9 +245,6 @@ void LeabraLayer::CheckInhibCons(LeabraNetwork* net) {
   FOREACH_ELEM_IN_GROUP(LeabraPrjn, p, projections) {
     p->CheckInhibCons(net);
   }
-  LeabraUnitSpec* us = (LeabraUnitSpec*)GetUnitSpec();
-  if(us->top_down_mod.on)
-    net->net_misc.td_mod = true;
 }
 
 void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {

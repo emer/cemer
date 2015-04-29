@@ -81,7 +81,7 @@ set(leabra_HEADS_MAKETA
   MatrixCon.h
   MatrixConSpec.h
   PatchUnitSpec.h
-  GPiUnitSpec.h
+  GPiInvUnitSpec.h
   InvertUnitSpec.h
   PFCUnitSpec.h
   PFCPrjnSpec.h
@@ -198,7 +198,7 @@ set(leabra_SRCS
   MatrixCon.cpp
   MatrixConSpec.cpp
   PatchUnitSpec.cpp
-  GPiUnitSpec.cpp
+  GPiInvUnitSpec.cpp
   InvertUnitSpec.cpp
   PFCUnitSpec.cpp
   PFCPrjnSpec.cpp

@@ -24,17 +24,18 @@
 
 // declare all other types mentioned but not required to include:
 
-eTypeDef_Of(PFCMaintSpec);
+eTypeDef_Of(PFCMiscSpec);
 
-class E_API PFCMaintSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for maintenance in PFC, based on deep_raw activations, which are gated by thalamic circuit
+class E_API PFCMiscSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra misc specifications for PFC function
 INHERITED(SpecMemberBase)
 public:
   float         thal_thr;       // threshold on thalamic gating signal to drive gating
+  bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
-  TA_SIMPLE_BASEFUNS(PFCMaintSpec);
+  TA_SIMPLE_BASEFUNS(PFCMiscSpec);
 protected:
   SPEC_DEFAULTS;
   //  void  UpdateAfterEdit_impl();
@@ -47,7 +48,7 @@ private:
 eTypeDef_Of(PFCUnitSpec);
 
 class E_API PFCUnitSpec : public LeabraUnitSpec {
-  // PFC unit spec -- thal signal during deep updating quarter drives updating of deep_raw activations as maintenance activations -- these activations evolve over time across units according to the dyn_table settings -- each unit has stereotyped dynamic responses to the gating event -- activation at time of gating stored in misc_1 var -- deep_norm at end of deep updating is updated to reflect new maint currents, and this feeds back using deep.d_to_s to drive superficial maint activation as well (super acts don't feel gating update until next alpha or beta trial to prevent learning effects, but deep_raw updates in prior quarter)
+  // PFC unit spec -- thal signal during deep updating quarter drives updating of deep_raw activations as maintenance activations -- these activations evolve over time across units according to the dyn_table settings -- each unit has stereotyped dynamic responses to the gating event -- activation at time of gating stored in misc_1 var -- deep_norm at end of deep updating is updated to reflect new maint currents, and this feeds back using deep.d_to_s to drive superficial maint activation as well (super acts don't feel gating update until next alpha or beta trial to prevent learning effects, but deep_raw updates in prior quarter) -- thal_cnt increments for continuing maintenance
 INHERITED(LeabraUnitSpec)
 public:
 
@@ -61,7 +62,7 @@ public:
     DYN_DECAY_DT,
   };
 
-  PFCMaintSpec  pfc_maint;      // misc specifications for maintenance in PFC
+  PFCMiscSpec   pfc;            // misc PFC specifications
   int           n_dyns;         // #DEF_5 number of different temporal dynamic profiles for different PFC units, all triggered by a single gating event -- each row of units within a PFC unit group shares the same dynamics -- there should be an even multiple of n_dyns rows (y unit group size) per unit group
   DataTable     dyn_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of dynamics parameters for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed -- one set of params per each row, n_dyns rows total (see n_dyns)
 
@@ -100,8 +101,14 @@ public:
   virtual void  UpdtDynTable();
   // #BUTTON update the dt values from the tau values
 
+  float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
+                            int thr_no, float& net_syn) override;
   void  Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
+  void  Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
+  virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
+  // clear maintenance in other layers we project to using MarkerConSpec
+  
   virtual void	GraphPFCDyns(DataTable* graph_data, int n_trials=20);
   // #MENU_BUTTON #MENU_ON_Graph #NULL_OK #NULL_TEXT_NewGraphData graph the pfc dynamics for response of deep_raw over time after gating has taken place -- update occurs once each quarter that deep_raw is computed (typically once per trial)
   

@@ -61,7 +61,7 @@ void LeabraWizard::Initialize() {
 #include <LearnModHebbConSpec>
 
 #include <PatchUnitSpec>
-#include <GPiUnitSpec>
+#include <GPiInvUnitSpec>
 #include <InvertUnitSpec>
 #include <ThalSendUnitSpec>
 #include <PFCUnitSpec>
@@ -1371,7 +1371,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(LeabraUnitSpec, pbwm_units, pbwmspgp, prefix + "Units");
   FMChild(LeabraUnitSpec, matrix_units, pbwm_units, "MatrixUnits");
   FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
-  FMChild(GPiUnitSpec, gpi_units, pbwm_units, "GPiUnits");
+  FMChild(GPiInvUnitSpec, gpi_units, pbwm_units, "GPiUnits");
   FMChild(InvertUnitSpec, gpinv_units, pbwm_units, "GPInvert");
   FMChild(ThalSendUnitSpec, thal_units, pbwm_units, "ThalUnits");
   FMChild(PFCUnitSpec, pfc_units, pbwm_units, "PFCUnits");
@@ -1859,7 +1859,7 @@ can be sure everything is ok.";
   patch->SetUnitSpec(PbwmSp("PatchUnits",PatchUnitSpec));
   patch->SetLayerSpec(PbwmSp("PatchLayer",LeabraLayerSpec));
 
-  gpi->SetUnitSpec(PbwmSp("GPiUnits",GPiUnitSpec));
+  gpi->SetUnitSpec(PbwmSp("GPiUnits",GPiInvUnitSpec));
   gpi->SetLayerSpec(PbwmSp("GPiLayer",LeabraLayerSpec));
 
   gpinvert->SetUnitSpec(PbwmSp("GPInvert",InvertUnitSpec));
