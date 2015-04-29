@@ -19,6 +19,7 @@
 TA_BASEFUNS_CTORS_DEFN(DeepCopyUnitSpec);
 
 void DeepCopyUnitSpec::Initialize() {
+  deep_var = DEEP_RAW;
   Defaults_init();
 }
 
@@ -54,7 +55,19 @@ void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net
     u->act = 0.0f;
     return;
   }
-  u->act = su->deep_raw;
+  float var = 0.0f;
+  switch(deep_var) {
+  case DEEP_RAW:
+    var = su->deep_raw;
+    break;
+  case DEEP_NORM:
+    var = su->deep_norm;
+    break;
+  case DEEP_CTXT:
+    var = su->deep_ctxt;
+    break;
+  }
+  u->act = var;
   u->act_eq = u->act_nd = u->act;
   TestWrite(u->da, 0.0f);
   // u->AddToActBuf(syn_delay); // todo:

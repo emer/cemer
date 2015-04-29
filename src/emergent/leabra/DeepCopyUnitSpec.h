@@ -26,9 +26,17 @@
 eTypeDef_Of(DeepCopyUnitSpec);
 
 class E_API DeepCopyUnitSpec : public LeabraUnitSpec {
-  // #AKA_Deep5bUnitSpec units that continuously copy deep5b activation values from a one-to-one receiving projection -- should typically just be used for visualization convenience -- use SendDeepRawConSpec to send deep5b activations to the d5b_net of other layers
+  // #AKA_Deep5bUnitSpec units that continuously copy deep layer activation values from a one-to-one receiving projection -- should typically just be used for visualization convenience -- use SendDeepRawConSpec or SendDeepNormConSpec to send these variables directly from a given layer (although these only operate at restricted times)
 INHERITED(LeabraUnitSpec)
 public:
+  enum DeepCopyVar {            // variable to copy from
+    DEEP_RAW,                   // deep_raw
+    DEEP_NORM,                  // deep_norm
+    DEEP_CTXT,                  // deep_ctxt
+  };
+
+  DeepCopyVar   deep_var;        // which variable to copy from
+  
   virtual void Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // set current act of deep unit to sending super unit activation
 

@@ -25,6 +25,7 @@ TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 void PFCMiscSpec::Initialize() {
   thal_thr = 0.1f;
   out_gate = false;
+  out_mnt = 1;
   Defaults_init();
 }
 
@@ -152,7 +153,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   int unidx = un->UnitGpUnIdx();
   int dyn_row = unidx % n_dyns;
 
-  if(u->thal < pfc.thal_thr || u->thal_cnt <= 0.0f) {
+  if(u->thal < pfc.thal_thr && u->thal_cnt <= 0.0f) {
     // we are not gating, and nor are we maintaining
     TestWrite(u->deep_raw, 0.0f); // not gated, off..
     TestWrite(u->thal_cnt, -1.0f); // clear any processed signal
@@ -187,29 +188,36 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
   int unidx = un->UnitGpUnIdx();
   int dyn_row = unidx % n_dyns;
 
-  if(u->thal_cnt <= 0.0f) {
+  if(u->thal_cnt < 0.0f) {
     TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
     TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
     return;
   }
 
   if(pfc.out_gate) {
-    // out gating is transient, now turn it off, and clear other guys
-    TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
-    TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
-    TestWrite(u->thal_cnt, -1.0f);
-    ClearOtherMaint(u, net, thr_no); // send clear to others..
+    ClearOtherMaint(u, net, thr_no); // send clear to others -- always right away
+    if(u->thal_cnt > pfc.out_mnt) {
+      // out gating is transient, now turn it off, and clear other guys
+      TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+      TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
+      TestWrite(u->thal_cnt, -1.0f);
+    }
+    else {
+      u->deep_norm = u->deep_raw;
+      u->thal_cnt += 1.0f;
+    }
   }
   else {
     // compute deep_norm based on current values..
-    float dctxt = u->deep_ctxt;
-    float lctxt = lay->am_deep_ctxt.avg;
-    float nw_nrm = 0.0f;
-    if(u->deep_raw > opt_thresh.send) {
-      // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
-      nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
-    }
-    u->deep_norm = nw_nrm;
+    // float dctxt = u->deep_ctxt;
+    // float lctxt = lay->am_deep_ctxt.avg;
+    // float nw_nrm = 0.0f;
+    // if(u->deep_raw > opt_thresh.send) {
+    //   // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
+    //   nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
+    // }
+    // u->deep_norm = nw_nrm;
+    u->deep_norm = u->deep_raw;
 
     // now update maintenance for next time!
     u->thal_cnt += 1.0f;

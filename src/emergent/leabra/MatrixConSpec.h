@@ -148,45 +148,30 @@ public:
     const float otr_lr = -matrix.otr_lrate;
     
     const int sz = cg->size;
-    if(nogo) {
-      if(matrix.use_thal) {
-        if(matrix.reset_any_da) {
-          for(int i=0; i<sz; i++) {
-            LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-            C_Compute_dWt_Matrix_ThalAnyDa(dwts[i], ntrs[i], trs[i], otr_lr,
-                                           -ru->dav, ru->thal, ru->act_eq, su->act_eq);
-          }
-        }
-        else {
-          for(int i=0; i<sz; i++) {
-            LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-            C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                      -ru->dav, ru->thal, ru->act_eq, su->act_eq);
-          }
+    if(matrix.use_thal) {
+      if(matrix.reset_any_da) {
+        for(int i=0; i<sz; i++) {
+          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+          float dav = ((nogo) ? -ru->dav : ru->dav);
+          C_Compute_dWt_Matrix_ThalAnyDa(dwts[i], ntrs[i], trs[i], otr_lr,
+                                         dav, ru->thal, ru->act_eq, su->act_eq);
         }
       }
       else {
         for(int i=0; i<sz; i++) {
           LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                      -ru->dav, ru->act_eq, su->act_eq);
+          float dav = ((nogo) ? -ru->dav : ru->dav);
+          C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                    dav, ru->thal, ru->act_eq, su->act_eq);
         }
       }
     }
     else {
-      if(matrix.use_thal) {
-        for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                  ru->dav, ru->thal, ru->act_eq, su->act_eq);
-        }
-      }
-      else {
-        for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                      ru->dav, ru->act_eq, su->act_eq);
-        }
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float dav = ((nogo) ? -ru->dav : ru->dav);
+        C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                    dav, ru->act_eq, su->act_eq);
       }
     }
   }

@@ -16,6 +16,7 @@
 #include "GPiInvUnitSpec.h"
 
 #include <LeabraNetwork>
+#include <MarkerConSpec>
 
 #include <taMisc>
 
@@ -124,6 +125,8 @@ void GPiInvUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no
   for(int g=0; g<nsg; g++) {
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
+    LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+    if(!cs->InheritsFrom(TA_MarkerConSpec)) continue;
     for(int j=0;j<send_gp->size; j++) {
       ((LeabraUnitVars*)send_gp->UnVars(j,net))->thal = snd_val;
     }

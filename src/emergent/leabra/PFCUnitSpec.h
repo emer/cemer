@@ -32,6 +32,7 @@ INHERITED(SpecMemberBase)
 public:
   float         thal_thr;       // threshold on thalamic gating signal to drive gating
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
+  int           out_mnt;        // #CONDSHOW_ON_out_gate number of trials (updates of deep_norm state, following deep_qtr updates) to maintain output gating signals
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
