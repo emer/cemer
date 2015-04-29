@@ -487,15 +487,15 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   }
   else {
     String trimmed_txt = trim(txt);
-    if (trimmed_txt == "Call") {
+    if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase() == "prog") {
       lookup_type = 5;
       txt = "Call ";
-      expr_start = 5;
+      expr_start = txt.length();
     }
-    if (trimmed_txt == "FunCall") {
+    else if (trimmed_txt.downcase() == "fun") {
       lookup_type = 6;
       txt = "FunCall ";
-      expr_start = 8;
+      expr_start = txt.length();
     }
     else if(path_base || path_base_typ) {
       lookup_type = 2;
@@ -735,7 +735,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       if(okc && pgrm_look_up->token()) {
         rval = prepend_before + pgrm_look_up->token()->GetName();
       }
+      new_pos = rval.length();
       delete pgrm_look_up;
+      break;
     }
       
     case 6: {                 // Functions
@@ -745,7 +747,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       if(okc && func_look_up->token()) {
         rval = prepend_before + func_look_up->token()->GetName();
       }
+      new_pos = rval.length();
       delete func_look_up;
+      break;
     }
   }
   
