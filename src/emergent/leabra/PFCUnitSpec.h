@@ -104,8 +104,11 @@ public:
 
   float Compute_NetinExtras(LeabraUnitVars* uv, LeabraNetwork* net,
                             int thr_no, float& net_syn) override;
+  void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
   void  Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) override;
   void  Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
+  void  Send_DeepNormNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   virtual void ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr_no);
   // clear maintenance in other layers we project to using MarkerConSpec

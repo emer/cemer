@@ -686,12 +686,14 @@ public:
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
   virtual void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
-  virtual void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net,
-                                  int thr_no);
-  // #CAT_TI send deep5b netinputs through SendDeepRawConSpec connections
-  virtual void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
-                                         int thr_no);
-  // #CAT_TI send context netinputs through SendDeepRawConSpec connections -- post processing rollup
+  virtual void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
+    virtual void Send_DeepRawNetin_impl(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #IGNORE send deep5b netinputs through SendDeepRawConSpec connections
+  virtual void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup
+    virtual void Send_DeepRawNetin_Post_impl(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #IGNORE send context netinputs through SendDeepRawConSpec connections -- post processing rollup
 
   inline float Compute_EThresh(LeabraUnitVars* uv);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold

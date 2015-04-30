@@ -151,7 +151,7 @@ bool ExtRewLayerSpec::OutErrRewAvail(LeabraLayer* lay, LeabraNetwork*) {
   return got_some;
 }
 
-float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
+float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork* net) {
   LeabraUnit* u = (LeabraUnit*)lay->units.Leaf(1);      // taking 2nd unit as representative
 
   // first pass: find the layers: use COMP if no TARG is found
@@ -184,7 +184,23 @@ float ExtRewLayerSpec::GetOutErrRew(LeabraLayer* lay, LeabraNetwork*) {
     if(rew_lay->name == "RewTarg") continue;
 
     if(!rew_lay->HasExtFlag(rew_chk_flag)) continue; // only proceed if valid
-    toterr += rew_lay->norm_err;        // now using norm err
+    //  toterr += rew_lay->norm_err;        // now using norm err
+    // this is now no longer computed at the point where we need it!  must compute ourselves!
+
+    LeabraUnitSpec* us = (LeabraUnitSpec*)rew_lay->GetUnitSpec();
+    
+    float this_err = 0.0f;
+    FOREACH_ELEM_IN_GROUP(LeabraUnit, un, rew_lay->units) {
+      if(un->lesioned()) continue;
+      LeabraUnitVars* uv = (LeabraUnitVars*)un->GetUnitVars();
+      bool targ_active = false;
+      float unerr = us->Compute_NormErr(uv, net, 0, targ_active);
+      if(unerr > 0.0f) {
+        this_err = 1.0f;
+        break;
+      }
+    }
+    toterr += this_err;
     totposs += 1.0f;
   }
   if(totposs == 0.0f)

@@ -148,6 +148,19 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
   UpdtDynTable();
 }
 
+void PFCUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                    int thr_no) {
+  // always send!
+  Send_DeepRawNetin_impl(u, net, thr_no);
+}
+
+void PFCUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
+                                         int thr_no) {
+  // always send!
+  Send_DeepRawNetin_Post_impl(u, net, thr_no);
+}
+
+
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   int unidx = un->UnitGpUnIdx();
@@ -195,8 +208,7 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
   }
 
   if(pfc.out_gate) {
-    ClearOtherMaint(u, net, thr_no); // send clear to others -- always right away
-    if(u->thal_cnt > pfc.out_mnt) {
+    if(u->thal_cnt >= pfc.out_mnt) {
       // out gating is transient, now turn it off, and clear other guys
       TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
       TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
@@ -226,6 +238,21 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
     float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
     u->deep_raw = nw_val;
   }
+}
+
+void PFCUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
+                                      int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+
+  if(pfc.out_gate) {
+    if(u->thal_cnt == 1.0f) {
+      ClearOtherMaint(u, net, thr_no); // send clear to others
+    }
+  }
+
+  // actually, don't send right now -- does deep_norm renorm..
+  //  inherited::Send_DeepNormNetin(u, net, thr_no);
 }
 
 float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,

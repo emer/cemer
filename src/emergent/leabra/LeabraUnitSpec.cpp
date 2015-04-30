@@ -566,7 +566,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
-  u->thal_cnt = 0.0f;
+  u->thal_cnt = -1.0f;
   u->lrnmod = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -681,7 +681,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
   u->thal = 0.0f;
-  u->thal_cnt = 0.0f;
+  u->thal_cnt = -1.0f;
   u->lrnmod = 0.0f;
   u->gc_i = 0.0f;
   u->I_net = 0.0f;
@@ -1126,9 +1126,7 @@ void LeabraUnitSpec::Send_NetinDelta(LeabraUnitVars* u, LeabraNetwork* net, int 
     u->act_sent = 0.0f;         // now it effectively sent a 0..
   }
 
-  if(deep.on && Quarter_DeepNow(net->quarter)) {
-    Send_DeepRawNetin(u, net, thr_no);
-  }    
+  Send_DeepRawNetin(u, net, thr_no);
 }
 
 void LeabraUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1244,9 +1242,10 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
     u->net *= Compute_Noise(u, net, thr_no);
   }
 
+  Send_DeepRawNetin_Post(u, net, thr_no);
+  
   if(deep.on && Quarter_DeepNow(net->quarter)) {
     Compute_DeepRaw(u, net, thr_no);
-    Send_DeepRawNetin_Post(u, net, thr_no);
   }
 
   TestWrite(u->thal, 0.0f);     // reset here before thalamic writing
@@ -1354,7 +1353,14 @@ void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int 
 }
 
 void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
-                                         int thr_no) {
+                                            int thr_no) {
+  if(deep.on && Quarter_DeepNow(net->quarter)) {
+    Send_DeepRawNetin_impl(u, net, thr_no);
+  }
+}
+
+void LeabraUnitSpec::Send_DeepRawNetin_impl(LeabraUnitVars* u, LeabraNetwork* net,
+                                            int thr_no) {
   float act_ts = u->deep_raw;
   // note: no delay for deep
   // if(syn_delay.on) {
@@ -1397,6 +1403,13 @@ void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
 
 void LeabraUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
                                          int thr_no) {
+  if(deep.on && Quarter_DeepNow(net->quarter)) {
+    Send_DeepRawNetin_Post_impl(u, net, thr_no);
+  }
+}
+
+void LeabraUnitSpec::Send_DeepRawNetin_Post_impl(LeabraUnitVars* u, LeabraNetwork* net,
+                                                 int thr_no) {
   int nt = net->n_thrs_built;
   int flat_idx = u->UnFlatIdx(net, thr_no);
 #ifdef CUDA_COMPILE

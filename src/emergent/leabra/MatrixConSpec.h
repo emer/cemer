@@ -86,7 +86,7 @@ public:
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
 
-    if(mtx_da != 0.0f) {
+    if(fabsf(mtx_da) > matrix.da_reset_tr) {
       dwt += cur_lrate * mtx_da * tr;
       tr = 0.0f;
     }
