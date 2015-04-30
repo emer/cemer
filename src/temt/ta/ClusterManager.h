@@ -131,7 +131,6 @@ public:
   void SaveExtraFiles();
   void SaveDoneTable();
   void DeleteFile(const String &filename);
-  String GetEmerVersionString(int idx);
 
   ClusterRun& m_cluster_run;
   bool m_valid;
