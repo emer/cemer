@@ -23,13 +23,13 @@ TA_BASEFUNS_CTORS_DEFN(PFCMiscSpec);
 TA_BASEFUNS_CTORS_DEFN(PFCUnitSpec);
 
 void PFCMiscSpec::Initialize() {
-  thal_thr = 0.1f;
   out_gate = false;
-  out_mnt = 1;
   Defaults_init();
 }
 
 void PFCMiscSpec::Defaults_init() {
+  gate_thr = 0.1f;
+  out_mnt = 1;
 }
 
 void PFCUnitSpec::Initialize() {
@@ -166,7 +166,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   int unidx = un->UnitGpUnIdx();
   int dyn_row = unidx % n_dyns;
 
-  if(u->thal < pfc.thal_thr && u->thal_cnt <= 0.0f) {
+  if(u->thal < pfc.gate_thr && u->thal_cnt <= 0.0f) {
     // we are not gating, and nor are we maintaining
     TestWrite(u->deep_raw, 0.0f); // not gated, off..
     TestWrite(u->thal_cnt, -1.0f); // clear any processed signal
@@ -175,7 +175,7 @@ void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr
   }
   // now we are either gating or maintaining
   
-  if(u->thal >= pfc.thal_thr) {
+  if(u->thal >= pfc.gate_thr) {
     // new gating signal -- doesn't hurt to continuously update here..
     TestWrite(u->thal_cnt, 0.0f);     // reset count
     if(u->act_eq < opt_thresh.send) {            // not active enough for gating
@@ -259,7 +259,7 @@ float PFCUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
 
   float net_ex = inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
-  if(u->thal >= pfc.thal_thr) { // our gate is open
+  if(u->thal >= pfc.gate_thr) { // our gate is open
     net_ex += u->deep_raw_net;  // add in the gated deep inputs!
   }
   return net_ex;

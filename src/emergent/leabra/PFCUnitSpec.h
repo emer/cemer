@@ -30,9 +30,9 @@ class E_API PFCMiscSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra misc specifications for PFC function
 INHERITED(SpecMemberBase)
 public:
-  float         thal_thr;       // threshold on thalamic gating signal to drive gating
+  float         gate_thr;       // #DEF_0.1 threshold on thalamic gating signal to drive gating
   bool          out_gate;       // if true, this PFC layer is an output gate layer, which means that it only has transient activation during gating
-  int           out_mnt;        // #CONDSHOW_ON_out_gate number of trials (updates of deep_norm state, following deep_qtr updates) to maintain output gating signals
+  int           out_mnt;        // #CONDSHOW_ON_out_gate #DEF_1:2 number of trials (updates of deep_norm state, following deep_qtr updates) to maintain output gating signals
   
   String        GetTypeDecoKey() const override { return "UnitSpec"; }
 
