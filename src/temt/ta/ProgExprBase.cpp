@@ -425,21 +425,35 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   String extra_txt = cur_txt.from(cur_pos);
   String append_at_end;
   String prepend_before;
+  String prog_el_txt;
   
   String base_path;             // path to base element(s) if present
   String lookup_seed;           // start of text to seed lookup process
   String rval = _nilString;
   
   int lookup_type = -1; // 1 = var name (no path, delim), 2 = obj memb/meth,
-  // 3 = type scoped, 4 = array index, 5 = call program, 6 = call function
+  // 3 = type scoped, 4 = array index, 5 = some program element (e.g. function call)
   
   int_Array delim_pos;
   int delims_used = 0;
   int expr_start = 0;
+  int prog_el_start_pos = -1;
   int c = '\0';
-  for(int i=cur_pos-1;i>= 0; i--) {
+  
+  for(int i=cur_pos-1; i>= 0; i--) {
     c = txt[i];
-    if(isalpha(c) || isdigit(c) || (c == '_')) continue;
+    if(isdigit(c) || (c == '_') || (c == ' ')) {
+      continue;
+    }
+    if(isalpha(c)) {
+      if (delim_pos.size > 0) {  // we only collect chars just before the preceeding position
+        continue;
+      }
+      else {
+        prog_el_start_pos = i;
+        continue;
+      }
+    }
     if(c == ']' || c == '[' || c == '.' || c == '>' || c == '-' || c == ':') {
       delim_pos.Add(i);
       continue;
@@ -486,15 +500,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     // todo: []
   }
   else {
-    String trimmed_txt = trim(txt);
-    if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase() == "prog") {
+    if (prog_el_start_pos > -1) {
+      prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
       lookup_type = 5;
-      txt = "Call ";
-      expr_start = txt.length();
-    }
-    else if (trimmed_txt.downcase() == "fun") {
-      lookup_type = 6;
-      txt = "FunCall ";
       expr_start = txt.length();
     }
     else if(path_base || path_base_typ) {
@@ -728,28 +736,32 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       break;
     }
       
-    case 5: {                 // Programs
-      taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0);
-      pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
-      bool okc = pgrm_look_up->OpenChooser();
-      if(okc && pgrm_look_up->token()) {
-        rval = prepend_before + pgrm_look_up->token()->GetName();
+    case 5: {                 // ProgEl
+      String trimmed_txt = trim(prog_el_txt);
+      if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase() == "prog") {
+        txt = "Call ";
+        taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0);
+        pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
+        bool okc = pgrm_look_up->OpenChooser();
+        if(okc && pgrm_look_up->token()) {
+          rval = txt + pgrm_look_up->token()->GetName();
+        }
+        new_pos = rval.length();
+        delete pgrm_look_up;
+        break;
       }
-      new_pos = rval.length();
-      delete pgrm_look_up;
-      break;
-    }
-      
-    case 6: {                 // Functions
-      taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0);
-      func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
-      bool okc = func_look_up->OpenChooser();
-      if(okc && func_look_up->token()) {
-        rval = prepend_before + func_look_up->token()->GetName();
+      else if (trimmed_txt.downcase().startsWith("fun")) {
+        taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0);
+        func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
+        bool okc = func_look_up->OpenChooser();
+        if(okc && func_look_up->token()) {
+          rval = prepend_before.repl(prog_el_txt, func_look_up->token()->GetName());
+          rval += "()";
+        }
+        new_pos = rval.length();
+        delete func_look_up;
+        break;
       }
-      new_pos = rval.length();
-      delete func_look_up;
-      break;
     }
   }
   
