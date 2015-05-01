@@ -20,23 +20,56 @@
 #include <GpCustomPrjnSpecBase>
 
 // member includes:
+#include <DataTable>
 
 // declare all other types mentioned but not required to include:
 
 eTypeDef_Of(BgPfcPrjnSpec);
 
 class E_API BgPfcPrjnSpec : public GpCustomPrjnSpecBase {
-  // for connecting BG and PFC layers, where there are separate PFCmnt and PFCout layers that interconnect with a single BG layer (Matrix, GPi, etc), allowing competition within the BG -- uses layer names to automatically do the right thing -- looks for 'pfc'|'acc'|'ofc' and 'mnt' and 'out' strings to identify which side is the pfc, and assumes that mnt comprises the left-most set of unit groups, while out is on the right 
+  // for connecting BG and PFC layers, where there are separate PFC layers that interconnect with a single BG layer (Matrix, GPi, etc), allowing competition within the BG -- has a customizable data table of the different PFC layers that all map to the same BG layer -- also supports connections from a Patch layer with same name root as PFC
 INHERITED(GpCustomPrjnSpecBase)
 public:
-  bool  cross_mnt_out;          // if true, then route maint to out or vice-versa
+  enum BgTableVals { // the different values stored in bg_table -- for rapid access
+    BGT_NAME,
+    BGT_SIZE_X,
+    BGT_SIZE_Y,
+    BGT_START_X,
+    BGT_START_Y,
+  };
+
+  int           n_pfcs;        // number of different PFC layers that map into a common BG layer -- this is the number of rows that will be enforced in the bg_table data table
+  DataTable     bg_table;      // #SHOW_TREE #EXPERT #HIDDEN_CHOOSER table of PFC layers that map into a common BG layer -- one row per PFC layer -- you specify the name of each PFC layer and its size in unit groups (x,y), and optionally a starting x,y unit group offset within the BG layer (-1 means use default horizontal layout of pfc's within bg) -- mouse over the column headers for important further details
+
+  bool          cross_connect;       // if true, then this creates connections based on the PFC layer name specified in the connect_as field, instead of the actual name of the PFC layer (still needs to find the PFC layer name in bg_table to know which layer is the PFC layer and which is the BG layer)
+  String        connect_as;          // #CONDSHOW_ON_cross_connect PFC layer name to connect as -- see cross_connect option for details
+
+  inline int    FindBgTableRow(const String& name) {
+    return bg_table.FindVal(name, BGT_NAME, 0, true);
+  }
+  // find table row for given pfc name -- emits error if not found
+  inline Variant  GetBgTableVal(BgTableVals val, int row) {
+    return bg_table.GetVal(val, row);
+  }
+  // get specific dyn value for given row
+  inline void   SetBgTableVal(const Variant& vl, BgTableVals val, int row) {
+    bg_table.SetVal(vl, val, row);
+  }
+  // set specific dyn value for given row
   
+  virtual void  FormatBgTable();
+  // #IGNORE format the bg table
+  virtual void  InitBgTable();
+  // default initial bg table
+  virtual void  UpdtBgTable();
+  // #BUTTON update the bg table to ensure consistency of everything
+
   void	Connect_impl(Projection* prjn, bool make_cons) override;
 
-  virtual bool CheckLayerGeoms(Layer* bg_layer, Layer* pfc_layer);
-  // check the layer geometries
-
   TA_SIMPLE_BASEFUNS(BgPfcPrjnSpec);
+protected:
+  void UpdateAfterEdit_impl();
+  
 private:
   void Initialize();
   void Destroy()     { };
