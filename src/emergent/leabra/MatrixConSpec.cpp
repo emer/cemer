@@ -19,6 +19,7 @@ TA_BASEFUNS_CTORS_DEFN(MatrixLearnSpec);
 TA_BASEFUNS_CTORS_DEFN(MatrixConSpec);
 
 void MatrixLearnSpec::Initialize() {
+  reset_any_da = true;
   use_thal = true;
   Defaults_init();
 }
@@ -45,6 +46,8 @@ void MatrixConSpec::Defaults_init() {
 
   // SetUnique("lrate", true);
   lrate = 0.001f;
+
+  learn_qtr = Q2_Q4;            // beta frequency default
 
   ignore_unlearnable = false;
 }

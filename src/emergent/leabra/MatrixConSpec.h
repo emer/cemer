@@ -98,6 +98,8 @@ public:
         ntr = otr_lr * ru_act * su_act; // other alternative non-gated
       }
       tr += ntr;                       // just keep accumulating..
+      if(tr > 1.0f) tr = 1.0f;
+      else if(tr < -1.0f) tr = -1.0f;
     }
   }
   // #IGNORE
@@ -118,6 +120,8 @@ public:
       ntr = otr_lr * ru_act * su_act; // other alternative non-gated
     }
     tr += ntr;                       // just keep accumulating..
+    if(tr > 1.0f) tr = 1.0f;
+    else if(tr < -1.0f) tr = -1.0f;
   }
   // #IGNORE
 
@@ -132,6 +136,8 @@ public:
 
     ntr = ru_act * su_act;
     tr += ntr;                       // just keep accumulating..
+    if(tr > 1.0f) tr = 1.0f;
+    else if(tr < -1.0f) tr = -1.0f;
   }
   // #IGNORE
 

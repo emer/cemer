@@ -75,7 +75,7 @@ private:
 eTypeDef_Of(VTAUnitSpec);
 
 class E_API VTAUnitSpec : public LeabraUnitSpec {
-  // Models the Ventral Tegmental Area: computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect
+  // Models the Ventral Tegmental Area: computes gdPVLV dopamine (Da) signal from PPTg and LHbRMTg input projections, and also a direct input from a positive valence PV layer, and shunting inhibition from VS Patch Indirect -- uses deep_qtr to determine when to send dopamine values
 INHERITED(LeabraUnitSpec)
 public:
   gdPVLVDaSpec    da;             // parameters for the pvlv da computation

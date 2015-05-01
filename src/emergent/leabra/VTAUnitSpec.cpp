@@ -46,6 +46,7 @@ void LVBlockSpec::Initialize() {
 }
 
 void VTAUnitSpec::Initialize() {
+  deep_qtr = Q4;
   SetUnique("act_range", true);
   act_range.max = 2.0f;
   act_range.min = -2.0f;
@@ -211,14 +212,21 @@ void VTAUnitSpec::Send_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   }
 }
 
+
 void VTAUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  Compute_Da(u, net, thr_no);
-  Send_Da(u, net, thr_no);
+  if(Quarter_DeepNow(net->quarter)) {
+    Compute_Da(u, net, thr_no);
+    Send_Da(u, net, thr_no);
+  }
+  else {
+    u->act = 0.0f;
+    Send_Da(u, net, thr_no);    // send nothing
+    Compute_Da(u, net, thr_no); // then compute just for kicks
+  }
 }
 
 void VTAUnitSpec::Compute_Act_Spike(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  Compute_Da(u, net, thr_no);
-  Send_Da(u, net, thr_no);
+  Compute_Act_Rate(u, net, thr_no);
 }
 
 

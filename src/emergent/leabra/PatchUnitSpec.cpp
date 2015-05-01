@@ -20,9 +20,11 @@
 TA_BASEFUNS_CTORS_DEFN(PatchUnitSpec);
 
 void PatchUnitSpec::Initialize() {
+  Defaults_init();
 }
 
 void PatchUnitSpec::Defaults_init() {
+  shunt_factor = 0.5f;
 }
 
 void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -32,7 +34,7 @@ void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_
     LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
     if(send_gp->NotActive()) continue;
     for(int j=0;j<send_gp->size; j++) {
-      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav = 0.0f; // shunt!
+      ((LeabraUnitVars*)send_gp->UnVars(j,net))->dav *= shunt_factor; // shunt!
     }
   }
 }

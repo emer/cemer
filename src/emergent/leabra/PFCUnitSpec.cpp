@@ -30,6 +30,7 @@ void PFCMiscSpec::Initialize() {
 void PFCMiscSpec::Defaults_init() {
   gate_thr = 0.1f;
   out_mnt = 1;
+  max_mnt = 100;
 }
 
 void PFCUnitSpec::Initialize() {
@@ -37,9 +38,8 @@ void PFCUnitSpec::Initialize() {
 }
 
 void PFCUnitSpec::Defaults_init() {
-  // act_avg.l_up_inc = 0.1f;       // needs a slower upside due to longer maintenance window..
   InitDynTable();
-  deep_qtr = Q4;
+  deep_qtr = Q2_Q4;
   deep.on = true;
   deep_norm.on = true;
   deep_norm.mod = false;
@@ -229,14 +229,22 @@ void PFCUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int th
     //   nw_nrm = deep_norm.ComputeNormLayCtxt(u->deep_raw, dctxt, lctxt);
     // }
     // u->deep_norm = nw_nrm;
-    u->deep_norm = u->deep_raw;
 
-    // now update maintenance for next time!
-    u->thal_cnt += 1.0f;
-    float cur_val = u->deep_raw;
-    float prv_val = u->deep_raw_pprv;
-    float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
-    u->deep_raw = nw_val;
+    if(u->thal_cnt >= pfc.max_mnt) {
+      TestWrite(u->deep_norm, 0.0f);        // not maintaining, bail
+      TestWrite(u->deep_raw, 0.0f);        // not maintaining, bail
+      TestWrite(u->thal_cnt, -1.0f);
+    }
+    else {
+      u->deep_norm = u->deep_raw;
+
+      // now update maintenance for next time!
+      u->thal_cnt += 1.0f;
+      float cur_val = u->deep_raw;
+      float prv_val = u->deep_raw_pprv;
+      float nw_val = UpdtDynVal(cur_val, prv_val, u->misc_1, dyn_row);
+      u->deep_raw = nw_val;
+    }
   }
 }
 

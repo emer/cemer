@@ -560,6 +560,7 @@ public:
     Q2 = 0x02,                 // second quarter
     Q3 = 0x04,                 // third quarter -- posterior cortical minus phase
     Q4 = 0x08,                 // fourth quarter -- posterior cortical plus phase
+    Q2_Q4 = Q2 | Q4,           // #NO_BIT standard beta frequency option, for bg, pfc
   };
 
   ActFun	act_fun;	// #CAT_Activation activation function to use -- typically NOISY_XX1 or SPIKE -- others are for special purposes or testing
