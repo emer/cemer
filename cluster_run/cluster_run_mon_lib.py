@@ -175,6 +175,7 @@ job_out_bytes_total = 30000
 #   REMOVEJOB remove given tag job from the jobs done list
 #   CLEANJOBFILES tell cluster to remove job files associated with tags
 #   REMOVEFILES tell cluster to remove specific files listed in this other_files entry
+#   UPDATENOTE update the notes field of a completed job
 #   ARCHIVEJOB tell cluster to move given tags from jobs_done into jobs_archive
 # The cluster script sets this field in the running/done tables to:
 #   SUBMITTED after job successfully submitted to a queue.
@@ -1058,6 +1059,7 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _start_or_cancel_jobs(self, filename, rev):
+        logging.info("start or cancel !!!")
         # get all the file names for this dir, and load jobs_running and jobs_done 
         self._get_cur_jobs_files(filename)
         # Load the new 'submit' table from the working copy.
@@ -1101,7 +1103,9 @@ class SubversionPoller(object):
                     self._remove_job(filename, rev, row)
                 elif status == 'CLEANJOBFILES':
                     self._clean_job_files(filename, rev, row)
-            
+                elif status == 'UPDATENOTE':
+                    self._update_note(filename, rev, row)
+
         # save any changes to current jobs files
         self._save_cur_files()
 
@@ -1582,7 +1586,14 @@ class SubversionPoller(object):
         
         self._save_cur_files()
         self.got_submit = True
-
+                
+    def _update_note(self, filename, rev, row):
+        tag = self.jobs_submit.get_val(row, "tag")
+        note = self.jobs_submit.get_val(row, "notes")
+        done_row = self.jobs_done.find_val("tag", tag)
+        if done_row >= 0:
+        	self.jobs_done.set_val(done_row, "notes", note)
+			
     def _cancel_job(self, filename, rev, row):
         if (submit_mode == "cluster"):
             self._cancel_job_cluster(filename, rev, row);
@@ -1594,7 +1605,7 @@ class SubversionPoller(object):
     def _cancel_job_cluster(self, filename, rev, row):
         job_no = self.jobs_submit.get_val(row, "job_no")
         if qdel_args != '':
-            cmd = [qdel_cmd, qdel_args, job_no]
+            cmd = [qdel_cmd, qdel_args, job_no] 
         else:
             cmd = [qdel_cmd, job_no]
         del_out = check_output(cmd)
@@ -1751,6 +1762,7 @@ class SubversionPoller(object):
                 print "getdata_job: tag %s not found in either jobs running or done" % tag
 
     def _getfiles_job_tag(self, tag):
+    	logging.info("getfiles")
         runrow = self.jobs_running.find_val("tag", tag)
         if runrow >= 0:
             other_files = self.jobs_running.get_val(runrow, "other_files")
@@ -1777,7 +1789,7 @@ class SubversionPoller(object):
         for df in dats:
             fdf = resdir + df
             if debug:
-                logging.info("Checking if dat file: %s exists to commit to SVN" % fdf)
+                ("Checking if dat file: %s exists to commit to SVN" % fdf)
             if os.path.exists(fdf):
                 cmd = ['svn', 'add', '--username', self.username,
                        '--non-interactive', fdf]

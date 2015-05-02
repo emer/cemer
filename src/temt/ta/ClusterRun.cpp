@@ -282,6 +282,29 @@ void ClusterRun::Kill() {
   }
 }
 
+void ClusterRun::UpdtNotes() {
+  if(!InitClusterManager())
+    return;
+  
+  // Get the (inclusive) range of rows to update notes.
+  int st_row, end_row;
+  if (SelectedRows(jobs_done, st_row, end_row)) {
+    // Populate the jobs_submit table with UPDATENOTE requests for the selected jobs.
+    jobs_submit.ResetData();
+    for (int row = st_row; row <= end_row; ++row) {
+      SubmitUpdateNote(row);
+    }
+    
+    // Commit the table.
+    m_cm->CommitJobSubmissionTable();
+    AutoUpdateMe();
+  }
+  else {
+    taMisc::Warning("No rows selected -- no notes were updated");
+  }
+
+}
+
 void ClusterRun::LoadData(bool remove_existing) {
   if(!InitClusterManager())
     return;
@@ -1493,6 +1516,18 @@ bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row, bool w
 }
 
 void
+ClusterRun::SubmitUpdateNote(int tab_row)
+{
+    if(!CheckLocalClustUser(jobs_done, tab_row))
+      return;
+    int dst_row = jobs_submit.AddBlankRow();
+    jobs_submit.SetVal("UPDATENOTE", "status", dst_row);
+    jobs_submit.CopyCell("tag", dst_row, jobs_done, "tag", tab_row);
+    jobs_submit.CopyCell("notes", dst_row, jobs_done, "notes", tab_row);
+    jobs_submit.SetVal(CurTimeStamp(), "submit_time",  dst_row); // # guarantee submit
+}
+
+void
 ClusterRun::CancelJob(int running_row)
 {
   if(!CheckLocalClustUser(jobs_running, running_row))
@@ -1783,12 +1818,12 @@ void ClusterRun::UpdateUI() {
   
   enable_kill = false;
   enable_load = false;
-//  enable_get = false;
-//  enable_remove = false;
+  enable_notes = false;
   
   if (cur_table != NULL && cur_table != &cluster_info) {
     enable_kill = (cur_table == &jobs_running);
     enable_load = (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive);
+    enable_notes = (cur_table == &jobs_done);
   }
   ps->UpdateMethodButtons();
 }
