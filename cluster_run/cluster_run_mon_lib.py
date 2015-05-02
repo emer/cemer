@@ -1059,7 +1059,8 @@ class SubversionPoller(object):
         subprocess.call(cmd)
 
     def _start_or_cancel_jobs(self, filename, rev):
-        logging.info("start or cancel !!!")
+        if debug:
+            logging.info("start or cancel !!!")
         # get all the file names for this dir, and load jobs_running and jobs_done 
         self._get_cur_jobs_files(filename)
         # Load the new 'submit' table from the working copy.
@@ -1762,7 +1763,8 @@ class SubversionPoller(object):
                 print "getdata_job: tag %s not found in either jobs running or done" % tag
 
     def _getfiles_job_tag(self, tag):
-    	logging.info("getfiles")
+        if debug:
+            logging.info("getfiles")
         runrow = self.jobs_running.find_val("tag", tag)
         if runrow >= 0:
             other_files = self.jobs_running.get_val(runrow, "other_files")
