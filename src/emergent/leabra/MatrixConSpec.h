@@ -35,6 +35,8 @@ public:
   float         da_reset_tr;    // amount of dopamine to completely reset the trace
   bool          use_thal;       // include thalamic modulation in the trace value -- this should be true for PBWM use of matrix con specs, but other cases may not use thalamic gating, and should have this off
   float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less in proportion to average number gating / total stripes
+  float         tr_max;         // maximum trace value -- cap trace at this value (either positive or negative)
+  float         tr_decay;       // how much to decay the existing trace when adding a new trace -- actual decay rate is multiplied by the new trace value 
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -97,9 +99,10 @@ public:
       else {
         ntr = otr_lr * ru_act * su_act; // other alternative non-gated
       }
-      tr += ntr;                       // just keep accumulating..
-      if(tr > 1.0f) tr = 1.0f;
-      else if(tr < -1.0f) tr = -1.0f;
+      
+      tr += ntr * (1.0f - matrix.tr_decay * tr);
+      if(tr > matrix.tr_max) tr = matrix.tr_max;
+      else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
     }
   }
   // #IGNORE
@@ -119,9 +122,9 @@ public:
     else {
       ntr = otr_lr * ru_act * su_act; // other alternative non-gated
     }
-    tr += ntr;                       // just keep accumulating..
-    if(tr > 1.0f) tr = 1.0f;
-    else if(tr < -1.0f) tr = -1.0f;
+    tr += ntr * (1.0f - matrix.tr_decay * tr);
+    if(tr > matrix.tr_max) tr = matrix.tr_max;
+    else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
   }
   // #IGNORE
 
@@ -135,9 +138,9 @@ public:
     tr *= reset_factor;
 
     ntr = ru_act * su_act;
-    tr += ntr;                       // just keep accumulating..
-    if(tr > 1.0f) tr = 1.0f;
-    else if(tr < -1.0f) tr = -1.0f;
+    tr += ntr * (1.0f - matrix.tr_decay * tr);
+    if(tr > matrix.tr_max) tr = matrix.tr_max;
+    else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
   }
   // #IGNORE
 

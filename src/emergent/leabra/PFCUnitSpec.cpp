@@ -29,7 +29,7 @@ void PFCMiscSpec::Initialize() {
 
 void PFCMiscSpec::Defaults_init() {
   gate_thr = 0.1f;
-  out_mnt = 1;
+  out_mnt = 2;
   max_mnt = 100;
 }
 
