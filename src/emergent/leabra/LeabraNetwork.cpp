@@ -1364,7 +1364,7 @@ void LeabraNetwork::Compute_DeepNormStats_Post() {
     LeabraUnitSpec* us = (LeabraUnitSpec*)lay->GetUnitSpec();
     if(us->deep_norm.on) {
       if(us->DeepNormCopied()) {
-        lay->deep_norm_def = 0.0f;
+        lay->deep_norm_def = us->deep_norm.copy_def;
       }
       else {
         float lctxt = lay->am_deep_ctxt.avg;

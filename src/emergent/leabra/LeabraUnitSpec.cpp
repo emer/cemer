@@ -326,6 +326,7 @@ void DeepNormSpec::Initialize() {
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
   min_ctxt = 0.05f;
+  copy_def = 0.0f;
   Defaults_init();
 }
 
