@@ -31,7 +31,6 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for learning in the matrix 
 INHERITED(SpecMemberBase)
 public:
-  bool          reset_any_da;   // reset on any dopamine value
   float         da_reset_tr;    // amount of dopamine to completely reset the trace
   bool          use_thal;       // include thalamic modulation in the trace value -- this should be true for PBWM use of matrix con specs, but other cases may not use thalamic gating, and should have this off
   float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less in proportion to average number gating / total stripes
@@ -84,29 +83,6 @@ public:
   // TODO: need to build in a temporal asymmetry here, so that gating activations
   // register before dopamine when it makes sense for them to?
   
-  inline void C_Compute_dWt_Matrix_ThalAnyDa
-    (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
-     const float ru_thal, const float ru_act, const float su_act) {
-
-    if(fabsf(mtx_da) > matrix.da_reset_tr) {
-      dwt += cur_lrate * mtx_da * tr;
-      tr = 0.0f;
-    }
-    else {
-      if(ru_thal > 0.0f) {              // gated
-        ntr = ru_thal * ru_act * su_act;
-      }
-      else {
-        ntr = otr_lr * ru_act * su_act; // other alternative non-gated
-      }
-      
-      tr += ntr * (1.0f - matrix.tr_decay * tr);
-      if(tr > matrix.tr_max) tr = matrix.tr_max;
-      else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
-    }
-  }
-  // #IGNORE
-
   inline void C_Compute_dWt_Matrix_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
      const float ru_thal, const float ru_act, const float su_act) {
@@ -122,7 +98,9 @@ public:
     else {
       ntr = otr_lr * ru_act * su_act; // other alternative non-gated
     }
-    tr += ntr * (1.0f - matrix.tr_decay * tr);
+    float decay_factor = matrix.tr_decay * fabs(ntr); // decay is function of new trace
+    if(decay_factor > 1.0f) decay_factor = 1.0f;
+    tr += ntr - decay_factor * tr;
     if(tr > matrix.tr_max) tr = matrix.tr_max;
     else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
   }
@@ -138,7 +116,11 @@ public:
     tr *= reset_factor;
 
     ntr = ru_act * su_act;
-    tr += ntr * (1.0f - matrix.tr_decay * tr);
+    
+    float decay_factor = matrix.tr_decay * fabs(ntr); // decay is function of new trace
+    if(decay_factor > 1.0f) decay_factor = 1.0f;
+
+    tr += ntr - decay_factor * tr;
     if(tr > matrix.tr_max) tr = matrix.tr_max;
     else if(tr < -matrix.tr_max) tr = -matrix.tr_max;
   }
@@ -158,21 +140,11 @@ public:
     
     const int sz = cg->size;
     if(matrix.use_thal) {
-      if(matrix.reset_any_da) {
-        for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          float dav = ((nogo) ? -ru->dav : ru->dav);
-          C_Compute_dWt_Matrix_ThalAnyDa(dwts[i], ntrs[i], trs[i], otr_lr,
-                                         dav, ru->thal, ru->act_eq, su->act_eq);
-        }
-      }
-      else {
-        for(int i=0; i<sz; i++) {
-          LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
-          float dav = ((nogo) ? -ru->dav : ru->dav);
-          C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
-                                    dav, ru->thal, ru->act_eq, su->act_eq);
-        }
+      for(int i=0; i<sz; i++) {
+        LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
+        float dav = ((nogo) ? -ru->dav : ru->dav);
+        C_Compute_dWt_Matrix_Thal(dwts[i], ntrs[i], trs[i], otr_lr,
+                                  dav, ru->thal, ru->act_eq, su->act_eq);
       }
     }
     else {
