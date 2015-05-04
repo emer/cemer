@@ -96,8 +96,14 @@ public:
       ntr = ru_thal * ru_act * su_act;
     }
     else {
-      ntr = otr_lr * ru_act * su_act; // other alternative non-gated
+      if(tr <= 0.0f) {
+        ntr = otr_lr * ru_act * su_act; // other alternative non-gated -- only if not previously positively gated!!
+      }
+      else {
+        ntr = 0.0f;             // no alternative if already gated!!
+      }
     }
+
     float decay_factor = matrix.tr_decay * fabs(ntr); // decay is function of new trace
     if(decay_factor > 1.0f) decay_factor = 1.0f;
     tr += ntr - decay_factor * tr;
