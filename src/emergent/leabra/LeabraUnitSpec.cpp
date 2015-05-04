@@ -2028,6 +2028,9 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 #endif
   }
   u->deep_norm_net = nw_nt;
+  if(deep_norm.raw_val == DeepNormSpec::NORM_NET) {
+    Compute_DeepNorm(u, net, thr_no); // redo now with new norm net!
+  }
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
