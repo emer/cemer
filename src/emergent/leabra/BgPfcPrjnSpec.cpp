@@ -90,10 +90,66 @@ void BgPfcPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   Layer* pfc_lay = NULL;
   Layer* bg_lay = NULL;
 
+  bool found_a_pfc = false;
+  bool found_a_bg = false;
+
+  // first find out if one end of the thing is a pfc at all
+  for(int i=0; i<bg_table.rows; i++) {
+    String nm = GetBgTableVal(BGT_NAME, i).toString();
+    if(recv_lay->name.contains(nm)) {
+      found_a_pfc = true;
+      pfc_lay = recv_lay;
+      bg_lay = send_lay;
+    }
+    else if(send_lay->name.contains(nm)) {
+      found_a_pfc = true;
+      pfc_lay = send_lay;
+      bg_lay = recv_lay;
+    }
+  }
+
+  if(!found_a_pfc) {            // look for a bg
+    String bg_names = "GP SNr Matrix";
+    String_Array bg_nm_ary;
+    bg_nm_ary.Split(bg_names, " ");
+    for(int i=0; i<bg_nm_ary.size; i++) {
+      String nm = bg_nm_ary[i];
+      if(recv_lay->name.contains(nm)) {
+        found_a_bg = true;
+        bg_lay = recv_lay;
+        pfc_lay = send_lay;
+      }
+      else if(send_lay->name.contains(nm)) {
+        found_a_bg = true;
+        bg_lay = send_lay;
+        pfc_lay = recv_lay;
+      }
+    }
+  }
+
+  if(!found_a_pfc && !found_a_bg) {
+    if(recv_lay->gp_geom.n < send_lay->gp_geom.n) { // bg is usu bigger!
+      pfc_lay = recv_lay;
+      bg_lay = send_lay;
+    }
+    else {
+      pfc_lay = send_lay;
+      bg_lay = recv_lay;
+    }
+  }
+
+  if(TestError(!found_a_pfc && !cross_connect, "Connect_impl",
+               "could not find PFC layer from either recv layer:", recv_lay->name,
+               "or send layer:", send_lay->name,
+               "must use cross_connect in this case")) {
+    return;
+  }
+  
+  int trg_sz_x = 0;
+  int trg_sz_y = 0;
   int sz_x = 0;
   int st_x = -1;
   int st_y = -1;
-
   for(int i=0; i<bg_table.rows; i++) {
     String nm = GetBgTableVal(BGT_NAME, i).toString();
     int szx = GetBgTableVal(BGT_SIZE_X, i).toInt();
@@ -105,27 +161,25 @@ void BgPfcPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     if(cross_connect) {
       if(connect_as.contains(nm)) {
         got = true;
-        if(recv_lay->gp_geom.n < send_lay->gp_geom.n) { // bg is always bigger!
-          pfc_lay = recv_lay;
-          bg_lay = send_lay;
-        }
-        else {
-          pfc_lay = send_lay;
-          bg_lay = recv_lay;
-        }
       }
     }
     else {
-      if(recv_lay->name.contains(nm)) {
+      if(recv_lay->name.contains(nm) || send_lay->name.contains(nm)) {
         got = true;
-        pfc_lay = recv_lay;
-        bg_lay = send_lay;
       }
-      else if(send_lay->name.contains(nm)) {
-        got = true;
-        pfc_lay = send_lay;
-        bg_lay = recv_lay;
-      }
+    }
+
+    if(szx > 0 && szy > 0) {
+      trg_sz_x = szx;
+      trg_sz_y = szy;
+    }
+    else if(found_a_pfc) {
+      trg_sz_x = pfc_lay->gp_geom.x;
+      trg_sz_y = pfc_lay->gp_geom.y;
+    }
+    else {
+      trg_sz_x = bg_lay->gp_geom.x / bg_table.rows; // assume even
+      trg_sz_y = bg_lay->gp_geom.y;
     }
 
     if(got) {
@@ -148,12 +202,7 @@ void BgPfcPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
       sz_x += szx;
     }
     else {
-      if(recv_lay->gp_geom.n < send_lay->gp_geom.n) { // bg is always bigger!
-        sz_x += recv_lay->gp_geom.x;
-      }
-      else {
-        sz_x += send_lay->gp_geom.x;
-      }
+      sz_x += trg_sz_x;
     }
   }
     
@@ -167,42 +216,59 @@ void BgPfcPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
                "Bg layer must have unit groups", bg_lay->name)) {
     return;
   }
-  if(TestError(!pfc_lay->unit_groups, "Connect_impl",
-               "PFC layer must have unit groups", pfc_lay->name)) {
-    return;
-  }
-  
-  if(TestError((bg_lay->gp_geom.x < (st_x + pfc_lay->gp_geom.x)), "Connect_impl",
-               "BG layer is not big enough to hold pfc layer:",
-               pfc_lay->name, "starting at x offfset:",
-               String(st_x), "with x unit groups:", String(pfc_lay->gp_geom.x))) {
-    return;
-  }
-  if(TestError((bg_lay->gp_geom.y < (st_y + pfc_lay->gp_geom.y)), "Connect_impl",
-               "BG layer is not big enough to hold pfc layer:",
-               pfc_lay->name, "starting at y offfset:",
-               String(st_y), "with y unit groups:", String(pfc_lay->gp_geom.y))) {
-    return;
-  }
 
-  for(int pfcy = 0; pfcy < pfc_lay->gp_geom.y; pfcy++) {
-    for(int pfcx = 0; pfcx < pfc_lay->gp_geom.x; pfcx++) {
-      int pfcgp = pfcy * pfc_lay->gp_geom.x + pfcx;
-      int bgx = st_x + pfcx;
-      int bgy = st_y + pfcy;
-      int bggp = bgy * bg_lay->gp_geom.x + bgx;
-      if(pfc_lay == recv_lay) {
-        Connect_Gp(prjn, Layer::ACC_GP, pfcgp, Layer::ACC_GP, bggp, make_cons);
-      }
-      else {
-        Connect_Gp(prjn, Layer::ACC_GP, bggp, Layer::ACC_GP, pfcgp, make_cons);
+  if(!found_a_pfc) {
+    // do full connectivity into each of the bg groups -- typically from an input layer..
+    for(int bgy = 0; bgy < trg_sz_y; bgy++) {
+      for(int bgx = 0; bgx < trg_sz_x; bgx++) {
+        int bggp = bgy * bg_lay->gp_geom.x + bgx;
+        if(bg_lay == recv_lay) {
+          Connect_Gp(prjn, Layer::ACC_GP, bggp, Layer::ACC_LAY, 0, make_cons);
+        }
+        else {
+          Connect_Gp(prjn, Layer::ACC_LAY, 0, Layer::ACC_GP, bggp, make_cons);
+        }
       }
     }
-  }
   
-  if(!make_cons) { // on first pass through alloc loop, do allocations
-    recv_lay->RecvConsPostAlloc(prjn);
-    send_lay->SendConsPostAlloc(prjn);
+    if(!make_cons) { // on first pass through alloc loop, do allocations
+      recv_lay->RecvConsPostAlloc(prjn);
+      send_lay->SendConsPostAlloc(prjn);
+    }
+  }
+  else {
+    if(TestError((bg_lay->gp_geom.x < (st_x + pfc_lay->gp_geom.x)), "Connect_impl",
+                 "BG layer is not big enough to hold pfc layer:",
+                 pfc_lay->name, "starting at x offfset:",
+                 String(st_x), "with x unit groups:", String(pfc_lay->gp_geom.x))) {
+      return;
+    }
+    if(TestError((bg_lay->gp_geom.y < (st_y + pfc_lay->gp_geom.y)), "Connect_impl",
+                 "BG layer is not big enough to hold pfc layer:",
+                 pfc_lay->name, "starting at y offfset:",
+                 String(st_y), "with y unit groups:", String(pfc_lay->gp_geom.y))) {
+      return;
+    }
+
+    for(int pfcy = 0; pfcy < pfc_lay->gp_geom.y; pfcy++) {
+      for(int pfcx = 0; pfcx < pfc_lay->gp_geom.x; pfcx++) {
+        int pfcgp = pfcy * pfc_lay->gp_geom.x + pfcx;
+        int bgx = st_x + pfcx;
+        int bgy = st_y + pfcy;
+        int bggp = bgy * bg_lay->gp_geom.x + bgx;
+        if(pfc_lay == recv_lay) {
+          Connect_Gp(prjn, Layer::ACC_GP, pfcgp, Layer::ACC_GP, bggp, make_cons);
+        }
+        else {
+          Connect_Gp(prjn, Layer::ACC_GP, bggp, Layer::ACC_GP, pfcgp, make_cons);
+        }
+      }
+    }
+  
+    if(!make_cons) { // on first pass through alloc loop, do allocations
+      recv_lay->RecvConsPostAlloc(prjn);
+      send_lay->SendConsPostAlloc(prjn);
+    }
   }
 }
 

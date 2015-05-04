@@ -71,6 +71,10 @@ void DeepCopyUnitSpec::Compute_ActFmSource(LeabraUnitVars* u, LeabraNetwork* net
   u->act_eq = u->act_nd = u->act;
   TestWrite(u->da, 0.0f);
   // u->AddToActBuf(syn_delay); // todo:
+
+  if(deep.on && Quarter_DeepNow(net->quarter)) {
+    Compute_DeepRaw(u, net, thr_no);
+  }
 }
 
 void DeepCopyUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
