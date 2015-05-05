@@ -25,7 +25,7 @@ void TiledDivGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
   send_gp_skip = 2;
   send_gp_start = 0;
-  gp_divide = 1;        // the group isn't divided
+  gp_divide = 2;        // the group isn't divided
   wrap = false;
   reciprocal = false;
   wts_type = GAUSSIAN;
@@ -70,7 +70,7 @@ void TiledDivGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
   
   if(reciprocal) {
-        Connect_Reciprocal(prjn, make_cons);
+    Connect_Reciprocal(prjn, make_cons);
     return;
   }
   
@@ -83,6 +83,7 @@ void TiledDivGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   
   int sg_sz_tot = send_gp_size.Product();   // number of unit groups sending
   int alloc_no = sg_sz_tot * su_nunits;     // number of units sending
+  alloc_no /= gp_divide;                    // we only connect sending to a portion of receiving
   
   taVector2i ruc;
   int rgpidx = 0;
@@ -227,8 +228,8 @@ bool TiledDivGpRFPrjnSpec::InMyDivision(Layer* recv_lay, Layer* send_lay, int re
   int ru_nunits = recv_lay->un_geom.n;      // units per group
   int su_nunits = send_lay->un_geom.n;      // units per group
 
-  int recv_units_per_div = ru_nunits/gp_divide.x;
-  int send_units_per_div = su_nunits/gp_divide.x;
+  int recv_units_per_div = ru_nunits/gp_divide;
+  int send_units_per_div = su_nunits/gp_divide;
   
   int recv_div = 0;
   int send_div = 0;

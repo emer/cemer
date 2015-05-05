@@ -40,7 +40,7 @@ public:
   taVector2i	send_gp_size;		// number of groups in the sending receptive field
   taVector2i	send_gp_skip;		// number of groups to skip per each recv group (typically 1/2 of the size for nice overlap)
   taVector2i	send_gp_start;	// starting offset for sending groups -- for wrapping this was previously automatically set to -send_gp_skip (else 0), but you can now set this to anything you want
-  taVector2i  gp_divide;      // the number of divisions in x and y; each section created by the dvision connects the same sub group section of the sender and reciever
+  int  gp_divide;      // the number of divisions; each section created by a division connects the same sub group section of the sender and reciever
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts how to initialize the random initial weights
