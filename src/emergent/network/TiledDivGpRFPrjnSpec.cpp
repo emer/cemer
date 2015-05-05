@@ -176,9 +176,9 @@ void TiledDivGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) 
           if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
             continue;
           int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-          if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-          
-                    Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, !make_cons);
+          if(!send_lay->UnitGpIdxIsValid(sgpidx))
+            continue;
+          Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, !make_cons);
         }
       }
     }
@@ -189,7 +189,7 @@ void TiledDivGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) 
 }
 
 void TiledDivGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-                                          int rgpidx, int sgpidx, int alloc_loop) {
+                                             int rgpidx, int sgpidx, int alloc_loop) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
   
@@ -197,24 +197,47 @@ void TiledDivGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, 
     for(int sui=0; sui < su_nunits; sui++) {
       Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
       for(int rui=0; rui < ru_nunits; rui++) {
-        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-        if(!self_con && (su_u == ru_u)) continue;
-        su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+        if (InMyDivision(recv_lay, send_lay, rui, sui)) {
+          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+          if(!self_con && (su_u == ru_u))
+            continue;
+          su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+          
+        }
       }
     }
   }
   else {
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-      for(int sui=0; sui < su_nunits; sui+=4) {
-        Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
-        if(!self_con && (su_u == ru_u))
-          continue;
-        ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      for(int sui=0; sui < su_nunits; sui++) {
+        if (InMyDivision(recv_lay, send_lay, rui, sui)) {
+          Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+          if(!self_con && (su_u == ru_u))
+            continue;
+          ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+        }
       }
     }
   }
 }
+
+
+bool TiledDivGpRFPrjnSpec::InMyDivision(Layer* recv_lay, Layer* send_lay, int recv_unit_idx, int send_unit_idx) {
+  int ru_nunits = recv_lay->un_geom.n;      // units per group
+  int su_nunits = send_lay->un_geom.n;      // units per group
+
+  int recv_units_per_div = ru_nunits/gp_divide.x;
+  int send_units_per_div = su_nunits/gp_divide.x;
+  
+  int recv_div = 0;
+  int send_div = 0;
+  if (trunc(recv_unit_idx/recv_units_per_div) == trunc(send_unit_idx/send_units_per_div)) {
+    return true;
+  }
+  return false;
+}
+
 
 int TiledDivGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
   if(!(bool)prjn->from) return 0;
@@ -417,4 +440,3 @@ void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGro
     SetCnWt(cg, i, net, wt, thr_no);
   }
 }
-
