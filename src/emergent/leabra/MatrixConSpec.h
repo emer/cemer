@@ -118,7 +118,7 @@ public:
   // #IGNORE
 
   inline void C_Compute_dWt_Matrix_NoThal
-    (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
+    (float& dwt, float& ntr, float& tr, const float mtx_da,
      const float ru_act, const float su_act) {
 
     dwt += cur_lrate * mtx_da * tr;
@@ -162,7 +162,7 @@ public:
       for(int i=0; i<sz; i++) {
         LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i,net);
         float dav = ((nogo) ? -ru->dav : ru->dav);
-        C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], otr_lr,
+        C_Compute_dWt_Matrix_NoThal(dwts[i], ntrs[i], trs[i], 
                                     dav, ru->act_eq, su->act_eq);
       }
     }

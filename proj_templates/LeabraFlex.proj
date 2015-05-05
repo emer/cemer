@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7880
+// ta_Dump File v3.0 -- code v7.8.0.0 rev8208
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -47,7 +47,9 @@ LeabraProject .projects["LeabraFlex"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [26] {
+   DataTableCols @.jobs_running.data = [27] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["notes"] { };
     String_Data @["params"] { };
@@ -68,7 +70,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -100,7 +101,9 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_done.data = [26] {
+   DataTableCols @.jobs_done.data = [27] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["notes"] { };
     String_Data @["params"] { };
@@ -121,7 +124,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -153,7 +155,9 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [26] {
+   DataTableCols @.jobs_archive.data = [27] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
     String_Data @["notes"] { };
     String_Data @["params"] { };
@@ -174,7 +178,6 @@ LeabraProject .projects["LeabraFlex"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -206,7 +209,9 @@ LeabraProject .projects["LeabraFlex"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.file_list.data = [9] {
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["file_name"] { };
     String_Data @["tag"] { };
     String_Data @["size"] { };
@@ -991,7 +996,7 @@ LeabraProject .projects["LeabraFlex"] {
      };
     };
 
-    ProgEl_List @.prog_code = [19] {
+    ProgEl_List @.prog_code = [17] {
      MethodCall @[0] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
@@ -1026,39 +1031,31 @@ LeabraProject .projects["LeabraFlex"] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[8] { 
+     NetUpdateView @[8] { };
+     StopStepPoint @[9] { };
+     Comment @[10] { };
+     MethodCall @[11] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
-     NetUpdateView @[9] { };
-     StopStepPoint @[10] { };
-     Comment @[11] { };
-     MethodCall @[12] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     ProgramCall @[13] { 
+     ProgramCall @[12] { 
       ProgArg_List @.prog_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
       };
      };
-     ProgramCall @[14] { 
+     ProgramCall @[13] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[15] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     NetUpdateView @[16] { };
-     ProgramCall @[17] { 
+     NetUpdateView @[14] { };
+     ProgramCall @[15] { 
       ProgArg_List @.prog_args = [1] {
        ProgArg @[0] { };
       };
      };
-     MethodCall @[18] { 
+     MethodCall @[16] { 
       ProgArg_List @.meth_args = [0] {
       };
      };
@@ -1230,8 +1227,9 @@ LeabraProject .projects["LeabraFlex"] {
        If @[1] { 
 	ProgEl_List @.true_code = [1] {
 	 RandomCall @[0] { 
-	  ProgArg_List @.meth_args = [1] {
+	  ProgArg_List @.meth_args = [2] {
 	   ProgArg @[0] { };
+	   ProgArg @[1] { };
 	  };
 	 };
 	};
@@ -1268,8 +1266,9 @@ LeabraProject .projects["LeabraFlex"] {
 
     ProgEl_List @.prog_code = [2] {
      RandomCall @[0] { 
-      ProgArg_List @.meth_args = [1] {
+      ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
      MethodCall @[1] { 
@@ -2402,9 +2401,9 @@ LeabraProject .projects["LeabraFlex"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
-    T3PanelViewer @["T3Frames"] { 
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
+    T3PanelViewer @["Visualizer"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_frame_selected"] { };
       UserDataItem @["view_panel_selected"] { };
@@ -2706,6 +2705,8 @@ LeabraProject .projects["LeabraFlex"] {
   minor=1;
   step=15;
  };
+ author=;
+ email=;
  license {
   owner="Regents of the University of Colorado";
   license=GPLv2;
@@ -2763,35 +2764,27 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:578aea4183360bf97b768f88a24d775b */
 div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-style:italic;font-size:90%} span.smwttinline span.smwttcontent{display:none;speak:none} span.smwtticon{display:none} span.smwttactivepersist{cursor:help;color:#0000C8} span.smwttactiveinline{color:#BB7700;text-decoration:none} img.smwttimg{padding-right:5px;padding-left:4px} .smwttcontent{display:none} .smwtticon{padding:14px 12px 0 0;white-space:nowrap;margin-bottom:-1px} .smwtticon.info{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.service{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAABmJLR0QAQACXAOIX6M4XAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH1woNCAQvupvvrgAAAgpJREFUKBUFwTtME3EAwOHf3f961+vd9Sh9HEVINUrFhAbRmCgGo9FodCFMLhomJ6MmJsbF1Z2ExMHBUQc3BmOigyERB0ElQHgECRYECrRC26OPa3t+nwQAAI7aO/K458yJeK8qOA74dY/1hbWdxZWJsVUoeAAKAImh2NDdR/duD54cdRLRdMQydB84KJaPzufyyx+6Tr+Zej/2jr1vBUHiin3j/pPnwzcvPMv0OKlb/YlAT4cupR1d0lRNNWwrmUhEB+tmSl7/vTktMiNPhy9dvviyM2FYnZEgpRp8WS3htaC/W2du64iWLAUl1RgoY84qiiJdU03TKFR9vv+tIZQGsiTojqg0WrDtwlHVR7PscCDAVaXoEV3KN+hCELUVVBFgNBOkXZd5NVPhoC6TL0J2v8FhnbiCUBtlX2WzInB1jZiuEQ4KfhVgrR7ErUO+UsMlgCwUT6FRW9YU2TdMXbIsjbglmD+EPQ9iYQFo1Go6Xq3c8hveolze2/hY3M6u2IaGHRI4JpxthyRVHAPCIQXbDFLcyi6WcuufhLs2lXMxsy0tkk51tDkdYVU6ZkosbFXxAwF290vN6amfM0uf374oTI5/lQAAYfddP5e58/BBuivel4qF4k0f/uy7u0sbubn5ifHX7srkLNCUAAAAQtFUW/LUQLI9HHGaPv6/Yj63s/pju1LYPAQA+A8p2cUweh5dZAAAAABJRU5ErkJggg==) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/info.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.warning{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAZ1JREFUKFOVy79rE3EcxvH39+7y8/q9pF4S0xi0mEiaMxV68Yxg8PeiVyhV6iCIQhErHUScFJxcHAX/Azf/AgWXWlsUhyrYioMiqKgoiEgrJTH3cSuldvE9Pg8vkw3Nt6lfHuZ68g9fnv/k2/pPRDDWD098bD1gTO4cdS+NNowp38ZhQ2tgZgQSWo3kDgyPpU/esSuHd4fnK6o1lERtCuIp0tmGO73sHavevf8B8Y7uaDT7pwMXvSmwEkbgNHeFb1eLPH22wNJKnka7enxAG+1/wKxPpq+SuuaeOKSzuSQxq0vGjZML99vj+xJXDmoKa2DOx0znOVUcL7fNrXl8v0OtZhIEv1GFFLUJt3XW43TRJAZgGBal/lbsjN0sZeENIkuEoQUsAq/RQcZpHjEnzpUpA/DqAld/zOjVqOdJFO2RuXlPhuo5efBwUKJou0S9gvx6HO/cG+OmiGD1FdSU3tZNyNdPAFQd4cbFHvUty8jnCOhhl6JYfZBJ4JY1+1IeObc770S6ChClQCvhxaKwEAEISqE+vuf7XkCJCP/TX7cEexPi9whUAAAAAElFTkSuQmCC) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/warning.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}.smwtticon.note{display:inline-block;background:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAwAAAAMCAYAAABWdVznAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAgtJREFUeNokUctqU1EUXefk5iY3D2MrSWOamyq9jYO2BovUR41O1Iykov6Bc6WDDh36A4oKnYkORZBCoA6KI1GrEKhoFWOo1qhJk6Z539c57sTB5gzOWns9NpMA3KCK0s0TsHwiBsW3qPi0OYerbmP89IaVnFvtMn/dmEginU5DITyYLSA4y40embp3MDWVVoNhgKvot1sob699/OqdvM0MY32AVTrZWZhhfnEsk85HEikOxoERnbYwBLxeGNH4jK/wdq1W1Bd7h8fySnlei4WT0ZV4ROWivQt4A+AzV0DrIV8/AtQA9Onjyt7G6spmOJHhb6IXrkbCnqOyuw+YNL0aTRPSpOnVidgE7A70Q/7x+pf315Wgph1TpAVBOcApktUBnN7/t9/AoBT6REAl8f3dBcW07R1pdSGkSvaJIBzIWpHUWkRqDrNAWENFIWJBZafWKZgjbWghDZIRgUK7Hx4PugNzXSK1wZmLVq0CO5ot8kw2Vyg70U+M/Eu7D0lWPLm78GSXKEOD7JlAu4rvTVWwmPGc/frzF63S5kIgv7SeOGCp0usHUmfAhAtW3SIdga2ffZTnl++nZk/dYlJKkDBePXtyOfb56cO4W5rUWH9YQEcEsI2U+9u48WD63KVlY0K3hpeWjgMxqr+snr9zslL5do3t/ThLnYXsUKLIY8YLj22+Y441gOKfAAMAeeDgUIIDAXwAAAAASUVORK5CYII=) no-repeat left bottom;background:url(https://grey.colorado.edu/emergent/extensions/SemanticMediaWiki/resources/smw/util/../../images/note.png?2014-12-15T00:56:40Z) no-repeat left bottom!ie}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:2581106f4267d54f61dcdb06e62c25e1 */</style><style>
-.cite-accessibility-label{position:absolute !important; top:-99999px;clip:rect(1px 1px 1px 1px); clip:rect(1px,1px,1px,1px);padding:0 !important;border:0 !important;height:1px !important;width:1px !important;overflow:hidden}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:6989008023386f50501783f5c5ff5345 */
-.mw-collapsible-toggle{float:right} li .mw-collapsible-toggle{float:none} .mw-collapsible-toggle-li{list-style:none}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4250852ed2349a0d4d0fc6509a3e7d4c */
-.suggestions{overflow:hidden;position:absolute;top:0;left:0;width:0;border:none;z-index:1099;padding:0;margin:-1px -1px 0 0} html > body .suggestions{margin:-1px 0 0 0}.suggestions-special{position:relative;background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0;margin-top:-2px;display:none;padding:0.25em 0.25em;line-height:1.25em}.suggestions-results{background-color:white;cursor:pointer;border:solid 1px #aaaaaa;padding:0;margin:0}.suggestions-result{color:black;margin:0;line-height:1.5em;padding:0.01em 0.25em;text-align:left}.suggestions-result-current{background-color:#4C59A6;color:white}.suggestions-special .special-label{color:gray;text-align:left}.suggestions-special .special-query{color:black;font-style:italic;text-align:left}.suggestions-special .special-hover{background-color:silver}.suggestions-result-current .special-label,.suggestions-result-current .special-query{color:white}.autoellipsis-matched,.highlight{font-weight:bold}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:9780324491b653a3780e2d029bdc140c */
-.postedit-container{margin:0 auto;position:fixed;top:0;height:0;left:50%;z-index:1000;font-size:13px}.postedit-container:hover{cursor:pointer}.postedit{position:relative;top:0.6em;left:-50%;padding:.6em 3.6em .6em 1.1em;line-height:1.5625em;color:#626465;background-color:#f4f4f4;border:1px solid #dcd9d9;text-shadow:0 0.0625em 0 rgba(255,255,255,0.5);border-radius:5px;-webkit-box-shadow:0 2px 5px 0 #ccc;box-shadow:0 2px 5px 0 #ccc;-webkit-transition:all 0.25s ease-in-out;-moz-transition:all 0.25s ease-in-out;-ms-transition:all 0.25s ease-in-out;-o-transition:all 0.25s ease-in-out;transition:all 0.25s ease-in-out}.skin-monobook .postedit{top:6em !important}.postedit-faded{opacity:0}.postedit-icon{padding-left:41px;  line-height:25px;background-repeat:no-repeat;background-position:8px 50%}.postedit-icon-checkmark{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAMAAAAoLQ9TAAABblBMVEUAAAD///////9PfTf///80aRdTgjn///9Feij///////////9Rfzf///////////9PfjZRgDh1o1xOfTb///////+bwYqLtnj///////9PfTa82K////9WhT6YxIL///9QgDdTgzr////////j7uDl7eLq8efi693k7OH///////9UhjuBr2rp9uRUhjr///9YljVKgir///9WiTlYjT3////9/v57vFlbkT5PjC9dlD/5/fhuq09stUTs9uhxuElctCpfnT1huDFloEZloUZmpENmvDZpvDxpvTxqvjxrvT5rvT9rwTxsqktswD5uwkBvuUdxw0NztFBztU9ztVBzwkp0tlJ1xkd2t1R3uVR4w1F4xk54x014yE15uVZ5v1R5xVB6v1R7yFJ8wVh9xVl9yFR9yVd9ylN+xVh+yFd/x1l/yFeAylmEx1+Ny2uY0Hqe04Wj1Ymv3Ze33qLD47TJ5L3O6cPU7Mrq9eb2+/Q4j37OAAAAQHRSTlMAAQIEBAUFBQwPFB4fJCUoKiosQEhJS01RUlZZXmdydXaChYuSlJSWmJmoq6uur8LExcvM19fg5ejt8fX2+Pr7SljgewAAAKpJREFUGBkFwQNCAwAAAMDLtl3LtrG4rWXbtvX77gAgZ6grFwC0bhwNVgKgdPZx8b0dgLi+s7Wn0VoAqpfOI9+BNADZI7fLrz2pSEwGHZuH+78lSK8ZLkLezF3ooyUG3VPXq2USei9WngeyoG195yBYWDF3E/2pAhl1e9Gr8bGT+bfOFCC2fnvh4X7rcqIAQNNu+HT6sxkAjceTL/2ZAIhv+PorBwBJxfkA//dFHSCBy/UTAAAAAElFTkSuQmCC);background-image:url(https://grey.colorado.edu/emergent/resources/mediawiki.action/images/green-checkmark.png?2014-12-15T00:55:00Z)!ie;background-position:left}.postedit-close{position:absolute;padding:0 .8em;right:0;top:0;font-size:1.25em;font-weight:bold;line-height:2.3em;color:black;text-shadow:0 0.0625em 0 white;text-decoration:none;opacity:0.2;filter:alpha(opacity=20)}.postedit-close:hover{color:black;text-decoration:none;opacity:0.4;filter:alpha(opacity=40)}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:69d62017dbdb7839a2b048df4cebdee2 */
-#drafts-list-box{margin-bottom:10px;padding-left:10px;padding-right:10px;border:red solid 1px}#drafts-list-table{margin-left:-5px;margin-right:-5px}#drafts-list-table td,#drafts-list-table th{text-align:left}.rtl #drafts-list-table td,.rtl #drafts-list-table th{text-align:right}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:4a12383ab0b3a1a5c752c720c34cd845 */</style><style>
-.suggestions a.mw-searchSuggest-link,.suggestions a.mw-searchSuggest-link:hover,.suggestions a.mw-searchSuggest-link:active,.suggestions a.mw-searchSuggest-link:focus{text-decoration:none;color:black}.suggestions-result-current a.mw-searchSuggest-link,.suggestions-result-current a.mw-searchSuggest-link:hover,.suggestions-result-current a.mw-searchSuggest-link:active,.suggestions-result-current a.mw-searchSuggest-link:focus{color:white}
-/* cache key: pdpwiki:resourceloader:filter:minify-css:7:52b1797f70c7e4094dfa4191101944e8 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
+.ui-helper-hidden{display:none}.ui-helper-hidden-accessible{position:absolute;left:-99999999px}.ui-helper-reset{margin:0;padding:0;border:0;outline:0;line-height:1.3;text-decoration:none;font-size:100%;list-style:none}.ui-helper-clearfix:after{content:\".\";display:block;height:0;clear:both;visibility:hidden}.ui-helper-clearfix{display:inline-block} * html .ui-helper-clearfix{height:1%}.ui-helper-clearfix{display:block} .ui-helper-zfix{width:100%;height:100%;top:0;left:0;position:absolute;opacity:0;filter:Alpha(Opacity=0)} .ui-state-disabled{cursor:default !important}  .ui-icon{display:block;text-indent:-99999px;overflow:hidden;background-repeat:no-repeat}  .ui-widget-overlay{position:absolute;top:0;left:0;width:100%;height:100%}  .ui-widget{font-family:sans-serif;font-size:0.8em}.ui-widget .ui-widget{font-size:1em}.ui-widget input,.ui-widget select,.ui-widget textarea,.ui-widget button{font-family:sans-serif;font-size:1em}.ui-widget-content{border:1px solid #cccccc;background:#f2f5f7 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAKElEQVQYV2P6+ev3fyYGIBiGxH8w6/9/GAsshuD+Byv5D2dhKh6eBAAABBSmkTpaYQAAAABJRU5ErkJggg==) 50% top repeat-x;background:#f2f5f7 url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_100_f2f5f7_1x100.png?2014-12-15T00:55:00Z) 50% top repeat-x!ie;color:#362b36}.ui-widget-content a{color:#362b36}.ui-widget-header{border-bottom:1px solid #bbbbbb;line-height:1em;background:#ffffff url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAF0lEQVQYV2P49+/ff4ZhQPwHglGCKAIAdlSOCIOoOV0AAAAASUVORK5CYII=) 50% 50% repeat-x;background:#ffffff url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_ffffff_1x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;color:#222222;font-weight:bold}.ui-widget-header a{color:#222222} .ui-state-default,.ui-widget-content .ui-state-default,.ui-widget-header .ui-state-default{border:1px solid #aed0ea;background:#d7ebf9 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAL0lEQVQY02N69eXPfyYGIBhexH+G/0DiP5gFJP79RxAwiX9giX//kZUgdDAMXwIA/14cgwH0gmgAAAAASUVORK5CYII=) 50% 50% repeat-x;background:#d7ebf9 url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-hard_80_d7ebf9_1x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;font-weight:normal;color:#2779aa}.ui-state-default a,.ui-state-default a:link,.ui-state-default a:visited{color:#2779aa;text-decoration:none}.ui-state-hover,.ui-widget-content .ui-state-hover,.ui-widget-header .ui-state-hover,.ui-state-focus,.ui-widget-content .ui-state-focus,.ui-widget-header .ui-state-focus{border:1px solid #74b2e2;background:#e4f1fb url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAMUlEQVQYV2P68vPvfyYGIBhCxP//cBacYAAKInGRlIBYaBJQHWAWXBuqoVBZmNhwIgBlYh6Ywkr41gAAAABJRU5ErkJggg==) 50% 50% repeat-x;background:#e4f1fb url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_100_e4f1fb_1x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;font-weight:normal;color:#0070a3}.ui-state-hover a,.ui-state-hover a:hover{color:#0070a3;text-decoration:none}.ui-state-active,.ui-widget-content .ui-state-active,.ui-widget-header .ui-state-active{border:1px solid #cccccc;background:#f0f0f0 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAABHLFpgAAAAIElEQVQYV2P68OHDfyYGIBiuBCMjIzILGxdNDI017AgARXMEsCkUdugAAAAASUVORK5CYII=) 50% 50% repeat-x;url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_inset-hard_100_f0f0f0_1x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;font-weight:normal;color:#000000}.ui-state-active a,.ui-state-active a:link,.ui-state-active a:visited{color:#000000;text-decoration:none}.ui-widget :active{outline:none} .ui-state-highlight,.ui-widget-content .ui-state-highlight,.ui-widget-header .ui-state-highlight{border:1px solid #f9dd34;background:#ffef8f url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAABkCAYAAAEwK2r2AAAAX0lEQVQYV2P+/3HBf+aGyoAGTMK3gbm+3B1IVLgCuRUe2AlsBtRX+oG0eYEMcAOpcyNeLx4CbKgP3GRPEAtssjse95HkcOoQUO/7obrZG+rwBrjrGyo8oa6vJ88L5BEAeRC4pmqV01IAAAAASUVORK5CYII=) 50% top repeat-x;url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_highlight-soft_25_ffef8f_1x100.png?2014-12-15T00:55:00Z) 50% top repeat-x!ie;color:#363636}.ui-state-highlight a,.ui-widget-content .ui-state-highlight a,.ui-widget-header .ui-state-highlight a{color:#363636}.ui-state-error,.ui-widget-content .ui-state-error,.ui-widget-header .ui-state-error{border:1px solid #cd0a0a;background:#cd0a0a url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEXNCgokNzldAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_15_cd0a0a_40x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;color:#ffffff}.ui-state-error a,.ui-widget-content .ui-state-error a,.ui-widget-header .ui-state-error a{color:#ffffff}.ui-state-error-text,.ui-widget-content .ui-state-error-text,.ui-widget-header .ui-state-error-text{color:#ffffff}.ui-priority-primary,.ui-widget-content .ui-priority-primary,.ui-widget-header .ui-priority-primary{font-weight:bold}.ui-priority-secondary,.ui-widget-content .ui-priority-secondary,.ui-widget-header .ui-priority-secondary{opacity:.7;filter:Alpha(Opacity=70);font-weight:normal}.ui-state-disabled,.ui-widget-content .ui-state-disabled,.ui-widget-header .ui-state-disabled{opacity:.35;filter:Alpha(Opacity=35);background-image:none}  .ui-icon{width:16px;height:16px}.ui-icon,.ui-widget-content .ui-icon,.ui-widget-header .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEV0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psx0psyPQTyXAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_72a7cf_256x240.png?2014-12-15T00:55:00Z)!ie}.ui-state-default .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_3d80b3_256x240.png?2014-12-15T00:55:00Z)!ie}.ui-state-hover .ui-icon,.ui-state-focus .ui-icon{background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAQAAAADwCAMAAADYSUr5AAAA7VBMVEUkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwkluwOSETqAAAATnRSTlMAGBAyBAhQv4OZLiJUcEBmYBoSzQwgPBZCSEoeWiYwUiyFNIeBw2rJz8c4RBy9uXyrtaWNqa2zKP2fJO8KBgKPo2KVoa9s351GPm5+kWho0kj9AAAM6klEQVR4XuybAYrjMAxFrRzw3f84C2F2g+ex34Q0NKV6sCzNl2xLVpy47own0DRNUV8ePw/PAHU5xChSUJMx9cYKBGAy0ATBL7VA6kGBOpD/ZAz1vgoEQHPkBHgGrdrdHdhYLrfg8ccQgl5ABe/QuoFSj/cC5QBdAblCPMOxAsIAVAFvwUNUfCIYFCzSC6U14DueAr6FdmOqX4Sapmmapmm+4k2wHvUi5t0OVAiIHZSv/H1A+EKoUBO34gEoATaYzScD5avcHBU3j2riBjz+POIgF1AhXzGfBtj/3Y0r+KDSiMvmDrhSPmUeKuBNFHd+H+A7xGtAPwW+gqZpmqZpGq55A1xqn/cGMIB4weJJONe/E4o+WI8esX0GNpndsZY60ACkrvvP8SBZutQQgbvjl4jEWEFywGLuP26XcQKCzE6OILnHAThAdmYDZnN21P+JFOUShlV+HTHZ3QM418OJ8KzaAHQh60Ng/1zQoUPLvpRVxkV4qH9+TDZN0zRN01z/WSpcHkDcL2aNnRHIasG5AYQOZBUjyAOYj5WoScpQaQONj/chbjCX/ctdAUjLAwCYDxahJi1WEFRMQKm7dZnFDECMH4m6YncOkSlFjFBB3g47wfgKYz0ApKoBjVD+0uVvGTUwQoBKgBK0ToAGIHsZrGWI++dhd98CoYuRboGCOnMLuMbdP2ERwwEIT5kk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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2694e8_256x240.png?2014-12-15T00:55:00Z)!ie}.ui-state-active .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_666666_256x240.png?2014-12-15T00:55:00Z)!ie}.ui-state-highlight .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_2e83ff_256x240.png?2014-12-15T00:55:00Z)!ie}.ui-state-error .ui-icon,.ui-state-error-text .ui-icon{background-image:url(data:image/png;base64,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);background-image:url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-icons_ffffff_256x240.png?2014-12-15T00:55:00Z)!ie} .ui-icon-carat-1-n{background-position:0 0}.ui-icon-carat-1-ne{background-position:-16px 0}.ui-icon-carat-1-e{background-position:-32px 0}.ui-icon-carat-1-se{background-position:-48px 0}.ui-icon-carat-1-s{background-position:-64px 0}.ui-icon-carat-1-sw{background-position:-80px 0}.ui-icon-carat-1-w{background-position:-96px 0}.ui-icon-carat-1-nw{background-position:-112px 0}.ui-icon-carat-2-n-s{background-position:-128px 0}.ui-icon-carat-2-e-w{background-position:-144px 0}.ui-icon-triangle-1-n{background-position:0 -16px}.ui-icon-triangle-1-ne{background-position:-16px -16px}.ui-icon-triangle-1-e{background-position:-32px -16px}.ui-icon-triangle-1-se{background-position:-48px -16px}.ui-icon-triangle-1-s{background-position:-64px -16px}.ui-icon-triangle-1-sw{background-position:-80px -16px}.ui-icon-triangle-1-w{background-position:-96px -16px}.ui-icon-triangle-1-nw{background-position:-112px -16px}.ui-icon-triangle-2-n-s{background-position:-128px -16px}.ui-icon-triangle-2-e-w{background-position:-144px -16px}.ui-icon-arrow-1-n{background-position:0 -32px}.ui-icon-arrow-1-ne{background-position:-16px -32px}.ui-icon-arrow-1-e{background-position:-32px -32px}.ui-icon-arrow-1-se{background-position:-48px -32px}.ui-icon-arrow-1-s{background-position:-64px -32px}.ui-icon-arrow-1-sw{background-position:-80px -32px}.ui-icon-arrow-1-w{background-position:-96px -32px}.ui-icon-arrow-1-nw{background-position:-112px -32px}.ui-icon-arrow-2-n-s{background-position:-128px -32px}.ui-icon-arrow-2-ne-sw{background-position:-144px -32px}.ui-icon-arrow-2-e-w{background-position:-160px -32px}.ui-icon-arrow-2-se-nw{background-position:-176px -32px}.ui-icon-arrowstop-1-n{background-position:-192px -32px}.ui-icon-arrowstop-1-e{background-position:-208px -32px}.ui-icon-arrowstop-1-s{background-position:-224px -32px}.ui-icon-arrowstop-1-w{background-position:-240px -32px}.ui-icon-arrowthick-1-n{background-position:0 -48px}.ui-icon-arrowthick-1-ne{background-position:-16px -48px}.ui-icon-arrowthick-1-e{background-position:-32px -48px}.ui-icon-arrowthick-1-se{background-position:-48px -48px}.ui-icon-arrowthick-1-s{background-position:-64px -48px}.ui-icon-arrowthick-1-sw{background-position:-80px -48px}.ui-icon-arrowthick-1-w{background-position:-96px -48px}.ui-icon-arrowthick-1-nw{background-position:-112px -48px}.ui-icon-arrowthick-2-n-s{background-position:-128px -48px}.ui-icon-arrowthick-2-ne-sw{background-position:-144px -48px}.ui-icon-arrowthick-2-e-w{background-position:-160px -48px}.ui-icon-arrowthick-2-se-nw{background-position:-176px -48px}.ui-icon-arrowthickstop-1-n{background-position:-192px -48px}.ui-icon-arrowthickstop-1-e{background-position:-208px -48px}.ui-icon-arrowthickstop-1-s{background-position:-224px -48px}.ui-icon-arrowthickstop-1-w{background-position:-240px -48px}.ui-icon-arrowreturnthick-1-w{background-position:0 -64px}.ui-icon-arrowreturnthick-1-n{background-position:-16px -64px}.ui-icon-arrowreturnthick-1-e{background-position:-32px -64px}.ui-icon-arrowreturnthick-1-s{background-position:-48px -64px}.ui-icon-arrowreturn-1-w{background-position:-64px -64px}.ui-icon-arrowreturn-1-n{background-position:-80px -64px}.ui-icon-arrowreturn-1-e{background-position:-96px -64px}.ui-icon-arrowreturn-1-s{background-position:-112px -64px}.ui-icon-arrowrefresh-1-w{background-position:-128px -64px}.ui-icon-arrowrefresh-1-n{background-position:-144px -64px}.ui-icon-arrowrefresh-1-e{background-position:-160px -64px}.ui-icon-arrowrefresh-1-s{background-position:-176px -64px}.ui-icon-arrow-4{background-position:0 -80px}.ui-icon-arrow-4-diag{background-position:-16px -80px}.ui-icon-extlink{background-position:-32px -80px}.ui-icon-newwin{background-position:-48px -80px}.ui-icon-refresh{background-position:-64px -80px}.ui-icon-shuffle{background-position:-80px -80px}.ui-icon-transfer-e-w{background-position:-96px -80px}.ui-icon-transferthick-e-w{background-position:-112px -80px}.ui-icon-folder-collapsed{background-position:0 -96px}.ui-icon-folder-open{background-position:-16px -96px}.ui-icon-document{background-position:-32px -96px}.ui-icon-document-b{background-position:-48px -96px}.ui-icon-note{background-position:-64px -96px}.ui-icon-mail-closed{background-position:-80px -96px}.ui-icon-mail-open{background-position:-96px -96px}.ui-icon-suitcase{background-position:-112px -96px}.ui-icon-comment{background-position:-128px -96px}.ui-icon-person{background-position:-144px -96px}.ui-icon-print{background-position:-160px -96px}.ui-icon-trash{background-position:-176px -96px}.ui-icon-locked{background-position:-192px -96px}.ui-icon-unlocked{background-position:-208px -96px}.ui-icon-bookmark{background-position:-224px -96px}.ui-icon-tag{background-position:-240px -96px}.ui-icon-home{background-position:0 -112px}.ui-icon-flag{background-position:-16px -112px}.ui-icon-calendar{background-position:-32px -112px}.ui-icon-cart{background-position:-48px -112px}.ui-icon-pencil{background-position:-64px -112px}.ui-icon-clock{background-position:-80px -112px}.ui-icon-disk{background-position:-96px -112px}.ui-icon-calculator{background-position:-112px -112px}.ui-icon-zoomin{background-position:-128px -112px}.ui-icon-zoomout{background-position:-144px -112px}.ui-icon-search{background-position:-160px -112px}.ui-icon-wrench{background-position:-176px -112px}.ui-icon-gear{background-position:-192px -112px}.ui-icon-heart{background-position:-208px -112px}.ui-icon-star{background-position:-224px -112px}.ui-icon-link{background-position:-240px -112px}.ui-icon-cancel{background-position:0 -128px}.ui-icon-plus{background-position:-16px -128px}.ui-icon-plusthick{background-position:-32px -128px}.ui-icon-minus{background-position:-48px -128px}.ui-icon-minusthick{background-position:-64px -128px}.ui-icon-close{background-position:-80px -128px}.ui-icon-closethick{background-position:-96px -128px}.ui-icon-key{background-position:-112px -128px}.ui-icon-lightbulb{background-position:-128px -128px}.ui-icon-scissors{background-position:-144px -128px}.ui-icon-clipboard{background-position:-160px -128px}.ui-icon-copy{background-position:-176px -128px}.ui-icon-contact{background-position:-192px -128px}.ui-icon-image{background-position:-208px -128px}.ui-icon-video{background-position:-224px -128px}.ui-icon-script{background-position:-240px -128px}.ui-icon-alert{background-position:0 -144px}.ui-icon-info{background-position:-16px -144px}.ui-icon-notice{background-position:-32px -144px}.ui-icon-help{background-position:-48px -144px}.ui-icon-check{background-position:-64px -144px}.ui-icon-bullet{background-position:-80px -144px}.ui-icon-radio-off{background-position:-96px -144px}.ui-icon-radio-on{background-position:-112px -144px}.ui-icon-pin-w{background-position:-128px -144px}.ui-icon-pin-s{background-position:-144px -144px}.ui-icon-play{background-position:0 -160px}.ui-icon-pause{background-position:-16px -160px}.ui-icon-seek-next{background-position:-32px -160px}.ui-icon-seek-prev{background-position:-48px -160px}.ui-icon-seek-end{background-position:-64px -160px}.ui-icon-seek-start{background-position:-80px -160px} .ui-icon-seek-first{background-position:-80px -160px}.ui-icon-stop{background-position:-96px -160px}.ui-icon-eject{background-position:-112px -160px}.ui-icon-volume-off{background-position:-128px -160px}.ui-icon-volume-on{background-position:-144px -160px}.ui-icon-power{background-position:0 -176px}.ui-icon-signal-diag{background-position:-16px -176px}.ui-icon-signal{background-position:-32px -176px}.ui-icon-battery-0{background-position:-48px -176px}.ui-icon-battery-1{background-position:-64px -176px}.ui-icon-battery-2{background-position:-80px -176px}.ui-icon-battery-3{background-position:-96px -176px}.ui-icon-circle-plus{background-position:0 -192px}.ui-icon-circle-minus{background-position:-16px -192px}.ui-icon-circle-close{background-position:-32px -192px}.ui-icon-circle-triangle-e{background-position:-48px -192px}.ui-icon-circle-triangle-s{background-position:-64px -192px}.ui-icon-circle-triangle-w{background-position:-80px -192px}.ui-icon-circle-triangle-n{background-position:-96px -192px}.ui-icon-circle-arrow-e{background-position:-112px -192px}.ui-icon-circle-arrow-s{background-position:-128px -192px}.ui-icon-circle-arrow-w{background-position:-144px -192px}.ui-icon-circle-arrow-n{background-position:-160px -192px}.ui-icon-circle-zoomin{background-position:-176px -192px}.ui-icon-circle-zoomout{background-position:-192px -192px}.ui-icon-circle-check{background-position:-208px -192px}.ui-icon-circlesmall-plus{background-position:0 -208px}.ui-icon-circlesmall-minus{background-position:-16px -208px}.ui-icon-circlesmall-close{background-position:-32px -208px}.ui-icon-squaresmall-plus{background-position:-48px -208px}.ui-icon-squaresmall-minus{background-position:-64px -208px}.ui-icon-squaresmall-close{background-position:-80px -208px}.ui-icon-grip-dotted-vertical{background-position:0 -224px}.ui-icon-grip-dotted-horizontal{background-position:-16px -224px}.ui-icon-grip-solid-vertical{background-position:-32px -224px}.ui-icon-grip-solid-horizontal{background-position:-48px -224px}.ui-icon-gripsmall-diagonal-se{background-position:-64px -224px}.ui-icon-grip-diagonal-se{background-position:-80px -224px}  .ui-corner-tl{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0}.ui-corner-tr{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bl{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-br{-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-top{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-topright:0;-webkit-border-top-right-radius:0}.ui-corner-bottom{-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-right{-moz-border-radius-topright:0;-webkit-border-top-right-radius:0;-moz-border-radius-bottomright:0;-webkit-border-bottom-right-radius:0}.ui-corner-left{-moz-border-radius-topleft:0;-webkit-border-top-left-radius:0;-moz-border-radius-bottomleft:0;-webkit-border-bottom-left-radius:0}.ui-corner-all{-moz-border-radius:0;-webkit-border-radius:0} .ui-widget-overlay{background:#000000;opacity:.75;filter:Alpha(Opacity=75)}.ui-widget-shadow{margin:-7px 0 0 -7px;padding:7px;background:#000000 url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAABkAQMAAADOquA5AAAAA1BMVEUAAACnej3aAAAAD0lEQVQoFWNgGAWjgPoAAAJYAAEDeXiTAAAAAElFTkSuQmCC) 50% 50% repeat-x;background:#000000 url(https://grey.colorado.edu/emergent/resources/jquery.ui/themes/vector/images/ui-bg_flat_70_000000_40x100.png?2014-12-15T00:55:00Z) 50% 50% repeat-x!ie;opacity:.20;filter:Alpha(Opacity=20);-moz-border-radius:8px;-webkit-border-radius:8px;border-radius:8px}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:22ca7d8e6de8d8662bf14c86267f0cd4 */</style><style>
+.ui-tabs{position:relative;padding:.2em;zoom:1} .ui-tabs .ui-tabs-nav{margin:0;padding:.2em .2em 0}.ui-tabs .ui-tabs-nav li{list-style:none;float:left;position:relative;top:1px;margin:0 .2em 1px 0;border-bottom:0 !important;padding:0;white-space:nowrap}.ui-tabs .ui-tabs-nav li a{float:left;padding:.5em 1em;text-decoration:none}.ui-tabs .ui-tabs-nav li.ui-tabs-selected{margin-bottom:0;padding-bottom:1px}.ui-tabs .ui-tabs-nav li.ui-tabs-selected a,.ui-tabs .ui-tabs-nav li.ui-state-disabled a,.ui-tabs .ui-tabs-nav li.ui-state-processing a{cursor:text}.ui-tabs .ui-tabs-nav li a,.ui-tabs.ui-tabs-collapsible .ui-tabs-nav li.ui-tabs-selected a{cursor:pointer} .ui-tabs .ui-tabs-panel{display:block;border-width:0;padding:1em 1.4em;background:none}.ui-tabs .ui-tabs-hide{display:none !important}
+/* cache key: pdpwiki:resourceloader:filter:minify-css:7:09e43d1292df09b412447d2a1c11b776 */</style><meta name=\"ResourceLoaderDynamicStyles\" content=\"\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=styles&amp;skin=vector&amp;*\">
 <style>a:lang(ar),a:lang(ckb),a:lang(kk-arab),a:lang(mzn),a:lang(ps),a:lang(ur){text-decoration:none}.mw-editsection{display:none}
 /* cache key: pdpwiki:resourceloader:filter:minify-css:7:d901f157ec9fff8ddab15d03002ebefd */</style>
 
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false}});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\"
 :0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false
-,\"searchNs108\":false,\"searchNs109\":false,\"extensionDrafts_enable\":true,\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
-/* cache key: pdpwiki:resourceloader:filter:minify-js:7:40f3858c02bab56210bb921598bbd826 */
+,\"searchNs108\":false,\"searchNs109\":false,\"searchNs500\":false,\"searchNs501\":false,\"extensionDrafts_enable\":true,\"variant\":\"en\"});},{},{});mw.loader.implement(\"user.tokens\",function(){mw.user.tokens.set({\"editToken\":\"+\\\\\",\"patrolToken\":false,\"watchToken\":false});},{},{});
+/* cache key: pdpwiki:resourceloader:filter:minify-js:7:29a96f854efc7725dc408d12e26e7835 */
 }</script>
 <script>if(window.mw){
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
-}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script>
-<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20141215T020648Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20141215T020644Z&amp;*\"></script></head>
+}</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
+<!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150419T081545Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
 <body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-vector action-view vector-animateLayout\">
 		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
@@ -2874,8 +2867,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.028 seconds
-Real time usage: 0.034 seconds
+CPU time usage: 0.040 seconds
+Real time usage: 0.038 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2884,7 +2877,7 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20141217205310
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150505183821
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"				</div>
@@ -2897,14 +2890,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [ctrl-alt-o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [ctrl-alt-c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [ctrl-alt-t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -2923,8 +2916,8 @@ Expensive parser function count: 0/100
 	<ul>
 					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
 					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"This page is protected.
-You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [ctrl-alt-h]\" accesskey=\"h\">View history</a></span></li>
+You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
@@ -2938,20 +2931,20 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 	<h3><label for=\"searchInput\">Search</label></h3>
 	<form action=\"/emergent/index.php\" id=\"searchform\">
 				<div id=\"simpleSearch\">
-						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [ctrl-alt-f]\" accesskey=\"f\" id=\"searchInput\" tabindex=\"1\" autocomplete=\"off\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
+						<input name=\"search\" placeholder=\"Search\" title=\"Search emergent [f]\" accesskey=\"f\" id=\"searchInput\">						<button type=\"submit\" name=\"button\" title=\"Search the pages for this text\" id=\"searchButton\"><img src=\"/emergent/skins/vector/images/search-ltr.png?303\" alt=\"Search\" width=\"12\" height=\"13\"></button>								<input type=\"hidden\" name=\"title\" value=\"Special:Search\">
 		</div>
 	</form>
 </div>
 				</div>
 			</div>
-			<div id=\"mw-panel\" class=\"collapsible-nav\">
+			<div id=\"mw-panel\">
 					<div id=\"p-logo\" role=\"banner\"><a style=\"background-image: url(/mediawiki/sites//emergent/logo.png);\" href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page\"></a></div>
-				<div class=\"portal first persistent\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
+				<div class=\"portal\" role=\"navigation\" id=\"p-navigation\" aria-labelledby=\"p-navigation-label\">
 	<h3 id=\"p-navigation-label\">Navigation</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [ctrl-alt-z]\" accesskey=\"z\">Main page</a></li>
-			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [ctrl-alt-r]\" accesskey=\"r\">Recent changes</a></li>
+			<li id=\"n-mainpage-description\"><a href=\"/emergent/index.php/Main_Page\" title=\"Visit the main page [z]\" accesskey=\"z\">Main page</a></li>
+			<li id=\"n-recentchanges\"><a href=\"/emergent/index.php/Special:RecentChanges\" title=\"A list of recent changes in the wiki [r]\" accesskey=\"r\">Recent changes</a></li>
 			<li id=\"n-Documentation\"><a href=\"/emergent/index.php/User_hub\">Documentation</a></li>
 			<li id=\"n-Submit-a-bug\"><a href=\"/emergent/index.php/How_to_submit_a_bug_report\">Submit a bug</a></li>
 			<li id=\"n-Bug-tracker\"><a href=\"//grey.colorado.edu/cgi-bin/bugzilla/index.cgi\" rel=\"nofollow\">Bug tracker</a></li>
@@ -2959,26 +2952,26 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 		</ul>
 	</div>
 </div>
-<div class=\"portal expanded\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
-	<h3 id=\"p-tb-label\" tabindex=\"2\"><a href=\"#\">Tools</a></h3>
-	<div class=\"body\" style=\"display: block;\">
+<div class=\"portal\" role=\"navigation\" id=\"p-tb\" aria-labelledby=\"p-tb-label\">
+	<h3 id=\"p-tb-label\">Tools</h3>
+	<div class=\"body\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [ctrl-alt-j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [ctrl-alt-k]\" accesskey=\"k\">Related changes</a></li>
-			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [ctrl-alt-q]\" accesskey=\"q\">Special pages</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
 			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
 			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=info\">Page information</a></li>
 			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" rel=\"smw-browse\">Browse properties</a></li>
 		</ul>
 	</div>
 </div>
-<div class=\"portal collapsed\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
-	<h3 id=\"p-coll-print_export-label\" tabindex=\"3\"><a href=\"#\">Print/export</a></h3>
+<div class=\"portal\" role=\"navigation\" id=\"p-coll-print_export\" aria-labelledby=\"p-coll-print_export-label\">
+	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
 	<div class=\"body\">
 		<ul>
 			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
 			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [ctrl-alt-p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -2986,8 +2979,8 @@ You can view its source [ctrl-alt-e]\" accesskey=\"e\">View source</a></span></l
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 00:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 12,465 times.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 12,706 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -3007,10 +3000,10 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.410 secs. -->
+<!-- Served in 0.450 secs. -->
 	
 
-<div class=\"suggestions\" style=\"display: none; font-size: 13px;\"><div class=\"suggestions-results\"></div><div class=\"suggestions-special\"></div></div></body></html>";
+</body></html>";
   };
  };
  wizards {
@@ -3071,6 +3064,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      param_set_value {
       saved_value=;
      };
+     notes {
+      notes=;
+     };
     };
     EditMbrItem @[1] {
      label="Cycle_update_net_view";
@@ -3089,6 +3085,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      param_set_value {
       saved_value=;
+     };
+     notes {
+      notes=;
      };
     };
     EditMbrItem @[2] {
@@ -3109,6 +3108,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      param_set_value {
       saved_value=;
      };
+     notes {
+      notes=;
+     };
     };
     EditMbrItem @[3] {
      label="LeabraConSpec_0_lrate";
@@ -3127,6 +3129,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      param_set_value {
       saved_value=;
+     };
+     notes {
+      notes=;
      };
     };
    };
@@ -3197,6 +3202,34 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
@@ -3420,20 +3453,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -3637,6 +3656,34 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
@@ -3860,20 +3907,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      String_Data @["repo_url"] {
       name="repo_url";
       desc="name of repository to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -4077,6 +4110,34 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
@@ -4311,20 +4372,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
@@ -4517,6 +4564,34 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name=;
+      [0]       };
+      width=0;
+     };
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
@@ -4758,6 +4833,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
    };
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
    extra_files=;
@@ -4766,6 +4845,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=-1;
    n_threads=2;
    use_mpi=0;
@@ -4774,6 +4854,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    pb_batches=10;
    pb_nodes=0;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=1;
   };
  };
  param_sets {
@@ -4976,7 +5059,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5035,7 +5118,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5074,7 +5157,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5087,7 +5170,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5126,7 +5209,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5152,7 +5235,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5165,7 +5248,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5178,7 +5261,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5191,7 +5274,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5204,7 +5287,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5217,7 +5300,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5230,7 +5313,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5243,7 +5326,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5256,7 +5339,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5269,7 +5352,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5282,7 +5365,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5295,7 +5378,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5396,7 +5479,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5409,7 +5492,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5435,7 +5518,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5500,7 +5583,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5513,7 +5596,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5526,7 +5609,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5539,7 +5622,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5552,7 +5635,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5565,7 +5648,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5578,7 +5661,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5591,7 +5674,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5604,7 +5687,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5617,7 +5700,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5630,7 +5713,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5643,7 +5726,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5656,7 +5739,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5669,7 +5752,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5682,7 +5765,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5695,7 +5778,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5708,7 +5791,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5721,7 +5804,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -5734,7 +5817,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
        expr=;
       };
       dim_names {
-       name=;
+       name="dim_names";
       [0]       };
       width=0;
      };
@@ -8981,7 +9064,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=5300: sys=693: tot=141885326426: }: end={usr=5300: sys=693: tot=141885326426: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=44840: sys=25064: tot=143085637860: }: end={usr=44840: sys=25064: tot=143085637860: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -9246,39 +9329,24 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettleMinus"]$$;
       targ_ld_init="*SettleMinus*";
      };
-     MethodCall @[8] {
-      desc="compute minus phase statistics";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Compute_MinusStats;
-      meth_args {
-       name=;
-       el_typ=ProgArg;
-       el_def=0;
-      };
-      meth_sig="void Compute_MinusStats()";
-      meth_desc=" compute the stats that should be computed at the end of the minus phase: minus_output_name -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
-     };
-     NetUpdateView @[9] {
+     NetUpdateView @[8] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$$;
      };
-     StopStepPoint @[10] {
+     StopStepPoint @[9] {
       desc=;
       flags=0;
       orig_prog_code=;
      };
-     Comment @[11] {
+     Comment @[10] {
       desc="=== Run Plus Phase ===";
       flags=0;
       orig_prog_code=;
      };
-     MethodCall @[12] {
+     MethodCall @[11] {
       desc="only need to re-apply if something is new!";
       flags=OFF|CAN_REVERT_TO_CODE;
       orig_prog_code="network.Init_InputData()";
@@ -9293,7 +9361,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       meth_sig="void Init_InputData()";
       meth_desc=" Initializes external and target inputs";
      };
-     ProgramCall @[13] {
+     ProgramCall @[12] {
       desc="only need to re-apply if something is new!";
       flags=OFF;
       orig_prog_code=;
@@ -9327,7 +9395,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=$.projects["LeabraFlex"].programs.gp["EnviroProgs"]["ApplyInputs"]$;
       targ_ld_init="*ApplyInputs*";
      };
-     ProgramCall @[14] {
+     ProgramCall @[13] {
       desc="settle for designated plus phase number of cycles";
       flags=0;
       orig_prog_code=;
@@ -9350,29 +9418,14 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["SettlePlus"]$$;
       targ_ld_init="*Settle*";
      };
-     MethodCall @[15] {
-      desc="compute plus phase statistics";
-      flags=0;
-      orig_prog_code=;
-      result_var=NULL;
-      obj=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
-      method=LeabraNetwork::Compute_PlusStats;
-      meth_args {
-       name="ProgArg_List_0";
-       el_typ=ProgArg;
-       el_def=0;
-      };
-      meth_sig="void Compute_PlusStats()";
-      meth_desc=" compute the stats that should be computed at the end of the plus phase: all the error stats: SSE, PRerr, NormErr, CosErr, ExtRew -- typically call this using Compute_PhaseStats which does the appropriate call given the current network phase";
-     };
-     NetUpdateView @[16] {
+     NetUpdateView @[14] {
       desc="update network views, if update_net_view == true";
       flags=0;
       orig_prog_code=;
       network_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["network"]$;
       update_var=$.projects["LeabraFlex"].programs.gp["TaskProgs"]["BasicTrain"].args["update_net_view"]$;
      };
-     ProgramCall @[17] {
+     ProgramCall @[15] {
       desc="standard end of trial stuff";
       flags=0;
       orig_prog_code=;
@@ -9395,7 +9448,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       target=.projects["LeabraFlex"].programs.gp["UtilProgs"]["TrialEnd"]$$;
       targ_ld_init="*TrialEnd*";
      };
-     MethodCall @[18] {
+     MethodCall @[16] {
       desc=;
       flags=0;
       orig_prog_code=;
@@ -9468,7 +9521,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [6] 4;0;5;3;2;1;      };
+      [6] 4;3;1;0;5;2;      };
      };
     };
     types {
@@ -9530,7 +9583,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      ProgVar @["input_idx"] {
       name="input_idx";
       var_type=T_Int;
-      int_val=0;
+      int_val=1;
       objs_ptr=0;
       flags=CTRL_PANEL|CTRL_READ_ONLY|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
       reference=0;
@@ -10072,9 +10125,20 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	    name="n";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="input_data.rows";
 	    expr {
 	     expr="input_data.rows";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="thr_no";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr=;
 	    };
 	   };
 	  };
@@ -10191,9 +10255,20 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
 	name="n";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="input_data.rows";
 	expr {
 	 expr="input_data.rows";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -16545,22 +16620,22 @@ and the testing data is updated.  The first epoch monitor should have all the it
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0;
+     value 6 0=0.005851063877344131;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.01614273525774479;
+     value 6 0=0;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9978790879249573;
+     value 6 0=0.9978723526000977;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.799490213394165;
+     value 6 0=0.7986767292022705;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -16609,20 +16684,20 @@ and the testing data is updated.  The first epoch monitor should have all the it
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$.projects["LeabraFlex"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
      visible=1;
     };
-    T3PanelViewer @["T3Frames"] {
+    T3PanelViewer @["Visualizer"] {
      UserDataItem_List @*(.user_data_) {
       name=;
       el_typ=UserDataItem;
@@ -16638,7 +16713,7 @@ and the testing data is updated.  The first epoch monitor should have all the it
        val_type_fixed=0;
       };
      };
-     name="T3Frames";
+     name="Visualizer";
      m_data=NULL;
      visible=1;
      panels {
@@ -17167,6 +17242,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=-1: };
+	  page_rows=-8017975;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -17195,6 +17271,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17212,6 +17290,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17234,6 +17314,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=1: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17253,6 +17335,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17272,6 +17356,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17291,6 +17377,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17310,6 +17398,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17329,6 +17419,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17348,6 +17440,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17367,6 +17461,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17386,6 +17482,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17405,6 +17503,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17424,6 +17524,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17443,6 +17545,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17462,6 +17566,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17481,6 +17587,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17500,6 +17608,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17519,6 +17629,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17543,6 +17655,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17562,6 +17676,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17581,6 +17697,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17600,6 +17718,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17619,6 +17739,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17638,6 +17760,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17657,6 +17781,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17676,6 +17802,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17695,6 +17823,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17714,6 +17844,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17733,6 +17865,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17752,6 +17886,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17771,6 +17907,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17790,6 +17928,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17809,6 +17949,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17828,6 +17970,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17851,6 +17995,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17880,6 +18026,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17994,17 +18142,17 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.008496176451444626;
+       value 6 0=0.01039697509258986;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04029692336916924;
+       value 6 0=0.04042553156614304;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7357689142227173;
+       value 6 0=0.7277882695198059;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -18277,11 +18425,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      v_m_init {name="v_m_init": type=NONE: mean=0.4000000059604645: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.3: net_tau=1.4: fast_cyc=0: vm_dt=0.3030303: net_dt=0.7142857: };
-     act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     avg_l {init=0.4: max=2: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.02368421: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
-     deep5b_qtr=Q4;
-     ti_ctxt_qtr=Q4;
      adapt {
       on=0;
       tau=144;
@@ -18298,12 +18445,18 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       on=0;
       delay=4;
      };
-     cifer_thal {on=0: thal_thr=0.2: thal_bin=1: auto_thal=0: thal_to_super=0.1: };
-     cifer_d5b {on=0: burst=1: ti_rescale=1: ti_scale_mult=1: act5b_thr=0.2: ti_5b=0: d5b_to_super=0.01: ti_5b_c=1: };
+     dropout {
+      net_on=0;
+      net_p=0.1;
+      net_drop=0.9;
+     };
+     deep_qtr=0;
+     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: contrast=1: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
-     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=1: drop_thr=0.1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -18333,8 +18486,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_limits {type=NONE: min=-1: max=5: sym=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
-       diff_scale_p=0;
-       wt_scale_p {abs=1: rel=1: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.02;
@@ -18390,10 +18541,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
-       xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-       cifer {on=0: bg_lrate=1: fg_lrate=0: };
+       deep {on=0: bg_lrate=1: fg_lrate=0: };
        dwt_thresh=0.1;
       };
       LeabraConSpec @["TopDownCons"] {
@@ -18409,8 +18560,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
        inhib=0;
        wt_scale {abs=1: rel=0.2: };
-       diff_scale_p=0;
-       wt_scale_p {abs=1: rel=1: };
        learn=1;
        learn_qtr=Q4;
        lrate=0.02;
@@ -18466,18 +18615,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
-       xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-       cifer {on=0: bg_lrate=1: fg_lrate=0: };
+       deep {on=0: bg_lrate=1: fg_lrate=0: };
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
      wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
      inhib=0;
      wt_scale {abs=1: rel=1: };
-     diff_scale_p=0;
-     wt_scale_p {abs=1: rel=1: };
      learn=1;
      learn_qtr=Q4;
      lrate=0.02;
@@ -18533,10 +18680,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      ignore_unlearnable=1;
-     xcal {raw_l_mix=0: thr_l_mix=0.05: thr_m_mix=0.95: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=0: };
      fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
-     cifer {on=0: bg_lrate=1: fg_lrate=0: };
+     deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -18598,8 +18745,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects["LeabraFlex"].networks["Network_0"].specs["LeabraUnitSpec_0"]$$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=0;
+      fm_output=2;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18646,7 +18793,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
       LeabraPrjn @["Fm_Output"] {
@@ -18663,7 +18811,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_OUTPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
@@ -18682,8 +18831,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=1;
+      fm_output=1;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18730,7 +18879,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
@@ -18749,8 +18899,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["LeabraFlex"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=2;
+      fm_output=0;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
@@ -18767,7 +18917,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=BUILT|INTACT;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -18792,6 +18941,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     sync_time_pct=0;
     wake_in_sync_pct=1.216681899864304e+285;
    };
+   alt_mpi=0;
    net_timing {
     name="net_timing";
     el_typ=LeabraNetTiming;
@@ -18880,8 +19030,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
    };
    net_misc {
     spike=0;
-    ti=0;
-    deep5b_cons=0;
+    deep=0;
     bias_learn=1;
     trial_decay=1;
     diff_scale_p=0;
