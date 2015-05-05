@@ -31,11 +31,13 @@ class E_API MatrixLearnSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS ##CAT_Leabra specifications for learning in the matrix 
 INHERITED(SpecMemberBase)
 public:
-  float         da_reset_tr;    // amount of dopamine to completely reset the trace
+  float         da_reset_tr;    // #DEF_0.1 amount of dopamine needed to completely reset the trace
+  float         tr_decay;       // #DEF_1 #MIN_0 #MAX_1 how much to decay the existing trace when adding a new trace -- actual decay rate is multiplied by the new trace value: decay in proportion to how much new trace is coming in -- so effective decay rate is typically less than value entered here
   bool          use_thal;       // include thalamic modulation in the trace value -- this should be true for PBWM use of matrix con specs, but other cases may not use thalamic gating, and should have this off
-  float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less in proportion to average number gating / total stripes
-  float         tr_max;         // maximum trace value -- cap trace at this value (either positive or negative)
-  float         tr_decay;       // how much to decay the existing trace when adding a new trace -- actual decay rate is multiplied by the new trace value 
+  float         otr_lrate;      // #CONDSHOW_ON_use_thal #MIN_0 #DEF_0.5 learning rate associated with other non-gated activations (only avail when using thalamic gating) -- should generally be less than 1 -- the non-gated trace has the opposite sign (negative) from the gated trace -- encourages exploration of other alternatives if a negative outcome occurs, so that otr = opposite trace or opponent trace as well as other trace
+  bool          protect_pos;    // #CONDSHOW_ON_use_thal do not add in an opposite trace value if the synapse already has a positive trace value from prior gating -- in theory this makes sense to protect the trace over intervening gating events, but only if the gated trace is actually the correct one -- by continuing to add in the opponent traces, the system remains more open to exploration..
+  bool          thal_mult;      // #CONDSHOW_ON_use_thal multiply gated trace by the actual thal gating signal value -- otherwise it is just used as a gating signal but does not multiply
+  float         tr_max;         // maximum trace value -- cap trace at this value (either positive or negative) -- if tr_decay is 1, this is not needed, but otherwise the trace can build up over time
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
@@ -80,8 +82,8 @@ public:
     }
   }
 
-  // TODO: need to build in a temporal asymmetry here, so that gating activations
-  // register before dopamine when it makes sense for them to?
+  // IMPORTANT: need to always build in a temporal asymmetry so LV-level gating does not
+  // disrupt the trace right as it is established..
   
   inline void C_Compute_dWt_Matrix_Thal
     (float& dwt, float& ntr, float& tr, const float otr_lr, const float mtx_da,
@@ -93,14 +95,17 @@ public:
     tr *= reset_factor;
 
     if(ru_thal > 0.0f) {              // gated
-      ntr = ru_thal * ru_act * su_act;
+      if(matrix.thal_mult)
+        ntr = ru_thal * ru_act * su_act;
+      else
+        ntr = ru_act * su_act;
     }
-    else {
-      if(tr <= 0.0f) {
-        ntr = otr_lr * ru_act * su_act; // other alternative non-gated -- only if not previously positively gated!!
+    else {                      // non-gated, do otr: opposite / other / opponent trace
+      if(!matrix.protect_pos || tr <= 0.0f) {
+        ntr = otr_lr * ru_act * su_act;
       }
       else {
-        ntr = 0.0f;             // no alternative if already gated!!
+        ntr = 0.0f;             // no otr if already gated!!
       }
     }
 

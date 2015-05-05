@@ -24,10 +24,12 @@ void MatrixLearnSpec::Initialize() {
 }
 
 void MatrixLearnSpec::Defaults_init() {
-  da_reset_tr = 0.2f;
+  da_reset_tr = 0.1f;
+  tr_decay = 1.0f;
   otr_lrate = 0.5f;
+  protect_pos = false;
+  thal_mult = true;
   tr_max = 10.0f;
-  tr_decay = 0.0f;
 }
 
 void MatrixLearnSpec::UpdateAfterEdit_impl() {
