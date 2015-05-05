@@ -33,7 +33,6 @@ void LeabraWizard::Initialize() {
 #include <MarkerGpOneToOnePrjnSpec>
 #include <TesselPrjnSpec>
 #include <UniformRndPrjnSpec>
-#include <RowColPrjnSpec>
 #include <GpRndTesselPrjnSpec>
 
 #include <TwoDValLayerSpec>
@@ -41,6 +40,8 @@ void LeabraWizard::Initialize() {
 #include <MarkerConSpec>
 #include <LayerActUnitSpec>
 #include <LeabraContextLayerSpec>
+
+#include <ThalAutoEncodeUnitSpec>
 
 #include <ExtRewLayerSpec>
 // #include <LeabraTdUnit>
@@ -62,13 +63,12 @@ void LeabraWizard::Initialize() {
 
 #include <PatchUnitSpec>
 #include <GPiInvUnitSpec>
-#include <InvertUnitSpec>
-#include <ThalSendUnitSpec>
 #include <PFCUnitSpec>
 #include <DeepCopyUnitSpec>
 #include <MatrixConSpec>
 #include <SendDeepRawConSpec>
 
+#include <BgPfcPrjnSpec>
 #include <TopoWtsPrjnSpec>
 
 #include <HippoEncoderConSpec>
@@ -790,7 +790,7 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
 
   //////  Cons
   pvlv_cons->UpdateAfterEdit();
-  pvlv_cons->lrate = 0.002f;    // best for pbwm
+  pvlv_cons->lrate = 0.005f;    // best for pbwm
   // pvlv_cons->xcal.raw_l_mix = true;
   // pvlv_cons->xcal.thr_l_mix = 0.0f; // no hebbian at all..
   pvlv_cons->rnd.mean = 0.01f;
@@ -1370,34 +1370,29 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   FMSpec(LeabraUnitSpec, pbwm_units, pbwmspgp, prefix + "Units");
   FMChild(LeabraUnitSpec, matrix_units, pbwm_units, "MatrixUnits");
-  FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
   FMChild(GPiInvUnitSpec, gpi_units, pbwm_units, "GPiUnits");
-  FMChild(InvertUnitSpec, gpinv_units, pbwm_units, "GPInvert");
-  FMChild(ThalSendUnitSpec, thal_units, pbwm_units, "ThalUnits");
-  FMChild(PFCUnitSpec, pfc_units, pbwm_units, "PFCUnits");
+  FMChild(PatchUnitSpec, patch_units, pbwm_units, "PatchUnits");
+  FMChild(PFCUnitSpec, pfc_mnt_units, pbwm_units, "PFCmntUnits");
+  FMChild(PFCUnitSpec, pfc_out_units, pbwm_units, "PFCoutUnits");
   FMChild(DeepCopyUnitSpec, pfcd_units, pbwm_units, "PFCdUnits");
+  FMChild(ThalAutoEncodeUnitSpec, pfc_trc_units, pbwm_units, "PFCtrcUnits");
+  FMChild(LeabraUnitSpec, input_units, pbwm_units, "PFCInputUnits");
 
   ////////////	ConSpecs
 
   FMSpec(LeabraConSpec, lrn_cons, pbwmspgp, prefix + "LrnCons");
   FMChild(MatrixConSpec, mtx_cons_go, lrn_cons, "MatrixConsGo");
   FMChild(MatrixConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
-  FMChild(SendDeepRawConSpec, d5b_lrn_cons, lrn_cons, "Deep5bLrn");
   FMChild(LeabraConSpec, to_pfc, lrn_cons, "ToPFC");
-  FMChild(SendDeepRawConSpec, pfcd_mnt_out, lrn_cons, "PFCdMntToOut");
+  FMChild(LeabraConSpec, pfc_fm_trc, lrn_cons, "PFCfmTRC");
+  FMChild(LeabraConSpec, pfc_to_trc, lrn_cons, "PFCtoTRC");
 
   FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
   FMChild(MarkerConSpec, marker_cons, fix_cons, prefix + "MarkerCons");
-  FMChild(LeabraConSpec, in_to_mtx, fix_cons, "InputToMatrixBias");
-  FMChild(LeabraConSpec, pfc_to_mtx, fix_cons, "PFCToMatrix");
-  FMChild(SendDeepRawConSpec, pfcd_out_bias_mtx, fix_cons, "PFCdOutBiasMtx");
-  FMChild(LeabraConSpec, in_to_thal, fix_cons, "InputToThal");
-  FMChild(LeabraConSpec, gp_inhib_to_thal, fix_cons, "GPinhibToThal");
-  FMChild(LeabraConSpec, pfc_to_thal, fix_cons, "PFCToThal");
-  FMChild(SendDeepRawConSpec, pfcd_mnt_bias_thal, fix_cons, "PFCdMntBiasThal");
-  FMChild(SendDeepRawConSpec, pfcd_out_bias_thal, fix_cons, "PFCdOutBiasThal");
-  FMChild(SendDeepRawConSpec, pfcd_patch, fix_cons, "PFCdPatch");
+
+  FMChild(SendDeepRawConSpec, pfcd_mnt_out, lrn_cons, "PFCdMntToOut");
+  FMChild(SendDeepRawConSpec, d5b_lrn_cons, lrn_cons, prefix + "DeepRawPlus");
 
   ////////////	LayerSpecs
 
@@ -1405,7 +1400,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMChild(LeabraLayerSpec, matrix_sp, pbwm_sp, "MatrixLayer");
   FMChild(LeabraLayerSpec, patch_sp, pbwm_sp, "PatchLayer");
   FMChild(LeabraLayerSpec, gpi_sp, pbwm_sp, "GPiLayer");
-  FMChild(LeabraLayerSpec, thal_sp, pbwm_sp, "ThalLayer");
+  FMChild(LeabraLayerSpec, gp_nogo_sp, gpi_sp, "GPeNoGoLayer");
   FMChild(LeabraLayerSpec, pfc_sp, pbwm_sp, "PFCLayer");
 
   ////////////	PrjnSpecs
@@ -1413,15 +1408,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   FMSpec(FullPrjnSpec, fullprjn, pbwmspgp, prefix + "FullPrjn");
   FMSpec(OneToOnePrjnSpec, onetoone, pbwmspgp, prefix + "OneToOne");
   FMSpec(GpOneToOnePrjnSpec, gponetoone, pbwmspgp, prefix + "GpOneToOne");
-  FMSpec(RowColPrjnSpec, input_to_pfc_in_prjn, pbwmspgp, "InputToPFCinPrjn");
-  FMChild(RowColPrjnSpec, input_to_thal_in_prjn, input_to_pfc_in_prjn,
-          "InputToThalInPrjn");
-  FMSpec(RowColPrjnSpec, pfc_out_to_out_prjn, pbwmspgp, "PFCoutToOutPrjn");
-  FMSpec(RowColPrjnSpec, pfcd_mnt_to_out_prjn, pbwmspgp, "PFCdMntToOutPrjn");
-  FMChild(RowColPrjnSpec, pfcd_mnt_to_out_thal_prjn, pfcd_mnt_to_out_prjn,
-          "PFCdMntToOutPrjn_thal");
-  FMSpec(RowColPrjnSpec, pfc_mnt_to_patch_prjn, pbwmspgp, "PFCMntToPatchPrjn");
-  FMSpec(GpRndTesselPrjnSpec, patch_to_matrix_prjn, pbwmspgp, "PatchToMatrixPrjn");
+
+  FMSpec(BgPfcPrjnSpec, bgpfcprjn, pbwmspgp, "BgPfcPrjn");
+  FMChild(BgPfcPrjnSpec, bgpfcprjn_toout, bgpfcprjn, "BgPfcPrjnToOut");
+  FMChild(BgPfcPrjnSpec, bgpfcprjn_tomnt, bgpfcprjn, "BgPfcPrjnToMnt");
 
   //////////////////////////////////////////////////////////////////////////////////
   // first: all the basic defaults from specs
@@ -1434,12 +1424,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   ////////////	UnitSpecs
 
   pbwm_units->bias_spec.SetSpec(fix_bias);
-
-  matrix_units->SetUnique("deep", true);
-  matrix_units->deep.on = true;
-  // matrix_units->cifer_thal.thal_thr = 0.1f;
-  // matrix_units->cifer_thal.thal_bin = false;
-
+  pbwm_units->deep_qtr = LeabraUnitSpec::Q2_Q4; // beta by default
+  
   matrix_units->SetUnique("noise_type", true);
   matrix_units->noise_type = LeabraUnitSpec::NETIN_NOISE;
   matrix_units->SetUnique("noise", true);
@@ -1447,57 +1433,34 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->SetUnique("noise_adapt", true);
   matrix_units->noise_adapt.trial_fixed = true;
 
-  pfc_units->SetUnique("deep", true);
-  pfc_units->deep.on = true;
-  // pfc_units->cifer_thal.thal_thr = 0.1f;
-  // pfc_units->cifer_thal.thal_bin = true;
-
+  // this has less strong self-maint:
+  pfc_out_units->SetUnique("deep", true);
+  pfc_out_units->deep.d_to_s = 0.2f;
 
   ////////////	ConSpecs
 
-  lrn_cons->lrate = 0.01f;
+  lrn_cons->lrate = 0.001f;
 
   mtx_cons_go->SetUnique("wt_limits", true);
   mtx_cons_go->wt_limits.sym = false;
   mtx_cons_go->SetUnique("lrate", true);
-  mtx_cons_go->lrate = 0.001f;
+  mtx_cons_go->lrate = 0.005f;
 
   mtx_cons_nogo->SetUnique("nogo", true);
   mtx_cons_nogo->nogo = true;
 
+  to_pfc->SetUnique("wt_scale", true);
+  to_pfc->wt_scale.abs = 0.2f;
+  
   fix_cons->SetUnique("rnd", true);
   fix_cons->rnd.mean = 0.8f;
   fix_cons->rnd.var = 0.0f;
   fix_cons->SetUnique("wt_limits", true);
   fix_cons->wt_limits.sym = false;
-  fix_cons->rnd.var = 0.0f;
   fix_cons->SetUnique("lrate", true);
   fix_cons->lrate = 0.0f;
-  fix_cons->SetUnique("xcal", true);
-  // fix_cons->xcal.raw_l_mix = true;
-  // fix_cons->xcal.thr_l_mix = 0.0f;
   fix_cons->SetUnique("learn", true);
   fix_cons->learn = false;
-
-  in_to_mtx->SetUnique("wt_scale", true);
-  in_to_mtx->wt_scale.rel = 0.1f;
-  pfc_to_mtx->SetUnique("wt_scale", true);
-  pfc_to_mtx->wt_scale.rel = 0.1f;
-  pfcd_out_bias_mtx->SetUnique("wt_scale", true);
-  pfcd_out_bias_mtx->wt_scale.rel = 0.1f;
-
-  in_to_thal->SetUnique("wt_scale", true);
-  in_to_thal->wt_scale.rel = 1.0f;
-  gp_inhib_to_thal->SetUnique("wt_scale", true);
-  gp_inhib_to_thal->wt_scale.abs = 0.8f;
-  gp_inhib_to_thal->SetUnique("inhib", true);
-  gp_inhib_to_thal->inhib = true;
-  pfc_to_thal->SetUnique("wt_scale", true);
-  pfc_to_thal->wt_scale.rel = 1.0f;
-  pfcd_mnt_bias_thal->SetUnique("wt_scale", true);
-  pfcd_mnt_bias_thal->wt_scale.abs = 1.75f;
-  pfcd_out_bias_thal->SetUnique("wt_scale", true);
-  pfcd_out_bias_thal->wt_scale.abs = 1.75f;
 
   ////////////	LayerSpecs
 
@@ -1505,7 +1468,7 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->lay_inhib.on = false;
   matrix_sp->SetUnique("unit_gp_inhib", true);
   matrix_sp->unit_gp_inhib.on = true;
-  matrix_sp->unit_gp_inhib.gi = 2.0f;
+  matrix_sp->unit_gp_inhib.gi = 2.3f;
   matrix_sp->unit_gp_inhib.ff = 1.0f;
   matrix_sp->unit_gp_inhib.fb = 0.0f;
   matrix_sp->SetUnique("avg_act", true);
@@ -1515,7 +1478,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->inhib_misc.self_fb = 0.3f;
   matrix_sp->SetUnique("del_inhib", true);
   matrix_sp->del_inhib.on = true;
-  matrix_sp->del_inhib.prv_trl = 0.001f; // todo: prv_phs instead..
+  matrix_sp->del_inhib.prv_trl = 0.001f; // todo: try prv_q instead..
+  matrix_sp->del_inhib.prv_q = 0.0f;
 
   patch_sp->SetUnique("lay_inhib", true);
   patch_sp->lay_inhib.on = false;
@@ -1532,37 +1496,20 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   gpi_sp->SetUnique("lay_inhib", true);
   gpi_sp->lay_inhib.on = true;
-  gpi_sp->lay_inhib.gi = 1.5f;
+  gpi_sp->lay_inhib.gi = 2.2f;
   gpi_sp->lay_inhib.ff = 1.0f;
   gpi_sp->lay_inhib.fb = 0.5f;
   gpi_sp->SetUnique("unit_gp_inhib", true);
-  gpi_sp->unit_gp_inhib.on = true;
-  gpi_sp->unit_gp_inhib.gi = 1.5f;
-  gpi_sp->unit_gp_inhib.ff = 1.0f;
-  gpi_sp->unit_gp_inhib.fb = 0.5f;
+  gpi_sp->unit_gp_inhib.on = false;
   gpi_sp->SetUnique("avg_act", true);
   gpi_sp->avg_act.init = 0.2f;
   gpi_sp->avg_act.fixed = true;
-
-  thal_sp->SetUnique("lay_inhib", true);
-  thal_sp->lay_inhib.on = true;
-  thal_sp->lay_inhib.gi = 0.8f;
-  thal_sp->lay_inhib.ff = 1.0f;
-  thal_sp->lay_inhib.fb = 0.5f;
-  thal_sp->SetUnique("unit_gp_inhib", true);
-  thal_sp->unit_gp_inhib.on = true;
-  thal_sp->unit_gp_inhib.gi = 1.0f;
-  thal_sp->unit_gp_inhib.ff = 1.0f;
-  thal_sp->unit_gp_inhib.fb = 0.5f;
-  thal_sp->SetUnique("avg_act", true);
-  thal_sp->avg_act.init = 0.2f;
-  thal_sp->avg_act.fixed = true;
 
   pfc_sp->SetUnique("lay_inhib", true);
   pfc_sp->lay_inhib.on = false;
   pfc_sp->SetUnique("unit_gp_inhib", true);
   pfc_sp->unit_gp_inhib.on = true;
-  pfc_sp->unit_gp_inhib.gi = 2.0f;
+  pfc_sp->unit_gp_inhib.gi = 2.2f;
   pfc_sp->unit_gp_inhib.ff = 1.0f;
   pfc_sp->unit_gp_inhib.fb = 0.5f;
   pfc_sp->SetUnique("avg_act", true);
@@ -1573,42 +1520,15 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   ////////////	PrjnSpecs
 
-  input_to_pfc_in_prjn->recv_row_col = RowColPrjnSpec::ROWS;
-  input_to_pfc_in_prjn->recv_gp = true;
-  input_to_pfc_in_prjn->recv_start = 0;
-  input_to_pfc_in_prjn->recv_end = 0; // todo: need to set in main fun!
-  input_to_pfc_in_prjn->send_row_col = RowColPrjnSpec::ALL;
-  
-  input_to_thal_in_prjn->SetUnique("recv_gp", true);
-  input_to_thal_in_prjn->recv_gp = false;
+  bgpfcprjn_toout->SetUnique("cross_connect", true);
+  bgpfcprjn_toout->cross_connect = true;
+  bgpfcprjn_toout->SetUnique("connect_as", true);
+  bgpfcprjn_toout->connect_as = "PFCout";
 
-  pfc_out_to_out_prjn->recv_row_col = RowColPrjnSpec::ALL;
-  pfc_out_to_out_prjn->send_row_col = RowColPrjnSpec::ROWS;
-  pfc_out_to_out_prjn->send_gp = true;
-  pfc_out_to_out_prjn->send_start = -1; // todo: need to set in main fun!
-  pfc_out_to_out_prjn->send_end = -1; 
-
-  pfcd_mnt_to_out_prjn->recv_row_col = RowColPrjnSpec::ROWS;
-  pfcd_mnt_to_out_prjn->recv_gp = true;
-  pfcd_mnt_to_out_prjn->recv_start = -1; // todo: need to set in main fun!
-  pfcd_mnt_to_out_prjn->recv_end = -1; 
-  pfcd_mnt_to_out_prjn->send_row_col = RowColPrjnSpec::ROWS;
-  pfcd_mnt_to_out_prjn->send_gp = true;
-  pfcd_mnt_to_out_prjn->send_start = 0; 
-  pfcd_mnt_to_out_prjn->send_end = 0; // todo: need to set in main fun!
-  pfcd_mnt_to_out_prjn->one_to_one = true;
-
-  pfcd_mnt_to_out_thal_prjn->SetUnique("recv_gp", true);
-  pfcd_mnt_to_out_thal_prjn->recv_gp = false;
-
-  patch_to_matrix_prjn->def_p_con = 1.0f;
-  patch_to_matrix_prjn->MakeRectangle(1, 1, 0, 0);
-
-  pfc_mnt_to_patch_prjn->recv_row_col = RowColPrjnSpec::ALL;
-  pfc_mnt_to_patch_prjn->send_row_col = RowColPrjnSpec::ROWS;
-  pfc_mnt_to_patch_prjn->send_gp = true;
-  pfc_mnt_to_patch_prjn->send_start = 0; 
-  pfc_mnt_to_patch_prjn->send_end = 0; // todo: need to set in main fun!
+  bgpfcprjn_tomnt->SetUnique("cross_connect", true);
+  bgpfcprjn_tomnt->cross_connect = true;
+  bgpfcprjn_tomnt->SetUnique("connect_as", true);
+  bgpfcprjn_tomnt->connect_as = "PFCmnt";
 
   ///////// Update All!
 
@@ -1627,49 +1547,44 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
     String subgp;
     subgp = "PFC";
-    pfc_units->AddToControlPanelNm("pfc_maint", cp, "pfc", subgp);
-    pfc_units->AddToControlPanelNm("cifer", cp, "pfc", subgp);
+    pfc_mnt_units->AddToControlPanelNm("pfc", cp, "pfc_mnt_pfc", subgp);
+    pfc_mnt_units->AddToControlPanelNm("deep", cp, "pfc_mnt_deep", subgp);
 
+    pfc_out_units->AddToControlPanelNm("pfc", cp, "pfc_out_pfc", subgp);
+    pfc_out_units->AddToControlPanelNm("deep", cp, "pfc_out_deep", subgp);
+    
     pfc_sp->AddToControlPanelNm("unit_gp_inhib", cp, "pfc", subgp);
     pfc_sp->AddToControlPanelNm("lay_inhib", cp, "pfc", subgp);
     pfc_sp->AddToControlPanelNm("avg_act", cp, "pfc", subgp);
 
+    to_pfc->AddToControlPanelNm("wt_scale", cp, "to_pfc", subgp);
+    
     subgp = "Matrix";
-    matrix_units->AddToControlPanelNm("cifer", cp, "matrix", subgp);
+    matrix_sp->AddToControlPanelNm("unit_gp_inhib", cp, "matrix", subgp);
+    matrix_sp->AddToControlPanelNm("inhib_misc", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("del_inhib", cp, "matrix", subgp);
+
     mtx_cons_go->AddToControlPanelNm("lrate", cp, "matrix", subgp,
-                                     "Default Matrix lrate is .001");
+                                     "Default Matrix lrate is .005");
     mtx_cons_go->AddToControlPanelNm("matrix", cp, "matrix", subgp);
 
-    in_to_mtx->AddToControlPanelNm("wt_scale", cp, "in_to_matrix_bias", subgp);
-    pfc_to_mtx->AddToControlPanelNm("wt_scale", cp, "pfc_to_matrix", subgp);
-
-    subgp = "GPi_Thal";
+    subgp = "GP";
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
+
     gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp);
     gpi_sp->AddToControlPanelNm("unit_gp_inhib", cp, "gpi", subgp);
-
-    gp_inhib_to_thal->AddToControlPanelNm("wt_scale", cp, "gp_inhib_to_thal", subgp);
-    pfcd_mnt_bias_thal->AddToControlPanelNm("wt_scale", cp, "pfcd_mnt_bias_thal", subgp);
-    pfcd_out_bias_thal->AddToControlPanelNm("wt_scale", cp, "pfcd_out_bias_thal", subgp);
 
     cp->EditPanel(true, true);
   }
   return true;
 }
 
-static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_channels, 
-                         bool gpi_thal, int n_units = -1, bool sp = true) {
+static void lay_set_geom(LeabraLayer* lay, int gp_x, int gp_y, int n_units = -1,
+                         bool sp = true) {
   lay->unit_groups = true;
-  if(gpi_thal) {
-    lay->un_geom.SetXY(1, n_stripes);
-    lay->gp_geom.SetXY(n_channels, 1);
-  }
-  else {
-    lay->gp_geom.SetXY(n_channels, n_stripes);
-    if(n_units > 0) {
-      lay->SetNUnits(n_units);
-    }
+  lay->gp_geom.SetXY(gp_x, gp_y);
+  if(n_units > 0) {
+    lay->SetNUnits(n_units);
   }
   if(sp) {
     lay->gp_spc.x = 1;
@@ -1679,18 +1594,17 @@ static void lay_set_geom(LeabraLayer* lay, int n_stripes, int n_channels,
 }
 
 static void set_n_stripes(LeabraNetwork* net, const String& gpnm, const String& nm,
-                          int n_stripes, int n_channels, bool gpi_thal,
-                          int n_units, bool sp)
+                          int pfc_gp_x, int pfc_gp_y, int n_units, bool sp)
 {
   Layer_Group* laygp = (Layer_Group*)net->layers.gp.FindName(gpnm);
   if(!laygp) return;
   LeabraLayer* lay = (LeabraLayer*)laygp->FindLeafName(nm);
   if(!lay) return;
-  lay_set_geom(lay, n_stripes, n_channels, gpi_thal, n_units, sp);
+  lay_set_geom(lay, pfc_gp_x, pfc_gp_y, n_units, sp);
 }
 
-bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-				    int out_stripes, int n_channels, int n_matrix_units,
+bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int pfc_gp_x, int pfc_gp_y,
+                                    int n_matrix_units,
 				    int n_pfc_units, const String& prefix) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
@@ -1702,27 +1616,26 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int in_stripes, int mnt_
 //     proj->undo_mgr.SaveUndo(net, "Wizard::PBWM_SetNStripes -- actually saves network specifically");
 //   }
 
-  int tot_stripes = in_stripes + mnt_stripes + out_stripes;
+  int bg_gp_x = 2 * pfc_gp_x;
+  int bg_gp_y = pfc_gp_y;
 
-  set_n_stripes(net, prefix, "MatrixGo",  tot_stripes, n_channels, false,
-                n_matrix_units, true);
-  set_n_stripes(net, prefix, "MatrixNoGo",  tot_stripes, n_channels, false,
-                n_matrix_units, true);
-  set_n_stripes(net, prefix, "Patch",  1, n_channels, false, 1, true);
+  set_n_stripes(net, prefix, "MatrixGo", bg_gp_x, bg_gp_y, n_matrix_units, true);
+  set_n_stripes(net, prefix, "MatrixNoGo", bg_gp_x, bg_gp_y, n_matrix_units, true);
+  set_n_stripes(net, prefix, "Patch",  pfc_gp_x, pfc_gp_y, 1, true);
 
-  set_n_stripes(net, prefix, "GPi", tot_stripes, n_channels, true, -1, true);
-  set_n_stripes(net, prefix, "GPInvert", tot_stripes, n_channels, true, -1, true);
-  set_n_stripes(net, prefix, "MDThal", tot_stripes, n_channels, true, -1, true);
+  set_n_stripes(net, prefix, "GPi", bg_gp_x, bg_gp_y, -1, true);
+  set_n_stripes(net, prefix, "GPeNoGo", bg_gp_x, bg_gp_y, -1, true);
 
-  set_n_stripes(net, prefix, "PFC",  tot_stripes, n_channels, false, n_pfc_units, true);
-  set_n_stripes(net, prefix, "PFCdeep",  tot_stripes, n_channels, false, n_pfc_units, true);
+  set_n_stripes(net, prefix, "PFCmnt",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
+  set_n_stripes(net, prefix, "PFCout",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
+  set_n_stripes(net, prefix, "PFCout_deep",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
+  set_n_stripes(net, prefix, "PFCmnt_deep",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
 
   net->Build();
   return true;
 }
 
-bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
-			int out_stripes, int n_channels,
+bool LeabraWizard::PBWM(LeabraNetwork* net, int pfc_gp_x, int pfc_gp_y,
                         bool add_on, const String& prefix) {
   if(!net) {
     LeabraProject* proj = GET_MY_OWNER(LeabraProject);
@@ -1731,8 +1644,6 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int in_stripes, int mnt_stripes,
       return false;
     if(!StdNetwork()) return false;
   }
-
-  int tot_stripes = in_stripes + mnt_stripes + out_stripes;
 
   // first configure PVLV system..
   if(!add_on) {
@@ -1787,22 +1698,23 @@ can be sure everything is ok.";
   LeabraLayer* matrix_nogo = NULL;
   LeabraLayer* patch = NULL;
   LeabraLayer* gpi = NULL;
-  LeabraLayer* gpinvert = NULL;
-  LeabraLayer* thal= NULL;
-  LeabraLayer* pfc = NULL;
-  LeabraLayer* pfcd = NULL;
+  LeabraLayer* gpenogo = NULL;
+  LeabraLayer* pfc_mnt = NULL;
+  LeabraLayer* pfc_out = NULL;
+  LeabraLayer* pfc_mnt_d = NULL;
+  LeabraLayer* pfc_out_d = NULL;
 
   bool new_matrix = false;
   matrix_go = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixGo", NULL, new_matrix);
   matrix_nogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MatrixNoGo", NULL);
-  patch = (LeabraLayer*)pbwm_laygp->FindMakeLayer("Patch", NULL);
+  patch = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_patch", NULL);
+  gpenogo = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPeNoGo", NULL);
   gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
-  gpinvert = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPInvert", NULL);
-  bool new_thal = false;
-  thal = (LeabraLayer*)pbwm_laygp->FindMakeLayer("MDThal", NULL, new_thal);
   bool new_pfc  = false;
-  pfc = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFC", NULL, new_pfc);
-  pfcd = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCdeep", NULL);
+  pfc_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt", NULL, new_pfc);
+  pfc_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout", NULL);
+  pfc_mnt_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_deep", NULL);
+  pfc_out_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout_deep", NULL);
 
   //////////////////////////////////////////////////////////////////////////////////
   // collect layer groups
@@ -1862,41 +1774,23 @@ can be sure everything is ok.";
   gpi->SetUnitSpec(PbwmSp("GPiUnits",GPiInvUnitSpec));
   gpi->SetLayerSpec(PbwmSp("GPiLayer",LeabraLayerSpec));
 
-  gpinvert->SetUnitSpec(PbwmSp("GPInvert",InvertUnitSpec));
-  gpinvert->SetLayerSpec(PbwmSp("GPiLayer",LeabraLayerSpec));
+  gpenogo->SetUnitSpec(PbwmSp("PBWMUnits",LeabraUnitSpec));
+  gpenogo->SetLayerSpec(PbwmSp("GPeNoGoLayer",LeabraLayerSpec));
 
-  thal->SetUnitSpec(PbwmSp("ThalUnits",ThalSendUnitSpec));
-  thal->SetLayerSpec(PbwmSp("ThalLayer",LeabraLayerSpec));
+  pfc_mnt->SetUnitSpec(PbwmSp("PFCmntUnits",PFCUnitSpec));
+  pfc_mnt->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfc->SetUnitSpec(PbwmSp("PFCUnits",PFCUnitSpec));
-  pfc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
+  pfc_out->SetUnitSpec(PbwmSp("PFCoutUnits",PFCUnitSpec));
+  pfc_out->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfcd->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
-  pfcd->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
+  pfc_mnt_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
+  pfc_mnt_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
+
+  pfc_out_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
+  pfc_out_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   //////////////////////////////////////////////////////////////////////////////////
   // make projections
-
-  //// fix prjn params for stripes
-  { RowColPrjnSpec* rcps = PbwmSp("InputToPFCinPrjn",RowColPrjnSpec);
-    rcps->recv_end = in_stripes;
-    rcps->UpdateAfterEdit();
-  }
-  { RowColPrjnSpec* rcps = PbwmSp("PFCoutToOutPrjn",RowColPrjnSpec);
-    rcps->send_start = -out_stripes;
-    rcps->UpdateAfterEdit();
-  }
-  { RowColPrjnSpec* rcps = PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec);
-    rcps->recv_start = -out_stripes;
-    rcps->send_end = in_stripes + mnt_stripes; // todo..
-    rcps->UpdateAfterEdit();
-  }
-  { RowColPrjnSpec* rcps = PbwmSp("PFCMntToPatchPrjn",RowColPrjnSpec);
-    rcps->send_start = in_stripes;
-    rcps->send_end = in_stripes + mnt_stripes;
-    rcps->UpdateAfterEdit();
-  }
-
 
   MarkerConSpec* marker_cons = PbwmSp(prefix + "MarkerCons", MarkerConSpec);
   GpOneToOnePrjnSpec* gponetoone = PbwmSp(prefix + "GpOneToOne",GpOneToOnePrjnSpec);
@@ -1911,38 +1805,38 @@ can be sure everything is ok.";
   net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_go, patch, PbwmSp("PatchToMatrixPrjn", GpRndTesselPrjnSpec),
                     marker_cons);
-  net->FindMakePrjn(matrix_go, pfc, gponetoone,
+  net->FindMakePrjn(matrix_go, pfc_mnt, gponetoone,
                     PbwmSp("PFCToMatrix", LeabraConSpec));
-  net->FindMakePrjn(matrix_go, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
+  // net->FindMakePrjn(matrix_go, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
+  //                   PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
 
   net->FindMakePrjn(matrix_nogo, gpi, gponetoone, marker_cons);
   net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
   net->FindMakePrjn(matrix_nogo, patch, PbwmSp("PatchToMatrixPrjn", GpRndTesselPrjnSpec),
                     marker_cons);
-  net->FindMakePrjn(matrix_nogo, pfc, gponetoone,
+  net->FindMakePrjn(matrix_nogo, pfc_mnt, gponetoone,
                     PbwmSp("PFCToMatrix", LeabraConSpec));
-  net->FindMakePrjn(matrix_nogo, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
+  // net->FindMakePrjn(matrix_nogo, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
+  //                   PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
 
-  net->FindMakePrjn(patch, pfc, gponetoone, PbwmSp("PFCdPatch", SendDeepRawConSpec));
+  net->FindMakePrjn(patch, pfc_mnt, gponetoone, PbwmSp("PFCdPatch", SendDeepRawConSpec));
 
   net->FindMakePrjn(gpi, matrix_go, gponetoone, fix_cons);
   net->FindMakePrjn(gpi, matrix_nogo, gponetoone, fix_cons);
 
-  net->FindMakePrjn(gpinvert, gpi, onetoone, marker_cons);
+  net->FindMakePrjn(gpenogo, gpi, onetoone, marker_cons);
 
-  net->FindMakePrjn(thal, gpinvert, onetoone, marker_cons);
-  net->FindMakePrjn(thal, pfc, gponetoone, PbwmSp("PFCToThal", LeabraConSpec));
-  net->FindMakePrjn(thal, pfc, gponetoone, PbwmSp("PFCdMntBiasThal", SendDeepRawConSpec));
-  net->FindMakePrjn(thal, pfc, PbwmSp("PFCdMntToOutPrjn_thal",RowColPrjnSpec),
-                    PbwmSp("PFCdOutBiasThal", SendDeepRawConSpec));
+  // net->FindMakePrjn(thal, gpenogo, onetoone, marker_cons);
+  // net->FindMakePrjn(thal, pfc_mnt, gponetoone, PbwmSp("PFCToThal", LeabraConSpec));
+  // net->FindMakePrjn(thal, pfc_mnt, gponetoone, PbwmSp("PFCdMntBiasThal", SendDeepRawConSpec));
+  // // net->FindMakePrjn(thal, pfc_mnt, PbwmSp("PFCdMntToOutPrjn_thal",RowColPrjnSpec),
+  // //                   PbwmSp("PFCdOutBiasThal", SendDeepRawConSpec));
 
-  net->FindMakePrjn(pfc, thal, gponetoone, marker_cons);
-  net->FindMakePrjn(pfc, pfc, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-                    PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
+  // net->FindMakePrjn(pfc_mnt, thal, gponetoone, marker_cons);
+  // // net->FindMakePrjn(pfc_mnt, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
+  // //                   PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
 
-  net->FindMakePrjn(pfcd, pfc, onetoone, marker_cons);
+  // net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
 
   // connect input layers
   for(i=0;i<input_lays.size;i++) {
@@ -1954,13 +1848,13 @@ can be sure everything is ok.";
                         PbwmSp("MatrixConsNoGo", MatrixConSpec));
     }
     else {
-      net->FindMakePrjn(matrix_go, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
-                        PbwmSp("InputToMatrixBias", LeabraConSpec));
-      net->FindMakePrjn(matrix_nogo, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
-                        PbwmSp("InputToMatrixBias", LeabraConSpec));
-      net->FindMakePrjn(thal, il, PbwmSp("InputToThalInPrjn", RowColPrjnSpec),
-                        PbwmSp("InputToThal", LeabraConSpec));
-      net->FindMakePrjn(pfc, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
+      // net->FindMakePrjn(matrix_go, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
+      //                   PbwmSp("InputToMatrixBias", LeabraConSpec));
+      // net->FindMakePrjn(matrix_nogo, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
+      //                   PbwmSp("InputToMatrixBias", LeabraConSpec));
+      // net->FindMakePrjn(thal, il, PbwmSp("InputToThalInPrjn", RowColPrjnSpec),
+      //                   PbwmSp("InputToThal", LeabraConSpec));
+      // net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
     }
   }
 
@@ -1968,10 +1862,10 @@ can be sure everything is ok.";
   for(i=0;i<output_lays.size;i++) {
     Layer* ol = (Layer*)output_lays[i];
 
-    net->FindMakePrjn(ol, pfc, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-                      PbwmSp("Deep5bLrn", SendDeepRawConSpec));
+    // net->FindMakePrjn(ol, pfc_mnt, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
+    //                   PbwmSp("Deep5bLrn", SendDeepRawConSpec));
     // todo: need reciprocal connection!
-    // net->FindMakePrjn(pfc, ol, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
+    // net->FindMakePrjn(pfc_mnt, ol, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
     //                   PbwmSp("ToPFC", LeabraConSpec));
   }
 
@@ -1979,10 +1873,10 @@ can be sure everything is ok.";
   for(i=0;i<hidden_lays.size;i++) {
     Layer* hl = (Layer*)hidden_lays[i];
 
-    net->FindMakePrjn(hl, pfc, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-                      PbwmSp("Deep5bLrn", SendDeepRawConSpec));
+    // net->FindMakePrjn(hl, pfc_mnt, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
+    //                   PbwmSp("Deep5bLrn", SendDeepRawConSpec));
     // todo: need reciprocal connection!
-    // net->FindMakePrjn(pfc, hl, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
+    // net->FindMakePrjn(pfc_mnt, hl, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
     //                   PbwmSp("ToPFC", LeabraConSpec));
   }
 
@@ -1997,14 +1891,12 @@ can be sure everything is ok.";
     patch->brain_area = ".*/.*/.*/.*/Caudate Body";
   if(gpi->brain_area.empty())
     gpi->brain_area = ".*/.*/.*/.*/Substantia Nigra";
-  if(gpinvert->brain_area.empty())
-    gpinvert->brain_area = ".*/.*/.*/.*/Substantia Nigra";
-  if(thal->brain_area.empty())
-    thal->brain_area = ".*/.*/Thalamus/.*/Medial Dorsal Nucleus";
-  if(pfc->brain_area.empty())
-    pfc->brain_area = ".*/.*/.*/.*/BA9";
-  if(pfcd->brain_area.empty())
-    pfcd->brain_area = ".*/.*/.*/.*/BA9";
+  if(gpenogo->brain_area.empty())
+    gpenogo->brain_area = ".*/.*/.*/.*/Substantia Nigra";
+  if(pfc_mnt->brain_area.empty())
+    pfc_mnt->brain_area = ".*/.*/.*/.*/BA9";
+  if(pfc_mnt_d->brain_area.empty())
+    pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
 
   int lay_spc = 2;
 
@@ -2028,13 +1920,13 @@ can be sure everything is ok.";
   if(new_matrix) {
     matrix_go->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
     matrix_go->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
-    lay_set_geom(matrix_go, tot_stripes, n_channels, false);
+    lay_set_geom(matrix_go, pfc_gp_x * 2, pfc_gp_y);
 
     mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go->disp_geom.y + 3 * lay_spc);
     matrix_nogo->pos.SetXYZ(mtx_st_x, mtx_nogo_y, mtx_z);
     matrix_nogo->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
 
-    lay_set_geom(matrix_nogo, tot_stripes, n_channels, false);
+    lay_set_geom(matrix_nogo, pfc_gp_x * 2, pfc_gp_y);
 
     mtx_st_x += matrix_nogo->disp_geom.x + lay_spc; // move over..
   }
@@ -2045,19 +1937,15 @@ can be sure everything is ok.";
 
   if(new_matrix) {
     gpi->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(gpi, tot_stripes, n_channels, true);
+    lay_set_geom(gpi, pfc_gp_x * 2, pfc_gp_y);
     gpi_st_y += gpi->disp_geom.y + lay_spc;
 
-    gpinvert->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(gpinvert, tot_stripes, n_channels, true);
-    gpi_st_y += gpinvert->disp_geom.y + lay_spc;
-    
-    thal->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(thal, tot_stripes, n_channels, true);
-    gpi_st_y += thal->disp_geom.y + lay_spc;
+    gpenogo->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
+    lay_set_geom(gpenogo, pfc_gp_x * 2, pfc_gp_y);
+    gpi_st_y += gpenogo->disp_geom.y + lay_spc;
     
     patch->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(patch, 1, n_channels, false, 1, true);
+    lay_set_geom(patch, pfc_gp_x * 2, pfc_gp_y, 1);
     gpi_st_y += patch->disp_geom.y + lay_spc;
   }
 
@@ -2068,19 +1956,19 @@ can be sure everything is ok.";
   int pfc_st_y = 0;
   int pfc_z = 1;
   if(new_pfc) {
-    pfc->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-    pfc->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    lay_set_geom(pfc, tot_stripes, n_channels, false);
+    pfc_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+    pfc_mnt->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+    lay_set_geom(pfc_mnt, pfc_gp_x, pfc_gp_y);
 
-    pfc_st_y += pfc->disp_geom.y + lay_spc;
+    pfc_st_y += pfc_mnt->disp_geom.y + lay_spc;
 
-    pfcd->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
-    pfcd->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
-    lay_set_geom(pfcd, tot_stripes, n_channels, false);
+    pfc_mnt_d->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+    pfc_mnt_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+    lay_set_geom(pfc_mnt_d, pfc_gp_x, pfc_gp_y);
   }
 
   // here to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, in_stripes, mnt_stripes, out_stripes, n_channels);
+  PBWM_SetNStripes(net, pfc_gp_x, pfc_gp_y);
 
   if(new_pbwm_laygp) {
     pbwm_laygp->pos.z = 0;

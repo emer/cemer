@@ -28,7 +28,7 @@ void GPiMiscSpec::Initialize() {
 }
 
 void GPiMiscSpec::Defaults_init() {
-  nogo = 0.1f;
+  nogo = 1.0f;
   thr_act = true;
   gate_thr = 0.1f;
   net_gain = 2.0f;

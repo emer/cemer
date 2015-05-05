@@ -159,18 +159,21 @@ void GpOneToOnePrjnSpec::Connect_SendUnitsRecvGps(Projection* prjn, bool make_co
     if(!make_cons) {
       // pre-allocate connections
       Unit* su = send_lay->UnitAtCoord(rgp_pos);
+      if(!su) continue;
       su->SendConsPreAlloc(ru_nunits, prjn);
 
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        if(!ru) continue;
         ru->RecvConsPreAlloc(1, prjn);
       }
     }
     else {
       Unit* su = send_lay->UnitAtCoord(rgp_pos);
+      if(!su) continue;
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-        if(self_con || (ru != su))
+        if(ru && (self_con || (ru != su)))
           ru->ConnectFrom(su, prjn);
       }
     }

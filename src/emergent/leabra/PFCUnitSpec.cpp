@@ -29,7 +29,7 @@ void PFCMiscSpec::Initialize() {
 
 void PFCMiscSpec::Defaults_init() {
   gate_thr = 0.1f;
-  out_mnt = 2;
+  out_mnt = 1;
   max_mnt = 100;
 }
 
@@ -41,9 +41,15 @@ void PFCUnitSpec::Defaults_init() {
   InitDynTable();
   deep_qtr = Q2_Q4;
   deep.on = true;
+  deep.d_to_d = 0.0f;
+  deep.d_to_s = 1.0f;
+  deep.thal_to_d = 0.0f;
+  deep.thal_to_s = 0.0f;
   deep_norm.on = true;
   deep_norm.mod = false;
   deep_norm.raw_val = DeepNormSpec::UNIT;
+  deep_norm.contrast = 1.0f;
+  deep_norm.copy_def = 0.0f;
 }
 
 void  PFCUnitSpec::FormatDynTable() {

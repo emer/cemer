@@ -71,10 +71,9 @@ public:
 				 bool disconnect = false);
   // #MENU_BUTTON #PROJ_SCOPE_1 make (or break if disconnect = true) connection between given output_layer in given network and the PVe layer, which uses this output layer together with the RewTarg layer input to automatically compute reward value based on performance
 
-  virtual bool 	PBWM(LeabraNetwork* net, int in_stripes = 0, int mnt_stripes = 2,
-		     int out_stripes = 2, int n_channels = 3, bool add_on = false, 
-                     const String& prefix = "PBWM");
-  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; numbers of stripes can be set per each type of gating, within each independent channel of such stripes (0 = do not create that type of gating pathway); n_channels = number of independent collections of interdependent stripes;  add_on = this is an additional PBWM system on top of one that is already there -- be sure to also change prefix name so it doesn't overwrite
+  virtual bool 	PBWM(LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2,
+                     bool add_on = false, const String& prefix = "PBWM");
+  // #MENU_BUTTON #MENU_SEP_BEFORE configure all the layers and specs for the prefrontal-cortex basal ganglia working memory system (PBWM) -- does a PVLV configuration first (see PVLV for details) and then adds a basal ganglia gating system that is trained by PVLV dopamine signals.  The gating system determines when the PFC working memory representations are updated; unit group (stripe) geometry specified for paired maint and output stripes;  add_on = this is an additional PBWM system on top of one that is already there -- be sure to also change prefix name so it doesn't overwrite
 
   virtual bool 	PBWM_Specs(LeabraNetwork* net, 
                            const String& prefix = "PBWM", bool set_defs = false);
@@ -85,10 +84,9 @@ public:
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured
 
   virtual bool PBWM_SetNStripes
-    (LeabraNetwork* net, int in_stripes = 0, int mnt_stripes = 2, int out_stripes = 2,
-     int n_channels = 3, int n_matrix_units=-1, int n_pfc_units=-1,
-     const String& prefix = "PBWM");
-  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) for each different type of gating in the network -- each complete set of stripes constitutes one channel, and n_channels independent channels can be defined -- channels are columns and stripe types are rows in one PFC layer -- and number of units per unit group in matrix and pfc (-1 = use current # of units); one_snr = make one snrthal layer for all pfc layers -- otherwise make separate one for output gating; 
+    (LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2, int n_matrix_units=-1,
+     int n_pfc_units=-1, const String& prefix = "PBWM");
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) for maint and output gating in the network -- and number of units per unit group in matrix and pfc (-1 = use current # of units)
 
   virtual bool PBWM_Remove(LeabraNetwork* net,
                            const String& prefix = "PBWM");

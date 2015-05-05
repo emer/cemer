@@ -32,7 +32,7 @@ void ThalAutoEncodeUnitSpec::Defaults_init() {
 void ThalAutoEncodeUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
                                            int thr_no) {
   inherited::Compute_NetinRaw(u, net, thr_no);
-  if(net->phase == LeabraNetwork::PLUS_PHASE) { // note: using plus phase here..
+  if(Quarter_DeepNow(net->quarter)) {
     u->net_raw = u->deep_raw_net;          // only gets from deep!
   }
 }
