@@ -28,7 +28,7 @@ void MatrixLearnSpec::Defaults_init() {
   tr_decay = 1.0f;
   otr_lrate = 0.5f;
   protect_pos = false;
-  thal_mult = true;
+  thal_mult = false;
   tr_max = 10.0f;
 }
 

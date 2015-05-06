@@ -39,12 +39,15 @@ void PFCUnitSpec::Initialize() {
 
 void PFCUnitSpec::Defaults_init() {
   InitDynTable();
+  SetUnique("deep", true);
   deep_qtr = Q2_Q4;
   deep.on = true;
+  deep.thr = 0.1f;
   deep.d_to_d = 0.0f;
   deep.d_to_s = 1.0f;
   deep.thal_to_d = 0.0f;
   deep.thal_to_s = 0.0f;
+  SetUnique("deep_norm", true);
   deep_norm.on = true;
   deep_norm.mod = false;
   deep_norm.raw_val = DeepNormSpec::UNIT;

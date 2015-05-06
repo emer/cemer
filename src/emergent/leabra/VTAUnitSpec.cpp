@@ -46,6 +46,7 @@ void LVBlockSpec::Initialize() {
 }
 
 void VTAUnitSpec::Initialize() {
+  SetUnique("deep_qtr", true);
   deep_qtr = Q4;
   SetUnique("act_range", true);
   act_range.max = 2.0f;

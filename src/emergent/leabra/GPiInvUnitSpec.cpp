@@ -28,10 +28,10 @@ void GPiMiscSpec::Initialize() {
 }
 
 void GPiMiscSpec::Defaults_init() {
+  net_gain = 1.0f;
   nogo = 1.0f;
-  thr_act = true;
   gate_thr = 0.1f;
-  net_gain = 2.0f;
+  thr_act = true;
   tot_gain = net_gain + nogo;
 }
 

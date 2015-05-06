@@ -368,7 +368,7 @@ void LeabraUnitSpec::Initialize() {
 
   act_fun = NOISY_XX1;
 
-  deep_qtr = QNULL;
+  deep_qtr = Q4;
 
   noise_type = NO_NOISE;
   noise.type = Random::GAUSSIAN;

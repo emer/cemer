@@ -62,6 +62,7 @@ void DataCol::InitLinks() {
     taBase::Own(ar, this);
     SetMatrixViewMode();
   }
+  AutoNameMyMembers();
 }
 
 void DataCol::SetMatrixViewMode() {

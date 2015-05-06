@@ -24,7 +24,7 @@ void PatchUnitSpec::Initialize() {
 }
 
 void PatchUnitSpec::Defaults_init() {
-  shunt_factor = 0.5f;
+  shunt_factor = 0.0f;
 }
 
 void PatchUnitSpec::Send_DAShunt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
