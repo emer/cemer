@@ -2210,7 +2210,7 @@ bool DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name
     taMisc::Info("DataTable::ExportDataJSON_impl -- column type undefined - should not happen");
   }
   std::string theString = root.write_formatted();
-  taMisc::DebugInfo(theString.c_str());
+//  taMisc::DebugInfo(theString.c_str());
   strm << theString;
   strm << endl;
 
