@@ -308,6 +308,11 @@ public:
   void          SetDefaultPos2d();
   // #IGNORE initialize position of layer -- 2d
 
+  void          PositionRightOf(Layer* lay, int space = 2);
+  // position this layer to the right of given other layer -- does this for both 3D and 2D displays, with given amount of space
+  void          PositionBehind(Layer* lay, int space = 2);
+  // position this layer behind other layer -- does this for both 3D and 2D displays, with given amount of space
+  
   virtual void  Copy_Weights(const Layer* src);
   // #MENU #MENU_ON_Object #MENU_SEP_BEFORE #CAT_ObjectMgmt copies weights from other layer (incl wts assoc with unit bias member)
 

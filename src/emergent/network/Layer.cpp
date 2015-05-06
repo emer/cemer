@@ -441,6 +441,23 @@ void Layer::SetDefaultPos2d() {
   }
 }
 
+void Layer::PositionRightOf(Layer* lay, int space) {
+  lay->RecomputeGeometry();     // be sure..
+  pos = lay->pos;
+  pos.x += lay->scaled_disp_geom.x + space;
+  pos2d = lay->pos2d;
+  pos2d.x += lay->scaled_disp_geom.x + space;
+}
+
+void Layer::PositionBehind(Layer* lay, int space) {
+  lay->RecomputeGeometry();     // be sure..
+  pos = lay->pos;
+  pos.y += lay->scaled_disp_geom.y + space;
+  pos2d = lay->pos2d;
+  pos2d.y += lay->scaled_disp_geom.y + space;
+}
+
+
 void Layer::LayoutUnits() {
   StructUpdate(true);
   RecomputeGeometry();

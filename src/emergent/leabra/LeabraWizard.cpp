@@ -1700,6 +1700,7 @@ can be sure everything is ok.";
   LeabraLayer* gpi = NULL;
   LeabraLayer* gpenogo = NULL;
   LeabraLayer* pfc_mnt = NULL;
+  LeabraLayer* pfc_mnt_trc = NULL;
   LeabraLayer* pfc_out = NULL;
   LeabraLayer* pfc_mnt_d = NULL;
   LeabraLayer* pfc_out_d = NULL;
@@ -1712,8 +1713,9 @@ can be sure everything is ok.";
   gpi = (LeabraLayer*)pbwm_laygp->FindMakeLayer("GPi", NULL);
   bool new_pfc  = false;
   pfc_mnt = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt", NULL, new_pfc);
-  pfc_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout", NULL);
   pfc_mnt_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_deep", NULL);
+  pfc_mnt_trc = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCmnt_trc", NULL, new_pfc);
+  pfc_out = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout", NULL);
   pfc_out_d = (LeabraLayer*)pbwm_laygp->FindMakeLayer("PFCout_deep", NULL);
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1722,7 +1724,8 @@ can be sure everything is ok.";
   int mx_z1 = 0;         // max x coordinate on layer z=1
   int mx_z2 = 0;         // z=2
   Layer_Group other_lays;   Layer_Group hidden_lays;
-  Layer_Group output_lays;  Layer_Group input_lays;
+  Layer_Group output_lays;  Layer_Group stim_input_lays;
+  Layer_Group task_input_lays;
   taVector3i lpos;
   int i;
   for(i=0;i<net->layers.leaves;i++) {
@@ -1738,14 +1741,26 @@ can be sure everything is ok.";
     int xm = lpos.x + lay->scaled_disp_geom.x + 1;
     if(lpos.z == 1) mx_z1 = MAX(mx_z1, xm);
     if(lpos.z == 2) mx_z2 = MAX(mx_z2, xm);
-    if(lay->layer_type == Layer::HIDDEN)
+    if(lay->layer_type == Layer::HIDDEN) {
       hidden_lays.Link(lay);
-    else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In"))
-      input_lays.Link(lay);
-    else if(lay->name.contains("Out"))
+    }
+    else if((lay->layer_type == Layer::INPUT) || lay->name.contains("In")) {
+      if(lay->name.contains("Ctrl") || lay->name.contains("Task")) {
+        task_input_lays.Link(lay);
+      }
+      else {
+        stim_input_lays.Link(lay);   // default to input
+      }
+    }
+    else if(lay->name.contains("Out")) {
       output_lays.Link(lay);
-    else
-      input_lays.Link(lay);   // default to input -- many are now TARGET in TI
+    }
+    else if(lay->name.contains("Ctrl") || lay->name.contains("Task")) {
+      task_input_lays.Link(lay);
+    }
+    else {
+      stim_input_lays.Link(lay);   // default to input
+    }
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1780,11 +1795,14 @@ can be sure everything is ok.";
   pfc_mnt->SetUnitSpec(PbwmSp("PFCmntUnits",PFCUnitSpec));
   pfc_mnt->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
-  pfc_out->SetUnitSpec(PbwmSp("PFCoutUnits",PFCUnitSpec));
-  pfc_out->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
-
   pfc_mnt_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
   pfc_mnt_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
+
+  pfc_mnt_trc->SetUnitSpec(PbwmSp("PFCtrcUnits",ThalAutoEncodeUnitSpec));
+  pfc_mnt_trc->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
+
+  pfc_out->SetUnitSpec(PbwmSp("PFCoutUnits",PFCUnitSpec));
+  pfc_out->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
 
   pfc_out_d->SetUnitSpec(PbwmSp("PFCdUnits",DeepCopyUnitSpec));
   pfc_out_d->SetLayerSpec(PbwmSp("PFCLayer",LeabraLayerSpec));
@@ -1796,6 +1814,7 @@ can be sure everything is ok.";
   GpOneToOnePrjnSpec* gponetoone = PbwmSp(prefix + "GpOneToOne",GpOneToOnePrjnSpec);
   FullPrjnSpec* fullprjn = PbwmSp(prefix + "FullPrjn", FullPrjnSpec);
   OneToOnePrjnSpec* onetoone = PbwmSp(prefix + "OneToOne", OneToOnePrjnSpec);
+  BgPfcPrjnSpec* bgpfcprjn = PbwmSp("BgPfcPrjn", BgPfcPrjnSpec);
 
   LeabraConSpec* fix_cons = PbwmSp(prefix + "FixedCons", LeabraConSpec);
 
@@ -1803,81 +1822,68 @@ can be sure everything is ok.";
 
   net->FindMakePrjn(matrix_go, gpi, gponetoone, marker_cons);
   net->FindMakePrjn(matrix_go, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(matrix_go, patch, PbwmSp("PatchToMatrixPrjn", GpRndTesselPrjnSpec),
-                    marker_cons);
-  net->FindMakePrjn(matrix_go, pfc_mnt, gponetoone,
-                    PbwmSp("PFCToMatrix", LeabraConSpec));
-  // net->FindMakePrjn(matrix_go, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-  //                   PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
+  net->FindMakePrjn(matrix_go, patch, bgpfcprjn, marker_cons);
 
   net->FindMakePrjn(matrix_nogo, gpi, gponetoone, marker_cons);
   net->FindMakePrjn(matrix_nogo, vta, fullprjn, marker_cons);
-  net->FindMakePrjn(matrix_nogo, patch, PbwmSp("PatchToMatrixPrjn", GpRndTesselPrjnSpec),
-                    marker_cons);
-  net->FindMakePrjn(matrix_nogo, pfc_mnt, gponetoone,
-                    PbwmSp("PFCToMatrix", LeabraConSpec));
-  // net->FindMakePrjn(matrix_nogo, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-  //                   PbwmSp("PFCdOutBiasMtx", SendDeepRawConSpec));
+  net->FindMakePrjn(matrix_nogo, patch, bgpfcprjn, marker_cons);
 
-  net->FindMakePrjn(patch, pfc_mnt, gponetoone, PbwmSp("PFCdPatch", SendDeepRawConSpec));
+  net->FindMakePrjn(patch, pfc_mnt, gponetoone, fix_cons);
+
+  net->FindMakePrjn(gpenogo, gpi, onetoone, fix_cons);
 
   net->FindMakePrjn(gpi, matrix_go, gponetoone, fix_cons);
-  net->FindMakePrjn(gpi, matrix_nogo, gponetoone, fix_cons);
+  net->FindMakePrjn(gpi, gpenogo, gponetoone, fix_cons);
 
-  net->FindMakePrjn(gpenogo, gpi, onetoone, marker_cons);
+  net->FindMakePrjn(pfc_mnt, gpi, bgpfcprjn, marker_cons);
+  net->FindMakePrjn(pfc_mnt, pfc_out, onetoone, marker_cons);
+  net->FindMakePrjn(pfc_mnt, pfc_mnt_trc, gponetoone,
+                    PbwmSp("PFCfmTRC", LeabraConSpec));
 
-  // net->FindMakePrjn(thal, gpenogo, onetoone, marker_cons);
-  // net->FindMakePrjn(thal, pfc_mnt, gponetoone, PbwmSp("PFCToThal", LeabraConSpec));
-  // net->FindMakePrjn(thal, pfc_mnt, gponetoone, PbwmSp("PFCdMntBiasThal", SendDeepRawConSpec));
-  // // net->FindMakePrjn(thal, pfc_mnt, PbwmSp("PFCdMntToOutPrjn_thal",RowColPrjnSpec),
-  // //                   PbwmSp("PFCdOutBiasThal", SendDeepRawConSpec));
+  net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
 
-  // net->FindMakePrjn(pfc_mnt, thal, gponetoone, marker_cons);
-  // // net->FindMakePrjn(pfc_mnt, pfc_mnt, PbwmSp("PFCdMntToOutPrjn",RowColPrjnSpec),
-  // //                   PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
+  net->FindMakePrjn(pfc_mnt_trc, pfc_mnt, gponetoone,
+                    PbwmSp("PFCtoTRC", LeabraConSpec));
 
-  // net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
+  net->FindMakePrjn(pfc_out, gpi, bgpfcprjn, marker_cons);
+  net->FindMakePrjn(pfc_out, pfc_mnt, gponetoone,
+                    PbwmSp("PFCdMntToOut", SendDeepRawConSpec));
 
+  net->FindMakePrjn(pfc_out_d, pfc_out, onetoone, marker_cons);
+  
   // connect input layers
-  for(i=0;i<input_lays.size;i++) {
-    Layer* il = (Layer*)input_lays[i];
-    if(il->name.contains("Ctrl") || il->name.contains("Task")) {
-      // control or task inputs go to everyone
+  for(i=0;i<task_input_lays.size;i++) {
+    Layer* il = (Layer*)task_input_lays[i];
+    net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MatrixConSpec));
+    net->FindMakePrjn(matrix_nogo, il, fullprjn,
+                      PbwmSp("MatrixConsNoGo", MatrixConSpec));
+  }
+
+  for(i=0;i<stim_input_lays.size;i++) {
+    Layer* il = (Layer*)stim_input_lays[i];
+    if(task_input_lays.size == 0) {
       net->FindMakePrjn(matrix_go, il, fullprjn, PbwmSp("MatrixConsGo", MatrixConSpec));
       net->FindMakePrjn(matrix_nogo, il, fullprjn,
                         PbwmSp("MatrixConsNoGo", MatrixConSpec));
     }
-    else {
-      // net->FindMakePrjn(matrix_go, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
-      //                   PbwmSp("InputToMatrixBias", LeabraConSpec));
-      // net->FindMakePrjn(matrix_nogo, il, PbwmSp("InputToPFCinPrjn", RowColPrjnSpec),
-      //                   PbwmSp("InputToMatrixBias", LeabraConSpec));
-      // net->FindMakePrjn(thal, il, PbwmSp("InputToThalInPrjn", RowColPrjnSpec),
-      //                   PbwmSp("InputToThal", LeabraConSpec));
-      // net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
-    }
+    net->FindMakePrjn(pfc_mnt, il, fullprjn, PbwmSp("ToPFC", LeabraConSpec));
+    net->FindMakePrjn(pfc_mnt_trc, il, fullprjn, PbwmSp(prefix + "DeepRawPlus",
+                                                        SendDeepRawConSpec));
   }
 
   // connect output layers
   for(i=0;i<output_lays.size;i++) {
     Layer* ol = (Layer*)output_lays[i];
-
-    // net->FindMakePrjn(ol, pfc_mnt, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-    //                   PbwmSp("Deep5bLrn", SendDeepRawConSpec));
-    // todo: need reciprocal connection!
-    // net->FindMakePrjn(pfc_mnt, ol, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-    //                   PbwmSp("ToPFC", LeabraConSpec));
+    net->FindMakePrjn(ol, pfc_out_d, fullprjn, PbwmSp(prefix + "LrnCons", LeabraConSpec));
+    //    net->FindMakePrjn(ol, pfc_mnt_d, fullprjn, PbwmSp(prefix + "LrnCons", LeabraConSpec));
+    // todo: no reciprocal connection!?
   }
 
   // connect hiden layers
   for(i=0;i<hidden_lays.size;i++) {
     Layer* hl = (Layer*)hidden_lays[i];
-
-    // net->FindMakePrjn(hl, pfc_mnt, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-    //                   PbwmSp("Deep5bLrn", SendDeepRawConSpec));
-    // todo: need reciprocal connection!
-    // net->FindMakePrjn(pfc_mnt, hl, PbwmSp("PFCoutToOutPrjn", RowColPrjnSpec), 
-    //                   PbwmSp("ToPFC", LeabraConSpec));
+    net->FindMakePrjn(hl, pfc_out_d, fullprjn, PbwmSp(prefix + "LrnCons", LeabraConSpec));
+    //    net->FindMakePrjn(hl, pfc_mnt_d, fullprjn, PbwmSp(prefix + "LrnCons", LeabraConSpec));
   }
 
   //////////////////////////////////////////////////////////////////////////////////
@@ -1898,6 +1904,9 @@ can be sure everything is ok.";
   if(pfc_mnt_d->brain_area.empty())
     pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
 
+  // here to allow it to get disp_geom for laying out the pfc and matrix guys!
+  PBWM_SetNStripes(net, pfc_gp_x, pfc_gp_y);
+
   int lay_spc = 2;
 
   if(new_pbwm_laygp) {
@@ -1908,6 +1917,9 @@ can be sure everything is ok.";
 
   ///////////////	Matrix Layout
 
+  int bg_gp_x = pfc_gp_x * 2;
+  int bg_gp_y = pfc_gp_y;
+  
   int mtx_st_x = 0;
   int mtx_st_y = 0;
   int mtx_nogo_y = mtx_st_y + 3 * lay_spc;
@@ -1920,15 +1932,11 @@ can be sure everything is ok.";
   if(new_matrix) {
     matrix_go->pos.SetXYZ(mtx_st_x, mtx_st_y, mtx_z);
     matrix_go->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
-    lay_set_geom(matrix_go, pfc_gp_x * 2, pfc_gp_y);
+    lay_set_geom(matrix_go, bg_gp_x, bg_gp_y);
 
-    mtx_nogo_y = MAX(mtx_nogo_y, mtx_st_y + matrix_go->disp_geom.y + 3 * lay_spc);
-    matrix_nogo->pos.SetXYZ(mtx_st_x, mtx_nogo_y, mtx_z);
+    matrix_nogo->PositionBehind(matrix_go, lay_spc);
     matrix_nogo->un_geom.SetXYN(mtx_x_sz, mtx_y_sz, mtx_n);
-
-    lay_set_geom(matrix_nogo, pfc_gp_x * 2, pfc_gp_y);
-
-    mtx_st_x += matrix_nogo->disp_geom.x + lay_spc; // move over..
+    lay_set_geom(matrix_nogo, bg_gp_x, bg_gp_y);
   }
 
   ///////////////	GPi / Thal
@@ -1936,17 +1944,14 @@ can be sure everything is ok.";
   int gpi_st_y = 0;
 
   if(new_matrix) {
-    gpi->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(gpi, pfc_gp_x * 2, pfc_gp_y);
-    gpi_st_y += gpi->disp_geom.y + lay_spc;
+    gpi->PositionRightOf(matrix_go, lay_spc);
+    lay_set_geom(gpi, bg_gp_x, bg_gp_y);
 
-    gpenogo->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(gpenogo, pfc_gp_x * 2, pfc_gp_y);
-    gpi_st_y += gpenogo->disp_geom.y + lay_spc;
+    gpenogo->PositionBehind(gpi, lay_spc);
+    lay_set_geom(gpenogo, bg_gp_x, bg_gp_y);
     
-    patch->pos.SetXYZ(mtx_st_x, gpi_st_y, mtx_z);
-    lay_set_geom(patch, pfc_gp_x * 2, pfc_gp_y, 1);
-    gpi_st_y += patch->disp_geom.y + lay_spc;
+    patch->PositionBehind(gpenogo, lay_spc);
+    lay_set_geom(patch, bg_gp_x, bg_gp_y, 1);
   }
 
   ///////////////	PFC Layout first -- get into z = 1
@@ -1956,19 +1961,26 @@ can be sure everything is ok.";
   int pfc_st_y = 0;
   int pfc_z = 1;
   if(new_pfc) {
-    pfc_mnt->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+    pfc_mnt_trc->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z); 
+    pfc_mnt_trc->un_geom.SetXYN(4, 4, 16);
+    lay_set_geom(pfc_mnt_trc, pfc_gp_x, pfc_gp_y);
+
+    pfc_mnt->PositionRightOf(pfc_mnt_trc, lay_spc);
     pfc_mnt->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
     lay_set_geom(pfc_mnt, pfc_gp_x, pfc_gp_y);
-
-    pfc_st_y += pfc_mnt->disp_geom.y + lay_spc;
-
-    pfc_mnt_d->pos.SetXYZ(pfc_st_x, pfc_st_y, pfc_z);
+    
+    pfc_mnt_d->PositionBehind(pfc_mnt, lay_spc);
     pfc_mnt_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
     lay_set_geom(pfc_mnt_d, pfc_gp_x, pfc_gp_y);
-  }
 
-  // here to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, pfc_gp_x, pfc_gp_y);
+    pfc_out->PositionRightOf(pfc_mnt, lay_spc);
+    pfc_out->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+    lay_set_geom(pfc_out, pfc_gp_x, pfc_gp_y);
+
+    pfc_out_d->PositionBehind(pfc_out, lay_spc);
+    pfc_out_d->un_geom.SetXYN(pfcu_x, pfcu_y, pfcu_n);
+    lay_set_geom(pfc_out_d, pfc_gp_x, pfc_gp_y);
+  }
 
   if(new_pbwm_laygp) {
     pbwm_laygp->pos.z = 0;
