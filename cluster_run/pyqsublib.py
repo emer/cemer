@@ -1,6 +1,6 @@
 #!/usr/bin/python
 from subprocess import call,Popen,PIPE
-import os, time, re, string
+import os, time, re, string, logging
 
 DEBUG = True
 
@@ -164,7 +164,10 @@ class SGEJobManager( ClusterJobManager ):
         cmd = " ".join(self.subCmd) + " " + self.script_filename
         if DEBUG:
             print cmd
-        stdoutstr = Popen(cmd, shell=True, stdout=PIPE).communicate()[0]
+        try:
+            stdoutstr = Popen(cmd, shell=True, stdout=PIPE).communicate()[0]
+        except OSError:
+            logging.error("Failed to submit command: %s " % cmd)
         self.job_id = re.search('([0-9]+)', stdoutstr).group()
 
         cmd = ['qalter','-o','JOB.' + self.job_id + '.out', '-N', 'JOB.' + self.job_id + '.sh', self.job_id]
@@ -301,7 +304,10 @@ class PBSJobManager( ClusterJobManager ):
         cmd = ['qsub', '-h', self.script_filename]
         if DEBUG:
             print cmd
-        stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        try:
+            stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        except OSError:
+            logging.error("Failed to submit command %s" % cmd)
         
         self.job_id = re.search('([0-9]+)', stdoutstr).group()
         cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
@@ -404,7 +410,10 @@ class SlurmJobManager( ClusterJobManager ):
         cmd = ['sbatch', '-H',  self.script_filename]
         if DEBUG:
             print cmd
-        stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        try:
+            stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
+        except:
+            logging.error("Failed to submit command: %s" % cmd)
         
         self.job_id = re.search('([0-9]+)', stdoutstr).group()
         cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
