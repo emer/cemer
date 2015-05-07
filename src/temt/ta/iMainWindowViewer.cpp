@@ -148,6 +148,9 @@ void iMainWindowViewer::Init() {
   m_is_proj_browser = false;
   m_is_proj_viewer = false;
   m_close_proj_now = false; // only ever set once
+  
+  tools_dock_was_visible = true;
+  nav_frame_width = 0;
 
   // allow win to be any size, even bigger than screen -- esp important for
   // multi-monitor situations, so you can size across screens
@@ -2964,75 +2967,68 @@ void iMainWindowViewer::changeEvent(QEvent* ev) {
 }
 
 void iMainWindowViewer::ShowHideFrames(int combo) {
-  PanelViewer* pv_browse = (PanelViewer*)viewer()->GetLeftBrowser();
-  PanelViewer* pv_panels = (PanelViewer*)viewer()->GetMiddlePanel();
-  PanelViewer* pv_T3 = (PanelViewer*)viewer()->GetRightViewer();
-
+  // 0 - Navigator, 1 - Editor, 2 - Visualizer
+  QList<int> split_sizes_old = body->sizes();
+  int total_width = 0;
+  for (int i=0; i<split_sizes_old.size(); i++) {
+    total_width += split_sizes_old.at(i);
+  }
+  
+  QList<int> split_sizes_new;
+  split_sizes_new.append(0);
+  split_sizes_new.append(0);
+  split_sizes_new.append(0);
+  
+  if (split_sizes_old.at(0) > 0 && split_sizes_old.at(0) != total_width) {
+    nav_frame_width = split_sizes_old.at(0);
+  }
+  
   DockViewer* dv = viewer()->FindDockViewerByName("Tools");
   if (dv) {
-    if ((pv_browse && pv_browse->isVisible()) || (pv_panels && pv_panels->isVisible()))
+    if ((split_sizes_old.at(0) > 0) || (split_sizes_old.at(1) > 0))
       tools_dock_was_visible = dv->isVisible();  // save the state for case when dock is hidden because the browse and panel frames are hidden
   }
-
-  bool show_pv_browse = false;
-  bool show_pv_panels = false;
-  bool show_pv_T3 = false;
-
+  
+  bool show_tools_dock = true;
   switch (combo) {
-  case 1:
-    show_pv_browse = true;
-    break;
-  case 2:
-    show_pv_panels = true;
-    break;
-  case 3:
-    show_pv_browse = true;
-    show_pv_panels = true;
-    break;
-  case 4:
-    show_pv_T3 = true;
-    if (dv)
-      dv->Hide();
-    break;
-  case 5:
-    show_pv_browse = true;
-    show_pv_T3 = true;
-    break;
-  case 6:
-    show_pv_panels = true;
-    show_pv_T3 = true;
-    break;
-  case 7:
-    show_pv_browse = true;
-    show_pv_panels = true;
-    show_pv_T3 = true;
-    break;
+    case 1:
+      split_sizes_new.replace(0, total_width);
+      break;
+    case 2:
+      split_sizes_new.replace(1, total_width);
+      break;
+    case 3:
+      split_sizes_new.replace(0, nav_frame_width);
+      split_sizes_new.replace(1, total_width - nav_frame_width);
+     break;
+    case 4:
+      split_sizes_new.replace(2, total_width);
+      show_tools_dock = false;
+      break;
+    case 5:
+      split_sizes_new.replace(0, nav_frame_width);
+      split_sizes_new.replace(2, total_width - nav_frame_width);
+      break;
+    case 6:
+      split_sizes_new.replace(1, total_width/2);
+      split_sizes_new.replace(2, total_width/2);
+      break;
+    case 7:
+      split_sizes_new.replace(0, nav_frame_width);
+      int remainder = total_width - nav_frame_width;
+      split_sizes_new.replace(1, remainder/2);
+      split_sizes_new.replace(2, remainder/2);
+      show_tools_dock = true;
+      break;
   }
-
-  if (pv_browse) {
-    if (show_pv_browse) {
-      pv_browse->Show();
-      if (dv && tools_dock_was_visible)  // make sure dock is visible if was previously visible
-        dv->Show();
-    }
-    else
-      pv_browse->Hide();
+  
+  if (show_tools_dock && tools_dock_was_visible) {
+    dv->Show();
   }
-  if (pv_panels) {
-    if (show_pv_panels) {
-      pv_panels->Show();
-      if (dv && tools_dock_was_visible)  // make sure dock is visible if was previously visible
-        dv->Show();
-    }
-    else
-      pv_panels->Hide();
+  else {
+    dv->Hide();
   }
-  if (pv_T3) {
-    if (show_pv_T3)
-      pv_T3->Show();
-    else
-      pv_T3->Hide();
-  }
+  body->setSizes(split_sizes_new);
 }
 
 void iMainWindowViewer::toolsOpenRemoteServer() {

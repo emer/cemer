@@ -82,7 +82,10 @@ public:
   iBrowseHistory*       brow_hist;
   taiWidgetMenuBar*     menu;           // menu bar -- note: we use the window's built-in QMenu
   QMenuBar*             main_menu_bar;  // #IGNORE used for mac -- main menu bar created independently
+
   iSplitter*            body;           // #IGNORE body of the window
+  int                   nav_frame_width;// hold onto size of navigator frame for resetting splitter
+  bool                  tool_dock_was_visible;  // save state for flipping between views that might and might not include the programming toolbar
   
   QSignalMapper*        signalMapperForViews;   // #IGNORE used to map several actions to one action and pass a value
   QSignalMapper*        signalMapperForDataProc;   // #IGNORE used to map several actions to one action and pass a value
