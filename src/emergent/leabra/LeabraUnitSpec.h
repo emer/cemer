@@ -443,7 +443,8 @@ public:
     UNIT,           // use the unit deep_raw value -- produces a very specific attentional mask for deep_norm values -- may not generalize very well to new inputs
     GROUP_MAX,      // use the max deep_raw across the unit group -- provides a broader deep_norm attentional mask and is the most lenient allocation of attention to anything that had some strong activation -- falls back on unit if no unit groups
     GROUP_AVG,      // use the average deep_raw across the unit group -- provides a broader deep_norm attentional mask and, while weighting overall level of contribution within unit group -- falls back on unit if no unit groups
-    NORM_NET,       // only use deep_norm_net for computing deep_norm in this layer -- makes this a slave layer to its modulatory inputs -- this also sets the layer default value to 0, so that truly everything comes from the inputs -- if contrast < 1, then binarize with contrast as the threshold 
+    NORM_NET,       // only use deep_norm_net for computing deep_norm in this layer -- makes this a slave layer to its modulatory inputs -- this also sets the layer default value to 0, so that truly everything comes from the inputs -- if contrast < 1, then binarize with contrast as the threshold
+    THAL,           // only use thal for computing deep_norm in this layer -- useful for directly using gating signals driven to the thal variable, e.g., in pfc auto encoder
   };
 
   bool          on;             // enable normalization of the deep_raw, deep_norm_net, and deep_ctxt values into deep_norm attentional modulation factors -- automatically normalized based on layer vals to max at 1.0 -- if off, then deep_norm is always set to 1.0 -- requires deep.on for this to work!!

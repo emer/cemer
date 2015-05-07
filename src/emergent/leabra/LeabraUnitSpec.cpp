@@ -1207,14 +1207,6 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
   // u->net_raw and u->gi_syn now have proper values integrated from deltas
 
   float net_syn = u->net_raw;
-  if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
-    if(u->deep_norm > 0.0f) {
-      net_syn *= u->deep_norm;
-    }
-    else {
-      net_syn *= lay->deep_norm_def;
-    }
-  }
   float net_ex = Compute_NetinExtras(u, net, thr_no, net_syn);
   // this could modify net_syn if it wants..
   float net_tot = net_syn + net_ex;
@@ -1254,7 +1246,17 @@ void LeabraUnitSpec::Compute_NetinInteg(LeabraUnitVars* u, LeabraNetwork* net, i
 
 float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
                                           int thr_no, float& net_syn) {
-  LeabraLayerSpec* ls = (LeabraLayerSpec*)u->Un(net, thr_no)->own_lay()->GetLayerSpec();
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
+
+  if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
+    if(u->deep_norm > 0.0f) {
+      net_syn *= u->deep_norm;
+    }
+    else {
+      net_syn *= lay->deep_norm_def;
+    }
+  }
 
   float net_ex = 0.0f;
   if(bias_spec) {
@@ -1934,7 +1936,8 @@ void LeabraUnitSpec::Send_DeepCtxtNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 }
 
 bool LeabraUnitSpec::DeepNormCopied() {
-  if(deep_norm.raw_val == DeepNormSpec::NORM_NET)
+  if((deep_norm.raw_val == DeepNormSpec::NORM_NET) ||
+     (deep_norm.raw_val == DeepNormSpec::THAL)) 
     return true;
   return false;
 }
@@ -1957,6 +1960,9 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
         nw_nrm = 1.0f;
     }
     u->deep_norm = nw_nrm;
+  }
+  else if(deep_norm.raw_val == DeepNormSpec::THAL) {
+    u->deep_norm = u->thal;
   }
   else {
     float deep_raw = u->deep_raw; // default to UNIT

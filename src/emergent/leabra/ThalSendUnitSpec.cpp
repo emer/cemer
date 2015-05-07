@@ -25,12 +25,12 @@ void ThalSendUnitSpec::Initialize() {
 void ThalSendUnitSpec::Defaults_init() {
 }
 
-void ThalSendUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net,
-                                           int thr_no) {
-  inherited::Compute_NetinRaw(u, net, thr_no);
-  if(deep.on && net->phase == LeabraNetwork::PLUS_PHASE) {
-    u->net_raw = u->deep_raw_net;          // only use deep_raw_net
+float ThalSendUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
+                                            int thr_no, float& net_syn) {
+  if(Quarter_DeepNow(net->quarter)) {
+    net_syn = u->deep_raw_net;          // only gets from deep!
   }
+  return inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
 }
 
 void ThalSendUnitSpec::Send_Thal(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {

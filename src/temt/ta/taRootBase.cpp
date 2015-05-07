@@ -1304,6 +1304,8 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
 
 bool taRootBase::Startup_InitTA() {
   // first initialize the type data from maketa generated files, registered here:
+  taMisc::Init_Defaults_PreLoadConfig(); // needs to have this early!
+
   taMisc::Init_Types();
 
   taMisc::Init_Hooks(); // client dlls register init hooks -- this calls them!
@@ -1332,7 +1334,6 @@ bool taRootBase::Startup_InitTA() {
 
   // Preferences directory
   taMisc::prefs_dir = taMisc::user_app_dir + PATH_SEP + "prefs";
-  taMisc::Init_Defaults_PreLoadConfig();
   // then load configuration info: sets lots of user-defined config info
   ((taMisc*)TA_taMisc.GetInstance())->LoadConfig();
   // ugh: reload because legacy options file will load its value

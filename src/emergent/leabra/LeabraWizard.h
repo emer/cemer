@@ -84,9 +84,10 @@ public:
   // #MENU_BUTTON set the parameters in the specs of the network to the latest default values for the PBWM model, and also ensures that the standard select edits are built and contain relevant parameters -- this is only for a model that already has PBWM configured
 
   virtual bool PBWM_SetNStripes
-    (LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2, int n_matrix_units=-1,
-     int n_pfc_units=-1, const String& prefix = "PBWM");
-  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) for maint and output gating in the network -- and number of units per unit group in matrix and pfc (-1 = use current # of units)
+    (LeabraNetwork* net, int pfc_gp_x = 2, int pfc_gp_y = 2,
+     int n_matrix_units_x=-1, int n_matrix_units_y=-1,
+     int n_pfc_units_x=-1, int n_pfc_units_y=-1, const String& prefix = "PBWM");
+  // #MENU_BUTTON #MENU_SEP_BEFORE set number of "stripes" (unit groups) for maint and output gating in the network -- and number of units per unit group in matrix and pfc along each dimension (-1 = use current # of units -- must specify both x and y if specifying)
 
   virtual bool PBWM_Remove(LeabraNetwork* net,
                            const String& prefix = "PBWM");

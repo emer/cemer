@@ -1460,6 +1460,10 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfcd_units->deep_norm.raw_val = DeepNormSpec::UNIT;
   pfcd_units->deep_var = DeepCopyUnitSpec::DEEP_NORM;
   
+  pfc_trc_units->SetUnique("deep_norm", true);
+  pfc_trc_units->deep_norm.on = true;
+  pfc_trc_units->deep_norm.raw_val = DeepNormSpec::THAL;
+
   input_units->SetUnique("deep", true);
   input_units->deep.on = true;
   input_units->deep.thr = 0.1f;
@@ -1516,8 +1520,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_sp->inhib_misc.self_fb = 0.3f;
   matrix_sp->SetUnique("del_inhib", true);
   matrix_sp->del_inhib.on = true;
-  matrix_sp->del_inhib.prv_trl = 0.001f; // todo: try prv_q instead..
-  matrix_sp->del_inhib.prv_q = 0.0f;
+  matrix_sp->del_inhib.prv_trl = 0.0f;
+  matrix_sp->del_inhib.prv_q = 0.02f;
 
   patch_sp->SetUnique("lay_inhib", true);
   patch_sp->lay_inhib.on = false;
@@ -1617,12 +1621,12 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   return true;
 }
 
-static void lay_set_geom(LeabraLayer* lay, int gp_x, int gp_y, int n_units = -1,
-                         bool sp = true) {
+static void lay_set_geom(LeabraLayer* lay, int gp_x, int gp_y, int n_un_x = -1,
+                         int n_un_y = -1, bool sp = true) {
   lay->unit_groups = true;
   lay->gp_geom.SetXY(gp_x, gp_y);
-  if(n_units > 0) {
-    lay->SetNUnits(n_units);
+  if(n_un_x > 0) {
+    lay->un_geom.SetXY(n_un_x, n_un_y);
   }
   if(sp) {
     lay->gp_spc.x = 1;
@@ -1632,18 +1636,19 @@ static void lay_set_geom(LeabraLayer* lay, int gp_x, int gp_y, int n_units = -1,
 }
 
 static void set_n_stripes(LeabraNetwork* net, const String& gpnm, const String& nm,
-                          int pfc_gp_x, int pfc_gp_y, int n_units, bool sp)
+                          int pfc_gp_x, int pfc_gp_y, int n_un_x, int n_un_y, bool sp)
 {
   Layer_Group* laygp = (Layer_Group*)net->layers.gp.FindName(gpnm);
   if(!laygp) return;
   LeabraLayer* lay = (LeabraLayer*)laygp->FindLeafName(nm);
   if(!lay) return;
-  lay_set_geom(lay, pfc_gp_x, pfc_gp_y, n_units, sp);
+  lay_set_geom(lay, pfc_gp_x, pfc_gp_y, n_un_x, n_un_y, sp);
 }
 
 bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int pfc_gp_x, int pfc_gp_y,
-                                    int n_matrix_units,
-				    int n_pfc_units, const String& prefix) {
+                                    int n_matrix_units_x, int n_matrix_units_y,
+				    int n_pfc_units_x, int n_pfc_units_y,
+                                    const String& prefix) {
   if(TestError(!net, "PBWM_SetNStripes", "network is NULL -- only makes sense to run on an existing network -- aborting!"))
     return false;
 
@@ -1657,17 +1662,24 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int pfc_gp_x, int pfc_gp
   int bg_gp_x = 2 * pfc_gp_x;
   int bg_gp_y = pfc_gp_y;
 
-  set_n_stripes(net, prefix, "MatrixGo", bg_gp_x, bg_gp_y, n_matrix_units, true);
-  set_n_stripes(net, prefix, "MatrixNoGo", bg_gp_x, bg_gp_y, n_matrix_units, true);
-  set_n_stripes(net, prefix, "Patch",  pfc_gp_x, pfc_gp_y, 1, true);
+  set_n_stripes(net, prefix, "MatrixGo", bg_gp_x, bg_gp_y,
+                n_matrix_units_x, n_matrix_units_y, true);
+  set_n_stripes(net, prefix, "MatrixNoGo", bg_gp_x, bg_gp_y,
+                n_matrix_units_x, n_matrix_units_y, true);
+  set_n_stripes(net, prefix, "Patch",  pfc_gp_x, pfc_gp_y, 1, 1,
+                true);
 
-  set_n_stripes(net, prefix, "GPi", bg_gp_x, bg_gp_y, -1, true);
-  set_n_stripes(net, prefix, "GPeNoGo", bg_gp_x, bg_gp_y, -1, true);
+  set_n_stripes(net, prefix, "GPi", bg_gp_x, bg_gp_y, -1, -1, true);
+  set_n_stripes(net, prefix, "GPeNoGo", bg_gp_x, bg_gp_y, -1, -1, true);
 
-  set_n_stripes(net, prefix, "PFCmnt",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
-  set_n_stripes(net, prefix, "PFCout",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
-  set_n_stripes(net, prefix, "PFCout_deep",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
-  set_n_stripes(net, prefix, "PFCmnt_deep",  pfc_gp_x, pfc_gp_y, n_pfc_units, true);
+  set_n_stripes(net, prefix, "PFCmnt",  pfc_gp_x, pfc_gp_y,
+                n_pfc_units_x, n_pfc_units_y, true);
+  set_n_stripes(net, prefix, "PFCout",  pfc_gp_x, pfc_gp_y,
+                n_pfc_units_x, n_pfc_units_y, true);
+  set_n_stripes(net, prefix, "PFCout_deep",  pfc_gp_x, pfc_gp_y,
+                n_pfc_units_x, n_pfc_units_y, true);
+  set_n_stripes(net, prefix, "PFCmnt_deep",  pfc_gp_x, pfc_gp_y,
+                n_pfc_units_x, n_pfc_units_y, true);
 
   net->Build();
   return true;
@@ -1884,6 +1896,7 @@ can be sure everything is ok.";
 
   net->FindMakePrjn(pfc_mnt_d, pfc_mnt, onetoone, marker_cons);
 
+  net->FindMakePrjn(pfc_mnt_trc, gpi, bgpfcprjn, marker_cons);
   net->FindMakePrjn(pfc_mnt_trc, pfc_mnt, gponetoone,
                     PbwmSp("PFCtoTRC", LeabraConSpec));
 
@@ -1900,7 +1913,6 @@ can be sure everything is ok.";
     net->FindMakePrjn(matrix_nogo, il, fullprjn,
                       PbwmSp("MatrixConsNoGo", MatrixConSpec));
   }
-
   
   LeabraUnitSpec* input_units = PbwmSp("PFCInputUnits", LeabraUnitSpec);
   
@@ -1954,7 +1966,7 @@ can be sure everything is ok.";
     pfc_mnt_d->brain_area = ".*/.*/.*/.*/BA9";
 
   // here to allow it to get disp_geom for laying out the pfc and matrix guys!
-  PBWM_SetNStripes(net, pfc_gp_x, pfc_gp_y);
+  PBWM_SetNStripes(net, pfc_gp_x, pfc_gp_y, -1, -1, -1, -1, prefix);
 
   int lay_spc = 2;
 
@@ -2005,7 +2017,7 @@ can be sure everything is ok.";
 
   ///////////////	PFC Layout first -- get into z = 1
 
-  int pfcu_n = 49; int pfcu_x = 7; int pfcu_y = 7;
+  int pfcu_n = 35; int pfcu_x = 5; int pfcu_y = 7;
   int pfc_st_x = 0;
   int pfc_st_y = 0;
   int pfc_z = 1;
