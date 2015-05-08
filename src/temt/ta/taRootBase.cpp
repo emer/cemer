@@ -1304,7 +1304,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
 
 bool taRootBase::Startup_InitTA() {
   // first initialize the type data from maketa generated files, registered here:
-  taMisc::Init_Defaults_PreLoadConfig(); // needs to have this early!
+  // taMisc::Init_Defaults_PreLoadConfig(); // needs to have this early!
 
   taMisc::Init_Types();
 
