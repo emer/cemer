@@ -221,7 +221,7 @@ public:
   // add to jobs_submit for remove files for given list of files (space separated)
   virtual int   CountJobs(const DataTable& table, const String &status_regexp);
   // count the number of jobs in given table with given status value 
-  virtual void  SubmitUpdateNote(int row);
+  virtual void  SubmitUpdateNote(const DataTable& table, int row);
   // add to jobs_submit for update of 'done' job
   
   virtual void  RunCommand(String& cmd, String& params, bool use_cur_vals = false);
