@@ -201,7 +201,10 @@ def make_dir(dir):
 
 # Don't have subprocess.check_output in Python 2.6.  This will have to do.
 def check_output(cmd):
-    return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+    try:
+        return subprocess.Popen(cmd, stdout=subprocess.PIPE).communicate()[0]
+    except OSError:
+        logging.error("Failed to execute command " + str(cmd) + ": " + str(OSError))
 
 #############################################################################
 
@@ -705,6 +708,8 @@ class SubversionPoller(object):
         self.file_list = DataTable()
         self.cluster_info = DataTable()
 
+        logging.info(self.repo_url)
+
         # The repo directory only includes the working copy root and
         # repo_name (as defined by the user and stored in config.ini).
         # It does not include the project name, hence the '/[^/]+/'.
@@ -774,9 +779,13 @@ class SubversionPoller(object):
         # This initial checkout/update is interactive so the user can
         # enter credentials if needed, which will then be cached for
         # the remainder of this script.
-        subprocess.call(cmd)
+        try:
+            subprocess.call(cmd)
+        except OSError:
+            logging.error("Failed to execute SVN command: " + str(cmd))
+        
         if not os.path.isdir(self.repo_dir):
-            print '\nCheckout failed, aborting.'
+            logging.error('\nCheckout failed, aborting.')
             sys.exit(1)
 
         # Now do an 'svn info' (non-interactive) to get the starting rev.
@@ -1568,7 +1577,10 @@ class SubversionPoller(object):
         job_err_file = "/tmp/JOB." + job_no + ".err"
  
         logging.info("Cmd to execute: " + str(cmdsub))
-        pid = subprocess.Popen(cmdsub, stdout=open(job_out_file,"w"), stderr=open(job_err_file,"w")).pid
+        try:
+            pid = subprocess.Popen(cmdsub, stdout=open(job_out_file,"w"), stderr=open(job_err_file,"w")).pid
+        except:
+            print "Failed to run command to submit job: " + str(cmdsub)
         job_no = job_no + "." + str(pid)
         
         status = 'RUNNING'
@@ -2495,7 +2507,20 @@ class SubversionPoller(object):
                 user = scols[3]
                 state = scols[4]
                 procs = scols[8]
-                start_time = "Some time"
+
+                #Can't get the start time from squeue, so need to run scontrol show job for each.
+                if qstat_args != '':
+                    cmd = [qstat_cmd] + qstat_args + [job_no]
+                else:
+                    cmd = [qstat_cmd, job_no]
+                q_out = check_output(cmd)
+
+                # regexp for output of scontrol show job that tells you when the job started
+                qstat_start_time_re = r"\s*StartTime=(\S*)\s.*"
+                re_start_time = re.compile(qstat_start_time_re)
+
+                start_time_mo = re_start_time.search(q_out)
+                start_time = start_time_mo.group(1)
 
                 queue = scols[1]
                 row = self.cluster_info.add_blank_row()
