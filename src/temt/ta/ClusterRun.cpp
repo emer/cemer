@@ -73,8 +73,6 @@ void ClusterRun::Initialize() {
   
   enable_kill = false;
   enable_load = false;
-//  enable_get = false;
-//  enable_remove = false;
   
   qt_object_helper = new ClusterRun_QObj(this);
   helper_is_connected = false;
@@ -322,6 +320,8 @@ void ClusterRun::LoadData(bool remove_existing) {
     return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
 
+  DataTable* cur_table = GetCurDataTable();
+
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
@@ -348,6 +348,11 @@ void ClusterRun::LoadData(bool remove_existing) {
   else if (SelectedRows(file_list, st_row, end_row)) {
     for (int row = st_row; row <= end_row; ++row) {
       LoadData_impl(dgp, file_list, row); 
+    }
+  }
+  else if (cur_table == &jobs_running) {  // if here no rows selected in other job tables
+    for (int row = 0; row < jobs_running.rows; ++row) {
+      LoadData_impl(dgp, jobs_running, row);
     }
   }
   else {
@@ -1798,7 +1803,10 @@ bool ClusterRun::WaitProcAutoUpdate() {
   return true;
 }
 
-DataTable* ClusterRun::GetCurDataTable(PanelId panel_id) {
+DataTable* ClusterRun::GetCurDataTable() {
+  iPanelSet* ps = FindMyPanelSet();
+  PanelId panel_id = static_cast<PanelId>(ps->cur_panel_id);
+
   if (panel_id == PANEL_RUNNING) {
     return &jobs_running;
   }
@@ -1825,8 +1833,7 @@ void ClusterRun::DoClusterOp(String do_this) {
 
 void ClusterRun::UpdateUI() {
   iPanelSet* ps = FindMyPanelSet();
-  PanelId cur_panel = static_cast<PanelId>(ps->cur_panel_id);
-  DataTable* cur_table = GetCurDataTable(cur_panel);
+  DataTable* cur_table = GetCurDataTable();
   
   enable_kill = false;
   enable_load = false;

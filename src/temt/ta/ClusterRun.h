@@ -270,7 +270,7 @@ public:
   // auto update to given target revision
   virtual void        UpdateUI();
   // a chance to enable/disable buttons when panel changes or selection changes
-  virtual DataTable*        GetCurDataTable(PanelId panel_id);
+  virtual DataTable*        GetCurDataTable();
 
   
   SIMPLE_COPY(ClusterRun);
