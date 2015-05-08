@@ -113,7 +113,8 @@ public:
 
   // Signature must match that of the item_filter_fun typedef.
   static bool   ExprLookupVarFilter(void* base, void* var); // special filter used in ExprLookupFun
-
+  static bool   ExprLookupIsFunc(const String& txt);  // is it a function or program lookup
+  
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(ProgExprBase);

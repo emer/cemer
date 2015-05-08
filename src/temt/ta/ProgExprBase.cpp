@@ -500,8 +500,9 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     // todo: []
   }
   else {
-    if (prog_el_start_pos > -1) {
-      prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
+    prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
+
+    if (prog_el_start_pos > -1 && ExprLookupIsFunc(prog_el_txt)) {
       lookup_type = 5;
       expr_start = txt.length();
     }
@@ -738,7 +739,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       
     case 5: {                 // ProgEl
       String trimmed_txt = trim(prog_el_txt);
-      if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase() == "prog") {
+      if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase().startsWith("prog")) {
         txt = "Call ";
         taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0);
         pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
@@ -782,6 +783,12 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
   return ProgExprBase::ExprLookupFun(cur_txt, cur_pos, new_pos,
                                      path_own_obj, path_own_typ, path_md,
                                      own_pel, own_prg, own_fun);
+}
+
+bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
+  String trimmed_txt = trim(txt);
+  trimmed_txt.downcase();
+  return (trimmed_txt == "call" || trimmed_txt.startsWith("prog") || trimmed_txt.startsWith("fun"));
 }
 
 String MemberProgEl::StringFieldLookupFun(const String& cur_txt, int cur_pos,
