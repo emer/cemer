@@ -31,7 +31,6 @@ set(ta_HEADS_MAKETA_NOMOC
   taRefN.h
 
   NameVar.h
-  MTRndState.h
   MTRnd.h
   taHashEl.h
   taPtrList_impl.h
@@ -1173,7 +1172,6 @@ set(ta_SRCS_MAKETA
   taRefN.cpp
 
   NameVar.cpp
-  MTRndState.cpp
   MTRnd.cpp
   taHashEl.cpp
   taPtrList_impl.cpp

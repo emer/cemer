@@ -1552,6 +1552,7 @@ bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
       break;
     }
     _get_tempering_parameter_hard_dc(mts);
+    taMisc::Info("successfully completed params for MT PRNG number:", String(i));
   }
 
   end_mt_search(&pre);
