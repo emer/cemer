@@ -1575,16 +1575,16 @@ static void Install_Commands() {
 //////////////////////////
 
 static cssEl* cssRealFun_drand48_stub(int, cssEl**) {
-  return new cssReal((Real)MTRnd::genrand_res53());
+  return new cssReal((Real)MTRnd::GenRandRes53());
 }
 static cssEl* cssElCFun_lrand48_stub(int, cssEl**) {
-  return new cssInt((int)MTRnd::genrand_int32());
+  return new cssInt((int)MTRnd::GenRandInt32());
 }
 static cssEl* cssElCFun_random_stub(int, cssEl**) {
-  return new cssInt((int)MTRnd::genrand_int31());
+  return new cssInt((int)MTRnd::GenRandInt32());
 }
 static cssEl* cssElCFun_srand48_stub(int, cssEl* arg[]) {
-  MTRnd::seed((int)*(arg[1]));
+  MTRnd::InitSeeds((int)*(arg[1]));
   return &cssMisc::Void;
 }
 

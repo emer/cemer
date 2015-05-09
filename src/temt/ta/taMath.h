@@ -118,9 +118,10 @@ public:
   static void mat_cvt_float_to_double(double_Matrix* dbl_dest, const float_Matrix* flt_src);
   // #CAT_Convert convert float vector/matrix data to double
 
+  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath) //
+private:
   void Initialize() { };
   void Destroy() { };
-  TA_ABSTRACT_BASEFUNS_NOCOPY(taMath) //
 };
 
 #endif // taMath_h

@@ -9,7 +9,6 @@ set(maketa_HEADS
   ../ta/taRefN.h
 
   ../ta/NameVar.h
-  ../ta/MTRnd.h
   ../ta/taPtrList_impl.h
   ../ta/taPtrList.h
   ../ta/taPtrList_base.h
@@ -61,8 +60,6 @@ set(maketa_SRCS
   ../ta/taRefN.cpp
 
   ../ta/NameVar.cpp
-  ../ta/MTRndState.cpp
-  ../ta/MTRnd.cpp
   ../ta/taPtrList_impl.cpp
   ../ta/taPtrList.cpp
   ../ta/taPtrList_base.cpp

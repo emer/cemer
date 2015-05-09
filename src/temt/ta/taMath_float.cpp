@@ -322,13 +322,13 @@ float taMath_float::binom_dev(int n, float pp, int thr_no) {
   if (n < 25) {
     bnl=0.0;
     for (j=1;j<=n;j++)
-      if (MTRnd::genrand_res53(thr_no) < p) bnl += 1.0;
+      if (MTRnd::GenRandRes53(thr_no) < p) bnl += 1.0;
   }
   else if (am < 1.0) {
     g=exp(-am);
     t=1.0;
     for (j=0;j<=n;j++) {
-      t *= MTRnd::genrand_res53(thr_no);
+      t *= MTRnd::GenRandRes53(thr_no);
       if (t < g) break;
     }
     bnl=(j <= n ? j : n);
@@ -348,14 +348,14 @@ float taMath_float::binom_dev(int n, float pp, int thr_no) {
     sq=sqrt(2.0*am*pc);
     do {
       do {
-        angle=pi*MTRnd::genrand_res53(thr_no);
+        angle=pi*MTRnd::GenRandRes53(thr_no);
         y=tan(angle);
         em=sq*y+am;
       } while (em < 0.0 || em >= (en+1.0));
       em=floor(em);
       t=1.2*sq*(1.0+y*y)*exp(oldg-gamma_ln(em+1.0)
           -gamma_ln(en-em+1.0)+em*plog+(en-em)*pclog);
-    } while (MTRnd::genrand_res53(thr_no) > t);
+    } while (MTRnd::GenRandRes53(thr_no) > t);
     bnl=em;
   }
   if (p != pp) bnl=n-bnl;
@@ -392,7 +392,7 @@ float taMath_float::poisson_dev(float xm, int thr_no) {
     t=1.0;
     do {
       em += 1.0;
-      t *= MTRnd::genrand_res53(thr_no);
+      t *= MTRnd::GenRandRes53(thr_no);
     } while (t > g);
   }
   else {
@@ -404,12 +404,12 @@ float taMath_float::poisson_dev(float xm, int thr_no) {
     }
     do {
       do {
-        y=tan(pi*MTRnd::genrand_res53(thr_no));
+        y=tan(pi*MTRnd::GenRandRes53(thr_no));
         em=sq*y+xm;
       } while (em < 0.0);
       em=floor(em);
       t=0.9*(1.0+y*y)*exp(em*alxm-gamma_ln(em+1.0)-g);
-    } while (MTRnd::genrand_res53(thr_no) > t);
+    } while (MTRnd::GenRandRes53(thr_no) > t);
   }
   return em;
 }
@@ -440,7 +440,7 @@ float taMath_float::gamma_cum(int j, float l, float t) {
 
 float taMath_float::gamma_dev(const float a, const float b, int thr_no) {
   if (a < 1) {
-    float u = MTRnd::genrand_res53(thr_no);
+    float u = MTRnd::GenRandRes53(thr_no);
     return gamma_dev(1.0 + a, b, thr_no) * pow (u, 1.0 / a);
   }
 
@@ -457,7 +457,7 @@ float taMath_float::gamma_dev(const float a, const float b, int thr_no) {
       while (v <= 0);
 
       v = v * v * v;
-      u = MTRnd::genrand_res53(thr_no);
+      u = MTRnd::GenRandRes53(thr_no);
 
       if (u < 1 - 0.0331 * x * x * x * x) 
         break;
@@ -580,7 +580,7 @@ float taMath_float::gauss_inv_lim(float p) {
 
 
 float taMath_float::gauss_dev(int thr_no) {
-  return static_cast<float>(MTRnd::genrand_gauss_dev_double(thr_no));
+  return static_cast<float>(MTRnd::GenRandGaussDev(thr_no));
 }
 
 /**********************************

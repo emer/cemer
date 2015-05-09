@@ -14,7 +14,9 @@
 //   Lesser General Public License for more details.
 
 #include "taArray_impl.h"
+#ifndef NO_TA_BASE
 #include <MTRnd>
+#endif
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -197,7 +199,11 @@ void taArray_impl::Permute(int thr_no) {
   int i, nv;
   void* tmp = El_GetTmp_();
   for(i=0; i<size; i++) {
-    nv = (int) ((MTRnd::genrand_int32(thr_no) % (size - i)) + i); // get someone from the future
+#ifndef NO_TA_BASE
+    nv = (int) ((MTRnd::GenRandInt32(thr_no) % (size - i)) + i); // get someone from the future
+#else
+    nv = (int) ((random() % (size - i)) + i);
+#endif
     El_Copy_(tmp, FastEl_(i));
     El_Copy_(FastEl_(i), FastEl_(nv));  // swap with yourself
     El_Copy_(FastEl_(nv), tmp);

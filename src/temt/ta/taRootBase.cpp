@@ -38,6 +38,7 @@
 #include <taiWidgetTokenChooser>
 #include <KeyBindings_List>
 #include <ClusterRun>
+#include <MTRnd>
 
 taTypeDef_Of(PluginWizard);
 taTypeDef_Of(StartupWizard);
@@ -716,6 +717,11 @@ bool taRootBase::Startup_InitArgs(int& argc, const char* argv[]) {
   taMisc::AddArgNameDesc("CssRefCountTrace", "\
  -- Specifies that css reference count tracing should be performed (debugging tool)");
 
+  taMisc::AddArgName("-gen_prng_params", "GenPrngParams");
+  taMisc::AddArgName("--gen_prng_params", "GenPrngParams");
+  taMisc::AddArgNameDesc("GenPrngParams", "\
+ -- generate new pseudo-random-number-generator parameters for threads -- saves in file: 'new_mtrndpars.txt'");
+
   ////////////////////////////////////////////////////
   //    All the multi-threading stuff has standard default startup args
 
@@ -853,6 +859,7 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
      || taMisc::CheckArgByName("CleanAllPlugins")
      || taMisc::CheckArgByName("MakeUserPlugin")
      || taMisc::CheckArgByName("MakeSystemPlugin")
+     || taMisc::CheckArgByName("GenPrngParams")
      || taMisc::CheckArgByName("CreateNewSrc")
      || taMisc::CheckArgByName("RenameType")
      || taMisc::CheckArgByName("ReplaceString")
@@ -1794,6 +1801,10 @@ bool taRootBase::Startup_ProcessArgs() {
   if(taMisc::CheckArgByName("CleanAllSystemPlugins")) {
     taPlugins::CleanAllSystemPlugins();
     run_startup = false;
+  }
+  if(taMisc::CheckArgByName("GenPrngParams")) {
+    run_startup = false;
+    MTRnd::GenInitParams(MTRnd::max_gens, "new_mtrndpars.txt");
   }
   if(taMisc::CheckArgByName("CreateNewSrc")) {
     String srcnm = taMisc::FindArgByName("CreateNewSrc");

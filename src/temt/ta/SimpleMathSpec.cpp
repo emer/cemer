@@ -35,7 +35,7 @@ double SimpleMathSpec::Evaluate(double val) const {
   case THRESH:
     return (val >= arg) ? hi : lw;
   case ABS:
-    return fabsf(val);
+    return std::abs(val);
   case SQUARE:
     return val * val;
   case SQRT:

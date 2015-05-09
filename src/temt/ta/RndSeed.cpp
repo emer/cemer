@@ -22,59 +22,27 @@
 TA_BASEFUNS_CTORS_DEFN(RndSeed);
 
 void RndSeed::Initialize() {
-  GetCurrent();
-}
-
-void RndSeed::GetCurrent() {
-  // Get the RNG's current state data. 
-  const MTRndState &state = MTRnd::get_state();
-  // NOTE: only saving / restoring the non-threaded guy
-
-  // Save that state data to this object.
-  seed.SetSize(MTRnd::N);
-  for (int idx = 0; idx < seed.size; ++idx) {
-    seed.FastEl(idx) = (long)state.mt[idx];
-  }
-  mti = state.mti;
-  is_gauss_double_cached = state.is_gauss_double_cached;
-  cached_gauss_double = state.cached_gauss_double;
+  seed = 0;
 }
 
 void RndSeed::NewSeed() {
-  MTRnd::seed_time_pid();
-  GetCurrent();
+  seed = MTRnd::GetTimePidSeed();
+  MTRnd::InitSeeds(seed);
 }
 
 void RndSeed::OldSeed() {
-  // Ensure saved seed is valid.
-  seed.SetSize(MTRnd::N);
-  bool all_zero = true;
-  for (int idx = 0; idx < seed.size; ++idx) {
-    if (seed.FastEl(idx) != 0) {
-      all_zero = false;
-      break;
-    }
+  if(TestWarning(seed == 0, "OldSeed",
+               "seed is currently 0 -- attempting to use uninitialized seed in OldSeed -- running NewSeed first!")) {
+    NewSeed();
   }
-  if (all_zero) {
-    taMisc::Warning("*** RndSeed::OldSeed: random seed is all zero and this doesn't work; getting current random seed!");
-    GetCurrent();
-    return;
+  else {
+    MTRnd::InitSeeds(seed);
   }
-
-  // Restore saved seed to the RNG.
-  MTRndState state;
-  for (int idx = 0; idx < seed.size; ++idx) {
-    state.mt[idx] = (ulong)seed.FastEl(idx);
-  }
-  state.mti = mti;
-  state.is_gauss_double_cached = is_gauss_double_cached;
-  state.cached_gauss_double = cached_gauss_double;
-  MTRnd::set_state(state);
 }
 
-void RndSeed::Init(ulong i) {
-  MTRnd::seed(i);
-  GetCurrent();
+void RndSeed::Init(uint32_t i) {
+  seed = i;
+  MTRnd::InitSeeds(seed);
 }
 
 #ifdef DMEM_COMPILE
@@ -83,7 +51,7 @@ void RndSeed::DMem_Sync(MPI_Comm comm) {
     return;
 
   // just blast the first guy to all members of the same communicator
-  DMEM_MPICALL(MPI_Bcast(seed.el, MTRnd::N, MPI_LONG, 0, comm),
+  DMEM_MPICALL(MPI_Bcast(&seed, 1, MPI_INT, 0, comm),
                "Process::SyncAllSeeds", "Bcast");
   OldSeed();            // then get my seed!
 }

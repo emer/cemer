@@ -31,18 +31,13 @@ class TA_API RndSeed : public taNBase {
   // #STEM_BASE ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)
 public:
-  int_Array             seed;   // #READ_ONLY the seed, 624 elements long
-  int                   mti;    // #READ_ONLY the index into the seed, also needs to be saved
-  bool                  is_gauss_double_cached; // #READ_ONLY The state of the gaussian generator.
-  double                cached_gauss_double;    // #READ_ONLY The state of the gaussian generator.
+  uint32_t              seed;   // #READ_ONLY the seed -- just a single int
 
   virtual void   NewSeed();
   // #BUTTON #CONFIRM set the seed to a new random value (based on time and process id)
   virtual void   OldSeed();
   // #BUTTON #CONFIRM restore current seed to random num generator
-  virtual void   GetCurrent();
-  // #BUTTON #CONFIRM get the current seed in use by the generator
-  virtual void   Init(ulong i);
+  virtual void   Init(uint32_t i);
   // initialize the seed based on given initializer
 
   virtual void  DMem_Sync(MPI_Comm comm);

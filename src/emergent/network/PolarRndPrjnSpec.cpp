@@ -35,7 +35,6 @@ void PolarRndPrjnSpec::Initialize() {
   max_retries = 1000;
 
   same_seed = false;
-  rndm_seed.GetCurrent();
 }
 
 void PolarRndPrjnSpec::UpdateAfterEdit_impl() {

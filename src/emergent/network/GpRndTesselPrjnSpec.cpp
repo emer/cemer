@@ -36,7 +36,6 @@ void GpRndTesselPrjnSpec::Initialize() {
   def_p_con = 1.0f;
   sym_self = true;
   same_seed = false;
-  rndm_seed.GetCurrent();
 }
 
 void GpRndTesselPrjnSpec::UpdateAfterEdit_impl() {

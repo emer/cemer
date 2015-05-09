@@ -18,7 +18,9 @@
 
 #include <taHashTable>
 #include <taMisc>
+#ifndef NO_TA_BASE
 #include <MTRnd>
+#endif
 
 taPtrList_impl taPtrList_impl::scratch_list;
 
@@ -591,7 +593,11 @@ void taPtrList_impl::PopAll() {
 void taPtrList_impl::Permute(int thr_no) {
   int i, nv;
   for(i=0; i<size; i++) {
-    nv = (int) ((MTRnd::genrand_int32(thr_no) % (size - i)) + i); // get someone from the future
+#ifndef NO_TA_BASE
+    nv = (int) ((MTRnd::GenRandInt32(thr_no) % (size - i)) + i); // get someone from the future
+#else
+    nv = (int) ((random() % (size - i)) + i);
+#endif
     SwapIdx(i, nv);
   }
 }

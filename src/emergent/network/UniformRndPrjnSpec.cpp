@@ -22,7 +22,6 @@ void UniformRndPrjnSpec::Initialize() {
   p_con = .25;
   sym_self = true;
   same_seed = false;
-  rndm_seed.GetCurrent();
 }
 
 void UniformRndPrjnSpec::UpdateAfterEdit_impl() {

@@ -13,11 +13,7 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "MTRnd.h"
-
-#include <taMisc>
-#include <cmath>
-
+// includes some stuff from here too:
 /*
    A C-program for MT19937, with initialization improved 2002/1/26.
    Coded by Takuji Nishimura and Makoto Matsumoto.
@@ -61,186 +57,1557 @@
    email: matumoto@math.keio.ac.jp
 */
 
-// Initialize the static MT-RNG state instance.
+#include "MTRnd.h"
 
-MTRndState* MTRnd::states = NULL;
-int MTRnd::n_states = 0;
+#include <taMisc>
+#include <cmath>
 
-void MTRnd::alloc_states() {
-  if(states)
-    delete [] states;
-  n_states = taMisc::thread_defaults.cpus;
-  n_states = MAX(1, n_states);
-  states = new MTRndState[n_states]; // note -- never deleted!
-}
+TA_BASEFUNS_CTORS_DEFN(MTRndPar);
+TA_BASEFUNS_CTORS_DEFN(MTRndPar_List);
+TA_BASEFUNS_CTORS_DEFN(MTRnd);
 
-/* initializes mt[N] with a seed */
-void MTRnd::seed(uint s, int thr_no) {
-  if(states == NULL)
-    alloc_states();
-  MTRndState& state = get_state(thr_no);
-  state.reset();
-  state.mt[0] = s & 0xffffffffUL;
-  for (state.mti = 1; state.mti < N; state.mti++) {
-    state.mt[state.mti] =
-      (1812433253UL * (state.mt[state.mti-1] ^ (state.mt[state.mti-1] >> 30)) + state.mti);
+///////////////////////////////////////////////////////////////////
+//              First, we include the MT19937 basic RNG
+//              for generating random numbers for generators!
+
+/* A C-program for MT19937: Integer version (1999/10/28)          */
+/*  genrand() generates one pseudorandom unsigned integer (32bit) */
+/* which is uniformly distributed among 0 to 2^32-1  for each     */
+/* call. sgenrand(seed) sets initial values to the working area   */
+/* of 624 words. Before genrand(), sgenrand(seed) must be         */
+/* called once. (seed is any 32-bit integer.)                     */
+/*   Coded by Takuji Nishimura, considering the suggestions by    */
+/* Topher Cooper and Marc Rieffel in July-Aug. 1997.              */
+
+/* When you use this, send an email to: matumoto@math.keio.ac.jp   */
+/* with an appropriate reference to your work.                     */
+
+/* REFERENCE                                                       */
+/* M. Matsumoto and T. Nishimura,                                  */
+/* "Mersenne Twister: A 623-Dimensionally Equidistributed Uniform  */
+/* Pseudo-Random Number Generator",                                */
+/* ACM Transactions on Modeling and Computer Simulation,           */
+/* Vol. 8, No. 1, January 1998, pp 3--30.                          */
+
+#define N 624
+
+typedef struct _ORG_STATE {
+    uint32_t mt[N];
+    int mti;
+} _org_state;
+
+void _sgenrand_dc(_org_state *st, uint32_t seed);
+uint32_t _genrand_dc(_org_state *st);
+
+/* Period parameters */
+/* #define N 624 */
+#define M 397
+#define MATRIX_A UINT32_C(0x9908b0df)   /* constant vector a */
+#define UPPER_MASK UINT32_C(0x80000000) /* most significant w-r bits */
+#define LOWER_MASK UINT32_C(0x7fffffff) /* least significant r bits */
+
+/* Tempering parameters */
+#define TEMPERING_MASK_B UINT32_C(0x9d2c5680)
+#define TEMPERING_MASK_C UINT32_C(0xefc60000)
+#define TEMPERING_SHIFT_U(y)  (y >> 11)
+#define TEMPERING_SHIFT_S(y)  (y << 7)
+#define TEMPERING_SHIFT_T(y)  (y << 15)
+#define TEMPERING_SHIFT_L(y)  (y >> 18)
+
+/* Initializing the array with a seed */
+void _sgenrand_dc(_org_state *st, uint32_t seed)
+{
+  int i;
+
+  for (i=0;i<N;i++) {
+    st->mt[i] = seed;
+    seed = (UINT32_C(1812433253) * (seed  ^ (seed >> 30))) + i + 1;
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
     /* only MSBs of the array mt[].                        */
-    /* 2002/01/09 modified by Makoto Matsumoto             */
-    state.mt[state.mti] &= 0xffffffffUL;
-    /* for >32 bit machines */
   }
-  if(thr_no == 0)
-    seed_to_threads(s);
+  st->mti = N;
 }
 
-uint MTRnd::seed_time_pid(int thr_no) {
-  //NOTE: this is a bit simpler than the 3.2 version
-  int pid = taMisc::ProcessId();
-  int tc = taMisc::TickCount(); // ms since system started
-  ulong sdval = (ulong)tc * (ulong)pid;
-  sdval = sdval & 0xffffffffUL;
-  seed(sdval, thr_no);          // use microseconds..
-  return sdval;
-}
 
-void MTRnd::seed_to_threads(uint s) {
-  for(int i=1; i<n_states; i++) {
-    ulong sdval = (ulong)sdval + (ulong)(i * 7); // lame magic number 7.. :)
-    sdval = sdval & 0xffffffffUL;
-    seed(sdval, i); 
-  }
-}
-
-/* initialize by an array with array-length */
-/* init_key is the array for initializing keys */
-/* key_length is its length */
-void MTRnd::seed_array(uint init_key[], int key_length, int thr_no) {
-  int i, j, k;
-  seed(19650218UL);
-  MTRndState& state = get_state(thr_no);
-  i=1; j=0;
-  k = (N>key_length ? N : key_length);
-  for (; k; k--) {
-    state.mt[i] = (state.mt[i] ^ ((state.mt[i-1] ^ (state.mt[i-1] >> 30)) * 1664525UL))
-      + init_key[j] + j; /* non linear */
-    state.mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
-    i++; j++;
-    if (i>=N) { state.mt[0] = state.mt[N-1]; i=1; }
-    if (j>=key_length) j=0;
-  }
-  for (k=N-1; k; k--) {
-    state.mt[i] = (state.mt[i] ^ ((state.mt[i-1] ^ (state.mt[i-1] >> 30)) * 1566083941UL))
-      - i; /* non linear */
-    state.mt[i] &= 0xffffffffUL; /* for WORDSIZE > 32 machines */
-    i++;
-    if (i>=N) { state.mt[0] = state.mt[N-1]; i=1; }
-  }
-
-  state.mt[0] = 0x80000000UL; /* MSB is 1; assuring non-zero initial array */
-}
-
-void
-MTRnd::set_state(const MTRndState &newState, int thr_no)
+uint32_t _genrand_dc(_org_state *st)
 {
-  MTRndState& state = get_state(thr_no);
-  state.reset();
-  state = newState;
-  if(thr_no == 0) {
-    seed_to_threads(state.mt[0]);
-  }
-}
-
-/* generates a random number on [0,0xffffffff]-interval */
-
-uint MTRnd::genrand_int32(int thr_no) {
-  MTRndState& state = get_state(thr_no);
-  ulong y;
-  static ulong mag01[2]={0x0UL, MATRIX_A};
+  uint32_t y;
+  static const uint32_t mag01[2]={0x0, MATRIX_A};
   /* mag01[x] = x * MATRIX_A  for x=0,1 */
 
-  if (state.mti >= N) { /* generate N words at one time */
+  if (st->mti >= N) { /* generate N words at one time */
     int kk;
 
-    if (state.mti == N+1)   /* if init_genrand() has not been called, */
-      seed_time_pid(thr_no);  // (5489UL); a default initial seed is used
-
     for (kk=0;kk<N-M;kk++) {
-      y = (state.mt[kk]&UPPER_MASK)|(state.mt[kk+1]&LOWER_MASK);
-      state.mt[kk] = state.mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1UL];
+      y = (st->mt[kk]&UPPER_MASK)|(st->mt[kk+1]&LOWER_MASK);
+      st->mt[kk] = st->mt[kk+M] ^ (y >> 1) ^ mag01[y & 0x1];
     }
     for (;kk<N-1;kk++) {
-      y = (state.mt[kk]&UPPER_MASK)|(state.mt[kk+1]&LOWER_MASK);
-      state.mt[kk] = state.mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1UL];
+      y = (st->mt[kk]&UPPER_MASK)|(st->mt[kk+1]&LOWER_MASK);
+      st->mt[kk] = st->mt[kk+(M-N)] ^ (y >> 1) ^ mag01[y & 0x1];
     }
-    y = (state.mt[N-1]&UPPER_MASK)|(state.mt[0]&LOWER_MASK);
-    state.mt[N-1] = state.mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1UL];
+    y = (st->mt[N-1]&UPPER_MASK)|(st->mt[0]&LOWER_MASK);
+    st->mt[N-1] = st->mt[M-1] ^ (y >> 1) ^ mag01[y & 0x1];
 
-    state.mti = 0;
+    st->mti = 0;
   }
 
-  y = state.mt[state.mti++];
-
-  /* Tempering */
-  y ^= (y >> 11);
-  y ^= (y << 7) & 0x9d2c5680UL;
-  y ^= (y << 15) & 0xefc60000UL;
-  y ^= (y >> 18);
+  y = st->mt[st->mti++];
+  y ^= TEMPERING_SHIFT_U(y);
+  y ^= TEMPERING_SHIFT_S(y) & TEMPERING_MASK_B;
+  y ^= TEMPERING_SHIFT_T(y) & TEMPERING_MASK_C;
+  y ^= TEMPERING_SHIFT_L(y);
 
   return y;
 }
 
-/* generates a random number on [0,0x7fffffff]-interval */
-int MTRnd::genrand_int31(int thr_no) {
-  return (int)(genrand_int32(thr_no)>>1);
+////////////////////////////////////////////////////////////////
+//              dci.h -- internal stuff for dcmt
+
+#define NOT_REJECTED 1
+#define REJECTED 0
+#define REDU 0
+#define IRRED 1
+#define NONREDU 1
+
+extern _org_state global_mt19937;
+typedef struct {int *x; int deg;} Polynomial;
+
+typedef struct PRESCR_T {
+    int sizeofA; /* parameter size */
+    uint32_t **modlist;
+    Polynomial **preModPolys;
+} prescr_t;
+
+typedef struct CHECK32_T {
+    uint32_t upper_mask;
+    uint32_t lower_mask;
+    uint32_t word_mask;
+} check32_t;
+
+typedef struct EQDEG_T {
+    uint32_t bitmask[32];
+    uint32_t mask_b;
+    uint32_t mask_c;
+    uint32_t upper_v_bits;
+    int shift_0;
+    int shift_1;
+    int shift_s;
+    int shift_t;
+    int mmm;
+    int nnn;
+    int rrr;
+    int www;
+    uint32_t aaa[2];
+    uint32_t gupper_mask;   /** most significant  (WWW - RRR) bits **/
+    uint32_t glower_mask;	/** least significant RRR bits **/
+    uint32_t greal_mask;	/** upper WWW bitmask **/
+    int ggap; /** difference between machine wordsize and dest wordsize **/
+    int gcur_maxlengs[32];	/** for optimize_v_hard **/
+    uint32_t gmax_b, gmax_c;
+} eqdeg_t;
+
+
+////////////////////////////////////////////////////////////////////
+//              check32
+
+#define LSB 0x1
+#define WORDLEN 32
+
+void _InitCheck32_dc(check32_t *ck, int r, int w) {
+  int i;
+
+  /* word_mask (least significant w bits) */
+  ck->word_mask = 0xFFFFFFFF;
+  ck->word_mask <<= WORDLEN - w;
+  ck->word_mask >>= WORDLEN - w;
+  /* lower_mask (least significant r bits) */
+  for (ck->lower_mask=0,i=0; i<r; ++i) {
+    ck->lower_mask <<= 1;
+    ck->lower_mask |= LSB;
+  }
+  /* upper_mask (most significant (w-r) bits */
+  ck->upper_mask = (~ck->lower_mask) & ck->word_mask;
 }
 
-/* generates a random number on [0,1]-real-interval */
-double MTRnd::genrand_real1(int thr_no) {
-  return genrand_int32(thr_no)*(1.0/4294967295.0);
-  /* divided by 2^32-1 */
-}
-
-/* generates a random number on [0,1)-real-interval */
-double MTRnd::genrand_real2(int thr_no) {
-  return genrand_int32(thr_no)*(1.0/4294967296.0);
-  /* divided by 2^32 */
-}
-
-/* generates a random number on (0,1)-real-interval */
-double MTRnd::genrand_real3(int thr_no) {
-  return (((double)genrand_int32(thr_no)) + 0.5)*(1.0/4294967296.0);
-  /* divided by 2^32 */
-}
-
-/* generates a random number on [0,1) with 53-bit resolution*/
-double MTRnd::genrand_res53(int thr_no) {
-  ulong a=genrand_int32(thr_no)>>5, b=genrand_int32(thr_no)>>6;
-  return(a*67108864.0+b)*(1.0/9007199254740992.0);
-}
-/* These real versions are due to Isaku Wada, 2002/01/09 added */
-
-double
-MTRnd::genrand_gauss_dev_double(int thr_no)
+int _CheckPeriod_dc(check32_t *ck, _org_state *st,
+		    uint32_t a, int m, int n, int r, int w)
 {
-  MTRndState& state = get_state(thr_no);
+  int i, j, p, pp;
+  uint32_t y, *x, *init, mat[2];
+
+
+  p = n*w-r;
+  x = (uint32_t*) malloc (2*p*sizeof(uint32_t));
+  if (NULL==x) {
+    taMisc::Error("malloc error in \"_CheckPeriod_dc()\"");
+    exit(1);
+  }
+
+  init = (uint32_t*) malloc (n*sizeof(uint32_t));
+  if (NULL==init) {
+    taMisc::Error("malloc error \"_CheckPeriod_dc()\"");
+    free(x);
+    exit(1);
+  }
+
+  /* set initial values */
+  for (i=0; i<n; ++i)
+    x[i] = init[i] = (ck->word_mask & _genrand_dc(st));
+  /* it is better that LSBs of x[2] and x[3] are different */
+  if ( (x[2]&LSB) == (x[3]&LSB) ) {
+    x[3] ^= 1;
+    init[3] ^= 1;
+  }
+
+  pp = 2*p-n;
+  mat[0] = 0; mat[1] = a;
+  for (j=0; j<p; ++j) {
+
+    /* generate */
+    for (i=0; i<pp; ++i){
+      y = (x[i]&ck->upper_mask) | (x[i+1]&ck->lower_mask);
+      x[i+n] = x[i+m] ^ ( (y>>1) ^ mat[y&LSB] );
+    }
+
+    /* pick up odd subscritpt elements */
+    for (i=2; i<=p; ++i)
+      x[i] = x[(i<<1)-1];
+
+    /* reverse generate */
+    for (i=p-n; i>=0; --i) {
+      y = x[i+n] ^ x[i+m] ^ mat[ x[i+1]&LSB ];
+      y <<=1; y |= x[i+1]&LSB;
+
+      x[i+1] = (x[i+1]&ck->upper_mask) | (y&ck->lower_mask);
+      x[i] = (y&ck->upper_mask) | (x[i]&ck->lower_mask);
+    }
+
+  }
+
+  if ((x[0]&ck->upper_mask)==(init[0]&ck->upper_mask)) {
+    for (i=1; i<n; ++i) {
+      if (x[i] != init[i])
+        break;
+    }
+    if (i==n) {
+      free(x); free(init);
+      return IRRED;
+    }
+  }
+
+
+  free(x); free(init);
+  return REDU;
+}
+
+/////////////////////////////////////////////////////
+//              prescr.c -- prescreening
+
+#define LIMIT_IRRED_DEG 31
+#define NIRREDPOLY 127
+#define MAX_IRRED_DEG 9
+
+/* list of irreducible polynomials whose degrees are less than 10 */
+static const int irredpolylist[NIRREDPOLY][MAX_IRRED_DEG+1] = {
+    {0,1,0,0,0,0,0,0,0,0,},{1,1,0,0,0,0,0,0,0,0,},{1,1,1,0,0,0,0,0,0,0,},
+    {1,1,0,1,0,0,0,0,0,0,},{1,0,1,1,0,0,0,0,0,0,},{1,1,0,0,1,0,0,0,0,0,},
+    {1,0,0,1,1,0,0,0,0,0,},{1,1,1,1,1,0,0,0,0,0,},{1,0,1,0,0,1,0,0,0,0,},
+    {1,0,0,1,0,1,0,0,0,0,},{1,1,1,1,0,1,0,0,0,0,},{1,1,1,0,1,1,0,0,0,0,},
+    {1,1,0,1,1,1,0,0,0,0,},{1,0,1,1,1,1,0,0,0,0,},{1,1,0,0,0,0,1,0,0,0,},
+    {1,0,0,1,0,0,1,0,0,0,},{1,1,1,0,1,0,1,0,0,0,},{1,1,0,1,1,0,1,0,0,0,},
+    {1,0,0,0,0,1,1,0,0,0,},{1,1,1,0,0,1,1,0,0,0,},{1,0,1,1,0,1,1,0,0,0,},
+    {1,1,0,0,1,1,1,0,0,0,},{1,0,1,0,1,1,1,0,0,0,},{1,1,0,0,0,0,0,1,0,0,},
+    {1,0,0,1,0,0,0,1,0,0,},{1,1,1,1,0,0,0,1,0,0,},{1,0,0,0,1,0,0,1,0,0,},
+    {1,0,1,1,1,0,0,1,0,0,},{1,1,1,0,0,1,0,1,0,0,},{1,1,0,1,0,1,0,1,0,0,},
+    {1,0,0,1,1,1,0,1,0,0,},{1,1,1,1,1,1,0,1,0,0,},{1,0,0,0,0,0,1,1,0,0,},
+    {1,1,0,1,0,0,1,1,0,0,},{1,1,0,0,1,0,1,1,0,0,},{1,0,1,0,1,0,1,1,0,0,},
+    {1,0,1,0,0,1,1,1,0,0,},{1,1,1,1,0,1,1,1,0,0,},{1,0,0,0,1,1,1,1,0,0,},
+    {1,1,1,0,1,1,1,1,0,0,},{1,0,1,1,1,1,1,1,0,0,},{1,1,0,1,1,0,0,0,1,0,},
+    {1,0,1,1,1,0,0,0,1,0,},{1,1,0,1,0,1,0,0,1,0,},{1,0,1,1,0,1,0,0,1,0,},
+    {1,0,0,1,1,1,0,0,1,0,},{1,1,1,1,1,1,0,0,1,0,},{1,0,1,1,0,0,1,0,1,0,},
+    {1,1,1,1,1,0,1,0,1,0,},{1,1,0,0,0,1,1,0,1,0,},{1,0,1,0,0,1,1,0,1,0,},
+    {1,0,0,1,0,1,1,0,1,0,},{1,0,0,0,1,1,1,0,1,0,},{1,1,1,0,1,1,1,0,1,0,},
+    {1,1,0,1,1,1,1,0,1,0,},{1,1,1,0,0,0,0,1,1,0,},{1,1,0,1,0,0,0,1,1,0,},
+    {1,0,1,1,0,0,0,1,1,0,},{1,1,1,1,1,0,0,1,1,0,},{1,1,0,0,0,1,0,1,1,0,},
+    {1,0,0,1,0,1,0,1,1,0,},{1,0,0,0,1,1,0,1,1,0,},{1,0,1,1,1,1,0,1,1,0,},
+    {1,1,0,0,0,0,1,1,1,0,},{1,1,1,1,0,0,1,1,1,0,},{1,1,1,0,1,0,1,1,1,0,},
+    {1,0,1,1,1,0,1,1,1,0,},{1,1,1,0,0,1,1,1,1,0,},{1,1,0,0,1,1,1,1,1,0,},
+    {1,0,1,0,1,1,1,1,1,0,},{1,0,0,1,1,1,1,1,1,0,},{1,1,0,0,0,0,0,0,0,1,},
+    {1,0,0,0,1,0,0,0,0,1,},{1,1,1,0,1,0,0,0,0,1,},{1,1,0,1,1,0,0,0,0,1,},
+    {1,0,0,0,0,1,0,0,0,1,},{1,0,1,1,0,1,0,0,0,1,},{1,1,0,0,1,1,0,0,0,1,},
+    {1,1,0,1,0,0,1,0,0,1,},{1,0,0,1,1,0,1,0,0,1,},{1,1,1,1,1,0,1,0,0,1,},
+    {1,0,1,0,0,1,1,0,0,1,},{1,0,0,1,0,1,1,0,0,1,},{1,1,1,1,0,1,1,0,0,1,},
+    {1,1,1,0,1,1,1,0,0,1,},{1,0,1,1,1,1,1,0,0,1,},{1,1,1,0,0,0,0,1,0,1,},
+    {1,0,1,0,1,0,0,1,0,1,},{1,0,0,1,1,0,0,1,0,1,},{1,1,0,0,0,1,0,1,0,1,},
+    {1,0,1,0,0,1,0,1,0,1,},{1,1,1,1,0,1,0,1,0,1,},{1,1,1,0,1,1,0,1,0,1,},
+    {1,0,1,1,1,1,0,1,0,1,},{1,1,1,1,0,0,1,1,0,1,},{1,0,0,0,1,0,1,1,0,1,},
+    {1,1,0,1,1,0,1,1,0,1,},{1,0,1,0,1,1,1,1,0,1,},{1,0,0,1,1,1,1,1,0,1,},
+    {1,0,0,0,0,0,0,0,1,1,},{1,1,0,0,1,0,0,0,1,1,},{1,0,1,0,1,0,0,0,1,1,},
+    {1,1,1,1,1,0,0,0,1,1,},{1,1,0,0,0,1,0,0,1,1,},{1,0,0,0,1,1,0,0,1,1,},
+    {1,1,0,1,1,1,0,0,1,1,},{1,0,0,1,0,0,1,0,1,1,},{1,1,1,1,0,0,1,0,1,1,},
+    {1,1,0,1,1,0,1,0,1,1,},{1,0,0,0,0,1,1,0,1,1,},{1,1,0,1,0,1,1,0,1,1,},
+    {1,0,1,1,0,1,1,0,1,1,},{1,1,0,0,1,1,1,0,1,1,},{1,1,1,1,1,1,1,0,1,1,},
+    {1,0,1,0,0,0,0,1,1,1,},{1,1,1,1,0,0,0,1,1,1,},{1,0,0,0,0,1,0,1,1,1,},
+    {1,0,1,0,1,1,0,1,1,1,},{1,0,0,1,1,1,0,1,1,1,},{1,1,1,0,0,0,1,1,1,1,},
+    {1,1,0,1,0,0,1,1,1,1,},{1,0,1,1,0,0,1,1,1,1,},{1,0,1,0,1,0,1,1,1,1,},
+    {1,0,0,1,1,0,1,1,1,1,},{1,1,0,0,0,1,1,1,1,1,},{1,0,0,1,0,1,1,1,1,1,},
+    {1,1,0,1,1,1,1,1,1,1,},
+};
+
+static void MakepreModPolys(prescr_t *pre, int mm, int nn, int rr, int ww);
+static Polynomial *make_tntm( int n, int m);
+static Polynomial *PolynomialDup(Polynomial *pl);
+static void PolynomialMod(Polynomial *wara, const Polynomial *waru);
+static Polynomial *PolynomialMult(Polynomial *p0, Polynomial *p1);
+static void FreePoly( Polynomial *p);
+static Polynomial *NewPoly(int degree);
+static int IsReducible(prescr_t *pre, uint32_t aaa, uint32_t *polylist);
+static uint32_t word2bit(Polynomial *pl);
+static void makemodlist(prescr_t *pre, Polynomial *pl, int nPoly);
+static void NextIrredPoly(Polynomial *pl, int nth);
+
+
+int _prescreening_dc(prescr_t *pre, uint32_t aaa) {
+
+  int i;
+
+  for (i=0; i<NIRREDPOLY; i++) {
+    if (IsReducible(pre, aaa,pre->modlist[i])==REDU)
+      return REJECTED;
+  }
+  return NOT_REJECTED;
+}
+
+void _InitPrescreening_dc(prescr_t *pre, int m, int n, int r, int w) {
+  int i;
+  Polynomial *pl;
+
+  pre->sizeofA = w;
+
+  pre->preModPolys = (Polynomial **)malloc(
+                                           (pre->sizeofA+1)*(sizeof(Polynomial*)));
+  if (NULL == pre->preModPolys) {
+    taMisc::Error ("malloc error in \"InitPrescreening\"");
+    exit(1);
+  }
+  MakepreModPolys(pre, m,n,r,w);
+
+  pre->modlist = (uint32_t**)malloc(NIRREDPOLY * sizeof(uint32_t*));
+  if (NULL == pre->modlist) {
+    taMisc::Error ("malloc error in \"InitPrescreening()\"");
+    exit(1);
+  }
+  for (i=0; i<NIRREDPOLY; i++) {
+    pre->modlist[i]
+      = (uint32_t*)malloc( (pre->sizeofA + 1) * (sizeof(uint32_t)) );
+    if (NULL == pre->modlist[i]) {
+      taMisc::Error ("malloc error in \"InitPrescreening()\"");
+      exit(1);
+    }
+  }
+
+
+  for (i=0; i<NIRREDPOLY; i++) {
+    pl = NewPoly(MAX_IRRED_DEG);
+    NextIrredPoly(pl,i);
+    makemodlist(pre, pl, i);
+    FreePoly(pl);
+  }
+
+  for (i=pre->sizeofA; i>=0; i--)
+    FreePoly(pre->preModPolys[i]);
+  free(pre->preModPolys);
+
+}
+
+void _EndPrescreening_dc(prescr_t *pre) {
+  int i;
+
+  for (i=0; i<NIRREDPOLY; i++)
+    free(pre->modlist[i]);
+  free(pre->modlist);
+}
+
+/*************************************************/
+/******          static functions           ******/
+/*************************************************/
+
+void NextIrredPoly(Polynomial *pl, int nth) {
+  int i, max_deg;
+
+  for (max_deg=0,i=0; i<=MAX_IRRED_DEG; i++) {
+    if ( irredpolylist[nth][i] )
+      max_deg = i;
+    pl->x[i] = irredpolylist[nth][i];
+  }
+
+  pl->deg = max_deg;
+
+}
+
+static void makemodlist(prescr_t *pre, Polynomial *pl, int nPoly) {
+  Polynomial *tmpPl;
+  int i;
+
+  for (i=0; i<=pre->sizeofA; i++) {
+    tmpPl = PolynomialDup(pre->preModPolys[i]);
+    PolynomialMod(tmpPl,pl);
+    pre->modlist[nPoly][i] = word2bit(tmpPl);
+    FreePoly(tmpPl);
+  }
+}
+
+/* Pack Polynomial into a word */
+static uint32_t word2bit(Polynomial *pl) {
+  int i;
+  uint32_t bx;
+
+  bx = 0;
+  for (i=pl->deg; i>0; i--) {
+    if (pl->x[i]) bx |= 0x1;
+    bx <<= 1;
+  }
+  if (pl->x[0]) bx |= 0x1;
+
+  return bx;
+}
+
+/* REDU -- reducible */
+/* aaa = (a_{w-1}a_{w-2}...a_1a_0 */
+static int IsReducible(prescr_t *pre, uint32_t aaa, uint32_t *polylist) {
+  int i;
+  uint32_t x;
+
+  x = polylist[pre->sizeofA];
+  for (i=pre->sizeofA-1; i>=0; i--) {
+    if (aaa&0x1)
+      x ^= polylist[i];
+    aaa >>= 1;
+  }
+
+  if ( x == 0 ) return REDU;
+  else return NONREDU;
+}
+
+/***********************************/
+/**   functions for polynomial    **/
+/***********************************/
+
+static Polynomial *NewPoly(int degree) {
+  Polynomial *p;
+
+  p = (Polynomial *)calloc( 1, sizeof(Polynomial));
+  if( p==NULL ){
+    taMisc::Error("calloc error in \"NewPoly()\"");
+    exit(1);
+  }
+  p->deg = degree;
+
+  if (degree < 0) {
+    p->x = NULL;
+    return p;
+  }
+
+  p->x = (int *)calloc( degree + 1, sizeof(int));
+  if( p->x == NULL ){
+    taMisc::Error("calloc error");
+    exit(1);
+  }
+
+  return p;
+}
+
+static void FreePoly( Polynomial *p) {
+  if (p->x != NULL)
+    free( p->x );
+  free( p );
+}
+
+
+/** multiplication **/
+static Polynomial *PolynomialMult(Polynomial *p0,Polynomial *p1) {
+  int i, j;
+  Polynomial *p;
+
+  /* if either p0 or p1 is 0, return 0 */
+  if ( (p0->deg < 0) || (p1->deg < 0) ) {
+    p = NewPoly(-1);
+    return p;
+  }
+
+  p = NewPoly(p0->deg + p1->deg);
+  for( i=0; i<=p1->deg; i++){
+    if( p1->x[i] ){
+      for( j=0; j<=p0->deg; j++){
+        p->x[i+j] ^= p0->x[j];
+      }
+    }
+  }
+
+  return p;
+}
+
+/** wara mod waru **/
+/** the result is stored in wara ********/
+static void PolynomialMod( Polynomial *wara, const Polynomial *waru) {
+  int i;
+  int deg_diff;
+
+  while( wara->deg >= waru->deg  ){
+    deg_diff = wara->deg - waru->deg;
+    for( i=0; i<=waru->deg; i++){
+      wara->x[ i+deg_diff ] ^= waru->x[i];
+    }
+
+    for( i=wara->deg; i>=0; i--){
+      if( wara->x[i] ) break;
+    }
+    wara->deg=i;
+
+  }
+}
+
+static Polynomial *PolynomialDup(Polynomial *pl) {
+  Polynomial *pt;
+  int i;
+
+  pt = NewPoly(pl->deg);
+  for (i=pl->deg; i>=0; i--)
+    pt->x[i] = pl->x[i];
+
+  return pt;
+}
+
+/** make the polynomial  "t**n + t**m"  **/
+static Polynomial *make_tntm( int n, int m) {
+  Polynomial *p;
+
+  p = NewPoly(n);
+  p->x[n] = p->x[m] = 1;
+
+  return p;
+}
+
+static void MakepreModPolys(prescr_t *pre, int mm, int nn, int rr, int ww) {
+  Polynomial *t, *t0, *t1, *s, *s0, *s1;
+  int i,j;
+
+  j = 0;
+  t = NewPoly(0);
+  t->deg = 0;
+  t->x[0] = 1;
+  pre->preModPolys[j++] = t;
+
+  t = make_tntm (nn, mm);
+  t0 = make_tntm (nn, mm);
+  s = make_tntm (nn-1, mm-1);
+
+  for( i=1; i<(ww - rr); i++){
+    pre->preModPolys[j++] = PolynomialDup(t0);
+    t1 = t0;
+    t0 = PolynomialMult(t0, t);
+    FreePoly(t1);
+  }
+
+  pre->preModPolys[j++] = PolynomialDup(t0);
+
+  s0 =PolynomialMult( t0, s);
+  FreePoly(t0);	FreePoly(t);
+  for( i=(rr-2); i>=0; i--){
+    pre->preModPolys[j++] = PolynomialDup(s0);
+    s1 = s0;
+    s0 = PolynomialMult( s0, s);
+    FreePoly(s1);
+  }
+
+  pre->preModPolys[j++] = PolynomialDup(s0);
+
+  FreePoly(s0); FreePoly(s);
+}
+
+/////////////////////////////////////////////////////////////////
+//              eqdeg.c 
+
+/**************************************/
+#define SSS 7
+#define TTT 15
+/* #define S00 11 */
+#define S00 12
+#define S01 18
+/**************************************/
+
+/** for get_tempering_parameter_hard **/
+#define LIMIT_V_BEST_OPT 15
+/**************************************/
+
+#define WORD_LEN 32
+#define MIN_INFINITE (-2147483647-1)
+
+typedef struct {
+  uint32_t *cf;  /* fraction part */              // status
+  int start;     /* beginning of fraction part */ // idx
+  int count;	   /* maximum (degree) */
+  uint32_t next; /* (bp) rm (shifted&bitmasked) at the maximum degree */
+} Vector;
+
+typedef struct mask_node{
+  uint32_t b,c;
+  int v,leng;
+  struct mask_node *next;
+} MaskNode;
+
+static inline uint32_t trnstmp(eqdeg_t *eq, uint32_t tmp) {
+  tmp ^= (tmp >> eq->shift_0) & eq->greal_mask;
+  return tmp;
+}
+
+static inline uint32_t masktmp(eqdeg_t *eq, uint32_t tmp) {
+  tmp ^= (tmp << eq->shift_s) & eq->mask_b;
+  tmp ^= (tmp << eq->shift_t) & eq->mask_c;
+  return tmp;
+}
+
+static inline uint32_t lsb(eqdeg_t *eq, uint32_t x) {
+  return (x >> eq->ggap) & 1;
+}
+
+static const uint8_t pivot_calc_tbl[256] = {
+    0, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    3, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    2, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    3, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    1, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    3, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    2, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    3, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+    4, 8, 7, 8, 6, 8, 7, 8, 5, 8, 7, 8, 6, 8, 7, 8,
+};
+
+static int calc_pivot(uint32_t v);
+static int push_stack(eqdeg_t *eq, uint32_t b, uint32_t c,
+		      int v, uint32_t *bbb, uint32_t *ccc);
+static int push_mask(eqdeg_t * eq, int l, int v,
+		     uint32_t b, uint32_t c, uint32_t *bbb, uint32_t *ccc);
+static int pivot_reduction(eqdeg_t *eq, int v);
+static void init_tempering(eqdeg_t *eq, MTRndPar *mts);
+static void free_Vector( Vector *v );
+static void free_lattice( Vector **lattice, int v);
+static void add(int nnn, Vector *u, Vector *v);
+static void optimize_v(eqdeg_t *eq, uint32_t b, uint32_t c, int v);
+static MaskNode *optimize_v_hard(eqdeg_t *eq, int v, MaskNode *prev);
+static Vector *new_Vector(int nnn);
+static Vector **make_lattice(eqdeg_t *eq, int v);
+static void delete_MaskNodes(MaskNode *head);
+static MaskNode *delete_lower_MaskNodes(MaskNode *head, int l);
+static MaskNode *cons_MaskNode(MaskNode *head, uint32_t b, uint32_t c, int leng);
+/* static void count_MaskNodes(MaskNode *head); */
+static void next_state(eqdeg_t *eq, Vector *v, int *count);
+
+void _get_tempering_parameter_dc(MTRndPar *mts) {
+  eqdeg_t eq;
+  init_tempering(&eq, mts);
+  optimize_v(&eq, 0, 0, 0);
+  mts->shift0 = eq.shift_0;
+  mts->shift1 = eq.shift_1;
+  mts->shiftB = eq.shift_s;
+  mts->shiftC = eq.shift_t;
+  mts->maskB = eq.mask_b >> eq.ggap;
+  mts->maskC = eq.mask_c >> eq.ggap;
+}
+
+void _get_tempering_parameter_hard_dc(MTRndPar *mts) {
+  int i;
+  MaskNode mn0, *cur, *next;
+  eqdeg_t eq;
+
+  init_tempering(&eq, mts);
+
+  for (i=0; i<eq.www; i++)
+    eq.gcur_maxlengs[i] = -1;
+
+  mn0.b = mn0.c = mn0.leng = 0;
+  mn0.next = NULL;
+
+  cur = &mn0;
+  for (i=0; i<LIMIT_V_BEST_OPT; i++) {
+    next = optimize_v_hard(&eq, i, cur);
+    if (i > 0)
+      delete_MaskNodes(cur);
+    cur = next;
+  }
+  delete_MaskNodes(cur);
+
+  optimize_v(&eq, eq.gmax_b, eq.gmax_c,i);
+  mts->shift0 = eq.shift_0;
+  mts->shift1 = eq.shift_1;
+  mts->shiftB = eq.shift_s;
+  mts->shiftC = eq.shift_t;
+  mts->maskB = eq.mask_b >> eq.ggap;
+  mts->maskC = eq.mask_c >> eq.ggap;
+}
+
+static int calc_pivot(uint32_t v) {
+  int p1, p2, p3, p4;
+
+  p1 = pivot_calc_tbl[v & 0xff];
+  if (p1) {
+    return p1 + 24 - 1;
+  }
+  p2 = pivot_calc_tbl[(v >> 8) & 0xff];
+  if (p2) {
+    return p2 + 16 - 1;
+  }
+  p3 = pivot_calc_tbl[(v >> 16) & 0xff];
+  if (p3) {
+    return p3 + 8 - 1;
+  }
+  p4 = pivot_calc_tbl[(v >> 24) & 0xff];
+  if (p4) {
+    return p4 - 1;
+  }
+  return -1;
+}
+
+static int is_zero(int size, Vector *v) {
+  if (v->cf[0] != 0) {
+    return 0;
+  } else {
+    return (memcmp(v->cf, v->cf + 1, sizeof(uint32_t) * (size - 1)) == 0);
+  }
+}
+
+static void init_tempering(eqdeg_t *eq, MTRndPar *mts) {
+  int i;
+
+  eq->mmm = mts->mm;
+  eq->nnn = mts->nn;
+  eq->rrr = mts->rr;
+  eq->www = mts->ww;
+  eq->shift_0 = S00;
+  eq->shift_1 = S01;
+  eq->shift_s = SSS;
+  eq->shift_t = TTT;
+  eq->ggap = WORD_LEN - eq->www;
+  /* bits are filled in mts->aaa from MSB */
+  eq->aaa[0] = 0; eq->aaa[1] = (mts->aaa) << eq->ggap;
+
+
+  for( i=0; i<WORD_LEN; i++)
+    eq->bitmask[i] = UINT32_C(0x80000000) >> i;
+
+  for( i=0, eq->glower_mask=0; i<eq->rrr; i++)
+    eq->glower_mask = (eq->glower_mask<<1)| 0x1;
+
+  eq->gupper_mask = ~eq->glower_mask;
+  eq->gupper_mask <<= eq->ggap;
+  eq->glower_mask <<= eq->ggap;
+
+  eq->greal_mask = (eq->gupper_mask | eq->glower_mask);
+}
+
+/* (v-1) bitmasks of b,c */
+static MaskNode *optimize_v_hard(eqdeg_t *eq, int v, MaskNode *prev_masks) {
+  int i, ll, t;
+  uint32_t bbb[8], ccc[8];
+  MaskNode *cur_masks;
+
+  cur_masks = NULL;
+
+  while (prev_masks != NULL) {
+
+    ll = push_stack(eq, prev_masks->b,prev_masks->c,v,bbb,ccc);
+
+    for (i=0; i<ll; ++i) {
+      eq->mask_b = bbb[i];
+      eq->mask_c = ccc[i];
+      t = pivot_reduction(eq, v+1);
+      if (t >= eq->gcur_maxlengs[v]) {
+        eq->gcur_maxlengs[v] = t;
+        eq->gmax_b = eq->mask_b;
+        eq->gmax_c = eq->mask_c;
+        cur_masks = cons_MaskNode(cur_masks, eq->mask_b, eq->mask_c, t);
+      }
+    }
+    prev_masks = prev_masks->next;
+  }
+
+  cur_masks = delete_lower_MaskNodes(cur_masks, eq->gcur_maxlengs[v]);
+
+  return cur_masks;
+}
+
+
+/* (v-1) bitmasks of b,c */
+static void optimize_v(eqdeg_t *eq, uint32_t b, uint32_t c, int v) {
+  int i, max_len, max_i, ll, t;
+  uint32_t bbb[8], ccc[8];
+
+  ll = push_stack(eq, b,c,v,bbb,ccc);
+
+  max_len = max_i = 0;
+  if (ll > 1) {
+    for (i=0; i<ll; ++i) {
+      eq->mask_b = bbb[i];
+      eq->mask_c = ccc[i];
+      t = pivot_reduction(eq, v+1);
+      if (t > max_len) {
+        max_len = t;
+        max_i = i;
+      }
+    }
+  }
+
+  if ( v >= eq->www-1 ) {
+    eq->mask_b = bbb[max_i];
+    eq->mask_c = ccc[max_i];
+    return;
+  }
+
+  optimize_v(eq, bbb[max_i], ccc[max_i], v+1);
+}
+
+static int push_stack(eqdeg_t *eq, uint32_t b, uint32_t c, int v,
+		      uint32_t *bbb, uint32_t *ccc)
+{
+  int i, ll, ncv;
+  uint32_t cv_buf[2];
+
+  ll = 0;
+
+  if( (v+eq->shift_t) < eq->www ){
+    ncv = 2; cv_buf[0] = c | eq->bitmask[v]; cv_buf[1] = c;
+  }
+  else {
+    ncv = 1; cv_buf[0] = c;
+  }
+
+  for( i=0; i<ncv; ++i)
+    ll += push_mask(eq, ll, v, b, cv_buf[i], bbb, ccc);
+
+  return ll;
+}
+
+static int push_mask(eqdeg_t *eq, int l, int v, uint32_t b, uint32_t c,
+		     uint32_t *bbb, uint32_t *ccc)
+{
+  int i, j, k, nbv, nbvt;
+  uint32_t bmask, bv_buf[2], bvt_buf[2];
+
+  k = l;
+  if( (eq->shift_s+v) >= eq->www ){
+    nbv = 1; bv_buf[0] = 0;
+  }
+  else if( (v>=eq->shift_t) && (c&eq->bitmask[v-eq->shift_t] ) ){
+    nbv = 1; bv_buf[0] = b&eq->bitmask[v];
+  }
+  else {
+    nbv = 2; bv_buf[0] = eq->bitmask[v]; bv_buf[1] = 0;
+  }
+
+  if( ((v+eq->shift_t+eq->shift_s) < eq->www) && (c&eq->bitmask[v]) ){
+    nbvt = 2; bvt_buf[0] = eq->bitmask[v+eq->shift_t]; bvt_buf[1] = 0;
+  }
+  else {
+    nbvt = 1; bvt_buf[0] = 0;
+  }
+
+  bmask = eq->bitmask[v];
+  if( (v+eq->shift_t) < eq->www )
+    bmask |= eq->bitmask[v+eq->shift_t];
+  bmask = ~bmask;
+  for( i=0; i<nbvt; ++i){
+    for( j=0; j<nbv; ++j){
+      bbb[k] = (b&bmask) | bv_buf[j] | bvt_buf[i];
+      ccc[k] = c;
+      ++k;
+    }
+  }
+
+  return k-l;
+}
+
+/**********************************/
+/****  subroutines for lattice ****/
+/**********************************/
+static int pivot_reduction(eqdeg_t *eq, int v) {
+  Vector **lattice, *ltmp;
+  int i;
+  int pivot;
+  int count;
+  int min;
+
+  eq->upper_v_bits = 0;
+  for( i=0; i<v; i++) {
+    eq->upper_v_bits |= eq->bitmask[i];
+  }
+
+  lattice = make_lattice(eq, v );
+
+  for (;;) {
+    pivot = calc_pivot(lattice[v]->next);
+    if (lattice[pivot]->count < lattice[v]->count) {
+      ltmp = lattice[pivot];
+      lattice[pivot] = lattice[v];
+      lattice[v] = ltmp;
+    }
+    add(eq->nnn, lattice[v], lattice[pivot]);
+    if (lattice[v]->next == 0) {
+      count = 0;
+      next_state(eq, lattice[v], &count);
+      if (lattice[v]->next == 0) {
+        if (is_zero(eq->nnn, lattice[v])) {
+          break;
+        }
+        while (lattice[v]->next == 0) {
+          count++;
+          next_state(eq, lattice[v], &count);
+          if (count > eq->nnn * (eq->www-1) - eq->rrr) {
+            break;
+          }
+        }
+        if (lattice[v]->next == 0) {
+          break;
+        }
+      }
+    }
+  }
+
+  min = lattice[0]->count;
+  for (i = 1; i < v; i++) {
+    if (min > lattice[i]->count) {
+      min = lattice[i]->count;
+    }
+  }
+  free_lattice( lattice, v );
+  return min;
+}
+
+/********************************/
+/** allocate momory for Vector **/
+/********************************/
+static Vector *new_Vector(int nnn) {
+  Vector *v;
+
+  v = (Vector *)malloc( sizeof( Vector ) );
+  if( v == NULL ){
+    taMisc::Error("malloc error in \"new_Vector()\"");
+    exit(1);
+  }
+
+  v->cf = (uint32_t *)calloc( nnn, sizeof( uint32_t ) );
+  if( v->cf == NULL ){
+    taMisc::Error("calloc error in \"new_Vector()\"");
+    exit(1);
+  }
+
+  v->start = 0;
+
+  return v;
+}
+
+/************************************************/
+/* frees *v which was allocated by new_Vector() */
+/************************************************/
+static void free_Vector( Vector *v ) {
+  if( NULL != v->cf ) free( v->cf );
+  if( NULL != v ) free( v );
+}
+
+static void free_lattice( Vector **lattice, int v) {
+  int i;
+
+  for( i=0; i<=v; i++)
+    free_Vector( lattice[i] );
+  free( lattice );
+}
+
+/* adds v to u (then u will change) */
+static void add(int nnn, Vector *u, Vector *v) {
+  int i;
+  int diff = (v->start - u->start + nnn) % nnn;
+  for (i = 0; i < nnn - diff; i++) {
+    u->cf[i] ^= v->cf[i + diff];
+  }
+  diff = diff - nnn;
+  for (; i < nnn; i++) {
+    u->cf[i] ^= v->cf[i + diff];
+  }
+  u->next ^=  v->next;
+}
+
+/* makes a initial lattice */
+static Vector **make_lattice(eqdeg_t *eq, int v) {
+  int i;
+  int count;
+  Vector **lattice, *bottom;
+
+  lattice = (Vector **)malloc( (v+1) * sizeof( Vector *) );
+  if( NULL == lattice ){
+    taMisc::Error("malloc error in \"make_lattice\"");
+    exit(1);
+  }
+
+  for( i=0; i<v; i++){ /* from 0th row to v-1-th row */
+    lattice[i] = new_Vector(eq->nnn);
+    lattice[i]->next = eq->bitmask[i];
+    lattice[i]->start = 0;
+    lattice[i]->count = 0;
+  }
+
+  bottom = new_Vector(eq->nnn); /* last row */
+  for(i=0; i< eq->nnn; i++) {
+    bottom->cf[i] = 0;
+  }
+  bottom->cf[eq->nnn -1] = 0xc0000000 & eq->greal_mask;
+  bottom->start = 0;
+  bottom->count = 0;
+  count = 0;
+  do {
+    next_state(eq, bottom, &count);
+  } while (bottom->next == 0);
+  //    degree_of_vector(eq, top );
+  lattice[v] = bottom;
+
+  return lattice;
+}
+
+static void next_state(eqdeg_t *eq, Vector *v, int *count) {
+  uint32_t tmp;
+
+  do {
+    tmp = ( v->cf[v->start] & eq->gupper_mask )
+      | ( v->cf[(v->start + 1) % eq->nnn] & eq->glower_mask );
+    v->cf[v->start] = v->cf[(v->start + eq->mmm) % eq->nnn]
+      ^ ( (tmp>>1) ^ eq->aaa[lsb(eq, tmp)] );
+    v->cf[v->start] &= eq->greal_mask;
+    tmp = v->cf[v->start];
+    v->start = (v->start + 1) % eq->nnn;
+    v->count++;
+    tmp = trnstmp(eq, tmp);
+    tmp = masktmp(eq, tmp);
+    v->next = tmp & eq->upper_v_bits;
+    (*count)++;
+    if (*count > eq->nnn * (eq->www-1) - eq->rrr) {
+      break;
+    }
+  } while (v->next == 0);
+}
+
+/***********/
+static MaskNode *cons_MaskNode(MaskNode *head, uint32_t b, uint32_t c, int leng) {
+  MaskNode *t;
+
+  t = (MaskNode*)malloc(sizeof(MaskNode));
+  if (t == NULL) {
+    taMisc::Error("malloc error in \"cons_MaskNode\"");
+    exit(1);
+  }
+
+  t->b = b;
+  t->c = c;
+  t->leng = leng;
+  t->next = head;
+
+  return t;
+}
+
+static void delete_MaskNodes(MaskNode *head) {
+  MaskNode *t;
+
+  while(head != NULL) {
+    t = head->next;
+    free(head);
+    head = t;
+  }
+}
+
+static MaskNode *delete_lower_MaskNodes(MaskNode *head, int l) {
+  MaskNode *s, *t, *tail;
+
+  s = head;
+  while(1) { /* heading */
+    if (s == NULL)
+      return NULL;
+    if (s->leng >= l)
+      break;
+    t = s->next;
+    free(s);
+    s = t;
+  }
+
+  head = tail = s;
+
+  while (head != NULL) {
+    t = head->next;
+    if (head->leng < l) {
+      free(head);
+    }
+    else {
+      tail->next = head;
+      tail = head;
+    }
+    head = t;
+  }
+
+  tail->next = NULL;
+  return s;
+}
+
+/////////////////////////////////////////////////////////////////////
+//              seive.c -- main code
+
+
+#define MAX_SEARCH 10000
+
+_org_state global_mt19937;
+
+/*******************************************************************/
+static uint32_t nextA(_org_state *org, int w);
+static uint32_t nextA_id(_org_state *org, int w, int id, int idw);
+static void make_masks(int r, int w, MTRndPar *mts);
+static int get_irred_param(check32_t *ck, prescr_t *pre, _org_state *org,
+			   MTRndPar *mts,int id, int idw);
+static bool init_mt_search(MTRndPar* mts, check32_t *ck, prescr_t *pre, int w, int p);
+static void end_mt_search(prescr_t *pre);
+static void copy_params_of_MTRndPar(MTRndPar *src, MTRndPar *dst);
+static int proper_mersenne_exponent(int p);
+/*******************************************************************/
+
+/* When idw==0, id is not embedded into "a" */
+#define FOUND 1
+#define NOT_FOUND 0
+static int get_irred_param(check32_t *ck, prescr_t *pre, _org_state *org,
+			   MTRndPar *mts, int id, int idw)
+{
+  int i;
+  uint32_t a;
+
+  for (i=0; i<MAX_SEARCH; i++) {
+    if (idw == 0)
+      a = nextA(org, mts->ww);
+    else
+      a = nextA_id(org, mts->ww, id, idw);
+    if (NOT_REJECTED == _prescreening_dc(pre, a) ) {
+      if (IRRED
+          == _CheckPeriod_dc(ck, org, a,mts->mm,mts->nn,mts->rr,mts->ww)) {
+        mts->aaa = a;
+        break;
+      }
+    }
+  }
+
+  if (MAX_SEARCH == i) {
+    taMisc::Error("was not able to find a good parameter for id:", String(id), "bailing!");
+    return NOT_FOUND;
+  }
+  return FOUND;
+}
+
+
+static uint32_t nextA(_org_state *org, int w) {
+  uint32_t x, word_mask;
+
+  word_mask = 0xFFFFFFFF;
+  word_mask <<= WORDLEN - w;
+  word_mask >>= WORDLEN - w;
+
+  x = _genrand_dc(org);
+  x &= word_mask;
+  x |= (LSB << (w-1));
+
+  return x;
+}
+
+static uint32_t nextA_id(_org_state *org, int w, int id, int idw) {
+  uint32_t x, word_mask;
+
+  word_mask = 0xFFFFFFFF;
+  word_mask <<= WORDLEN - w;
+  word_mask >>= WORDLEN - w;
+  word_mask >>= idw;
+  word_mask <<= idw;
+
+  x = _genrand_dc(org);
+  x &= word_mask;
+  x |= (LSB << (w-1));
+  x |= (uint32_t)id; /* embedding id */
+
+  return x;
+}
+
+static void make_masks(int r, int w, MTRndPar *mts) {
+  int i;
+  uint32_t ut, wm, um, lm;
+
+  wm = 0xFFFFFFFF;
+  wm >>= (WORDLEN - w);
+
+  ut = 0;
+  for (i=0; i<r; i++) {
+    ut <<= 1;
+    ut |= LSB;
+  }
+
+  lm = ut;
+  um = (~ut) & wm;
+
+  mts->wmask = wm;
+  mts->umask = um;
+  mts->lmask = lm;
+}
+
+static bool init_mt_search(MTRndPar *mts, check32_t *ck, prescr_t *pre, int w, int p) {
+  int n, m, r;
+
+  if ( (w>32) || (w<31) ) {
+    taMisc::Error ("Sorry, currently only w = 32 or 31 is allowded.");
+    return false;
+  }
+
+  if ( !proper_mersenne_exponent(p) ) {
+    if (p<521) {
+      taMisc::Error ("\"p\" is too small.");
+      return false;
+    }
+    else if (p>44497){
+      taMisc::Error ("\"p\" is too large.");
+      return false;
+    }
+    else {
+      taMisc::Error ("\"p\" is not a Mersenne exponent.");
+      return false;
+    }
+  }
+
+  n = p/w + 1; /* since p is Mersenne Exponent, w never divids p */
+
+  m = n/2;
+  if (m < 2) m = n-1;
+  r = n * w - p;
+
+  make_masks(r, w, mts);
+  _InitPrescreening_dc(pre, m, n, r, w);
+  _InitCheck32_dc(ck, r, w);
+
+  mts->mm = m;
+  mts->nn = n;
+  mts->rr = r;
+  mts->ww = w;
+
+  return true;
+}
+
+static void end_mt_search(prescr_t *pre) {
+  _EndPrescreening_dc(pre);
+}
+
+static void copy_params_of_MTRndPar(MTRndPar *src, MTRndPar *dst) {
+  dst->nn = src->nn;
+  dst->mm = src->mm;
+  dst->rr = src->rr;
+  dst->ww = src->ww;
+  dst->wmask = src->wmask;
+  dst->umask = src->umask;
+  dst->lmask = src->lmask;
+}
+
+static int proper_mersenne_exponent(int p) {
+  switch(p) {
+  case 521:
+  case 607:
+  case 1279:
+  case 2203:
+  case 2281:
+  case 3217:
+  case 4253:
+  case 4423:
+  case 9689:
+  case 9941:
+  case 11213:
+  case 19937:
+  case 21701:
+  case 23209:
+  case 44497:
+    return 1;
+  default:
+    return 0;
+  }
+}
+
+
+////////////////////////////////////////////////////////////////
+//              Main Gen Code
+
+void MTRndPar::Initialize() {
+  aaa = 0;
+  mm = 0;
+  nn = 0;
+  rr = 0;
+  ww = 0;
+  wmask = 0;
+  umask = 0;
+  lmask = 0;
+  shift0 = 0;
+  shift1 = 0;
+  shiftB = 0;
+  shiftC = 0;
+  maskB = 0;
+  maskC = 0;
+  mti = 0;
+  double_cached = false;
+  cached_double = 0.0f;
+
+  state = NULL;
+}
+
+void MTRndPar::Destroy() {
+  if(state != NULL) {
+    delete[] state;
+    state = NULL;
+  }
+}
+
+void MTRndPar::AllocState() {
+  state = new uint32_t[nn];
+}
+
+/*
+   w -- word size
+   p -- Mersenne Exponent
+   seed -- seed for original mt19937 to generate parameter.
+*/
+bool MTRndPar::GenerateParams(int w, int p, uint32_t seed) {
+  prescr_t pre;
+  _org_state org;
+  check32_t ck;
+
+  _sgenrand_dc(&org, seed);
+  bool rval = init_mt_search(this, &ck, &pre, w, p);
+  if(!rval) return rval;
+
+  if ( NOT_FOUND == get_irred_param(&ck, &pre, &org, this, 0,0) ) {
+    return false;
+  }
+  _get_tempering_parameter_hard_dc(this);
+  end_mt_search(&pre);
+  return true;
+}
+
+/*
+   w -- word size
+   p -- Mersenne Exponent
+*/
+#define DEFAULT_ID_SIZE 16
+/* id <= 0xffff */
+
+bool MTRndPar::GenerateParamsID(int w, int p, int id, uint32_t seed) {
+  prescr_t pre;
+  _org_state org;
+  check32_t ck;
+
+  _sgenrand_dc(&org, seed);
+  if (id > 0xffff) {
+    taMisc::Error("\"id\" must be less than 65536");
+    return false;
+  }
+  if (id < 0) {
+    taMisc::Error("\"id\" must be positive");
+    return false;
+  }
+
+  bool rval = init_mt_search(this, &ck, &pre, w, p);
+  if (!rval) return false;
+
+  if ( NOT_FOUND == get_irred_param(&ck, &pre, &org,
+                                    this, id, DEFAULT_ID_SIZE) ) {
+    return false;
+  }
+  _get_tempering_parameter_hard_dc(this);
+  end_mt_search(&pre);
+  return true;
+}
+
+////////////////////////////////////////////////////////////////
+//              Actually use params to generate numbers!
+
+void MTRndPar::InitSeed(uint32_t seed) {
+  if(!state) {
+    AllocState();
+  }
+
+  int i;
+  for (i=0; i<nn; i++) {
+    state[i] = seed;
+    seed = (UINT32_C(1812433253) * (seed  ^ (seed >> 30))) + i + 1;
+    /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
+    /* In the previous versions, MSBs of the seed affect   */
+    /* only MSBs of the array mt[].                        */
+  }
+  mti = nn;
+
+  for (i=0; i<nn; i++)
+    state[i] &= wmask;
+}
+
+uint32_t MTRndPar::GenRandInt32() {
+  if(!state) {
+    AllocState();
+  }
   
-  if (state.is_gauss_double_cached) {
-    state.is_gauss_double_cached = false;
-    return state.cached_gauss_double;
+  uint32_t *st, uuu, lll, aa, x;
+  int k,n,m,lim;
+
+  if ( mti >= nn ) {
+    n = nn; m = mm;
+    aa = aaa;
+    st = state;
+    uuu = umask; lll = lmask;
+
+    lim = n - m;
+    for (k=0; k<lim; k++) {
+      x = (st[k]&uuu)|(st[k+1]&lll);
+      st[k] = st[k+m] ^ (x>>1) ^ (x&1U ? aa : 0U);
+    }
+    lim = n - 1;
+    for (; k<lim; k++) {
+      x = (st[k]&uuu)|(st[k+1]&lll);
+      st[k] = st[k+m-n] ^ (x>>1) ^ (x&1U ? aa : 0U);
+    }
+    x = (st[n-1]&uuu)|(st[0]&lll);
+    st[n-1] = st[m-1] ^ (x>>1) ^ (x&1U ? aa : 0U);
+    mti=0;
+  }
+
+  x = state[mti];
+  mti += 1;
+  x ^= x >> shift0;
+  x ^= (x << shiftB) & maskB;
+  x ^= (x << shiftC) & maskC;
+  x ^= x >> shift1;
+
+  return x;
+}
+
+double MTRndPar::GenRandGaussDev() {
+  if(double_cached) {
+    double_cached = false;
+    return cached_double;
   }
 
   double fac, r, v1, v2;
   do {
-    v1 = 2.0 * MTRnd::genrand_res53(thr_no) - 1.0;
-    v2 = 2.0 * MTRnd::genrand_res53(thr_no) - 1.0;
+    v1 = 2.0 * GenRandRes53() - 1.0;
+    v2 = 2.0 * GenRandRes53() - 1.0;
     r = v1 * v1 + v2 * v2;
   }
   while (r >= 1.0 || r == 0);
 
   fac = sqrt(-2.0 * log(r) / r);
-  state.cached_gauss_double = v1 * fac;
-  state.is_gauss_double_cached = true;
+  cached_double = v1 * fac;
+  double_cached = true;
   return v2 * fac;
+}
+
+uint32_t MTRndPar::GetCurSeed() {
+  if(!state) {
+    return 0;
+  }
+  return state[mti];
+}
+
+
+////////////////////////////////
+//      MTRndPar_List
+
+bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
+  SetSize(n_ids);
+
+  prescr_t pre;
+  _org_state org;
+  check32_t ck;
+
+  _sgenrand_dc(&org, seed);
+
+  MTRndPar template_mts;
+  bool rval = init_mt_search(&template_mts, &ck, &pre, w, p);
+  if (!rval) return false;
+
+  rval = true;
+  for (int i=0; i<n_ids; i++) {
+    MTRndPar* mts = FastEl(i);
+    copy_params_of_MTRndPar(&template_mts, mts);
+
+    if ( NOT_FOUND == get_irred_param(&ck, &pre, &org, mts,
+                                      i,DEFAULT_ID_SIZE) ) {
+      rval = false;
+      break;
+    }
+    _get_tempering_parameter_hard_dc(mts);
+  }
+
+  end_mt_search(&pre);
+  return rval;
+}
+
+void MTRndPar_List::InitSeeds(uint32_t seed) {
+  for(int i=0; i<size; i++) {
+    FastEl(i)->InitSeed(seed);
+  }
+}
+
+////////////////////////////////
+//      MTRnd
+
+const int MTRnd::max_gens = 64;
+MTRndPar_List MTRnd::mtrnds;
+
+void MTRnd::Initialize() {
+}
+
+void MTRnd::Destroy() {
+}
+
+MTRndPar* MTRnd::GetRnd(int thr_no) {
+  if(thr_no >= mtrnds.size || thr_no < 0) {
+    taMisc::Error("MTRnd: thread number:", String(thr_no),
+                  "out of range for number of parallel RNG's:", String(mtrnds.size));
+    return NULL;
+  }
+  return mtrnds.FastEl(thr_no);
+}
+    
+void MTRnd::InitSeeds(uint32_t seed) {
+  mtrnds.InitSeeds(seed);
+}
+
+uint32_t MTRnd::GetTimePidSeed() {
+  int pid = taMisc::ProcessId();
+  int tc = taMisc::TickCount(); // ms since system started
+  ulong sdval = (ulong)tc * (ulong)pid;
+  uint32_t rval = sdval & 0xffffffffUL;
+  return rval;
+}
+
+void MTRnd::LoadInitParams() {
+  // String ldstr = chars!
+  // mtrnds.Load_String(ldstr);
+}
+
+void MTRnd::GenInitParams(int n_gens, const String& save_file_name) {
+  taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using 19937 prime value -- could decrease that to speed things up, and generating:", String(n_gens),
+                  "generators");
+  mtrnds.GenerateParamsID(32, 19937, n_gens, GetTimePidSeed());
+  String svstr;
+  mtrnds.Save_String(svstr);
+  svstr.SaveToFile(save_file_name);
+  taMisc::Info("MTRnd params saved to:", save_file_name);
 }

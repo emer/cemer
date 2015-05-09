@@ -56,7 +56,7 @@ public:
   // various handy static random number generation functions:
 
   static int    IntZeroN(int n, int thr_no = 0)
-  { if(n > 0) return (int)(MTRnd::genrand_int32(thr_no) % (uint)n); return 0; }
+  { if(n > 0) return (int)(MTRnd::GenRandInt32(thr_no) % (uint)n); return 0; }
   // #CAT_Int uniform random integer in the range between 0 and n, exclusive of n: [0,n) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
   static int    IntMinMax(int min, int max, int thr_no = 0)
   { return min + IntZeroN(max - min, thr_no); }
@@ -66,7 +66,7 @@ public:
   // #CAT_Int uniform random integer with given range on either side of the mean: [mean - range, mean + range] -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
   static double ZeroOne(int thr_no = 0)
-  { return MTRnd::genrand_res53(thr_no); }
+  { return MTRnd::GenRandRes53(thr_no); }
   // #CAT_Float uniform random number between zero and one (inclusive of 1 due to rounding!) -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
   static double UniformMinMax(double min, double max, int thr_no = 0)
   { return min + (max - min) * ZeroOne(thr_no); }
@@ -104,10 +104,11 @@ public:
   static bool   BoolProb(double p, int thr_no = 0) { return (ZeroOne(thr_no) < p); }
   // #CAT_Bool boolean true/false with given probability -- specify thread number if calling from thread for thread-safe operation (1 <= thr_no < cpus)
 
+  TA_BASEFUNS(Random);
+private:
+  void  Copy_(const Random& cp);
   void  Initialize();
   void  Destroy()                { };
-  void  Copy_(const Random& cp);
-  TA_BASEFUNS(Random); //
 };
 
 #endif // Random_h

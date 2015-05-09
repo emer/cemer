@@ -22,7 +22,6 @@ TA_BASEFUNS_CTORS_DEFN(RandomPrjnSpec);
 void RandomPrjnSpec::Initialize() {
   p_con = .25;
   sym_self = false;
-  rndm_seed.GetCurrent();
 }
 
 void RandomPrjnSpec::UpdateAfterEdit_impl() {

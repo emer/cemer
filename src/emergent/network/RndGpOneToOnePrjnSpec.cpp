@@ -22,7 +22,6 @@ TA_BASEFUNS_CTORS_DEFN(RndGpOneToOnePrjnSpec);
 void RndGpOneToOnePrjnSpec::Initialize() {
   p_con = .25;
   same_seed = false;
-  rndm_seed.GetCurrent();
 }
 
 void RndGpOneToOnePrjnSpec::UpdateAfterEdit_impl() {
