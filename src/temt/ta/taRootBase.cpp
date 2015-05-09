@@ -1311,6 +1311,7 @@ bool taRootBase::Startup_InitTA_InitUserAppDir() {
 
 bool taRootBase::Startup_InitTA() {
   // first initialize the type data from maketa generated files, registered here:
+ 
   // taMisc::Init_Defaults_PreLoadConfig(); // needs to have this early!
 
   taMisc::Init_Types();
@@ -1422,6 +1423,8 @@ bool taRootBase::Startup_InitTA() {
 
   instance()->sidebar_paths.AddUnique(desktop_path);
   instance()->sidebar_paths.AddUnique(docs_path);
+
+  MTRnd::LoadInitParams();
 
   // start recording stuff at this point -- only with gui active
   if(taMisc::use_gui) {
