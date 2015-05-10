@@ -1603,10 +1603,10 @@ uint32_t MTRnd::GetTimePidSeed() {
 }
 
 void MTRnd::GenInitParams(int n_gens, const String& save_file_name) {
-  //  int prime = 521;     // for testing -- runs in a few seconds
-  int prime = 4423;        // takes under an hour for 100
-  //  int prime = 9941;    // takes several hours
-  //  int prime = 19937;   // this takes several days
+  // int prime = 521;     // for testing -- runs in a few seconds
+  // int prime = 4423;    // takes under an hour for 100
+  // int prime = 9941;    // takes several hours
+  int prime = 19937;   // this takes several days
 
   taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using  prime value:", String(prime), "(19937 takes several days for 100, computation is O(prime^3)) -- generating a total of:", String(n_gens),
                   "generators");
