@@ -356,7 +356,7 @@ void ClusterRun::LoadData(bool remove_existing) {
     }
   }
   else {
-    taMisc::Warning("No rows selected -- no data fetched");
+    taMisc::Warning("No rows selected -- no data loaded");
   }
   ClearAllSelections();       // done
 }
@@ -1535,7 +1535,7 @@ bool ClusterRun::CheckLocalClustUser(const DataTable& table, int tab_row, bool w
 void
 ClusterRun::SubmitUpdateNote(const DataTable& table, int tab_row)
 {
-    if(!CheckLocalClustUser(jobs_done, tab_row))
+    if(!CheckLocalClustUser(table, tab_row))
       return;
     int dst_row = jobs_submit.AddBlankRow();
     jobs_submit.SetVal("UPDATENOTE", "status", dst_row);
