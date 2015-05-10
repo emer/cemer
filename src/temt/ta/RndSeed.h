@@ -31,7 +31,7 @@ class TA_API RndSeed : public taNBase {
   // #STEM_BASE ##CAT_Math random seeds: can control the random number generator to restart with the same pseudo-random sequence or get a new one
 INHERITED(taNBase)
 public:
-  uint32_t              seed;   // #READ_ONLY the seed -- just a single int
+  uint32_t       rnd_seed;   // #READ_ONLY the random seed
 
   virtual void   NewSeed();
   // #BUTTON #CONFIRM set the seed to a new random value (based on time and process id)

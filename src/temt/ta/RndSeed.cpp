@@ -22,27 +22,27 @@
 TA_BASEFUNS_CTORS_DEFN(RndSeed);
 
 void RndSeed::Initialize() {
-  seed = 0;
+  rnd_seed = 0;
 }
 
 void RndSeed::NewSeed() {
-  seed = MTRnd::GetTimePidSeed();
-  MTRnd::InitSeeds(seed);
+  rnd_seed = MTRnd::GetTimePidSeed();
+  MTRnd::InitSeeds(rnd_seed);
 }
 
 void RndSeed::OldSeed() {
-  if(TestWarning(seed == 0, "OldSeed",
-               "seed is currently 0 -- attempting to use uninitialized seed in OldSeed -- running NewSeed first!")) {
+  if(TestWarning(rnd_seed == 0, "OldSeed",
+               "rnd_seed is currently 0 -- attempting to use uninitialized rnd_seed in OldSeed -- running NewSeed first!")) {
     NewSeed();
   }
   else {
-    MTRnd::InitSeeds(seed);
+    MTRnd::InitSeeds(rnd_seed);
   }
 }
 
 void RndSeed::Init(uint32_t i) {
-  seed = i;
-  MTRnd::InitSeeds(seed);
+  rnd_seed = i;
+  MTRnd::InitSeeds(rnd_seed);
 }
 
 #ifdef DMEM_COMPILE
@@ -51,7 +51,7 @@ void RndSeed::DMem_Sync(MPI_Comm comm) {
     return;
 
   // just blast the first guy to all members of the same communicator
-  DMEM_MPICALL(MPI_Bcast(&seed, 1, MPI_INT, 0, comm),
+  DMEM_MPICALL(MPI_Bcast(&rnd_seed, 1, MPI_INT, 0, comm),
                "Process::SyncAllSeeds", "Bcast");
   OldSeed();            // then get my seed!
 }

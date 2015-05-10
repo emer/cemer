@@ -1532,32 +1532,25 @@ void Network::Init_dWt_Thr(int thr_no) {
 
 void Network::Init_Weights() {
   // do lots of checking here to make sure, cuz often 1st thing that happens
-  //NOTE: this will typically be nested inside a gui check
+  // NOTE: this will typically be nested inside a gui check
   if (!CheckConfig(false)) return;
 
   taMisc::Busy();
 
   needs_wt_sym = false;          // will get set to true if needed
 
-  // todo: not clear if random numberes are working yet..
-  NET_THREAD_LOOP(Network::Init_Weights_Thr);
-  //  NET_THREAD_CALL(Network::Init_Weights_Thr);
+  NET_THREAD_CALL(Network::Init_Weights_Thr);
 
   if(needs_wt_sym) {
-    // taMisc::Info("Starting Init_Weights_sym...");
     NET_THREAD_CALL(Network::Init_Weights_sym);
   }
-  // taMisc::Info("Starting Init_Weights_post...");
   NET_THREAD_CALL(Network::Init_Weights_post_Thr);
 
-  // taMisc::Info("Starting Init_Weights_Layer..");
   Init_Weights_Layer();
 
   Init_Acts();                  // also re-init state at this point..
   Init_Metrics();
   UpdateAllViews();
-
-  // taMisc::Info("Done Init_Weights...");
 
   SendWeightsToGPU();
   taMisc::DoneBusy();

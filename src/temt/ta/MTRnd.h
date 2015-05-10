@@ -151,7 +151,7 @@ class TA_API MTRnd : public taNBase {
   // A container for the Mersenne Twister (MT19937) random number generator by Makoto Matsumoto and Takuji Nishimura -- maintains list of dynamically created MT generators, each designed to be as different from each other as possible -- because generation takes a very long time, we initialize from a saved list of generators
 INHERITED(taNBase)
 public:
-  static const int      max_gens; // maximum number of generators -- defaults to 64 -- cannot use more than this number of threads in parallel unless new parameters are generated and saved in the code
+  static const int      max_gens; // maximum number of generators -- defaults to 100 -- cannot use more than this number of threads in parallel unless new parameters are generated and saved in the code
   static MTRndPar_List  mtrnds;
   // list of MT generators -- of max_gens size
 

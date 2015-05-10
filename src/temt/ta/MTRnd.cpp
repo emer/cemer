@@ -1541,18 +1541,22 @@ bool MTRndPar_List::GenerateParamsID(int w, int p, int n_ids, uint32_t seed) {
   bool rval = init_mt_search(&template_mts, &ck, &pre, w, p);
   if (!rval) return false;
 
-  rval = true;
-  for (int i=0; i<n_ids; i++) {
-    MTRndPar* mts = FastEl(i);
+  int id = 0;
+  int count = 0;
+  while(count < n_ids) {
+    MTRndPar* mts = FastEl(count);
     copy_params_of_MTRndPar(&template_mts, mts);
 
     if ( NOT_FOUND == get_irred_param(&ck, &pre, &org, mts,
-                                      i,DEFAULT_ID_SIZE) ) {
-      rval = false;
-      break;
+                                      id, DEFAULT_ID_SIZE) ) {
+      id++;
+      continue;
     }
     _get_tempering_parameter_hard_dc(mts);
-    taMisc::Info("successfully completed params for MT PRNG number:", String(i));
+    taMisc::Info("successfully completed params for MT PRNG id:", String(id),
+                 "count:", String(count));
+    id++;
+    count++;
   }
 
   end_mt_search(&pre);
@@ -1568,7 +1572,7 @@ void MTRndPar_List::InitSeeds(uint32_t seed) {
 ////////////////////////////////
 //      MTRnd
 
-const int MTRnd::max_gens = 64;
+const int MTRnd::max_gens = 100;
 MTRndPar_List MTRnd::mtrnds;
 
 void MTRnd::Initialize() {
@@ -1601,10 +1605,17 @@ uint32_t MTRnd::GetTimePidSeed() {
 void MTRnd::GenInitParams(int n_gens, const String& save_file_name) {
   taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using 19937 prime value -- could decrease that to speed things up, and generating:", String(n_gens),
                   "generators");
-  mtrnds.GenerateParamsID(32, 19937, n_gens, GetTimePidSeed());
-  //  mtrnds.GenerateParamsID(32, 521, n_gens, GetTimePidSeed());
-  String svstr;
-  mtrnds.Save_String(svstr);
+  //  int prime = 521;              // for testing
+  int prime = 9941;
+  // int prime = 19937;   // for reals
+  mtrnds.GenerateParamsID(32, prime, n_gens, GetTimePidSeed());
+  String svstr = "static const char* mtdefparams[] = {\n";
+  for(int i=0;i<mtrnds.size;i++) {
+    MTRndPar* rnd = mtrnds.FastEl(i);
+    String vlstr = rnd->GetValStr();
+    svstr << "\"" << vlstr << "\",\n";
+  }
+  svstr << "};\n";
   svstr.SaveToFile(save_file_name);
   taMisc::Info("MTRnd params saved to:", save_file_name);
 }
