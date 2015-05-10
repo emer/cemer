@@ -102,13 +102,13 @@ uint32_t _genrand_dc(_org_state *st);
 /* Period parameters */
 /* #define N 624 */
 #define M 397
-#define MATRIX_A UINT32_C(0x9908b0df)   /* constant vector a */
-#define UPPER_MASK UINT32_C(0x80000000) /* most significant w-r bits */
-#define LOWER_MASK UINT32_C(0x7fffffff) /* least significant r bits */
+#define MATRIX_A   0x9908b0df   /* constant vector a */
+#define UPPER_MASK 0x80000000   /* most significant w-r bits */
+#define LOWER_MASK 0x7fffffff   /* least significant r bits */
 
 /* Tempering parameters */
-#define TEMPERING_MASK_B UINT32_C(0x9d2c5680)
-#define TEMPERING_MASK_C UINT32_C(0xefc60000)
+#define TEMPERING_MASK_B 0x9d2c5680
+#define TEMPERING_MASK_C 0xefc60000
 #define TEMPERING_SHIFT_U(y)  (y >> 11)
 #define TEMPERING_SHIFT_S(y)  (y << 7)
 #define TEMPERING_SHIFT_T(y)  (y << 15)
@@ -121,7 +121,7 @@ void _sgenrand_dc(_org_state *st, uint32_t seed)
 
   for (i=0;i<N;i++) {
     st->mt[i] = seed;
-    seed = (UINT32_C(1812433253) * (seed  ^ (seed >> 30))) + i + 1;
+    seed = (1812433253 * (seed  ^ (seed >> 30))) + i + 1;
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
     /* only MSBs of the array mt[].                        */
@@ -802,7 +802,7 @@ static void init_tempering(eqdeg_t *eq, MTRndPar *mts) {
 
 
   for( i=0; i<WORD_LEN; i++)
-    eq->bitmask[i] = UINT32_C(0x80000000) >> i;
+    eq->bitmask[i] = 0x80000000 >> i;
 
   for( i=0, eq->glower_mask=0; i<eq->rrr; i++)
     eq->glower_mask = (eq->glower_mask<<1)| 0x1;
@@ -1447,7 +1447,7 @@ void MTRndPar::InitSeed(uint32_t seed) {
   int i;
   for (i=0; i<nn; i++) {
     state[i] = seed;
-    seed = (UINT32_C(1812433253) * (seed  ^ (seed >> 30))) + i + 1;
+    seed = (1812433253 * (seed  ^ (seed >> 30))) + i + 1;
     /* See Knuth TAOCP Vol2. 3rd Ed. P.106 for multiplier. */
     /* In the previous versions, MSBs of the seed affect   */
     /* only MSBs of the array mt[].                        */
