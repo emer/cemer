@@ -1444,6 +1444,8 @@ void MTRndPar::InitSeed(uint32_t seed) {
     AllocState();
   }
 
+  double_cached = false;
+  
   int i;
   for (i=0; i<nn; i++) {
     state[i] = seed;
