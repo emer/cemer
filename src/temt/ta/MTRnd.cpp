@@ -1603,11 +1603,14 @@ uint32_t MTRnd::GetTimePidSeed() {
 }
 
 void MTRnd::GenInitParams(int n_gens, const String& save_file_name) {
-  taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using 19937 prime value -- could decrease that to speed things up, and generating:", String(n_gens),
+  //  int prime = 521;    // for testing -- runs in a few seconds
+  int prime = 4423;
+  //  int prime = 9941;   // takes several hours?
+  // int prime = 19937;   // this takes several days
+
+  taMisc::Warning("This can take quite a long time -- be patient or kill it!!!  Using  prime value:", String(prime), "(19937 takes several days for 100, computation is O(prime^3)) -- generating a total of:", String(n_gens),
                   "generators");
-  //  int prime = 521;              // for testing
-  int prime = 9941;
-  // int prime = 19937;   // for reals
+
   mtrnds.GenerateParamsID(32, prime, n_gens, GetTimePidSeed());
   String svstr = "static const char* mtdefparams[] = {\n";
   for(int i=0;i<mtrnds.size;i++) {
