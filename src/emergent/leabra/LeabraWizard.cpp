@@ -1640,7 +1640,6 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
 
     gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp);
-    gpi_sp->AddToControlPanelNm("unit_gp_inhib", cp, "gpi", subgp);
 
     cp->EditPanel(true, true);
   }
