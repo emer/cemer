@@ -10,7 +10,7 @@ import cluster_run_mon_lib as runmon
 runmon.submit_mode = "cluster"
 
 # name of queue -- used for a few things -- replace with actual!
-clust_queue = ""
+clust_queue = "blanca-ccn"
 
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
@@ -60,7 +60,7 @@ runmon.qdel_args = ""
 # moab = showq 
 # pyshowq for SGE (checked into emergent/cluster_run showq)
 runmon.showq_cmd = "squeue"
-runmon.showq_args = ['-a', '-h', '-o', "%.14i %.14P %.30j %.10u %.8T %.10M %.9l %.6D %.10C %.10m %.10p %R"]
+runmon.showq_args = ['-a', '-h', '-p', cluster_queue, '-o', "%.14i %.14P %.30j %.10u %.8T %.10M %.9l %.6D %.10C %.10m %.10p %R"]
 # parser function to use for showq output -- complex enough that this is most efficient way to do it
 runmon.showq_parser = "slurm"
 
