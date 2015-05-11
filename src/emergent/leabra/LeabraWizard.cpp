@@ -1700,6 +1700,8 @@ bool LeabraWizard::PBWM_SetNStripes(LeabraNetwork* net, int pfc_gp_x, int pfc_gp
 
   set_n_stripes(net, prefix, "PFCmnt",  pfc_gp_x, pfc_gp_y,
                 n_pfc_units_x, n_pfc_units_y, true);
+  set_n_stripes(net, prefix, "PFCmnt_trc",  pfc_gp_x, pfc_gp_y,
+                -1, -1, true);
   set_n_stripes(net, prefix, "PFCout",  pfc_gp_x, pfc_gp_y,
                 n_pfc_units_x, n_pfc_units_y, true);
   set_n_stripes(net, prefix, "PFCout_deep",  pfc_gp_x, pfc_gp_y,

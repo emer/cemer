@@ -43,7 +43,7 @@ INHERITED(DataTableView)
 public:
   static GridTableView* New(DataTable* dt, T3Panel*& fr);
 
-  int           view_cols;      // number of columns to display: determines sizes of everything automatically from this - protected to force use of set method by other classes
+  int           view_cols;      // #AKA_col_n number of columns to display: determines sizes of everything automatically from this
   int           page_cols;      // number of columns to jump (page) when << or >> are clicked
   int_Array     vis_cols;       // #READ_ONLY #NO_SAVE indicies of visible columns
   MinMaxInt     col_range;      // column range to display, in terms of the visible columns (contained in vis_cols index list)
