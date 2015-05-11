@@ -859,9 +859,17 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
      // cp->SetUserData("user_pinned", true);
 
     pvlv_cons->AddToControlPanelNm("lrate", cp, "pvlv");
+    lhbrmtg_units->AddToControlPanelNm("gains", cp, "lhb_rmtg");
+    pptg_units->AddToControlPanelNm("d_net_gain", cp, "pptg");
+    vta_units->AddToControlPanelNm("da", cp, "vta");
+    vta_units->AddToControlPanelNm("lv_block", cp, "vta");
+    drn_units->AddToControlPanelNm("se", cp, "drn");
     vsmd_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_dir");
     vsmi_units->AddToControlPanelNm("da_mod", cp, "vs_matrix_ind");
-    
+
+    laysp->AddToControlPanelNm("lay_inhib", cp, "pvlv");
+    laysp->AddToControlPanelNm("inhib_misc", cp, "pvlv");
+
     cp->EditPanel(true, true);
   }
 
@@ -1390,13 +1398,15 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   ////////////	ConSpecs
 
-  FMSpec(LeabraConSpec, lrn_cons, pbwmspgp, prefix + "LrnCons");
-  FMChild(MatrixConSpec, mtx_cons_go, lrn_cons, "MatrixConsGo");
+  FMSpec(LeabraConSpec, bg_lrn_cons, pbwmspgp, "BgLrnCons");
+  FMChild(MatrixConSpec, mtx_cons_go, bg_lrn_cons, "MatrixConsGo");
   FMChild(MatrixConSpec, mtx_cons_nogo, mtx_cons_go, "MatrixConsNoGo");
-  FMChild(LeabraConSpec, to_pfc, lrn_cons, "ToPFC");
-  FMChild(LeabraConSpec, pfc_fm_trc, lrn_cons, "PFCfmTRC");
-  FMChild(LeabraConSpec, pfc_to_trc, lrn_cons, "PFCtoTRC");
-  FMChild(LeabraConSpec, to_out_cons, lrn_cons, "PFCtoOutput");
+
+  FMSpec(LeabraConSpec, pfc_lrn_cons, pbwmspgp, "PfcLrnCons");
+  FMChild(LeabraConSpec, to_pfc, pfc_lrn_cons, "ToPFC");
+  FMChild(LeabraConSpec, pfc_fm_trc, pfc_lrn_cons, "PFCfmTRC");
+  FMChild(LeabraConSpec, pfc_to_trc, pfc_lrn_cons, "PFCtoTRC");
+  FMChild(LeabraConSpec, to_out_cons, pfc_lrn_cons, "PFCtoOutput");
 
   FMSpec(LeabraConSpec, fix_cons, pbwmspgp, prefix + "FixedCons");
   FMChild(LeabraBiasSpec, fix_bias, fix_cons, prefix + "FixedBias");
@@ -1444,6 +1454,9 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   matrix_units->SetUnique("noise_adapt", true);
   matrix_units->noise_adapt.trial_fixed = true;
 
+  pfc_mnt_units->SetUnique("deep", true);
+  pfc_mnt_units->deep.d_to_s = 0.1f;
+
   // this has less strong self-maint:
   pfc_out_units->SetUnique("deep", true);
   pfc_out_units->deep.d_to_s = 0.2f;
@@ -1460,6 +1473,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   pfcd_units->deep_norm.raw_val = DeepNormSpec::UNIT;
   pfcd_units->deep_var = DeepCopyUnitSpec::DEEP_NORM;
   
+  pfc_trc_units->SetUnique("deep", true);
+  pfc_trc_units->deep.on = true;
   pfc_trc_units->SetUnique("deep_norm", true);
   pfc_trc_units->deep_norm.on = true;
   pfc_trc_units->deep_norm.raw_val = DeepNormSpec::THAL;
@@ -1472,22 +1487,23 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
   
   ////////////	ConSpecs
 
-  lrn_cons->lrate = 0.001f;
-  lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4; // beta by default
+  bg_lrn_cons->lrate = 0.005f;
+  bg_lrn_cons->learn_qtr = LeabraConSpec::Q2_Q4; // beta by default
 
   mtx_cons_go->SetUnique("wt_limits", true);
   mtx_cons_go->wt_limits.sym = false;
-  mtx_cons_go->SetUnique("lrate", true);
-  mtx_cons_go->lrate = 0.005f;
 
   mtx_cons_nogo->SetUnique("nogo", true);
   mtx_cons_nogo->nogo = true;
 
+  pfc_lrn_cons->lrate = 0.01f;
+  pfc_lrn_cons->learn_qtr = LeabraConSpec::Q4; // pfc lrn Q4 only for now
+
   to_pfc->SetUnique("wt_scale", true);
-  to_pfc->wt_scale.abs = 0.2f;
+  to_pfc->wt_scale.abs = 1.0f;  // strong input driven for trc learning
 
   pfc_fm_trc->SetUnique("wt_scale", true);
-  pfc_fm_trc->wt_scale.rel = 0.05f;
+  pfc_fm_trc->wt_scale.rel = 0.2f;
   
   to_out_cons->SetUnique("lrate", true);
   to_out_cons->lrate = 0.02f;
@@ -1588,29 +1604,39 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
     // cp->SetUserData("user_pinned", true);
 
     String subgp;
-    subgp = "PFC";
-    pfc_mnt_units->AddToControlPanelNm("pfc", cp, "pfc_mnt_pfc", subgp);
-    pfc_mnt_units->AddToControlPanelNm("deep", cp, "pfc_mnt_deep", subgp);
+    subgp = "";
 
-    pfc_out_units->AddToControlPanelNm("pfc", cp, "pfc_out_pfc", subgp);
-    pfc_out_units->AddToControlPanelNm("deep", cp, "pfc_out_deep", subgp);
+    pbwm_units->AddToControlPanelNm("deep_qtr", cp, "pbwm", subgp,
+                                    "set to Q2, Q4 for beta frequency updating -- Q4 for just alpha -- coordinate with bg_lrn_learn_qtr setting!");
+    bg_lrn_cons->AddToControlPanelNm("learn_qtr", cp, "bg_lrn", subgp);
+    
+    subgp = "PFC";
+
+    pfc_mnt_units->AddToControlPanelNm("pfc", cp, "pfc_mnt", subgp);
+    pfc_mnt_units->AddToControlPanelNm("deep", cp, "pfc_mnt", subgp);
+
+    pfc_out_units->AddToControlPanelNm("pfc", cp, "pfc_out", subgp);
+    pfc_out_units->AddToControlPanelNm("deep", cp, "pfc_out", subgp);
     
     pfc_sp->AddToControlPanelNm("unit_gp_inhib", cp, "pfc", subgp);
     pfc_sp->AddToControlPanelNm("lay_inhib", cp, "pfc", subgp);
     pfc_sp->AddToControlPanelNm("avg_act", cp, "pfc", subgp);
 
+    pfc_lrn_cons->AddToControlPanelNm("lrate", cp, "pfc_lrn", subgp);
+    pfc_lrn_cons->AddToControlPanelNm("learn_qtr", cp, "pfc_lrn", subgp);
     to_pfc->AddToControlPanelNm("wt_scale", cp, "to_pfc", subgp);
+
+    pfc_fm_trc->AddToControlPanelNm("wt_scale", cp, "pfc_fm_trc", subgp);
     
-    subgp = "Matrix";
+    subgp = "BG";
     matrix_sp->AddToControlPanelNm("unit_gp_inhib", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("inhib_misc", cp, "matrix", subgp);
     matrix_sp->AddToControlPanelNm("del_inhib", cp, "matrix", subgp);
 
-    mtx_cons_go->AddToControlPanelNm("lrate", cp, "matrix", subgp,
+    bg_lrn_cons->AddToControlPanelNm("lrate", cp, "bg_lrn", subgp,
                                      "Default Matrix lrate is .005");
     mtx_cons_go->AddToControlPanelNm("matrix", cp, "matrix", subgp);
 
-    subgp = "GP";
     gpi_units->AddToControlPanelNm("gpi", cp, "gpi", subgp);
 
     gpi_sp->AddToControlPanelNm("lay_inhib", cp, "gpi", subgp);
@@ -1700,27 +1726,27 @@ bool LeabraWizard::PBWM(LeabraNetwork* net, int pfc_gp_x, int pfc_gp_y,
     if(TestError(!PVLV(net, 1, 1, false), "PBWM", "could not make PVLV")) return false;
   }
 
-  String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory) Layers:\n\n\
-There is one thing you will need to check manually after this automatic configuration\
-process completes (this note will be repeated when things complete --- there may be some\
+  String msg = "Configuring PBWM (Prefrontal-cortex Basal-ganglia Working Memory)       Layers:\n\n\
+There are some things you should check after this automatic configuration \
+process completes (this note will be repeated when things complete --- there may be some \
 messages in the interim):\n\n";
 
-  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate layers.\
-Except for special intra-PFC connections, the conspecs INTO ALL superficial PFC layers should be ToPFC conspecs; those out from PFC layers should be regular learning conspecs.";
+  String man_msg = "1. Check the bidirectional connections between the PFC and all appropriate layers.  \
+Except for special intra-PFC connections, the conspecs into all superficial PFC layers \
+should usually be ToPFC conspecs; those out from PFC layers should be PFCtoOutput or regular learning conspecs.\n\n\
+2. Check the projections into the Matrix layers -- both Go and NoGo should typically \
+receive the same patterns of connections, and the wizard just connects everything to \
+everything -- more selective connection patterns usually work better overall.";
 
-  msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters\
-will be set.  If there are any actual errors which must be corrected before\
-the network will run, you will see a message to that effect --- you will then need to\
-re-run this configuration process to make sure everything is OK.  When you press\
-Re/New/Init on the control process these same checks will be performed, so you\
+  msg += man_msg + "\n\nThe configuration will now be checked and a number of default parameters \
+will be set.  If there are any actual errors which must be corrected before \
+the network will run, you will see a message to that effect --- you will then need to \
+re-run this configuration process to make sure everything is OK.  When you press \
+Re/New/Init on the control process these same checks will be performed, so you \
 can be sure everything is ok.";
   taMisc::Confirm(msg);
 
   net->RemoveUnits();
-
-  // TODO: Note below gets rid of LeabraWizard PBWM CHECK ERROR message -- works and seems safe to do
-  // net->phases.no_plus_test = false;
-
 
   //////////////////////////////////////////////////////////////////////////////////
   // make layers
@@ -2072,8 +2098,8 @@ function again after you have corrected the source of the error.";
   }
   else {
     msg =
-      "PBWM configuration is now complete.  Do not forget the one remaining thing\
-you need to do manually:\n\n" + man_msg;
+      "PBWM configuration is now complete.  Do not forget the remaining things \
+you need to check:\n\n" + man_msg;
   }
   taMisc::Confirm(msg);
 
