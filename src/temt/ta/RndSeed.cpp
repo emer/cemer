@@ -25,6 +25,17 @@ void RndSeed::Initialize() {
   rnd_seed = 0;
 }
 
+void RndSeed::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  
+  if(taMisc::is_loading) {
+    taVersion v781(7, 8, 1);
+    if(rnd_seed == 0 && taMisc::loading_version < v781) { // auto-new seeds for old project
+      NewSeed();
+    }
+  }
+}
+
 void RndSeed::NewSeed() {
   rnd_seed = MTRnd::GetTimePidSeed();
   MTRnd::InitSeeds(rnd_seed);

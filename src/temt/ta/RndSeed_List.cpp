@@ -21,6 +21,16 @@
 
 TA_BASEFUNS_CTORS_DEFN(RndSeed_List);
 
+void RndSeed_List::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  
+  if(taMisc::is_loading) {
+    taVersion v781(7, 8, 1);
+    if(taMisc::loading_version < v781) { // auto-new seeds for old project
+      NewSeeds();
+    }
+  }
+}
 
 void RndSeed_List::MakeSeeds(int n_seeds) {
   seeds.SetSize(n_seeds);

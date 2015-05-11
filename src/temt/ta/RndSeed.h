@@ -43,9 +43,13 @@ public:
   virtual void  DMem_Sync(MPI_Comm comm);
    // #IGNORE synchronize seeds across all procs -- uses the first proc's seed
 
+  TA_SIMPLE_BASEFUNS(RndSeed);
+protected:
+  void UpdateAfterEdit_impl();
+  
+private:    
   void  Initialize();
   void  Destroy()                { CutLinks(); }
-  TA_SIMPLE_BASEFUNS(RndSeed);
 };
 
 #endif // RndSeed_h

@@ -49,6 +49,9 @@ public:
   DumpQueryResult Dump_QuerySaveMember(MemberDef* md) override;
 
   TA_SIMPLE_BASEFUNS(RndSeed_List);
+protected:
+  void UpdateAfterEdit_impl();
+    
 private:
   void  Initialize()            { seeds.SetBaseType(&TA_RndSeed); }
   void  Destroy()               { };
