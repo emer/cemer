@@ -243,6 +243,7 @@ public:
   enum LeabraConVars {
     FWT = DWT+1,                // fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
     SWT,                        // slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
+    SCALE,                      // scaling paramter -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
   };
 
   enum Quarters {               // #BITS specifies gamma frequency quarters within an alpha-frequency trial on which to do things
@@ -260,6 +261,7 @@ public:
   bool		learn;		// #CAT_Learning #DEF_true individual control over whether learning takes place in this connection spec -- if false, no learning will take place regardless of any other settings -- if true, learning will take place if it is enabled at the network and other relevant levels
   Quarters      learn_qtr;      // #CAT_Learning #CONDSHOW_ON_learn quarters after which learning (Compute_dWt) should take place
   float		lrate;		// #CAT_Learning #CONDSHOW_ON_learn #DEF_0.01;0.02 #MIN_0 [0.01 for std Leabra, .02 for CtLeabra] learning rate -- how fast do the weights change per experience
+  bool          use_lrate_sched; // #CAT_Learning #CONDSHOW_ON_learn use the lrate_sched learning rate schedule if one exists -- allows learning rate to change over time as a function of epoch count
   float		cur_lrate;	// #READ_ONLY #NO_INHERIT #SHOW #CONDSHOW_ON_learn #CAT_Learning current actual learning rate = lrate * lrate_sched current value (* 1 if no lrate_sched)
   float		lrs_mult;	// #READ_ONLY #NO_INHERIT #CAT_Learning learning rate multiplier obtained from the learning rate schedule
   Schedule	lrate_sched;	// #CAT_Learning schedule of learning rate over training epochs (NOTE: these factors (lrs_mult) multiply lrate to give the cur_lrate value)
@@ -289,7 +291,12 @@ public:
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
+    float* scales = cg->OwnCnVar(SCALE);
 
+    for(int i=0; i<cg->size; i++) {
+      scales[i] = 1.0f;         // default -- must be set in prjn spec if different
+    }
+    
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
         C_Init_Weight_Rnd(wts[i], thr_no);
@@ -305,9 +312,11 @@ public:
     float* wts = cg->OwnCnVar(WT);
     float* swts = cg->OwnCnVar(SWT);
     float* fwts = cg->OwnCnVar(FWT);
+    float* scales = cg->OwnCnVar(SCALE);
     for(int i=0; i<cg->size; i++) {
       swts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
       fwts[i] = swts[i];
+      wts[i] *= scales[i];
     }
   }
 
@@ -381,13 +390,14 @@ public:
   inline void	Compute_dWt(ConGroup* cg, Network* net, int thr_no) override;
 
   inline void	C_Compute_Weights_CtLeabraXCAL
-    (float& wt, float& dwt, float& fwt, float& swt)
+    (float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { if(dwt != 0.0f) {
       if(dwt > 0.0f)	dwt *= (1.0f - fwt);
       else		dwt *= fwt;
       fwt += dwt;
-      // swt = fwt;                // keep sync'd -- not tech necc..
-      wt = SigFmLinWt(fwt);
+      // swt = fwt;  // leave swt as pristine original weight value -- saves time
+      // and is useful for visualization!
+      wt = scale * SigFmLinWt(fwt);
       dwt = 0.0f;
     }
   }
@@ -395,13 +405,13 @@ public:
 
   inline void	C_Compute_Weights_CtLeabraXCAL_fast
     (const float decay_dt, const float wt_dt, const float slow_lrate,
-     float& wt, float& dwt, float& fwt, float& swt)
+     float& wt, float& dwt, float& fwt, float& swt, float& scale)
   { 
     if(dwt > 0.0f)	dwt *= (1.0f - fwt);
     else		dwt *= fwt;
     fwt += dwt + decay_dt * (swt - fwt);
     swt += dwt * slow_lrate;
-    float nwt = SigFmLinWt(fwt);
+    float nwt = scale * SigFmLinWt(fwt);
     wt += wt_dt * (nwt - wt);
     dwt = 0.0f;
   }
@@ -409,11 +419,11 @@ public:
 
 #ifdef TA_VEC_USE
   inline void	Compute_Weights_CtLeabraXCAL_vec
-    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts);
+    (LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- no fast wts -- vectorized
   inline void	Compute_Weights_CtLeabraXCAL_fast_vec
     (LeabraConGroup* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
-     float* wts, float* dwts, float* fwts, float* swts);
+     float* wts, float* dwts, float* fwts, float* swts, float* scales);
   // #IGNORE overall compute weights for CtLeabraXCAL learning rule -- fast wts -- vectorized
 #endif
 

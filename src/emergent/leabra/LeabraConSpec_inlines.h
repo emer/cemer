@@ -208,7 +208,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 
 #ifdef TA_VEC_USE
 inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
-(LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts) {
+(LeabraConGroup* cg, float* wts, float* dwts, float* fwts, float* swts, float* scales) {
 
   VECF zeros(0.0f);
   VECF sig_res_inv(wt_sig_fun.res_inv);
@@ -221,6 +221,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
     VECF wt;  wt.load(wts+i);
     VECF dwt; dwt.load(dwts+i);
     VECF fwt; fwt.load(fwts+i);
+    VECF scale; scale.load(scales+i);
 
     dwt *= select(dwt > 0.0f, 1.0f - fwt, fwt);
     fwt += dwt;
@@ -228,23 +229,24 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_vec
     // todo: try this also as a sub-loop
     // wt = SigFmLinWt(fwt)
     idx = truncate_to_int(fwt * sig_res_inv); // min is 0
-    wt = lookup<10002>(idx, wt_sig_fun.el);
+    wt = scale * lookup<10002>(idx, wt_sig_fun.el);
 
     dwt = zeros;
 
     wt.store(wts+i);
     dwt.store(dwts+i);
     fwt.store(fwts+i);
-    fwt.store(swts+i);          // swt = fwt
+    //  fwt.store(swts+i);  // leave swt as pristine original weight value -- saves time
+    // and is useful for visualization!
   }
   for(;i<sz;i++) {              // get the remainder
-    C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], fwts[i], swts[i]);
+    C_Compute_Weights_CtLeabraXCAL(wts[i], dwts[i], fwts[i], swts[i], scales[i]);
   }
 }
 
 inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
 (LeabraConGroup* cg, const float decay_dt, const float wt_dt, const float slow_lrate,
- float* wts, float* dwts, float* fwts, float* swts) {
+ float* wts, float* dwts, float* fwts, float* swts, float* scales) {
 
   VECF zeros(0.0f);
   VECF sig_res_inv(wt_sig_fun.res_inv);
@@ -262,6 +264,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
     VECF dwt; dwt.load(dwts+i);
     VECF fwt; fwt.load(fwts+i);
     VECF swt; swt.load(swts+i);
+    VECF scale; scale.load(scales+i);
 
     dwt *= select(dwt > 0.0f, 1.0f - fwt, fwt);
     fwt += dwt + ddt * (swt - fwt);
@@ -271,7 +274,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
     // wt = SigFmLinWt(fwt)
     idx = truncate_to_int(fwt * sig_res_inv); // min is 0
     VECF nwt;
-    nwt = lookup<10002>(idx, wt_sig_fun.el);
+    nwt = scale * lookup<10002>(idx, wt_sig_fun.el);
     wt += wdt * (nwt - wt);
 
     dwt = zeros;
@@ -283,7 +286,7 @@ inline void LeabraConSpec::Compute_Weights_CtLeabraXCAL_fast_vec
   }
   for(;i<sz;i++) {              // get the remainder
     C_Compute_Weights_CtLeabraXCAL_fast
-      (decay_dt, wt_dt, slow_lrate, wts[i], dwts[i], fwts[i], swts[i]);
+      (decay_dt, wt_dt, slow_lrate, wts[i], dwts[i], fwts[i], swts[i], scales[i]);
   }
 }
 
@@ -298,6 +301,7 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
   float* dwts = cg->OwnCnVar(DWT);
   float* fwts = cg->OwnCnVar(FWT);
   float* swts = cg->OwnCnVar(SWT);
+  float* scales = cg->OwnCnVar(SCALE);
 
   if(fast_wts.on) {
     const float decay_dt = fast_wts.decay_dt;
@@ -305,18 +309,19 @@ inline void LeabraConSpec::Compute_Weights(ConGroup* scg, Network* net, int thr_
     const float slow_lrate = fast_wts.slow_lrate;
 #ifdef TA_VEC_USE
     Compute_Weights_CtLeabraXCAL_fast_vec(cg, decay_dt, wt_dt, slow_lrate,
-                                          wts, dwts, fwts, swts);
+                                          wts, dwts, fwts, swts, scales);
 #else
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL_fast
-                   (decay_dt, wt_dt, slow_lrate, wts[i], dwts[i], fwts[i], swts[i]));
+                   (decay_dt, wt_dt, slow_lrate, wts[i], dwts[i], fwts[i], swts[i],
+                    scales[i]));
 #endif
   }
   else {
 #ifdef TA_VEC_USE
-    Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts);
+    Compute_Weights_CtLeabraXCAL_vec(cg, wts, dwts, fwts, swts, scales);
 #else
     CON_GROUP_LOOP(cg, C_Compute_Weights_CtLeabraXCAL
-                   (wts[i], dwts[i], fwts[i], swts[i]));
+                   (wts[i], dwts[i], fwts[i], swts[i], scales[i]));
 #endif
   }
 }

@@ -31,8 +31,9 @@ class E_API LeabraCon : public Connection {
 public:
   float         fwt;            // #NO_SAVE fast learning linear (underlying) weight value -- learns according to the lrate specified in the connection spec -- this is converted into the effective weight value, "wt", via sigmoidal contrast enhancement (wt_sig)
   float         swt;            // #NO_SAVE slow learning linear (underlying) weight value -- learns more slowly from weight changes than fast weights, and fwt decays down to swt over time
+  float         scale;          // #NO_SAVE scaling paramter for this connection -- effective weight value is scaled by this factor -- useful for topographic connectivity patterns e.g., to enforce more distant connections to always be lower in magnitude than closer connections -- set by custom weight init code for certain projection specs
   
-  LeabraCon() { fwt = swt = 0.0f; }
+  LeabraCon() { fwt = swt = 0.0f; scale = 1.0f; }
 };
 
 #endif // LeabraCon_h

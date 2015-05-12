@@ -166,6 +166,7 @@ void LeabraConSpec::Defaults_init() {
   rnd.mean = .5f;
   rnd.var = .25f;
   lrate = .02f;
+  use_lrate_sched = true;
   cur_lrate = .02f;
   lrs_mult = 1.0f;
 }
@@ -221,10 +222,12 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
     cur_lrate *= fast_wts.nofast_lrate;
   }
 
-  lrs_mult = lrate_sched.GetVal(net->epoch);
-  cur_lrate *= lrs_mult;
-  if(cur_lrate != prv_cur_lrate) {
-    net->net_misc.lrate_updtd = true;
+  if(use_lrate_sched) {
+    lrs_mult = lrate_sched.GetVal(net->epoch);
+    cur_lrate *= lrs_mult;
+    if(cur_lrate != prv_cur_lrate) {
+      net->net_misc.lrate_updtd = true;
+    }
   }
 }
 
@@ -364,6 +367,7 @@ void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
   float wt = 0.5f;
   float fwt = 0.5f;
   float swt = 0.5f;
+  float scale = 1.0f;
   for(int trl = 0; trl < trials; trl++) {
     if(trl == 0)
       dwt = 0.1f;
@@ -372,7 +376,7 @@ void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
     float dwt_save = dwt;
     C_Compute_Weights_CtLeabraXCAL_fast
       (fast_wts.decay_dt, fast_wts.wt_dt, fast_wts.slow_lrate,
-       wt, dwt, fwt, swt);
+       wt, dwt, fwt, swt, scale);
     graph_data->AddBlankRow();
     trialc->SetValAsInt(trl, -1);
     dwtc->SetValAsFloat(dwt_save, -1);

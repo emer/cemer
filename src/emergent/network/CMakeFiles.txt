@@ -70,8 +70,8 @@ set(network_HEADS_MAKETA
   RndGpOneToOnePrjnSpec.h
   GpRndTesselPrjnSpec.h
   TiledRFPrjnSpec.h
-  TiledGpRFPrjnSpec.h
   TiledNovlpPrjnSpec.h
+  TiledDivGpRFPrjnSpec.h
   GpMapConvergePrjnSpec.h
   GpMapDivergePrjnSpec.h
   TiledGpMapConvergePrjnSpec.h
@@ -133,7 +133,6 @@ set(network_HEADS_MAKETA
   T3NetNode.h
   T3BrainNode.h
   WtBasedRF.h
-  TiledDivGpRFPrjnSpec.h
 )
 
 set(network_HEADS_NOMAKETA
@@ -252,8 +251,8 @@ set(network_SRCS
   RndGpOneToOnePrjnSpec.cpp
   GpRndTesselPrjnSpec.cpp
   TiledRFPrjnSpec.cpp
-  TiledGpRFPrjnSpec.cpp
   TiledNovlpPrjnSpec.cpp
+  TiledDivGpRFPrjnSpec.cpp
   GpMapConvergePrjnSpec.cpp
   GpMapDivergePrjnSpec.cpp
   TiledGpMapConvergePrjnSpec.cpp
@@ -332,7 +331,6 @@ set(network_SRCS
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
   WtBasedRF.cpp
-  TiledDivGpRFPrjnSpec.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

@@ -53,6 +53,8 @@ set(leabra_HEADS_MAKETA
   TwoDValLayerSpec.h
   DecodeTwoDValLayerSpec.h
   LeabraV1LayerSpec.h
+  TiledGpRFPrjnSpec.h
+  TiledSubGpRFPrjnSpec.h
 
   ScalarValSelfPrjnSpec.h
   SaliencyPrjnSpec.h
@@ -171,6 +173,8 @@ set(leabra_SRCS
   TwoDValLayerSpec.cpp
   DecodeTwoDValLayerSpec.cpp
   LeabraV1LayerSpec.cpp
+  TiledGpRFPrjnSpec.cpp
+  TiledSubGpRFPrjnSpec.cpp
 
   ScalarValSelfPrjnSpec.cpp
   SaliencyPrjnSpec.cpp
