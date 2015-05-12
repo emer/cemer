@@ -285,33 +285,23 @@ void ClusterRun::UpdtNotes() {
     return;
   
   jobs_submit.ResetData();
-
+  
+  DataTable* cur_table = GetCurDataTable();
+  
   // Get the (inclusive) range of rows to update notes.
   int st_row, end_row;
-  if (SelectedRows(jobs_done, st_row, end_row)) {
-    // Populate the jobs_submit table with UPDATENOTE requests for the selected jobs.
-    for (int row = st_row; row <= end_row; ++row) {
-      SubmitUpdateNote(jobs_done, row);
+  if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      // Populate the jobs_submit table with UPDATENOTE requests for the selected jobs.
+      for (int row = st_row; row <= end_row; ++row) {
+        SubmitUpdateNote(*cur_table, row);
+      }
+      m_cm->CommitJobSubmissionTable();
+      AutoUpdateMe();
     }
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe();
-  }
-  else if (SelectedRows(jobs_running, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SubmitUpdateNote(jobs_running, row);
+    else {
+      taMisc::Warning("No rows selected -- no notes were updated");
     }
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe();
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SubmitUpdateNote(jobs_archive, row);
-    }
-    m_cm->CommitJobSubmissionTable();
-    AutoUpdateMe();
-  }
-  else {
-    taMisc::Warning("No rows selected -- no notes were updated");
   }
 }
 
@@ -319,9 +309,9 @@ void ClusterRun::LoadData(bool remove_existing) {
   if(!InitClusterManager())
     return;
   // note: can't call Update here because it unselects the rows in jobs_ tables!
-
+  
   DataTable* cur_table = GetCurDataTable();
-
+  
   taProject* proj = GET_MY_OWNER(taProject);
   if(!proj) return;
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
@@ -329,34 +319,26 @@ void ClusterRun::LoadData(bool remove_existing) {
   if(remove_existing) {
     dgp->Reset();
   }
+  
   int st_row, end_row;
-  if (SelectedRows(jobs_running, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      LoadData_impl(dgp, jobs_running, row); 
+  if (cur_table == &jobs_running) {
+    if (SelectedRows(jobs_running, st_row, end_row)) {
+    }
+    else {
+      for (int row = 0; row <jobs_running.rows; ++row) {
+        LoadData_impl(dgp, jobs_running, row);
+      }
     }
   }
-  else if (SelectedRows(jobs_done, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      LoadData_impl(dgp, jobs_done, row); 
+  else if (cur_table == &jobs_done || cur_table == &jobs_archive || cur_table == &file_list) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      for (int row = st_row; row <= end_row; ++row) {
+        LoadData_impl(dgp, *cur_table, row);
+      }
     }
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      LoadData_impl(dgp, jobs_archive, row); 
+    else {
+      taMisc::Warning("No rows selected -- no data loaded");
     }
-  }
-  else if (SelectedRows(file_list, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      LoadData_impl(dgp, file_list, row); 
-    }
-  }
-  else if (cur_table == &jobs_running) {  // if here no rows selected in other job tables
-    for (int row = 0; row < jobs_running.rows; ++row) {
-      LoadData_impl(dgp, jobs_running, row);
-    }
-  }
-  else {
-    taMisc::Warning("No rows selected -- no data loaded");
   }
   ClearAllSelections();       // done
 }
@@ -495,27 +477,22 @@ void ClusterRun::ListJobFiles() {
     return;
   bool include_data = true;     // doesn't hurt..
   file_list.ResetData();
+  
+  DataTable* cur_table = GetCurDataTable();
+  
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
-  if (SelectedRows(jobs_running, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SelectFiles_impl(jobs_running, row, include_data); 
+  if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      for (int row = st_row; row <= end_row; ++row) {
+        SelectFiles_impl(*cur_table, row, include_data);
+      }
+    }
+    else {
+      taMisc::Warning("No rows selected -- no files selected");
     }
   }
-  else if (SelectedRows(jobs_done, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SelectFiles_impl(jobs_done, row, include_data); 
-    }
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SelectFiles_impl(jobs_archive, row, include_data); 
-    }
-  }
-  else {
-    taMisc::Warning("No rows selected -- no files selected");
-  }
-
+  
   ClearAllSelections();       // done
   ViewPanelNumber(4);
 }
