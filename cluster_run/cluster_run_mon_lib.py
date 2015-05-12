@@ -2051,10 +2051,12 @@ class SubversionPoller(object):
         else:
             cmd = [qstat_cmd, job_no]
         if debug:
-            logging.info("qstat cmd: " + str(cmd))
-        q_out = check_output(cmd)
-        if debug:
-            logging.info("q_out")
+            logging.debug("qstat cmd: " + str(cmd))
+        try:
+            q_out = check_output(cmd)
+        except:
+            logging.warning("Failed to execute command " + str(cmd))
+            logging.info(q_out)
 
         # regexp for output of qstat that tells you that the job is running
         qstat_running_re = r"\s*JobState=RUNNING.*"
@@ -2500,6 +2502,8 @@ class SubversionPoller(object):
         self.cluster_info.reset_data();
 
         for l in show_out.splitlines():
+            if debug:
+                logging.debug("Parsing squeue line: " + l)
             scols = l.split()   # splits on whitespace anyway
             
             if len(scols) > 11:  # detailed data
@@ -2513,14 +2517,21 @@ class SubversionPoller(object):
                     cmd = [qstat_cmd] + qstat_args + [job_no]
                 else:
                     cmd = [qstat_cmd, job_no]
-                q_out = check_output(cmd)
+                try:
+                    q_out = check_output(cmd)
+                except Exception as ex:
+                    logging.warning("Failed to execute scontrol command " + str(cmd) + ": " + str(ex))
 
                 # regexp for output of scontrol show job that tells you when the job started
                 qstat_start_time_re = r"\s*StartTime=(\S*)\s.*"
                 re_start_time = re.compile(qstat_start_time_re)
 
                 start_time_mo = re_start_time.search(q_out)
-                start_time = start_time_mo.group(1)
+                if start_time_mo is None:
+                    logging.warning("Could not determin start time for job " + str(job_no) + " " + str(q_out))
+                    start_time = "Unknown"
+                else:
+                    start_time = start_time_mo.group(1)
 
                 queue = scols[1]
                 row = self.cluster_info.add_blank_row()
@@ -2530,8 +2541,7 @@ class SubversionPoller(object):
                 self.cluster_info.set_val(row, "state", state)
                 self.cluster_info.set_val(row, "procs", procs)
                 self.cluster_info.set_val(row, "start_time", start_time)
-        if self.cluster_info.n_rows() > 0:
-            self.cluster_info.write(self.cluster_info_file)
+        self.cluster_info.write(self.cluster_info_file)
         # done
 
 
@@ -2544,7 +2554,7 @@ class SubversionPoller(object):
 nohup_filename = 'nohup_running_cluster_run_mon.txt'
 
 def main():
-    logging.basicConfig(level=logging.DEBUG)
+    logging.basicConfig(level=logging.INFO)
     # Delete the nohup file, if it exists.
     if os.path.isfile(nohup_filename):
         print 'Removing nohup file: %s' % nohup_filename
@@ -2593,7 +2603,7 @@ def main():
         poller.poll() # Infinite loop.
 
 def main_background():
-    logging.basicConfig(filename='cluster_run_mon.log',level=logging.DEBUG)
+    logging.basicConfig(filename='cluster_run_mon.log',level=logging.INFO)
     logging.info('\nStarting background run at %s' % datetime.now())
 
     username    = sys.argv[1]
