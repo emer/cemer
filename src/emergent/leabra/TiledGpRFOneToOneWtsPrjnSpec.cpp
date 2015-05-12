@@ -42,7 +42,13 @@ void TiledGpRFOneToOneWtsPrjnSpec::Init_Weights_Prjn
     float wt = other_wt;
     if(sui == rui)
       wt = one_to_one_wt;
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }
 

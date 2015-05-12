@@ -15,9 +15,7 @@
 
 #include "TiledSubGpRFPrjnSpec.h"
 #include <Network>
-#include <int_Array>
 #include <taMath_float>
-#include <taMisc>
 
 #include <LeabraConSpec>
 
@@ -32,7 +30,6 @@ void TiledSubGpRFPrjnSpec::Initialize() {
   wrap = false;
   reciprocal = false;
   wts_type = GAUSSIAN;
-  set_scale = false;
   gauss_sig = 1.0f;
   gauss_ctr_mv = 0.5f;
   wt_range.min = 0.1f;
@@ -69,13 +66,14 @@ void TiledSubGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     return;
   }
 
-  if(reciprocal) {
-    Connect_Reciprocal(prjn, make_cons);
-    return;
-  }
-
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+
+  if(reciprocal) {
+    recv_lay = prjn->from;      // backwards -- only diff!
+    send_lay = prjn->layer;
+  }
+
   taVector2i ru_geo = recv_lay->gp_geom;
   taVector2i su_geo = send_lay->gp_geom;
   int ru_nunits = recv_lay->un_geom.n;
@@ -140,80 +138,8 @@ void TiledSubGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     }
   }
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    recv_lay->RecvConsPostAlloc(prjn);
-    send_lay->SendConsPostAlloc(prjn);
-  }
-}
-
-void TiledSubGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) {
-  Layer* recv_lay = prjn->from; // from perspective of non-recip!
-  Layer* send_lay = prjn->layer;
-  taVector2i ru_geo = recv_lay->gp_geom;
-  taVector2i su_geo = send_lay->gp_geom;
-  int ru_nunits = recv_lay->un_geom.n;
-  int su_nunits = send_lay->un_geom.n;
-
-  taVector2i ruc;
-  if(!make_cons) {
-    int_Array alloc_sz;
-    alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
-    alloc_sz.InitVals(0);
-
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        taVector2i su_st;
-        su_st = send_gp_start + ruc * send_gp_skip;
-
-        taVector2i suc;
-        taVector2i suc_wrp;
-        for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-          for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-            suc_wrp = suc;
-            if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-              continue;
-            int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-            if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-            alloc_sz[sgpidx] += ru_nunits;
-          }
-        }
-      }
-    }
-
-    // now actually allocate
-    for(int sug=0; sug < send_lay->gp_geom.n; sug++) {
-      for(int sui=0; sui < su_nunits; sui++) {
-        Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sug);
-        su_u->RecvConsPreAlloc(alloc_sz[sug], prjn);
-      }
-    }
-  }
-
-  // then connect
-  int rgpidx = 0;
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      taVector2i su_st;
-      su_st = send_gp_start + ruc * send_gp_skip;
-
-      taVector2i suc;
-      taVector2i suc_wrp;
-      for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-        for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-          suc_wrp = suc;
-          if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-            continue;
-          int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-          if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-
-          Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, make_cons);
-        }
-      }
-    }
-  }
-  if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    recv_lay->RecvConsPostAlloc(prjn);
-    send_lay->SendConsPostAlloc(prjn);
+    prjn->layer->RecvConsPostAlloc(prjn);
+    prjn->from->SendConsPostAlloc(prjn);
   }
 }
 
@@ -257,10 +183,6 @@ void TiledSubGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
   }
 }
 
-int TiledSubGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
-  return 0;                     // todo: not worth maintaining at this point..
-}
-
 bool TiledSubGpRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   trg_send_geom.x = send_x;
   trg_send_geom.y = send_y;
@@ -276,6 +198,9 @@ bool TiledSubGpRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   else
     trg_send_geom = ((trg_recv_geom +1) * send_gp_skip);
 
+  trg_recv_geom *= recv_subgp_size;
+  trg_send_geom *= send_subgp_size;
+  
   SigEmitUpdated();
   return (trg_send_geom.x == send_x && trg_send_geom.y == send_y);
 }
@@ -295,6 +220,9 @@ bool TiledSubGpRFPrjnSpec::TrgSendFmRecv(int recv_x, int recv_y) {
   else
     trg_recv_geom = (trg_send_geom / send_gp_skip) - 1;
 
+  trg_recv_geom *= recv_subgp_size;
+  trg_send_geom *= send_subgp_size;
+  
   SigEmitUpdated();
   return (trg_recv_geom.x == recv_x && trg_recv_geom.y == recv_y);
 }
@@ -352,13 +280,11 @@ void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
 
     if(set_scale) {
-      LeabraConSpec* cs = (LeabraConSpec*)cg->GetConSpec();
-      cs->C_Init_Weight_Rnd(cg->Cn(i,LeabraConSpec::WT,net), thr_no); // std rnd wts
-      cg->Cn(i,LeabraConSpec::SCALE,net) = wt;
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
     }
     else {
-      wt = wt_range.min + wt_range.range * wt;
-      SetCnWt(cg, i, net, wt, thr_no);
+      SetCnWt(wt, cg, i, net, thr_no);
     }
   }
 }

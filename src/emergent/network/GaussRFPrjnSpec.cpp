@@ -108,7 +108,13 @@ void GaussRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }
 

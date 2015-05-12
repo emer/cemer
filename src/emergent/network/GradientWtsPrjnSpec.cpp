@@ -65,7 +65,13 @@ void GradientWtsPrjnSpec::SetWtFmDist(Projection* prjn, ConGroup* cg, Unit* ru,
     else
       wt_val = wt_range.min + gaus * wt_range.Range();
   }
-  SetCnWt(cg, cg_idx, net, wt_val, thr_no);
+  if(set_scale) {
+    SetCnWtRnd(cg, cg_idx, net, thr_no);
+    SetCnScale(wt_val, cg, cg_idx, net, thr_no);
+  }
+  else {
+    SetCnWt(wt_val, cg, cg_idx, net, thr_no);
+  }
 }
 
 ///////////////////////////////////////////////

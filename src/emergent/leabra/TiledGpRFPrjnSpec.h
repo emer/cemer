@@ -43,7 +43,6 @@ public:
   bool		wrap;			// if true, then connectivity has a wrap-around structure so it starts at -gp_skip (wrapped to right/top) and goes +gp_skip past the right/top edge (wrapped to left/bottom)
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts how to initialize the random initial weights
-  bool          set_scale;              // #CONDSHOW_ON_init_wts for Leabra models -- set the scale value to the wts_type function, instead of actually initializing the weights differentially
   float		gauss_sig;		// #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
   float         gauss_ctr_mv;           // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN how much the center of the gaussian moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field
   MinMaxRange	wt_range;
@@ -65,11 +64,10 @@ public:
                                              int thr_no);
   // permuted bimodal weight values
 
-  void Connect_impl(Projection* prjn, bool make_cons) override;
-  virtual void 	Connect_Reciprocal(Projection* prjn, bool make_cons);
-  int 	ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0f);
+  void  Connect_impl(Projection* prjn, bool make_cons) override;
+
   virtual void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-				  int rgpidx, int sgpidx, int alloc_loop);
+				  int rgpidx, int sgpidx, bool make_cons);
   // #IGNORE connect one unit group to another -- rgpidx = recv unit group idx, sgpidx = send unit group idx
 
   virtual bool	TrgRecvFmSend(int send_x, int send_y);

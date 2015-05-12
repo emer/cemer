@@ -320,6 +320,10 @@ public:
     }
   }
 
+  void  SetConScale(float scale, ConGroup* cg, int cidx, Network* net, int thr_no) override {
+    cg->Cn(cidx, SCALE, net) = scale;
+  }
+
   ///////////////////////////////////////////////////////////////
   //	Activation: Netinput -- only NetinDelta is supported
 

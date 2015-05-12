@@ -177,7 +177,13 @@ void TesselPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
   int mxi = MIN(cg->size, send_offs.size);
   for(int i=0; i<mxi; i++) {
     TessEl* te = (TessEl*)send_offs.FastEl(i);
-    SetCnWt(cg, i, net, te->wt_val, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(te->wt_val, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(te->wt_val, cg, i, net, thr_no);
+    }
   }
 }
 

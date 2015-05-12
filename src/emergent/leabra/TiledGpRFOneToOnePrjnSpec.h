@@ -36,7 +36,7 @@ public:
   int		gp_n_cons;		// [-1 = all] number of units to connect within each group -- allows for layers to have diff unit group structure
 
   void	Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-				  int rgpidx, int sgpidx, int alloc_loop) override;
+				  int rgpidx, int sgpidx, bool make_cons) override;
   void	Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net, int thr_no)
     override;
 

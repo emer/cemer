@@ -28,7 +28,7 @@
 eTypeDef_Of(ScriptPrjnSpec);
 
 class E_API ScriptPrjnSpec : public ProjectionSpec, public ScriptBase {
-  // Script-controlled connectivity: use prjn and make_cons variables in script code to refer to current projection and make_cons state that script is operating on; recv layer is prjn->layer, send layer is prjn->from; if(!make_cons), must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- else use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
+  // Script-controlled connectivity (see also ProgramPrjnSpec): use prjn and make_cons variables in script code to refer to current projection and make_cons state that script is operating on; recv layer is prjn->layer, send layer is prjn->from; if(!make_cons), must do ru->RecvConsPreAlloc and su->SendConsPreAlloc calls pprior to making connections -- else use ru->ConnectFrom(su, prjn) or ru->ConnectFromCk to make connections
 INHERITED(ProjectionSpec)
 public:
   Projection*	prjn;		// #READ_ONLY #NO_SAVE this holds the argument to the prjn

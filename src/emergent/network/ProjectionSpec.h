@@ -44,6 +44,7 @@ INHERITED(BaseSpec)
 public:
   bool          self_con;          // #CAT_Structure whether to create self-connections or not (if applicable)
   bool          init_wts;     	   // #CAT_Structure whether this projection spec does weight init (else conspec)
+  bool          set_scale;         // #CAT_Structure #CONDSHOW_ON_init_wts only for Leabra algorithm: if initializing the weights, set the connection scaling parameter in addition to intializing the weights -- this will for example set a gaussian scaling parameter on top of random initial weights, instead of just setting the initial weights to a gaussian weighted value
   bool          add_rnd_var;  	   // #AKA_add_rnd_wts #CONDSHOW_ON_init_wts if init_wts is set, use the random weight settings on the conspec to add random values to the weights set by the projection spec -- the mean of the random distribution is subtracted, so we're just adding variance, not any mean value
 
   virtual void  Connect_Sizes(Projection* prjn);
@@ -58,8 +59,12 @@ public:
     virtual int ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt = 0.0);
     // #CAT_Structure actual implementation: probabilistically add a proportion of new connections to replace those pruned previously, init_wt = initial weight value of new connection
 
-  virtual void  SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val, int thr_no);
+  virtual void  SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* net, int thr_no);
   // #CAT_Weights set given connection number in con group to given weight value -- this implements the add_rnd_var flag to add random variance to weights if set
+  virtual void  SetCnWtRnd(ConGroup* cg, int cn_idx, Network* net, int thr_no);
+  // #CAT_Weights set given connection number in con group to standard random weight value as specified in the connection spec
+  virtual void  SetCnScale(float scale_val, ConGroup* cg, int cn_idx, Network* net, int thr_no);
+  // #CAT_Weights set given connection number in con group to given scale value
 
   virtual void  Init_Weights_Prjn(Projection* prjn, ConGroup* cg, Network* net,
                                   int thr_no);

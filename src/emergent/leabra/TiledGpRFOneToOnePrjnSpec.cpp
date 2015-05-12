@@ -27,7 +27,7 @@ void TiledGpRFOneToOnePrjnSpec::Initialize() {
 }
 
 void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
-                                Layer* send_lay, int rgpidx, int sgpidx, int alloc_loop) {
+                                Layer* send_lay, int rgpidx, int sgpidx, bool make_cons) {
   int ru_nunits = recv_lay->un_geom.n - ru_idx_st;
   int su_nunits = send_lay->un_geom.n - su_idx_st;
   int maxn = MIN(ru_nunits, su_nunits);
@@ -39,7 +39,13 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
       Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
       Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
       if(!self_con && (su_u == ru_u)) continue;
-      su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+      if(!make_cons) {
+        su_u->RecvConsAllocInc(1, prjn); // recip!
+        ru_u->SendConsAllocInc(1, prjn); // recip!
+      }
+      else {
+        su_u->ConnectFrom(ru_u, prjn); // recip!
+      }
     }
   }
   else {
@@ -47,7 +53,13 @@ void TiledGpRFOneToOnePrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_
       Unit* ru_u = recv_lay->UnitAtUnGpIdx(ru_idx_st + ui, rgpidx);
       Unit* su_u = send_lay->UnitAtUnGpIdx(su_idx_st + ui, sgpidx);
       if(!self_con && (su_u == ru_u)) continue;
-      ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+      if(!make_cons) {
+        ru_u->RecvConsAllocInc(1, prjn);
+        su_u->SendConsAllocInc(1, prjn);
+      }
+      else {
+        ru_u->ConnectFrom(su_u, prjn);
+      }
     }
   }
 }
@@ -68,6 +80,12 @@ void TiledGpRFOneToOnePrjnSpec::Init_Weights_Prjn
     float dst = taMath_float::euc_dist_sq(su_x, su_y, rf_ctr.x, rf_ctr.y);
     float wt = expf(-0.5 * dst / sig_sq);
 
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }

@@ -399,7 +399,13 @@ void TiledDivGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
     wt = wt_range.min + wt_range.range * wt;
     
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }
 
@@ -438,6 +444,12 @@ void TiledDivGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGro
     else {
       wt = wt_range.min;
     }
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }

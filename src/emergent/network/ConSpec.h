@@ -124,6 +124,9 @@ public:
   { dwt = 0.0f; }
   // #CAT_Learning initialize weight-change variable to 0
 
+  virtual void          SetConScale(float scale, ConGroup* cg, int cidx, Network* net, int thr_no) { }
+  // #CAT_Learning set the connection scale parameter, for given connection index, for algorithms that support connection scale parameters (Leabra)
+  
   inline void           Init_Weights_symflag(Network* net, int thr_no);
   // #IGNORE must be called during Init_Weights to update net flag for weight symmetrizing
 

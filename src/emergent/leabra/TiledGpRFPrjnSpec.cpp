@@ -30,7 +30,6 @@ void TiledGpRFPrjnSpec::Initialize() {
   wrap = false;
   reciprocal = false;
   wts_type = GAUSSIAN;
-  set_scale = false;
   gauss_sig = 1.0f;
   gauss_ctr_mv = 0.5f;
   wt_range.min = 0.1f;
@@ -71,13 +70,13 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
     high_low_wts.Reset();       // keep it fresh
   }
   
-  if(reciprocal) {
-    Connect_Reciprocal(prjn, make_cons);
-    return;
-  }
-
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
+  if(reciprocal) {
+    recv_lay = prjn->from; // from perspective of non-recip!
+    send_lay = prjn->layer;
+  }
+
   taVector2i ru_geo = recv_lay->gp_geom;
   taVector2i su_geo = send_lay->gp_geom;
   int ru_nunits = recv_lay->un_geom.n;
@@ -110,89 +109,20 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
           int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
           if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
 
-          Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, !make_cons);
+          Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, make_cons);
         }
       }
     }
   }
   if(!make_cons) { // on first pass through alloc loop, do sending allocations
+    prjn->layer->RecvConsPostAlloc(prjn);
     prjn->from->SendConsPostAlloc(prjn);
   }
 }
 
-void TiledGpRFPrjnSpec::Connect_Reciprocal(Projection* prjn, bool make_cons) {
-  Layer* recv_lay = prjn->from; // from perspective of non-recip!
-  Layer* send_lay = prjn->layer;
-  taVector2i ru_geo = recv_lay->gp_geom;
-  taVector2i su_geo = send_lay->gp_geom;
-  int ru_nunits = recv_lay->un_geom.n;
-  int su_nunits = send_lay->un_geom.n;
-
-  taVector2i ruc;
-  if(!make_cons) {
-    int_Array alloc_sz;
-    alloc_sz.SetSize(su_geo.Product()); // alloc sizes per each su unit group
-    alloc_sz.InitVals(0);
-
-    int rgpidx = 0;
-    for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-      for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-        taVector2i su_st;
-        su_st = send_gp_start + ruc * send_gp_skip;
-
-        taVector2i suc;
-        taVector2i suc_wrp;
-        for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-          for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-            suc_wrp = suc;
-            if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-              continue;
-            int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-            if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-            alloc_sz[sgpidx] += ru_nunits;
-          }
-        }
-      }
-    }
-
-    // now actually allocate
-    for(int sug=0; sug < send_lay->gp_geom.n; sug++) {
-      for(int sui=0; sui < su_nunits; sui++) {
-        Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sug);
-        su_u->RecvConsPreAlloc(alloc_sz[sug], prjn);
-      }
-    }
-  }
-
-  // then connect
-  int rgpidx = 0;
-  for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
-    for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
-      taVector2i su_st;
-      su_st = send_gp_start + ruc * send_gp_skip;
-
-      taVector2i suc;
-      taVector2i suc_wrp;
-      for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
-        for(suc.x = su_st.x; suc.x < su_st.x + send_gp_size.x; suc.x++) {
-          suc_wrp = suc;
-          if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
-            continue;
-          int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-          if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
-
-          Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, !make_cons);
-        }
-      }
-    }
-  }
-  if(!make_cons) { // on first pass through alloc loop, do sending allocations
-    prjn->from->SendConsPostAlloc(prjn);
-  }
-}
-
-void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Layer* send_lay,
-                                          int rgpidx, int sgpidx, int alloc_loop) {
+void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
+                                             Layer* send_lay,
+                                             int rgpidx, int sgpidx, bool make_cons) {
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
@@ -202,7 +132,13 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Lay
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
         if(!self_con && (su_u == ru_u)) continue;
-        su_u->ConnectFrom(ru_u, prjn, alloc_loop); // recip!
+        if(!make_cons) {
+          su_u->RecvConsAllocInc(1, prjn); // recip!
+          ru_u->SendConsAllocInc(1, prjn); // recip!
+        }
+        else {
+          su_u->ConnectFrom(ru_u, prjn); // recip!
+        }
       }
     }
   }
@@ -212,15 +148,18 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay, Lay
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
         if(!self_con && (su_u == ru_u)) continue;
-        ru_u->ConnectFrom(su_u, prjn, alloc_loop); // recip!
+        if(!make_cons) {
+          ru_u->RecvConsAllocInc(1, prjn);
+          su_u->SendConsAllocInc(1, prjn);
+        }
+        else {
+          ru_u->ConnectFrom(su_u, prjn);
+        }
       }
     }
   }
 }
 
-int TiledGpRFPrjnSpec::ProbAddCons_impl(Projection* prjn, float p_add_con, float init_wt) {
-  return 0;                     // todo: not worth maintaining at this point..
-}
 
 bool TiledGpRFPrjnSpec::TrgRecvFmSend(int send_x, int send_y) {
   trg_send_geom.x = send_x;
@@ -314,15 +253,14 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
 
     float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+    wt = wt_range.min + wt_range.range * wt;
 
     if(set_scale) {
-      LeabraConSpec* cs = (LeabraConSpec*)cg->GetConSpec();
-      cs->C_Init_Weight_Rnd(cg->Cn(i,LeabraConSpec::WT,net), thr_no); // std rnd wts
-      cg->Cn(i,LeabraConSpec::SCALE,net) = wt;
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
     }
     else {
-      wt = wt_range.min + wt_range.range * wt;
-      SetCnWt(cg, i, net, wt, thr_no);
+      SetCnWt(wt, cg, i, net, thr_no);
     }
   }
 }
@@ -362,7 +300,13 @@ void TiledGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGroup*
     else {
       wt = wt_range.min;
     }
-    SetCnWt(cg, i, net, wt, thr_no);
+    if(set_scale) {
+      SetCnWtRnd(cg, i, net, thr_no);
+      SetCnScale(wt, cg, i, net, thr_no);
+    }
+    else {
+      SetCnWt(wt, cg, i, net, thr_no);
+    }
   }
 }
 

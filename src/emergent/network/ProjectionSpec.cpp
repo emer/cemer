@@ -25,6 +25,7 @@ void ProjectionSpec::Initialize() {
   min_obj_type = &TA_Projection;
   self_con = false;
   init_wts = false;
+  set_scale = false;
   add_rnd_var = false;
 }
 
@@ -58,13 +59,24 @@ int ProjectionSpec::ProbAddCons(Projection* prjn, float p_add_con, float init_wt
   return rval;
 }
 
-void ProjectionSpec::SetCnWt(ConGroup* cg, int cn_idx, Network* net, float wt_val, int thr_no) {
+void ProjectionSpec::SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* net, int thr_no) {
   ConSpec* cs = cg->GetConSpec();
   if(add_rnd_var) {
     cs->C_Init_Weight_AddRndVar(wt_val, thr_no);
   }
   cs->C_ApplyLimits(wt_val);
   cg->Cn(cn_idx,ConGroup::WT,net) = wt_val;
+}
+
+void ProjectionSpec::SetCnWtRnd(ConGroup* cg, int cn_idx, Network* net, int thr_no) {
+  ConSpec* cs = cg->GetConSpec();
+  float& wt_val = cg->Cn(cn_idx,ConGroup::WT,net);
+  cs->C_Init_Weight_Rnd(wt_val, thr_no); // std rnd wts
+}
+
+void ProjectionSpec::SetCnScale(float sc_val, ConGroup* cg, int cn_idx, Network* net, int thr_no) {
+  ConSpec* cs = cg->GetConSpec();
+  cs->SetConScale(sc_val, cg, cn_idx, net, thr_no);
 }
 
 void ProjectionSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
