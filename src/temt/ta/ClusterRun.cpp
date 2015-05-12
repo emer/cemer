@@ -323,6 +323,9 @@ void ClusterRun::LoadData(bool remove_existing) {
   int st_row, end_row;
   if (cur_table == &jobs_running) {
     if (SelectedRows(jobs_running, st_row, end_row)) {
+      for (int row = st_row; row <= end_row; ++row) {
+        LoadData_impl(dgp, jobs_running, row);
+      }
     }
     else {
       for (int row = 0; row <jobs_running.rows; ++row) {
