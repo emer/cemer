@@ -742,25 +742,22 @@ void ClusterRun::RemoveFiles() {
 void ClusterRun::RemoveNonDataFiles() {
   if(!InitClusterManager())
     return;
-
+  
+  DataTable* cur_table = GetCurDataTable();
+  
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
-  if (SelectedRows(jobs_done, st_row, end_row)) {
-    file_list.ResetData();
-    for (int row = end_row; row >= st_row; --row) {
-      SelectFiles_impl(jobs_done, row, false); // NOT include data
+  if (cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      file_list.ResetData();
+      for (int row = end_row; row >= st_row; --row) {
+        SelectFiles_impl(*cur_table, row, false); // NOT include data
+      }
+      RemoveAllFilesInList();
     }
-    RemoveAllFilesInList();
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    file_list.ResetData();
-    for (int row = end_row; row >= st_row; --row) {
-      SelectFiles_impl(jobs_archive, row, false); // NOT include data
+    else {
+      taMisc::Warning("No rows selected in jobs_done or jobs_archive -- no files removed");
     }
-    RemoveAllFilesInList();
-  }
-  else {
-    taMisc::Warning("No rows selected in jobs_done or jobs_archive -- no files removed");
   }
 }
 
@@ -768,26 +765,20 @@ void ClusterRun::GetProjAtRev() {
   if(!InitClusterManager())
     return;
 
+  DataTable* cur_table = GetCurDataTable();
+  
   int svn_rev = -1;
   // Get the (inclusive) range of rows to process
   int st_row, end_row;
-  if (SelectedRows(jobs_running, st_row, end_row)) {
-    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
-      return;
-    svn_rev = jobs_running.GetVal("submit_svn", st_row).toInt();
-  }
-  else if (SelectedRows(jobs_done, st_row, end_row)) {
-    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
-      return;
-    svn_rev = jobs_done.GetVal("submit_svn", st_row).toInt();
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
-      return;
-    svn_rev = jobs_archive.GetVal("submit_svn", st_row).toInt();
-  }
-  else {
-    taMisc::Warning("No rows selected -- project not loaded");
+  if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      if(TestError(st_row != end_row, "GetProjAtRev", "must select only one row"))
+        return;
+      svn_rev = cur_table->GetVal("submit_svn", st_row).toInt();
+    }
+    else {
+      taMisc::Warning("No rows selected -- project not loaded");
+    }
   }
   if(TestError(svn_rev < 0, "GetProjAtRev", "valid svn revision not found"))
     return;
@@ -882,24 +873,18 @@ void ClusterRun::OpenSvnBrowser() {
 }
 
 void ClusterRun::SaveJobParams() {
+  DataTable* cur_table = GetCurDataTable();
+  
   int st_row, end_row;
-  if (SelectedRows(jobs_running, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SaveJobParams_impl(jobs_running, row);
+  if (cur_table == &jobs_running || cur_table == &jobs_done || cur_table == &jobs_archive) {
+    if (SelectedRows(*cur_table, st_row, end_row)) {
+      for (int row = st_row; row <= end_row; ++row) {
+        SaveJobParams_impl(*cur_table, row);
+      }
     }
-  }
-  else if (SelectedRows(jobs_done, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SaveJobParams_impl(jobs_done, row);
+    else {
+      taMisc::Warning("No rows selected -- no job parameters saved");
     }
-  }
-  else if (SelectedRows(jobs_archive, st_row, end_row)) {
-    for (int row = st_row; row <= end_row; ++row) {
-      SaveJobParams_impl(jobs_archive, row);
-    }
-  }
-  else {
-    taMisc::Warning("No rows selected -- no job parameters saved");
   }
 }
 
