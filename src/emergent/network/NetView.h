@@ -139,6 +139,7 @@ public:
   enum ConType {                // where there are multiple types of connections between units, this allows selection of which type to display
     ANY_CON,                    // #LABEL_Any just show the first connection shown -- don't select by name at all
     STD_CON,                    // #LABEL_Std only show standard connections -- projection names start with Fm_
+    INHIB_CON,                  // #LABEL_Inhib only show inhib connections -- projection names start with Inhib_
     CTXT_CON,                   // #LABEL_Ctxt only show context connections -- projection names start with Ctxt_
     DEEP_CON,                   // #LABEL_Deep only show deep connections -- projection names start with Deep_
     MARKER_CON,                 // #LABEL_Marker only show MarkerConSpec connections -- projection names start with Marker_

@@ -193,6 +193,13 @@ void LeabraConSpec::UpdateAfterEdit_impl() {
   ClearBaseFlag(BF_MISC2);      // done..
 }
 
+void LeabraConSpec::GetPrjnName(Projection& prjn, String& nm) {
+  if(inhib)
+    nm = "Inhib_" + nm;
+  else
+    return inherited::GetPrjnName(prjn, nm);
+}
+
 bool LeabraConSpec::CheckConfig_RecvCons(ConGroup* cg, bool quiet) {
   bool rval = true;
   return rval;

@@ -515,6 +515,8 @@ public:
   bool CheckConfig_RecvCons(ConGroup* cg, bool quiet=false) override;
   // check for for misc configuration settings required by different algorithms
 
+  void  GetPrjnName(Projection& prjn, String& nm) override;
+
   void	InitLinks();
   SIMPLE_COPY(LeabraConSpec);
   TA_BASEFUNS(LeabraConSpec);

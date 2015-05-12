@@ -1630,6 +1630,9 @@ void NetView::setUnitDispMd(MemberDef* md) {
   case NetView::STD_CON:
     prjn_starts_with = "Fm_";
     break;
+  case NetView::INHIB_CON:
+    prjn_starts_with = "Inhib_";
+    break;
   case NetView::CTXT_CON:
     prjn_starts_with = "Ctxt_";
     break;
