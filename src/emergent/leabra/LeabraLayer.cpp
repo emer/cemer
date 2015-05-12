@@ -63,6 +63,7 @@ void LeabraLayer::InitLinks() {
   taBase::Own(avg_netin_sum, this);
 
   taBase::Own(ungp_data, this);
+  taBase::Own(multigp_data, this);
 
 #ifdef DMEM_COMPILE
   taBase::Own(dmem_agg_sum, this);
@@ -139,6 +140,10 @@ void LeabraLayer::BuildUnits() {
   ungp_data.Reset();
   ungp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
   ungp_data.SetSize(gp_geom.n);
+
+  multigp_data.Reset();
+  multigp_data.SetBaseType(((LeabraLayerSpec*)GetLayerSpec())->UnGpDataType());
+  multigp_data.SetSize(gp_geom.n);
 }
 
 #ifdef DMEM_COMPILE

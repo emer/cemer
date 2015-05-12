@@ -64,6 +64,7 @@ public:
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is above the layerspec hog_thr threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the layer that have a long-time-averaged activitation level that is below the layerspec dead_thr threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
   LeabraUnGpData_List ungp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for inhibition computation and other things) -- allows actual unit groups to be virtual (virt_groups flag)
+  LeabraUnGpData_List multigp_data; // #NO_SAVE #NO_COPY #SHOW_TREE #HIDDEN #CAT_Activation unit group data (for multi-unit-group inhibition computation and other things)
 
 #ifdef DMEM_COMPILE
   DMemAggVars	dmem_agg_sum;		// #IGNORE aggregation of network variables using SUM op (currently only OP in use -- add others as needed)
@@ -79,8 +80,14 @@ public:
   LeabraUnGpData* 	UnGpData(int gpidx)
   { return ungp_data.SafeEl(gpidx); }
   // #CAT_Structure get unit group data structure for given unit group index
+  LeabraUnGpData* 	MultiGpData(int gpidx)
+  { return multigp_data.SafeEl(gpidx); }
+  // #CAT_Structure get multi unit group data structure for given unit group index
   LeabraUnGpData* 	UnGpDataUn(Unit* un)
   { return ungp_data.SafeEl(un->ug_idx); }
+  // #CAT_Structure get unit group data structure for unit group for given unit
+  LeabraUnGpData* 	MultiGpDataUn(Unit* un)
+  { return multigp_data.SafeEl(un->ug_idx); }
   // #CAT_Structure get unit group data structure for unit group for given unit
 
   ///////////////////////////////////////////////////////////////////////

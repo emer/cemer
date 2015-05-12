@@ -72,6 +72,27 @@ private:
   void	Defaults_init();
 };
 
+eTypeDef_Of(LeabraMultiGpSpec);
+
+class E_API LeabraMultiGpSpec : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specifies how to combine multiple unit groups for multi-group inhibition
+INHERITED(SpecMemberBase)
+public:
+  taVector2i    size;         // total number of unit groups to combine together into a common pool of multi unit-group inhibition
+  taVector2i    sub_size;     // how many unit groups share the same pooled multi-group inhibition -- all the unit groups within this subgroup size share the same inhibitory pool -- i.e., the pool only moves after every gp_subgp unit groups
+  bool          wrap;         // wrap around on the edges or not?
+
+  String       GetTypeDecoKey() const override { return "LayerSpec"; }
+
+  TA_SIMPLE_BASEFUNS(LeabraMultiGpSpec);
+protected:
+  SPEC_DEFAULTS;
+private:
+  void	Initialize();
+  void 	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(LayerAvgActSpec);
 
 class E_API LayerAvgActSpec : public SpecMemberBase {
@@ -241,8 +262,10 @@ class E_API LeabraLayerSpec : public LayerSpec {
   // #STEM_BASE ##CAT_Leabra Leabra layer specs, computes inhibitory input for all units in layer
 INHERITED(LayerSpec)
 public:
-  LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed -- if unit groups are present and unit_gp inhib.gi > 0, net inhibition is MAX of layer and unit-group level
-  LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- set gi = 0 to exclude any group-level inhibition -- net inhibition is MAX of layer and unit group) -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition -- set gi to 0 to turn off computed 
+  LeabraInhibSpec lay_inhib;	// #CAT_Activation #AKA_inhib how to compute layer-wide inhibition -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- net inhibition is MAX of layer and unit group -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraInhibSpec unit_gp_inhib; // #CAT_Activation how to compute unit-group-level inhibition (only relevant if layer actually has unit groups -- net inhibition is MAX of layer and unit group -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraInhibSpec multi_gp_inhib; // #CAT_Activation how to compute inhibition that combines across multiple unit-groups (only relevant if layer actually has unit groups -- net inhibition is MAX of layer and unit group -- uses feedforward (FF) and feedback (FB) inhibition (FFFB) based on average netinput (FF) and activation (FB) -- any inhibitory unit inhibition is just added on top of this computed inhibition
+  LeabraMultiGpSpec multi_gp_geom; // #CAT_Activation #CONDSHOW_ON_multi_gp_inhib.on how to combine multiple unit groups for computing multi-group level inhibition
   LayerAvgActSpec avg_act;	// #CAT_Activation expected average activity levels in the layer -- used to initialize running-average computation that is then used for netinput scaling, also specifies time constant for updating average
   LeabraInhibMisc inhib_misc;	// #CAT_Activation extra parameters for special forms of inhibition beyond the basic FFFB dynamic specified in inhib
   LeabraClampSpec clamp;        // #CAT_Activation how to clamp external inputs to units (hard vs. soft)
@@ -255,10 +278,10 @@ public:
   //	Access, status functions
 
   inline bool   HasUnitGpInhib(Layer* lay)
-  { return ((unit_gp_inhib.gi > 0.0f) && lay->unit_groups); }
+  { return (unit_gp_inhib.on && lay->unit_groups); }
   // does this layer have unit-group level inhibition?
   inline bool   HasLayerInhib(Layer* lay)
-  { return (lay_inhib.gi > 0.0f); }
+  { return (lay_inhib.on); }
   // does this layer have layer level inhibition
 
 
@@ -313,14 +336,15 @@ public:
   virtual void	Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
   // #CAT_Activation compute the inhibition for layer -- this is the main call point into this stage of processing
     virtual void Compute_Inhib_impl
-      (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx, 
-       LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of inhibition computation for either layer or unit group
 
     virtual void Compute_Inhib_FfFb
-      (LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
-       LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
+      (LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec);
     // #IGNORE implementation of feed-forward, feed-back inhibition computation
+
+    virtual void Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no);
+    // #IGNORE multi-group inhib
 
   virtual void	Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Activation Stage 2.2: for layer groups, need to propagate inhib out to unit groups

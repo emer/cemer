@@ -20,6 +20,7 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibSpec);
+TA_BASEFUNS_CTORS_DEFN(LeabraMultiGpSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerAvgActSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraInhibMisc);
 TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
@@ -51,6 +52,15 @@ void LeabraInhibSpec::Defaults_init() {
 void LeabraInhibSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   fb_dt = 1.0f / fb_tau;
+}
+
+void LeabraMultiGpSpec::Initialize() {
+  size = 4;
+  sub_size = 1;
+  wrap = true;
+}
+
+void LeabraMultiGpSpec::Defaults_init() {
 }
 
 void LayerAvgActSpec::Initialize() {
@@ -154,6 +164,7 @@ void LayGpInhibSpec::Defaults_init() {
 void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   unit_gp_inhib.on = false;
+  multi_gp_inhib.on = false;
 }
 
 void LeabraLayerSpec::Defaults_init() {
@@ -268,6 +279,17 @@ void LeabraLayerSpec::Init_Weights_Layer(LeabraLayer* lay, LeabraNetwork* net) {
       else {
         gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
       }
+
+      gpd = lay->multigp_data.FastEl(g);
+      gpd->Init_State();
+      gpd->acts_m_avg = avg_act.init;
+      gpd->acts_p_avg = avg_act.init;
+      if(avg_act.fixed) {
+        gpd->acts_p_avg_eff = avg_act.init;
+      }
+      else {
+        gpd->acts_p_avg_eff = avg_act.adjust * gpd->acts_p_avg;
+      }
     }
   }
   Init_Inhib(lay, net);         // initialize inhibition at start..
@@ -321,6 +343,9 @@ void LeabraLayerSpec::Init_Acts_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->Inhib_Init_Acts(this);
+
+      gpd = lay->multigp_data.FastEl(g);
+      gpd->Inhib_Init_Acts(this);
     }
   }
 }
@@ -351,6 +376,10 @@ void LeabraLayerSpec::Trial_Init_Layer(LeabraLayer* lay, LeabraNetwork* net) {
     if(lay->unit_groups) {
       for(int g=0; g < lay->gp_geom.n; g++) {
         LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
+        gpd->i_val.ffi -= decay.trial * gpd->i_val.ffi;
+        gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
+
+        gpd = lay->multigp_data.FastEl(g);
         gpd->i_val.ffi -= decay.trial * gpd->i_val.ffi;
         gpd->i_val.fbi -= decay.trial * gpd->i_val.fbi;
       }
@@ -396,32 +425,70 @@ void LeabraLayerSpec::TargExtToComp(LeabraLayer* lay, LeabraNetwork* net) {
 ///////////////////////////////////////////////////////////////////////
 //      Cycle Step 2: Inhibition, Basic computation
 
-void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thread_no) {
+void LeabraLayerSpec::Compute_Inhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no) {
   if(lay->hard_clamped) return; // say no more..
 
   if(HasUnitGpInhib(lay)) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
-      Compute_Inhib_impl(lay, Layer::ACC_GP, g, (LeabraInhib*)gpd, net, unit_gp_inhib);
+      Compute_Inhib_impl(lay, (LeabraInhib*)gpd, net, unit_gp_inhib);
     }
+
+  }
+  if(multi_gp_inhib.on && lay->unit_groups) {
+    Compute_MultiGpInhib(lay, net, thr_no);
   }
   if(HasLayerInhib(lay)) {
-    Compute_Inhib_impl(lay, Layer::ACC_LAY, 0, (LeabraInhib*)lay, net, lay_inhib);
+    Compute_Inhib_impl(lay, (LeabraInhib*)lay, net, lay_inhib);
   }
 
   Compute_LayInhibToGps(lay, net); // sync it all up..
 }
 
+void LeabraLayerSpec::Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net, int thr_no) {
+  bool wrap = multi_gp_geom.wrap;
+
+  taVector2i gpc;
+  for(gpc.y = 0; gpc.y < lay->gp_geom.y; gpc.y++) {
+    for(gpc.x = 0; gpc.x < lay->gp_geom.x; gpc.x++) {
+      int gpidx = lay->UnitGpIdxFmPos(gpc);
+
+      taVector2i st_gpc;
+      st_gpc = gpc / multi_gp_geom.sub_size; // auto takes int part
+      st_gpc *= multi_gp_geom.sub_size;
+
+      LeabraUnGpData* mgpd = lay->multigp_data.FastEl(gpidx);
+      mgpd->netin.InitVals();
+      mgpd->acts.InitVals();
+
+      taVector2i ngpc;  // neighbor gp to get values from
+      for(ngpc.y = st_gpc.y; ngpc.y < st_gpc.y + multi_gp_geom.size.y; ngpc.y++) {
+        for(ngpc.x = st_gpc.x; ngpc.x < st_gpc.x + multi_gp_geom.size.x; ngpc.x++) {
+          taVector2i ngpc_wrp = ngpc;
+          if(ngpc_wrp.WrapClip(wrap, lay->gp_geom) && !wrap)
+            continue;
+          int ngpidx = lay->UnitGpIdxFmPos(ngpc_wrp);
+
+          LeabraUnGpData* ngpd = lay->ungp_data.FastEl(ngpidx);
+
+          mgpd->netin.UpdtFmAvgMax(ngpd->netin);
+          mgpd->acts.UpdtFmAvgMax(ngpd->acts);
+        }
+      }
+      // mgpd has average netin and acts across multi-gp groups
+      Compute_Inhib_impl(lay, mgpd, net, multi_gp_inhib);
+    }
+  }
+}
+
 void LeabraLayerSpec::Compute_Inhib_impl
-(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
- LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
-  Compute_Inhib_FfFb(lay, acc_md, gpidx, thr, net, ispec); // only one option right now..
+(LeabraLayer* lay,  LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
+  Compute_Inhib_FfFb(lay, thr, net, ispec); // only one option right now..
   thr->i_val.g_i_orig = thr->i_val.g_i; // retain original values..
 }
 
 void LeabraLayerSpec::Compute_Inhib_FfFb
-(LeabraLayer* lay, Layer::AccessMode acc_md, int gpidx,
- LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
+(LeabraLayer* lay, LeabraInhib* thr, LeabraNetwork* net, LeabraInhibSpec& ispec) {
 
   if(!ispec.on) {
     thr->i_val.ffi = 0.0f;
@@ -457,11 +524,20 @@ void LeabraLayerSpec::Compute_Inhib_FfFb
 void LeabraLayerSpec::Compute_LayInhibToGps(LeabraLayer* lay, LeabraNetwork* net) {
   if(!lay->unit_groups) return;
 
-  if(HasUnitGpInhib(lay)) {
+  if(unit_gp_inhib.on || multi_gp_inhib.on) {
     for(int g=0; g < lay->gp_geom.n; g++) {
       LeabraUnGpData* gpd = lay->ungp_data.FastEl(g);
       gpd->i_val.lay_g_i = lay->i_val.g_i;
-      gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+      if(unit_gp_inhib.on ) {
+        gpd->i_val.g_i = MAX(gpd->i_val.g_i, lay->i_val.g_i);
+      }
+      else {
+        gpd->i_val.g_i = 0.0f;
+      }
+      if(multi_gp_inhib.on) {
+        LeabraUnGpData* mgpd = lay->multigp_data.FastEl(g);
+        gpd->i_val.g_i = MAX(gpd->i_val.g_i, mgpd->i_val.g_i);
+      }
     }
   }
   else {
