@@ -79,6 +79,7 @@ class E_API LeabraMultiGpSpec : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   taVector2i    size;         // total number of unit groups to combine together into a common pool of multi unit-group inhibition
+  taVector2i    st_off;       // starting offset -- defines the lower left corner of the square of unit groups of size 'size' that is included within a given unit group's multi-group inhibition window -- for example if size is 3x3 and st_off is -1, -1 (and sub_size = 1) then you will include the immediate neighbors of each unit group on all sides
   taVector2i    sub_size;     // how many unit groups share the same pooled multi-group inhibition -- all the unit groups within this subgroup size share the same inhibitory pool -- i.e., the pool only moves after every gp_subgp unit groups
   bool          wrap;         // wrap around on the edges or not?
 

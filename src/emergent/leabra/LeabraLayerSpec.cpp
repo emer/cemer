@@ -55,7 +55,8 @@ void LeabraInhibSpec::UpdateAfterEdit_impl() {
 }
 
 void LeabraMultiGpSpec::Initialize() {
-  size = 4;
+  size = 3;
+  st_off = -1;
   sub_size = 1;
   wrap = true;
 }
@@ -456,6 +457,7 @@ void LeabraLayerSpec::Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net,
       taVector2i st_gpc;
       st_gpc = gpc / multi_gp_geom.sub_size; // auto takes int part
       st_gpc *= multi_gp_geom.sub_size;
+      st_gpc += multi_gp_geom.st_off;         // add offset, post sub-grouping
 
       LeabraUnGpData* mgpd = lay->multigp_data.FastEl(gpidx);
       mgpd->netin.InitVals();
