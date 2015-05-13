@@ -98,6 +98,7 @@ inline float LeabraConSpec::Compute_Netin(ConGroup* rcg, Network* net, int thr_n
 
 #ifdef TA_VEC_USE
 
+// NOTE: this is no longer used and is missing a few things!
 inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
 (LeabraConGroup* cg, float* dwts, float* ru_avg_s, float* ru_avg_m, float* ru_avg_l,
  float* ru_avg_l_lrn, float* ru_deep,
@@ -126,6 +127,7 @@ inline void LeabraConSpec::Compute_dWt_CtLeabraXCAL_vec
       const float srm_j = srm[j];
       const float ru_avg_l_j = ru_avg_l[ru_idx+j];
       const float ru_avg_l_lrn_j = ru_avg_l_lrn[ru_idx+j];
+      // note: above factor is not always used -- if set_l_lrn for example.
       float lrate_eff = clrate;
       if(deep_on) {
         lrate_eff *= (bg_lrate + fg_lrate * ru_deep[ru_idx+j]);
@@ -179,6 +181,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
 
 #if 0 // TA_VEC_USE
   // at this point, code is so simple that this vec version probably not worth it..
+  // also, the set_l_lrn is not supported here..
   LeabraNetwork* lnet = (LeabraNetwork*)net;
   float* avg_s = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_S);
   float* avg_m = lnet->UnVecVar(thr_no, LeabraNetwork::AVG_M);
@@ -196,9 +199,14 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     if(deep_on) {
       lrate_eff *= (bg_lrate + fg_lrate * ru->deep_norm);
     }
+    float l_lrn_eff;
+    if(xcal.set_l_lrn)
+      l_lrn_eff = xcal.l_lrn;
+    else
+      l_lrn_eff = ru->avg_l_lrn;
     C_Compute_dWt_CtLeabraXCAL
       (dwts[i], lrate_eff, ru->avg_s_eff, ru->avg_m, su_avg_s, su_avg_m,
-       ru->avg_l, ru->avg_l_lrn);
+       ru->avg_l, l_lrn_eff);
   }
 #endif
 }
