@@ -33,6 +33,9 @@ def submitJob(jm, opts, args):
                      print job.lastErr()
                      print job.usage()
                      return False
+            if opts.mailuser != None:
+                job.setMailUser(opts.mailuser)
+                job.setMailType(opts.mailtype)
             if opts.tasks:
                 r=re.compile(r'[-:%]')
                 job.setTaskStart( int(r.split(opts.tasks)[0]) )
@@ -85,6 +88,9 @@ def submitJob(jm, opts, args):
                      print job.lastErr()
                      print job.usage()
                      return False
+            if opts.mailuser != None:
+                job.setMailUser(opts.mailuser)
+                job.setMailType(opts.mailtype)
             if opts.tasks:
                 r=re.compile(r'[-:%]')
                 job.setTaskStart( int(r.split(opts.tasks)[0]) )
@@ -143,6 +149,8 @@ if __name__ == "__main__":
     p.add_option("--threaded", action="store_true", help="enables proper accounting for threaded programs", default=False)
     p.add_option("--tasks", "-t", action="store", help="specify array job tasks", default=None)
     p.add_option("--throttle", "-r", action="store", help="specify throttle for array job tasks", default=None)
+    p.add_option("--mailtype", "-y", action="store", help="specify the type of events resulting in an email notification", default='FAIL')
+    p.add_option("--mailuser", "-u", action="store", help="specify the email address to email notifications", default=None)
     opts, args = p.parse_args()
 
 
@@ -151,7 +159,7 @@ if __name__ == "__main__":
     #opts.tasks = None
     #opts.throttle = None
     ###############################################################################
-    
+
     #print "Opts: %s" % opts
     #print "Args: %s" % args
 

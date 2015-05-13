@@ -379,7 +379,9 @@ class SlurmJobManager( ClusterJobManager ):
 
         file.write("#SBATCH --qos=%s\n" % job.queueName() )
         self.subCmd.append("--qos=%s" % job.queueName() )
-            
+        if job.mail_user != None:
+            file.write("#SBATCH --mail-type=%s\n" % job.mail_type)
+            file.write("#SBATCH --mail-user=%s\n" % job.mail_user)
 
         if job.isArrayJob():
             file.write("#SBATCH --array=%d-%d\n" % (job.taskStart(), job.numTasks()))
@@ -478,6 +480,8 @@ class ClusterJob:
         self.memory = None
         self.user_cmd = "hostname"
         self.last_err =""
+        self.mail_user = None
+        self.mail_type = "FAIL"
     def isThreaded(self):
         return self.threaded
     def enableThreaded( self ):
@@ -505,6 +509,11 @@ class ClusterJob:
         self.step = n
     def taskStep(self):
         return self.step
+    def setMailUser(self, address):
+        logging.info("Setting mail user! %s" % address)
+        self.mail_user = address
+    def setMailType(self, type):
+        self.mail_type = type
     def numNodes(self):
         return self.nodes
     def setNumNodes( self, n ):

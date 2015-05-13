@@ -74,6 +74,11 @@ showq_args = ""
 # options are pyshowq, moab
 showq_parser = "moab"
 
+# specify the email address of the user to notify of job events
+mail_user = None
+# specify the type of job events the user should be notified about via email
+mail_type = "FAIL"
+
 # Specifies the availability region of Amazon AWS EC2  
 ec2_region = ""
 
@@ -1262,6 +1267,16 @@ class SubversionPoller(object):
                     args_eff = args_eff + [" -m", str(ram_gb) + "GB"]
                 else:
                     args_eff = [" -m", str(ram_gb) + "GB"]
+            if (('mail_user' in globals()) and (mail_user != None)):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + [" -u", mail_user]
+                else:
+                    args_eff = [" -u", mail_user]
+            if ('mail_type' in globals()):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + [" -y", mail_type]
+                else:
+                    args_eff = [" -y", mail_type]
             if len(args_eff) > 0:
                 cmdsub = [sp_qsub_cmd] + args_eff + [str(n_threads), run_time, cmd, params]
             else:
@@ -1273,6 +1288,16 @@ class SubversionPoller(object):
                     args_eff = args_eff + [" -m", str(ram_gb) + "GB"]
                 else:
                     args_eff = [" -m", str(ram_gb) + "GB"]
+            if (('mail_user' in globals()) and (mail_user != None)):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + [" -u", mail_user]
+                else:
+                    args_eff = [" -u", mail_user]
+            if ('mail_type' in globals()):
+                if len(args_eff) > 0:
+                    args_eff = args_eff + [" -y", mail_type]
+                else:
+                    args_eff = [" -y", mail_type]
             if len(args_eff) > 0:
                 cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(n_threads), run_time, cmd, params]
             else:
