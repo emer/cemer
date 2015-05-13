@@ -278,6 +278,7 @@ void TiledSubGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
 
     float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+    wt = wt_range.min + wt_range.range * wt;
 
     if(set_scale) {
       SetCnWtRnd(cg, i, net, thr_no);
