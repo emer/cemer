@@ -66,6 +66,7 @@ void ProjectionSpec::SetCnWt(float wt_val, ConGroup* cg, int cn_idx, Network* ne
   }
   cs->C_ApplyLimits(wt_val);
   cg->Cn(cn_idx,ConGroup::WT,net) = wt_val;
+  cs->SetConScale(1.0f, cg, cn_idx, net, thr_no); // reset scale..
 }
 
 void ProjectionSpec::SetCnWtRnd(ConGroup* cg, int cn_idx, Network* net, int thr_no) {
