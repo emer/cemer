@@ -475,8 +475,10 @@ void LeabraLayerSpec::Compute_MultiGpInhib(LeabraLayer* lay, LeabraNetwork* net,
           mgpd->acts.UpdtFmAvgMax(ngpd->acts);
         }
       }
+      mgpd->netin.CalcAvg();
+      mgpd->acts.CalcAvg();
       // mgpd has average netin and acts across multi-gp groups
-      Compute_Inhib_impl(lay, mgpd, net, multi_gp_inhib);
+      Compute_Inhib_impl(lay, (LeabraInhib*)mgpd, net, multi_gp_inhib);
     }
   }
 }
