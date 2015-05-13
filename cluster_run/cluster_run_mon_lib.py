@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging
+import os, re, subprocess, sys, time, traceback, ConfigParser, socket, shutil, random, json, urllib2, base64, ast, logging, getpass
 from datetime import datetime
 # requires this package, included with python 2.5 and above -- otherwise get
 # from http://effbot.org/downloads
@@ -1235,7 +1235,7 @@ class SubversionPoller(object):
         return
     
     def _start_job_cluster(self, filename, rev, row):
-      
+        global mail_user
         proj = self.model_files[0]  
         proj = os.path.abspath(proj)
         self.cur_proj_file = proj
@@ -1268,6 +1268,8 @@ class SubversionPoller(object):
                 else:
                     args_eff = [" -m", str(ram_gb) + "GB"]
             if (('mail_user' in globals()) and (mail_user != None)):
+                if (mail_user == "$USER"):
+                    mail_user = getpass.getuser()
                 if len(args_eff) > 0:
                     args_eff = args_eff + [" -u", mail_user]
                 else:
@@ -1289,6 +1291,8 @@ class SubversionPoller(object):
                 else:
                     args_eff = [" -m", str(ram_gb) + "GB"]
             if (('mail_user' in globals()) and (mail_user != None)):
+                if (mail_user == "$USER"):
+                    mail_user = getpass.getuser()
                 if len(args_eff) > 0:
                     args_eff = args_eff + [" -u", mail_user]
                 else:

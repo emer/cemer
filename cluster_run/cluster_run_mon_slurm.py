@@ -69,7 +69,7 @@ runmon.showq_parser = "slurm"
 runmon.job_update_window = 3
 
 # specify the email address of the user to notify of job events
-runmon.mail_user = None
+runmon.mail_user = "$USER"
 # specify the type of job events the user should be notified about via email
 runmon.mail_type = "FAIL"
 
