@@ -36,6 +36,7 @@ void gdPVLVDaSpec::Initialize() {
   dip_gain = 1.0f;
   pv_gain = 1.0f;
   pv_thr = 0.1f;
+  pvi_gain = 1.0f;
   vsp_thr = 0.1f;
 }
 
@@ -159,14 +160,17 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
   float pospv = pospv_lay->acts_eq.avg;
   float vspvi = vspatch_lay->acts_eq.avg;
 
-  float pospv_da = pospv - vspvi;
-  pospv_da = MAX(pospv_da, 0.0f); // can't dip through this!
-
+  //float pospv_da = pospv - vspvi; // original
+  float pospv_da = pospv - da.pvi_gain * vspvi; // higher pvi_gain == more shunting
+  
+  pospv_da = MAX(pospv_da, 0.0f); // shunting should not be able to produce dip!
+  
   float net_block = (1.0f - (lv_block.pos_pv * pospv + lv_block.dip * dip_da));
   net_block = MAX(0.0f, net_block);
 
   float net_da = da.pv_gain * pospv_da + net_block * da.burst_gain * burst_da -
-    da.dip_gain * dip_da;
+  da.dip_gain * dip_da;
+
   net_da *= da.da_gain;
 
   if(lv_block.rec_data) {

@@ -34,8 +34,9 @@ public:
   float         tonic_da;       // #DEF_0 set a tonic 'dopamine' (DA) level (offset to add to da values)
   float         burst_gain;     // #DEF_1 gain on bursts from PPTg
   float         dip_gain;       // #DEF_1 gain on dips from LHbRMTg
-  float         pv_gain;        // #DEF_1 gain on positive PV - VSPatchIndir (PVi) shunt signal
+  float         pv_gain;        // #DEF_1 gain on positive PV component of total phasic DA signal (net after subtracting VSPatchIndir (PVi) shunt signal)
   float         pv_thr;         // #DEF_0.1 threshold on pv max act for setting pv_detected
+  float         pvi_gain;       // #DEF_1 gain on VSPatchIndir (PVi) shunt signal - higher pvi_gain == more shunting
   float         vsp_thr;        // #DEF_0.1 threshold on VS Patch Indir max act for setting pv_detected
 
   String       GetTypeDecoKey() const override { return "UnitSpec"; }
