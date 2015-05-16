@@ -64,6 +64,9 @@ public:
   virtual void	Defaults();
   // #BUTTON #CONFIRM #CAT_ObjectMgmt for all specs in this group: restore specs to their default original parameter values, for parameters that have a strong default value -- WARNING: you will lose any unique parameters for anything that has a strong default value
   
+  virtual void  UpdateAllSpecs();
+  // update all of the specs within this group
+
   void RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
 

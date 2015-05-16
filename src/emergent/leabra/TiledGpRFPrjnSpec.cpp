@@ -40,6 +40,8 @@ void TiledGpRFPrjnSpec::Initialize() {
 void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
 
+  wt_range.UpdateAfterEdit_NoGui();
+  
   if(taMisc::is_loading) {
     taVersion v705(7, 0, 5);
     if(taMisc::loading_version < v705) { // set send_gp_start to prev val
@@ -57,14 +59,6 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(!(bool)prjn->from) return;
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
-  if(TestWarning(!prjn->layer->unit_groups, "Connect_impl",
-                 "requires recv layer to have unit groups!")) {
-    return;
-  }
-  if(TestWarning(!prjn->from->unit_groups, "Connect_impl",
-                 "requires send layer to have unit groups!")) {
-    return;
-  }
 
   if(wts_type == BIMODAL_PERMUTED) {
     high_low_wts.Reset();       // keep it fresh
@@ -78,7 +72,13 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   }
 
   taVector2i ru_geo = recv_lay->gp_geom;
+  if(!recv_lay->unit_groups) {
+    ru_geo = 1;
+  }
   taVector2i su_geo = send_lay->gp_geom;
+  if(!send_lay->unit_groups) {
+    su_geo = 1;
+  }
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
@@ -89,16 +89,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   int rgpidx = 0;
   for(ruc.y = 0; ruc.y < ru_geo.y; ruc.y++) {
     for(ruc.x = 0; ruc.x < ru_geo.x; ruc.x++, rgpidx++) {
+      if(!recv_lay->unit_groups) {
+        rgpidx = -1;
+      }
       taVector2i su_st;
       su_st = send_gp_start + ruc * send_gp_skip;
-
-      if(!make_cons) {
-        for(int rui=0; rui < ru_nunits; rui++) {
-          Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
-          ru_u->RecvConsPreAlloc(alloc_no, prjn);
-        }
-      }
-
       taVector2i suc;
       taVector2i suc_wrp;
       for(suc.y = su_st.y; suc.y < su_st.y + send_gp_size.y; suc.y++) {
@@ -106,8 +101,11 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
           suc_wrp = suc;
           if(suc_wrp.WrapClip(wrap, su_geo) && !wrap)
             continue;
-          int sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
-          if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+          int sgpidx = -1;
+          if(send_lay->unit_groups) {
+            sgpidx = send_lay->UnitGpIdxFmPos(suc_wrp);
+            if(!send_lay->UnitGpIdxIsValid(sgpidx)) continue;
+          }
 
           Connect_UnitGroup(prjn, recv_lay, send_lay, rgpidx, sgpidx, make_cons);
         }
@@ -128,9 +126,17 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
 
   if(reciprocal) {              // reciprocal is backwards!
     for(int sui=0; sui < su_nunits; sui++) {
-      Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+      Unit* su_u;
+      if(sgpidx >= 0)
+        su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+      else
+        su_u = send_lay->units.SafeEl(sui);
       for(int rui=0; rui < ru_nunits; rui++) {
-        Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        Unit* ru_u;
+        if(rgpidx >= 0)
+          ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        else
+          ru_u = recv_lay->units.SafeEl(rui);
         if(!self_con && (su_u == ru_u)) continue;
         if(!make_cons) {
           su_u->RecvConsAllocInc(1, prjn); // recip!
@@ -144,9 +150,17 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
   }
   else {
     for(int rui=0; rui < ru_nunits; rui++) {
-      Unit* ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      Unit* ru_u;
+      if(rgpidx >= 0)
+        ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+      else
+        ru_u = recv_lay->units.SafeEl(rui);
       for(int sui=0; sui < su_nunits; sui++) {
-        Unit* su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+        Unit* su_u;
+        if(sgpidx >= 0)
+          su_u = send_lay->UnitAtUnGpIdx(sui, sgpidx);
+        else
+          su_u = send_lay->units.SafeEl(sui);
         if(!self_con && (su_u == ru_u)) continue;
         if(!make_cons) {
           ru_u->RecvConsAllocInc(1, prjn);

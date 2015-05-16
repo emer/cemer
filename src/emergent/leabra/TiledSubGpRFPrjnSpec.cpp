@@ -39,6 +39,9 @@ void TiledSubGpRFPrjnSpec::Initialize() {
 
 void TiledSubGpRFPrjnSpec::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
+
+  wt_range.UpdateAfterEdit_NoGui();
+  
   if(TestError(send_subgp_size.x > recv_subgp_size.x, "UAE",
                "send_subgp_size must be smaller than or equal to recv_subgp_size")) {
   }

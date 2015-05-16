@@ -177,6 +177,12 @@ void BaseSpec_Group::SetParam(TypeDef* spec_type, const String& param_path,
   }
 }
 
+void BaseSpec_Group::UpdateAllSpecs() {
+  FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
+    bs->UpdateAfterEdit();
+  }
+}
+
 void BaseSpec_Group::RestorePanels() {
   FOREACH_ELEM_IN_GROUP(BaseSpec, bs, *this) {
     if(bs->GetUserDataAsBool("user_pinned")) {

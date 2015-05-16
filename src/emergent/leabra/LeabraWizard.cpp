@@ -34,6 +34,7 @@ void LeabraWizard::Initialize() {
 #include <TesselPrjnSpec>
 #include <UniformRndPrjnSpec>
 #include <GpRndTesselPrjnSpec>
+#include <TiledGpRFPrjnSpec>
 
 #include <TwoDValLayerSpec>
 #include <DeepCtxtConSpec>
@@ -67,6 +68,7 @@ void LeabraWizard::Initialize() {
 #include <DeepCopyUnitSpec>
 #include <MatrixConSpec>
 #include <SendDeepRawConSpec>
+#include <SendDeepNormConSpec>
 
 #include <BgPfcPrjnSpec>
 #include <TopoWtsPrjnSpec>
@@ -94,7 +96,8 @@ void LeabraWizard::Initialize() {
 String LeabraWizard::RenderWizDoc_network() {
   String rval = inherited::RenderWizDoc_network();
   rval += String("\
-* [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on biology -- functionally similar to an SRN but auto-encoding and predictive\n\
+* [[<this>.LeabraTI()|LeabraTI]] -- configure specs and layers for LeabraTI -- temporal integration of information over time, based on deep neocortical layer biology -- functionally similar to an SRN but auto-encoding and predictive\n\
+* [[<this>.DeepLeabra()|DeepLeabra]] -- configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers -- optionaly create TI deep context self projections, and top-down deep attentional projections from higher layers\n\
 * [[<this>.SRNContext()|SRN Context]] -- configure a network with a simple-recurrent-network (SRN) context layer\n\
 * [[<this>.UnitInhib()|Unit Inhib]] -- configure unit-based inhibition for all layers in selected network (as compared with standard kWTA inhibition) ('''NOTE: parameters are out of date''').\n\
 * [[<this>.Hippo()|Hippo]] -- configure a Hippocampus using theta-phase specs -- high functioning hippocampal episodic memory system.\n\
@@ -383,15 +386,25 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
     return false;
   }
   FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
-  FMChild(LeabraConSpec, ti_ctxt, stdcons, "LeabraTICtxt");
+  FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
   FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
+  FMChild(LeabraUnitSpec, ti_uns, stduns, "TICtxtUnits");
   FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
-
-  net->net_misc.deep = true;
+  FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
 
   ti_ctxt->SetUnique("wt_scale", true);
   ti_ctxt->wt_scale.rel = 1.0f;
+  ti_uns->SetUnique("deep", true);
+  ti_uns->deep.on = true;
+  ti_uns->SetUnique("deep_qtr", true);
+  ti_uns->deep_qtr = LeabraUnitSpec::Q4;
 
+  ctxt_prjn->send_gp_size = 3;
+  ctxt_prjn->send_gp_skip = 1;
+  ctxt_prjn->send_gp_start = -1;
+
+  net->specs.UpdateAllSpecs();
+  
   for(int li=net->layers.leaves-1; li >= 0; li--) {
     LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
     if(lay->layer_type != Layer::HIDDEN) continue;
@@ -400,10 +413,129 @@ bool LeabraWizard::LeabraTI(LeabraNetwork* net) {
     if(ls->InheritsFrom(&TA_LeabraContextLayerSpec)) continue; // skip existing srn's
 
     //	  	 	   to		 from		prjn_spec	con_spec
-    net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
+    if(lay->unit_groups) {
+      net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
+    }
+    else {
+      net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
+    }
+    lay->SetUnitSpec(ti_uns);
   }
 
   net->Build();
+  return true;
+}
+
+bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down_attn) {
+  if(TestError(!net, "DeepLeabra", "must have basic constructed network first")) {
+    return false;
+  }
+  FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
+  FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
+  FMChild(LeabraConSpec, fm_trc, stdcons, "FmTRC");
+  FMChild(LeabraConSpec, to_trc, stdcons, "ToTRC");
+  FMChild(SendDeepRawConSpec, d_to_trc, stdcons, "DeepToTRC");
+  FMChild(SendDeepNormConSpec, dnorm, stdcons, "DeepNorm_fixed");
+  FMSpec(FullPrjnSpec, full_prjn, net, "FullPrjnSpec_0");
+  FMSpec(GpOneToOnePrjnSpec, gp_one_to_one, net, "GpOneToOne");
+  FMSpec(TiledGpRFPrjnSpec, deep_prjn, net, "DeepToTRC");
+  FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
+
+  fm_trc->SetUnique("wt_scale", true);
+  fm_trc->wt_scale.rel = 0.1f;
+  d_to_trc->SetUnique("learn", true);
+  d_to_trc->learn = false;
+  d_to_trc->SetUnique("rnd", true);
+  d_to_trc->rnd.var = 0.0f;
+
+  dnorm->SetUnique("learn", true);
+  dnorm->learn = false;
+  dnorm->SetUnique("rnd", true);
+  dnorm->rnd.var = 0.0f;
+
+  deep_prjn->init_wts = true;
+  deep_prjn->send_gp_size = 2;
+  deep_prjn->send_gp_skip = 2;
+  deep_prjn->send_gp_start = 0;
+  deep_prjn->wrap = true;
+  deep_prjn->wts_type = TiledGpRFPrjnSpec::GAUSSIAN;
+  deep_prjn->gauss_sig = 0.3f;
+  deep_prjn->gauss_ctr_mv = 0.8f;
+  deep_prjn->wt_range.min = 0.3f;
+  deep_prjn->wt_range.max = 0.7f;
+
+  ctxt_prjn->send_gp_size = 3;
+  ctxt_prjn->send_gp_skip = 1;
+  ctxt_prjn->send_gp_start = -1;
+
+  // Layer_Group input_lays;
+  // for(int li=net->layers.leaves-1; li >= 0; li--) {
+  //   LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+  //   if(lay->layer_type == Layer::INPUT) {
+  //     input_lays.Link(lay);
+  //   }
+  // }
+
+  net->specs.UpdateAllSpecs();
+
+  net->Build();
+  // build first so we can use directional information from existing connections
+
+  for(int li=net->layers.leaves-1; li >= 0; li--) {
+    LeabraLayer* lay = (LeabraLayer*)net->layers.Leaf(li);
+    if(lay->layer_type != Layer::HIDDEN) continue;
+    if(lay->name.contains("_trc")) continue;
+
+    LeabraLayer* trc = (LeabraLayer*)net->FindMakeLayer(lay->name + "_trc");
+    trc->un_geom = 4;
+    trc->unit_groups = lay->unit_groups;
+    trc->gp_geom = lay->gp_geom;
+    net->layers.MoveAfter(lay, trc);
+    trc->PositionBehind(lay, 2);
+
+    Layer* fm_in = NULL;
+    Layer* fm_out = NULL;
+    for(int pi = 0; pi < lay->projections.size; pi++) {
+      Projection* prjn = lay->projections[pi];
+      if(!fm_in && prjn->direction == Projection::FM_INPUT)
+        fm_in = prjn->from.ptr();
+      if(!fm_out && prjn->direction == Projection::FM_OUTPUT)
+        fm_out = prjn->from.ptr();
+    }
+
+    //	  	 	   to		 from		prjn_spec	con_spec
+    if(lay->unit_groups) {
+      net->FindMakePrjn(lay, trc, ctxt_prjn,  fm_trc);
+      net->FindMakePrjn(trc, lay, ctxt_prjn,  to_trc);
+      net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
+      if(do_ti_ctxt) {
+        net->FindMakePrjn(lay, lay, ctxt_prjn,  ti_ctxt);
+      }
+      if(top_down_attn && fm_out) {
+        net->FindMakePrjn(lay, fm_out, ctxt_prjn,  dnorm);
+      }
+    }
+    else {
+      net->FindMakePrjn(lay, trc, full_prjn,  fm_trc);
+      net->FindMakePrjn(trc, lay, full_prjn,  to_trc);
+      //      net->FindMakePrjn(trc, lay, gp_one_to_one,  dnorm);
+      if(do_ti_ctxt) {
+        net->FindMakePrjn(lay, lay, full_prjn,  ti_ctxt);
+      }
+      if(top_down_attn && fm_out) {
+        net->FindMakePrjn(lay, fm_out, full_prjn,  dnorm);
+      }
+    }
+    if(fm_in) {
+      net->FindMakePrjn(trc, fm_in, deep_prjn,  d_to_trc);
+    }
+  }
+  
+  net->Build();
+
+  String msg = "DeepLeabra Configuration complete -- be sure to turn on deep.on and deep_norm.on as appropriate in relevant LeabraUnitSpec's!";
+  taMisc::Confirm(msg);
+  
   return true;
 }
 
@@ -418,6 +550,8 @@ bool LeabraWizard::SRNContext(LeabraNetwork* net) {
   FMSpec(OneToOnePrjnSpec, otop, net, "CtxtPrjn");
   FMSpec(LeabraContextLayerSpec, ctxts, net, "CtxtLayerSpec");
 
+  net->specs.UpdateAllSpecs();
+  
   if((otop == NULL) || (ctxts == NULL)) {
     return false;
   }
@@ -609,6 +743,8 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   ersp->unit_range.max = 1.5f;
   ersp->unit_range.UpdateAfterEdit();
 
+  net->specs.UpdateAllSpecs();
+  
   //////////////////////////////////////////////////////////////////////////////////
   // set geometries
 
@@ -678,13 +814,7 @@ bool LeabraWizard::TD(LeabraNetwork* net, bool bio_labels, bool td_mod_all) {
   ersp->UpdateAfterEdit();
   tdintsp->UpdateAfterEdit();
 
-  for(int j=0;j<net->specs.leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)net->specs.Leaf(j);
-    sp->UpdateAfterEdit();
-  }
-
-  // todo: !!!
-//   winbMisc::DelayedMenuUpdate(net);
+  net->specs.UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
   // select edit
@@ -845,10 +975,8 @@ bool LeabraWizard::PVLV_Specs(LeabraNetwork* net) {
   pvlv_cons->UpdateAfterEdit();
   laysp->UpdateAfterEdit();
 
-  for(int j=0;j<pvlvspgp->leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)pvlvspgp->Leaf(j);
-    sp->UpdateAfterEdit();
-  }
+  net->specs.UpdateAllSpecs();
+  pvlvspgp->UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
   // control panel
@@ -1590,10 +1718,8 @@ bool LeabraWizard::PBWM_Specs(LeabraNetwork* net, const String& prefix, bool set
 
   ///////// Update All!
 
-  for(int j=0;j<pbwmspgp->leaves;j++) {
-    BaseSpec* sp = (BaseSpec*)pbwmspgp->Leaf(j);
-    sp->UpdateAfterEdit();
-  }
+  net->specs.UpdateAllSpecs();
+  pbwmspgp->UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
   // control panel
@@ -2222,6 +2348,8 @@ bool LeabraWizard::Hippo(LeabraNetwork* net, int n_ec_slots) {
   FMSpec(UniformRndPrjnSpec, ppath_prjn, prjns, "RandomPerfPath");
   FMSpec(UniformRndPrjnSpec, mossy_prjn, prjns, "UniformRndMossy");
 
+  net->specs.UpdateAllSpecs();
+  hipspec->UpdateAllSpecs();
 
   //////////////////////////////////////////////////////////////////////////////////
   // apply specs to objects

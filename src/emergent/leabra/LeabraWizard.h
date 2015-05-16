@@ -43,7 +43,10 @@ public:
   // #MENU_BUTTON #MENU_ON_Network #MENU_SEP_BEFORE make standard layer specs for a basic Leabra network (FFFB inhib for hiddens, KWTA PAT_K for input/output), and TopDownCons con spec for connections from higher layers
 
   virtual bool	LeabraTI(LeabraNetwork* net);
-  // #MENU_BUTTON configure temporal integration (LeabraTI) specs and layers
+  // #MENU_BUTTON configure temporal integration (LeabraTI) specs and connections, for all hidden layers in the network -- creates new conspec and unit spec under the basic LeabraConSpec_0 and LeabraUnitSpec_0 specs, and new SELF projections with this conspec set -- requires unitspec deep.on = true and deep_qtr = Q4
+
+  virtual bool	DeepLeabra(LeabraNetwork* net, bool ti_ctxt = false, bool top_down_attn = false);
+  // #MENU_BUTTON configure DeepLeabra specs and layers, for all hidden layers in the network -- creates corresponding trc layers for predictive auto-encoder learning from deep layer driver projections coming from lower layers -- optionaly create TI deep context self projections, and top-down deep attentional projections from higher layers (latter implies ti_context as well)
 
   virtual bool	SRNContext(LeabraNetwork* net);
   // #MENU_BUTTON configure a simple-recurrent-network context layer in the network
