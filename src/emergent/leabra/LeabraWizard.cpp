@@ -430,6 +430,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
   if(TestError(!net, "DeepLeabra", "must have basic constructed network first")) {
     return false;
   }
+  FMSpec(LeabraUnitSpec, stduns, net, "LeabraUnitSpec_0");
+  FMChild(ThalAutoEncodeUnitSpec, ae_uns, stduns, "TRCAutoEnc");
   FMSpec(LeabraConSpec, stdcons, net, "LeabraConSpec_0");
   FMChild(DeepCtxtConSpec, ti_ctxt, stdcons, "DeepTICtxt");
   FMChild(LeabraConSpec, fm_trc, stdcons, "FmTRC");
@@ -492,6 +494,7 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
     trc->gp_geom = lay->gp_geom;
     net->layers.MoveAfter(lay, trc);
     trc->PositionBehind(lay, 2);
+    trc->SetUnitSpec(ae_uns);
 
     Layer* fm_in = NULL;
     Layer* fm_out = NULL;
