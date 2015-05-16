@@ -443,6 +443,11 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
   FMSpec(TiledGpRFPrjnSpec, deep_prjn, net, "DeepToTRC");
   FMSpec(TiledGpRFPrjnSpec, ctxt_prjn, net, "RF3x3skp1");
 
+  stduns->deep.on = true;
+  if(top_down_attn) {
+    stduns->deep_norm.on = true;
+  }
+  
   fm_trc->SetUnique("wt_scale", true);
   fm_trc->wt_scale.rel = 0.1f;
   d_to_trc->SetUnique("learn", true);
