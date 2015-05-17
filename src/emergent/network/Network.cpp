@@ -1091,7 +1091,7 @@ void Network::Connect_Alloc_Thr(int thr_no) {
   const int nrcg = ThrNRecvConGps(thr_no);
   for(int i=0; i<nrcg; i++) {
     ConGroup* rcg = ThrRecvConGroup(thr_no, i); // guaranteed to be active..
-    rcg->SetMemStart(thrs_recv_cons_mem[thr_no], thrs_recv_cons_idx);
+    rcg->SetMemStart(this, thrs_recv_cons_mem[thr_no], thrs_recv_cons_idx);
     // if(TestError(thrs_recv_cons_idx >= thrs_recv_cons_cnt[thr_no],
     //              "Connect_Alloc_Thr",
     //              "thrs_recv_cons_idx >= thrs_recv_cons_cnt[thr_no] -- programmer error -- please report!")) {
@@ -1104,7 +1104,7 @@ void Network::Connect_Alloc_Thr(int thr_no) {
   const int nscg = ThrNSendConGps(thr_no);
   for(int i=0; i<nscg; i++) {
     ConGroup* scg = ThrSendConGroup(thr_no, i); // guaranteed to be active..
-    scg->SetMemStart(thrs_send_cons_mem[thr_no], thrs_send_cons_idx);
+    scg->SetMemStart(this, thrs_send_cons_mem[thr_no], thrs_send_cons_idx);
     // if(TestError(thrs_send_cons_idx >= thrs_send_cons_cnt[thr_no],
     //              "Connect_Alloc_Thr",
     //              "thrs_send_cons_idx >= thrs_send_cons_cnt[thr_no] -- programmer error -- please report!")) {

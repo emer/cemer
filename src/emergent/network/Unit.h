@@ -225,6 +225,9 @@ public: //
   virtual void  UpdtActiveCons();
   // #CAT_Structure update the active state of all connection groups
 
+  virtual bool  ShareRecvConsFrom(Unit* shu, Projection* prjn);
+  // #CAT_Structure share our receiving connection group connection memory for given projection from given other source unit -- shu must appear prior to this layer in the same layer
+  
   virtual void  GetLocalistName();
   // #CAT_Structure look for a receiving projection from a single unit, which has a name: if found, set our name to that name
 

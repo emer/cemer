@@ -528,6 +528,13 @@ void Unit::UpdtActiveCons() {
   }
 }
 
+bool Unit::ShareRecvConsFrom(Unit* shu, Projection* prjn) {
+  ConGroup* rcgp = RecvConGroupPrjnSafe(prjn);
+  if(!rcgp) return false;
+  Network* net = own_net();
+  return rcgp->SetShareFrom(net, shu);
+}
+
 void Unit::GetInSubGp() {
   Unit_Group* ownr = (Unit_Group*)owner;
   if((ownr != NULL) && (ownr->owner != NULL) && ownr->owner->InheritsFrom(TA_taSubGroup))

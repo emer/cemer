@@ -51,8 +51,12 @@ void ConGroup::Initialize(int flgs, Projection* prj, int oth_idx,
   n_con_vars = prjn->con_type->members.size;
   own_flat_idx = own_flt_idx;
   own_thr_idx = own_th_idx;
-  mem_idx = 0;
+  share_idx = -1;
   mem_start = 0;
+  cnmem_start = 0;
+#ifdef CUDA_COMPILE
+  mem_idx = 0;
+#endif
 }
 
 // void ConGroup::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -82,6 +86,30 @@ void ConGroup::Copy_Weights(const ConGroup* src, Network* net) {
   for(int i=0; i < mx; i++) {
     Cn(i, WT, net) = src->Cn(i, WT, net);
   }
+}
+
+Unit* ConGroup::SharedUn(Network* net) const {
+  if(!Sharing()) return NULL;
+  return net->UnFmIdx(share_idx);
+}
+
+ConGroup* ConGroup::SharedUnCons(Network* net) const {
+  if(!Sharing()) return NULL;
+  if(IsRecv()) return net->RecvConGroup(share_idx, prjn->recv_idx);
+  return net->SendConGroup(share_idx, prjn->send_idx);
+}
+
+bool ConGroup::SetShareFrom(Network* net, Unit* shu) {
+  if(!OwnCons()) {
+    taMisc::Warning("SetShareFrom: can only set sharing for OwnCons side of the connection!");
+    return false;
+  }
+  if(shu->flat_idx >= OwnUn(net)->flat_idx) {
+    taMisc::Warning("SetShareFrom: share source unit must be earlier in network than sharing unit");
+    return false;
+  }
+  share_idx = shu->flat_idx;
+  return true;
 }
 
 float& ConGroup::SafeCn(int idx, int var_no) const {
@@ -243,21 +271,55 @@ void ConGroup::AllocCons(int sz) {
   }
 
   mem_start = 0;
-  mem_idx = 0;
+  cnmem_start = 0;
   size = 0;
   vec_chunked_size = 0;
   alloc_size = sz;
+
+#ifdef CUDA_COMPILE
+  mem_idx = 0;
+#endif
   SetInactive();
 }
 
 void ConGroup::FreeCons() {
   mem_start = 0;
-  mem_idx = 0;
+  cnmem_start = 0;
   size = 0;
   vec_chunked_size = 0;
   alloc_size = 0;
+#ifdef CUDA_COMPILE
+  mem_idx = 0;
+#endif
   SetInactive();
 }
+
+void ConGroup::SetMemStart(Network* net, float* ms, int midx) {
+  mem_start = ms + midx;
+#ifdef CUDA_COMPILE
+  mem_idx = midx;
+#endif
+  if(OwnCons()) {
+    cnmem_start = mem_start + alloc_size;
+  }
+  ClearConGroupFlag(SHARING);
+  if(share_idx > 0) {
+    if(share_idx >= own_flat_idx) {
+      taMisc::Error("SetMemStart: share_idx cannot be >= our own_flat_idx - can only share from units *earlier* in the layer (i.e., the first units in the layer)");
+      return;
+    }
+    ConGroup* shcg = SharedUnCons(net);
+    if(!shcg) {
+      taMisc::Error("SetMemStart: did not find share con group");
+      share_idx = -1;
+      return;
+    }
+    cnmem_start = shcg->cnmem_start; // now we're sharing!
+    SetConGroupFlag(SHARING);
+  }
+}
+
+
 
 bool ConGroup::CopyCons(const ConGroup& cp) {
   if(ConType() != cp.ConType() || OwnCons() != cp.OwnCons()) return false;
@@ -267,9 +329,10 @@ bool ConGroup::CopyCons(const ConGroup& cp) {
   if(size == 0) return true;
 
   if(OwnCons()) {
-    int ncv = NConVars() + 1;
-    for(int i=0; i< ncv; i++) {
-      memcpy(MemBlock(i), (char*)cp.MemBlock(i), size * sizeof(float));
+    memcpy(MemBlock(0), (char*)cp.MemBlock(0), size * sizeof(float));
+    int ncv = NConVars();
+    for(int i=0; i < ncv; i++) {
+      memcpy(CnMemBlock(0), (char*)cp.CnMemBlock(0), size * sizeof(float));
     }
   }
   else {
@@ -535,6 +598,8 @@ int ConGroup::VecChunk_impl(int* tmp_chunks, int* tmp_not_chunks,
     return size;                // no changes
   
   int ncv = NConVars()+1;       // include unit idx
+  if(Sharing())
+    ncv = 1;                    // other guy must have done it -- we just do our ptrs
 
   // now construct new reorganized data
   int cur_sz = 0;

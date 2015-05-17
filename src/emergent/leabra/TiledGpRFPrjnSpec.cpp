@@ -28,6 +28,7 @@ void TiledGpRFPrjnSpec::Initialize() {
   send_gp_skip = 2;
   send_gp_start = 0;
   wrap = false;
+  share_cons = false;
   reciprocal = false;
   wts_type = GAUSSIAN;
   gauss_sig = 1.0f;
@@ -124,7 +125,11 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
   int ru_nunits = recv_lay->un_geom.n;
   int su_nunits = send_lay->un_geom.n;
 
+  Network* net = recv_lay->own_net;
+
   if(reciprocal) {              // reciprocal is backwards!
+    // todo: share_cons here requires a separate loop for reciprocal
+    
     for(int sui=0; sui < su_nunits; sui++) {
       Unit* su_u;
       if(sgpidx >= 0)
@@ -151,8 +156,13 @@ void TiledGpRFPrjnSpec::Connect_UnitGroup(Projection* prjn, Layer* recv_lay,
   else {
     for(int rui=0; rui < ru_nunits; rui++) {
       Unit* ru_u;
-      if(rgpidx >= 0)
+      if(rgpidx >= 0) {
         ru_u = recv_lay->UnitAtUnGpIdx(rui, rgpidx);
+        if(share_cons && net->RecvOwnsCons() && rgpidx > 0) {
+          Unit* shru = recv_lay->UnitAtUnGpIdx(rui, 0); // group 0
+          ru_u->ShareRecvConsFrom(shru, prjn);
+        }
+      }
       else
         ru_u = recv_lay->units.SafeEl(rui);
       for(int sui=0; sui < su_nunits; sui++) {

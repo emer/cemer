@@ -72,4 +72,5 @@ inline ConGroup* ConGroup::SafeUnCons(int idx, Network* net) const {
   return net->RecvConGroup(UnIdx(idx), other_idx);
 }
 
+
 #endif // ConGroup_inlines_h

@@ -50,13 +50,20 @@ class DataTable; //
 // block of (con_type->members.size + 1) * sizeof(float) * alloc_size
 // where sizeof(float) *better be* same size as int (4 bytes, 32 bits)
 //
-// int unit_idxs = mem_start[0..alloc_size-1]  // we have to cast from the float*
+// int     unit_idxs = mem_start[0..alloc_size-1]  // we have to cast from the float*
 // float   con_val1 =  mem_start[alloc_size .. 2*alloc_size -1]
-// float   con_val2..
+// float   con_val2 =  mem_start[2*alloc_size .. 3*alloc_size -1] etc..
+
+// to support shared connections, and slightly optimize the indexing, we store
+// a separate cnmem_start pointer -- this points to the connection memory of the
+// source we share from if shared, or else it is just mem_start + alloc_size:
+
+// float   con_val1 =  cnmem_start[0 .. alloc_size -1]
+// float   con_val2 =  cnmem_start[alloc_size .. 2*alloc_size -1]
 
 // Memory for connection pointers = block of 2 * sizeof(int) * alloc_size
 // int unit_idxs = mem_start[0..alloc_size-1]
-// int con_idxs = mem_start[alloc_size .. 2*alloc_size -1]
+// int con_idxs  = mem_start[alloc_size .. 2*alloc_size -1]
 
 eTypeDef_Of(ConGroup);
 
@@ -77,9 +84,10 @@ public:
 
   enum ConGroupFlags {  // #BITS flags for this connection group
     CG_0 = 0x0,         // #IGNORE 
-    OWN_CONS = 0x0001,      // this guy owns the connections -- else gets links to others
-    RECV_CONS = 0x0002,     // we are a recv con group -- else a send con group
-    IS_ACTIVE = 0x0004,     // we are an active con group -- projection is active and size > 0
+    OWN_CONS = 0x0001,  // this guy owns the connections -- else gets links to others
+    RECV_CONS = 0x0002, // we are a recv con group -- else a send con group
+    IS_ACTIVE = 0x0004, // we are an active con group -- projection is active and size > 0
+    SHARING = 0x0008,   // this OWN_CONS group is sharing connection objects from another con group
   };
 
   static float  null_rval;      // #IGNORE null return value for reference funs
@@ -92,12 +100,16 @@ public:
   Projection*   prjn;           // #CAT_Structure #READ_ONLY #SHOW #NO_SET_POINTER pointer to the projection which created these connections -- has the source con_type and con spec information
   ConSpec*      con_spec;       // #IGNORE con spec that we use: controlled entirely by the projection!
   int           other_idx;      // #CAT_Structure #READ_ONLY #SHOW index into other direction's list of cons objects (i.e., send_idx for RecvCons and recv_idx for SendCons)
+  int           share_idx;      // #CAT_Structure #READ_ONLY #SHOW index of other unit that this congroup shares connection objects with -- unit must be in same layer with same -- projection must set this during the initial pre-allocation phase of connecting -- if -1 then this congroup has its own unique connection objects
 
   int           n_con_vars;     // #IGNORE number of connection variables
   int           own_flat_idx;   // #IGNORE unit flat index of unit that owns us
   int           own_thr_idx;    // #IGNORE unit thread-specific index of unit that owns us
-  int64_t       mem_idx;        // #IGNORE index into Network allocated thread-specific connection memory -- this is float-sized (32bit) index into either own_cons_mem or ptr_cons_mem
   float*        mem_start;      // #IGNORE pointer into Network allocated connection memory -- we do not own this!  for owned cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for ptr cons, it is 2 * sizeof(float) * alloc_size
+  float*        cnmem_start;    // #IGNORE pointer to start of connection memory -- for shared connections this is y -- we do not own this!  for owned cons, it is (con_type->members.size + 1) * sizeof(float) * alloc_size, for ptr cons, it is 2 * sizeof(float) * alloc_size
+#ifdef CUDA_COMPILE
+  int64_t       mem_idx;        // #IGNORE index into Network allocated thread-specific connection memory -- this is float-sized (32bit) index into either own_cons_mem or ptr_cons_mem -- only needed for CUDA
+#endif
 
 
   void  Initialize(int flgs, Projection* prj, int oth_idx, int own_flt_idx,
@@ -132,6 +144,8 @@ public:
   // #CAT_Structure is this an active connection group, with connections and an active projection?
   bool  NotActive() const { return !HasConGroupFlag(IS_ACTIVE); }
   // #CAT_Structure is this NOT an active connection group, with connections and an active projection?
+  bool  Sharing() const { return HasConGroupFlag(SHARING); }
+  // #CAT_Structure is this group sharing connections from another connection group?
 
   inline bool           PrjnIsActive();
   // #IGNORE is the projection active for this connection group?
@@ -165,9 +179,12 @@ public:
   inline float*         MemBlock(int mem_block) const
   { return mem_start + alloc_size * mem_block; }
   // #IGNORE access given memory block -- just increments of alloc_size from mem_start -- for low-level routines
+  inline float*         CnMemBlock(int mem_block) const
+  { return cnmem_start + alloc_size * mem_block; }
+  // #IGNORE access given connection memory block -- just increments of alloc_size from cnmem_start -- for low-level routines
 
   inline int            OwnMemReq()
-  { return alloc_size * (NConVars() + 1); }
+  { if(share_idx > 0) return alloc_size; return alloc_size * (NConVars() + 1); }
   // #IGNORE memory allocation requirements for con owner, in terms of numbers of float's/int32's
   inline int            PtrMemReq()
   { return alloc_size * 2; }
@@ -176,8 +193,7 @@ public:
   { if(OwnCons()) return OwnMemReq(); return PtrMemReq(); }
   // #IGNORE memory allocation requirements for this connection group, in terms of numbers of float's/int32's
 
-  inline void           SetMemStart(float* ms, int midx)
-  { mem_start = ms + midx; mem_idx = midx; }
+  void                  SetMemStart(Network* net, float* ms, int midx);
   // #IGNORE set our starting memory location and index -- called by Network Connect_Alloc routine
 
   inline int            VecChunkMod(int sz) 
@@ -195,16 +211,16 @@ public:
 
 #ifdef DEBUG
   inline float*         OwnCnVar(int var_no) const
-  { if(!OwnCons()) return NULL; 
-    return mem_start + (alloc_size * (1 + var_no)); }
+  { if(!OwnCons()) return NULL;
+    return cnmem_start + (alloc_size * var_no); }
 #else
   inline float*         OwnCnVar(int var_no) const
-  { return mem_start + (alloc_size * (1 + var_no)); }
+  { return cnmem_start + (alloc_size * var_no); }
 #endif
   // #CAT_Access fastest access (no range checking) to owned connection variable value -- get this float* and then index it directly with loop index -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline float&          OwnCn(int idx, int var_no) const
-  { return mem_start[(alloc_size * (1 + var_no)) + idx]; }
+  { return cnmem_start[(alloc_size * var_no) + idx]; }
   // #CAT_Access fast access (no range checking) to owned connection variable value at given index -- OwnCnVar with index in loop is preferred for fastest access -- var_no is defined in ConSpec (e.g., ConSpec::WT, DWT or algorithm-specific types (e.g., LeabraConSpec::PDW)
 
   inline const int& UnIdx(int idx) const
@@ -229,6 +245,12 @@ public:
   // #IGNORE get ConGroup for this projection in unit at given index at other end of this connection
   inline ConGroup*      SafeUnCons(int idx, Network* net) const;
   // #IGNORE get ConGroup for this projection in unit at given index at other end of this connection -- uses safe access
+  Unit*                 SharedUn(Network* net) const;
+  // #CAT_Access get the unit that we share connections from
+  ConGroup*             SharedUnCons(Network* net) const;
+  // #CAT_Access get the con group of the unit that we share connections from
+  bool                  SetShareFrom(Network* net, Unit* shu);
+  // #CAT_Access set this connection group to share from given other unit -- checks to make sure this works -- returns false if not (will have already emitted warning message)
 
   inline const int& PtrCnIdx(int idx) const
   { return ((int*)mem_start)[alloc_size + idx]; }
