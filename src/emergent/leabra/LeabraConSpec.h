@@ -318,7 +318,7 @@ public:
     for(int i=0; i<cg->size; i++) {
       swts[i] = LinFmSigWt(wts[i]); // swt, fwt are linear underlying weight values
       fwts[i] = swts[i];
-      wts[i] *= scales[i]; // TODO: commenting out fixes my problem; thus, scales[i] must all be 0.0f in MatrixCon's
+      wts[i] *= scales[i];
     }
   }
 
