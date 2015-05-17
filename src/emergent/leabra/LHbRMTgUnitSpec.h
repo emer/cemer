@@ -30,8 +30,8 @@ class E_API LHbRMTgGains : public SpecMemberBase {
 INHERITED(SpecMemberBase)
 public:
   float         all;            // #MIN_0 #DEF_4 final overall gain on everything
-  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus negative PV outcomes
-  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus positive PV outcomes
+  float         patch_dir;      // #MIN_0 #DEF_1 VS patch direct pathway versus positive PV outcomes
+  float         patch_ind;      // #MIN_0 #DEF_1 VS patch indirect pathway versus negative PV outcomes
   float         matrix;         // #MIN_0 #DEF_1 VS gain on matrix pathway 
   bool          matrix_td;      // #DEF_false compute temporal derivative over matrix pos inputs to produce a dip when LV values go down (misc_1 holds the prior trial net input) -- otherwise matrix is matrix_ind - matrix_dir difference between NoGo and Go (dips driven by greater NoGo than Go balance)
 

@@ -191,10 +191,10 @@ void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, in
   }
   matrix_net = MAX(0.0f, matrix_net);
 
-  float pv_neg_net = gains.patch_dir * (pv_neg - patch_dir); // dir cancels neg
+  float pv_neg_net = gains.patch_ind * (pv_neg - patch_ind); // indir cancels neg
   pv_neg_net = MAX(0.0f, pv_neg_net);
 
-  float pv_pos_net = gains.patch_ind * (patch_ind - pv_pos); // ind cancels pos
+  float pv_pos_net = gains.patch_dir * (patch_dir - pv_pos); // direct cancels pos
   pv_pos_net = MAX(0.0f, pv_pos_net);
 
   u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);

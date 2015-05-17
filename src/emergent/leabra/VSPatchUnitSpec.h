@@ -26,7 +26,7 @@
 eTypeDef_Of(VSPatchUnitSpec);
 
 class E_API VSPatchUnitSpec : public LeabraUnitSpec {
-  // simulates the ventral striatum patch units, both direct (recv from negative valence) and indirect (positive valence) -- should recv a MarkerConSpec projection PV layer units that send the lrnmod variable -- use this to set the plus phase clamped activation -- other connections from sensory and BLA can learn to predict -- use LeabraDeltaConSpec
+  // simulates the ventral striatum patch units, both direct (recv from positive valence) and indirect (negative valence) -- should recv a MarkerConSpec projection fm PV layer units that send the lrnmod variable -- use this to set the plus phase clamped activation -- other connections from sensory and BLA can learn to predict -- use LeabraDeltaConSpec
 INHERITED(LeabraUnitSpec)
 public:
 
