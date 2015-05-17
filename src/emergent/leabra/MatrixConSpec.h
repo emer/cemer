@@ -58,8 +58,8 @@ class E_API MatrixConSpec : public LeabraConSpec {
 INHERITED(LeabraConSpec)
 public:
   enum MtxConVars {
-    NTR = SWT+1,           // new trace -- drives updates to trace value -- thal * ru * su
-    TR,                    // current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
+    NTR = SCALE+1,      // new trace -- drives updates to trace value -- thal * ru * su
+    TR,                 // current ongoing trace of activations, which drive learning -- adds ntr and clears after learning on current values -- includes both thal gated (+ and other nongated, - inputs)
   };
   bool                  nogo;    // are these nogo con specs -- if so, flip the sign of the dopamine signal
   MatrixLearnSpec       matrix;  // parameters for special matrix learning dynamics
@@ -69,9 +69,15 @@ public:
 
     float* wts = cg->OwnCnVar(WT);
     float* dwts = cg->OwnCnVar(DWT);
+    float* scales = cg->OwnCnVar(SCALE);
+    
     float* ntrs = cg->OwnCnVar(NTR);
     float* trs = cg->OwnCnVar(TR);
 
+    for(int i=0; i<cg->size; i++) {
+      scales[i] = 1.0f;         // default -- must be set in prjn spec if different
+    }
+    
     if(rnd.type != Random::NONE) {
       for(int i=0; i<cg->size; i++) {
         C_Init_Weight_Rnd(wts[i], thr_no);
