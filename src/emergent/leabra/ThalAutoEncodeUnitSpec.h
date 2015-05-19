@@ -23,14 +23,39 @@
 
 // declare all other types mentioned but not required to include:
 
+eTypeDef_Of(AutoEncodeSpecs);
+
+class E_API AutoEncodeSpecs : public SpecMemberBase {
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra thalamic auto-encoder specs
+INHERITED(SpecMemberBase)
+public:
+  bool          binarize;       // apply a threshold and binarize the plus-phase deep-layer driven activation states
+  float		thr;		// #DEF_0.5 threshold for binarizing the activations
+
+  String       GetTypeDecoKey() const override { return "UnitSpec"; }
+
+  TA_SIMPLE_BASEFUNS(AutoEncodeSpecs);
+protected:
+  SPEC_DEFAULTS;
+
+ private:
+  void	Initialize();
+  void	Destroy()	{ };
+  void	Defaults_init();
+};
+
 eTypeDef_Of(ThalAutoEncodeUnitSpec);
 
 class E_API ThalAutoEncodeUnitSpec : public LeabraUnitSpec {
   // #AKA_Deep5bClampUnitSpec When deep_qtr is active (which defines the effective plus phase), these units are exclusively driven by their deep_raw_net netinput, and otherwise they are just like regular neurons -- used for simulating thalamic relay cells as auto-encoder layers hard-clamped to deep_raw drivers in the plus phase
 INHERITED(LeabraUnitSpec)
 public:
+  AutoEncodeSpecs       auto_enc; // auto-encoder specs
+
   float Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net, int thr_no,
                            float& net_syn) override;
+  void Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
+                           int thr_no) override;
   void Trial_Init_SRAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no) override;
 
   bool DeepNormCopied() override { return true; }

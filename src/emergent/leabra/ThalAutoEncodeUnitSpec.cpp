@@ -17,15 +17,31 @@
 
 #include <LeabraNetwork>
 
+TA_BASEFUNS_CTORS_DEFN(AutoEncodeSpecs);
 TA_BASEFUNS_CTORS_DEFN(ThalAutoEncodeUnitSpec);
+
+void AutoEncodeSpecs::Initialize() {
+  binarize = false;
+  thr = 0.5f;
+}
+
+void AutoEncodeSpecs::Defaults_init() {
+  
+}
 
 void ThalAutoEncodeUnitSpec::Initialize() {
   Defaults_init();
 }
 
 void ThalAutoEncodeUnitSpec::Defaults_init() {
+  SetUnique("act_misc", true);
+  act_misc.rec_nd = false;
+  act_misc.avg_nd = false;
+  SetUnique("deep", true);
   deep.on = true;
+  SetUnique("deep_qtr", true);
   deep_qtr = Q4;
+  SetUnique("deep_norm", true);
   deep_norm.on = true;
 }
 
@@ -35,6 +51,21 @@ float ThalAutoEncodeUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwo
     net_syn = u->deep_raw_net;          // only gets from deep!
   }
   return inherited::Compute_NetinExtras(u, net, thr_no, net_syn);
+}
+
+void ThalAutoEncodeUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
+                                                 int thr_no) {
+  inherited::Compute_ActFun_Rate(u, net, thr_no);
+  if(Quarter_DeepNow(net->quarter)) {
+    if(auto_enc.binarize) {
+      if(u->act_eq >= auto_enc.thr) {
+        u->act_eq = u->act = clamp_range.max;
+      }
+      else {
+        u->act_eq = u->act = clamp_range.min;
+      }
+    }
+  }
 }
 
 void ThalAutoEncodeUnitSpec::Trial_Init_SRAvg(LeabraUnitVars* u, LeabraNetwork* net,

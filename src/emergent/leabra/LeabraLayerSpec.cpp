@@ -850,6 +850,21 @@ float LeabraLayerSpec::Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net
   return cosv;
 }
 
+float LeabraLayerSpec::Compute_NetSd(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->net_sd = 0.0f;
+  float var = 0.0f;
+
+  const int li = lay->active_lay_idx;
+  for(int thr_no=0; thr_no < net->n_thrs_built; thr_no++) {
+    // integrate over thread raw data
+    float& lvar = net->ThrLayStats(thr_no, li, 0, LeabraNetwork::NETSD);
+    var += lvar;
+  }
+  lay->net_sd = sqrt(var);
+  lay->avg_net_sd.Increment(lay->net_sd);
+  return var;
+}
+
 void LeabraLayerSpec::Compute_HogDeadPcts(LeabraLayer* lay, LeabraNetwork* net) {
   lay->hog_pct = 0.0f;
   lay->dead_pct = 0.0f;
@@ -900,6 +915,10 @@ void LeabraLayerSpec::Compute_AvgTrialCosDiff(LeabraLayer* lay, LeabraNetwork* n
   lay->avg_trial_cos_diff.GetAvg_Reset();
 }
 
+void LeabraLayerSpec::Compute_AvgNetSd(LeabraLayer* lay, LeabraNetwork* net) {
+  lay->avg_net_sd.GetAvg_Reset();
+}
+
 void LeabraLayerSpec::Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->Layer::Compute_EpochStats(net);
   Compute_AvgNormErr(lay, net);
@@ -907,6 +926,7 @@ void LeabraLayerSpec::Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net) {
   Compute_AvgCosDiff(lay, net);
   Compute_AvgAvgActDiff(lay, net);
   Compute_AvgTrialCosDiff(lay, net);
+  Compute_AvgNetSd(lay, net);
 }
 
 

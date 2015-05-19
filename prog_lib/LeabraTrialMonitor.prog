@@ -1,8 +1,8 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7880
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
 Program .projects[0].programs.gp[0][7] { 
  ProgObjList @.objs = [1] {
   NetMonitor @[0] { 
-   NetMonItem_List @.items = [24] {
+   NetMonItem_List @.items = [25] {
     NetMonItem @[0] { };
     NetMonItem @[1] { };
     NetMonItem @[2] { };
@@ -27,6 +27,7 @@ Program .projects[0].programs.gp[0][7] {
     NetMonItem @[21] { };
     NetMonItem @[22] { };
     NetMonItem @[23] { };
+    NetMonItem @[24] { };
    };
   };
  };
@@ -234,9 +235,9 @@ Program .projects[0].programs.gp[0][7] {
       var=NULL;
       enable_var=NULL;
      };
-     pre_proc_1 {name="SimpleMathSpec_256": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="SimpleMathSpec_257": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="SimpleMathSpec_258": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[4] {
      name="trial";
@@ -336,9 +337,9 @@ Program .projects[0].programs.gp[0][7] {
       var=NULL;
       enable_var=NULL;
      };
-     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
-     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[7] {
      name="trial_name";
@@ -715,6 +716,40 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
     NetMonItem @[18] {
+     name="lay_net_sd";
+     computed=0;
+     object_type=LeabraNetwork;
+     object=$.projects[0].networks[0]$;
+     variable="layers.net_sd";
+     var_label="lay_net_sd";
+     name_style=AUTO_NAME;
+     max_name_len=6;
+     options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+     val_type=VT_FLOAT;
+     matrix=0;
+     matrix_geom{      };
+     data_agg=0;
+     data_src=NULL;
+     agg_col {
+      col_name="agg_col";
+     };
+     agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+     select_rows=0;
+     select_spec {
+      col_name="select_spec";
+      name="select_spec_EQUAL_";
+      on=1;
+      rel=EQUAL;
+      use_var=0;
+      cmp 0 1;
+      var=NULL;
+      enable_var=NULL;
+     };
+     pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+    };
+    NetMonItem @[19] {
      name="net_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
@@ -748,7 +783,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[19] {
+    NetMonItem @[20] {
      name="net_trial_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
@@ -782,7 +817,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[20] {
+    NetMonItem @[21] {
      name="net_avg_act_diff";
      computed=0;
      object_type=LeabraNetwork;
@@ -816,7 +851,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[21] {
+    NetMonItem @[22] {
      name="cos_diff";
      computed=0;
      object_type=LeabraNetwork;
@@ -850,7 +885,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[22] {
+    NetMonItem @[23] {
      name="trial_cos_diff";
      computed=0;
      object_type=LeabraNetwork;
@@ -884,7 +919,7 @@ Program .projects[0].programs.gp[0][7] {
      pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
      pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
     };
-    NetMonItem @[23] {
+    NetMonItem @[24] {
      name="avg_act_diff";
      computed=0;
      object_type=LeabraNetwork;

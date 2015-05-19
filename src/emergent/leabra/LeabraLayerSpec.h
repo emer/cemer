@@ -406,6 +406,8 @@ public:
   // #CAT_Statistic compute average act_diff (act_p - act_m) for this layer -- must be called after Quarter_Final for plus phase to get the act_p values -- this is an important statistic to track overall 'main effect' differences across phases 
   virtual float  Compute_TrialCosDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute cosine (normalized dot product) of trial activation difference in this layer: act_q4 compared to act_q0 -- must be called after Quarter_Final for plus phase to get the act_q4 values
+  virtual float   Compute_NetSd(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- must be called at end of minus phase
   virtual void   Compute_HogDeadPcts(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute percentage of units in the layer that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
 
@@ -419,6 +421,8 @@ public:
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
   virtual void	Compute_AvgAvgActDiff(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgNetSd(LeabraLayer* lay, LeabraNetwork* net);
+  // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
   virtual void	Compute_EpochStats(LeabraLayer* lay, LeabraNetwork* net);
   // #CAT_Statistic compute epoch-level statistics (averages)
 

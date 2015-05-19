@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.0.0 rev8223
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
 LeabraProject .projects["LeabraFlex"] { 
  Doc_Group @.docs = [1] {
   taDoc @["LeabraFlexProgs"] { 
@@ -252,7 +252,7 @@ LeabraProject .projects["LeabraFlex"] {
   };
   DataTable_Group @.gp["OutputData"] = [2] { 
    DataTable @["TrialOutputData"] { 
-    DataTableCols @.data = [27] {
+    DataTableCols @.data = [29] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -291,6 +291,8 @@ LeabraProject .projects["LeabraFlex"] {
      float_Data @["Output_lay_sse"] { };
      float_Data @["Output_lay_norm_err"] { };
      float_Data @["Output_lay_cos_err"] { };
+     float_Data @["Hidden_lay_net_sd"] { };
+     float_Data @["Output_lay_net_sd"] { };
      float_Data @["net_cos_diff"] { };
      float_Data @["net_trial_cos_diff"] { };
      float_Data @["net_avg_act_diff"] { };
@@ -303,7 +305,7 @@ LeabraProject .projects["LeabraFlex"] {
     };
    };
    DataTable @["EpochOutputData"] { 
-    DataTableCols @.data = [38] {
+    DataTableCols @.data = [40] {
      int_Data @["batch"] { 
       UserDataItem_List @*(.user_data_) {
        UserDataItem @["NARROW"] { };
@@ -339,6 +341,8 @@ LeabraProject .projects["LeabraFlex"] {
      float_Data @["Output_avg_trial_cos_diff"] { };
      float_Data @["Hidden_avg_avg_act_diff"] { };
      float_Data @["Output_avg_avg_act_diff"] { };
+     float_Data @["Hidden_avg_net_sd"] { };
+     float_Data @["Output_avg_net_sd"] { };
      float_Data @["Hidden_hog_pct"] { };
      float_Data @["Output_hog_pct"] { };
      float_Data @["Hidden_dead_pct"] { };
@@ -2187,7 +2191,7 @@ LeabraProject .projects["LeabraFlex"] {
     Program @["LeabraTrialMonitor"] { 
      ProgObjList @.objs = [1] {
       NetMonitor @["trial_netmon"] { 
-       NetMonItem_List @.items = [24] {
+       NetMonItem_List @.items = [25] {
 	NetMonItem @["batch"] { };
 	NetMonItem @["epoch"] { };
 	NetMonItem @["train_mode"] { };
@@ -2206,6 +2210,7 @@ LeabraProject .projects["LeabraFlex"] {
 	NetMonItem @["lay_sse"] { };
 	NetMonItem @["lay_norm_err"] { };
 	NetMonItem @["lay_cos_err"] { };
+	NetMonItem @["lay_net_sd"] { };
 	NetMonItem @["net_cos_diff"] { };
 	NetMonItem @["net_trial_cos_diff"] { };
 	NetMonItem @["net_avg_act_diff"] { };
@@ -2274,7 +2279,7 @@ LeabraProject .projects["LeabraFlex"] {
     Program @["LeabraEpochMonitor"] { 
      ProgObjList @.objs = [1] {
       NetMonitor @["epoch_netmon"] { 
-       NetMonItem_List @.items = [29] {
+       NetMonItem_List @.items = [30] {
 	NetMonItem @["batch"] { };
 	NetMonItem @["epoch"] { };
 	NetMonItem @["avg_sse"] { };
@@ -2299,6 +2304,7 @@ LeabraProject .projects["LeabraFlex"] {
 	NetMonItem @["avg_cos_diff"] { };
 	NetMonItem @["avg_trial_cos_diff"] { };
 	NetMonItem @["avg_avg_act_diff"] { };
+	NetMonItem @["avg_net_sd"] { };
 	NetMonItem @["hog_pct"] { };
 	NetMonItem @["dead_pct"] { };
 	NetMonItem @["netmax"] { };
@@ -2441,7 +2447,7 @@ LeabraProject .projects["LeabraFlex"] {
       T3Panel @["EpochOutputData"] { 
        T3DataView_List @.root_view.children = [1] {
 	GraphTableView @["EpochOutputData_Graph"] { 
-	 T3DataView_List @.children = [38] {
+	 T3DataView_List @.children = [40] {
 	  GraphColView @["batch"] { };
 	  GraphColView @["epoch"] { };
 	  GraphColView @["avg_sse"] { };
@@ -2469,6 +2475,8 @@ LeabraProject .projects["LeabraFlex"] {
 	  GraphColView @["Output_avg_trial_cos_diff"] { };
 	  GraphColView @["Hidden_avg_avg_act_diff"] { };
 	  GraphColView @["Output_avg_avg_act_diff"] { };
+	  GraphColView @["Hidden_avg_net_sd"] { };
+	  GraphColView @["Output_avg_net_sd"] { };
 	  GraphColView @["Hidden_hog_pct"] { };
 	  GraphColView @["Output_hog_pct"] { };
 	  GraphColView @["Hidden_dead_pct"] { };
@@ -2746,13 +2754,14 @@ LeabraProject .projects["LeabraFlex"] {
 </html>
 ";
    html_text="<!DOCTYPE html><html lang=\"en\" dir=\"ltr\" class=\"client-js\"><head>
-<meta charset=\"UTF-8\"><title>LeabraFlexProgs - emergent</title>
+<meta charset=\"UTF-8\"><title>LeabraFlex - emergent</title>
 <meta name=\"generator\" content=\"MediaWiki 1.22.14\">
-<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlexProgs\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlexProgs&amp;xmlmime=rdf\">
+<link rel=\"ExportRDF\" type=\"application/rdf+xml\" title=\"LeabraFlex\" href=\"/emergent/index.php?title=Special:ExportRDF/LeabraFlex&amp;xmlmime=rdf\">
 <link rel=\"shortcut icon\" href=\"/emergent/favicon.ico\">
 <link rel=\"search\" type=\"application/opensearchdescription+xml\" href=\"/emergent/opensearch_desc.php\" title=\"emergent (en)\">
 <link rel=\"EditURI\" type=\"application/rsd+xml\" href=\"https://grey.colorado.edu/emergent/api.php?action=rsd\">
 <link rel=\"alternate\" type=\"application/atom+xml\" title=\"emergent Atom feed\" href=\"/emergent/index.php?title=Special:RecentChanges&amp;feed=atom\">
+<link rel=\"canonical\" href=\"/emergent/index.php/LeabraFlex\">
 <link rel=\"stylesheet\" href=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.rtlcite%7Cmediawiki.legacy.commonPrint%2Cshared%7Cskins.vector&amp;only=styles&amp;skin=vector&amp;*\">
 <link rel=\"stylesheet\" href=\"/emergent/extensions/HeaderTabs/skins-jquery/ext.headertabs.jquery-large.css\"><style>
 .qtip,.qtip{position:absolute;left:-28000px;top:-28000px;display:none;max-width:280px;min-width:50px;font-size:10.5px;line-height:12px;direction:ltr}.qtip-content{position:relative;padding:5px 9px;overflow:hidden;text-align:left;word-wrap:break-word}.qtip-titlebar{position:relative;padding:5px 35px 5px 10px;overflow:hidden;border-width:0 0 1px;font-weight:bold}.qtip-titlebar + .qtip-content{border-top-width:0 !important} .qtip-close{position:absolute;right:-9px;top:-9px;cursor:pointer;outline:medium none;border-width:1px;border-style:solid;border-color:transparent}.qtip-titlebar .qtip-close{right:4px;top:50%;margin-top:-9px}* html .qtip-titlebar .qtip-close{top:16px} .qtip-titlebar .ui-icon,.qtip-icon .ui-icon{display:block;text-indent:-1000em;direction:ltr;vertical-align:middle}.qtip-icon,.qtip-icon .ui-icon{-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;text-decoration:none}.qtip-icon .ui-icon{width:18px;height:14px;text-align:center;text-indent:0;font:normal bold 10px/13px Tahoma,sans-serif;color:inherit;background:transparent none no-repeat -100em -100em} .qtip-focus{} .qtip-hover{} .qtip-default{border-width:1px;border-style:solid;border-color:#F1D031;background-color:#FFFFA3;color:#555}.qtip-default .qtip-titlebar{background-color:#FFEF93}.qtip-default .qtip-icon{border-color:#CCC;background:#F1F1F1;color:#777}.qtip-default .qtip-titlebar .qtip-close{border-color:#AAA;color:#111} .qtip-light{background-color:white;border-color:#E2E2E2;color:#454545}.qtip-light .qtip-titlebar{background-color:#f1f1f1} .qtip-dark{background-color:#505050;border-color:#303030;color:#f3f3f3}.qtip-dark .qtip-titlebar{background-color:#404040}.qtip-dark .qtip-icon{border-color:#444}.qtip-dark .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-cream{background-color:#FBF7AA;border-color:#F9E98E;color:#A27D35}.qtip-cream .qtip-titlebar{background-color:#F0DE7D}.qtip-cream .qtip-close .qtip-icon{background-position:-82px 0} .qtip-red{background-color:#F78B83;border-color:#D95252;color:#912323}.qtip-red .qtip-titlebar{background-color:#F06D65}.qtip-red .qtip-close .qtip-icon{background-position:-102px 0}.qtip-red .qtip-icon{border-color:#D95252}.qtip-red .qtip-titlebar .ui-state-hover{border-color:#D95252} .qtip-green{background-color:#CAED9E;border-color:#90D93F;color:#3F6219}.qtip-green .qtip-titlebar{background-color:#B0DE78}.qtip-green .qtip-close .qtip-icon{background-position:-42px 0} .qtip-blue{background-color:#E5F6FE;border-color:#ADD9ED;color:#5E99BD}.qtip-blue .qtip-titlebar{background-color:#D0E9F5}.qtip-blue .qtip-close .qtip-icon{background-position:-2px 0} .qtip-shadow{-webkit-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);-moz-box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15);box-shadow:1px 1px 3px 1px rgba(0,0,0,0.15)} .qtip-rounded,.qtip-tipsy,.qtip-bootstrap{-moz-border-radius:5px;-webkit-border-radius:5px;border-radius:5px} .qtip-youtube{-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 3px #333;-moz-box-shadow:0 0 3px #333;box-shadow:0 0 3px #333;color:white;border-width:0;background:#4A4A4A;background-image:-webkit-gradient(linear,left top,left bottom,color-stop(0,#4A4A4A),color-stop(100%,black));background-image:-webkit-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-moz-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-ms-linear-gradient(top,#4A4A4A 0,black 100%);background-image:-o-linear-gradient(top,#4A4A4A 0,black 100%)}.qtip-youtube .qtip-titlebar{background-color:#4A4A4A;background-color:rgba(0,0,0,0)}.qtip-youtube .qtip-content{padding:.75em;font:12px arial,sans-serif;filter:progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);-ms-filter:\"progid:DXImageTransform.Microsoft.Gradient(GradientType=0,StartColorStr=#4a4a4a,EndColorStr=#000000);\"}.qtip-youtube .qtip-icon{border-color:#222}.qtip-youtube .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-jtools{background:#232323;background:rgba(0,0,0,0.7);background-image:-webkit-gradient(linear,left top,left bottom,from(#717171),to(#232323));background-image:-moz-linear-gradient(top,#717171,#232323);background-image:-webkit-linear-gradient(top,#717171,#232323);background-image:-ms-linear-gradient(top,#717171,#232323);background-image:-o-linear-gradient(top,#717171,#232323);border:2px solid #ddd;border:2px solid rgba(241,241,241,1);-moz-border-radius:2px;-webkit-border-radius:2px;border-radius:2px;-webkit-box-shadow:0 0 12px #333;-moz-box-shadow:0 0 12px #333;box-shadow:0 0 12px #333} .qtip-jtools .qtip-titlebar{background-color:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#717171,endColorstr=#4A4A4A)\"}.qtip-jtools .qtip-content{filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#4A4A4A,endColorstr=#232323)\"}.qtip-jtools .qtip-titlebar,.qtip-jtools .qtip-content{background:transparent;color:white;border:0 dashed transparent}.qtip-jtools .qtip-icon{border-color:#555}.qtip-jtools .qtip-titlebar .ui-state-hover{border-color:#333} .qtip-cluetip{-webkit-box-shadow:4px 4px 5px rgba(0,0,0,0.4);-moz-box-shadow:4px 4px 5px rgba(0,0,0,0.4);box-shadow:4px 4px 5px rgba(0,0,0,0.4);background-color:#D9D9C2;color:#111;border:0 dashed transparent}.qtip-cluetip .qtip-titlebar{background-color:#87876A;color:white;border:0 dashed transparent}.qtip-cluetip .qtip-icon{border-color:#808064}.qtip-cluetip .qtip-titlebar .ui-state-hover{border-color:#696952;color:#696952} .qtip-tipsy{background:black;background:rgba(0,0,0,.87);color:white;border:0 solid transparent;font-size:11px;font-family:'Lucida Grande',sans-serif;font-weight:bold;line-height:16px;text-shadow:0 1px black}.qtip-tipsy .qtip-titlebar{padding:6px 35px 0 10;background-color:transparent}.qtip-tipsy .qtip-content{padding:6px 10}.qtip-tipsy .qtip-icon{border-color:#222;text-shadow:none}.qtip-tipsy .qtip-titlebar .ui-state-hover{border-color:#303030} .qtip-tipped{border:3px solid #959FA9;-moz-border-radius:3px;-webkit-border-radius:3px;border-radius:3px;background-color:#F9F9F9;color:#454545;font-weight:normal;font-family:serif}.qtip-tipped .qtip-titlebar{border-bottom-width:0;color:white;background:#3A79B8;background-image:-webkit-gradient(linear,left top,left bottom,from(#3A79B8),to(#2E629D));background-image:-webkit-linear-gradient(top,#3A79B8,#2E629D);background-image:-moz-linear-gradient(top,#3A79B8,#2E629D);background-image:-ms-linear-gradient(top,#3A79B8,#2E629D);background-image:-o-linear-gradient(top,#3A79B8,#2E629D);filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D);-ms-filter:\"progid:DXImageTransform.Microsoft.gradient(startColorstr=#3A79B8,endColorstr=#2E629D)\"}.qtip-tipped .qtip-icon{border:2px solid #285589;background:#285589}.qtip-tipped .qtip-icon .ui-icon{background-color:#FBFBFB;color:#555} .qtip-bootstrap{ font-size:14px;line-height:20px;color:#333333; padding:1px;background-color:#ffffff;border:1px solid #ccc;border:1px solid rgba(0,0,0,0.2);-webkit-border-radius:6px;-moz-border-radius:6px;border-radius:6px;-webkit-box-shadow:0 5px 10px rgba(0,0,0,0.2);-moz-box-shadow:0 5px 10px rgba(0,0,0,0.2);box-shadow:0 5px 10px rgba(0,0,0,0.2);-webkit-background-clip:padding-box;-moz-background-clip:padding;background-clip:padding-box}.qtip-bootstrap .qtip-titlebar{ padding:8px 14px;margin:0;font-size:14px;font-weight:normal;line-height:18px;background-color:#f7f7f7;border-bottom:1px solid #ebebeb;-webkit-border-radius:5px 5px 0 0;-moz-border-radius:5px 5px 0 0;border-radius:5px 5px 0 0}.qtip-bootstrap .qtip-titlebar .qtip-close{ right:11px;top:45%;border-style:none}.qtip-bootstrap .qtip-content{ padding:9px 14px}.qtip-bootstrap .qtip-icon{ background:transparent}.qtip-bootstrap .qtip-icon .ui-icon{ width:auto;height:auto; float:right;font-size:20px;font-weight:bold;line-height:18px;color:#000000;text-shadow:0 1px 0 #ffffff;opacity:0.2;filter:alpha(opacity=20)}.qtip-bootstrap .qtip-icon .ui-icon:hover{ color:#000000;text-decoration:none;cursor:pointer;opacity:0.4;filter:alpha(opacity=40)} .qtip:not(.ie9haxors) div.qtip-content,.qtip:not(.ie9haxors) div.qtip-titlebar{filter:none;-ms-filter:none} .qtip .qtip-tip{margin:0 auto;overflow:hidden;z-index:10}.qtip .qtip-tip,.qtip .qtip-tip .qtip-vml{position:absolute;color:#123456;background:transparent;border:0 dashed transparent}.qtip .qtip-tip canvas{top:0;left:0}.qtip .qtip-tip .qtip-vml{behavior:url(#default#VML);display:inline-block;visibility:visible} #qtip-overlay{position:fixed;left:-10000em;top:-10000em} #qtip-overlay.blurs{cursor:pointer} #qtip-overlay div{position:absolute;left:0;top:0;width:100%;height:100%;background-color:black;opacity:0.7;filter:alpha(opacity=70);-ms-filter:\"progid:DXImageTransform.Microsoft.Alpha(Opacity=70)\"} .qtipmodal-ie6fix{position:absolute !important}
@@ -2771,7 +2780,7 @@ div.smwtt{color:#000000} span.smwttpersist span.smwttcontent{color:#888888;font-
 
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=startup&amp;only=scripts&amp;skin=vector&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery%2Cmediawiki&amp;only=scripts&amp;skin=vector&amp;version=20141215T005424Z\"></script>
 <script>if(window.mw){
-mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlexProgs\",\"wgTitle\":\"LeabraFlexProgs\",\"wgCurRevisionId\":9226,\"wgRevisionId\":9226,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlexProgs\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
+mw.config.set({\"wgCanonicalNamespace\":\"\",\"wgCanonicalSpecialPageName\":false,\"wgNamespaceNumber\":0,\"wgPageName\":\"LeabraFlex\",\"wgTitle\":\"LeabraFlex\",\"wgCurRevisionId\":11088,\"wgRevisionId\":11088,\"wgArticleId\":2315,\"wgIsArticle\":true,\"wgIsRedirect\":false,\"wgAction\":\"view\",\"wgUserName\":null,\"wgUserGroups\":[\"*\"],\"wgCategories\":[],\"wgBreakFrames\":false,\"wgPageContentLanguage\":\"en\",\"wgPageContentModel\":\"wikitext\",\"wgSeparatorTransformTable\":[\"\",\"\"],\"wgDigitTransformTable\":[\"\",\"\"],\"wgDefaultDateFormat\":\"dmy\",\"wgMonthNames\":[\"\",\"January\",\"February\",\"March\",\"April\",\"May\",\"June\",\"July\",\"August\",\"September\",\"October\",\"November\",\"December\"],\"wgMonthNamesShort\":[\"\",\"Jan\",\"Feb\",\"Mar\",\"Apr\",\"May\",\"Jun\",\"Jul\",\"Aug\",\"Sep\",\"Oct\",\"Nov\",\"Dec\"],\"wgRelevantPageName\":\"LeabraFlex\",\"wgIsProbablyEditable\":false,\"wgRestrictionEdit\":[],\"wgRestrictionMove\":[],\"wgRedirectedFrom\":\"LeabraFlexProgs\",\"sfgAutocompleteValues\":[],\"sfgAutocompleteOnAllChars\":false,\"sfgFieldProperties\":[],\"sfgDependentFields\":[],\"sfgShowOnSelect\":[],\"sfgScriptPath\":\"/emergent/extensions/SemanticForms\",\"htTabIndexes\":[],\"wgSVGEditEditor\":\"http://svg-edit.googlecode.com/svn/trunk/editor/svg-editor.html\",\"wgWikiEditorEnabledModules\":{\"toolbar\":true,\"dialogs\":true,\"hidesig\":true,\"templateEditor\":false,\"templates\":false,\"preview\":true,\"previewDialog\":false,\"publish\":false,\"toc\":false},\"wgCategoryTreePageCategoryOptions\":\"{\\\"mode\\\":0,\\\"hideprefix\\\":20,\\\"showcount\\\":true,\\\"namespaces\\\":false}\"});
 }</script><script>if(window.mw){
 mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonemails\":0,\"cols\":80,\"date\":\"default\",\"diffonly\":0,\"disablemail\":0,\"disablesuggest\":0,\"editfont\":\"default\",\"editondblclick\":0,\"editsection\":false,\"editsectiononrightclick\":0,\"enotifminoredits\":0,\"enotifrevealaddr\":0,\"enotifusertalkpages\":1,\"enotifwatchlistpages\":0,\"extendwatchlist\":0,\"fancysig\":0,\"forceeditsummary\":0,\"gender\":\"unknown\",\"hideminor\":0,\"hidepatrolled\":0,\"imagesize\":2,\"justify\":0,\"math\":0,\"minordefault\":0,\"newpageshidepatrolled\":0,\"nocache\":0,\"noconvertlink\":0,\"norollbackdiff\":0,\"numberheadings\":0,\"previewonfirst\":0,\"previewontop\":1,\"rcdays\":7,\"rclimit\":50,\"rememberpassword\":0,\"rows\":25,\"searchlimit\":20,\"showhiddencats\":0,\"shownumberswatching\":1,\"showtoc\":1,\"showtoolbar\":1,\"skin\":\"vector\",\"stubthreshold\":0,\"thumbsize\":2,\"underline\":2,\"uselivepreview\":0,\"usenewrc\":0,\"vector-simplesearch\":1,\"watchcreations\":0,\"watchdefault\":0,\"watchdeletion\":0,\"watchlistdays\":3,\"watchlisthideanons\":0,\"watchlisthidebots\"
 :0,\"watchlisthideliu\":0,\"watchlisthideminor\":0,\"watchlisthideown\":0,\"watchlisthidepatrolled\":0,\"watchmoves\":0,\"wllimit\":250,\"useeditwarning\":1,\"prefershttps\":1,\"vector-collapsiblenav\":1,\"vector-collapsibletabs\":1,\"vector-editwarning\":1,\"vector-expandablesearch\":1,\"vector-footercleanup\":1,\"usebetatoolbar\":1,\"usebetatoolbar-cgd\":1,\"wikieditor-preview\":1,\"upwiz_deflicense\":\"default\",\"upwiz_def3rdparty\":\"default\",\"upwiz_deflicensetype\":\"default\",\"language\":\"en\",\"variant-gan\":\"gan\",\"variant-iu\":\"iu\",\"variant-kk\":\"kk\",\"variant-ku\":\"ku\",\"variant-shi\":\"shi\",\"variant-sr\":\"sr\",\"variant-tg\":\"tg\",\"variant-uz\":\"uz\",\"variant-zh\":\"zh\",\"searchNs0\":true,\"searchNs1\":false,\"searchNs2\":false,\"searchNs3\":false,\"searchNs4\":false,\"searchNs5\":false,\"searchNs6\":false,\"searchNs7\":false,\"searchNs8\":false,\"searchNs9\":false,\"searchNs10\":false,\"searchNs11\":false,\"searchNs12\":false,\"searchNs13\":false,\"searchNs14\":false,\"searchNs15\":false,\"searchNs102\":false,\"searchNs103\":false,\"searchNs106\":false,\"searchNs107\":false
@@ -2782,16 +2791,16 @@ mw.loader.implement(\"user.options\",function(){mw.user.options.set({\"ccmeonema
 mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\",\"mediawiki.legacy.wikibits\",\"mediawiki.legacy.ajax\",\"skins.vector.js\"]);
 }</script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.jquery.qtip%7Cext.smw%7Cext.smw.style%2Ctooltip%2Ctooltips%7Cext.smw.tooltip.styles&amp;skin=vector&amp;version=20150419T081543Z&amp;*\"></script><script src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.async%2Cclient%2Ccookie%2CdelayedBind%2CmwExtension%7Cmediawiki.legacy.ajax%2Cwikibits%7Cmediawiki.notify%2Cutil%7Cmediawiki.page.startup%7Cskins.vector.js&amp;skin=vector&amp;version=20150419T081544Z&amp;*\"></script>
 <!--[if lt IE 7]><style type=\"text/css\">body{behavior:url(\"/emergent/skins/vector/csshover.min.htc\")}</style><![endif]--><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=ext.Drafts%2Ccite%2Cheadertabs%7Cjquery.autoEllipsis%2CcheckboxShiftClick%2Chidpi%2ChighlightText%2CmakeCollapsible%2Cmw-jump%2Cplaceholder%2Csuggestions%2CtabIndex%7Cmediawiki.action.view.postEdit%7Cmediawiki.api%2Ccldr%2Chidpi%2CjqueryMsg%2Clanguage%2CsearchSuggest%2Cuser%7Cmediawiki.language.data%2Cinit%7Cmediawiki.libs.pluralruleparser%7Cmediawiki.page.ready%7Cskins.vector.collapsibleNav&amp;skin=vector&amp;version=20150419T081545Z&amp;*\"></script><script async=\"\" src=\"/emergent/load.php?debug=false&amp;lang=en&amp;modules=jquery.ui.core%2Ctabs%2Cwidget&amp;skin=vector&amp;version=20150208T001329Z&amp;*\"></script></head>
-<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlexProgs skin-vector action-view vector-animateLayout\">
+<body class=\"mediawiki ltr sitedir-ltr ns-0 ns-subject page-LeabraFlex skin-vector action-view vector-animateLayout\">
 		<div id=\"mw-page-base\" class=\"noprint\"><a href=\"http://grey.colorado.edu/emergent\"><img src=\"http://grey.colorado.edu/mediawiki/sites/emergent/images/6/6b/emergent_small.png\"></a></div>
 		<div id=\"mw-head-base\" class=\"noprint\"></div>
 		<div id=\"content\" class=\"mw-body\" role=\"main\">
 			<a id=\"top\"></a>
 			<div id=\"mw-js-message\" style=\"display:none;\"></div>
-						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">LeabraFlexProgs</span></h1>
+						<h1 id=\"firstHeading\" class=\"firstHeading\" lang=\"en\"><span dir=\"auto\">LeabraFlex</span></h1>
 			<div id=\"bodyContent\">
 								<div id=\"siteSub\">From emergent</div>
-								<div id=\"contentSub\"></div>
+								<div id=\"contentSub\">(Redirected from <a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;redirect=no\" title=\"LeabraFlexProgs\">LeabraFlexProgs</a>)</div>
 												<div id=\"jump-to-nav\" class=\"mw-jump\">
 					Jump to:					<a href=\"#mw-navigation\">navigation</a>, 					<a href=\"#p-search\">search</a>
 				</div>
@@ -2864,8 +2873,8 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 
 <!-- 
 NewPP limit report
-CPU time usage: 0.036 seconds
-Real time usage: 0.041 seconds
+CPU time usage: 0.044 seconds
+Real time usage: 0.049 seconds
 Preprocessor visited node count: 15/1000000
 Preprocessor generated node count: 20/1000000
 Post?expand include size: 0/2097152 bytes
@@ -2874,10 +2883,10 @@ Highest expansion depth: 2/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150510062603
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:2315-0!*!0!!en!*!* and timestamp 20150518152729
  -->
 </div>								<div class=\"printfooter\">
-				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226</a>\"				</div>
+				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088\">https://grey.colorado.edu/emergent/index.php?title=LeabraFlex&amp;oldid=11088</a>\"				</div>
 												<div id=\"catlinks\" class=\"catlinks catlinks-allhidden\"></div>												<div class=\"visualClear\"></div>
 							</div>
 		</div>
@@ -2887,14 +2896,14 @@ Expensive parser function count: 0/100
 				<div id=\"p-personal\" role=\"navigation\" class=\"\" aria-labelledby=\"p-personal-label\">
 	<h3 id=\"p-personal-label\">Personal tools</h3>
 	<ul>
-<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlexProgs\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
+<li id=\"pt-createaccount\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex&amp;type=signup\">Create account</a></li><li id=\"pt-login\"><a href=\"/emergent/index.php?title=Special:UserLogin&amp;returnto=LeabraFlex\" title=\"You are encouraged to log in; however, it is not mandatory [o]\" accesskey=\"o\">Log in</a></li>	</ul>
 </div>
 				<div id=\"left-navigation\">
 					<div id=\"p-namespaces\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-namespaces-label\">
 	<h3 id=\"p-namespaces-label\">Namespaces</h3>
 	<ul>
-					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
-					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlexProgs&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
+					<li id=\"ca-nstab-main\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\" title=\"View the content page [c]\" accesskey=\"c\">Page</a></span></li>
+					<li id=\"ca-talk\" class=\"new\"><span><a href=\"/emergent/index.php?title=Talk:LeabraFlex&amp;action=edit&amp;redlink=1\" title=\"Discussion about the content page [t]\" accesskey=\"t\">Discussion</a></span></li>
 			</ul>
 </div>
 <div id=\"p-variants\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-variants-label\">
@@ -2911,10 +2920,10 @@ Expensive parser function count: 0/100
 					<div id=\"p-views\" role=\"navigation\" class=\"vectorTabs\" aria-labelledby=\"p-views-label\">
 	<h3 id=\"p-views-label\">Views</h3>
 	<ul>
-					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlexProgs\">Read</a></span></li>
-					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=edit\" title=\"This page is protected.
+					<li id=\"ca-view\" class=\"selected\"><span><a href=\"/emergent/index.php/LeabraFlex\">Read</a></span></li>
+					<li id=\"ca-viewsource\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=edit\" title=\"This page is protected.
 You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
-					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
+					<li id=\"ca-history\" class=\"collapsible\"><span><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=history\" title=\"Past revisions of this page [h]\" accesskey=\"h\">View history</a></span></li>
 			</ul>
 </div>
 <div id=\"p-cactions\" role=\"navigation\" class=\"vectorMenu emptyPortlet\" aria-labelledby=\"p-cactions-label\">
@@ -2953,12 +2962,12 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3 id=\"p-tb-label\">Tools</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlexProgs\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
-			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlexProgs\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
+			<li id=\"t-whatlinkshere\"><a href=\"/emergent/index.php/Special:WhatLinksHere/LeabraFlex\" title=\"A list of all wiki pages that link here [j]\" accesskey=\"j\">What links here</a></li>
+			<li id=\"t-recentchangeslinked\"><a href=\"/emergent/index.php/Special:RecentChangesLinked/LeabraFlex\" title=\"Recent changes in pages linked from this page [k]\" accesskey=\"k\">Related changes</a></li>
 			<li id=\"t-specialpages\"><a href=\"/emergent/index.php/Special:SpecialPages\" title=\"A list of all special pages [q]\" accesskey=\"q\">Special pages</a></li>
-			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;oldid=9226\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
-			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;action=info\">Page information</a></li>
-			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlexProgs\" rel=\"smw-browse\">Browse properties</a></li>
+			<li id=\"t-permalink\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;oldid=11088\" title=\"Permanent link to this revision of the page\">Permanent link</a></li>
+			<li id=\"t-info\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;action=info\">Page information</a></li>
+			<li id=\"t-smwbrowselink\"><a href=\"/emergent/index.php/Special:Browse/LeabraFlex\" rel=\"smw-browse\">Browse properties</a></li>
 		</ul>
 	</div>
 </div>
@@ -2966,9 +2975,9 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 	<h3 id=\"p-coll-print_export-label\">Print/export</h3>
 	<div class=\"body\">
 		<ul>
-			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlexProgs\">Create a book</a></li>
-			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlexProgs&amp;oldid=9226&amp;writer=rl\">Download as PDF</a></li>
-			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlexProgs&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
+			<li id=\"coll-create_a_book\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=book_creator&amp;referer=LeabraFlex\">Create a book</a></li>
+			<li id=\"coll-download-as-rl\"><a href=\"/emergent/index.php?title=Special:Book&amp;bookcmd=render_article&amp;arttitle=LeabraFlex&amp;oldid=11088&amp;writer=rl\">Download as PDF</a></li>
+			<li id=\"t-print\"><a href=\"/emergent/index.php?title=LeabraFlex&amp;printable=yes\" title=\"Printable version of this page [p]\" accesskey=\"p\">Printable version</a></li>
 		</ul>
 	</div>
 </div>
@@ -2976,8 +2985,8 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		</div>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
-											<li id=\"footer-info-lastmod\"> This page was last modified on 23 December 2011, at 01:39.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 12,746 times.</li>
+											<li id=\"footer-info-lastmod\"> This page was last modified on 10 May 2015, at 01:14.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 12,803 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -2997,7 +3006,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.483 secs. -->
+<!-- Served in 0.366 secs. -->
 	
 
 </body></html>";
@@ -5262,6 +5271,32 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     float_Data @["Hidden_lay_net_sd"] {
+      name="Hidden_lay_net_sd";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_lay_net_sd"] {
+      name="Output_lay_net_sd";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      float_Data @["net_cos_diff"] {
       name="net_cos_diff";
       col_flags=SAVE_ROWS|SAVE_DATA;
@@ -5755,6 +5790,32 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      };
      float_Data @["Output_avg_avg_act_diff"] {
       name="Output_avg_avg_act_diff";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Hidden_avg_net_sd"] {
+      name="Hidden_avg_net_sd";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     float_Data @["Output_avg_net_sd"] {
+      name="Output_avg_net_sd";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -9061,7 +9122,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      name="objs";
      el_typ=taNBase;
      el_def=0;
-     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=44840: sys=25064: tot=143085637860: }: end={usr=44840: sys=25064: tot=143085637860: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
+     TimeUsed @["BasicTrainTime"] {name="BasicTrainTime": start={usr=1174: sys=360: tot=143201938679: }: end={usr=1174: sys=360: tot=143201938679: }: used={usr=0: sys=0: tot=0: }: s_used=0: n_used=0: };
     };
     types {
      name="types";
@@ -9518,7 +9579,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
       keygen 4 0=0;
       row_indexes {
        name="row_indexes";
-      [0]       };
+      [6] 4;5;2;1;3;0;      };
      };
     };
     types {
@@ -10875,103 +10936,103 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
        el_def=0;
        RndSeed @["RndSeed_1"] {
 	name="RndSeed_1";
-	rnd_seed=201786110;
+	rnd_seed=2929233146;
        };
        RndSeed @["RndSeed_2"] {
 	name="RndSeed_2";
-	rnd_seed=201786111;
+	rnd_seed=2929233147;
        };
        RndSeed @["RndSeed_3"] {
 	name="RndSeed_3";
-	rnd_seed=201786112;
+	rnd_seed=2929233148;
        };
        RndSeed @["RndSeed_4"] {
 	name="RndSeed_4";
-	rnd_seed=201786113;
+	rnd_seed=2929233149;
        };
        RndSeed @["RndSeed_5"] {
 	name="RndSeed_5";
-	rnd_seed=201786114;
+	rnd_seed=2929233150;
        };
        RndSeed @["RndSeed_6"] {
 	name="RndSeed_6";
-	rnd_seed=201786115;
+	rnd_seed=2929233151;
        };
        RndSeed @["RndSeed_7"] {
 	name="RndSeed_7";
-	rnd_seed=201786116;
+	rnd_seed=2929233152;
        };
        RndSeed @["RndSeed_8"] {
 	name="RndSeed_8";
-	rnd_seed=201786117;
+	rnd_seed=2929233153;
        };
        RndSeed @["RndSeed_9"] {
 	name="RndSeed_9";
-	rnd_seed=201786118;
+	rnd_seed=2929233154;
        };
        RndSeed @["RndSeed_10"] {
 	name="RndSeed_10";
-	rnd_seed=201786119;
+	rnd_seed=2929233155;
        };
        RndSeed @["RndSeed_11"] {
 	name="RndSeed_11";
-	rnd_seed=201786120;
+	rnd_seed=2929233156;
        };
        RndSeed @["RndSeed_12"] {
 	name="RndSeed_12";
-	rnd_seed=201786121;
+	rnd_seed=2929233157;
        };
        RndSeed @["RndSeed_13"] {
 	name="RndSeed_13";
-	rnd_seed=201786122;
+	rnd_seed=2929233158;
        };
        RndSeed @["RndSeed_14"] {
 	name="RndSeed_14";
-	rnd_seed=201786123;
+	rnd_seed=2929233159;
        };
        RndSeed @["RndSeed_15"] {
 	name="RndSeed_15";
-	rnd_seed=201786124;
+	rnd_seed=2929233160;
        };
        RndSeed @["RndSeed_16"] {
 	name="RndSeed_16";
-	rnd_seed=201786125;
+	rnd_seed=2929233161;
        };
        RndSeed @["RndSeed_17"] {
 	name="RndSeed_17";
-	rnd_seed=201786126;
+	rnd_seed=2929233162;
        };
        RndSeed @["RndSeed_18"] {
 	name="RndSeed_18";
-	rnd_seed=201786127;
+	rnd_seed=2929233163;
        };
        RndSeed @["RndSeed_19"] {
 	name="RndSeed_19";
-	rnd_seed=201786128;
+	rnd_seed=2929233164;
        };
        RndSeed @["RndSeed_20"] {
 	name="RndSeed_20";
-	rnd_seed=201786129;
+	rnd_seed=2929233165;
        };
        RndSeed @["RndSeed_21"] {
 	name="RndSeed_21";
-	rnd_seed=201786130;
+	rnd_seed=2929233166;
        };
        RndSeed @["RndSeed_22"] {
 	name="RndSeed_22";
-	rnd_seed=201786131;
+	rnd_seed=2929233167;
        };
        RndSeed @["RndSeed_23"] {
 	name="RndSeed_23";
-	rnd_seed=201786132;
+	rnd_seed=2929233168;
        };
        RndSeed @["RndSeed_24"] {
 	name="RndSeed_24";
-	rnd_seed=201786133;
+	rnd_seed=2929233169;
        };
        RndSeed @["RndSeed_25"] {
 	name="RndSeed_25";
-	rnd_seed=201786134;
+	rnd_seed=2929233170;
        };
       };
      };
@@ -12007,7 +12068,7 @@ command line is: emergent -nowin -ni -p <project name>.proj [enviro=xxx] [tag=xx
      el_def=0;
      RndSeed @["dmem_rnd_seed"] {
       name="dmem_rnd_seed";
-      rnd_seed=0;
+      rnd_seed=1439355325;
      };
     };
     types {
@@ -14707,6 +14768,40 @@ also save specs.";
 	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
+	NetMonItem @["lay_net_sd"] {
+	 name="lay_net_sd";
+	 computed=0;
+	 object_type=LeabraNetwork;
+	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
+	 variable="layers.net_sd";
+	 var_label="lay_net_sd";
+	 name_style=AUTO_NAME;
+	 max_name_len=6;
+	 options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	 val_type=VT_FLOAT;
+	 matrix=0;
+	 matrix_geom{ 	 };
+	 data_agg=0;
+	 data_src=NULL;
+	 agg_col {
+	  col_name="agg_col";
+	 };
+	 agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 select_rows=0;
+	 select_spec {
+	  col_name="select_spec";
+	  name="select_spec_EQUAL_";
+	  on=1;
+	  rel=EQUAL;
+	  use_var=0;
+	  cmp 0 1;
+	  var=NULL;
+	  enable_var=NULL;
+	 };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+	};
 	NetMonItem @["net_cos_diff"] {
 	 name="net_cos_diff";
 	 computed=0;
@@ -15986,6 +16081,40 @@ also save specs.";
 	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
 	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
 	};
+	NetMonItem @["avg_net_sd"] {
+	 name="avg_net_sd";
+	 computed=0;
+	 object_type=LeabraNetwork;
+	 object=$.projects["LeabraFlex"].networks["Network_0"]$;
+	 variable="layers.avg_net_sd";
+	 var_label="avg_net_sd";
+	 name_style=AUTO_NAME;
+	 max_name_len=8;
+	 options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+	 val_type=VT_FLOAT;
+	 matrix=0;
+	 matrix_geom{ 	 };
+	 data_agg=0;
+	 data_src=NULL;
+	 agg_col {
+	  col_name=;
+	 };
+	 agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+	 select_rows=0;
+	 select_spec {
+	  col_name=;
+	  name="_EQUAL_";
+	  on=1;
+	  rel=EQUAL;
+	  use_var=0;
+	  cmp 0 1;
+	  var=NULL;
+	  enable_var=NULL;
+	 };
+	 pre_proc_1 {name="pre_proc_1": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
+	 pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
+	};
 	NetMonItem @["hog_pct"] {
 	 name="hog_pct";
 	 computed=0;
@@ -16856,7 +16985,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["epoch"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=29: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_sse"] {
@@ -16864,7 +16993,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_sse"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=1: min=0: fix_max=0: max=4.52558: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["cnt_err"] {
@@ -16872,7 +17001,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["cnt_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=50: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["pct_cor"] {
@@ -16896,7 +17025,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["avg_norm_err"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0.586: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["avg_cos_err"] {
@@ -17016,7 +17145,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_cos_diff"]$$;
 	    m_transform=NULL;
 	    visible=1;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
 	    data_range {min=0: max=0: };
 	   };
 	   GraphColView @["Output_avg_cos_diff"] {
@@ -17054,6 +17183,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   GraphColView @["Output_avg_avg_act_diff"] {
 	    name="Output_avg_avg_act_diff";
 	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_avg_act_diff"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Hidden_avg_net_sd"] {
+	    name="Hidden_avg_net_sd";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Hidden_avg_net_sd"]$$;
+	    m_transform=NULL;
+	    visible=1;
+	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
+	    data_range {min=0: max=0: };
+	   };
+	   GraphColView @["Output_avg_net_sd"] {
+	    name="Output_avg_net_sd";
+	    m_data=.projects["LeabraFlex"].data.gp["OutputData"]["EpochOutputData"].data["Output_avg_net_sd"]$$;
 	    m_transform=NULL;
 	    visible=1;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
@@ -17290,12 +17435,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
-	    col_name=;
+	    col_name="Hidden_avg_net_sd";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.281181: fix_max=0: max=0.466438: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
@@ -17311,12 +17456,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    m_transform=NULL;
 	    on=0;
 	    axis=Y;
-	    col_name=;
+	    col_name="Hidden_avg_cos_diff";
 	    is_string=0;
 	    is_matrix=0;
 	    n_cells=1;
 	    matrix_cell=0;
-	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    fixed_range {fix_min=0: min=0.962046: fix_max=0: max=0.999009: };
 	    show_axis_label=1;
 	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
@@ -18283,6 +18428,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
        avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
        inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
@@ -18299,6 +18446,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      avg_act {init=0.1: fixed=0: tau=100: adjust=1: dt=0.01: };
      inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
@@ -18408,6 +18557,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=1;
        learn_qtr=Q4;
        lrate=0.02;
+       use_lrate_sched=1;
        cur_lrate=0.04;
        lrs_mult=1;
        lrate_sched {
@@ -18460,7 +18610,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
-       xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -18482,6 +18632,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        learn=1;
        learn_qtr=Q4;
        lrate=0.02;
+       use_lrate_sched=1;
        cur_lrate=0.04;
        lrs_mult=1;
        lrate_sched {
@@ -18534,7 +18685,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	};
        };
        ignore_unlearnable=1;
-       xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=0: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
        deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -18547,6 +18698,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      learn=1;
      learn_qtr=Q4;
      lrate=0.02;
+     use_lrate_sched=1;
      cur_lrate=0.04;
      lrs_mult=1;
      lrate_sched {
@@ -18599,7 +18751,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
      };
      ignore_unlearnable=1;
-     xcal {m_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=0: };
      fast_wts {on=0: nofast_lrate=2: decay_tau=600: wt_tau=20: fast_lrate=5: decay_dt=0.001666667: wt_dt=0.05: slow_lrate=0.2: };
      deep {on=0: bg_lrate=1: fg_lrate=0: };
@@ -18615,6 +18767,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      self_con=0;
      init_wts=0;
+     set_scale=0;
      add_rnd_var=0;
     };
    };

@@ -210,6 +210,7 @@ public:
     COSDIFF,
     AVGACTDIFF,
     TRIALCOSDIFF,
+    NETSD,
     HOGDEAD,
     N_LeabraThrLayStats,
   };
@@ -263,6 +264,8 @@ public:
 
   float		trial_cos_diff;	// #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic cosine (normalized dot product) activation difference across trials between act_q4 and act_q0 activations on this trial -- excludes input layers which are represented in the cos_err measure
   Average	avg_trial_cos_diff; // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic #DMEM_AGG_SUM average cosine (normalized dot product) trial diff (computed over previous epoch)
+  float         net_sd;             // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
+  Average       avg_net_sd;         // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic standard deviation of the minus phase net inputs across the layer -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail
   float         hog_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is above a layer-specific threshold, indicating that they are 'hogging' the representational space (because this is computed on a time average, there is no epoch average of this statistic)
   float         dead_pct;           // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Statistic the percentage of units in the network that have a long-time-averaged activitation level that is below a layer-specific threshold, indicating that they are effectively 'dead' and not participating in any representations (because this is computed on a time average, there is no epoch average of this statistic)
 
@@ -581,6 +584,12 @@ public:
     // #IGNORE
     virtual float Compute_TrialCosDiff_Agg();
     // #IGNORE
+  virtual float	Compute_NetSd();
+  // #CAT_Statistic compute standard deviation of the minus phase net inputs across the layers -- this is a key statistic to monitor over time for how much the units are gaining traction on the problem -- they should be getting more differentiated and sd should go up -- if not, then the network will likely fail -- MUST call this at end of minus phase!
+    virtual void Compute_NetSd_Thr(int thr_no);
+    // #IGNORE
+    virtual float Compute_NetSd_Agg();
+    // #IGNORE
   virtual void	Compute_HogDeadPcts();
   // #CAT_Statistic compute percentage of units in the network that have a long-time-averaged activitation level that is above or below hog / dead thresholds, indicating that they are either 'hogging' the representational space, or 'dead' and not participating in any representations
     virtual void Compute_HogDeadPcts_Thr(int thr_no);
@@ -622,6 +631,8 @@ public:
   // #CAT_Statistic compute average trial_cos_diff (at an epoch-level timescale)
   virtual void	Compute_AvgAvgActDiff();
   // #CAT_Statistic compute average avg_act_diff (at an epoch-level timescale)
+  virtual void	Compute_AvgNetSd();
+  // #CAT_Statistic compute average net_sd (at an epoch-level timescale)
   void	Compute_EpochStats() override;
   // #CAT_Statistic compute epoch-level statistics, including SSE, AvgExtRew and AvgCycles
   void	SetProjectionDefaultTypes(Projection* prjn) override;

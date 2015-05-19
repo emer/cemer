@@ -182,8 +182,11 @@ bool iDialogItemChooser::SetInitView(void* sel_val, const String& filt_str) {
     }
   }
   else if(sel_val != NULL) {
+    // ROR: no, don't work backwards -- first view is the default, and user wants to
+    // see the *largest* scope for the current thing, not the smallest!
     // work backwards most to least scoped
-    for(int vw = m_client->viewCount() - 1; vw >= 0; vw--) {
+    //    for(int vw = m_client->viewCount() - 1; vw >= 0; vw--) {
+    for(int vw = 0; vw < m_client->viewCount(); vw++) {
       setView(vw, true);
 //       taMisc::ProcessEvents();
       if(SetCurrentItemByData(sel_val)) {

@@ -22,21 +22,13 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(V1RegionSpec);
-
 TA_BASEFUNS_CTORS_DEFN(VisSpatIntegSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V2BordOwnStencilSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V2BordOwnSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V1ComplexSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V1BinocularSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V1MotionSpec);
-
 TA_BASEFUNS_CTORS_DEFN(V1sNeighInhib);
-
 TA_BASEFUNS_CTORS_DEFN(V1GaborSpec);
 
 void V1GaborSpec::Initialize() {
@@ -1441,6 +1433,16 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
 
   return true;
 }
+
+// todo: new threading strategy should be like in Network -- just call the 4 threads *once*
+// per action, and they each then do a *predefined* set of the filtering action, in a
+// single routine, which should also split up the space into non-border and border cases
+// and do vector ops(?) on the non-borders, or at least skip the wrap-clip computation
+// vector op requires x dimension of convolution filter to be even multiple of vect op
+// could always just use 4 and ensure filters have that multiplicity - probably good
+// enough.
+
+// and for the filters, probably want to try combining both tri and bi polar guys?
 
 void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
   taVector2i sc;                 // simple coords

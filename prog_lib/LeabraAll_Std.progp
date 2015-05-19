@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.0.0 rev8223
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8269
 Program_Group .projects[0].programs.gp[0] { 
  Program @[0] { 
   ProgObjList @.objs = [0] {
@@ -573,7 +573,7 @@ Program_Group .projects[0].programs.gp[0] {
  Program @[7] { 
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
-    NetMonItem_List @.items = [24] {
+    NetMonItem_List @.items = [25] {
      NetMonItem @[0] { };
      NetMonItem @[1] { };
      NetMonItem @[2] { };
@@ -598,6 +598,7 @@ Program_Group .projects[0].programs.gp[0] {
      NetMonItem @[21] { };
      NetMonItem @[22] { };
      NetMonItem @[23] { };
+     NetMonItem @[24] { };
     };
    };
   };
@@ -660,7 +661,7 @@ Program_Group .projects[0].programs.gp[0] {
  Program @[8] { 
   ProgObjList @.objs = [1] {
    NetMonitor @[0] { 
-    NetMonItem_List @.items = [29] {
+    NetMonItem_List @.items = [30] {
      NetMonItem @[0] { };
      NetMonItem @[1] { };
      NetMonItem @[2] { };
@@ -690,6 +691,7 @@ Program_Group .projects[0].programs.gp[0] {
      NetMonItem @[26] { };
      NetMonItem @[27] { };
      NetMonItem @[28] { };
+     NetMonItem @[29] { };
     };
    };
   };
@@ -1060,103 +1062,103 @@ Program_Group .projects[0].programs.gp[0] {
      el_def=0;
      RndSeed @[0] {
       name="RndSeed_1";
-      rnd_seed=48083641;
+      rnd_seed=2878175685;
      };
      RndSeed @[1] {
       name="RndSeed_2";
-      rnd_seed=48083642;
+      rnd_seed=2878175686;
      };
      RndSeed @[2] {
       name="RndSeed_3";
-      rnd_seed=48083643;
+      rnd_seed=2878175687;
      };
      RndSeed @[3] {
       name="RndSeed_4";
-      rnd_seed=48083644;
+      rnd_seed=2878175688;
      };
      RndSeed @[4] {
       name="RndSeed_5";
-      rnd_seed=48083645;
+      rnd_seed=2878175689;
      };
      RndSeed @[5] {
       name="RndSeed_6";
-      rnd_seed=48083646;
+      rnd_seed=2878175690;
      };
      RndSeed @[6] {
       name="RndSeed_7";
-      rnd_seed=48083647;
+      rnd_seed=2878175691;
      };
      RndSeed @[7] {
       name="RndSeed_8";
-      rnd_seed=48083648;
+      rnd_seed=2878175692;
      };
      RndSeed @[8] {
       name="RndSeed_9";
-      rnd_seed=48083649;
+      rnd_seed=2878175693;
      };
      RndSeed @[9] {
       name="RndSeed_10";
-      rnd_seed=48083650;
+      rnd_seed=2878175694;
      };
      RndSeed @[10] {
       name="RndSeed_11";
-      rnd_seed=48083651;
+      rnd_seed=2878175695;
      };
      RndSeed @[11] {
       name="RndSeed_12";
-      rnd_seed=48083652;
+      rnd_seed=2878175696;
      };
      RndSeed @[12] {
       name="RndSeed_13";
-      rnd_seed=48083653;
+      rnd_seed=2878175697;
      };
      RndSeed @[13] {
       name="RndSeed_14";
-      rnd_seed=48083654;
+      rnd_seed=2878175698;
      };
      RndSeed @[14] {
       name="RndSeed_15";
-      rnd_seed=48083655;
+      rnd_seed=2878175699;
      };
      RndSeed @[15] {
       name="RndSeed_16";
-      rnd_seed=48083656;
+      rnd_seed=2878175700;
      };
      RndSeed @[16] {
       name="RndSeed_17";
-      rnd_seed=48083657;
+      rnd_seed=2878175701;
      };
      RndSeed @[17] {
       name="RndSeed_18";
-      rnd_seed=48083658;
+      rnd_seed=2878175702;
      };
      RndSeed @[18] {
       name="RndSeed_19";
-      rnd_seed=48083659;
+      rnd_seed=2878175703;
      };
      RndSeed @[19] {
       name="RndSeed_20";
-      rnd_seed=48083660;
+      rnd_seed=2878175704;
      };
      RndSeed @[20] {
       name="RndSeed_21";
-      rnd_seed=48083661;
+      rnd_seed=2878175705;
      };
      RndSeed @[21] {
       name="RndSeed_22";
-      rnd_seed=48083662;
+      rnd_seed=2878175706;
      };
      RndSeed @[22] {
       name="RndSeed_23";
-      rnd_seed=48083663;
+      rnd_seed=2878175707;
      };
      RndSeed @[23] {
       name="RndSeed_24";
-      rnd_seed=48083664;
+      rnd_seed=2878175708;
      };
      RndSeed @[24] {
       name="RndSeed_25";
-      rnd_seed=48083665;
+      rnd_seed=2878175709;
      };
     };
    };
@@ -3892,6 +3894,40 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
      NetMonItem @[18] {
+      name="lay_net_sd";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.projects[0].networks[0]$;
+      variable="layers.net_sd";
+      var_label="lay_net_sd";
+      name_style=AUTO_NAME;
+      max_name_len=6;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name="agg_col";
+      };
+      agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name="select_spec";
+       name="select_spec_EQUAL_";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[19] {
       name="net_cos_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -3925,7 +3961,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[19] {
+     NetMonItem @[20] {
       name="net_trial_cos_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -3959,7 +3995,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[20] {
+     NetMonItem @[21] {
       name="net_avg_act_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -3993,7 +4029,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[21] {
+     NetMonItem @[22] {
       name="cos_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -4027,7 +4063,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[22] {
+     NetMonItem @[23] {
       name="trial_cos_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -4061,7 +4097,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[23] {
+     NetMonItem @[24] {
       name="avg_act_diff";
       computed=0;
       object_type=LeabraNetwork;
@@ -5171,6 +5207,40 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
      NetMonItem @[24] {
+      name="avg_net_sd";
+      computed=0;
+      object_type=LeabraNetwork;
+      object=$.projects[0].networks[0]$;
+      variable="layers.avg_net_sd";
+      var_label="avg_net_sd";
+      name_style=AUTO_NAME;
+      max_name_len=8;
+      options=HIDDEN_LAYERS|OUTPUT_LAYERS|TARGET_LAYERS;
+      val_type=VT_FLOAT;
+      matrix=0;
+      matrix_geom{       };
+      data_agg=0;
+      data_src=NULL;
+      agg_col {
+       col_name=;
+      };
+      agg {name="agg": op=NONE: rel={name="rel": rel=LESSTHANOREQUAL: val=0: use_var=0: var=NULL: }: };
+      select_rows=0;
+      select_spec {
+       col_name=;
+       name="_EQUAL_";
+       on=1;
+       rel=EQUAL;
+       use_var=0;
+       cmp 0 1;
+       var=NULL;
+       enable_var=NULL;
+      };
+      pre_proc_1 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_2 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+      pre_proc_3 {name="": opr=NONE: arg=0: lw=-1: hi=1: };
+     };
+     NetMonItem @[25] {
       name="hog_pct";
       computed=0;
       object_type=LeabraNetwork;
@@ -5204,7 +5274,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[25] {
+     NetMonItem @[26] {
       name="dead_pct";
       computed=0;
       object_type=LeabraNetwork;
@@ -5238,7 +5308,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[26] {
+     NetMonItem @[27] {
       name="netmax";
       computed=0;
       object_type=LeabraNetwork;
@@ -5272,7 +5342,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[27] {
+     NetMonItem @[28] {
       name="avg_act";
       computed=0;
       object_type=LeabraNetwork;
@@ -5306,7 +5376,7 @@ this program can be extended to do arbitrary things to generate data and apply i
       pre_proc_2 {name="pre_proc_2": opr=NONE: arg=0: lw=-1: hi=1: };
       pre_proc_3 {name="pre_proc_3": opr=NONE: arg=0: lw=-1: hi=1: };
      };
-     NetMonItem @[28] {
+     NetMonItem @[29] {
       name="netrel";
       computed=0;
       object_type=LeabraNetwork;

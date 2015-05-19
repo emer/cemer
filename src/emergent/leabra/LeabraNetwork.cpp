@@ -121,8 +121,10 @@ void LeabraNetwork::Initialize() {
   cos_err_vs_prv = 0.0f;
 
   cos_diff = 0.0f;
-
   trial_cos_diff = 0.0f;
+  net_sd = 0.0f;
+  hog_pct = 0.0f;
+  dead_pct = 0.0f;
 
   unit_vec_vars = NULL;
   thrs_send_deeprawnet_tmp = NULL;
@@ -302,6 +304,12 @@ void LeabraNetwork::Init_Stats() {
   
   trial_cos_diff = 0.0f;
   avg_trial_cos_diff.ResetAvg();
+
+  net_sd = 0.0f;
+  avg_net_sd.ResetAvg();
+
+  hog_pct = 0.0f;
+  dead_pct = 0.0f;
 }
 
 void LeabraNetwork::Init_Acts() {
@@ -2075,6 +2083,46 @@ float LeabraNetwork::Compute_TrialCosDiff_Agg() {
   return cosv;
 }
 
+float LeabraNetwork::Compute_NetSd() {
+  NET_THREAD_CALL(LeabraNetwork::Compute_NetSd_Thr);
+  return Compute_NetSd_Agg();
+}
+    
+void LeabraNetwork::Compute_NetSd_Thr(int thr_no) {
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
+    const float net_avg = lay->netin.avg;
+
+    float var = 0.0f;
+
+    const int ust = ThrLayUnStart(thr_no, li);
+    const int ued = ThrLayUnEnd(thr_no, li);
+    for(int ui = ust; ui < ued; ui++) {
+      LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
+      if(uv->lesioned()) continue;
+      const float netsb = (uv->net - net_avg);
+      var += netsb * netsb;
+    }
+    ThrLayStats(thr_no, li, 0, NETSD) = var;
+  }
+}
+
+float LeabraNetwork::Compute_NetSd_Agg() {
+  float var = 0.0f;
+  const int nlay = n_layers_built;
+  for(int li = 0; li < nlay; li++) {
+    LeabraLayer* l = (LeabraLayer*)ActiveLayer(li);
+    float lvar = l->Compute_NetSd(this);
+    if(!l->HasExtFlag(UnitVars::EXT)) {
+      var += lvar;
+    }
+  }
+  net_sd = sqrt(var);
+  avg_net_sd.Increment(net_sd);
+  return net_sd;
+}
+
 void LeabraNetwork::Compute_HogDeadPcts() {
   NET_THREAD_CALL(LeabraNetwork::Compute_HogDeadPcts_Thr);
   Compute_HogDeadPcts_Agg();
@@ -2144,6 +2192,8 @@ void LeabraNetwork::Compute_MinusStats() {
   if(rt_cycles < 0) // never reached target
     rt_cycles = cycle;       // set to current cyc -- better for integrating
   avg_cycles.Increment(rt_cycles);
+
+  Compute_NetSd(); // todo: combine as in plus if more than one
 
   FOREACH_ELEM_IN_GROUP(LeabraLayer, lay, layers) {
     if(!lay->lesioned())
@@ -2245,6 +2295,10 @@ void LeabraNetwork::Compute_AvgTrialCosDiff() {
   avg_trial_cos_diff.GetAvg_Reset();
 }
 
+void LeabraNetwork::Compute_AvgNetSd() {
+  avg_net_sd.GetAvg_Reset();
+}
+
 void LeabraNetwork::Compute_EpochStats() {
   Compute_EpochWeights();
   inherited::Compute_EpochStats();
@@ -2254,6 +2308,7 @@ void LeabraNetwork::Compute_EpochStats() {
   Compute_AvgCosDiff();
   Compute_AvgAvgActDiff();
   Compute_AvgTrialCosDiff();
+  Compute_AvgNetSd();
   Compute_AvgExtRew();
   Compute_AvgSendPct();
   Compute_AvgAbsRelNetin();
