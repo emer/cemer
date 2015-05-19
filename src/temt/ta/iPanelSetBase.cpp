@@ -80,9 +80,9 @@ const iColor iPanelSetBase::GetTabColor(bool selected, bool& ok) const {
 iPanelBase* iPanelSetBase::GetDataPanelOfType(TypeDef* typ, int& idx) {
   while ((idx >= 0) && (idx < panels.size)) {
     iPanelBase* rval = panels.FastEl(idx);
-    idx++; // before returning val - I think it should be after! (jr)
     if (rval->GetTypeDef()->InheritsFrom(typ))
       return rval;
+    idx++; // was before returning val - changed to after by jr on 5/19/15
   }
   return NULL;
 }
@@ -91,7 +91,7 @@ void iPanelSetBase::SetPanelOfDataTable(int col) {
   int idx = 0;
   iPanelOfDataTable* panel_of_dt = (iPanelOfDataTable*)GetDataPanelOfType(&TA_iPanelOfDataTable, idx);
   if (panel_of_dt) {
-    setCurrentPanelId(0);  // how are the panels ordered - thought I could use the idx returned
+    setCurrentPanelId(idx);
   }
   panel_of_dt->dte->ScrollToColumn(col);
   panel_of_dt->dte->SelectColumns(col, col);
