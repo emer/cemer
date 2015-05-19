@@ -91,6 +91,9 @@ public:
   LeabraUnGpData* 	MultiGpDataUn(Unit* un)
   { return multigp_data.SafeEl(un->ug_idx); }
   // #CAT_Structure get unit group data structure for unit group for given unit
+  bool          	HasUnitGpInhib()
+  { return spec->HasUnitGpInhib(this); }
+  // #CAT_Structure does the layer have unit group inhibition engaged?
 
   ///////////////////////////////////////////////////////////////////////
   //	General Init functions

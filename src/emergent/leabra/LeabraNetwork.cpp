@@ -2092,8 +2092,10 @@ void LeabraNetwork::Compute_NetSd_Thr(int thr_no) {
   const int nlay = n_layers_built;
   for(int li = 0; li < nlay; li++) {
     LeabraLayer* lay = (LeabraLayer*)ActiveLayer(li);
-    const float net_avg = lay->netin.avg;
+    float net_avg = lay->netin.avg;
 
+    bool ugp = lay->HasUnitGpInhib();
+    
     float var = 0.0f;
 
     const int ust = ThrLayUnStart(thr_no, li);
@@ -2101,7 +2103,11 @@ void LeabraNetwork::Compute_NetSd_Thr(int thr_no) {
     for(int ui = ust; ui < ued; ui++) {
       LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, ui);
       if(uv->lesioned()) continue;
-      const float netsb = (uv->net - net_avg);
+      float netsb;
+      if(ugp) {
+        net_avg = lay->UnGpDataUn(uv->Un(this, thr_no))->netin.avg;
+      }
+      netsb = (uv->net - net_avg);
       var += netsb * netsb;
     }
     ThrLayStats(thr_no, li, 0, NETSD) = var;
