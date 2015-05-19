@@ -67,6 +67,7 @@ void XCalLearnSpec::Initialize() {
 void XCalLearnSpec::Defaults_init() {
   m_lrn = 1.0f;
   set_l_lrn = false;
+  hebb_only_epc = 0;
   l_lrn = 1.0f;
   d_rev = 0.10f;
   d_thr = 0.0001f;
@@ -236,6 +237,17 @@ void LeabraConSpec::Trial_Init_Specs(LeabraNetwork* net) {
     cur_lrate *= lrs_mult;
     if(cur_lrate != prv_cur_lrate) {
       net->net_misc.lrate_updtd = true;
+    }
+  }
+
+  if(xcal.hebb_only_epc > 0) {
+    if(net->epoch == xcal.hebb_only_epc) {
+      xcal.m_lrn = 1.0f;
+      xcal.set_l_lrn = false;
+    }
+    else if(net->epoch < xcal.hebb_only_epc) {
+      xcal.m_lrn = 0.0f;
+      xcal.set_l_lrn = true;
     }
   }
 }
