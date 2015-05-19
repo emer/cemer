@@ -39,8 +39,8 @@ public:
   int                   cur_panel_id; // -1 if none
   iPanelBase_PtrList    panels;
 
-  taiSigLink* par_link() const override {return (m_tabView) ? m_tabView->par_link() : NULL;}
-  MemberDef*   par_md() const override {return (m_tabView) ? m_tabView->par_md() : NULL;}
+  taiSigLink*   par_link() const override {return (m_tabView) ? m_tabView->par_link() : NULL;}
+  MemberDef*    par_md() const override {return (m_tabView) ? m_tabView->par_md() : NULL;}
   iPanelViewer* tabViewerWin() const override {return (m_tabView) ? m_tabView->tabViewerWin() : NULL;}
 
   iPanelBase*           curPanel() const {return panels.SafeEl(cur_panel_id);} // NULL if none
@@ -61,7 +61,8 @@ public:
   ~iPanelSetBase();
 
 public slots:
-  void                  setCurrentPanelId(int id);
+  void         setCurrentPanelId(int id);
+  void         SetPanelOfDataTable(int col);
 
 public: // ISigLinkClient interface
   void*        This() override {return (void*)this;}
@@ -69,9 +70,9 @@ public: // ISigLinkClient interface
   TypeDef*     GetTypeDef() const override {return &TA_iPanelSetBase;}
 
 protected:
-  virtual void          setCurrentPanelId_impl(int id) {}
-  void                  removeChild(QObject* obj);
-  void         OnWindowBind_impl(iPanelViewer* itv) override;
+  virtual void  setCurrentPanelId_impl(int id) {}
+  void          removeChild(QObject* obj);
+  void          OnWindowBind_impl(iPanelViewer* itv) override;
 };
 
 #endif // iPanelSetBase_h

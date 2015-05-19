@@ -275,3 +275,15 @@ void iDataTableEditor::ScrollToBottom() {
     tvTable->scrollToBottom();
 }
 
+void iDataTableEditor::ScrollToColumn(int col) {
+  if(tvTable) {
+    tvTable->scrollTo(dtm()->index(0, col));}
+  }
+
+void iDataTableEditor::SelectColumns(int start_col, int end_col) {
+  if(tvTable) {
+    tvTable->SelectColumns(start_col, end_col);
+  }
+}
+
+

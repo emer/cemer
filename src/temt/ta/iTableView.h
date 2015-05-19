@@ -31,6 +31,7 @@ class QPoint; //
 class iMainWindowViewer; //
 class taiWidgetMenu; //
 class CellRange; //
+class QWheelEvent; //
 
 
 class TA_API iTableView: public QTableView {
@@ -54,7 +55,7 @@ public:
 
   virtual void          clearExtSelection();       // clear extended selection mode and also clear any existing selection
   virtual void          selectCurCell();           // call clearExtSelection and then select current index
-
+  virtual bool           SelectColumns(int st_col, int st_row);
   /////////////////////////////////////////////////////////////////
   //            ScrollArea Management
 

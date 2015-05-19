@@ -14,13 +14,16 @@
 //   Lesser General Public License for more details.
 
 #include "iPanelOfList.h"
+#include <iPanelSet>
 #include <iTreeView>
 #include <taiListNode>
-
 #include <SigLinkSignal>
 #include <taMisc>
 #include <taiMisc>
 
+#include <QApplication>
+
+taTypeDef_Of(iPanelOfDataTable);
 
 
 iPanelOfList::iPanelOfList(taiSigLink* dl_, const String& custom_name_)
@@ -147,25 +150,23 @@ void iPanelOfList::RenumberList() {
 
 void iPanelOfList::list_itemDoubleClicked(QTreeWidgetItem* item_, int /*col*/) {
   taiListNode* item = dynamic_cast<taiListNode*>(item_);
-  if (!item) return;
+  if (!item)
+    return;
   taBase* ta = item->taData(); // null if n/a
-  if (ta) {
-//     tabMisc::DelayedFunCall_gui(ta, "BrowserSelectMe");
-//    ta->BrowserSelectMe();
-    // neither of the above actually update the panel view to new item -- presumably because
-    // it is still in use or something..
-    //    ta->EditPanel(true, false);   // new non-pinned panel -- leads to a proliferation
-    // of panels and doesn't make a lot of sense.
-    ta->OpenInWindow();           // pop up the edit dialog -- not favored, but probably
-                                // the best thing for this situation
+  if (ta) {  // switch to table view and select the same column
+    if(QApplication::keyboardModifiers() & Qt::ControlModifier) {  // command key on mac
+      data_panel_set()->SetPanelOfDataTable(item->num);  //  pass the column num
+    }
+    else {
+      ta->OpenInWindow(); // (jar - what does this mean?) pop up the edit dialog -- not favored, but probably the best thing for this situation
+    }
   }
 }
 
 void iPanelOfList::OnWindowBind_impl(iPanelViewer* itv) {
   inherited::OnWindowBind_impl(itv);
   // connect the list up to the panel
-  list->Connect_SelectableHostNotifySignal(itv,
-    SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
+  list->Connect_SelectableHostNotifySignal(itv, SLOT(SelectableHostNotifySlot_Internal(ISelectableHost*, int)) );
 }
 
 String iPanelOfList::panel_type() const {

@@ -36,9 +36,9 @@ public:
   iTreeView*            list; //actually an iLDPListView
 
   String       panel_type() const override; // this string is on the subpanel button for this panel
-  void                  ClearList(); // for when data changes -- we just rebuild the list
-  void                  FillList();
-  void                  RenumberList();
+  void         ClearList(); // for when data changes -- we just rebuild the list
+  void         FillList();
+  void         RenumberList();
 
   QWidget*     firstTabFocusWidget() override;
 
@@ -50,12 +50,12 @@ public: // ISigLinkClient interface
   TypeDef*     GetTypeDef() const override {return &TA_iPanelOfList;}
 
 public slots:
-  void                  list_itemDoubleClicked(QTreeWidgetItem* item, int col);
+  void         list_itemDoubleClicked(QTreeWidgetItem* item, int col);
     // for editing
 
 protected:
-  String                m_custom_name; // used instead of "List View", typically for defchild lists
-  void                  ConfigHeader();
+  String       m_custom_name; // used instead of "List View", typically for defchild lists
+  void         ConfigHeader();
   void         SigEmit_impl(int sls, void* op1, void* op2) override; //
   void         UpdatePanel_impl() override;
   void         OnWindowBind_impl(iPanelViewer* itv) override;

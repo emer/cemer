@@ -65,7 +65,9 @@ public:
   iDataTableModel*      dtm() const;
 
   virtual void          ScrollToBottom(); // scroll table to last row
-
+  virtual void          ScrollToColumn(int col); // scroll to table column
+  virtual void          SelectColumns(int start_col, int end_col);
+                
   void                  Refresh(); // for manual refresh
 
   iDataTableEditor(iDataTableView* table_view, QWidget* parent = NULL);

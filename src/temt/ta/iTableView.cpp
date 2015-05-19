@@ -28,6 +28,7 @@
 #include <QApplication>
 #include <QScrollBar>
 #include <QKeyEvent>
+#include <QWheelEvent>
 
 
 iTableView::iTableView(QWidget* parent)
@@ -423,15 +424,34 @@ bool iTableView::SelectedRows(int& st_row, int& end_row) {
 bool iTableView::SelectRows(int st_row, int end_row) {
   int maxcol = model()->columnCount(rootIndex())-1;
   int maxrow = model()->rowCount(rootIndex())-1;
-  QModelIndex tl = model()->index(st_row, 0, rootIndex());
-  if(!tl.isValid()) return false;
+  QModelIndex tl = model()->index(st_row, 0, rootIndex()); // start
+  if(!tl.isValid())
+    return false;
+  
   end_row = MIN(maxrow, end_row);
-  QModelIndex br = model()->index(end_row, maxcol, rootIndex());
-  if(!br.isValid()) return false;
+  QModelIndex br = model()->index(end_row, maxcol, rootIndex()); // end
+  if(!br.isValid())
+    return false;
+  
   selectionModel()->select(QItemSelection(tl,br), QItemSelectionModel::ClearAndSelect);
   return true;
 }
 
+bool iTableView::SelectColumns(int st_col, int end_col) {
+  int maxcol = model()->columnCount(rootIndex())-1;
+  int maxrow = model()->rowCount(rootIndex())-1;
+  QModelIndex tl = model()->index(0, st_col, rootIndex());  // start
+  if(!tl.isValid())
+    return false;
+  
+  end_col = MIN(maxcol, end_col);
+  QModelIndex br = model()->index(maxrow, end_col, rootIndex()); // end
+  if(!br.isValid())
+    return false;
+  
+  selectionModel()->select(QItemSelection(tl,br), QItemSelectionModel::ClearAndSelect);
+  return true;
+}
 
 ////////////////////////////////////////////////
 //      iTableViewDefaultDelegate
