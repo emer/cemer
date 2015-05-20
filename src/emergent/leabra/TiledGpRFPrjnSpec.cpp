@@ -32,6 +32,7 @@ void TiledGpRFPrjnSpec::Initialize() {
   reciprocal = false;
   wts_type = GAUSSIAN;
   gauss_sig = 1.0f;
+  gp_gauss_sig = -1.0f;
   gauss_ctr_mv = 0.5f;
   wrap_wts = false;
   wt_range.min = 0.1f;
@@ -250,7 +251,12 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   taVector2f half_size = full_size;
   half_size *= 0.5f;
 
-  float eff_sig = gauss_sig * (float)half_size.x;
+  float eff_sig = gauss_sig * half_size.x;
+
+  taVector2f gp_full_size = send_lay->un_geom;
+  taVector2f gp_half_size = gp_full_size;
+  gp_half_size *= 0.5f;
+  float gp_eff_sig = gp_gauss_sig * gp_half_size.x;
   
   taVector2i ru_pos;
   Unit* ru = cg->ThrOwnUn(net, thr_no);
@@ -261,35 +267,63 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   taVector2f ru_nrm_pos = gauss_ctr_mv * (((taVector2f)ru_pos - rugpctr) / rugpctr);
 
   taVector2f s_ctr = (ru_nrm_pos * half_size) + half_size;
+  taVector2f s_gp_ctr = (ru_nrm_pos * gp_half_size) + gp_half_size;
 
+  taVector2i unc, ugc;
+  taVector2f suc;
+  taVector2f sucw;
+  taVector2f suncw;
+  
   for(int i=0; i<cg->size; i++) {
     // note: these are organized within unit group first, then by groups
     int ug_idx = i / send_lay->un_geom.n; // which unit group, ordinally
     int un_idx = i % send_lay->un_geom.n; // index in unit group
 
-    int un_x = un_idx % send_lay->un_geom.x;
-    int un_y = un_idx / send_lay->un_geom.x;
+    unc.x = un_idx % send_lay->un_geom.x;
+    unc.y = un_idx / send_lay->un_geom.x;
 
-    int ug_x = ug_idx % send_gp_size.x;
-    int ug_y = ug_idx / send_gp_size.x;
+    ugc.x = ug_idx % send_gp_size.x;
+    ugc.y = ug_idx / send_gp_size.x;
 
-    float su_x = ug_x * send_lay->un_geom.x + un_x;
-    float su_y = ug_y * send_lay->un_geom.y + un_y;
-
-    // wrap coords around to get min dist from ctr either way
-    if(wrap_wts) {
-      if(fabs((su_x + full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
-        su_x = su_x + full_size.x;
-      else if(fabs((su_x - full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
-        su_x = su_x - full_size.x;
-      if(fabs((su_y + full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
-        su_y = su_y + full_size.y;
-      else if(fabs((su_y - full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
-        su_y = su_y - full_size.y;
-    }
+    float gwt = 1.0f;
+    if(gauss_sig > 0.0f) {
+      suc = ugc * send_lay->un_geom + unc;
+      sucw = suc;
+      // wrap coords around to get min dist from ctr either way
+      if(wrap_wts) {
+        if(fabs((sucw.x + full_size.x) - s_ctr.x) < fabs(sucw.x - s_ctr.x))
+          sucw.x = sucw.x + full_size.x;
+        else if(fabs((sucw.x - full_size.x) - s_ctr.x) < fabs(sucw.x - s_ctr.x))
+          sucw.x = sucw.x - full_size.x;
+        if(fabs((sucw.y + full_size.y) - s_ctr.y) < fabs(sucw.y - s_ctr.y))
+          sucw.y = sucw.y + full_size.y;
+        else if(fabs((sucw.y - full_size.y) - s_ctr.y) < fabs(sucw.y - s_ctr.y))
+          sucw.y = sucw.y - full_size.y;
+      }
     
-    float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
-    float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+      float dst = taMath_float::euc_dist(sucw.x, sucw.y, s_ctr.x, s_ctr.y);
+      gwt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+    }
+
+    float unwt = 1.0f;
+    if(gp_gauss_sig > 0.0f) {
+      suncw = unc;
+      if(wrap_wts) {
+        if(fabs((suncw.x + gp_full_size.x) - s_gp_ctr.x) < fabs(suncw.x - s_gp_ctr.x))
+          suncw.x = suncw.x + gp_full_size.x;
+        else if(fabs((suncw.x - gp_full_size.x) - s_gp_ctr.x) < fabs(suncw.x - s_gp_ctr.x))
+          suncw.x = suncw.x - gp_full_size.x;
+        if(fabs((suncw.y + gp_full_size.y) - s_gp_ctr.y) < fabs(suncw.y - s_gp_ctr.y))
+          suncw.y = suncw.y + gp_full_size.y;
+        else if(fabs((suncw.y - gp_full_size.y) - s_gp_ctr.y) < fabs(suncw.y - s_gp_ctr.y))
+          suncw.y = suncw.y - gp_full_size.y;
+      }
+    
+      float dst = taMath_float::euc_dist(suncw.x, suncw.y, s_gp_ctr.x, s_gp_ctr.y);
+      unwt = taMath_float::gauss_den_nonorm(dst, gp_eff_sig);
+    }
+
+    float wt = gwt * unwt;
     wt = wt_range.min + wt_range.range * wt;
 
     if(set_scale) {

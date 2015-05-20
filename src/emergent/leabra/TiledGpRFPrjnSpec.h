@@ -44,7 +44,8 @@ public:
   bool		reciprocal;		// if true, make the appropriate reciprocal connections for a backwards projection from recv to send
   bool          share_cons;             // units in unit groups after the first unit group share connection values (weights etc) with those in the first unit group -- generally only works if wrap is true so that all units have same scope and order of connectivity
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts how to initialize the random initial weights
-  float		gauss_sig;		// #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
+  float		gauss_sig;		// #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN gaussian sigma (width) for the full projection distance, in normalized units where entire distance across projection onto the sending layer is 1.0 -- use -1 to turn off gaussian at this level -- see gp_gauss_sig for gaussian function for each sub group
+  float		gp_gauss_sig;		// #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN gaussian sigma (width) for the individual unit groups within the sending layers, in normalized units where entire distance across unit group is 1.0 -- use -1 to turn off gaussian at this level -- see gauss_sig for gaussian function for entire projection
   float         gauss_ctr_mv;           // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN how much the center of the gaussian moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field
   bool          wrap_wts;               // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN wrap the initial weights around the receptive field
   MinMaxRange	wt_range;
