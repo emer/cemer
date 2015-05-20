@@ -136,19 +136,27 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
         ++it; continue;
       }
     }
-    if(!tree_view->isItemExpanded(item)) {
-      // do full recursive search if not already expanded
-      sub_srch.Reset();
-      tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens); // go with defaults for now
-      for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
-        taBase* fnd = sub_srch.FastEl(k);
-        found_items.Add(fnd);
+    if (text_only) {
+      if(tab->SearchTestItem_impl(srch, text_only, true, case_sens)) {       // otherwise just test this one item
+        srch_found.append(item);
+        found_items.Add(tab);
       }
-      sub_srch.Reset();
     }
-    else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens)) {       // otherwise just test this one item
-      srch_found.append(item);
-      found_items.Add(tab);
+    else {
+      if(!tree_view->isItemExpanded(item)) {
+        // do full recursive search if not already expanded
+        sub_srch.Reset();
+        tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens); // go with defaults for now
+        for(int k=0; k<sub_srch.size; k++) { // transfer to our ref list
+          taBase* fnd = sub_srch.FastEl(k);
+          found_items.Add(fnd);
+        }
+        sub_srch.Reset();
+      }
+      else if(tab->SearchTestItem_impl(srch, text_only, true, case_sens)) {       // otherwise just test this one item
+        srch_found.append(item);
+        found_items.Add(tab);
+      }
     }
     ++it;
   }
