@@ -765,13 +765,13 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
 
   QCoreApplication* app = QCoreApplication::instance();
-  iMainWindowViewer* mvw = viewerWindow();
-  if(mvw) {
-    mvw->FocusIsMiddlePanel();
+  // iMainWindowViewer* mvw = viewerWindow();
+  // if(mvw) {
+  //   mvw->FocusIsMiddlePanel();
 //    taMisc::DebugInfo("taiEditorOfClass - would call nav");
 //    if(mvw->KeyEventFilterWindowNav(obj, e))
 //      return true;
-  }
+  // }
 
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
   if(ctrl_pressed && ((e->key() == Qt::Key_Return) || (e->key() == Qt::Key_Enter))) {
@@ -779,8 +779,8 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
       Ok();
     else
       Apply();
-    if(mvw)
-      mvw->FocusCurTreeView(); // return focus back to current browser
+    // if(mvw)
+    //   mvw->FocusCurTreeView(); // return focus back to current browser
     return true;
   }
   // for edit dialogs -- arrows = tabs..
@@ -830,8 +830,8 @@ bool taiEditorOfClass::eventFilter(QObject* obj, QEvent* event) {
       Cancel();
     else
       Revert();                 // do it!
-    if(mvw)
-      mvw->FocusCurTreeView(); // return focus back to current browser
+    // if(mvw)
+    //   mvw->FocusCurTreeView(); // return focus back to current browser
     return true;
   }
   return QObject::eventFilter(obj, event);
