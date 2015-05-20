@@ -46,6 +46,7 @@ public:
   InitWtsType   wts_type;               // #CONDSHOW_ON_init_wts how to initialize the random initial weights
   float		gauss_sig;		// #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN gaussian sigma (width), in normalized units where entire distance across sending layer is 1.0
   float         gauss_ctr_mv;           // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN how much the center of the gaussian moves with respect to the position of the receiving unit within its unit group -- 1.0 = centers span the entire range of the receptive field
+  bool          wrap_wts;               // #CONDSHOW_ON_init_wts&&wts_type:GAUSSIAN wrap the initial weights around the receptive field
   MinMaxRange	wt_range;
   // #CONDSHOW_ON_init_wts range of weakest (min) to strongest (max) weight values generated -- for bimodal, min and max are the two means of the bimodal distribution
   float         p_high;

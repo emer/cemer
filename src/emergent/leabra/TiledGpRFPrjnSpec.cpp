@@ -33,6 +33,7 @@ void TiledGpRFPrjnSpec::Initialize() {
   wts_type = GAUSSIAN;
   gauss_sig = 1.0f;
   gauss_ctr_mv = 0.5f;
+  wrap_wts = false;
   wt_range.min = 0.1f;
   wt_range.max = 0.9f;
   p_high = 0.25f;
@@ -276,14 +277,16 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     float su_y = ug_y * send_lay->un_geom.y + un_y;
 
     // wrap coords around to get min dist from ctr either way
-    if(fabs((su_x + full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
-      su_x = su_x + full_size.x;
-    else if(fabs((su_x - full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
-      su_x = su_x - full_size.x;
-    if(fabs((su_y + full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
-      su_y = su_y + full_size.y;
-    else if(fabs((su_y - full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
-      su_y = su_y - full_size.y;
+    if(wrap_wts) {
+      if(fabs((su_x + full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
+        su_x = su_x + full_size.x;
+      else if(fabs((su_x - full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
+        su_x = su_x - full_size.x;
+      if(fabs((su_y + full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
+        su_y = su_y + full_size.y;
+      else if(fabs((su_y - full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
+        su_y = su_y - full_size.y;
+    }
     
     float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
