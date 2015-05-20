@@ -245,7 +245,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
 
   // todo: need to fix for reciprocal?
 
-  taVector2i full_size = send_lay->un_geom * send_gp_size;
+  taVector2f full_size = send_lay->un_geom * send_gp_size;
   taVector2f half_size = full_size;
   half_size *= 0.5f;
 
@@ -260,7 +260,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   taVector2f ru_nrm_pos = gauss_ctr_mv * (((taVector2f)ru_pos - rugpctr) / rugpctr);
 
   taVector2f s_ctr = (ru_nrm_pos * half_size) + half_size;
-  
+
   for(int i=0; i<cg->size; i++) {
     // note: these are organized within unit group first, then by groups
     int ug_idx = i / send_lay->un_geom.n; // which unit group, ordinally
@@ -272,9 +272,19 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     int ug_x = ug_idx % send_gp_size.x;
     int ug_y = ug_idx / send_gp_size.x;
 
-    int su_x = ug_x * send_lay->un_geom.x + un_x;
-    int su_y = ug_y * send_lay->un_geom.y + un_y;
+    float su_x = ug_x * send_lay->un_geom.x + un_x;
+    float su_y = ug_y * send_lay->un_geom.y + un_y;
 
+    // wrap coords around to get min dist from ctr either way
+    if(fabs((su_x + full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
+      su_x = su_x + full_size.x;
+    else if(fabs((su_x - full_size.x) - s_ctr.x) < fabs(su_x - s_ctr.x))
+      su_x = su_x - full_size.x;
+    if(fabs((su_y + full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
+      su_y = su_y + full_size.y;
+    else if(fabs((su_y - full_size.y) - s_ctr.y) < fabs(su_y - s_ctr.y))
+      su_y = su_y - full_size.y;
+    
     float dst = taMath_float::euc_dist(su_x, su_y, s_ctr.x, s_ctr.y);
     float wt = taMath_float::gauss_den_nonorm(dst, eff_sig);
     wt = wt_range.min + wt_range.range * wt;

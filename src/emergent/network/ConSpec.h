@@ -63,6 +63,7 @@ public:
   float         min;            // #CONDSHOW_OFF_type:NONE,LT_MAX minimum weight value (if applicable)
   float         max;            // #CONDSHOW_OFF_type:NONE,GT_MIN maximum weight value (if applicable)
   bool          sym;            // if true, also symmetrize weights with those in reciprocal connections, during weight initialization process -- this is automatically turned off if the random variance (rnd.var) in the weights is set to 0 (e.g., for fixed weight patterns)
+  bool          sym_fm_top;     // #CONDSHOW_ON_sym if symmetrizing, and this is true, then top-down weights end up driving the symmetrized weights -- otherwise the bottom-up end of driving (default)
 
   void  ApplyMinLimit(float& wt)        { if(wt < min) wt = min; }
   void  ApplyMaxLimit(float& wt)        { if(wt > max) wt = max; }
@@ -74,10 +75,9 @@ public:
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 
-  SIMPLE_COPY(WeightLimits);
-  TA_BASEFUNS(WeightLimits);
+  TA_SIMPLE_BASEFUNS(WeightLimits);
 private:
-  void  Initialize()            { type = NONE; min = -1.0f; max = 1.0f; sym = false; }
+  void  Initialize();
   void  Destroy()               { };
 };
 

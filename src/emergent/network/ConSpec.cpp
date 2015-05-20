@@ -24,6 +24,14 @@ TA_BASEFUNS_CTORS_LITE_DEFN(ConSpec_SPtr);
 TA_BASEFUNS_CTORS_DEFN(WeightLimits);
 SMARTREF_OF_CPP(ConSpec);
 
+void WeightLimits::Initialize() {
+  type = NONE;
+  min = -1.0f;
+  max = 1.0f;
+  sym = false;
+  sym_fm_top = false;
+}
+
 void ConSpec::Initialize() {
   min_obj_type = &TA_Connection;
   rnd.type = Random::UNIFORM;
@@ -98,7 +106,10 @@ void ConSpec::ApplySymmetry_r(ConGroup* cg, Network* net, int thr_no) {
     if(rrcg && con_idx >= 0) {
       ConSpec* rrcs = rrcg->GetConSpec();
       if(rrcs && rrcs->wt_limits.sym) {
-        cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // we copy, for memory streaming
+        if(wt_limits.sym_fm_top)
+          rrcg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT); // todo: not sure this order is right
+        else
+          cg->OwnCn(i, WT) = rrcg->OwnCn(con_idx, WT); // theoretically should be opp of s
       }
     }
   }
@@ -114,7 +125,10 @@ void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
     if(rscg && con_idx >= 0) {
       ConSpec* rscs = rscg->GetConSpec();
       if(rscs && rscs->wt_limits.sym) {
-        cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
+        if(wt_limits.sym_fm_top)
+          cg->OwnCn(i, WT) = rscg->OwnCn(con_idx, WT);
+        else
+          rscg->OwnCn(con_idx, WT) = cg->OwnCn(i, WT);
       }
     }
   }
