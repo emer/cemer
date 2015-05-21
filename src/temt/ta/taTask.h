@@ -24,8 +24,10 @@
 #include <taSmartPtrT>
 
 // member includes:
+#include <TimeUsedHR>
 
 // declare all other types mentioned but not required to include:
+class taThreadMgr;
 
 
 taTypeDef_Of(taTask);
@@ -35,9 +37,19 @@ class TA_API taTask: public taOBase {
 INHERITED(taOBase)
 public:
   int			task_id; // #READ_ONLY #SHOW #NO_COPY unique id per list of tasks -- typically one per thread
+  TimeUsedHR            wait_time; // amount of time spent in spin-lock wait
 
   virtual void		run() {} // must be overridden, to dispatch actual proc
   
+  void SyncSpin0(int usec_wait = 0);
+  // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
+  void SyncSpin1(int usec_wait = 0);
+  // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
+  void SyncSpin2(int usec_wait = 0);
+  // synchronize all the threads using atomic int counters and spin waiting (active looping) -- if usec_wait > 0, then sleep for given number of micro seconds during each wait loop
+
+  taThreadMgr*  mgr();
+
   int		GetIndex() const override {return task_id;}
   void		SetIndex(int val) override {task_id = val;}
   TA_BASEFUNS(taTask);

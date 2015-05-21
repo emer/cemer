@@ -84,6 +84,16 @@ public:
   QWaitCondition 	wait;
   // #IGNORE overall wait condition -- all threads are waiting for the wakeAll from this condition, unless they are actually running
 
+  QAtomicInt    sync_ctr0;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync_step0;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+
+  QAtomicInt    sync_ctr1;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync_step1;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+
+  QAtomicInt    sync_ctr2;       // #IGNORE for thread sync -- this is the counter that keeps incrementing 
+  QAtomicInt    sync_step2;      // #IGNORE for thread sync -- this determines the target count -- every call through Sync* increments this by 1
+
+  
   //////////////////////////////////////////////////////
   //		Main interface for users
 
@@ -95,6 +105,11 @@ public:
   virtual void	RunThreads();	// start the threads running their current task: NOTE this is ONLY called on the actual threads, and does not run the main thread
   virtual void	SyncThreads();	// synchronize the threads at the end of running to ensure everyone has finished their task and is ready to move on
   virtual void  SyncThreadsStart(); // synchronize all threads started -- after this call, all threads have started running
+
+  virtual void  SyncSpin(int thread_no, int sync_no = 0, int usec_wait = 0);
+  // #IGNORE synchronize all the threads using atomic int counters with an active spin loop -- it is a very good idea to increment the sync_no in the cycle 0,1,2,0,1,2 with subsequent calls to prevent any chance of lockup -- optional sleep for given number of micro seconds if usec_wait > 0 during each wait loop -- each thread must call this with its own thread_no at given point in code, to make sure all threads are synchronized -- MUST ONLY BE CALLED from methods that were invoked through Run() function in first place!!
+  virtual void  InitSyncCtrs();
+  // #IGNORE initialize the sync_* ctrs for SyncSpin -- called at start of Run
 
   virtual void	StartTimers();
   // Start accumulating timing information on all threads -- must be called *after* everything is initialized and ready to run

@@ -65,7 +65,18 @@ void taThreadMgr::UpdateAfterEdit_impl() {
   TestWarning(!task_type, "UAE", "task_type is still NULL -- this should have been set in the code -- please file a bug report");
 }
 
+void taThreadMgr::InitSyncCtrs() {
+  sync_ctr0 = 0;
+  sync_step0 = 0;
+  sync_ctr1 = 0;
+  sync_step1 = 0;
+  sync_ctr2 = 0;
+  sync_step2 = 0;
+}
+
+
 void taThreadMgr::InitAll() {
+  InitSyncCtrs();
   if((threads.size == n_threads-1) && (tasks.size == n_threads)) return; // fast bail if same
   InitThreads();
   CreateTasks();
@@ -408,3 +419,19 @@ void taThreadMgr::EndTimers(bool print_report) {
     cout << "wake in sync: " << n_wake_in_sync << " \t%: " << wake_in_sync_pct << endl;  
   }
 }
+
+void taThreadMgr::SyncSpin(int thread_no, int sync_no, int usec_wait) {
+  taTask* ntt = tasks[thread_no];
+  switch(sync_no) {
+  case 0:
+    ntt->SyncSpin0(usec_wait);
+    break;
+  case 1:
+    ntt->SyncSpin1(usec_wait);
+    break;
+  case 2:
+    ntt->SyncSpin2(usec_wait);
+    break;
+  }
+}
+
