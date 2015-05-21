@@ -45,6 +45,9 @@ iDataTableView::iDataTableView(QWidget* parent)
 
   row_header = new iDataTableRowHeaderView(this); // subclass header
   this->setVerticalHeader(row_header);
+  
+  connect(this, SIGNAL(doubleClicked(const QModelIndex&)), this, SLOT(doubleClicked(const QModelIndex&)) );
+
 }
 
 void iDataTableView::currentChanged(const QModelIndex& current, const QModelIndex& previous) {
@@ -101,8 +104,11 @@ void iDataTableView::EditAction(int ea) {
 
 void iDataTableView::ViewAction(int ea) {
   // only one action -- ignore arg
+  (void)ea;
+  
   DataTable* tab = this->dataTable(); // may not exist
-  if (!tab || !selectionModel()) return;
+  if (!tab || !selectionModel())
+    return;
   CellRange sel(selectionModel()->selectedIndexes());
   String str;
   for (int col = sel.col_fr; col <= sel.col_to; ++col) {
@@ -272,4 +278,12 @@ void iDataTableView::FillContextMenu_impl(ContextArea ca,
     taiWidgetMenu* menu, const CellRange& sel)
 {
   inherited::FillContextMenu_impl(ca, menu, sel);
+}
+
+void iDataTableView::doubleClicked(const QModelIndex& index) {
+  iDataTableModel* model = dataTable()->GetTableModel();
+  Qt::ItemFlags flags = model->flags(index);
+  if(!flags.testFlag(Qt::ItemIsEditable)) {
+    ViewAction(0);
+  }
 }

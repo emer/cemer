@@ -62,8 +62,12 @@ protected:
   void         dataChanged(const override QModelIndex& topLeft, const QModelIndex & bottomRight);
 #endif
 // refresh mat cell if in here
-  void         FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
-  void         RowColOp_impl(int op_code, const CellRange& sel) override;
+  void          FillContextMenu_impl(ContextArea ca, taiWidgetMenu* menu, const CellRange& sel) override;
+  void          RowColOp_impl(int op_code, const CellRange& sel) override;
+  
+public slots:
+  void          doubleClicked(const QModelIndex & index) override;
+
 
 };
 
