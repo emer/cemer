@@ -70,7 +70,7 @@ int iDialogChoice::ChoiceDialogSepBut(QWidget* parent_, const String& msg,
 bool iDialogChoice::ErrorDialog(QWidget* parent_, const char* msg,
   const char* title, bool copy_but_, bool cancel_errs_but_)
 {
-  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  // QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   String buts;
   if(cancel_errs_but_)
     buts = "Cancel Remaining Error Dialogs" + delimiter + "OK";
@@ -79,7 +79,7 @@ bool iDialogChoice::ErrorDialog(QWidget* parent_, const char* msg,
   dlg->setIcon(QMessageBox::Critical);
   dlg->setWindowModality(Qt::ApplicationModal);
   int chs = dlg->exec();
-  QApplication::restoreOverrideCursor();
+  // QApplication::restoreOverrideCursor();
   delete dlg;
   return chs == 0;              // true if cancel
 }
