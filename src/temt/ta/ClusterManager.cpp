@@ -36,6 +36,8 @@
 
 ClusterManager::Exception::Exception(const char *msg)
   : std::runtime_error(msg) {
+  if(taiMisc::busy_count > 0)   // if we excepted
+    taMisc::DoneBusy();
   taMisc::Error(msg);
 }
 
