@@ -103,7 +103,7 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
     & QStyle::State_Selected)) */
     // note: only make it actual ro color if ro (not for "(matrix)" cells)
     if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
-      return QColor(Qt::lightGray);
+      return QColor(247, 247, 247);  // very light gray
     break;
   case Qt::TextColorRole: { // QColor: color of text
     if (col->is_matrix)

@@ -1084,10 +1084,6 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
-  // TODO - make all columns readonly or add means to make table guireadonly
-  // and use this to ghost the column menu items that don't make sense for readonly
-//  dc->SetColFlag(DataCol::READ_ONLY);
-  
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
   dc = dt.FindMakeCol("params", VT_STRING);
@@ -1176,6 +1172,13 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->desc = "svn revision for the original job submission";
   dc = dt.FindMakeCol("submit_job", VT_STRING);
   dc->desc = "index of job number within a given submission -- equal to the row number of the original set of jobs submitted in submit_svn jobs";
+  
+  for (int i=0; i<dt.data.size; i++) {
+    dc = dt.data.SafeEl(i);
+    dc->SetColFlag(DataCol::READ_ONLY);
+  }
+  dc = dt.FindColName("notes");
+  dc->ClearColFlag(DataCol::READ_ONLY);
 }
 
 void ClusterRun::FormatFileListTable(DataTable& dt) {
@@ -1223,7 +1226,11 @@ void ClusterRun::FormatFileListTable(DataTable& dt) {
 
   dc = dt.FindMakeCol("file_path", VT_STRING);
   dc->desc = "full path to file on local file system, including all parent directories and name of file -- takes you directly to the file";
-
+  
+  for (int i=0; i<dt.data.size; i++) {
+    dc = dt.data.SafeEl(i);
+    dc->SetColFlag(DataCol::READ_ONLY);
+  }
 }
 
 void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
@@ -1248,6 +1255,11 @@ void ClusterRun::FormatClusterInfoTable(DataTable& dt) {
 
   dc = dt.FindMakeCol("start_time", VT_STRING);
   dc->desc = "timestamp for when the job was submitted or started running";
+  
+  for (int i=0; i<dt.data.size; i++) {
+    dc = dt.data.SafeEl(i);
+    dc->SetColFlag(DataCol::READ_ONLY);
+  }
 }
 
 String
