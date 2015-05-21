@@ -178,7 +178,7 @@ void VTAUnitSpec::Compute_Da(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) 
     lay->SetUserData("burst_da", burst_da);
     lay->SetUserData("dip_da", dip_da);
     lay->SetUserData("pos_pv", pospv);
-    lay->SetUserData("vs_patch_indir_pos", vspvi);
+    lay->SetUserData("vs_patch_dir_pos", vspvi);
     lay->SetUserData("pospv_da", pospv_da);
     lay->SetUserData("net_block", net_block);
     lay->SetUserData("net_da", net_da);

@@ -28,6 +28,7 @@ void LHbRMTgGains::Initialize() {
   patch_ind = 1.0f;
   matrix = 1.0f;
   matrix_td = false;
+  rec_data = false;
 }
 
 void LHbRMTgGains::Defaults_init() {
@@ -198,6 +199,20 @@ void LHbRMTgUnitSpec::Compute_NetinRaw(LeabraUnitVars* u, LeabraNetwork* net, in
   pv_pos_net = MAX(0.0f, pv_pos_net);
 
   u->net_raw = gains.all * (matrix_net + pv_neg_net + pv_pos_net);
+  
+  if(gains.rec_data) {
+    LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
+    LeabraLayer* lay = un->own_lay();
+    lay->SetUserData("pv_pos", pv_pos);
+    lay->SetUserData("patch_dir", patch_dir);
+    lay->SetUserData("pv_pos_net", pv_pos_net);
+    lay->SetUserData("pv_neg", pv_neg);
+    lay->SetUserData("patch_ind", patch_ind);
+    lay->SetUserData("pv_neg_net", pv_neg_net);
+    lay->SetUserData("matrix_dir", matrix_dir);
+    lay->SetUserData("matrix_ind", matrix_ind);
+    lay->SetUserData("matrix_net", matrix_net);
+  }
 }
 
 void LHbRMTgUnitSpec::Quarter_Final(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
