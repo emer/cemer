@@ -174,12 +174,8 @@ void ProgVar::Copy_(const ProgVar& cp) {
     }
   }
   SetFlagsByOwnership();
-  if(objs_ptr) {
-    Program* myprg = (Program*)GetOwner(&TA_Program);
-    Program* othprg = (Program*)cp.GetOwner(&TA_Program);
-    if(myprg == othprg)
-      objs_ptr = false; // if in same program, then it is a duplicate and cannot be objs_ptr
-  }
+  objs_ptr = false; // only the original var can have special relationship with object
+  object_val.set(cp.object_val.ptr());
 }
 
 bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
