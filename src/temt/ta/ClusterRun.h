@@ -126,7 +126,7 @@ public:
   virtual void  Kill();
   // #BUTTON #CONFIRM #GHOST_ON_enable_kill:false running jobs in the jobs_running datatable (must select rows for jobs in gui)
   virtual void  LoadData(bool remove_existing = false);
-  // #BUTTON #GHOST_ON_enable_load:false load the data for the selected rows in the jobs_running or jobs_done or file_list data tables -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
+  // #BUTTON #GHOST_ON_enable_load:false load the data for the selected rows in the jobs_running, jobs_done or file_list data tables (all rows if none selected) -- loads each of the job's data into data.ClusterRun datatables with file name = tag, and columns added for each of the parameter values that were set in the command -- if remove_existing is set, any existing files are removed prior to loading the new ones
   virtual void  SaveJobParams();
   // #MENU_BUTTON #MENU_ON_Jobs save the parameters for selected job(s) in jobs_running, jobs_done or jobs_archive into new ParamSet saved parameters under .param_sets -- convenient way to save different sets of good parameters for later reference -- automatically named with the job name and comments in the desc field
   virtual void  UpdtNotes();
