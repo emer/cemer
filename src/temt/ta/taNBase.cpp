@@ -67,6 +67,12 @@ bool taNBase::SetCopyName(const taBase& cp) {
   if(dynamic_cast<const taNBase&>(cp).name.empty())
     return false;
   
+  taProject* this_proj = GET_OWNER(this, taProject);
+  taProject* cp_proj = GET_OWNER(&cp, taProject);
+  if(this_proj != cp_proj) {
+    return false;
+  }
+  
   String tmp_name = dynamic_cast<const taNBase&>(cp).name;
   String root_name = dynamic_cast<const taNBase&>(cp).name;
   if (tmp_name.contains("_copy")) {
