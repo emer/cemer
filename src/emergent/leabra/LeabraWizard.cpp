@@ -465,9 +465,15 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
   deep_prjn->send_gp_skip = 2;
   deep_prjn->send_gp_start = 0;
   deep_prjn->wrap = true;
-  deep_prjn->wts_type = TiledGpRFPrjnSpec::GAUSSIAN;
-  deep_prjn->gauss_sig = 0.3f;
-  deep_prjn->gauss_ctr_mv = 0.8f;
+  deep_prjn->full_gauss.on = true;
+  deep_prjn->full_gauss.sigma = 1.2f;
+  deep_prjn->full_gauss.wrap_wts = false;
+  deep_prjn->full_gauss.ctr_mv = 0.8f;
+  deep_prjn->gp_gauss.on = true;
+  deep_prjn->gp_gauss.sigma = 1.2f;
+  deep_prjn->gp_gauss.wrap_wts = true;
+  deep_prjn->gp_gauss.ctr_mv = 1.0f;
+
   deep_prjn->wt_range.min = 0.3f;
   deep_prjn->wt_range.max = 0.7f;
 

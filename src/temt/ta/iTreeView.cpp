@@ -499,12 +499,12 @@ void iTreeView::focusInEvent(QFocusEvent* ev) {
   inherited::focusInEvent(ev); // prob does nothing
   if(main_window) {
     main_window->cur_tree_view = this; // always overwrite with current
-    // if(this == main_window->GetMainTreeView()) {
-    //   main_window->FocusIsLeftBrowser();
-    // }
-    // else {                      // assume prog editor!
-    //   main_window->FocusIsMiddlePanel(iMainWindowViewer::PROG_TREE);
-    // }
+    if(this == main_window->GetMainTreeView()) {
+      main_window->FocusIsLeftBrowser(); // this just records that this is active..
+    }
+    else {                      // assume prog editor!
+      main_window->FocusIsMiddlePanel(iMainWindowViewer::PROG_TREE);
+    }
   }
   Emit_GotFocusSignal();
 }

@@ -102,11 +102,12 @@ bool taiEditorOfDoc::eventFilter(QObject* obj, QEvent* event) {
   QKeyEvent* e = static_cast<QKeyEvent *>(event);
 
   iMainWindowViewer* mvw = viewerWindow();
-  // if(mvw) {
-  //   mvw->FocusIsMiddlePanel();
+  if(mvw) {
+    if(host_type != HT_DIALOG)
+      mvw->FocusIsMiddlePanel();
 //    if(mvw->KeyEventFilterWindowNav(obj, e))
 //      return true;
-  // }
+  }
 
   bool ctrl_pressed = taiMisc::KeyEventCtrlPressed(e);
 
@@ -116,8 +117,9 @@ bool taiEditorOfDoc::eventFilter(QObject* obj, QEvent* event) {
       Ok();
     else
       Apply();
-    // if(mvw)
-    //   mvw->FocusCurTreeView(); // return focus back to current browser
+    if(host_type != HT_DIALOG && mvw) {
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    }
     return true;
   }
   if(e->key() == Qt::Key_Escape) {
@@ -125,8 +127,9 @@ bool taiEditorOfDoc::eventFilter(QObject* obj, QEvent* event) {
       Cancel();
     else
       Revert();			// do it!
-    // if(mvw)
-    //   mvw->FocusCurTreeView(); // return focus back to current browser
+    if(host_type != HT_DIALOG && mvw) {
+      mvw->FocusCurTreeView(); // return focus back to current browser
+    }
     return true;
   }
   return QObject::eventFilter(obj, event);

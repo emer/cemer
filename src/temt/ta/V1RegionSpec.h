@@ -52,11 +52,12 @@ public:
   virtual void	GridFilters(float_Matrix& fltrs, DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable plot the filters into data table and generate a grid view (reset any existing data first)
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1GaborSpec);
 protected:
   void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 taTypeDef_Of(V1sNeighInhib);
@@ -71,11 +72,12 @@ public:
 
   int		tot_ni_len;	// #READ_ONLY total length of neighborhood inhibition stencils = 2 * neigh_inhib_d + 1
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1sNeighInhib);
 protected:
   void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 taTypeDef_Of(V1MotionSpec);
@@ -93,11 +95,12 @@ public:
 
   int		tot_width;	// #READ_ONLY total width = 1 + 2 * tuning_width
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1MotionSpec);
 protected:
   void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 taTypeDef_Of(V1ComplexSpec);
@@ -119,11 +122,12 @@ public:
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
   float		len_sum_norm;	// #READ_ONLY 1.0 / len_sum_width -- normalize sum
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1ComplexSpec);
 protected:
   void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 taTypeDef_Of(VisSpatIntegSpec);
@@ -140,11 +144,12 @@ public:
   taVector2i	spat_spacing;	// #READ_ONLY 1/2 overlap spacing with spat_rf
   taVector2i	spat_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(VisSpatIntegSpec);
 protected:
   void 	UpdateAfterEdit_impl();
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 taTypeDef_Of(V1RegionSpec);
@@ -332,8 +337,6 @@ public:
   virtual void	PlotSpacing(DataTable* disp_data, bool reset = true);
   // #BUTTON #NULL_OK_0 #NULL_TEXT_0_NewDataTable #ARGC_1 plot the arrangement of the filters (centers) in the data table using given value, and generate a grid view -- one row for each type of filter (scroll to see each in turn) -- light squares show bounding box of rf, skipping every other
 
-  void 	Initialize();
-  void	Destroy() { };
   TA_SIMPLE_BASEFUNS(V1RegionSpec);
 protected:
   float_Matrix* cur_out_acts;	// cur output activations -- for kwta thing
@@ -437,6 +440,9 @@ protected:
   // Spat Invar to output table
   virtual bool OptOutputToTable(DataTable* dtab, bool fmt_only = false);
   // optional to output table
+private:
+  void 	Initialize();
+  void	Destroy() { };
 };
 
 #endif // V1RegionSpec_h

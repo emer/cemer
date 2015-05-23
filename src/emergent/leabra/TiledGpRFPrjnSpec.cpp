@@ -21,23 +21,26 @@
 
 #include <LeabraConSpec>
 
+TA_BASEFUNS_CTORS_DEFN(GaussInitWtsSpec);
 TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
+
+void GaussInitWtsSpec::Initialize() {
+  on = true;
+  sigma = 1.0f;
+  wrap_wts = false;
+  ctr_mv = 0.8f;
+}
 
 void TiledGpRFPrjnSpec::Initialize() {
   send_gp_size = 4;
   send_gp_skip = 2;
-  send_gp_start = 0;
-  wrap = false;
+  send_gp_start = -1;
+  wrap = true;
   share_cons = false;
   reciprocal = false;
-  wts_type = GAUSSIAN;
-  gauss_sig = 1.0f;
-  gp_gauss_sig = -1.0f;
-  gauss_ctr_mv = 0.5f;
-  wrap_wts = false;
-  wt_range.min = 0.1f;
-  wt_range.max = 0.9f;
-  p_high = 0.25f;
+  full_gpwise = false;
+  wt_range.min = 0.4f;
+  wt_range.max = 0.6f;
 }
 
 void TiledGpRFPrjnSpec::UpdateAfterEdit_impl() {
@@ -63,10 +66,6 @@ void TiledGpRFPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   if(prjn->layer->units.leaves == 0) // an empty layer!
     return;
 
-  if(wts_type == BIMODAL_PERMUTED) {
-    high_low_wts.Reset();       // keep it fresh
-  }
-  
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
   if(reciprocal) {
@@ -232,12 +231,7 @@ void TiledGpRFPrjnSpec::Init_Weights_Prjn(Projection* prjn, ConGroup* cg,
                    "Init_Weights_Prjn", "set_scale can only apply to Leabra connections!"))
       return;
   }
-  if(wts_type == GAUSSIAN) {
-    Init_Weights_Gaussian(prjn, cg, net, thr_no);
-  }
-  else {
-    Init_Weights_BimodalPermuted(prjn, cg, net, thr_no);
-  }    
+  Init_Weights_Gaussian(prjn, cg, net, thr_no);
 }
 
 void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
@@ -245,18 +239,21 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
   Layer* recv_lay = prjn->layer;
   Layer* send_lay = prjn->from;
 
-  // todo: need to fix for reciprocal?
+  // if(reciprocal) {
+  //   recv_lay = prjn->from; // from perspective of non-recip!
+  //   send_lay = prjn->layer;
+  // }
 
-  taVector2f full_size = send_lay->un_geom * send_gp_size;
-  taVector2f half_size = full_size;
-  half_size *= 0.5f;
+  taVector2f un_full_size = send_lay->un_geom * send_gp_size;
+  taVector2f un_half_size = un_full_size;
+  un_half_size *= 0.5f;
 
-  float eff_sig = gauss_sig * half_size.x;
+  float full_eff_sig = full_gauss.sigma * un_half_size.x;
 
   taVector2f gp_full_size = send_lay->un_geom;
   taVector2f gp_half_size = gp_full_size;
   gp_half_size *= 0.5f;
-  float gp_eff_sig = gp_gauss_sig * gp_half_size.x;
+  float gp_eff_sig = gp_gauss.sigma * gp_half_size.x;
   
   taVector2i ru_pos;
   Unit* ru = cg->ThrOwnUn(net, thr_no);
@@ -264,10 +261,17 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
 
   taVector2f rugpctr = recv_lay->un_geom;
   rugpctr *= 0.5f;
-  taVector2f ru_nrm_pos = gauss_ctr_mv * (((taVector2f)ru_pos - rugpctr) / rugpctr);
+  taVector2f ru_nrm_pos = ((taVector2f)ru_pos - rugpctr) / rugpctr;
+  taVector2f ru_nrm_pos_full = ru_nrm_pos * full_gauss.ctr_mv;
+  taVector2f ru_nrm_pos_gp = ru_nrm_pos * gp_gauss.ctr_mv;
 
-  taVector2f s_ctr = (ru_nrm_pos * half_size) + half_size;
-  taVector2f s_gp_ctr = (ru_nrm_pos * gp_half_size) + gp_half_size;
+  taVector2f s_un_ctr;
+  if(full_gpwise)
+    s_un_ctr = un_half_size;
+  else
+    s_un_ctr = (ru_nrm_pos_full * un_half_size) + un_half_size;
+
+  taVector2f s_gp_ctr = (ru_nrm_pos_gp * gp_half_size) + gp_half_size;
 
   taVector2i unc, ugc;
   taVector2f suc;
@@ -285,30 +289,34 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
     ugc.x = ug_idx % send_gp_size.x;
     ugc.y = ug_idx / send_gp_size.x;
 
-    float gwt = 1.0f;
-    if(gauss_sig > 0.0f) {
-      suc = ugc * send_lay->un_geom + unc;
+    float fwt = 1.0f;
+    if(full_gauss.on) {
+      suc = ugc * send_lay->un_geom;
+      if(full_gpwise)
+        suc += gp_half_size;
+      else
+        suc += unc;
       sucw = suc;
       // wrap coords around to get min dist from ctr either way
-      if(wrap_wts) {
-        if(fabs((sucw.x + full_size.x) - s_ctr.x) < fabs(sucw.x - s_ctr.x))
-          sucw.x = sucw.x + full_size.x;
-        else if(fabs((sucw.x - full_size.x) - s_ctr.x) < fabs(sucw.x - s_ctr.x))
-          sucw.x = sucw.x - full_size.x;
-        if(fabs((sucw.y + full_size.y) - s_ctr.y) < fabs(sucw.y - s_ctr.y))
-          sucw.y = sucw.y + full_size.y;
-        else if(fabs((sucw.y - full_size.y) - s_ctr.y) < fabs(sucw.y - s_ctr.y))
-          sucw.y = sucw.y - full_size.y;
+      if(full_gauss.wrap_wts) {
+        if(fabs((sucw.x + un_full_size.x) - s_un_ctr.x) < fabs(sucw.x - s_un_ctr.x))
+          sucw.x = sucw.x + un_full_size.x;
+        else if(fabs((sucw.x - un_full_size.x) - s_un_ctr.x) < fabs(sucw.x - s_un_ctr.x))
+          sucw.x = sucw.x - un_full_size.x;
+        if(fabs((sucw.y + un_full_size.y) - s_un_ctr.y) < fabs(sucw.y - s_un_ctr.y))
+          sucw.y = sucw.y + un_full_size.y;
+        else if(fabs((sucw.y - un_full_size.y) - s_un_ctr.y) < fabs(sucw.y - s_un_ctr.y))
+          sucw.y = sucw.y - un_full_size.y;
       }
     
-      float dst = taMath_float::euc_dist(sucw.x, sucw.y, s_ctr.x, s_ctr.y);
-      gwt = taMath_float::gauss_den_nonorm(dst, eff_sig);
+      float dst = taMath_float::euc_dist(sucw.x, sucw.y, s_un_ctr.x, s_un_ctr.y);
+      fwt = taMath_float::gauss_den_nonorm(dst, full_eff_sig);
     }
 
-    float unwt = 1.0f;
-    if(gp_gauss_sig > 0.0f) {
+    float gwt = 1.0f;
+    if(gp_gauss.on) {
       suncw = unc;
-      if(wrap_wts) {
+      if(gp_gauss.wrap_wts) {
         if(fabs((suncw.x + gp_full_size.x) - s_gp_ctr.x) < fabs(suncw.x - s_gp_ctr.x))
           suncw.x = suncw.x + gp_full_size.x;
         else if(fabs((suncw.x - gp_full_size.x) - s_gp_ctr.x) < fabs(suncw.x - s_gp_ctr.x))
@@ -320,57 +328,12 @@ void TiledGpRFPrjnSpec::Init_Weights_Gaussian(Projection* prjn, ConGroup* cg,
       }
     
       float dst = taMath_float::euc_dist(suncw.x, suncw.y, s_gp_ctr.x, s_gp_ctr.y);
-      unwt = taMath_float::gauss_den_nonorm(dst, gp_eff_sig);
+      gwt = taMath_float::gauss_den_nonorm(dst, gp_eff_sig);
     }
 
-    float wt = gwt * unwt;
+    float wt = fwt * gwt;
     wt = wt_range.min + wt_range.range * wt;
 
-    if(set_scale) {
-      SetCnWtRnd(cg, i, net, thr_no);
-      SetCnScale(wt, cg, i, net, thr_no);
-    }
-    else {
-      SetCnWt(wt, cg, i, net, thr_no);
-    }
-  }
-}
-
-void TiledGpRFPrjnSpec::Init_Weights_BimodalPermuted(Projection* prjn, ConGroup* cg,
-                                                     Network* net, int thr_no) {
-  Layer* recv_lay = prjn->layer;
-  Layer* send_lay = prjn->from;
-
-  // todo: need to fix for reciprocal?
-
-  taVector2i full_size = send_lay->un_geom * send_gp_size;
-  int n_sz = full_size.Product();
-  
-  if(high_low_wts.size != n_sz) {
-    high_low_wts.SetSize(n_sz);
-    int n_on = (int)((float)n_sz * p_high);
-    if(n_on == 0) n_on = 1;
-    if(n_on > n_sz) n_on = n_sz;
-    int i;
-    for(i=0; i<n_on; i++) {
-      high_low_wts[i] = 1;
-    }
-    for(;i<n_sz;i++) {
-      high_low_wts[i] = 0;
-    }
-  }
-
-  high_low_wts.Permute();
-  
-  for(int i=0; i<cg->size; i++) {
-    int hilo = high_low_wts[i];
-    float wt;
-    if(hilo == 1) {
-      wt = wt_range.max;
-    }
-    else {
-      wt = wt_range.min;
-    }
     if(set_scale) {
       SetCnWtRnd(cg, i, net, thr_no);
       SetCnScale(wt, cg, i, net, thr_no);
