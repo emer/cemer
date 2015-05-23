@@ -190,6 +190,8 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
   if(!data_table || save_mode == NONE_SAVE) // bail now
     return false;
 
+  threads.InitAll();
+  
   if(save_mode == FIRST_ROW) {
     data_table->EnforceRows(1);
     data_table->WriteItem(0);
@@ -200,22 +202,16 @@ bool VisRegionSpecBase::FilterImage_impl(bool motion_only) {
   }
 
   if(input_adapt.on) {
-    int n_run = input_size.retina_size.Product();
-
-    threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-    threads.nibble_chunk = 1;     // small chunks
-
     cur_img = cur_img_r;
     cur_adapt = &cur_img_r_adapt;
-    ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
-                              &VisRegionSpecBase::InputAdapt_thread);
-    threads.Run(&ip_call, n_run);
+
+    IMG_THREAD_CALL(VisRegionSpecBase::InputAdapt_thread);
+
     if(region.ocularity == VisRegionParams::BINOCULAR) {
       cur_img = cur_img_l;
       cur_adapt = &cur_img_l_adapt;
-      ThreadImgProcCall ip_call((ThreadImgProcMethod)(VisRegionBaseMethod)
-                                &VisRegionSpecBase::InputAdapt_thread);
-      threads.Run(&ip_call, n_run);
+
+      IMG_THREAD_CALL(VisRegionSpecBase::InputAdapt_thread);
     }
   }
 
@@ -234,7 +230,36 @@ void VisRegionSpecBase::ResetAdapt() {
   }
 }
 
-void VisRegionSpecBase::InputAdapt_thread(int img_idx, int thread_no) {
+void VisRegionSpecBase::InputAdapt_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, input_size.retina_size, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      if(cur_img->dims() == 3) {
+        for(int c = 0; c<3; c++) {
+          float& ret_in = cur_img->FastEl3d(oc.x, oc.y, c);
+          float orig_in = ret_in;
+          float& adpt = cur_adapt->FastEl3d(oc.x, oc.y, c);
+          ret_in -= adpt;
+          if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
+          adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
+        }
+      }
+      else {
+        float& ret_in = cur_img->FastEl2d(oc.x, oc.y);
+        float orig_in = ret_in;
+        float& adpt = cur_adapt->FastEl2d(oc.x, oc.y);
+        ret_in -= adpt;
+        if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
+        adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
+      }
+    }
+  }
+#if 0
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(img_idx, input_size.retina_size.x);
   if(cur_img->dims() == 3) {
@@ -255,6 +280,7 @@ void VisRegionSpecBase::InputAdapt_thread(int img_idx, int thread_no) {
     if(ret_in < 0.0f) ret_in = 0.0f; // can't go any lower
     adpt += input_adapt.up_dt * orig_in - input_adapt.dn_dt * adpt;
   }
+#endif
 }
 
 bool VisRegionSpecBase::ColorRGBtoCMYK(float_Matrix& img) {

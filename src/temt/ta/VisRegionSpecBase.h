@@ -209,7 +209,7 @@ protected:
   virtual void IncrTime();
   // increment time one step -- move the CircMatrix indexes
 
-  virtual void 	InputAdapt_thread(int img_idx, int thread_no);
+  virtual void 	InputAdapt_thread(int thr_no);
   // adapt input image
 
   virtual void  ResetAdapt();

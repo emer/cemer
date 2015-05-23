@@ -18,77 +18,93 @@
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(ImgProcThreadBase);
-
 TA_BASEFUNS_CTORS_DEFN(ImgProcCallThreadMgr);
-
 TA_BASEFUNS_CTORS_DEFN(ImgProcCallTask);
 
+
 void ImgProcCallTask::Initialize() {
-  img_proc_call = NULL;
 }
 
 void ImgProcCallTask::Destroy() {
-  img_proc_call = NULL;
 }
 
 void ImgProcCallTask::run() {
   ImgProcCallThreadMgr* mg = mgr();
   ImgProcThreadBase* base = mg->img_proc();
 
-  // all nibbling all the time
-  const int nib_chnk = mg->nibble_chunk;
-  const int nib_stop = mg->n_cmp_units;
-
-  while(true) {
-    int nxt_uidx = mg->nibble_i.fetchAndAddOrdered(nib_chnk);
-    if(nxt_uidx >= nib_stop) break;
-    const int mx = MIN(nib_stop, nxt_uidx + nib_chnk);
-    for(int i=nxt_uidx; i <mx; i++) {
-      img_proc_call->call(base, i, task_id); // task id indicates threading, and which thread
-    }
-    if(mx == nib_stop) break;           // we're the last guy
-  }
+  meth_call.call(base, task_id); // task id indicates threading, and which thread
 }
 
 /////////////////////////////////
 //              Mgr
 
 void ImgProcCallThreadMgr::Initialize() {
-  on = true;
-  nibble_chunk = 1;
   task_type = &TA_ImgProcCallTask;
 }
 
 void ImgProcCallThreadMgr::Destroy() {
 }
 
-void ImgProcCallThreadMgr::Run(ThreadImgProcCall* img_proc_call, int n_cmp_un) {
-  InitAll();                    // make sure
-
-  n_cmp_units = n_cmp_un;
-
-  ImgProcThreadBase* base = img_proc();
-  if(!on || n_threads == 1 || n_cmp_units <= 2 * tasks.size) {
-    for(int i=0;i<n_cmp_units;i++) {
-      img_proc_call->call(base, i, -1); // -1 indicates no threading
-    }
+void ImgProcCallThreadMgr::UpdateAfterEdit_impl() {
+  inherited::UpdateAfterEdit_impl();
+  if(n_threads > 4)             // right now we can't handle more than 4
+    n_threads = 4;
+  if(n_threads % 2 != 0) {      // must be even number!!
+    n_threads = n_threads / 2;
+    n_threads *= 2;
+    n_threads = MAX(n_threads, 1);
   }
-  else {
-    // everything is done with nibbling -- so much more effective at load balancing
-    nibble_i = 0;
+}
 
-    // set the call
-    for(int i=0;i<tasks.size;i++) {
-      ImgProcCallTask* uct = (ImgProcCallTask*)tasks[i];
-      uct->img_proc_call = img_proc_call;
-    }
-
-    // then run the subsidiary guys
-    RunThreads();
-
-    tasks[0]->run();            // run our own set..
-
-    // finally, always need to sync at end to ensure that everyone is done!
-    SyncThreads();
+void ImgProcCallThreadMgr::Run(ThreadImgProcCall& meth_call) {
+  const int nt = tasks.size;
+  for(int i=0;i<nt;i++) {
+    ImgProcCallTask* ntt = (ImgProcCallTask*)tasks[i];
+    ntt->meth_call = meth_call;
   }
+
+  inherited::Run();
+}
+
+/////////////////////////////////
+//              Base
+
+static void split_geom_half(const int geom, const int thr, int& st, int& ed) {
+  const int hlf = geom / 2;
+  st = thr * hlf;
+  if(thr == 0)
+    ed = hlf;
+  else
+    ed = geom;
+}
+
+
+bool ImgProcThreadBase::GetThread2DGeom(int thr_no, const taVector2i& geom,
+                                        taVector2i& start, taVector2i& end) {
+  switch(threads.n_threads) {
+  case 1: {
+    start = 0;
+    end = geom;
+    break;
+  }
+  case 2: {
+    start.x = 0; end.x = geom.x; // full x
+    split_geom_half(geom.y, thr_no, start.y, end.y);
+    break;
+  }
+  case 4: {
+    int xhalf = thr_no % 2;
+    int yhalf = thr_no / 2;
+    split_geom_half(geom.x, xhalf, start.x, end.x);
+    split_geom_half(geom.y, yhalf, start.y, end.y);
+    break;
+  }
+  default: {
+    TestError(true, "GetThread2DGeom",
+              "thread count not supported yet for image processing!",
+              String(threads.n_threads));
+    return false;
+  }
+  }
+  return true;
 }

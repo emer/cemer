@@ -40,12 +40,12 @@ int iDialogChoice::ChoiceDialog(QWidget* parent_, const String& msg,
   iDialogChoice* dlg = new iDialogChoice(Question, QString(title),
     msg.toQString(), but_list,  parent_, false);
   // show the dialog
-  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  // QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
   dlg->resize( taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer) );
   int rval = dlg->exec();
-  QApplication::restoreOverrideCursor();
+  // QApplication::restoreOverrideCursor();
   delete dlg;
   return rval;
 }
@@ -56,12 +56,12 @@ int iDialogChoice::ChoiceDialogSepBut(QWidget* parent_, const String& msg,
   iDialog* dlg = new iDialogChoiceSepBut(Question, QString(title),
                                msg.toQString(), but_list_sep, but_list, parent_);
   // show the dialog
-  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  // QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   // dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
   // dlg->resize( taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer) );
   int rval = dlg->exec();
-  QApplication::restoreOverrideCursor();
+  // QApplication::restoreOverrideCursor();
   delete dlg;
   return rval;
 }
@@ -87,14 +87,14 @@ bool iDialogChoice::ErrorDialog(QWidget* parent_, const char* msg,
 void iDialogChoice::ConfirmDialog(QWidget* parent_, const char* msg,
   const char* title, bool copy_but_)
 {
-  QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
+  // QApplication::setOverrideCursor(QCursor(Qt::ArrowCursor)); // in case busy, recording, etc
   iDialogChoice* dlg = new iDialogChoice(Information, QString(title),
     QString(msg), "", parent_, copy_but_);
   dlg->setIcon(QMessageBox::Question);
   dlg->setWindowModality(Qt::ApplicationModal);
   dlg->resize( taiM->dialogSize(taiMisc::dlgMedium | taiMisc::dlgVer) );
   dlg->exec();
-  QApplication::restoreOverrideCursor();
+  // QApplication::restoreOverrideCursor();
   delete dlg;
 }
 

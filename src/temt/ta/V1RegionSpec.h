@@ -38,11 +38,11 @@ INHERITED(taOBase)
 public:
   float		gain;		// #DEF_2 overall gain multiplier applied after gabor filtering -- only relevant if not using renormalization (otherwize it just gets renormed away)
   int		n_angles;	// #DEF_4 number of different angles encoded -- currently only 4 is supported
-  int		filter_size;	// #DEF_6;12;18;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square
-  int		spacing;	// how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1, lower res can be increments therefrom
-  float		wvlen;		// #DEF_6;12;18;24 (values = filter_size work well) wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
-  float		gauss_sig_len;	// #DEF_0.25:0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
-  float		gauss_sig_wd;	// #DEF_0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
+  int		filter_size;	// #DEF_6;8;12;16;24 size of the overall filter -- number of pixels wide and tall for a square matrix used to encode the filter -- filter is centered within this square -- computational speed advantage for it to be a multiple of 4
+  int		spacing;	// how far apart to space the centers of the gabor filters -- 1 = every pixel, 2 = every other pixel, etc -- high-res should be 1 or 2, lower res can be increments therefrom
+  float		wvlen;		// #DEF_6;12;18;24  wavelength of the sine waves -- number of pixels over which a full period of the wave takes place (computation adds a 2 PI factor to translate into pixels instead of radians)
+  float		gauss_sig_len;	// #DEF_0.225;0.3 gaussian sigma for the length dimension (elongated axis perpendicular to the sine waves) -- normalized as a function of filter_size
+  float		gauss_sig_wd;	// #DEF_0.15;0.2 gaussian sigma for the width dimension (in the direction of the sine waves) -- normalized as a function of filter_size
   float		phase_off;	// #DEF_0;1.5708 offset for the sine phase -- can make it into a symmetric gabor by using PI/2 = 1.5708
   bool		circle_edge;	// #DEF_true cut off the filter (to zero) outside a circle of diameter filter_size -- makes the filter more radially symmetric
 
@@ -366,23 +366,23 @@ protected:
   virtual bool	V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_raw,
 				      float_Matrix* out, float_Matrix* adapt);
   // do simple filters, static only on current inputs -- dispatch threads
-  virtual void 	V1SimpleFilter_Static_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_Static_thread(int thr_no);
   // do simple filters, static only on current inputs -- do it
-  virtual void 	V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_Static_neighinhib_thread(int thr_no);
   // do neighborhood inhibition on simple filters
   virtual bool 	V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matrix* v1pi_out);
   // polarity invariance: max polarities of v1s_out 
-  virtual void 	V1SimpleFilter_PolInvar_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_PolInvar_thread(int thr_no);
   // polarity invariance: max polarities of v1s_out 
 
   virtual bool	V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, float_Matrix* maxout, 
 		      float_Matrix* still, float_Matrix* hist, CircMatrix* circ);
   // do simple filters, motion on current inputs -- dispatch threads
-  virtual void 	V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_Motion_thread(int thr_no);
   // do simple filters, motion on current inputs -- do it
-  virtual void 	V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_Motion_CpHist_thread(int thr_no);
   // do simple motion filters, copy v1s to history
-  virtual void 	V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no);
+  virtual void 	V1SimpleFilter_Motion_Still_thread(int thr_no);
   // do simple motion filters, compute non-moving (still) background
 
   virtual bool	V1ComplexFilter();
@@ -396,25 +396,25 @@ protected:
   // end stop
   virtual void  V1ComplexFilter_V1S_SqGp4(float_Matrix* v1s_in, float_Matrix* sg_out);
   // v1s sg4
-  virtual void 	V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no);
+  virtual void 	V1ComplexFilter_SqGp4_thread(int thr_no);
   // square-group4 if selected
-  virtual void 	V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no);
+  virtual void 	V1ComplexFilter_LenSum_thread(int thr_no);
   // length-sum
-  virtual void 	V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no);
+  virtual void 	V1ComplexFilter_EndStop_thread(int thr_no);
   // end stop
 
   virtual bool	SpatIntegFilter();
   // do spatial integration filters -- dispatch threads
-  virtual void 	SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no);
-  virtual void 	SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no);
+  virtual void 	SpatIntegFilter_V1S_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1PI_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1PI_SG_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1S_SqGp4_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1S_SG_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1C_thread(int thr_no);
 
   virtual bool	V1OptionalFilter();
   // do optional filters -- dispatch threads
-  virtual void 	V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no);
+  virtual void 	V1OptionalFilter_Energy_thread(int thr_no);
   // energy as max activation output of v1pi_out_r
 
   virtual bool V1SOutputToTable(DataTable* dtab, bool fmt_only = false);

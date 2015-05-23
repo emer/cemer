@@ -17,6 +17,8 @@
 #include <taProject>
 #include <DataTable>
 
+#include <ta_vector_ops.h>
+
 #include <taMisc>
 
 TA_BASEFUNS_CTORS_DEFN(DoGRegionSpec);
@@ -150,13 +152,7 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
     ColorRGBtoCMYK(*cur_img);   // precompute!
   }
 
-  int n_run = dog_img_geom.Product();
-
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(DoGRegionMethod)&DoGRegionSpec::DoGFilterImage_thread);
-  threads.Run(&ip_call, n_run);
+  IMG_THREAD_CALL(DoGRegionSpec::DoGFilterImage_thread);
 
   // renormalize -- todo: could thread this perhaps, but chunk size would have to be larger probably
   if(dog_renorm != NO_RENORM) {
@@ -166,41 +162,83 @@ bool DoGRegionSpec::DoGFilterImage(float_Matrix* image, float_Matrix* out) {
   return true;
 }
 
-void DoGRegionSpec::DoGFilterImage_thread(int dog_idx, int thread_no) {
-  taVector2i dc;                 // dog coords
-  dc.SetFmIndex(dog_idx, dog_img_geom.x);
-  taVector2i icc = input_size.border + dog_specs.spacing * dc; // image coords center
+void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, dog_img_geom, st, ed);
+
+  const float* flt = (const float*)dog_specs.net_filter.data();
+  int   flt_wd = dog_specs.filter_width; // half-width
+  int   flt_wdf = 2 * flt_wd + 1;        // full-width
+  int   flt_vecw = flt_wdf / 4;
+  flt_vecw *= 4;
+
+  taVector2i st_ne = dog_img_geom + (flt_wd - input_size.border); // no edge
+  taVector2i ed_ne = dog_img_geom - (flt_wd - input_size.border);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
 
   float_Matrix* dog_img = cur_img;
 
-  // x = on/off, y = color channel
-  taVector2i ic;         // image coord
-  for(int chan = 0; chan < dog_feat_geom.y; chan++) {
-    ColorChannel cchan = (ColorChannel)chan;
-    if(rgb_img) {
-      dog_img = GetImageForChan(cchan);
-    }
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      bool ne = y_ne && (oc.x >= st_ne.x && oc.x < ed_ne.x); // no edge
 
-    float cnv_sum = 0.0f;               // convolution sum
-    if(chan == 0 || rgb_img) {          // only rgb images if chan > 0
-      for(int yf = -dog_specs.filter_width; yf <= dog_specs.filter_width; yf++) {
-        for(int xf = -dog_specs.filter_width; xf <= dog_specs.filter_width; xf++) {
-          ic.y = icc.y + yf;
-          ic.x = icc.x + xf;
-          if(ic.WrapClip(wrap, input_size.retina_size)) {
-            if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+      taVector2i icc = input_size.border + dog_specs.spacing * oc; // image coords center
+
+      // x = on/off, y = color channel
+      for(int chan = 0; chan < dog_feat_geom.y; chan++) {
+        ColorChannel cchan = (ColorChannel)chan;
+        if(rgb_img) {
+          dog_img = GetImageForChan(cchan);
+        }
+
+        float cnv_sum = 0.0f;               // convolution sum
+        if(chan == 0 || rgb_img) {          // only rgb images if chan > 0
+          int fi = 0;
+          for(int yf = -flt_wd; yf <= flt_wd; yf++) {
+            if(ne) {
+              int img_st = dog_img->FastElIndex2d(icc.x - flt_wd, icc.y + yf);
+#ifdef TA_VEC_USE
+              int xf;
+              for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
+                Vec4f ivals;  ivals.load(dog_img->el + img_st + xf);
+                Vec4f fvals;  fvals.load(flt + fi);
+                Vec4f prod = ivals * fvals;
+                cnv_sum += horizontal_add(prod);
+              }
+              for(; xf < flt_wdf; xf++, fi++) { // get the residuals
+                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * flt[fi];
+              }
+#else              
+              for(int xf = 0; xf < flt_wdf; xf++, fi++) {
+                cnv_sum += dog_img->FastEl_Flat(img_st + xf) * flt[fi];
+              }
+#endif              
+            }
+            else {
+              for(int xf = -flt_wd; xf <= flt_wd; xf++, fi++) {
+                ic.y = icc.y + yf;
+                ic.x = icc.x + xf;
+                if(ic.WrapClip(wrap, input_size.retina_size)) {
+                  if(region.edge_mode == VisRegionParams::CLIP) continue;
+                }
+                cnv_sum += dog_img->FastEl2d(ic.x, ic.y) * flt[fi];
+              }
+            }
           }
-          cnv_sum += dog_specs.FilterPoint(xf, yf, dog_img->FastEl2d(ic.x, ic.y));
+        }
+        if(cnv_sum >= 0.0f) {
+          cur_out->FastEl4d(0, chan, oc.x, oc.y) = cnv_sum; // feat x = 0 = on
+          cur_out->FastEl4d(1, chan, oc.x, oc.y) = 0.0f;      // feat x = 1 = off
+        }
+        else {
+          cur_out->FastEl4d(0, chan, oc.x, oc.y) = 0.0f;      // feat x = 0 = on
+          cur_out->FastEl4d(1, chan, oc.x, oc.y) = -cnv_sum; // feat x = 1 = off
         }
       }
-    }
-    if(cnv_sum >= 0.0f) {
-      cur_out->FastEl4d(0, chan, dc.x, dc.y) = cnv_sum; // feat x = 0 = on
-      cur_out->FastEl4d(1, chan, dc.x, dc.y) = 0.0f;      // feat x = 1 = off
-    }
-    else {
-      cur_out->FastEl4d(0, chan, dc.x, dc.y) = 0.0f;      // feat x = 0 = on
-      cur_out->FastEl4d(1, chan, dc.x, dc.y) = -cnv_sum; // feat x = 1 = off
     }
   }
 }

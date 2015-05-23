@@ -30,7 +30,6 @@ void NetworkThreadTask::Destroy() {
 }
 
 void NetworkThreadTask::run() {
-  NetworkThreadMgr* mg = mgr();
   meth_call.call(network, task_id); // task id indicates threading, and which thread
 }
 
@@ -64,7 +63,6 @@ void NetworkThreadMgr::InitAll() {
 }
 
 void NetworkThreadMgr::Run(NetworkThreadCall& meth_call) {
-  Network* net = network();
   const int nt = tasks.size;
   for(int i=0;i<nt;i++) {
     NetworkThreadTask* ntt = (NetworkThreadTask*)tasks[i];

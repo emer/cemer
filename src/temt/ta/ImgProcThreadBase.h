@@ -21,6 +21,7 @@
 #include <taThreadMgr>
 
 // member includes:
+#include <taVector2i>
 
 // declare all other types mentioned but not required to include:
 class ImgProcThreadBase; // 
@@ -31,19 +32,21 @@ class ImgProcCallThreadMgr; //
 #ifdef __MAKETA__
 typedef void* ThreadImgProcCall;
 #else
-typedef taTaskMethCall2<ImgProcThreadBase, void, int, int> ThreadImgProcCall;
-typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int, int);
+typedef taTaskMethCall1<ImgProcThreadBase, void, int> ThreadImgProcCall;
+typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int);
 #endif
+
+#define IMG_THREAD_CALL(meth) { ThreadImgProcCall meth_call((ThreadImgProcMethod)(&meth));\
+  threads.Run(meth_call); }
 
 taTypeDef_Of(ImgProcCallTask);
 
 class TA_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
 public:
-  ThreadImgProcCall* img_proc_call;	// #IGNORE method to call on the object
+  ThreadImgProcCall    meth_call;	// #IGNORE method to call on the object
 
   void run() override;
-  // runs specified chunk of computation
 
   ImgProcCallThreadMgr* mgr() { return (ImgProcCallThreadMgr*)owner->GetOwner(); }
 
@@ -60,18 +63,15 @@ class TA_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
-  bool          on;             // turn on threading
-  int		nibble_chunk;	// #MIN_1 #DEF_1 #NO_SAVE #HIDDEN #READ_ONLY how many items to grab at a time to process -- set by each processing stage per its own optimized values
-
-  taAtomicInt	nibble_i;	// #IGNORE current nibble index -- atomic incremented by working threads to nibble away the rest..
-  int		n_cmp_units;	// #IGNORE number of compute units to perform -- max of the nibbling..
-
   ImgProcThreadBase*	img_proc() 	{ return (ImgProcThreadBase*)owner; }
 
-  void		Run(ThreadImgProcCall* img_proc_call, int n_cmp_un);
-  // #IGNORE run given function, splitting n_cmp_units computational units evenly across the available threads
+  void		Run(ThreadImgProcCall& meth_call);
+  // #IGNORE run given function, passing thread number as arg -- splits computation into n_threads components
   
   TA_BASEFUNS_NOCOPY(ImgProcCallThreadMgr);
+protected:
+  void UpdateAfterEdit_impl();
+  
 private:
   void	Initialize();
   void	Destroy();
@@ -85,9 +85,14 @@ class TA_API ImgProcThreadBase : public taNBase {
 public:
   ImgProcCallThreadMgr threads; // #CAT_Threads parallel threading of image processing computation
 
+  virtual bool GetThread2DGeom(int thr_no, const taVector2i& geom,
+                               taVector2i& start, taVector2i& end);
+  // get start and end coords for a given thread to process, based on total 2d geometry -- total number of threads guaranteed to be an even number!
+  
+  TA_SIMPLE_BASEFUNS(ImgProcThreadBase);
+private:
   void 	Initialize() { };
   void	Destroy() { };
-  TA_SIMPLE_BASEFUNS(ImgProcThreadBase);
 };
 
 #endif // ImgProcThreadBase_h

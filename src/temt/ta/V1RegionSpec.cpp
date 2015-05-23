@@ -31,11 +31,11 @@ TA_BASEFUNS_CTORS_DEFN(V1GaborSpec);
 void V1GaborSpec::Initialize() {
   gain = 2.0f;
   n_angles = 4;
-  filter_size = 6;
+  filter_size = 8;
   spacing = 1;
   wvlen = 6.0f;
-  gauss_sig_len = 0.3f;
-  gauss_sig_wd = 0.2f;
+  gauss_sig_len = 0.25f;
+  gauss_sig_wd = 0.15f;
   phase_off = 0.0f;
   circle_edge = true;
 }
@@ -994,14 +994,7 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   }
   cur_adapt = adapt;
 
-  int n_run = v1s_img_geom.Product();
-
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
-                            &V1RegionSpec::V1SimpleFilter_Static_thread);
-  threads.Run(&ip_call, n_run);
+  IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Static_thread);
 
   if(v1s_renorm != NO_RENORM) {            // always renorm prior to any kwta
     RenormOutput(v1s_renorm, cur_out);
@@ -1009,9 +1002,7 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
 
   if(v1s_kwta.On()) {
     if(v1s_neigh_inhib.on) { // pre-compute neigh inhib
-      ThreadImgProcCall ip_call_ni((ThreadImgProcMethod)(V1RegionMethod)
-                                   &V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread);
-      threads.Run(&ip_call_ni, n_run);       // computes v1s_nimax
+      IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread);
       v1s_kwta.Compute_Inhib_Extra(*out_raw, *out, v1s_gci, v1s_nimax);
     }
     else {
@@ -1022,109 +1013,150 @@ bool V1RegionSpec::V1SimpleFilter_Static(float_Matrix* image, float_Matrix* out_
   return true;
 }
 
-// todo: new threading strategy should be like in Network -- just call the 4 threads *once*
-// per action, and they each then do a *predefined* set of the filtering action, in a
-// single routine, which should also split up the space into non-border and border cases
-// and do vector ops(?) on the non-borders, or at least skip the wrap-clip computation
-// vector op requires x dimension of convolution filter to be even multiple of vect op
-// could always just use 4 and ensure filters have that multiplicity - probably good
-// enough.
+void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
-// and for the filters, probably want to try combining both tri and bi polar guys?
+  int flt_wdf = v1s_specs.filter_size; // full-width
+  int flt_wd;                          // half-width
+  if(flt_wdf % 2 == 0)
+    flt_wd = flt_wdf / 2;
+  else
+    flt_wd = (flt_wdf-1) / 2;
 
-void V1RegionSpec::V1SimpleFilter_Static_thread(int v1s_idx, int thread_no) {
-  taVector2i sc;                 // simple coords
-  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
-  taVector2i icc = input_size.border + v1s_specs.spacing * sc; // image coords center
+  int flt_vecw = flt_wdf / 4;
+  flt_vecw *= 4;
+
+  taVector2i in_off = input_size.border - flt_wd;
+  
+  taVector2i st_ne = v1s_img_geom - in_off; // skip over start..
+  taVector2i ed_ne = v1s_img_geom + in_off;
+  ed_ne -= flt_wdf;
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+
   float_Matrix* v1s_img = cur_img;
 
-  int ctr_off;
-  if(v1s_specs.filter_size % 2 == 0)
-    ctr_off = v1s_specs.filter_size / 2;
-  else
-    ctr_off = (v1s_specs.filter_size-1) / 2;
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      bool ne = y_ne && (oc.x >= st_ne.x && oc.x < ed_ne.x); // no edge
 
-  icc -= ctr_off;               // always offset
+      taVector2i icc = in_off + v1s_specs.spacing * oc; // image coords center
 
-  taVector2i ic;         // image coord
-  for(int chan = 0; chan < n_colors; chan++) {
-    ColorChannel cchan = (ColorChannel)chan;
-    if(rgb_img) {
-      v1s_img = GetImageForChan(cchan);
-    }
+      for(int chan = 0; chan < n_colors; chan++) {
+        ColorChannel cchan = (ColorChannel)chan;
+        if(rgb_img) {
+          v1s_img = GetImageForChan(cchan);
+        }
 
-    int fcy = chan * n_polarities; // starting of y axis -- add 1 for off-polarity
+        int fcy = chan * n_polarities; // starting of y axis -- add 1 for off-polarity
 
-    for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
-      float cnv_sum = 0.0f;             // convolution sum
-      if(chan == 0 || rgb_img) {                // only rgb images if chan > 0
-        for(int yf = 0; yf < v1s_specs.filter_size; yf++) {
-          for(int xf = 0; xf < v1s_specs.filter_size; xf++) {
-            ic.y = icc.y + yf;
-            ic.x = icc.x + xf;
-            if(ic.WrapClip(wrap, input_size.retina_size)) {
-              if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+        for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+          const float* flt = (const float*)v1s_gabor_filters.el +
+            v1s_gabor_filters.FastElIndex3d(0, 0, ang);
+        
+          float cnv_sum = 0.0f;               // convolution sum
+          if(chan == 0 || rgb_img) {          // only rgb images if chan > 0
+            int fi = 0;
+            for(int yf = 0; yf < flt_wdf; yf++) {
+              if(ne) {
+                int img_st = v1s_img->FastElIndex2d(icc.x, icc.y + yf);
+#ifdef TA_VEC_USE
+                int xf;
+                for(xf = 0; xf < flt_vecw; xf+= 4, fi+=4) {
+                  Vec4f ivals;  ivals.load(v1s_img->el + img_st + xf);
+                  Vec4f fvals;  fvals.load(flt + fi);
+                  Vec4f prod = ivals * fvals;
+                  cnv_sum += horizontal_add(prod);
+                }
+                for(; xf < flt_wdf; xf++, fi++) { // get the residuals
+                  cnv_sum += v1s_img->FastEl_Flat(img_st + xf) * flt[fi];
+                }
+#else              
+                for(int xf = 0; xf < flt_wdf; xf++, fi++) {
+                  cnv_sum += v1s_img->FastEl_Flat(img_st + xf) * flt[fi];
+                }
+#endif              
+              }
+              else {
+                for(int xf = 0; xf < flt_wdf; xf++, fi++) {
+                  ic.y = icc.y + yf;
+                  ic.x = icc.x + xf;
+                  if(ic.WrapClip(wrap, input_size.retina_size)) {
+                    if(region.edge_mode == VisRegionParams::CLIP) continue;
+                  }
+                  cnv_sum += v1s_img->FastEl2d(ic.x, ic.y) * flt[fi];
+                }
+              }
             }
-            cnv_sum += v1s_gabor_filters.FastEl3d(xf, yf, ang) * v1s_img->FastEl2d(ic.x, ic.y);
+          }
+          cnv_sum *= v1s_specs.gain;
+          if(cnv_sum >= 0.0f) {
+            if(v1s_adapt.on) {
+              float cs_orig = cnv_sum;
+              float& adpt = cur_adapt->FastEl4d(ang, fcy, oc.x, oc.y);
+              cnv_sum -= adpt;
+              if(cnv_sum < 0.0f) cnv_sum = 0.0f;
+              adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
+          
+              float& adpto = cur_adapt->FastEl4d(ang, fcy+1, oc.x, oc.y);
+              adpto -= v1s_adapt.dn_dt * adpto;
+            }
+            cur_out->FastEl4d(ang, fcy, oc.x, oc.y) = cnv_sum; // on-polarity
+            cur_out->FastEl4d(ang, fcy+1, oc.x, oc.y) = 0.0f;
+          }
+          else {
+            if(v1s_adapt.on) {
+              float cs_orig = -cnv_sum;
+              float& adpt = cur_adapt->FastEl4d(ang, fcy+1, oc.x, oc.y);
+              cnv_sum += adpt;
+              if(cnv_sum > 0.0f) cnv_sum = 0.0f;
+              adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
+          
+              float& adpto = cur_adapt->FastEl4d(ang, fcy, oc.x, oc.y);
+              adpto -= v1s_adapt.dn_dt * adpto;
+            }
+            cur_out->FastEl4d(ang, fcy, oc.x, oc.y) = 0.0f;
+            cur_out->FastEl4d(ang, fcy+1, oc.x, oc.y) = -cnv_sum; // off-polarity
           }
         }
-      }
-      cnv_sum *= v1s_specs.gain;
-      if(cnv_sum >= 0.0f) {
-        if(v1s_adapt.on) {
-          float cs_orig = cnv_sum;
-          float& adpt = cur_adapt->FastEl4d(ang, fcy, sc.x, sc.y);
-          cnv_sum -= adpt;
-          if(cnv_sum < 0.0f) cnv_sum = 0.0f;
-          adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
-          
-          float& adpto = cur_adapt->FastEl4d(ang, fcy+1, sc.x, sc.y);
-          adpto -= v1s_adapt.dn_dt * adpto;
-        }
-        cur_out->FastEl4d(ang, fcy, sc.x, sc.y) = cnv_sum; // on-polarity
-        cur_out->FastEl4d(ang, fcy+1, sc.x, sc.y) = 0.0f;
-      }
-      else {
-        if(v1s_adapt.on) {
-          float cs_orig = -cnv_sum;
-          float& adpt = cur_adapt->FastEl4d(ang, fcy+1, sc.x, sc.y);
-          cnv_sum += adpt;
-          if(cnv_sum > 0.0f) cnv_sum = 0.0f;
-          adpt += v1s_adapt.up_dt * cs_orig - v1s_adapt.dn_dt * adpt;
-          
-          float& adpto = cur_adapt->FastEl4d(ang, fcy, sc.x, sc.y);
-          adpto -= v1s_adapt.dn_dt * adpto;
-        }
-        cur_out->FastEl4d(ang, fcy, sc.x, sc.y) = 0.0f;
-        cur_out->FastEl4d(ang, fcy+1, sc.x, sc.y) = -cnv_sum; // off-polarity
       }
     }
   }
 }
 
-void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int v1s_idx, int thread_no) {
-  taVector2i sc;                 // simple coords
-  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
-  taVector2i oc;         // other coord
-  for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
-    for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-      float raw = cur_out->FastEl4d(ang, polclr, sc.x, sc.y);
-      float feat_inhib_max = 0.0f;
-      for(int lpdx=0; lpdx < v1s_neigh_inhib.tot_ni_len; lpdx++) { // go out to neighs
-        if(lpdx == v1s_neigh_inhib.inhib_d) continue;              // skip self
-        int xp = v1s_ni_stencils.FastEl3d(X,lpdx,ang);
-        int yp = v1s_ni_stencils.FastEl3d(Y,lpdx,ang);
-        oc.x = sc.x + xp;
-        oc.y = sc.y + yp;
-        if(oc.WrapClip(wrap, v1s_img_geom)) {
-          if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+        for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+          float raw = cur_out->FastEl4d(ang, polclr, oc.x, oc.y);
+          float feat_inhib_max = 0.0f;
+          for(int lpdx=0; lpdx < v1s_neigh_inhib.tot_ni_len; lpdx++) { // go out to neighs
+            if(lpdx == v1s_neigh_inhib.inhib_d) continue;              // skip self
+            int xp = v1s_ni_stencils.FastEl3d(X,lpdx,ang);
+            int yp = v1s_ni_stencils.FastEl3d(Y,lpdx,ang);
+            ic.x = oc.x + xp;
+            ic.y = oc.y + yp;
+            if(ic.WrapClip(wrap, v1s_img_geom)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue;
+            }
+            float oth_inp = cur_out->FastEl4d(ang, polclr, ic.x, ic.y); // other guy
+            float ogi = v1s_neigh_inhib.inhib_g * oth_inp;
+            feat_inhib_max = MAX(feat_inhib_max, ogi);
+          }
+          v1s_nimax.FastEl4d(ang, polclr, oc.x, oc.y) = feat_inhib_max;
         }
-        float oth_inp = cur_out->FastEl4d(ang, polclr, oc.x, oc.y); // other guy
-        float ogi = v1s_neigh_inhib.inhib_g * oth_inp;
-        feat_inhib_max = MAX(feat_inhib_max, ogi);
       }
-      v1s_nimax.FastEl4d(ang, polclr, sc.x, sc.y) = feat_inhib_max;
     }
   }
 }
@@ -1133,29 +1165,28 @@ bool V1RegionSpec::V1SimpleFilter_PolInvar(float_Matrix* v1s_out_in, float_Matri
   cur_in = v1s_out_in;          // using img for this..
   cur_out = v1pi_out;
 
-  int n_run = v1s_img_geom.Product();
-
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
-                            &V1RegionSpec::V1SimpleFilter_PolInvar_thread);
-  threads.Run(&ip_call, n_run);
+  IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_PolInvar_thread);
 
   return true;
 }
 
-void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int v1s_idx, int thread_no) {
-  taVector2i sc;                 // simple coords
-  sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
+void V1RegionSpec::V1SimpleFilter_PolInvar_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
 
-  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    float max_pi = 0.0f;
-    for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
-      float val = cur_in->FastEl4d(ang, polclr, sc.x, sc.y);
-      max_pi = MAX(max_pi, val);
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float max_pi = 0.0f;
+        for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+          float val = cur_in->FastEl4d(ang, polclr, oc.x, oc.y);
+          max_pi = MAX(max_pi, val);
+        }
+        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_pi;
+      }
     }
-    cur_out->FastEl4d(ang, 0, sc.x, sc.y) = max_pi;
   }
 }
 
@@ -1172,23 +1203,14 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
   cur_hist = hist;
   cur_circ = circ;
 
-  int n_run = v1s_img_geom.Product();
-
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
-  ThreadImgProcCall ip_cp_hist((ThreadImgProcMethod)(V1RegionMethod)&V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
-  threads.Run(&ip_cp_hist, n_run);
+  // todo: put all these into one _thread call!
+  IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread);
 
   if(!cur_mot_only) {
     // if motion only, then really just load the history for later processing!
-    ThreadImgProcCall ip_call_still((ThreadImgProcMethod)(V1RegionMethod)
-                                    &V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
-    threads.Run(&ip_call_still, n_run);
+    IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_Still_thread);
 
-    ThreadImgProcCall ip_call_mot((ThreadImgProcMethod)(V1RegionMethod)
-                                  &V1RegionSpec::V1SimpleFilter_Motion_thread);
-    threads.Run(&ip_call_mot, n_run);
+    IMG_THREAD_CALL(V1RegionSpec::V1SimpleFilter_Motion_thread);
 
     if(v1m_renorm != NO_RENORM) {
       RenormOutput(v1m_renorm, out);
@@ -1198,7 +1220,24 @@ bool V1RegionSpec::V1SimpleFilter_Motion(float_Matrix* in, float_Matrix* out, fl
   return true;
 }
 
-void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_no) {
+void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
+
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+  int mot_len = cur_circ->length;
+
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float in_val = cur_in->FastEl4d(ang, 0, oc.x, oc.y);
+        cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx) = in_val;
+      }
+    }
+  }
+#if 0
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
@@ -1210,9 +1249,54 @@ void V1RegionSpec::V1SimpleFilter_Motion_CpHist_thread(int v1s_idx, int thread_n
     float in_val = cur_in->FastEl4d(ang, 0, sc.x, sc.y);
     cur_hist->FastEl(ang, 0, sc.x, sc.y, cur_mot_idx) = in_val;
   }
+#endif
 }
 
-void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no) {
+void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
+
+  // todo: could optimize wrap clip out as function of v1s_motion.tuning_width
+  // also, make this more binary / strongly sigmoidal so it is a more robust signal
+  
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+  int mot_len = cur_circ->length;
+
+  taVector2i mo;                 // motion offset
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float cur_val = cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx);
+        float min_mot = cur_val;
+        if(cur_val >= v1s_motion.opt_thr) { // save time
+          int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
+          for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
+            float t_val = 0.0f;
+            for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
+              int twidx = v1s_motion.tuning_width+tw;
+              int xp = v1m_still_stencils.FastEl4d(X, twidx, mot, ang);
+              int yp = v1m_still_stencils.FastEl4d(Y, twidx, mot, ang);
+              mo.x = oc.x + xp;
+              mo.y = oc.y + yp;
+              if(mo.WrapClip(wrap, v1s_img_geom)) {
+                if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+              }
+              int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
+              float val = cur_hist->FastEl(ang, 0, mo.x, mo.y, midx);
+              val *= v1m_weights.FastEl1d(twidx);
+              t_val = MAX(t_val, val);
+            }
+            min_mot = MIN(min_mot, t_val); // MIN = fast product
+          }
+        }
+        cur_still->FastEl4d(ang, 0, oc.x, oc.y) = min_mot;
+      }
+    }
+  }
+#if 0
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
@@ -1246,9 +1330,70 @@ void V1RegionSpec::V1SimpleFilter_Motion_Still_thread(int v1s_idx, int thread_no
     }
     cur_still->FastEl4d(ang, 0, sc.x, sc.y) = min_mot;
   }
+#endif
 }
 
-void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
+void V1RegionSpec::V1SimpleFilter_Motion_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
+
+  // todo: could optimize wrap clip out as function of v1s_motion.tuning_width
+  // also, make this more binary / strongly sigmoidal so it is a more robust signal
+  
+  int cur_mot_idx = cur_circ->CircIdx_Last();
+  int mot_len = cur_circ->length;
+
+  taVector2i mo;                 // motion offset
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float max_out = 0.0f;
+        for(int speed = 0; speed < v1s_motion.n_speeds; speed++) { // speed
+          for(int dir = 0; dir < 2; dir++) { // directions
+            int moty = (speed * 2 + dir);
+
+            float cur_val = cur_hist->FastEl(ang, 0, oc.x, oc.y, cur_mot_idx);
+            float still_val = cur_still->FastEl4d(ang, 0, oc.x, oc.y);
+            cur_val -= still_val;   // subtract out still bg
+            cur_val = MAX(cur_val, 0.0f);
+            float min_mot = cur_val;
+            if(cur_val >= v1s_motion.opt_thr) { // save time
+              int mx_mot = mot_len-1; // don't go up to last value -- e.g., 2
+              for(int mot = 0; mot < mx_mot; mot++) { // time steps back in time -- e.g., 0, 1
+                float t_val = 0.0f;
+                for(int tw = -v1s_motion.tuning_width; tw <= v1s_motion.tuning_width; tw++) {
+                  int twidx = v1s_motion.tuning_width+tw;
+                  int xp = v1m_stencils.FastEl(X, twidx, mot, dir, ang, speed);
+                  int yp = v1m_stencils.FastEl(Y, twidx, mot, dir, ang, speed);
+
+                  mo.x = oc.x + xp;
+                  mo.y = oc.y + yp;
+                  if(mo.WrapClip(wrap, v1s_img_geom)) {
+                    if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+                  }
+                  int midx = cur_circ->CircIdx(mx_mot-1 - mot); // e.g., 1-0 = 1; 1-1 = 0,
+                  float val = cur_hist->FastEl(ang, 0, mo.x, mo.y, midx);
+                  float still_val = cur_still->FastEl4d(ang, 0, mo.x, mo.y);
+                  val -= still_val; // subtract out still bg
+                  val = MAX(val, 0.0f);
+                  val *= v1m_weights.FastEl1d(twidx);
+                  t_val = MAX(t_val, val);
+                }
+                min_mot = MIN(min_mot, t_val); // MIN = fast product
+              }
+            }
+            cur_out->FastEl4d(ang, moty, oc.x, oc.y) = min_mot;
+            max_out = MAX(max_out, min_mot);
+          }
+        }
+        cur_maxout->FastEl4d(ang, 0, oc.x, oc.y) = max_out;
+      }
+    }
+  }
+#if 0
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
@@ -1298,6 +1443,7 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
     }
     cur_maxout->FastEl4d(ang, 0, sc.x, sc.y) = max_out;
   }
+#endif
 }
 
 
@@ -1306,11 +1452,6 @@ void V1RegionSpec::V1SimpleFilter_Motion_thread(int v1s_idx, int thread_no) {
 
 bool V1RegionSpec::V1ComplexFilter() {
   bool v1c_sep_lr = (region.ocularity == VisRegionParams::BINOCULAR);
-
-  int n_run = v1c_img_geom.Product();
-
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
 
   if(v1c_specs.sg4) {
     V1ComplexFilter_SqGp4(&v1pi_out_r, &v1sg_out_r);
@@ -1348,22 +1489,16 @@ bool V1RegionSpec::V1ComplexFilter() {
 }
 
 void V1RegionSpec::V1ComplexFilter_SqGp4(float_Matrix* pi_in, float_Matrix* sg_out) {
-  int n_run_sg = v1sg_img_geom.Product();
   cur_in = pi_in;
   cur_out = sg_out;
-  ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
-                            &V1RegionSpec::V1ComplexFilter_SqGp4_thread);
-  threads.Run(&ip_call, n_run_sg);
+  IMG_THREAD_CALL(V1RegionSpec::V1ComplexFilter_SqGp4_thread);
 }
 
 void V1RegionSpec::V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_out) {
-  int n_run = v1c_img_geom.Product();
   cur_in = ls_in;
   cur_out = ls_out;
 
-  ThreadImgProcCall ip_call_ls((ThreadImgProcMethod)(V1RegionMethod)
-                               &V1RegionSpec::V1ComplexFilter_LenSum_thread);
-  threads.Run(&ip_call_ls, n_run);
+  IMG_THREAD_CALL(V1RegionSpec::V1ComplexFilter_LenSum_thread);
 
   // always renorm *prior* to any kwta
   if(v1c_renorm != NO_RENORM) {
@@ -1373,27 +1508,54 @@ void V1RegionSpec::V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_
 
 void V1RegionSpec::V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* ls_in,
                                            float_Matrix* es_out) {
-  int n_run = v1c_img_geom.Product();
   cur_in = pi_in;
   cur_in2 = ls_in;
   cur_out = es_out;
-  ThreadImgProcCall ip_call_es((ThreadImgProcMethod)(V1RegionMethod)
-                               &V1RegionSpec::V1ComplexFilter_EndStop_thread);
-  threads.Run(&ip_call_es, n_run);
+
+  IMG_THREAD_CALL(V1RegionSpec::V1ComplexFilter_EndStop_thread);
 }
 
 void V1RegionSpec::V1ComplexFilter_V1S_SqGp4(float_Matrix* v1s_in, float_Matrix* sg_out) {
-  int n_run_sg = v1sg_img_geom.Product();
-
   cur_in = v1s_in;
   cur_out = sg_out;
 
-  ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)
-                                      &V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
-  threads.Run(&ip_call_v1ssg_pre, n_run_sg);
+  IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
 }
 
-void V1RegionSpec::V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no) {
+void V1RegionSpec::V1ComplexFilter_SqGp4_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1sg_img_geom, st, ed);
+
+  taVector2i sc;                 // simple coord
+  taVector2i scc;                // simple coord, center
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i scs = v1c_specs.sg_spacing * oc; // v1s coords start
+      scs += v1c_specs.sg_border;
+      scs -= v1c_specs.sg_half; // convert to lower-left starting position, not center
+
+      for(int ang=0; ang<v1s_specs.n_angles; ang++) {
+        float max_rf = 0.0f;   // max over spatial rfield
+        int nctrs = v1sg_stencils.FastEl3d(2, 0, ang);         // length stored here
+        for(int ctrdx = 0; ctrdx < nctrs; ctrdx++) {
+          int xp = v1sg_stencils.FastEl3d(X, ctrdx, ang);
+          int yp = v1sg_stencils.FastEl3d(Y, ctrdx, ang);
+          sc.y = scs.y + yp;
+          sc.x = scs.x + xp;
+          scc = sc; // center
+          if(scc.WrapClip(wrap, v1s_img_geom)) {
+            if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+          }
+          float ctr_val = cur_in->FastEl4d(ang, 0, scc.x, scc.y); // gets from polinvar
+          max_rf = MAX(max_rf, ctr_val);
+        }
+        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_rf;
+      }
+    }
+  }
+#if 0
   taVector2i pc;                 // pre coords
   pc.SetFmIndex(v1sg_idx, v1sg_img_geom.x);
   taVector2i scs = v1c_specs.sg_spacing * pc; // v1s coords start
@@ -1419,9 +1581,36 @@ void V1RegionSpec::V1ComplexFilter_SqGp4_thread(int v1sg_idx, int thread_no) {
     }
     cur_out->FastEl4d(ang, 0, pc.x, pc.y) = max_rf;
   }
+#endif
 }
 
-void V1RegionSpec::V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no) {
+void V1RegionSpec::V1ComplexFilter_LenSum_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1c_img_geom, st, ed);
+
+  taVector2i ic;         // input = line coord
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float line_sum = 0.0f;
+        for(int lpdx=0; lpdx < v1c_specs.len_sum_width; lpdx++) {
+          ic.x = oc.x + v1ls_stencils.FastEl3d(X,lpdx,ang);
+          ic.y = oc.y + v1ls_stencils.FastEl3d(Y,lpdx,ang);
+          if(ic.WrapClip(wrap, v1c_img_geom)) {
+            if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+          }
+          float lval = cur_in->FastEl4d(ang, 0, ic.x, ic.y);
+          line_sum += lval;
+        }
+        line_sum *= v1c_specs.len_sum_norm;
+        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = line_sum;
+      }
+    }
+  }
+#if 0
   taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
@@ -1440,9 +1629,48 @@ void V1RegionSpec::V1ComplexFilter_LenSum_thread(int v1c_idx, int thread_no) {
     line_sum *= v1c_specs.len_sum_norm;
     cur_out->FastEl4d(ang, 0, cc.x, cc.y) = line_sum;
   }
+#endif
 }
 
-void V1RegionSpec::V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no) {
+void V1RegionSpec::V1ComplexFilter_EndStop_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1c_img_geom, st, ed);
+
+  taVector2i ic;         // input = line coord
+  taVector2i sc;         // second input = stop / off coord
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        for(int dir=0; dir < 2; dir++) {                  // direction
+          // len sum point
+          ic.x = oc.x + v1es_stencils.FastEl(X,0,ON,dir,ang);
+          ic.y = oc.y + v1es_stencils.FastEl(Y,0,ON,dir,ang);
+          if(ic.WrapClip(wrap, v1c_img_geom)) {
+            if(region.edge_mode == VisRegionParams::CLIP) continue;
+          }
+          float lsval = cur_in2->FastEl4d(ang, 0, ic.x, ic.y); // len sum
+
+          // off point
+          float max_off = 0.0f;
+          for(int orthdx=0; orthdx < 3; orthdx++) {
+            sc.x = oc.x + v1es_stencils.FastEl(X,orthdx,OFF,dir,ang);
+            sc.y = oc.y + v1es_stencils.FastEl(Y,orthdx,OFF,dir,ang);
+            if(sc.WrapClip(wrap, v1c_img_geom)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue;
+            }
+            float offval = cur_in->FastEl4d(ang, 0, sc.x, sc.y); // single oriented line
+            max_off = MAX(offval, max_off);
+          }
+          float esval = lsval - max_off;
+          if(esval < v1c_specs.es_thr) esval = 0.0f; // keep it real
+          cur_out->FastEl4d(ang, dir, oc.x, oc.y) = esval;
+        }
+      }
+    }
+  }
+#if 0
   taVector2i cc;                 // complex coords
   cc.SetFmIndex(v1c_idx, v1c_img_geom.x);
 
@@ -1474,6 +1702,7 @@ void V1RegionSpec::V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no) {
       cur_out->FastEl4d(ang, dir, cc.x, cc.y) = esval;
     }
   }
+#endif
 }
 
 
@@ -1481,19 +1710,12 @@ void V1RegionSpec::V1ComplexFilter_EndStop_thread(int v1c_idx, int thread_no) {
 //              Spatial Integration
 
 bool V1RegionSpec::SpatIntegFilter() {
-  int n_run_s = si_v1s_geom.Product();
-  int n_run_sg = si_v1sg_geom.Product();
-  int n_run_c = si_v1c_geom.Product();
-
-  threads.n_threads = MIN(n_run_c, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
   if(spat_integ & SI_V1S) {
     if(si_kwta.On()) cur_out = &si_v1s_out_raw;
     else           cur_out = &si_v1s_out;
-    ThreadImgProcCall ip_call_v1s((ThreadImgProcMethod)(V1RegionMethod)
-                                  &V1RegionSpec::SpatIntegFilter_V1S_thread);
-    threads.Run(&ip_call_v1s, n_run_s);
+
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1S_thread);
+
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1s_out_raw, si_v1s_out, si_gci);
   }
@@ -1501,9 +1723,9 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1PI) {
     if(si_kwta.On()) cur_out = &si_v1pi_out_raw;
     else           cur_out = &si_v1pi_out;
-    ThreadImgProcCall ip_call_v1pi((ThreadImgProcMethod)(V1RegionMethod)
-                                   &V1RegionSpec::SpatIntegFilter_V1PI_thread);
-    threads.Run(&ip_call_v1pi, n_run_s);
+
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1PI_thread);
+
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1pi_out_raw, si_v1pi_out, si_gci);
   }
@@ -1511,28 +1733,23 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1PI_SG) {
     if(si_kwta.On()) cur_out = &si_v1pi_sg_out_raw;
     else           cur_out = &si_v1pi_sg_out;
-    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)
-                                   &V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
-    threads.Run(&ip_call_v1sg, n_run_sg);
+
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1PI_SG_thread);
+
     if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
     if(si_kwta.On()) si_kwta.Compute_Inhib(si_v1pi_sg_out_raw, si_v1pi_sg_out, si_gci);
   }
 
   if(spat_integ & SI_V1S_SG) {
-    int n_run_sg_gp4 = v1sg_img_geom.Product();
-
     cur_in = &v1s_out_r;
     cur_out = &v1s_sg_out;
 
-    ThreadImgProcCall ip_call_v1ssg_pre((ThreadImgProcMethod)(V1RegionMethod)
-                                        &V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
-    threads.Run(&ip_call_v1ssg_pre, n_run_sg_gp4);
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread);
 
     if(si_kwta.On() && !(spat_integ & SI_V1C)) cur_out = &si_v1s_sg_out_raw;
     else           cur_out = &si_v1s_sg_out;
-    ThreadImgProcCall ip_call_v1sg((ThreadImgProcMethod)(V1RegionMethod)
-                                   &V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
-    threads.Run(&ip_call_v1sg, n_run_sg);
+
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1S_SG_thread);
 
     if(!(spat_integ & SI_V1C)) {
       if(si_renorm != NO_RENORM) RenormOutput(si_renorm, cur_out);
@@ -1543,9 +1760,8 @@ bool V1RegionSpec::SpatIntegFilter() {
   if(spat_integ & SI_V1C) {
     if(si_kwta.On()) cur_out = &si_v1c_out_raw;
     else           cur_out = &si_v1c_out;
-    ThreadImgProcCall ip_call_v1c((ThreadImgProcMethod)(V1RegionMethod)
-                                  &V1RegionSpec::SpatIntegFilter_V1C_thread);
-    threads.Run(&ip_call_v1c, n_run_c);
+
+    IMG_THREAD_CALL(V1RegionSpec::SpatIntegFilter_V1C_thread);
 
     if(spat_integ & SI_V1S_SG) { // both are on -- combine output into same table prior to kwta
       taVector2i cc;
@@ -1568,37 +1784,78 @@ bool V1RegionSpec::SpatIntegFilter() {
   return true;
 }
 
-void V1RegionSpec::SpatIntegFilter_V1S_thread(int v1s_idx, int thread_no) {
-  taVector2i sc;
-  sc.SetFmIndex(v1s_idx, si_v1s_geom.x);
-  taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
-  ics += si_specs.spat_border;
-  ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+void V1RegionSpec::SpatIntegFilter_V1S_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, si_v1s_geom, st, ed);
 
-  taVector2i ic;                 // input coord
-  taVector2i icc;                // input coord, center
-  for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
-    for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
-      float max_rf = 0.0f;   // max over spatial rfield
-      for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
-        ic.y = ics.y + ys;
-        for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
-          ic.x = ics.x + xs;
-          icc = ic;     // center
-          if(icc.WrapClip(wrap, v1s_img_geom)) {
-            if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  taVector2i icc;        // input coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+
+      taVector2i ics = si_specs.spat_spacing * oc; // v1s coords start
+      ics += si_specs.spat_border;
+      ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+      
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+          float max_rf = 0.0f;   // max over spatial rfield
+          for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+            ic.y = ics.y + ys;
+            for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+              ic.x = ics.x + xs;
+              icc = ic;     // center
+              if(icc.WrapClip(wrap, v1s_img_geom)) {
+                if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+              }
+              float val = v1s_out_r.FastEl4d(ang, polclr, icc.x, icc.y);
+              val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
+              max_rf = MAX(max_rf, val);
+            }
           }
-          float val = v1s_out_r.FastEl4d(ang, polclr, icc.x, icc.y);
-          val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
-          max_rf = MAX(max_rf, val);
-        }
-      }
-      cur_out->FastEl4d(ang, polclr, sc.x, sc.y) = max_rf;
-    } // for polclr
-  }  // for ang
+          cur_out->FastEl4d(ang, polclr, oc.x, oc.y) = max_rf;
+        } // for polclr
+      }  // for ang
+    }
+  }
 }
 
-void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1PI_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, si_v1s_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  taVector2i icc;        // input coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i ics = si_specs.spat_spacing * oc; // v1s coords start
+      ics += si_specs.spat_border;
+      ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float max_rf = 0.0f;   // max over spatial rfield
+        for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+          ic.y = ics.y + ys;
+          for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+            ic.x = ics.x + xs;
+            icc = ic;       // center
+            if(icc.WrapClip(wrap, v1s_img_geom)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+            }
+            float val = v1pi_out_r.FastEl4d(ang, 0, icc.x, icc.y);
+            val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
+            max_rf = MAX(max_rf, val);
+          }
+        }
+        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_rf;
+      }
+    }
+  }
+#if 0
   taVector2i sc;
   sc.SetFmIndex(v1s_idx, si_v1s_geom.x);
   taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
@@ -1624,9 +1881,43 @@ void V1RegionSpec::SpatIntegFilter_V1PI_thread(int v1s_idx, int thread_no) {
     }
     cur_out->FastEl4d(ang, 0, sc.x, sc.y) = max_rf;
   } // for ang
+#endif
 }
 
-void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, si_v1sg_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  taVector2i icc;        // input coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i ics = si_specs.spat_spacing * oc; // v1s coords start
+      ics += si_specs.spat_border;
+      ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        float max_rf = 0.0f;   // max over spatial rfield
+        for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+          ic.y = ics.y + ys;
+          for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+            ic.x = ics.x + xs;
+            icc = ic;       // center
+            if(icc.WrapClip(wrap, v1sg_img_geom)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+            }
+            float val = v1sg_out_r.FastEl4d(ang, 0, icc.x, icc.y);
+            val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
+            max_rf = MAX(max_rf, val);
+          }
+        }
+        cur_out->FastEl4d(ang, 0, oc.x, oc.y) = max_rf;
+      }
+    }
+  }
+#if 0
   taVector2i sc;
   sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
   taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
@@ -1652,9 +1943,45 @@ void V1RegionSpec::SpatIntegFilter_V1PI_SG_thread(int v1sg_idx, int thread_no) {
     }
     cur_out->FastEl4d(ang, 0, sc.x, sc.y) = max_rf;
   } // for ang
+#endif
 }
 
-void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1sg_img_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input = simple coord
+  taVector2i icc;        // input = simple coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i scs = v1c_specs.sg_spacing * oc; // v1s coords start
+      scs += v1c_specs.sg_border;
+      scs -= v1c_specs.sg_half; // convert to lower-left starting position, not center
+
+      for(int ang=0; ang<v1s_specs.n_angles; ang++) {
+        for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+          float max_rf = 0.0f;   // max over spatial rfield
+          int nctrs = v1sg_stencils.FastEl3d(2, 0, ang);       // length stored here
+          for(int ctrdx = 0; ctrdx < nctrs; ctrdx++) {
+            int xp = v1sg_stencils.FastEl3d(X, ctrdx, ang);
+            int yp = v1sg_stencils.FastEl3d(Y, ctrdx, ang);
+            ic.y = scs.y + yp;
+            ic.x = scs.x + xp;
+            icc = ic;       // center
+            if(icc.WrapClip(wrap, v1s_img_geom)) {
+              if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+            }
+            float ctr_val = cur_in->FastEl4d(ang, polclr, icc.x, icc.y);
+            max_rf = MAX(max_rf, ctr_val);
+          }
+          cur_out->FastEl4d(ang, polclr, oc.x, oc.y) = max_rf;
+        }
+      }
+    }
+  }
+#if 0
   taVector2i pc;                 // pre coords
   pc.SetFmIndex(v1sg_idx, v1sg_img_geom.x);
   taVector2i scs = v1c_specs.sg_spacing * pc; // v1s coords start
@@ -1682,9 +2009,45 @@ void V1RegionSpec::SpatIntegFilter_V1S_SqGp4_thread(int v1sg_idx, int thread_no)
       cur_out->FastEl4d(ang, polclr, pc.x, pc.y) = max_rf;
     }
   }
+#endif
 }
 
-void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, si_v1sg_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  taVector2i icc;        // input coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i ics = si_specs.spat_spacing * oc; // v1s coords start
+      ics += si_specs.spat_border;
+      ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        for(int polclr = 0; polclr < n_polclr; polclr++) { // polclr features
+          float max_rf = 0.0f;   // max over spatial rfield
+          for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+            ic.y = ics.y + ys;
+            for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+              ic.x = ics.x + xs;
+              icc = ic;     // center
+              if(icc.WrapClip(wrap, v1sg_img_geom)) {
+                if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+              }
+              float val = v1s_sg_out.FastEl4d(ang, polclr, icc.x, icc.y);
+              val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
+              max_rf = MAX(max_rf, val);
+            }
+          }
+          cur_out->FastEl4d(ang, polclr, oc.x, oc.y) = max_rf;
+        } // for ang
+      }
+    }
+  }
+#if 0
   taVector2i sc;
   sc.SetFmIndex(v1sg_idx, si_v1sg_geom.x);
   taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
@@ -1712,9 +2075,49 @@ void V1RegionSpec::SpatIntegFilter_V1S_SG_thread(int v1sg_idx, int thread_no) {
       cur_out->FastEl4d(ang, polclr, sc.x, sc.y) = max_rf;
     } // for ang
   }
+#endif
 }
 
-void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
+void V1RegionSpec::SpatIntegFilter_V1C_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, si_v1c_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  taVector2i ic;         // input coord
+  taVector2i icc;        // input coord, center
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      taVector2i ics = si_specs.spat_spacing * oc; // v1s coords start
+      ics += si_specs.spat_border;
+      ics -= si_specs.spat_half; // convert to lower-left starting position, not center
+
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) { // angles
+        for(int cfdx = 0; cfdx < v1c_feat_geom.y; cfdx++) { // cfdx features
+          float max_rf = 0.0f;   // max over spatial rfield
+          for(int ys = 0; ys < si_specs.spat_rf.y; ys++) { // yspat
+            ic.y = ics.y + ys;
+            for(int xs = 0; xs < si_specs.spat_rf.x; xs++) { // xspat
+              ic.x = ics.x + xs;
+              icc = ic;     // center
+              if(icc.WrapClip(wrap, v1c_img_geom)) {
+                if(region.edge_mode == VisRegionParams::CLIP) continue; // bail on clipping only
+              }
+              float val;
+              if(cfdx == 0)         // length-sum = 0
+                val = v1ls_out_r.FastEl4d(ang, 0, icc.x, icc.y);
+              else
+                val = v1es_out_r.FastEl4d(ang, cfdx-1, icc.x, icc.y);
+              val *= si_weights.FastEl2d(xs, ys); // spatial rf weighting
+              max_rf = MAX(max_rf, val);
+            }
+          }
+          cur_out->FastEl4d(ang, cfdx, oc.x, oc.y) = max_rf;
+        }
+      }
+    }
+  }
+#if 0
   taVector2i sc;
   sc.SetFmIndex(v1c_idx, si_v1c_geom.x);
   taVector2i ics = si_specs.spat_spacing * sc; // v1s coords start
@@ -1746,6 +2149,7 @@ void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
       cur_out->FastEl4d(ang, cfdx, sc.x, sc.y) = max_rf;
     } // for cfdx
   }  // for ang
+#endif
 }
 
 
@@ -1753,20 +2157,32 @@ void V1RegionSpec::SpatIntegFilter_V1C_thread(int v1c_idx, int thread_no) {
 //              Optional Filters
 
 bool V1RegionSpec::V1OptionalFilter() {
-  int n_run = v1s_img_geom.Product();
-  threads.n_threads = MIN(n_run, taMisc::thread_defaults.n_threads); // keep in range..
-  threads.nibble_chunk = 1;     // small chunks
-
   if(opt_filters & ENERGY) {
-    ThreadImgProcCall ip_call((ThreadImgProcMethod)(V1RegionMethod)
-                              &V1RegionSpec::V1OptionalFilter_Energy_thread);
-    threads.Run(&ip_call, n_run);
+    IMG_THREAD_CALL(V1RegionSpec::V1OptionalFilter_Energy_thread);
   }
 
   return true;
 }
 
-void V1RegionSpec::V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no) {
+void V1RegionSpec::V1OptionalFilter_Energy_thread(int thr_no) {
+  taVector2i st;
+  taVector2i ed;
+  GetThread2DGeom(thr_no, v1s_img_geom, st, ed);
+
+  taVector2i oc;         // current coord -- output space
+  for(oc.y = st.y; oc.y < ed.y; oc.y++) {
+    for(oc.x = st.x; oc.x < ed.x; oc.x++) {
+      float max_feat = 0.0f;
+      // just max over angles -- blobify!
+      for(int ang = 0; ang < v1s_specs.n_angles; ang++) {
+        float v1sval = v1pi_out_r.FastEl4d(ang, 0, oc.x, oc.y);
+        max_feat = MAX(max_feat, v1sval);
+      }
+
+      energy_out.FastEl2d(oc.x, oc.y) = max_feat;
+    }
+  }
+#if 0
   taVector2i sc;                 // simple coords
   sc.SetFmIndex(v1s_idx, v1s_img_geom.x);
 
@@ -1777,6 +2193,7 @@ void V1RegionSpec::V1OptionalFilter_Energy_thread(int v1s_idx, int thread_no) {
   }
 
   energy_out.FastEl2d(sc.x, sc.y) = max_feat;
+#endif
 }
 
 

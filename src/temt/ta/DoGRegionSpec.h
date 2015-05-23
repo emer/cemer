@@ -74,7 +74,7 @@ protected:
 
   virtual bool DoGFilterImage(float_Matrix* image, float_Matrix* out);
   // implementation of DoG filtering for a given image and output -- manages threaded calls to _thread version
-  virtual void DoGFilterImage_thread(int dog_idx, int thread_no);
+  virtual void DoGFilterImage_thread(int thr_no);
   // threaded routine for actually filtering given index of dog
 
   virtual bool DoGOutputToTable(DataTable* dtab);
