@@ -173,7 +173,7 @@ void DoGRegionSpec::DoGFilterImage_thread(int thr_no) {
   int   flt_vecw = flt_wdf / 4;
   flt_vecw *= 4;
 
-  taVector2i st_ne = dog_img_geom + (flt_wd - input_size.border); // no edge
+  taVector2i st_ne = (flt_wd - input_size.border); // no edge
   taVector2i ed_ne = dog_img_geom - (flt_wd - input_size.border);
 
   taVector2i oc;         // current coord -- output space

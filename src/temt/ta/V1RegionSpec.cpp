@@ -1030,20 +1030,27 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
 
   taVector2i in_off = input_size.border - flt_wd;
   
-  taVector2i st_ne = v1s_img_geom - in_off; // skip over start..
+  taVector2i st_ne = -in_off; // skip over start..
   taVector2i ed_ne = v1s_img_geom + in_off;
   ed_ne -= flt_wdf;
 
+  // taMisc::Info("st:", st.GetStr(), "ed:", ed.GetStr(),
+  //              "st_ne:", st_ne.GetStr(), "ed_ne:", ed_ne.GetStr());
+  
   taVector2i oc;         // current coord -- output space
   taVector2i ic;         // input coord
 
   float_Matrix* v1s_img = cur_img;
 
+  // int ne_cnt = 0;
+  
   for(oc.y = st.y; oc.y < ed.y; oc.y++) {
     bool y_ne = (oc.y >= st_ne.y && oc.y < ed_ne.y); // y no edge
     for(oc.x = st.x; oc.x < ed.x; oc.x++) {
       bool ne = y_ne && (oc.x >= st_ne.x && oc.x < ed_ne.x); // no edge
 
+      // if(ne) ne_cnt++;
+      
       taVector2i icc = in_off + v1s_specs.spacing * oc; // image coords center
 
       for(int chan = 0; chan < n_colors; chan++) {
@@ -1126,6 +1133,9 @@ void V1RegionSpec::V1SimpleFilter_Static_thread(int thr_no) {
       }
     }
   }
+
+  // taVector2i tot = ed - st;
+  // taMisc::Info("ne cnt:", String(ne_cnt),"out of:", String(tot.Product()));
 }
 
 void V1RegionSpec::V1SimpleFilter_Static_neighinhib_thread(int thr_no) {

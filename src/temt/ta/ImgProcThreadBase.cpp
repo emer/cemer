@@ -47,8 +47,8 @@ void ImgProcCallThreadMgr::Destroy() {
 
 void ImgProcCallThreadMgr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if(n_threads > 4)             // right now we can't handle more than 4
-    n_threads = 4;
+  // if(n_threads > 4)             // right now we can't handle more than 4
+  //   n_threads = 4;
   if(n_threads % 2 != 0) {      // must be even number!!
     n_threads = n_threads / 2;
     n_threads *= 2;
@@ -81,6 +81,17 @@ static void split_geom_half(const int geom, const int thr, int& st, int& ed) {
 
 bool ImgProcThreadBase::GetThread2DGeom(int thr_no, const taVector2i& geom,
                                         taVector2i& start, taVector2i& end) {
+  start = 0;
+  end = geom;
+  // put it all on y:
+  float perthr = ((float)geom.y / (float)threads.n_threads);
+  start.y = (int) ((float)thr_no * perthr);
+  end.y = (int) ((float)(thr_no+1) * perthr);
+  if(thr_no == threads.n_threads-1)
+    end.y = geom.y;             // just double checking..
+  
+  return true;
+  // old strategy below here: splits up memory so not as efficient!
   switch(threads.n_threads) {
   case 1: {
     start = 0;

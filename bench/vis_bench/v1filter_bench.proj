@@ -403,7 +403,8 @@ LeabraProject .projects["v1filter_bench"] {
     ProgVar @["n_iters"] { };
    };
 
-   ProgVar_List @.vars = [4] {
+   ProgVar_List @.vars = [5] {
+    ProgVar @["full_xform"] { };
     ProgVar @["V1DataSave2D"] { };
     ProgVar @["V1RetinaProc_0"] { };
     ProgVar @["Canvas"] { };
@@ -424,7 +425,7 @@ LeabraProject .projects["v1filter_bench"] {
     };
    };
 
-   ProgEl_List @.prog_code = [7] {
+   ProgEl_List @.prog_code = [6] {
     LocalVars @[0] { 
      ProgVar_List @.local_vars = [1] {
       ProgVar @["i"] { };
@@ -434,35 +435,67 @@ LeabraProject .projects["v1filter_bench"] {
      ProgArg_List @.prog_args = [0] {
      };
     };
-    MethodCall @[2] { 
-     ProgArg_List @.meth_args = [6] {
-      ProgArg @[0] { };
-      ProgArg @[1] { };
-      ProgArg @[2] { };
-      ProgArg @[3] { };
-      ProgArg @[4] { };
-      ProgArg @[5] { };
-     };
-    };
-    MethodCall @[3] { 
-     ProgArg_List @.meth_args = [1] {
-      ProgArg @[0] { };
-     };
-    };
-    ForLoop @[4] { 
-     ProgEl_List @.loop_code = [1] {
+    If @[2] { 
+     ProgEl_List @.true_code = [2] {
       MethodCall @[0] { 
        ProgArg_List @.meth_args = [1] {
 	ProgArg @[0] { };
        };
       };
+      ForLoop @[1] { 
+       ProgEl_List @.loop_code = [2] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [6] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	  ProgArg @[2] { };
+	  ProgArg @[3] { };
+	  ProgArg @[4] { };
+	  ProgArg @[5] { };
+	 };
+	};
+	MethodCall @[1] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
      };
     };
-    MethodCall @[5] { 
+    Else @[3] { 
+     ProgEl_List @.else_code = [3] {
+      MethodCall @[0] { 
+       ProgArg_List @.meth_args = [6] {
+	ProgArg @[0] { };
+	ProgArg @[1] { };
+	ProgArg @[2] { };
+	ProgArg @[3] { };
+	ProgArg @[4] { };
+	ProgArg @[5] { };
+       };
+      };
+      MethodCall @[1] { 
+       ProgArg_List @.meth_args = [1] {
+	ProgArg @[0] { };
+       };
+      };
+      ForLoop @[2] { 
+       ProgEl_List @.loop_code = [1] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [1] {
+	  ProgArg @[0] { };
+	 };
+	};
+       };
+      };
+     };
+    };
+    MethodCall @[4] { 
      ProgArg_List @.meth_args = [0] {
      };
     };
-    PrintExpr @[6] { };
+    PrintExpr @[5] { };
    };
   };
   Program @["VisStimGen"] { 
@@ -10212,7 +10245,7 @@ LeabraProject .projects["v1filter_bench"] {
       name="row_indexes";
      [0]      };
     };
-    TimeUsedHR @["VisTimer"] {name="VisTimer": s_used=8.692964: n_used=1: avg_used={avg=0: sum=0: n=0: }: };
+    TimeUsedHR @["VisTimer"] {name="VisTimer": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
    };
    types {
     name="types";
@@ -10238,6 +10271,16 @@ LeabraProject .projects["v1filter_bench"] {
     name="vars";
     el_typ=ProgVar;
     el_def=0;
+    ProgVar @["full_xform"] {
+     name="full_xform";
+     var_type=T_Bool;
+     bool_val=0;
+     objs_ptr=0;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+     reference=0;
+     desc="include full transformimage call in timing";
+     init_from=NULL;
+    };
     ProgVar @["V1DataSave2D"] {
      name="V1DataSave2D";
      var_type=T_Object;
@@ -10359,119 +10402,177 @@ LeabraProject .projects["v1filter_bench"] {
      target=.projects["v1filter_bench"].programs["VisStimGen"]$$;
      targ_ld_init="*VisStimGen*";
     };
-    MethodCall @[2] {
+    If @[2] {
      desc=;
      flags=0;
-     orig_prog_code=;
-     result_var=NULL;
-     obj=$.projects["v1filter_bench"].programs["VisBench"].vars["V1RetinaProc_0"]$;
-     method=RetinaProc::TransformImage;
-     meth_args {
-      name="meth_args";
-      el_typ=ProgArg;
+     orig_prog_code="if(full_xform)";
+     cond {
+      expr="full_xform";
+     };
+     true_code {
+      name="true_code";
+      el_typ=ProgCode;
       el_def=0;
-      ProgArg @[0] {
-       arg_type=taImage_ptr;
-       type="taImage*";
-       name="right_eye_image";
-       required=1;
-       def_val=;
-       prev_expr=;
-       expr {
-	expr="Canvas";
+      MethodCall @[0] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="VisTimer.StartTimer()";
+       result_var=NULL;
+       obj=$.projects["v1filter_bench"].programs["VisBench"].vars["VisTimer"]$;
+       method=TimeUsedHR::StartTimer;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=bool;
+	 type="bool";
+	 name="reset_used";
+	 required=0;
+	 def_val="true";
+	 prev_expr=;
+	 expr {
+	  expr="true";
+	 };
+	};
        };
+       meth_sig="void StartTimer(bool reset_used = true)";
+       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
       };
-      ProgArg @[1] {
-       arg_type=taImage_ptr;
-       type="taImage*";
-       name="left_eye_image";
-       required=0;
-       def_val="__null";
-       prev_expr=;
-       expr {
-	expr="NULL";
+      ForLoop @[1] {
+       desc=;
+       flags=0;
+       orig_prog_code="for(i=0;i<n_iters; i++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 obj=$.projects["v1filter_bench"].programs["VisBench"].vars["V1RetinaProc_0"]$;
+	 method=RetinaProc::TransformImage;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=taImage_ptr;
+	   type="taImage*";
+	   name="right_eye_image";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="Canvas";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=taImage_ptr;
+	   type="taImage*";
+	   name="left_eye_image";
+	   required=0;
+	   def_val="__null";
+	   prev_expr=;
+	   expr {
+	    expr="NULL";
+	   };
+	  };
+	  ProgArg @[2] {
+	   arg_type=float;
+	   type="float";
+	   name="move_x";
+	   required=0;
+	   def_val="0";
+	   prev_expr=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  ProgArg @[3] {
+	   arg_type=float;
+	   type="float";
+	   name="move_y";
+	   required=0;
+	   def_val="0";
+	   prev_expr=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	  ProgArg @[4] {
+	   arg_type=float;
+	   type="float";
+	   name="scale";
+	   required=0;
+	   def_val="1.0f";
+	   prev_expr=;
+	   expr {
+	    expr="1.0";
+	   };
+	  };
+	  ProgArg @[5] {
+	   arg_type=float;
+	   type="float";
+	   name="rotate";
+	   required=0;
+	   def_val="0.0f";
+	   prev_expr=;
+	   expr {
+	    expr="0";
+	   };
+	  };
+	 };
+	 meth_sig="bool TransformImage(taImage* right_eye_image, taImage* left_eye_image = __null, float move_x = 0, float move_y = 0, float scale = 1.0f, float rotate = 0.0f)";
+	 meth_desc=" transform image/s in image format, with retina centered at given normalized offsets from center of image (move -1=far left edge, 0=ctr, 1=far right edge), scaled by given factor (1=same size, .5 = half size, 2 = double size), rotated by normalized units (1=360deg)";
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 obj=$.projects["v1filter_bench"].programs["VisBench"].vars["V1RetinaProc_0"]$;
+	 method=RetinaProc::FilterImageData;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=bool;
+	   type="bool";
+	   name="motion_only";
+	   required=0;
+	   def_val="false";
+	   prev_expr=;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	 meth_sig="bool FilterImageData(bool motion_only = false)";
+	 meth_desc=" filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence";
+	};
        };
-      };
-      ProgArg @[2] {
-       arg_type=float;
-       type="float";
-       name="move_x";
-       required=0;
-       def_val="0";
-       prev_expr=;
-       expr {
-	expr="0";
+       init {
+	expr="i=0";
        };
-      };
-      ProgArg @[3] {
-       arg_type=float;
-       type="float";
-       name="move_y";
-       required=0;
-       def_val="0";
-       prev_expr=;
-       expr {
-	expr="0";
+       test {
+	expr="i<n_iters";
        };
-      };
-      ProgArg @[4] {
-       arg_type=float;
-       type="float";
-       name="scale";
-       required=0;
-       def_val="1.0f";
-       prev_expr=;
-       expr {
-	expr="1.0";
-       };
-      };
-      ProgArg @[5] {
-       arg_type=float;
-       type="float";
-       name="rotate";
-       required=0;
-       def_val="0.0f";
-       prev_expr=;
-       expr {
-	expr="0";
+       iter {
+	expr="i++";
        };
       };
      };
-     meth_sig="bool TransformImage(taImage* right_eye_image, taImage* left_eye_image = __null, float move_x = 0, float move_y = 0, float scale = 1.0f, float rotate = 0.0f)";
-     meth_desc=" transform image/s in image format, with retina centered at given normalized offsets from center of image (move -1=far left edge, 0=ctr, 1=far right edge), scaled by given factor (1=same size, .5 = half size, 2 = double size), rotated by normalized units (1=360deg)";
     };
-    MethodCall @[3] {
-     desc=;
-     flags=CAN_REVERT_TO_CODE;
-     orig_prog_code="VisTimer.StartTimer()";
-     result_var=NULL;
-     obj=$.projects["v1filter_bench"].programs["VisBench"].vars["VisTimer"]$;
-     method=TimeUsedHR::StartTimer;
-     meth_args {
-      name="meth_args";
-      el_typ=ProgArg;
-      el_def=0;
-      ProgArg @[0] {
-       arg_type=bool;
-       type="bool";
-       name="reset_used";
-       required=0;
-       def_val="true";
-       prev_expr=;
-       expr {
-	expr="true";
-       };
-      };
-     };
-     meth_sig="void StartTimer(bool reset_used = true)";
-     meth_desc=" record the current time as the starting time, and optionally reset the time used information";
-    };
-    ForLoop @[4] {
+    Else @[3] {
      desc=;
      flags=0;
-     orig_prog_code="for(i=0;i<n_iters; i++)";
-     loop_code {
-      name="loop_code";
+     orig_prog_code="else";
+     else_code {
+      name="else_code";
       el_typ=ProgCode;
       el_def=0;
       MethodCall @[0] {
@@ -10480,7 +10581,88 @@ LeabraProject .projects["v1filter_bench"] {
        orig_prog_code=;
        result_var=NULL;
        obj=$.projects["v1filter_bench"].programs["VisBench"].vars["V1RetinaProc_0"]$;
-       method=RetinaProc::FilterImageData;
+       method=RetinaProc::TransformImage;
+       meth_args {
+	name="meth_args";
+	el_typ=ProgArg;
+	el_def=0;
+	ProgArg @[0] {
+	 arg_type=taImage_ptr;
+	 type="taImage*";
+	 name="right_eye_image";
+	 required=1;
+	 def_val=;
+	 prev_expr=;
+	 expr {
+	  expr="Canvas";
+	 };
+	};
+	ProgArg @[1] {
+	 arg_type=taImage_ptr;
+	 type="taImage*";
+	 name="left_eye_image";
+	 required=0;
+	 def_val="__null";
+	 prev_expr=;
+	 expr {
+	  expr="NULL";
+	 };
+	};
+	ProgArg @[2] {
+	 arg_type=float;
+	 type="float";
+	 name="move_x";
+	 required=0;
+	 def_val="0";
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+	ProgArg @[3] {
+	 arg_type=float;
+	 type="float";
+	 name="move_y";
+	 required=0;
+	 def_val="0";
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+	ProgArg @[4] {
+	 arg_type=float;
+	 type="float";
+	 name="scale";
+	 required=0;
+	 def_val="1.0f";
+	 prev_expr=;
+	 expr {
+	  expr="1.0";
+	 };
+	};
+	ProgArg @[5] {
+	 arg_type=float;
+	 type="float";
+	 name="rotate";
+	 required=0;
+	 def_val="0.0f";
+	 prev_expr=;
+	 expr {
+	  expr="0";
+	 };
+	};
+       };
+       meth_sig="bool TransformImage(taImage* right_eye_image, taImage* left_eye_image = __null, float move_x = 0, float move_y = 0, float scale = 1.0f, float rotate = 0.0f)";
+       meth_desc=" transform image/s in image format, with retina centered at given normalized offsets from center of image (move -1=far left edge, 0=ctr, 1=far right edge), scaled by given factor (1=same size, .5 = half size, 2 = double size), rotated by normalized units (1=360deg)";
+      };
+      MethodCall @[1] {
+       desc=;
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="VisTimer.StartTimer()";
+       result_var=NULL;
+       obj=$.projects["v1filter_bench"].programs["VisBench"].vars["VisTimer"]$;
+       method=TimeUsedHR::StartTimer;
        meth_args {
 	name="meth_args";
 	el_typ=ProgArg;
@@ -10488,30 +10670,66 @@ LeabraProject .projects["v1filter_bench"] {
 	ProgArg @[0] {
 	 arg_type=bool;
 	 type="bool";
-	 name="motion_only";
+	 name="reset_used";
 	 required=0;
-	 def_val="false";
+	 def_val="true";
 	 prev_expr=;
 	 expr {
-	  expr="false";
+	  expr="true";
 	 };
 	};
        };
-       meth_sig="bool FilterImageData(bool motion_only = false)";
-       meth_desc=" filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence";
+       meth_sig="void StartTimer(bool reset_used = true)";
+       meth_desc=" record the current time as the starting time, and optionally reset the time used information";
+      };
+      ForLoop @[2] {
+       desc=;
+       flags=0;
+       orig_prog_code="for(i=0;i<n_iters; i++)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code=;
+	 result_var=NULL;
+	 obj=$.projects["v1filter_bench"].programs["VisBench"].vars["V1RetinaProc_0"]$;
+	 method=RetinaProc::FilterImageData;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=bool;
+	   type="bool";
+	   name="motion_only";
+	   required=0;
+	   def_val="false";
+	   prev_expr=;
+	   expr {
+	    expr="false";
+	   };
+	  };
+	 };
+	 meth_sig="bool FilterImageData(bool motion_only = false)";
+	 meth_desc=" filter retinal image data -- operates on images that were generated from prior Transform or LookAt calls -- must call one of those first -- if motion_only = true, then only process up to level of motion, for faster processing of initial frames of motion sequence";
+	};
+       };
+       init {
+	expr="i=0";
+       };
+       test {
+	expr="i<n_iters";
+       };
+       iter {
+	expr="i++";
+       };
       };
      };
-     init {
-      expr="i=0";
-     };
-     test {
-      expr="i<n_iters";
-     };
-     iter {
-      expr="i++";
-     };
     };
-    MethodCall @[5] {
+    MethodCall @[4] {
      desc=;
      flags=CAN_REVERT_TO_CODE;
      orig_prog_code="VisTimer.StartTimer()";
@@ -10526,7 +10744,7 @@ LeabraProject .projects["v1filter_bench"] {
      meth_sig="void EndTimer()";
      meth_desc=" record the current time as the ending time, and compute difference as the time used";
     };
-    PrintExpr @[6] {
+    PrintExpr @[5] {
      desc=;
      flags=0;
      orig_prog_code=;
@@ -10596,7 +10814,7 @@ LeabraProject .projects["v1filter_bench"] {
      keygen 4 0=0;
      row_indexes {
       name="row_indexes";
-     [1] 0;     };
+     [0]      };
     };
    };
    types {
@@ -10822,7 +11040,7 @@ LeabraProject .projects["v1filter_bench"] {
      var_type=T_Real;
      real_val=0.15;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc=;
      init_from=NULL;
@@ -10842,7 +11060,7 @@ LeabraProject .projects["v1filter_bench"] {
      var_type=T_Real;
      real_val=0;
      objs_ptr=0;
-     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|EDIT_VAL;
+     flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
      reference=0;
      desc="angle of background lines";
      init_from=NULL;
@@ -12659,7 +12877,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   el_def=0;
 	  };
 	  view_rows=1;
-	  view_range {min=0: max=0: };
+	  view_range {min=0: max=-1: };
 	  page_rows=10;
 	  display_on=1;
 	  manip_ctrl_on=1;
