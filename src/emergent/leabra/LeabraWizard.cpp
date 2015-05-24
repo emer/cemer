@@ -471,8 +471,8 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
   deep_prjn->full_gauss.ctr_mv = 0.8f;
   deep_prjn->gp_gauss.on = true;
   deep_prjn->gp_gauss.sigma = 1.2f;
-  deep_prjn->gp_gauss.wrap_wts = true;
-  deep_prjn->gp_gauss.ctr_mv = 1.0f;
+  deep_prjn->gp_gauss.wrap_wts = false;
+  deep_prjn->gp_gauss.ctr_mv = 0.8f;
 
   deep_prjn->wt_range.min = 0.3f;
   deep_prjn->wt_range.max = 0.7f;
@@ -480,6 +480,16 @@ bool LeabraWizard::DeepLeabra(LeabraNetwork* net, bool do_ti_ctxt, bool top_down
   ctxt_prjn->send_gp_size = 3;
   ctxt_prjn->send_gp_skip = 1;
   ctxt_prjn->send_gp_start = -1;
+  ctxt_prjn->init_wts = true;
+  ctxt_prjn->wrap = true;
+  ctxt_prjn->full_gauss.on = true;
+  ctxt_prjn->full_gauss.sigma = 0.6f;
+  ctxt_prjn->full_gauss.wrap_wts = false;
+  ctxt_prjn->full_gauss.ctr_mv = 0.8f;
+  ctxt_prjn->gp_gauss.on = true;
+  ctxt_prjn->gp_gauss.sigma = 0.6f;
+  ctxt_prjn->gp_gauss.wrap_wts = false;
+  ctxt_prjn->gp_gauss.ctr_mv = 0.8f;
 
   // Layer_Group input_lays;
   // for(int li=net->layers.leaves-1; li >= 0; li--) {

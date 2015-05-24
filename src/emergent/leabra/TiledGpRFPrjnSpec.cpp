@@ -26,7 +26,7 @@ TA_BASEFUNS_CTORS_DEFN(TiledGpRFPrjnSpec);
 
 void GaussInitWtsSpec::Initialize() {
   on = true;
-  sigma = 1.0f;
+  sigma = 0.6f;
   wrap_wts = false;
   ctr_mv = 0.8f;
 }
