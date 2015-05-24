@@ -128,6 +128,9 @@ public:
 
   void		ScanObject();
   // #CAT_Monitor get the monitor data information from the object
+  
+  void    SetObject(taBase* obj);
+  // #DYN1
 
   static const KeyString key_obj_name; // #IGNORE
   static const KeyString key_obj_type; // #IGNORE
