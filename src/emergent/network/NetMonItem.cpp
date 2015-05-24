@@ -161,15 +161,7 @@ String NetMonItem::GetAutoName(taBase* obj) {
 
 void NetMonItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (off)
-    return; // all stuff will run once turned on...
-  
-  if (object.ptr() != NULL) {
-    TypeDef* cur_obj_type = object.ptr()->GetTypeDef();
-    if (!cur_obj_type->InheritsFrom(object_type)) {
-      object = NULL;
-    }
-  }
+  if (off) return; // all stuff will run once turned on...
   
   if(computed) {
     name_style = MY_NAME;
@@ -1213,4 +1205,5 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
 
 void NetMonItem::SetObject(taBase* obj) {
   object = obj;
+  UpdateAfterEdit();
 }
