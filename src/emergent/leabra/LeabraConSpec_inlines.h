@@ -164,7 +164,8 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     if(!rus->deep_norm.on)
       deep_on = false;          // only applicable to deep_norm active layers
   }
-  float clrate = cur_lrate;
+  LeabraLayer* rlay = (LeabraLayer*)cg->prjn->layer;
+  float clrate = cur_lrate * rlay->lrate_mod;
 
   float bg_lrate;
   float fg_lrate;
