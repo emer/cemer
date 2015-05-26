@@ -71,6 +71,9 @@ ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
     char * proc_name;
     int proc_name_len;
     int portno;
+    int port_retry;
+    int error_encountered;
+    int * dmem_errors_encountered;
     struct sockaddr_in serv_addr, cli_addr;
 
     proc_name = (char *) calloc(MPI_MAX_PROCESSOR_NAME, sizeof(char));
@@ -82,43 +85,68 @@ ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
     MPI_Get_processor_name((char*)proc_name, &proc_name_len);
 
     /** Get the list of MPI processor names to be able to open our own TCP/IP sockets too. **/
+    dmem_errors_encountered = (int*)calloc(dmem_nprocs, sizeof(int));
     dmem_proc_names = (char*)calloc(dmem_nprocs, sizeof(char *)*MPI_MAX_PROCESSOR_NAME);
     printf("We are initializing our reduce context on %s with rank %i of %i\n", proc_name, dmem_proc, dmem_nprocs);
 
     MPI_Allgather(proc_name, MPI_MAX_PROCESSOR_NAME, MPI_CHAR, dmem_proc_names, MPI_MAX_PROCESSOR_NAME, MPI_CHAR, mpi_ctx);
 
-    if (dmem_proc == 0) {
-        for (int i = 0; i < dmem_nprocs; i++) {
-            printf("P%i: rank %i is running on %s\n", dmem_proc, i, &dmem_proc_names[MPI_MAX_PROCESSOR_NAME*i]);
+    for (port_retry = 0; port_retry < 20; port_retry++) {
+        error_encountered = 0;
+        if (dmem_proc == 0) {
+            if (port_retry == 0) {
+                for (int i = 0; i < dmem_nprocs; i++) {
+                    printf("P%i: rank %i is running on %s\n", dmem_proc, i, &dmem_proc_names[MPI_MAX_PROCESSOR_NAME*i]);
+                }
+            }
+            base_port = 16000 + (rand() % 32000);
+             
+            printf("Baseport is %i\n", base_port);
         }
-        base_port = 16000 + (rand() % 32000);
-        printf("Baseport is %i\n", base_port);
-    }
-    MPI_Bcast(&base_port, 1, MPI_INT, 0, mpi_ctx);
+        MPI_Bcast(&base_port, 1, MPI_INT, 0, mpi_ctx);
 
-    /** Setup TCP/IP server (incoming) sockets */
-    serverfds = (int *)calloc(nThreads, sizeof(int));
-    serverconnfds = (int *)calloc(nThreads, sizeof(int));
-    connectedS = (int *)calloc(nThreads, sizeof(int));
+        /** Setup TCP/IP server (incoming) sockets */
+        serverfds = (int *)calloc(nThreads, sizeof(int));
+        serverconnfds = (int *)calloc(nThreads, sizeof(int));
+        connectedS = (int *)calloc(nThreads, sizeof(int));
     
-    for (int i = 0; i < nThreads; i++) {
-        serverfds[i] = socket(AF_INET, SOCK_STREAM, 0);
-        if (serverfds[i] < 0) {
-            printf("P%i: ERROR opening socket\n", dmem_proc);
-            initialized = 0;
-            return;
+        for (int i = 0; i < nThreads; i++) {
+            serverfds[i] = socket(AF_INET, SOCK_STREAM, 0);
+            if (serverfds[i] < 0) {
+                printf("P%i: ERROR opening socket (%s)\n", dmem_proc, strerror(errno));
+                initialized = 0;
+                error_encountered = 1;
+                break;
+            }
+            portno = base_port + i + 20*dmem_proc;
+            serv_addr.sin_family = AF_INET;
+            serv_addr.sin_addr.s_addr = INADDR_ANY;
+            serv_addr.sin_port = htons(portno);
+            if (bind(serverfds[i], (struct sockaddr *) &serv_addr,
+                     sizeof(serv_addr)) < 0) {
+                printf("P%i: ERROR on binding!! (%s)\n", dmem_proc,  strerror(errno));
+                initialized = 0;
+                error_encountered = 1;
+                break;
+            } 
+            if (listen(serverfds[i],5) < 0) {
+                printf("P%i: ERROR listening to socket (%s)\n", dmem_proc, strerror(errno));
+                initialized = 0;
+                error_encountered = 1;
+                break;
+            }
         }
-        portno = base_port + i + 20*dmem_proc;
-        serv_addr.sin_family = AF_INET;
-        serv_addr.sin_addr.s_addr = INADDR_ANY;
-        serv_addr.sin_port = htons(portno);
-        if (bind(serverfds[i], (struct sockaddr *) &serv_addr,
-                 sizeof(serv_addr)) < 0) {
-            printf("P%i: ERROR on binding!!\n", dmem_proc);
-            initialized = 0;
-            return;
-        }
-        listen(serverfds[i],5);
+        MPI_Allgather(&error_encountered,1, MPI_INT, dmem_errors_encountered, 1, MPI_INT, mpi_ctx);
+
+        error_encountered = 0;
+        for (int i = 0; i < dmem_nprocs; i++)
+            if (dmem_errors_encountered[i] == 1) error_encountered = 1;
+        if (error_encountered == 0) break;
+    }
+    if (error_encountered) {
+        free(dmem_errors_encountered);
+        printf("ERROR: !!!!!!!!!!! Despite multiple retries, can't obtain valid socket !!!!!!!!!!\n");
+        return;
     }
 
     /** Setup TCP/IP client (outgoing) sockets
