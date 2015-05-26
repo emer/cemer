@@ -159,6 +159,11 @@ public:
   virtual void  MonitorVar(NetMonitor* net_mon, const String& variable);
   // #BUTTON #DYN1 #CAT_Statistic monitor (record in a datatable) the given variable on this projection
 
+  virtual void  SaveWeights(const String& fname="");
+  // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (leave fname empty to pull up file chooser)
+  virtual bool  LoadWeights(const String& fname="", bool quiet = false);
+  // #BUTTON #MENU #EXT_wts #GHOST_OFF_flags:BUILT,INTACT #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+
   virtual DataTable*    WeightsToTable(DataTable* dt, const String& col_nm = "",
                                        bool recv_wts = true);
   // #MENU #NULL_OK  #NULL_TEXT_0_NewTable #CAT_Structure copy entire set of projection weights to given table (e.g., for analysis), with one row per receiving unit, and one column (name is layer name if not otherwise specified) that has a float matrix cell of the geometry of the sending layer -- recv prjn if recv_wts is true, else sending weights

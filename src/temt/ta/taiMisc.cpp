@@ -519,8 +519,15 @@ QString taiMisc::ToolTipPreProcess(const String &tip_str) {
 }
 
 void taiMisc::OnQuitting_impl(CancelOp& cancel_op) {
-// called when quitting -- does all saves
-  if(!taMisc::interactive) return;
+  // called when quitting -- does all saves
+  if(!taMisc::interactive) {
+    taMisc::Info("on quitting impl, cancel_op:", String(cancel_op));
+    if(cancel_op != CO_NORMAL_QUIT)
+      BgRunKilled();
+    return;
+  }
+  if(cancel_op == CO_NORMAL_QUIT)
+    cancel_op = CO_NOT_CANCELLABLE; // normal quit utility is now over..
   ResolveEditChanges(cancel_op);
   if (cancel_op == CO_CANCEL) return;
   ResolveViewerChanges(cancel_op);

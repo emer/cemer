@@ -42,6 +42,7 @@ public:
   virtual void	AutoBuildNets();
   // build networks according to their own individual auto_bulid modes
   
+  void  BgRunKilled() override;
   void	Dump_Load_post() override;
 
   void 	InitLinks_impl(); // special, for this class only

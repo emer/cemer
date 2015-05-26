@@ -196,8 +196,9 @@ public:
     MANUAL_POS          = 0x0001, // disables the automatic cleanup/positioning of layers
     NETIN_PER_PRJN      = 0x0002, // compute netinput per projection instead of a single aggregate value across all inputs (which is the default)
     BUILD_INIT_WTS      = 0x0004, // initialize the weights after building the network -- for very large networks, may want to turn this off to save some redundant time
-    BUILT               = 0x1000, // #READ_ONLY is the network built -- all memory allocated, etc
-    INTACT              = 0x2000, // #READ_ONLY if the network is built, is it also still intact, with all the current params set as they were when it was built?
+    SAVE_KILLED_WTS     = 0x0008, // if the project is killed while running in a non-interactive mode (e.g., on cluster), save this network's weights (only if network is built and epoch > 0)
+    BUILT               = 0x1000, // #READ_ONLY #NO_SAVE is the network built -- all memory allocated, etc
+    INTACT              = 0x2000, // #READ_ONLY #NO_SAVE if the network is built, is it also still intact, with all the current params set as they were when it was built?
     BUILT_INTACT        = BUILT | INTACT // #NO_BIT built and intact
   };
 
@@ -222,7 +223,7 @@ public:
   Layer_Group   layers;         // #CAT_Structure Layers or Groups of Layers
   Weights_List  weights;        // #CAT_Structure saved weights objects
 
-  NetFlags      flags;          // #CAT_Structure #NO_SAVE flags controlling various aspects of network function
+  NetFlags      flags;          // #CAT_Structure flags controlling various aspects of network function
 
   TypeDef*      unit_vars_type; // #CAT_Structure #TYPE_UnitVars type of unit variables object to create in the network -- there can only be ONE type of UnitVars in the entire network, because it is allocated globally!
   TypeDef*      con_group_type; // #CAT_Structure #TYPE_ConGroup type of connection group objects to create in the network -- there can only be ONE type of ConGroup in the entire network, because it is allocated globally!
@@ -1040,6 +1041,9 @@ public:
   // #IGNORE aggregate network variables across procs for trial-level dmem
 #endif
 
+  virtual void  BgRunKilled();
+  // #IGNORE called when program is quitting prematurely and is not in an interactive mode - save network if SAVE_KILLED_WTS flag is set
+  
   int  Dump_Load_Value(std::istream& strm, taBase* par=NULL) override;
   int  Save_strm(std::ostream& strm, taBase* par=NULL, int indent=0) override;
   int  Dump_Save_impl(std::ostream& strm, taBase* par=NULL, int indent=0) override;

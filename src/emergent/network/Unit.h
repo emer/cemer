@@ -177,9 +177,9 @@ public: //
   virtual void  Copy_Weights(const Unit* src, Projection* prjn = NULL);
   // #CAT_ObjectMgmt copies weights from other unit (incl wts assoc with unit bias member) -- if prjn is specified, then it only copies weights for that particular projection on this unit, from the same projection index number on the src unit (assumes that there is a correspondence in the projections across this and source unit!)
 
-  virtual void  SaveWeights_strm(std::ostream& strm, Projection* prjn = NULL, ConGroup::WtSaveFormat fmt = ConGroup::TEXT);
+  virtual void  SaveWeights_strm(std::ostream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, Projection* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File write weight values out in a simple ordered list of weights (optionally in binary fmt)
-  virtual int   LoadWeights_strm(std::istream& strm, Projection* prjn = NULL, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, bool quiet = false);
+  virtual int   LoadWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT, bool quiet = false, Projection* prjn = NULL);
   // #EXT_wts #COMPRESS #CAT_File read weight values in from a simple ordered list of weights (optionally in binary fmt) -- rval is taMisc::ReadTagStatus, TAG_END if successful
   static int    SkipWeights_strm(std::istream& strm, ConGroup::WtSaveFormat fmt = ConGroup::TEXT,
                                  bool quiet = false);

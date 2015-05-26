@@ -1021,17 +1021,40 @@ void Layer::Copy_Weights(const Layer* src) {
   units.Copy_Weights(&(src->units));
 }
 
-void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt) {
+void Layer::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
   // name etc is saved & processed by network level guy -- this is equiv to unit group
-  units.SaveWeights_strm(strm, fmt);
+  units.SaveWeights_strm(strm, fmt, prjn);
 }
 
-int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
-  return units.LoadWeights_strm(strm, fmt, quiet);
+int Layer::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
+  return units.LoadWeights_strm(strm, fmt, quiet, prjn);
 }
 
 int Layer::SkipWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
   return Unit_Group::SkipWeights_strm(strm, fmt, quiet);
+}
+
+void Layer::SaveWeights(const String& fname) {
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
+  if(flr->ostrm)
+    SaveWeights_strm(*flr->ostrm);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+bool Layer::LoadWeights(const String& fname, bool quiet) {
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
+  bool rval = false;
+  if(flr->istrm) {
+    rval = LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet);
+  }
+  else {
+    TestError(true, "LoadWeights", "aborted due to inability to load weights file");
+    // the above should be unnecessary but we're not getting the error sometimes..
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
 }
 
 void Layer::PropagateInputDistance() {

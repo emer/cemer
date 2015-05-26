@@ -36,7 +36,8 @@ class QTimer; //
 enum CancelOp { // ops for passing cancel status and instructions, typically for Window closing
   CO_PROCEED,           // tells caller to proceed with operation (typical default)
   CO_CANCEL,            // client can set this to tell caller to cancel the operation
-  CO_NOT_CANCELLABLE    // preset, to tell client that operation will go ahead unconditionally
+  CO_NOT_CANCELLABLE,   // preset, to tell client that operation will go ahead unconditionally
+  CO_NORMAL_QUIT,       // this is a normal quit -- used for !interactive jobs that finish normally
 };
 
 taTypeDef_Of(taiMiscCore);
@@ -67,6 +68,7 @@ public:
   static void           Quit(CancelOp cancel_op = CO_NOT_CANCELLABLE);
    // call to quit, invokes Quit_impl on instance first
   static void           OnQuitting(CancelOp& cancel_op); // call this when a quit situation is detected -- does all the save logic
+  static void           BgRunKilled(); // called when a background job (!interactive) is quitting prematurely -- can save state -- calls project BgRunKilled method on Project
 
   const String          classname(); // 3.x compatability, basically the app name
 

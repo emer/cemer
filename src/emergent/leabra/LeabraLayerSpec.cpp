@@ -27,7 +27,6 @@ TA_BASEFUNS_CTORS_DEFN(LeabraClampSpec);
 TA_BASEFUNS_CTORS_DEFN(LayerDecaySpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraDelInhib);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayStats);
-TA_BASEFUNS_CTORS_DEFN(LeabraLayLrate);
 TA_BASEFUNS_CTORS_DEFN(LayGpInhibSpec);
 TA_BASEFUNS_CTORS_DEFN(LeabraLayerSpec);
 TA_BASEFUNS_CTORS_LITE_DEFN(LeabraLayerSpec_SPtr);
@@ -150,18 +149,6 @@ void LeabraLayStats::UpdateAfterEdit_impl() {
   cos_diff_avg_dt = 1.0f / cos_diff_avg_tau;
 }
 
-void LeabraLayLrate::Initialize() {
-  Defaults_init();
-}
-
-void LeabraLayLrate::Defaults_init() {
-  on = false;
-  fixed = false;
-  fix_lrate = 1.0f;
-  max_lrate = 2.0f;
-  max_err = 0.5f;
-}
-
 void LayGpInhibSpec::Initialize() {
   on = false;
   gp_g = 0.5f;
@@ -179,10 +166,11 @@ void LeabraLayerSpec::Initialize() {
   min_obj_type = &TA_LeabraLayer;
   unit_gp_inhib.on = false;
   multi_gp_inhib.on = false;
+  Defaults_init();
 }
 
 void LeabraLayerSpec::Defaults_init() {
-  // nothing at this level..
+  lay_lrate = 1.0f;
 }
 
 void LeabraLayerSpec::UpdateAfterEdit_impl() {
@@ -334,7 +322,7 @@ void LeabraLayerSpec::Init_Stats(LeabraLayer* lay, LeabraNetwork* net) {
   lay->avg_cos_diff.ResetAvg();
   lay->cos_diff_avg = 0.0f;
   lay->cos_diff_avg_lrn = 0.0f;
-  lay->lrate_mod = 1.0f;
+  lay->lrate_mod = lay_lrate;
   lay->avg_act_diff = 0.0f;
   lay->avg_avg_act_diff.ResetAvg();
   lay->trial_cos_diff = 0.0f;
@@ -801,17 +789,9 @@ float LeabraLayerSpec::Compute_CosDiff(LeabraLayer* lay, LeabraNetwork* net) {
   lay->cos_diff = cosv;
 
   lstats.UpdtDiffAvg(lay->cos_diff_avg, lay->cos_diff);
-  if(lrate.on && lrate.fixed)
-    lay->lrate_mod = lrate.fix_lrate;
-  else
-    lay->lrate_mod = 1.0f;
+  lay->lrate_mod = lay_lrate;
   if(lay->layer_type == Layer::HIDDEN) {
     lay->cos_diff_avg_lrn = 1.0f - lay->cos_diff_avg;
-    if(lrate.on && !lrate.fixed) {
-      float eff_err = MIN(lay->cos_diff_avg_lrn, lrate.max_err);
-      lay->lrate_mod = 1.0f + ((lrate.max_err - eff_err) / lrate.max_err) *
-        (lrate.max_lrate - 1.0f);
-    }
   }
   else {
     lay->cos_diff_avg_lrn = 0.0f; // no mix for TARGET layers; irrelevant for INPUT

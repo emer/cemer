@@ -164,7 +164,7 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
   float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
-  int send_no = (int)(send_no_flt + 2.0f * send_sem + 5.0f); // polar needs some extra insurance
+  int send_no = (int)(send_no_flt + 3.0f * send_sem + 5.0f); // polar needs some extra insurance
   if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
   // pre-allocate connections!

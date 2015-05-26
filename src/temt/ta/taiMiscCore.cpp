@@ -201,8 +201,21 @@ void taiMiscCore::Init(bool gui) {
     this, SLOT(app_aboutToQuit()) );
 }
 
+void taiMiscCore::BgRunKilled() {
+#ifdef DMEM_COMPILE
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  for(int i=0; i< tabMisc::root->projects.leaves; i++) {
+    taProject* proj = tabMisc::root->projects.Leaf(i);
+    proj->BgRunKilled();
+  }
+}
+
 void taiMiscCore::OnQuitting_impl(CancelOp& cancel_op) {
-  // nothing in nongui
+  if(taMisc::interactive) return;
+   if(cancel_op != CO_NORMAL_QUIT) {
+    BgRunKilled();
+  }
 }
 
 void taiMiscCore::PostUpdateAfter() {

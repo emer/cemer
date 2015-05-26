@@ -192,7 +192,8 @@ int ConGroup::ConnectUnOwnCn(Unit* un, bool ignore_alloc_errs,
   if((size >= alloc_size) || (!mem_start)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnOwnCn: mem not allocated or size already at maximum allocated of",
-                String(alloc_size),"this is a programmer error -- please report the bug");
+                String(alloc_size),"this is a programmer error -- please report the bug, in prjn:",
+                    prjn->layer->name, prjn->name);
     }
     warned_already = true;
     return -1;
@@ -215,7 +216,8 @@ bool ConGroup::ConnectUnPtrCn(Unit* un, int con_idx, bool ignore_alloc_errs) {
   if((size >= alloc_size) || (!mem_start)) {
     if(!taMisc::err_cancel && !ignore_alloc_errs && !warned_already) {
       taMisc::Error("ConnectUnPtrCn: mem not allocated or size already at maximum allocated of",
-                String(alloc_size),"this is a programmer error -- please report the bug");
+                    String(alloc_size),"this is a programmer error -- please report the bug, in prjn:",
+                    prjn->layer->name, prjn->name);
     }
     warned_already = true;
     return false;
@@ -987,7 +989,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
                         "in cons group does not match the loaded unit -- weights will be off");
         warned_already = true;
       }
-      Cn(i,WT,net) = wtval;
+      con_spec->LoadWeightVal(wtval, this, i, net);
 
       // this is not viable:
       // for(int j=size-1; j >= i; j--) {
@@ -998,7 +1000,7 @@ int ConGroup::LoadWeights_strm(istream& strm, Unit* ru, Network* net,
     }
     else {                      // all good normal case, just set the weights!
       warned_already = false;
-      Cn(i,WT,net) = wtval;
+      con_spec->LoadWeightVal(wtval, this, i, net);
     }
   }
   ConGroup::LoadWeights_EndTag(strm, "Cn", tag, stat, quiet);

@@ -219,8 +219,11 @@ public:
   virtual void          ViewProjLog_Editor();
   // #MENU #MENU_ON_View #MENU_CONTEXT #CAT_File view the current project log file in an external editor as specified in the preferences
 
+  virtual void          BgRunKilled() { };
+  // #IGNORE called when program is quitting prematurely and is not in an interactive mode -- override to save relevant state information
+  
   void         Dump_Load_post() override;
-  void                  OpenViewers(); // open any yet unopen viewers
+  void         OpenViewers(); // open any yet unopen viewers
   void         CloseLater() override;
 
   void  UpdateAfterEdit();

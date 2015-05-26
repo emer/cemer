@@ -429,6 +429,29 @@ void Projection::MonitorVar(NetMonitor* net_mon, const String& variable) {
   net_mon->AddObject(this, variable);
 }
 
+void Projection::SaveWeights(const String& fname) {
+  taFiler* flr = GetSaveFiler(fname, ".wts", true);
+  if(flr->ostrm)
+    layer->SaveWeights_strm(*flr->ostrm, ConGroup::TEXT, this);
+  flr->Close();
+  taRefN::unRefDone(flr);
+}
+
+bool Projection::LoadWeights(const String& fname, bool quiet) {
+  taFiler* flr = GetLoadFiler(fname, ".wts", true);
+  bool rval = false;
+  if(flr->istrm) {
+    rval = layer->LoadWeights_strm(*flr->istrm, ConGroup::TEXT, quiet, this);
+  }
+  else {
+    TestError(true, "LoadWeights", "aborted due to inability to load weights file");
+    // the above should be unnecessary but we're not getting the error sometimes..
+  }
+  flr->Close();
+  taRefN::unRefDone(flr);
+  return rval;
+}
+
 int Projection::ReplaceConSpec(ConSpec* old_sp, ConSpec* new_sp) {
   if(con_spec.SPtr() != old_sp) return 0;
   con_spec.SetSpec(new_sp);

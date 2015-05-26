@@ -236,29 +236,6 @@ private:
   void	Defaults_init();
 };
 
-eTypeDef_Of(LeabraLayLrate);
-
-class E_API LeabraLayLrate : public SpecMemberBase {
-  // ##INLINE ##NO_TOKENS ##CAT_Leabra layer-level learning rate adjustment parameters -- can set a fixed learning rate per layer, or adjust learning rate as function of average error level in the layer (cos_diff_avg_lrn) -- sets lrate_mod value on layer which applies to all recv connections coming into layer
-INHERITED(SpecMemberBase)
-public:
-  bool          on;             // set a learning rate modulator for all 
-  bool          fixed;          // #CONDSHOW_ON_on set a fixed learning rate multiplier for layers that this spec applies to -- otherwise compute learning rate as function of layer-level average error level (cos_diff_avg_lrn), which is only applicable to HIDDEN layer types
-  float         fix_lrate;      // #CONDSHOW_ON_on&&fixed set the learning rate multiplier to this value for all layers that this spec applies to -- this is a multiplier on the conspec lrate, so a value of 1 does nothing, > 1 increases lrate, and < 1 decreases lrate
-  float         max_lrate;      // #CONDSHOW_ON_on&&!fixed #MIN_1 maximum learning rate multiplier, when cos_diff_avg_lrn is 0 -- higher cos_diff_avg_lrn values decrease lrate multiplier linearly, such that at max_err the multiplier will be 1 (i.e., the lrate will be the value specified in the con spec)
-  float         max_err;        // #CONDSHOW_ON_on&&!fixed maximum value of cos_diff_avg_lrn that we modulate learning rates over -- any level of error above this value will get the base lrate multiplier of 1.0 -- defines the error range (0 .. max_err) over which learning rates are modulated
-
-  String       GetTypeDecoKey() const override { return "LayerSpec"; }
-
-  TA_SIMPLE_BASEFUNS(LeabraLayLrate);
-protected:
-  SPEC_DEFAULTS;
-private:
-  void	Initialize();
-  void 	Destroy()	{ };
-  void	Defaults_init();
-};
-
 eTypeDef_Of(LayGpInhibSpec);
 
 class E_API LayGpInhibSpec : public SpecMemberBase {
@@ -296,7 +273,7 @@ public:
   LayerDecaySpec  decay;        // #CAT_Activation decay of activity state vars between trials
   LeabraDelInhib  del_inhib;	// #CAT_Activation delayed inhibition, as a function of per-unit net input on prior trial and/or phase -- produces temporal derivative effects
   LeabraLayStats  lstats;       // #CAT_Statistic layer-level statistics parameters
-  LeabraLayLrate  lrate;        // #CAT_Statistic layer-level learning rate adjustment parameters -- adjust learning rate as function of average error level in the layer (cos_diff_avg_lrn) -- sets lrate_mod value on layer which applies to all recv connections coming into layer
+  float           lay_lrate;    // #CAT_Statistic layer-level learning rate modulator, multiplies learning rates for all connections coming into layer(s) that this spec applies to -- sets lrate_mod value on layer
   LayGpInhibSpec  lay_gp_inhib;	// #CAT_Activation pooling of inhibition across layers within layer groups -- only applicable if the layer actually lives in a subgroup with other layers (and only in a first-level subgroup, not a sub-sub-group) -- each layer's computed inhib vals contribute with a factor of gp_g (0-1) to a pooled inhibition value, which is the MAX over all these individual scaled inhibition terms -- the final inhibition value for a given layer is then a MAX of the individual layer's original inhibition and this pooled value -- depending on the gp_g factor, this can cause more weak layers to drop out
 
   ///////////////////////////////////////////////////////////////////////

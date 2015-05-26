@@ -63,6 +63,12 @@ void ProjectBase::Copy_(const ProjectBase& cp) {
   UpdatePointers_NewPar((taBase*)&cp, this); // update all the pointers!
 }
 
+void ProjectBase::BgRunKilled() {
+  FOREACH_ELEM_IN_GROUP(Network, net, networks) {
+    net->BgRunKilled();
+  }
+}
+
 void ProjectBase::Dump_Load_post() {
   //  inherited::Dump_Load_post(); -- don't do this -- need to do in correct order
   taFBase::Dump_Load_post();          // parent of taProject
@@ -78,19 +84,13 @@ void ProjectBase::Dump_Load_post() {
   setDirty(false);              // nobody should start off dirty!
   if(!taMisc::interactive) {
     bool startup_run = programs.RunStartupProgs();      // run startups as last step..
-    if(!taMisc::gui_active && startup_run) taiMC_->Quit();
+    if(!taMisc::gui_active && startup_run)
+      taiMC_->Quit(CO_NORMAL_QUIT);
   }
 }
 
 void ProjectBase::SaveRecoverFile_strm(ostream& strm) {
-  // really there is no compelling reason to force it to save units if project otherwise does not
-//   FOREACH_ELEM_IN_GROUP(Network, net, networks) {
-//     net->SetNetFlag(Network::SAVE_UNITS_FORCE); // force to save units for recover file!
-//   }
   Save_strm(strm);
-//   FOREACH_ELEM_IN_GROUP(Network, net, networks) {
-//     net->ClearNetFlag(Network::SAVE_UNITS_FORCE);
-//   }
 }
 
 void ProjectBase::AutoBuildNets() {

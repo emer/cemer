@@ -2512,7 +2512,8 @@ bool Network::LoadWeights_strm(istream& strm, bool quiet) {
     if(stat != taMisc::TAG_END) break;
   }
 
-  Init_Weights_post();
+  // no longer need to do this: is done directly in load weights call
+  // Init_Weights_post();
   NET_THREAD_CALL(Network::Connect_VecChunk_Thr); // re-chunk just to be sure, in case they moved around
   
   // could try to read end tag but what is the point?
@@ -3439,4 +3440,22 @@ taBase* Network::ChooseNew(taBase* origin) {
     ntwrk = (Network*)prj->networks.New(1);
   }
   return ntwrk;
+}
+
+void Network::BgRunKilled() {
+  if(!HasNetFlag(SAVE_KILLED_WTS)) return;
+  if(!HasNetFlag(BUILT_INTACT) || epoch < 1) return;
+  String fname;
+  if(file_name.nonempty()) {
+    fname = file_name;
+    if(fname.contains(".wts"))
+      fname = fname.before(".wts",-1);
+    fname += "_killed." + taMisc::LeadingZeros(epoch,4) + ".wts.gz";
+  }
+  else {
+    fname = GetFileNameFmProject(".wts.gz", "_killed." + taMisc::LeadingZeros(epoch,4),
+                                 "", false);
+  }
+  taMisc::Info("Saving final killed weights to:", fname);
+  SaveWeights(fname);
 }

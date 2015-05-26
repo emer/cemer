@@ -872,9 +872,15 @@ void taMisc::Error(const char* a, const char* b, const char* c, const char* d,
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
   }
-  if (taMisc::gui_active && !taMisc::is_loading) {
-    bool cancel = iDialogChoice::ErrorDialog(NULL, taMisc::last_err_msg);
-    taMisc::ErrorCancelSet(cancel);
+  if(!taMisc::interactive) {
+    taMisc::Info("Quitting non-interactive job on error");
+    taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
+  }
+  else {
+    if (taMisc::gui_active && !taMisc::is_loading) {
+      bool cancel = iDialogChoice::ErrorDialog(NULL, taMisc::last_err_msg);
+      taMisc::ErrorCancelSet(cancel);
+    }
   }
 #endif
 }

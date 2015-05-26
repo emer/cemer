@@ -221,6 +221,10 @@ void cssMisc::Error(cssProg* prog, const char* a, const char* b, const char* c,
     bool running = top->state & cssProg::State_Run;
     top->own_program->CssError(GetSourceLn(prog), running, cssMisc::last_err_msg);
   }
+  if(!taMisc::interactive) {
+    taMisc::Info("Quitting non-interactive job on error");
+    taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
+  }
 }
 
 String cssMisc::last_warn_msg;

@@ -1923,7 +1923,7 @@ bool taRootBase::Startup_ProcessArgs() {
 bool taRootBase::Startup_RunStartupScript() {
   bool ran = cssMisc::TopShell->RunStartupScript();
   if(ran && !taMisc::gui_active && !taMisc::interactive)
-    taiMC_->Quit();
+    taiMC_->Quit(CO_NORMAL_QUIT);
   return true;
 }
 
@@ -2305,24 +2305,21 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   taMisc::Decode_Signal(err);
   cerr << endl;
 
+  taiMiscCore::BgRunKilled();
   if (tabMisc::root) for (int i = 0; i < tabMisc::root->projects.size; ++i) {
     taProject* prj = tabMisc::root->projects.FastEl(i);
     prj->SaveRecoverFile();
   }
 
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
-  exit(err);
+  taiMiscCore::Quit();
 #else // TA_OS_WIN // MS CRT doesn't handle these signals...
   if(non_term_sig) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
-  } else {
-    if(err == SIGTERM) {
-      exit(err);                // we need to forcibly exit on this one
-    }
-    else {
-      kill(getpid(), err);      // activate signal
-    }
+  }
+  else {
+    taiMiscCore::Quit();
   }
 #endif //
 }

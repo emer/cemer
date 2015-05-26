@@ -322,6 +322,13 @@ public:
     }
   }
 
+  void  LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) {
+    cg->Cn(cidx, WT, net) = wtval;
+    float linwt = LinFmSigWt(wtval / cg->Cn(cidx, SCALE, net));
+    cg->Cn(cidx, SWT, net) = linwt;
+    cg->Cn(cidx, FWT, net) = linwt;
+  }
+
   void  SetConScale(float scale, ConGroup* cg, int cidx, Network* net, int thr_no) override {
     cg->Cn(cidx, SCALE, net) = scale;
   }

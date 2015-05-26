@@ -557,7 +557,7 @@ void Unit::Copy_Weights(const Unit* src, Projection* prjn) {
   }
 }
 
-void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, ConGroup::WtSaveFormat fmt) {
+void Unit::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
   Network* net = own_net();
   strm << "<Un>\n";
   float bwt = bias_wt();
@@ -582,7 +582,7 @@ void Unit::SaveWeights_strm(ostream& strm, Projection* prjn, ConGroup::WtSaveFor
   strm << "</Un>\n";
 }
 
-int Unit::LoadWeights_strm(istream& strm, Projection* prjn, ConGroup::WtSaveFormat fmt, bool quiet) {
+int Unit::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
   Network* net = own_net();
   String tag, val;
   int stat = ConGroup::LoadWeights_StartTag(strm, "Un", val, quiet);

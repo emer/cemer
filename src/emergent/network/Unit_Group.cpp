@@ -121,18 +121,18 @@ void Unit_Group::Copy_Weights(const Unit_Group* src) {
   }
 }
 
-void Unit_Group::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt) {
+void Unit_Group::SaveWeights_strm(ostream& strm, ConGroup::WtSaveFormat fmt, Projection* prjn) {
   strm << "<Ug>\n";
   FOREACH_ELEM_IN_GROUP(Unit, u, *this) {
     int lfi = u->GetMyLeafIndex();
     strm << "<UgUn " << lfi << " " << u->name << ">\n";
-    u->SaveWeights_strm(strm, NULL, fmt);
+    u->SaveWeights_strm(strm, fmt, prjn);
     strm << "</UgUn>\n";
   }
   strm << "</Ug>\n";
 }
 
-int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet) {
+int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool quiet, Projection* prjn) {
   String tag, val;
   int stat = ConGroup::LoadWeights_StartTag(strm, "Ug", val, quiet);
   if(stat != taMisc::TAG_GOT) return stat;
@@ -144,7 +144,7 @@ int Unit_Group::LoadWeights_strm(istream& strm, ConGroup::WtSaveFormat fmt, bool
     int lfi = (int)val.before(' ');
     if(leaves > lfi) {
       Unit* u = Leaf(lfi);
-      stat = u->LoadWeights_strm(strm, NULL, fmt, quiet);
+      stat = u->LoadWeights_strm(strm, fmt, quiet, prjn);
     }
     else {
       stat = Unit::SkipWeights_strm(strm, fmt, quiet);

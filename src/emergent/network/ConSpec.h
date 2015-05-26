@@ -111,6 +111,9 @@ public:
   //    Below are the primary computational interface to the Network Objects
   //    for performing algorithm-specific activation and learning
 
+  virtual void  LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net);
+  // #CAT_Structure set loaded weight value for given connection index
+  
   inline void   C_Init_Weight_Rnd(float& wt, int thr_no) {
     wt = rnd.Gen(thr_no);
     C_ApplyLimits(wt);

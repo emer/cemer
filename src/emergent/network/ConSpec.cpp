@@ -133,3 +133,7 @@ void ConSpec::ApplySymmetry_s(ConGroup* cg, Network* net, int thr_no) {
     }
   }
 }
+
+void ConSpec::LoadWeightVal(float wtval, ConGroup* cg, int cidx, Network* net) {
+  cg->Cn(cidx,WT,net) = wtval;
+}
