@@ -155,15 +155,20 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
 
   int recv_no;
   if(!self_con && (prjn->from.ptr() == prjn->layer))
-    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f);
+    recv_no = (int) ((p_con * (float)(prjn->from->units.leaves-1)) + .5f) + 1;
   else
-    recv_no = (int) ((p_con * (float)prjn->from->units.leaves) + .5f);
+    recv_no = (int) ((p_con * (float)prjn->from->units.leaves) + .5f) + 1;
   if(recv_no <= 0) recv_no = 1;
 
   // sending number is even distribution across senders plus some imbalance factor
-  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) / (float)prjn->from->units.leaves;
+  float send_no_flt = (float)(prjn->layer->units.leaves * recv_no) /
+    (float)prjn->from->units.leaves;
+  if(send_no_flt < 2.0f)
+    send_no_flt = 2.0f;
   // add SEM as corrective factor
   float send_sem = send_no_flt / sqrtf(send_no_flt);
+  if(send_sem < 1.0f)
+    send_sem = 1.0f;
   int send_no = (int)(send_no_flt + 3.0f * send_sem + 5.0f); // polar needs some extra insurance
   if(send_no > prjn->layer->units.leaves) send_no = prjn->layer->units.leaves;
 
@@ -197,8 +202,9 @@ void PolarRndPrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
         n_retry++;
         continue;
       }
-      if(ru->ConnectFromCk(su, prjn, recv_gp))
+      if(ru->ConnectFromCk(su, prjn, recv_gp)) {
         n_con++;
+      }
       else {
         n_retry++;              // already connected, retry
         continue;

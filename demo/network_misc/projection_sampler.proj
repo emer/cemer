@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8297
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8301
 LeabraProject .projects["projection_sampler"] { 
  Doc_Group @.docs = [1] {
   taDoc @["ProjectionSpecDocs"] { 
@@ -1492,7 +1492,7 @@ mw.loader.load([\"ext.smw.style\",\"ext.smw.tooltips\",\"mediawiki.page.startup\
 <!-- 
 NewPP limit report
 CPU time usage: 0.048 seconds
-Real time usage: 0.055 seconds
+Real time usage: 0.054 seconds
 Preprocessor visited node count: 42/1000000
 Preprocessor generated node count: 84/1000000
 Post?expand include size: 226/2097152 bytes
@@ -1501,7 +1501,7 @@ Highest expansion depth: 3/40
 Expensive parser function count: 0/100
 -->
 
-<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!*!0!!en!*!* and timestamp 20150525082944
+<!-- Saved in parser cache with key pdpwiki:pcache:idhash:301-0!*!0!!en!*!* and timestamp 20150527050628
  -->
 </div>								<div class=\"printfooter\">
 				Retrieved from \"<a href=\"https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508\">https://grey.colorado.edu/emergent/index.php?title=ProjectionSpec&amp;oldid=4508</a>\"				</div>
@@ -1604,7 +1604,7 @@ You can view its source [e]\" accesskey=\"e\">View source</a></span></li>
 		<div id=\"footer\" role=\"contentinfo\">
 							<ul id=\"footer-info\">
 											<li id=\"footer-info-lastmod\"> This page was last modified on 13 August 2009, at 11:09.</li>
-											<li id=\"footer-info-viewcount\">This page has been accessed 2,035 times.</li>
+											<li id=\"footer-info-viewcount\">This page has been accessed 2,038 times.</li>
 									</ul>
 							<ul id=\"footer-places\">
 											<li id=\"footer-places-about\"><a href=\"/emergent/index.php/emergent:About\" title=\"emergent:About\">About emergent</a></li>
@@ -1624,7 +1624,7 @@ mw.loader.state({\"site\":\"loading\",\"user\":\"ready\",\"user.groups\":\"ready
 mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawiki.hidpi\",\"mediawiki.page.ready\",\"mediawiki.searchSuggest\",\"ext.headertabs\",\"ext.Drafts\",\"ext.cite\",\"skins.vector.collapsibleNav\"],null,true);
 }</script>
 <script src=\"https://grey.colorado.edu/emergent/load.php?debug=false&amp;lang=en&amp;modules=site&amp;only=scripts&amp;skin=vector&amp;*\"></script>
-<!-- Served in 0.516 secs. -->
+<!-- Served in 0.410 secs. -->
 	
 
 </body></html>";
@@ -4094,7 +4094,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	  net_text_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=-0.5: z=0: }: };
 	  net_text_rot=0;
 	  cur_unit_vals{ r.wt;	  };
-	  unit_src_path=".layers[3].units[25]";
+	  unit_src_path=".layers[3].units[10]";
 	  con_type=ANY_CON;
 	  hist_idx=0;
 	  hist_save=1;
@@ -4966,13 +4966,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     GaussRFPrjnSpec @["GaussRF_HalfOvlp4x4"] {
@@ -5349,6 +5343,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -5753,13 +5748,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     TesselPrjnSpec @["Tessel_EllipseHalfOvlp"] {
@@ -6472,6 +6461,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -6876,13 +6866,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
@@ -7038,7 +7022,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
      desc=;
      unique{      };
      children {
-      name="BaseSpec_Group_533";
+      name="children";
       el_typ=TiledGpRFPrjnSpec;
       el_def=0;
      };
@@ -7482,6 +7466,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -7886,13 +7871,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
@@ -8276,6 +8255,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
@@ -8364,7 +8344,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
    n_units=252;
-   n_cons=1763;
+   n_cons=1811;
    max_prjns=1;
    max_disp_size {x=14: y=14: z=2: };
    max_disp_size2d {x=22: y=20: };
@@ -8680,13 +8660,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraConSpec @["LeabraConSpec_0"] {
@@ -9070,6 +9044,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=NO_BUILD;
@@ -9419,13 +9394,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
       dead_thr=0.01;
       cos_diff_avg_dt=0.01;
      };
-     lrate {
-      on=0;
-      fixed=0;
-      fix_lrate=1;
-      max_lrate=2;
-      max_err=0.5;
-     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     GpRndTesselPrjnSpec @["GpRndTessel_Full"] {
@@ -9913,6 +9882,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
     el_typ=Weights;
     el_def=0;
    };
+   flags=BUILD_INIT_WTS;
    unit_vars_type=LeabraUnitVars;
    con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;

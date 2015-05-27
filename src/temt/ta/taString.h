@@ -507,6 +507,13 @@ public:
   // #CAT_Modify convert all letters to lower case of this string (NOTE: modifies this string, and also returns the resulting string value)
   taString&               capitalize();
   // #CAT_Modify capitalize the first letter of each word of this string (NOTE: modifies this string, and also returns the resulting string value)
+  taString&               triml();
+  // #CAT_Modify trims leading spaces (NOTE: modifies this string, and also returns the resulting string value)
+  taString&               trimr();
+  // #CAT_Modify trims trailing spaces (NOTE: modifies this string, and also returns the resulting string value)
+  taString&               trim();
+  // #CAT_Modify trims leading and trailing spaces (NOTE: modifies this string, and also returns the resulting string value)
+  
   taString&               xml_esc();
   // #CAT_Modify xml escape, ex & to &amp; of this string (NOTE: modifies this string, and also returns the resulting string value)
   taString&               xml_unesc();

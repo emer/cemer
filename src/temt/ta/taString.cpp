@@ -831,6 +831,36 @@ taString& taString::downcase() {
   return *this;
 }
 
+taString& taString::triml() {
+  int n = 0; // count of number to strip
+  while (n < length()) {
+    char c = elem(n);
+    if (!((c== ' ') || (c == '\t'))) break;
+    ++n;
+  }
+  if (n == 0) return *this;
+  setRep(right(length() - n).mrep);
+  return *this;
+}
+
+taString& taString::trimr() {
+  // note: c=0 when len=0
+  char c = lastchar();
+  if (!((c== ' ') || (c == '\t')))
+    return *this;
+
+  do {
+    truncate(length() - 1);
+    c = lastchar();
+  }
+  while ((c== ' ') || (c == '\t'));
+  return *this;
+}
+
+taString& taString::trim() {
+  return trimr().triml();
+}
+
 taString taString::elidedToFirstLine() const {
   int pos_nl = index('\n');
   if (pos_nl < 0) return *this;
