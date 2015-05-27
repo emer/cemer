@@ -671,6 +671,15 @@ void taMisc::CheckError(const char* a, const char* b, const char* c, const char*
   } else {
     last_check_msg = msg;
   }
+#if !defined(NO_TA_BASE)
+#if defined(DMEM_COMPILE)
+  if(taMisc::dmem_proc > 0) return;
+#endif
+  if(!taMisc::interactive) {
+    taMisc::Info("Quitting non-interactive job on error");
+    taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
+  }
+#endif
 }
 
 #ifndef NO_TA_BASE
@@ -769,6 +778,10 @@ void taMisc::Error_nogui(const char* a, const char* b, const char* c, const char
     }
     cssMisc::cur_top->run_stat = cssEl::ExecError; // tell css that we've got an error
     cssMisc::cur_top->exec_err_msg = taMisc::last_err_msg;
+  }
+  if(!taMisc::interactive) {
+    taMisc::Info("Quitting non-interactive job on error");
+    taiMiscCore::Quit();        // all errors are *fatal* for non-interactive jobs!!!
   }
 #endif
 }
