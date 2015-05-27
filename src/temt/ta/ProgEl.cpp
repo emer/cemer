@@ -249,9 +249,13 @@ void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
 }
 
 bool ProgEl::CheckEqualsError(String& condition, bool quiet, bool& rval) {
-  if(CheckError((condition.freq('=') == 1) && !(condition.contains(">=")
-                                                || condition.contains("<=")
-                                                || condition.contains("!=")),
+  String cond = condition;
+  if(cond.freq('\"') >= 2) {
+    cond = cond.before('\"') + cond.after('\"',-1);
+  }
+  if(CheckError((cond.freq('=') == 1) && !(cond.contains(">=")
+                                           || cond.contains("<=")
+                                           || cond.contains("!=")),
                 quiet, rval,
                 "condition contains a single '=' assignment operator -- this is not the equals operator: == .  Fixed automatically")) {
     condition.gsub("=", "==");
