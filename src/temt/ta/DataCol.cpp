@@ -28,6 +28,7 @@
 #include <taObjDiff_List>
 #include <DataSelectSpec>
 #include <DataSelectEl>
+#include <String_Array>
 #include <AnalysisRun>  // need for analysis type enum
 
 #include <SigLinkSignal>
@@ -903,3 +904,18 @@ void DataCol::RunLinearRegression() {
   dataTable()->RunAnalysis(this, AnalysisRun::REGRESS_LINEAR);
 }
 
+void DataCol::GetUniqueColumnValues(String_Array& groups) {
+  String_Array temp;
+  for (int i=0; i<this->rows(); i++) {
+    temp.Add(this->GetValAsString(i));
+  }
+  temp.Sort();
+  groups.Reset();
+  String prior = "";
+  for (int i=0; i<temp.size; i++) {
+    if (temp.FastEl(i) != prior) {
+      groups.Add(temp.FastEl(i));
+      prior = temp.FastEl(i);
+    }
+  }
+}

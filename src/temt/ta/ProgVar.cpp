@@ -176,6 +176,7 @@ void ProgVar::Copy_(const ProgVar& cp) {
   SetFlagsByOwnership();
   objs_ptr = false; // only the original var can have special relationship with object
   object_val.set(cp.object_val.ptr());
+  UpdateAfterCopy(cp);
 }
 
 bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
@@ -249,6 +250,20 @@ void ProgVar::UpdateAfterEdit_impl() {
               "Hard-coded (C++) enum's are not supported for local variables -- please use an int or String variable instead.");
 
   UpdateCssObjVal();
+}
+
+void ProgVar::UpdateAfterCopy(const ProgVar& cp) {
+  Program* myprg = GET_MY_OWNER(Program);
+  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
+//  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
+//    // if within the same program, we need to update the *function* pointers
+//    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+//  }
+//  if (var_type == T_Object) {
+//    if (myprg != otprg) {
+//      objs_ptr = true;
+//    }
+//  }
 }
 
 bool ProgVar::UpdateCssObjVal() {

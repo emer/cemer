@@ -22,6 +22,7 @@
 #include <taMath_float>
 #include <iViewPanelOfGraphTable>
 #include <taSvg>
+#include <String_Array>
 
 #include <taMisc>
 
@@ -60,6 +61,7 @@ void GraphAxisBase::Initialize() {
   units = 1.;
   show_axis_label = true;
   show_alt_axis_label = true;
+  group_by_initialized = false;
 }
 
 void GraphAxisBase::Destroy() {
@@ -702,3 +704,4 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
     }
   }
 }
+

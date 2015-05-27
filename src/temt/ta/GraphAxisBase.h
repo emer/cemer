@@ -24,6 +24,7 @@
 #include <RGBA>
 #include <MinMax>
 #include <DataCol>
+#include <String_Array>
 
 // declare all other types mentioned but not required to include:
 class GraphColView; // 
@@ -65,7 +66,9 @@ public:
   double                units;          // #READ_ONLY #NO_SAVE #NO_COPY order of the units displayed (i.e. divide by this)
 
   T3DataView_List*      col_list;       // #READ_ONLY #NO_SAVE #NO_COPY list of columns for the col_lookup
-
+  
+  String_Array          group_by_values; // #READ_ONLY #NO_SAVE values of "group by" column
+  bool                  group_by_initialized; // #READ_ONLY #NO_SAVE mark so we don't unnecessarily repeat this expensive operation
   virtual void          SetColPtr(GraphColView* cgv);
   GraphColView*         GetColPtr(); // get column pointer from col_name
   DataCol*              GetDAPtr();  // get dataarray ptr
@@ -119,7 +122,7 @@ public:
 
   virtual void          InitFromUserData();
   // initialize various settings from the user data of the data column
-  bool         hasViewProperties() const override { return true; }
+  bool                  hasViewProperties() const override { return true; }
   virtual void          UpdateOnFlag();
   // update the 'on' flag for this column, taking into account whether there is actually any data column set (if not, on must be false)
   virtual void          UpdateFmColLookup();
@@ -127,10 +130,10 @@ public:
   virtual void          UpdateFmDataCol();
   // update various settings from the DataCol (matrix, string, etc)
 
-  void          CopyFromView_base(GraphAxisBase* cp);
+  void                   CopyFromView_base(GraphAxisBase* cp);
   // special copy function that just copies user view options in a robust manner
 
-  void InitLinks();
+void InitLinks();
   void CutLinks();
   SIMPLE_COPY(GraphAxisBase);
   T3_DATAVIEWFUNS(GraphAxisBase, T3DataView)

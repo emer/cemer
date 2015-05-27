@@ -63,6 +63,7 @@ public:
     FIXED_COLOR,                // use the color specified in the plot view (shown in EXPERT mode)
     VALUE_COLOR,                // the data value determines the data drawing color, looked up on the color scale
     COLOR_AXIS,                 // use the data column specified by the color_axis to determine the drawing color
+    COLOR_BY_GROUP,                 // use the data column specified by the color_axis to determine the drawing color
   };
 
   enum MatrixMode {             // how to display matrix grid data
@@ -234,8 +235,8 @@ protected:
   virtual void          RenderAxes();
   virtual void          RenderLegend();
   virtual void          RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
-                                        taVector2f& cur_tr);
-
+                                        taVector2f& cur_tr, int group = -1);
+  // draw one element of the legend - group is the group number if 'color by group'
   virtual void          RemoveGraph(); // remove all lines
 
   virtual void          PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,

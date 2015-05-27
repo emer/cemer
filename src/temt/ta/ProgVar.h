@@ -195,13 +195,16 @@ protected:
 
   virtual bool          CheckUndefType(const String& function_context, bool quiet = false) const;
   // #IGNORE check if var_type == T_UnDef and emit a warning if so -- returns true if undefined..
-  void         UpdateAfterEdit_impl() override;
+  void                  UpdateAfterEdit_impl() override;
+  virtual void          UpdateAfterCopy(const ProgVar& cp);
+
   virtual String        GetSchemaSig() const;
   // #IGNORE make a string that is the schema signature of obj; as long as schema stays the same, we don't stale on changes (ex, to value)
-  void         CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void         CheckChildConfig_impl(bool quiet, bool& rval) override; //object, if any
+  void                  CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void                  CheckChildConfig_impl(bool quiet, bool& rval) override; //object, if any
   virtual const String  GenCssArg_impl();
   virtual const String  GenCssVar_impl();
+
 private:
   void  Copy_(const ProgVar& cp);
   void  Initialize();

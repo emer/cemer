@@ -424,6 +424,9 @@ public:
                                        MemberDef* memb_def=NULL, const void* par=NULL,
                                        TypeDef* par_typ=NULL, taObjDiffRec* par_od=NULL) const override;
 
+  virtual void GetUniqueColumnValues(String_Array& groups);
+  // make a list of the unique values of the column
+
   void  InitLinks(); //note: ok to do own AR here, because never called in constructor
   void  CutLinks(); //note: NOT ok to do disown AR here, because called in destructor
   TA_ABSTRACT_BASEFUNS(DataCol) //
