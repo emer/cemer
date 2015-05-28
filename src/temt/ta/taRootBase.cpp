@@ -2312,14 +2312,14 @@ void taRootBase::SaveRecoverFileHandler(int err) {
   }
 
 #ifdef TA_OS_WIN // MS CRT doesn't handle these signals...
-  taiMiscCore::Quit();
+  exit(err);
 #else // TA_OS_WIN // MS CRT doesn't handle these signals...
   if(non_term_sig) {
     taMisc::Register_Cleanup((SIGNAL_PROC_FUN_TYPE) SaveRecoverFileHandler);
     has_crashed = false;
   }
   else {
-    taiMiscCore::Quit();
+    exit(err);
   }
 #endif //
 }

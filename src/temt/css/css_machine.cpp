@@ -4536,33 +4536,50 @@ bool cssProgSpace::DoCompileCtrl() {
 
 bool cssProgSpace::ParseElseCheck() {
   int c;
-  bool got_else = false;
-  while (isspace(c=Getc())); // skip space
-  if(c == 'e') {
-    if(Getc() == 'l') {
-      if(Getc() == 's') {
-        if(Getc() == 'e') {
-          got_else = true;
-          unGetc(); unGetc();
-          unGetc(); unGetc();
+  while(true) {
+    while (isspace(c=Getc())); // skip space
+    if(c == '/') {
+      if(Getc() == '/') {
+        while(((c=Getc()) != EOF) && (c != '\n')); // eat rest
+        continue;
+      }
+      else {
+        unGetc(); unGetc();
+        return false;
+      }
+      unGetc();
+      return false;
+    }
+    if(c == 'e') {
+      if(Getc() == 'l') {
+        if(Getc() == 's') {
+          if(Getc() == 'e') {
+            unGetc(); unGetc();
+            unGetc(); unGetc();
+            return true;
+          }
+          else {
+            unGetc(); unGetc();
+            unGetc(); unGetc();
+            return false;
+          }
         }
         else {
-          unGetc(); unGetc();
-          unGetc(); unGetc();
+          unGetc(); unGetc(); unGetc();
+          return false;
         }
       }
       else {
-        unGetc(); unGetc(); unGetc();
+        unGetc(); unGetc();
+        return false;
       }
     }
     else {
-      unGetc(); unGetc();
+      unGetc();
+      return false;
     }
   }
-  else {
-    unGetc();
-  }
-  return got_else;
+  return false;
 }
 
 bool cssProgSpace::PopElseBlocks() {
