@@ -69,6 +69,7 @@ public:
   AvgMaxVals    am_deep_raw;    // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw values for the layer
   AvgMaxVals    am_deep_ctxt;   // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_ctxt values for the layer
   AvgMaxVals    am_deep_norm_net; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_norm net input values for the layer
+  AvgMaxVals    am_deep_raw_norm; // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_raw_norm values for the layer
   AvgMaxVals    am_deep_norm;   // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum deep_norm values for the layer
   float         deep_norm_def;  // #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation default deep_norm value for units that have deep_raw = 0
 

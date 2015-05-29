@@ -43,6 +43,7 @@ void ThalAutoEncodeUnitSpec::Defaults_init() {
   deep_qtr = Q4;
   SetUnique("deep_norm", true);
   deep_norm.on = true;
+  deep_norm.raw_val = DeepNormSpec::NORM_NET;
 }
 
 float ThalAutoEncodeUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
@@ -79,14 +80,14 @@ void ThalAutoEncodeUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* 
     return;
   if(deep_norm.raw_val == DeepNormSpec::THAL) {
     if(net->quarter >= 1)
-      u->deep_norm = u->thal;
+      u->deep_norm = u->deep_raw_norm;
     else
       u->deep_norm = 0.0f;      // restart at start..
   }
   else {
     LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-    if(lay->am_deep_norm_net.max > 0.0f)
-      u->deep_norm = u->deep_norm_net; // this will then be renormalized..
+    if(lay->am_deep_raw_norm.max > 0.0f)
+      u->deep_norm = u->deep_raw_norm;
     else
       u->deep_norm = 1.0f;
   }

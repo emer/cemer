@@ -130,6 +130,9 @@ public:
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
   // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
+  inline float& deep_raw_norm()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_norm; }
+  // #CAT_UnitVar the value of deep_raw that goes into the deep_norm computation for this unit -- determined by the deep_norm.raw_val setting on the unit spec -- automatically max-normalized to 1 per layer, and thresholded by deep_norm.raw_thr
   inline float& deep_norm()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_norm; }
   // #CAT_UnitVar normalized deep layer activation, reflecting normalization from deep_ctxt local integration of deep_raw signals -- this is the net attentional filter that is applied to the superficial layers, and is communicated in top-down deep-to-deep projections via layer 5/6 corticocortical neurons and communicated to layer 4 and thalamus by layer 6 corticothalamic projections, where it modulates net input into superficial neurons

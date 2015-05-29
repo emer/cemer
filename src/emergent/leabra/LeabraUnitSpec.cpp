@@ -322,6 +322,7 @@ void DeepNormSpec::Initialize() {
   on = false;
   mod = true;
   raw_val = GROUP_MAX;
+  raw_thr = 0.2f;
   contrast = 1.0f;
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
@@ -1942,27 +1943,16 @@ bool LeabraUnitSpec::DeepNormCopied() {
   return false;
 }
 
-void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
-  if(!deep_norm.on) {
-    TestWrite(u->deep_norm, 1.0f);
-    return;
-  }
+void LeabraUnitSpec::Compute_DeepRawNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!Compute_DeepTest(u, net, thr_no))
     return;
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
 
   if(deep_norm.raw_val == DeepNormSpec::NORM_NET) {
-    float nw_nrm = u->deep_norm_net;
-    if(deep_norm.contrast < 1) {
-      if(nw_nrm < deep_norm.contrast)
-        nw_nrm = 0.0f;
-      else
-        nw_nrm = 1.0f;
-    }
-    u->deep_norm = nw_nrm;
+    u->deep_raw_norm = u->deep_norm_net;
   }
   else if(deep_norm.raw_val == DeepNormSpec::THAL) {
-    u->deep_norm = u->thal;
+    u->deep_raw_norm = u->thal;
   }
   else {
     float deep_raw = u->deep_raw; // default to UNIT
@@ -1976,15 +1966,37 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
         deep_raw = gpdata->am_deep_raw.max;
       }
     }
+    u->deep_raw_norm = deep_raw;
+  }
+}
 
-    float dctxt = u->deep_ctxt;
-    float lctxt = lay->am_deep_ctxt.avg;
-    float nw_nrm = 0.0f;
-    if(deep_raw > opt_thresh.send) {
-      // deep_norm only registered for units that have deep_raw firing -- others use lay->deep_norm_def
-      nw_nrm = deep_norm.ComputeNormLayCtxt(deep_raw, dctxt, lctxt);
+void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!deep_norm.on) {
+    TestWrite(u->deep_norm, 1.0f);
+    return;
+  }
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+
+  if(lay->am_deep_raw_norm.max > 0.0f) {
+    u->deep_raw_norm /= lay->am_deep_raw_norm.max;
+  }
+
+  if(u->deep_raw_norm < deep_norm.raw_thr) {
+    u->deep_raw_norm = 0.0f;
+    u->deep_norm = 0.0f;
+  }
+  else {
+    if((deep_norm.raw_val == DeepNormSpec::NORM_NET) ||
+       (deep_norm.raw_val == DeepNormSpec::THAL)) {
+      u->deep_norm = u->deep_raw_norm; // direct copy!
     }
-    u->deep_norm = nw_nrm;
+    else {
+      float dctxt = u->deep_ctxt;
+      float lctxt = lay->am_deep_ctxt.avg;
+      u->deep_norm = deep_norm.ComputeNormLayCtxt(u->deep_raw_norm, dctxt, lctxt);
+    }
   }
 }
 
@@ -2034,9 +2046,6 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 #endif
   }
   u->deep_norm_net = nw_nt;
-  if(deep_norm.raw_val == DeepNormSpec::NORM_NET) {
-    Compute_DeepNorm(u, net, thr_no); // redo now with new norm net!
-  }
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -2044,6 +2053,7 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->deep_raw_prv = 0.0f;
   u->deep_raw_pprv = 0.0f;
   u->deep_ctxt = 0.0f;
+  u->deep_raw_norm = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_raw_net = 0.0f;
   u->deep_norm_net = 0.0f;

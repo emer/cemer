@@ -199,6 +199,7 @@ public:
     AM_UN_G_I,
     AM_DEEP_RAW,
     AM_DEEP_CTXT,
+    AM_DEEP_RAW_NORM,
     AM_DEEP_NORM_NET,
     AM_DEEP_NORM,
     N_AM_VARS,
@@ -500,9 +501,13 @@ public:
   // #IGNORE update deep variables, using the proper sequence of unit-level calls
 
     virtual void Compute_DeepRawStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    // #IGNORE compute layer and unit-group level stats on deep_raw vars
     virtual void Compute_DeepRawStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    // #IGNORE compute layer and unit-group level stats on deep_raw vars
+    virtual void Compute_DeepRawCtxtStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_raw_norm, deep_ctxt vars
+    virtual void Compute_DeepRawCtxtStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_raw_norm, deep_ctxt vars
     virtual void Compute_DeepNormStats_Thr(int thr_no);
     // #IGNORE compute layer and unit-group level stats on deep_norm
     virtual void Compute_DeepNormStats_Post();

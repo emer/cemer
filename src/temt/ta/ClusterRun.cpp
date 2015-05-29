@@ -629,6 +629,9 @@ void ClusterRun::GetFiles() {
         m_cm->CommitFiles(String("added file from another svn project / cluster / user to this project's results files: ") + fl);
         taMisc::DoneBusy();
       }
+      else {
+        taMisc::RemoveFile(local_fl); // don't leave bad one lying around
+      }
     }
     else {
       if(CheckLocalClustUser(file_list, row, false)) { // false = no warnings
@@ -650,6 +653,7 @@ void ClusterRun::GetFiles() {
         }
         catch (const SubversionClient::Exception &ex) {
           taMisc::Error("Error doing SafeFile in other SubversionClient.\n", ex.what());
+          taMisc::RemoveFile(local_fl); // don't leave bad one lying around
           taMisc::DoneBusy();
           return;
         }
