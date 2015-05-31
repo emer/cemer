@@ -366,7 +366,8 @@ class SlurmJobManager( ClusterJobManager ):
         file.write("#!/bin/sh\n")
         file.write("#SBATCH -t %s\n" % job.wallTime() )
         self.subCmd.append("-t %s" % job.wallTime())
-        file.write("#SBATCH -N %d\n" % job.numNodes())
+        file.write("#SBATCH -n %d\n" % job.numNodes() * job.numPerNode())
+        file.write("#SBATCH --ntasks-per-node=%d\n" % job.numPerNode())
         file.write("#SBATCH --cpus-per-task=%d\n" % job.numCores())
         file.write("#SBATCH --output=JOB.%j.out\n")
         if job.memorySize() != None:
@@ -466,7 +467,7 @@ class ClusterJob:
     '''Generic cluster job - abstract base class'''
     # @TODO determine proper node/core limits
     MAX_NODES = 5120
-    MAX_CORES = 12
+    MAX_CORES = 24
     def __init__( self ):
         self.tasks = 0
         self.start = 1
@@ -475,6 +476,7 @@ class ClusterJob:
         self.threaded = False
         self.nodes = 1
         self.cores = 1
+        self.per_node = 1
         self.time = "24:00:00"
         self.queue = None
         self.memory = None
@@ -528,10 +530,28 @@ class ClusterJob:
         return self.cores
     def setNumCores( self, c ):
         # cores must be > 0 and < MAX_CORES
-        if c > 0 and c <= ClusterJob.MAX_CORES:
+        if c > 0 and c * self.per_node <= ClusterJob.MAX_CORES:
             self.cores = c
         else:
-            self.last_err = "cores must be > 0 and < %d" % ClusterJob.MAX_CORES
+            self.last_err = "cores must be > 0 and per_node * cores < %d" % ClusterJob.MAX_CORES
+            return False
+        return True
+    def numPerNode(self):
+        return self.per_node
+    def setPerNode( self, n ):
+        if n > 0 and n * self.cores <= ClusterJob.MAX_CORES:
+            self.per_node = n
+        else:
+            self.last_err = "per_node must be > 0 and per_node * cores < %d" % ClusterJob.MAX_CORES
+            return False
+        return True
+    def setPerNodeCores( self, n, c ):
+        # cores must be > 0 and < MAX_CORES
+        if n > 0 and c > 0 and c * n <= ClusterJob.MAX_CORES:
+            self.per_node = n
+            self.cores = c
+        else:
+            self.last_err = "cores, per_node must be > 0 and per_node * cores < %d" % ClusterJob.MAX_CORES
             return False
         return True
     def wallTime(self):
@@ -609,7 +629,7 @@ class DMJob(ClusterJob):
             return False
     def usage( self ):
         return '''usage:
-dm_qsub [-m memory] [-q queue] [-t 1-<tasks> [-r <limit>] ] <nodes> <ppn> <time> <cmd> 
+dm_qsub [-m memory] [-q queue] [-t 1-<tasks> [-r <limit>] ] <nodes> <per_node> <threads> <time> <cmd> 
     <memory> maximum amount of physical memory used by any single process of the job (in GB or MB)
     <queue> the name of the queue where you want your job to run. Without this the script
             will pick the appropriate queue, so only use this if you know what you're doing
@@ -619,25 +639,27 @@ dm_qsub [-m memory] [-q queue] [-t 1-<tasks> [-r <limit>] ] <nodes> <ppn> <time>
     <nodes> is number of compute nodes to spread computation across
             (nodes communicate via MPI, and generally this is only useful if
             doing trial-wise MPI, not within network MPI)
-     <ppn>  number of processors per node to use, where processors use threading
-            to compute -- YOU MUST ALSO PASS n_threads=<ppn> as args to emergent
-            or whatever other program you might be using, or have this as a default
-            for emergent, 2 gives ~2x speedup, and 4 gives 3 -- above that is not
-            typically useful
+ <per_node> is number of MPI processes / logical nodes / tasks / jobs to allocate per physical 
+            compute node -- with higher-core systems, putting multiple per node, with faster
+            intra-node communication, can be faster than spreading all across diff nodes
+   <threads> number of threads / cores/ processors per MPI process to use, using threading
+            to compute -- total cores used per node is threads * per_node
+            YOU MUST ALSO PASS n_threads=<ppn> as args to emergent or whatever other program
+            you might be using, or have this as a default for emergent.
      <time> is #d (days) | #h (hours) | #m (minutes) and is used for
             scheduling your job -- please try to be as accurate as
-            possible but don't worry about being wrong.
+            possible but do not underestimate -- jobs will be killed after this amount of time
      <cmd>  is the usual kind of startup command to run the job
             e.g., emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=4
             (note that you MUST use _mpi version of executable!
 
 Examples:
-dm_qsub 8 4 24h emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=4
-            (runs on 8 nodes, 4 procs per node, taking an estimated 24 hrs to finish)
-dm_qsub 5 2 2d emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=2
-            (runs on 5 nodes, 2 procs per node, taking an estimated 2 days to finish)
-dm_qsub -m 4GB 5 2 2d emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=2
-            (runs on 5 nodes, 2 procs per node, taking an estimated 2 days to finish and no more than 4GB of memory)
+dm_qsub 8 1 4 24h emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=4
+            (runs on 8 nodes, 1 processes per node, 4 threads per process, taking 24 hrs to finish)
+dm_qsub 5 3 2 2d emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=2
+            (runs on 5 nodes, 3 processes per node, 2 threads per process, taking 2 days to finish)
+dm_qsub -m 4GB 5 3 2 2d emergent_mpi -nogui -ni -p my.proj.gz epochs=100 batches=10 n_threads=2
+            (runs on 5 nodes, 3 processes per node, 2 threads per node, taking 2 days to finish and no more than 4GB of memory)
         '''
 class SPJob(ClusterJob):
     '''Single processor cluster job'''

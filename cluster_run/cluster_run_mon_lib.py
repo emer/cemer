@@ -32,7 +32,7 @@ sp_qsub_cmd = 'sp_qsub_q'
 sp_qsub_args = ""
 # sp_qsub_args = "-q " + clust_queue
 
-# the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
+# the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
 dm_qsub_cmd = 'dm_qsub_q'
 dm_qsub_args = ""
 # dm_qsub_args = "-q " + clust_queue
@@ -552,7 +552,7 @@ class DataTable(object):
 
     # adds a new column to the data table in memory
     def add_col(self, col_name, col_type):
-        if self.get_col_idx(col_name):
+        if !self.get_col_idx(col_name):
             self._header.append({'name': col_name, 'type': col_type})
             for r in self._rows:    # add an empty columns to the data rows
                 r.append('')
@@ -560,6 +560,12 @@ class DataTable(object):
         else:
             logging.warning("Column '%s' (%s) already exists." % (col_name, col_type))
             return False   
+    
+    def insert_col(self, col_name, col_type, col_idx):
+        self._header.insert(col_idx, {'name': col_name, 'type': col_type})
+        for r in self._rows:    # add an empty columns to the data rows
+            r.insert(col_idx, '')
+        return True
     
     # validates a value with regard to a column
     # input: val = value to validate
@@ -922,7 +928,8 @@ class SubversionPoller(object):
 
     def _query_running_jobs(self, filename, force_updt = False):
         self._get_cur_jobs_files(filename) # get all the file names for this dir
-        self._load_cur_files()   # and load jobs and running files -- must exist here
+        self._init_jobs_files()   # and init or load jobs and running files
+        # self._load_cur_files()   # and load jobs and running files -- must exist here
         
         # first go over the running jobs
         # go backward because we can delete from running.. also newest to oldest
@@ -1012,6 +1019,16 @@ class SubversionPoller(object):
 
         return (revision, author)
 
+    # check jobs files formats
+    def _check_job_table_format(self, job_table, table_file):
+        if job_table.n_cols() < self.jobs_submit.n_cols(): # jobs submit is the reference
+            for i in range(self.jobs_submit.n_cols()):
+                colnm = self.jobs_submit.get_col_name(i)
+                if colnm != job_table.get_col_name(i):
+                    job_table.insert_col(colnm, self.jobs_submit.get_col_type(i), i)
+                    print "added new column from jobs_submit: " + colnm + " to table: " + table_file
+        # todo: theoretically should check for extras and remove them -- do later..
+    
     # init both files
     def _init_jobs_files(self):
         self._init_jobs_running()
@@ -1024,6 +1041,7 @@ class SubversionPoller(object):
             if debug:
                 logging.info("loading existing running file: %s" % self.cur_running_file)
             self.jobs_running.load_from_file(self.cur_running_file)
+            self._check_job_table_format(self.jobs_running, self.cur_running_file)
         else:
             # create new and save and add to svn
             self.jobs_running.copy_cols(self.jobs_submit)
@@ -1036,6 +1054,7 @@ class SubversionPoller(object):
             if debug:
                 logging.info("loading existing done file: %s" % self.cur_done_file)
             self.jobs_done.load_from_file(self.cur_done_file)
+            self._check_job_table_format(self.jobs_done, self.cur_done_file)
         else:
             # create new and save and add to svn
             self.jobs_done.copy_cols(self.jobs_running)
@@ -1048,6 +1067,7 @@ class SubversionPoller(object):
             if debug:
                 logging.info("loading existing archive file: %s" % self.cur_archive_file)
             self.jobs_archive.load_from_file(self.cur_archive_file)
+            self._check_job_table_format(self.jobs_archive, self.cur_archive_file)
         else:
             # create new and save and add to svn
             self.jobs_archive.copy_cols(self.jobs_done)
@@ -1245,6 +1265,7 @@ class SubversionPoller(object):
         run_time = self.jobs_submit.get_val(row, "run_time")
         n_threads = self.jobs_submit.get_val(row, "n_threads")
         mpi_nodes = self.jobs_submit.get_val(row, "mpi_nodes")
+        mpi_per_node = self.jobs_submit.get_val(row, "mpi_per_node")
         ram_gb = self.jobs_submit.get_val(row, "ram_gb")
         pb_batches = self.jobs_submit.get_val(row, "pb_batches")
         pb_nodes = self.jobs_submit.get_val(row, "pb_nodes")
@@ -1303,9 +1324,9 @@ class SubversionPoller(object):
                     else:
                         args_eff = [" -y", mail_type]
             if len(args_eff) > 0:
-                cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(n_threads), run_time, cmd, params]
+                cmdsub = [dm_qsub_cmd] + args_eff + [str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
             else:
-                cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(n_threads), run_time, cmd, params]
+                cmdsub = [dm_qsub_cmd, str(mpi_nodes), str(mpi_per_node), str(n_threads), run_time, cmd, params]
 
         # if pb, put a wrapper on it!
         if pb_batches > 0 and pb_nodes > 0:

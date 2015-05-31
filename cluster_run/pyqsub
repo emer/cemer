@@ -8,7 +8,7 @@ def submitJob(jm, opts, args):
     if opts.jobtype.find("dm") != -1:
         #if args[0].find("dm") != -1:
         job = DMJob()
-        if len(args) < 4:
+        if len(args) < 5:
             print job.usage()
             return False
         else:
@@ -48,15 +48,15 @@ def submitJob(jm, opts, args):
                 print job.lastErr()
                 print job.usage()
                 return False
-            if False == job.setNumCores(int(args[1])):
+            if False == job.setPerNodeCores(int(args[1]), int(args[2])):
                 print job.lastErr()
                 print job.usage()
                 return False
-            if False == job.setWallTime(args[2]):
+            if False == job.setWallTime(args[3]):
                 print job.lastErr()
                 print job.usage()
                 return False
-            if False == job.setUserCmd(args[3:]):
+            if False == job.setUserCmd(args[4:]):
                 print job.lastErr()
                 print job.usage()
                 return False

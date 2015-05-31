@@ -9,7 +9,7 @@ import cluster_run_mon_lib as runmon
 # STANDARD USER CONFIGURABLE PARAMETERS
 
 # name of queue -- used for a few things -- replace with actual!
-clust_queue = "janus-short"
+clust_queue = "janus"
 
 # full path to single processor job submission script
 # STRONGLY recommend using the pyqsub based commands avail in 
@@ -23,7 +23,7 @@ runmon.sp_qsub_cmd = 'sp_qsub_q'
 # sp_qsub_args = ""
 runmon.sp_qsub_args = "-q " + clust_queue
 
-# the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
+# the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
 runmon.dm_qsub_cmd = 'dm_qsub_q'
 # runmon.dm_qsub_args = ""
 runmon.dm_qsub_args = "-q " + clust_queue

@@ -63,6 +63,7 @@ void ClusterRun::Initialize() {
   n_threads = 1;  // taMisc::thread_defaults.n_threads
   use_mpi = false;
   mpi_nodes = 10;
+  mpi_per_node = 1;
   parallel_batch = false;
   pb_batches = 10;
   pb_nodes = 0;
@@ -1165,7 +1166,14 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc = dt.FindMakeCol("n_threads", VT_INT);
   dc->desc = "number of parallel threads to use for running";
   dc = dt.FindMakeCol("mpi_nodes", VT_INT);
-  dc->desc = "number of nodes to use for mpi run -- 0 or -1 means not to use mpi";
+  dc->desc = "number of physical nodes to use for mpi run -- 0 or -1 means not to use mpi";
+  int nodes_idx = dt.FindColNameIdx(dc->name);
+  dc = dt.FindMakeCol("mpi_per_node", VT_INT);
+  dc->desc = "number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+  idx = dt.FindColNameIdx(dc->name);
+  if(idx != nodes_idx + 1) {
+    dt.MoveCol(idx, nodes_idx + 1);
+  }
   dc = dt.FindMakeCol("pb_batches", VT_INT);
   dc->desc = "if > 0, use parallel batch mode with this number of batches";
   dc = dt.FindMakeCol("pb_nodes", VT_INT);
@@ -1331,12 +1339,20 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
       taMisc::Error("Job requests to use MPI but cluster says mpi is NOT available on cluster:", cluster);
       return false;
     }
-    if(mpi_nodes <= 1) {
-      taMisc::Error("Job requests to use MPI but mpi_nodes is <= 1", String(mpi_nodes));
+    if(mpi_nodes < 1) {
+      taMisc::Error("Job requests to use MPI but mpi_nodes is less than 1 -- must be at least 1", String(mpi_nodes));
       return false;
     }
-    if(mpi_nodes > cs.nodes) {
-      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes requested:", String(mpi_nodes), "avail on cluster:", String(cs.nodes));
+    if(mpi_per_node < 1) {
+      taMisc::Error("Job requests to use MPI but mpi_per_node is less than 1 -- must be at least 1", String(mpi_per_node));
+      return false;
+    }
+    if(mpi_nodes * mpi_per_node > cs.nodes) {
+      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes * mpi_per_node requested:", String(mpi_nodes * mpi_per_node), "avail on cluster:", String(cs.nodes));
+      return false;
+    }
+    if(mpi_per_node * n_threads > cs.procs_per_node) {
+      taMisc::Error("Job requests to use MPI with more per_node * n_threads processors than is available on cluster:", cluster, "mpi_per_node * n_threads requested:", String(mpi_per_node * n_threads), "avail on cluster:", String(cs.procs_per_node));
       return false;
     }
   }
@@ -1348,7 +1364,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
 
   if(parallel_batch) {
     if(pb_batches <= 1) {
-      taMisc::Error("Job requests to use parallel_batches but pb_batches is <= 1",
+      taMisc::Error("Job requests to use parallel_batches but pb_batches is less than or equal to 1",
                     String(pb_batches));
       return false;
     }
@@ -1369,7 +1385,7 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
     }
   }
   int tot_procs = n_jobs_to_sub * n_threads;
-  if(use_mpi) tot_procs *= mpi_nodes;
+  if(use_mpi) tot_procs *= mpi_nodes * mpi_per_node;
   if(parallel_batch && cs.by_node) { // note: regular non-by-node pb already reflected in n_jobs_to_sub!
     tot_procs *= pb_batches;
   }
@@ -1438,10 +1454,13 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
   jobs_submit.SetVal(run_time,    "run_time",   row);
   jobs_submit.SetVal(ram_gb,      "ram_gb",     row);
   jobs_submit.SetVal(n_threads,   "n_threads",  row);
-  if(use_mpi)
+  if(use_mpi) {
     jobs_submit.SetVal(mpi_nodes,   "mpi_nodes",  row);
-  else
+    jobs_submit.SetVal(mpi_per_node, "mpi_per_node",  row);
+  }
+  else {
     jobs_submit.SetVal(0,   "mpi_nodes",  row);
+  }
 
   if(parallel_batch && pb_batches > 0) {
     jobs_submit.SetVal(pb_batches,   "pb_batches",  row);

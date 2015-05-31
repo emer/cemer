@@ -24,7 +24,7 @@ runmon.sp_qsub_cmd = 'sp_qsub_q'
 # runmon.sp_qsub_args = "-q " + clust_queue
 runmon.sp_qsub_args = ""
 
-# the dm_qsub_cmd takes args of <mpi_nodes> <n_threads> <run_time> <full_command>
+# the dm_qsub_cmd takes args of <mpi_nodes> <per_node> <n_threads> <run_time> <full_command>
 runmon.dm_qsub_cmd = 'dm_qsub_q'
 # runmon.dm_qsub_args = "-q " + clust_queue
 runmon.dm_qsub_args = ""

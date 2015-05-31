@@ -823,7 +823,7 @@ ClusterManager::ShowRepoDialog()
   dlg.win_title = "Run on cluster";
   dlg.prompt = "Enter parameters";
   dlg.width = 300;
-  dlg.height = 500;
+  dlg.height = 680;
 
   String widget("main");
   String vbox("mainv");
@@ -940,7 +940,12 @@ ClusterManager::ShowRepoDialog()
   dlg.AddStretch(row);
   dlg.AddLabel("nodesLbl", widget, row, "label=MPI nodes: ;");
   dlg.AddIntField(&m_cluster_run.mpi_nodes, "numnodes", widget, row,
-    "tooltip=The number of MPI nodes to use per each model.;");
+    "tooltip=The number of physical compute nodes to use per each job for MPI -- total number of nodes is nodes * per_node.;");
+  dlg.AddStretch(row);
+  dlg.AddLabel("pernodesLbl", widget, row, "label=MPI per_node: ;");
+  dlg.AddIntField(&m_cluster_run.mpi_per_node, "numpernode", widget, row,
+    "tooltip=The number of MPI processes to use per each physical compute node -- total number of nodes is nodes * per_node.;");
+  dlg.AddStretch(row);
 
   row = "pb";
   dlg.AddSpace(space, vbox);
@@ -956,6 +961,15 @@ ClusterManager::ShowRepoDialog()
   dlg.AddIntField(&m_cluster_run.pb_nodes, "numpbnodes", widget, row,
     "tooltip=if the cluster uses by_node job allocation strategy, then this is the number of nodes to request for this job -- if you want all of your jobs to run in parallel at the same time, then this should be equal to (pb_batches * n_threads * mpi_nodes) / cpus_per_node -- setting this value to 0 will default to this allocation number.;");
 
+  row = "misc";
+  dlg.AddSpace(space, vbox);
+  dlg.AddHBoxLayout(row, vbox);
+  dlg.AddLabel("nowinxLbl", widget, row, "label=Use -nowin: ;");
+  dlg.AddBoolCheckbox(&m_cluster_run.nowin_x, "nowin", widget, row,
+                      "tooltip=use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode.;");
+  dlg.AddStretch(row);
+
+  
   bool modal = true;
   int drval = dlg.PostDialog(modal);
   if (drval == 0) {
