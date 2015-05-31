@@ -355,7 +355,7 @@ class SlurmJobManager( ClusterJobManager ):
     '''Cluster job manager interface for Slurm'''
     def __init__(self, verbose=False, quick=False):
         ClusterJobManager.__init__(self, verbose, quick)
-        self.job_launcher = 'mpirun'
+        self.job_launcher = 'mpirun --bind-to none --mca btl_tcp_if_include bond0'
         self.subCmd = ["sbatch -H"]
         
     def generateJobScript( self, job ):
@@ -383,6 +383,8 @@ class SlurmJobManager( ClusterJobManager ):
         if job.mail_user != None:
             file.write("#SBATCH --mail-type=%s\n" % job.mail_type)
             file.write("#SBATCH --mail-user=%s\n" % job.mail_user)
+        # temporary hack!
+        # file.write("#SBATCH --nodelist=bnode0204,bnode0205,bnode0206,bnode0207\n")
 
         if job.isArrayJob():
             file.write("#SBATCH --array=%d-%d\n" % (job.taskStart(), job.numTasks()))
@@ -410,7 +412,7 @@ class SlurmJobManager( ClusterJobManager ):
         if DEBUG:
             print cmd
         Popen(cmd)
-        cmd = ['sbatch', '-H',  self.script_filename]
+        cmd = ['sbatch', '--begin=now+5',  self.script_filename]
         if DEBUG:
             print cmd
         try:
@@ -428,21 +430,21 @@ class SlurmJobManager( ClusterJobManager ):
             if DEBUG:
                 print cmd
             Popen(cmd)
-            time.sleep(5)
-            cmd = ['scontrol', 'release', self.job_id+'[]']
-            if DEBUG:
-                print cmd
-            Popen(cmd)
+#            time.sleep(5)
+#            cmd = ['scontrol', 'release', self.job_id+'[]']
+#            if DEBUG:
+#                print cmd
+#            Popen(cmd)
         else:
             cmd = ['scontrol', 'update', 'JobId=' + self.job_id, 'name=' + 'JOB.'+ self.job_id + '.sh']
             if DEBUG:
                 print cmd
             Popen(cmd)
-            time.sleep(5)
-            cmd = ['scontrol', 'release', self.job_id]
-            if DEBUG:
-                print cmd
-            Popen(cmd)
+#            time.sleep(5)
+#            cmd = ['scontrol', 'release', 'JOB.' + self.job_id + '.sh']
+#            if DEBUG:
+#                print cmd
+#            Popen(cmd)
         print "created: JOB.%s.sh" % (self.job_id)
     
         # checkjob doesn't seem to work well on RC
