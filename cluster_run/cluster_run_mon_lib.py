@@ -289,7 +289,7 @@ class ClusterConfig(object):
         # Get the amount of time between polling the subversion server.
         return self._prompt_for_int_field(
             self.user_section, 'poll_interval',
-            'Enter the polling interval, in seconds (10-20 recommended):')
+            'Enter the polling interval, in seconds (5-10 recommended):')
 
     def get_check_user(self):
         # Should the script only start jobs committed by the selected user?

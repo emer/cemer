@@ -338,10 +338,10 @@ void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len) {
          
     timer1e = MPI_Wtime();
  
-    if (dmem_proc == 0) {
-        printf("P%i: ThreadedAllReduce reduce in %f seconds at a rate of %f Gbit/s\n", dmem_proc, (timer1e - timer1s),
-               ((len*sizeof(float)*8.0)/(timer1e - timer1s) / 1024.0 / 1024.0 / 1024.0)); 
-    }
+    // if (dmem_proc == 0) {
+    //     printf("P%i: ThreadedAllReduce reduce in %f seconds at a rate of %f Gbit/s\n", dmem_proc, (timer1e - timer1s),
+    //            ((len*sizeof(float)*8.0)/(timer1e - timer1s) / 1024.0 / 1024.0 / 1024.0)); 
+    // }
     
 }
 
