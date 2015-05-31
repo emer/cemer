@@ -552,7 +552,7 @@ class DataTable(object):
 
     # adds a new column to the data table in memory
     def add_col(self, col_name, col_type):
-        if !self.get_col_idx(col_name):
+        if not self.get_col_idx(col_name):
             self._header.append({'name': col_name, 'type': col_type})
             for r in self._rows:    # add an empty columns to the data rows
                 r.append('')
