@@ -366,7 +366,7 @@ class SlurmJobManager( ClusterJobManager ):
         file.write("#!/bin/sh\n")
         file.write("#SBATCH -t %s\n" % job.wallTime() )
         self.subCmd.append("-t %s" % job.wallTime())
-        file.write("#SBATCH -n %d\n" % job.numNodes() * job.numPerNode())
+        file.write("#SBATCH -n %d\n" % job.numNodesTotal())
         file.write("#SBATCH --ntasks-per-node=%d\n" % job.numPerNode())
         file.write("#SBATCH --cpus-per-task=%d\n" % job.numCores())
         file.write("#SBATCH --output=JOB.%j.out\n")
@@ -419,7 +419,8 @@ class SlurmJobManager( ClusterJobManager ):
             stdoutstr = Popen(cmd,stdout=PIPE).communicate()[0]
         except:
             logging.error("Failed to submit command: %s" % cmd)
-        
+
+        print stdoutstr
         self.job_id = re.search('([0-9]+)', stdoutstr).group()
         cmd = ['mv',self.script_filename,'JOB.'+ self.job_id + '.sh']
         if DEBUG:
@@ -518,6 +519,8 @@ class ClusterJob:
         self.mail_user = address
     def setMailType(self, type):
         self.mail_type = type
+    def numNodesTotal(self):
+        return self.nodes * self.per_node 
     def numNodes(self):
         return self.nodes
     def setNumNodes( self, n ):
