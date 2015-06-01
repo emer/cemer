@@ -1321,7 +1321,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   t3gl->setLineStyle((T3GraphLine::LineStyle)plv.line_style, dev_pix_ratio * line_width);
   t3gl->setMarkerSize(point_size);
   t3gl->setValueColorMode(false);
-  if (group > -1) {  // if legend is based on coloring by group (e.g. different runs)
+  if (color_mode == BY_GROUP) {
     iColor clr = GetValueColor(&color_axis, group);
     t3gl->setDefaultColor((T3Color)(&clr));
   }
@@ -1330,7 +1330,7 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
   }
   
   String label;
-  if (group > -1) {
+  if (color_mode == BY_GROUP) {
     label = plv.group_by_values[group];
   }
   else {
@@ -1361,12 +1361,19 @@ void GraphTableView::RenderLegend_Ln(GraphPlotView& plv, T3GraphLine* t3gl,
 
 void GraphTableView::RenderLegend() {
   T3GraphViewNode* node_so = this->node_so();
-  if (!node_so) return;
+  if (!node_so)
+    return;
   
   float ylen = plots[0]->axis_length;
   
-  int tot_plots = main_y_plots.size + alt_y_plots.size;
-  if(tot_plots == 0) return;    // nothing..
+  if (color_mode == BY_GROUP) {
+    tot_plots = color_axis.group_by_values.size;
+  }
+  else {
+    int tot_plots = main_y_plots.size + alt_y_plots.size;
+  }
+  if(tot_plots == 0)
+    return;    // nothing..
   int n_down = 2;
   int n_across = (int)(((float)tot_plots / (float)n_down) + 0.5f);
   if(n_across < 1) n_across = 1;
