@@ -1421,8 +1421,9 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
   }
 
   // final sanity check for large-ish jobs..
-  if(tot_procs > 24) {
-    int chs = taMisc::Choice("You are requesting to run a job using: " + String(tot_procs) + " total processors on cluster: " + cluster + " -- please confirm!", "Run", "Cancel");
+  int tot_tasks = tot_procs / n_threads;
+  if(tot_tasks > 24) {
+    int chs = taMisc::Choice("You are requesting to run a job using: " + String(tot_tasks) + " total processes on cluster: " + cluster + "using a total of: " + String(tot_procs) + " cores -- please confirm!", "Run", "Cancel");
     if(chs == 1) return false;
   }
 
