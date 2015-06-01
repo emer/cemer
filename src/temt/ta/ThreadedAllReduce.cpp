@@ -67,8 +67,9 @@ void * thread_spawn(void* data) {
     return NULL;
 } 
 
-ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
+ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads, char * node_prefix, char * node_suffix) {
     char * proc_name;
+    char * proc_name_tmp;
     int proc_name_len;
     int portno;
     int port_retry;
@@ -76,13 +77,29 @@ ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
     int * dmem_errors_encountered;
     struct sockaddr_in serv_addr, cli_addr;
 
-    proc_name = (char *) calloc(MPI_MAX_PROCESSOR_NAME, sizeof(char));
+    proc_name =  (char *) calloc(MPI_MAX_PROCESSOR_NAME, sizeof(char));
     thread_ids = (pthread_t *)calloc(nThreads, sizeof(pthread_t));
     this->mpi_ctx = mpi_ctx;
     this->nThreads = nThreads;
     MPI_Comm_size(mpi_ctx, &dmem_nprocs);
     MPI_Comm_rank(MPI_COMM_WORLD, &dmem_proc);
     MPI_Get_processor_name((char*)proc_name, &proc_name_len);
+
+    /** On some clusters with multiple networ adapters, the host name does not resolve to the correct IP of
+     ** the fastest network adapter. Often the different network adapters have some pre or suffix to indicate
+     ** the network adapter. So if specified, append or prepend the approriate pre-/suffix. **/
+    if (node_prefix) {
+      proc_name_tmp = (char *) calloc(MPI_MAX_PROCESSOR_NAME, sizeof(char));
+      strncpy(proc_name_tmp, node_prefix, MPI_MAX_PROCESSOR_NAME);
+      strncat(proc_name_tmp, proc_name, MPI_MAX_PROCESSOR_NAME);
+      free(proc_name);
+      proc_name = proc_name_tmp;
+    }
+
+    if (node_suffix) {
+      strncat(proc_name, node_suffix, MPI_MAX_PROCESSOR_NAME);
+    }
+
 
     /** Get the list of MPI processor names to be able to open our own TCP/IP sockets too. **/
     dmem_errors_encountered = (int*)calloc(dmem_nprocs, sizeof(int));
@@ -202,11 +219,11 @@ ThreadedAllReduce::~ThreadedAllReduce() {
     free(thread_ids);
 }
 
-ThreadedAllReduce * ThreadedAllReduce::getSingleton(MPI_Comm mpi_ctx, int nThreads ) {
+ThreadedAllReduce * ThreadedAllReduce::getSingleton(MPI_Comm mpi_ctx, int nThreads, char * node_prefix, char * node_suffix ) {
     static ThreadedAllReduce * singleton = NULL;
     if (singleton != NULL)
         return singleton;
-    singleton = new ThreadedAllReduce(mpi_ctx, nThreads);
+    singleton = new ThreadedAllReduce(mpi_ctx, nThreads, node_prefix, node_suffix);
     return singleton;
 }
 

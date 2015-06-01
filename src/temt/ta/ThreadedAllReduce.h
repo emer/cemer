@@ -58,10 +58,10 @@ private:
     int      * connectedC; //If the client socket is connected
     struct sockaddr_in * serv_addrs; // #IGNORE Connection information to connect to our respective "server"
 
-    ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads = defaultnThreads);
+    ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads, char * node_prefix, char * node_suffix);
 
 public:
-    static ThreadedAllReduce * getSingleton(MPI_Comm mpi_ctx, int nThreads = defaultnThreads);
+    static ThreadedAllReduce * getSingleton(MPI_Comm mpi_ctx, int nThreads = defaultnThreads, char * node_prefix = NULL, char * node_suffix = NULL);
     ~ThreadedAllReduce();
     void allreduce(float * src, float * dst, size_t len, int tag);
     void allreduce(float * src, float * dst, size_t len);
