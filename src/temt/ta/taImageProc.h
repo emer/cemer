@@ -129,6 +129,9 @@ public:
   
   static bool	CompositeImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and images are same size.  img2 can be greyscale or rgb
+
+  static bool	CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. X/Y are coordinates within img1 where to place img2
   
   static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)

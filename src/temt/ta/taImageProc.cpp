@@ -1418,6 +1418,49 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
   return true;
 }
 
+bool taImageProc::CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2) {
+  if(img1.dims() != 3) {
+    taMisc::Error("img1 must be rgba format -- is only 2d greyscale");
+    return false;
+  }
+  if(img1.dim(2) != 4) {
+    taMisc::Error("img1 must be rgba format -- does not have 4 colors in outer dimension");
+    return false;
+  }
+
+  if(img1.dim(0) < img2.dim(0) || img1.dim(1) < img2.dim(1)) {
+    taMisc::Error("img2 must be at least the size of img1");
+    return false;
+  }
+
+  int nclrs = 1; // grayscale
+  if(img2.dims() == 3) {
+    nclrs = img2.dim(2);
+  }
+
+  taVector2i img_size(std::min(img2.dim(0), img1.dim(0) - x), std::min(img2.dim(1),img1.dim(1) - y));
+
+  for(int yi=0; yi< img_size.y; yi++) {
+    for(int xi=0; xi< img_size.x; xi++) {
+      const float i1alpha = img2.FastEl3d(xi, yi, 3); // much faster to cache these values!!
+      const float i1alpha_c = 1.0f - i1alpha;
+      if(nclrs > 1) {
+	for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+	  float& i1clr = img1.FastEl3d(xi + x, yi + y, cl);
+	  i1clr = i1clr * i1alpha_c + img2.FastEl3d(xi,yi,cl) * i1alpha;
+	}
+      }
+      else {
+	for(int cl=0; cl < 3; cl++) {
+	  float& i1clr = img1.FastEl3d(xi + x, yi + y, cl);
+	  i1clr = i1clr * i1alpha_c + img2.FastEl2d(xi,yi) * i1alpha; // // assume img2 has no alpha channel
+	}
+      }
+    }
+  }
+  return true;
+}
+
 bool taImageProc::OverlayImages(float_Matrix& img1, float_Matrix& img2) {  
   if(img1.dims() != img2.dims()) {
     taMisc::Error("img1 and img2 must either both be grayscale or both be color");

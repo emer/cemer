@@ -224,6 +224,29 @@ bool taImage::ImageFromMatrix_rgb(const float_Matrix& rgb_data) {
   return true;
 }
 
+bool taImage::ImageFromMatrix_rgba(const float_Matrix& rgba_data) {
+  if(TestError((rgba_data.dims() < 3), "IMageFromMatrix_rgba", "img data does not have at least 3 dimensions"))
+    return false;
+  int wd = rgba_data.dim(0);
+  int ht = rgba_data.dim(1);
+  
+  ImageChanging();
+  q_img = QImage(wd, ht, QImage::Format_ARGB32);
+  
+  for(int y=0; y<ht; y++) {
+    for(int x=0; x< wd; x++) {
+      int rval = (int)(rgba_data.FastEl3d(x, y, 0) * 255.0f);
+      int gval = (int)(rgba_data.FastEl3d(x, y, 1) * 255.0f);
+      int bval = (int)(rgba_data.FastEl3d(x, y, 2) * 255.0f);
+      int aval = (int)(rgba_data.FastEl3d(x, y, 3) * 255.0f);
+      QRgb pix = qRgba(rval, gval, bval, aval);
+      q_img.setPixel(x, ht-1-y, pix);
+    }
+  }
+  ImageChanged();
+  return true;
+}
+
 bool taImage::ImageToDataCell(DataTable* dt, const Variant& col, int row) {
   if(TestError(q_img.isNull(), "ImageToDataCell", "Null image")) return false;
   if(TestError(!dt, "ImageToDataCell", "Null data table")) return false;
