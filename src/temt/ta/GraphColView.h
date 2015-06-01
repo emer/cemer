@@ -43,7 +43,7 @@ class TypeDef; //
   ERR_1 -- set as err_1 data
   ERR_2 -- set as err_2 data
   ERR_n -- set as err_n data
-  COLOR_AXIS -- set as color_axis
+  BY_VARIABLE -- set as color_axis
   RASTER_AXIS -- set as raster_axis
 */
 

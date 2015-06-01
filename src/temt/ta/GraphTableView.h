@@ -60,10 +60,10 @@ public:
   };
 
   enum ColorMode {
-    FIXED_COLOR,                // use the color specified in the plot view (shown in EXPERT mode)
-    VALUE_COLOR,                // the data value determines the data drawing color, looked up on the color scale
-    COLOR_AXIS,                 // use the data column specified by the color_axis to determine the drawing color
-    COLOR_BY_GROUP,                 // use the data column specified by the color_axis to determine the drawing color
+    FIXED,                // use the color specified in the plot view (shown in EXPERT mode)
+    BY_VALUE,                // the data value determines the data drawing color, looked up on the color scale
+    BY_VARIABLE,                 // use the data column specified by the color_axis to determine the drawing color
+    BY_GROUP,                 // use the data column specified by the color_axis to determine the drawing color
   };
 
   enum MatrixMode {             // how to display matrix grid data
@@ -99,7 +99,8 @@ public:
   float                 err_bar_width;  // half-width of error bars, in view plot units
 
   ColorMode             color_mode;     // how to determine the colors to draw
-  GraphAxisView         color_axis;     // #CONDEDIT_ON_color_mode:COLOR_AXIS color axis, for determining color of lines when color_mode = COLOR_AXIS
+  GraphAxisView         color_axis;     // #CONDEDIT_ON_color_mode:BY_VARIABLE color axis, for determining color of lines when color_mode = BY_VARIABLE
+  GraphAxisView         last_color_axis; // #READ_ONLY #NO_SAVE track so we don't unnecessarily repeat GetUniqueColumnValues() which is expensive
   ColorScale            colorscale;     // contains current min,max,range,zero,auto_scale
 
   GraphAxisView         raster_axis;    // #CONDEDIT_ON_graph_type:RASTER raster axis, if doing a raster plot

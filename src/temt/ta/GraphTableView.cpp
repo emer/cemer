@@ -148,7 +148,7 @@ GraphTableView* GraphTableView::New(DataTable* dt, T3Panel*& fr) {
 
 void GraphTableView::Initialize() {
   view_rows = 10000;
-  tot_plots = 16;
+  tot_plots = 6;
   
   x_axis.on = false;
   x_axis.axis = GraphAxisBase::X;
@@ -167,7 +167,7 @@ void GraphTableView::Initialize() {
   point_spacing = 1;
   bar_space = .2f;
   bar_depth = 0.01f;
-  color_mode = VALUE_COLOR;
+  color_mode = BY_VALUE;
   negative_draw = false;
   negative_draw_z = true;
   axis_font_size = .05f;
@@ -508,7 +508,7 @@ void GraphTableView::UpdateAfterEdit_impl(){
   
   if(graph_type == RASTER) {
     if((plot_style != THRESH_LINE) && (plot_style !=  THRESH_POINT))
-      color_mode = VALUE_COLOR;
+      color_mode = BY_VALUE;
     raster_axis.on = true;
     raster_axis.UpdateOnFlag();
     if(!raster_axis.on) {
@@ -518,23 +518,24 @@ void GraphTableView::UpdateAfterEdit_impl(){
     }
   }
   
-  if(color_mode == COLOR_AXIS || color_mode == COLOR_BY_GROUP) {
+  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP) {
     color_axis.on = true;
     color_axis.UpdateOnFlag();
     if(!color_axis.on) {
       if(!no_cols) {
-        taMisc::Warning("GraphTableView -- color_mode = COLOR_AXIS and no valid col_name found for color_axis -- nothing will be plotted!");
+        taMisc::Warning("GraphTableView -- color_mode = BY_VARIABLE and no valid col_name found for color_axis -- nothing will be plotted!");
       }
     }
   }
   
-  if (!color_axis.group_by_initialized) {
+  if (!color_axis.group_by_initialized || last_color_axis.GetColPtr() != color_axis.GetColPtr()) {
     GraphColView* gcv = color_axis.GetColPtr();
     if (gcv) {
       DataCol* col = gcv->dataCol();
       if (col) {
         col->GetUniqueColumnValues(color_axis.group_by_values);
         color_axis.group_by_initialized = true;
+        last_color_axis = color_axis;
       }
     }
   }
@@ -835,7 +836,7 @@ void GraphTableView::ComputeAxisRanges() {
     }
   }
   
-  if(color_mode == COLOR_AXIS || color_mode == COLOR_BY_GROUP)
+  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP)
     color_axis.ComputeRange();
   if(graph_type == RASTER)
     raster_axis.ComputeRange();
@@ -991,7 +992,7 @@ void GraphTableView::InitFromUserData() {
         errbars[i]->InitFromUserData();
       }
     }
-    if(da->HasUserData("COLOR_AXIS")) {
+    if(da->HasUserData("BY_VARIABLE")) {
       color_axis.col_name = cvs->name;   color_axis.on = true;
       color_axis.InitFromUserData();
     }
@@ -1392,7 +1393,7 @@ void GraphTableView::RenderLegend() {
   
   taVector2f cur_tr;
   
-  if (color_mode == COLOR_BY_GROUP) {
+  if (color_mode == BY_GROUP) {
     for (int group=0; group<color_axis.group_by_values.size; group++) {
       if (main_y_plots.size > 0) {  // only draw legend for y plot - all the same when color is by group
         GraphPlotView* pl = plots[main_y_plots[0]];
@@ -1856,13 +1857,13 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   
   GraphAxisBase* ax_clr = NULL;
   DataCol* da_clr = NULL;
-  if(color_mode == FIXED_COLOR) {
+  if(color_mode == FIXED) {
     t3gl->setValueColorMode(false);
     t3gl->setDefaultColor((T3Color)(plv.color.color()));
   }
   else {
     t3gl->setValueColorMode(true);
-    if(color_mode == VALUE_COLOR) {
+    if(color_mode == BY_VALUE) {
       ax_clr = &yax;
       da_clr = plv.GetDAPtr();
     }
@@ -1983,8 +1984,13 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
     }
     else if(da_clr) {
       clr_ok = true;
-      if(color_mode == VALUE_COLOR) {
+      if(color_mode == BY_VALUE) {
         clr = GetValueColor(ax_clr, yval);
+      }
+      else if (color_mode == BY_GROUP) {
+        String group = da_clr->GetValAsString(row);
+        int index = color_axis.group_by_values.FindEl(group);
+        clr = GetValueColor(ax_clr, index);
       }
       else {
         clr = GetValueColor(ax_clr, ax_clr->GetDataVal(da_clr, row));
@@ -2157,13 +2163,13 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
   
   GraphAxisBase* ax_clr = NULL;
   DataCol* da_clr = NULL;
-  if(color_mode == FIXED_COLOR) {
+  if(color_mode == FIXED) {
     t3gl->setValueColorMode(false);
     t3gl->setDefaultColor((T3Color)(plv.color.color()));
   }
   else {
     t3gl->setValueColorMode(true);
-    if(color_mode == VALUE_COLOR) {
+    if(color_mode == BY_VALUE) {
       ax_clr = &yax;
       da_clr = plv.GetDAPtr();
     }
@@ -2240,7 +2246,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     }
     else if(da_clr) {
       clr_ok = true;
-      if(color_mode == VALUE_COLOR) {
+      if(color_mode == BY_VALUE) {
         clr = GetValueColor(ax_clr, dat.y);
       }
       else {

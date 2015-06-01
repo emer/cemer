@@ -913,9 +913,10 @@ void DataCol::GetUniqueColumnValues(String_Array& groups) {
   groups.Reset();
   String prior = "";
   for (int i=0; i<temp.size; i++) {
-    if (temp.FastEl(i) != prior) {
-      groups.Add(temp.FastEl(i));
-      prior = temp.FastEl(i);
+    String next = temp.FastEl(i);
+    if (next != prior) {
+      groups.Add(next);
+      prior = next;
     }
   }
 }

@@ -265,7 +265,7 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
 
   layCAxis = new QHBoxLayout; layWidg->addLayout(layCAxis);
   lblColorMode = taiM->NewLabel("Color\nMode", widg, font_spec);
-  lblColorMode->setToolTip(taiMisc::ToolTipPreProcess("How to determine line color:\n VALUE_COLOR makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED_COLOR uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n COLOR_AXIS uses a separate column of data to determine color value"));
+  lblColorMode->setToolTip(taiMisc::ToolTipPreProcess("How to determine line color:\n BY_VALUE makes the color change as a function of the\n Y axis value, according to the colorscale pallete\n FIXED uses fixed colors associated with each Y axis line\n (click on line/legend/axis and do View Properties in context menu to change)\n BY_VARIABLE uses a separate column of data to determine color value"));
   layCAxis->addWidget(lblColorMode);
   cmbColorMode = dl.Add(new taiWidgetComboBox(true, TA_GraphTableView.sub_types.FindName("ColorMode"),
         this, NULL, widg, taiWidget::flgAutoApply));
@@ -273,11 +273,11 @@ iViewPanelOfGraphTable::iViewPanelOfGraphTable(GraphTableView* tlv)
   //  layColorScale->addSpacing(taiM->hsep_c);
 
   lblCAxis = taiM->NewLabel("Color\nAxis:", widg, font_spec);
-  lblCAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for COLOR_AXIS color mode"));
+  lblCAxis->setToolTip(taiMisc::ToolTipPreProcess("Column of data for BY_VARIABLE or BY_GROUP color mode"));
   layCAxis->addWidget(lblCAxis);
   lelCAxis = dl.Add(new taiWidgetListElChooser(&TA_T3DataView_List, this, NULL, widg, list_flags));
   layCAxis->addWidget(lelCAxis->GetRep());
-
+  
   lblThresh = taiM->NewLabel("Thresh", widg, font_spec);
   lblThresh->setToolTip(taiMisc::ToolTipPreProcess("Threshold for THRESH_LINE and THRESH_POINT styles -- only draw a line when value is over this threshold."));
   layCAxis->addWidget(lblThresh);
@@ -551,7 +551,7 @@ void iViewPanelOfGraphTable::UpdatePanel_impl() {
 
   cmbColorMode->GetImage(glv->color_mode);
   lelCAxis->GetImage(&(glv->children), glv->color_axis.GetColPtr());
-  lelCAxis->SetFlag(taiWidget::flgReadOnly, glv->color_mode != GraphTableView::COLOR_AXIS);
+  lelCAxis->SetFlag(taiWidget::flgReadOnly, glv->color_mode != GraphTableView::BY_VARIABLE);
 
   fldThresh->GetImage((String)glv->thresh);
 
