@@ -1347,8 +1347,8 @@ ClusterRun::ValidateJob(int n_jobs_to_sub) {
       taMisc::Error("Job requests to use MPI but mpi_per_node is less than 1 -- must be at least 1", String(mpi_per_node));
       return false;
     }
-    if(mpi_nodes * mpi_per_node > cs.nodes) {
-      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes * mpi_per_node requested:", String(mpi_nodes * mpi_per_node), "avail on cluster:", String(cs.nodes));
+    if(mpi_nodes > cs.nodes) {
+      taMisc::Error("Job requests to use MPI with more nodes than is available on cluster:", cluster, "mpi_nodes requested:", String(mpi_nodes), "avail on cluster:", String(cs.nodes));
       return false;
     }
     if(mpi_per_node * n_threads > cs.procs_per_node) {

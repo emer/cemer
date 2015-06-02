@@ -1365,21 +1365,23 @@ void GraphTableView::RenderLegend() {
     return;
   
   float ylen = plots[0]->axis_length;
+
+  int n_plots_eff = 0;
   
   if (color_mode == BY_GROUP) {
-    tot_plots = color_axis.group_by_values.size;
+    n_plots_eff = color_axis.group_by_values.size;
   }
   else {
-    int tot_plots = main_y_plots.size + alt_y_plots.size;
+    n_plots_eff = main_y_plots.size + alt_y_plots.size;
   }
-  if(tot_plots == 0)
+  if(n_plots_eff == 0)
     return;    // nothing..
   int n_down = 2;
-  int n_across = (int)(((float)tot_plots / (float)n_down) + 0.5f);
+  int n_across = (int)(((float)n_plots_eff / (float)n_down) + 0.5f);
   if(n_across < 1) n_across = 1;
   while(n_across > 3) {         // keep it reasonable..
     n_down++;
-    n_across = tot_plots / n_down;
+    n_across = n_plots_eff / n_down;
   }
   
   SoSeparator* leg = node_so->legend();
