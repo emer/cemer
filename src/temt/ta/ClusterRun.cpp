@@ -1074,14 +1074,14 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   if(clust_user) {
     dc = dt.FindMakeCol("cluster", VT_STRING);
     dc->desc = "cluster where this job was submitted / run";
-    idx = dt.FindColNameIdx(dc->name);
+    idx = dc->col_idx;
     if(idx != 0) {
       dt.MoveCol(idx, 0);
     }
 
     dc = dt.FindMakeCol("user", VT_STRING);
     dc->desc = "user who ran this job";
-    idx = dt.FindColNameIdx(dc->name);
+    idx = dc->col_idx;
     if(idx != 1) {
       dt.MoveCol(idx, 1);
     }
@@ -1089,6 +1089,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   
   dc = dt.FindMakeCol("tag", VT_STRING);
   dc->desc = "unique tag id for this job -- all files etc are named according to this tag";
+  int tag_idx = dc->col_idx;
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
   dc = dt.FindMakeCol("params", VT_STRING);
@@ -1124,9 +1125,16 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
 
   dc = dt.FindMakeCol("status", VT_STRING);
   dc->desc = "status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
-
+  if(clust_user) {
+    if(dc->col_idx != tag_idx + 1)
+      dt.MoveCol(dc->col_idx, tag_idx+1);
+  }
   dc = dt.FindMakeCol("status_info", VT_STRING);
   dc->desc = "more detailed information about status";
+  // if(clust_user) {
+  //   if(dc->col_idx != tag_idx + 2)
+  //     dt.MoveCol(dc->col_idx, tag_idx+2);
+  // }
 
   dc = dt.FindMakeCol("submit_time", VT_STRING);
   dc->desc = "when was the job submitted (tracks time from emergent client submission)";
