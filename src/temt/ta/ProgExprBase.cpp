@@ -398,16 +398,22 @@ String ProgExprBase::GetFullExpr() const {
 }
 
 bool ProgExprBase::ExprLookupVarFilter(void* base_, void* var_) {
-  if(!base_) return true;
+  if(!base_)
+    return true;
   Program* prog = dynamic_cast<Program*>(static_cast<taBase*>(base_));
-  if(!prog) return true;
+  if(!prog)
+    return true;
   ProgVar* var = dynamic_cast<ProgVar*>(static_cast<taBase*>(var_));
-  if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR)) return true; // definitely all globals
+  if(!var || !var->HasVarFlag(ProgVar::LOCAL_VAR))
+    return true; // definitely all globals
   Function* varfun = GET_OWNER(var, Function);
-  if(!varfun) return true;      // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
-  if(!expr_lookup_cur_base) return true; // no filter possible
+  if(!varfun)
+    return true;      // not within a function, always go -- can't really tell scoping very well at this level -- could actually do it but it would be recursive and hairy
+  if(!expr_lookup_cur_base)
+    return true; // no filter possible
   Function* basefun = GET_OWNER(expr_lookup_cur_base, Function);
-  if(basefun != varfun) return false; // different function scope
+  if(basefun != varfun)
+    return false; // different function scope
   return true;
 }
 
@@ -523,6 +529,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   
   switch(lookup_type) {
     case 1: {                       // lookup variables
+      lookup_seed = trim(lookup_seed);
       taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
       varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
