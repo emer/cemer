@@ -720,7 +720,7 @@ ClusterManager::LoadTable(const String &filename, DataTable &table)
   bool has_sel = m_cluster_run.SelectedRows(table, st_row, end_row);
   table.StructUpdate(true);
   table.ResetData();
-  table.LoadAnyData(filename);
+  table.LoadData(filename);
   table.StructUpdate(false);
   if(has_sel && st_row >= 0 && end_row >= st_row) {
     m_cluster_run.SelectRows(table, st_row, end_row);
