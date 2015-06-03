@@ -482,6 +482,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   if(delim_pos.size > 0) {
     if(txt[delim_pos[0]] == '.') { // path sep = .
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      base_path = triml(base_path);
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 2;
@@ -490,6 +491,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      base_path = triml(base_path);
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 2;
@@ -498,6 +500,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      base_path = triml(base_path);
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 3;
