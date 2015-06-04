@@ -836,8 +836,12 @@ void GraphTableView::ComputeAxisRanges() {
     }
   }
   
-  if(color_mode == BY_VARIABLE || color_mode == BY_GROUP)
+  if(color_mode == BY_VARIABLE)
     color_axis.ComputeRange();
+  if(color_mode == BY_GROUP) {
+    // the range is the number of groups
+    color_axis.SetRange(0, color_axis.group_by_values.size - 1);
+  }
   if(graph_type == RASTER)
     raster_axis.ComputeRange();
 }

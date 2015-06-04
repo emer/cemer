@@ -99,6 +99,8 @@ public:
   // compute range information based on data column, call UpdateRange_impl
   virtual bool          UpdateRange();
   // update range information based on last cell in data column, call UpdateRange_impl & returns true if a new range update
+  virtual void          SetRange(float min, float max);
+  // set the range as specified
 
   virtual void          ComputeTicks();
   // compute the start_tick, tick_incr, and act_n_ticks vals, based on current range info

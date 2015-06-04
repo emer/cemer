@@ -305,6 +305,11 @@ bool GraphAxisBase::UpdateRange() {
   return rval;
 }
 
+void GraphAxisBase::SetRange(float the_min, float the_max) {
+  range.min = the_min;
+  range.max = the_max;
+}
+
 void GraphAxisBase::ComputeTicks() {
   double min = range.min;
   double max = range.max;

@@ -36,6 +36,7 @@ public:
   void         ComputeRange() override;
   bool         UpdateRange() override;
   void         UpdateOnFlag() override;
+  void         SetRange(float min, float max) override;
 
   void          CopyFromView(GraphAxisView* cp);
   // #BUTTON special copy function that just copies user view options in a robust manner

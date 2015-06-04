@@ -61,3 +61,6 @@ bool GraphAxisView::UpdateRange() {
   return UpdateRange_impl(gv->view_range.min, gv->view_range.max);
 }
 
+void GraphAxisView::SetRange(float the_min, float the_max) {
+  inherited::SetRange(the_min, the_max);
+}
