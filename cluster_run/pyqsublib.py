@@ -103,11 +103,11 @@ class SGEJobManager( ClusterJobManager ):
         file.write("#$ -l h_rt=%s\n" % job.wallTime() ) 
         self.subCmd.append("-l h_rt=%s" % job.wallTime())
         if job.isThreaded():
-            file.write("#$ -pe threaded_mpi_%d %d\n" % (job.numCores(), job.numCores()*job.numNodes()))
-            self.subCmd.append("-pe threaded_mpi_%d %d" % (job.numCores(), job.numCores()*job.numNodes()))
+            file.write("#$ -pe threaded_mpi_%d %d\n" % (job.numCoresPerNode(), job.numCoresTotal()))
+            self.subCmd.append("-pe threaded_mpi_%d %d" % (job.numCoresPerNode(), job.numCoresTotal()))
         else :       
-            file.write("#$ -pe mpi %d\n" % (job.numCores()*job.numNodes()) )
-            self.subCmd.append("-pe mpi %d" % (job.numCores()*job.numNodes()))
+            file.write("#$ -pe mpi %d\n" % (job.numCoresTotal()) )
+            self.subCmd.append("-pe mpi %d" % (job.numCoresTotal()))
         if job.isArrayJob():
                 file.write("#$ -t %d-%d:%d\n" % (int(job.taskStart()), int(job.numTasks()), int(job.taskStep()) ))
                 self.subCmd.append("-t %d-%d:%d" % (job.taskStart(), job.numTasks(), job.taskStep() ) )
@@ -136,9 +136,9 @@ class SGEJobManager( ClusterJobManager ):
         file.write("\n")
 
         if job.isThreaded():
-            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodes(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodesTotal(), job.userCmd()))
         else :       
-            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodes()*job.numCores(), job.userCmd()))
+            file.write("%s -np %d -machinefile ${SGE_O_WORKDIR}/.tempfiles/$$/hostfile %s \n" % (self.job_launcher, job.numNodesTotal()*job.numCores(), job.userCmd()))
 
         file.write("\n")
         file.write("# remove our temp hostfile\n")
@@ -559,6 +559,10 @@ class ClusterJob:
             self.last_err = "cores, per_node must be > 0 and per_node * cores < %d" % ClusterJob.MAX_CORES
             return False
         return True
+    def numCoresTotal(self):
+        return self.nodes * self.per_node * self.cores
+    def numCoresPerNode(self):
+        return self.per_node * self.cores
     def wallTime(self):
         return self.time
     def setWallTime( self, t ): 
