@@ -67,7 +67,15 @@ void PrintVar::GenCssBody_impl(Program* prog) {
     prog->DecIndent();
     prog->AddLine(this, "}");
   }
-  else {
+//  else {
+//    prog->AddLine(this, "if(!debug || InDebugMode()) {");
+//    prog->IncIndent();
+//    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+//    prog->AddVerboseLine(this);
+//    prog->DecIndent();
+//    prog->AddLine(this, "}");
+//  }
+  else {  // delete when above is working
     prog->AddLine(this, rval, ProgLine::MAIN_LINE);
     prog->AddVerboseLine(this);
   }

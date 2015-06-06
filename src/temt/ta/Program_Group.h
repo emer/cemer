@@ -45,8 +45,10 @@ public:
   String                desc; // #EDIT_DIALOG description of what this program group does and when it should be used (used for searching in prog_lib -- be thorough!)
   ProgramRef            step_prog;
   // #READ_ONLY #NO_SAVE #OBSOLETE this is just here for loading prior versions and is no longer used in any fashion
-
+  
   static ProgLib        prog_lib; // #HIDDEN_TREE library of available programs
+  
+  bool                  debug_mode; // if set here and ProgEls can check this to conditionally turn on/off elements e.g. print (CALL InDebugMode() for state - do not access directly - would be protected but then it can't be saved
 
   taBase* NewFromLib(ProgLibEl* prog_type);
   // #BUTTON #MENU_CONTEXT #FROM_GROUP_prog_lib #NO_SAVE_ARG_VAL #CAT_Program create a new program from a library of existing program types
@@ -63,7 +65,7 @@ public:
   virtual void  ClearAllBreakpoints();
   // #MENU #MENU_ON_Object #DYN1 remove breakpoints for all programs in the group:
   
-  virtual void RestorePanels();
+  virtual void  RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
   virtual bool  RunStartupProgs();
   // run programs marked as STARTUP_RUN -- typically only done by system at startup -- returns true if any run
@@ -77,10 +79,12 @@ public:
 #endif
   void          SetProgsStale(); // set all progs in this group/subgroup to be dirty
 
-  String       GetTypeDecoKey() const override { return "Program"; }
+  String        GetTypeDecoKey() const override { return "Program"; }
 
-  Variant      GetGuiArgVal(const String& fun_name, int arg_idx) override;
-
+  Variant       GetGuiArgVal(const String& fun_name, int arg_idx) override;
+  
+  bool          InDebugMode();
+  
   void  InitLinks();
   void  CutLinks();
   TA_BASEFUNS(Program_Group);

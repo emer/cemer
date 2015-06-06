@@ -924,3 +924,14 @@ bool ProgEl::CvtCodeToVar(String& code) {
   }
   return true;
 }
+
+bool ProgEl::InDebugMode() {
+  Program* prg = GET_MY_OWNER(Program);
+  if (prg) {
+    Program_Group* prg_grp = GET_MY_OWNER(Program_Group);
+    if (prg_grp) {
+      return prg_grp->InDebugMode();
+    }
+  }
+  return false;  // shouldn't get here
+}

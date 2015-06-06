@@ -149,3 +149,18 @@ bool Program_Group::BrowserEditTest() {
   return any_errs;
 }
 #endif
+
+bool Program_Group::InDebugMode() {
+  if (debug_mode) {
+    return true;
+  }
+  else {
+    Program_Group* prg_grp = GET_MY_OWNER(Program_Group);
+    if (prg_grp) {
+      return prg_grp->InDebugMode();
+    }
+    else {
+      return false;
+    }
+  }
+}

@@ -31,7 +31,7 @@ class TA_API PrintVar: public ProgEl {
   // print out (to the console) the value of variable(s) -- useful for debugging
 INHERITED(ProgEl)
 public:
-  String		message;	// initial message to print (do NOT include quotes!)
+  String		    message;	// initial message to print (do NOT include quotes!)
   ProgVarRef		print_var; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var2; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var3; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
@@ -40,6 +40,7 @@ public:
   ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
   ProgVarRef		debug_level; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set, indicating the current desired debugging level 
+    bool        debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
   
   bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
   bool		CvtFmCode(const String& code) override;
@@ -50,13 +51,13 @@ public:
 
   PROGEL_SIMPLE_BASEFUNS(PrintVar);
 protected:
-  void 	UpdateAfterEdit_impl() override;
-  void 	CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void 	  UpdateAfterEdit_impl() override;
+  void 	  CheckThisConfig_impl(bool quiet, bool& rval) override;
   void		GenCssBody_impl(Program* prog) override;
 
 private:
-  void	Initialize();
-  void	Destroy()	{CutLinks();}
+  void	  Initialize();
+  void	  Destroy()	{CutLinks();}
 }; 
 
 #endif // PrintVar_h
