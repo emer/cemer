@@ -42,8 +42,9 @@ void * thread_recv(void * data) {
   for (int j = 0; j < (recv_struct->dmem_nprocs - 1); j++) {
     data_recved = 0;
     while (data_recved < (recv_struct->len * sizeof(float))) {
-      n = read(recv_struct->serverconnfds[recv_struct->tag],((void *)recv_data) +
-               data_recved,recv_struct->len * sizeof(float) - data_recved);
+      n = read(recv_struct->serverconnfds[recv_struct->tag],
+	       ((void *)recv_data) + data_recved, // todo: can't use (void*) in arithmatic!!! char*?
+	       recv_struct->len * sizeof(float) - data_recved);
       if (n < 0) {
         printf("Failed to read data %s\n", strerror(errno));
         break;
@@ -60,7 +61,9 @@ void * thread_recv(void * data) {
   for (int j = 0; j < (recv_struct->dmem_nprocs - 1); j++) {
     data_recved = 0;
     while (data_recved < (recv_struct->len * sizeof(float))) {
-      n = read(recv_struct->serverconnfds[recv_struct->tag],((void *)recv_data) + data_recved,recv_struct->len * sizeof(float) - data_recved);
+      n = read(recv_struct->serverconnfds[recv_struct->tag],
+	       ((void *)recv_data) + data_recved, // todo: can't use (void*) in arithmatic!!! char*?
+	       recv_struct->len * sizeof(float) - data_recved);
       if (n < 0) {
         printf("P%i: ERROR! Failed to read data %s\n", recv_struct->dmem_proc, strerror(errno));
         break;
@@ -115,7 +118,7 @@ ThreadedAllReduce::ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads) {
     proc_name = proc_name_tmp;
   }
 
-  if (taMisc::thread_defaults.node_suffix) {
+  if (taMisc::thread_defaults.node_suffix.nonempty()) {
     strncat(proc_name, taMisc::thread_defaults.node_suffix.chars(), MPI_MAX_PROCESSOR_NAME);
   }
 
@@ -305,7 +308,10 @@ void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len, int tag)
     n = 0;
     data_sent = 0;
     while (data_sent < seg_len*sizeof(float)) {
-      n = write(clientfds[recv_struct.tag],((void *)(&dst[((dmem_proc - j + dmem_nprocs) % dmem_nprocs)*seg_len])) + data_sent,seg_len * sizeof(float) - data_sent);
+      n = write(clientfds[recv_struct.tag],
+		// todo: can't use (void*) in arithmatic!!! char*?
+		((void *)(&dst[((dmem_proc - j + dmem_nprocs) % dmem_nprocs)*seg_len])) + data_sent,
+		seg_len * sizeof(float) - data_sent);
       if (n < 0) {
         printf("Sending failed with %s\n", strerror(errno));
         break;
@@ -323,7 +329,10 @@ void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len, int tag)
     n = 0;
     data_sent = 0;
     while (data_sent < seg_len*sizeof(float)) {
-      n = write(clientfds[recv_struct.tag],((void *)(&dst[((dmem_proc + 1 - j + dmem_nprocs) % dmem_nprocs)*seg_len])) + data_sent,seg_len * sizeof(float) - data_sent);
+      n = write(clientfds[recv_struct.tag],
+		 // todo: can't use (void*) in arithmatic!!! char*?
+		((void *)(&dst[((dmem_proc + 1 - j + dmem_nprocs) % dmem_nprocs)*seg_len])) + data_sent,
+		seg_len * sizeof(float) - data_sent);
       if (n < 0) {
         printf("P%i: ERROR! Sending failed with %s\n", dmem_proc, strerror(errno));
         break;
@@ -381,4 +390,4 @@ void ThreadedAllReduce::allreduce(float * src, float * dst, size_t len) {
     
 }
 
-#endif DMEM_COMPILE
+#endif // DMEM_COMPILE
