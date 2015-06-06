@@ -32,19 +32,18 @@ class TA_API PrintExpr: public ProgEl {
   // print out (to the console) an expression -- e.g., an informational message for the user
 INHERITED(ProgEl)
 public:
-  ProgExpr		 expr;
+  ProgExpr		  expr;
   // #BROWSER_EDIT_LOOKUP print out (to console) this expression -- it just does the equivalent of 'cout << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
   ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
-  ProgVarRef		debug_level; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set, indicating the current desired debugging level
   bool          debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
 
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "print"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "print"; }
 
   PROGEL_SIMPLE_BASEFUNS(PrintExpr);
 protected:

@@ -1516,6 +1516,8 @@ bool taRootBase::Startup_InitViewColors() {
 
   taMisc::view_colors->FindMakeViewColor("NotEnabled", "State: !isEnabled",
                                          false, _nilString, true, "grey80");
+  taMisc::view_colors->FindMakeViewColor("debug_mode", "State: all programs in group are in debug_mode",
+                                         false, _nilString, true, "LightSalmon");
   taMisc::view_colors->FindMakeViewColor("ThisInvalid", "State: item not valid according to CheckConfig",
                                          false, _nilString, true, "pink");
   taMisc::view_colors->FindMakeViewColor("ChildInvalid", "State: child not valid according to CheckConfig",

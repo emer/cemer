@@ -39,21 +39,20 @@ public:
   ProgVarRef		print_var5; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		print_var6; 	// #ITEM_FILTER_StdProgVarFilter print out (to console) the value of this variable
   ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
-  ProgVarRef		debug_level; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set, indicating the current desired debugging level 
-    bool        debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
+  bool          debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
   
-  bool		CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
-  bool		CvtFmCode(const String& code) override;
+  bool          CanCvtFmCode(const String& code, ProgEl* scope_el) const override;
+  bool          CvtFmCode(const String& code) override;
 
-  String	GetDisplayName() const override;
-  String 	GetTypeDecoKey() const override { return "ProgVar"; }
-  String	GetToolbarName() const override { return "print var"; }
+  String        GetDisplayName() const override;
+  String        GetTypeDecoKey() const override { return "ProgVar"; }
+  String        GetToolbarName() const override { return "print var"; }
 
   PROGEL_SIMPLE_BASEFUNS(PrintVar);
 protected:
-  void 	  UpdateAfterEdit_impl() override;
-  void 	  CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		GenCssBody_impl(Program* prog) override;
+  void          UpdateAfterEdit_impl() override;
+  void          CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void          GenCssBody_impl(Program* prog) override;
 
 private:
   void	  Initialize();

@@ -27,10 +27,8 @@ void PrintExpr::Initialize() {
 void PrintExpr::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!debug_level) {
-    debug_level = my_prog->vars.FindName("debug_level");
-  }
+  if(!my_prog)
+    return;
 }
 
 void PrintExpr::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -44,34 +42,21 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
     expr.SetExpr("\"\""); // prevents error if no expression
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
-  if(my_mask && debug_level) {
-    prog->AddLine(this, "if(" + my_mask->name + " & " + debug_level->name + ") {");
-    prog->IncIndent();
-    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-    prog->AddVerboseLine(this);
-    prog->DecIndent();
-    prog->AddLine(this, "}");
-  }
-//  else {
-//    prog->AddLine(this, "if(!debug || InDebugMode()) {");
-//    prog->IncIndent();
-//    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-//    prog->AddVerboseLine(this);
-//    prog->DecIndent();
-//    prog->AddLine(this, "}");
-//  }
-  else {  // delete when above is working
-    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-    prog->AddVerboseLine(this);
-  }
+  prog->AddLine(this, "if(" + String(!debug) + " || " + String(InDebugMode()) + ") {");
+  prog->IncIndent();
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+
+  // delete these two lines when above is working
+//  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+//  prog->AddVerboseLine(this);
 }
 
 String PrintExpr::GetDisplayName() const {
   String rval;
   rval += "Print: " + expr.GetFullExpr();
-  if(debug_level && my_mask) {
-    rval += " (dbg mask: " + my_mask->name + ")";
-  }
   return rval;
 }
 

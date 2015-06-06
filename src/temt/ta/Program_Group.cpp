@@ -164,3 +164,18 @@ bool Program_Group::InDebugMode() {
     }
   }
 }
+
+void Program_Group::ToggleDebug() {
+  debug_mode = !debug_mode;
+  UpdateAfterEdit();
+}
+
+String Program_Group::GetStateDecoKey() const {
+  String rval = inherited::GetStateDecoKey();
+  if(rval.empty()) {
+    if(debug_mode)
+      return "debug_mode";
+  }
+  return rval;
+}
+

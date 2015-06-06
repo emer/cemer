@@ -17,6 +17,7 @@
 #include <Program>
 #include <ProgVar>
 #include <taMisc>
+#include <Program_Group>
 
 TA_BASEFUNS_CTORS_DEFN(PrintVar);
 
@@ -27,10 +28,8 @@ void PrintVar::Initialize() {
 void PrintVar::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
   Program* my_prog = program();
-  if(!my_prog) return;
-  if(!debug_level) {
-    debug_level = my_prog->vars.FindName("debug_level");
-  }
+  if(!my_prog)
+    return;
 }
 
 void PrintVar::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -59,26 +58,16 @@ void PrintVar::GenCssBody_impl(Program* prog) {
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
   rval += " << endl;";
 
-  if(my_mask && debug_level) {
-    prog->AddLine(this, "if(" + my_mask->name + " & " + debug_level->name + ") {");
-    prog->IncIndent();
-    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-    prog->AddVerboseLine(this);
-    prog->DecIndent();
-    prog->AddLine(this, "}");
-  }
-//  else {
-//    prog->AddLine(this, "if(!debug || InDebugMode()) {");
-//    prog->IncIndent();
-//    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-//    prog->AddVerboseLine(this);
-//    prog->DecIndent();
-//    prog->AddLine(this, "}");
-//  }
-  else {  // delete when above is working
-    prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-    prog->AddVerboseLine(this);
-  }
+  prog->AddLine(this, "if(" + String(!debug) + " || " + String(InDebugMode()) + ") {");
+  prog->IncIndent();
+  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+  prog->AddVerboseLine(this);
+  prog->DecIndent();
+  prog->AddLine(this, "}");
+
+  // delete these two lines when above is working
+//  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
+//  prog->AddVerboseLine(this);
 }
 
 String PrintVar::GetDisplayName() const {
@@ -98,9 +87,6 @@ String PrintVar::GetDisplayName() const {
   if((bool)print_var6)
     rval += " " + print_var6->name;
 
-  if(debug_level && my_mask) {
-    rval += " (dbg mask: " + my_mask->name + ")";
-  }
   return rval;
 }
 
