@@ -53,6 +53,7 @@ class QVariant; // #IGNORE
 class iColor; //
 class MainWindowViewer; //
 class String_Array; //
+class taProject; //
 
 
 //////////////////////////////////////////////////////////////////////////////////
@@ -821,7 +822,10 @@ public:
   // #IGNORE mostly for testing if has children
   virtual taBase*       SetOwner(taBase*)               { return(NULL); } // #IGNORE
   virtual taBase*       GetOwner() const        { return(NULL); } // #CAT_ObjectMgmt
+  taBase*               GetOwnerOfType(TypeDef* td) const
+  { return GetOwner(td); }
   virtual taBase*       GetOwner(TypeDef* td) const; // #CAT_ObjectMgmt
+  virtual taProject*    GetMyProj() const; // #CAT_ObjectMgmt get the project object that owns this object
   virtual taBase*       GetThisOrOwner(TypeDef* td); // #IGNORE get this obj or first owner that is of type td
   virtual taBase*       GetMemberOwner(bool highest = false) const;
   // #CAT_ObjectMgmt get the object that owns this object as a member -- if this object is not a member of its Owner (or has no owner) then it returns NULL -- if highest then it proceeds recursively up to the highest member owner and returns that -- i.e., if this is a member of a member (which is an object) of larger object, this will return the largest such object that contains this as a member at some level

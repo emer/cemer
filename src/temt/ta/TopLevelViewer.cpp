@@ -115,7 +115,7 @@ void TopLevelViewer::DeIconify() {
 bool TopLevelViewer::deleteOnWinClose() const {
 //NOTE: this behavior can be changed, but is the current default:
   // if we are in a project, then persist, else transient
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   return (!proj);
 }
 

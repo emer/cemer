@@ -2586,7 +2586,7 @@ void  iMainWindowViewer::setFrameGeometry(int left, int top, int width, int heig
 
 iMainWindowViewer* iMainWindowViewer::GetViewerForObj(taBase* obj) {
   if(!taMisc::gui_active) return NULL;
-  taProject* proj = GET_OWNER(obj, taProject);
+  taProject* proj = obj->GetMyProj();
   if(!proj) return NULL;
 
   // iterate to find all Browsers
@@ -3051,7 +3051,7 @@ bool taBase::EditPanel(bool new_tab, bool pin_tab) {
 
   iMainWindowViewer* inst = NULL;
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(proj) {
     MainWindowViewer* vwr = proj->GetDefaultProjectBrowser(); // this is better
     if(!vwr) return false;	// shouldn't happen
@@ -3086,7 +3086,7 @@ bool taBase::BrowserSelectMe() {
     return true;
   }
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
@@ -3106,7 +3106,7 @@ bool taBase::BrowserSelectMe() {
 
 bool taBase::BrowserExpandAll() {
   if(!taMisc::gui_active) return false;
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
@@ -3126,7 +3126,7 @@ bool taBase::BrowserExpandAll() {
 
 bool taBase::BrowserCollapseAll() {
   if(!taMisc::gui_active) return false;
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;
@@ -3147,7 +3147,7 @@ bool taBase::BrowserCollapseAll() {
 
 bool taBase::GuiFindFromMe(const String& find_str) {
   if(!taMisc::gui_active) return false;
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   taiSigLink* link = (taiSigLink*)GetSigLink();
   if (!link) return false;

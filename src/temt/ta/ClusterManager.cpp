@@ -58,7 +58,7 @@ ClusterManager::ClusterManager(ClusterRun &cluster_run)
   , m_proj_copy_filename()
   , m_submit_dat_filename()
 {
-  m_proj = GET_OWNER(&m_cluster_run, taProject);
+  m_proj = m_cluster_run.GetMyProj();
   if (!m_proj) {
     // Should never happen.
     taMisc::Error("Could not get project object to run on cluster.");

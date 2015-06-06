@@ -174,6 +174,7 @@ String taMisc::compile_info;
 taThreadDefaults::taThreadDefaults() {
   cpus = 1;
   n_threads = -1;
+  alt_mpi = false;
 }
 
 taThreadDefaults taMisc::thread_defaults;

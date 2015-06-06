@@ -479,6 +479,10 @@ taBase* taBase::GetOwner(TypeDef* td) const {
   return own->GetOwner(td);
 }
 
+taProject* taBase::GetMyProj() const {
+  return (taProject*)GetOwner(&TA_taProject);
+}
+
 taBase* taBase::GetThisOrOwner(TypeDef* td) {
   if (InheritsFrom(td)) return this;
   return GetOwner(td);
@@ -1387,7 +1391,7 @@ taBase* taBase::GetUndoBarrier() {
 //      Saving and Loading to/from files
 
 String taBase::GetFileNameFmProject(const String& ext, const String& tag, const String& subdir, bool dmem_proc_no) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return _nilString;
   String proj_base_nm = proj->name; // use the actual name which should be what was saved
   // and thus doesn't change when we use cluster run or something else that might use
@@ -1426,7 +1430,7 @@ String taBase::GetFileNameFmProject(const String& ext, const String& tag, const 
 }
 
 String taBase::GetProjDir() const {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return _nilString;
   return proj->proj_dir;
 }
@@ -1512,7 +1516,7 @@ taFiler* taBase::GetLoadFiler(const String& fname, String exts,
   taFiler* flr = StatGetFiler(NULL, exts, compress, filetypes);
   taRefN::Ref(flr);
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
 
   if(fname.nonempty()) {
     flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
@@ -1637,7 +1641,7 @@ taFiler* taBase::GetSaveFiler(const String& fname, String exts,
   taFiler* flr = StatGetFiler(typ, exts, compress, filetypes);
   taRefN::Ref(flr);
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
 
   if (fname.nonempty()) {
     flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
@@ -1669,7 +1673,7 @@ taFiler* taBase::GetAppendFiler(const String& fname, const String& ext, int comp
   taFiler* flr = GetFiler(NULL, ext, compress, filetypes);
   taRefN::Ref(flr);
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
 
   if (fname.nonempty()) {
     flr->SetFileName(taMisc::ExpandFilePath(fname, proj));
@@ -2965,7 +2969,7 @@ bool taBase::OpenInWindow(bool modal) {
 }
 
 MainWindowViewer* taBase::GetMyBrowser() {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return NULL;
   return proj->GetDefaultProjectBrowser();
 }
@@ -3103,7 +3107,7 @@ Variant taBase::GetGuiArgVal(const String& fun_name, int arg_idx) {
 String taBase::DiffCompareString(taBase* cmp_obj, taDoc*& doc) {
   if(TestError(!cmp_obj, "DiffCompareString", "cmp_obj is null")) return _nilString;
   if(!doc) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "DiffCompare", "cannot find project")) return _nilString;
     doc = (taDoc*)proj->docs.New(1);
     doc->name = "DiffCompare_" + GetDisplayName() + "_" + cmp_obj->GetDisplayName();
@@ -3482,7 +3486,7 @@ bool taBase::AddToControlPanel(MemberDef* member, ControlPanel* ctrl_panel, cons
                            const String& sub_gp_nm) {
   if(TestError(!member,"AddToControlPanel", "member is null")) return false;
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3493,7 +3497,7 @@ bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
                              const String& extra_label, const String& sub_gp_nm,
                              const String& desc) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);  StructUpdate(true);
+    taProject* proj = GetMyProj();  StructUpdate(true);
 
     if(TestError(!proj, "AddToControlPanelNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
@@ -3503,7 +3507,7 @@ bool taBase::AddToControlPanelNm(const String& member, ControlPanel* ctrl_panel,
 
 int taBase::AddToControlPanelSearch(const String& memb_contains, ControlPanel*& ctrl_panel) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanelSearch", "cannot find project")) return -1;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
     ctrl_panel->name = "Srch_" + memb_contains;
@@ -3539,7 +3543,7 @@ int taBase::AddToControlPanelCompare(taBase*cmp_obj, ControlPanel*& ctrl_panel, 
   if(TestError(GetTypeDef() != cmp_obj->GetTypeDef(), "AddToControlPanelCompare",
                "objects must have the exact same type to be able to be compared")) return -1;
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanelCompare", "cannot find project")) return -1;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3552,7 +3556,7 @@ bool taBase::AddFunToControlPanel(MethodDef* function, ControlPanel* ctrl_panel,
                               const String& extra_label, const String& sub_gp_nm) {
   if(TestError(!function, "AddControlFunForEdit", "function is null")) return false;
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEdit", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3563,7 +3567,7 @@ bool taBase::AddFunToControlPanelNm(const String& function, ControlPanel* ctrl_p
                                 const String& extra_label, const String& sub_gp_nm,
                                 const String& desc) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddControlFunForEditNm", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3574,7 +3578,7 @@ bool taBase::AddToParamSet(MemberDef* member, ParamSet* param_set, const String&
                                const String& sub_gp_nm) {
   if(TestError(!member,"AddToParamSet", "member is null")) return false;
   if(!param_set) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToParamSet", "cannot find project")) return false;
     param_set = (ParamSet*)proj->param_sets.New(1);
   }

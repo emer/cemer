@@ -319,7 +319,7 @@ void DoGRegionSpec::GridDoGFilter(DataTable* graph_data) {
 }
 
 void DoGRegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_PlotSpacing", true);
   }

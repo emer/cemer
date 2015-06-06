@@ -48,7 +48,7 @@ bool Comment::BrowserEditSet(const String& code, int move_after) {
   if(move_after != -11) {
     Program* prog = GET_MY_OWNER(Program);
     if(prog) {
-      taProject* proj = GET_OWNER(prog, taProject);
+      taProject* proj = prog->GetMyProj();
       if(proj) {
         proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
       }

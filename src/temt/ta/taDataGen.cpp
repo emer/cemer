@@ -82,7 +82,7 @@ DataCol* taDataGen::GetFloatDataCol(const DataTable* src_data, const String& dat
 
 bool taDataGen::GetDest(DataTable*& dest, const DataTable* src, const String& suffix) {
   if(dest) return false;
-  taProject* proj = GET_OWNER(src, taProject);
+  taProject* proj = src->GetMyProj();
   dest = proj->GetNewInputDataTable(src->name + "_" + suffix, true);
   return true;
 }

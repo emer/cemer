@@ -20,6 +20,7 @@
 #include "ta_def.h"
 
 // member includes:
+#include <taString>
 
 // declare all other types mentioned but not required to include:
 
@@ -31,6 +32,9 @@ class TA_API taThreadDefaults {
 public:
   int           cpus;           // #READ_ONLY #SHOW #NO_SAVE number of physical processors (cores) on this system -- typically you want to set n_threads equal to this, but not necessarily always -- may need to use fewer threads in some cases (almost never more)
   int           n_threads;      // #MIN_1 number of threads to actually use -- typically the number of physical processors (cores) available (see cpus), and is initialized to that.
+  bool          alt_mpi;        // use alternative custom allreduce function instead of standard MPI calls -- faster at least on non-infiniband sytems..
+  String        node_prefix;    // #CONDSHOW_ON_alt_mpi for alt_mpi optmized threaded MPI code, prefix to add to node name to get proper high-speed network adapter
+  String        node_suffix;    // #CONDSHOW_ON_alt_mpi for alt_mpi optmized threaded MPI code, prefix to add to node name to get proper high-speed network adapter
 
   taThreadDefaults();
 // implicit copy and assign

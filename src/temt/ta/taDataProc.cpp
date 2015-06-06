@@ -51,7 +51,7 @@ bool taDataProc::GetDest(DataTable*& dest, const DataTable* src, const String& s
   }
   in_place_req = false;
   if(dest) return false;
-  taProject* proj = GET_OWNER(src, taProject);
+  taProject* proj = src->GetMyProj();
   dest = proj->GetNewAnalysisDataTable(src->name + "_" + suffix, true);
   return true;
 }

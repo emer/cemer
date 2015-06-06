@@ -94,7 +94,7 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
 void iClusterTableView::DoClusterOp(const Variant& var) {
   DataTable* tab = this->dataTable(); // may not exist
   if (!tab) return;
-  taProject* proj = GET_OWNER(tab, taProject);
+  taProject* proj = tab->GetMyProj();
   if(!proj) return;
   ClusterRun* cr = (ClusterRun*)proj->FindMakeControlPanel("ClusterRun", &TA_ClusterRun);
   if (cr) {

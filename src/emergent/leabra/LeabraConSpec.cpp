@@ -272,7 +272,7 @@ void LeabraConSpec::CreateWtSigFun() {
 }
 
 void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_WtSigFun", true);
   }
@@ -303,7 +303,7 @@ void LeabraConSpec::GraphWtSigFun(DataTable* graph_data) {
 }
 
 void LeabraConSpec::GraphXCaldWtFun(DataTable* graph_data, float thr_p) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_XCalFun", true);
   }
@@ -329,7 +329,7 @@ void LeabraConSpec::GraphXCaldWtFun(DataTable* graph_data, float thr_p) {
 }
 
 void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_XCalSoftBoundFun", true);
   }
@@ -355,7 +355,7 @@ void LeabraConSpec::GraphXCalSoftBoundFun(DataTable* graph_data) {
 }
 
 void LeabraConSpec::GraphFastWtsFun(int trials, DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_FastWtsFun", true);
   }

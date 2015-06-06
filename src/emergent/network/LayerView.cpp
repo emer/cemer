@@ -279,7 +279,7 @@ void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Layer* lay = lv->layer();
   NetView* nv = lv->getNetView();
   Network* net = nv->net();
-  taProject* proj = GET_OWNER(net, taProject);
+  taProject* proj = net->GetMyProj();
 
   float fx = (float)lay->disp_geom.x / nv->eff_max_size.x;
   float fy = (float)lay->disp_geom.y / nv->eff_max_size.y;
@@ -324,7 +324,7 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   Layer* lay = lv->layer();
   NetView* nv = lv->getNetView();
   Network* net = nv->net();
-  taProject* proj = GET_OWNER(net, taProject);
+  taProject* proj = net->GetMyProj();
 
   const SbVec3f& trans = dragger->translation.getValue();
   float new_z = trans[0] * nv->eff_max_size.z;

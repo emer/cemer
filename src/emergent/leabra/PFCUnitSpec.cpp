@@ -297,7 +297,7 @@ void PFCUnitSpec::ClearOtherMaint(LeabraUnitVars* u, LeabraNetwork* net, int thr
 
 
 void PFCUnitSpec::GraphPFCDyns(DataTable* graph_data, int n_trials) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_PFCDyns", true);
   }

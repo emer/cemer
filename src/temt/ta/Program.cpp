@@ -308,7 +308,7 @@ void Program::Init() {
   if(AlreadyRunning()) return;
   ProjDirToCurrent();
   ClearStopReq();
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(proj && proj->file_name.nonempty()) {
     QFileInfo fi(proj->file_name); // set to current working dir on init
     QDir::setCurrent(fi.absolutePath());
@@ -570,7 +570,7 @@ void Program::ToggleTrace() {
 }
 
 void Program::ProjDirToCurrent() {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return;
   proj->ProjDirToCurrent();
 }
@@ -590,7 +590,7 @@ void Program::ClearStopReq() {
 
 void Program::UpdateUi() {
   if(!taMisc::gui_active) return;
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return;
   proj->UpdateUi();
   taiM->ProcessEvents();
@@ -724,7 +724,7 @@ void Program::ExitShell() {
 }
 
 void Program::UpdateCallerArgs() {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return;
   FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
     ProgramCallBase* pc = pg->FindSubProgTarget(this);
@@ -886,7 +886,7 @@ Program* Program::FindProgramName(const String& prog_nm, bool warn_not_found) co
     Program_Group* pg = (Program_Group*)owner;
     rval = pg->FindName(prog_nm);
     if(!rval) {
-      taProject* proj = GET_MY_OWNER(taProject);
+      taProject* proj = GetMyProj();
       if(proj) {
         rval = proj->programs.FindLeafName(prog_nm);
       }
@@ -905,7 +905,7 @@ Program* Program::FindProgramNameContains(const String& prog_nm, bool warn_not_f
     Program_Group* pg = (Program_Group*)owner;
     rval = pg->FindNameContains(prog_nm);
     if(!rval) {
-      taProject* proj = GET_MY_OWNER(taProject);
+      taProject* proj = GetMyProj();
       if(proj) {
         rval = proj->programs.FindLeafNameContains(prog_nm);
       }
@@ -980,7 +980,7 @@ void Program::VerboseOut(Program* prg, int code_line,
                          const char* g, const char* h, const char* i) {
   if(!prg) return;
   String msg;
-  taProject* proj = GET_OWNER(prg, taProject);
+  taProject* proj = prg->GetMyProj();
   if(proj)
     msg = prg->GetPathNames(NULL, &(proj->programs));
   else
@@ -1575,7 +1575,7 @@ String Program::RenderGlobalTrace(bool html) {
     rval << cnt << "\t";
     if(html) rval << "</td>";
     if(sp->own_program) {
-      taProject* proj = GET_OWNER(sp->own_program, taProject);
+      taProject* proj = sp->own_program->GetMyProj();
       if(html) {
         rval << "<td><a href=\"ta:" << sp->own_program->GetPath(NULL, proj)
         << "#progln_" << ln << "\">"
@@ -1809,7 +1809,7 @@ Program* Program::MakeTemplate() {
 bool Program::AddCtrlFunsToControlPanel(ControlPanel* ctrl_panel, const String& extra_label,
                                     const String& sub_gp_nm) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddCtrlFunsToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }

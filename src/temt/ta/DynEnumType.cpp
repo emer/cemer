@@ -47,7 +47,7 @@ void DynEnumType::SeqNumberItems(int first_val) {
 }
 
 bool DynEnumType::UpdateOtherProgs() {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
     DynEnumType* tp = (DynEnumType*)pg->types.FindName(name); // find my name

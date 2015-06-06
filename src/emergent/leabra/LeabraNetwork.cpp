@@ -1837,7 +1837,7 @@ void LeabraNetwork::Compute_Weights_Thr(int thr_no) {
 //      Stats
 
 void LeabraNetwork::LayerAvgAct(DataTable* report_table, LeabraLayerSpec* lay_spec) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!report_table) {
     report_table = proj->GetNewAnalysisDataTable(name + "_LayerAvgAct", true);
   }

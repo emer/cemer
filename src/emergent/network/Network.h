@@ -243,7 +243,6 @@ public:
   int           small_batch_n_eff; // #GUI_READ_ONLY #EXPERT #NO_SAVE #CAT_Learning effective batch_n value = batch_n except for dmem when it = (batch_n / epc_nprocs) >= 1
   NetStatsSpecs stats;          // #CAT_Statistic parameters controling the computation of statistics
   NetworkThreadMgr threads;    // #CAT_Threads parallel threading of network computation
-  bool             alt_mpi;    // #CAT_MPI use alternative custom allreduce function instead of standard MPI
   NetTiming_List net_timing; // #CAT_Statistic timing for different network-level functions -- per thread, plus one summary item at the end
 
   int           batch;          // #NO_SAVE #GUI_READ_ONLY #SHOW #CAT_Counter #VIEW batch counter: number of times network has been trained over a full sequence of epochs (updated by program)
@@ -720,7 +719,7 @@ public:
   virtual void  SaveWeights(const String& fname="", WtSaveFormat fmt = NET_FMT);
   // #BUTTON #MENU #EXT_wts #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_SAVE write weight values out in a simple ordered list of weights (optionally in binary fmt) (leave fname empty to pull up file chooser)
   virtual bool  LoadWeights(const String& fname="", bool quiet = false);
-  // #BUTTON #MENU #EXT_wts #GHOST_ON_flags:BUILT_INTACT #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
+  // #BUTTON #MENU #EXT_wts #GHOST_OFF_flags:BUILT&&flags:INTACT #COMPRESS #CAT_File #FILETYPE_Weights #FILE_DIALOG_LOAD read weight values in from a simple ordered list of weights (fmt is read from file) (leave fname empty to pull up file chooser)
 
   virtual void  SaveToWeights(Weights* wts);
   // #BUTTON #MENU #NULL_OK #NULL_TEXT_NewWeightsObj write weight values out to given weights object (NULL = make a new one)
@@ -754,7 +753,7 @@ public:
     virtual void  Init_dWt_Thr(int thr_no);
     // #IGNORE
   virtual void  Init_Weights();
-  // #BUTTON #MENU #CONFIRM #GHOST_ON_flags:BUILT_INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
+  // #BUTTON #MENU #CONFIRM #GHOST_OFF_flags:BUILT&&flags:INTACT #CAT_Learning Initialize the weights -- also inits acts, counters and stats -- does unit level threaded and then does Layers after
     virtual void  Init_Weights_Thr(int thr_no);
     // #IGNORE
     virtual void Init_Weights_sym(int thr_no);

@@ -18,6 +18,7 @@
 
 #include <int_PArray>
 #include <taMisc>
+#include <taiMisc>
 
 #include <taGuiDialog>
 
@@ -113,6 +114,8 @@ SubversionClient::Exception::Exception(svn_error_t *svn_error)
   , m_error_code(toEmerErrorCode(svn_error))
   , m_svn_error_code(svn_error->apr_err)
 {
+  if(taiMisc::busy_count > 0)   // if we excepted
+    taMisc::DoneBusy();
   svn_error_clear(svn_error);
 }
 
@@ -124,6 +127,8 @@ SubversionClient::Exception::Exception(
   , m_error_code(toEmerErrorCode(svn_error))
   , m_svn_error_code(svn_error->apr_err)
 {
+  if(taiMisc::busy_count > 0)   // if we excepted
+    taMisc::DoneBusy();
   svn_error_clear(svn_error);
 }
 
@@ -136,6 +141,8 @@ SubversionClient::Exception::Exception(
   , m_error_code(error_code)
   , m_svn_error_code(svn_error_code)
 {
+  if(taiMisc::busy_count > 0)   // if we excepted
+    taMisc::DoneBusy();
 }
 
 SubversionClient::ErrorCode

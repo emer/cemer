@@ -41,7 +41,7 @@ bool taDataAnal::GetDest(DataTable*& dest, const DataTable* src, const String& s
     dest->ResetData();		// always clear out for new data
     return false;
   }
-  taProject* proj = GET_OWNER(src, taProject);
+  taProject* proj = src->GetMyProj();
   dest = proj->GetNewAnalysisDataTable(src->name + "_" + suffix, true);
   return true;
 }

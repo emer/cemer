@@ -716,10 +716,6 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
   lay->cos_err_vs_prv = 0.0f;
   n_vals = 0;
   if(!lay->HasExtFlag(UnitVars::COMP_TARG)) return 0.0f;
-  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
-     (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
-    return 0.0f;
-  }
   float cosv = 0.0f;
   float cosvp = 0.0f;
   float ssm = 0.0f;
@@ -762,6 +758,11 @@ float LeabraLayerSpec::Compute_CosErr(LeabraLayer* lay, LeabraNetwork* net,
 
     lay->avg_cos_err_prv.Increment(lay->cos_err_prv);
     lay->avg_cos_err_vs_prv.Increment(lay->cos_err_vs_prv);
+  }
+  if(lay->HasLayerFlag(Layer::NO_ADD_SSE) ||
+     (lay->HasExtFlag(UnitVars::COMP) && lay->HasLayerFlag(Layer::NO_ADD_COMP_SSE))) {
+    n_vals = 0;
+    return 0.0f;
   }
   return cosv;
 }

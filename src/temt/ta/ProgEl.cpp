@@ -183,8 +183,8 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
   }
 
   UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
-  taProject* myproj = GET_OWNER(myprg, taProject);
-  taProject* otproj = GET_OWNER(otprg, taProject);
+  taProject* myproj = myprg->GetMyProj();
+  taProject* otproj = otprg->GetMyProj();
   if(myproj && otproj && (myproj != otproj))
     UpdatePointers_NewPar(otproj, myproj);
   // then do it again if moving between projects
@@ -319,8 +319,8 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from function:", ot_fun->name, "to function:",
                  my_fun->name, "because copied program element refers to it");
-    taProject* myproj = GET_OWNER(my_prg, taProject);
-    taProject* otproj = GET_OWNER(ot_prg, taProject);
+    taProject* myproj = my_prg->GetMyProj();
+    taProject* otproj = ot_prg->GetMyProj();
     // update possible var pointers from other project!
     if(myproj && otproj && (myproj != otproj)) {
       pv->UpdatePointers_NewPar(otproj, myproj);
@@ -370,8 +370,8 @@ bool ProgEl::UpdateProgVarRef_NewOwner(ProgVarRef& pvr) {
     taMisc::Info("Note: copied program variable:",
                  var_nm, "from program:", ot_prg->name, "to program:",
                  my_prg->name, "because copied program element refers to it");
-    taProject* myproj = GET_OWNER(my_prg, taProject);
-    taProject* otproj = GET_OWNER(ot_prg, taProject);
+    taProject* myproj = my_prg->GetMyProj();
+    taProject* otproj = ot_prg->GetMyProj();
     // update possible var pointers from other project!
     if(myproj && otproj && (myproj != otproj)) {
       pv->UpdatePointers_NewPar(otproj, myproj);
@@ -632,7 +632,7 @@ ProgVar* ProgEl::FindVarNameInScope(String& var_nm, bool else_make) {
   
   // in cases like AssignTo we don't pop the choice dialog
   if(prg) {
-    taProject* proj = GET_OWNER(prg, taProject);
+    taProject* proj = prg->GetMyProj();
     if(proj && proj->no_dialogs) {
       return NULL;
     }
@@ -750,7 +750,7 @@ bool ProgEl::BrowserEditSet(const String& code, int move_after) {
   if(move_after != -11) {
     Program* prog = GET_MY_OWNER(Program);
     if(prog) {
-      taProject* proj = GET_OWNER(prog, taProject);
+      taProject* proj = prog->GetMyProj();
       if(proj) {
         proj->undo_mgr.SaveUndo(this, "BrowserEditSet", prog);
       }

@@ -85,7 +85,7 @@ float GaborFilter::GetParam(GaborParam param) {
 
 void GaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_Gabor_GraphFilter", true);
   }
@@ -116,7 +116,7 @@ void GaborFilter::GraphFilter(DataTable* graph_data) {
 
 void GaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_Gabor_GridFilter", true);
   }

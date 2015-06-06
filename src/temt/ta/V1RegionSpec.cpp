@@ -103,7 +103,7 @@ void V1GaborSpec::GridFilters(float_Matrix& fltrs, DataTable* graph_data, bool r
   String name;
   if(owner) name = owner->GetName();
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_V1Gabor_GridFilters", true);
   }
@@ -2566,7 +2566,7 @@ void V1RegionSpec::GridGaborFilters(DataTable* graph_data) {
 void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
   Init();                       // need to init stencils for sure!
 
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_GridV1Stencils", true);
   }
@@ -2730,7 +2730,7 @@ void V1RegionSpec::GridV1Stencils(DataTable* graph_data) {
 
 
 void V1RegionSpec::PlotSpacing(DataTable* graph_data, bool reset) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_V1_PlotSpacing", true);
   }

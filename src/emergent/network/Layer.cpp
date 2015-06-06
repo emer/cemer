@@ -949,14 +949,14 @@ float Layer::Compute_SSE(Network* net, int& n_vals, bool unit_avg, bool sqrt) {
   if(sqrt) {
     sse = sqrtf(sse);
   }
+  avg_sse.Increment(sse);
+  if(sse > net->stats.cnt_err_tol)
+    cur_cnt_err += 1.0;
   if(HasLayerFlag(NO_ADD_SSE) || (HasExtFlag(UnitVars::COMP) &&
                                   HasLayerFlag(NO_ADD_COMP_SSE))) {
     rval = 0.0f;
     n_vals = 0;
   }
-  avg_sse.Increment(sse);
-  if(sse > net->stats.cnt_err_tol)
-    cur_cnt_err += 1.0;
   return rval;
 }
 
@@ -1436,7 +1436,7 @@ int Layer::ReplaceLayerSpec(LayerSpec* old_sp, LayerSpec* new_sp) {
 DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
     new_table = true;
   }
@@ -1457,7 +1457,7 @@ DataTable* Layer::WeightsToTable(DataTable* dt, Layer* send_lay) {
 DataTable* Layer::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
     new_table = true;
   }
@@ -1487,7 +1487,7 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
                            Projection* prjn) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }
@@ -1503,7 +1503,7 @@ DataTable* Layer::ConVarsToTable(DataTable* dt, const String& var1, const String
 DataTable* Layer::PrjnsToTable(DataTable* dt, bool sending) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("LayerPrjns_" + name, true);
     new_table = true;
   }

@@ -738,7 +738,7 @@ int Unit::LesionCons(float p_lesion, bool permute, Projection* prjn) {
 DataTable* Unit::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("Unit_Var_" + variable, true);
     new_table = true;
   }
@@ -769,7 +769,7 @@ DataTable* Unit::ConVarsToTable(DataTable* dt, const String& var1, const String&
   Network* net = own_net();
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }

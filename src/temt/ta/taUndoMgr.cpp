@@ -127,7 +127,7 @@ bool taUndoMgr::SaveUndo(taBase* mod_obj, const String& action, taBase* save_top
 
   // tell project to refresh ui, because otherwise the undo action does not get enabled
   // properly
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(proj) {
     tabMisc::DelayedFunCall_gui(proj,"UpdateUi");
   }
@@ -244,7 +244,7 @@ bool taUndoMgr::LoadFromRec_impl(taUndoRec* urec) {
   --taMisc::is_undo_loading;
 
   // tell project to refresh
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(proj) {
     tabMisc::DelayedFunCall_gui(proj,"RefreshAllViews");
   }

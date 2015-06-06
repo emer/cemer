@@ -169,7 +169,7 @@ bool OtherProgramVar::CvtFmCode(const String& code) {
 
   if(!remainder.contains('=')) {
     // shortcut to just get the program
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(proj) {
       Program* np = proj->programs.FindLeafName(remainder);
       if(np) {
@@ -188,7 +188,7 @@ bool OtherProgramVar::CvtFmCode(const String& code) {
     String value = nv_pairs.FastEl(i).value.toString();
 
     if (name.startsWith("prog")) {
-      taProject* proj = GET_MY_OWNER(taProject);
+      taProject* proj = GetMyProj();
       if(proj) {
         Program* np = proj->programs.FindLeafName(value);
         if(np) {
@@ -236,7 +236,7 @@ bool OtherProgramVar::CvtFmCode(const String& code) {
 //  String rest = dtnm.after("Vars: ");
 //  dtnm = dtnm.before(" ");
 //  if(!other_prog || other_prog->name != dtnm) {
-//    taProject* proj = GET_MY_OWNER(taProject);
+//    taProject* proj = GetMyProj();
 //    if(proj) {
 //      Program* np = proj->programs.FindLeafName(dtnm);
 //      if(np) {

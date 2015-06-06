@@ -4315,7 +4315,7 @@ bool DataTable::RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type) {
 
     group = GET_OWNER(this, DataTable_Group);
     if (group != NULL) { // The table belongs to the data section of the project
-      taProject* proj = GET_OWNER(this, taProject);
+      taProject* proj = GetMyProj();
       group = (DataTable_Group*)proj->data.FindMakeGpName("AnalysisData");
       result_data_table = group->NewEl(1, NULL);   // add a new data table to the group
     }
@@ -4347,7 +4347,7 @@ taBase* DataTable::ChooseNew(taBase* origin) {
   if (origin == NULL)
     return NULL;
   
-  taProject* prj = GET_OWNER(origin, taProject);  // who initiated the choice/new datatable call?
+  taProject* prj = origin->GetMyProj();  // who initiated the choice/new datatable call?
   Program* pgrm = GET_OWNER(origin, Program);     // who initiated the choice/new datatable call?
   DataTable_Group root_group = prj->data;  // top level
 

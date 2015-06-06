@@ -72,8 +72,6 @@ void Network::Initialize() {
   small_batch_n = 10;
   small_batch_n_eff = 10;
 
-  alt_mpi = false;
-
   batch = 0;
   epoch = 0;
   group = 0;
@@ -2076,7 +2074,7 @@ void Network::Compute_EpochStats() {
 DataTable* Network::NetStructToTable(DataTable* dt, bool list_specs) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("NetStru_" + name, true);
     new_table = true;
   }
@@ -2250,7 +2248,7 @@ void Network::NetStructFmTable(DataTable* dt) {
 DataTable* Network::NetPrjnsToTable(DataTable* dt) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("NetPrjns_" + name, true);
     new_table = true;
   }
@@ -2335,6 +2333,8 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
 
   // note: memory is not contiguous for all DWT vars, so we still need to do this..
+  // todo: for threaded all-reduce case, we could to this all within separate threads
+  // only for that thread's memory -- not sure if that would help or not though..
 
   values.SetSize(n_cons + n_units);
 
@@ -2373,7 +2373,7 @@ void Network::DMem_SumDWts(MPI_Comm comm) {
 
   results.SetSize(cidx);
   timer2s = MPI_Wtime();
-  if(alt_mpi) {
+  if(taMisc::thread_defaults.alt_mpi) {
     dmem_trl_comm.my_reduce->allreduce(values.el, results.el, cidx);
   }
   else {
@@ -2783,7 +2783,7 @@ void Network::UpdateMonitors() {
 
 void Network::NetControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String& sub_gp_nm) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "NetControlPanel", "cannot find project")) return;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }
@@ -3038,7 +3038,7 @@ DataTable* Network::WeightsToTable(DataTable* dt, Layer* recv_lay, Layer* send_l
 DataTable* Network::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
     new_table = true;
   }
@@ -3065,7 +3065,7 @@ DataTable* Network::ConVarsToTable(DataTable* dt, const String& var1, const Stri
   bool new_table = false;
   GetWeightsFromGPU();
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }

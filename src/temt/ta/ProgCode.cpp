@@ -157,7 +157,7 @@ void ProgCode::ConvertToProgEl() {
   if(!cvt) return;
   Program* prog = GET_OWNER(own, Program);
   if(prog) {
-    taProject* proj = GET_OWNER(prog, taProject);
+    taProject* proj = prog->GetMyProj();
     if(proj) {
       proj->undo_mgr.SaveUndo(this, "ProgCodeCvt", prog); 
     }

@@ -263,7 +263,7 @@ void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->getNetView();
   Network* net = nv->net();
-  taProject* proj = GET_OWNER(net, taProject);
+  taProject* proj = net->GetMyProj();
 
   float fx = ((float)lgp->max_disp_size.x + 2.0f * T3LayerNode::width) / nv->eff_max_size.x;
   float fy = ((float)lgp->max_disp_size.y + 2.0f * T3LayerNode::width) / nv->eff_max_size.y;
@@ -314,7 +314,7 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   Layer_Group* lgp = lv->layer_group();
   NetView* nv = lv->getNetView();
   Network* net = nv->net();
-  taProject* proj = GET_OWNER(net, taProject);
+  taProject* proj = net->GetMyProj();
 
   float fz = (float)lgp->max_disp_size.z / nv->eff_max_size.z;
   float zfrac = .5f * fz;

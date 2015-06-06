@@ -2164,7 +2164,7 @@ void LeabraUnitSpec::BioParams(float norm_sec, float norm_volt, float volt_off, 
 }
 
 void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, float max, float incr) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_VmFun", true);
   }
@@ -2189,7 +2189,7 @@ void LeabraUnitSpec::GraphVmFun(DataTable* graph_data, float g_i, float min, flo
 
 void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float min, float max,
                                       float incr, float g_e_thr, float lin_gain) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_ActFmNetFun", true);
   }
@@ -2228,7 +2228,7 @@ void LeabraUnitSpec::GraphActFmNetFun(DataTable* graph_data, float g_i, float mi
 
 void LeabraUnitSpec::GraphDeepNormFun(DataTable* graph_data, 
                                       float deep_ctxt, float incr) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_DeepNormFun", true);
   }
@@ -2311,7 +2311,7 @@ void LeabraUnitSpec::TimeExp(int mode, int nreps) {
 }
 
 void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_SpikeAlphFun", true);
   }
@@ -2361,7 +2361,7 @@ void LeabraUnitSpec::GraphSpikeAlphaFun(DataTable* graph_data, bool force_alpha)
 }
 
 // void LeabraUnitSpec::GraphSLNoiseAdaptFun(DataTable* graph_data, float incr) {
-//   taProject* proj = GET_MY_OWNER(taProject);
+//   taProject* proj = GetMyProj();
 //   if(!graph_data) {
 //     graph_data = proj->GetNewAnalysisDataTable(name + "_SLNoiseAdaptFun", true);
 //   }

@@ -52,7 +52,7 @@ void taiWidgetTokenChooserMultiType::EditPanel() {
   iMainWindowViewer* imw = taiM->active_wins.Peek_MainWindow();
   if (!imw) return; // no viewer!
   // get a better viewer if possible
-  taProject* proj = GET_OWNER(cur_base, taProject);
+  taProject* proj = cur_base->GetMyProj();
   if(proj) {
     MainWindowViewer* vwr = proj->GetDefaultProjectBrowser();
     if(vwr && vwr->widget())

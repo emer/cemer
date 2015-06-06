@@ -76,7 +76,7 @@ bool DataOpEl::SetName(const String& nm) {
 
 bool DataOpEl::BrowserEditSet(const String& new_val_str, int move_after) {
   if(move_after != -11) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(proj) {
       proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
     }

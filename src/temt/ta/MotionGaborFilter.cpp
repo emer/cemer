@@ -123,7 +123,7 @@ float MotionGaborFilter::GetParam(MotionGaborParam param) {
 
 void MotionGaborFilter::GraphFilter(DataTable* graph_data) {
   UpdateFilter();
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_MotionGabor_GraphFilter", true);
   }
@@ -156,7 +156,7 @@ void MotionGaborFilter::GraphFilter(DataTable* graph_data) {
 
 void MotionGaborFilter::GridFilter(DataTable* graph_data, bool reset) {
   UpdateFilter();
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_MotionGabor_GridFilter", true);
   }

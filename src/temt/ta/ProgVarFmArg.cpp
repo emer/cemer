@@ -120,7 +120,7 @@ bool ProgVarFmArg::CvtFmCode(const String& code) {
   remainder = trim(remainder.after("Program:"));
   String the_prog = trim(remainder.before(' '));
   if (the_prog != "?") {
-    taProject* prj = GET_MY_OWNER(taProject);
+    taProject* prj = GetMyProj();
     if (prj) {
        prog = prj->programs.FindLeafName(the_prog);
     }

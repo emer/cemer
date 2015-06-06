@@ -224,7 +224,7 @@ bool ProgramCall::CanCvtFmCode(const String& code, ProgEl* scope_el) const {
   if(lhs.contains('=')) return false; // no rval for progcall
   if((funm.freq('.') + funm.freq("->")) > 0) return false; // exclude method call
   if(!scope_el) return false;
-  taProject* proj = GET_OWNER(scope_el, taProject);
+  taProject* proj = scope_el->GetMyProj();
   if(!proj) return false;
   Program* prg = proj->programs.FindLeafName(funm);
   if(prg) return true;
@@ -241,7 +241,7 @@ bool ProgramCall::CvtFmCode(const String& code) {
   if(lhs.contains('('))
     lhs = lhs.before('(');
   String funm = lhs;
-  taProject* proj = GET_OWNER(this, taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return false;
   Program* prg = proj->programs.FindLeafName(funm);
   if(!prg) return false;

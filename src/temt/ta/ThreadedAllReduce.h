@@ -1,3 +1,18 @@
+// Copyright, 1995-2013, Regents of the University of Colorado,
+// Carnegie Mellon University, Princeton University.
+//
+// This file is part of The Emergent Toolkit
+//
+//   This library is free software; you can redistribute it and/or
+//   modify it under the terms of the GNU Lesser General Public
+//   License as published by the Free Software Foundation; either
+//   version 2.1 of the License, or (at your option) any later version.
+//
+//   This library is distributed in the hope that it will be useful,
+//   but WITHOUT ANY WARRANTY; without even the implied warranty of
+//   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+//   Lesser General Public License for more details.
+
 #ifdef DMEM_COMPILE
 
 #ifndef _XOPEN_SOURCE
@@ -39,55 +54,56 @@ class ThreadedAllReduce {
 
     
 private:
-    char * dmem_proc_names;
-    int dmem_nprocs, dmem_proc;
-    MPI_Comm mpi_ctx;
-    int initialized;
+  char * dmem_proc_names;
+  int dmem_nprocs, dmem_proc;
+  MPI_Comm mpi_ctx;
+  int initialized;
 
-    int nThreads;
-    pthread_t * thread_ids;
+  int nThreads;
+  pthread_t * thread_ids;
 
-    int base_port;
-    static const int defaultnThreads = 6;
+  int base_port;
+  static const int defaultnThreads = 6;
 
 
-    int      * serverfds;  //Server socket file descriptor for each connection thread
-    int      * serverconnfds; //Connected incomming socket file descripter for each thread
-    int      * clientfds; //Outgoi#include "reduce_replacement.hpp"ng socket file descriptor for each connection thread
-    int      * connectedS; //If server socket has a client connection
-    int      * connectedC; //If the client socket is connected
-    struct sockaddr_in * serv_addrs; // #IGNORE Connection information to connect to our respective "server"
+  int      * serverfds;  //Server socket file descriptor for each connection thread
+  int      * serverconnfds; //Connected incomming socket file descripter for each thread
+  int      * clientfds; //Outgoi#include "reduce_replacement.hpp"ng socket file descriptor for each connection thread
+  int      * connectedS; //If server socket has a client connection
+  int      * connectedC; //If the client socket is connected
+  struct sockaddr_in * serv_addrs; // #IGNORE Connection information to connect to our respective "server"
 
-    ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads, char * node_prefix, char * node_suffix);
+  ThreadedAllReduce(MPI_Comm mpi_ctx, int nThreads);
 
 public:
-    static ThreadedAllReduce * getSingleton(MPI_Comm mpi_ctx, int nThreads = defaultnThreads, char * node_prefix = NULL, char * node_suffix = NULL);
-    ~ThreadedAllReduce();
-    void allreduce(float * src, float * dst, size_t len, int tag);
-    void allreduce(float * src, float * dst, size_t len);
+  static ThreadedAllReduce * getSingleton(MPI_Comm mpi_ctx,
+                                          int nThreads = defaultnThreads);
+  ~ThreadedAllReduce();
+  void allreduce(float * src, float * dst, size_t len, int tag);
+  void allreduce(float * src, float * dst, size_t len);
 };
 
 struct recv_thread_struct {
-    int tag;
-    size_t len;
-    float * recv_buff;
-    pthread_barrier_t barrier;
+  int tag;
+  size_t len;
+  float * recv_buff;
+  pthread_barrier_t barrier;
 
-    int      * serverfds;  //Server socket file descriptor for each connection thread
-    int      * serverconnfds; //Connected incomming socket file descripter for each thread
-    int      * connectedS; //If server socket has a client connection
+  int      * serverfds;  //Server socket file descriptor for each connection thread
+  int      * serverconnfds; //Connected incomming socket file descripter for each thread
+  int      * connectedS; //If server socket has a client connection
     
-    int dmem_proc, dmem_nprocs;
+  int dmem_proc, dmem_nprocs;
 };
 
 struct spawn_thread_struct {
-    int tag;
-    size_t len;
-    float * recv_buff;
-    float * send_buff;
+  int tag;
+  size_t len;
+  float * recv_buff;
+  float * send_buff;
     
-    int dmem_proc, dmem_nprocs;
-    ThreadedAllReduce * obj_ctx;
+  int dmem_proc, dmem_nprocs;
+  ThreadedAllReduce * obj_ctx;
 };
 
 

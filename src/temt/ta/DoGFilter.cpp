@@ -75,7 +75,7 @@ void DoGFilter::UpdateFilter() {
 }
 
 void DoGFilter::GraphFilter(DataTable* graph_data) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_GraphFilter", true);
   }
@@ -106,7 +106,7 @@ void DoGFilter::GraphFilter(DataTable* graph_data) {
 }
 
 void DoGFilter::GridFilter(DataTable* graph_data, bool reset) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!graph_data) {
     graph_data = proj->GetNewAnalysisDataTable(name + "_DoG_GridFilter", true);
   }

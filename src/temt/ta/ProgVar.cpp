@@ -200,7 +200,7 @@ void ProgVar::UpdateAfterEdit_impl() {
   
   // in cases like AssignTo we don't pop the choice dialog
   Program* pgrm = GET_MY_OWNER(Program);
-  taProject* proj = GET_OWNER(pgrm, taProject);
+  taProject* proj = pgrm->GetMyProj();
   if (proj->no_dialogs) {
     if (CheckUndefType("UpdateAfterEdit", true)) {
       String var_nm;
@@ -993,7 +993,7 @@ String ProgVar::GetColText(const KeyString& key, int itm_idx) const {
 
 bool ProgVar::AddToProjectControlPanel(ControlPanel* ctrl_panel, const String& extra_label, const String sub_gp_nm) {
   if(!ctrl_panel) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(TestError(!proj, "AddToControlPanel", "cannot find project")) return false;
     ctrl_panel = (ControlPanel*)proj->ctrl_panels.New(1);
   }

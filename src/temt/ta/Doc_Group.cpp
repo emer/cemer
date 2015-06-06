@@ -37,7 +37,7 @@ void Doc_Group::RestorePanels() {
 
 taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
   // todo: make a chooser for taMisc::wikis!
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj)
     return NULL;
   taDoc* doc = NewEl(1);
@@ -51,7 +51,7 @@ taDoc* Doc_Group::NewProjWikiDoc(const String& wiki_name) {
 }
 
 taDoc* Doc_Group::PubProjWikiDoc(const String& wiki_name, const String& page_name) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj)
     return NULL;
   taDoc* doc = NewEl(1);

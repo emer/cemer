@@ -100,7 +100,7 @@ void ClusterRun::UpdateAfterEdit_impl() {
   }
   if(set_proj_name) {
     if(proj_name.empty()) {
-      taProject* proj = GET_MY_OWNER(taProject);
+      taProject* proj = GetMyProj();
       if(proj) {
         proj_name = taMisc::GetFileFmPath(proj->file_name);
       }
@@ -313,7 +313,7 @@ void ClusterRun::LoadData(bool remove_existing) {
   
   DataTable* cur_table = GetCurDataTable();
   
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return;
   DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("ClusterRun");
   dgp->save_tables = false;     // don't save -- prevents project bloat
@@ -897,7 +897,7 @@ void ClusterRun::SaveJobParams() {
 }
 
 void ClusterRun::SaveJobParams_impl(DataTable& table, int row) {
-  taProject* proj = GET_MY_OWNER(taProject);
+  taProject* proj = GetMyProj();
   if(!proj) return;
   ParamSet* ps = proj->param_sets.NewEl(1);
 

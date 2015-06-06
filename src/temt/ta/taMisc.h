@@ -237,7 +237,7 @@ public:
   //    User-tunable compute params
 
   static taThreadDefaults thread_defaults;
-  // #SAVE #CAT_MultiProc defaults for parallel threading -- these are used to initialize values in any specific parallel threading context, as they should be specific to a given machine, not to a given model or project
+  // #SAVE #CAT_MultiProc defaults for parallel threading and other relaed multi-processor functions -- these are used to initialize values in any specific parallel threading context, as they should be specific to a given machine, not to a given model or project
   static bool           dmem_output_all;
   // #SAVE #CAT_MultiProc #EXPERT all dmem (mpi) processors generate output (with processor number as PX:) for the standard output routines (Error, Warning, Info), including program traces and verbose output -- useful for debugging dmem issues, but otherwise can be too much output
 

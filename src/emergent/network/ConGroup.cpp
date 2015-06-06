@@ -1046,7 +1046,7 @@ DataTable* ConGroup::ConVarsToTable(DataTable* dt, Unit* ru, Network* net,
 
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_OWNER(net, taProject);
+    taProject* proj = net->GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }

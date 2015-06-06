@@ -344,7 +344,7 @@ bool Unit_Group::UnitValuesFromMatrix(float_Matrix& mat, const String& variable)
 DataTable* Unit_Group::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
     new_table = true;
   }
@@ -374,7 +374,7 @@ DataTable* Unit_Group::ConVarsToTable(DataTable* dt, const String& var1, const S
                                 Projection* prjn) {
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }

@@ -91,7 +91,7 @@ bool InitNamedUnits::GetUnitNamesVar() {
   unit_names_var->var_type = ProgVar::T_Object;
 
   if(!unit_names_var->object_val) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(!proj) return false;
     DataTable_Group* dgp = (DataTable_Group*)proj->data.FindMakeGpName("InputData");
     DataTable* rval = dgp->FindName("UnitNames");

@@ -67,8 +67,8 @@ bool taNBase::SetCopyName(const taBase& cp) {
   if(dynamic_cast<const taNBase&>(cp).name.empty())
     return false;
   
-  taProject* this_proj = GET_OWNER(this, taProject);
-  taProject* cp_proj = GET_OWNER(&cp, taProject);
+  taProject* this_proj = GetMyProj();
+  taProject* cp_proj = cp.GetMyProj();
   if(this_proj != cp_proj) {
     return false;
   }
@@ -112,7 +112,7 @@ bool taNBase::BrowserEditEnable() {
 
 bool taNBase::BrowserEditSet(const String& new_val_str, int move_after) {
   if(move_after != -11) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     if(proj) {
       proj->undo_mgr.SaveUndo(this, "BrowserEditSet", this);
     }

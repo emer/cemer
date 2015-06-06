@@ -202,7 +202,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
   Network* net = layer->own_net;
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Weights", true);
     new_table = true;
   }
@@ -256,7 +256,7 @@ DataTable* Projection::WeightsToTable(DataTable* dt, const String& col_nm_,
 DataTable* Projection::VarToTable(DataTable* dt, const String& variable) {
   bool new_table = false;
   if (!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable(name + "_Var_" + variable, true);
     new_table = true;
   }
@@ -286,7 +286,7 @@ DataTable* Projection::ConVarsToTable(DataTable* dt, const String& var1, const S
   if(!(bool)layer) return NULL;
   bool new_table = false;
   if(!dt) {
-    taProject* proj = GET_MY_OWNER(taProject);
+    taProject* proj = GetMyProj();
     dt = proj->GetNewAnalysisDataTable("ConVars", true);
     new_table = true;
   }

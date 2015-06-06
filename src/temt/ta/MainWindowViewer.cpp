@@ -92,7 +92,7 @@ MainWindowViewer* MainWindowViewer::NewBrowser(taBase* root,
   PanelViewer* pv = new PanelViewer;
   rval->frames.Add(pv);
   // browsers are added to the global viewers, and not persistent
-  taProject* proj = GET_OWNER(root, taProject);
+  taProject* proj = root->GetMyProj();
   if(proj) {
     proj->viewers_tmp.Add(rval);
   }
@@ -133,7 +133,7 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
   rval->frames.Add(pv);
   // nuke or modify some stuff usually added:
   // browsers are added to the global viewers, and not persistent
-  taProject* proj = GET_OWNER(root, taProject);
+  taProject* proj = root->GetMyProj();
   if(proj) {
     proj->viewers_tmp.Add(rval);
   }
@@ -146,7 +146,7 @@ MainWindowViewer* MainWindowViewer::NewEditDialog(taBase* root) {
 
 MainWindowViewer* MainWindowViewer::FindEditDialog(taBase* root) {
   taViewer_List* vwrs = NULL;
-  taProject* proj = GET_OWNER(root, taProject);
+  taProject* proj = root->GetMyProj();
   if(proj) {
     vwrs = &(proj->viewers_tmp);
   }

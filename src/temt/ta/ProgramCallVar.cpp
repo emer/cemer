@@ -255,7 +255,7 @@ bool ProgramCallVar::CvtFmCode(const String& code) {
       prog_name_var = FindVarNameInScope(value, false); // don't make
     }
     else if (name.startsWith("prog_group")) {
-      taProject* prj = GET_MY_OWNER(taProject);
+      taProject* prj = GetMyProj();
       if (prj) {
         Program_TopGroup& root_group = prj->programs;
         FOREACH_SUBGROUP(Program_Group, grp, root_group) {
