@@ -1,4 +1,3 @@
-
 // Copyright, 1995-2013, Regents of the University of Colorado,
 // Carnegie Mellon University, Princeton University.
 //
@@ -22,6 +21,7 @@ TA_BASEFUNS_CTORS_DEFN(PrintExpr);
 
 
 void PrintExpr::Initialize() {
+  debug = false;
 }
 
 void PrintExpr::UpdateAfterEdit_impl() {
@@ -42,16 +42,17 @@ void PrintExpr::GenCssBody_impl(Program* prog) {
     expr.SetExpr("\"\""); // prevents error if no expression
   String rval = String("cout << ") + expr.GetFullExpr() + " << endl;";
 
-  prog->AddLine(this, "if(" + String(!debug) + " || " + String(InDebugMode()) + ") {");
+  prog->AddLine(this, "{ PrintExpr* pexp = this" + GetPath(NULL, program()) + ";",
+                ProgLine::MAIN_LINE);
+  prog->IncIndent();
+  prog->AddLine(this, "if(!pexp->debug || pexp->InDebugMode()) {");
   prog->IncIndent();
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->DecIndent();
   prog->AddLine(this, "}");
-
-  // delete these two lines when above is working
-//  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-//  prog->AddVerboseLine(this);
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 String PrintExpr::GetDisplayName() const {

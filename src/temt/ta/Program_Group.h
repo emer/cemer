@@ -84,10 +84,10 @@ public:
 
   Variant       GetGuiArgVal(const String& fun_name, int arg_idx) override;
   
-  bool          InDebugMode();
-  void          ToggleDebug();
-  // #BUTTON #MENU_CONTEXT toggle the debug_mode
-  
+  virtual bool  InDebugMode();
+  // test whether we are in debug mode or not -- looks at parent Program_Group's as well
+  virtual void  ToggleDebug();
+  // #BUTTON #MENU_CONTEXT toggle the debug_mode, which determines whether any print statements with the debug flag set will print
   
   void  InitLinks();
   void  CutLinks();

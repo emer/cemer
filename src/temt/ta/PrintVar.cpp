@@ -23,6 +23,7 @@ TA_BASEFUNS_CTORS_DEFN(PrintVar);
 
 
 void PrintVar::Initialize() {
+  debug = false;
 }
 
 void PrintVar::UpdateAfterEdit_impl() {
@@ -58,16 +59,17 @@ void PrintVar::GenCssBody_impl(Program* prog) {
     rval += "<< \"  " + print_var6->name + " = \" << " + print_var6->name;
   rval += " << endl;";
 
-  prog->AddLine(this, "if(" + String(!debug) + " || " + String(InDebugMode()) + ") {");
+  prog->AddLine(this, "{ PrintVar* pvar = this" + GetPath(NULL, program()) + ";",
+                ProgLine::MAIN_LINE);
+  prog->IncIndent();
+  prog->AddLine(this, "if(!pvar->debug || pvar->InDebugMode()) {");
   prog->IncIndent();
   prog->AddLine(this, rval, ProgLine::MAIN_LINE);
   prog->AddVerboseLine(this);
   prog->DecIndent();
   prog->AddLine(this, "}");
-
-  // delete these two lines when above is working
-//  prog->AddLine(this, rval, ProgLine::MAIN_LINE);
-//  prog->AddVerboseLine(this);
+  prog->DecIndent();
+  prog->AddLine(this, "}");
 }
 
 String PrintVar::GetDisplayName() const {

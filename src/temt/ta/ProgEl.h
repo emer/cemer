@@ -193,8 +193,8 @@ public:
   void         ClearBreakpoint();
   // #IGNORE just sets the flags
   
-  bool          InDebugMode();
-  // #IGNORE check program group debug_mode
+  virtual bool          InDebugMode();
+  // test whether we are in debug mode or not -- calls this method on parent program group
 
   virtual String        GetToolbarName() const;
   // #IGNORE name of the program element as represented in the programming toolbar

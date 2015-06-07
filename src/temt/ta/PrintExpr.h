@@ -34,7 +34,6 @@ INHERITED(ProgEl)
 public:
   ProgExpr		  expr;
   // #BROWSER_EDIT_LOOKUP print out (to console) this expression -- it just does the equivalent of 'cout << expr << endl;' so you can put multiple << segments in the expression to print out multiple things -- you DO need to include quotes around strings!
-  ProgVarRef		my_mask; 	// #ITEM_FILTER_StdProgVarFilter set this to a DynEnum variable with bits flags set for when to actually print this information, in comparison to the current debug_level variable -- if any flags match, then it will be printed
   bool          debug; // if false just print; if set check Program_Group debug_mode and only print if that is true
 
   
