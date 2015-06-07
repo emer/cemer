@@ -483,6 +483,9 @@ void taMisc::LoadConfig() {
   if(!QFile::exists(cfgfn)) {   // try without app suffix!
     cfgfn = prefs_dir + PATH_SEP + "options";
   }
+  if(!QFile::exists(cfgfn))
+    return;
+  taMisc::Info("Loading config (preferences, options) from:", cfgfn);
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
