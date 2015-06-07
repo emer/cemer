@@ -136,7 +136,7 @@ void iTreeSearch::Search(iTreeSearch::SearchMode mode) {
         ++it; continue;
       }
     }
-    if(!tree_view->isItemExpanded(item)) {
+    if(!tree_view->isItemExpanded(item) && !item->ChildrenCreated()) {
       // do full recursive search if not already expanded
       sub_srch.Reset();
       tab->Search(ftxt, sub_srch, NULL, text_only, true, case_sens); // go with defaults for now
