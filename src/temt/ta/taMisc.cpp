@@ -485,7 +485,8 @@ void taMisc::LoadConfig() {
   }
   if(!QFile::exists(cfgfn))
     return;
-  std::cout << "Loading config (preferences, options) from: " << cfgfn << std::endl;
+  if(taMisc::dmem_proc == 0)
+    std::cout << "Loading config (preferences, options) from: " << cfgfn << std::endl;
   fstream strm;
   strm.open(cfgfn, ios::in);
   if(!strm.bad() && !strm.eof())
