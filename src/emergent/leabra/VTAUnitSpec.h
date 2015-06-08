@@ -57,7 +57,7 @@ class E_API LVBlockSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for how PV and dip signals block LV signals in dopamine
 INHERITED(SpecMemberBase)
 public:
-  float         pos_pv;         // #DEF_2 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
+  float         pos_pv;         // #DEF_2;5 down-regulate LV by factor of: (1 - pos_pv * pv) for positive pv signals (e.g., from LHA etc) -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
   float         dip;            // #DEF_2 down-regulate LV by factor of: (1 - dip * lhb_rmtg) for da dip signals coming from the LHbRMTg sytem -- the larger this value, the more LV is blocked -- if it is 0, then there is no LV block at all -- net actual block is 1 - sum over both sources of block
   bool          rec_data;       // record all the internal computations in user data on the VTA layer
 

@@ -64,6 +64,8 @@ public:
   // #MENU #MENU_ON_Object #DYN1 toggle the TRACE flag to opposite of current state for all programs in the group: flag indicates whether to record a trace of program execution in the css console or not
   virtual void  ClearAllBreakpoints();
   // #MENU #MENU_ON_Object #DYN1 remove breakpoints for all programs in the group:
+  virtual void  ToggleDebug();
+  // #BUTTON #MENU_CONTEXT #DYN1 toggle the debug_mode, which determines whether any print statements with the debug flag set will print
   
   virtual void  RestorePanels();
   // if the panel was pinned when the program was saved redisplay it on project open
@@ -86,8 +88,6 @@ public:
   
   virtual bool  InDebugMode();
   // test whether we are in debug mode or not -- looks at parent Program_Group's as well
-  virtual void  ToggleDebug();
-  // #BUTTON #MENU_CONTEXT toggle the debug_mode, which determines whether any print statements with the debug flag set will print
   
   void  InitLinks();
   void  CutLinks();

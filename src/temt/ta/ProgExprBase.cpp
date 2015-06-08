@@ -529,10 +529,11 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   if(delim_pos.size > 0) {
     path_prepend_before = txt.through(delim_pos[0]);
   }
+
+  lookup_seed.trim();
   
   switch(lookup_type) {
     case 1: {                       // lookup variables
-      lookup_seed = trim(lookup_seed);
       taiWidgetTokenChooserMultiType* varlkup =  new taiWidgetTokenChooserMultiType
       (&TA_ProgVar, NULL, NULL, NULL, 0, lookup_seed);
       varlkup->setNewObj1(&(own_prg->vars), " New Global Var");
@@ -644,8 +645,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       }
       if(tal) {
         if(tal->InheritsFrom(&TA_taGroup_impl)) {
-          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser(lookup_td, NULL, NULL, NULL,
-                                                                        0, lookup_seed);
+          taiWidgetGroupElChooser* lilkup = new taiWidgetGroupElChooser
+            (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
           lilkup->GetImage((taGroup_impl*)tal, NULL);
           bool okc = lilkup->OpenChooser();
           if(okc && lilkup->item()) {
@@ -658,8 +659,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           delete lilkup;
         }
         else {
-          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser(lookup_td, NULL, NULL, NULL,
-                                                                      0, lookup_seed);
+          taiWidgetListElChooser* lilkup = new taiWidgetListElChooser
+            (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
           lilkup->GetImage(tal, NULL);
           bool okc = lilkup->OpenChooser();
           if(okc && lilkup->item()) {
@@ -675,8 +676,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       else if(lookup_td) {
         TypeItem* lookup_md = NULL;
         if(path_base || path_base_typ) {          // can only lookup members, not methods
-          taiWidgetMemberDefChooser* mdlkup = new taiWidgetMemberDefChooser(lookup_td, NULL, NULL,
-                                                                            NULL, 0, lookup_seed);
+          taiWidgetMemberDefChooser* mdlkup = new taiWidgetMemberDefChooser
+            (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
           mdlkup->GetImage((MemberDef*)NULL, lookup_td);
           bool okc = mdlkup->OpenChooser();
           if(okc && mdlkup->md()) {
@@ -685,8 +686,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
           delete mdlkup;
         }
         else {
-          taiWidgetMemberMethodDefChooser* mdlkup =  new taiWidgetMemberMethodDefChooser(lookup_td, NULL, NULL,
-                                                                                         NULL, 0, lookup_seed);
+          taiWidgetMemberMethodDefChooser* mdlkup = new taiWidgetMemberMethodDefChooser
+            (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
           mdlkup->GetImage((MemberDef*)NULL, lookup_td);
           bool okc = mdlkup->OpenChooser();
           if(okc && mdlkup->md()) {
@@ -712,8 +713,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     case 3: {                      // enums
       TypeDef* lookup_td = TypeDef::FindGlobalTypeName(base_path, false);
       if(lookup_td) {
-        taiWidgetEnumStaticChooser* eslkup =  new taiWidgetEnumStaticChooser(lookup_td, NULL, NULL,
-                                                                             NULL, 0, lookup_seed);
+        taiWidgetEnumStaticChooser* eslkup = new taiWidgetEnumStaticChooser
+          (lookup_td, NULL, NULL, NULL, 0, lookup_seed);
         eslkup->GetImage((MemberDef*)NULL, lookup_td);
         bool okc = eslkup->OpenChooser();
         if(okc && eslkup->md()) {
@@ -728,8 +729,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       else {                      // now try for local enums
         ProgType* pt = own_prg->types.FindName(base_path);
         if(pt && pt->InheritsFrom(&TA_DynEnumBase)) {
-          taiWidgetTokenChooser* varlkup =  new taiWidgetTokenChooser(&TA_DynEnumItem, NULL, NULL,
-                                                                      NULL, 0, lookup_seed);
+          taiWidgetTokenChooser* varlkup = new taiWidgetTokenChooser
+            (&TA_DynEnumItem, NULL, NULL, NULL, 0, lookup_seed);
           varlkup->GetImageScoped(NULL, &TA_DynEnumItem, pt, &TA_DynEnumBase); // scope to this guy
           bool okc = varlkup->OpenChooser();
           if(okc && varlkup->token()) {
@@ -749,9 +750,12 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       
     case 5: {                 // ProgEl
       String trimmed_txt = trim(prog_el_txt);
+      if(trimmed_txt.contains(' '))
+        lookup_seed = trimmed_txt.after(' ',-1);
       if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase().startsWith("prog")) {
         txt = "Call ";
-        taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser(&TA_Program, NULL, NULL, NULL, 0);
+        taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser
+          (&TA_Program, NULL, NULL, NULL, 0, lookup_seed);
         pgrm_look_up->GetImageScoped(NULL, &TA_Program, NULL, &TA_Program); // scope to this guy
         bool okc = pgrm_look_up->OpenChooser();
         if(okc && pgrm_look_up->token()) {
@@ -762,7 +766,8 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         break;
       }
       else if (trimmed_txt.downcase().startsWith("fun")) {
-        taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser(&TA_Function, NULL, NULL, NULL, 0);
+        taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser
+          (&TA_Function, NULL, NULL, NULL, 0, lookup_seed);
         func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
         bool okc = func_look_up->OpenChooser();
         if(okc && func_look_up->token()) {
