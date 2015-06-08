@@ -176,14 +176,15 @@ void Function::UpdateCallerArgs() {
 
   taBase_PtrList fc_items;
   prog->Search("FunctionCall", fc_items, NULL,
-               false, // contains
-               true, // case_sensitive
-               false, // obj_name
+               false,  // text_only
+               false,  // contains
+               true,   // case_sensitive
+               false,  // obj_name
                true,   // obj_type
                false,  // obj_desc
                false,  // obj_val
                false,  // mbr_name
-               false);  // type_desc
+               false); // type_desc
 
   for(int i=0;i<fc_items.size; i++) {
     taBase* it = fc_items[i];
