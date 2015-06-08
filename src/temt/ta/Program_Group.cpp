@@ -31,6 +31,7 @@ using namespace std;
 
 void Program_Group::Initialize() {
   SetBaseType(&TA_Program);
+  debug_mode = false;
 }
 
 void Program_Group::InitLinks() {
