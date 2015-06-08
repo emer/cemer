@@ -1418,6 +1418,27 @@ bool taImageProc::CompositeImages(float_Matrix& img1, float_Matrix& img2) {
   return true;
 }
 
+bool taImageProc::FlipY(float_Matrix& img1) {
+  float * tmp_mtx = (float *)malloc(sizeof(float) * img1.dim(0)*img1.dim(1)*img1.dim(2));
+  for (int yi = 0; yi < img1.dim(1); yi++) {
+    for (int xi = 0; xi < img1.dim(0); xi++) {
+      for (int ci = 0; ci < img1.dim(2); ci++) {
+	tmp_mtx[yi*img1.dim(0)*img1.dim(2) + xi*img1.dim(2) + ci] = img1.FastEl3d(xi, yi, ci); 
+      }
+    }
+  }
+  for (int yi = 0; yi < img1.dim(1); yi++) {
+    for (int xi = 0; xi < img1.dim(0); xi++) {
+      for (int ci = 0; ci < img1.dim(2); ci++) {
+	img1.FastEl3d(xi,img1.dim(1) - yi,ci) = tmp_mtx[yi*img1.dim(0)*img1.dim(2) + xi*img1.dim(2) + ci];
+      }
+    }
+  }
+  printf("X: %i, Y: %i, C: %i\n",img1.dim(0), img1.dim(1), img1.dim(2));
+  free(tmp_mtx);
+  return true;
+}
+
 bool taImageProc::CompositePartialImages(float_Matrix& img1, int x, int y, float_Matrix& img2) {
   if(img1.dims() != 3) {
     taMisc::Error("img1 must be rgba format -- is only 2d greyscale");
