@@ -1323,6 +1323,27 @@ void iMainWindowViewer::Find(taiSigLink* root, const String& find_str) {
   iDialogSearch* dlg = search_dialog;
 
   dlg->setRoot(root);
+  dlg->SetInteractive(true);
+  dlg->show();
+  dlg->raise();
+  dlg->activateWindow();
+  if(find_str.nonempty())
+    dlg->setSearchStr(find_str);
+}
+
+void iMainWindowViewer::FindNonInteractive(taiSigLink* root, const String& find_str) {
+  // if an instance doesn't exist, need to make one; we tie it to ourself
+  if (!search_dialog) {
+    search_dialog = iDialogSearch::New(0, this);
+  }
+  iDialogSearch* dlg = search_dialog;
+  
+  dlg->setRoot(root);
+  dlg->SetInteractive(false);
+  dlg->SaveOptions();
+  dlg->ClearOptions();
+  dlg->SetOption(iDialogSearch::SO_OBJ_DESC);
+  dlg->RestoreOptions();
   dlg->show();
   dlg->raise();
   dlg->activateWindow();
@@ -3162,7 +3183,7 @@ bool taBase::GuiFindFromMe(const String& find_str) {
     if(!imwv) continue;
 
     rval= true;
-    imwv->Find(link, find_str);
+    imwv->FindNonInteractive(link, find_str);
   }
   return rval;
 }

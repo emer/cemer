@@ -87,15 +87,23 @@ public:
   static iDialogSearch* New(int ft = 0, iMainWindowViewer* par_window_ = NULL);
 
   QVBoxLayout*          layOuter;
-  taiWidgetBitBox*              bbOptions;
-  iLineEdit*                search;
-  QAbstractButton*          btnGo;
-  QAbstractButton*          btnStop;
-  iTextBrowser*           results;      // list of result items
-  QStatusBar*             status_bar;
-  QTime                   proc_events_timer;
+  taiWidgetBitBox*      bbOptions;
+  iLineEdit*            search;
+  QAbstractButton*      btnGo;
+  QAbstractButton*      btnStop;
+  iTextBrowser*         results;      // list of result items
+  QStatusBar*           status_bar;
+  QTime                 proc_events_timer;
+  
+  bool                  interactive; // if false no editable UI elements
 
+  void                  SetInteractive(bool editable);  // state determines visibility of editable UI elements
+  void                  SaveOptions();
+  void                  RestoreOptions();
+  void                  ClearOptions();
+  void                  SetOption(SearchOptions option);
   int                   options() const {return m_options;}
+  
   void                  setRoot(taiSigLink* root, bool update_gui = true); // set or reset the root and window used for the search; sets caption and clears
   void                  setSearchStr(const String& srch_str);
   // set the search string to given value (erases any that might be there already -- if non-empty, starts the search going too!
@@ -132,6 +140,7 @@ protected:
   static const int      num_sorts = 3;
 
   int                   m_options; // any of the option values
+  int                   saved_options; // copy before changing so they can be restored
   String                m_caption; // base portion of caption
   String                src;
   String                root_path;

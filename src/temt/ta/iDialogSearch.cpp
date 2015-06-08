@@ -65,7 +65,9 @@ iDialogSearch::~iDialogSearch() {
 }
 
 void iDialogSearch::init() {
+  interactive = true;
   m_options = SO_DEF_OPTIONS;
+  saved_options = m_options;
   m_changing = 0;
   m_stop = false;
   for (int i = 0; i < num_sorts; ++i)
@@ -146,6 +148,23 @@ void iDialogSearch::AddItem(const String& headline, const String& href,
   m_items.SetVal(relev, col_relev, -1);
   m_items.SetVal(path_long, col_path, -1);
 }
+
+void iDialogSearch::SetInteractive(bool editable) {
+  interactive = editable;
+  if (interactive) {
+    btnGo->setVisible(true);
+    btnStop->setVisible(true);
+    bbOptions->setVisible(true);
+    search->setEnabled(true);
+  }
+  else {
+    btnGo->setVisible(false);
+    btnStop->setVisible(false);
+    bbOptions->setVisible(false);
+    search->setEnabled(false);
+  }
+}
+
 
 void iDialogSearch::SigLinkDestroying(taSigLink* dl) {
   Reset();
@@ -367,7 +386,6 @@ void iDialogSearch::StartSection(const String& sec_name)
 {
 }
 
-
 bool iDialogSearch::setFirstSort(int col) {
   if ((col < 0) || (col >= num_cols)) return false;
   if (m_sorts[0] == col) return false;
@@ -416,5 +434,28 @@ void iDialogSearch::stop_clicked() {
 
 void iDialogSearch::closeEvent(QCloseEvent * e) {
   m_stop = true;                // stop on close
+  if (interactive) {
+    // save latest user set options
+    bbOptions->GetValue(m_options);
+  }
+  SetInteractive(true);         // return UI to editable
   inherited::closeEvent(e);
+}
+
+void iDialogSearch::SaveOptions() {
+  saved_options = m_options;
+}
+
+void iDialogSearch::RestoreOptions() {
+  bbOptions->GetImage(saved_options);
+}
+
+void iDialogSearch::ClearOptions() {
+  m_options = 0;
+  bbOptions->GetImage(m_options);
+}
+
+void iDialogSearch::SetOption(iDialogSearch::SearchOptions option) {
+  m_options = m_options | option;
+  bbOptions->GetImage(m_options);
 }

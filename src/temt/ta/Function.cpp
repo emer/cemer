@@ -170,9 +170,17 @@ ProgVar* Function::FindVarName(const String& var_nm) const {
   return fun_code.FindVarName(var_nm);
 }
 
+void Function::ListCallers() {
+  Program* prog = program();
+  if(!prog)
+    return;
+  
+ prog->GuiFindFromMe("\"FunCall " + name + "\"");    // find all refs to me
+}
 void Function::UpdateCallerArgs() {
   Program* prog = program();
-  if(!prog) return;
+  if(!prog)
+    return;
 
   taBase_PtrList fc_items;
   prog->Search("FunctionCall", fc_items, NULL,
@@ -194,7 +202,7 @@ void Function::UpdateCallerArgs() {
       fc->UpdateArgs();
     }
   }
-  prog->GuiFindFromMe("\"FunCall " + name + "\"");    // find all refs to me
+  ListCallers();
 }
 
 bool Function::CanCvtFmCode(const String& code, ProgEl* scope_el) const {

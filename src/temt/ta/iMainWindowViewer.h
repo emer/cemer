@@ -245,6 +245,8 @@ public:
 
   void                  Find(taiSigLink* root, const String& find_str="");
   // common find called by main menu, and context menu finds
+  void                  FindNonInteractive(taiSigLink* root, const String& find_str);
+  // common find called by main menu, and context menu finds
   void                  Replace(taiSigLink* root, ISelectable_PtrList& sel_items,
                                 const String& srch="", const String& repl="");
   // replace called by main menu, and context menu

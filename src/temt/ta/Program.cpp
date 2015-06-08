@@ -723,16 +723,24 @@ void Program::ExitShell() {
   ExitShellScript();
 }
 
+void Program::ListCallers() {
+  taProject* proj = GetMyProj();
+  if(!proj)
+    return;
+  proj->programs.GuiFindFromMe("\"Call " + name + "\"");   // find all refs to me in programs
+}
+
 void Program::UpdateCallerArgs() {
   taProject* proj = GetMyProj();
-  if(!proj) return;
+  if(!proj)
+    return;
   FOREACH_ELEM_IN_GROUP(Program, pg, proj->programs) {
     ProgramCallBase* pc = pg->FindSubProgTarget(this);
     if(pc) {
       pc->UpdateArgs();
     }
   }
-  proj->programs.GuiFindFromMe("\"Call " + name + "\"");   // find all refs to me in programs
+  ListCallers();
 }
 
 void Program::CssError(int src_ln_no, bool running, const String& err_msg) {
