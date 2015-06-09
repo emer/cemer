@@ -73,18 +73,24 @@ void GpOneToOnePrjnSpec::Connect_impl(Projection* prjn, bool make_cons) {
       // pre-allocate connections
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
-        ru->RecvConsPreAlloc(su_nunits, prjn);
+        if(ru) {
+          ru->RecvConsPreAlloc(su_nunits, prjn);
+        }
       }
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-        su->SendConsPreAlloc(ru_nunits, prjn);
+        if(su) {
+          su->SendConsPreAlloc(ru_nunits, prjn);
+        }
       }
     }
     else {
       for(int rui=0; rui < ru_nunits; rui++) {
         Unit* ru = recv_lay->UnitAccess(racc_md, rui, rgpidx);
+        if(!ru) continue;
         for(int sui=0; sui < su_nunits; sui++) {
           Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+          if(!su) continue;
           if(self_con || (ru != su))
             ru->ConnectFrom(su, prjn);
         }
@@ -117,17 +123,21 @@ void GpOneToOnePrjnSpec::Connect_RecvUnitsSendGps(Projection* prjn, bool make_co
     if(!make_cons) {
       // pre-allocate connections
       Unit* ru = recv_lay->UnitAtCoord(sgp_pos);
-      ru->RecvConsPreAlloc(su_nunits, prjn);
+      if(ru)
+        ru->RecvConsPreAlloc(su_nunits, prjn);
 
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
-        su->SendConsPreAlloc(1, prjn);
+        if(su)
+          su->SendConsPreAlloc(1, prjn);
       }
     }
     else {
       Unit* ru = recv_lay->UnitAtCoord(sgp_pos);
+      if(!ru) continue;
       for(int sui=0; sui < su_nunits; sui++) {
         Unit* su = send_lay->UnitAccess(sacc_md, sui, sgpidx);
+        if(!su) continue;
         if(self_con || (ru != su))
           ru->ConnectFrom(su, prjn);
       }
