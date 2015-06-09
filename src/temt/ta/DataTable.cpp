@@ -102,6 +102,7 @@ void DataTable::InitLinks() {
   taBase::Own(row_indexes, this);
   taBase::Own(diff_row_list, this);
   taBase::Own(change_col_geom, this);
+  taBase::Own(last_sort_spec, this);
   log_file = taFiler::New("DataTable", ".dat");
   taRefN::Ref(log_file);
 }
@@ -110,6 +111,7 @@ void DataTable::CutLinks() {
   data.CutLinks();
   row_indexes.CutLinks();
   diff_row_list.CutLinks();
+  last_sort_spec.CutLinks();
   if(log_file) {
     taRefN::unRefDone(log_file);
     log_file = NULL;
@@ -3793,6 +3795,7 @@ void DataTable::Sort(const Variant& col1, bool ascending1,
     }
   }
   taDataProc::SortThruIndex(this, &spec);
+  last_sort_spec = spec;
 }
 
 void DataTable::SortColName(const String& col1, bool ascending1,
@@ -3840,6 +3843,7 @@ void DataTable::SortColName(const String& col1, bool ascending1,
     sp->SetColName(col6);
   }
   taDataProc::SortThruIndex(this, &spec);
+  last_sort_spec = spec;
 }
 
 void DataTable::SortCol(DataCol* col1, bool ascending1,
@@ -3887,6 +3891,19 @@ void DataTable::SortCol(DataCol* col1, bool ascending1,
     sp->SetColName(col6->name);
   }
   taDataProc::SortThruIndex(this, &spec);
+  last_sort_spec = spec;
+}
+
+void DataTable::SortUsingSpec(DataSortSpec& spec) {
+  taDataProc::SortThruIndex(this, &spec);
+}
+
+void DataTable::SortAgain() {
+  taDataProc::SortThruIndex(this, &last_sort_spec);
+}
+
+bool DataTable::HasBeenSorted() {
+  return (last_sort_spec.ops.size > 0);
 }
 
 void DataTable::Filter(Variant& col1, Relation::Relations operator_1,

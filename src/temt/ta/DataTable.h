@@ -30,6 +30,7 @@
 #include <int_Matrix>
 #include <int_Array>
 #include <AnalysisRun>
+#include <DataSortSpec>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -130,6 +131,9 @@ public:
   // #HIDDEN #NO_SAVE Holds last error message so client can check message if error returned
   String                cell_view;
   // #HIDDEN #NO_SAVE contents of a given cell, for viewing purposes (View menu action)
+  
+  DataSortSpec          last_sort_spec;
+  // #HIDDEN the last table sort specification
 
   /////////////////////////////////////////////
   // Flags
@@ -958,6 +962,13 @@ public:
                                 DataCol* col6 = NULL, bool ascending6 = true);
   // #CAT_DataProc #MENU #MENU_ON_DataProc #LABEL_Sort #FROM_GROUP_data #NULL_OK sort table according to selected columns of data. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this sort you would need to run Flatten first
 
+  virtual void          SortUsingSpec(DataSortSpec& spec);
+  // #CAT_DataProc Call when you already have a spec
+  virtual void          SortAgain();
+  // #CAT_DataProc Sort using the last_sort_spec;
+  virtual bool          HasBeenSorted();
+  // #CAT_DataProc has the table already been sorted
+  
   virtual bool          RunAnalysis(DataCol* column, AnalysisRun::AnalysisType type);
   // #CAT_stats Run an analysis of specified type on the specified column
 

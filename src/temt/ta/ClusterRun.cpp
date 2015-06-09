@@ -199,10 +199,28 @@ bool ClusterRun::Update() {
   bool has_updates = m_cm->UpdateTables();
   cur_svn_rev = m_cm->GetCurSvnRev();
   SortClusterInfoTable();
-  jobs_running.Sort("tag", true);
-  jobs_done.Sort("tag", true);  // also sort jobs done by tag
-  jobs_archive.Sort("tag", true);  // also sort jobs done by tag
-
+    
+  if (jobs_done.HasBeenSorted()) {
+    jobs_done.SortAgain();
+  }
+  else {
+    jobs_done.Sort("tag", true);  // also sort jobs done by tag
+  }
+  
+  if (jobs_running.HasBeenSorted()) {
+    jobs_running.SortAgain();
+  }
+  else {
+    jobs_running.Sort("tag", true);  // also sort jobs done by tag
+  }
+  
+  if (jobs_archive.HasBeenSorted()) {
+    jobs_archive.SortAgain();
+  }
+  else {
+    jobs_archive.Sort("tag", true);  // also sort jobs done by tag
+  }
+  
   if(has_sel_done && st_row_done >= 0 && end_row_done >= st_row_done) {
     SelectRows(jobs_done, st_row_done, end_row_done);
   }
@@ -1199,7 +1217,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   }
   dc = dt.FindColName("notes");
   dc->ClearColFlag(DataCol::READ_ONLY);
-}
+  }
 
 void ClusterRun::FormatFileListTable(DataTable& dt) {
   DataCol* dc;
