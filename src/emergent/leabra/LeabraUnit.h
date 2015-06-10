@@ -118,6 +118,9 @@ public:
   inline float& act_avg()
   { return ((LeabraUnitVars*)GetUnitVars())->act_avg; }
   // #CAT_UnitVar average activation (of final plus phase activation state) over long time intervals (time constant = act_mid.avg_time -- typically 200) -- useful for finding hog units and seeing overall distribution of activation
+  inline float& act_raw()
+  { return ((LeabraUnitVars*)GetUnitVars())->act_raw; }
+  // #CAT_UnitVar raw superficial-layer activation prior to mutliplication by deep_norm -- this may reflect layer 4 activation -- used in computing new deep_raw values
   inline float& deep_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw; }
   // #VIEW_HOT #CAT_UnitVar deep layer raw activation values -- these reflect the raw output from a microcolumn, in the form of layer 5b tufted neurons that project to the thalamus -- they integrate local thresholded input from superficial layer and top-down deep-layer input from other areas, to provide raw attentional and output signal from an area - this is then normalized in deep_nrm values

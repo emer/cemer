@@ -30,6 +30,8 @@ class E_API DeepCtxtConSpec : public LeabraConSpec {
   // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
 INHERITED(LeabraConSpec)
 public:
+  bool          send_deep_norm; // also send final deep_norm values over these context connections -- helps produce a broader spread of deep_norm values
+  
   // special!
   bool  DoesStdNetin() override { return false; }
   bool  DoesStdDwt() override { return false; }
@@ -41,6 +43,16 @@ public:
     const float su_act_eff = cg->scale_eff * su_act;
     float* wts = cg->OwnCnVar(WT);
     float* send_netin_vec = net->ThrSendNetinTmp(thr_no);
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
+                                         cg->UnIdx(i), su_act_eff));
+  }
+  // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
+
+  inline void Send_DeepNormNetin(LeabraConGroup* cg, LeabraNetwork* net,
+                                 int thr_no, const float su_act) {
+    const float su_act_eff = cg->scale_eff * su_act;
+    float* wts = cg->OwnCnVar(WT);
+    float* send_netin_vec = net->ThrSendDeepNormNetTmp(thr_no);
     CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
                                          cg->UnIdx(i), su_act_eff));
   }

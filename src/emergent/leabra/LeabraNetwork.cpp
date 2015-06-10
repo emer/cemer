@@ -917,6 +917,8 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_act = ThrLayAvgMax(thr_no, li, AM_ACT);
     am_act->InitVals();
+    AvgMaxValsRaw* am_act_raw = ThrLayAvgMax(thr_no, li, AM_ACT_RAW);
+    am_act_raw->InitVals();
     
     const int ust = ThrLayUnStart(thr_no, li);
     const int ued = ThrLayUnEnd(thr_no, li);
@@ -925,6 +927,7 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act->UpdtVals(uv->act, flat_idx); 
+      am_act_raw->UpdtVals(uv->act_raw, flat_idx); 
     }
   }
 
@@ -936,6 +939,8 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       continue;
     AvgMaxValsRaw* am_act = ThrUnGpAvgMax(thr_no, li, AM_ACT);
     am_act->InitVals();
+    AvgMaxValsRaw* am_act_raw = ThrUnGpAvgMax(thr_no, li, AM_ACT_RAW);
+    am_act_raw->InitVals();
     
     const int ust = ThrUnGpUnStart(thr_no, li);
     const int ued = ThrUnGpUnEnd(thr_no, li);
@@ -944,6 +949,7 @@ void LeabraNetwork::Compute_CycleStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_act->UpdtVals(uv->act, flat_idx); 
+      am_act_raw->UpdtVals(uv->act_raw, flat_idx); 
     }
   }
   
@@ -1008,8 +1014,10 @@ void LeabraNetwork::Compute_CycleStats_Post() {
       continue;
     AvgMaxVals& acts = lay->acts;
     AvgMaxVals& acts_eq = lay->acts_eq;
+    AvgMaxVals& acts_raw = lay->acts_raw;
     acts.InitVals();
     acts_eq.InitVals();
+    acts_raw.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrLayAvgMax(i, li, AM_ACT);
@@ -1021,9 +1029,12 @@ void LeabraNetwork::Compute_CycleStats_Post() {
       else {
         acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
       }
+      AvgMaxValsRaw* am_act_raw = ThrLayAvgMax(i, li, AM_ACT_RAW);
+      acts_raw.UpdtFmAvgMaxRaw(*am_act_raw);
     }
     acts.CalcAvg();
     acts_eq.CalcAvg();
+    acts_raw.CalcAvg();
     if(lay->HasExtFlag(UnitVars::TARG)) {
       trg_max_act = MAX(trg_max_act, acts_eq.max);
     }
@@ -1042,8 +1053,10 @@ void LeabraNetwork::Compute_CycleStats_Post() {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
     AvgMaxVals& acts = gpd->acts;
     AvgMaxVals& acts_eq = gpd->acts_eq;
+    AvgMaxVals& acts_raw = gpd->acts_raw;
     acts.InitVals();
     acts_eq.InitVals();
+    acts_raw.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
       AvgMaxValsRaw* am_act = ThrUnGpAvgMax(i, li, AM_ACT);
@@ -1055,9 +1068,12 @@ void LeabraNetwork::Compute_CycleStats_Post() {
       else {
         acts_eq.UpdtFmAvgMaxRaw(*am_act); // use act!
       }
+      AvgMaxValsRaw* am_act_raw = ThrUnGpAvgMax(i, li, AM_ACT_RAW);
+      acts_raw.UpdtFmAvgMaxRaw(*am_act_raw);
     }
     acts.CalcAvg();
     acts_eq.CalcAvg();
+    acts_raw.CalcAvg();
   }
 
   Compute_OutputName();

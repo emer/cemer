@@ -20,6 +20,7 @@ TA_BASEFUNS_CTORS_DEFN(DeepCtxtConSpec);
 void DeepCtxtConSpec::Initialize() {
   SetUnique("wt_scale", true);
   wt_scale.rel = 1.0;
+  send_deep_norm = false;
 }
 
 void DeepCtxtConSpec::GetPrjnName(Projection& prjn, String& nm) {

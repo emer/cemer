@@ -196,6 +196,7 @@ public:
     AM_TD_NET,
     AM_ACT,
     AM_ACT_EQ,
+    AM_ACT_RAW,
     AM_UN_G_I,
     AM_DEEP_RAW,
     AM_DEEP_CTXT,

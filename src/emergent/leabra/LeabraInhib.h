@@ -63,6 +63,7 @@ public:
   AvgMaxVals	td_netin;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum top-down net input values for the layer
   AvgMaxVals	acts;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum activation values for the layer
   AvgMaxVals	acts_eq;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_eq values for the layer
+  AvgMaxVals	acts_raw;	// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum act_raw values for the layer
   AvgMaxVals	acts_m;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum minus-phase activation stats for the layer (from acts_eq at end of minus phase)
   AvgMaxVals	acts_p;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum plus-phase activation stats for the layer (from acts_eq at end of plus phase)
   AvgMaxVals	un_g_i;		// #NO_SAVE #READ_ONLY #EXPERT #CAT_Activation average, maximum unit total inhibitory conductance values (optionally updated -- use for unit inhibition case)

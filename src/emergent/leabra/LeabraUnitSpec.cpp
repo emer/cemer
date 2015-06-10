@@ -560,6 +560,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l = avg_l.init;
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   u->act_avg = 0.15f;
+  u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
   u->deep_raw_pprv = 0.0f;
@@ -675,6 +676,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->avg_l_lrn = avg_l.GetLrn(u->avg_l);
   // not avg_l
   // not act_avg
+  u->act_raw = 0.0f;
   u->deep_raw = 0.0f;
   u->deep_raw_prv = 0.0f;
   u->deep_raw_pprv = 0.0f;
@@ -728,6 +730,7 @@ void LeabraUnitSpec::DecayState(LeabraUnitVars* u, LeabraNetwork* net, int thr_n
     u->td_net -= decay * u->td_net;
     u->act_eq -= decay * (u->act_eq - act_init.mean);
     u->act_nd -= decay * (u->act_nd - act_init.mean);
+    u->act_raw -= decay * (u->act_raw - act_init.mean);
     u->gc_i -= decay * u->gc_i;
     u->v_m -= decay * (u->v_m - v_m_init.mean);
     u->v_m_eq -= decay * (u->v_m_eq - v_m_init.mean);
@@ -1011,6 +1014,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
   }
   float ext_in = u->ext;
   if(net->cycle > 0 && deep_norm.on && deep_norm.mod) { // apply deep_norm attentional modulation to inputs!
+    u->act_raw = ext_in;
     if(u->deep_norm > 0.0f) {
       ext_in *= u->deep_norm;
     }
@@ -1250,14 +1254,14 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
-  if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
-    if(u->deep_norm > 0.0f) {
-      net_syn *= u->deep_norm;
-    }
-    else {
-      net_syn *= lay->deep_norm_def;
-    }
-  }
+  // if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
+  //   if(u->deep_norm > 0.0f) {
+  //     net_syn *= u->deep_norm;
+  //   }
+  //   else {
+  //     net_syn *= lay->deep_norm_def;
+  //   }
+  // }
 
   float net_ex = 0.0f;
   if(bias_spec) {
@@ -1349,8 +1353,8 @@ void LeabraUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int 
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   float thr_cmp = lay->acts.avg + deep.thr * (lay->acts.max - lay->acts.avg);
   float draw = 0.0f;
-  if(u->act_eq >= thr_cmp) {
-    draw = deep.ComputeDeepRaw(u->act_eq, u->deep_norm_net, u->thal,
+  if(u->act_raw >= thr_cmp) {
+    draw = deep.ComputeDeepRaw(u->act_raw, u->deep_norm_net, u->thal,
                                lay->am_deep_norm_net.max);
   }
   u->deep_raw = draw;
@@ -1455,6 +1459,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
 
   if((net->cycle >= 0) && lay->hard_clamped) {
     if(deep_norm.on && deep_norm.mod && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
+      u->act_raw = u->act_eq;
       if(u->deep_norm > 0.0f) {
         u->act_eq *= u->deep_norm;
       }
@@ -1521,6 +1526,7 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
+  u->act_raw = new_act;
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
     if(u->deep_norm > 0.0f) {
       new_act *= u->deep_norm;
@@ -2018,9 +2024,15 @@ void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(!((LeabraConSpec*)send_gp->GetConSpec())->IsDeepNormCon()) continue;
-      SendDeepNormConSpec* sp = (SendDeepNormConSpec*)send_gp->GetConSpec();
-      sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+      if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepNormCon()) {
+        SendDeepNormConSpec* sp = (SendDeepNormConSpec*)send_gp->GetConSpec();
+        sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+      }
+      if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepCtxtCon()) {
+        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)send_gp->GetConSpec();
+        if(sp->send_deep_norm)
+          sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+      }
     }
   }
 }
