@@ -1434,7 +1434,6 @@ bool taImageProc::FlipY(float_Matrix& img1) {
       }
     }
   }
-  printf("X: %i, Y: %i, C: %i\n",img1.dim(0), img1.dim(1), img1.dim(2));
   free(tmp_mtx);
   return true;
 }
