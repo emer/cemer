@@ -73,6 +73,9 @@ void taiMiscCore::Quit(CancelOp cancel_op) {
     if (taiMC_) {
       taiMC_->Quit_impl(cancel_op);
     }
+    if(!taMisc::interactive) {
+      exit(0);                    // just do it!
+    }
   }
   if (cancel_op == CO_CANCEL) {
     taMisc::quitting = taMisc::QF_RUNNING;
