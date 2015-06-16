@@ -273,7 +273,7 @@ public:
   virtual void  UpdateCallerArgs();
   // #BUTTON #CAT_Code run UpdateArgs on all the other programs that call me, and also display all these calls in the Find dialog (searching on this program's name) so you can make sure the args are correct for each such program
   virtual void  ListCallers();
-  // #MENU #MENU_CONTEXT #CAT_Code Display all callers of this program in the Find dialog (searching on this program's name)
+  // #BUTTON #MENU #MENU_CONTEXT #CAT_Code Display all callers of this program in the Find dialog (searching on this program's name)
   virtual void  CssError(int src_ln_no, bool running, const String& err_msg);
   // #IGNORE an error was triggered by css -- this is callback from css Error handling routine for program to update gui with relevant info
   virtual void  CssWarning(int src_ln_no, bool running, const String& err_msg);
