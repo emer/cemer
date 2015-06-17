@@ -983,6 +983,7 @@ set(ta_HEADS_NOMAKETA_MOC
   iTabView.h
   iTreeView.h
   iTreeSearch.h
+  iDataTableSearch.h
   iTableView.h
   iMatrixTableView.h
   iDataTableView.h
@@ -2111,6 +2112,7 @@ set(ta_SRCS_NOMAKETA
   iTabView.cpp
   iTreeView.cpp
   iTreeSearch.cpp
+  iDataTableSearch.cpp
   iTableView.cpp
   iMatrixTableView.cpp
   iDataTableView.cpp
