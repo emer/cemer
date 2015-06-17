@@ -42,7 +42,8 @@ class TypeDef; //
 class taiSigLink; // 
 class taSigLink; // 
 class DataTable; // 
-class iDataTableModel; // 
+class iDataTableModel; //
+class iDataTableSearch; //
 class QModelIndex; //
 class QEvent; //
 
@@ -59,6 +60,7 @@ public:
   QSplitter*            splMain;
   iDataTableView*       tvTable; // the main table
   iMatrixEditor*        tvCell; // a matrix cell in the table (only shown if needed)
+  iDataTableSearch*     search; // search the table
 
   DataTable*            dt() const {return m_dt;}
   void                  setDataTable(DataTable* dt); // only called once

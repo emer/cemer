@@ -45,25 +45,21 @@ class TA_API iDataTableSearch : public QWidget {
 public:
   iDataTableView*            table_view; // pointer to the DataTable view that we operate on
 
+  QLabel*                srch_label;
   QToolBar*             srch_bar;
   iLineEdit*            srch_text;
   QLabel*               srch_nfound;
   QAction*              srch_clear;
   QAction*              srch_prev;
   QAction*              srch_next;
-  iActionMenuButton*    srch_mode_button;
   QMenu*                srch_mode_menu;
-  QAction*              find_action;
-  QAction*              find_deep_action;
 
   void                  Search();
-  //
-//  void                  UnHighlightFound();
-//  // un-highlight all items
-//  void                  HighlightFound();
-//  // highlight all found items
-//  void                  SelectCurrent();
-//  // select current search item
+  
+  void                  UnHighlightFound();
+  // un-highlight all items
+  void                  HighlightFound();
+  // highlight all found items
 
   iDataTableSearch(QWidget* parent = NULL);
   iDataTableSearch(iDataTableView* table_view_, QWidget* parent = NULL);
@@ -72,6 +68,11 @@ public:
 protected:
   QList<QModelIndex>    found_items;  // full list of items found
   int                   cur_item; // currrent item
+  
+  void                  SelectCurrent();
+  // select the data table cell that is the current item in the found_items list
+  void                  SelectNext();
+  void                  SelectPrevious();
   
 private:
   void Constr();                // construct widget

@@ -22,6 +22,7 @@
 #include <iMatrixEditor>
 #include <iMatrixTableModel>
 #include <iDataTableModel>
+#include <iDataTableSearch>
 #include <taSigLink>
 #include <iMainWindowViewer>
 
@@ -48,6 +49,8 @@ iDataTableEditor::iDataTableEditor(iDataTableView* table_view, QWidget* parent)
   tvCell = new iMatrixEditor();
   splMain->addWidget(tvTable);
   splMain->addWidget(tvCell);
+  search = new iDataTableSearch(tvTable, this);
+  layOuter->addWidget(search);
 
   tvTable->installEventFilter(this);
   tvCell->tv->installEventFilter(this);

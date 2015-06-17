@@ -45,9 +45,67 @@ iDataTableSearch::~iDataTableSearch() {
 }
 
 void iDataTableSearch::Constr() {
+  taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
 
+  QHBoxLayout* lay = new QHBoxLayout(this);
+  srch_bar = new QToolBar(this);
+  lay->addWidget(srch_bar);
+  lay->setMargin(0);
+  lay->setSpacing(0);
+  
+  srch_label = new QLabel("Find:");
+  srch_label->setFont(taiM->nameFont(currentSizeSpec));
+  srch_label->setToolTip(taiMisc::ToolTipPreProcess("Find cells within the above data table: case sensitive if uppercase entered."));
+  srch_bar->addWidget(srch_label);
+
+  srch_text = new iLineEdit();
+  srch_bar->addWidget(srch_text);
+  
+  srch_nfound = new QLabel(" 0");
+  srch_nfound->setFont(taiM->nameFont(currentSizeSpec));
+  srch_nfound->setToolTip(taiMisc::ToolTipPreProcess("Number of items found"));
+  srch_bar->addWidget(srch_nfound);
+  
+  srch_clear = srch_bar->addAction("x");
+  srch_clear->setToolTip(taiMisc::ToolTipPreProcess("Clear search text and cell highlighting"));
+  srch_prev = srch_bar->addAction("<");
+  srch_prev->setToolTip(taiMisc::ToolTipPreProcess("Find previous occurrence of find text within table"));
+  srch_next = srch_bar->addAction(">");
+  srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within table"));
+  
+  connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
+  connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
+  connect(srch_prev, SIGNAL(triggered()), this, SLOT(srch_prev_clicked()) );
+  connect(srch_text, SIGNAL(returnPressed()), this, SLOT(srch_text_entered()) );
 }
 
 void iDataTableSearch::Search() {
   
 }
+
+void iDataTableSearch::HighlightFound() {
+  
+}
+
+void iDataTableSearch::UnHighlightFound() {
+  
+}
+
+void iDataTableSearch::SelectCurrent() {
+  
+}
+
+void iDataTableSearch::SelectNext() {
+//  cur_item++;
+//  if(cur_item >= found_items.size)
+//    cur_item = found_items.size-1;
+//  selectCurrent();
+}
+
+void iDataTableSearch::SelectPrevious() {
+//  cur_item--;
+//  if(cur_item < 0)
+//    cur_item = 0;
+//  selectCurrent();
+}
+
