@@ -31,6 +31,8 @@
 #include <int_Array>
 #include <AnalysisRun>
 #include <DataSortSpec>
+#include <taVector2i>
+#include <taVector2i_List>
 
 // declare all other types mentioned but not required to include:
 class cssProgSpace; // 
@@ -127,6 +129,9 @@ public:
   // #HIDDEN #NO_SAVE When comparing cell values this is the row to compare against
   int_Array             diff_row_list;
   // #HIDDEN #NO_SAVE When comparing cell values this is the list of rows compared against base_diff_row
+//  taVector2i            found_cell_item;
+  
+  // #HIDDEN #NO_SAVE When searching for cell values this is the list of cells that match
   String                error_msg;
   // #HIDDEN #NO_SAVE Holds last error message so client can check message if error returned
   String                cell_view;
@@ -912,7 +917,7 @@ public:
   int                   GetMaxCellRows(int col_fr, int col_to); // #IGNORE get the max muber of cell rows in this col range (used for clip operations)
   void                  GetFlatGeom(const CellRange& cr, int& tot_cols,
                                     int& max_cell_rows); // #IGNORE get the total flat cols and max rows per cell; used for TSV output
-  iDataTableModel*       GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
+  iDataTableModel*      GetTableModel(); // #IGNORE gets or makes the model -- kept around once made
 
   String                HeaderToTSV(); // #IGNORE for tsv save
   String                RangeToTSV(const CellRange& cr); // #IGNORE for clip operations
@@ -996,6 +1001,9 @@ public:
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
+  virtual void          Find(taVector2i_List* found_list, const String& search_str);
+  // #CAT_DataProc #MENU #FROM_GROUP_data search for first instance of value, non-matrix columns
+  
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);
@@ -1014,7 +1022,6 @@ public:
   // ##CAT_Rows reset the base row and the list
   virtual bool          CompareRowsState();
   // ##CAT_Rows is compare rows turned on or was the last call to clear compare rows
-
   virtual bool          MatrixColToScalarsCol(DataCol* mtx_col,
                                               const String& scalar_col_name_stub="");
   // #EXPERT #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #FROM_GROUP_data #LABEL_MatrixColToScalars convert a matrix column to a sequence of (new) scalar columns (existing cols are used too) -- if scalar_col_name_stub is non-empty, it will be used as the basis for the column names, which are sequentially numbered by cell index: stub_0 stub_1... -- otherwise, the original column name will be used with these index suffixes

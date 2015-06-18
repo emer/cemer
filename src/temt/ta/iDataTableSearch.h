@@ -27,14 +27,18 @@
 #include <QList>
 #endif
 
+#include <taVector2i_List>
+
 // declare all other types mentioned but not required to include:
 class iLineEdit; //
 class iDataTableView; //
+class iDataTableModel; //
 class QToolBar; //
 class QLabel; //
 class iActionMenuButton; //
 class iMenuButton; //
 class QMenu; //
+
 
 class TA_API iDataTableSearch : public QWidget {
   // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS search widget for a DataTable view -- controls searching in this view
@@ -43,9 +47,10 @@ class TA_API iDataTableSearch : public QWidget {
   friend class iDataTableView;
 
 public:
-  iDataTableView*            table_view; // pointer to the DataTable view that we operate on
+  iDataTableView*       table_view; // DataTable view for the table we search
+  iDataTableModel*      table_model; // table model holds list of found items
 
-  QLabel*                srch_label;
+  QLabel*               srch_label;
   QToolBar*             srch_bar;
   iLineEdit*            srch_text;
   QLabel*               srch_nfound;
@@ -56,23 +61,21 @@ public:
 
   void                  Search();
   
-  void                  UnHighlightFound();
-  // un-highlight all items
-  void                  HighlightFound();
-  // highlight all found items
-
   iDataTableSearch(QWidget* parent = NULL);
   iDataTableSearch(iDataTableView* table_view_, QWidget* parent = NULL);
   ~iDataTableSearch();
 
-protected:
-  QList<QModelIndex>    found_items;  // full list of items found
-  int                   cur_item; // currrent item
-  
-  void                  SelectCurrent();
-  // select the data table cell that is the current item in the found_items list
+public slots:
+  void                  TextEntered();
   void                  SelectNext();
   void                  SelectPrevious();
+  void                  SearchClear();
+
+protected:
+  taVector2i_List*      found_list;  // pass this to data table so it doesn't need to include any Qt code
+  int                   cur_item; // currrent item
+  
+  void                  SelectCurrent(); // select the data table cell that is the current item in the found_items list
   
 private:
   void Constr();                // construct widget

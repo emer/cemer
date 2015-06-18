@@ -52,7 +52,12 @@ public:
   void                  emit_dataChanged(int row_fr = 0, int col_fr = 0,
     int row_to = -1, int col_to = -1);// can be called w/o params to issue global change (for manual refresh)
   void                  emit_dataChanged(const QModelIndex& topLeft,
-                                         const QModelIndex& bottomRight); // #IGNORE 
+                                         const QModelIndex& bottomRight); // #IGNORE
+    
+    void                AddToFoundList(int row, int col);
+    // add the row/col pair of a data table to found_list - for non-matrix columns
+    void                ClearFoundList();
+    // remove all the previously found items from the list
 
 public slots:
   void                  matSigEmit(int col_idx); // mat editor calls when data changes
@@ -60,8 +65,10 @@ public slots:
 protected:
   iDataTableModel(DataTable* dt);
   ~iDataTableModel(); //
-
-public: // required implementations
+    
+  QList<QModelIndex>    items_found;  // matching items from last search
+  
+  public: // required implementations
 #ifndef __MAKETA__
   int                   columnCount(const QModelIndex& parent = QModelIndex()) const override; 
   QVariant              data(const QModelIndex& index, int role = Qt::DisplayRole) const override;

@@ -37,6 +37,7 @@
 #include <AnalysisRun>
 #include <taProject>
 #include <iDialogChoice>
+#include <taVector2i_List>
 
 taTypeDef_Of(float_Data);
 taTypeDef_Of(double_Data);
@@ -83,6 +84,8 @@ void DataTable::Initialize() {
   table_model = NULL;
   row_indexes.SetGeom(1,0);  // always should be set to 1d
   base_diff_row = -1;  // no base comparison row at start
+//  found_cell_item.x = -1;
+//  found_cell_item.y = -1;
   change_col = NULL;
   change_col_type = -1;
 }
@@ -4402,3 +4405,21 @@ taBase* DataTable::ChooseNew(taBase* origin) {
 
   return dt;
 }
+
+void DataTable::Find(taVector2i_List* found_list, const String& search_str) {
+  DataUpdate(true);
+  for (int i = 0; i < cols(); ++i) {
+    DataCol* col = data.FastEl(i);
+    if (!col->is_matrix) {
+      int row = FindVal(search_str, i, 0);
+      if (row != -1) {
+        taVector2i* cell = new taVector2i;
+        cell->x = row;
+        cell->y = i;
+        found_list->Add_(cell);
+      }
+    }
+  }
+  DataUpdate(false);
+}
+

@@ -141,6 +141,8 @@ set(ta_HEADS_MAKETA_NOMOC
   taAxisAngle.h
   taQuaternion.h
   taTransform.h
+  taVector2i_List.h
+
 
   MinMax.h
   MinMaxRange.h
@@ -1285,6 +1287,7 @@ set(ta_SRCS_MAKETA
   taAxisAngle.cpp
   taQuaternion.cpp
   taTransform.cpp
+  taVector2i_List.cpp
 
   MinMax.cpp
   MinMaxRange.cpp

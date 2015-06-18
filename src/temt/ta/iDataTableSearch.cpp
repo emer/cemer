@@ -16,7 +16,9 @@
 #include "iDataTableSearch.h"
 #include <iLineEdit>
 #include <taString>
+#include <DataTable>
 #include <iDataTableView>
+#include <iDataTableModel>
 #include <iActionMenuButton>
 #include <iMenuButton>
 
@@ -41,7 +43,6 @@ iDataTableSearch::iDataTableSearch(iDataTableView* table_view_, QWidget* parent)
 }
 
 iDataTableSearch::~iDataTableSearch() {
-  
 }
 
 void iDataTableSearch::Constr() {
@@ -73,22 +74,42 @@ void iDataTableSearch::Constr() {
   srch_next = srch_bar->addAction(">");
   srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within table"));
   
-  connect(srch_clear, SIGNAL(triggered()), this, SLOT(srch_clear_clicked()) );
-  connect(srch_next, SIGNAL(triggered()), this, SLOT(srch_next_clicked()) );
-  connect(srch_prev, SIGNAL(triggered()), this, SLOT(srch_prev_clicked()) );
-  connect(srch_text, SIGNAL(returnPressed()), this, SLOT(srch_text_entered()) );
+  connect(srch_clear, SIGNAL(triggered()), this, SLOT(SearchClear()) );
+  connect(srch_next, SIGNAL(triggered()), this, SLOT(SelectNext()) );
+  connect(srch_prev, SIGNAL(triggered()), this, SLOT(SelectPrevious()) );
+  connect(srch_text, SIGNAL(returnPressed()), this, SLOT(TextEntered()) );
+}
+
+void iDataTableSearch::TextEntered() {
+  Search();
 }
 
 void iDataTableSearch::Search() {
-  
-}
+  if (!table_view) {
+    return;
+  }
+  if (!table_model) {
+      table_model = table_view->dataTable()->GetTableModel();
+  }
+  // clear
+  table_view->dataTable()->DataUpdate(true);
+  table_model->ClearFoundList();
+  table_view->dataTable()->DataUpdate(false);
 
-void iDataTableSearch::HighlightFound() {
-  
-}
+  // start next search
+  found_list = new taVector2i_List();
+  table_view->dataTable()->Find(found_list, srch_text->text());
 
-void iDataTableSearch::UnHighlightFound() {
+  table_view->dataTable()->DataUpdate(true);
+  for (int i=0; i<found_list->size; i++) {
+    table_model->AddToFoundList(found_list->FastEl(i)->x, found_list->FastEl(i)->y);
+  }
+  table_view->dataTable()->DataUpdate(false);
+  srch_nfound->setText(String((int)found_list->size));
   
+  // cleanup
+  found_list = NULL;
+  delete found_list;
 }
 
 void iDataTableSearch::SelectCurrent() {
@@ -109,3 +130,12 @@ void iDataTableSearch::SelectPrevious() {
 //  selectCurrent();
 }
 
+void iDataTableSearch::SearchClear() {
+  if(table_model) {
+    table_view->dataTable()->DataUpdate(true);
+    table_model->ClearFoundList();
+    table_view->dataTable()->DataUpdate(false);
+  }
+  srch_nfound->setText("0");
+  srch_text->setText("");
+}

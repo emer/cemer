@@ -22,7 +22,9 @@
 #include <taiMisc>
 #include <CellRange>
 
+#include <QList>
 #include <QColor>
+#include <QModelIndex>
 
 
 iDataTableModel::iDataTableModel(DataTable* dt_)
@@ -48,7 +50,7 @@ void iDataTableModel::SigLinkDestroying(taSigLink* dl) {
 }
 
 void iDataTableModel::SigLinkRecv(taSigLink* dl, int sls,
-    void* op1, void* op2)
+                                  void* op1, void* op2)
 { // called from DataTable::SigEmit
   if (notifying) return;
   //this is primarily for code-driven changes
@@ -65,67 +67,72 @@ QVariant iDataTableModel::data(const QModelIndex& index, int role) const {
   //NOTES:
   // * it would be nice to just italicize the "matrix" text, but we have no
   //   no access to the font being used, and cannot only pass modifiers
-
+  
   DataCol* col = m_dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return QVariant(); // nil
-
+  
   switch (role) {
-  case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
-  case Qt::EditRole: {
-    if (col->is_matrix)
-      return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
-    else {
-      int dx;
-      if(m_dt->idx(index.row(), dx))
-        return static_cast<const char *>(col->GetValAsString(dx));
+    case Qt::DisplayRole: //note: we may choose to format different for display, ex floats
+    case Qt::EditRole: {
+      if (col->is_matrix)
+        return QVariant("(matrix)"); // user clicks to edit, or elsewise displayed
+      else {
+        int dx;
+        if(m_dt->idx(index.row(), dx))
+          return static_cast<const char *>(col->GetValAsString(dx));
+        else
+          return QVariant();      // nil
+      }
+    }
+      // Qt::FontRole: //  QFont: font for the text
+      //Qt::DecorationRole
+      //Qt::ToolTipRole
+      //Qt::StatusTipRole
+      //Qt::WhatsThisRole
+      //Qt::SizeHintRole -- QSize
+      //Qt::FontRole--  QFont: font for the text
+    case Qt::TextAlignmentRole: {
+      if (col->is_matrix)
+        return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
+      else if (col->isNumeric())
+        return QVariant(Qt::AlignRight | Qt::AlignVCenter);
       else
-        return QVariant();      // nil
-    }
-  }
-  // Qt::FontRole: //  QFont: font for the text
-  //Qt::DecorationRole
-  //Qt::ToolTipRole
-  //Qt::StatusTipRole
-  //Qt::WhatsThisRole
-  //Qt::SizeHintRole -- QSize
-  //Qt::FontRole--  QFont: font for the text
-  case Qt::TextAlignmentRole: {
-    if (col->is_matrix)
-      return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
-    else if (col->isNumeric())
-      return QVariant(Qt::AlignRight | Qt::AlignVCenter);
-    else
-      return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
-  } break;
-  case Qt::BackgroundColorRole : //-- QColor
-    /* note: only used when !(option.showDecorationSelected && (option.state
-    & QStyle::State_Selected)) */
-    // note: only make it actual ro color if ro (not for "(matrix)" cells)
-    if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
-      return QColor(247, 247, 247);  // very light gray
-    break;
-  case Qt::TextColorRole: { // QColor: color of text
-    if (col->is_matrix)
-      return QColor(Qt::blue);
-
-    // highlight cells when comparison is on and cell values unequal
-    int baseRow = m_dt->base_diff_row;
-    if (baseRow == index.row()) {
-      return QColor(Qt::blue);
-    }
-    else if (baseRow >= 0) {
-      if (m_dt->diff_row_list.FindEl(index.row()) != -1) {
-        DataCol* dc = m_dt->data.FastEl(index.column());
-        if (dc->GetVal(baseRow) != dc->GetVal(index.row())) {
-          return QColor(Qt::red);
+        return QVariant(Qt::AlignLeft | Qt::AlignVCenter);
+    } break;
+    case Qt::BackgroundColorRole : //-- QColor
+      /* note: only used when !(option.showDecorationSelected && (option.state
+       & QStyle::State_Selected)) */
+      // note: only make it actual ro color if ro (not for "(matrix)" cells)
+      if ((col->col_flags & DataCol::READ_ONLY) || col->isGuiReadOnly())
+        return QColor(247, 247, 247);  // very light gray
+      //    else if (index.column() == 2 && index.row() == 3)
+      if (items_found.contains(index)) {
+        return QColor(Qt::yellow);
+      }
+      break;
+    case Qt::TextColorRole: { // QColor: color of text
+      if (col->is_matrix)
+        return QColor(Qt::blue);
+      
+      // highlight cells when comparison is on and cell values unequal
+      int baseRow = m_dt->base_diff_row;
+      if (baseRow == index.row()) {
+        return QColor(Qt::blue);
+      }
+      else if (baseRow >= 0) {
+        if (m_dt->diff_row_list.FindEl(index.row()) != -1) {
+          DataCol* dc = m_dt->data.FastEl(index.column());
+          if (dc->GetVal(baseRow) != dc->GetVal(index.row())) {
+            return QColor(Qt::red);
+          }
         }
       }
     }
-  }
-  break;
-  //Qt::CheckStateRole
-  default: break;
+    break;
+    //Qt::CheckStateRole
+    default:
+      break;
   }
   return QVariant();
 }
@@ -135,12 +142,12 @@ void iDataTableModel::emit_dataChanged(int row_fr, int col_fr, int row_to, int c
   // lookup actual end values when we are called with sentinels
   if (row_to < 0) row_to = rowCount() - 1;
   if (col_to < 0) col_to = columnCount() - 1;
-
+  
   emit dataChanged(createIndex(row_fr, col_fr), createIndex(row_to, col_to));
 }
 
 void iDataTableModel::emit_dataChanged(const QModelIndex& topLeft,
-    const QModelIndex& bottomRight)
+                                       const QModelIndex& bottomRight)
 {
   if (!m_dt) return;
   ++notifying;
@@ -164,7 +171,7 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
       rval = Qt::ItemIsSelectable | Qt::ItemIsEnabled;
       DataCol* col = m_dt->GetColData(index.column(), true); // quiet
       if (col && !(col->is_matrix || (col->col_flags & DataCol::READ_ONLY) ||
-          col->isGuiReadOnly()) )
+                   col->isGuiReadOnly()) )
         rval |= Qt::ItemIsEditable;
     }
   }
@@ -172,7 +179,7 @@ Qt::ItemFlags iDataTableModel::flags(const QModelIndex& index) const {
 }
 
 QVariant iDataTableModel::headerData(int section, Qt::Orientation orientation,
-    int role) const
+                                     int role) const
 {
   if (m_dt) {
     if (orientation == Qt::Horizontal) {
@@ -195,7 +202,7 @@ QVariant iDataTableModel::headerData(int section, Qt::Orientation orientation,
 void iDataTableModel::refreshViews() {
   emit_layoutChanged();
   /*  emit dataChanged(createIndex(0, 0),
-    createIndex(rowCount() - 1, columnCount() - 1));*/
+   createIndex(rowCount() - 1, columnCount() - 1));*/
 }
 
 int iDataTableModel::rowCount(const QModelIndex& parent) const {
@@ -204,7 +211,7 @@ int iDataTableModel::rowCount(const QModelIndex& parent) const {
 
 void iDataTableModel::matSigEmit(int col_idx) {
   if (!m_dt) return;
-
+  
   DataCol* col = m_dt->GetColData(col_idx, true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return;
@@ -215,29 +222,29 @@ void iDataTableModel::matSigEmit(int col_idx) {
 
 bool iDataTableModel::setData(const QModelIndex& index, const QVariant & value, int role) {
   if (!m_dt || !index.isValid()) return false;
-
+  
   DataCol* col = m_dt->GetColData(index.column(), true); // quiet
   // if no col, we really don't care about anything else...
   if (!col) return false;
   //we restrict setData for scalars only -- use delegate for matrix
   if (col->is_matrix) return false;
-
+  
   bool rval = false;
   switch (role) {
-  case Qt::EditRole: {
-    taProject* proj = (taProject*)m_dt->GetOwner(&TA_taProject);
-    // save undo state!
-    if(proj) {
-      proj->undo_mgr.SaveUndo(col, "DataTableEdit", col);
+    case Qt::EditRole: {
+      taProject* proj = (taProject*)m_dt->GetOwner(&TA_taProject);
+      // save undo state!
+      if(proj) {
+        proj->undo_mgr.SaveUndo(col, "DataTableEdit", col);
+      }
+      m_dt->SetValAsVar(value, index.column(), index.row());
+      ++notifying;
+      emit_dataChanged(index, index);
+      col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
+      --notifying;
+      rval = true;
     }
-    m_dt->SetValAsVar(value, index.column(), index.row());
-    ++notifying;
-    emit_dataChanged(index, index);
-    col->SigEmit(SLS_ITEM_UPDATED); // for calc refresh
-    --notifying;
-    rval = true;
-  }
-  default: break;
+    default: break;
   }
   return rval;
 }
@@ -247,3 +254,11 @@ bool iDataTableModel::ValidateIndex(const QModelIndex& index) const {
   return (index.isValid() && (index.row() < m_dt->rows) && (index.column() < m_dt->cols()));
 }
 
+void iDataTableModel::AddToFoundList(int row, int col) {
+  QModelIndex indexA = index(row, col, QModelIndex());
+  items_found.append(indexA);
+}
+
+void iDataTableModel::ClearFoundList() {
+  items_found.clear();
+}
