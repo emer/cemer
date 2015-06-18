@@ -68,7 +68,6 @@ iDataTableEditor::~iDataTableEditor() {
   }
 }
 
-// jar 8/30/13 - Note to self - Is this code of any value?
 void iDataTableEditor::ConfigView() {
   DataTable* dt = this->dt(); // cache
   if (!dt) return;

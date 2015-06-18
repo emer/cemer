@@ -31,6 +31,8 @@ iDataTableModel::iDataTableModel(DataTable* dt_)
 :inherited(NULL)
 {
   m_dt = dt_;
+  current_found = -1;
+  items_found.clear();
 }
 
 iDataTableModel::~iDataTableModel() {
@@ -260,5 +262,37 @@ void iDataTableModel::AddToFoundList(int row, int col) {
 }
 
 void iDataTableModel::ClearFoundList() {
-  items_found.clear();
+  if (items_found.size() != 0) {
+    items_found.clear();
+  }
+  current_found = -1;
 }
+
+const QModelIndex* iDataTableModel::GetNextFound() {
+  if (items_found.size() == 0) {
+    return NULL;
+  }
+  if (current_found == items_found.size() - 1) {
+    current_found = 0;
+    return &items_found.at(current_found);
+  }
+  else {
+    current_found += 1;
+    return &items_found.at(current_found);
+  }
+}
+
+const QModelIndex* iDataTableModel::GetPreviousFound() {
+  if (items_found.size() == 0) {
+    return NULL;
+  }
+  if (current_found == 0) {
+    current_found = items_found.size() - 1;
+    return &items_found.at(current_found);
+  }
+  else {
+    current_found -= 1;
+    return &items_found.at(current_found);
+  }
+}
+

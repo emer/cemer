@@ -46,7 +46,9 @@ public: // cliphandler i/f
   void                  EditAction(int ea) override;
   void                  GetEditActionsEnabled(int& ea) override;
   void                  ViewAction(int ea) override;
-
+  void                  SetCurrentAndSelect(int row, int col);
+  // for selecting single cell only
+  
 #ifndef __MAKETA__
   signals:
   void                  sig_currentChanged(const QModelIndex& current);

@@ -287,3 +287,15 @@ void iDataTableView::doubleClicked(const QModelIndex& index) {
     ViewAction(0);
   }
 }
+
+void iDataTableView::SetCurrentAndSelect(int row, int col) {
+// for single cell only
+QModelIndex topLeft = model()->index(row, col);
+QModelIndex bottomRight = model()->index(row, col);
+QItemSelection selection(topLeft, bottomRight);
+this->selectionModel()->select(selection, QItemSelectionModel::Select);
+this->setCurrentIndex(topLeft);
+this->setFocus();
+}
+
+

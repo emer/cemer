@@ -34,6 +34,7 @@
 
 iDataTableSearch::iDataTableSearch(QWidget* parent) : QWidget(parent) {
   table_view = NULL;
+  table_model = NULL;
   Constr();
 }
 
@@ -91,6 +92,10 @@ void iDataTableSearch::Search() {
   if (!table_model) {
       table_model = table_view->dataTable()->GetTableModel();
   }
+  if (!table_model) {
+    return;
+  }
+  
   // clear
   table_view->dataTable()->DataUpdate(true);
   table_model->ClearFoundList();
@@ -106,36 +111,40 @@ void iDataTableSearch::Search() {
   }
   table_view->dataTable()->DataUpdate(false);
   srch_nfound->setText(String((int)found_list->size));
+  SelectNext();
   
   // cleanup
   found_list = NULL;
   delete found_list;
 }
 
-void iDataTableSearch::SelectCurrent() {
-  
-}
-
 void iDataTableSearch::SelectNext() {
-//  cur_item++;
-//  if(cur_item >= found_items.size)
-//    cur_item = found_items.size-1;
-//  selectCurrent();
+  if (table_model == NULL) {
+    return;
+  }
+  const QModelIndex* model_index = table_model->GetNextFound();
+  if (model_index) {
+    table_view->SetCurrentAndSelect(model_index->row(), model_index->column());
+  }
 }
 
 void iDataTableSearch::SelectPrevious() {
-//  cur_item--;
-//  if(cur_item < 0)
-//    cur_item = 0;
-//  selectCurrent();
+  if (table_model == NULL) {
+    return;
+  }
+  const QModelIndex* model_index = table_model->GetPreviousFound();
+  if (model_index) {
+    table_view->SetCurrentAndSelect(model_index->row(), model_index->column());
+  }
 }
 
 void iDataTableSearch::SearchClear() {
-  if(table_model) {
-    table_view->dataTable()->DataUpdate(true);
-    table_model->ClearFoundList();
-    table_view->dataTable()->DataUpdate(false);
+  if (table_model == NULL) {
+    return;
   }
+  table_view->dataTable()->DataUpdate(true);
+  table_model->ClearFoundList();
   srch_nfound->setText("0");
   srch_text->setText("");
+  table_view->dataTable()->DataUpdate(false);
 }

@@ -75,8 +75,6 @@ protected:
   taVector2i_List*      found_list;  // pass this to data table so it doesn't need to include any Qt code
   int                   cur_item; // currrent item
   
-  void                  SelectCurrent(); // select the data table cell that is the current item in the found_items list
-  
 private:
   void Constr();                // construct widget
 };

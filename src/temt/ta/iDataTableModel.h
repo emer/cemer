@@ -35,6 +35,7 @@ class DataTable; //
 class QModelIndex; //
 
 
+
 taTypeDef_Of(iDataTableModel);
 
 class TA_API iDataTableModel: public QAbstractTableModel,
@@ -58,7 +59,11 @@ public:
     // add the row/col pair of a data table to found_list - for non-matrix columns
     void                ClearFoundList();
     // remove all the previously found items from the list
-
+    const QModelIndex*  GetNextFound();
+    // get the row/col of the next item from the current search
+    const QModelIndex*  GetPreviousFound();
+    // get the row/col of the previous item from the current search
+    
 public slots:
   void                  matSigEmit(int col_idx); // mat editor calls when data changes
 
@@ -66,7 +71,10 @@ protected:
   iDataTableModel(DataTable* dt);
   ~iDataTableModel(); //
     
+#ifndef __MAKETA__
   QList<QModelIndex>    items_found;  // matching items from last search
+#endif
+  int                   current_found;
   
   public: // required implementations
 #ifndef __MAKETA__
