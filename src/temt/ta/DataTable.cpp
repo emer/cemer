@@ -4408,15 +4408,30 @@ taBase* DataTable::ChooseNew(taBase* origin) {
 
 void DataTable::Find(taVector2i_List* found_list, const String& search_str) {
   DataUpdate(true);
-  for (int i = 0; i < cols(); ++i) {
-    DataCol* col = data.FastEl(i);
+  for (int col_idx = 0; col_idx < cols(); ++col_idx) {
+    DataCol* col = data.FastEl(col_idx);
     if (!col->is_matrix) {
-      int row = FindVal(search_str, i, 0);
-      if (row != -1) {
-        taVector2i* cell = new taVector2i;
-        cell->x = row;
-        cell->y = i;
-        found_list->Add_(cell);
+      bool keep_searching = true;
+      int start_row = 0;
+      while (keep_searching) {
+        int row = FindVal(search_str, col_idx, start_row);
+        if (row != -1) {
+          taVector2i* cell = new taVector2i;
+          cell->x = row;
+          cell->y = col_idx;
+          found_list->Add_(cell);
+          if (row != rows - 1) {  // are we at the last row?
+            start_row = row + 1;
+          }
+          else {
+            keep_searching = false;
+            break;
+          }
+        }
+        else {
+          keep_searching = false;
+          break;
+        }
       }
     }
   }
