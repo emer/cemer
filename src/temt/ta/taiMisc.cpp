@@ -1074,12 +1074,12 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_OPEN, QKeySequence(meta_key + Qt::Key_O));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CLOSE, QKeySequence(meta_key + Qt::Key_W));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND, QKeySequence(meta_key + Qt::Key_F));
-  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
+//  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_MINIMIZE, QKeySequence(meta_key + Qt::Key_M));
 #endif
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DELETE, QKeySequence(control_key + Qt::Key_D));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_DUPLICATE, QKeySequence(control_key + Qt::Key_M));
-  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence("F3"));
+//  default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT, QKeySequence("F3"));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_STOP, QKeySequence("F8"));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_CONTINUE, QKeySequence("F9"));
   default_list->Add(taiMisc::MENU_CONTEXT, taiMisc::MENU_STEP, QKeySequence("F10"));
@@ -1201,6 +1201,10 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_UP_II, QKeySequence());
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN, QKeySequence(control_key + Qt::Key_V));
   default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_PAGE_DOWN_II, QKeySequence());
+#ifdef TA_OS_MAC
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_NEXT, QKeySequence(meta_key + Qt::Key_G));
+  default_list->Add(taiMisc::DATATABLE_CONTEXT, taiMisc::DATATABLE_FIND_PREVIOUS, QKeySequence(meta_key + Qt::ShiftModifier + Qt::Key_G));
+#endif
   
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT, QKeySequence(Qt::Key_Enter));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_DEFAULT_ELEMENT_II, QKeySequence(Qt::Key_Return));

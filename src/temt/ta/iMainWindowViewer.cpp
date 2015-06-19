@@ -632,8 +632,8 @@ void iMainWindowViewer::Constr_EditMenu()
   QKeySequence ks_find = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND);
   editFindAction = AddAction(new iAction(0, "&Find...", ks_find, "editFindAction"));
   editFindAction->setIcon(QIcon(QPixmap(":/images/find_icon.png")));
-  QKeySequence ks_find_next = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT);
-  editFindNextAction = AddAction(new iAction(0, "Find &Next", ks_find_next, "editFindNextAction"));
+//  QKeySequence ks_find_next = taiMisc::GetSequenceFromAction(taiMisc::MENU_CONTEXT, taiMisc::MENU_FIND_NEXT);
+//  editFindNextAction = AddAction(new iAction(0, "Find &Next", ks_find_next, "editFindNextAction"));
 
   // Build menu items.
   editMenu->AddAction(editUndoAction);
@@ -654,7 +654,7 @@ void iMainWindowViewer::Constr_EditMenu()
 
   editMenu->insertSeparator();
   editMenu->AddAction(editFindAction);
-  editMenu->AddAction(editFindNextAction);
+//  editMenu->AddAction(editFindNextAction);
 
   // Make connections.
   connect(editUndoAction, SIGNAL(Action()), this, SLOT(editUndo()));
@@ -671,7 +671,7 @@ void iMainWindowViewer::Constr_EditMenu()
   connect(editDeleteAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editDupeAction, SIGNAL(IntParamAction(int)), this, SIGNAL(EditAction(int)));
   connect(editFindAction, SIGNAL(Action()), this, SLOT(editFind()));
-  connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
+//  connect(editFindNextAction, SIGNAL(Action()), this, SLOT(editFindNext()));
   
   editUndoAction->setEnabled(false);
   editRedoAction->setEnabled(false);

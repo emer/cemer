@@ -267,6 +267,12 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
         tvCell->tv->selectCurCell();
         return true;
       }
+    case taiMisc::DATATABLE_FIND_NEXT:
+      search->SelectNext();
+      return true;
+    case taiMisc::DATATABLE_FIND_PREVIOUS:
+      search->SelectPrevious();
+      return true;
     default:
       return tvTable->eventFilter(obj, event); // this has all the other good emacs xlations
   }
