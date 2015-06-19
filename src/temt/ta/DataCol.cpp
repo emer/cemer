@@ -610,6 +610,15 @@ bool DataCol::InitValsToRowNo()  {
   return true;
 }
 
+bool DataCol::InitValsByIncrement(int increment, int first_value)  {
+  if(TestError(is_matrix, "InitVInitValsByIncrementalsToRowNo", "column is a matrix")) return false;
+  SetValAsInt(first_value, 0);
+  for(int i=1; i<rows(); i++) {
+    SetValAsInt(first_value + i*increment, i);
+  }
+  return true;
+}
+
 void DataCol::SortAscending() {
   dataTable()->SortCol(this, true);
 }

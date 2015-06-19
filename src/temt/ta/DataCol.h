@@ -170,6 +170,8 @@ public:
   // #CAT_Modify #BUTTON #MENU #MENU_CONTEXT #MENU_ON_Column initialize all values in this column to given value
   bool          InitValsToRowNo();
   // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number -- only valid for scalar (not matrix) columns
+  bool          InitValsByIncrement(int increment = 1, int first_value = 0);
+  // #CAT_Modify #MENU #MENU_CONTEXT #GHOST_ON_is_matrix initialize all values in this column to be equal to the row number multiplied by some integer value -- only valid for scalar (not matrix) columns
 
   void          SortAscending();
   // #CAT_DataProc #MENU #MENU_CONTEXT #MENU_ON_Column #MENU_SEP_BEFORE #GHOST_ON_is_matrix
