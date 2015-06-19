@@ -88,7 +88,18 @@ void iClusterTableView::FillContextMenu_impl(ContextArea ca,
     menu->AddSep();
     act = menu->AddItem("Get Project at Rev", taiWidgetMenu::normal, iAction::var_act, this, SLOT(DoClusterOp(const Variant&)), "GetProjectAtRev");
     act->setEnabled((tab->name == "jobs_running" || tab->name == "jobs_done" || tab->name == "jobs_archive") && sel.height() == 0);
-  }
+
+    menu->AddSep();
+    act = menu->AddItem("Compare Selected Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_COMPARE));
+    act->setEnabled(sel.height() > 1);  // enable if compare state is on
+    
+    act = menu->AddItem("Clear Compare Rows", taiWidgetMenu::normal,
+                        iAction::int_act,
+                        this, SLOT(RowColOp(int)), (OP_ROW | OP_CLEAR_COMPARE));
+    act->setEnabled(tab->CompareRowsState());  // enable if compare state is on
+}
 }
 
 void iClusterTableView::DoClusterOp(const Variant& var) {
