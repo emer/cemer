@@ -1018,12 +1018,7 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
   float ext_in = u->ext;
   if(net->cycle > 0 && deep_norm.on && deep_norm.mod) { // apply deep_norm attentional modulation to inputs!
     u->act_raw = ext_in;
-    if(u->deep_mod > 0.0f) {
-      ext_in *= u->deep_mod;
-    }
-    else {
-      ext_in *= lay->deep_norm_def;
-    }
+    ext_in *= u->deep_mod;
   }
   u->net = u->thal = ext_in;
   ext_in = clamp_range.Clip(ext_in);
@@ -1250,12 +1245,7 @@ float LeabraUnitSpec::Compute_NetinExtras(LeabraUnitVars* u, LeabraNetwork* net,
   LeabraLayerSpec* ls = (LeabraLayerSpec*)lay->GetLayerSpec();
 
   // if(deep_norm.on && deep_norm.mod) { // apply attention directly to netin and act (later)
-  //   if(u->deep_mod > 0.0f) {
-  //     net_syn *= u->deep_mod;
-  //   }
-  //   else {
-  //     net_syn *= lay->deep_norm_def;
-  //   }
+  //   net_syn *= u->deep_mod;
   // }
 
   float net_ex = 0.0f;
@@ -1370,12 +1360,7 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   if((net->cycle >= 0) && lay->hard_clamped) {
     if(deep_norm.on && deep_norm.mod && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
       u->act_raw = u->act_eq;
-      if(u->deep_mod > 0.0f) {
-        u->act_eq *= u->deep_mod;
-      }
-      else {
-        u->act_eq *= lay->deep_norm_def;
-      }
+      u->act_eq *= u->deep_mod;
       u->act_nd = u->act_eq;
       u->act = u->act_eq;
     }
@@ -1433,15 +1418,9 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
-  u->act_raw = new_act;
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
-    if(u->deep_mod > 0.0f) {
-      new_act *= u->deep_mod;
-    }
-    else {
-      LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
-      new_act *= lay->deep_norm_def;
-    }
+    u->act_raw = new_act;
+    new_act *= u->deep_mod;
   }
   u->act_nd = act_range.Clip(new_act);
 
@@ -1989,10 +1968,16 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
     qtr_eff--;
   if(!Quarter_DeepNow(qtr_eff)) return;
 
+  LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
+  if(u->deep_norm > 0.0f) {
+    u->deep_mod = u->deep_norm;
+  }
+  else {
+    u->deep_mod = lay->deep_norm_def;
+  }
+
   u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
-
-  u->deep_mod = u->deep_norm;
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
