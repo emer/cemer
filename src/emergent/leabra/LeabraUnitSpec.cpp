@@ -1968,6 +1968,7 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
     qtr_eff--;
   if(!Quarter_DeepNow(qtr_eff)) return;
 
+  // deep_mod has full final value for modulation
   LeabraLayer* lay = (LeabraLayer*)u->Un(net, thr_no)->own_lay();
   if(u->deep_norm > 0.0f) {
     u->deep_mod = u->deep_norm;
