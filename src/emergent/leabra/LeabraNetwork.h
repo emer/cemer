@@ -82,6 +82,7 @@ INHERITED(taOBase)
 public:
   int		quarter;	// #DEF_25 number of cycles to run per each quarter of a trial -- typically, a trial is one alpha cycle of 100 msec (10 Hz), and we run at 1 cycle = 1 msec, so that is 25 cycles per quarter, which gives the ubiquitous gamma frequency power of 40 Hz -- a traditional minus phase takes the first 3 quarters, and the last quarter is the plus phase -- use CycleRunMax_Minus and CycleRunMax_Plus to get proper minus and plus phase cycles values to use in programs, taking into account lthreads.quarter setting
   bool          cycle_qtr;      // #DEF_true #NO_SAVE one CycleRun runs for a full quarter number of actual cycles -- this greatly speeds up processing by reducing threading overhead, but prevents e.g., interactive viewing at the individual cycle level -- this is not saved -- have to re-engage it when needed, to prevent unintentionally slowing everything down
+  int           deep_cyc;       // #DEF_5 how often (in cycles) to perform deep layer updating -- typically not necessary to update as frequently as superficial activations -- and biologically driven by layer 5 ib neurons that emit just a few bursts
   float		time_inc;	// #DEF_0.001 in units of seconds -- how much to increment the network time variable every cycle -- this goes monotonically up from the last weight init or manual reset -- default is .001 which means one cycle = 1 msec -- MUST also coordinate this with LeabraUnitSpec.dt.integ for most accurate time constants -- also affects rate-code computed spiking intervals in unit spec
 
   int		minus;	        // #READ_ONLY computed total number of cycles per minus phase = 3 * quarter
@@ -479,6 +480,39 @@ public:
   // #CAT_Cycle compute cycle-level stats -- inhibitory conductance AvgMax -- single thread post-step
 
   ///////////////////////////////////////////////////////////////////////
+  //	DeepLeabra Updating -- called after superficial layer updating
+
+  virtual void Compute_Deep_Thr(int thr_no);
+  // #IGNORE update deep variables, using the proper sequence of unit-level calls
+
+    virtual void Compute_DeepRawStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    virtual void Compute_DeepRawStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    virtual void Compute_DeepRawNormStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
+    virtual void Compute_DeepRawNormStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
+    virtual void Compute_DeepNormStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_norm
+    virtual void Compute_DeepNormStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_norm
+    virtual void Compute_DeepNormStats_PostPost();
+    // #IGNORE compute layer and unit-group level stats on deep_norm -- renorm avg
+    virtual void Compute_DeepNormNetStats_Thr(int thr_no);
+    // #IGNORE compute layer and unit-group level stats on deep_norm_net
+    virtual void Compute_DeepNormNetStats_Post();
+    // #IGNORE compute layer and unit-group level stats on deep_norm_net
+  
+  virtual void Compute_DeepMod_Thr(int thr_no);
+  // #IGNORE update deep_mod from deep_norm -- happens at start of new trial
+  
+  virtual void ClearDeepActs();
+  // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
+    virtual void ClearDeepActs_Thr(int thr_no);
+    // #IGNORE clear all the deep lamina variables -- can be useful to do at discontinuities of experience
+
+  ///////////////////////////////////////////////////////////////////////
   //	Quarter Final
 
   virtual void	 Quarter_Final();
@@ -494,37 +528,6 @@ public:
     virtual void Quarter_Final_Counters();
     // #CAT_QuarterFinal update counters at end of quarter
 
-
-  ///////////////////////////////////////////////////////////////////////
-  //	DeepLeabra Updating -- called during Quarter_Init
-
-  virtual void Compute_Deep_Thr(int thr_no);
-  // #IGNORE update deep variables, using the proper sequence of unit-level calls
-
-    virtual void Compute_DeepRawStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw vars
-    virtual void Compute_DeepRawStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw vars
-    virtual void Compute_DeepRawCtxtStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw_norm, deep_ctxt vars
-    virtual void Compute_DeepRawCtxtStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw_norm, deep_ctxt vars
-    virtual void Compute_DeepNormStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_norm
-    virtual void Compute_DeepNormStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_norm
-    virtual void Compute_DeepNormStats_PostPost();
-    // #IGNORE compute layer and unit-group level stats on deep_norm -- renorm avg
-    virtual void Compute_DeepNormNetStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_norm_net
-    virtual void Compute_DeepNormNetStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_norm_net
-  
-  
-  virtual void ClearDeepActs();
-  // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
-    virtual void ClearDeepActs_Thr(int thr_no);
-    // #IGNORE clear all the deep lamina variables -- can be useful to do at discontinuities of experience
 
   ///////////////////////////////////////////////////////////////////////
   //	Trial Update and Final

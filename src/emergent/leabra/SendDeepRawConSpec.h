@@ -37,47 +37,16 @@ public:
   bool  IsDeepRawCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
-#ifdef TA_VEC_USE
-  inline void Send_DeepRawNetDelta_vec
-    (LeabraConGroup* cg, const float su_act_delta_eff,
-     float* send_deepnet_vec, const float* wts)
-  {
-    VECF sa(su_act_delta_eff);
-    const int sz = cg->size;
-    const int parsz = cg->vec_chunked_size;
-    int i;
-    for(i=0; i<parsz; i += TA_VEC_SIZE) {
-      VECF wt;  wt.load(wts+i);
-      VECF dp = wt * sa;
-      VECF rnet;
-      float* stnet = send_deepnet_vec + cg->UnIdx(i);
-      rnet.load(stnet);
-      rnet += dp;
-      rnet.store(stnet);
-    }
-
-    // remainder of non-vector chunkable ones
-    for(; i<sz; i++) {
-      send_deepnet_vec[cg->UnIdx(i)] += wts[i] * su_act_delta_eff;
-    }
-  }
-#endif
-
-  inline void 	C_Send_DeepRawNetDelta(const float wt, float* send_deepnet_vec,
-                                       const int ru_idx, const float su_act_delta_eff)
-  { send_deepnet_vec[ru_idx] += wt * su_act_delta_eff; }
-  // #IGNORE
-
   inline void Send_DeepRawNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
                                    int thr_no, const float su_act_delta) {
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_deepnet_vec = net->ThrSendDeepRawNetTmp(thr_no);
+    float* send_deepnet_vec = net->ThrSendDeepRawNetTmp(thr_no); // no per-prjn
 #ifdef TA_VEC_USE
-    Send_DeepRawNetDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
+    Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
 #else
-    CON_GROUP_LOOP(cg, C_Send_DeepRawNetDelta(wts[i], send_deepnet_vec,
-                                              cg->UnIdx(i), su_act_delta_eff));
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
+                                         cg->UnIdx(i), su_act_delta_eff));
 #endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thr_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units

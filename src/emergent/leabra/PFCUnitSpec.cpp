@@ -157,20 +157,9 @@ void PFCUnitSpec::UpdateAfterEdit_impl() {
   UpdtDynTable();
 }
 
-void PFCUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
-                                    int thr_no) {
-  // always send!
-  Send_DeepRawNetin_impl(u, net, thr_no);
-}
-
-void PFCUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* net,
-                                         int thr_no) {
-  // always send!
-  Send_DeepRawNetin_Post_impl(u, net, thr_no);
-}
-
-
 void PFCUnitSpec::Compute_DeepRaw(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+  if(!Compute_DeepTest(u, net, thr_no))
+    return;
   LeabraUnit* un = (LeabraUnit*)u->Un(net, thr_no);
   int unidx = un->UnitGpUnIdx();
   int dyn_row = unidx % n_dyns;

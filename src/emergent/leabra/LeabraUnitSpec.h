@@ -684,16 +684,6 @@ public:
     virtual void Compute_NetinInteg_Spike_i(LeabraUnitVars* uv, LeabraNetwork* net,
                                             int thr_no);
     // #IGNORE called by Compute_NetinInteg for spiking units: compute actual inhibitory netin conductance value for spiking units by integrating over spike
-  virtual void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
-  virtual void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
-    virtual void Send_DeepRawNetin_impl(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #IGNORE send deep5b netinputs through SendDeepRawConSpec connections
-  virtual void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup
-    virtual void Send_DeepRawNetin_Post_impl(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #IGNORE send context netinputs through SendDeepRawConSpec connections -- post processing rollup
 
   inline float Compute_EThresh(LeabraUnitVars* uv);
   // #CAT_Activation #IGNORE compute excitatory value that would place unit directly at threshold
@@ -780,31 +770,21 @@ public:
 
 
   ///////////////////////////////////////////////////////////////////////
-  //	Quarter Final
-
-  virtual void Quarter_Final(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
-    virtual void Quarter_Final_RecVals(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
-    virtual void Compute_ActTimeAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-    // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in Quarter_Final function
-
-  ///////////////////////////////////////////////////////////////////////
-  //	Deep Leabra Computations -- called during Quarter_Init
-
-  virtual bool Compute_DeepTest(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep should various Compute_Deep* functions be run now?
-
-  virtual void Send_DeepCtxtNetin(LeabraUnitVars* uv, LeabraNetwork* net,
-                                  int thr_no);
-  // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections
-  virtual void Send_DeepCtxtNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net,
-                                        int thr_no);
-  // #CAT_Deep send deep_raw context netinputs through DeepCtxtConSpec connections -- post processing rollup
+  //	Deep Leabra Computations -- after superifical acts updated
 
   virtual bool DeepNormCopied();
   // #CAT_Deep is the deep_norm value actually copied from another layer (e.g., ThalAutoEncodeUnitSpec) -- if true, then the deep_norm_def value on the layer is just set to 0, so it doesn't get miscomputed based on values that are not otherwise accurate
   
+  virtual bool Compute_DeepTest(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep should various Compute_Deep* functions be run now?
+
+  virtual void Compute_DeepRaw(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation update the deep_raw activations -- assumes checks have already been done
+  virtual void	Send_DeepRawNetin(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep send deep5b netinputs through SendDeepRawConSpec connections
+  virtual void	Send_DeepRawNetin_Post(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep send context netinputs through SendDeepRawConSpec connections -- post processing rollup
+
   virtual void Compute_DeepRawNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep compute deep_raw_norm values from deep_raw values
   virtual void Compute_DeepNorm(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
@@ -817,9 +797,21 @@ public:
                                         int thr_no);
   // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
   
+  virtual void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep compute deep_mod from deep_norm -- happens at start of trial
+
   virtual void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience
 
+  ///////////////////////////////////////////////////////////////////////
+  //	Quarter Final
+
+  virtual void Quarter_Final(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
+    virtual void Quarter_Final_RecVals(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation record state variables after each gamma-frequency quarter-trial of processing
+    virtual void Compute_ActTimeAvg(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+    // #CAT_Activation compute time-averaged activation of unit (using act.avg_dt time constant), typically done at end of settling in Quarter_Final function
 
   ///////////////////////////////////////////////////////////////////////
   //	Stats
