@@ -323,7 +323,8 @@ void DeepNormSpec::Initialize() {
   mod = true;
   raw_val = GROUP_MAX;
   raw_thr = 0.2f;
-  contrast = 1.0f;
+  binary = false;
+  contrast = 0.5f;
   ctxt_fm_lay = 0.5f;
   ctxt_fm_ctxt = 1.0f - ctxt_fm_lay;
   min_ctxt = 0.05f;
@@ -1016,8 +1017,8 @@ void LeabraUnitSpec::Compute_HardClamp(LeabraUnitVars* u, LeabraNetwork* net, in
     return;
   }
   float ext_in = u->ext;
+  u->act_raw = ext_in;
   if(net->cycle > 0 && deep_norm.on && deep_norm.mod) { // apply deep_norm attentional modulation to inputs!
-    u->act_raw = ext_in;
     ext_in *= u->deep_mod;
   }
   u->net = u->thal = ext_in;
@@ -1045,16 +1046,18 @@ void LeabraUnitSpec::Compute_HardClampNoClip(LeabraUnitVars* u, LeabraNetwork* n
   if(!(ls->clamp.hard && lay->HasExtFlag(UnitVars::EXT))) {
     return;
   }
-  u->net = u->ext;
-  u->thal = u->ext;             // thalamus is external input
-  //  u->act_eq = clamp_range.Clip(u->ext);
-  u->act_eq = u->ext;
-  u->act_nd = u->act_eq;
-  u->act = u->act_eq;
+  float ext_in = u->ext;
+  u->act_raw = ext_in;
+  if(net->cycle > 0 && deep_norm.on && deep_norm.mod) { // apply deep_norm attentional modulation to inputs!
+    ext_in *= u->deep_mod;
+  }
+  u->net = u->thal = ext_in;
+  // ext_in = clamp_range.Clip(ext_in);
+  u->act_eq = u->act_nd = u->act = ext_in;
   if(u->act_eq == 0.0f)
     u->v_m = e_rev.l;
   else
-    u->v_m = act.thr + u->act_eq / act.gain;
+    u->v_m = act.thr + ext_in / act.gain;
   u->v_m_eq = u->v_m;
   u->da = u->I_net = 0.0f;
 
@@ -1358,12 +1361,6 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
-    if(deep_norm.on && deep_norm.mod && net->cycle == 0) { // apply deep_norm attentional modulation to inputs!
-      u->act_raw = u->act_eq;
-      u->act_eq *= u->deep_mod;
-      u->act_nd = u->act_eq;
-      u->act = u->act_eq;
-    }
     return; // don't re-compute
   }
 
@@ -1418,8 +1415,8 @@ void LeabraUnitSpec::Compute_ActFun_Rate(LeabraUnitVars* u, LeabraNetwork* net,
     new_act += Compute_Noise(u, net, thr_no);
   }
 
+  u->act_raw = new_act;
   if(deep_norm.on && deep_norm.mod) { // apply attention directly to act and netin
-    u->act_raw = new_act;
     new_act *= u->deep_mod;
   }
   u->act_nd = act_range.Clip(new_act);
@@ -1898,6 +1895,8 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
       u->deep_norm = u->deep_raw_norm; // direct copy!
     }
     else {
+      if(deep_norm.binary)
+        u->deep_raw_norm = 1.0f;
       float dctxt = u->deep_ctxt;
       float lctxt = lay->am_deep_ctxt.avg;
       u->deep_norm = deep_norm.ComputeNormLayCtxt(u->deep_raw_norm, dctxt, lctxt);

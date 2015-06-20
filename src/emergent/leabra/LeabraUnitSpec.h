@@ -451,6 +451,7 @@ public:
   bool          mod;            // #CONDSHOW_ON_on should deep_norm values modulate (multiply) superficial act and net variables -- turn this off to allow layer to compute deep_norm values but not apply them to itself..
   DeepRawVal    raw_val;        // #CONDSHOW_ON_on which deep_raw value should be used in computing the deep_norm attentional mask weights -- see options for various issues
   float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
+  bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
   float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
   float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
