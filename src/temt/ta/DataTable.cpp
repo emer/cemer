@@ -1878,7 +1878,7 @@ void DataTable::MoveRow(int old_index, int new_index) {
 }
 
 bool DataTable::AppendRows(DataTable* append_from) {
-  return taDataProc::AppendRows(this, append_from);
+  return taDataProc::CopyCommonColData(this, append_from);
 }
 
 void DataTable::RemoveOrphanCols() {
