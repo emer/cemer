@@ -199,6 +199,7 @@ void Program::UpdateAfterCopy(const Program& cp) {
     return;
   }
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
 
 void Program::UpdateAfterEdit_impl() {
