@@ -166,6 +166,7 @@ void Program::Copy_(const Program& cp) {
     script->ClearAll();
     script->prog_vars.Reset();
   }
+  SetBaseFlag(COPYING); // ala Copy__
   tags = cp.tags;
   desc = cp.desc;
   flags = cp.flags;
@@ -185,13 +186,24 @@ void Program::Copy_(const Program& cp) {
   sub_progs_step.RemoveAll();
   sub_progs_all.RemoveAll();
   sub_progs_dir.RemoveAll();
+  UpdateAfterCopy(cp);
+  ClearBaseFlag(COPYING);
+  
+  //  UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+  //  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
+}
+
+void Program::UpdateAfterCopy(const Program& cp) {
+  Program_Group* my_group = GET_MY_OWNER(Program_Group);
+  if (my_group && my_group->HasBaseFlag(COPYING)){
+    return;
+  }
   UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
-  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject); // also check for project copy
 }
 
 void Program::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-
+  
   if(taMisc::is_loading) {
     last_name = name;           // grab it!
   }

@@ -118,9 +118,11 @@ void ProgEl::Destroy() {
 }
 
 void ProgEl::Copy_(const ProgEl& cp) {
+  SetBaseFlag(COPYING); // ala Copy__
   desc = cp.desc;
   flags = cp.flags;
   orig_prog_code = cp.orig_prog_code;
+  ClearBaseFlag(COPYING); // ala Copy__
 }
 
 void ProgEl::UpdateProgFlags() {
@@ -192,9 +194,13 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
 
 void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
   Program* myprg = GET_MY_OWNER(Program);
+  if (myprg && myprg->HasBaseFlag(taBase::COPYING)) {
+    return;
+  }
+  
   Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING)) return;
-  // don't update if already being taken care of at higher level
+  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING))
+    return; // don't update if already being taken care of at higher level
 
   // todo: this can now theoretically be done by UpdatePointers_NewPar_FindNew
   // but this was written first and it works..

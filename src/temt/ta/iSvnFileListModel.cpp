@@ -29,9 +29,15 @@
 
 #define SVN_N_COLS 5
 
-bool iSvnFileListModel::CommitFile(const String& file_path, const String& msg) {
+bool iSvnFileListModel::CommitFile(const String& file_path, bool single_file, const String& msg) {
   iSvnFileListModel* svn_file_model = new iSvnFileListModel();
-  String path = taMisc::GetDirFmPath(file_path);
+  String path;
+  if (single_file == false) {
+    path = taMisc::GetDirFmPath(file_path);
+  }
+  else {
+    path = file_path;
+  }
   svn_file_model->setWcPath(path);
   String wc_url;
   bool rval = false;
@@ -46,9 +52,9 @@ bool iSvnFileListModel::CommitFile(const String& file_path, const String& msg) {
 
 iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)
+  , svn_head_rev(-1)
   , svn_client(0)
   , svn_rev(-1)
-  , svn_head_rev(-1)
 {
   file_icon_provider = new QFileIconProvider;
 }

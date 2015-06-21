@@ -165,7 +165,7 @@ public:
 
   virtual void          SvnBrowser();
   // #BUTTON #CAT_File open a subversion browser for the directory that this project is in
-  virtual void          SvnCommit();
+  virtual void          SvnCommit(bool project_file_only);
   // #BUTTON #CAT_File commit this project file (saves first) into svn (only if already added to svn repository -- use SvnBrowser to do that if necessary)
 
   virtual void          UpdateChangeLog();

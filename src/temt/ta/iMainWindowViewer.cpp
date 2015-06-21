@@ -1582,9 +1582,15 @@ void iMainWindowViewer::fileOpenSvnBrowser() {
 }
 
 void iMainWindowViewer::fileSvnCommit() {
+  bool project_file_only = true;
+  if (QApplication::keyboardModifiers() & Qt::AltModifier) {
+    project_file_only = false;
+  }
   taProject* proj = curProject();
-  if (!proj) return;
-  proj->SvnCommit();
+  if (!proj){
+    return;
+  }
+  proj->SvnCommit(project_file_only);
 }
 
 void iMainWindowViewer::fileSaveAll() {

@@ -903,11 +903,11 @@ void taProject::SvnBrowser() {
   }
 }
 
-void taProject::SvnCommit() {
+void taProject::SvnCommit(bool project_file_only) {
   Save();
   String path = GetFileName();
   if(path.nonempty()) {
-    iSvnFileListModel::CommitFile(path);
+    iSvnFileListModel::CommitFile(path, project_file_only); // true means project file only
   }
 }
 

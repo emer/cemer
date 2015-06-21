@@ -466,7 +466,9 @@ protected:
   String                last_name; // last-used program name -- detect changes and update short_nm accordingly
   taBaseRef             scroll_to_itm; // item to scroll to in a callback
 
-  void         UpdateAfterEdit_impl() override;
+  virtual void  UpdateAfterCopy(const Program& cp);
+  
+ void         UpdateAfterEdit_impl() override;
   bool         CheckConfig_impl(bool quiet) override;
   void         CheckChildConfig_impl(bool quiet, bool& rval) override;
   void         InitScriptObj_impl() override; // no "this" and install
