@@ -633,10 +633,12 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   u->td_net = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
-  u->deep_sent = 0.0f;
-  u->deep_raw_net = 0.0f;
-  u->deep_ctxt_net = 0.0f;
   // u->gi_syn = 0.0f;
+
+  // all the deep vars are updated in Compute_DeepStateUpdt
+  // u->deep_sent = 0.0f;
+  // u->deep_raw_net = 0.0f;
+  // u->deep_ctxt_net = 0.0f;
 
   // u->net = 0.0f;
 
@@ -1981,6 +1983,12 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   u->deep_ctxt = u->deep_ctxt_net;
   u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
+
+  // todo: add deep_norm_sent and transition that to delta
+  // update all the netins here 
+  u->deep_sent = 0.0f;
+  u->deep_raw_net = 0.0f;
+  u->deep_ctxt_net = 0.0f;
 }
 
 void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
