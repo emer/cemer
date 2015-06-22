@@ -1110,6 +1110,8 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   int tag_idx = dc->col_idx;
   dc = dt.FindMakeCol("notes", VT_STRING);
   dc->desc = "notes for the job -- describe any specific information about the model configuration etc -- can use this for searching and sorting results";
+  dc = dt.FindMakeCol("filename", VT_STRING);
+  dc->desc = "name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
   dc = dt.FindMakeCol("params", VT_STRING);
   dc->desc = "emergent parameters based on currently selected items in the ClusterRun";
 
@@ -1464,6 +1466,8 @@ ClusterRun::AddJobRow_impl(const String& cmd, const String& params, int cmd_id) 
 
   int row = jobs_submit.AddBlankRow();
   // submit_svn filled in later -- not avail now
+  String filename = GetMyProj()->name;
+  jobs_submit.SetVal(filename,    "filename", row);
   jobs_submit.SetVal(last_submit_time, "submit_time",   row);
   jobs_submit.SetVal(String(row), "submit_job", row); // = row!
   // job_no will be filled in on cluster
