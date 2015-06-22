@@ -17,6 +17,8 @@
 #include <taVector2f>
 #include <taImage>
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(RetinaProc);
 SMARTREF_OF_CPP(RetinaProc); // RetinaProcRef
 
@@ -79,12 +81,14 @@ bool RetinaProc::TransformImageData_impl(float_Matrix& eye_image,
     scaled_size.y = 2 + (int)(scale * (img_size.y-2));
     if(scaled_size.x < reg->input_size.retina_size.x || scaled_size.y < reg->input_size.retina_size.y) {
       eff_em = taImageProc::BORDER;
+      // taMisc::Info("switched to border:, scale:", scaled_size.GetStr(),"vs:",
+      //              reg->input_size.retina_size.GetStr());
     }
   }
 
-  taImageProc::SampleImageWindow_float(xform_image, eye_image, reg->input_size.retina_size.x,
-				       reg->input_size.retina_size.y,
-				       ctr_x, ctr_y, rotate, scale, eff_em);
+  taImageProc::SampleImageWindow_float
+    (xform_image, eye_image, reg->input_size.retina_size.x,
+     reg->input_size.retina_size.y, ctr_x, ctr_y, rotate, scale, eff_em);
 
   if(edge_mode == taImageProc::BORDER) taImageProc::RenderBorder_float(xform_image);
   if(edge_mode == taImageProc::BORDER && fade_width > 0) {

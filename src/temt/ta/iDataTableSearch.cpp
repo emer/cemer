@@ -40,6 +40,7 @@ iDataTableSearch::iDataTableSearch(QWidget* parent) : QWidget(parent) {
 
 iDataTableSearch::iDataTableSearch(iDataTableView* table_view_, QWidget* parent)  : QWidget(parent) {
   table_view = table_view_;
+  table_model = NULL;
   Constr();
 }
 
