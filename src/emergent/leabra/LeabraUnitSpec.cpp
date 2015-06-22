@@ -570,6 +570,7 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
+  u->deep_ctxt_net = 0.0f;
   u->thal = 0.0f;
   u->thal_cnt = -1.0f;
   u->lrnmod = 0.0f;
@@ -634,7 +635,7 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   u->gi_raw = 0.0f;
   u->deep_sent = 0.0f;
   u->deep_raw_net = 0.0f;
-  u->deep_ctxt = 0.0f;
+  u->deep_ctxt_net = 0.0f;
   // u->gi_syn = 0.0f;
 
   // u->net = 0.0f;
@@ -688,6 +689,7 @@ void LeabraUnitSpec::Init_Acts(UnitVars* ru, Network* rnet, int thr_no) {
   u->deep_ctxt = 0.0f;
   u->deep_norm_net = 0.0f;
   u->deep_raw_net = 0.0f;
+  u->deep_ctxt_net = 0.0f;
   u->thal = 0.0f;
   u->thal_cnt = -1.0f;
   u->lrnmod = 0.0f;
@@ -1840,7 +1842,7 @@ void LeabraUnitSpec::Send_DeepRawNetin_Post(LeabraUnitVars* u, LeabraNetwork* ne
 #endif
   }
   u->deep_raw_net += draw_net_delta;
-  u->deep_ctxt += dctxt_net_delta;
+  u->deep_ctxt_net += dctxt_net_delta;
 }
 
 void LeabraUnitSpec::Compute_DeepRawNorm(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
@@ -1897,8 +1899,8 @@ void LeabraUnitSpec::Compute_DeepNorm(LeabraUnitVars* u, LeabraNetwork* net, int
     else {
       if(deep_norm.binary)
         u->deep_raw_norm = 1.0f;
-      float dctxt = u->deep_ctxt;
-      float lctxt = lay->am_deep_ctxt.avg;
+      float dctxt = u->deep_ctxt_net;
+      float lctxt = lay->am_deep_ctxt_net.avg;
       u->deep_norm = deep_norm.ComputeNormLayCtxt(u->deep_raw_norm, dctxt, lctxt);
     }
   }
@@ -1958,7 +1960,7 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
   u->deep_norm_net = nw_nt;
 }
 
-void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
+void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
   if(!deep.on) return;
   int qtr_eff = net->quarter;
   if(qtr_eff == 0)
@@ -1976,6 +1978,7 @@ void LeabraUnitSpec::Compute_DeepMod(LeabraUnitVars* u, LeabraNetwork* net, int 
     u->deep_mod = lay->deep_norm_def;
   }
 
+  u->deep_ctxt = u->deep_ctxt_net;
   u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
 }
@@ -1988,8 +1991,9 @@ void LeabraUnitSpec::ClearDeepActs(LeabraUnitVars* u, LeabraNetwork* net, int th
   u->deep_raw_norm = 0.0f;
   u->deep_norm = 1.0f;
   u->deep_mod = 1.0f;
-  u->deep_raw_net = 0.0f;
   u->deep_norm_net = 0.0f;
+  u->deep_raw_net = 0.0f;
+  u->deep_ctxt_net = 0.0f;
 }
 
 ///////////////////////////////////////////////////////////////////////

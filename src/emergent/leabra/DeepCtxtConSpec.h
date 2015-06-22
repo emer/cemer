@@ -27,7 +27,7 @@
 eTypeDef_Of(DeepCtxtConSpec);
 
 class E_API DeepCtxtConSpec : public LeabraConSpec {
-  // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
+  // #AKA_LeabraTICtxtConSpec sends deep layer deep_raw activation values to deep_ctxt_net variable on receiving units -- typically used to integrate across the local context within a layer, providing both temporal integration (TI) learning, and the basis for normalizing attentional signals -- use for SELF projection in a layer -- wt_scale should be set to 1, 1
 INHERITED(LeabraConSpec)
 public:
   bool          send_deep_norm; // also send final deep_norm values over these context connections -- helps produce a broader spread of deep_norm values

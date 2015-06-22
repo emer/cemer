@@ -436,7 +436,7 @@ private:
 eTypeDef_Of(DeepNormSpec);
 
 class E_API DeepNormSpec : public SpecMemberBase {
-  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt variables -- a
+  // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra specs for computing deep_norm normalized attentional filter values as function of deep_raw, deep_norm_net, and deep_ctxt_net variables -- a
 INHERITED(SpecMemberBase)
 public:
   enum DeepRawVal { // value to use for deep_raw in computing deep_norm
@@ -453,8 +453,8 @@ public:
   float         raw_thr;        // #CONDSHOW_ON_on threshold for the computation of deep_norm on the effective normalized deep_raw_norm value that drives the deep_norm computation -- anything below this threshold will get a deep_norm value of 0, and use the layer deep_norm_def default value for the layer
   bool          binary;         // #CONDSHOW_ON_on deep norm is a binary mask based on what is above or below threshold
   float         contrast;       // #CONDSHOW_ON_on #MIN_0 contrast weighting factor -- the larger this is, the SMALLER the contrast is between the strongest and weakest elements
-  float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt values
-  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt value
+  float         ctxt_fm_lay;    // #CONDSHOW_ON_on #MIN_0 #MAX_1 what proportion of the deep context value to get from the layer average context value, for purposes of computing deep_norm -- remainder is from local deep_ctxt_net values
+  float         ctxt_fm_ctxt;   // #READ_ONLY 1.0 - ctxt_fm_lay -- how much of context comes from deep_ctxt_net value
   float         min_ctxt;       // #CONDSHOW_ON_on #MIN_0 #DEF_0.05 minimum context value for purposes of computing deep_norm -- because ctxt shows up in divisor of norm equation, very small values can produce high values -- this prevents that sensitivity
   float         copy_def;       // #CONDSHOW_ON_on for the raw_val = NORM_NET and other specialized cases where deep_norm is copied from other values and not computed as usual, this is the value to use for the deep_norm_def default deep_norm value for units that don't have an above-zero deep_norm value
   
@@ -584,7 +584,7 @@ public:
   LeabraDropoutSpec dropout;	// #CAT_Activation random dropout parameters -- an important tool against positive feedback dynamics, and pressure to break up large-scale interdependencies between neurons, which benefits generalization
   Quarters      deep_qtr;       // #CAT_Learning quarters during which deep neocortical layer activations should be updated -- deep_raw is updated and sent during this quarter, and deep_ctxt, deep_norm are updated and sent right after this quarter (wrapping around to the first quarter for the 4th quarter)
   DeepSpec	 deep;  	// #CAT_Learning specs for DeepLeabra deep neocortical layer dynamics, which capture attentional, thalamic auto-encoder, and temporal integration mechanisms 
-  DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt variables
+  DeepNormSpec   deep_norm;	// #CAT_Learning specs for computing deep_nrm normalized attentional filter values as function of deep_raw and deep_ctxt_net variables
   DaModSpec	da_mod;		// #CAT_Learning da modulation of activations (for da-based learning, and other effects)
   NoiseType	noise_type;	// #CAT_Activation where to add random noise in the processing (if at all)
   RandomSpec	noise;		// #CONDSHOW_OFF_noise_type:NO_NOISE #CAT_Activation distribution parameters for random added noise
@@ -798,8 +798,8 @@ public:
                                         int thr_no);
   // #CAT_Deep send deep_norm netinputs through SendDeepNormConSpec connections -- post processing rollup
   
-  virtual void Compute_DeepMod(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
-  // #CAT_Deep compute deep_mod from deep_norm -- happens at start of trial
+  virtual void Compute_DeepStateUpdt(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
+  // #CAT_Deep state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net
 
   virtual void ClearDeepActs(LeabraUnitVars* uv, LeabraNetwork* net, int thr_no);
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience

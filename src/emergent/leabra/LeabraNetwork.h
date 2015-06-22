@@ -486,9 +486,9 @@ public:
   // #IGNORE update deep variables, using the proper sequence of unit-level calls
 
     virtual void Compute_DeepRawStats_Thr(int thr_no);
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
     virtual void Compute_DeepRawStats_Post();
-    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt vars
+    // #IGNORE compute layer and unit-group level stats on deep_raw, deep_ctxt_net vars
     virtual void Compute_DeepRawNormStats_Thr(int thr_no);
     // #IGNORE compute layer and unit-group level stats on deep_raw_norm vars
     virtual void Compute_DeepRawNormStats_Post();
@@ -504,8 +504,8 @@ public:
     virtual void Compute_DeepNormNetStats_Post();
     // #IGNORE compute layer and unit-group level stats on deep_norm_net
   
-  virtual void Compute_DeepMod_Thr(int thr_no);
-  // #IGNORE update deep_mod from deep_norm -- happens at start of new trial
+  virtual void Compute_DeepStateUpdt_Thr(int thr_no);
+  // #IGNORE state update for deep leabra -- typically at start of new alpha trial -- copy deep_mod from deep_norm, deep_ctxt from deep_ctxt_net
   
   virtual void ClearDeepActs();
   // #CAT_Deep clear all the deep lamina variables -- can be useful to do at discontinuities of experience

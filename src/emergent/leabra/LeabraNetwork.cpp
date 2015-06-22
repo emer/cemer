@@ -432,7 +432,7 @@ void LeabraNetwork::Quarter_Init() {
   Compute_HardClamp_Layer();
 
   if(net_misc.deep) {
-    NET_THREAD_CALL(LeabraNetwork::Compute_DeepMod_Thr);
+    NET_THREAD_CALL(LeabraNetwork::Compute_DeepStateUpdt_Thr);
   }
 }
 
@@ -1308,7 +1308,7 @@ void LeabraNetwork::Compute_DeepRawStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_raw->UpdtVals(uv->deep_raw, flat_idx); 
-      am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
+      am_ctxt->UpdtVals(uv->deep_ctxt_net, flat_idx); 
     }
   }
 
@@ -1330,7 +1330,7 @@ void LeabraNetwork::Compute_DeepRawStats_Thr(int thr_no) {
       if(uv->lesioned()) continue;
       const int flat_idx = ThrUnitIdx(thr_no, ui); // note: max_i is now in flat_idx units
       am_raw->UpdtVals(uv->deep_raw, flat_idx); 
-      am_ctxt->UpdtVals(uv->deep_ctxt, flat_idx); 
+      am_ctxt->UpdtVals(uv->deep_ctxt_net, flat_idx); 
     }
   }
 }
@@ -1346,7 +1346,7 @@ void LeabraNetwork::Compute_DeepRawStats_Post() {
     // continue;
     AvgMaxVals& am_deep_raw = lay->am_deep_raw;
     am_deep_raw.InitVals();
-    AvgMaxVals& am_deep_ctxt = lay->am_deep_ctxt;
+    AvgMaxVals& am_deep_ctxt = lay->am_deep_ctxt_net;
     am_deep_ctxt.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
@@ -1369,7 +1369,7 @@ void LeabraNetwork::Compute_DeepRawStats_Post() {
     LeabraUnGpData* gpd = lay->ungp_data.FastEl(ugidx);
     AvgMaxVals& am_deep_raw = gpd->am_deep_raw;
     am_deep_raw.InitVals();
-    AvgMaxVals& am_deep_ctxt = gpd->am_deep_ctxt;
+    AvgMaxVals& am_deep_ctxt = gpd->am_deep_ctxt_net;
     am_deep_ctxt.InitVals();
 
     for(int i=0; i < n_thrs_built; i++) {
@@ -1524,7 +1524,7 @@ void LeabraNetwork::Compute_DeepNormStats_Post() {
         lay->deep_norm_def = us->deep_norm.copy_def;
       }
       else {
-        float lctxt = lay->am_deep_ctxt.avg;
+        float lctxt = lay->am_deep_ctxt_net.avg;
         // use layer context for both, and then renormalize
         lay->deep_norm_def = us->deep_norm.ComputeNormLayCtxt(0.0f, lctxt, lctxt);
         if(lay->am_deep_norm.max > 0.0f)
@@ -1659,7 +1659,7 @@ void LeabraNetwork::Compute_DeepNormNetStats_Post() {
   }
 }
 
-void LeabraNetwork::Compute_DeepMod_Thr(int thr_no) {
+void LeabraNetwork::Compute_DeepStateUpdt_Thr(int thr_no) {
   const int nu = ThrNUnits(thr_no);
 
   bool deep_updt = false;
@@ -1667,7 +1667,7 @@ void LeabraNetwork::Compute_DeepMod_Thr(int thr_no) {
   for(int i=0; i<nu; i++) {
     LeabraUnitVars* uv = (LeabraUnitVars*)ThrUnitVars(thr_no, i);
     if(uv->lesioned()) continue;
-    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepMod(uv, this, thr_no);
+    ((LeabraUnitSpec*)uv->unit_spec)->Compute_DeepStateUpdt(uv, this, thr_no);
   }
 }
 

@@ -132,7 +132,7 @@ public:
   // #CAT_UnitVar previous-previous value of the deep layer raw activation values -- used for pfc dynamics updating
   inline float& deep_ctxt()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt; }
-  // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_nrm -- also provides temporal context for temporal integration (TI) learning -- added into net input of superficial neurons -- requires DeepCtxtConSpec connection
+  // #CAT_UnitVar temporally-delayed local lateral integration of deep_raw signals to provide context for temporal integration (TI) learning -- added into net input of superficial neurons -- copied from deep_ctxt_net at start of new alpha trial
   inline float& deep_raw_norm()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_norm; }
   // #CAT_UnitVar the value of deep_raw that goes into the deep_norm computation for this unit -- determined by the deep_norm.raw_val setting on the unit spec -- automatically max-normalized to 1 per layer, and thresholded by deep_norm.raw_thr
@@ -148,6 +148,9 @@ public:
   inline float& deep_raw_net()
   { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_net; }
   // #CAT_UnitVar net input from the deep_raw activation of other areas, in terms of the feedforward corticothalamic pathway from deep5b IB neurons to thalamic relay neurons in other areas
+  inline float& deep_ctxt_net()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_ctxt_net; }
+  // #CAT_UnitVar local lateral integration of deep_raw signals, to drive normalization of the overall attentional filtering signals as reflected in deep_norm -- also provides temporal context for temporal integration (TI) learning in deep_ctxt
   inline float& thal()
   { return ((LeabraUnitVars*)GetUnitVars())->thal; }
   // #VIEW_HOT #CAT_UnitVar thalamic activation value, driven by a ThalSendUnitSpec or GpiInvUnitSpec -- used by deep params in LeabraUnitSpec and MatrixConSpecs, and possibly other specs, to respond to thalamic inputs
