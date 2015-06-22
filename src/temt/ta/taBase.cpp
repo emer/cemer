@@ -3741,8 +3741,29 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
     ref.set(new_par);
     return true;
   }
+  taBase* old_grand_par = old_par->GetOwner();
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
-  if(old_own != old_par) return false; // if not scoped in our guy, bail
+  if (!old_own && !old_grand_par) {
+    return false;
+  }
+  if (!old_own && old_grand_par) {  // try up a level
+    old_own = ref.ptr()->GetOwner(old_grand_par->GetTypeDef());
+    if (old_own) {
+      taBase* new_grand_par = new_par->GetOwner();
+      if (new_grand_par) {
+        taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_grand_par, new_grand_par);
+        if(new_guy)
+          ref.set(new_guy);
+        else {
+          if(null_not_found)
+            ref.set(NULL);            // reset to null if not found!
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_par, new_par);
   if(new_guy)
     ref.set(new_guy);
