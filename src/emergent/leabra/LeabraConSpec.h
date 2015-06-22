@@ -219,9 +219,9 @@ class E_API DeepLrateSpec : public SpecMemberBase {
   // ##INLINE ##INLINE_DUMP ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_Leabra learning rate specs for DeepLeabra -- effective learning rate can be enhanced for units receiving deep attentional modulation vs. those without
 INHERITED(SpecMemberBase)
 public:
-  bool          on;             // enable the deep attentional differential learning rates based on deep_norm modulation signal
-  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations -- this is the baseline learning rate prior to adding in contribution of deep_norm term: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_norm)
-  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground activations, as a function of deep_norm activation level: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_norm)
+  bool          on;             // enable the deep attentional differential learning rates based on deep_mod modulation signal
+  float         bg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for background cortico-cortical activations -- this is the baseline learning rate prior to adding in contribution of deep_norm term: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_mod)
+  float         fg_lrate;       // #CONDSHOW_ON_on #MIN_0 learning rate multiplier for foreground activations, as a function of deep_norm activation level: lrate_eff = lrate * (bg_lrate + fg_lrate * deep_mod)
 
   String       GetTypeDecoKey() const override { return "ConSpec"; }
 

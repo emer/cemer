@@ -198,7 +198,7 @@ inline void LeabraConSpec::Compute_dWt(ConGroup* scg, Network* rnet, int thr_no)
     LeabraUnitVars* ru = (LeabraUnitVars*)cg->UnVars(i, net);
     float lrate_eff = clrate;
     if(deep_on) {
-      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_norm);
+      lrate_eff *= (bg_lrate + fg_lrate * ru->deep_mod);
     }
     float l_lrn_eff;
     if(xcal.set_l_lrn)

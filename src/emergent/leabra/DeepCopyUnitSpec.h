@@ -32,6 +32,7 @@ public:
   enum DeepCopyVar {            // variable to copy from
     DEEP_RAW,                   // deep_raw
     DEEP_NORM,                  // deep_norm
+    DEEP_MOD,                   // deep_mod
     DEEP_CTXT,                  // deep_ctxt
   };
 
