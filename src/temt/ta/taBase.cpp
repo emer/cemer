@@ -3735,45 +3735,53 @@ bool taBase::UpdatePointers_NewPar_SmPtr(taSmartPtr& ref, taBase* old_par, taBas
 }
 
 bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase* new_par,
-                                 bool null_not_found) {
+                                       bool null_not_found) {
   if(!ref.ptr() || !old_par || !new_par) return false;
   if(ref.ptr() == old_par) {
     ref.set(new_par);
     return true;
   }
-  taBase* old_grand_par = old_par->GetOwner();
+  
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
-  if (!old_own && !old_grand_par) {
-    return false;
-  }
-  if (!old_own && old_grand_par) {  // try up a level
-    old_own = ref.ptr()->GetOwner(old_grand_par->GetTypeDef());
-    if (old_own) {
-      taBase* new_grand_par = new_par->GetOwner();
-      if (new_grand_par) {
-        taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_grand_par, new_grand_par);
-        if(new_guy)
-          ref.set(new_guy);
-        else {
-          if(null_not_found)
-            ref.set(NULL);            // reset to null if not found!
-          return false;
-        }
-      }
+   if (old_own == old_par) {
+    taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_par, new_par);
+    if(new_guy)
+      ref.set(new_guy);
+    else {
+      if(null_not_found)
+        ref.set(NULL);            // reset to null if not found!
+      return false;
     }
+    // note: this does not call UAE: done later on owner
     return true;
   }
-
-  taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_par, new_par);
-  if(new_guy)
-    ref.set(new_guy);
-  else {
-    if(null_not_found)
-      ref.set(NULL);            // reset to null if not found!
-    return false;
+  // keep looking
+  bool rval = false;
+  bool keep_looking = true;
+  while(keep_looking) {
+    taBase* old_grand_par = old_par->GetOwner();
+    taBase* new_grand_par = new_par->GetOwner();
+    if (!old_grand_par || !new_grand_par) {
+      break;
+    }
+    old_own = ref.ptr()->GetOwner(old_grand_par->GetTypeDef());
+    if (old_own == old_grand_par) {
+      keep_looking = false;
+      taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_grand_par, new_grand_par);
+      if(new_guy) {
+        ref.set(new_guy);
+        rval = true;
+      }
+      else {
+        if(null_not_found)
+          ref.set(NULL);            // reset to null if not found!
+      }
+      break;
+    }
+    old_par = old_grand_par;
+    new_par = new_grand_par;
   }
-  // note: this does not call UAE: done later on owner
-  return true;
+  return rval;
 }
 
 int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
