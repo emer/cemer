@@ -1216,7 +1216,9 @@ void taiMisc::LoadDefaultKeyBindings() {
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_NEW_ELEMENT_BELOW_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CUT, QKeySequence(control_key + Qt::Key_W));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_CUT_II, QKeySequence());
-  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE, QKeySequence(control_key + Qt::Key_Y));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_COPY, QKeySequence(Qt::AltModifier + Qt::Key_W));
+  default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_COPY_II, QKeySequence());
+default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE, QKeySequence(control_key + Qt::Key_Y));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_II, QKeySequence());
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO, QKeySequence(Qt::ShiftModifier + meta_key + Qt::Key_V));
   default_list->Add(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO_II, QKeySequence());

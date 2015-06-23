@@ -651,6 +651,20 @@ void iTreeView::keyPressEvent(QKeyEvent* key_event) {
         }
         key_event->accept();
         return;
+      case taiMisc::TREE_COPY:
+      case taiMisc::TREE_COPY_II:
+        ext_select_on = false;
+        if (ISelectable *si = curItem()) {
+          if (ISelectableHost *host = si->host()) {
+            int ea = 0;
+            host->EditActionsEnabled(ea);
+            if (ea & iClipData::EA_COPY) {
+              host->EditAction(iClipData::EA_COPY);
+            }
+          }
+        }
+        key_event->accept();
+        return;
       case taiMisc::TREE_PASTE:
       case taiMisc::TREE_PASTE_II:
         ext_select_on = false;
