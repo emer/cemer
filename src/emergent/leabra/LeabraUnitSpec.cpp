@@ -1365,6 +1365,14 @@ void LeabraUnitSpec::Compute_Act_Rate(LeabraUnitVars* u, LeabraNetwork* net, int
   // if(syn_delay.on && !u->act_buf) Init_ActBuff(u);
 
   if((net->cycle >= 0) && lay->hard_clamped) {
+    // Compute_HardClamp happens before deep_mod is available due to timing of updates
+    if(deep_norm.on && deep_norm.mod && net->cycle == 0) {
+      // sync this with Compute_HardClamp:
+      float ext_in = u->ext * u->deep_mod;
+      u->net = u->thal = ext_in;
+      ext_in = clamp_range.Clip(ext_in);
+      u->act_eq = u->act_nd = u->act = ext_in;
+    }
     return; // don't re-compute
   }
 
