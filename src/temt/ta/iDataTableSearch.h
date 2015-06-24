@@ -47,10 +47,14 @@ class TA_API iDataTableSearch : public QWidget {
   friend class iDataTableView;
 
 public:
+  enum SearchMode {
+    CONTAINS = 0,       // if string is a substring of value
+    MATCHES,            // string same as value but case insensitive
+  };
+  
   iDataTableView*       table_view; // DataTable view for the table we search
   iDataTableModel*      table_model; // table model holds list of found items
 
-  QLabel*               srch_label;
   QToolBar*             srch_bar;
   iLineEdit*            srch_text;
   QLabel*               srch_nfound;
@@ -58,8 +62,14 @@ public:
   QAction*              srch_prev;
   QAction*              srch_next;
   QMenu*                srch_mode_menu;
+  iActionMenuButton*    srch_mode_button;
 
-  void                  Search();
+  QAction*              contains_action;
+  QAction*              matches_action;
+  enum SearchMode       search_mode;
+
+  void                  Search(iDataTableSearch::SearchMode mode);
+  // all searches, partial or exact, are case insensitive
   
   iDataTableSearch(QWidget* parent = NULL);
   iDataTableSearch(iDataTableView* table_view_, QWidget* parent = NULL);
@@ -70,6 +80,8 @@ public slots:
   void                  SelectNext();
   void                  SelectPrevious();
   void                  SearchClear();
+  void                  ContainsSelected();
+  void                  MatchesSelected();
 
 protected:
   taVector2i_List*      found_list;  // pass this to data table so it doesn't need to include any Qt code

@@ -4420,7 +4420,7 @@ taBase* DataTable::ChooseNew(taBase* origin) {
   return dt;
 }
 
-void DataTable::Find_impl(taVector2i_List* found_list, const String& search_str) {
+void DataTable::FindAllScalar(taVector2i_List* found_list, const String& search_str, bool contains) {
   DataUpdate(true);
   for (int col_idx = 0; col_idx < cols(); ++col_idx) {
     DataCol* col = data.FastEl(col_idx);
@@ -4428,7 +4428,13 @@ void DataTable::Find_impl(taVector2i_List* found_list, const String& search_str)
       bool keep_searching = true;
       int start_row = 0;
       while (keep_searching) {
-        int row = FindVal(search_str, col_idx, start_row);
+        int row;
+        if (contains) {
+          row = col->FindValPartial(search_str, start_row);
+        }
+        else {
+          row = col->FindVal(search_str, start_row);
+        }
         if (row != -1) {
           taVector2i* cell = new taVector2i;
           cell->x = row;

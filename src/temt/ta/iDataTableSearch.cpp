@@ -48,6 +48,7 @@ iDataTableSearch::~iDataTableSearch() {
 }
 
 void iDataTableSearch::Constr() {
+  search_mode = CONTAINS;  //  default
   taiMisc::SizeSpec currentSizeSpec = taiM->GetCurrentSizeSpec();
 
   QHBoxLayout* lay = new QHBoxLayout(this);
@@ -56,10 +57,17 @@ void iDataTableSearch::Constr() {
   lay->setMargin(0);
   lay->setSpacing(0);
   
-  srch_label = new QLabel("Find:");
-  srch_label->setFont(taiM->nameFont(currentSizeSpec));
-  srch_label->setToolTip(taiMisc::ToolTipPreProcess("Find cells within the above data table: case sensitive if uppercase entered."));
-  srch_bar->addWidget(srch_label);
+  srch_mode_button = new iActionMenuButton();
+  srch_bar->addWidget(srch_mode_button);
+  
+  contains_action = new QAction("Find", this);
+  matches_action = new QAction("Find Matching", this);
+
+  srch_mode_menu = new QMenu(this);
+  srch_mode_button->setMenu(srch_mode_menu);
+  srch_mode_button->setDefaultAction(contains_action);
+  srch_mode_button->setFont(taiM->nameFont(currentSizeSpec));
+  srch_mode_button->setToolTip(taiMisc::ToolTipPreProcess("Find cells within the above data table: always case insensitive"));
 
   srch_text = new iLineEdit();
   srch_bar->addWidget(srch_text);
@@ -76,17 +84,22 @@ void iDataTableSearch::Constr() {
   srch_next = srch_bar->addAction(">");
   srch_next->setToolTip(taiMisc::ToolTipPreProcess("Find next occurrence of find text within table"));
   
-  connect(srch_clear, SIGNAL(triggered()), this, SLOT(SearchClear()) );
-  connect(srch_next, SIGNAL(triggered()), this, SLOT(SelectNext()) );
-  connect(srch_prev, SIGNAL(triggered()), this, SLOT(SelectPrevious()) );
-  connect(srch_text, SIGNAL(returnPressed()), this, SLOT(TextEntered()) );
+  srch_mode_menu->addAction(contains_action);
+  srch_mode_menu->addAction(matches_action);
+
+  connect(srch_clear, SIGNAL(triggered()), this, SLOT(SearchClear()));
+  connect(srch_next, SIGNAL(triggered()), this, SLOT(SelectNext()));
+  connect(srch_prev, SIGNAL(triggered()), this, SLOT(SelectPrevious()));
+  connect(srch_text, SIGNAL(returnPressed()), this, SLOT(TextEntered()));
+  connect(contains_action, SIGNAL(triggered()), this, SLOT(ContainsSelected()));
+  connect(matches_action, SIGNAL(triggered()), this, SLOT(MatchesSelected()));
 }
 
 void iDataTableSearch::TextEntered() {
-  Search();
+  Search(search_mode);
 }
 
-void iDataTableSearch::Search() {
+void iDataTableSearch::Search(iDataTableSearch::SearchMode mode) {
   if (!table_view) {
     return;
   }
@@ -104,7 +117,8 @@ void iDataTableSearch::Search() {
 
   // start next search
   found_list = new taVector2i_List();
-  table_view->dataTable()->Find_impl(found_list, srch_text->text());
+  bool contains = (search_mode == CONTAINS);
+  table_view->dataTable()->FindAllScalar(found_list, srch_text->text(), contains);
 
   table_view->dataTable()->DataUpdate(true);
   for (int i=0; i<found_list->size; i++) {
@@ -149,3 +163,12 @@ void iDataTableSearch::SearchClear() {
   srch_text->setText("");
   table_view->dataTable()->DataUpdate(false);
 }
+
+void iDataTableSearch::ContainsSelected() {
+  search_mode = CONTAINS;
+}
+
+void iDataTableSearch::MatchesSelected() {
+  search_mode = MATCHES;
+}
+
