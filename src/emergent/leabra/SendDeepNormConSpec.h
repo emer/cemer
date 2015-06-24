@@ -28,7 +28,7 @@
 eTypeDef_Of(SendDeepNormConSpec);
 
 class E_API SendDeepNormConSpec : public LeabraConSpec {
-  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_net var on recv unit -- used e.g., in projections to thalamus
+  // #AKA_Deep5bConSpec sends deep_norm activation values instead of usual act values -- stored into deep_norm_net var on recv unit -- used for deep top-down projections
 INHERITED(LeabraConSpec)
 public:
 
@@ -38,13 +38,17 @@ public:
   bool  IsDeepNormCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
-  inline void Send_DeepNormNetin(LeabraConGroup* cg, LeabraNetwork* net,
-                                 int thr_no, const float su_act) {
-    const float su_act_eff = cg->scale_eff * su_act;
+  inline void Send_DeepNormNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
+                                    int thr_no, const float su_act_delta) {
+    const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->ThrSendDeepNormNetTmp(thr_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
-                                         cg->UnIdx(i), su_act_eff));
+    float* send_deepnet_vec = net->ThrSendDeepNormNetTmp(thr_no);
+#ifdef TA_VEC_USE
+    Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
+#else
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
+                                         cg->UnIdx(i), su_act_delta_eff));
+#endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 

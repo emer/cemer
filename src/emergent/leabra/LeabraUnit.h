@@ -222,9 +222,12 @@ public:
   inline float& gi_raw()
   { return ((LeabraUnitVars*)GetUnitVars())->gi_raw; }
   // #NO_VIEW #EXPERT #CAT_UnitVar raw inhib net input received from sending units (increments the deltas in send_delta)
-  inline float& deep_sent()
-  { return ((LeabraUnitVars*)GetUnitVars())->deep_sent; }
-  // #NO_VIEW #EXPERT #CAT_UnitVar last deep activation value sent (only send when diff is over threshold)
+  inline float& deep_raw_sent()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_raw_sent; }
+  // #NO_VIEW #EXPERT #CAT_UnitVar last deep_raw activation value sent in computing deep_raw_net
+  inline float& deep_norm_sent()
+  { return ((LeabraUnitVars*)GetUnitVars())->deep_norm_sent; }
+  // #NO_VIEW #EXPERT #CAT_UnitVar last deep_norm activation value sent in computing deep_norm_net
 
   inline float& misc_1()
   { return ((LeabraUnitVars*)GetUnitVars())->misc_1; }

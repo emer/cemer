@@ -88,7 +88,8 @@ public:
   float      act_sent;       // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last activation value sent (only send when diff is over threshold)
   float      net_raw;        // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw net input received from sending units (send delta delta's are added to this value)
   float      gi_raw;         // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation raw inhib net input received from sending units (increments the deltas in send_delta)
-  float      deep_sent;      // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_net
+  float      deep_raw_sent;  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_raw activation value sent in computing deep_raw_net
+  float      deep_norm_sent;  // #NO_VIEW #NO_SAVE #EXPERT #CAT_Activation last deep_norm activation value sent in computing deep_norm_net
 
   float      misc_1;         // #NO_SAVE #CAT_Activation miscellaneous variable for other algorithms that need it
   int        spk_t;          // #NO_SAVE #CAT_Activation time in tot_cycle units when spiking last occurred (-1 for not yet)

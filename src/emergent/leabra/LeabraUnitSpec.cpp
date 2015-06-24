@@ -596,7 +596,8 @@ void LeabraUnitSpec::Init_Vars(UnitVars* ru, Network* rnet, int thr_no) {
   u->act_sent = 0.0f;
   u->net_raw = 0.0f;
   u->gi_raw = 0.0f;
-  u->deep_sent = 0.0f;
+  u->deep_raw_sent = 0.0f;
+  u->deep_norm_sent = 0.0f;
 
   u->misc_1 = 0.0f;
   u->spk_t = -1;
@@ -636,7 +637,8 @@ void LeabraUnitSpec::Init_Netins(LeabraUnitVars* u, LeabraNetwork* net, int thr_
   // u->gi_syn = 0.0f;
 
   // all the deep vars are updated in Compute_DeepStateUpdt
-  // u->deep_sent = 0.0f;
+  // u->deep_raw_sent = 0.0f;
+  // u->deep_norm_sent = 0.0f;
   // u->deep_raw_net = 0.0f;
   // u->deep_ctxt_net = 0.0f;
 
@@ -1786,7 +1788,7 @@ void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
   // }
 
   if(act_ts > opt_thresh.send) {
-    float act_delta = act_ts - u->deep_sent;
+    float act_delta = act_ts - u->deep_raw_sent;
     if(fabsf(act_delta) > opt_thresh.delta) {
       const int nsg = u->NSendConGps(net, thr_no); 
       for(int g=0; g< nsg; g++) {
@@ -1794,36 +1796,38 @@ void LeabraUnitSpec::Send_DeepRawNetin(LeabraUnitVars* u, LeabraNetwork* net,
         if(send_gp->NotActive()) continue;
         // LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
         // if(tol->hard_clamped)      continue;
-        if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepRawCon()) {
-          SendDeepRawConSpec* sp = (SendDeepRawConSpec*)send_gp->GetConSpec();
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(cs->IsDeepRawCon()) {
+          SendDeepRawConSpec* sp = (SendDeepRawConSpec*)cs;
           sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);
         }
-        else if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepCtxtCon()) {
-          DeepCtxtConSpec* sp = (DeepCtxtConSpec*)send_gp->GetConSpec();
+        else if(cs->IsDeepCtxtCon()) {
+          DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
           sp->Send_DeepCtxtNetDelta(send_gp, net, thr_no, act_delta);
         }
       }
-      u->deep_sent = act_ts;     // cache the last sent value
+      u->deep_raw_sent = act_ts;     // cache the last sent value
     }
   }
-  else if(u->deep_sent > opt_thresh.send) {
-    float act_delta = - u->deep_sent; // un-send the last above-threshold activation to get back to 0
+  else if(u->deep_raw_sent > opt_thresh.send) {
+    float act_delta = - u->deep_raw_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
       // LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
       // if(tol->hard_clamped)        continue;
-      if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepRawCon()) {
-        SendDeepRawConSpec* sp = (SendDeepRawConSpec*)send_gp->GetConSpec();
+      LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+      if(cs->IsDeepRawCon()) {
+        SendDeepRawConSpec* sp = (SendDeepRawConSpec*)cs;
         sp->Send_DeepRawNetDelta(send_gp, net, thr_no, act_delta);
       }
-      else if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepCtxtCon()) {
-        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)send_gp->GetConSpec();
+      else if(cs->IsDeepCtxtCon()) {
+        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
         sp->Send_DeepCtxtNetDelta(send_gp, net, thr_no, act_delta);
       }
     }
-    u->deep_sent = 0.0f;         // now it effectively sent a 0..
+    u->deep_raw_sent = 0.0f;         // now it effectively sent a 0..
   }
 }
 
@@ -1928,22 +1932,48 @@ void LeabraUnitSpec::Send_DeepNormNetin(LeabraUnitVars* u, LeabraNetwork* net,
   if(lay->am_deep_norm.max > 0.0f)
     u->deep_norm /= lay->am_deep_norm.max;
   float act_ts = u->deep_norm;
+
   if(act_ts > opt_thresh.send) {
+    float act_delta = act_ts - u->deep_norm_sent;
+    if(fabsf(act_delta) > opt_thresh.delta) {
+      const int nsg = u->NSendConGps(net, thr_no); 
+      for(int g=0; g< nsg; g++) {
+        LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
+        if(send_gp->NotActive()) continue;
+        // LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+        // if(tol->hard_clamped)      continue;
+        LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+        if(cs->IsDeepNormCon()) {
+          SendDeepNormConSpec* sp = (SendDeepNormConSpec*)cs;
+          sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
+        }
+        else if(cs->IsDeepCtxtCon()) {
+          DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
+          sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
+        }
+      }
+      u->deep_norm_sent = act_ts;     // cache the last sent value
+    }
+  }
+  else if(u->deep_norm_sent > opt_thresh.send) {
+    float act_delta = - u->deep_norm_sent; // un-send the last above-threshold activation to get back to 0
     const int nsg = u->NSendConGps(net, thr_no); 
     for(int g=0; g< nsg; g++) {
       LeabraConGroup* send_gp = (LeabraConGroup*)u->SendConGroup(net, thr_no, g);
       if(send_gp->NotActive()) continue;
-      LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
-      if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepNormCon()) {
-        SendDeepNormConSpec* sp = (SendDeepNormConSpec*)send_gp->GetConSpec();
-        sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+      // LeabraLayer* tol = (LeabraLayer*) send_gp->prjn->layer;
+      // if(tol->hard_clamped)        continue;
+      LeabraConSpec* cs = (LeabraConSpec*)send_gp->GetConSpec();
+      if(cs->IsDeepNormCon()) {
+        SendDeepNormConSpec* sp = (SendDeepNormConSpec*)cs;
+        sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
       }
-      if(((LeabraConSpec*)send_gp->GetConSpec())->IsDeepCtxtCon()) {
-        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)send_gp->GetConSpec();
-        if(sp->send_deep_norm)
-          sp->Send_DeepNormNetin(send_gp, net, thr_no, act_ts);
+      else if(cs->IsDeepCtxtCon()) {
+        DeepCtxtConSpec* sp = (DeepCtxtConSpec*)cs;
+        sp->Send_DeepNormNetDelta(send_gp, net, thr_no, act_delta);
       }
     }
+    u->deep_norm_sent = 0.0f;         // now it effectively sent a 0..
   }
 }
 
@@ -1992,9 +2022,9 @@ void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net
   u->deep_raw_pprv = u->deep_raw_prv;
   u->deep_raw_prv = u->deep_raw; // keep track of what we sent here, for context learning
 
-  // todo: add deep_norm_sent and transition that to delta
   // update all the netins here 
-  u->deep_sent = 0.0f;
+  u->deep_raw_sent = 0.0f;
+  u->deep_norm_sent = 0.0f;
   u->deep_raw_net = 0.0f;
   u->deep_ctxt_net = 0.0f;
 }

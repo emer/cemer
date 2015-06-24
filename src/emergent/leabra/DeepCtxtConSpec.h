@@ -52,13 +52,17 @@ public:
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 
-  inline void Send_DeepNormNetin(LeabraConGroup* cg, LeabraNetwork* net,
-                                 int thr_no, const float su_act) {
-    const float su_act_eff = cg->scale_eff * su_act;
+  inline void Send_DeepNormNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
+                                    int thr_no, const float su_act_delta) {
+    const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
-    float* send_netin_vec = net->ThrSendDeepNormNetTmp(thr_no);
-    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_netin_vec,
-                                         cg->UnIdx(i), su_act_eff));
+    float* send_deepnet_vec = net->ThrSendDeepNormNetTmp(thr_no);
+#ifdef TA_VEC_USE
+    Send_NetinDelta_vec(cg, su_act_delta_eff, send_deepnet_vec, wts);
+#else
+    CON_GROUP_LOOP(cg, C_Send_NetinDelta(wts[i], send_deepnet_vec,
+                                         cg->UnIdx(i), su_act_delta_eff));
+#endif
   }
   // #IGNORE sender-based activation net input for con group (send net input to receivers) -- always goes into tmp matrix (thread_no >= 0!) and is then integrated into net through Compute_NetinInteg function on units
 

@@ -28,12 +28,13 @@
 eTypeDef_Of(SendDeepRawConSpec);
 
 class E_API SendDeepRawConSpec : public LeabraConSpec {
-  // #AKA_Deep5bConSpec sends deep_raw activation values instead of usual act values -- stored into deep_net var on recv unit -- used e.g., in projections to thalamus
+  // #AKA_Deep5bConSpec sends deep_raw activation values instead of usual act values -- stored into deep_raw_net var on recv unit -- used e.g., in projections to thalamus
 INHERITED(LeabraConSpec)
 public:
 
   // special!
   bool  DoesStdNetin() override { return false; }
+  bool  DoesStdDwt() override { return false; }
   bool  IsDeepRawCon() override { return true; }
   void  Trial_Init_Specs(LeabraNetwork* net) override;
 
