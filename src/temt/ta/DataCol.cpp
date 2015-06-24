@@ -371,6 +371,27 @@ int DataCol::FindVal(const Variant& val, int st_row) const {
   }
 }
 
+int DataCol::FindValPartial(const Variant& val, int st_row) const {
+  if(TestError(isMatrix(), "FindValPartial", "column must be scalar, not matrix")) return -1;
+  String val_str = val.toString();
+  if(st_row >= 0) {
+    for(int i=st_row; i<rows(); i++) {
+      String row_str = GetValAsString(i);
+      if(row_str.contains(val_str))
+        return i;
+    }
+    return -1;
+  }
+  else {
+    for(int i=rows()+st_row; i>=0; i--) {
+      String row_str = GetValAsString(i);
+      if(row_str.contains(val_str))
+        return i;
+    }
+    return -1;
+  }
+}
+
 void DataCol::BuildHashTable() {
   RemoveHashTable();
   if(TestError(isMatrix(), "BuildHashTable", "column must be scalar, not matrix"))

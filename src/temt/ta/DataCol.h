@@ -203,7 +203,9 @@ public:
 
   int           FindVal(const Variant& val, int st_row = 0) const;
   // #CAT_Access find row number for given value within column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
-
+  int           FindValPartial(const Variant& val, int st_row = 0) const;
+  // #CAT_Access find row number for given value if it is contained within any element of column of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
+  
   void          BuildHashTable();
   // #CAT_Access build a hash table of column (scalar only) values to speed up finding in large fixed tables -- table is destroyed after any insertion or removal of rows -- it is up to the user to call this when relevant data is all in place -- system cannot track value changes
   void          RemoveHashTable();
