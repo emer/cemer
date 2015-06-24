@@ -665,6 +665,13 @@ bool DataTable::InitValsToRowNo(const Variant& col) {
   return true;
 }
 
+bool DataTable::InitValsByIncrement(const int first_value, const int increment, const Variant& col) {
+  DataCol* da = GetColData(col);
+  if (!da) return false;
+  da->InitValsByIncrement();
+  return true;
+}
+
 bool DataTable::InitValsColName(const Variant& init_val, const String& col_nm) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
@@ -676,6 +683,13 @@ bool DataTable::InitValsToRowNoColName(const String& col_nm) {
   DataCol* da = FindColName(col_nm, true);
   if (!da) return false;
   da->InitValsToRowNo();
+  return true;
+}
+
+bool DataTable::InitValsByIncrementColName(const int first_value, const int increment, const String& col_nm) {
+  DataCol* da = FindColName(col_nm, true);
+  if (!da) return false;
+  da->InitValsByIncrement(first_value, increment);
   return true;
 }
 
@@ -4406,7 +4420,7 @@ taBase* DataTable::ChooseNew(taBase* origin) {
   return dt;
 }
 
-void DataTable::Find(taVector2i_List* found_list, const String& search_str) {
+void DataTable::Find_impl(taVector2i_List* found_list, const String& search_str) {
   DataUpdate(true);
   for (int col_idx = 0; col_idx < cols(); ++col_idx) {
     DataCol* col = data.FastEl(col_idx);

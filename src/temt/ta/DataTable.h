@@ -655,6 +655,8 @@ public:
   // #CAT_Modify initialize all values in given column to given value -- column can be specified as either integer index or a string that is then used to find the given column name
   bool          InitValsToRowNo(const Variant& col);
   // #CAT_Modify initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
+  bool          InitValsByIncrement(const int first_value, const int increment, const Variant& col);
+  // #CAT_Modify initialize all values in given column to be equal to some starting values plus some increment -- only valid for scalar (not matrix) columns -- column can be specified as either integer index or a string that is then used to find the given column name
 
   int           FindVal(const Variant& val, const Variant& col, int st_row = 0,
                         bool not_found_err = false) const;
@@ -699,6 +701,8 @@ public:
   bool          InitValsColName(const Variant& init_val, const String& col_name);
   // #EXPERT #CAT_Modify initialize all values in column of given name to given value
   bool          InitValsToRowNoColName(const String& col_name);
+  // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
+  bool          InitValsByIncrementColName(const int first_value, int increment, const String& col_name);
   // #EXPERT #CAT_Modify initialize all values in column of given name to be equal to the row number -- only valid for scalar (not matrix) columns
 
   int           FindValColName(const Variant& val, const String& col_name, int st_row = 0) const;
@@ -746,10 +750,16 @@ public:
 
   bool          InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #EXPERT #CAT_Modify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals #FROM_GROUP_data initialize all values in given column to given value
+  // #EXPERT #CAT_Modify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_GROUP_data initialize all values in given column to given value
+
   bool          InitValsToRowNoCol(DataCol* col)
   { return col->InitValsToRowNo(); }
-  // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
+  // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns bool          InitValsToRowNoCol(DataCol* col)
+
+  bool          InitValsByIncrementCol(DataCol* col, const int first_value, const int increment)
+  { return col->InitValsByIncrement(first_value, increment); }
+  // #CAT_Columns #MENU #LABEL_InitValsByIncrement #FROM_GROUP_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
+
   int           FindValCol(DataCol* col, const Variant& val, int st_row = 0) const
   { return col->FindVal(val, st_row); }
   // #EXPERT #CAT_Access #MENU #FROM_GROUP_data #USE_RVAL find row number for given value within column col of scalar type (use for Programs), starting at given starting row number.  if st_row < 0 then the search proceeds backwards from that many rows from end (-1 = end)
@@ -1001,9 +1011,9 @@ public:
   // #CAT_DataProc #MENU #FROM_GROUP_data #LABEL_Filter_Custom Select table rows by supplying a logical expression -- if it evaluates to true the row remains visible.  Refer to columns by name. Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
   virtual bool          FilterBySpec(DataSelectSpec* spec);
   // #CAT_DataProc filter the table rows by specifying which rows to retain in the table (hiding the ones that do not match).  Note: you can instantly recover the original full set of rows, unsorted and unfiltered, by using ShowAllRows on the DataTable -- see that function for more details -- to be be able to undo just this Filter you would need to run Flatten first
-  virtual void          Find(taVector2i_List* found_list, const String& search_str);
-  // #CAT_DataProc #MENU #FROM_GROUP_data search for first instance of value, non-matrix columns
-  
+  virtual void          Find_impl(taVector2i_List* found_list, const String& search_str);
+  // #CAT_DataProc search for all instances of value, non-matrix columns
+
   virtual bool          GroupMeanSEM(DataTable* dest_data,
                                      DataCol* gp_col1, DataCol* gp_col2 = NULL,
                                      DataCol* gp_col3 = NULL, DataCol* gp_col4 = NULL);

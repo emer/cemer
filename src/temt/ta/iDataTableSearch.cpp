@@ -104,7 +104,7 @@ void iDataTableSearch::Search() {
 
   // start next search
   found_list = new taVector2i_List();
-  table_view->dataTable()->Find(found_list, srch_text->text());
+  table_view->dataTable()->Find_impl(found_list, srch_text->text());
 
   table_view->dataTable()->DataUpdate(true);
   for (int i=0; i<found_list->size; i++) {
