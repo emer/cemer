@@ -750,15 +750,15 @@ public:
 
   bool          InitValsCol(DataCol* col, const Variant& init_val)
   { return col->InitVals(init_val); }
-  // #EXPERT #CAT_Modify #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_GROUP_data initialize all values in given column to given value
+  // #CAT_Columns #MENU #MENU_ON_Columns #MENU_SEP_BEFORE #LABEL_InitVals    #FROM_GROUP_data initialize all values in given column to given value
 
   bool          InitValsToRowNoCol(DataCol* col)
   { return col->InitValsToRowNo(); }
-  // #CAT_Columns #MENU #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns bool          InitValsToRowNoCol(DataCol* col)
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsToRowNo #FROM_GROUP_data initialize all values in given column to be equal to the row number -- only valid for scalar (not matrix) columns
 
   bool          InitValsByIncrementCol(DataCol* col, const int first_value, const int increment)
   { return col->InitValsByIncrement(first_value, increment); }
-  // #CAT_Columns #MENU #LABEL_InitValsByIncrement #FROM_GROUP_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
+  // #CAT_Columns #MENU #MENU_ON_Columns #LABEL_InitValsByIncrement #FROM_GROUP_data initialize all values in given column to be equal to the row number times some integer increment plus an initial starting value -- only valid for scalar (not matrix) columns
 
   int           FindValCol(DataCol* col, const Variant& val, int st_row = 0) const
   { return col->FindVal(val, st_row); }
