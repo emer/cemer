@@ -231,6 +231,12 @@ bool ClusterRun::Update() {
   if (has_updates && cur_search_algo) {
     cur_search_algo->ProcessResults();
   }
+  
+  DataCol* col = jobs_done.GetColData("running_time", true); // true means quiet
+  if (col) {
+//    col->InitValsToRowNo();
+  }
+
   SigEmitUpdated();
   UpdateUI();
   return has_updates;
@@ -1162,7 +1168,10 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->desc = "when did the job actually start running";
   dc = dt.FindMakeCol("end_time", VT_STRING);
   dc->desc = "when did the job finish running";
-
+  if (!dt.name.contains_ci("tmp")) {
+    dc = dt.FindMakeCol("running_time", VT_STRING);
+    dc->desc = "total time job ran";
+  }
   dc = dt.FindMakeCol("job_no", VT_STRING);
   dc->desc = "job number on cluster -- assigned once the job is submitted to the cluster";
   dc = dt.FindMakeCol("job_out", VT_STRING);
