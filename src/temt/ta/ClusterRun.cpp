@@ -1829,13 +1829,15 @@ bool ClusterRun::WaitProcAutoUpdate() {
   wait_proc_updt->SigEmitUpdated();
   wait_proc_last_updt.currentDateTime();
   if(wait_proc_updt->cur_svn_rev >= wait_proc_trg_rev) {
-    taMisc::Info("ClusterRun: updated to target revision:", wait_proc_updt->name);
+    taMisc::Info("ClusterRun: updated to target revision:",
+                 String(wait_proc_updt->cur_svn_rev));
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;
     return true;
   }
   if(wait_proc_start.secsTo(curtime) > 120) {
-    taMisc::Info("ClusterRun: time out on updating cluster run:", wait_proc_updt->name);
+    taMisc::Info("ClusterRun: time out on updating cluster run, cur rev:",
+                 String(wait_proc_updt->cur_svn_rev));
     wait_proc_updt = NULL;
     wait_proc_trg_rev = -1;
     return true;

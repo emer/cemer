@@ -257,7 +257,12 @@ void Layer::Lesion() {
     own_net->UpdtAfterNetMod();
 }
 
-void Layer::UnLesion()  {
+void Layer::LesionIconify() {
+  Lesion();
+  Iconify();
+}
+
+void Layer::UnLesion() {
   StructUpdate(true);
   ClearLayerFlag(LESIONED);
   UnLesionUnits();              // all our units were lesioned when parent was
@@ -267,6 +272,11 @@ void Layer::UnLesion()  {
     own_net->UpdtAfterNetMod();
 }
 
+void Layer::UnLesionDeIconify() {
+  UnLesion();
+  DeIconify();
+}
+  
 void Layer::Iconify() {
   StructUpdate(true);
   SetLayerFlag(ICONIFIED);

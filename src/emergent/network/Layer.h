@@ -509,8 +509,12 @@ public:
 
   virtual void  Lesion();
   // #BUTTON #MENU #MENU_ON_Structure #DYN1 #MENU_SEP_BEFORE #CAT_Structure set the lesion flag on layer -- removes it from all processing operations
+  virtual void  LesionIconify();
+  // #MENU #MENU_ON_Structure #DYN1 #CAT_Structure set the lesion flag on layer -- removes it from all processing operations -- also iconifies the layer
   virtual void  UnLesion();
   // #BUTTON #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing
+  virtual void  UnLesionDeIconify();
+  // #MENU #DYN1 #CAT_Structure un-set the lesion flag on layer -- restores it to engage in normal processing -- also de-iconifies the layer
 
   virtual int   ReplaceUnitSpec(UnitSpec* old_sp, UnitSpec* new_sp);
   // #CAT_Structure switch any units/layers using old_sp to using new_sp
