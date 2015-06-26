@@ -1989,15 +1989,15 @@ void LeabraUnitSpec::Send_DeepNormNetin_Post(LeabraUnitVars* u, LeabraNetwork* n
 #ifdef CUDA_COMPILE
   nt = 1;                       // cuda is always 1 thread for this..
 #endif
-  float nw_nt = 0.0f;
+  float dnorm_net_delta = 0.0f;
   for(int j=0;j<nt;j++) {
     float& ndval = net->ThrSendDeepNormNetTmp(j)[flat_idx];
-    nw_nt += ndval;
+    dnorm_net_delta += ndval;
 #ifndef CUDA_COMPILE
     ndval = 0.0f;             // zero immediately..
 #endif
   }
-  u->deep_norm_net = nw_nt;
+  u->deep_norm_net += dnorm_net_delta;
 }
 
 void LeabraUnitSpec::Compute_DeepStateUpdt(LeabraUnitVars* u, LeabraNetwork* net, int thr_no) {
