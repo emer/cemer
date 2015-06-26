@@ -200,7 +200,9 @@ public:
   virtual bool  ValidateJob(int n_jobs_to_sub = 1);
   // validate all the current parameters and ensure that they make sense for selected cluster, etc -- arg is number of jobs that will be submitted of this form
   virtual String CurTimeStamp();
-  // get a timestamp string for the current time 
+  // get a timestamp string for the current time
+  virtual void FillInRunningTime(DataTable* table);
+  // calculate the running time and write the result into the running_time column
   virtual void  AddJobRow(const String& cmd, const String& params, int& cmd_id);
   // add a new job row with given command and arbitrary id number, which is typically the iteration of the search algorithm -- it is always incremented here, and can be incremented by pb_batches for parallel batch mode
   virtual void  AddJobRow_impl(const String& cmd, const String& params, int cmd_id);

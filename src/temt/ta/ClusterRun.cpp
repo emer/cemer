@@ -30,6 +30,7 @@
 #include <taSigLinkItr>
 #include <iPanelSet>
 #include <taMisc>
+#include <taiMisc>
 
 #include <QRegExp>
 #include <QDir>
@@ -232,10 +233,8 @@ bool ClusterRun::Update() {
     cur_search_algo->ProcessResults();
   }
   
-  DataCol* col = jobs_done.GetColData("running_time", true); // true means quiet
-  if (col) {
-//    col->InitValsToRowNo();
-  }
+  FillInRunningTime(&jobs_done);
+  FillInRunningTime(&jobs_archive);
 
   SigEmitUpdated();
   UpdateUI();
@@ -1170,7 +1169,7 @@ void ClusterRun::FormatJobTable(DataTable& dt, bool clust_user) {
   dc->desc = "when did the job finish running";
   if (!dt.name.contains_ci("tmp")) {
     dc = dt.FindMakeCol("running_time", VT_STRING);
-    dc->desc = "total time job ran";
+    dc->desc = "total running time in days/hours/minutes";
   }
   dc = dt.FindMakeCol("job_no", VT_STRING);
   dc->desc = "job number on cluster -- assigned once the job is submitted to the cluster";
@@ -1885,4 +1884,27 @@ void ClusterRun::UpdateUI() {
     enable_notes = (cur_table == &jobs_done);
   }
   ps->UpdateMethodButtons();
+}
+
+void ClusterRun::FillInRunningTime(DataTable* table) {
+  DataCol* running_time_col = table->GetColData("running_time", true); // true means quiet
+  if (running_time_col) {
+    DataCol* start_col = table->GetColData("start_time", true);
+    DataCol* end_col = table->GetColData("end_time", true);
+    if (start_col && end_col) {
+      for (int i=0; i<table->rows; i++) {
+        String start_time_str;
+        String end_time_str;
+        start_time_str = start_col->GetValAsString(i);
+        end_time_str = end_col->GetValAsString(i);
+        
+        taDateTime start_time;
+        taDateTime end_time;
+        start_time.fromString(start_time_str, timestamp_fmt);
+        end_time.fromString(end_time_str, timestamp_fmt);
+        int secs = start_time.secsTo(end_time);
+        running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
+      }
+    }
+  }
 }

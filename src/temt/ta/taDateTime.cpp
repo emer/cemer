@@ -25,3 +25,17 @@ void taDateTime::fromString(const String &s, const String &format) {
   if(format.empty()) fmQDateTime(QDateTime::fromString(s));
   else fmQDateTime(QDateTime::fromString(s, format));
 }
+
+String taDateTime::SecondsToDHM(uint64_t duration)  // duration is in seconds
+{
+  String rval;
+  int seconds = (int) (duration % 60);
+  duration /= 60;
+  int minutes = (int) (duration % 60);
+  duration /= 60;
+  int hours = (int) (duration % 24);
+  int days = (int) (duration / 24);
+  
+  rval = (String)days + "_" + (String)hours + "_" + (String)minutes;
+  return rval;
+}

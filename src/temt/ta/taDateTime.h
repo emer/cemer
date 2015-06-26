@@ -122,6 +122,8 @@ public:
   { taDateTime sdt; sdt.setTime_t(st_time); taDateTime edt; edt.setTime_t(ed_time);
     return sdt.daysTo(edt); }
   // compute number of days between two time_t values (seconds since january 1st, 1970, UTC)
+  static String   SecondsToDHM(uint64_t duration);
+  // convert seconds into a string showing the equivalent days, hours, minutes
 
   static String longDayName(int weekday) { return QDate::longDayName(weekday); }
   static String longMonthName(int month) { return QDate::longMonthName(month); }
