@@ -235,6 +235,7 @@ bool ClusterRun::Update() {
   
   FillInRunningTime(&jobs_done);
   FillInRunningTime(&jobs_archive);
+  FillInElapsedTime(&jobs_running);
 
   SigEmitUpdated();
   UpdateUI();
@@ -1903,6 +1904,27 @@ void ClusterRun::FillInRunningTime(DataTable* table) {
         start_time.fromString(start_time_str, timestamp_fmt);
         end_time.fromString(end_time_str, timestamp_fmt);
         int secs = start_time.secsTo(end_time);
+        running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
+      }
+    }
+  }
+}
+
+void ClusterRun::FillInElapsedTime(DataTable* table) {
+  DataCol* running_time_col = table->GetColData("running_time", true); // true means quiet
+  if (running_time_col) {
+    DataCol* start_col = table->GetColData("start_time", true);
+    if (start_col) {
+      for (int i=0; i<table->rows; i++) {
+        String start_time_str;
+        start_time_str = start_col->GetValAsString(i);
+        
+        taDateTime start_time;
+        start_time.fromString(start_time_str, timestamp_fmt);
+        taDateTime cur_time;
+        cur_time.currentDateTime();
+        uint cur_secs = cur_time.toTime_t();
+        int secs = start_time.secsTo(cur_time);
         running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
       }
     }
