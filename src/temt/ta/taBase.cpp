@@ -3743,7 +3743,7 @@ bool taBase::UpdatePointers_NewPar_Ref(taSmartRef& ref, taBase* old_par, taBase*
   }
   
   taBase* old_own = ref.ptr()->GetOwner(old_par->GetTypeDef());
-   if (old_own == old_par) {
+  if (old_own == old_par) {
     taBase* new_guy = UpdatePointers_NewPar_FindNew(ref.ptr(), old_par, new_par);
     if(new_guy)
       ref.set(new_guy);
@@ -3807,7 +3807,41 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
     else if(md->type->IsNotPtr()) {
       if(md->type->InheritsFrom(TA_taSmartRef)) {
         taSmartRef* ref = (taSmartRef*)md->GetOff(this);
-        int chg = UpdatePointers_NewPar_Ref(*ref, old_par, new_par);
+        bool null_not_found = true;
+
+        // get list owners
+        taList_impl* ref_ptr_list = NULL;
+        if (ref && ref->ptr()) {
+          ref_ptr_list = (taList_impl*)ref->ptr()->GetOwner(&TA_taList_impl);
+        }
+        taList_impl* new_par_list = NULL;
+        if (new_par) {
+          new_par_list = (taList_impl*)new_par->GetOwner(&TA_taList_impl);
+        }
+        
+        // is the object referenced in the same group hierarchy as the new parent group
+        if (ref_ptr_list && new_par_list) {
+          // now get the root groups
+          taGroup_impl* ref_ptr_grp_root = NULL;
+          if (ref_ptr_list->InheritsFrom(&TA_taGroup_impl)) {
+            ref_ptr_grp_root = (taGroup_impl*)ref_ptr_list;
+            if(ref_ptr_grp_root->root_gp)
+              ref_ptr_grp_root = ref_ptr_grp_root->root_gp; // go up to root of initial find owner
+          }
+          taGroup_impl* new_par_grp_root = NULL;
+          if (new_par_list->InheritsFrom(&TA_taGroup_impl)) {
+            new_par_grp_root = (taGroup_impl*)new_par_list;
+            if(new_par_grp_root->root_gp)
+              new_par_grp_root = new_par_grp_root->root_gp; // go up to root of initial find owner
+          }
+          
+          // if not the same root group don't try to update pointers
+          if (ref_ptr_grp_root != new_par_grp_root) {
+            null_not_found = false;
+          }
+        }
+        
+        int chg = UpdatePointers_NewPar_Ref(*ref, old_par, new_par, null_not_found);
         nchg += chg; mychg += chg;
       }
       if(md->type->InheritsFrom(TA_taSmartPtr)) {
