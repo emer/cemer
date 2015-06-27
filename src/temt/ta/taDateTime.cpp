@@ -15,6 +15,8 @@
 
 #include "taDateTime.h"
 
+#include <taMisc>
+
 TA_BASEFUNS_CTORS_DEFN(taDateTime);
 
 void taDateTime::Initialize() {
@@ -36,6 +38,6 @@ String taDateTime::SecondsToDHM(uint64_t duration)  // duration is in seconds
   int hours = (int) (duration % 24);
   int days = (int) (duration / 24);
   
-  rval = (String)days + "_" + (String)hours + "_" + (String)minutes;
+  rval = taMisc::LeadingZeros(days, 2) + "d_" + taMisc::LeadingZeros(hours, 2) + "h_" + taMisc::LeadingZeros(minutes, 2) + "m";
   return rval;
 }
