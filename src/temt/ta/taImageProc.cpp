@@ -1329,21 +1329,75 @@ bool taImageProc::BubbleMask(float_Matrix& img, int n_bubbles, float bubble_sig,
   return true;
 }
 
+bool taImageProc::ReplaceColor(float_Matrix& img,
+                               float oc_r, float oc_g, float oc_b, float oc_a,
+                               float nc_r, float nc_g, float nc_b, float nc_a,
+                               float tol, bool repl_nonmatch) {
+  taVector2i img_size(img.dim(0), img.dim(1));
+
+  float ocs[4];
+  ocs[0] = oc_r; ocs[1] = oc_g; ocs[2] = oc_b; ocs[3] = oc_a;
+  float ncs[4];
+  ncs[0] = nc_r; ncs[1] = nc_g; ncs[2] = nc_b; ncs[3] = nc_a;
+  
+  // different processing depending on whether image is rgb or gray
+  if(img.dims() == 3) { // rgb or rgba
+    int nclrs = img.dim(2);
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {
+        bool match = true;
+        for(int cl=0; cl < nclrs; cl++) {
+          float val = img.FastEl3d(xi, yi, cl);
+          if(fabs(val - ocs[cl]) > tol) {
+            match = false;
+            break;
+          }
+        }
+        if(repl_nonmatch)
+          match = !match;
+        if(match) {
+          for(int cl=0; cl < nclrs; cl++) {
+            float& val = img.FastEl3d(xi, yi, cl);
+            val = ncs[cl];
+          }
+        }
+      }
+    }
+  }
+  else { // grayscale
+    for(int yi=0; yi< img_size.y; yi++) {
+      for(int xi=0; xi< img_size.x; xi++) {      	        	  	
+        float& val = img.FastEl2d(xi, yi);
+        bool match = true;
+        if(fabs(val - oc_r) > tol) {
+          match = false;
+        }
+        if(repl_nonmatch)
+          match = !match;
+        if(match) {
+          val = nc_r;
+        }
+      }
+    }
+  }
+  return true;
+}
+
 bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg_color) {
   taVector2i img_size(img.dim(0), img.dim(1));
   
-	if(bg_color > 1.0f) {	// hopefully user is smart enough not to use negative value aside from -1
-		taMisc::Error("bg_color must be between 0 and 1");
-		return false;
-	}
+  if(bg_color > 1.0f) {	// hopefully user is smart enough not to use negative value aside from -1
+    taMisc::Error("bg_color must be between 0 and 1");
+    return false;
+  }
 
   // if bg color not specified, use border color
   float brd_clr[4];
   if(bg_color == -1) {
-		GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);  
-	}
-	else if(bg_color < 0.0f || bg_color > 1.0f) {
-		taMisc::Error("bg_color must be between 0 and 1");
+    GetBorderColor_float(img, brd_clr[0], brd_clr[1], brd_clr[2], brd_clr[3]);  
+  }
+  else if(bg_color < 0.0f || bg_color > 1.0f) {
+    taMisc::Error("bg_color must be between 0 and 1");
   }
   else {
     brd_clr[0] = bg_color;
@@ -1357,18 +1411,18 @@ bool taImageProc::AdjustContrast(float_Matrix& img, float new_contrast, float bg
     int nclrs = img.dim(2);
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {
-				for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
-				  float& val = img.FastEl3d(xi, yi, cl);
-				  val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
-				}
+        for(int cl=0; cl < 3; cl++) { // only use rgb for this loop
+          float& val = img.FastEl3d(xi, yi, cl);
+          val = ((val - brd_clr[cl])*new_contrast) + brd_clr[cl];
+        }
       }
     }
   }
   else { // grayscale
     for(int yi=0; yi< img_size.y; yi++) {
       for(int xi=0; xi< img_size.x; xi++) {      	        	  	
-				float& iv = img.FastEl2d(xi, yi);
-				iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
+        float& iv = img.FastEl2d(xi, yi);
+        iv = ((iv-brd_clr[0])*new_contrast)+brd_clr[0]; // just use red channel
       }
     }
   }

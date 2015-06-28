@@ -113,7 +113,7 @@ bool Program_Group::RunStartupProgs() {
   bool any_run = false;
   FOREACH_ELEM_IN_GROUP(Program, prog, *this) {
     if(!prog->HasProgFlag(Program::STARTUP_RUN)) continue;
-    cerr << "Running startup program: " << prog->name << endl;
+    taMisc::Info("Running startup program:", prog->name);
     prog->Init();
     if((prog->ret_val == Program::RV_OK) && (prog->run_state == Program::DONE)) {
       prog->Run();

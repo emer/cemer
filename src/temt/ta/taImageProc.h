@@ -124,6 +124,15 @@ public:
 			   float_Matrix* foreground=NULL, int_Matrix* bubble_coords=NULL);
   // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise Simplified version of Gosselin & Schyn's bubble paradigm which creates a mask from Gaussians Bubbles through which information is let through. Conceptually just the inverse of BlobBlurOcclude, but parameterization allows titration on number of bubbles. n_bubbles is the number of bubbles to create in the mask, bubble_sig controls the width of the bubble in image width normalized units (e.g., .05 = 5% of the width of the image). foreground specifies a foreground to bubble through (default = border color). if bubble_coords is specified, saves the coordinates of the bubble centers for analysis in an Nx2 xy matrix 
   
+  static bool Blur(float_Matrix& img, int kernel_size);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_Noise apply a square equal-weighting blurring kernel to the image
+
+  static bool ReplaceColor(float_Matrix& img,
+                           float oc_r, float oc_g, float oc_b, float oc_a,
+                           float nc_r, float nc_g, float nc_b, float nc_a,
+                           float tol = 0.01f, bool repl_nonmatch = false);
+  // #CAT_Noise #MENU_BUTTON #MENU_ON_ImageProc replace original image color (oc) with a new image color (nc) -- matching of original color uses given tolerance applied around each of the rgb values -- only the r value is used for greyscale -- if repl_nonmatch is set, then colors that do NOT match the oc color are replaced with new color (can be useful for creating a mask of an object against a uniform background)
+
   static bool	AdjustContrast(float_Matrix& img, float new_contrast, float bg_color=-1.0f);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Adjust the contrast of the image (in place -- affects the img matrix itself) using new_contrast as a scalar. Holds background color constant at passed in value or if not specified, checks border. new_contrast is a scalar in range [0 1] and bg_color is an integer in range [0 1]
   
@@ -134,11 +143,10 @@ public:
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc Combine img1 and img2 using img1's alpha channel. Operation is done in place on img1. Assumes img1 is RGBA format (img2 alpha channel unused) and img2 is smaller than img1. X/Y are coordinates within img1 where to place img2
 
   static bool   FlipY(float_Matrix& img1);
+  // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc invert the image in the Y axis -- emergent has 0,0 at lower-left, while many images have that as the top-left -- this deals with that..
   
   static bool	OverlayImages(float_Matrix& img1, float_Matrix& img2);
   // #CAT_ImageProc #MENU_BUTTON #MENU_ON_ImageProc overlay img2 onto img1. if img2 is smaller than img1, then overlay is done on the center of img1. both images should have the same number of dims (i.e., both grayscale or both rgb)
-
-  static bool Blur(float_Matrix& img, int kernel_size);
 
   String 	GetTypeDecoKey() const override { return "DataTable"; }
   TA_BASEFUNS_NOCOPY(taImageProc);
