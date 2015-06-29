@@ -109,14 +109,13 @@ class TA_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
-  bool		sg4;		// #DEF_true #AKA_pre_gp4 use a 4x4 square grouping of v1s features prior to computing subsequent steps (length sum, end stop) -- this square grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- size must be even due to half-overlap for spacing requirement, so 4x4 is only size that makes sense
-  bool		spc4;		// #DEF_false #CONDSHOW_ON_sg4 use 4x4 spacing for square grouping, instead of half-overlap 2x2 spacing -- this results in greater savings in computation, at some small cost in uniformity of coverage of the space
+  int		sg_rf;		// #DEF_1;2;4 #MIN_1 #MAX_4 only valid values are 1,2,4 -- number of v1 simple cells to sub-group over prior to computing subsequent steps (length sum, end stop) -- this grouping provides more isotropic coverage of the space, reduces the computational cost of subsequent steps, and also usefully makes it more robust to minor variations -- downside is that larger sg_n values produce more dense, overlapping activation patterns, which can ber problematic in cluttered visual scenes
+  int		sg_spc;	        // #AKA_sg_spacing #DEF_1;2 #MIN_1 spacing between sub-group centers (see sg_rf) -- typically this works best as 1/2 of sg_rf size for half-overlap, but to stretch resolution the same value as sg_rf also does work, but typically leads to worse performance due to aliasing effects
+ 
   int		len_sum_len;	// #DEF_1 length (in pre-grouping of v1s/b rf's) beyond rf center (aligned along orientation of the cell) to integrate length summing -- this is a half-width, such that overall length is 1 + 2 * len_sum_len
   float		es_thr;		// #DEF_0.2 threshold for end stopping activation -- there are typically many "ghost" end stops, so this filters those out
 
-  int		sg_rf;		// #READ_ONLY size of sg-grouping -- always 4 for now, as it is the only thing that makes sense
   int		sg_half;	// #READ_ONLY sg_rf / 2
-  int		sg_spacing;	// #READ_ONLY either 4 or 2 depending on spc4
   int		sg_border;	// #READ_ONLY border onto v1s filters -- automatically computed based on wrap mode and spacing setting
 
   int		len_sum_width;	// #READ_ONLY 1 + 2 * len_sum_len -- computed
@@ -261,7 +260,8 @@ public:
   int_Matrix	v1m_still_stencils; // #READ_ONLY #NO_SAVE stencils for motion detectors -- detecting stillness, in terms of v1s location offsets through time [x,y][1+2*tuning_width][motion_frames][angles] (4d)
 
   ///////////////////  V1C Geom/Stencils ////////////////////////
-  int_Matrix	v1sg_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square grouping -- represents center points of the lines for each angle [x,y,len][5][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
+  int_Matrix	v1sg4_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 4x4 grouping -- represents center points of the lines for each angle [x,y,len][10][angles] -- there are 10 points for the 2 diagonal lines with 4 angles and 8 for horiz, vert -- only works if n_angles = 4 and line_len = 4 or 5
+  int_Matrix	v1sg2_stencils; 	// #READ_ONLY #NO_SAVE stencils for v1 square 2x2 grouping -- represents center points of the lines for each angle [x,y,len][4][angles] -- there are 5 points for the 2 diagonal lines with 4 angles -- only works if n_angles = 4 and line_len = 4 or 5
   int_Matrix	v1ls_stencils;  // #READ_ONLY #NO_SAVE stencils for complex length sum cells [x,y][len_sum_width][angles]
   int_Matrix	v1ls_ni_stencils; // #READ_ONLY #NO_SAVE stencils for neighborhood inhibition [x,y][tot_ni_len][angles]
   int_Matrix	v1es_stencils;  // #READ_ONLY #NO_SAVE stencils for complex end stop cells [x,y][pts=3(only stop)][len_sum,stop=2][dirs=2][angles] -- new version
@@ -390,17 +390,17 @@ protected:
 
   virtual bool	V1ComplexFilter();
   // do complex filters -- dispatch threads
-  virtual void 	V1ComplexFilter_SqGp4(float_Matrix* pi_in, float_Matrix* sg_out);
-  // square-group4 if selected
+  virtual void 	V1ComplexFilter_SqGp(float_Matrix* pi_in, float_Matrix* sg_out);
+  // square-group if selected
   virtual void 	V1ComplexFilter_LenSum(float_Matrix* ls_in, float_Matrix* ls_out);
   // length-sum
   virtual void 	V1ComplexFilter_EndStop(float_Matrix* pi_in, float_Matrix* ls_in,
                                         float_Matrix* es_out);
   // end stop
-  virtual void  V1ComplexFilter_V1S_SqGp4(float_Matrix* v1s_in, float_Matrix* sg_out);
+  virtual void  V1ComplexFilter_V1S_SqGp(float_Matrix* v1s_in, float_Matrix* sg_out);
   // v1s sg4
-  virtual void 	V1ComplexFilter_SqGp4_thread(int thr_no);
-  // square-group4 if selected
+  virtual void 	V1ComplexFilter_SqGp_thread(int thr_no);
+  // square-group if selected
   virtual void 	V1ComplexFilter_LenSum_thread(int thr_no);
   // length-sum
   virtual void 	V1ComplexFilter_EndStop_thread(int thr_no);
@@ -411,7 +411,7 @@ protected:
   virtual void 	SpatIntegFilter_V1S_thread(int thr_no);
   virtual void 	SpatIntegFilter_V1PI_thread(int thr_no);
   virtual void 	SpatIntegFilter_V1PI_SG_thread(int thr_no);
-  virtual void 	SpatIntegFilter_V1S_SqGp4_thread(int thr_no);
+  virtual void 	SpatIntegFilter_V1S_SqGp_thread(int thr_no);
   virtual void 	SpatIntegFilter_V1S_SG_thread(int thr_no);
   virtual void 	SpatIntegFilter_V1C_thread(int thr_no);
 
