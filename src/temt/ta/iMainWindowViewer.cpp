@@ -180,6 +180,7 @@ void iMainWindowViewer::Init() {
   fileSaveAsAction = NULL;
   fileSaveNotesAction = NULL;
   fileOpenSvnBrowserAction = NULL;
+  fileSvnAddAction = NULL;
   fileSvnCommitAction = NULL;
   fileUpdateChangeLogAction = NULL;
   fileSaveAllAction = NULL;
@@ -482,6 +483,9 @@ void iMainWindowViewer::Constr_FileMenu()
   fileSvnCommitAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   fileSvnCommitAction->setIconText("Commit");
 
+  fileSvnAddAction = AddAction(new iAction("SVN Add...", QKeySequence(), "fileSvnAddAction"));
+  fileSvnAddAction->setToolTip(taiMisc::ToolTipPreProcess("add this project file (saves first) into svn"));
+  fileSvnAddAction->setIcon(QIcon(QPixmap(":/images/svn_commit_icon.png")));
   
   fileCloseAction = AddAction(new iAction("Close Project", QKeySequence(), "fileCloseAction"));
   fileCloseAction->setIcon(QIcon(QPixmap(":/images/project_close_icon.png")));
@@ -509,6 +513,7 @@ void iMainWindowViewer::Constr_FileMenu()
   fileMenu->insertSeparator();
 
   fileMenu->AddAction(fileOpenSvnBrowserAction);
+  fileMenu->AddAction(fileSvnAddAction);
   fileMenu->AddAction(fileSvnCommitAction);
 
   fileMenu->insertSeparator();
@@ -556,6 +561,7 @@ void iMainWindowViewer::Constr_FileMenu()
     connect(fileUpdateChangeLogAction, SIGNAL(Action()), this, SLOT(fileUpdateChangeLog()));
 
     connect(fileOpenSvnBrowserAction, SIGNAL(Action()), this, SLOT(fileOpenSvnBrowser()));
+    connect(fileSvnAddAction, SIGNAL(Action()), this, SLOT(fileSvnAdd()));
     connect(fileSvnCommitAction, SIGNAL(Action()), this, SLOT(fileSvnCommit()));
 
     // Connect "publish" options only for project windows.
@@ -1591,6 +1597,14 @@ void iMainWindowViewer::fileSvnCommit() {
     return;
   }
   proj->SvnCommit(project_file_only);
+}
+
+void iMainWindowViewer::fileSvnAdd() {
+  taProject* proj = curProject();
+  if (!proj){
+    return;
+  }
+  proj->SvnAdd();
 }
 
 void iMainWindowViewer::fileSaveAll() {

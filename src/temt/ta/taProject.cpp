@@ -903,10 +903,31 @@ void taProject::SvnBrowser() {
   }
 }
 
-void taProject::SvnCommit(bool project_file_only) {
+void taProject::SvnAdd() {
   Save();
+  bool in_repo = true;
   String path = GetFileName();
   if(path.nonempty()) {
+    in_repo = iSvnFileListModel::FileInRepo(path);
+    if (in_repo) {
+      String msg = "The project " + path + " is already in the repository";
+      taMisc::Warning(msg);
+      return;
+    }
+    iSvnFileListModel::AddFile(taMisc::GetDirFmPath(GetFileName()), taMisc::GetFileFmPath(GetFileName()));
+  }
+}
+
+void taProject::SvnCommit(bool project_file_only) {
+  Save();
+  bool in_repo = true;
+  String path = GetFileName();
+  if (project_file_only) {
+    in_repo = iSvnFileListModel::FileInRepo(path);
+    iDialogChoice::ConfirmDialog(NULL, "Project file not found in repository - to add choose SVN Add from the file menu", "", false);
+  }
+  
+  if(path.nonempty() && in_repo) {
     iSvnFileListModel::CommitFile(path, project_file_only); // true means project file only
   }
 }

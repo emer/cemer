@@ -42,7 +42,10 @@ INHERITED(QAbstractItemModel)
 public:
   static bool   CommitFile(const String& file_path, bool single_file, const String& msg = "");
   // commit file at given file_path to its repository, or all modified files in directory if single file is false, with optional commit message (will prompt if empty) -- uses the model to manage the svn_client
- 
+  static bool   FileInRepo(const String& file_path);
+  // is the file in the repository - single file only
+  static bool   AddFile(const String& file_path, const String& name, const String& msg = "");
+  // add single file to repository and commit
 
   iSvnFileListModel(QObject *parent = 0);
   ~iSvnFileListModel();
@@ -110,7 +113,8 @@ public:
   // check out currently-set url at given rev to given path - if empty, then prompts for it, and fills it in to to_path
   virtual bool    getUrlFromPath(String& url, const String& path);
   // get the server url from path to local file
-
+  virtual bool    exists(const String& path);
+  // see if the file is in the repository
 
 public: // required model implementations
 #ifndef __MAKETA__

@@ -50,6 +50,25 @@ bool iSvnFileListModel::CommitFile(const String& file_path, bool single_file, co
   return rval;
 }
 
+bool iSvnFileListModel::AddFile(const String& file_path, const String& name, const String& msg) {
+  iSvnFileListModel* svn_file_model = new iSvnFileListModel();
+  svn_file_model->setWcPath(file_path);
+  String wc_url;
+  bool rval = svn_file_model->addFile(name);
+  if (rval) {
+    rval = svn_file_model->commit(msg);
+  }
+  delete svn_file_model;
+  return rval;
+}
+
+bool iSvnFileListModel::FileInRepo(const taString &path) {
+  iSvnFileListModel* svn_file_model = new iSvnFileListModel();
+  svn_file_model->setWcPath(path);
+  return svn_file_model->exists(path);
+}
+
+
 iSvnFileListModel::iSvnFileListModel(QObject* parent)
   : inherited(parent)
   , svn_head_rev(-1)
@@ -288,7 +307,6 @@ bool iSvnFileListModel::addFile(const String& fnm) {
     taMisc::Error("Subversion client error in addFile\n", ex.what());
     return false;
   }
-
   taMisc::Info("subversion added path:", path);
   return true;
 }
@@ -414,6 +432,21 @@ bool iSvnFileListModel::checkout(String& to_path, int rv) {
   taMisc::Info("Subversion url:", path, "checked out to:", to_path);
   return true;
 }
+
+bool iSvnFileListModel::exists(const String& path) {
+  if(!svn_client)
+    return false;
+  try {
+    String url;
+    svn_client->GetUrlFromPath(url, path);
+  }
+  catch (const SubversionClient::Exception &ex) {
+//    taMisc::Error("Subversion client error in GetUrlFromPath\n", ex.what());
+    return false;
+  }
+  return true;
+}
+
 
 bool iSvnFileListModel::getUrlFromPath(String& url, const String& path) {
   if(!svn_client)

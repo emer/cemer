@@ -126,6 +126,7 @@ public:
   iAction*            fileSaveNotesAction;
   iAction*            fileSaveAsTemplateAction;
   iAction*            fileOpenSvnBrowserAction;
+  iAction*            fileSvnAddAction;
   iAction*            fileSvnCommitAction;
   iAction*            fileUpdateChangeLogAction;
   iAction*            fileSaveAllAction;
@@ -330,6 +331,7 @@ public slots:
   virtual void  fileSaveNotes();        // SaveNoteChanges Project (only enabled if viewer)
   virtual void  fileSaveAsTemplate();   // SaveAsTemplate Project (only enabled if viewer)
   virtual void  fileOpenSvnBrowser();   // open svn browser for project
+  virtual void  fileSvnAdd();           // add project file to svn
   virtual void  fileSvnCommit();        // commit project file to svn
   virtual void  fileUpdateChangeLog();  // UpdateChangeLog Project (only enabled if viewer)
   virtual void  fileSaveAll();          // Save All Projects (always enabled)
