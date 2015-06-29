@@ -1920,14 +1920,18 @@ void ClusterRun::FillInElapsedTime(DataTable* table) {
       for (int i=0; i<table->rows; i++) {
         String start_time_str;
         start_time_str = start_col->GetValAsString(i);
-        
-        taDateTime start_time;
-        start_time.fromString(start_time_str, timestamp_fmt);
-        taDateTime cur_time;
-        cur_time.currentDateTime();
-        uint cur_secs = cur_time.toTime_t();
-        int secs = start_time.secsTo(cur_time);
-        running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
+        if (start_time_str.empty()) {
+          running_time_col->SetVal(taDateTime::SecondsToDHM(0), i);
+        }
+        else {
+          taDateTime start_time;
+          start_time.fromString(start_time_str, timestamp_fmt);
+          taDateTime cur_time;
+          cur_time.currentDateTime();
+          uint cur_secs = cur_time.toTime_t();
+          int secs = start_time.secsTo(cur_time);
+          running_time_col->SetVal(taDateTime::SecondsToDHM(secs), i);
+        }
       }
     }
   }
