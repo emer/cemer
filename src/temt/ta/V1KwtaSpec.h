@@ -52,7 +52,7 @@ public:
   float         max_da; // #HIDDEN #NO_SAVE current max delta activation for fffb settling
   float         max_da_crit; // #HIDDEN #NO_SAVE stopping criterion for activation change for fffb
   float         ff0;    // #HIDDEN #NO_SAVE #DEF_0.1 feedforward zero point in terms of average netinput -- below this level, no FF inhibition is computed -- the 0.1 default should be good for most cases -- fixed to 0.1
-  float		gain;	 // #CONDSHOW_OFF_mode:OFF #DEF_40 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
+  float		gain;	 // #CONDSHOW_OFF_mode:OFF #DEF_40;80 gain on the NXX1 activation function (based on g_e - g_e_thr value -- i.e. the gelin version of the function)
   float		nvar;	 // #CONDSHOW_OFF_mode:OFF #DEF_0.01 noise variance to convolve with XX1 function to obtain NOISY_XX1 function -- higher values make the function more gradual at the bottom
   float		g_bar_l; // #CONDSHOW_OFF_mode:OFF #DEF_0.1;0.3 leak current conductance value -- determines neural response to weak inputs -- a higher value can damp the neural response
   float		g_bar_e; // #HIDDEN #NO_SAVE excitatory conductance multiplier -- multiplies filter input value prior to computing membrane potential -- general target is to have max excitatory input = .5, so with 0-1 normalized inputs, this value is automatically set to .5

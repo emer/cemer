@@ -37,7 +37,7 @@ void V1KwtaSpec::Initialize() {
   fb_dt = 0.7f;
   max_da_crit = 0.005f;
   ff0 = 0.1f;
-  gain = 40.0f;
+  gain = 80.0f;
   nvar = 0.01f;
   g_bar_l = 0.1f;
 

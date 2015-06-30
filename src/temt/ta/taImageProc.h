@@ -41,12 +41,17 @@ public:
     WRAP,			// wrap the image around to the other side: no edges!
   };
 
-  static bool	GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b, float& a);
-  // #CAT_Render get the average color around a 1 pixel border region of the image -- if grey-scale image, r,g,b are all set to the single grey value
-  static bool	GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b, float& a);
-    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb(a) image
-    static bool	GetBorderColor_float_grey(float_Matrix& img_data, float& grey);
-    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for grey scale image
+  static bool	GetBorderColor_float(float_Matrix& img_data,
+                                     float& r, float& g, float& b, float& a,
+                                     bool median = false);
+  // #CAT_Render get the average color around a 1 pixel border region of the image -- if grey-scale image, r,g,b are all set to the single grey value -- median = use median color value instead of mean
+  static bool	GetBorderColor_float_rgb(float_Matrix& img_data,
+                                         float& r, float& g, float& b, float& a,
+                                         bool median = false);
+    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for rgb(a) image -- median = use median color value instead of mean
+  static bool	GetBorderColor_float_grey(float_Matrix& img_data, float& grey,
+                                          bool median = false);
+    // #CAT_Render get the average color around a 1 pixel border region of the image -- specifically for grey scale image -- median = use median color value instead of mean
 
   static bool	RenderBorder_float(float_Matrix& img_data);
   // #CAT_Render make a uniform border 1 pixel wide around image, containing average value for that border region in original image: this value is what gets filled in when image is translated "off screen"
@@ -61,7 +66,14 @@ public:
   static bool	RenderFill(float_Matrix& img_data, float r, float g, float b, float a);
   // #CAT_Render render a "blank" image at a specified color
 
-  static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
+  static bool	RGBToGrey(float_Matrix& grey_data, const float_Matrix& rgb_data);
+  // #CAT_Convert convert rgb image to greyscale (averages the r,g,b values)
+
+  static bool	GreyToRGB(float_Matrix& rgb_data, const float_Matrix& grey_data,
+                          bool alpha = false);
+  // #CAT_Convert convert greyscale image to rgb (replicates the grey to r,g,b) -- if alpha flag then add an alpha channel too (values set to 1.0)
+
+    static void	GetWeightedPixels_float(float coord, int size, int* pc, float* pw);
   // #IGNORE helper function: get pixel coordinates (pc[0], pc[1]) with norm weights (pw[0], [1]) for given floating coordinate coord
 
   static bool   TranslateImagePix_float(float_Matrix& xlated_img, float_Matrix& orig_img, 
@@ -106,6 +118,7 @@ public:
     (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
      taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,
      int n_orig_pix, float rotate, float scale, EdgeMode edge);
+  // #IGNORE
   static bool	SampleImageWindow_float_clip_rgb
     (float_Matrix& out_img, float_Matrix& in_img, float_Matrix& sc_ary,
      taVector2i& win_size, taVector2i& img_size, taVector2f& win_ctr, taVector2f& img_ctr,

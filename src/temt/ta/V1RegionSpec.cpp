@@ -181,8 +181,11 @@ void V1ComplexSpec::UpdateAfterEdit_impl() {
 
   TestWarning(sg_rf != 1 && sg_rf != 2 && sg_rf != 4, "UAE",
               "sg_rf must be either 1, 2, or 4");
-  sg_half = sg_rf / 2;
+  TestWarning(sg_spc != 1 && sg_spc != 2 && sg_spc != 4, "UAE",
+              "sg_spc must be either 1, 2, or 4");
   
+  sg_half = sg_rf / 2;
+
   len_sum_width = 1 + 2 * len_sum_len;
   len_sum_norm = 1.0f / (float)(len_sum_width);
 }

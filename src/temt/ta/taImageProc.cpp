@@ -18,6 +18,7 @@
 #include <taVector2i>
 #include <taVector2f>
 #include <taMath_float>
+#include <float_Array>
 #include <Random>
 #include <int_Matrix>
 
@@ -32,18 +33,22 @@ void taImageProc::Initialize() {
 void taImageProc::Destroy() {
 }
 
-bool taImageProc::GetBorderColor_float(float_Matrix& img_data, float& r, float& g, float& b, float& a) {
+bool taImageProc::GetBorderColor_float(float_Matrix& img_data,
+                                       float& r, float& g, float& b, float& a,
+                                       bool median) {
   if(img_data.dims() == 3) {    // an rgb guy
-    return GetBorderColor_float_rgb(img_data, r, g, b, a);
+    return GetBorderColor_float_rgb(img_data, r, g, b, a, median);
   }
   else {
-    bool rval = GetBorderColor_float_grey(img_data, r);
+    bool rval = GetBorderColor_float_grey(img_data, r, median);
     g = r; b = r; a = 1.0f;
     return rval;
   }
 }
 
-bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, float& g, float& b, float& a) {
+bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data,
+                                           float& r, float& g, float& b, float& a,
+                                           bool median) {
   if(img_data.dims() != 3) {
     taMisc::Error("taImageProc::GetBorderColor_float_rgb", "image must have 3 dims: x, y, color");
     return false; // err
@@ -53,7 +58,7 @@ bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, flo
   for(int i=0;i<nclrs;i++) {
     float_Matrix* cmp = img_data.GetFrameSlice(i);
     taBase::Ref(cmp);
-    GetBorderColor_float_grey(*cmp, clrs[i]);
+    GetBorderColor_float_grey(*cmp, clrs[i], median);
     taBase::unRefDone(cmp);
   }
   r = clrs[0]; g = clrs[1]; b = clrs[2];
@@ -62,31 +67,49 @@ bool taImageProc::GetBorderColor_float_rgb(float_Matrix& img_data, float& r, flo
   return true;
 }
 
-bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey) {
+bool taImageProc::GetBorderColor_float_grey(float_Matrix& img_data, float& grey,
+                                            bool median) {
   if(img_data.dims() != 2) {
     taMisc::Error("taImageProc::GetBorderColor_float_grey", "image must have 2 dims: x, y");
     return false; // err
   }
   taVector2i img_size(img_data.dim(0), img_data.dim(1));
-  float tavg = 0.0f;
-  float bavg = 0.0f;
-  for(int x=0;x<img_size.x;x++) {
-    tavg += img_data.FastEl2d(x, img_size.y-1);
-    bavg += img_data.FastEl2d(x, 0);
+  if(median) {
+    float_Array edges;
+    edges.SetSize(img_size.x * 2 + img_size.y * 2);
+    int idx = 0;
+    for(int x=0;x<img_size.x;x++) {
+      edges.FastEl(idx++) = img_data.FastEl2d(x, img_size.y-1);
+      edges.FastEl(idx++) = img_data.FastEl2d(x, 0);
+    }
+    for(int y=0;y<img_size.y;y++) {
+      edges.FastEl(idx++) = img_data.FastEl2d(img_size.x-1, y);
+      edges.FastEl(idx++) = img_data.FastEl2d(0, y);
+    }
+    edges.Sort();
+    grey = edges.FastEl(edges.size / 2);
   }
-  tavg /= (float)(img_size.x);
-  bavg /= (float)(img_size.x);
+  else {
+    float tavg = 0.0f;
+    float bavg = 0.0f;
+    for(int x=0;x<img_size.x;x++) {
+      tavg += img_data.FastEl2d(x, img_size.y-1);
+      bavg += img_data.FastEl2d(x, 0);
+    }
+    tavg /= (float)(img_size.x);
+    bavg /= (float)(img_size.x);
 
-  float lavg = 0.0f;
-  float ravg = 0.0f;
-  for(int y=0;y<img_size.y;y++) {
-    ravg += img_data.FastEl2d(img_size.x-1, y);
-    lavg += img_data.FastEl2d(0, y);
+    float lavg = 0.0f;
+    float ravg = 0.0f;
+    for(int y=0;y<img_size.y;y++) {
+      ravg += img_data.FastEl2d(img_size.x-1, y);
+      lavg += img_data.FastEl2d(0, y);
+    }
+    lavg /= (float)(img_size.y);
+    ravg /= (float)(img_size.y);
+
+    grey = 0.25f * (tavg + bavg + lavg + ravg);
   }
-  lavg /= (float)(img_size.y);
-  ravg /= (float)(img_size.y);
-
-  grey = 0.25f * (tavg + bavg + lavg + ravg);
   return true;
 }
 
@@ -193,6 +216,53 @@ bool taImageProc::RenderFill(float_Matrix& img_data, float r, float g, float b, 
       }
       else {
 	img_data.FastEl2d(xi,yi) = r; // just use r channel for gray
+      }
+    }
+  }
+  return true;
+}
+
+bool taImageProc::RGBToGrey(float_Matrix& grey_data, const float_Matrix& rgb_data) {
+  taVector2i img_size(rgb_data.dim(0), rgb_data.dim(1));
+  grey_data.SetGeom(2, img_size.x, img_size.y);
+  int nclrs = 1;
+  if(rgb_data.dims() == 3) {
+    nclrs = rgb_data.dim(2);
+  }
+  float norm = 1.0f / (float)nclrs;
+  for(int yi = 0; yi < img_size.y; yi++) {
+    for(int xi = 0; xi < img_size.x; xi++) {
+      float grey = 0.0f;
+      if(nclrs > 1) {
+	for(int cl=0; cl < nclrs; cl++) {
+	  grey += rgb_data.FastEl3d(xi,yi,cl);
+	}
+        grey *= norm;
+      }
+      else {
+	grey = rgb_data.FastEl2d(xi,yi);
+      }
+      grey_data.FastEl2d(xi,yi) = grey;
+    }
+  }
+  return true;
+}
+
+bool taImageProc::GreyToRGB(float_Matrix& rgb_data, const float_Matrix& grey_data,
+                            bool alpha) {
+  taVector2i img_size(grey_data.dim(0), grey_data.dim(1));
+  int nclrs = 3;
+  if(alpha)
+    nclrs++;
+  rgb_data.SetGeom(3, img_size.x, img_size.y, nclrs);
+  for(int yi = 0; yi < img_size.y; yi++) {
+    for(int xi = 0; xi < img_size.x; xi++) {
+      float grey = grey_data.FastEl2d(xi, yi);
+      for(int cl=0; cl < 3; cl++) {
+        rgb_data.FastEl3d(xi,yi,cl) = grey;
+      }
+      if(nclrs == 4) {
+        rgb_data.FastEl3d(xi,yi,3) = 1.0f;
       }
     }
   }
