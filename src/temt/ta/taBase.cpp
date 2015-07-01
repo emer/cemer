@@ -3836,7 +3836,7 @@ int taBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
           }
           
           // if not the same root group don't try to update pointers
-          if (ref_ptr_grp_root != new_par_grp_root) {
+          if (ref_ptr_grp_root == NULL || (ref_ptr_grp_root != new_par_grp_root)) {
             null_not_found = false;
           }
         }
