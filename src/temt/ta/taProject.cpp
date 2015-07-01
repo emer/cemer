@@ -924,7 +924,9 @@ void taProject::SvnCommit(bool project_file_only) {
   String path = GetFileName();
   if (project_file_only) {
     in_repo = iSvnFileListModel::FileInRepo(path);
-    iDialogChoice::ConfirmDialog(NULL, "Project file not found in repository - to add choose SVN Add from the file menu", "", false);
+    if (!in_repo) {
+      iDialogChoice::ConfirmDialog(NULL, "Project file not found in repository - to add choose SVN Add from the file menu", "", false);
+    }
   }
   
   if(path.nonempty() && in_repo) {
