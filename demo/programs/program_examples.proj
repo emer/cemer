@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.0.3.0 rev7747
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8392
 LeabraProject .projects["program_examples"] { 
  Doc_Group @.docs = [4] {
   taDoc @["DataTables"] { };
@@ -28,15 +28,19 @@ LeabraProject .projects["program_examples"] {
    EditMthItem_Group @.mths = [0] {
    };
 
-   DataTableCols @.jobs_running.data = [26] {
+   DataTableCols @.jobs_running.data = [30] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -49,7 +53,6 @@ LeabraProject .projects["program_examples"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -63,6 +66,11 @@ LeabraProject .projects["program_examples"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -81,15 +89,22 @@ LeabraProject .projects["program_examples"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_done.data = [26] {
+   DataOpList @.jobs_running.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_done.data = [30] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -102,7 +117,6 @@ LeabraProject .projects["program_examples"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -116,6 +130,11 @@ LeabraProject .projects["program_examples"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -134,15 +153,22 @@ LeabraProject .projects["program_examples"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.jobs_archive.data = [26] {
+   DataOpList @.jobs_done.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.jobs_archive.data = [30] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["tag"] { };
-    String_Data @["notes"] { };
-    String_Data @["params"] { };
     String_Data @["status"] { };
+    String_Data @["notes"] { };
+    String_Data @["filename"] { };
+    String_Data @["params"] { };
     String_Data @["status_info"] { };
     String_Data @["submit_time"] { };
     String_Data @["start_time"] { };
     String_Data @["end_time"] { };
+    String_Data @["running_time"] { };
     String_Data @["job_no"] { };
     String_Data @["job_out"] { };
     String_Data @["job_out_file"] { };
@@ -155,7 +181,6 @@ LeabraProject .projects["program_examples"] {
     };
     String_Data @["command"] { };
     String_Data @["repo_url"] { };
-    String_Data @["cluster"] { };
     String_Data @["queue"] { };
     String_Data @["run_time"] { };
     int_Data @["ram_gb"] { 
@@ -169,6 +194,11 @@ LeabraProject .projects["program_examples"] {
      };
     };
     int_Data @["mpi_nodes"] { 
+     UserDataItem_List @*(.user_data_) {
+      UserDataItem @["NARROW"] { };
+     };
+    };
+    int_Data @["mpi_per_node"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["NARROW"] { };
      };
@@ -187,7 +217,12 @@ LeabraProject .projects["program_examples"] {
     String_Data @["submit_job"] { };
    };
 
-   DataTableCols @.file_list.data = [9] {
+   DataOpList @.jobs_archive.last_sort_spec.ops = [0] {
+   };
+
+   DataTableCols @.file_list.data = [11] {
+    String_Data @["cluster"] { };
+    String_Data @["user"] { };
     String_Data @["file_name"] { };
     String_Data @["tag"] { };
     String_Data @["size"] { };
@@ -199,6 +234,9 @@ LeabraProject .projects["program_examples"] {
     String_Data @["file_path"] { };
    };
 
+   DataOpList @.file_list.last_sort_spec.ops = [0] {
+   };
+
    DataTableCols @.cluster_info.data = [6] {
     String_Data @["queue"] { };
     String_Data @["job_no"] { };
@@ -206,6 +244,9 @@ LeabraProject .projects["program_examples"] {
     String_Data @["state"] { };
     String_Data @["procs"] { };
     String_Data @["start_time"] { };
+   };
+
+   DataOpList @.cluster_info.last_sort_spec.ops = [0] {
    };
 
    ParamSearchAlgo_List @.search_algos = [0] {
@@ -223,6 +264,9 @@ LeabraProject .projects["program_examples"] {
      String_Data @["Name"] { };
      float_Data @["Input"] { };
      float_Data @["Output"] { };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
     };
    };
   };
@@ -255,6 +299,9 @@ LeabraProject .projects["program_examples"] {
      float_Data @["sse"] { };
      float_Data @["ext_rew"] { };
     };
+
+    DataOpList @.last_sort_spec.ops = [0] {
+    };
    };
    DataTable @["EpochOutputData"] { 
     DataTableCols @.data = [8] {
@@ -274,6 +321,9 @@ LeabraProject .projects["program_examples"] {
      float_Data @["avg_cycles"] { };
      float_Data @["epoch_time_tot"] { };
      float_Data @["epoch_time_usr"] { };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
     };
    };
   };
@@ -295,6 +345,9 @@ LeabraProject .projects["program_examples"] {
        UserDataItem @["view_panel_wd"] { };
       };
      };
+    };
+
+    DataOpList @.last_sort_spec.ops = [0] {
     };
    };
   };
@@ -400,8 +453,9 @@ LeabraProject .projects["program_examples"] {
       };
      };
      RandomCall @[1] { 
-      ProgArg_List @.meth_args = [1] {
+      ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
      PrintVar @[2] { };
@@ -463,9 +517,10 @@ LeabraProject .projects["program_examples"] {
       };
      };
      RandomCall @[2] { 
-      ProgArg_List @.meth_args = [2] {
+      ProgArg_List @.meth_args = [3] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+       ProgArg @[2] { };
       };
      };
      If @[3] { 
@@ -643,6 +698,9 @@ LeabraProject .projects["program_examples"] {
 	};
        };
       };
+
+      DataOpList @.last_sort_spec.ops = [0] {
+      };
      };
      DataTable @["TestOrders"] { 
       DataTableCols @.data = [2] {
@@ -657,6 +715,9 @@ LeabraProject .projects["program_examples"] {
 	 UserDataItem @["view_panel_wd"] { };
 	};
        };
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
       };
      };
      DataTable @["Configurations"] { 
@@ -676,6 +737,9 @@ LeabraProject .projects["program_examples"] {
 	 UserDataItem @["view_panel_wd"] { };
 	};
        };
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
       };
      };
     };
@@ -757,8 +821,9 @@ LeabraProject .projects["program_examples"] {
 	ProgEl_List @.prog_code = [6] {
 	 PrintExpr @[0] { };
 	 RandomCall @[1] { 
-	  ProgArg_List @.meth_args = [1] {
+	  ProgArg_List @.meth_args = [2] {
 	   ProgArg @[0] { };
+	   ProgArg @[1] { };
 	  };
 	 };
 	 MethodCall @[2] { 
@@ -788,8 +853,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	 Comment @[4] { };
 	 RandomCall @[5] { 
-	  ProgArg_List @.meth_args = [1] {
+	  ProgArg_List @.meth_args = [2] {
 	   ProgArg @[0] { };
+	   ProgArg @[1] { };
 	  };
 	 };
 	 PrintVar @[6] { };
@@ -988,6 +1054,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -1044,6 +1113,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -1094,6 +1166,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -1135,6 +1210,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1212,6 +1290,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1291,6 +1372,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1375,6 +1459,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["DemoDataCopyJson"] { 
        DataTableCols @.data = [3] {
@@ -1393,6 +1480,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
       DataTable @["DemoDataCopyCSV"] { 
@@ -1489,6 +1579,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -1573,6 +1666,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1666,6 +1762,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -1710,7 +1809,7 @@ LeabraProject .projects["program_examples"] {
      };
     };
    };
-   Program_Group @.gp["DataOperations"] = [6] { 
+   Program_Group @.gp["DataOperations"] = [7] { 
     Program @["DataLoop"] { 
      ProgObjList @.objs = [1] {
       DataTable @["DemoData"] { 
@@ -1725,6 +1824,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1790,6 +1892,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["TableOne"] { 
        DataTableCols @.data = [2] {
@@ -1805,6 +1910,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1907,6 +2015,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["SelectedRows"] { 
        DataTableCols @.data = [3] {
@@ -1925,6 +2036,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -1982,6 +2096,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["DemoStats"] { 
        DataTableCols @.data = [3] {
@@ -2000,6 +2117,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -2058,6 +2178,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["SortedRows"] { 
        DataTableCols @.data = [3] {
@@ -2076,6 +2199,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
      };
@@ -2132,6 +2258,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
       DataTable @["FruitData"] { 
        DataTableCols @.data = [3] {
@@ -2150,6 +2279,9 @@ LeabraProject .projects["program_examples"] {
 	  UserDataItem @["view_panel_wd"] { };
 	 };
 	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
        };
       };
       DataTable @["JoinedData"] { 
@@ -2180,6 +2312,9 @@ LeabraProject .projects["program_examples"] {
 	 };
 	};
        };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
       };
      };
 
@@ -2209,6 +2344,100 @@ LeabraProject .projects["program_examples"] {
       DataJoinProg @[1] { };
      };
     };
+    Program @["FindMatchingRows"] { 
+     ProgObjList @.objs = [1] {
+      DataTable @["DemoData"] { 
+       DataTableCols @.data = [3] {
+	String_Data @["Name_One"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	String_Data @["Name_Two"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+	int_Data @["Match"] { 
+	 UserDataItem_List @*(.user_data_) {
+	  UserDataItem @["NARROW"] { };
+	  UserDataItem @["view_panel_wd"] { };
+	 };
+	};
+       };
+
+       DataOpList @.last_sort_spec.ops = [0] {
+       };
+      };
+     };
+
+     ProgType_List @.types = [0] {
+     };
+
+     ProgVar_List @.args = [0] {
+     };
+
+     ProgVar_List @.vars = [5] {
+      ProgVar @["DemoData"] { };
+      ProgVar @["data_loop_index"] { };
+      ProgVar @["data_loop_order"] { };
+      ProgVar @["name_one_value"] { };
+      ProgVar @["name_two_value"] { };
+     };
+
+     Function_List @.functions = [0] {
+     };
+
+     ProgEl_List @.init_code = [0] {
+     };
+
+     ProgEl_List @.prog_code = [4] {
+      Comment @[0] { };
+      Comment @[1] { };
+      LocalVars @[2] { 
+       ProgVar_List @.local_vars = [0] {
+       };
+      };
+      DataLoop @[3] { 
+       ProgEl_List @.loop_code = [4] {
+	MethodCall @[0] { 
+	 ProgArg_List @.meth_args = [2] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	 };
+	};
+	MethodCall @[1] { 
+	 ProgArg_List @.meth_args = [2] {
+	  ProgArg @[0] { };
+	  ProgArg @[1] { };
+	 };
+	};
+	If @[2] { 
+	 ProgEl_List @.true_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	 };
+	};
+	Else @[3] { 
+	 ProgEl_List @.else_code = [1] {
+	  MethodCall @[0] { 
+	   ProgArg_List @.meth_args = [3] {
+	    ProgArg @[0] { };
+	    ProgArg @[1] { };
+	    ProgArg @[2] { };
+	   };
+	  };
+	 };
+	};
+       };
+      };
+     };
+    };
    };
   };
   Program_Group @.gp["Math"] = [3] { 
@@ -2221,6 +2450,9 @@ LeabraProject .projects["program_examples"] {
 	 UserDataItem @["view_panel_wd"] { };
 	};
        };
+      };
+
+      DataOpList @.last_sort_spec.ops = [0] {
       };
      };
     };
@@ -2250,8 +2482,9 @@ LeabraProject .projects["program_examples"] {
      PrintExpr @[1] { };
      Comment @[2] { };
      RandomCall @[3] { 
-      ProgArg_List @.meth_args = [1] {
+      ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
+       ProgArg @[1] { };
       };
      };
      PrintVar @[4] { };
@@ -2259,9 +2492,10 @@ LeabraProject .projects["program_examples"] {
      PrintExpr @[6] { };
      PrintExpr @[7] { };
      RandomCall @[8] { 
-      ProgArg_List @.meth_args = [2] {
+      ProgArg_List @.meth_args = [3] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+       ProgArg @[2] { };
       };
      };
      PrintVar @[9] { };
@@ -2294,27 +2528,31 @@ LeabraProject .projects["program_examples"] {
       };
      };
      RandomCall @[1] { 
-      ProgArg_List @.meth_args = [0] {
-      };
-     };
-     PrintVar @[2] { };
-     RandomCall @[3] { 
-      ProgArg_List @.meth_args = [2] {
-       ProgArg @[0] { };
-       ProgArg @[1] { };
-      };
-     };
-     PrintVar @[4] { };
-     RandomCall @[5] { 
       ProgArg_List @.meth_args = [1] {
        ProgArg @[0] { };
       };
      };
-     PrintVar @[6] { };
-     RandomCall @[7] { 
+     PrintVar @[2] { };
+     RandomCall @[3] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
+      };
+     };
+     PrintVar @[4] { };
+     RandomCall @[5] { 
       ProgArg_List @.meth_args = [2] {
        ProgArg @[0] { };
        ProgArg @[1] { };
+      };
+     };
+     PrintVar @[6] { };
+     RandomCall @[7] { 
+      ProgArg_List @.meth_args = [3] {
+       ProgArg @[0] { };
+       ProgArg @[1] { };
+       ProgArg @[2] { };
       };
      };
      PrintVar @[8] { };
@@ -2651,9 +2889,9 @@ LeabraProject .projects["program_examples"] {
    };
 
    FrameViewer_List @.frames = [3] {
-    BrowseViewerTaBase @["Tree"] { };
-    PanelViewer @["Panels"] { };
-    T3PanelViewer @["T3Frames"] { 
+    BrowseViewerTaBase @["Navigator"] { };
+    PanelViewer @["Editor"] { };
+    T3PanelViewer @["Visualizer"] { 
      UserDataItem_List @*(.user_data_) {
       UserDataItem @["view_panel_selected"] { };
      };
@@ -2782,9 +3020,6 @@ LeabraProject .projects["program_examples"] {
  Network_Group @.networks = [1] {
   LeabraNetwork @["Network_0"] { 
    UserDataItem_List @*(.user_data_) {
-    UserDataItem @["trial_cos_diff"] { };
-    UserDataItem @["avg_act_diff"] { };
-    UserDataItem @["cos_diff"] { };
     UserDataItem @["cos_err"] { };
     UserDataItem @["norm_err"] { };
     UserDataItem @["ext_rew"] { };
@@ -2797,6 +3032,7 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["output_name"] { };
     UserDataItem @["trial_name"] { };
     UserDataItem @["group_name"] { };
+    UserDataItem @["total_trials"] { };
     UserDataItem @["time"] { };
     UserDataItem @["cycle"] { };
     UserDataItem @["tick"] { };
@@ -2804,6 +3040,9 @@ LeabraProject .projects["program_examples"] {
     UserDataItem @["group"] { };
     UserDataItem @["epoch"] { };
     UserDataItem @["batch"] { };
+    UserDataItem @["trial_cos_diff"] { };
+    UserDataItem @["avg_act_diff"] { };
+    UserDataItem @["cos_diff"] { };
     UserDataItem @["maxda"] { };
     UserDataItem @["minus_cycles"] { };
     UserDataItem @["ct_cycle"] { };
@@ -2875,6 +3114,14 @@ LeabraProject .projects["program_examples"] {
 
    Weights_List @.weights = [0] {
    };
+
+   NetTiming_List NULL = [5] {
+    LeabraNetTiming @[0] { };
+    LeabraNetTiming @[1] { };
+    LeabraNetTiming @[2] { };
+    LeabraNetTiming @[3] { };
+    LeabraNetTiming @[4] { };
+   };
   };
  };
 };
@@ -2887,6 +3134,8 @@ LeabraProject .projects["program_examples"] {
   minor=0;
   step=0;
  };
+ author="rohrlich";
+ email="john.rohrlich@colorado.edu";
  license {
   owner="Regents of the University of Colorado";
   license=NO_LIC;
@@ -4565,9 +4814,51 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -4593,10 +4884,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4607,9 +4898,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -4667,6 +4958,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -4799,20 +5104,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
@@ -4913,6 +5204,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -4997,6 +5312,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_done {
     name="jobs_done";
@@ -5005,9 +5328,51 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5033,10 +5398,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5047,9 +5412,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5107,6 +5472,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5239,20 +5618,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
@@ -5353,6 +5718,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -5437,6 +5826,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    jobs_archive {
     name="jobs_archive";
@@ -5445,9 +5842,51 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="name of cluster to run job on";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["tag"] {
       name="tag";
       desc="unique tag id for this job -- all files etc are named according to this tag";
+      col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["status"] {
+      name="status";
+      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5473,10 +5912,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["params"] {
-      name="params";
-      desc="emergent parameters based on currently selected items in the ClusterRun";
-      col_flags=SAVE_ROWS|SAVE_DATA;
+     String_Data @["filename"] {
+      name="filename";
+      desc="name of the specific project used for this job -- because multiple versions of a model are often run under the same project name";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5487,9 +5926,9 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["status"] {
-      name="status";
-      desc="status of job: REQUESTED, CANCELLED, SUBMITTED, QUEUED, RUNNING, DONE, KILLED";
+     String_Data @["params"] {
+      name="params";
+      desc="emergent parameters based on currently selected items in the ClusterRun";
       col_flags=SAVE_ROWS|SAVE_DATA;
       is_matrix=0;
       cell_geom{ 1;      };
@@ -5547,6 +5986,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       name="end_time";
       desc="when did the job finish running";
       col_flags=SAVE_ROWS|SAVE_DATA;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["running_time"] {
+      name="running_time";
+      desc="total running time in days/hours/minutes";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
       is_matrix=0;
       cell_geom{ 1;      };
       calc_expr {
@@ -5679,20 +6132,6 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
-     String_Data @["cluster"] {
-      name="cluster";
-      desc="name of cluster to run job on";
-      col_flags=SAVE_ROWS|SAVE_DATA;
-      is_matrix=0;
-      cell_geom{ 1;      };
-      calc_expr {
-       expr=;
-      };
-      dim_names {
-       name="dim_names";
-      [0]       };
-      width=0;
-     };
      String_Data @["queue"] {
       name="queue";
       desc="if specified, indicate a particular queue on the computing resource";
@@ -5793,6 +6232,30 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       [0]       };
       width=0;
      };
+     int_Data @["mpi_per_node"] {
+      UserDataItem_List @*(.user_data_) {
+       name=;
+       el_typ=UserDataItem;
+       el_def=0;
+       UserDataItem @["NARROW"] {
+	name="NARROW";
+	value 1 0=1;
+	val_type_fixed=0;
+       };
+      };
+      name="mpi_per_node";
+      desc="number of processes to use per MPI node to use for mpi run - total nodes is mpi_nodes * mpi_per_node";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      int_Data @["pb_batches"] {
       UserDataItem_List @*(.user_data_) {
        name=;
@@ -5877,6 +6340,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    file_list {
     name="file_list";
@@ -5885,6 +6356,34 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
      name="data";
      el_typ=String_Data;
      el_def=0;
+     String_Data @["cluster"] {
+      name="cluster";
+      desc="cluster where this job was submitted / run";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
+     String_Data @["user"] {
+      name="user";
+      desc="user who ran this job";
+      col_flags=SAVE_ROWS|SAVE_DATA|READ_ONLY;
+      is_matrix=0;
+      cell_geom{ 1;      };
+      calc_expr {
+       expr=;
+      };
+      dim_names {
+       name="dim_names";
+      [0]       };
+      width=0;
+     };
      String_Data @["file_name"] {
       name="file_name";
       desc="name of file -- does not include any path information";
@@ -6019,6 +6518,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    cluster_info {
     name="cluster_info";
@@ -6119,6 +6626,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    search_algos {
     name="search_algos";
@@ -6126,6 +6641,10 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     el_def=0;
    };
    cur_search_algo=NULL;
+   set_proj_name=0;
+   proj_name=;
+   clusters=;
+   users=;
    last_submit_time=;
    notes=;
    extra_files=;
@@ -6134,14 +6653,19 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    cluster=;
    queue=;
    run_time=;
+   exe_cmd="emergent";
    ram_gb=-1;
    n_threads=2;
    use_mpi=0;
    mpi_nodes=10;
+   mpi_per_node=1;
    parallel_batch=0;
    pb_batches=10;
    pb_nodes=0;
    nowin_x=0;
+   enable_kill=0;
+   enable_load=0;
+   enable_notes=1;
   };
  };
  param_sets {
@@ -6252,6 +6776,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [6] 0;1;2;3;4;5;    };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
   };
   DataTable_Group @.gp["OutputData"] {
@@ -6458,6 +6990,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
    DataTable @["EpochOutputData"] {
     name="EpochOutputData";
@@ -6622,6 +7162,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [0]     };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
   };
   DataTable_Group @.gp["AnalysisData"] {
@@ -6722,6 +7270,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
     row_indexes {
      name="row_indexes";
     [2] 0;1;    };
+    last_sort_spec {
+     name="last_sort_spec";
+     ops {
+      name="ops";
+      el_typ=DataSortEl;
+      el_def=0;
+     };
+    };
    };
   };
  };
@@ -6731,12 +7287,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
   el_def=0;
   tags=;
   desc=;
+  debug_mode=0;
   Program_Group @.gp["Control"] {
    name="Control";
    el_typ=Program;
    el_def=0;
    tags=;
    desc=;
+   debug_mode=0;
    Program @["For"] {
     name="For";
     short_nm="For";
@@ -6846,8 +7404,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
       init {
@@ -7049,9 +7606,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="n";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="5";
 	expr {
 	 expr="5";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -7067,8 +7635,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Switch @[3] {
       desc=;
@@ -7094,8 +7661,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"got case 0\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -7117,8 +7683,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"got case 1\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -7140,8 +7705,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"got case 2\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -7163,8 +7727,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"got case 3\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -7186,8 +7749,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"got default case\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -7282,7 +7844,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="min";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="0";
 	expr {
 	 expr="0";
 	};
@@ -7293,9 +7855,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	name="max";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="9";
 	expr {
 	 expr="9";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -7318,8 +7891,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	expr {
 	 expr="\"value is less than 5\"";
 	};
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -7341,8 +7913,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	expr {
 	 expr="\"value is greater than 5\"";
 	};
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -7361,8 +7932,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	expr {
 	 expr="\"value is exactly 5\"";
 	};
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -7536,8 +8106,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"Print if debug level 1\"";
       };
-      my_mask=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_level_1"]$$;
-      debug_level=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_current_level"]$$;
+      debug=0;
      };
      PrintExpr @[10] {
       desc=;
@@ -7546,8 +8115,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"Print if debug level 2\"";
       };
-      my_mask=.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_level_2"]$$;
-      debug_level=$.projects["program_examples"].programs.gp["Control"]["Conditional_Printing"].vars["debug_current_level"]$;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -7560,6 +8128,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
    el_def=0;
    tags=;
    desc=;
+   debug_mode=0;
    Program @["Strings"] {
     name="Strings";
     short_nm="String";
@@ -7671,8 +8240,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      StopStepPoint @[3] {
       desc=;
@@ -7691,8 +8259,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str[1]: \" << str[1]";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[6] {
       desc="very easy to extract substrings using after, from, through..";
@@ -7701,8 +8268,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.after('c'): \" << str.after(\"c\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[7] {
       desc="before..";
@@ -7711,8 +8277,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.before('f'): \" << str.before(\"f\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[8] {
       desc="can specifiy optional starting position, -1 means start from back";
@@ -7721,8 +8286,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"abba.before('b',-1): \" << \"abba\".before(\"b\",-1)";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[9] {
       desc="between..";
@@ -7731,8 +8295,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.between('c', 'f'): \" << str.between(\"c\", \"f\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[10] {
       desc="finding strings";
@@ -7746,8 +8309,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.startsWith('ab'): \" << str.startsWith(\"ab\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[12] {
       desc="and what it ends with";
@@ -7756,8 +8318,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.endsWith('ab'): \" << str.endsWith(\"ab\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[13] {
       desc="what does it contain?";
@@ -7766,8 +8327,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.contains('de'): \" << str.contains(\"de\")";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[14] {
       desc="modifying the string";
@@ -7796,8 +8356,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.upcase(): \" << str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MethodCall @[17] {
       desc=;
@@ -7821,8 +8380,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.downcase(): \" << str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MethodCall @[19] {
       desc=;
@@ -7846,8 +8404,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.capitalize(): \" << str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MethodCall @[21] {
       desc="search-and-replace";
@@ -7893,8 +8450,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.gdub('d', 'delicious')): \" << str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[23] {
       desc="looping, splitting, joining";
@@ -7920,8 +8476,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
       el_var=$.projects["program_examples"].programs.gp["Variables"]["Strings"].prog_code[0].local_vars["chr"]$;
@@ -7966,8 +8521,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MethodCall @[27] {
       desc="join it back, with spaces now..";
@@ -8006,8 +8560,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[29] {
       desc="converting strings to other things";
@@ -8030,8 +8583,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str = 3.14159: \" << str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[32] {
       desc="and spit it back out again";
@@ -8040,8 +8592,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"str.toFloat(): \" << str.toFloat()";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      CssExpr @[33] {
       desc="the conversion is implied automatically as well";
@@ -8066,8 +8617,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"(bool)str: \" << (bool)str";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[36] {
       desc="see DynEnum program examples for how to convert between strings and enumerated types";
@@ -8157,6 +8707,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       row_indexes {
        name="row_indexes";
       [5] 0;1;2;3;4;      };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
      };
      DataTable @["TestOrders"] {
       name="TestOrders";
@@ -8232,6 +8790,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       row_indexes {
        name="row_indexes";
       [2] 0;1;      };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
      };
      DataTable @["Configurations"] {
       name="Configurations";
@@ -8326,6 +8892,14 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       row_indexes {
        name="row_indexes";
       [3] 0;1;2;      };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
+      };
      };
     };
     types {
@@ -8589,8 +9163,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -8670,8 +9243,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"we are now in run mode\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	 RandomCall @[1] {
 	  desc="randomly select one of the unit names";
@@ -8690,9 +9262,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="n";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="N_UnitNames";
 	    expr {
 	     expr="N_UnitNames";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="thr_no";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr=;
 	    };
 	   };
 	  };
@@ -8786,8 +9369,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"we are now in test mode\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	 Comment @[1] {
 	  desc="here we use one function to convert enum names into numbers -- these numbers can then be used directly in rest of code to access units, etc";
@@ -8858,9 +9440,20 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    name="n";
 	    required=1;
 	    def_val=;
-	    prev_expr=;
+	    prev_expr="TestOrders.rows";
 	    expr {
 	     expr="TestOrders.rows";
+	    };
+	   };
+	   ProgArg @[1] {
+	    arg_type=int;
+	    type="int";
+	    name="thr_no";
+	    required=0;
+	    def_val="0";
+	    prev_expr=;
+	    expr {
+	     expr=;
 	    };
 	   };
 	  };
@@ -8876,8 +9469,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  print_var4=NULL;
 	  print_var5=NULL;
 	  print_var6=NULL;
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	 MethodCall @[7] {
 	  desc="clear out any existing rows";
@@ -8940,8 +9532,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	    expr {
 	     expr="\"generated input: \" << name_var.NumberToName(i)";
 	    };
-	    my_mask=NULL;
-	    debug_level=NULL;
+	    debug=0;
 	   };
 	   MethodCall @[4] {
 	    desc="tells the gui etc that you're done writing to this row";
@@ -8984,8 +9575,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"we are now in help mode\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	 PrintExpr @[1] {
 	  desc=;
@@ -8994,8 +9584,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"select the 'RUN' cmd to generate a single random input in InputData (look at table in left browser)\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	 PrintExpr @[2] {
 	  desc=;
@@ -9004,8 +9593,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
 	  expr {
 	   expr="\"select the 'TEST' cmd to generate a sequence of InputData inputs according to a row in TestOrders\"";
 	  };
-	  my_mask=NULL;
-	  debug_level=NULL;
+	  debug=0;
 	 };
 	};
 	case_val {
@@ -9222,8 +9810,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"a:\\n\" << a";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[7] {
       desc="== figuring out their dimensions ==";
@@ -9245,8 +9832,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"b = shape(a)\\n\" << b << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[10] {
       desc="number of dimensions";
@@ -9255,8 +9841,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"ndims(a):\\n\" << ndims(a) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[11] {
       desc="== accessing cells in the matrix ==";
@@ -9270,8 +9855,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"a[1,0]:\\n\" << a[1,0] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[13] {
       desc="if you put a : in for a dimension, you get the whole thing";
@@ -9280,8 +9864,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"a[:,0]:\\n\" << a[:,0] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[14] {
       desc="note that output specifies coordinates of each cell in above case -- this happens when specifiying subsets of cells (could be arbitrary)";
@@ -9295,8 +9878,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"a[0:2:1,:]:\\n\" << a[0:2:1,:] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[16] {
       desc="== assignment -- setting values ==";
@@ -9326,8 +9908,7 @@ mw.loader.load([\"mediawiki.action.view.postEdit\",\"mediawiki.user\",\"mediawik
       expr {
        expr="\"b[:,0] = a[:,1]:\\n\" << b";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      CssExpr @[20] {
       desc="sets all cells to same value";
@@ -9345,8 +9926,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"b=3:\\n\" << b << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      CssExpr @[22] {
       desc="assigning to a different matrix completely overwrites any existing values";
@@ -9363,8 +9943,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"b = [10,20,30]:\\n\" << b << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[24] {
       desc="== making matricies out of matricies ==";
@@ -9378,8 +9957,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"[a,a; a,a]:\\n\" << [a,a; a,a] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[26] {
       desc="== matrix math ==";
@@ -9393,8 +9971,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a+a:\\n\" << a+a << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      CssExpr @[28] {
       desc=;
@@ -9411,8 +9988,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"mat_mult(a,b):\\n\" << mat_mult(a,b) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[30] {
       desc="yes, min is avail too";
@@ -9421,8 +9997,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"max(a):\\n\" << max(a) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[31] {
       desc="this is now an element-wise operator with the scalar";
@@ -9431,8 +10006,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"max(a,2):\\n\" << max(a,2) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[32] {
       desc="sin, etc all here";
@@ -9441,8 +10015,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"cos(a):\\n\" << cos(a) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[33] {
       desc="element-wise to the 3rd power";
@@ -9451,8 +10024,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"pow(a,3):\\n\" << pow(a,3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[34] {
       desc="a shorter form";
@@ -9461,8 +10033,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a^3:\\n\" << (a^3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[35] {
       desc="== boolean operators etc ==";
@@ -9476,8 +10047,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a>3:\\n\" << (a>3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[37] {
       desc="if a single element indexed, just a normal bool op";
@@ -9486,8 +10056,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a[1,0] > a[0,0]:\\n\" << (a[1,0]>a[0,0]) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[38] {
       desc="use the bools as a filter on the original matrix, returning only the 1's";
@@ -9496,8 +10065,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a[a>3]:\\n\" << a[a>3] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[39] {
       desc="get the indexes of the cells that pass the test";
@@ -9506,8 +10074,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"find(a>3):\\n\" << find(a>3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[40] {
       desc="get the values -- this is a different filter on a matrix, so the output is different from a[a>3] but otherwise behaves the same";
@@ -9516,8 +10083,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"a[find(a>3)]:\\n\" << a[find(a>3)] << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[41] {
       desc="use flatten to turn a subset of a matrix into its own proper whole matrix -- always 1D due to arbitrary list-like nature of elements";
@@ -9526,8 +10092,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"flatten(a[a>3]):\\n\" << flatten(a[a>3]) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[42] {
       desc="== handy initializers ==";
@@ -9541,8 +10106,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"zeros([4,3]):\\n\" << zeros([4,3]) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[44] {
       desc="identity square matrix (1's along the diagonal, 0's elsewhere)";
@@ -9551,8 +10115,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"eye(3):\\n\" << eye(3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[45] {
       desc="put the elements from given matrix along diagonal of new square matrix";
@@ -9561,8 +10124,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"diag(a,0):\\n\" << diag(a,0) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[46] {
       desc="get them back out!";
@@ -9571,8 +10133,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"diag(diag(a,0),1):\\n\" << diag(diag(a,0),1) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[47] {
       desc="uniform random 0-1 elements";
@@ -9581,8 +10142,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"rand([4,3]):\\n\" << rand([4,3]) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[48] {
       desc=;
@@ -9591,8 +10151,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"linspace(1,3,3):\\n\" << linspace(1,3,3) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[49] {
       desc=;
@@ -9601,8 +10160,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"meshgrid([0:3, 0:2]):\\n\" << meshgrid([0:3, 0:2])<< endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[50] {
       desc="== function calling ==";
@@ -9658,8 +10216,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"softmax of b = [1,2,3]:\\n\" << b << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[54] {
       desc="== more math functions ==";
@@ -9683,8 +10240,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"vec_sum(a):\\n\" << vec_sum(a) << endl";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -9751,8 +10307,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"Click init and then run the program a few times - notice that the global variable holds its value but the local variable is reset each time the program is rerun\"";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     prog_code {
@@ -9790,8 +10345,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      AssignExpr @[2] {
       desc=;
@@ -9822,8 +10376,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -9836,12 +10389,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    el_def=0;
    tags=;
    desc=;
+   debug_mode=0;
    Program_Group @.gp["BasicDataReadWrite"] {
     name="BasicDataReadWrite";
     el_typ=Program;
     el_def=0;
     tags=;
     desc="Programs demonstrating how to copy data to and from a data table";
+    debug_mode=0;
     Program @["ReadAndPrintAllRows"] {
      name="ReadAndPrintAllRows";
      short_nm="RCrrRw";
@@ -9921,6 +10476,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -10074,8 +10637,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 print_var4=NULL;
 	 print_var5=NULL;
 	 print_var6=NULL;
-	 my_mask=NULL;
-	 debug_level=NULL;
+	 debug=0;
 	};
        };
        data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadAndPrintAllRows"].vars["DemoData"]$;
@@ -10166,6 +10728,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -10295,8 +10865,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
      step_prog=NULL;
@@ -10381,6 +10950,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -10485,8 +11062,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
      step_prog=NULL;
@@ -10539,7 +11115,15 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        keygen 4 0=0;
        row_indexes {
 	name="row_indexes";
-       [5] 0;1;2;3;4;       };
+       [0]        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -10878,6 +11462,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [3] 0;1;2;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -11065,8 +11657,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 print_var4=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["B"]$$;
 	 print_var5=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["user_name"]$$;
 	 print_var6=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["value"]$$;
-	 my_mask=NULL;
-	 debug_level=NULL;
+	 debug=0;
 	};
        };
        data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"]["ReadFromManyColumns"].vars["MoreDemoData"]$;
@@ -11259,6 +11850,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [3] 0;1;2;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -11441,8 +12040,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 print_var4=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["B"]$$;
 	 print_var5=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["user_name"]$$;
 	 print_var6=.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["value"]$$;
-	 my_mask=NULL;
-	 debug_level=NULL;
+	 debug=0;
 	};
        };
        data_var=$.projects["program_examples"].programs.gp["Data"].gp["BasicDataReadWrite"][5].vars["MoreDemoData"]$;
@@ -11679,6 +12277,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["DemoDataCopyJson"] {
        name="DemoDataCopyJson";
@@ -11783,6 +12389,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
       DataTable @["DemoDataCopyCSV"] {
@@ -12290,6 +12904,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -12580,6 +13202,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     tags=;
     desc=;
+    debug_mode=0;
     Program @["UseLocalVarWhenAccessingMatrices"] {
      name="UseLocalVarWhenAccessingMatrices";
      short_nm="DtcCss";
@@ -12691,6 +13314,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -13127,6 +13758,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -13196,8 +13835,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"first column (Name), all rows of data:  DemoData[\\\"Name\\\"][:] \\n\" <<DemoData[\"Name\"][:] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintExpr @[4] {
        desc="full syntax is start : end : increment";
@@ -13206,8 +13844,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"first 3 rows from first column:  DemoData[0][0:3]\\n\" << DemoData[0][0:3] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintExpr @[5] {
        desc=;
@@ -13216,8 +13853,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"every other row: DemoData[0][0:DemoData.rows:2]\\n\" << DemoData[0][0:DemoData.rows:2] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       Comment @[6] {
        desc="== accessing and copying matrix data ==";
@@ -13231,8 +13867,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"first row of matrix data: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       CssExpr @[8] {
        desc="random numbers";
@@ -13249,8 +13884,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"now after randomizing: DemoData[\\\"MatrixVal\\\"][:,:,0] \\n\" << DemoData[\"MatrixVal\"][:,:,0] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       CssExpr @[10] {
        desc="replicate to all other rows";
@@ -13267,8 +13901,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"verifying a cell in all rows after copying:\\n\" << DemoData[\"MatrixVal\"][2,1,:] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       Comment @[12] {
        desc="== doing some scalar column math ==";
@@ -13290,8 +13923,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"value3 = value + value2: \\n\" << DemoData[\"Value3\"][:] << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintExpr @[15] {
        desc=;
@@ -13300,8 +13932,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"mean of value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][:]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][:]) << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       PrintExpr @[16] {
        desc=;
@@ -13310,8 +13941,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"mean of first 3 value3: taMath_float::vec_mean(DemoData[\\\"Value3\\\"][0:3]) \\n\" << taMath_float::vec_mean(DemoData[\"Value3\"][0:3]) << endl";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
       Comment @[17] {
        desc="note: use ctrl+L after taMath_float::vec_ to see all the various functions avail here -- many!";
@@ -13329,6 +13959,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     tags=;
     desc="How to regroup and select data from data tables and how to create new columns based on the values of existing data";
+    debug_mode=0;
     Program @["DataLoop"] {
      name="DataLoop";
      short_nm="DLp";
@@ -13408,6 +14039,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [10] 0;1;2;3;4;5;6;7;8;9;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -13605,8 +14244,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	 print_var4=NULL;
 	 print_var5=NULL;
 	 print_var6=NULL;
-	 my_mask=NULL;
-	 debug_level=NULL;
+	 debug=0;
 	};
        };
        data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["DataLoop"].vars["DemoData"]$;
@@ -13683,6 +14321,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [6] 0;1;2;3;4;5;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["TableOne"] {
        name="TableOne";
@@ -13761,6 +14407,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [6] 0;1;2;3;4;5;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -14145,6 +14799,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["SelectedRows"] {
        name="SelectedRows";
@@ -14239,6 +14901,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [8] 7;6;5;4;3;2;1;0;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -14473,6 +15143,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["DemoStats"] {
        name="DemoStats";
@@ -14567,6 +15245,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        row_indexes {
 	name="row_indexes";
        [2] 0;1;       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -14791,6 +15477,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["SortedRows"] {
        name="SortedRows";
@@ -14892,6 +15586,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="row_indexes";
        [20] 0;1;12;13;19;14;2;3;16;4;
 5;6;17;7;8;9;11;18;15;10;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
      };
@@ -15106,6 +15808,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
       DataTable @["FruitData"] {
        name="FruitData";
@@ -15207,6 +15917,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="row_indexes";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
+       };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
        };
       };
       DataTable @["JoinedData"] {
@@ -15366,6 +16084,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        [20] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
        };
+       last_sort_spec {
+	name="last_sort_spec";
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
       };
      };
      types {
@@ -15463,6 +16189,436 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
      step_prog=NULL;
      step_n=1;
     };
+    Program @["FindMatchingRows"] {
+     name="FindMatchingRows";
+     short_nm="FnMtcR";
+     tags=;
+     desc="Compare two columns and mark each row where the data matches";
+     flags=NO_STOP_STEP;
+     objs {
+      name="ProgObjList_154";
+      el_typ=taNBase;
+      el_def=0;
+      DataTable @["DemoData"] {
+       name="DemoData";
+       desc=;
+       data {
+	name="data";
+	el_typ=String_Data;
+	el_def=0;
+	String_Data @["Name_One"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.2161172181367874;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name_One";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [9] "Apple";"Banana";"Cherry";"Dragon Fruit";"Elderberry";"Grapes";"Huckleberry";"Imo";"Jam";	 };
+	};
+	String_Data @["Name_Two"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.2161172181367874;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Name_Two";
+	 col_flags=SAVE_ROWS|SAVE_DATA;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=177;
+	 ar {
+	  name="ar";
+	 [9] "Grapefruit";"Banana";"NotCherry";"Dragon Fruit";"Elderberry";"NotGrapes";"Huckleberry";"Imo";"Kiwi";	 };
+	};
+	int_Data @["Match"] {
+	 UserDataItem_List @*(.user_data_) {
+	  name=;
+	  el_typ=UserDataItem;
+	  el_def=0;
+	  UserDataItem @["NARROW"] {
+	   name="NARROW";
+	   value 1 0=1;
+	   val_type_fixed=0;
+	  };
+	  UserDataItem @["view_panel_wd"] {
+	   name="view_panel_wd";
+	   value 6 0=0.1684981733560562;
+	   val_type_fixed=0;
+	  };
+	 };
+	 name="Match";
+	 col_flags=SAVE_ROWS;
+	 is_matrix=0;
+	 cell_geom{ 1;	 };
+	 calc_expr {
+	  expr=;
+	 };
+	 dim_names {
+	  name="dim_names";
+	 [0] 	 };
+	 width=138;
+	 ar {
+	  name="ar";
+	 [9] 0;1;0;1;1;0;1;1;0;	 };
+	};
+       };
+       data_flags=SAVE_ROWS|AUTO_CALC;
+       auto_load=NO_AUTO_LOAD;
+       auto_load_file=;
+       keygen 4 0=0;
+       row_indexes {
+	name=;
+       [9] 0;1;2;3;4;5;6;7;8;       };
+       last_sort_spec {
+	name=;
+	ops {
+	 name="ops";
+	 el_typ=DataSortEl;
+	 el_def=0;
+	};
+       };
+      };
+     };
+     types {
+      name="ProgType_List_1";
+      el_typ=DynEnumType;
+      el_def=0;
+     };
+     args {
+      name="ProgVar_List_1";
+      el_typ=ProgVar;
+      el_def=0;
+     };
+     vars {
+      name="ProgVar_List_1";
+      el_typ=ProgVar;
+      el_def=0;
+      ProgVar @["DemoData"] {
+       name="DemoData";
+       var_type=T_Object;
+       object_type=DataTable;
+       object_val=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].objs["DemoData"]$$;
+       objs_ptr=1;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["data_loop_index"] {
+       name="data_loop_index";
+       var_type=T_Int;
+       int_val=9;
+       objs_ptr=0;
+       flags=NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="the index variable is created for you when you add a DataLoop to your program";
+       init_from=NULL;
+      };
+      ProgVar @["data_loop_order"] {
+       name="data_loop_order";
+       var_type=T_HardEnum;
+       int_val=0;
+       hard_enum_type=DataLoop::Order;
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc="order can also be PERMUTED or RANDOM";
+       init_from=NULL;
+      };
+      ProgVar @["name_one_value"] {
+       name="name_one_value";
+       var_type=T_String;
+       string_val="Jam";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+      ProgVar @["name_two_value"] {
+       name="name_two_value";
+       var_type=T_String;
+       string_val="Kiwi";
+       objs_ptr=0;
+       flags=CTRL_PANEL|NULL_CHECK|SAVE_VAL|USED|EDIT_VAL;
+       reference=0;
+       desc=;
+       init_from=NULL;
+      };
+     };
+     functions {
+      name="Function_List_154";
+      el_typ=Function;
+      el_def=0;
+     };
+     init_code {
+      name="ProgEl_List_1252";
+      el_typ=ProgCode;
+      el_def=0;
+     };
+     prog_code {
+      name="ProgEl_List_1253";
+      el_typ=ProgCode;
+      el_def=0;
+      Comment @[0] {
+       desc="We have our input table 'DemoData' with 2 columns of data and a third column to track if the first 2 match";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// We have our input table 'DemoData' and the new table 'SelectedRows' that will only have those rows that match a spec";
+      };
+      Comment @[1] {
+       desc="We loop through the rows getting the value for each column and setting the value in the third column based on a comparison";
+       flags=CAN_REVERT_TO_CODE;
+       orig_prog_code="// We loop through the rows getting the value for each column and setting the value in the third column based on a comparison";
+      };
+      LocalVars @[2] {
+       desc=;
+       flags=0;
+       orig_prog_code=;
+       local_vars {
+	name="local_vars";
+	el_typ=ProgVar;
+	el_def=0;
+       };
+      };
+      DataLoop @[3] {
+       desc=;
+       flags=0;
+       orig_prog_code="DataTable Loop (SEQUENTIAL over: DemoData index: data_loop_index)";
+       loop_code {
+	name="loop_code";
+	el_typ=ProgCode;
+	el_def=0;
+	MethodCall @[0] {
+	 desc="read the value from the data table into variable";
+	 flags=CAN_REVERT_TO_CODE;
+	 orig_prog_code="Name = DemoData.GetVal(data_loop_index)";
+	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["name_one_value"]$$;
+	 obj=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$$;
+	 method=DataTable::GetVal;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_Variant_ref;
+	   type="Variant&";
+	   name="col";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"Name_One\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="row";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="data_loop_index";
+	   };
+	  };
+	 };
+	 meth_sig="const_Variant GetVal(Variant& col, int row)";
+	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
+	};
+	MethodCall @[1] {
+	 desc=;
+	 flags=CAN_REVERT_TO_CODE;
+	 orig_prog_code="Value = DemoData->GetVal(\"Value\", data_loop_index)";
+	 result_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["name_two_value"]$$;
+	 obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
+	 method=DataTable::GetVal;
+	 meth_args {
+	  name="meth_args";
+	  el_typ=ProgArg;
+	  el_def=0;
+	  ProgArg @[0] {
+	   arg_type=const_Variant_ref;
+	   type="Variant&";
+	   name="col";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="\"Name_Two\"";
+	   };
+	  };
+	  ProgArg @[1] {
+	   arg_type=int;
+	   type="int";
+	   name="row";
+	   required=1;
+	   def_val=;
+	   prev_expr=;
+	   expr {
+	    expr="data_loop_index";
+	   };
+	  };
+	 };
+	 meth_sig="const_Variant GetVal(Variant& col, int row)";
+	 meth_desc=" get data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name";
+	};
+	If @[2] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="if (name_value == name_two_value)";
+	 cond {
+	  expr="name_one_value == name_two_value";
+	 };
+	 true_code {
+	  name="true_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="DemoData->SetVal(\"Match\", data_loop_index)";
+	   result_var=NULL;
+	   obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
+	   method=DataTable::SetVal;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="1";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"Match\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="data_loop_index";
+	     };
+	    };
+	   };
+	   meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+	   meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
+	  };
+	 };
+	};
+	Else @[3] {
+	 desc=;
+	 flags=0;
+	 orig_prog_code="else";
+	 else_code {
+	  name="else_code";
+	  el_typ=ProgCode;
+	  el_def=0;
+	  MethodCall @[0] {
+	   desc=;
+	   flags=CAN_REVERT_TO_CODE;
+	   orig_prog_code="DemoData->SetVal(0, \"Match\", data_loop_index)";
+	   result_var=NULL;
+	   obj=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
+	   method=DataTable::SetVal;
+	   meth_args {
+	    name="meth_args";
+	    el_typ=ProgArg;
+	    el_def=0;
+	    ProgArg @[0] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="val";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="0";
+	     };
+	    };
+	    ProgArg @[1] {
+	     arg_type=const_Variant_ref;
+	     type="Variant&";
+	     name="col";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="\"Match\"";
+	     };
+	    };
+	    ProgArg @[2] {
+	     arg_type=int;
+	     type="int";
+	     name="row";
+	     required=1;
+	     def_val=;
+	     prev_expr=;
+	     expr {
+	      expr="data_loop_index";
+	     };
+	    };
+	   };
+	   meth_sig="bool SetVal(Variant& val, Variant& col, int row)";
+	   meth_desc=" set data of scalar type, in Variant form (any data type, use for Programs), for given column, row -- column can be specified as either integer index or a string that is then used to find the given column name; returns 'true' if valid access and set is successful";
+	  };
+	 };
+	};
+       };
+       data_var=$.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["DemoData"]$;
+       index_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["data_loop_index"]$$;
+       order_var=.projects["program_examples"].programs.gp["Data"].gp["DataOperations"]["FindMatchingRows"].vars["data_loop_order"]$$;
+       order=SEQUENTIAL;
+      };
+     };
+     step_prog=NULL;
+     step_n=1;
+    };
    };
   };
   Program_Group @.gp["Math"] {
@@ -15471,6 +16627,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    el_def=0;
    tags=;
    desc=;
+   debug_mode=0;
    Program @["RandomInteger"] {
     name="RandomInteger";
     short_nm="Rndmnt";
@@ -15523,6 +16680,14 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       row_indexes {
        name="row_indexes";
       [10] 0;1;2;3;4;5;6;7;8;9;
+      };
+      last_sort_spec {
+       name="last_sort_spec";
+       ops {
+	name="ops";
+	el_typ=DataSortEl;
+	el_def=0;
+       };
       };
      };
     };
@@ -15593,8 +16758,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"IntZeroN will generate a number between zero and N - 1\"";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[2] {
       desc="Good for picking a random row of a data table because the first row is zero";
@@ -15618,9 +16782,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="n";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="DemoData.rows";
 	expr {
 	 expr="DemoData.rows";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -15636,8 +16811,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[5] {
       desc=;
@@ -15646,8 +16820,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"\"";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[6] {
       desc=;
@@ -15656,8 +16829,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"\"";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      PrintExpr @[7] {
       desc=;
@@ -15666,8 +16838,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       expr {
        expr="\"When your range doesn't start with zero use IntMinMax\"";
       };
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      RandomCall @[8] {
       desc=;
@@ -15686,7 +16857,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="min";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="1";
 	expr {
 	 expr="1";
 	};
@@ -15697,9 +16868,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="max";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="4";
 	expr {
 	 expr="4";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -15715,8 +16897,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -15803,6 +16984,17 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        name="ProgArg_List_0";
        el_typ=ProgArg;
        el_def=0;
+       ProgArg @[0] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
+	};
+       };
       };
      };
      PrintVar @[2] {
@@ -15816,8 +17008,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      RandomCall @[3] {
       desc="can also specify any range";
@@ -15836,7 +17027,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="min";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="-1.0";
 	expr {
 	 expr="-1.0";
 	};
@@ -15847,9 +17038,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="max";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="1.0";
 	expr {
 	 expr="1.0";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -15865,8 +17067,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      RandomCall @[5] {
       desc="gaussian is also very handy";
@@ -15885,9 +17086,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="stdev";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="1.0";
 	expr {
 	 expr="1.0";
+	};
+       };
+       ProgArg @[1] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -15903,8 +17115,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      RandomCall @[7] {
       desc="binomial is very convenient for saying how many events will happen out of a sample of n, given probability p";
@@ -15923,7 +17134,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="n";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr="10";
 	expr {
 	 expr="10";
 	};
@@ -15934,9 +17145,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	name="p";
 	required=1;
 	def_val=;
-	prev_expr=;
+	prev_expr=".5";
 	expr {
 	 expr=".5";
+	};
+       };
+       ProgArg @[2] {
+	arg_type=int;
+	type="int";
+	name="thr_no";
+	required=0;
+	def_val="0";
+	prev_expr=;
+	expr {
+	 expr=;
 	};
        };
       };
@@ -15952,8 +17174,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -16132,8 +17353,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MathCall @[3] {
       desc="this is also available as just plain atan2 -- but using taMath_float makes it easier to find them, and you can get some help too!";
@@ -16181,8 +17401,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[5] {
       desc="vector math -- lots of this -- let's make some data first";
@@ -16354,8 +17573,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      MathCall @[10] {
       desc="we make it faster by using the existing mean -- hardly matters but wth";
@@ -16425,8 +17643,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
      Comment @[12] {
       desc="see Matrix program for lots of Matrix math..";
@@ -16444,6 +17661,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    el_def=0;
    tags=;
    desc=;
+   debug_mode=0;
    Program @["CallFunctionReturnValue"] {
     name="CallFunctionReturnValue";
     short_nm="ClFnct";
@@ -16604,8 +17822,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
       print_var4=NULL;
       print_var5=NULL;
       print_var6=NULL;
-      my_mask=NULL;
-      debug_level=NULL;
+      debug=0;
      };
     };
     step_prog=NULL;
@@ -16733,8 +17950,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
 	print_var4=NULL;
 	print_var5=NULL;
 	print_var6=NULL;
-	my_mask=NULL;
-	debug_level=NULL;
+	debug=0;
        };
       };
      };
@@ -16785,6 +18001,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     tags=;
     desc="You can call another program but unlike a function it can't return a value (also see AccessVariablesInAnotherProgram)";
+    debug_mode=0;
     Program @["CallingProgram"] {
      name="CallingProgram";
      short_nm="CllPrg";
@@ -16918,8 +18135,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        expr {
 	expr="\"Program_B - I've been called\"";
        };
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
      step_prog=NULL;
@@ -16932,6 +18148,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     tags=;
     desc="Programs can't return values like functions but you can access variables of other programs - Run the ProgramSeekingValue program to see this work";
+    debug_mode=0;
     Program @["ProgramSeekingValue"] {
      name="ProgramSeekingValue";
      short_nm="PrgSkn";
@@ -17034,8 +18251,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        print_var4=NULL;
        print_var5=NULL;
        print_var6=NULL;
-       my_mask=NULL;
-       debug_level=NULL;
+       debug=0;
       };
      };
      step_prog=NULL;
@@ -17129,22 +18345,22 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=-0.9713541865348816;
+     value 6 0=-0.751173734664917;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
      name="view_win_top";
-     value 6 0=0.00284090917557478;
+     value 6 0=0.002822865266352892;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9661458134651184;
+     value 6 0=0.751173734664917;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.7992424368858337;
+     value 6 0=0.798870861530304;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -17161,7 +18377,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
    name="Browser2";
    m_data=.projects["program_examples"]$$;
    visible=1;
-   win_name=".projects[\"program_examples\"] - program_examples.proj [*]";
+   win_name=".projects[\"program_examples\"] - program_examples.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -17193,20 +18409,20 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
     name="frames";
     el_typ=BrowseViewerTaBase;
     el_def=0;
-    BrowseViewerTaBase @["Tree"] {
-     name="Tree";
+    BrowseViewerTaBase @["Navigator"] {
+     name="Navigator";
      m_data=NULL;
      visible=1;
      root_typ=LeabraProject;
      root_md=NULL;
      m_root=$.projects["program_examples"]$;
     };
-    PanelViewer @["Panels"] {
-     name="Panels";
+    PanelViewer @["Editor"] {
+     name="Editor";
      m_data=NULL;
      visible=1;
     };
-    T3PanelViewer @["T3Frames"] {
+    T3PanelViewer @["Visualizer"] {
      UserDataItem_List @*(.user_data_) {
       name="UserDataItem_List_93";
       el_typ=UserDataItem;
@@ -17217,7 +18433,7 @@ printf(\"b=3:\\n\", b, \"\\n\\n\");";
        val_type_fixed=0;
       };
      };
-     name="T3Frames";
+     name="Visualizer";
      m_data=NULL;
      visible=0;
      panels {
@@ -17306,6 +18522,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=1: y=0: z=0: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=0;
+	   last_max=0;
 	   range=1;
 	   zero=0;
 	   spec=.colorspecs["C_ColdHot"]$$<ColorScaleSpec,C_ColdHot>;
@@ -17504,6 +18722,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  view_rows=10000;
 	  view_range {min=0: max=-1: };
+	  page_rows=0;
 	  display_on=1;
 	  manip_ctrl_on=1;
 	  graph_type=XY;
@@ -17532,6 +18751,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17549,6 +18770,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -17571,6 +18794,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17590,6 +18815,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=1: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17609,6 +18836,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17628,6 +18857,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17647,6 +18878,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17666,6 +18899,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17685,6 +18920,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17704,6 +18941,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17723,6 +18962,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17742,6 +18983,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="red": r=1: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17761,6 +19004,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="blue": r=0: g=0: b=1: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17780,6 +19025,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="green3": r=0: g=0.8039216: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17799,6 +19046,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="purple": r=0.627451: g=0.1254902: b=0.9411765: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17818,6 +19067,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="orange": r=1: g=0.6470588: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17837,6 +19088,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="brown": r=0.6470588: g=0.1647059: b=0.1647059: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17856,6 +19109,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="chartreuse": r=0.4980392: g=1: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17880,6 +19135,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17899,6 +19156,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17918,6 +19177,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17937,6 +19198,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17956,6 +19219,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17975,6 +19240,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -17994,6 +19261,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18013,6 +19282,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18032,6 +19303,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18051,6 +19324,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18070,6 +19345,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18089,6 +19366,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18108,6 +19387,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18127,6 +19408,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18146,6 +19429,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18165,6 +19450,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    n_cells=1;
 	    matrix_cell=0;
 	    fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	    show_axis_label=1;
+	    show_alt_axis_label=1;
 	    color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	    n_ticks=10;
 	    axis_length=1;
@@ -18175,7 +19462,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  err_spacing=1;
 	  err_bar_width=0.02;
-	  color_mode=FIXED_COLOR;
+	  color_mode=FIXED;
 	  color_axis {
 	   name="color_axis";
 	   m_data=NULL;
@@ -18188,6 +19475,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -18198,6 +19487,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   chunks=133;
 	   min=-1;
 	   max=1;
+	   last_min=-1;
+	   last_max=1;
 	   range=0;
 	   zero=0;
 	   spec=$.colorspecs["C_ColdHot"]$;
@@ -18215,6 +19506,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   n_cells=1;
 	   matrix_cell=0;
 	   fixed_range {fix_min=0: min=0: fix_max=0: max=0: };
+	   show_axis_label=1;
+	   show_alt_axis_label=1;
 	   color {name="black": r=0: g=0: b=0: a=1: desc="": };
 	   n_ticks=10;
 	   axis_length=1;
@@ -18324,22 +19617,22 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
       UserDataItem @["view_win_lft"] {
        name="view_win_lft";
-       value 6 0=-1;
+       value 6 0=0;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_top"] {
        name="view_win_top";
-       value 6 0=0.02462121285498142;
+       value 6 0=0.02046577259898186;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04218750074505806;
+       value 6 0=0.03208137676119804;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.685606062412262;
+       value 6 0=0.7325335144996643;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {
@@ -18376,21 +19669,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     name="UserDataItem_List_7";
     el_typ=UserDataItem;
     el_def=0;
-    UserDataItem @["trial_cos_diff"] {
-     name="trial_cos_diff";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
-    UserDataItem @["avg_act_diff"] {
-     name="avg_act_diff";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
-    UserDataItem @["cos_diff"] {
-     name="cos_diff";
-     value 1 0=1;
-     val_type_fixed=1;
-    };
     UserDataItem @["cos_err"] {
      name="cos_err";
      value 1 0=1;
@@ -18451,6 +19729,11 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      value 1 0=1;
      val_type_fixed=1;
     };
+    UserDataItem @["total_trials"] {
+     name="total_trials";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
     UserDataItem @["time"] {
      name="time";
      value 1 0=1;
@@ -18483,6 +19766,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     };
     UserDataItem @["batch"] {
      name="batch";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["trial_cos_diff"] {
+     name="trial_cos_diff";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["avg_act_diff"] {
+     name="avg_act_diff";
+     value 1 0=1;
+     val_type_fixed=1;
+    };
+    UserDataItem @["cos_diff"] {
+     name="cos_diff";
      value 1 0=1;
      val_type_fixed=1;
     };
@@ -18532,21 +19830,39 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        };
        lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
        unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+       multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
        avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-       inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+       inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
        clamp {hard=1: gain=0.2: };
-       decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+       decay {trial=1: };
        del_inhib {on=0: prv_trl=0: prv_q=0: };
+       lstats {
+	cos_diff_avg_tau=100;
+	hog_thr=0.3;
+	dead_thr=0.01;
+	cos_diff_avg_dt=0.01;
+       };
+       lay_lrate=1;
        lay_gp_inhib {on=0: gp_g=0.5: };
       };
      };
      lay_inhib {on=1: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
      unit_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_inhib {on=0: gi=2: ff=1: fb=0.5: fb_tau=1.4: ff0=0.1: fb_dt=0.7142857: };
+     multi_gp_geom {size={x=3: y=3: }: st_off={x=-1: y=-1: }: sub_size={x=1: y=1: }: wrap=1: };
      avg_act {init=0.2: fixed=0: tau=100: adjust=1: dt=0.01: };
-     inhib_misc {self_fb=0: self_tau=1.4: Ei_dyn=0: Ei_gain=0.001: Ei_tau=50: fb_up_immed=0: self_dt=0.7142857: Ei_dt=0.02: };
+     inhib_misc {self_fb=0: self_tau=1.4: fb_up_immed=0: self_dt=0.7142857: };
      clamp {hard=1: gain=0.2: };
-     decay {event=1: cos_diff_avg_tau=100: cos_diff_avg_dt=0.01: };
+     decay {trial=1: };
      del_inhib {on=0: prv_trl=0: prv_q=0: };
+     lstats {
+      cos_diff_avg_tau=100;
+      hog_thr=0.3;
+      dead_thr=0.01;
+      cos_diff_avg_dt=0.01;
+     };
+     lay_lrate=1;
      lay_gp_inhib {on=0: gp_g=0.5: };
     };
     LeabraUnitSpec @["LeabraUnitSpec_0"] {
@@ -18559,7 +19875,6 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       el_def=0;
      };
      act_range {min=0: max=1: range=1: scale=1: };
-     bias_con_type=LeabraCon;
      bias_spec {type=LeabraBiasSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"].children["LeabraBiasSpec_0"]$$: };
      sse_tol=0.5;
      act_fun=NOISY_XX1;
@@ -18582,30 +19897,38 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      v_m_init {name="v_m_init": type=UNIFORM: mean=0.3: var=0: par=1: };
      act_init {name="act_init": type=NONE: mean=0: var=0: par=1: };
      dt {integ=1: vm_tau=3.333333: net_tau=1.428571: fast_cyc=0: vm_dt=0.3: net_dt=0.7000002: };
-     act_avg {l_up_inc=0.2: l_dn_tau=2.5: ss_tau=2: s_tau=2: m_tau=10: l_dn_dt=0.4: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     act_avg {ss_tau=2: s_tau=2: m_tau=10: m_in_s=0.1: s_in_s=0.9: ss_dt=0.5: s_dt=0.5: m_dt=0.1: };
+     avg_l {init=0.4: max=1.5: min=0.1: tau=10: lrn_max=0.05: lrn_min=0.005: err_mod=1: err_min=0.01: act_thr=0.2: dt=0.1: lrn_fact=0.03214286: };
      g_bar {e=1: l=0.1: i=1: };
      e_rev {e=1: l=0.3: i=0.25: };
-     learn_qtr=Q4;
-     deep5b_qtr=0;
-     ti_ctxt_qtr=0;
      adapt {
       on=0;
       tau=144;
       vm_gain=0.04;
       spike_gain=0.00805;
+      Ei_dyn=1;
+      Ei_gain=0.001;
+      Ei_tau=50;
       dt=0.006944444;
+      Ei_dt=0.02;
      };
      stp {on=0: f_r_ratio=0.02: rec_tau=200: p0=0.3: p0_norm=0.4: kre_tau=100: kre=0.002: fac_tau=4: fac=0.3: rec_dt=0.005: fac_dt=0.25: kre_dt=0.01: oneo_p0_norm=2.5: };
      syn_delay {
       on=0;
       delay=4;
      };
-     cifer_thal {on=0: thal_to_super=0.1: thal_thr=0.2: thal_bin=1: };
-     cifer_d5b {on=0: d5b_to_super=0.01: d5b_burst=1: act5b_thr=0.2: ti_5b=0: d5b_repl_ctxt=2: ti_5b_c=1: };
+     dropout {
+      net_on=0;
+      net_p=0.1;
+      net_drop=0.9;
+     };
+     deep_qtr=Q4;
+     deep {on=0: thr=0.2: d_to_d=0.5: d_to_s=0: ctxt_to_s=0.15: ctxt_rel=0: thal_to_d=0: thal_to_s=0: };
+     deep_norm {on=0: mod=1: raw_val=GROUP_MAX: raw_thr=0.2: binary=0: contrast=0.5: ctxt_fm_lay=0.5: ctxt_fm_ctxt=0.5: min_ctxt=0.05: copy_def=0: };
      da_mod {on=0: minus=0: plus=0.1: };
      noise_type=NO_NOISE;
      noise {name="noise": type=GAUSSIAN: mean=0: var=0.001: par=1: };
-     noise_adapt {trial_fixed=1: mode=FIXED_NOISE: };
+     noise_adapt {trial_fixed=1: drop_thr=0.1: mode=FIXED_NOISE: };
      noise_sched {
       name="noise_sched";
       el_typ=SchedItem;
@@ -18632,13 +19955,13 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	el_def=0;
        };
        rnd {name="rnd": type=UNIFORM: mean=0: var=0: par=1: };
-       wt_limits {type=NONE: min=-1: max=5: sym=0: };
+       wt_limits {type=NONE: min=-1: max=5: sym=0: sym_fm_top=0: };
        inhib=0;
        wt_scale {abs=1: rel=1: };
-       diff_scale_p=0;
-       wt_scale_p {abs=1: rel=1: };
        learn=1;
+       learn_qtr=Q4;
        lrate=0.02;
+       use_lrate_sched=1;
        cur_lrate=0.02;
        lrs_mult=1;
        lrate_sched {
@@ -18649,21 +19972,21 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	interpolate=0;
        };
        ignore_unlearnable=1;
-       xcal {raw_l_mix=0: thr_l_mix=0.01: thr_m_mix=0.99: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+       xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
        wt_sig {gain=6: off=1: dwt_norm=1: };
        fast_wts {on=0: nofast_lrate=2: decay_tau=300: wt_tau=5: fast_lrate=5: decay_dt=0.003333333: wt_dt=0.2: slow_lrate=0.2: };
-       cifer {on=0: bg_lrate=1: fg_lrate=0: };
+       deep {on=0: bg_lrate=1: fg_lrate=0: };
        dwt_thresh=0.1;
       };
      };
      rnd {name="rnd": type=UNIFORM: mean=0.5: var=0.25: par=1: };
-     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: };
+     wt_limits {type=MIN_MAX: min=0: max=1: sym=1: sym_fm_top=0: };
      inhib=0;
      wt_scale {abs=1: rel=1: };
-     diff_scale_p=0;
-     wt_scale_p {abs=1: rel=1: };
      learn=1;
+     learn_qtr=Q4;
      lrate=0.02;
+     use_lrate_sched=1;
      cur_lrate=0.02;
      lrs_mult=1;
      lrate_sched {
@@ -18674,10 +19997,10 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       interpolate=0;
      };
      ignore_unlearnable=1;
-     xcal {raw_l_mix=0: thr_l_mix=0.01: thr_m_mix=0.99: thr_max=1: s_mix=0.9: m_mix=0.1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
+     xcal {m_lrn=1: set_l_lrn=0: l_lrn=1: d_rev=0.1: d_thr=0.0001: d_rev_ratio=-9: };
      wt_sig {gain=6: off=1: dwt_norm=1: };
      fast_wts {on=0: nofast_lrate=2: decay_tau=300: wt_tau=5: fast_lrate=5: decay_dt=0.003333333: wt_dt=0.2: slow_lrate=0.2: };
-     cifer {on=0: bg_lrate=1: fg_lrate=0: };
+     deep {on=0: bg_lrate=1: fg_lrate=0: };
     };
     FullPrjnSpec @["FullPrjnSpec_0"] {
      name="FullPrjnSpec_0";
@@ -18690,6 +20013,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      self_con=0;
      init_wts=0;
+     set_scale=0;
      add_rnd_var=0;
     };
    };
@@ -18717,6 +20041,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=0;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -18737,16 +20063,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=0;
+      fm_output=2;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=1;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$$: };
     };
     LeabraLayer @["Hidden"] {
@@ -18765,6 +20091,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=2;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -18777,15 +20105,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["program_examples"].networks["Network_0"].layers["Input"]$$;
        spec {type=FullPrjnSpec: spec=.projects["program_examples"].networks["Network_0"].specs["FullPrjnSpec_0"]$$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"]$$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
       LeabraPrjn @["Fm_Output"] {
@@ -18796,15 +20123,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["program_examples"].networks["Network_0"].layers["Output"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
        recv_idx=1;
        send_idx=0;
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_OUTPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
@@ -18823,16 +20149,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=1;
+      fm_output=1;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=1;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"]$$: };
     };
     LeabraLayer @["Output"] {
@@ -18851,6 +20177,8 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      flat_geom {x=5: y=5: n_not_xy=0: n=25: };
      disp_geom {x=5: y=5: n_not_xy=0: n=25: };
      scaled_disp_geom {x=5: y=5: n_not_xy=0: n=1: };
+     n_recv_prjns=1;
+     n_send_prjns=1;
      projections {
       name="projections";
       el_typ=LeabraPrjn;
@@ -18863,15 +20191,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
        from=.projects["program_examples"].networks["Network_0"].layers["Hidden"]$$;
        spec {type=FullPrjnSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["FullPrjnSpec_0"]$: };
        con_type=LeabraCon;
-       recvcons_type=LeabraRecvCons;
-       sendcons_type=LeabraSendCons;
        con_spec {type=LeabraConSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraConSpec_0"]$: };
        recv_idx=0;
        send_idx=0;
        recv_n=1;
        send_n=1;
        projected=1;
-       direction=DIR_UNKNOWN;
+       dir_fixed=0;
+       direction=FM_INPUT;
        prjn_clr {r=1: g=0.9: b=0.5: a=1: };
       };
      };
@@ -18890,16 +20217,16 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
      };
      unit_spec {type=LeabraUnitSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["LeabraUnitSpec_0"]$: };
      dist {
-      fm_input=-1;
-      fm_output=-1;
+      fm_input=2;
+      fm_output=0;
      };
      units_lesioned=0;
      gp_unit_names_4d=0;
      brain_area=;
      voxel_fill_pct=1;
-     acts_m_avg=0.1;
-     acts_p_avg=0.1;
-     acts_p_avg_eff=1;
+     acts_m_avg=0.2;
+     acts_p_avg=0.2;
+     acts_p_avg_eff=0.2;
      spec {type=LeabraLayerSpec: spec=$.projects["program_examples"].networks["Network_0"].specs["HiddenLayer"].children["Input_Output"]$: };
     };
    };
@@ -18908,8 +20235,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     el_typ=Weights;
     el_def=0;
    };
-   flags=0;
+   flags=BUILD_INIT_WTS;
+   unit_vars_type=LeabraUnitVars;
+   con_group_type=LeabraConGroup;
    auto_build=AUTO_BUILD;
+   auto_load_wts=NO_AUTO_LOAD;
+   auto_load_file=;
    brain_atlas_name=;
    train_mode=TRAIN;
    wt_update=ON_LINE;
@@ -18928,9 +20259,66 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     run_time_pct=0;
     sync_time_pct=0;
     wake_in_sync_pct=0;
-    nibble_chunk=8;
-    min_units=3000;
-    ignore_lay_sync=0;
+   };
+   net_timing {
+    name="net_timing";
+    el_typ=LeabraNetTiming;
+    el_def=0;
+    LeabraNetTiming @[0] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[1] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[2] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[3] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
+    LeabraNetTiming @[4] {
+     netin {name="netin": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act {name="act": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     dwt {name="dwt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     wt {name="wt": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_integ {name="netin_integ": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     netin_stats {name="netin_stats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     inhib {name="inhib": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     act_post {name="act_post": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+     cycstats {name="cycstats": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
+    };
    };
    usr1_save_fmt=FULL_NET;
    wt_save_fmt=TEXT;
@@ -18945,21 +20333,9 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     cons_per_thread=2;
     timers_on=0;
    };
-   lthreads {
-    run_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    sync_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    total_time {name="": s_used=0: n_used=0: avg_used={avg=0: sum=0: n=0: }: };
-    n_wake_in_sync=0;
-    run_time_pct=0;
-    sync_time_pct=0;
-    wake_in_sync_pct=0;
-    quarter=1;
-    unit_chunks=32;
-    unit_fixed=0;
-    timers_on=0;
-   };
    times {
     quarter=25;
+    deep_cyc=5;
     time_inc=0.001;
     minus=75;
     plus=25;
@@ -18972,9 +20348,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
     cos_err_lrn_thr=-1;
    };
    net_misc {
-    ti=0;
-    deep5b_cons=0;
+    spike=0;
+    deep=0;
+    bias_learn=0;
+    trial_decay=0;
     diff_scale_p=0;
+    diff_scale_q1=0;
     dwt_norm=0;
     lay_gp_inhib=0;
     inhib_cons=0;
