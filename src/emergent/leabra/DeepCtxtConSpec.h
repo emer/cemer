@@ -54,6 +54,7 @@ public:
 
   inline void Send_DeepNormNetDelta(LeabraConGroup* cg, LeabraNetwork* net,
                                     int thr_no, const float su_act_delta) {
+    if(!send_deep_norm) return;
     const float su_act_delta_eff = cg->scale_eff * su_act_delta;
     float* wts = cg->OwnCnVar(WT);
     float* send_deepnet_vec = net->ThrSendDeepNormNetTmp(thr_no);
