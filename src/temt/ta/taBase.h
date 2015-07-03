@@ -114,6 +114,7 @@ public: \
   void y::Copy__(const y& cp) {  \
     SetBaseFlag(COPYING); \
       Copy_(cp); \
+      UpdatePointersAfterCopy_(cp); \
     ClearBaseFlag(COPYING);} \
   void y::Copy_impl(const y& cp) { \
     StructUpdate(true); \
@@ -987,7 +988,8 @@ public:
   ///////////////////////////////////////////////////////////////////////////
   //    Updating of object properties
 public:
-
+  void                  UpdatePointersAfterCopy_(const taBase& cp);
+  virtual void          UpdatePointersAfterCopy_impl(const taBase& cp) { };
   virtual void          UpdateAfterEdit();
   // #CAT_ObjectMgmt (aka UAE) called after editing, or any user change to members (eg. in the interface, script)
   virtual void          UpdateAfterEdit_NoGui();

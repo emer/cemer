@@ -135,12 +135,6 @@ void ProgExprBase::CheckThisConfig_impl(bool quiet, bool& rval) {
   }
 }
 
-int ProgExprBase::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
-  int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
-  nchg += vars.UpdatePointers_NewPar(this, old_par, new_par);
-  return nchg;
-}
-
 int ProgExprBase::UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewParType(par_typ, new_par);
   nchg += vars.UpdatePointers_NewParType(this, par_typ, new_par);

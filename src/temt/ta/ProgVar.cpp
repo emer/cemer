@@ -163,20 +163,9 @@ void ProgVar::Copy_(const ProgVar& cp) {
   desc = cp.desc;
   init_from = cp.init_from;
   
-  if(var_type == T_Object) {
-    if((bool)object_val) {
-      // note that updatepointers will reset to null if not found, so it is key
-      // to call the appropriate one based on owner of object being pointed to
-      if(object_val->GetOwner(&TA_Program) == cp.GetOwner(&TA_Program))
-        UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program); // only look in program
-      else
-        UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject); // only look outside of program
-    }
-  }
   SetFlagsByOwnership();
   objs_ptr = false; // only the original var can have special relationship with object
   object_val.set(cp.object_val.ptr());
-  UpdateAfterCopy(cp);
 }
 
 bool ProgVar::CheckUndefType(const String& function_context, bool quiet) const {
@@ -252,19 +241,19 @@ void ProgVar::UpdateAfterEdit_impl() {
   UpdateCssObjVal();
 }
 
-void ProgVar::UpdateAfterCopy(const ProgVar& cp) {
-  Program* myprg = GET_MY_OWNER(Program);
-  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-//  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
-//    // if within the same program, we need to update the *function* pointers
-//    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
-//  }
-//  if (var_type == T_Object) {
-//    if (myprg != otprg) {
-//      objs_ptr = true;
-//    }
-//  }
-}
+//void ProgVar::UpdateAfterCopy(const ProgVar& cp) {
+//  Program* myprg = GET_MY_OWNER(Program);
+//  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
+////  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
+////    // if within the same program, we need to update the *function* pointers
+////    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+////  }
+////  if (var_type == T_Object) {
+////    if (myprg != otprg) {
+////      objs_ptr = true;
+////    }
+////  }
+//}
 
 bool ProgVar::UpdateCssObjVal() {
   if(var_type != T_Object || HasVarFlag(LOCAL_VAR) || css_idx < 0)

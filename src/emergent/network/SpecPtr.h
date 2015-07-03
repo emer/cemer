@@ -53,9 +53,9 @@ public:
   virtual bool	CheckObjTypeForSpec(TypeDef* obj_td = NULL);
   // check for proper type of object (obj_td) that is using this spec (if obj_td is null, it is set to owner type -- can be diff for various other cases) -- just a check -- no message or anything (message is in CheckSpec
 
-  taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
-						 taBase* new_par) override;
-  int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
+//  taBase* UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par,
+//						 taBase* new_par) override;
+//  int	UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
 
   TA_BASEFUNS(SpecPtr_impl);
 protected:

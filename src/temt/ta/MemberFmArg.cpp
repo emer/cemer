@@ -27,8 +27,6 @@ void MemberFmArg::Initialize() {
 }
 
 void MemberFmArg::Copy_(const MemberFmArg& cp) {
-  MemberFmArg::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp);
-  UpdateAfterCopy(cp);
   prv_obj = obj.ptr();
 }
 

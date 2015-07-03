@@ -78,7 +78,6 @@ public:
   TA_BASEFUNS(Function);
 protected:
   void         UpdateAfterEdit_impl() override;
-  void         UpdateAfterCopy(const ProgEl& cp) override;
   void         CheckChildConfig_impl(bool quiet, bool& rval) override;
   void         CheckThisConfig_impl(bool quiet, bool& rval) override;
   void         PreGenChildren_impl(int& item_id) override;

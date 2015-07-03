@@ -33,9 +33,6 @@ void ProgVar_List::Initialize() {
 
 void ProgVar_List::Copy_(const ProgVar_List& cp) {
   var_context = cp.var_context;
-
-  // this is not needed: each individual guy will do it
-  //  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void ProgVar_List::El_SetIndex_(void* it_, int idx) {

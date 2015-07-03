@@ -37,7 +37,6 @@ void ProgEl_List::Destroy() {
 }
 
 void ProgEl_List::Copy_(const ProgEl_List& cp) {
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void ProgEl_List::UpdateAfterEdit_impl() {

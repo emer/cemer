@@ -1969,6 +1969,18 @@ void taBase::ChildUpdateAfterEdit(taBase* child, bool& handled) {
   }
 }
 
+void taBase::UpdatePointersAfterCopy_(const taBase& cp) {
+  if (taMisc::is_loading) {
+    return;
+  }
+  taBase* owner = GetOwner();
+  if (owner) {
+    if (!owner->HasBaseFlag(COPYING)) {
+      UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
+    }
+  }
+}
+
 void taBase::UpdateAfterMove(taBase* old_owner) {
   UpdateAfterMove_impl(old_owner);
   //  SigEmitUpdated();  no extra notify -- list takes care of it.  should

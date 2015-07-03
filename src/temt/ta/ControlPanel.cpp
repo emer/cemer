@@ -55,8 +55,6 @@ void ControlPanel::Copy_(const ControlPanel& cp) {
   base_refs.Reset(); // should get added by copies below
   mbrs = cp.mbrs;
   mths = cp.mths;
-
-  UpdatePointers_NewPar_IfParNotCp((taBase*)&cp, &TA_taProject);
 }
 
 void ControlPanel::UpdateAfterEdit_impl() {

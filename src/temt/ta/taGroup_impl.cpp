@@ -233,6 +233,7 @@ void taGroup_impl::CompareSameTypeR(Member_List& mds, TypeSpace& base_types,
                       show_forbidden, show_allowed, no_ptrs);
 }
 
+// if gp.Upd... not needed then method not needed
 int taGroup_impl::UpdatePointers_NewPar(taBase* old_par, taBase* new_par) {
   int nchg = inherited::UpdatePointers_NewPar(old_par, new_par);
   nchg += gp.UpdatePointers_NewPar(old_par, new_par);

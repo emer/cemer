@@ -30,7 +30,6 @@ void Function_List::Destroy() {
 }
 
 void Function_List::Copy_(const Function_List& cp) {
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_Program);
 }
 
 void Function_List::GenCss(Program* prog) {

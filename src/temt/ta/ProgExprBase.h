@@ -93,7 +93,6 @@ public:
   virtual void  UpdateProgExpr_NewOwner();
   // update program expression after it has been moved/copied to a new owner -- this will identify any variables that are not present in the new program and copy them from the old owner -- must be called before messing with any of the vars progvarref's pointers (should be a copy/same as prior ones)
 
-  int  UpdatePointers_NewPar(taBase* old_par, taBase* new_par) override;
   int  UpdatePointers_NewParType(TypeDef* par_typ, taBase* new_par) override;
   int  UpdatePointers_NewObj(taBase* old_ptr, taBase* new_ptr) override;
 

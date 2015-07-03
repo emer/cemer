@@ -77,7 +77,6 @@ void Function::Copy_(const Function& cp) {
   object_type = cp.object_type;
   args = cp.args;
   fun_code = cp.fun_code;
-  UpdateAfterCopy(cp);
   ClearBaseFlag(COPYING); // ala Copy__
 }
 
@@ -92,30 +91,6 @@ void Function::UpdateAfterEdit_impl() {
   }
   fun_code.el_typ = &TA_ProgCode;  // make sure this is default
 }
-
-void Function::UpdateAfterCopy(const ProgEl& cp) {
-  Program* myprg = GET_MY_OWNER(Program);
-  if(myprg && myprg->HasBaseFlag(taBase::COPYING)) {
-    // if within the same program, we need to update the *function* pointers
-    return;
-  }
-    inherited::UpdateAfterCopy(cp);
-    Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-    if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
-      // if within the same program, we need to update the *function* pointers
-      UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
-    }
-}
-
-//void Function::UpdateAfterCopy(const ProgEl& cp) {
-//  inherited::UpdateAfterCopy(cp);
-//  Program* myprg = GET_MY_OWNER(Program);
-//  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-//  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
-//    // if within the same program, we need to update the *function* pointers
-//    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
-//  }
-//}
 
 void Function::CheckThisConfig_impl(bool quiet, bool& rval) {
   inherited::CheckThisConfig_impl(quiet, rval);

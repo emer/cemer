@@ -43,7 +43,7 @@ taTypeDef_Of(taiWidgetItemChooser);
 
 #define PROGEL_SIMPLE_COPY(T) \
   void Copy_(const T& cp) {T::StatTypeDef(0)->CopyOnlySameType((void*)this, (void*)&cp); \
-    UpdateAfterCopy(cp); }
+}
 
 #define PROGEL_SIMPLE_BASEFUNS(T) \
   PROGEL_SIMPLE_COPY(T);  \
@@ -207,7 +207,6 @@ public:
 protected:
   void         UpdateAfterEdit_impl() override;
   void         UpdateAfterMove_impl(taBase* old_owner) override;
-  virtual void UpdateAfterCopy(const ProgEl& cp);
   // uses type information to do a set of automatic updates of pointers (smart refs) after copy
   void         CheckError_msg(const char* a, const char* b=0, const char* c=0,
                                        const char* d=0, const char* e=0, const char* f=0,

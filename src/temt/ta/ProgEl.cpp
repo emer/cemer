@@ -192,56 +192,6 @@ void ProgEl::UpdateAfterMove_impl(taBase* old_owner) {
   // then do it again if moving between projects
 }
 
-void ProgEl::UpdateAfterCopy(const ProgEl& cp) {
-  Program* myprg = GET_MY_OWNER(Program);
-  if (myprg && myprg->HasBaseFlag(taBase::COPYING)) {
-    return;
-  }
-  
-  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-  if(!myprg || !otprg || myprg == otprg || myprg->HasBaseFlag(taBase::COPYING))
-    return; // don't update if already being taken care of at higher level
-
-  // todo: this can now theoretically be done by UpdatePointers_NewPar_FindNew
-  // but this was written first and it works..
-  // automatically perform all necessary housekeeping functions!
-  TypeDef* td = GetTypeDef();
-  for(int i=0;i<td->members.size;i++) {
-    MemberDef* md = td->members[i];
-    if(md->type->InheritsFrom(&TA_ProgExprBase)) {
-      ProgExprBase* peb = (ProgExprBase*)md->GetOff((void*)this);
-      peb->UpdateProgExpr_NewOwner();
-    }
-    else if(md->type->InheritsFrom(&TA_ProgArg_List)) {
-      ProgArg_List* peb = (ProgArg_List*)md->GetOff((void*)this);
-      peb->UpdateProgExpr_NewOwner();
-    }
-    else if(md->type->InheritsFrom(&TA_ProgExpr_List)) {
-      ProgExpr_List* peb = (ProgExpr_List*)md->GetOff((void*)this);
-      peb->UpdateProgExpr_NewOwner();
-    }
-    else if(md->type->InheritsFromName("ProgVarRef")) {
-      ProgVarRef* pvr = (ProgVarRef*)md->GetOff((void*)this);
-      UpdateProgVarRef_NewOwner(*pvr);
-    }
-    else if(md->type->InheritsFromName("ProgramRef")) {
-      ProgramRef* pvr = (ProgramRef*)md->GetOff((void*)this);
-      if(pvr->ptr()) {
-        Program_Group* mygp = GET_MY_OWNER(Program_Group);
-        Program_Group* otgp = GET_OWNER(otprg, Program_Group);
-        Program_Group* pvgp = GET_OWNER(pvr->ptr(), Program_Group);
-        if(mygp != otgp && (pvgp == otgp)) { // points to old group and we're in a new one
-          Program* npg = mygp->FindName(pvr->ptr()->name); // try to find new guy in my group
-          if(npg) pvr->set(npg);                    // set it!
-        }
-      }
-    }
-  }
-
-  UpdatePointers_NewPar(otprg, myprg); // do the generic function to catch anything else..
-  UpdatePointers_NewPar_IfParNotCp(&cp, &TA_taProject);
-  // then do it again if moving between projects
-}
 
 void ProgEl::CheckError_msg(const char* a, const char* b, const char* c,
                             const char* d, const char* e, const char* f,
