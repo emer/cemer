@@ -241,20 +241,6 @@ void ProgVar::UpdateAfterEdit_impl() {
   UpdateCssObjVal();
 }
 
-//void ProgVar::UpdateAfterCopy(const ProgVar& cp) {
-//  Program* myprg = GET_MY_OWNER(Program);
-//  Program* otprg = (Program*)cp.GetOwner(&TA_Program);
-////  if(myprg && otprg && myprg == otprg && !myprg->HasBaseFlag(taBase::COPYING)) {
-////    // if within the same program, we need to update the *function* pointers
-////    UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
-////  }
-////  if (var_type == T_Object) {
-////    if (myprg != otprg) {
-////      objs_ptr = true;
-////    }
-////  }
-//}
-
 bool ProgVar::UpdateCssObjVal() {
   if(var_type != T_Object || HasVarFlag(LOCAL_VAR) || css_idx < 0)
     return false;
