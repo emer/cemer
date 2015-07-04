@@ -1984,10 +1984,11 @@ void taBase::UpdatePointersAfterCopy_(const taBase& cp) {
 }
 
 void taBase::UpdateAfterMove(taBase* old_owner) {
+  taBase* owner = GetOwner();
+  if (owner && old_owner) {
+    UpdatePointers_NewPar(old_owner, owner); // update any pointers within this guy
+  }
   UpdateAfterMove_impl(old_owner);
-  //  SigEmitUpdated();  no extra notify -- list takes care of it.  should
-  // just _impl doing updating of pointers etc -- just have _impl stuff because it always
-  // ends up being needed eventually..
 }
 
 void taBase::UpdateAllViews() {
