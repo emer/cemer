@@ -156,17 +156,19 @@ protected:
   float_Matrix		agg_tmp_calc_2; // temp calc matrix for agg data
   double_Matrix		agg_tmp_calc_d; // temp calc matrix for agg data
 
-  void	        UpdateAfterEdit_impl();
-  int		cell_num; // current cell number, when adding mon vals
-  void		CheckThisConfig_impl(bool quiet, bool& rval) override;
-  void		SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
-  void		SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
+  void            UpdateAfterEdit_impl() override;
+  void            UpdateAfterMove_impl(taBase* old_owner) override;
+
+  int             cell_num; // current cell number, when adding mon vals
+  void            CheckThisConfig_impl(bool quiet, bool& rval) override;
+  void            SmartRef_SigDestroying(taSmartRef* ref, taBase* obj) override;
+  void            SmartRef_SigEmit(taSmartRef* ref, taBase* obj,
                                  int sls, void* op1_, void* op2_) override;
 
   DataColSpec* 		AddScalarCol(const String& valname, ValType vt);
   DataColSpec* 		AddScalarCol_Agg(const String& valname, ValType vt);
   // add to the agg_specs just to keep it consistent
-  DataColSpec* 	        AddMatrixCol(const String& valname, ValType vt,
+  DataColSpec* 	  AddMatrixCol(const String& valname, ValType vt,
                                      const MatrixGeom* geom = NULL);
   // caller resp for somehow setting geom if NULL; clears cell_num
   bool	 		GetMonVal(int i, Variant& rval); // #IGNORE get the value at i, true if exists

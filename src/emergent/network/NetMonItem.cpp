@@ -110,7 +110,9 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   
   if (!monitor) {
     NetMonItem_List* monitor_list = dynamic_cast<NetMonItem_List*>(this->owner);
-    monitor = dynamic_cast<NetMonitor*>(monitor_list->owner);
+    if (monitor_list) {  // if it was a "copy here" the owner won't be a NetMonItem_List
+      monitor = dynamic_cast<NetMonitor*>(monitor_list->owner);
+    }
   }
 }
 
@@ -175,7 +177,9 @@ void NetMonItem::UpdateAfterEdit_impl() {
   // sets for old projects that didn't have this member
   if (!monitor) {
     NetMonItem_List* monitor_list = dynamic_cast<NetMonItem_List*>(this->owner);
+    if (monitor_list) {
       monitor = dynamic_cast<NetMonitor*>(monitor_list->owner);
+    }
   }
   
   if(computed) {
@@ -223,6 +227,39 @@ void NetMonItem::UpdateAfterEdit_impl() {
     }
     name = taMisc::StringCVar(name);            // keep it clean for css var names
     ScanObject();
+  }
+}
+
+void NetMonItem::UpdateAfterMove_impl(taBase* old_owner) {
+  inherited::UpdateAfterMove_impl(old_owner);
+  NetMonItem_List* old_monitor_list = dynamic_cast<NetMonItem_List*>(old_owner);
+  NetMonItem_List* new_monitor_list = dynamic_cast<NetMonItem_List*>(owner);
+  if (!new_monitor_list) {  // if it was a "move here" the owner won't be a NetMonItem_List - don't proceed
+    return;
+  }
+  NetMonitor* old_monitor = dynamic_cast<NetMonitor*>(old_monitor_list->owner);
+  NetMonitor* new_monitor = dynamic_cast<NetMonitor*>(new_monitor_list->owner);
+  Network* old_network = old_monitor->network;
+  Network* new_network = new_monitor->network;
+  if (old_network != new_network) {
+    if (object_type && object.ptr()) {
+      taBase* new_guy = UpdatePointers_NewPar_FindNew(object.ptr(), old_network, new_network);
+      if(new_guy && new_guy->InheritsFrom(object_type)) {
+        object = new_guy;
+      }
+    }
+  }
+}
+
+// similar to code in NetMonitor for when the network is changed at the monitor level
+void NetMonItem::UpdatePointersAfterCopy_impl(const taBase& cp) {
+  inherited::UpdatePointersAfterCopy_impl(cp);
+  const NetMonItem* src_mon_item = dynamic_cast<const NetMonItem*>(&cp);
+  if (object_type && object.ptr() && monitor != NULL && src_mon_item->monitor != NULL) {
+    taBase* new_guy = UpdatePointers_NewPar_FindNew(object.ptr(), src_mon_item->monitor->network, monitor->network);
+    if(new_guy && new_guy->InheritsFrom(object_type)) {
+      object = new_guy;
+    }
   }
 }
 
@@ -1221,16 +1258,4 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
 void NetMonItem::SetObject(taBase* obj) {
   object = obj;
   UpdateAfterEdit();
-}
-
-// similar to code in NetMonitor for when the network is changed at the monitor level
-void NetMonItem::UpdatePointersAfterCopy_impl(const taBase& cp) {
-  inherited::UpdatePointersAfterCopy_impl(cp);
-  const NetMonItem* src_mon_item = (NetMonItem*)&cp;
-  if (object_type && object.ptr() && monitor != NULL && src_mon_item->monitor != NULL) {  // old projects didn't set this
-    taBase* new_guy = UpdatePointers_NewPar_FindNew(object.ptr(), src_mon_item->monitor->network, monitor->network);
-    if(new_guy && new_guy->InheritsFrom(object_type)) {
-      object = new_guy;
-    }
-  }
 }
