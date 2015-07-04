@@ -123,6 +123,7 @@ NetMonItem* NetMonitor::AddObject(taBase* obj, const String& variable) {
       return nmi;
   }
   nmi = (NetMonItem*)items.New_gui(1, &TA_NetMonItem); // use gui to update
+  nmi->monitor = this;
   nmi->SetMonVals(obj, variable);
   return nmi;
 }

@@ -36,6 +36,7 @@ void NetMonItem::Initialize() {
   computed = false;
   object_type = NULL;
   lookup_var = NULL;
+  monitor = NULL;
   variable = "act";
   name_style = AUTO_NAME;
   max_name_len = 6;
@@ -78,6 +79,7 @@ void NetMonItem::CutLinks() {
   object.CutLinks();
   object_type = NULL;
   lookup_var = NULL;
+  monitor = NULL;
   inherited::CutLinks();
 }
 
@@ -105,6 +107,11 @@ void NetMonItem::Copy_(const NetMonItem& cp) {
   pre_proc_1 = cp.pre_proc_1;
   pre_proc_2 = cp.pre_proc_2;
   pre_proc_3 = cp.pre_proc_3;
+  
+  if (!monitor) {
+    NetMonItem_List* monitor_list = dynamic_cast<NetMonItem_List*>(this->owner);
+    monitor = dynamic_cast<NetMonitor*>(monitor_list->owner);
+  }
 }
 
 void NetMonItem::CheckThisConfig_impl(bool quiet, bool& rval) {
@@ -161,7 +168,15 @@ String NetMonItem::GetAutoName(taBase* obj) {
 
 void NetMonItem::UpdateAfterEdit_impl() {
   inherited::UpdateAfterEdit_impl();
-  if (off) return; // all stuff will run once turned on...
+  if (off) {
+    return; // all stuff will run once turned on...
+  }
+  
+  // sets for old projects that didn't have this member
+  if (!monitor) {
+    NetMonItem_List* monitor_list = dynamic_cast<NetMonItem_List*>(this->owner);
+      monitor = dynamic_cast<NetMonitor*>(monitor_list->owner);
+  }
   
   if(computed) {
     name_style = MY_NAME;
@@ -1206,4 +1221,16 @@ void NetMonItem::GetMonVals_DataAgg(DataTable* db) {
 void NetMonItem::SetObject(taBase* obj) {
   object = obj;
   UpdateAfterEdit();
+}
+
+// similar to code in NetMonitor for when the network is changed at the monitor level
+void NetMonItem::UpdatePointersAfterCopy_impl(const taBase& cp) {
+  inherited::UpdatePointersAfterCopy_impl(cp);
+  const NetMonItem* src_mon_item = (NetMonItem*)&cp;
+  if (object_type && object.ptr() && monitor != NULL && src_mon_item->monitor != NULL) {  // old projects didn't set this
+    taBase* new_guy = UpdatePointers_NewPar_FindNew(object.ptr(), src_mon_item->monitor->network, monitor->network);
+    if(new_guy && new_guy->InheritsFrom(object_type)) {
+      object = new_guy;
+    }
+  }
 }

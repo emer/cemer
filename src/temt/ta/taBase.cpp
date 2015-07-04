@@ -1979,6 +1979,8 @@ void taBase::UpdatePointersAfterCopy_(const taBase& cp) {
       UpdatePointers_NewPar((taBase*)&cp, this); // update any pointers within this guy
     }
   }
+  // for work we can't handle generically
+  UpdatePointersAfterCopy_impl(cp);
 }
 
 void taBase::UpdateAfterMove(taBase* old_owner) {
@@ -3655,6 +3657,9 @@ void taBase::Help() {
 taBase* taBase::UpdatePointers_NewPar_FindNew(taBase* old_guy, taBase* old_par, taBase* new_par) {
   String old_path = old_guy->GetPath(NULL, old_par);
   MemberDef* md;
+  if (!new_par) {
+    return NULL;
+  }
   taBase* new_guy = new_par->FindFromPath(old_path, md);
   String old_nm = old_guy->GetName();
   if(old_guy->GetOwner() && (!new_guy || (old_nm != new_guy->GetName()))) {

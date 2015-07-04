@@ -67,34 +67,36 @@ public:
     // #NO_BIT all but the input layers
   };
 
-  bool			off; // #NO_SAVE_EMPTY set this to not use this netmon item
-  bool			computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
-  TypeDef*		object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
-  taSmartRef 		object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
-  MemberDef*		lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
-  String        	variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specificaly targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
-  String		var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
-  NameStyle		name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
-  int			max_name_len;	 // #DEF_6 maximum length for any name segment
-  MonOptions            options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
-
-  ValType		val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
-  bool			matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
-  MatrixGeom		matrix_geom;	// #CONDSHOW_ON_matrix&&computed geometry of matrix to create if a matrix type
-
-  bool			data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
-  DataTableRef		data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
-  DataOpEl		agg_col;	// #CONDSHOW_ON_data_agg #NO_AUTO_NAME column name in data_src data table to get data to aggregate from
+  NetMonitor*         monitor;
+  // #HIDDEN this is my net monitor
   
-  AggregateSpec		agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
+  bool                off; // #NO_SAVE_EMPTY set this to not use this netmon item
+  bool                computed;	// if true, this value is computed separately in a program, and this is here just to make a place for it in the output data (note: computation sold separately -- must be performed elsewhere)
+  TypeDef*            object_type;	// #CONDSHOW_OFF_computed #TYPE_taOBase type of object to monitor (narrows down the choices when choosing the object)
+  taSmartRef          object;		// #CONDSHOW_OFF_computed #TYPE_ON_object_type #PROJ_SCOPE the network object being monitored
+  MemberDef*          lookup_var;	// #CONDSHOW_OFF_computed #TYPE_ON_object_type #NULL_OK #NO_SAVE #NO_EDIT lookup a member variable to monitor -- this just enters the name into the variable field and then auto-resets to NULL.  you can also just type variable directly, esp for non-members (r.wt, etc)
+  String              variable;	// #CONDSHOW_OFF_computed Variable on object to monitor.  Can also be a variable on sub-objects (e.g., act on Layer or Network will get all unit activations); r. and s. indicate recv and send connection vals (e.g., r.wt), projections.varname or prjns.varname gets projection-level variables, and layers.varname specificaly targets layer-level variables (important for same-name variables on network and layer); can specify vars on particular unit(s) within a layer as 'units[index<-endidx>].varname' or 'units[gpno][index<-endidx>].varname' where the index value is a leaf in the first case and within a given unit group in the second -- in both cases a range of units can be optionally specified
+  String              var_label;	// #CONDSHOW_OFF_computed label to use in place of variable in naming the columns/columns generated from this data (if empty, variable is used)
+  NameStyle           name_style;	 // #CONDSHOW_OFF_computed how to name the columns/columns generated from this data?
+  int                 max_name_len;	 // #DEF_6 maximum length for any name segment
+  MonOptions          options;         // #CONDSHOW_OFF_computed misc options for modifying the way that monitors operate
 
-  bool			select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
-  DataSelectEl		select_spec;	// #CONDSHOW_ON_select_rows #NO_AUTO_NAME optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that
+  ValType             val_type;       // #CONDSHOW_ON_computed type of data column to create (only for computed variables)
+  bool                matrix;		// #CONDSHOW_ON_computed if true, create a matrix data column (otherwise scalar)
+  MatrixGeom          matrix_geom;	// #CONDSHOW_ON_matrix&&computed geometry of matrix to create if a matrix type
 
-  DataColSpec_List	val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored 
-  DataColSpec_List	agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
-  MemberSpace   	members;	// #IGNORE memberdefs
-  voidptr_Array		ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
+  bool                data_agg; 	// #CONDSHOW_ON_computed compute value automatically from a column of data in another data table
+  DataTableRef        data_src;	// #CONDSHOW_ON_data_agg source data for data aggregation operation
+  DataOpEl            agg_col;	// #CONDSHOW_ON_data_agg #NO_AUTO_NAME column name in data_src data table to get data to aggregate from
+  AggregateSpec       agg;		// #CONDSHOW_ON_computed:false||data_agg:true aggregation operation to perform (reduces vector data down to a single scalar value for network variables, and is aggregation to perform for data_agg aggregation)
+
+  bool                 select_rows;	// #CONDSHOW_ON_data_agg whether to select specific rows of data from the data_src data table to operate on
+  DataSelectEl         select_spec;	// #CONDSHOW_ON_select_rows #NO_AUTO_NAME optional selection of rows to perform aggregation on according to the value of items in given column -- for more complex selections and/or greater efficiency, use DataSelectRowsProg to create intermediate data table and operate on that
+
+  DataColSpec_List      val_specs;	// #HIDDEN_TREE #NO_SAVE specs of the values being monitored
+  DataColSpec_List      agg_specs;	// #HIDDEN_TREE #NO_SAVE specs of the agg values -- these are the matrix values whereas the val_specs contain the agg'd scalar values
+  MemberSpace           members;	// #IGNORE memberdefs
+  voidptr_Array         ptrs;     	// #HIDDEN #NO_SAVE actual ptrs to values
 
   SimpleMathSpec 	pre_proc_1;	// #EXPERT first step of pre-processing to perform
   SimpleMathSpec 	pre_proc_2;	// #EXPERT second step of pre-processing to perform
@@ -112,24 +114,24 @@ public:
   { if(on) SetMonOption(flg); else ClearMonOption(flg); }
   // set flag state according to on bool (if true, set flag, if false, clear it)
   
-  String  	GetAutoName(taBase* obj); 
+  String        GetAutoName(taBase* obj);
   // get auto-name value based on current values
-  String  	GetObjName(taBase* obj); 
+  String        GetObjName(taBase* obj);
   // get name of object for naming monitored values -- uses GetDisplayName by default but is optimized for various network objects; uses max_name_len constraint
-  String	GetColName(taBase* obj, int col_idx);
+  String        GetColName(taBase* obj, int col_idx);
   // get name for given column of data, taking into account namestyle preferences; col_idx is index within the columnspec_list for this guy
 
-  void		SetMonVals(taBase* obj, const String& var); 
+  void          SetMonVals(taBase* obj, const String& var);
   // #CAT_Monitor set object and variable, and update appropriately
   virtual void 	GetMonVals(DataTable* db);
   // #CAT_Monitor get the monitor data and stick it in the current row of the datablock/datatable
-  void		ResetMonVals();
+  void          ResetMonVals();
   // #CAT_Monitor deletes the cached vars
 
-  void		ScanObject();
+  void          ScanObject();
   // #CAT_Monitor get the monitor data information from the object
   
-  void    SetObject(taBase* obj);
+  void          SetObject(taBase* obj);
   // #DYN1 #TYPE_taNBase
 
   static const KeyString key_obj_name; // #IGNORE
@@ -140,8 +142,10 @@ public:
   void           CollectAllSpecs(NetMonitor* mon);
   // #IGNORE collect all the specs to parent monitor
 
+  void           UpdatePointersAfterCopy_impl(const taBase& cp) override;
+
   int		GetEnabled() const {return (off) ? 0 : 1;}
-  void		SetEnabled(bool value) {off = !value;}
+  void	SetEnabled(bool value) {off = !value;}
   void  InitLinks();
   void	CutLinks();
   void 	Copy_(const NetMonItem& cp);
