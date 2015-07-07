@@ -695,7 +695,7 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
   // All non-move paste ops (i.e., copy an object)
   if (
     (ea & (iClipData::EA_DROP_COPY2)) ||
-    //  Cut/Paste is a move
+    //  Cut/Paste svn is a move
     ((ea & iClipData::EA_PASTE2) && (ms->srcAction() & iClipData::EA_SRC_COPY))
   ) {
     if(proj) {
@@ -719,7 +719,8 @@ int taOBase::ChildEditActionLD_impl_inproc(const MemberDef* md,
     // special new delayed code to expand and select the new guy!
     if(!taMisc::in_gui_multi_action && 
        !list->HasOption("NO_EXPAND_ALL") && !new_obj->HasOption("NO_EXPAND_ALL")) {
-      tabMisc::DelayedFunCall_gui(new_obj, "BrowserExpandAll");
+      // Bug 2231 - no auto expand on duplicate
+//      tabMisc::DelayedFunCall_gui(new_obj, "BrowserExpandAll");
       tabMisc::DelayedFunCall_gui(new_obj, "BrowserSelectMe");
     }
 

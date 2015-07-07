@@ -2310,7 +2310,8 @@ taBase* taBase::ChildDuplicate(const taBase* chld) {
     if(rval && taMisc::gui_active) {
       if(!taMisc::in_gui_multi_action &&
          !lst->HasOption("NO_EXPAND_ALL") && !rval->HasOption("NO_EXPAND_ALL")) {
-        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
+        // Bug 2231 - no auto expand on duplicate
+//        tabMisc::DelayedFunCall_gui(rval, "BrowserExpandAll");
         tabMisc::DelayedFunCall_gui(rval, "BrowserSelectMe");
       }
     }
