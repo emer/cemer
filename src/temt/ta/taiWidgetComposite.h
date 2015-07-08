@@ -23,7 +23,8 @@
 #include <taiWidget_List>
 
 // declare all other types mentioned but not required to include:
-class QHBoxLayout; // 
+class QHBoxLayout; //
+class QGridLayout; //
 class iFlowLayout; //
 class QStackedLayout; //
 
@@ -35,7 +36,8 @@ public:
   enum LayoutType { // the type of layout being used
     LT_HBox,
     LT_Flow,
-    LT_Stacked
+    LT_Stacked,
+    LT_Grid
   };
 
   taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWidget* parent_, QWidget* gui_parent_, int flags = 0);
@@ -47,6 +49,7 @@ public:
 
   QLayout*              GetLayout() override {return (QLayout*)lay;}
   inline LayoutType     layType() const {return lay_type;}
+  inline void           SetLayType(LayoutType type) { lay_type = type; }
   QWidget*              widgets(int index);
   int                   widgetCount();
 
@@ -54,10 +57,10 @@ public:
    {if (m_child_base) return m_child_base; return inherited::ChildBase();}
    // child base, typically obtained from parent or host, except ex. PolyData
   virtual void          InitLayout(); // default creates a QHBoxLayout in the Rep
-  void                  AddChildWidget(QWidget* child_widget, int space_after = -1,
-    int stretch = 0);
-    // s_a=-1 for default taiM->hspc_c
-  virtual void          AddChildMember(MemberDef* md); // adds label and control for the member
+  void                  AddChildWidget(QWidget* child_widget, int space_after = -1, int stretch = 0);
+  // s_a=-1 for default taiM->hspc_c
+  void                  AddChildWidgetToGrid(QWidget* child_widget, int column);
+  virtual void          AddChildMember(MemberDef* md, int column = 0); // adds label and control for the member
   virtual void          EndLayout(); // default adds a stretch
 
 #ifndef __MAKETA__
@@ -69,14 +72,12 @@ protected:
   QLayout*              lay; // may be ignored/unused by subclasses
   LayoutType            lay_type;
   mutable taBase*       m_child_base; // typically set in PolyData GetImage
-  inline QHBoxLayout*   layHBox() const
-    {return (QHBoxLayout*)lay;} // only if !hasFlow
-  inline iFlowLayout*   layFlow() const
-    {return (iFlowLayout*)lay;} // only if hasFlow
-  inline QStackedLayout* layStacked() const
-    {return (QStackedLayout*)lay;} // only if hasFlow
-  void         ChildAdd(taiWidget* child) override;
-  void         ChildRemove(taiWidget* child) override;
+  inline QHBoxLayout*   layHBox() const {return (QHBoxLayout*)lay;} // only if !hasFlow
+  inline QGridLayout*   layGrid() const {return (QGridLayout*)lay;} // only if !hasFlow
+  inline iFlowLayout*   layFlow() const {return (iFlowLayout*)lay;} // only if hasFlow
+  inline QStackedLayout* layStacked() const {return (QStackedLayout*)lay;} // only if hasFlow
+  void                  ChildAdd(taiWidget* child) override;
+  void                  ChildRemove(taiWidget* child) override;
   virtual void          AddChildWidget_impl(QWidget* child_widget, int spacing,
     int stretch);// default does an add to layout
 

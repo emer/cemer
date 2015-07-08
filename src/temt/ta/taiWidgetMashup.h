@@ -40,7 +40,7 @@ public:
   inline QWidget*       rep() const { return (QWidget*)m_rep; }
   bool                  fillHor() override {return true;}
 
-  void                 AddChildMember(MemberDef* md) override;
+  void                 AddChildMember(MemberDef* md, int column = 0) override;
   
  virtual void          ResetBases();
  virtual void          AddBase(taBase* b);

@@ -132,12 +132,13 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
           mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
+//          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
           mash_widg->InitLayout();
-          mash_widg->AddChildMember(md);
-          mash_widg->AddChildMember(ps_md);
+          mash_widg->AddChildMember(md, 1);
+          mash_widg->AddChildMember(ps_md, 2);
           MemberDef* note_md = TA_EditMbrItem.members.FindName("notes");
           if (note_md) {
-            mash_widg->AddChildMember(note_md);
+            mash_widg->AddChildMember(note_md, 3);
           }
           mash_widg->EndLayout();
           
@@ -159,6 +160,7 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
           mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
+//          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
           mash_widg->InitLayout();
           mash_widg->AddChildMember(md);
           mash_widg->AddChildMember(psv_md);
@@ -189,10 +191,11 @@ void taiEditorOfControlPanelFull::Constr_Widget_Labels() {
           taiWidgetMashup* mash_widg = taiWidgetMashup::New(false, md->type, this, NULL, body);
           mash_widg->SetMemberDef(md);
           mash_widg->add_labels = false;
+//          mash_widg->SetLayType(taiWidgetComposite::LT_Grid);
           mash_widg->InitLayout();
-          mash_widg->AddChildMember(md);
+          mash_widg->AddChildMember(md, 1);
           if (note_md) {
-            mash_widg->AddChildMember(note_md);
+            mash_widg->AddChildMember(note_md, 2);
           }
           mash_widg->EndLayout();
           

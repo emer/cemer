@@ -62,9 +62,9 @@ bool taiWidgetMashup::ShowMember(MemberDef* md) const {
   return ShowMemberStat(md, show);
 }
 
-void taiWidgetMashup::AddChildMember(MemberDef* md) {
+void taiWidgetMashup::AddChildMember(MemberDef* md, int column) {  // column for grid layout
   memb_el.Add(md);
-  inherited::AddChildMember(md);
+  inherited::AddChildMember(md, column);
 }
 
 void taiWidgetMashup::AddBase(taBase* b) {
