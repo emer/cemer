@@ -32,6 +32,7 @@ taiWidgetComposite::taiWidgetComposite(TypeDef* typ_, IWidgetHost* host_, taiWid
   lay = NULL; // usually created in InitLayout;
   last_spc = -1;
   lay_type = LT_HBox; // default
+  min_width_column_one = 150;
   add_labels = true;
   mwidgets = new QObjectList();
   m_child_base = NULL;
@@ -70,7 +71,7 @@ void taiWidgetComposite::InitLayout() { //virtual/overridable
       break;
     case LT_Grid:
       lay = new QGridLayout(GetRep());
-      dynamic_cast<QGridLayout*>(lay)->setColumnMinimumWidth(1, 200);
+      dynamic_cast<QGridLayout*>(lay)->setColumnMinimumWidth(1, min_width_column_one);
       break;
       //no default -- must handle all cases
   }

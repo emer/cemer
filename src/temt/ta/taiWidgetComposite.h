@@ -53,14 +53,14 @@ public:
   QWidget*              widgets(int index);
   int                   widgetCount();
 
-  taBase*      ChildBase() const override
+  taBase*               ChildBase() const override
    {if (m_child_base) return m_child_base; return inherited::ChildBase();}
    // child base, typically obtained from parent or host, except ex. PolyData
   virtual void          InitLayout(); // default creates a QHBoxLayout in the Rep
   void                  AddChildWidget(QWidget* child_widget, int space_after = -1, int stretch = 0);
   // s_a=-1 for default taiM->hspc_c
   void                  AddChildWidgetToGrid(QWidget* child_widget, int column);
-  virtual void          AddChildMember(MemberDef* md, int column = 0); // adds label and control for the member
+  virtual void          AddChildMember(MemberDef* md, int column = 0); // adds label and control for the member - column for grid layout
   virtual void          EndLayout(); // default adds a stretch
 
 #ifndef __MAKETA__
@@ -79,7 +79,9 @@ protected:
   void                  ChildAdd(taiWidget* child) override;
   void                  ChildRemove(taiWidget* child) override;
   virtual void          AddChildWidget_impl(QWidget* child_widget, int spacing,
-    int stretch);// default does an add to layout
+
+  int stretch);// default does an add to layout
+  int min_width_column_one; 
 
 protected slots:
   void                  ChildSigEmit(taiWidget* sender);
