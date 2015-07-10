@@ -412,20 +412,25 @@ void iMainWindowViewer::Constr_MainMenu_impl() {
 #endif
 
   fileMenu = menu->AddSubMenu("F&ile");
+  
   editMenu = menu->AddSubMenu("&Edit");
+  connect(editMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(editMenu_aboutToShow()));
   viewMenu = menu->AddSubMenu("&View");
   show_menu = menu->AddSubMenu("&Show");
   ctrlMenu = menu->AddSubMenu("&Control");
+  
   connect(show_menu->menu(), SIGNAL(aboutToShow()), this, SLOT(showMenu_aboutToShow()));
-  // if (!(taMisc::show_gui & TypeItem::NO_EXPERT))
+  
   toolsMenu = menu->AddSubMenu("&Tools");
   connect(toolsMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(toolsMenu_aboutToShow()));
+  
   dataMenu = menu->AddSubMenu("&Data");
   connect(dataMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(dataMenu_aboutToShow()));
+  
   windowMenu = menu->AddSubMenu("&Window");
   connect(windowMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(windowMenu_aboutToShow()));
+  
   helpMenu = menu->AddSubMenu("&Help");
-  connect(editMenu->menu(), SIGNAL(aboutToShow()), this, SLOT(editMenu_aboutToShow()));
 }
 
 void iMainWindowViewer::Constr_Menu_impl()
@@ -1268,6 +1273,9 @@ void iMainWindowViewer::Constr_HelpMenu()
   helpMenu->AddAction(helpFileBugAction);
   helpMenu->insertSeparator();
   helpMenu->AddAction(helpAboutAction);
+  
+  helpHelpAction->setEnabled(true);
+  helpFileBugAction->setEnabled(true);
 
   // Make connetions.
   connect(helpHelpAction, SIGNAL(Action()), this, SLOT(helpHelp()));
