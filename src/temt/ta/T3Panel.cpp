@@ -199,6 +199,8 @@ void T3Panel::Render_impl() {
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     QColor bg = (QColor)GetBgColor();
+#ifndef TA_QT3D
+    // todo: this should be a method!
     if(viewer->quarter->backgroundColor() != bg)
       viewer->quarter->setBackgroundColor(bg);
     if(viewer->quarter->stereoMode() != (QuarterWidget::StereoMode)stereo_view)
@@ -206,6 +208,7 @@ void T3Panel::Render_impl() {
     if(viewer->quarter->headlightEnabled() != headlight_on)
       viewer->quarter->setHeadlightEnabled(headlight_on);
     viewer->syncViewerMode();   // keep it in sync
+#endif
   }
   inherited::Render_impl();
   root_view.Render_impl();
@@ -374,11 +377,13 @@ bool T3Panel::SaveImageEPS(const String& fname) {
 
   // calibrate so that text, lines, points and images will have the
   // same size in the postscript file as on the monitor.
+#ifndef TA_QT3D
   ps->calibrate(viewer->getViewportRegion());
 
   // apply action on the viewer scenegraph. Remember to use
   // SoSceneManager's scene graph so that the camera is included.
   ps->apply(viewer->quarter->getSoRenderManager()->getSceneGraph());
+#endif
 
   // this will create the postscript file
   ps->endPage();
@@ -443,9 +448,11 @@ bool T3Panel::SaveImageSVG(const String& fname) {
 void T3Panel::SetImageSize(int width, int height) {
   if(!widget()) return;
   T3ExaminerViewer* viewer = widget()->t3viewer();
+#ifndef TA_QT3D
   if(!viewer || !viewer->quarter) return;
   // note: these may not be the same on all platforms!! works for me on my mac.. :)
   viewer->quarter->resize(width, height);
+#endif
 }
 
 void T3Panel::SetTextBgColor(const String &new_text_color, const String &new_bg_color) {

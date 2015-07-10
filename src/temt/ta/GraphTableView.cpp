@@ -640,6 +640,7 @@ const String GraphTableView::caption() const {
   return rval;
 }
 
+#ifndef TA_QT3D
 void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
   GraphTableView* nv = (GraphTableView*)userData;
   T3Panel* fr = nv->GetFrame();
@@ -655,7 +656,6 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
       rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
-      
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(2);
@@ -686,6 +686,7 @@ void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
   if(got_one)
     ecb->setHandled();
 }
+#endif
 
 void GraphTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
@@ -705,9 +706,11 @@ void GraphTableView::Render_pre() {
    
    */
   
+#ifndef TA_QT3D
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), GraphTableView_MouseCB, this);
   node_so()->addChild(ecb);
+#endif
   
   colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
   

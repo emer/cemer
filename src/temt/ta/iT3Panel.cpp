@@ -71,7 +71,11 @@ void iT3Panel::viewSaved(int view_no) {
 
 void iT3Panel::fileExportInventor() {
   static QFileDialog* fd = NULL;
+#ifdef TA_QT3D
+  SoNode* scene = NULL;
+#else
   SoNode* scene = m_t3viewer->quarter->getSceneGraph();
+#endif
   if (!scene) {
     iDialogChoice::ErrorDialog(this, "No scene exists yet.", "No scene", false);
     return;

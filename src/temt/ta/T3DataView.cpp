@@ -268,6 +268,7 @@ bool T3DataView::isMapped() const {
     // taMisc::Info("view:",name,"not mapped because no GetViewer");
     return false;
   }
+#ifndef TA_QT3D
   if(!vw->quarter) {
     // taMisc::Info("view:",name,"not mapped because no quarter");
     return false;
@@ -276,6 +277,7 @@ bool T3DataView::isMapped() const {
     // taMisc::Info("view:",name,"not mapped because no quarter->isValid()");
     return false;
   }
+#endif
   return true;
 }
 

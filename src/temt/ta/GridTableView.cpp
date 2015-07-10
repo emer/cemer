@@ -368,9 +368,11 @@ void GridTableView::Render_pre() {
   setNode(new T3GridViewNode(this, width, show_drag));
 
   if(vw && vw->interactionModeOn()) {
+#ifndef TA_QT3D
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), T3GridViewNode_MouseCB, this);
     node_so()->addChild(ecb);
+#endif
   }
 
   colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
@@ -1306,6 +1308,8 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 
 // this callback is registered in GridTableView::Render_pre
 
+#ifndef TA_QT3D
+
 void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   GridTableView* gv = (GridTableView*)userData;
   T3Panel* fr = gv->GetFrame();
@@ -1323,7 +1327,9 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
       T3ExaminerViewer* viewer = tgv->GetViewer();
       SoRayPickAction rp( viewer->getViewportRegion());
       rp.setPoint(mouseevent->getPosition());
+#ifndef TA_QT3D
       rp.apply(viewer->quarter->getSoEventManager()->getSceneGraph()); // event mgr has full graph!
+#endif
       SoPickedPoint* pp = rp.getPickedPoint(0);
       if(!pp) continue;
       SoNode* pobj = pp->getPath()->getNodeFromTail(1);
@@ -1425,3 +1431,5 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   if(got_one)
     ecb->setHandled();
 }
+
+#endif

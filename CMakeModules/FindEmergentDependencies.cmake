@@ -20,7 +20,7 @@ if (QT_USE_5)
   find_package(Qt5WebKitWidgets)
   find_package(Qt5PrintSupport)
 
-#  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
+    #  qt5_use_modules(Emergent Widgets Network WebKit OpenGL Xml)
 #  set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
   # Add compiler flags for building executables (-fPIE)
@@ -36,15 +36,33 @@ if (QT_USE_5)
     ${Qt5Network_LIBRARIES} ${Qt5WebKit_LIBRARIES} ${Qt5WebKitWidgets_LIBRARIES}
     ${Qt5PrintSupport_LIBRARIES})
 
+  if (QT_USE_3D)
+    find_package(Qt53DCore)
+    find_package(Qt53DRenderer)
+    find_package(Qt53DInput)
+    add_definitions(-DTA_QT3D)
+
+    include_directories(${Qt53DCore_INCLUDE_DIRS} ${Qt53DRenderer_INCLUDE_DIRS}
+      ${Qt53DInput_INCLUDE_DIRS})
+
+    set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt53DCore_LIBRARIES} ${Qt53DRenderer_LIBRARIES}
+       ${Qt53DInput_LIBRARIES})
+  else (QT_USE_3D)
+    # todo: when actually working, uncomment these and comment out below
+    # find_package(Coin REQUIRED)
+    # find_package(Quarter REQUIRED)
+    # find_package(OpenGL REQUIRED)
+  endif (QT_USE_3D)
+
+  find_package(Coin REQUIRED)
+  find_package(Quarter REQUIRED)
+  find_package(OpenGL REQUIRED)
+
   # from http://cebmtpchat.googlecode.com/svn/trunk/CMakeModules/QtSupport.cmake
   SET(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")
   SET(QT_LIBRARY_DIR "${_qt5Core_install_prefix}/lib")
   SET(QT_PLUGINS_DIR "${_qt5Core_install_prefix}/plugins")
   SET(QT_TRANSLATIONS_DIR "${_qt5Core_install_prefix}/translations")
-
-  find_package(Coin REQUIRED)
-  find_package(Quarter REQUIRED)
-  find_package(OpenGL REQUIRED)
 
   # Instruct CMake to run moc automatically when needed.
 #  set(CMAKE_AUTOMOC ON)

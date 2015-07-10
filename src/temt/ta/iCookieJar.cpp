@@ -52,6 +52,7 @@
  * ***** END LICENSE BLOCK ***** */
 
 #include <QNetworkCookie>
+#include <QDataStream>
 
 // Updated from https://wiki.mozilla.org/TLD_List#External_Links
 // To set a custom list use NetworkCookieJar::setSecondLevelDomains()

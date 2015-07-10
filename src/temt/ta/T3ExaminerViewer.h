@@ -30,19 +30,35 @@
 // declare all other types mentioned but not required to include:
 class iT3ViewspaceWidget; //
 class T3Panel; //
-class SoCamera; //
-class SbViewportRegion; //
 class iThumbWheel; //
 class QVBoxLayout; // 
 class QHBoxLayout; // 
 class QLabel; //
 class iMenuButton; //
 
+#ifdef TA_QT3D
+#else
+class SoCamera; //
+class SbViewportRegion; //
+#endif
 
 #ifndef __MAKETA__
+#ifdef TA_QT3D
+#include <Qt3DCore>
+#include <Qt3DRenderer>
+#include <Qt3DInput>
+// class Qt3D::QAspectEngine;
+// class Qt3D::QRenderAspect;
+// class Qt3D::QInputAspect;
+// class Qt3D::QEntity;
+// class Qt3D::QCamera;
+// class Qt3D::QFrameGraph;
+// class Qt3D::QForwardRenderer;
+#else
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
 using SIM::Coin3D::Quarter::QuarterWidget;
+#endif
 #endif
 
 class TA_API T3ExaminerViewer : public QWidget {
@@ -61,7 +77,7 @@ public:
   };
 
 
-  ViewerMode            viewer_mode;    // our current viewer mode -- used to make sure that quarter is in appropriate state
+  ViewerMode      viewer_mode;    // our current viewer mode -- used to make sure that quarter is in appropriate state
 
   iT3ViewspaceWidget*   t3vw;           // owner widget
   T3Panel*      GetPanel();     // get my owning panel, from t3vw
@@ -72,13 +88,27 @@ public:
   QVBoxLayout*    main_vbox;       // overall vertical box, containing main_hbox, bot_hbox
   QHBoxLayout*    main_hbox;       // overall horizontal box, containing lhs_vbox, quarter, rhs_vbox
   QVBoxLayout*    lhs_vbox;     // overall box for all decoration on the left-hand-side of widget -- contains (optional -- none in default impl) buttons at top and vrot_wheel at bottom
-    QVBoxLayout*  lhs_button_vbox; // buttons on the top-left hand side (empty by default)
-  QuarterWidget*  quarter;      // the quarter viewer -- in the middle of the widget
+  QVBoxLayout*    lhs_button_vbox; // buttons on the top-left hand side (empty by default)
   QVBoxLayout*    rhs_vbox;     // overall box for all decoration on the right-hand-side of widget -- contains buttons at top and zoom_wheel at bottom
-    QVBoxLayout*  rhs_button_vbox; // buttons on the top-right hand side
+  QVBoxLayout*    rhs_button_vbox; // buttons on the top-right hand side
   QHBoxLayout*    bot_hbox;        // overall box for all decoration on the bottom of widget -- contains (optional -- none in default impl) buttons at right and hrot_wheel at left
-    QHBoxLayout*  bot_button_hbox; // buttons on the bottom right side
+  QHBoxLayout*    bot_button_hbox; // buttons on the bottom right side
 
+#ifdef TA_QT3D
+#ifndef __MAKETA__
+  QWidget*             view3d;       // widget that we render onto
+  Qt3D::QAspectEngine* engine;       // overall master engine that does stuff
+  Qt3D::QRenderAspect* render;       // controls rendering
+  Qt3D::QInputAspect*  input;        // controls input 
+  Qt3D::QEntity*       root_entity;  // root of scenegraph, containing camera, then scene
+  Qt3D::QCamera*       camera_entity; // camera
+  Qt3D::QFrameGraph*   framegraph;    // framegraph for rendering
+  Qt3D::QForwardRenderer* forward_renderer; // temp basic renderer
+#endif
+#else
+  QuarterWidget*  quarter;      // the quarter viewer -- in the middle of the widget
+#endif
+  
   //////////////////////////////////////////////
   //   Thumbwheels
 
@@ -139,10 +169,13 @@ public:
   //////////////////////////////////////////////
   //   Functions that actually do stuff
 
+#ifdef TA_QT3D
+#else
   SoCamera*             getViewerCamera() const;
   // helper function get the quarter viewer camera (not immediately avail on quarter widget)
   const SbViewportRegion& getViewportRegion() const;
   // helper function get the quarter viewer viewport region (not immediately avail on quarter widget)
+#endif
   virtual void          viewAll();
   // view all objects in scene -- compared to QuarterWidget's default version, this one doesn't leave such a huge margin around everything so you really fill the window
 

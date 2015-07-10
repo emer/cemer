@@ -86,6 +86,7 @@ void NetViewParams::Initialize() {
   show_laygp = true;
 }
 
+#ifndef TA_QT3D
 void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   NetView* nv = (NetView*)userData;
   T3Panel* fr = nv->GetFrame();
@@ -228,6 +229,7 @@ void UnitGroupView_MouseCB(void* userData, SoEventCallback* ecb) {
   if(got_one)
     ecb->setHandled();
 }
+#endif
 
 /*
  
@@ -1130,9 +1132,11 @@ void NetView::Render_pre() {
   scale.SetColorSpec(scale.spec);  // Call set to force the saved color to be restored
 
   if(vw && vw->interactionModeOn()) {
+#ifndef TA_QT3D
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), UnitGroupView_MouseCB, this);
     node_so()->addChild(ecb);
+#endif
   }
 
   if(vw) {                      // add hot buttons to viewer

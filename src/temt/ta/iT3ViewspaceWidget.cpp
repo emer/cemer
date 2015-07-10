@@ -88,7 +88,9 @@ void iT3ViewspaceWidget::init() {
 void iT3ViewspaceWidget::deleteScene() {
   if (m_t3viewer) {
     // remove the nodes
+#ifndef TA_QT3D
     m_t3viewer->quarter->setSceneGraph(NULL);
+#endif
   }
 }
 
@@ -142,7 +144,9 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   if(!m_t3viewer) return;
 
   if (m_selMode == SM_NONE) {
+#ifndef TA_QT3D
     m_t3viewer->quarter->setSceneGraph(m_root_so);
+#endif
   }
   else {
     sel_so = new SoSelection();
@@ -154,6 +158,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
     sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
     sel_so->addChild(m_root_so);
+#ifndef TA_QT3D
     m_t3viewer->quarter->setSceneGraph(sel_so);
 
     SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
@@ -164,6 +169,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     rman->setAntialiasing(true, 1);
     m_t3viewer->quarter->setTransparencyType(QuarterWidget::BLEND);
     // make sure it has the transparency set for new guy
+#endif
   }
 }
 
@@ -207,8 +213,10 @@ void iT3ViewspaceWidget::showEvent(QShowEvent* ev) {
   if ((bool)m_top_view && (m_last_vis != 1)) {
     m_last_vis = 1;
     m_top_view->SetVisible(true);
+#ifndef TA_QT3D
     if(m_t3viewer && m_t3viewer->quarter)
       m_t3viewer->quarter->setUpdatesEnabled(true);
+#endif
   }
 }
 
@@ -216,8 +224,10 @@ void iT3ViewspaceWidget::hideEvent(QHideEvent* ev) {
   if ((bool)m_top_view && (m_last_vis != -1)) {
     m_last_vis = -1;
     m_top_view->SetVisible(false);
+#ifndef TA_QT3D
     if(m_t3viewer && m_t3viewer->quarter)
       m_t3viewer->quarter->setUpdatesEnabled(false);
+#endif
   }
   inherited::hideEvent(ev);
 }

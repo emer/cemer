@@ -21,6 +21,7 @@ echo "  --verbose-build (or --verbose or -v) turn on verbose make output: for ma
 echo "  --not-native                 don't define -march=native for compilation, which is otherwise the default -- only needed for making packages that will run more broadly"
 echo "  --emer-mac-arch-bits=NN      set up for 32-bit or 64-bit compilation"
 echo "  --qt5                        configure for Qt5 -- must set QTDIR enviro var to qt install dir (e.g., /usr/local/Qt5.2.0/5.2.0/clang_64)"
+echo "  --qt3d                       configure for Qt3D instead of Coin3D / Quarter"
 echo "  --qt4                        configure for Qt4 -- either qt5 or 4 must be explicitly set, just to be sure you got the right one"
 echo "  --c++11                      enable c++11 support, using e.g., -std=c++11 flag"
 echo "  --enable-cuda (or --cuda)    enable NVIDIA CUDA support"
@@ -135,6 +136,11 @@ do
     --qt4 | -qt4 | qt4)
       cmake_cmd="$cmake_cmd -DQT_USE_4=ON -DQTDIR=$QTDIR"
       qt_version="qt4"
+      shift 1
+    ;;
+
+    --qt3d | -qt3d | qt3d)
+      cmake_cmd="$cmake_cmd -DQT_USE_3D=ON"
       shift 1
     ;;
 

@@ -491,6 +491,7 @@ const iColor BrainView::bgColor(bool& ok) const {
 
 // this callback is registered in BrainView::Render_pre
 
+#ifndef TA_QT3D
 void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
   BrainView* bv = (BrainView*)userData;
   T3Panel* fr = bv->GetFrame();
@@ -528,6 +529,7 @@ void BrainVolumeView_MouseCB(void* userData, SoEventCallback* ecb) {
   if(got_one)
     ecb->setHandled();
 }
+#endif
 
 void BrainView::Render_pre() {
   InitDisplay();
@@ -547,9 +549,11 @@ void BrainView::Render_pre() {
   mat->transparency.setValue(0.5f);
 
   if(vw && vw->interactionModeOn()) {
+#ifndef TA_QT3D
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), BrainVolumeView_MouseCB, this);
     node_so()->addChild(ecb);
+#endif
   }
 
   if(vw) {                      // add hot buttons to viewer

@@ -444,7 +444,9 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     QGLWidget* qglwidg = NULL;
     T3ExaminerViewer* exvw = GetViewer();
     if(exvw) {
+#ifndef TA_QT3D
       qglwidg = exvw->quarter;
+#endif
     }
     cam_renderer = new SoOffscreenRendererQt(vpreg, qglwidg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();

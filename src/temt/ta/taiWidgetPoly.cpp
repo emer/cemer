@@ -63,9 +63,9 @@ bool taiWidgetPoly::ShowMember(MemberDef* md) const {
   return ShowMemberStat(md, show);
 }
 
-void taiWidgetPoly::AddChildMember(MemberDef* md) {
+void taiWidgetPoly::AddChildMember(MemberDef* md, int column) {
   memb_el.Add(md);
-  inherited::AddChildMember(md);
+  inherited::AddChildMember(md, column);
 }
 
 void taiWidgetPoly::AddTypeMembers() {

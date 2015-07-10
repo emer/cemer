@@ -38,10 +38,28 @@
 #include <taMisc>
 #include <taiMisc>
 
+#ifdef TA_QT3D
+#include <Qt3DCore/QEntity>
+#include <Qt3DCore/QCamera>
+#include <Qt3DCore/QCameraLens>
+#include <Qt3DCore/QTransform>
+#include <Qt3DCore/QLookAtTransform>
+#include <Qt3DCore/QScaleTransform>
+#include <Qt3DCore/QRotateTransform>
+#include <Qt3DCore/QTranslateTransform>
+#include <Qt3DCore/QAspectEngine>
+
+#include <Qt3DInput/QInputAspect>
+
+#include <Qt3DRenderer/QRenderAspect>
+#include <Qt3DRenderer/QFrameGraph>
+#include <Qt3DRenderer/QForwardRenderer>
+#include <Qt3DRenderer/QPhongMaterial>
+#else
 #include <Inventor/SoEventManager.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
-
+#endif
 
 #include "pick.xpm"
 #include "view.xpm"
@@ -82,8 +100,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 : QWidget(parent)
 {
   t3vw = parent;
+#ifndef TA_QT3D
   quarter = NULL;               // for startup events
-  
+#endif
   viewer_mode = VIEW;
   
   // all the main layout code
@@ -106,7 +125,72 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   lhs_vbox = new QVBoxLayout;
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
+
+
+#ifdef TA_QT3D
+  view3d = new QWidget(this);
+  main_hbox->addWidget(view3d, 1);
+  engine = new Qt3D::QAspectEngine;
+  render = new Qt3D::QRenderAspect;
+  engine->registerAspect(render);
+  input = new Qt3D::QInputAspect;
+  engine->registerAspect(input);
+  QVariantMap data;
+  // surface must be the window!
+  QWindow* win = window()->windowHandle();
+  data.insert(QStringLiteral("surface"), QVariant::fromValue(static_cast<QSurface *>(win)));
+  data.insert(QStringLiteral("eventSource"), QVariant::fromValue(win));
+  engine->setData(data);
+
+  root_entity = new Qt3D::QEntity();
+  camera_entity = new Qt3D::QCamera(root_entity);
+
+  camera_entity->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 1000.0f);
+  camera_entity->setPosition(QVector3D(0, 0, -40.0f));
+  camera_entity->setUpVector(QVector3D(0, 1, 0));
+  camera_entity->setViewCenter(QVector3D(0, 0, 0));
+  input->setCamera(camera_entity);
+
+  framegraph = new Qt3D::QFrameGraph();
+  forward_renderer = new Qt3D::QForwardRenderer();
+  forward_renderer->setClearColor(QColor::fromRgbF(0.0, 0.5, 1.0, 1.0));
+  forward_renderer->setCamera(camera_entity);
+  framegraph->setActiveFrameGraph(forward_renderer);
+
+  // todo: following is temporary test code
+
+  // Material
+  Qt3D::QMaterial *material = new Qt3D::QPhongMaterial(root_entity);
+
+  // Torus
+  Qt3D::QEntity *torusEntity = new Qt3D::QEntity(root_entity);
+  Qt3D::QTorusMesh *torusMesh = new Qt3D::QTorusMesh;
+  torusMesh->setRadius(5);
+  torusMesh->setMinorRadius(1);
+  torusMesh->setRings(100);
+  torusMesh->setSlices(20);
+
+  Qt3D::QTransform *torusTransform = new Qt3D::QTransform;
+  Qt3D::QScaleTransform *torusScaleTransform = new Qt3D::QScaleTransform;
+  torusScaleTransform->setScale3D(QVector3D(1.5, 1, 0.5));
+
+  Qt3D::QRotateTransform *torusRotateTransform = new Qt3D::QRotateTransform;
+  torusRotateTransform->setAxis(QVector3D(1, 0, 0));
+  torusRotateTransform->setAngleDeg(45);
+
+  torusTransform->addTransform(torusScaleTransform);
+  torusTransform->addTransform(torusRotateTransform);
+
+  torusEntity->addComponent(torusMesh);
+  torusEntity->addComponent(torusTransform);
+  torusEntity->addComponent(material);
+
+  // end test code
   
+  root_entity->addComponent(framegraph);
+  // todo: this is hanging..
+  // engine->setRootEntity(root_entity);
+#else
   // note: we're setting our format right at construction, instead of doing
   // it later in iT3ViewSpaceWidget, which we used to do..
   QGLFormat fmt;
@@ -130,6 +214,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   SoEventManager* emgr = quarter->getSoEventManager();
   emgr->setNavigationState(SoEventManager::JUST_NAVIGATION);
   main_hbox->addWidget(quarter, 1);
+#endif
   
   rhs_vbox = new QVBoxLayout;
   rhs_vbox->setMargin(0); rhs_vbox->setSpacing(0);
@@ -242,8 +327,10 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
+#ifndef TA_QT3D
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
+#endif
 }
 
 T3Panel* T3ExaminerViewer::GetPanel() {
@@ -560,7 +647,9 @@ void T3ExaminerViewer::viewallbuttonClicked() {
 }
 
 void T3ExaminerViewer::seekbuttonClicked() {
+#ifndef TA_QT3D
   quarter->seek();
+#endif
 }
 
 void T3ExaminerViewer::snapshotbuttonClicked() {
@@ -726,7 +815,9 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
       key_event->accept();
       return;
     case taiMisc::GRAPHICS_SEEK:
+#ifndef TA_QT3D
       quarter->seek();
+#endif
       key_event->accept();
       return;
     case taiMisc::GRAPHICS_PAN_LEFT: // arrow keys do double duty - depends on mode ;break and drop through if "interaction" mode
@@ -814,6 +905,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 ///////////////////////////////////////////////////////////////
 //              Actual functions
 
+#ifndef TA_QT3D
 SoCamera* T3ExaminerViewer::getViewerCamera() const {
   SoEventManager* mgr = quarter->getSoEventManager();
   if(!mgr) return NULL;
@@ -824,8 +916,11 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
   SoEventManager* mgr = quarter->getSoEventManager();
   return mgr->getViewportRegion(); // hope it works!
 }
+#endif
+
 
 void T3ExaminerViewer::viewAll() {
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
   // restore camera position to head-on
@@ -833,12 +928,14 @@ void T3ExaminerViewer::viewAll() {
   cam->orientation.setValue(SbVec3f(-1.0f, 0.0f, 0.0f), 0.0f);
   quarter->viewAll();
   zoomView(-.35f);              // zoom in !!
+#endif
 }
 
 // this is copied directly from SoQtFullViewer.cpp, which defines it as a static
 // method on SoGuiFullViewerP
 
 void T3ExaminerViewer::zoomView(const float diffvalue) {
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
   
@@ -905,6 +1002,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
       cam->focalDistance = newfocaldist;
     }
   }
+#endif
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
@@ -927,6 +1025,7 @@ void T3ExaminerViewer::vertPanView(const float pan_value) {
 // copied from SoQtExaminerViewer.cpp -- hidden method on private P class
 
 void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   
@@ -945,10 +1044,12 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
+#endif
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   
@@ -956,11 +1057,13 @@ void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
   
   SbVec3f newpos = cam->position.getValue() + mvec;
   cam->position = newpos;
+#endif
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 
 void T3ExaminerViewer::syncViewerMode() {
+#ifndef TA_QT3D
   if(!quarter) return;
   bool int_onoff = (bool)viewer_mode;
   if(quarter->interactionModeOn() != int_onoff) {
@@ -976,9 +1079,11 @@ void T3ExaminerViewer::syncViewerMode() {
     //     taMisc::Info("sync interact to:", String(int_onoff));
     // #endif
   }
+#endif
 }
 
 bool T3ExaminerViewer::syncCursor() {
+#ifndef TA_QT3D
   if(!quarter) return false;
   if(viewer_mode == INTERACT) {
     setCursor(quarter->stateCursor("interact"));
@@ -986,11 +1091,13 @@ bool T3ExaminerViewer::syncCursor() {
   else {
     setCursor(quarter->cursor());
   }
+#endif
   return true;
 }
 
 void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
   viewer_mode = (ViewerMode)onoff; // enum matches
+#ifndef TA_QT3D
   if(quarter->interactionModeOn() != onoff) {
     SoEventManager* emgr = quarter->getSoEventManager();
     if(onoff) {
@@ -1018,24 +1125,29 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
     interact_button->setChecked(false);
     view_button->setChecked(true);
   }
+#endif
 }
 
 void T3ExaminerViewer::saveView(int view_no) {
   if(view_no < 0 || view_no >= n_views) return;
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   T3SavedView* sv = saved_views[view_no];
   sv->getCameraParams(cam);
   if(sv->view_action)
     sv->view_action->setChecked(true);
+#endif
   emit viewSaved(view_no);
 }
 
 void T3ExaminerViewer::gotoView(int view_no) {
   if(view_no < 0 || view_no >= n_views) return;
+#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   saved_views[view_no]->setCameraParams(cam);
+#endif
   cur_view_no = view_no;
   syncViewerMode();
   emit viewSelected(view_no);
@@ -1077,7 +1189,11 @@ void T3ExaminerViewer::updtViewName(int view_no) {
 }
 
 QImage  T3ExaminerViewer::grabImage() {
+#ifdef TA_QT3D
+  return QImage();
+#else
   return quarter->grabFrameBuffer(true); // true = get alpha
+#endif
 }
 
 void T3ExaminerViewer::saveImage(const QString& fname) {
@@ -1096,6 +1212,9 @@ void T3ExaminerViewer::printImage() {
 }
 
 bool T3ExaminerViewer::event(QEvent* ev_) {
+#ifdef TA_QT3D
+  return inherited::event(ev_);
+#else
   static bool inside_event_loop = false;
   
   //NOTE: the base classes don't check if event is already handled, so we have to skip
@@ -1113,9 +1232,13 @@ bool T3ExaminerViewer::event(QEvent* ev_) {
     }
   }
   return rval;
+#endif
 }
 
 bool T3ExaminerViewer::eventFilter(QObject* obj, QEvent* ev_) {
+#ifdef TA_QT3D
+  return inherited::eventFilter(obj, ev_);
+#else
   if(!t3vw || (obj != this && obj != quarter)) goto do_inherited;
   
   if((ev_->type() == QEvent::MouseMove) || (ev_->type() == QEvent::MouseButtonPress) ||
@@ -1148,4 +1271,5 @@ do_inherited:
   }
   
   return inherited::eventFilter(obj, ev_);
+#endif
 }
