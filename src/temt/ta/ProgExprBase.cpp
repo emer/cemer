@@ -476,7 +476,11 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   if(delim_pos.size > 0) {
     if(txt[delim_pos[0]] == '.') { // path sep = .
       base_path = txt.at(expr_start, delim_pos[0]-expr_start);
+      int length = base_path.length();
       base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      delim_pos[0] += shift;
+      expr_start += shift;
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 2;
@@ -485,7 +489,12 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else if(txt[delim_pos[0]] == '>' && delim_pos.size > 1 && txt[delim_pos[1]] == '-'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ->
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      int length = base_path.length();
       base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      delim_pos[0] += shift;
+      delim_pos[1] += shift;
+      expr_start += shift;
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 2;
@@ -494,7 +503,12 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
     else if(txt[delim_pos[0]] == ':' && delim_pos.size > 1 && txt[delim_pos[1]] == ':'
             && (delim_pos[0] == delim_pos[1] + 1)) { // path sep = ::
       base_path = txt.at(expr_start, delim_pos[1]-expr_start);
+      int length = base_path.length();
       base_path = triml(base_path);
+      int shift = length - base_path.length(); // shift to compensate for trim
+      delim_pos[0] += shift;
+      delim_pos[1] += shift;
+      expr_start += shift;
       prepend_before = txt.before(expr_start);
       lookup_seed = txt.after(delim_pos[0]);
       lookup_type = 3;
@@ -504,19 +518,23 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
   }
   else {
     prog_el_txt = txt.at(prog_el_start_pos, txt.length() - prog_el_start_pos);
-
+    
     if (prog_el_start_pos > -1 && ExprLookupIsFunc(prog_el_txt)) {
       lookup_type = 5;
       expr_start = txt.length();
+//      lookup_seed = txt.from(expr_start);
+      prepend_before = txt.before(expr_start);
     }
     else if(path_base || path_base_typ) {
       lookup_type = 2;
+      lookup_seed = txt.from(expr_start);
+      prepend_before = txt.before(expr_start);
     }
     else {
       lookup_type = 1;
+      lookup_seed = txt.from(expr_start);
+      prepend_before = txt.before(expr_start);
     }
-    lookup_seed = txt.from(expr_start);
-    prepend_before = txt.before(expr_start);
   }
   
   String path_prepend_before;   // for path operations
@@ -744,9 +762,12 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
       
     case 5: {                 // ProgEl
       String trimmed_txt = trim(prog_el_txt);
-      if(trimmed_txt.contains(' '))
+      String el = trimmed_txt; // the program element
+      if(trimmed_txt.contains(' ')) {
         lookup_seed = trimmed_txt.after(' ',-1);
-      if (trimmed_txt.downcase() == "call" || trimmed_txt.downcase().startsWith("prog")) {
+        el = trimmed_txt.before(' ');
+      }
+      if (el.downcase() == "call" || el.downcase().startsWith("prog")) {
         txt = "Call ";
         taiWidgetTokenChooser* pgrm_look_up =  new taiWidgetTokenChooser
           (&TA_Program, NULL, NULL, NULL, 0, lookup_seed);
@@ -759,7 +780,7 @@ String ProgExprBase::ExprLookupFun(const String& cur_txt, int cur_pos, int& new_
         delete pgrm_look_up;
         break;
       }
-      else if (trimmed_txt.downcase().startsWith("fun")) {
+      else if (el.downcase().startsWith("fun")) {
         taiWidgetTokenChooser* func_look_up =  new taiWidgetTokenChooser
           (&TA_Function, NULL, NULL, NULL, 0, lookup_seed);
         func_look_up->GetImageScoped(NULL, &TA_Function, NULL, &TA_Function); // scope to this guy
@@ -797,6 +818,9 @@ String ProgExprBase::StringFieldLookupFun(const String& cur_txt, int cur_pos,
 bool ProgExprBase::ExprLookupIsFunc(const String& txt) {
   String trimmed_txt = trim(txt);
   trimmed_txt.downcase();
+  if(trimmed_txt.contains(' ')) {
+    trimmed_txt = trimmed_txt.before(' ');
+  }
   return (trimmed_txt == "call" || trimmed_txt.startsWith("prog") || trimmed_txt.startsWith("fun"));
 }
 
