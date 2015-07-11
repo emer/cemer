@@ -2917,11 +2917,22 @@ void iMainWindowViewer::UpdateUi() {
     if (ea & iClipData::EA_PASTE_APPEND) ++paste_cnt;
     
     editPasteAction->setEnabled(ea & iClipData::EA_PASTE);
+
     bool enable = false;
     enable = ea & iClipData::EA_PASTE_INTO;
     if (enable) {
+      KeyBindings* bindings = taMisc::key_binding_lists->SafeEl(static_cast<int>(taMisc::current_key_bindings));
+
       editPasteIntoAction->setVisible(true);
       editPasteIntoAction->setEnabled(true);
+      if (!editPasteAction->isEnabled()) {
+        QList<QKeySequence> shortcuts;
+        shortcuts << QKeySequence(QKeySequence::Paste) << QKeySequence(bindings->KeySequence(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO));
+        editPasteIntoAction->setShortcuts(shortcuts);
+      }
+      else {
+        editPasteIntoAction->setShortcut(bindings->KeySequence(taiMisc::TREE_CONTEXT, taiMisc::TREE_PASTE_INTO));
+      }
     }
     enable = ea & iClipData::EA_PASTE_ASSIGN;
     if (enable) {
