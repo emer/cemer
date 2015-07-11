@@ -1,10 +1,26 @@
 
 #include "qt3d_examiner_viewer.h"
 #include "qtthumbwheel.h"
+#include "window.h"
 
-#include <Qt3DCore/window.h>
-#include <Qt3DCore/qcameralens.h>
+#include <Qt3DCore/QEntity>
+#include <Qt3DCore/QCamera>
+#include <Qt3DCore/QCameraLens>
+#include <Qt3DCore/QTransform>
+#include <Qt3DCore/QLookAtTransform>
+#include <Qt3DCore/QScaleTransform>
+#include <Qt3DCore/QRotateTransform>
+#include <Qt3DCore/QTranslateTransform>
+#include <Qt3DCore/QAspectEngine>
 
+#include <Qt3DInput/QInputAspect>
+
+#include <Qt3DRenderer/QRenderAspect>
+#include <Qt3DRenderer/QFrameGraph>
+#include <Qt3DRenderer/QForwardRenderer>
+#include <Qt3DRenderer/QPhongMaterial>
+
+#include <QWindow>
 #include <QPushButton>
 #include <QToolButton>
 #include <QVBoxLayout>
@@ -80,7 +96,7 @@ Qt3DExaminerViewer::Qt3DExaminerViewer(QWidget* parent)
   lhs_vbox->setMargin(0); lhs_vbox->setSpacing(0);
   main_hbox->addLayout(lhs_vbox);
 
-  m_qview = new Qt3D::Window();
+  m_qview = new Window();       // this must be a special OpenGL window!!!
   QWidget *container = QWidget::createWindowContainer(m_qview);
   main_hbox->addWidget(container);
 
@@ -367,7 +383,7 @@ void Qt3DExaminerViewer::zoomView(const float diffvalue) {
   // This will be in the range of <0, ->>.
   float multiplicator = float(exp(diffvalue));
 
-  if (m_camera->projectionType() == Qt3D::QCameraLens::ProjectionType::OrthogonalProjection)
+  if (m_camera->projectionType() == Qt3D::QCameraLens::OrthogonalProjection)
   {
     // Since there's no perspective, "zooming" in the original sense
     // of the word won't have any visible effect. So we just increase

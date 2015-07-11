@@ -13,7 +13,7 @@
 #include <QApplication>
 #include <Qt3DInput/QInputAspect>
 
-#include <Qt3DCore/window.h>
+#include <QWindow.h>
 
 #include <Qt3DRenderer/qcylindermesh.h>
 #include <Qt3DRenderer/qmesh.h>
@@ -133,13 +133,13 @@ int main(int argc, char ** argv)
 
 #endif // #if 0
 
-  const char* glv = (const char *)glGetString(GL_VERSION);
-  if (!glv) {
-    std::cerr << "no version!" << std::endl;
-  }
-  else {
-    std::cerr << "glv: " << glv << std::endl;
-  }
+  // const char* glv = (const char *)glGetString(GL_VERSION);
+  // if (!glv) {
+  //   std::cerr << "no version!" << std::endl;
+  // }
+  // else {
+  //   std::cerr << "glv: " << glv << std::endl;
+  // }
 
   app.exec();
   // Loop until exit.
