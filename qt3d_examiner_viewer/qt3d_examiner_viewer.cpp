@@ -392,7 +392,7 @@ void Qt3DExaminerViewer::zoomView(const float diffvalue) {
     float view_size = m_camera->aspectRatio();
     m_camera->setAspectRatio(view_size * multiplicator);
   }
-  else // if (m_camera->projectionType() == Qt3D::QCameraLens::ProjectionType::PerspectiveProjection)
+  else // if (m_camera->projectionType() == Qt3D::QCameraLens::PerspectiveProjection)
   {
     float zoom = m_camera->fieldOfView();
     m_camera->setFieldOfView(zoom * multiplicator);

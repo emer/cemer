@@ -199,16 +199,15 @@ void T3Panel::Render_impl() {
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(viewer) {
     QColor bg = (QColor)GetBgColor();
+    if(viewer->backgroundColor() != bg)
+      viewer->setBackgroundColor(bg);
 #ifndef TA_QT3D
-    // todo: this should be a method!
-    if(viewer->quarter->backgroundColor() != bg)
-      viewer->quarter->setBackgroundColor(bg);
     if(viewer->quarter->stereoMode() != (QuarterWidget::StereoMode)stereo_view)
       viewer->quarter->setStereoMode((QuarterWidget::StereoMode)stereo_view);
     if(viewer->quarter->headlightEnabled() != headlight_on)
       viewer->quarter->setHeadlightEnabled(headlight_on);
-    viewer->syncViewerMode();   // keep it in sync
 #endif
+    viewer->syncViewerMode();   // keep it in sync
   }
   inherited::Render_impl();
   root_view.Render_impl();
@@ -218,7 +217,9 @@ void T3Panel::Render_impl() {
 void T3Panel::Render_post() {
   inherited::Render_post();
   root_view.Render_post();
+#ifndef TA_QT3D
   widget()->setSceneTop(root_view.node_so());
+#endif
   widget()->Render_post();
   // on first opening, do a viewall to center all geometry in viewer
   if(saved_views[0]->pos == 0.0f && saved_views[0]->focal_dist == 0.0f) {

@@ -29,30 +29,16 @@
 
 #include <QGLWidget>
 
+#ifdef TA_QT3D
+#else
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
+#endif
 
 // from: http://doc.trolltech.com/4.3/opengl-samplebuffers-glwidget-cpp.html
 #ifndef GL_MULTISAMPLE
 # define GL_MULTISAMPLE  0x809D
 #endif
-
-
-void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
-  iSoSelectionEvent ev(true, path);
-  iT3ViewspaceWidget* t3vw = (iT3ViewspaceWidget*)inst;
-  if(!t3vw->t3viewer()->interactionModeOn()) return;
-  t3vw->SoSelectionEvent(&ev);
-  t3vw->sel_so->touch(); // to redraw
-}
-
-void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
-  iSoSelectionEvent ev(false, path);
-  iT3ViewspaceWidget* t3dv = (iT3ViewspaceWidget*)inst;
-  if(!t3dv->t3viewer()->interactionModeOn()) return;
-  t3dv->SoSelectionEvent(&ev);
-  t3dv->sel_so->touch(); // to redraw
-}
 
 iT3ViewspaceWidget::iT3ViewspaceWidget(iT3Panel* parent)
 :QWidget(parent)
@@ -78,19 +64,24 @@ iT3ViewspaceWidget::~iT3ViewspaceWidget() {
 
 void iT3ViewspaceWidget::init() {
   m_t3viewer = NULL;
-  m_root_so = new SoSeparator(); // refs
   m_selMode = SM_NONE;
-  m_scene = NULL;
   m_last_vis = 0;
   setMinimumSize(320, 320);
+
+#ifdef TA_QT3D
+  sel_so = NULL;
+  m_root_so = new Qt3D::QEntity();
+  m_scene = NULL;
+#else
+  m_root_so = new SoSeparator(); // refs
+  m_scene = NULL;
+#endif
 }
 
 void iT3ViewspaceWidget::deleteScene() {
   if (m_t3viewer) {
     // remove the nodes
-#ifndef TA_QT3D
-    m_t3viewer->quarter->setSceneGraph(NULL);
-#endif
+    m_t3viewer->setSceneGraph(NULL);
   }
 }
 
@@ -144,11 +135,12 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   if(!m_t3viewer) return;
 
   if (m_selMode == SM_NONE) {
-#ifndef TA_QT3D
-    m_t3viewer->quarter->setSceneGraph(m_root_so);
-#endif
+    m_t3viewer->setSceneGraph(m_root_so);
   }
   else {
+#ifdef TA_QT3D
+    // m_t3viewer->setSceneGraph(m_root_so);
+#else
     sel_so = new SoSelection();
     switch (m_selMode) {
     case SM_SINGLE: sel_so->policy = SoSelection::SINGLE; break;
@@ -158,7 +150,6 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
     sel_so->addSelectionCallback(SoSelectionCallback, (void*)this);
     sel_so->addDeselectionCallback(SoDeselectionCallback, (void*)this);
     sel_so->addChild(m_root_so);
-#ifndef TA_QT3D
     m_t3viewer->quarter->setSceneGraph(sel_so);
 
     SoBoxHighlightRenderAction* rend_act = new SoBoxHighlightRenderAction;
@@ -173,6 +164,23 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   }
 }
 
+#ifdef TA_QT3D
+
+void iT3ViewspaceWidget::setSceneGraph(Qt3D::QEntity* sg) {
+  if (!m_t3viewer) return; //not supposed to happen
+  if (m_scene == sg) return;
+  if (m_scene) { //had to have already been initialized before
+    m_scene->setParent(NULL);
+    delete m_scene;             // todo: might not be right!?
+  }
+  m_scene = sg;
+  if (m_scene) { //had to have already been initialized before
+    m_scene->setParent(m_root_so);
+  }
+}
+
+#else
+
 void iT3ViewspaceWidget::setSceneGraph(SoNode* sg) {
   if (!m_t3viewer) return; //not supposed to happen
   if (m_scene == sg) return;
@@ -184,6 +192,47 @@ void iT3ViewspaceWidget::setSceneGraph(SoNode* sg) {
     m_root_so->addChild(m_scene);
   }
 }
+
+void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
+  T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
+  if (!t3node) return;
+
+  if (ev->is_selected) {
+    AddSelectedItem(t3node);
+    taiSigLink* link = t3node->effLink(ISelectable::GC_DEFAULT);
+    if(link) {
+      taBase* obj = (taBase*)link->data();
+      if(obj)
+        tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");
+    }
+  }
+  else {
+    RemoveSelectedItem(t3node);
+  }
+
+  t3viewer()->syncViewerMode();
+
+  // notify to our frame that we have grabbed focus
+  Emit_GotFocusSignal();
+}
+
+void iT3ViewspaceWidget::SoSelectionCallback(void* inst, SoPath* path) {
+  iSoSelectionEvent ev(true, path);
+  iT3ViewspaceWidget* t3vw = (iT3ViewspaceWidget*)inst;
+  if(!t3vw->t3viewer()->interactionModeOn()) return;
+  t3vw->SoSelectionEvent(&ev);
+  t3vw->sel_so->touch(); // to redraw
+}
+
+void iT3ViewspaceWidget::SoDeselectionCallback(void* inst, SoPath* path) {
+  iSoSelectionEvent ev(false, path);
+  iT3ViewspaceWidget* t3dv = (iT3ViewspaceWidget*)inst;
+  if(!t3dv->t3viewer()->interactionModeOn()) return;
+  t3dv->SoSelectionEvent(&ev);
+  t3dv->sel_so->touch(); // to redraw
+}
+
+#endif
 
 void iT3ViewspaceWidget::setSelMode(SelectionMode value) {
   if (m_scene) {
@@ -241,29 +290,6 @@ void iT3ViewspaceWidget::ContextMenuRequested(const QPoint& pos) {
     menu->exec(pos);
   }
   delete menu;
-}
-
-void iT3ViewspaceWidget::SoSelectionEvent(iSoSelectionEvent* ev) {
-  T3DataView* t3node = T3DataView::GetViewFromPath(ev->path);
-  if (!t3node) return;
-
-  if (ev->is_selected) {
-    AddSelectedItem(t3node);
-    taiSigLink* link = t3node->effLink(ISelectable::GC_DEFAULT);
-    if(link) {
-      taBase* obj = (taBase*)link->data();
-      if(obj)
-        tabMisc::DelayedFunCall_gui(obj, "BrowserSelectMe");
-    }
-  }
-  else {
-    RemoveSelectedItem(t3node);
-  }
-
-  t3viewer()->syncViewerMode();
-
-  // notify to our frame that we have grabbed focus
-  Emit_GotFocusSignal();
 }
 
 void iT3ViewspaceWidget::UpdateSelectedItems_impl() {

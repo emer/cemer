@@ -47,13 +47,19 @@ class SbViewportRegion; //
 #include <Qt3DCore>
 #include <Qt3DRenderer>
 #include <Qt3DInput>
-// class Qt3D::QAspectEngine;
-// class Qt3D::QRenderAspect;
-// class Qt3D::QInputAspect;
-// class Qt3D::QEntity;
-// class Qt3D::QCamera;
-// class Qt3D::QFrameGraph;
-// class Qt3D::QForwardRenderer;
+#include <QWindow>
+
+class T3RenderView : public QWindow {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS rendering surface for Qt3D rendering
+  Q_OBJECT
+public:
+  explicit T3RenderView(QScreen *screen = 0);
+  ~T3RenderView();
+
+protected:
+  virtual void keyPressEvent(QKeyEvent *e);
+};
+
 #else
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
@@ -96,14 +102,16 @@ public:
 
 #ifdef TA_QT3D
 #ifndef __MAKETA__
-  QWidget*             view3d;       // widget that we render onto
+  T3RenderView*        view3d;       // surface that we render onto
   Qt3D::QAspectEngine* engine;       // overall master engine that does stuff
   Qt3D::QRenderAspect* render;       // controls rendering
   Qt3D::QInputAspect*  input;        // controls input 
-  Qt3D::QEntity*       root_entity;  // root of scenegraph, containing camera, then scene
-  Qt3D::QCamera*       camera_entity; // camera
-  Qt3D::QFrameGraph*   framegraph;    // framegraph for rendering
+  Qt3D::QEntity*       root_entity;  // root of entire scenegraph, containing camera, then scene
+  Qt3D::QCamera*       camera;       // camera
+  Qt3D::QFrameGraph*   framegraph;   // framegraph for rendering
   Qt3D::QForwardRenderer* forward_renderer; // temp basic renderer
+  Qt3D::QEntity*       scene;        // root of the actual objects being viewed -- below camera
+  QColor               bg_color;     // background color
 #endif
 #else
   QuarterWidget*  quarter;      // the quarter viewer -- in the middle of the widget
@@ -170,12 +178,33 @@ public:
   //   Functions that actually do stuff
 
 #ifdef TA_QT3D
+  Qt3D::QCamera*        getViewerCamera() const
+  { return camera; }
+  void                  setSceneGraph(Qt3D::QEntity* root);
+  // set scene graph to given new root -- added under root_entity
+  Qt3D::QEntity*        getSceneGraph() const
+  { return scene; }
+  // current scene being viewed
+  void setBackgroundColor(const QColor & color);
+  QColor backgroundColor() const
+  { return bg_color; }
 #else
   SoCamera*             getViewerCamera() const;
   // helper function get the quarter viewer camera (not immediately avail on quarter widget)
   const SbViewportRegion& getViewportRegion() const;
   // helper function get the quarter viewer viewport region (not immediately avail on quarter widget)
+  void                  setSceneGraph(SoNode* root)
+  { quarter->setSceneGraph(root); }
+  // set the scene graph on the quarter widget
+  SoNode*               getSceneGraph() const
+  { return quarter->getSceneGraph(); }
+
+  void setBackgroundColor(const QColor & color)
+  { quarter->setBackgroundColor(color); }
+  QColor backgroundColor() const
+  { return quarter->backgroundColor(); }
 #endif
+  
   virtual void          viewAll();
   // view all objects in scene -- compared to QuarterWidget's default version, this one doesn't leave such a huge margin around everything so you really fill the window
 
@@ -269,10 +298,17 @@ protected:
   int   hpan_start_val;
   int   vpan_start_val;
 
+#ifdef TA_QT3D
+  virtual void  RotateView(const QVector3D& axis, const float ang);
+  // implementation function that will rotate view camera given angle (in radians) around given axis
+  virtual void  PanView(const QVector3D& dir, const float dist);
+  // implementation function that will move (pan) view camera given distance in given direction
+#else
   virtual void  RotateView(const SbVec3f& axis, const float ang);
   // implementation function that will rotate view camera given angle (in radians) around given axis
   virtual void  PanView(const SbVec3f& dir, const float dist);
   // implementation function that will move (pan) view camera given distance in given direction
+#endif
 
   bool event(QEvent* ev_) override;
   void keyPressEvent(QKeyEvent* e) override;

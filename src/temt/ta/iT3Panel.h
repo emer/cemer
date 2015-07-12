@@ -37,7 +37,13 @@ class iViewPanel; //
 class T3DataViewRoot; //
 class T3Node; //
 class T3DataView; //
+
+
+#ifdef TA_QT3D
+#include <Qt3DCore>
+#else
 class SoNode; //
+#endif
 
 
 class TA_API iT3Panel : public QWidget, public IViewerWidget {
@@ -58,10 +64,14 @@ public:
   T3ExaminerViewer*     t3viewer() {return m_t3viewer;}
 
   T3DataViewRoot*       root();
+#ifdef TA_QT3D
+  virtual void          setSceneTop(Qt3D::QEntity* node); // set top of scene -- usually called during Render_post
+#else
   virtual void          setSceneTop(SoNode* node); // set top of scene -- usually called during Render_post
+#endif
   virtual int           stretchFactor() const {return 4;} // 4/2 default
-  inline T3Panel* viewer() const {return (T3Panel*)m_viewer;}
-  iT3PanelViewer*        viewerWidget() const;
+  inline T3Panel*       viewer() const {return (T3Panel*)m_viewer;}
+  iT3PanelViewer*       viewerWidget() const;
 
   void                  NodeDeleting(T3Node* node);
     // called when a node is deleting; basically used to deselect

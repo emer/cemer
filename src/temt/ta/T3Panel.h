@@ -77,12 +77,12 @@ public:
   T3SavedView_List      saved_views;  // saved camera position views from viewer -- this is the persitent version copied from camera
 
   bool                  singleMode() const
-    {return (root_view.children.size == 1);}
-    // true when one and only one child obj -- it can control some of our properties by default
+  { return (root_view.children.size == 1); }
+  // true when one and only one child obj -- it can control some of our properties by default
   T3DataView*           singleChild() const; // return the single child
   T3DataViewMain*       FirstChild() const; // return the first child, as a main
 
-  inline iT3Panel* widget() {return (iT3Panel*)inherited::widget();} // lex override
+  inline iT3Panel*      widget() {return (iT3Panel*)inherited::widget();} // lex override
   const iColor          GetBgColor() const; // #IGNORE get the effective bg color
   const iColor          GetTextColor() const; // #IGNORE get the effective text color
 

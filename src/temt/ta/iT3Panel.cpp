@@ -120,7 +120,9 @@ void iT3Panel::NodeDeleting(T3Node* node) {
   if (t3vs->sel_so) {
     // deselect all the damn nodes because too complicated to try to figure out
     // how to deselect just one
+#ifndef TA_QT3D
     t3vs->sel_so->deselectAll();
+#endif
   }
 }
 
@@ -172,9 +174,15 @@ T3DataViewRoot* iT3Panel::root() {
   return (m_viewer) ? &(((T3Panel*)m_viewer)->root_view) : NULL;
 }
 
+#ifdef TA_QT3D
+void iT3Panel::setSceneTop(Qt3D::QEntity* node) {
+  t3vs->setSceneGraph(node);
+}
+#else
 void iT3Panel::setSceneTop(SoNode* node) {
   t3vs->setSceneGraph(node);
 }
+#endif
 
 void iT3Panel::T3DataViewClosing(T3DataView* node) {
 }

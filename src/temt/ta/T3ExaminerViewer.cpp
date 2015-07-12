@@ -55,6 +55,42 @@
 #include <Qt3DRenderer/QFrameGraph>
 #include <Qt3DRenderer/QForwardRenderer>
 #include <Qt3DRenderer/QPhongMaterial>
+
+#include <QKeyEvent>
+#include <QOpenGLContext>
+
+T3RenderView::T3RenderView(QScreen *screen)
+: QWindow(screen)
+{
+  setSurfaceType(QSurface::OpenGLSurface);
+
+  // resize(1024, 768);
+
+  QSurfaceFormat format;
+  if (QOpenGLContext::openGLModuleType() == QOpenGLContext::LibGL) {
+    format.setVersion(4, 3);
+    format.setProfile(QSurfaceFormat::CoreProfile);
+  }
+  format.setDepthBufferSize( 24 );
+  format.setSamples( 4 );
+  setFormat(format);
+  create();
+}
+
+T3RenderView::~T3RenderView() {
+}
+
+void T3RenderView::keyPressEvent( QKeyEvent* e ) {
+  // switch ( e->key() ) {
+  // case Qt::Key_Escape:
+  //   QGuiApplication::quit();
+  //   break;
+
+  // default:
+  QWindow::keyPressEvent( e );
+  // }
+}
+
 #else
 #include <Inventor/SoEventManager.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
@@ -128,33 +164,37 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
 
 #ifdef TA_QT3D
-  view3d = new QWidget(this);
-  main_hbox->addWidget(view3d, 1);
+  scene = NULL;
+  bg_color = QColor::fromRgbF(0.0, 0.5, 1.0, 1.0);
+  
+  view3d = new T3RenderView();
+  QWidget* container = QWidget::createWindowContainer(view3d);
+  main_hbox->addWidget(container, 1);
   engine = new Qt3D::QAspectEngine;
   render = new Qt3D::QRenderAspect;
   engine->registerAspect(render);
   input = new Qt3D::QInputAspect;
   engine->registerAspect(input);
+  engine->initialize();
   QVariantMap data;
-  // surface must be the window!
-  QWindow* win = window()->windowHandle();
-  data.insert(QStringLiteral("surface"), QVariant::fromValue(static_cast<QSurface *>(win)));
-  data.insert(QStringLiteral("eventSource"), QVariant::fromValue(win));
+  data.insert(QStringLiteral("surface"),
+              QVariant::fromValue(static_cast<QSurface *>(view3d)));
+  data.insert(QStringLiteral("eventSource"), QVariant::fromValue(view3d));
   engine->setData(data);
 
   root_entity = new Qt3D::QEntity();
-  camera_entity = new Qt3D::QCamera(root_entity);
+  camera = new Qt3D::QCamera(root_entity);
 
-  camera_entity->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 1000.0f);
-  camera_entity->setPosition(QVector3D(0, 0, -40.0f));
-  camera_entity->setUpVector(QVector3D(0, 1, 0));
-  camera_entity->setViewCenter(QVector3D(0, 0, 0));
-  input->setCamera(camera_entity);
+  camera->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 1000.0f);
+  camera->setPosition(QVector3D(0, 0, -40.0f));
+  camera->setUpVector(QVector3D(0, 1, 0));
+  camera->setViewCenter(QVector3D(0, 0, 0));
+  input->setCamera(camera);
 
   framegraph = new Qt3D::QFrameGraph();
   forward_renderer = new Qt3D::QForwardRenderer();
-  forward_renderer->setClearColor(QColor::fromRgbF(0.0, 0.5, 1.0, 1.0));
-  forward_renderer->setCamera(camera_entity);
+  forward_renderer->setClearColor(bg_color);
+  forward_renderer->setCamera(camera);
   framegraph->setActiveFrameGraph(forward_renderer);
 
   // todo: following is temporary test code
@@ -163,7 +203,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   Qt3D::QMaterial *material = new Qt3D::QPhongMaterial(root_entity);
 
   // Torus
-  Qt3D::QEntity *torusEntity = new Qt3D::QEntity(root_entity);
+  Qt3D::QEntity *torusEntity = new Qt3D::QEntity();
   Qt3D::QTorusMesh *torusMesh = new Qt3D::QTorusMesh;
   torusMesh->setRadius(5);
   torusMesh->setMinorRadius(1);
@@ -185,11 +225,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   torusEntity->addComponent(torusTransform);
   torusEntity->addComponent(material);
 
+  setSceneGraph(torusEntity);
+  
   // end test code
   
   root_entity->addComponent(framegraph);
-  // todo: this is hanging..
-  // engine->setRootEntity(root_entity);
+  engine->setRootEntity(root_entity);
+
 #else
   // note: we're setting our format right at construction, instead of doing
   // it later in iT3ViewSpaceWidget, which we used to do..
@@ -327,7 +369,11 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 }
 
 T3ExaminerViewer::~T3ExaminerViewer() {
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  engine->shutdown();
+  delete view3d;
+  delete engine;
+#else
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
 #endif
@@ -905,7 +951,23 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 ///////////////////////////////////////////////////////////////
 //              Actual functions
 
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+
+void T3ExaminerViewer::setSceneGraph(Qt3D::QEntity* root) {
+  if(scene) {
+    scene->setParent(NULL);
+  }
+  scene = root;
+  scene->setParent(root_entity);
+}
+
+void T3ExaminerViewer::setBackgroundColor(const QColor & color) {
+  bg_color = color;
+  forward_renderer->setClearColor(bg_color);
+}
+
+#else
+
 SoCamera* T3ExaminerViewer::getViewerCamera() const {
   SoEventManager* mgr = quarter->getSoEventManager();
   if(!mgr) return NULL;
@@ -920,7 +982,9 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
 
 
 void T3ExaminerViewer::viewAll() {
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  camera->setUpVector(QVector3D(0, 1, 0));  
+#else
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
   // restore camera position to head-on
@@ -935,7 +999,22 @@ void T3ExaminerViewer::viewAll() {
 // method on SoGuiFullViewerP
 
 void T3ExaminerViewer::zoomView(const float diffvalue) {
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  float multiplicator = float(exp(diffvalue));
+
+  if (camera->projectionType() == Qt3D::QCameraLens::OrthogonalProjection) {
+    // Since there's no perspective, "zooming" in the original sense
+    // of the word won't have any visible effect. So we just increase
+    // or decrease the field-of-view values of the camera instead, to
+    // "shrink" the projection size of the model / scene.
+    float view_size = camera->aspectRatio();
+    camera->setAspectRatio(view_size * multiplicator);
+  }
+  else if (camera->projectionType() == Qt3D::QCameraLens::PerspectiveProjection) {
+    float zoom = camera->fieldOfView();
+    camera->setFieldOfView(zoom * multiplicator);
+  }
+#else
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
   
@@ -1007,25 +1086,56 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
 }
 
 void T3ExaminerViewer::horizRotateView(const float rot_value) {
+#ifdef TA_QT3D
+  RotateView(QVector3D(0.0f, -1.0f, 0.0f), rot_value);
+#else
   RotateView(SbVec3f(0.0f, -1.0f, 0.0f), rot_value);
+#endif
 }
 
 void T3ExaminerViewer::vertRotateView(const float rot_value) {
+#ifdef TA_QT3D
+  RotateView(QVector3D(-1.0f, 0.0f, 0.0f), rot_value);
+#else
   RotateView(SbVec3f(-1.0f, 0.0f, 0.0f), rot_value);
+#endif
 }
 
 void T3ExaminerViewer::horizPanView(const float pan_value) {
+#ifdef TA_QT3D
+  PanView(QVector3D(-1.0f, 0.0f, 0.0f), pan_value);
+#else
   PanView(SbVec3f(-1.0f, 0.0f, 0.0f), pan_value);
+#endif
 }
 
 void T3ExaminerViewer::vertPanView(const float pan_value) {
+#ifdef TA_QT3D
+  PanView(QVector3D(0.0f, 1.0f, 0.0f), pan_value);
+#else
   PanView(SbVec3f(0.0f, 1.0f, 0.0f), pan_value);
+#endif
 }
 
-// copied from SoQtExaminerViewer.cpp -- hidden method on private P class
+#ifdef TA_QT3D
+
+void T3ExaminerViewer::RotateView(const QVector3D& axis, const float ang) {
+  QQuaternion rotation(ang, axis);
+  camera->rotate(rotation);
+  syncViewerMode();             // keep it sync'd -- this tends to throw it off
+}
+
+void T3ExaminerViewer::PanView(const QVector3D& dir, const float dist) {
+  QVector3D mvec = dir * dist;
+  QVector3D newpos = camera->position() + mvec;
+  camera->setPosition(newpos);
+  syncViewerMode();             // keep it sync'd -- this tends to throw it off
+}
+
+#else
 
 void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
-#ifndef TA_QT3D
+  // copied from SoQtExaminerViewer.cpp -- hidden method on private P class
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   
@@ -1044,12 +1154,10 @@ void T3ExaminerViewer::RotateView(const SbVec3f& axis, const float ang) {
   SbVec3f newdir;
   cam->orientation.getValue().multVec(DEFAULTDIRECTION, newdir);
   cam->position = focalpoint - cam->focalDistance.getValue() * newdir;
-#endif
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
 void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
-#ifndef TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
   
@@ -1057,10 +1165,10 @@ void T3ExaminerViewer::PanView(const SbVec3f& dir, const float dist) {
   
   SbVec3f newpos = cam->position.getValue() + mvec;
   cam->position = newpos;
-#endif
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
+#endif
 
 void T3ExaminerViewer::syncViewerMode() {
 #ifndef TA_QT3D

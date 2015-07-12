@@ -23,7 +23,6 @@
 // member includes:
 #include <taTransform>
 #include <iColor>
-#include <SoPtr>
 
 // declare all other types mentioned but not required to include:
 class T3Node; // 
@@ -31,10 +30,15 @@ class T3DataViewRoot; //
 class T3ExaminerViewer; // #IGNORE
 class iT3Panel; // #IGNORE
 class T3NodePtr; //
-class SoPath; // #IGNORE
 class T3Panel;
 
+// #ifdef TA_QT3D
+
+// #else
+#include <SoPtr>
+class SoPath; // #IGNORE
 SoPtr_Of(T3Node);
+// #endif
 
 /*
   DataView objects that have 3D reps
@@ -71,7 +75,7 @@ public:
   static T3DataView*    GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
 
   int                   flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
-  taTransform*       m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
+  taTransform*          m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
 
   virtual const iColor  bgColor(bool& ok) const {ok = false; return iColor();}
   // #IGNORE high-level items can optionally supply a bg color, for when they are singles
@@ -82,11 +86,13 @@ public:
   virtual bool          expandable() const {return false;}
   virtual void          setExpandable(bool) {}
   DATAVIEW_PARENT(T3DataView) // always a T3DataView (except root guy)
-  taTransform*       transform(bool auto_create = false);  // transform, in Inventor coords
+  taTransform*          transform(bool auto_create = false);
+  // transform, in Inventor coords
   virtual bool          fixTransformAxis();
   // make sure transform doesn't have a zero axis
 
-  bool         isMapped() const override; // only true if in gui mode and gui stuff exists
+  bool                  isMapped() const override;
+  // only true if in gui mode and gui stuff exists
   T3Node*               node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
   virtual T3Panel* GetFrame() const;
@@ -95,8 +101,8 @@ public:
   // #IGNORE get the Viewer that contains us
 
   void                  AddRemoveChildNode(SoNode* node, bool adding);
-    // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
-  void         Close() override; // usually delegates to parent->CloseChild
+  // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
+  void                  Close() override; // usually delegates to parent->CloseChild
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
   // subclass-dependent operation -- reinvoked after major update -- builds any sub-dataview objects, but not the corresponding So guys (which is done in render)
@@ -136,13 +142,15 @@ protected:
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
   virtual void          OnWindowBind_impl(iT3Panel* vw) {} // override for something this class
-  void         Clear_impl() override;
+  void                  Clear_impl() override;
   virtual void          ReInit_impl(); // default just calls clear() on the so, if it exists
-  void         Render_pre() override; //
-  void         Render_impl() override;
+  void                  Render_pre() override; //
+  void                  Render_impl() override;
 
-  void         SigRecvStructUpdateEnd_impl() override; // our own customized version, similar to generic base
-  void         SigRecvRebuildView_impl() override {SigRecvStructUpdateEnd_impl();} // same as StructEnd
+  void                  SigRecvStructUpdateEnd_impl() override;
+  // our own customized version, similar to generic base
+  void                  SigRecvRebuildView_impl() override
+  { SigRecvStructUpdateEnd_impl(); } // same as StructEnd
 
 protected:
   T3DataView*           last_child_node; // #IGNORE last child node created, so we can pass to createnode
