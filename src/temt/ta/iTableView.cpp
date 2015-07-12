@@ -76,14 +76,6 @@ bool iTableView::eventFilter(QObject* obj, QEvent* event) {
     app->postEvent(obj, new QKeyEvent(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier));
     return true;
   }
-  else if(ctrl_pressed && e->key() == Qt::Key_K) {
-    // don't let this go to edit filter -- we want it
-  }
-  else {
-    if((bool)m_window) {
-//      taMisc::DebugInfo("iTableView::eventFilter");
-    }
-  }
   return inherited::eventFilter(obj, event);
 }
 

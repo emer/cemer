@@ -258,15 +258,6 @@ bool iDataTableEditor::eventFilter(QObject* obj, QEvent* event) {
         tvTable->selectCurCell();
       }
       return true;
-    case taiMisc::DATATABLE_EDIT_HOME:
-    case taiMisc::DATATABLE_EDIT_END:
-    case taiMisc::DATATABLE_EDIT_HOME_II:
-    case taiMisc::DATATABLE_EDIT_END_II:
-      if(m_cell && obj->inherits("iDataTableView")) {
-        tvCell->tv->setFocus();
-        tvCell->tv->selectCurCell();
-        return true;
-      }
     case taiMisc::DATATABLE_FIND_NEXT:
       search->SelectNext();
       return true;
