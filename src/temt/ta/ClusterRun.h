@@ -99,9 +99,9 @@ public:
   bool           nowin_x;        // use the -nowin startup command instead of -nogui and add a _x suffix to the executable command (e.g., emergent_x or emergent_x_mpi), to call a version of the program (a shell wrapper around the standard compiled executable) that opens up an XWindows connection to allow offscreen rendering and other such operations, even in batch mode
   
   // this group is all about enabling method buttons
-  bool            enable_kill;    // whether to enable the kill action
-  bool            enable_load;    // whether to enable import action
-  bool            enable_notes;    // whether to enable update notes action
+  bool            enable_kill;    // #HIDDEN whether to enable the kill action
+  bool            enable_load;    // #HIDDEN whether to enable import action
+  bool            enable_notes;    // #HIDDEN whether to enable update notes action
   
 protected:
   bool InitClusterManager(bool check_prefs = true);
