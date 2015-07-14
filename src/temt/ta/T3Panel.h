@@ -154,8 +154,10 @@ public:
   TA_DATAVIEWFUNS(T3Panel, taViewer)
 
 protected:
+#ifndef TA_QT3D
   static void           SoSelectionCallback(void* inst, SoPath* path); // #IGNORE
   static void           SoDeselectionCallback(void* inst, SoPath* path); // #IGNORE
+#endif // TA_QT3D
 
 
   void         Constr_impl(QWidget* gui_parent = NULL) override;

@@ -22,8 +22,27 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class T3TransformBoxDragger; // 
 
+#ifdef TA_QT3D
+
+class TA_API T3VEStatic : public T3NodeLeaf {
+  // static item for virtual environment
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  bool                   show_drag;
+  
+  T3VEStatic(Qt3DNode* par = NULL, T3DataView* stat = NULL,
+             bool show_drag = false, float drag_size = 0.06f);
+  ~T3VEStatic();
+
+protected:
+  // T3TransformBoxDragger* drag_; // my position dragger
+};
+
+#else // TA_QT3D
+
+class T3TransformBoxDragger; // 
 
 taTypeDef_Of(T3VEStatic);
 
@@ -46,5 +65,7 @@ protected:
 
   ~T3VEStatic();
 };
+
+#endif // TA_QT3D
 
 #endif // T3VEStatic_h

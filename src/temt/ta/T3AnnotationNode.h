@@ -22,6 +22,23 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class TA_API T3AnnotationNode : public T3NodeLeaf {
+  // 3d annotation inventor node
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  bool          show_drag;
+
+  T3AnnotationNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+                   bool show_drag = false);
+  ~T3AnnotationNode();
+};
+
+#else // TA_QT3D
+
 class T3TransformBoxDragger; //
 
 class TA_API T3AnnotationNode : public T3NodeLeaf {
@@ -43,5 +60,7 @@ protected:
 
   ~T3AnnotationNode();
 };
+
+#endif // TA_QT3D
 
 #endif // T3AnnotationNode_h

@@ -22,6 +22,26 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class TA_API T3VEBody : public T3NodeLeaf {
+  // body for virtual environment
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  bool                   show_drag;
+
+  T3VEBody(Qt3DNode* par = NULL, T3DataView* bod = NULL,
+           bool show_drag = false, float drag_size = 0.06f);
+  ~T3VEBody();
+
+protected:
+  // T3TransformBoxDragger* drag_; // my position dragger
+};
+
+#else // TA_QT3D
+
 class T3TransformBoxDragger; // 
 
 
@@ -46,5 +66,7 @@ protected:
 
   ~T3VEBody();
 };
+
+#endif // TA_QT3D
 
 #endif // T3VEBody_h

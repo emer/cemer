@@ -23,6 +23,18 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
+
+class TA_API T3GridColViewNode: public T3NodeLeaf {
+  // grid view column -- mainly just for editing column spec ifno
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  T3GridColViewNode(Qt3DNode* par = NULL, T3DataView* colspec = NULL);
+  ~T3GridColViewNode();
+};
+
+#else // TA_QT3D
 
 taTypeDef_Of(T3GridColViewNode);
 
@@ -40,5 +52,7 @@ public:
 protected:
   ~T3GridColViewNode();
 };
+
+#endif // TA_QT3D
 
 #endif // T3GridColViewNode_h

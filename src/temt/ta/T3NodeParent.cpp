@@ -17,9 +17,21 @@
 
 #include <taMisc>
 
+#ifdef TA_QT3D
+
+T3NodeParent::T3NodeParent(Qt3DNode* parent, T3DataView* dataView_)
+  : T3Node(parent)
+{
+}
+
+T3NodeParent::~T3NodeParent() {
+}
+
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoTransform.h>
-
 
 SO_NODE_SOURCE(T3NodeParent);
 
@@ -96,3 +108,4 @@ SoFont* T3NodeParent::captionFont(bool auto_create) {
   return rval;
 }
 
+#endif // TA_QT3D

@@ -75,6 +75,11 @@ void VEObjCarouselView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
+#ifdef TA_QT3D
+  T3VEBody* obv = new T3VEBody(NULL, this, show_drag, wv->drag_size);
+  setNode(obv);
+
+#else // TA_QT3D
   T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
@@ -85,6 +90,7 @@ void VEObjCarouselView::Render_pre() {
     SoTransform* tx = obv->txfm_shape();
     ob->obj_xform.CopyTo(tx);
   }
+#endif // TA_QT3D
 
   SetDraggerPos();
 
@@ -103,6 +109,9 @@ void VEObjCarouselView::Render_impl() {
   T3VEBody* obv = (T3VEBody*)this->node_so(); // cache
   if(!obv) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
@@ -119,4 +128,5 @@ void VEObjCarouselView::Render_impl() {
       sw->whichChild = -1;
     }
   }
+#endif // TA_QT3D
 }

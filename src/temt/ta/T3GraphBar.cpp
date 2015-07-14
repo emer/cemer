@@ -16,6 +16,31 @@
 #include "T3GraphBar.h"
 #include <T3Color>
 
+#ifdef TA_QT3D
+
+T3GraphBar::T3GraphBar(Qt3DNode* parent, T3DataView* dataView_)
+  : T3NodeLeaf(parent)
+{
+}
+
+T3GraphBar::~T3GraphBar() {
+}
+
+void T3GraphBar::SetBar(iVec3f& pos, iVec3f& size, const T3Color& color) {
+  // SoMaterial* mat = material();
+  // mat->diffuseColor.setValue(color.r, color.g, color.b);
+  // // mat->transparency.setValue(1.0f - color.a);
+  // SoTransform* tx = transform();
+  // tx->translation.setValue(pos.x, pos.y+0.5f*size.y, pos.z+0.5f*size.z);
+  // SoCube* sp = new SoCube;
+  // sp->width = size.x;
+  // sp->depth = size.z;
+  // sp->height = size.y;
+  // shapeSeparator()->addChild(sp);
+}
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -52,3 +77,4 @@ void T3GraphBar::SetBar(iVec3f& pos, iVec3f& size, const T3Color& color) {
   shapeSeparator()->addChild(sp);
 }
 
+#endif // TA_QT3D

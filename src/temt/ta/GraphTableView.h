@@ -35,6 +35,9 @@ class T3Panel; //
 class T3GraphViewNode; //
 class T3GraphLine; //
 
+#ifdef TA_QT3D
+class T3Entity;
+#endif // TA_QT3D
 
 taTypeDef_Of(GraphTableView);
 
@@ -152,6 +155,7 @@ public:
   // #IGNORE
   
   inline T3GraphViewNode* node_so() const {return (T3GraphViewNode*)inherited::node_so();}
+  // #IGNORE
 
   void         DataUnitsXForm(taVector3f& pos, taVector3f& size) override;
 
@@ -245,11 +249,21 @@ protected:
                                     T3GraphLine* t3gl, int mat_cell = -1, 
                                     int clr_idx = -1);
   // plot XY data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
+#ifdef TA_QT3D
+  virtual void          PlotData_Bar(T3Entity* gr1, GraphPlotView& plv,
+                                     GraphPlotView& erv, GraphPlotView& yax,
+                                     T3GraphLine* t3gl, float bar_off, int mat_cell = -1,
+                                     int clr_idx = -1);
+  // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
+#else // TA_QT3D
   virtual void          PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv,
                                      GraphPlotView& erv, GraphPlotView& yax,
                                      T3GraphLine* t3gl, float bar_off, int mat_cell = -1,
                                      int clr_idx = -1);
   // plot bar data from given plot view column (and err view column) into given line, using given yaxis values, if from matrix then mat_cell >= 0), and color override if clr_idx >= 0
+#endif // TA_QT3D
+
+
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column

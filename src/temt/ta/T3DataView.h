@@ -29,16 +29,23 @@ class T3Node; //
 class T3DataViewRoot; //
 class T3ExaminerViewer; // #IGNORE
 class iT3Panel; // #IGNORE
-class T3NodePtr; //
 class T3Panel;
 
-// #ifdef TA_QT3D
+#ifdef TA_QT3D
 
-// #else
+#ifndef __MAKETA__
+#include <Qt3DCore>
+typedef QPointer<T3Node> T3NodePtr;
+#endif
+
+#else
+
 #include <SoPtr>
+class T3NodePtr; //
 class SoPath; // #IGNORE
 SoPtr_Of(T3Node);
-// #endif
+
+#endif
 
 /*
   DataView objects that have 3D reps
@@ -72,8 +79,6 @@ public:
     DNF_IS_LIST_NODE    = 0x080 // true for nodes in a list view (in panel, not on tree)
   };
 
-  static T3DataView*    GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
-
   int                   flags; // #READ_ONLY #NO_SAVE any of T3DataViewFlags TODO: tbd
   taTransform*          m_transform;  // #READ_ONLY #OWN_POINTER transform, created only if not unity
 
@@ -93,15 +98,23 @@ public:
 
   bool                  isMapped() const override;
   // only true if in gui mode and gui stuff exists
-  T3Node*               node_so() const {return m_node_so.ptr();} //
   virtual T3DataViewRoot* root();
   virtual T3Panel* GetFrame() const;
   // get the T3Panel that owns us
   virtual T3ExaminerViewer* GetViewer() const;
   // #IGNORE get the Viewer that contains us
 
+#ifdef TA_QT3D
+  T3Node*               node_so() const; // #IGNORE
+  void                  AddRemoveChildNode(T3Node* node, bool adding);
+  // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
+#else
+  T3Node*               node_so() const {return m_node_so.ptr();} // #IGNORE
+  static T3DataView*    GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView
   void                  AddRemoveChildNode(SoNode* node, bool adding);
   // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
+#endif
+
   void                  Close() override; // usually delegates to parent->CloseChild
   virtual void          CloseChild(taDataView* child) {}
   virtual void          BuildAll() {}
@@ -135,9 +148,14 @@ protected:
 protected:
   MemberDef*            m_md; // memberdef of this item in its parent
 
-  void                  setNode(T3Node* node); // make changes via this
+  void                  setNode(T3Node* node); // #IGNORE make changes via this
 
+#ifdef TA_QT3D
+  virtual void          AddRemoveChildNode_impl(T3Node* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
+#else
   virtual void          AddRemoveChildNode_impl(SoNode* node, bool adding); // generic base uses SoSeparator->addChild()/removeChild()-- replace to change
+#endif
+
   void         ChildRemoving(taDataView* child) override; // #IGNORE called from list; we also forward to taViewer; we also remove visually
   virtual void          Constr_Node_impl() {} // create the node_so rep -- called in RenderPre, null'ed in Clear
 
@@ -158,11 +176,15 @@ protected:
   void         UpdateAfterEdit_impl() override;
 
 private:
+#ifndef __MAKETA__
   T3NodePtr             m_node_so; // Inventor node DO NOT MOVE FROM PRIVATE!!! DON'T EVEN THINK ABOUT IT!!! YOU ARE STILL THINKING ABOUT IT... STOP!!!!!!!
+#endif
+  
   void  Copy_(const T3DataView& cp);
   void  Initialize();
   void  Destroy();
 };
+
 TA_SMART_PTRS(TA_API, T3DataView);
 
 #define T3_DATAVIEWFUNS(b,i) \

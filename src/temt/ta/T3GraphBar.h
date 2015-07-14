@@ -25,6 +25,21 @@
 // declare all other types mentioned but not required to include:
 class T3Color; // 
 
+#ifdef TA_QT3D
+
+class TA_API T3GraphBar : public T3NodeLeaf {
+  // a graph bar for bar graphs -- data is GraphColView
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  virtual void          SetBar(iVec3f& pos, iVec3f& size, const T3Color& color);
+
+  T3GraphBar(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL);
+  ~T3GraphBar();
+};
+
+#else // TA_QT3D
+
 taTypeDef_Of(T3GraphBar);
 
 class TA_API T3GraphBar : public T3NodeLeaf {
@@ -45,5 +60,7 @@ public:
 protected:
   ~T3GraphBar();
 };
+
+#endif // TA_QT3D
 
 #endif // T3GraphBar_h

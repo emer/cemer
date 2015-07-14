@@ -314,9 +314,11 @@ void DataTableView::Render_impl() {
 
   T3Node* node_so = this->node_so(); // cache
   if(!node_so) return;
+#ifndef TA_QT3D
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.3f;
   font->size.setValue(font_size); // is in same units as geometry units of network
+#endif // TA_QT3D
   node_so->setCaption(caption().chars());
   //NOTE: will need to move caption appropriately in subclass
 }

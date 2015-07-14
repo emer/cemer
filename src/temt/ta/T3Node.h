@@ -16,8 +16,139 @@
 #ifndef T3Node_h
 #define T3Node_h 1
 
+// todo: once Qt3D switch-over is complete, then remove all T3Node-based files from
+// maketa -- don't need it!
+
 // parent includes:
 #include "ta_def.h"
+
+#ifdef TA_QT3D
+
+class T3DataView;  //
+class iVec3f; //
+
+#ifdef __MAKETA__
+
+class T3Entity; // #IGNORE
+class T3TwoDText; // #IGNORE
+class T3Node; // #IGNORE
+class Qt3DNode; // #IGNORE
+
+#else
+
+#include <Qt3DCore>
+#include <Qt3DRenderer>
+#include <Qt3DCore/QTransform>
+#include <Qt3DCore/QScaleTransform>
+#include <Qt3DCore/QTranslateTransform>
+#include <Qt3DCore/QRotateTransform>
+
+// for maketa:
+typedef Qt3D::QNode Qt3DNode; 
+
+#include <QLabel>
+#include <QImage>
+
+// todo: move these guys to their own separate files at some point
+
+class TA_API T3Entity : public Qt3D::QEntity {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Qt3D entity that retains pointers to the standard components for rendering, for convenience, and automatically adds the standard transforms (scale, translate, rotation) in the constructor
+  Q_OBJECT
+  INHERITED(Qt3D::QEntity)
+public:
+  Qt3D::QTransform          transform; // overall transform applied to this node -- contains each of the following items:
+  Qt3D::QScaleTransform     scale;     // overall scale transform applied to this node
+  Qt3D::QTranslateTransform translate; // overall translation transform applied to this node
+  Qt3D::QRotateTransform    rotate;    // overall rotation transform applied to this node
+
+  Qt3D::QAbstractMesh*  mesh;      // mesh component for this node
+  Qt3D::QMaterial*      material;  // material for this node
+
+  void  addMesh(Qt3D::QAbstractMesh* msh)
+  { mesh = msh; addComponent(mesh); }
+  // adds mesh component, records the last one added
+
+  void  addMaterial(Qt3D::QMaterial* mat)
+  { material = mat; addComponent(material); }
+  // adds material component, records the last one added
+
+  T3Entity(Qt3DNode* parent = 0);
+  ~T3Entity();
+};
+
+class TA_API T3TwoDTexture : public Qt3D::QAbstractTextureImage {
+  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS texture provider that returns a texture of a QLabel text object
+  Q_OBJECT
+  INHERITED(Qt3D::QAbstractTextureImage)
+public:
+  QImage*       image;          // image that the label is rendered into, used for the image data
+
+  virtual void  renderLabel(QLabel& label);
+  // render the label to the image
+  
+  Qt3D::QTextureDataFunctorPtr dataFunctor() const override;
+
+  explicit T3TwoDTexture(Qt3DNode* parent = 0);
+  ~T3TwoDTexture();
+
+protected:
+  void copy(const Qt3DNode *ref) override;
+private:
+  QT3D_CLONEABLE(T3TwoDTexture)
+};
+
+enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
+  T3_ALIGN_LEFT  =  Qt::AlignLeft,
+  T3_ALIGN_RIGHT = Qt::AlignRight,
+  T3_ALIGN_CENTER = Qt::AlignHCenter,
+  T3_ALIGN_JUSTIFY = Qt::AlignJustify,
+};
+
+class TA_API T3TwoDText : public T3Entity {
+  // flat two-d text element that projects a QLabel onto a plane and shows that..
+  Q_OBJECT
+  INHERITED(T3Entity)
+public:
+  QLabel        label;          // label containing full info for what text to render and how
+  T3TwoDTexture texture;        // texture for rendering
+
+  virtual void  setText(const QString& txt);
+  // set the text and update the rendered display (just setting in label does not update render) -- call updateRender() explictly if other properties of the label are changed -- set font etc in advance of calling setText for greatest efficiency
+
+  T3TwoDText(Qt3DNode* parent = 0);
+  ~T3TwoDText();
+
+public slots:
+  virtual void  updateRender(); // update the rendered version of the text
+  
+};
+
+class TA_API T3Node : public T3Entity {
+  // a base class for Qt3D nodes that are paired with corresponding T3DataView object that provides persistence and generally controls behavior of this node -- T3Node can be relatively passive render stuff for time being
+  Q_OBJECT
+  INHERITED(T3Entity)
+public:
+  T3DataView*           data_view; // the T3DataView that owns/created this node
+  bool                  expanded;  // whether this node is currently expanded to show children or not
+  T3TwoDText*           caption;   // optional caption for this node
+  
+  virtual void		setCaption(const QString& txt);
+  // set the caption for this node to given text -- creates the caption node under this one if it does not already exist
+
+  virtual void		createCaption();
+  // create the caption node
+  virtual void		setDefaultCaptionTransform();
+  // set the default caption transform; this is called after creating caption first time
+  
+  virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
+
+  T3Node(Qt3DNode* parent = 0, T3DataView* dataView_ = NULL);
+  ~T3Node();
+};
+
+#endif  // __MAKETA__
+
+#else // TA_QT3D
 
 #ifndef __MAKETA__
 #include <Inventor/nodes/SoSeparator.h>
@@ -63,6 +194,18 @@ class SoIndexedLineSet; //
 class SoDrawStyle; // 
 class T3DataView;  //
 class iVec3f; //
+
+#ifndef __MAKETA__
+
+#include <Inventor/nodes/SoAsciiText.h>
+
+enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
+  T3_ALIGN_LEFT  = SoAsciiText::LEFT,
+  T3_ALIGN_RIGHT = SoAsciiText::RIGHT,
+  T3_ALIGN_CENTER = SoAsciiText::CENTER,
+};
+
+#endif
 
 /*
   All Nodes are implemented using an approach that is similar to, but simpler than,
@@ -152,10 +295,9 @@ NOTE: T3Node may be changed to look like this -- this change will be transparent
     callbackList: SoSeparator
     topSeparator: SoSeparator
       transform: SoTransform
-
-
-
 */
+
+
 taTypeDef_Of(T3Node);
 
 // NOTE: unfortunately we cannot mark T3Nodes as ##NO_MEMBERS because we need the initClass method which is called to initialize Coin3d Types
@@ -222,5 +364,7 @@ private:
   SoTransform*		txfm_shape_; // #IGNORE NOTE: must be created in subclass init
   SoMaterial*		material_; // #IGNORE NOTE: must be created in subclass init
 };
+
+#endif // TA_QT3D
 
 #endif // T3Node_h

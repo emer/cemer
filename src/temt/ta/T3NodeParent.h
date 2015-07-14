@@ -23,6 +23,21 @@
 
 // declare all other types mentioned but not required to include:
 
+
+#ifdef TA_QT3D
+
+class TA_API T3NodeParent: public T3Node {
+  // a base class for major owner nodes
+  Q_OBJECT
+  INHERITED(T3Node)
+public:
+  T3NodeParent(Qt3DNode* parent = 0, T3DataView* dataView_ = NULL);
+  ~T3NodeParent();
+};
+
+
+#else // TA_QT3D
+
 /*
   See T3Node for more docs
 
@@ -71,5 +86,7 @@ protected:
   SoSeparator*		shapeSeparator_; // #IGNORE
   SoSeparator*		childNodes_; // #IGNORE
 };
+
+#endif // TA_QT3D
 
 #endif // T3NodeParent_h

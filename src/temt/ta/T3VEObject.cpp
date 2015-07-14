@@ -15,6 +15,18 @@
 
 #include "T3VEObject.h"
 
+#ifdef TA_QT3D
+
+T3VEObject::T3VEObject(Qt3DNode* parent, T3DataView* dataView_)
+  : T3NodeParent(parent)
+{
+}
+
+T3VEObject::~T3VEObject() {
+}
+
+#else // TA_QT3D
+
 SO_NODE_SOURCE(T3VEObject);
 
 void T3VEObject::initClass()
@@ -33,3 +45,4 @@ T3VEObject::~T3VEObject()
   
 }
 
+#endif // TA_QT3D

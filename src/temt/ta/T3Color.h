@@ -21,9 +21,15 @@
 
 // member includes:
 #include <iColor>
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #ifndef __MAKETA__
 #include <Inventor/SbColor.h>
 #endif
+
+#endif // TA_QT3D
 
 // declare all other types mentioned but not required to include:
 
@@ -58,13 +64,16 @@ public:
   T3Color(const iColor* cp) {if (cp) cp->getRgb(r, g, b); else r = g = b = 0.0f;}
   T3Color(const iColor& cp) {cp.getRgb(r, g, b);}
 
+#ifdef TA_QT3D
+#else // TA_QT3D
 #ifndef __MAKETA__
   T3Color(const SbColor& cp) {cp.getValue(r, g, b);}
   T3Color& operator =(const SbColor& cp) {cp.getValue(r, g, b); return *this;}
+  operator SbColor() const {return SbColor(rgb);}
 #endif
+#endif // TA_QT3D
   T3Color& operator =(const iColor& cp) {cp.getRgb(r, g, b); return *this;}
   T3Color& operator =(float x_) {r = x_; g = x_; b = x_; return *this;}
-  operator SbColor() const {return SbColor(rgb);}
   operator iColor() const { iColor rv; rv.setRgb(r,g,b); return rv; }
 };
 

@@ -17,6 +17,19 @@
 
 #include <taMisc>
 
+
+#ifdef TA_QT3D
+
+T3NodeLeaf::T3NodeLeaf(Qt3DNode* parent, T3DataView* dataView_)
+  : T3Node(parent)
+{
+}
+
+T3NodeLeaf::~T3NodeLeaf() {
+}
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoFont.h>
 #include <Inventor/nodes/SoTransform.h>
 
@@ -63,3 +76,5 @@ SoSeparator* T3NodeLeaf::captionSeparator(bool auto_create) {
   }
   return rval;
 }
+
+#endif // TA_QT3D

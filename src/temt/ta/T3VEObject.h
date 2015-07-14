@@ -23,6 +23,18 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
+
+class TA_API T3VEObject : public T3NodeParent {
+  // object parent for virtual environment
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+  T3VEObject(Qt3DNode* par = NULL, T3DataView* obj = NULL);
+  ~T3VEObject();
+};
+
+#else // TA_QT3D
 
 taTypeDef_Of(T3VEObject);
 
@@ -40,5 +52,7 @@ public:
 protected:
   ~T3VEObject();
 };
+
+#endif // TA_QT3D
 
 #endif // T3VEObject_h

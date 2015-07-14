@@ -51,10 +51,18 @@ public:
   float         cut_off_angle;  // #CONDSHOW_ON_light_type:SPOT_LIGHT (30 default) angle in degrees from the direction vector where there will be no light -- the smaller the value, the stronger the shadow effect when shadows are on -- with 45 shadows are very light
   taVector3f    dir_norm;       // #READ_ONLY #SHOW normal vector for where the camera is facing
 
+#ifdef TA_QT3D
+  // virtual SoLight*      CreateLight();
+  // #IGNORE create the So light of correct type
+  // virtual void          ConfigLight(SoLight* lgt);
+  // #IGNORE config So light parameters
+#else // TA_QT3D
   virtual SoLight*      CreateLight();
   // #IGNORE create the So light of correct type
   virtual void          ConfigLight(SoLight* lgt);
   // #IGNORE config So light parameters
+#endif // TA_QT3D
+
   virtual bool          UpdateLight();
   // #BUTTON if environment is already initialized and viewed, this will update the light in the display based on current settings
   virtual void          UpdtDirNorm();

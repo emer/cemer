@@ -9,7 +9,7 @@
 # anyway, so there really isn't any point to it anymore
 
 # headers that need maketa run on them, but not moc
-set(ta_HEADS_MAKETA_NOMOC
+set(ta_HEADS_MAKETA_NOMOC_base
   maketa_streambuf.h
   maketa_iostream.h
   maketa_fstream.h
@@ -291,6 +291,10 @@ set(ta_HEADS_MAKETA_NOMOC
   ProgObjList.h
   Program_List.h
 
+  ProgElChoiceDlg.h
+  ProgBrkPt.h
+  ProgBrkPt_List.h
+
   ProgLibEl.h
   ProgLibEl_List.h
   ProgLib.h
@@ -451,6 +455,11 @@ set(ta_HEADS_MAKETA_NOMOC
   EditMthItem_Group.h
   ControlPanelConfig.h
   ControlPanel_Group.h
+  ControlItemNote.h
+
+  ParamSet.h
+  ParamSetItem.h
+  ParamSet_Group.h
 
   ParamSearchAlgo.h
   ParamSearchAlgo_List.h
@@ -482,6 +491,7 @@ set(ta_HEADS_MAKETA_NOMOC
   taProject.h
   Project_Group.h
   CssProject.h
+  taProjPubInfo.h
 
   PluginWizard.h
   TestWizard.h
@@ -556,7 +566,7 @@ set(ta_HEADS_MAKETA_NOMOC
   VEMuscle_List.h
   VEMuscle.h
   VELinearMuscle.h
-    VELambdaMuscle.h
+  VELambdaMuscle.h
   VEMuscleJoint.h
   VEArm.h
 
@@ -709,52 +719,10 @@ set(ta_HEADS_MAKETA_NOMOC
   iPanelOfEditor.h
   iPanelBase_PtrList.h
 
-  T3Node.h
-  T3NodeLeaf.h
-  T3NodeParent.h
-
   T3Color.h
-  T3ColorBar.h
 
-  T3AnnotationNode.h
-
-  T3GridColViewNode.h
-  T3GridViewNode.h
-  T3Axis.h
-  T3GraphLine.h
-  T3GraphBar.h
-  T3GraphViewNode.h
-
-  T3VEWorld.h
-  T3VEObject.h
-  T3VEBody.h
-  T3VEJoint.h
-  T3VESpace.h
-  T3VEStatic.h
-
-  SoCapsule.h
-  SoFrame.h
-  SoRect.h
-  SoLineBox3d.h
-  SoImageEx.h
-  SoMatrixGrid.h
-  So3DHeightField.h
-  T3ScaleUniformScaler.h
-  T3TransformBoxRotatorRotator.h
-  T3TransformBoxDragger.h
-  T3Translate1Translator.h
-  T3Translate2Translator.h
-  SoScrollBar.h
-  ProgElChoiceDlg.h
-  ProgBrkPt.h
-  ProgBrkPt_List.h
-  ParamSet.h
-  ParamSetItem.h
-  ParamSet_Group.h
   KeyBindings.h
   KeyBindings_List.h
-  taProjPubInfo.h
-  ControlItemNote.h
 )
 
 # multiple inheritence -- in correspondence with deps below
@@ -846,7 +814,7 @@ set(ta_HEADS_MAKETA_MOC
   iSubversionBrowser.h
 )
 
-set(ta_HEADS_NOMAKETA_MOC
+set(ta_HEADS_NOMAKETA_MOC_base
   iAutoSaver.h
   iInterceptor.h
   iCookieJar.h
@@ -1012,7 +980,7 @@ set(ta_HEADS_NOMAKETA_MOC
   KeyActionPair_PArray.h
 )
 
-set(ta_HEADS_NOMAKETA_NOMOC
+set(ta_HEADS_NOMAKETA_NOMOC_base
   ta_stdef.h
   ta_def.h
   ta_type_constr.h
@@ -1127,14 +1095,89 @@ set(ta_HEADS_NOMAKETA_NOMOC
   iDialogRegexpPopulator.h
 
   T3Misc.h
+
+  ThreadedAllReduce.h
+)
+
+# 3D headers -- do diff things depending on QT3D vs COIN
+set(ta_HEADS_T3
+  T3Node.h
+  T3NodeLeaf.h
+  T3NodeParent.h
+  T3AnnotationNode.h
+
+  T3ColorBar.h
+
+  T3GridColViewNode.h
+  T3GridViewNode.h
+  T3Axis.h
+  T3GraphLine.h
+  T3GraphBar.h
+  T3GraphViewNode.h
+
+  T3VEWorld.h
+  T3VEObject.h
+  T3VEBody.h
+  T3VEJoint.h
+  T3VESpace.h
+  T3VEStatic.h
+)
+
+# COIN only headers
+set(ta_HEADS_COIN_MAKETA
+  SoCapsule.h
+  SoFrame.h
+  SoRect.h
+  SoLineBox3d.h
+  SoImageEx.h
+  SoMatrixGrid.h
+  So3DHeightField.h
+  T3ScaleUniformScaler.h
+  T3TransformBoxRotatorRotator.h
+  T3TransformBoxDragger.h
+  T3Translate1Translator.h
+  T3Translate2Translator.h
+  SoScrollBar.h
+)
+
+set(ta_HEADS_COIN_NOMAKETA
   iSoSelectionEvent.h
   SoBase.h
   SoGroup.h
   SoPtr.h
   SoOffscreenRendererQt.h
-
-  ThreadedAllReduce.h
 )
+  
+if(QT_USE_3D)
+  set(ta_HEADS_MAKETA_NOMOC
+    ${ta_HEADS_MAKETA_NOMOC_base}
+  )
+  
+  set(ta_HEADS_NOMAKETA_MOC
+    ${ta_HEADS_NOMAKETA_MOC_base}
+    ${ta_HEADS_T3}
+  )
+
+  set(ta_HEADS_NOMAKETA_NOMOC
+    ${ta_HEADS_NOMAKETA_NOMOC_base}
+  )
+else(QT_USE_3D)
+  set(ta_HEADS_MAKETA_NOMOC
+    ${ta_HEADS_MAKETA_NOMOC_base}
+    ${ta_HEADS_T3}
+    ${ta_HEADS_COIN_MAKETA}
+  )
+  
+  set(ta_HEADS_NOMAKETA_MOC
+    ${ta_HEADS_NOMAKETA_MOC_base}
+  )
+    
+  set(ta_HEADS_NOMAKETA_NOMOC
+    ${ta_HEADS_NOMAKETA_NOMOC_base}
+    ${ta_HEADS_COIN_NOMAKETA}
+  )
+endif(QT_USE_3D)
+  
 
 # all headers that need maketa run on them
 set(ta_HEADS_MAKETA
@@ -1600,6 +1643,11 @@ set(ta_SRCS_MAKETA
   ControlPanelConfig.cpp
   ControlPanel.cpp
   ControlPanel_Group.cpp
+  ControlItemNote.cpp
+
+  ParamSet.cpp
+  ParamSetItem.cpp
+  ParamSet_Group.cpp
 
   ParamSearchAlgo.cpp
   ParamSearchAlgo_List.cpp
@@ -1631,6 +1679,7 @@ set(ta_SRCS_MAKETA
   taProject.cpp
   Project_Group.cpp
   CssProject.cpp
+  taProjPubInfo.cpp
 
   PluginWizard.cpp
   TestWizard.cpp
@@ -1859,42 +1908,7 @@ set(ta_SRCS_MAKETA
   iPanelOfEditor.cpp
   iPanelBase_PtrList.cpp
 
-  T3Node.cpp
-  T3NodeLeaf.cpp
-  T3NodeParent.cpp
-
   T3Color.cpp
-  T3ColorBar.cpp
-
-  T3AnnotationNode.cpp
-
-  T3GridColViewNode.cpp
-  T3GridViewNode.cpp
-  T3Axis.cpp
-  T3GraphLine.cpp
-  T3GraphBar.cpp
-  T3GraphViewNode.cpp
-
-  T3VEWorld.cpp
-  T3VEObject.cpp
-  T3VEBody.cpp
-  T3VEJoint.cpp
-  T3VESpace.cpp
-  T3VEStatic.cpp
-
-  SoCapsule.cpp
-  SoFrame.cpp
-  SoRect.cpp
-  SoLineBox3d.cpp
-  SoImageEx.cpp
-  SoMatrixGrid.cpp
-  So3DHeightField.cpp
-  T3ScaleUniformScaler.cpp
-  T3TransformBoxRotatorRotator.cpp
-  T3TransformBoxDragger.cpp
-  T3Translate1Translator.cpp
-  T3Translate2Translator.cpp
-  SoScrollBar.cpp
 
   taiMisc.cpp
   taiMiscCore.cpp
@@ -1960,16 +1974,13 @@ set(ta_SRCS_MAKETA
   ViewBackground.cpp
   ViewBackground_List.cpp
   iDialogColorChooser.cpp
-  ParamSet.cpp
-  ParamSetItem.cpp
-  ParamSet_Group.cpp
+
   ta_cuda.cpp
+
   KeyBindings.cpp
   KeyBindings_List.cpp
   KeyActionPair.cpp
   KeyActionPair_PArray.cpp
-  taProjPubInfo.cpp
-  ControlItemNote.cpp
 )
 
 # these correspond to TA_HEADS_NOMAKETA*
@@ -2237,13 +2248,55 @@ set(ta_SRCS_NOMAKETA
   iDialogRegexpPopulator.cpp
 
   T3Misc.cpp
+
+  ThreadedAllReduce.cpp
+)
+
+# 3d Nodes
+set(ta_SRCS_T3
+  T3Node.cpp
+  T3NodeLeaf.cpp
+  T3NodeParent.cpp
+
+  T3ColorBar.cpp
+
+  T3AnnotationNode.cpp
+
+  T3GridColViewNode.cpp
+  T3GridViewNode.cpp
+  T3Axis.cpp
+  T3GraphLine.cpp
+  T3GraphBar.cpp
+  T3GraphViewNode.cpp
+
+  T3VEWorld.cpp
+  T3VEObject.cpp
+  T3VEBody.cpp
+  T3VEJoint.cpp
+  T3VESpace.cpp
+  T3VEStatic.cpp
+)
+
+# COIN specific files
+set(ta_SRCS_COIN
+  SoCapsule.cpp
+  SoFrame.cpp
+  SoRect.cpp
+  SoLineBox3d.cpp
+  SoImageEx.cpp
+  SoMatrixGrid.cpp
+  So3DHeightField.cpp
+  T3ScaleUniformScaler.cpp
+  T3TransformBoxRotatorRotator.cpp
+  T3TransformBoxDragger.cpp
+  T3Translate1Translator.cpp
+  T3Translate2Translator.cpp
+  SoScrollBar.cpp
   iSoSelectionEvent.cpp
   SoBase.cpp
   SoGroup.cpp
   SoPtr.cpp
   SoOffscreenRendererQt.cpp
-
-  ThreadedAllReduce.cpp
 )
 
 set(ta_SRCS_UI
@@ -2258,8 +2311,19 @@ endif (APPLE)
 set(ta_SRCS
   ${ta_SRCS_MAKETA}
   ${ta_SRCS_NOMAKETA}
+  ${ta_SRCS_T3}
   ${ta_SRCS_mac}
   ta_qrc.cpp
 )
+
+if(QT_USE_3D)
+
+else(QT_USE_3D)
+  set(ta_SRCS
+    ${ta_SRCS}
+    ${ta_SRCS_COIN}
+  )
+endif(QT_USE_3D)
+
 
 set(ta_FILES ${ta_HEADS} ${ta_SRCS})

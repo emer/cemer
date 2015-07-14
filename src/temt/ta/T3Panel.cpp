@@ -401,6 +401,7 @@ bool T3Panel::SaveImageIV(const String& fname) {
   T3ExaminerViewer* viewer = widget()->t3viewer();
   if(!viewer) return false;
 
+#ifndef TA_QT3D
   String ext = String(".") + image_exts.SafeEl(IV);
   taFiler* flr = GetSaveFiler(fname, ext);
   if(!flr->ostrm) {
@@ -419,6 +420,7 @@ bool T3Panel::SaveImageIV(const String& fname) {
   out.closeFile();
 
   taRefN::unRefDone(flr);
+#endif // TA_QT3D
   return true;
 }
 

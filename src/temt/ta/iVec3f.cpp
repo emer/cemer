@@ -15,8 +15,11 @@
 
 #include "iVec3f.h"
 
-#ifdef TA_USE_INVENTOR
-  #include <Inventor/SbLinear.h>
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
+#include <Inventor/SbLinear.h>
 
 iVec3f::iVec3f(const SbVec3f& src) {
   src.getValue(x, y, z);
@@ -31,4 +34,4 @@ iVec3f::operator SbVec3f() const {
   return SbVec3f(x, y, z);
 }
 
-#endif
+#endif // TA_QT3D

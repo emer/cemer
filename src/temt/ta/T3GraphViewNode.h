@@ -22,6 +22,55 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class TA_API T3GraphViewNode: public T3NodeParent {
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+  static float 		frame_margin; // = .05 size of margin around stage for frame
+  static float 		frame_width; // = .02 width of frame itself
+  static void		initClass();
+
+  float                 width;
+  bool	                show_drag;
+  
+  // virtual void		render();
+  virtual void		setWidth(float wdth);
+
+  // virtual SoSeparator*	x_axis() { return x_axis_sep_; } // #IGNORE 
+  // virtual SoSeparator*	z_axis() { return z_axis_sep_; } // #IGNORE 
+  // virtual SoSeparator*	y_axes() { return y_axes_sep_; } // #IGNORE 
+  // virtual SoSeparator*	legend() { return legend_sep_; } // #IGNORE 
+  // virtual SoSeparator*	graphs() { return graphs_sep_; } // #IGNORE 
+
+  // SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; } // #IGNORE 
+
+  T3GraphViewNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float wdth=1.0f,
+                  bool show_draggers = true);
+  ~T3GraphViewNode();
+
+protected:
+  // SoFrame*		frame_; 
+
+  // in childNodes:
+  // SoMaterial*		chld_mat_; // first item in childNodes -- default material
+  // SoSeparator*		x_axis_sep_;
+  // SoSeparator*		z_axis_sep_;
+  // SoSeparator*		y_axes_sep_;
+  // SoSeparator*		legend_sep_; // can be multiple
+
+  // SoSeparator*		graphs_sep_; // graph boxes
+
+  // T3TransformBoxDragger* drag_;	// my position dragger
+
+  // SoTransform*		row_sb_tx_; // row scrollbar transform
+  // SoScrollBar*		row_scroll_bar_;
+};
+
+#else // TA_QT3D
+
 class SoScrollBar; // 
 class SoFrame; //
 class T3TransformBoxDragger; //
@@ -76,5 +125,7 @@ protected:
 
   ~T3GraphViewNode();
 };
+
+#endif // TA_QT3D
 
 #endif // T3GraphViewNode_h

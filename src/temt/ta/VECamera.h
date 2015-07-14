@@ -80,8 +80,12 @@ public:
   VELightParams light;          // directional "headlight" associated with the camera -- ensures that whatever is being viewed can be seen (but makes lighting artificially consistent and good)
   taVector3f    dir_norm;       // #READ_ONLY #SHOW normal vector for where the camera is facing
 
+#ifdef TA_QT3D
+  // virtual void          ConfigCamera(SoPerspectiveCamera* cam);
+#else // TA_QT3D
   virtual void          ConfigCamera(SoPerspectiveCamera* cam);
   // #IGNORE config So camera parameters
+#endif // TA_QT3D
   virtual void          UpdtDirNorm();
   // update dir_norm from cur_quat rotation
 

@@ -641,6 +641,7 @@ const String GraphTableView::caption() const {
 }
 
 #ifndef TA_QT3D
+
 void GraphTableView_MouseCB(void* userData, SoEventCallback* ecb) {
   GraphTableView* nv = (GraphTableView*)userData;
   T3Panel* fr = nv->GetFrame();
@@ -697,6 +698,10 @@ void GraphTableView::Render_pre() {
       show_drag = false;
   }
   
+#ifdef TA_QT3D
+  setNode(new T3GraphViewNode(NULL, this, width, show_drag));
+
+#else // TA_QT3D
   setNode(new T3GraphViewNode(this, width, show_drag));
   
   /*NOTES:
@@ -706,7 +711,6 @@ void GraphTableView::Render_pre() {
    
    */
   
-#ifndef TA_QT3D
   SoEventCallback* ecb = new SoEventCallback;
   ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), GraphTableView_MouseCB, this);
   node_so()->addChild(ecb);
@@ -849,18 +853,23 @@ void GraphTableView::ComputeAxisRanges() {
     raster_axis.ComputeRange();
 }
 
+#ifndef TA_QT3D
 void GraphTableView_RowScrollCB(SoScrollBar* sb, int val, void* user_data) {
   GraphTableView* gtv = (GraphTableView*)user_data;
   gtv->scrolling_ = true;
   gtv->ViewRow_At(val);
   gtv->scrolling_ = false;
 }
+#endif // TA_QT3D
 
 void GraphTableView::SetScrollBars() {
   if(scrolling_) return;                     // don't redo if currently doing!
   T3GraphViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoScrollBar* rsb = node_so->RowScrollBar();
   //  rsb->setMinimum(0);
   //  rsb->setSingleStep(1);
@@ -870,6 +879,7 @@ void GraphTableView::SetScrollBars() {
   rsb->setPageStep(pg_step);
   rsb->setValue(MIN(view_range.min, mx));
   rsb->setValueChangedCB(GraphTableView_RowScrollCB, this);
+#endif // TA_QT3D
 }
 
 void GraphTableView::Clear_impl() {
@@ -888,8 +898,11 @@ void GraphTableView::OnWindowBind_impl(iT3Panel* vw) {
 void GraphTableView::RemoveGraph(){
   T3GraphViewNode* node_so = this->node_so();
   if (!node_so) return;
+#ifdef TA_QT3D
+#else // TA_QT3D
   node_so->graphs()->removeAllChildren();
   node_so->y_axes()->removeAllChildren();
+#endif // TA_QT3D
 }
 
 void GraphTableView::FindDefaultXZAxes() {
@@ -1171,6 +1184,15 @@ void GraphTableView::RenderAxes() {
   
   if(!x_axis.on || !mainy) return;
   
+  String* rnd_svg = NULL;
+  if(render_svg) {
+    rnd_svg = &svg_str;
+    *rnd_svg << taSvg::Group();
+  }
+  
+#ifdef TA_QT3D
+  
+#else // TA_QT3D
   SoSeparator* xax = node_so->x_axis();
   xax->removeAllChildren();
   SoSeparator* zax = node_so->z_axis();
@@ -1186,12 +1208,6 @@ void GraphTableView::RenderAxes() {
   
   xax->addChild(t3_x_axis);
   xax->addChild(t3_x_axis_top);
-  
-  String* rnd_svg = NULL;
-  if(render_svg) {
-    rnd_svg = &svg_str;
-    *rnd_svg << taSvg::Group();
-  }
   
   x_axis.RenderAxis(t3_x_axis, iVec3f(0.0f, 0.0f, 0.0f), 0, false, rnd_svg);
   if(rnd_svg) {                 // svg needs separate ticks-only pass
@@ -1314,6 +1330,7 @@ void GraphTableView::RenderAxes() {
       }
     }
   }
+#endif // TA_QT3D
   
   if(render_svg) {
     rnd_svg = &svg_str;
@@ -1391,6 +1408,9 @@ void GraphTableView::RenderLegend() {
     n_across = n_plots_eff / n_down;
   }
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* leg = node_so->legend();
   leg->removeAllChildren();
   // move to top
@@ -1467,6 +1487,7 @@ void GraphTableView::RenderLegend() {
       }
     }
   }
+#endif // TA_QT3D
   
   if(render_svg) {
     svg_str << taSvg::GroupEnd();
@@ -1485,6 +1506,9 @@ void GraphTableView::RenderGraph_XY() {
   DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();	// this is the "nuclear option" that ensures full redraw
   
@@ -1546,6 +1570,7 @@ void GraphTableView::RenderGraph_XY() {
       }
     }
   }
+#endif // TA_QT3D
   
   if(render_svg) {
     svg_str << "\n</g>\n";
@@ -1564,6 +1589,9 @@ void GraphTableView::RenderGraph_Bar() {
   DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
   
@@ -1643,6 +1671,7 @@ void GraphTableView::RenderGraph_Bar() {
       bar_off += bar_width;
     }
   }
+#endif // TA_QT3D
 }
 
 void GraphTableView::RenderGraph_Matrix_Zi() {
@@ -1656,6 +1685,9 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
   DataCol* da_1 = mainy->GetDAPtr();
   if(!da_1) return;
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
   
@@ -1671,6 +1703,7 @@ void GraphTableView::RenderGraph_Matrix_Zi() {
     gr1->addChild(ln);
     PlotData_XY(*mainy, *errbars[main_y_plots[0]], *mainy, ln, i);
   }
+#endif // TA_QT3D
 }
 
 void GraphTableView::RenderGraph_Matrix_Sep() {
@@ -1690,6 +1723,9 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
   if(z_axis.on)
     boxd = depth;
   
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* graphs = node_so->graphs();
   graphs->removeAllChildren();
   
@@ -1820,6 +1856,7 @@ void GraphTableView::RenderGraph_Matrix_Sep() {
       }
     }
   }
+#endif // TA_QT3D
 }
 
 const iColor GraphTableView::GetValueColor(GraphAxisBase* ax_clr, float val) {
@@ -2151,10 +2188,18 @@ void GraphTableView::PlotData_XY(GraphPlotView& plv, GraphPlotView& erv,
   t3gl->finishBatch();
 }
 
+
+#ifdef TA_QT3D
+void GraphTableView::PlotData_Bar(T3Entity* gr1, GraphPlotView& plv, GraphPlotView& erv,
+                                  GraphPlotView& yax,
+                                  T3GraphLine* t3gl, float bar_off, int mat_cell,
+                                  int clr_idx) {
+#else // TA_QT3D
 void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlotView& erv,
                                   GraphPlotView& yax,
                                   T3GraphLine* t3gl, float bar_off, int mat_cell,
                                   int clr_idx) {
+#endif // TA_QT3D
   t3gl->clear();
   
   DataCol* da_y = plv.GetDAPtr();
@@ -2278,6 +2323,16 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
     size.x = bar_wd_plt;
     size.y = plt.y;
     size.z = bar_depth;
+
+#ifdef TA_QT3D
+    T3GraphBar* bar = new T3GraphBar(NULL, &plv);
+    if(clr_ok) {
+      bar->SetBar(pt, size, (T3Color)(clr));
+    }
+    else {
+      bar->SetBar(pt, size, (T3Color)(plv.color.color()));
+    }
+#else // TA_QT3D
     T3GraphBar* bar = new T3GraphBar(&plv);
     if(clr_ok) {
       bar->SetBar(pt, size, (T3Color)(clr));
@@ -2286,6 +2341,7 @@ void GraphTableView::PlotData_Bar(SoSeparator* gr1, GraphPlotView& plv, GraphPlo
       bar->SetBar(pt, size, (T3Color)(plv.color.color()));
     }
     gr1->addChild(bar);
+#endif // TA_QT3D
     
     if(render_svg) {
       if((row - view_range.min) % 10 == 1) {
@@ -2452,6 +2508,8 @@ iViewPanelOfGraphTable* GraphTableView::lvp() {
   return (iViewPanelOfGraphTable*)(iViewPanelOfDataTable*)m_lvp;
 }
 
+#ifndef TA_QT3D
+ 
 // callback for view transformer dragger
 void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -2501,3 +2559,5 @@ void T3GraphViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   
   nv->UpdateDisplay();
 }
+
+#endif // TA_QT3D

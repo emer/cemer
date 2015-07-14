@@ -15,6 +15,48 @@
 
 #include "T3VEWorld.h"
 
+#ifdef TA_QT3D
+
+T3VEWorld::T3VEWorld(Qt3DNode* parent, T3DataView* dataView_)
+  : T3NodeParent(parent)
+{
+}
+
+T3VEWorld::~T3VEWorld() {
+}
+
+void T3VEWorld::setShadows(bool on, float precision, float quality,
+                           float smoothing, float near_radius,
+                           float far_radius, float threshold, float epsilon) {
+  shadows = on;
+  // shadow_group->isActive = on;            // just high-level toggle
+  // shadow_group->precision = precision;
+  // shadow_group->quality = quality;
+  // shadow_group->smoothBorder = smoothing;
+  // shadow_group->visibilityNearRadius = near_radius;
+  // shadow_group->visibilityRadius = far_radius;
+  // shadow_group->epsilon = epsilon;
+  // shadow_group->threshold = threshold;
+}
+
+void T3VEWorld::setSunLightOn(bool on) {
+  // sun_light->on = on;
+}
+
+void T3VEWorld::setSunLightDir(float x_dir, float y_dir, float z_dir) {
+  // sun_light->direction = SbVec3f(x_dir, y_dir, z_dir);
+}
+
+void T3VEWorld::setCamLightOn(bool on) {
+  // cam_light->on = on;
+}
+
+void T3VEWorld::setCamLightDir(float x_dir, float y_dir, float z_dir) {
+  // cam_light->direction = SbVec3f(x_dir, y_dir, z_dir);
+}
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoDirectionalLight.h>
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -111,3 +153,4 @@ SoSeparator* T3VEWorld::childNodes() {
   return childNodes_;
 }
 
+#endif // TA_QT3D

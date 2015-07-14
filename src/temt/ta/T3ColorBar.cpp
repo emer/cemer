@@ -16,6 +16,109 @@
 #include "T3ColorBar.h"
 #include <iColor>
 #include <T3Color>
+#include <math.h>
+
+int T3ColorBar::blocks() {
+  int rval = (scale) ? scale->chunks : 1;
+  if (rval == 0) rval = 1;  // for robustness
+  return rval;
+}
+
+#ifdef TA_QT3D
+
+T3ColorBar::T3ColorBar(Qt3DNode* parent, ColorScale* c, T3DataView* dataView_)
+  : T3NodeLeaf(parent)
+{
+}
+
+T3ColorBar::~T3ColorBar() {
+}
+
+void T3ColorBar::clear() {
+  // SoVertexProperty* vp = (SoVertexProperty*)bars_->vertexProperty.getValue(); // cache
+  // bars_->numVertices.startEditing();
+  // vp->orderedRGBA.startEditing();
+  // vp->vertex.startEditing();
+
+  // bars_->numVertices.setNum(0);
+  // vp->orderedRGBA.setNum(0);
+  // vp->vertex.setNum(0);
+
+  // vp->vertex.finishEditing();
+  // vp->orderedRGBA.finishEditing();
+  // bars_->numVertices.finishEditing();
+  inherited::clear();
+}
+
+void T3ColorBar::SetColorScale(ColorScale* c){
+  if (scale.ptr() == c) return;
+
+  if ((bool)scale) {
+    clear();
+  }
+  scale = c;
+  if ((bool)scale) {
+    // render();
+  }
+}
+
+void T3ColorBar::SetDimensions(float wd, float ht) {
+  if ((wd == width) && (height == ht)) return;
+  width = wd;
+  height = ht;
+  // render();
+}
+
+// void T3ColorBar::render() {
+//   if ((width <= 0.0f) || (height <= 0.0f)) return; // out of bounds
+//   if (!scale) return;
+
+  // //note: this routine works whether cleared or not
+
+  // int b = blocks(); // cache
+  // float wb = width / b; // width per block
+  // float x = -(width / 2.0f); //
+  // float h2 = height / 2.0f;
+  // uint32_t pcol; // packed color
+
+  // SoVertexProperty* vp = (SoVertexProperty*)bars_->vertexProperty.getValue(); // cache
+
+  // // rect and vertex indices
+  // int idx_rct = 0;
+  // int idx_vtx = 0;
+
+  // bars_->numVertices.startEditing();
+  // vp->orderedRGBA.startEditing();
+  // vp->vertex.startEditing();
+
+  // // preset number of items, to avoid unnecessary dynamic enlargements of data structures
+  // bars_->numVertices.setNum(b);
+  // vp->orderedRGBA.setNum(b);
+  // vp->vertex.setNum(b * 4);
+
+  // for (int i = 0; i < b; ++i) { // one strip per color value
+  //   bool ok;
+  //   iColor col = scale->GetColor(i, &ok);
+  //   if (!ok) break; // shouldn't happen
+  //   // color
+  //   pcol = T3Color::makePackedRGBA(col.red(), col.green(), col.blue());
+  //   vp->orderedRGBA.set1Value(idx_rct, pcol);
+  //   // num of vertices
+  //   bars_->numVertices.set1Value(idx_rct++, 4); // always 4 per face
+  //   // a rect, requires 2 faces, 4 coords
+  //   vp->vertex.set1Value(idx_vtx++,  x, -h2, 0.0f);
+  //   vp->vertex.set1Value(idx_vtx++,  x,  h2, 0.0f);
+  //   x += wb;
+  //   vp->vertex.set1Value(idx_vtx++,  x, -h2, 0.0f);
+  //   vp->vertex.set1Value(idx_vtx++,  x,  h2, 0.0f);
+  // }
+
+  // vp->vertex.finishEditing();
+  // vp->orderedRGBA.finishEditing();
+  // bars_->numVertices.finishEditing();
+// }
+
+#else // TA_QT3D
 
 #include <Inventor/SbLinear.h>
 #include <Inventor/SbName.h>
@@ -28,14 +131,6 @@
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoTriangleStripSet.h>
 #include <Inventor/nodes/SoVertexProperty.h>
-
-#include <math.h>
-
-
-
-//////////////////////////
-//   T3ColorBar		//
-//////////////////////////
 
 SO_NODE_SOURCE(T3ColorBar);
 
@@ -77,12 +172,6 @@ T3ColorBar::T3ColorBar(ColorScale* c, T3DataView* dataView_)
 T3ColorBar::~T3ColorBar(){
   taBase::UnRef(scale);
   scale = NULL;
-}
-
-int T3ColorBar::blocks() {
-  int rval = (scale) ? scale->chunks : 1;
-  if (rval == 0) rval = 1;  // for robustness
-  return rval;
 }
 
 void T3ColorBar::clear() {
@@ -169,3 +258,4 @@ void T3ColorBar::render() {
   bars_->numVertices.finishEditing();
 }
 
+#endif // TA_QT3D

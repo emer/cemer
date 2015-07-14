@@ -72,6 +72,11 @@ void VEBodyView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
+#ifdef TA_QT3D
+  T3VEBody* obv = new T3VEBody(NULL, this, show_drag, wv->drag_size);
+  setNode(obv);
+
+#else // TA_QT3D
   T3VEBody* obv = new T3VEBody(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
@@ -153,6 +158,8 @@ void VEBodyView::Render_pre() {
     }
     }
   }
+#endif // TA_QT3D
+  
  finish:
 
   SetDraggerPos();
@@ -166,6 +173,10 @@ void VEBodyView::SetDraggerPos() {
   VEBody* ob = Body();
   if(!ob) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   // set dragger position
   T3TransformBoxDragger* drag = obv->getDragger();
   if(!drag) return;
@@ -191,6 +202,7 @@ void VEBodyView::SetDraggerPos() {
     break;
   }
   }
+#endif // TA_QT3D
 }
 
 void VEBodyView::Render_impl() {
@@ -209,6 +221,10 @@ void VEBodyView::Render_impl() {
   if(!wv) return;
   if(!wv->drag_objs) show_drag = false;
 
+#ifdef TA_QT3D
+  
+#else // TA_QT3D
+  
   SoTransform* tx = obv->transform();
   tx->translation.setValue(ob->cur_pos.x, ob->cur_pos.y, ob->cur_pos.z);
   tx->rotation.setValue(ob->cur_quat.x, ob->cur_quat.y, ob->cur_quat.z, ob->cur_quat.s);
@@ -325,9 +341,11 @@ void VEBodyView::Render_impl() {
       }
     }
   }
-  // taMisc::Info("VEBody", ob->name, "Render_impl complete");
+#endif // TA_QT3D
 }
 
+
+#ifndef TA_QT3D
 // callback for transformer dragger
 void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -368,3 +386,5 @@ void T3VEBody_DragFinishCB(void* userData, SoDragger* dragr) {
 
   wv->UpdateDisplay();
 }
+
+#endif // TA_QT3D

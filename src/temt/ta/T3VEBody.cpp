@@ -14,6 +14,22 @@
 //   Lesser General Public License for more details.
 
 #include "T3VEBody.h"
+
+#ifdef TA_QT3D
+
+T3VEBody::T3VEBody(Qt3DNode* parent, T3DataView* dataView_, bool show_drg,
+                   float drg_sz)
+  : T3NodeLeaf(parent)
+  , show_drag(show_drg)
+{
+}
+
+T3VEBody::~T3VEBody() {
+}
+
+
+#else // TA_QT3D
+
 #include <T3TransformBoxDragger>
 
 #include <Inventor/nodes/SoTransform.h>
@@ -54,3 +70,5 @@ T3VEBody::~T3VEBody()
 {
   
 }
+
+#endif // TA_QT3D

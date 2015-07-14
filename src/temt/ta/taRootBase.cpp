@@ -913,7 +913,9 @@ bool taRootBase::Startup_ProcessGuiArg(int argc, const char* argv[]) {
   return true;
 }
 
+#ifndef TA_QT3D
 static CoinImageReaderCB* coin_image_reader_cb_obj = NULL;
+#endif // TA_QT3D
 
 bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
   setlocale(LC_ALL, "");
@@ -935,7 +937,7 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
            << "If you open a project with a 3D display, or create one, the program will likely crash!" << endl;
     }
 
-#ifdef TA_USE_INVENTOR
+#ifndef TA_QT3D
 # if COIN_MAJOR_VERSION >= 3
     // this installs the callback to eliminate dependency on simage
     coin_image_reader_cb_obj = new CoinImageReaderCB;
@@ -2084,7 +2086,7 @@ void taRootBase::Cleanup_Main() {
   if (milestone & SM_TYPES_INIT)
     taMisc::types.RemoveAll();  // get rid of all the types before global dtor!
 
-#ifdef TA_USE_INVENTOR
+#ifndef TA_QT3D
   if(taMisc::gui_active && (milestone & SM_SOQT_INIT)) {
 #if COIN_MAJOR_VERSION >= 3
     if(coin_image_reader_cb_obj) {

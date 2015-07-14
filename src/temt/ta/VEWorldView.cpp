@@ -197,7 +197,11 @@ void VEWorldView::Render_pre() {
   // this delay is deadly for viewing!
   SoVRMLImageTexture::setDelayFetchURL(false);
 
+#ifdef TA_QT3D
+  setNode(new T3VEWorld(NULL, this));
+#else // TA_QT3D
   setNode(new T3VEWorld(this));
+#endif // TA_QT3D
 
   CreateLights();
   CreateTextures();
@@ -210,6 +214,8 @@ void VEWorldView::CreateLights() {
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoGroup* lgt_group = obv->getLightGroup();
   int n_lgt = 0;
   if(wl->light_0) {
@@ -224,12 +230,15 @@ void VEWorldView::CreateLights() {
     lgt_group->addChild(lt);
     n_lgt++;
   }
+#endif // TA_QT3D
 }
 
 void VEWorldView::CreateTextures() {
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoSwitch* texsw = obv->getTextureSwitch();
   SoSwitch* texxfsw = obv->getTextureXformSwitch();
   for(int i=0;i<wl->textures.size;i++) {
@@ -242,6 +251,7 @@ void VEWorldView::CreateTextures() {
     vtex->SetTransform(texxf);
     texxfsw->addChild(texxf);
   }
+#endif // TA_QT3D
 }
 
 void VEWorldView::Render_impl() {
@@ -274,6 +284,8 @@ void VEWorldView::SetupCameras() {
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoSwitch* cam_switch = obv->getCameraSwitch();
   int n_cam = 0;
   VECamera* cam_light = NULL;
@@ -315,6 +327,7 @@ void VEWorldView::SetupCameras() {
   else {
     obv->setCamLightOn(false);
   }
+#endif // TA_QT3D
 
 }
 
@@ -322,6 +335,9 @@ void VEWorldView::SetupLights() {
   T3VEWorld* obv = (T3VEWorld*)this->node_so(); // cache
   VEWorld* wl = World();
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoGroup* lgt_group = obv->getLightGroup();
   int n_lgt = 0;
   if(lgt_group->getNumChildren() > 0) {
@@ -349,6 +365,7 @@ void VEWorldView::SetupLights() {
   else {
     obv->setSunLightOn(false);
   }
+#endif // TA_QT3D
 }
 
 // void VEWorldView::setDisplay(bool value) {
@@ -410,6 +427,10 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     return img;
   }
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
   SoSwitch* cam_switch = obv->getCameraSwitch();
   if(TestWarning(cam_switch->getNumChildren() <= cam_no, "GetCameraImage",
 		 "cam_switch not avail")) {
@@ -444,9 +465,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
     QGLWidget* qglwidg = NULL;
     T3ExaminerViewer* exvw = GetViewer();
     if(exvw) {
-#ifndef TA_QT3D
       qglwidg = exvw->quarter;
-#endif
     }
     cam_renderer = new SoOffscreenRendererQt(vpreg, qglwidg);
     SoGLRenderAction* action = cam_renderer->getGLRenderAction();
@@ -481,6 +500,7 @@ QImage VEWorldView::GetCameraImage(int cam_no) {
   if(ok) {
     img = cam_renderer->getImage();
   }
+#endif
   return img;
 }
 
@@ -536,125 +556,3 @@ void VEWorld::UpdateView() {
 }
 
 
-////////////////////////////////////////
-//      VETexture, VECamera, VELight
-
-void VETexture::SetTransform(SoTexture2Transform* sotx) {
-  sotx->translation.setValue(offset.x, offset.y);
-  sotx->rotation.setValue(rot * taMath_float::rad_per_deg);
-  sotx->scaleFactor.setValue(scale.x, scale.y);
-  sotx->center.setValue(center.x, center.y);
-}
-
-bool VETexture::UpdateTexture() {
-  if(idx < 0 || fname.empty()) return false;
-  bool rval = false;
-  VEWorld* wrld = GET_MY_OWNER(VEWorld);
-  if(!wrld) return false;
-  VEWorldView* wv = wrld->FindView();
-  if(!wv || !wv->node_so()) return false;
-  SoSwitch* tsw = ((T3VEWorld*)wv->node_so())->getTextureSwitch();
-  if(tsw) {
-    if(tsw->getNumChildren() > idx) {
-      SoTexture2* tex = (SoTexture2*)tsw->getChild(idx);
-      SetTexture(tex);
-      rval = true;
-    }
-  }
-  tsw = ((T3VEWorld*)wv->node_so())->getTextureXformSwitch();
-  if(tsw) {
-    if(tsw->getNumChildren() > idx) {
-      SoTexture2Transform* tex = (SoTexture2Transform*)tsw->getChild(idx);
-      SetTransform(tex);
-      rval = true;
-    }
-  }
-  return rval;
-}
-
-#ifdef near
-#undef near
-#endif
-#ifdef far
-#undef far
-#endif
-
-void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
-  cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
-  cam->orientation.setValue(cur_quat.x, cur_quat.y, cur_quat.z, cur_quat.s);
-  // SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
-  cam->nearDistance = this->view_dist.near;
-  cam->focalDistance = view_dist.focal;
-  cam->farDistance = view_dist.far;
-  cam->heightAngle = field_of_view * taMath_float::rad_per_deg;
-}
-
-
-SoLight* VELight::CreateLight() {
-  SoLight* lgt = NULL;
-  switch(light_type) {
-  case DIRECTIONAL_LIGHT:
-    lgt = new SoDirectionalLight;
-    break;
-  case POINT_LIGHT:
-    lgt = new SoPointLight;
-    break;
-  case SPOT_LIGHT:
-    lgt = new SoSpotLight;
-    break;
-  }
-  ConfigLight(lgt);
-  return lgt;
-}
-
-void VELight::ConfigLight(SoLight* lgt) {
-  lgt->on = light.on;
-  lgt->intensity = light.intensity;
-  lgt->color.setValue(light.color.r, light.color.g, light.color.b);
-  switch(light_type) {
-  case DIRECTIONAL_LIGHT:
-    ((SoDirectionalLight*)lgt)->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
-    break;
-  case POINT_LIGHT:
-    ((SoPointLight*)lgt)->location.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
-    break;
-  case SPOT_LIGHT:
-    SoSpotLight* sl = (SoSpotLight*)lgt;
-    sl->direction.setValue(dir_norm.x, dir_norm.y, dir_norm.z);
-    float hl = .5f * length;
-    sl->location.setValue(cur_pos.x + dir_norm.x * hl,
-                          cur_pos.y + dir_norm.y * hl,
-                          cur_pos.z + dir_norm.z * hl);
-    sl->dropOffRate = drop_off_rate;
-    sl->cutOffAngle = cut_off_angle * taMath_float::rad_per_deg;
-    break;
-  }
-}
-
-bool VELight::UpdateLight() {
-  UpdtDirNorm();
-  bool rval = false;
-  VEWorld* wrld = GET_MY_OWNER(VEWorld);
-  if(!wrld) return false;
-  VEWorldView* wv = wrld->FindView();
-  if(!wv || !wv->node_so()) return false;
-  SoGroup* lg = ((T3VEWorld*)wv->node_so())->getLightGroup();
-  if(!lg || lg->getNumChildren() == 0) return false;
-  if(wrld->light_0.ptr() == this) {
-    SoLight* lgt = (SoLight*)lg->getChild(0);
-    ConfigLight(lgt);
-    rval = true;
-  }
-  else if(wrld->light_1.ptr() == this) {
-    if(lg->getNumChildren() == 2) {
-      SoLight* lgt = (SoLight*)lg->getChild(1);
-      ConfigLight(lgt);
-    }
-    else {
-      SoLight* lgt = (SoLight*)lg->getChild(0);
-      ConfigLight(lgt);
-    }
-    rval = true;
-  }
-  return rval;
-}

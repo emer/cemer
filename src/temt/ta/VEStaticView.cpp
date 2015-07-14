@@ -74,6 +74,10 @@ void VEStaticView::Render_pre() {
   VEWorldView* wv = parent();
   if(!wv->drag_objs) show_drag = false;
 
+#ifdef TA_QT3D
+  setNode(new T3VEStatic(NULL, this, show_drag, wv->drag_size));
+  
+#else // TA_QT3D
   setNode(new T3VEStatic(this, show_drag, wv->drag_size));
   SoSeparator* ssep = node_so()->shapeSeparator();
 
@@ -175,6 +179,7 @@ void VEStaticView::Render_pre() {
     }
   }
  finish:
+#endif // TA_QT3D
 
   SetDraggerPos();
 
@@ -187,6 +192,9 @@ void VEStaticView::SetDraggerPos() {
   VEStatic* ob = Static();
   if(!ob) return;
 
+#ifdef TA_QT3D
+  
+#else // TA_QT3D
   // set dragger position
   T3TransformBoxDragger* drag = obv->getDragger();
   if(!drag) return;
@@ -214,6 +222,7 @@ void VEStaticView::SetDraggerPos() {
     break;
   }
   }
+#endif // TA_QT3D
 }
 
 void VEStaticView::Render_impl() {
@@ -224,6 +233,10 @@ void VEStaticView::Render_impl() {
   VEStatic* ob = Static();
   if(!ob) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   SoTransform* tx = obv->transform();
   if(ob->shape == VEStatic::PLANE) {
     switch (ob->plane_norm) {
@@ -357,7 +370,10 @@ void VEStaticView::Render_impl() {
       }
     }
   }
+#endif // TA_QT3D
 }
+
+#ifndef TA_QT3D
 
 // callback for transformer dragger
 void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
@@ -399,3 +415,5 @@ void T3VEStatic_DragFinishCB(void* userData, SoDragger* dragr) {
 
   wv->UpdateDisplay();
 }
+
+#endif // TA_QT3D

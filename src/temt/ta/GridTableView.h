@@ -115,7 +115,9 @@ public:
   virtual void  SetViewCols(int count); // method because we need to know if the value has changed
 
   iViewPanelOfGridTable* lvp();
+  // #IGNORE
   inline T3GridViewNode* node_so() const {return (T3GridViewNode*)inherited::node_so();}
+  // #IGNORE
 
   virtual void          InitFromUserData();
 

@@ -19,8 +19,110 @@
 #include <taMath_float>
 #include <iVec3f>
 
-
 #include <taMisc>
+
+#ifdef TA_QT3D
+
+T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz, int axn)
+  : T3NodeLeaf(parent)
+  , axis(ax)
+  , font_size(fnt_sz)
+  , axis_n(axn)
+{
+}
+
+T3Axis::~T3Axis() {
+}
+
+void T3Axis::addLabel(const char* text, const iVec3f& at) {
+  int just;
+  switch (axis) {
+  case X: just = T3_ALIGN_CENTER;  break;
+  case Y: {
+    if(axis_n == 0)
+      just = T3_ALIGN_RIGHT;
+    else
+      just = T3_ALIGN_LEFT;
+    break;
+  }
+  case Z: just = T3_ALIGN_RIGHT;  break;
+  }
+  addLabel(text, at, just);
+}
+
+void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
+  //note: we assume (for simplicity) that each new label is at a different place
+  // SoTranslation* tr = new SoTranslation();
+  // tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
+  //       		   -(at.z - last_label_at.z));
+  // last_label_at = at;
+  // labels->addChild(tr);
+
+  // // render the actual text
+  // SoAsciiText* txt = new SoAsciiText();
+  // txt->justification.setValue((SoAsciiText::Justification)just);
+  // txt->string.setValue(text);
+  // labels->addChild(txt);
+}
+
+void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
+                         Qt3D::QRotateTransform& rot) {
+  //note: we assume (for simplicity) that each new label is at a different place
+  // SoTranslation* tr = new SoTranslation();
+  // tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
+  //       		   -(at.z - last_label_at.z));
+  // last_label_at = at;
+  // labels->addChild(tr);
+
+  // // render the actual text
+  // SoSeparator* sep = new SoSeparator;
+  // SoTransform* tx = new SoTransform;
+  // tx->rotation.setValue(rot);
+  // sep->addChild(tx);
+  // SoAsciiText* txt = new SoAsciiText();
+  // txt->justification.setValue((SoAsciiText::Justification)just);
+  // txt->string.setValue(text);
+  // sep->addChild(txt);
+  // labels->addChild(sep);
+}
+
+void T3Axis::addLine(const iVec3f& from, const iVec3f to) {
+  // lines->numVertices.startEditing();
+  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
+  // point.startEditing();
+
+  // // add the two new line vertices
+  // int pt_idx = point.getNum();
+  // point.set1Value(pt_idx++, from.x, from.y, -from.z);
+  // point.set1Value(pt_idx++, to.x, to.y, -to.z);
+
+  // // add num of vertices (2) of this new line
+  // lines->numVertices.set1Value(lines->numVertices.getNum(), 2);
+
+  // point.finishEditing();
+  // lines->numVertices.finishEditing();
+}
+
+void T3Axis::clear() {
+  // lines->numVertices.setNum(0);
+  // SoMFVec3f& lines_point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
+  // lines_point.setNum(0);
+
+  // last_label_at = 0.0f;
+  // labels->removeAllChildren();
+  // labels->addChild(complexity_);
+  // labels->addChild(labelFont_);
+  inherited::clear();
+}
+
+void T3Axis::setDefaultCaptionTransform() {
+  //note: this is the one for 3d objects -- 2d replace this
+  // captionNode_->justification = T3_ALIGN_CENTER;
+  // transformCaption(SbVec3f(0.0f, 0.1f, 0.45f));
+}
+
+
+#else // TA_QT3D
 
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoComplexity.h>
@@ -45,7 +147,7 @@ T3Axis::T3Axis(Axis ax, T3DataView* dataView_, float fnt_sz, int n_axis)
 //  axis_length = 1.0f; // dummy/default
   axis_ = ax;
   n_ax_ = n_axis;
-  font_size_ = fnt_sz;
+  font_size = fnt_sz;
 
   SoSeparator* ss = this->shapeSeparator(); //cache
 
@@ -63,7 +165,7 @@ T3Axis::T3Axis(Axis ax, T3DataView* dataView_, float fnt_sz, int n_axis)
   labelFont_ = new SoFont();
   labelFont_->ref(); // we re-add to the labels group every clear
   labelFont_->name = "Arial";
-  labelFont_->size.setValue(font_size_);
+  labelFont_->size.setValue(font_size);
 
   clear(); // initializes everything correctly
 }
@@ -179,3 +281,4 @@ void T3Axis::setDefaultCaptionTransform() {
   }
 } */
 
+#endif // TA_QT3D

@@ -23,6 +23,20 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
+
+class TA_API T3VESpace : public T3NodeParent {
+  // space parent for virtual environment
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+
+  T3VESpace(Qt3DNode* par = NULL, T3DataView* obj = NULL);
+  ~T3VESpace();
+
+};
+
+#else // TA_QT3D
 
 taTypeDef_Of(T3VESpace);
 
@@ -40,5 +54,7 @@ public:
 protected:
   ~T3VESpace();
 };
+
+#endif // TA_QT3D
 
 #endif // T3VESpace_h

@@ -15,7 +15,14 @@
 
 #include "VECamera.h"
 
+#include <taMath_float>
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/SbLinear.h>
+#include <Inventor/nodes/SoPerspectiveCamera.h>
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(VECamera);
 SMARTREF_OF_CPP(VECamera); // VECameraRef
@@ -63,4 +70,25 @@ void VECamera::CurToODE() {
   UpdtDirNorm();
 }
 
-// in VEWorldView.cpp:  void VECamera::ConfigCamera(SoPerspectiveCamera* cam)
+#ifdef near
+#undef near
+#endif
+#ifdef far
+#undef far
+#endif
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
+void VECamera::ConfigCamera(SoPerspectiveCamera* cam) {
+  cam->position.setValue(cur_pos.x, cur_pos.y, cur_pos.z);
+  cam->orientation.setValue(cur_quat.x, cur_quat.y, cur_quat.z, cur_quat.s);
+  // SbVec3f(cur_rot.x, cur_rot.y, cur_rot.z), cur_rot.rot);
+  cam->nearDistance = this->view_dist.near;
+  cam->focalDistance = view_dist.focal;
+  cam->farDistance = view_dist.far;
+  cam->heightAngle = field_of_view * taMath_float::rad_per_deg;
+}
+
+#endif // TA_QT3D

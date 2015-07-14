@@ -15,6 +15,18 @@
 
 #include "T3GridColViewNode.h"
 
+#ifdef TA_QT3D
+
+T3GridColViewNode::T3GridColViewNode(Qt3DNode* parent, T3DataView* dataView_)
+  : T3NodeLeaf(parent)
+{
+}
+
+T3GridColViewNode::~T3GridColViewNode() {
+}
+
+#else // TA_QT3D
+
 // this guy is managed by the _qtso and is only for selecting the column spec!
 
 SO_NODE_SOURCE(T3GridColViewNode);
@@ -34,4 +46,4 @@ T3GridColViewNode::~T3GridColViewNode()
 {
 }
 
-
+#endif // TA_QT3D

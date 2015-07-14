@@ -90,11 +90,13 @@ public:
     iVec3f rv; rv.x = -x; rv.y = -y; rv.z = -z; return rv;
   }
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   iVec3f(const SbVec3f& src);
   iVec3f&       operator=(const SbVec3f& src);
   operator SbVec3f() const;
-#endif
+#endif // TA_QT3D
 };
 
 inline iVec3f operator + (float td, const iVec3f& v) {

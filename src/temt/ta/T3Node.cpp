@@ -18,6 +18,163 @@
 #include <iColor>
 #include <T3Panel>
 
+#ifdef TA_QT3D
+
+#include <Qt3DRenderer/QPlaneMesh>
+#include <Qt3DCore/QTransform>
+#include <Qt3DCore/QScaleTransform>
+#include <Qt3DCore/QTranslateTransform>
+#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/QDiffuseMapMaterial>
+
+
+T3Entity::T3Entity(Qt3DNode* parent)
+  : Qt3D::QEntity(parent)
+{
+  mesh = NULL;
+  material = NULL;
+  transform.addTransform(&translate);
+  transform.addTransform(&scale);
+  transform.addTransform(&rotate);
+}
+
+T3Entity::~T3Entity() {
+}
+
+///////////////////////
+
+T3TwoDTexture::T3TwoDTexture(Qt3DNode* parent)
+  : Qt3D::QAbstractTextureImage(parent)
+{
+  image = NULL;
+}
+
+T3TwoDTexture::~T3TwoDTexture() {
+  if(image)
+    delete image;
+}
+
+void T3TwoDTexture::renderLabel(QLabel& label) {
+  if(!image) {
+    image = new QImage(label.size(), QImage::Format_ARGB32);
+  }
+  else {
+    if(image->size() != label.size()) {
+      delete image;
+    }
+    image = new QImage(label.size(), QImage::Format_ARGB32);
+  }
+  image->fill(Qt::transparent);
+  QPainter painter(image);
+  label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
+}
+
+class T3TwoDTextureDataFunctor : public Qt3D::QTextureDataFunctor {
+public:
+  QImage* image;
+  
+  T3TwoDTextureDataFunctor(QImage* img)
+    : Qt3D::QTextureDataFunctor()
+    , image(img)
+  {}
+
+  // Will be executed from within a QAspectJob
+  Qt3D::TexImageDataPtr operator ()() Q_DECL_FINAL
+  {
+    Qt3D::TexImageDataPtr dataPtr;
+    dataPtr.reset(new Qt3D::TexImageData());
+    if(image)
+      dataPtr->setImage(*image);
+    return dataPtr;
+  }
+
+  bool operator ==(const Qt3D::QTextureDataFunctor &other) const Q_DECL_FINAL
+  {
+    const T3TwoDTextureDataFunctor *otherFunctor = dynamic_cast<const T3TwoDTextureDataFunctor*>(&other);
+    return (otherFunctor != Q_NULLPTR && otherFunctor->image == image);
+  }
+};
+
+Qt3D::QTextureDataFunctorPtr T3TwoDTexture::dataFunctor() const {
+  return Qt3D::QTextureDataFunctorPtr(new T3TwoDTextureDataFunctor(image));
+}
+
+void T3TwoDTexture::copy(const Qt3DNode *ref) {
+  inherited:copy(ref);
+  const T3TwoDTexture* img = static_cast<const T3TwoDTexture *>(ref);
+  image = img->image;
+}
+
+///////////////////////
+
+T3TwoDText::T3TwoDText(Qt3DNode* parent)
+  : T3Entity(parent)
+{
+  addMesh(new Qt3D::QPlaneMesh());
+  Qt3D::QDiffuseMapMaterial* mat = new Qt3D::QDiffuseMapMaterial();
+  mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
+  mat->setShininess(2.0f);
+  mat->diffuse()->addTextureImage(&texture);
+  addMaterial(mat);
+}
+
+T3TwoDText::~T3TwoDText() {
+}
+
+void T3TwoDText::setText(const QString& txt) {
+  label.setText(txt);
+  updateRender();
+}
+
+void T3TwoDText::updateRender() {
+  texture.renderLabel(label);
+  QSize sz = label.size();
+  Qt3D::QPlaneMesh* pmesh = dynamic_cast<Qt3D::QPlaneMesh*>(mesh);
+  if(pmesh->width() != sz.width())
+    pmesh->setWidth(sz.width());
+  if(pmesh->height() != sz.height())
+    pmesh->setHeight(sz.height());
+  // todo: trigger screen update??
+}
+
+
+///////////////////////
+
+T3Node::T3Node(Qt3DNode* parent, T3DataView* dv)
+  : T3Entity(parent)
+  , data_view(dv)
+  , expanded(false)
+  , caption(NULL)
+{
+
+}
+
+T3Node::~T3Node() {
+}
+
+void T3Node::setCaption(const QString& txt) {
+  if(!caption) {
+    createCaption();
+  }
+  caption->setText(txt);
+}
+
+void T3Node::createCaption() {
+  if(caption) return;
+  caption = new T3TwoDText(this);
+  setDefaultCaptionTransform();
+}
+
+void T3Node::setDefaultCaptionTransform() {
+  if(!caption) return;
+  caption->scale.setScale(0.05f);
+  caption->translate.setTranslation(QVector3D(0.0f, -0.02f, 0.02f));
+  caption->rotate.setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
+  caption->rotate.setAngleDeg(90);
+}
+
+#else
+
 #include <Inventor/errors/SoDebugError.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoMaterial.h>
@@ -191,4 +348,6 @@ void T3Node::transformCaption(const SbRotation* rotate, const iVec3f* translate)
   if (translate)
     txfm->translation.setValue(SbVec3f(translate->x, translate->y, translate->z));
 }
+
+#endif // TA_QT3D
 

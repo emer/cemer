@@ -61,7 +61,11 @@ void VESpaceView::BuildAll() {
 }
 
 void VESpaceView::Render_pre() {
+#ifdef TA_QT3D
+  setNode(new T3VESpace(NULL, this));
+#else // TA_QT3D
   setNode(new T3VESpace(this));
+#endif // TA_QT3D
   inherited::Render_pre();
 }
 

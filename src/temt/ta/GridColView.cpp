@@ -114,8 +114,12 @@ void GridColView::ComputeColSizes() {
 }
 
 T3GridColViewNode* GridColView::MakeGridColViewNode() {
-//NOTE: assumes that Clear has previously been called, so doesn't check for exist
+  // NOTE: assumes that Clear has previously been called, so doesn't check for exist
+#ifdef TA_QT3D
+  T3GridColViewNode* colnd = new T3GridColViewNode(NULL, this);
+#else // TA_QT3D
   T3GridColViewNode* colnd = new T3GridColViewNode(this);
+#endif // TA_QT3D
   setNode(colnd);
   return colnd;
 }

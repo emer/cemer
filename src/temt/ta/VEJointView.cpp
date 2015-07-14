@@ -77,6 +77,11 @@ void VEJointView::Render_pre() {
 
   if(!wv->show_joints) return;
 
+#ifdef TA_QT3D
+  T3VEJoint* obv = new T3VEJoint(NULL, this, show_drag, wv->drag_size);
+  setNode(obv);
+
+#else // TA_QT3D
   T3VEJoint* obv = new T3VEJoint(this, show_drag, wv->drag_size);
   setNode(obv);
   SoSeparator* ssep = obv->shapeSeparator();
@@ -132,6 +137,7 @@ void VEJointView::Render_pre() {
     }
     }
   }
+#endif // TA_QT3D
 
  finalize:
   FixOrientation(true);
@@ -143,6 +149,11 @@ void VEJointView::Render_pre() {
 void VEJointView::FixOrientation(bool force) {
   VEJoint* ob = Joint();
   T3VEJoint* obv = (T3VEJoint*)node_so();
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
   if(ob && obv && (force || ob->IsCurType())) {// only if we are currently the right type
     SoSeparator* ssep = obv->shapeSeparator();
     switch(ob->joint_type) {
@@ -177,6 +188,7 @@ void VEJointView::FixOrientation(bool force) {
       break;
     }
   }
+#endif // TA_QT3D
 }
 
 void VEJointView::SetDraggerPos() {
@@ -185,9 +197,13 @@ void VEJointView::SetDraggerPos() {
   VEJoint* ob = Joint();
   if(!ob) return;
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   // set dragger position
   T3TransformBoxDragger* drag = obv->getDragger();
   if(!drag) return;
+  // todo: nothing happening here..?
+#endif // TA_QT3D
 }
 
 void VEJointView::Render_impl() {
@@ -204,6 +220,9 @@ void VEJointView::Render_impl() {
   VEBody* bod1 = ob->body1.ptr();
   if(!bod1) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoTransform* tx = obv->transform();
   taVector3f nw_anc = ob->anchor;
   bod1->cur_quat_raw.RotateVec(nw_anc); // use raw here -- otherwise cylinder stuff gets in way
@@ -249,10 +268,12 @@ void VEJointView::Render_impl() {
     }
     }
   }
+#endif // TA_QT3D
 
   FixOrientation();
 }
 
+#ifndef TA_QT3D
 // callback for transformer dragger
 void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
   // TODO: write this
@@ -263,3 +284,4 @@ void T3VEJoint_DragFinishCB(void* userData, SoDragger* dragr) {
 //  VEWorldView* wv = obv->parent();
 }
 
+#endif // TA_QT3D

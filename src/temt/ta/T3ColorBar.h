@@ -24,7 +24,31 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
 
+class TA_API T3ColorBar : public T3NodeLeaf {
+  // 3D color bar -- the bar is oriented horizontally be default (use a transform if needed) the 0,0 is at the centre of the rectangle
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  float			height;
+  float			width;
+
+  ColorScaleRef		scale;
+
+  virtual int 		blocks();
+  void	                clear() override;
+
+  virtual void		SetColorScale(ColorScale* c);
+  void			SetDimensions(float wd, float ht);
+  T3ColorBar(Qt3DNode* par = NULL, ColorScale* c = NULL, T3DataView* dataView_ = NULL);
+  ~T3ColorBar();
+
+  // SoTriangleStripSet*	bars_; // one rectangle per subbar
+  // void			render();
+};
+
+#else // TA_QT3D
 
 taTypeDef_Of(T3ColorBar);
 
@@ -57,5 +81,6 @@ protected:
   ~T3ColorBar();
 };
 
+#endif // TA_QT3D
 
 #endif // T3ColorBar_h

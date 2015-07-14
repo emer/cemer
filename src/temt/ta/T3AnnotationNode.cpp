@@ -15,8 +15,22 @@
 
 #include "T3AnnotationNode.h"
 
-#include <T3TransformBoxDragger>
+#ifdef TA_QT3D
 
+T3AnnotationNode::T3AnnotationNode(Qt3DNode* parent, T3DataView* dataView_,
+                                   bool show_drg)
+  : T3NodeLeaf(parent)
+  , show_drag(show_drg)
+{
+}
+
+T3AnnotationNode::~T3AnnotationNode() {
+}
+
+
+#else // TA_QT3D
+
+#include <T3TransformBoxDragger>
 
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoDrawStyle.h>
@@ -61,3 +75,4 @@ T3AnnotationNode::~T3AnnotationNode()
   
 }
 
+#endif // TA_QT3D

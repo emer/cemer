@@ -14,14 +14,32 @@
 //   Lesser General Public License for more details.
 
 #include "T3GridViewNode.h"
-#include <SoScrollBar>
-#include <T3TransformBoxDragger>
-#include <SoFrame>
 #include <taString>
 #include <T3Misc>
 #include <taMath_float>
 #include <iVec3f>
 
+#ifdef TA_QT3D
+
+float T3GridViewNode::frame_margin = .05f;
+float T3GridViewNode::frame_width = .02f;
+
+T3GridViewNode::T3GridViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd,
+                               bool show_drg)
+  : T3NodeParent(parent)
+  , width(wd)
+  , show_drag(show_drg)
+{
+}
+
+T3GridViewNode::~T3GridViewNode() {
+}
+
+#else // TA_QT3D
+
+#include <SoScrollBar>
+#include <T3TransformBoxDragger>
+#include <SoFrame>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCallback.h>
@@ -152,3 +170,4 @@ void T3GridViewNode::render() {
   transformCaption(iVec3f(0.0f, -((float)font->size.getValue() + frame_margin), 0.02f)); // move caption below the frame
 }
 
+#endif // TA_QT3D

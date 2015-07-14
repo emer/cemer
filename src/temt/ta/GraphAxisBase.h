@@ -30,8 +30,7 @@
 class GraphColView; // 
 class T3DataView_List; // 
 class GraphTableView; // 
-class T3Axis; //
-
+class T3Axis; // 
 
 taTypeDef_Of(GraphAxisBase);
 
@@ -117,7 +116,7 @@ public:
   virtual void          RenderAxis(T3Axis* t3ax, const iVec3f& off,
                                    int n_ax = 0, bool ticks_only=false,
                                    String* rnd_svg = NULL);
-  // draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
+  // #IGNORE draw the actual axis in a given direction -- if n_ax > 0 then it is an alternative one (only for Y)
 
   ///////////////////////////////////////////////////
   //    Misc

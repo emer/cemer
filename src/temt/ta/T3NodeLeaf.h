@@ -23,6 +23,20 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
+
+class TA_API T3NodeLeaf: public T3Node {
+  // a base class for major owner nodes
+  Q_OBJECT
+  INHERITED(T3Node)
+public:
+  T3NodeLeaf(Qt3DNode* parent = 0, T3DataView* dataView_ = NULL);
+  ~T3NodeLeaf();
+};
+
+
+#else // TA_QT3D
+
 taTypeDef_Of(T3NodeLeaf);
 
 class TA_API T3NodeLeaf: public T3Node {
@@ -46,5 +60,6 @@ protected:
   ~T3NodeLeaf();
 };
 
+#endif // TA_QT3D
 
 #endif // T3NodeLeaf_h

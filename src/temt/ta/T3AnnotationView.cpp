@@ -66,8 +66,12 @@ void T3AnnotationView::Render_pre() {
   T3DataViewMain* nv = GET_MY_OWNER(T3DataViewMain);
   if(nv && !nv->ShowDraggers()) show_drag = false;
 
+#ifdef TA_QT3D
+  setNode(new T3AnnotationNode(NULL, this, show_drag)); // todo: parent??
+#else // TA_QT3D
   setNode(new T3AnnotationNode(this, show_drag));
   SoSeparator* ssep = node_so()->shapeSeparator();
+#endif // TA_QT3D
 
   T3Annotation* ob = Anno();
   if(!ob) return;
@@ -78,6 +82,8 @@ void T3AnnotationView::Render_pre() {
     switch(ob->type) {
     case T3Annotation::LINE:
     case T3Annotation::RECTANGLE: {
+#ifdef TA_QT3D
+#else // TA_QT3D
       SoDrawStyle* ds = new SoDrawStyle();
       ssep->addChild(ds);
       SoLineSet* line = new SoLineSet();
@@ -90,9 +96,12 @@ void T3AnnotationView::Render_pre() {
         csep->addChild(new SoCube());
         ssep->addChild(csep);
       }
+#endif // TA_QT3D
       break;
     }
     case T3Annotation::ELLIPSE: {
+#ifdef TA_QT3D
+#else // TA_QT3D
       SoDrawStyle* ds = new SoDrawStyle();
       ssep->addChild(ds);
       SoLineSet* line = new SoLineSet();
@@ -102,9 +111,12 @@ void T3AnnotationView::Render_pre() {
         SoCylinder* cyl = new SoCylinder();
         ssep->addChild(cyl);
       }
+#endif // TA_QT3D
       break;
     }
     case T3Annotation::TEXT: {
+#ifdef TA_QT3D
+#else // TA_QT3D
       SoSeparator* tsep = new SoSeparator();
       SoComplexity* cplx = new SoComplexity;
       cplx->value.setValue(taMisc::text_complexity);
@@ -124,12 +136,15 @@ void T3AnnotationView::Render_pre() {
       mfs->setValue(ob->text.chars());
       tsep->addChild(txt);
       ssep->addChild(tsep);
+#endif // TA_QT3D
       break;
     }
     case T3Annotation::OBJECT: {
       bool got_one = false;
       int acc = access(ob->obj_fname, F_OK);
       if (acc == 0) {
+#ifdef TA_QT3D
+#else // TA_QT3D
         SoInput in;
         if ((access(ob->obj_fname, F_OK) == 0) && in.openFile(ob->obj_fname)) {
           SoSeparator* root = SoDB::readAll(&in);
@@ -138,6 +153,7 @@ void T3AnnotationView::Render_pre() {
             got_one = true;
           }
         }
+#endif // TA_QT3D
       }
       if(!got_one) {
         taMisc::Warning("object file:", ob->obj_fname, "not found or unable to be loaded!");
@@ -157,6 +173,8 @@ void T3AnnotationView::Render_impl() {
   T3Annotation* ob = Anno();
   if(!ob) return;
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoSeparator* ssep = node_so->shapeSeparator();
 
   SoTransform* tx = node_so->transform();
@@ -306,8 +324,10 @@ void T3AnnotationView::Render_impl() {
     break;
   }
   }
+#endif // TA_QT3D
 }
 
+#ifndef TA_QT3D
 // callback for netview transformer dragger
 void T3AnnotationNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -353,3 +373,4 @@ void T3AnnotationNode_DragFinishCB(void* userData, SoDragger* dragr) {
   //  nv->Refresh();
 }
 
+#endif // TA_QT3D

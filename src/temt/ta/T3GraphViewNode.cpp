@@ -14,12 +14,33 @@
 //   Lesser General Public License for more details.
 
 #include "T3GraphViewNode.h"
-#include <SoScrollBar>
-#include <T3TransformBoxDragger>
-#include <SoFrame>
 #include <taString>
 #include <T3Misc>
 #include <iVec3f>
+
+#ifdef TA_QT3D
+
+T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd,
+                                 bool show_drg)
+  : T3NodeParent(parent)
+  , width(wd)
+  , show_drag(show_drg)
+{
+}
+
+T3GraphViewNode::~T3GraphViewNode() {
+}
+
+void T3GraphViewNode::setWidth(float wdth) {
+  width = wdth;
+  // render();
+}
+
+#else // TA_QT3D
+
+#include <SoScrollBar>
+#include <T3TransformBoxDragger>
+#include <SoFrame>
 
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoCallback.h>
@@ -139,3 +160,4 @@ void T3GraphViewNode::setWidth(float wdth) {
   render();
 }
 
+#endif // TA_QT3D

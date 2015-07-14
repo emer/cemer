@@ -14,6 +14,21 @@
 //   Lesser General Public License for more details.
 
 #include "T3VEStatic.h"
+
+#ifdef TA_QT3D
+
+T3VEStatic::T3VEStatic(Qt3DNode* parent, T3DataView* dataView_, bool show_drg,
+                       float drg_sz)
+  : T3NodeLeaf(parent)
+  , show_drag(show_drg)
+{
+}
+
+T3VEStatic::~T3VEStatic() {
+}
+
+#else // TA_QT3D
+
 #include <T3TransformBoxDragger>
 
 #include <Inventor/nodes/SoTransform.h>
@@ -53,3 +68,5 @@ T3VEStatic::T3VEStatic(T3DataView* bod, bool show_drag, float drag_size)
 T3VEStatic::~T3VEStatic()
 {
 }
+
+#endif // TA_QT3D

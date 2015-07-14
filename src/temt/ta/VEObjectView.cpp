@@ -79,7 +79,11 @@ void VEObjectView::BuildAll() {
 }
 
 void VEObjectView::Render_pre() {
+#ifdef TA_QT3D
+  setNode(new T3VEObject(NULL, this));
+#else // TA_QT3D
   setNode(new T3VEObject(this));
+#endif // TA_QT3D
   inherited::Render_pre();
 }
 

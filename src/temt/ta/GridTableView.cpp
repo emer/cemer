@@ -354,7 +354,9 @@ void GridTableView::DataUnitsXForm(taVector3f& pos, taVector3f& size) {
   }
 }
 
+#ifndef TA_QT3D
 void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb);
+#endif // TA_QT3D
 
 void GridTableView::Render_pre() {
   bool show_drag = manip_ctrl_on;
@@ -365,16 +367,17 @@ void GridTableView::Render_pre() {
       show_drag = false;
   }
 
+#ifdef TA_QT3D
+  setNode(new T3GridViewNode(NULL, this, width, show_drag));
+#else // TA_QT3D
   setNode(new T3GridViewNode(this, width, show_drag));
-
   if(vw && vw->interactionModeOn()) {
-#ifndef TA_QT3D
     SoEventCallback* ecb = new SoEventCallback;
     ecb->addEventCallback(SoMouseButtonEvent::getClassTypeId(), T3GridViewNode_MouseCB, this);
     node_so()->addChild(ecb);
-#endif
   }
-
+#endif
+  
   colorscale.SetColorSpec(colorscale.spec);  // Call set to force the saved color to be restored
   UpdatePanel();                // otherwise doesn't get updated without explicit click..
   inherited::Render_pre();
@@ -608,6 +611,8 @@ void GridTableView::SetScrollBars() {
   T3GridViewNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoScrollBar* csb = node_so->ColScrollBar();
 //   csb->setMinimum(0);
 //   csb->setSingleStep(1);
@@ -626,6 +631,7 @@ void GridTableView::SetScrollBars() {
   rsb->setPageStep(pg_step);
   rsb->setValue(MIN(view_range.min, mx));
   rsb->setValueChangedCB(GridTableView_RowScrollCB, this);
+#endif // TA_QT3D
 }
 
 void GridTableView::ClearViewRange() {
@@ -651,21 +657,30 @@ void GridTableView::OnWindowBind_impl(iT3Panel* vw) {
 void GridTableView::RemoveGrid() {
   T3GridViewNode* node_so = this->node_so();
   if (node_so) {
+#ifdef TA_QT3D
+#else // TA_QT3D
     node_so->grid()->removeAllChildren();
+#endif // TA_QT3D
   }
 }
 
 void GridTableView::RemoveHeader() {
   T3GridViewNode* node_so = this->node_so();
   if (node_so) {
+#ifdef TA_QT3D
+#else // TA_QT3D
     node_so->header()->removeAllChildren();
+#endif // TA_QT3D
   }
 }
 
 void GridTableView::RemoveLines(){
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
+#ifdef TA_QT3D
+#else // TA_QT3D
   node_so->body()->removeAllChildren();
+#endif // TA_QT3D
 }
 
 void GridTableView::SaveImageSVG(const String& svg_fname) {
@@ -687,6 +702,11 @@ void GridTableView::SaveImageSVG(const String& svg_fname) {
 void GridTableView::RenderGrid() {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
+
+#ifdef TA_QT3D
+
+
+#else // TA_QT3D
   SoGroup* grid = node_so->grid();
   grid->removeAllChildren(); // should have been done
   if (!grid_on) return;
@@ -791,12 +811,16 @@ void GridTableView::RenderGrid() {
   }
   grid->addChild(horiz);
   ln->unref(); // deleted if not used
+#endif // TA_QT3D
 }
 
 void GridTableView::RenderHeader() {
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   // safely/correctly clear all the column headers
   // we remove first manually from us...
   SoSeparator* hdr = node_so->header();
@@ -920,6 +944,7 @@ void GridTableView::RenderHeader() {
     colnd->topSeparator()->addChild(rect);
     cvs->setNode(colnd);
   }
+#endif // TA_QT3D
 
   if(render_svg) {
     svg_str << taSvg::GroupEnd();
@@ -935,6 +960,11 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   float gr_mg_sz2 = 2.0f * gr_mg_sz;
   // origin is top-left of body area
   // make line container
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
   SoSeparator* ln = new SoSeparator();
 
   DataTable* dt = dataTable(); //cache
@@ -1128,6 +1158,8 @@ void GridTableView::RenderLine(int view_idx, int data_row) {
   }
   node_so->body()->addChild(ln);
 
+#endif // TA_QT3D
+
   if(render_svg) {
     svg_str << taSvg::GroupEnd();
   }
@@ -1137,6 +1169,11 @@ void GridTableView::RenderLines(){
   // this updates the data area
   T3GridViewNode* node_so = this->node_so();
   if (!node_so) return;
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
   SoSeparator* body = node_so->body(); // cache
   body->removeAllChildren(); //should already have been done
 
@@ -1170,6 +1207,7 @@ void GridTableView::RenderLines(){
     RenderLine(view_idx, data_row);
     ++view_idx;
   }
+#endif // TA_QT3D
 }
 
 void GridTableView::SetColorSpec(ColorScaleSpec* color_spec) {
@@ -1248,14 +1286,14 @@ void GridTableView::ColFwdAll() {
   ViewCol_At(vis_cols.size - view_cols);
 }
 
-
 void GridTableView::SetViewCols(int count) {
-    if (view_cols != count) {
-      need_scale_update = true;
-    }
-    view_cols = count;
+  if (view_cols != count) {
+    need_scale_update = true;
+  }
+  view_cols = count;
 }
 
+#ifndef TA_QT3D
 // callback for view transformer dragger
 void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -1307,8 +1345,6 @@ void T3GridViewNode_DragFinishCB(void* userData, SoDragger* dragr) {
 }
 
 // this callback is registered in GridTableView::Render_pre
-
-#ifndef TA_QT3D
 
 void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
   GridTableView* gv = (GridTableView*)userData;
@@ -1432,4 +1468,4 @@ void T3GridViewNode_MouseCB(void* userData, SoEventCallback* ecb) {
     ecb->setHandled();
 }
 
-#endif
+#endif // TA_QT3D

@@ -15,6 +15,19 @@
 
 #include "T3VESpace.h"
 
+#ifdef TA_QT3D
+
+T3VESpace::T3VESpace(Qt3DNode* parent, T3DataView* dataView_)
+  : T3NodeParent(parent)
+{
+}
+
+T3VESpace::~T3VESpace() {
+}
+
+
+#else // TA_QT3D
+
 SO_NODE_SOURCE(T3VESpace);
 
 void T3VESpace::initClass()
@@ -33,3 +46,4 @@ T3VESpace::~T3VESpace()
   
 }
 
+#endif // TA_QT3D

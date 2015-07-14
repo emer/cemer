@@ -23,22 +23,37 @@
 #include <SigLinkSignal>
 #include <taMisc>
 
+#ifdef TA_QT3D
+
+T3Node* T3DataView::node_so() const {
+  return m_node_so.data();
+}
+
+void T3DataView::AddRemoveChildNode(T3Node* node, bool adding) {
+  if (m_node_so.data())
+    AddRemoveChildNode_impl(node, adding);
+#ifdef DEBUG
+  // this is not that interesting -- happens for reasonable reasons -- just don't complain 
+  // else {
+  //   taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
+  //     "Attempt to access NULL node_so");
+  // }
+#endif
+}
+
+void T3DataView::AddRemoveChildNode_impl(T3Node* node, bool adding) {
+  // node_so()->addRemoveChildNode(node, adding);
+}
+
+#else // TA_QT3D
+
 #include <Inventor/SoPath.h>
 #include <Inventor/nodes/SoNode.h>
 
 #include <Quarter/Quarter.h>
 #include <Quarter/QuarterWidget.h>
 
-TA_BASEFUNS_CTORS_DEFN(T3DataView);
-SMARTREF_OF_CPP(T3DataView);
-
-
 using SIM::Coin3D::Quarter::QuarterWidget;
-
-#ifdef TA_PROFILE
-int T3DataView_inst_cnt = 0;
-#endif
-
 
 T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
   SoPath* path = path_->copy();
@@ -58,6 +73,33 @@ T3DataView* T3DataView::GetViewFromPath(const SoPath* path_) {
   path->unref();
   return rval;
 }
+
+void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
+  if (m_node_so.ptr())
+    AddRemoveChildNode_impl(node, adding);
+#ifdef DEBUG
+  // this is not that interesting -- happens for reasonable reasons -- just don't complain 
+  // else {
+  //   taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
+  //     "Attempt to access NULL node_so");
+  // }
+#endif
+}
+
+void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
+  node_so()->addRemoveChildNode(node, adding);
+}
+
+#endif // TA_QT3D
+
+
+TA_BASEFUNS_CTORS_DEFN(T3DataView);
+SMARTREF_OF_CPP(T3DataView);
+
+
+#ifdef TA_PROFILE
+int T3DataView_inst_cnt = 0;
+#endif
 
 
 void T3DataView::Initialize() {
@@ -122,22 +164,6 @@ bool T3DataView::fixTransformAxis() {
   return false;
 }
 
-void T3DataView::AddRemoveChildNode(SoNode* node, bool adding) {
-  if (m_node_so.ptr())
-    AddRemoveChildNode_impl(node, adding);
-#ifdef DEBUG
-  // this is not that interesting -- happens for reasonable reasons -- just don't complain 
-  // else {
-  //   taMisc::Warning("T3DataView::AddRemoveChildNode_impl",
-  //     "Attempt to access NULL node_so");
-  // }
-#endif
-}
-
-void T3DataView::AddRemoveChildNode_impl(SoNode* node, bool adding) {
-  node_so()->addRemoveChildNode(node, adding);
-}
-
 void T3DataView::ChildClearing(taDataView* child_) { // child is always a T3DataView
   T3DataView* child = (T3DataView*)child_;
   // remove the visual rendering of child, if any
@@ -159,7 +185,7 @@ void T3DataView::ChildRendered(taDataView* child_) { // child is always a T3Data
 void T3DataView::ChildRemoving(taDataView* child_) {
   if (T3DataView *child = dynamic_cast<T3DataView*>(child_)) {
     // remove the visual rendering of child, if any
-    if (SoNode *ch_so = child->node_so()) {
+    if (T3Node *ch_so = child->node_so()) {
       AddRemoveChildNode(ch_so, false); // remove node
       child->setNode(NULL);
     }
@@ -170,7 +196,7 @@ void T3DataView::Clear_impl() { // note: no absolute guarantee par will be T3Dat
   inherited::Clear_impl(); // does children
   // can't have any visual children, if we don't exist ourselves...
   // also, don't need to report to parent if we don't have any impl ourselves
-  if (!m_node_so.ptr()) return;
+  if (!node_so()) return;
 
   // we remove top-most item first, which results in only one update to the scene graph
   if (hasParent()) {
@@ -186,8 +212,8 @@ taiSigLink* T3DataView::clipParLink(GuiContext sh_typ) const {
 }
 
 void T3DataView::setNode(T3Node* node_) {
-  if (m_node_so.ptr() == node_) return; // generally shouldn't happen
-  if (m_node_so.ptr()) {
+  if (m_node_so == node_) return; // generally shouldn't happen
+  if (m_node_so) {
     if (T3Panel *dvf = GetFrame()) {
       if (iT3Panel *idvf = dvf->widget()) {
         idvf->NodeDeleting(m_node_so); // just desels all, for now
@@ -307,7 +333,7 @@ void T3DataView::ReInit() {
 }
 
 void T3DataView::ReInit_impl() {
-  if (T3Node *node = m_node_so.ptr()) {
+  if (T3Node *node = node_so()) {
     node->clear();
   }
 }
@@ -318,11 +344,14 @@ void T3DataView::Render_impl() {
     vw->syncViewerMode();
   }
 
-  T3Node* node = m_node_so.ptr();
+  T3Node* node = node_so();
+#ifndef TA_QT3D
+  // todo: may need to do this!
   if (m_transform && node) {
     fixTransformAxis();         // make sure
     m_transform->CopyTo(node->transform());
   }
+#endif // TA_QT3D
   inherited::Render_impl();
 }
 
