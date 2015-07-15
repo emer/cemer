@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ta_cuda.h"
+#include "../src/temt/ta_math/ta_cuda.h"

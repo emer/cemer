@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogColorChooser.h"
+#include "../src/temt/ta_gui/iDialogColorChooser.h"

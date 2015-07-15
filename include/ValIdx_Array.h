@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ValIdx_Array.h"
+#include "../src/temt/ta_core/ValIdx_Array.h"

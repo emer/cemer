@@ -1,1 +1,1 @@
-#include "../src/temt/ta/EnumSpace.h"
+#include "../src/temt/ta_core/EnumSpace.h"

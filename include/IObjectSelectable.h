@@ -1,1 +1,1 @@
-#include "../src/temt/ta/IObjectSelectable.h"
+#include "../src/temt/ta_gui/IObjectSelectable.h"

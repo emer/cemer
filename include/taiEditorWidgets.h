@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorWidgets.h"
+#include "../src/temt/ta_gui/taiEditorWidgets.h"

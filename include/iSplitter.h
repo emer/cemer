@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSplitter.h"
+#include "../src/temt/ta_gui/iSplitter.h"

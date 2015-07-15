@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPluginEditor.h"
+#include "../src/temt/ta_gui/iPluginEditor.h"

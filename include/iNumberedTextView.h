@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iNumberedTextView.h"
+#include "../src/temt/ta_gui/iNumberedTextView.h"

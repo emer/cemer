@@ -1,1 +1,1 @@
-#include "../src/temt/ta/UndoDiffThreadMgr.h"
+#include "../src/temt/ta_proj/UndoDiffThreadMgr.h"

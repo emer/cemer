@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iTabView_PtrList.h"
+#include "../src/temt/ta_gui/iTabView_PtrList.h"

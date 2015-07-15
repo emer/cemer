@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taPlainArray.h"
+#include "../src/temt/ta_core/taPlainArray.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3ScaleUniformScaler.h"
+#include "../src/temt/ta_3d/T3ScaleUniformScaler.h"

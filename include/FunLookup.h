@@ -1,1 +1,1 @@
-#include "../src/temt/ta/FunLookup.h"
+#include "../src/temt/ta_math/FunLookup.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelBase_PtrList.h"
+#include "../src/temt/ta_gui/iPanelBase_PtrList.h"

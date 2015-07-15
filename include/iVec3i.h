@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iVec3i.h"
+#include "../src/temt/ta_3d/iVec3i.h"

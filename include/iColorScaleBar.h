@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iColorScaleBar.h"
+#include "../src/temt/ta_gui/iColorScaleBar.h"

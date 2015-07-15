@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ISigLinkClient_PtrList.h"
+#include "../src/temt/ta_core/ISigLinkClient_PtrList.h"

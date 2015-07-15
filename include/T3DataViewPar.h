@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3DataViewPar.h"
+#include "../src/temt/ta_3d/T3DataViewPar.h"

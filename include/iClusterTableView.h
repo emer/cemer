@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iClusterTableView.h"
+#include "../src/temt/ta_gui/iClusterTableView.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MethodSpace.h"
+#include "../src/temt/ta_core/MethodSpace.h"

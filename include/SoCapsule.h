@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoCapsule.h"
+#include "../src/temt/ta_3d/SoCapsule.h"

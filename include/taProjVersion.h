@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taProjVersion.h"
+#include "../src/temt/ta_proj/taProjVersion.h"

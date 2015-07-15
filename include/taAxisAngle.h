@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taAxisAngle.h"
+#include "../src/temt/ta_math/taAxisAngle.h"

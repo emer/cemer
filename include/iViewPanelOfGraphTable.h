@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iViewPanelOfGraphTable.h"
+#include "../src/temt/ta_gui/iViewPanelOfGraphTable.h"

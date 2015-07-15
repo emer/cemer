@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iHelpBrowser.h"
+#include "../src/temt/ta_gui/iHelpBrowser.h"

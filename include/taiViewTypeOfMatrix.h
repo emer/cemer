@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfMatrix.h"
+#include "../src/temt/ta_gui/taiViewTypeOfMatrix.h"

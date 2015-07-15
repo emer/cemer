@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ISelectableHost_QObj.h"
+#include "../src/temt/ta_gui/ISelectableHost_QObj.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSvnRevLogModel.h"
+#include "../src/temt/ta_gui/iSvnRevLogModel.h"

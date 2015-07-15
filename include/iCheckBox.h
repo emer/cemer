@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iCheckBox.h"
+#include "../src/temt/ta_gui/iCheckBox.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taStringDiffEdits.h"
+#include "../src/temt/ta_core/taStringDiffEdits.h"

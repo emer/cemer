@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfEnum.h"
+#include "../src/temt/ta_gui/taiTypeOfEnum.h"

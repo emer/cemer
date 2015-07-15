@@ -1,1 +1,1 @@
-#include "../src/temt/ta/maketa_iostream.h"
+#include "../src/temt/ta_core/maketa_iostream.h"

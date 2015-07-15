@@ -1,1 +1,1 @@
-#include "../src/temt/ta/RelationSpec.h"
+#include "../src/temt/ta_math/RelationSpec.h"

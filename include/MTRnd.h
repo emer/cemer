@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MTRnd.h"
+#include "../src/temt/ta_math/MTRnd.h"

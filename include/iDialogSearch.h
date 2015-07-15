@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogSearch.h"
+#include "../src/temt/ta_gui/iDialogSearch.h"

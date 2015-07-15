@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3Axis.h"
+#include "../src/temt/ta_3d/T3Axis.h"

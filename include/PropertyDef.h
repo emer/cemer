@@ -1,1 +1,1 @@
-#include "../src/temt/ta/PropertyDef.h"
+#include "../src/temt/ta_core/PropertyDef.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/KeyActionPair.h"
+#include "../src/temt/ta_gui/KeyActionPair.h"

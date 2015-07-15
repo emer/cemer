@@ -1,1 +1,1 @@
-#include "../src/temt/ta/FrameViewer.h"
+#include "../src/temt/ta_gui/FrameViewer.h"

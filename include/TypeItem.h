@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TypeItem.h"
+#include "../src/temt/ta_core/TypeItem.h"

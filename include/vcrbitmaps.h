@@ -1,1 +1,1 @@
-#include "../src/temt/ta/vcrbitmaps.h"
+#include "../src/temt/ta_gui/vcrbitmaps.h"

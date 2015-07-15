@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProgElChoiceDlg.h"
+#include "../src/temt/ta_gui/ProgElChoiceDlg.h"

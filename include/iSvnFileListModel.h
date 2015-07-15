@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSvnFileListModel.h"
+#include "../src/temt/ta_gui/iSvnFileListModel.h"

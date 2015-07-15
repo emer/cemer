@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfControlPanel.h"
+#include "../src/temt/ta_gui/taiViewTypeOfControlPanel.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfStartupWizard.h"
+#include "../src/temt/ta_gui/taiViewTypeOfStartupWizard.h"

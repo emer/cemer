@@ -1,1 +1,1 @@
-#include "../src/temt/ta/Doc_Group.h"
+#include "../src/temt/ta_proj/Doc_Group.h"

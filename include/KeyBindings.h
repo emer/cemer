@@ -1,1 +1,1 @@
-#include "../src/temt/ta/KeyBindings.h"
+#include "../src/temt/ta_gui/KeyBindings.h"

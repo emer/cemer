@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taProjPubInfo.h"
+#include "../src/temt/ta_proj/taProjPubInfo.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoBase.h"
+#include "../src/temt/ta_3d/SoBase.h"

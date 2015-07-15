@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iStdDataTableView.h"
+#include "../src/temt/ta_gui/iStdDataTableView.h"

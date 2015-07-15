@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taTaskThread.h"
+#include "../src/temt/ta_core/taTaskThread.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/slice_Matrix.h"
+#include "../src/temt/ta_core/slice_Matrix.h"

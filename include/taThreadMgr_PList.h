@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taThreadMgr_PList.h"
+#include "../src/temt/ta_core/taThreadMgr_PList.h"

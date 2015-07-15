@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SimpleMathSpec.h"
+#include "../src/temt/ta_math/SimpleMathSpec.h"

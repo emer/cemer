@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MinMax.h"
+#include "../src/temt/ta_math/MinMax.h"

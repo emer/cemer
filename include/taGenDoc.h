@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taGenDoc.h"
+#include "../src/temt/ta_core/taGenDoc.h"

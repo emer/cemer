@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taVector3i.h"
+#include "../src/temt/ta_math/taVector3i.h"

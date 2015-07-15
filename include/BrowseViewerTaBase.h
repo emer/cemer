@@ -1,1 +1,1 @@
-#include "../src/temt/ta/BrowseViewerTaBase.h"
+#include "../src/temt/ta_gui/BrowseViewerTaBase.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ISigLinkProxy.h"
+#include "../src/temt/ta_core/ISigLinkProxy.h"

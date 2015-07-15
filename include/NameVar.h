@@ -1,1 +1,1 @@
-#include "../src/temt/ta/NameVar.h"
+#include "../src/temt/ta_core/NameVar.h"

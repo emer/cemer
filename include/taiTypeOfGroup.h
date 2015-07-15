@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfGroup.h"
+#include "../src/temt/ta_gui/taiTypeOfGroup.h"

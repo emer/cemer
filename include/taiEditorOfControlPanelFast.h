@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditorOfControlPanelFast.h"
+#include "../src/temt/ta_gui/taiEditorOfControlPanelFast.h"

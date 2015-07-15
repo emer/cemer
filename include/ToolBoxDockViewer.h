@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ToolBoxDockViewer.h"
+#include "../src/temt/ta_gui/ToolBoxDockViewer.h"

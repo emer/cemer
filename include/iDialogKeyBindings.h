@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDialogKeyBindings.h"
+#include "../src/temt/ta_gui/iDialogKeyBindings.h"

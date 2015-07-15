@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfFilePtr.h"
+#include "../src/temt/ta_gui/taiTypeOfFilePtr.h"

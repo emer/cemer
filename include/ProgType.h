@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ProgType.h"
+#include "../src/temt/ta_program/ProgType.h"

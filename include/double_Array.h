@@ -1,1 +1,1 @@
-#include "../src/temt/ta/double_Array.h"
+#include "../src/temt/ta_core/double_Array.h"

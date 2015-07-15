@@ -1,1 +1,1 @@
-#include "../src/temt/ta/vectorclass.h"
+#include "../src/temt/ta_math/vectorclass.h"

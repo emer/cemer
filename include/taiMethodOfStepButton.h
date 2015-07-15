@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMethodOfStepButton.h"
+#include "../src/temt/ta_gui/taiMethodOfStepButton.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/maketa_streambuf.h"
+#include "../src/temt/ta_core/maketa_streambuf.h"

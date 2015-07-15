@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iBaseClipWidgetAction.h"
+#include "../src/temt/ta_gui/iBaseClipWidgetAction.h"

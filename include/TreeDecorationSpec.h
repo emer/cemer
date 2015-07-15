@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TreeDecorationSpec.h"
+#include "../src/temt/ta_gui/TreeDecorationSpec.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelOfStartupWizard.h"
+#include "../src/temt/ta_gui/iPanelOfStartupWizard.h"

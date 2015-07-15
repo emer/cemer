@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetBitBox.h"
+#include "../src/temt/ta_gui/taiWidgetBitBox.h"

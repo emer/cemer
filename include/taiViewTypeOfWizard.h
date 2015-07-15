@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiViewTypeOfWizard.h"
+#include "../src/temt/ta_gui/taiViewTypeOfWizard.h"

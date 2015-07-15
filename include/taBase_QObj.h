@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taBase_QObj.h"
+#include "../src/temt/ta_core/taBase_QObj.h"

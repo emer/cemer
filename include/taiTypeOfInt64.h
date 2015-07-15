@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfInt64.h"
+#include "../src/temt/ta_gui/taiTypeOfInt64.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ControlPanelsFmArgs.h"
+#include "../src/temt/ta_program/ControlPanelsFmArgs.h"

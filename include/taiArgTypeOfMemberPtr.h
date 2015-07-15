@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfMemberPtr.h"
+#include "../src/temt/ta_gui/taiArgTypeOfMemberPtr.h"

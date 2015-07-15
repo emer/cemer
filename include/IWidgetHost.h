@@ -1,1 +1,1 @@
-#include "../src/temt/ta/IWidgetHost.h"
+#include "../src/temt/ta_gui/IWidgetHost.h"

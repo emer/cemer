@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taDoc.h"
+#include "../src/temt/ta_proj/taDoc.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ToolBar.h"
+#include "../src/temt/ta_gui/ToolBar.h"

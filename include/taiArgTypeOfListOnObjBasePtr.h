@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfListOnObjBasePtr.h"
+#include "../src/temt/ta_gui/taiArgTypeOfListOnObjBasePtr.h"

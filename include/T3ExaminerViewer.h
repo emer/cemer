@@ -1,1 +1,1 @@
-#include "../src/temt/ta/T3ExaminerViewer.h"
+#include "../src/temt/ta_3d/T3ExaminerViewer.h"

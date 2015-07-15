@@ -1,1 +1,1 @@
-#include "../src/temt/ta/IfGuiPrompt.h"
+#include "../src/temt/ta_program/IfGuiPrompt.h"

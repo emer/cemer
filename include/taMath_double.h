@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taMath_double.h"
+#include "../src/temt/ta_math/taMath_double.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetDimEdit.h"
+#include "../src/temt/ta_gui/taiWidgetDimEdit.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMisc.h"
+#include "../src/temt/ta_gui/taiMisc.h"

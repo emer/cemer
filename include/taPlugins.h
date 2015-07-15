@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taPlugins.h"
+#include "../src/temt/ta_core/taPlugins.h"

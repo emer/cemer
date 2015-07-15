@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiObjectsMimeItem.h"
+#include "../src/temt/ta_gui/taiObjectsMimeItem.h"

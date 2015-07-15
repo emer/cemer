@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SubMatrixOpSpec.h"
+#include "../src/temt/ta_data/SubMatrixOpSpec.h"

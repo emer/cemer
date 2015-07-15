@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DMemShareVar.h"
+#include "../src/temt/ta_core/DMemShareVar.h"

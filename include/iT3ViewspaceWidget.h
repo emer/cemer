@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iT3ViewspaceWidget.h"
+#include "../src/temt/ta_3d/iT3ViewspaceWidget.h"

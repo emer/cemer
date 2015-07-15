@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TokenSpace.h"
+#include "../src/temt/ta_core/TokenSpace.h"

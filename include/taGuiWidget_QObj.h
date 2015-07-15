@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taGuiWidget_QObj.h"
+#include "../src/temt/ta_gui/taGuiWidget_QObj.h"

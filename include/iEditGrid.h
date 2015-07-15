@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iEditGrid.h"
+#include "../src/temt/ta_gui/iEditGrid.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taStringDiffItem_PArray.h"
+#include "../src/temt/ta_core/taStringDiffItem_PArray.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TestWizard.h"
+#include "../src/temt/ta_proj/TestWizard.h"

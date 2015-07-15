@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTableColDesc_PArray.h"
+#include "../src/temt/ta_gui/taiTableColDesc_PArray.h"

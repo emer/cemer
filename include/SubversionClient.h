@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SubversionClient.h"
+#include "../src/temt/ta_core/SubversionClient.h"

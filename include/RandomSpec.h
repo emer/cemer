@@ -1,1 +1,1 @@
-#include "../src/temt/ta/RandomSpec.h"
+#include "../src/temt/ta_math/RandomSpec.h"

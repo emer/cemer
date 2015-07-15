@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ViewColor.h"
+#include "../src/temt/ta_gui/ViewColor.h"

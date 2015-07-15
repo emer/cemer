@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfStream.h"
+#include "../src/temt/ta_gui/taiArgTypeOfStream.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/vectormath.h"
+#include "../src/temt/ta_math/vectormath.h"

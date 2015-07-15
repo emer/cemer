@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iClipData.h"
+#include "../src/temt/ta_gui/iClipData.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ColorScale.h"
+#include "../src/temt/ta_gui/ColorScale.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/DockViewer_List.h"
+#include "../src/temt/ta_gui/DockViewer_List.h"

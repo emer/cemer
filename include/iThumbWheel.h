@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iThumbWheel.h"
+#include "../src/temt/ta_gui/iThumbWheel.h"

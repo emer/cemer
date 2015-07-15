@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MemberSpace.h"
+#include "../src/temt/ta_core/MemberSpace.h"

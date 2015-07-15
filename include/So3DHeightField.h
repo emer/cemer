@@ -1,1 +1,1 @@
-#include "../src/temt/ta/So3DHeightField.h"
+#include "../src/temt/ta_3d/So3DHeightField.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/MainWindowViewer.h"
+#include "../src/temt/ta_gui/MainWindowViewer.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/int_PArray.h"
+#include "../src/temt/ta_core/int_PArray.h"

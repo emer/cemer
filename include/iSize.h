@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSize.h"
+#include "../src/temt/ta_gui/iSize.h"

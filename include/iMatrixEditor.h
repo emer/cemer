@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iMatrixEditor.h"
+#include "../src/temt/ta_gui/iMatrixEditor.h"

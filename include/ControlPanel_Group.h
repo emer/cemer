@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ControlPanel_Group.h"
+#include "../src/temt/ta_proj/ControlPanel_Group.h"

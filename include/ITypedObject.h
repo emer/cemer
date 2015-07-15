@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ITypedObject.h"
+#include "../src/temt/ta_core/ITypedObject.h"

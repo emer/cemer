@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iMethodButtonMgr.h"
+#include "../src/temt/ta_gui/iMethodButtonMgr.h"

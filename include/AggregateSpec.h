@@ -1,1 +1,1 @@
-#include "../src/temt/ta/AggregateSpec.h"
+#include "../src/temt/ta_math/AggregateSpec.h"

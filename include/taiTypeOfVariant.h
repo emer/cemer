@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfVariant.h"
+#include "../src/temt/ta_gui/taiTypeOfVariant.h"

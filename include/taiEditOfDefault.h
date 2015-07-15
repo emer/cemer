@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiEditOfDefault.h"
+#include "../src/temt/ta_gui/taiEditOfDefault.h"

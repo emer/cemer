@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taSubGroup.h"
+#include "../src/temt/ta_core/taSubGroup.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfMatrixGeom.h"
+#include "../src/temt/ta_gui/taiTypeOfMatrixGeom.h"

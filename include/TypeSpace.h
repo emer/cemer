@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TypeSpace.h"
+#include "../src/temt/ta_core/TypeSpace.h"

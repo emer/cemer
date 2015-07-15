@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoLineBox3d.h"
+#include "../src/temt/ta_3d/SoLineBox3d.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTreeNode.h"
+#include "../src/temt/ta_gui/taiTreeNode.h"

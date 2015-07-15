@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taSigLinkPropertySpace.h"
+#include "../src/temt/ta_core/taSigLinkPropertySpace.h"

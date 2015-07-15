@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoScrollBar.h"
+#include "../src/temt/ta_3d/SoScrollBar.h"

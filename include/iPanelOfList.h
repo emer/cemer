@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelOfList.h"
+#include "../src/temt/ta_gui/iPanelOfList.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetListElChooser.h"
+#include "../src/temt/ta_gui/taiWidgetListElChooser.h"

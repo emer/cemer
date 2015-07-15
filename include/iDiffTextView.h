@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iDiffTextView.h"
+#include "../src/temt/ta_gui/iDiffTextView.h"

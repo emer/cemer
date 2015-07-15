@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanel.h"
+#include "../src/temt/ta_gui/iPanel.h"

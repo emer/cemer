@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taSmartRef.h"
+#include "../src/temt/ta_core/taSmartRef.h"

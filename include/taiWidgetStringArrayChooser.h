@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetStringArrayChooser.h"
+#include "../src/temt/ta_gui/taiWidgetStringArrayChooser.h"

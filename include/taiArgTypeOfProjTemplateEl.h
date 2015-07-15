@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfProjTemplateEl.h"
+#include "../src/temt/ta_gui/taiArgTypeOfProjTemplateEl.h"

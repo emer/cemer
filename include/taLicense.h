@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taLicense.h"
+#include "../src/temt/ta_core/taLicense.h"

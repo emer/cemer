@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiArgTypeOfTypePtr.h"
+#include "../src/temt/ta_gui/taiArgTypeOfTypePtr.h"

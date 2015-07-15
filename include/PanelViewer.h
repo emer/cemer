@@ -1,1 +1,1 @@
-#include "../src/temt/ta/PanelViewer.h"
+#include "../src/temt/ta_gui/PanelViewer.h"

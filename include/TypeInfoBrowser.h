@@ -1,1 +1,1 @@
-#include "../src/temt/ta/TypeInfoBrowser.h"
+#include "../src/temt/ta_gui/TypeInfoBrowser.h"

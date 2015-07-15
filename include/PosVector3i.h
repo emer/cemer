@@ -1,1 +1,1 @@
-#include "../src/temt/ta/PosVector3i.h"
+#include "../src/temt/ta_math/PosVector3i.h"

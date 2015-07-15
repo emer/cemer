@@ -1,1 +1,1 @@
-#include "../src/temt/ta/ta_type_constr.h"
+#include "../src/temt/ta_core/ta_type_constr.h"

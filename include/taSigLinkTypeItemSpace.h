@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taSigLinkTypeItemSpace.h"
+#include "../src/temt/ta_core/taSigLinkTypeItemSpace.h"

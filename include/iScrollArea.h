@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iScrollArea.h"
+#include "../src/temt/ta_gui/iScrollArea.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiMethodOfActuator.h"
+#include "../src/temt/ta_gui/taiMethodOfActuator.h"

@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iPanelOfDataTable_Mbr.h"
+#include "../src/temt/ta_gui/iPanelOfDataTable_Mbr.h"

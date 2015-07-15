@@ -1,1 +1,1 @@
-#include "../src/temt/ta/String_PArray.h"
+#include "../src/temt/ta_core/String_PArray.h"

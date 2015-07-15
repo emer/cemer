@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiTypeOfList.h"
+#include "../src/temt/ta_gui/taiTypeOfList.h"

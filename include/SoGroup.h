@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoGroup.h"
+#include "../src/temt/ta_3d/SoGroup.h"

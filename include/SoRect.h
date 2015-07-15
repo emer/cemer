@@ -1,1 +1,1 @@
-#include "../src/temt/ta/SoRect.h"
+#include "../src/temt/ta_3d/SoRect.h"

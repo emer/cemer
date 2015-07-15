@@ -1,1 +1,1 @@
-#include "../src/temt/ta/iSoSelectionEvent.h"
+#include "../src/temt/ta_3d/iSoSelectionEvent.h"

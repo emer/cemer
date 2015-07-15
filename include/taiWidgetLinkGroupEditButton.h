@@ -1,1 +1,1 @@
-#include "../src/temt/ta/taiWidgetLinkGroupEditButton.h"
+#include "../src/temt/ta_gui/taiWidgetLinkGroupEditButton.h"
