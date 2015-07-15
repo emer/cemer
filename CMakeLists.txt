@@ -164,12 +164,18 @@ message( STATUS "all EMERGENT_DEP_LIBRARIES = ${EMERGENT_DEP_LIBRARIES}")
 
 # TEMT system: The EMergent Toolkit
 add_subdirectory(src/temt/maketa)
-add_subdirectory(src/temt/ta)
+add_subdirectory(src/temt/ta_core)
+add_subdirectory(src/temt/ta_math)
+add_subdirectory(src/temt/ta_program)
+add_subdirectory(src/temt/ta_data)
+add_subdirectory(src/temt/ta_proj)
+add_subdirectory(src/temt/ta_gui)
+add_subdirectory(src/temt/ta_3d)
 add_subdirectory(src/temt/css)
 add_subdirectory(src/temt/json)
 add_subdirectory(src/temt/lib)
 add_subdirectory(src/temt/css_bin)
-add_subdirectory(src/temt/ta/images)
+add_subdirectory(src/temt/ta_gui/images)
 
 # Emergent code proper
 add_subdirectory(src/emergent/network)
@@ -177,6 +183,7 @@ add_subdirectory(src/emergent/bp)
 add_subdirectory(src/emergent/leabra)
 add_subdirectory(src/emergent/so)
 add_subdirectory(src/emergent/cs)
+add_subdirectory(src/emergent/virt_env)
 add_subdirectory(src/emergent/actr)
 add_subdirectory(src/emergent/lib)
 add_subdirectory(src/emergent/bin)
@@ -297,10 +304,10 @@ if (WIN32)
   install(DIRECTORY "${EMER_3RDPARTY_DIR}"
     DESTINATION .
   )
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent.ico
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta_gui/images/emergent.ico
     DESTINATION ${EMERGENT_SHARE_DEST}
   )
-  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta/images/emergent.ico
+  install(FILES ${CMAKE_CURRENT_SOURCE_DIR}/src/temt/ta_gui/images/emergent.ico
     DESTINATION bin
   )
   if (QT_USE_5)

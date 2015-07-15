@@ -10,19 +10,69 @@
 #set(mypath "..")
 set(mypath ${PROJECT_SOURCE_DIR}/src/temt)
 
-# taiqtso
+# first: include all the files and add the full path
 
-# ta
-include(${PROJECT_SOURCE_DIR}/src/temt/ta/CMakeFiles.txt)
-ADD_PATH_TO_FILES(temt_ta_SRCS ${mypath}/ta "${ta_SRCS}")
-ADD_PATH_TO_FILES(temt_ta_HEADS_MOC ${mypath}/ta "${ta_HEADS_MOC}")
-ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA ${mypath}/ta "${ta_HEADS_MAKETA}")
-ADD_PATH_TO_FILES(temt_ta_HEADS ${mypath}/ta "${ta_HEADS}")
-ADD_PATH_TO_FILES(temt_ta_SRCS_UI ${mypath}/ta "${ta_SRCS_UI}")
+# ta_core
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_core/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_core_SRCS ${mypath}/ta_core "${ta_core_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_core_HEADS_MOC ${mypath}/ta_core "${ta_core_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_ta_core_HEADS_MAKETA ${mypath}/ta_core "${ta_core_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_core_HEADS ${mypath}/ta_core "${ta_core_HEADS}")
 
-ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA_MI ${mypath}/ta "${ta_HEADS_MAKETA_MI}")
-ADD_PATH_TO_FILES(temt_ta_HEADS_MAKETA_MI_DEPS ${mypath}/ta "${ta_HEADS_MAKETA_MI_DEPS}")
+ADD_PATH_TO_FILES(temt_ta_core_HEADS_MAKETA_MI ${mypath}/ta_core "${ta_core_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_core_HEADS_MAKETA_MI_DEPS ${mypath}/ta_core "${ta_core_HEADS_MAKETA_MI_DEPS}")
 
+# ta_math
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_math/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_math_SRCS ${mypath}/ta_math "${ta_math_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_math_HEADS_MAKETA ${mypath}/ta_math "${ta_math_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_math_HEADS ${mypath}/ta_math "${ta_math_HEADS}")
+
+# ta_program
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_program/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_program_SRCS ${mypath}/ta_program "${ta_program_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_program_HEADS_MAKETA ${mypath}/ta_program "${ta_program_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_program_HEADS ${mypath}/ta_program "${ta_program_HEADS}")
+
+ADD_PATH_TO_FILES(temt_ta_program_HEADS_MAKETA_MI ${mypath}/ta_program "${ta_program_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_program_HEADS_MAKETA_MI_DEPS ${mypath}/ta_program "${ta_program_HEADS_MAKETA_MI_DEPS}")
+
+# ta_data
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_data/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_data_SRCS ${mypath}/ta_data "${ta_data_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_data_HEADS_MAKETA ${mypath}/ta_data "${ta_data_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_data_HEADS ${mypath}/ta_data "${ta_data_HEADS}")
+
+# ta_proj
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_proj/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_proj_SRCS ${mypath}/ta_proj "${ta_proj_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_proj_HEADS_MOC ${mypath}/ta_proj "${ta_proj_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_ta_proj_HEADS_MAKETA ${mypath}/ta_proj "${ta_proj_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_proj_HEADS ${mypath}/ta_proj "${ta_proj_HEADS}")
+
+ADD_PATH_TO_FILES(temt_ta_proj_HEADS_MAKETA_MI ${mypath}/ta_proj "${ta_proj_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_proj_HEADS_MAKETA_MI_DEPS ${mypath}/ta_proj "${ta_proj_HEADS_MAKETA_MI_DEPS}")
+
+# ta_gui
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_gui/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_gui_SRCS ${mypath}/ta_gui "${ta_gui_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MOC ${mypath}/ta_gui "${ta_gui_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MAKETA ${mypath}/ta_gui "${ta_gui_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_gui_HEADS ${mypath}/ta_gui "${ta_gui_HEADS}")
+ADD_PATH_TO_FILES(temt_ta_gui_SRCS_UI ${mypath}/ta_gui "${ta_gui_SRCS_UI}")
+
+ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MAKETA_MI ${mypath}/ta_gui "${ta_gui_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_gui_HEADS_MAKETA_MI_DEPS ${mypath}/ta_gui "${ta_gui_HEADS_MAKETA_MI_DEPS}")
+
+# ta_3d
+include(${PROJECT_SOURCE_DIR}/src/temt/ta_3d/CMakeFiles.txt)
+ADD_PATH_TO_FILES(temt_ta_3d_SRCS ${mypath}/ta_3d "${ta_3d_SRCS}")
+ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MOC ${mypath}/ta_3d "${ta_3d_HEADS_MOC}")
+ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MAKETA ${mypath}/ta_3d "${ta_3d_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(temt_ta_3d_HEADS ${mypath}/ta_3d "${ta_3d_HEADS}")
+
+ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MAKETA_MI ${mypath}/ta_3d "${ta_3d_HEADS_MAKETA_MI}")
+ADD_PATH_TO_FILES(temt_ta_3d_HEADS_MAKETA_MI_DEPS ${mypath}/ta_3d "${ta_3d_HEADS_MAKETA_MI_DEPS}")
 
 # css
 include(${PROJECT_SOURCE_DIR}/src/temt/css/CMakeFiles.txt)
@@ -35,31 +85,64 @@ include(${PROJECT_SOURCE_DIR}/src/temt/json/CMakeFiles.txt)
 ADD_PATH_TO_FILES(temt_json_SRCS ${mypath}/json "${json_SRCS}")
 ADD_PATH_TO_FILES(temt_json_HEADS ${mypath}/json "${json_HEADS}")
 
-MAKETA_WRAP_H(temt_ta_SRCS_MAKETA ${temt_ta_HEADS_MAKETA} OPTIONS ta)
+# next: use the wrap code to get maketa and moc to run:
 
-MAKETA_WRAP_H_MI(temt_ta_SRCS_MAKETA_MI "${temt_ta_HEADS_MAKETA_MI}" "${temt_ta_HEADS_MAKETA_MI_DEPS}")
+MAKETA_WRAP_H(temt_ta_core_SRCS_MAKETA ${temt_ta_core_HEADS_MAKETA} OPTIONS ta_core)
+MAKETA_WRAP_H(temt_ta_math_SRCS_MAKETA ${temt_ta_math_HEADS_MAKETA} OPTIONS ta_math)
+MAKETA_WRAP_H(temt_ta_program_SRCS_MAKETA ${temt_ta_program_HEADS_MAKETA} OPTIONS ta_program)
+MAKETA_WRAP_H(temt_ta_data_SRCS_MAKETA ${temt_ta_data_HEADS_MAKETA} OPTIONS ta_data)
+MAKETA_WRAP_H(temt_ta_proj_SRCS_MAKETA ${temt_ta_proj_HEADS_MAKETA} OPTIONS ta_proj)
+MAKETA_WRAP_H(temt_ta_gui_SRCS_MAKETA ${temt_ta_gui_HEADS_MAKETA} OPTIONS ta_gui)
+MAKETA_WRAP_H(temt_ta_3d_SRCS_MAKETA ${temt_ta_3d_HEADS_MAKETA} OPTIONS ta_3d)
+
+# include MAKETA_MI guys:
+MAKETA_WRAP_H_MI(temt_ta_core_SRCS_MAKETA_MI "${temt_ta_core_HEADS_MAKETA_MI}" "${temt_ta_core_HEADS_MAKETA_MI_DEPS}")
+MAKETA_WRAP_H_MI(temt_ta_program_SRCS_MAKETA_MI "${temt_ta_program_HEADS_MAKETA_MI}" "${temt_ta_program_HEADS_MAKETA_MI_DEPS}")
+MAKETA_WRAP_H_MI(temt_ta_proj_SRCS_MAKETA_MI "${temt_ta_proj_HEADS_MAKETA_MI}" "${temt_ta_proj_HEADS_MAKETA_MI_DEPS}")
+MAKETA_WRAP_H_MI(temt_ta_gui_SRCS_MAKETA_MI "${temt_ta_gui_HEADS_MAKETA_MI}" "${temt_ta_gui_HEADS_MAKETA_MI_DEPS}")
+MAKETA_WRAP_H_MI(temt_ta_3d_SRCS_MAKETA_MI "${temt_ta_3d_HEADS_MAKETA_MI}" "${temt_ta_3d_HEADS_MAKETA_MI_DEPS}")
 
 if (QT_USE_5)
-  qt5_wrap_ui(temt_ta_SRCS_UIC ${temt_ta_SRCS_UI})
-  qt5_wrap_cpp(temt_ta_SRCS_MOC ${temt_ta_HEADS_MOC})
+  qt5_wrap_ui(temt_ta_gui_SRCS_UIC ${temt_ta_gui_SRCS_UI})
+  qt5_wrap_cpp(temt_ta_core_SRCS_MOC ${temt_ta_core_HEADS_MOC})
+  # math, program, data don't have MOC files
+  qt5_wrap_cpp(temt_ta_proj_SRCS_MOC ${temt_ta_proj_HEADS_MOC})
+  qt5_wrap_cpp(temt_ta_gui_SRCS_MOC ${temt_ta_gui_HEADS_MOC})
+  qt5_wrap_cpp(temt_ta_3d_SRCS_MOC ${temt_ta_3d_HEADS_MOC})
   qt5_wrap_cpp(temt_css_SRCS_MOC ${temt_css_HEADS_MOC})
 else (QT_USE_5)
-  QT4_WRAP_UI(temt_ta_SRCS_UIC ${temt_ta_SRCS_UI})
-  QT4_WRAP_CPP(temt_ta_SRCS_MOC ${temt_ta_HEADS_MOC})
+  QT4_WRAP_UI(temt_ta_gui_SRCS_UIC ${temt_ta_gui_SRCS_UI})
+  # math, program, data don't have MOC files
+  QT4_WRAP_CPP(temt_ta_core_SRCS_MOC ${temt_ta_core_HEADS_MOC})
+  QT4_WRAP_CPP(temt_ta_proj_SRCS_MOC ${temt_ta_proj_HEADS_MOC})
+  QT4_WRAP_CPP(temt_ta_gui_SRCS_MOC ${temt_ta_gui_HEADS_MOC})
+  QT4_WRAP_CPP(temt_ta_3d_SRCS_MOC ${temt_ta_3d_HEADS_MOC})
   QT4_WRAP_CPP(temt_css_SRCS_MOC ${temt_css_HEADS_MOC})
 endif (QT_USE_5)
 
 
 # just list whole set of files here -- and also include the headers for IDE's
 set(temtlib_SRCS
-  ${temt_ta_SRCS}
-  ${temt_ta_SRCS_MAKETA} ${temt_ta_SRCS_MAKETA_MI}
-  ${temt_ta_SRCS_MOC}
-  ${temt_ta_SRCS_UIC}
+  ${temt_ta_core_SRCS} ${temt_ta_core_SRCS_MAKETA} ${temt_ta_core_SRCS_MAKETA_MI} ${temt_ta_core_SRCS_MOC}
+  ${temt_ta_math_SRCS} ${temt_ta_math_SRCS_MAKETA} ${temt_ta_math_SRCS_MAKETA_MI} ${temt_ta_math_SRCS_MOC}
+  ${temt_ta_program_SRCS} ${temt_ta_program_SRCS_MAKETA} ${temt_ta_program_SRCS_MAKETA_MI} ${temt_ta_program_SRCS_MOC}
+  ${temt_ta_data_SRCS} ${temt_ta_data_SRCS_MAKETA} ${temt_ta_data_SRCS_MAKETA_MI} ${temt_ta_data_SRCS_MOC}
+  ${temt_ta_proj_SRCS} ${temt_ta_proj_SRCS_MAKETA} ${temt_ta_proj_SRCS_MAKETA_MI} ${temt_ta_proj_SRCS_MOC}
+  ${temt_ta_gui_SRCS} ${temt_ta_gui_SRCS_MAKETA} ${temt_ta_gui_SRCS_MAKETA_MI} ${temt_ta_gui_SRCS_MOC}
+  ${temt_ta_3d_SRCS} ${temt_ta_3d_SRCS_MAKETA} ${temt_ta_3d_SRCS_MAKETA_MI} ${temt_ta_3d_SRCS_MOC}
+
+  ${temt_ta_gui_SRCS_UIC}
   ${temt_css_SRCS}
   ${temt_css_SRCS_MOC}
   ${temt_json_SRCS}
-  ${temt_ta_HEADS}
+
+  ${temt_ta_core_HEADS}
+  ${temt_ta_math_HEADS}
+  ${temt_ta_program_HEADS}
+  ${temt_ta_data_HEADS}
+  ${temt_ta_proj_HEADS}
+  ${temt_ta_gui_HEADS}
+  ${temt_ta_3d_HEADS}
   ${temt_css_HEADS}
   ${temt_json_HEADS}
 )

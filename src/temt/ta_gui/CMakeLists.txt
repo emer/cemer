@@ -3,7 +3,7 @@
 # get the files
 include(CMakeFiles.txt)
 
-set(mypath ${PROJECT_SOURCE_DIR}/src/temt/ta)
+set(mypath ${PROJECT_SOURCE_DIR}/src/temt/ta_gui)
 
 ########### running rcc qt resource compiler on ta.qrc ###############
 
@@ -16,5 +16,5 @@ ADD_CUSTOM_TARGET(make_ta_qrc
 
 ########### install files ###############
 
-EMERGENT_INSTALL_HEADERS("${ta_HEADS}")
+EMERGENT_INSTALL_HEADERS("${ta_gui_HEADS}")
 

@@ -1,50 +1,50 @@
 ########### maketa target ###############
 
 set(maketa_HEADS
-  ../ta/ta_stdef.h
-  ../ta/taBasicAtomicInt.h
-  ../ta/taAtomicInt.h
-  ../ta/taString.h
-  ../ta/Variant.h
-  ../ta/taRefN.h
+  ../ta_core/ta_stdef.h
+  ../ta_core/taBasicAtomicInt.h
+  ../ta_core/taAtomicInt.h
+  ../ta_core/taString.h
+  ../ta_core/Variant.h
+  ../ta_core/taRefN.h
 
-  ../ta/NameVar.h
-  ../ta/taPtrList_impl.h
-  ../ta/taPtrList.h
-  ../ta/taPtrList_base.h
-  ../ta/taHashEl.h
-  ../ta/taHashBucket.h
-  ../ta/taHashTable.h
-  ../ta/taArray_impl.h
-  ../ta/taPlainArray.h
-  ../ta/taFixedArray_impl.h
-  ../ta/taFixedArray.h
-  ../ta/int_FixedArray.h
-  ../ta/String_PArray.h
-  ../ta/int_PArray.h
-  ../ta/voidptr_PArray.h
-  ../ta/NameVar_PArray.h
+  ../ta_core/NameVar.h
+  ../ta_core/taPtrList_impl.h
+  ../ta_core/taPtrList.h
+  ../ta_core/taPtrList_base.h
+  ../ta_core/taHashEl.h
+  ../ta_core/taHashBucket.h
+  ../ta_core/taHashTable.h
+  ../ta_core/taArray_impl.h
+  ../ta_core/taPlainArray.h
+  ../ta_core/taFixedArray_impl.h
+  ../ta_core/taFixedArray.h
+  ../ta_core/int_FixedArray.h
+  ../ta_core/String_PArray.h
+  ../ta_core/int_PArray.h
+  ../ta_core/voidptr_PArray.h
+  ../ta_core/NameVar_PArray.h
 
-  ../ta/ITypedObject.h
-  ../ta/TypeItem.h
-  ../ta/EnumSpace.h
-  ../ta/TokenSpace.h
-  ../ta/MemberDefBase_List.h
-  ../ta/MemberSpace.h
-  ../ta/Member_List.h
-  ../ta/PropertySpace.h
-  ../ta/MethodSpace.h
-  ../ta/TypeSpace.h
-  ../ta/EnumDef.h
-  ../ta/MemberDefBase.h
-  ../ta/MemberDef.h
-  ../ta/PropertyDef.h
-  ../ta/MethodDef.h
-  ../ta/TypeDef.h
-  ../ta/BuiltinTypeDefs.h
+  ../ta_core/ITypedObject.h
+  ../ta_core/TypeItem.h
+  ../ta_core/EnumSpace.h
+  ../ta_core/TokenSpace.h
+  ../ta_core/MemberDefBase_List.h
+  ../ta_core/MemberSpace.h
+  ../ta_core/Member_List.h
+  ../ta_core/PropertySpace.h
+  ../ta_core/MethodSpace.h
+  ../ta_core/TypeSpace.h
+  ../ta_core/EnumDef.h
+  ../ta_core/MemberDefBase.h
+  ../ta_core/MemberDef.h
+  ../ta_core/PropertyDef.h
+  ../ta_core/MethodDef.h
+  ../ta_core/TypeDef.h
+  ../ta_core/BuiltinTypeDefs.h
 
-  ../ta/taVersion.h
-  ../ta/taMisc.h
+  ../ta_core/taVersion.h
+  ../ta_core/taMisc.h
 
   mta_parse.h
   mta_constr.h
@@ -52,49 +52,49 @@ set(maketa_HEADS
 )
 
 set(maketa_SRCS
-#  ../ta/ta_ti.cpp
-  ../ta/taBasicAtomicInt.cpp
-  ../ta/taAtomicInt.cpp
-  ../ta/taString.cpp
-  ../ta/Variant.cpp
-  ../ta/taRefN.cpp
+#  ../ta_core/ta_ti.cpp
+  ../ta_core/taBasicAtomicInt.cpp
+  ../ta_core/taAtomicInt.cpp
+  ../ta_core/taString.cpp
+  ../ta_core/Variant.cpp
+  ../ta_core/taRefN.cpp
 
-  ../ta/NameVar.cpp
-  ../ta/taPtrList_impl.cpp
-  ../ta/taPtrList.cpp
-  ../ta/taPtrList_base.cpp
-  ../ta/taHashEl.cpp
-  ../ta/taHashBucket.cpp
-  ../ta/taHashTable.cpp
-  ../ta/taArray_impl.cpp
-  ../ta/taPlainArray.cpp
-  ../ta/taFixedArray_impl.cpp
-  ../ta/taFixedArray.cpp
-  ../ta/int_FixedArray.cpp
-  ../ta/String_PArray.cpp
-  ../ta/int_PArray.cpp
-  ../ta/voidptr_PArray.cpp
-  ../ta/NameVar_PArray.cpp
+  ../ta_core/NameVar.cpp
+  ../ta_core/taPtrList_impl.cpp
+  ../ta_core/taPtrList.cpp
+  ../ta_core/taPtrList_base.cpp
+  ../ta_core/taHashEl.cpp
+  ../ta_core/taHashBucket.cpp
+  ../ta_core/taHashTable.cpp
+  ../ta_core/taArray_impl.cpp
+  ../ta_core/taPlainArray.cpp
+  ../ta_core/taFixedArray_impl.cpp
+  ../ta_core/taFixedArray.cpp
+  ../ta_core/int_FixedArray.cpp
+  ../ta_core/String_PArray.cpp
+  ../ta_core/int_PArray.cpp
+  ../ta_core/voidptr_PArray.cpp
+  ../ta_core/NameVar_PArray.cpp
 
-  ../ta/ITypedObject.cpp
-  ../ta/TypeItem.cpp
-  ../ta/EnumSpace.cpp
-  ../ta/TokenSpace.cpp
-  ../ta/MemberDefBase_List.cpp
-  ../ta/MemberSpace.cpp
-  ../ta/Member_List.cpp
-  ../ta/PropertySpace.cpp
-  ../ta/MethodSpace.cpp
-  ../ta/TypeSpace.cpp
-  ../ta/EnumDef.cpp
-  ../ta/MemberDefBase.cpp
-  ../ta/MemberDef.cpp
-  ../ta/PropertyDef.cpp
-  ../ta/MethodDef.cpp
-  ../ta/TypeDef.cpp
-  ../ta/BuiltinTypeDefs.cpp
-  ../ta/taVersion.cpp
-  ../ta/taMisc.cpp
+  ../ta_core/ITypedObject.cpp
+  ../ta_core/TypeItem.cpp
+  ../ta_core/EnumSpace.cpp
+  ../ta_core/TokenSpace.cpp
+  ../ta_core/MemberDefBase_List.cpp
+  ../ta_core/MemberSpace.cpp
+  ../ta_core/Member_List.cpp
+  ../ta_core/PropertySpace.cpp
+  ../ta_core/MethodSpace.cpp
+  ../ta_core/TypeSpace.cpp
+  ../ta_core/EnumDef.cpp
+  ../ta_core/MemberDefBase.cpp
+  ../ta_core/MemberDef.cpp
+  ../ta_core/PropertyDef.cpp
+  ../ta_core/MethodDef.cpp
+  ../ta_core/TypeDef.cpp
+  ../ta_core/BuiltinTypeDefs.cpp
+  ../ta_core/taVersion.cpp
+  ../ta_core/taMisc.cpp
   mta_parse.cpp
   mta_lex.cpp
   mta_constr.cpp

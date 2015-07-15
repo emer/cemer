@@ -1,0 +1,183 @@
+########## ta files ###############
+
+# IMPORTANT: this is just a list of files -- the compile commands are all located
+# in the temt/lib dir, which is where everything is actually built
+# other targets are in CMakeLists.txt in this directory
+
+# although some attempt is made to keep track of gui-related files, a huge amount
+# of additional work would be required to fully split this out, and we need Qt
+# anyway, so there really isn't any point to it anymore
+
+# headers that need maketa run on them, but not moc
+set(virt_env_HEADS_MAKETA_NOMOC_base
+  taAudioProc.h
+
+  taImage.h
+  taCanvas.h
+
+  ImgProcThreadBase.h
+  ImageProcCall.h
+
+  DoGFilter.h
+  GaborFilter.h
+  MotionGaborFilter.h
+  GaborFitter.h
+  taImageProc.h
+  VisRegionSpecBase.h
+  VisRegionSpecBaseList.h
+  DoGRegionSpec.h
+  V1KwtaSpec.h
+  V1RegionSpec.h
+  RetinaProc.h
+
+  VESurface.h
+  VETexture.h
+  VETexture_List.h
+
+  ODEIntParams.h
+  VEBody.h
+  VEBody_Group.h
+  VEJoint.h
+  VEJoint_Group.h
+  VEObject.h
+  VEObject_Group.h
+  VEStatic.h
+  VEStatic_Group.h
+  VESpace.h
+  VESpace_Group.h
+  VELightParams.h
+  VECamera.h
+  VELight.h
+  VEWorld.h
+
+  VEHillMuscle.h
+  VEMuscle_List.h
+  VEMuscle.h
+  VELinearMuscle.h
+  VELambdaMuscle.h
+  VEMuscleJoint.h
+  VEArm.h
+
+  VEObjCarousel.h
+  VEHeightField.h
+)
+
+# need both maketa and moc -- relatively rare
+set(virt_env_HEADS_MAKETA_MOC
+  iViewPanelOfVEWorld.h
+)
+
+# 3D headers -- do diff things depending on QT3D vs COIN
+set(virt_env_HEADS_T3
+  T3VEWorld.h
+  T3VEObject.h
+  T3VEBody.h
+  T3VEJoint.h
+  T3VESpace.h
+  T3VEStatic.h
+)
+
+if(QT_USE_3D)
+  set(virt_env_HEADS_MAKETA_NOMOC
+    ${virt_env_HEADS_MAKETA_NOMOC_base}
+  )
+  
+  set(virt_env_HEADS_NOMAKETA_MOC
+    ${virt_env_HEADS_T3}
+  )
+
+else(QT_USE_3D)
+  set(virt_env_HEADS_MAKETA_NOMOC
+    ${virt_env_HEADS_MAKETA_NOMOC_base}
+    ${virt_env_HEADS_T3}
+  )
+  
+  set(virt_env_HEADS_NOMAKETA_MOC
+  )
+endif(QT_USE_3D)
+  
+
+# all headers that need maketa run on them
+set(virt_env_HEADS_MAKETA
+  ${virt_env_HEADS_MAKETA_NOMOC}
+  ${virt_env_HEADS_MAKETA_MOC}
+)
+
+# headers that need Qt moc run
+set(virt_env_HEADS_MOC
+  ${virt_env_HEADS_MAKETA_MOC}
+  ${virt_env_HEADS_NOMAKETA_MOC}
+)
+
+# all heads
+set(virt_env_HEADS
+  ${virt_env_HEADS_MAKETA_NOMOC}
+  ${virt_env_HEADS_MAKETA_MOC}
+  ${virt_env_HEADS_NOMAKETA_NOMOC}
+  ${virt_env_HEADS_NOMAKETA_MOC}
+)
+
+# NOTE: do NOT include .moc files -- auto generated
+set(virt_env_SRCS
+  taAudioProc.cpp
+
+  taImage.cpp
+  taCanvas.cpp
+
+  ImgProcThreadBase.cpp
+  ImageProcCall.cpp
+
+  DoGFilter.cpp
+  GaborFilter.cpp
+  MotionGaborFilter.cpp
+  GaborFitter.cpp
+  taImageProc.cpp
+  VisRegionSpecBase.cpp
+  VisRegionSpecBaseList.cpp
+  DoGRegionSpec.cpp
+  V1KwtaSpec.cpp
+  V1RegionSpec.cpp
+  RetinaProc.cpp
+
+  VESurface.cpp
+  VETexture.cpp
+  VETexture_List.cpp
+
+  ODEIntParams.cpp
+  VEBody.cpp
+  VEBody_Group.cpp
+  VEJoint.cpp
+  VEJoint_Group.cpp
+  VEObject.cpp
+  VEObject_Group.cpp
+  VEStatic.cpp
+  VEStatic_Group.cpp
+  VESpace.cpp
+  VESpace_Group.cpp
+  VELightParams.cpp
+  VECamera.cpp
+  VELight.cpp
+  VEWorld.cpp
+
+  VEMuscle.cpp
+  VEMuscle_List.cpp
+  VEHillMuscle.cpp
+  VELinearMuscle.cpp
+  VELambdaMuscle.cpp
+  VEMuscleJoint.cpp
+  VEArm.cpp
+
+  VEObjCarousel.cpp
+  VEHeightField.cpp
+
+  iViewPanelOfVEWorld.cpp
+
+  T3VEWorld.cpp
+  T3VEObject.cpp
+  T3VEBody.cpp
+  T3VEJoint.cpp
+  T3VESpace.cpp
+  T3VEStatic.cpp
+)
+
+set(virt_env_FILES ${virt_env_HEADS} ${virt_env_SRCS})

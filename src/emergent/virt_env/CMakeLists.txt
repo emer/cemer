@@ -3,9 +3,9 @@
 # get the files
 include(CMakeFiles.txt)
 
-set(mypath ${PROJECT_SOURCE_DIR}/src/temt/ta_math)
+set(mypath ${PROJECT_SOURCE_DIR}/src/emergent/virt_env)
 
 ########### install files ###############
 
-EMERGENT_INSTALL_HEADERS("${ta_math_HEADS}")
+EMERGENT_INSTALL_HEADERS("${virt_env_HEADS}")
 
