@@ -41,11 +41,11 @@ class QImage; //
 class taImage; // 
 
 class VEWorld; //
-SMARTREF_OF(TA_API, VEWorld); // VEWorldRef
+SMARTREF_OF(E_API, VEWorld); // VEWorldRef
 
 taTypeDef_Of(ODEWorldParams);
 
-class TA_API ODEWorldParams : public ODEIntParams {
+class E_API ODEWorldParams : public ODEIntParams {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
   INHERITED(ODEIntParams)
 public:
@@ -64,7 +64,7 @@ private:
 
 taTypeDef_Of(VEShadowParams);
 
-class TA_API VEShadowParams : public taOBase {
+class E_API VEShadowParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv shadow parameters for virtual environment
   INHERITED(taOBase)
 public:
@@ -85,7 +85,7 @@ private:
 
 taTypeDef_Of(VEWorld);
 
-class TA_API VEWorld : public taNBase {
+class E_API VEWorld : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vewld a virtual environment world
 INHERITED(taNBase)
 public:

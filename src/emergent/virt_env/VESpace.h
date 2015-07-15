@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -33,7 +34,7 @@ class VEStatic; //
 
 taTypeDef_Of(VESpace);
 
-class TA_API VESpace : public taNBase {
+class E_API VESpace : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment that represents a sub-space of objects, containing static elements only -- helps optimize the collision detection process to group proximal items into sub spaces
 INHERITED(taNBase)
 public:
@@ -91,6 +92,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(TA_API, VESpace); // VESpaceRef
+SMARTREF_OF(E_API, VESpace); // VESpaceRef
 
 #endif // VESpace_h

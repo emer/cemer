@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taOBase>
+#include "network_def.h"
 
 // member includes:
 #include <taColor>
@@ -27,7 +28,7 @@
 
 taTypeDef_Of(VELightParams);
 
-class TA_API VELightParams : public taOBase {
+class E_API VELightParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv virtual env light parameters
 INHERITED(taOBase)
 public:

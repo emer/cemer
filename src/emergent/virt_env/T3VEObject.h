@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3NodeParent>
+#include "network_def.h"
 
 // member includes:
 
@@ -25,7 +26,7 @@
 
 #ifdef TA_QT3D
 
-class TA_API T3VEObject : public T3NodeParent {
+class E_API T3VEObject : public T3NodeParent {
   // object parent for virtual environment
   Q_OBJECT
   INHERITED(T3NodeParent)
@@ -38,7 +39,7 @@ public:
 
 taTypeDef_Of(T3VEObject);
 
-class TA_API T3VEObject : public T3NodeParent {
+class E_API T3VEObject : public T3NodeParent {
   // object parent for virtual environment
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;

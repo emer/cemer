@@ -28,7 +28,7 @@ class VEStatic; //
 
 taTypeDef_Of(VESpace_Group);
 
-class TA_API VESpace_Group : public taGroup<VESpace> {
+class E_API VESpace_Group : public taGroup<VESpace> {
   // ##CAT_VirtEnv a group of virtual environment objects
 INHERITED(taGroup<VESpace>)
 public:

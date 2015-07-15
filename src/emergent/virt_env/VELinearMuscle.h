@@ -26,7 +26,7 @@ class VEArm; //
 
 taTypeDef_Of(VELinearMuscle);
 
-class TA_API VELinearMuscle : public VEMuscle {
+class E_API VELinearMuscle : public VEMuscle {
   // A muscle that exerts force proportional to its input
   INHERITED(VEMuscle)
 public:
@@ -53,6 +53,6 @@ private:
   void Destroy();
 };
 
-SMARTREF_OF(TA_API, VELinearMuscle); // VELinearMuscleRef
+SMARTREF_OF(E_API, VELinearMuscle); // VELinearMuscleRef
 
 #endif // VELinearMuscle_h

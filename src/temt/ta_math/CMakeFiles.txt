@@ -20,6 +20,7 @@ set(ta_math_HEADS_MAKETA
   taQuaternion.h
   taTransform.h
   taVector2i_List.h
+  XYNGeom.h
 
   MinMax.h
   MinMaxRange.h
@@ -27,11 +28,8 @@ set(ta_math_HEADS_MAKETA
   FixedMinMax.h
   Modulo.h
   Average.h
-
-  XYNGeom.h
-
-  MathCall.h
-  RandomCall.h
+  FunLookupND.h
+  FunLookup.h
 
   Relation.h
   RelationSpec.h
@@ -43,15 +41,16 @@ set(ta_math_HEADS_MAKETA
   taMath.h
   taMath_double.h
   taMath_float.h
+  cssMath.h
+
+  MTRnd.h
   RndSeed.h
   RndSeed_List.h
   Random.h
   RandomSpec.h
 
-  cssMath.h
-
-  FunLookupND.h
-  FunLookup.h
+  MathCall.h
+  RandomCall.h
 )
 
 set(ta_HEADS_NOMAKETA
@@ -88,6 +87,7 @@ set(ta_math_SRCS
   taQuaternion.cpp
   taTransform.cpp
   taVector2i_List.cpp
+  XYNGeom.cpp
 
   MinMax.cpp
   MinMaxRange.cpp
@@ -95,8 +95,9 @@ set(ta_math_SRCS
   FixedMinMax.cpp
   Modulo.cpp
   Average.cpp
+  FunLookupND.cpp
+  FunLookup.cpp
 
-  XYNGeom.cpp
   Relation.cpp
   RelationSpec.cpp
   RelationFloat.cpp
@@ -107,16 +108,17 @@ set(ta_math_SRCS
   taMath.cpp
   taMath_double.cpp
   taMath_float.cpp
+  cssMath.cpp
+
+  MTRnd.cpp
   RndSeed.cpp
   RndSeed_List.cpp
   Random.cpp
   RandomSpec.cpp
 
-  cssMath.cpp
-
-  FunLookupND.cpp
-  FunLookup.cpp
-
+  MathCall.cpp
+  RandomCall.cpp
+  
   ta_vector_ops.cpp
   ta_cuda.cpp
 )

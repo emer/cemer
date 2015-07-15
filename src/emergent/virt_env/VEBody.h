@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -42,7 +43,7 @@ class VEObject; //
 
 taTypeDef_Of(ODEDamping);
 
-class TA_API ODEDamping : public taOBase {
+class E_API ODEDamping : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE damping parameters
 INHERITED(taOBase)
 public:
@@ -61,7 +62,7 @@ private:
 
 taTypeDef_Of(ODEFiniteRotation);
 
-class TA_API ODEFiniteRotation : public taOBase {
+class E_API ODEFiniteRotation : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv finite rotation mode settings
 INHERITED(taOBase)
 public:
@@ -75,11 +76,11 @@ private:
 };
 
 class VEBody; //
-SMARTREF_OF(TA_API, VEBody); // VEBodyRef
+SMARTREF_OF(E_API, VEBody); // VEBodyRef
 
 taTypeDef_Of(VEBody);
 
-class TA_API VEBody : public taNBase {
+class E_API VEBody : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vebod virtual environment body (rigid structural element), subject to physics dynamics
 INHERITED(taNBase)
 public:

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3NodeLeaf>
+#include "network_def.h"
 
 // member includes:
 
@@ -25,7 +26,7 @@
 
 #ifdef TA_QT3D
 
-class TA_API T3VEBody : public T3NodeLeaf {
+class E_API T3VEBody : public T3NodeLeaf {
   // body for virtual environment
   Q_OBJECT
   INHERITED(T3NodeLeaf)
@@ -47,7 +48,7 @@ class T3TransformBoxDragger; //
 
 taTypeDef_Of(T3VEBody);
 
-class TA_API T3VEBody : public T3NodeLeaf {
+class E_API T3VEBody : public T3NodeLeaf {
   // body for virtual environment
 #ifndef __MAKETA__
 typedef T3NodeLeaf inherited;

@@ -31,7 +31,7 @@ class DataTable; //
 
 taTypeDef_Of(DoGRegionSpec);
 
-class TA_API DoGRegionSpec : public VisRegionSpecBase {
+class E_API DoGRegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of Difference-of-Gaussian retinal filters -- used as part of overall RetinaProc processing object -- takes image bitmap inputs and produces filter activation outputs
 INHERITED(VisRegionSpecBase)
 public:

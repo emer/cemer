@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -38,11 +39,11 @@ class VEWorld; //
 class VESpace; // 
 
 class VEStatic; //
-SMARTREF_OF(TA_API, VEStatic); // VEStaticRef
+SMARTREF_OF(E_API, VEStatic); // VEStaticRef
 
 taTypeDef_Of(VEStatic);
 
-class TA_API VEStatic : public taNBase {
+class E_API VEStatic : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_vestc virtual environment static environment element -- not subject to physics and only interacts with bodies via collisions (cannot be part of a joint)
 INHERITED(taNBase)
 public:

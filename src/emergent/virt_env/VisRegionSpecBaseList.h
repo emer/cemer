@@ -27,7 +27,7 @@
 
 taTypeDef_Of(VisRegionSpecBaseList);
 
-class TA_API VisRegionSpecBaseList : public taList<VisRegionSpecBase> {
+class E_API VisRegionSpecBaseList : public taList<VisRegionSpecBase> {
   // ##CAT_Image a list of visual region image processing filters
 INHERITED(taList<VisRegionSpecBase>)
 public:

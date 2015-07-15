@@ -40,7 +40,7 @@ taTypeDef_Of(iDataTableModel);
 
 class TA_API iDataTableModel: public QAbstractTableModel,
   public ISigLinkClient {
-// #NO_INSTANCE #NO_CSS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
+// #NO_INSTANCE #NO_CSS #NO_MEMBERS class that implements the Qt Model interface for tables;\ncreated and owned by the DataTable
 INHERITED(QAbstractTableModel)
 friend class DataTableCols;
 friend class DataTable;
@@ -60,9 +60,9 @@ public:
     void                ClearFoundList();
     // remove all the previously found items from the list
     const QModelIndex*  GetNextFound();
-    // get the row/col of the next item from the current search
+    // #IGNORE get the row/col of the next item from the current search
     const QModelIndex*  GetPreviousFound();
-    // get the row/col of the previous item from the current search
+    // #IGNORE get the row/col of the previous item from the current search
     
 public slots:
   void                  matSigEmit(int col_idx); // mat editor calls when data changes

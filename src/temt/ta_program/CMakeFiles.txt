@@ -10,6 +10,10 @@
 
 # headers that need maketa run on them, but not moc
 set(ta_program_HEADS_MAKETA
+  AbstractScriptBase.h
+  ScriptBase.h
+  ScriptBase_List.h
+
   ProgramRef.h
   ProgVarRef.h
 
@@ -97,11 +101,6 @@ set(ta_program_HEADS_MAKETA
   RegisterArgs.h
 )
 
-# all heads
-set(ta_program_HEADS
-  ${ta_program_HEADS_MAKETA}
-)
-
 # multiple inheritence -- in correspondence with deps below
 set(ta_program_HEADS_MAKETA_MI
   Program.h
@@ -110,11 +109,20 @@ set(ta_program_HEADS_MAKETA_MI
 # note: there must be exactly same number of dependencies for each item
 # you can just add redundant ones to make it all work out
 set(ta_program_HEADS_MAKETA_MI_DEPS
-  "taBase.h;taNBase.h"
+  "../ta_core/taBase.h;../ta_core/taNBase.h"
+)
+
+# all heads
+set(ta_program_HEADS
+  ${ta_program_HEADS_MAKETA}
 )
 
 # NOTE: do NOT include .moc files -- auto generated
 set(ta_program_SRCS
+  AbstractScriptBase.cpp
+  ScriptBase.cpp
+  ScriptBase_List.cpp
+
   ProgramRef.cpp
   ProgVarRef.cpp
 

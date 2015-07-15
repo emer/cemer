@@ -82,10 +82,23 @@ SET_TA_PROPS(actr ${PROJECT_SOURCE_DIR}/src/emergent/actr)
 
 MAKETA_WRAP_H(emergent_actr_SRCS_MAKETA ${emergent_actr_HEADS_MAKETA} OPTIONS actr)
 
+# virt_env
+include(${PROJECT_SOURCE_DIR}/src/emergent/virt_env/CMakeFiles.txt)
+ADD_PATH_TO_FILES(emergent_virt_env_SRCS ${mypath}/virt_env "${virt_env_SRCS}")
+ADD_PATH_TO_FILES(emergent_virt_env_HEADS_MOC ${mypath}/virt_env "${virt_env_HEADS_MOC}")
+ADD_PATH_TO_FILES(emergent_virt_env_HEADS_MAKETA ${mypath}/virt_env "${virt_env_HEADS_MAKETA}")
+ADD_PATH_TO_FILES(emergent_virt_env_HEADS ${mypath}/virt_env "${virt_env_HEADS}")
+SET_TA_PROPS(virt_env ${PROJECT_SOURCE_DIR}/src/emergent/virt_env)
+
+MAKETA_WRAP_H(emergent_virt_env_SRCS_MAKETA ${emergent_virt_env_HEADS_MAKETA} OPTIONS virt_env)
+
+
 if (QT_USE_5)
   qt5_wrap_cpp(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
+  qt5_wrap_cpp(emergent_virt_env_SRCS_MOC ${emergent_virt_env_HEADS_MOC})
 else (QT_USE_5)
   QT4_WRAP_CPP(emergent_network_SRCS_MOC ${emergent_network_HEADS_MOC})
+  QT4_WRAP_CPP(emergent_virt_env_SRCS_MOC ${emergent_virt_env_HEADS_MOC})
 endif (QT_USE_5)
 
 # just list whole set of files here -- including headers for IDE's
@@ -97,6 +110,9 @@ set(emergentlib_SRCS
   ${emergent_cs_SRCS} ${emergent_cs_SRCS_MAKETA}
   ${emergent_so_SRCS} ${emergent_so_SRCS_MAKETA}
   ${emergent_actr_SRCS} ${emergent_actr_SRCS_MAKETA}
+  ${emergent_virt_env_SRCS} ${emergent_virt_env_SRCS_MOC}
+  ${emergent_virt_env_SRCS_MAKETA}
+
   ${emergent_network_HEADS}
   ${emergent_bp_HEADS}
   ${emergent_leabra_HEADS}
@@ -104,6 +120,7 @@ set(emergentlib_SRCS
   ${emergent_so_HEADS}
   ${emergent_actr_HEADS}
   ${emergent_leabra_CUDA_OBJS}
+  ${emergent_virt_env_HEADS}
 )
 
 EMERGENT_ADD_LIBRARY(emergentlib SHARED ${emergentlib_SRCS})

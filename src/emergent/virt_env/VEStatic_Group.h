@@ -27,7 +27,7 @@
 
 taTypeDef_Of(VEStatic_Group);
 
-class TA_API VEStatic_Group : public taGroup<VEStatic> {
+class E_API VEStatic_Group : public taGroup<VEStatic> {
   // ##CAT_VirtEnv a group of virtual environment static elements
 INHERITED(taGroup<VEStatic>)
 public:

@@ -35,7 +35,7 @@ SMARTREF_OF_CPP(taProject);
 
 taTypeDef_Of(taDataAnal);
 taTypeDef_Of(taDataGen);
-taTypeDef_Of(taImageProc);
+// taTypeDef_Of(taImageProc);
 
 #include <SigLinkSignal>
 #include <taMisc>
@@ -120,7 +120,7 @@ void taProject::InitLinks_impl() {
   FindMakeNewDataProc(&TA_taDataProc, "data_base")->SetUserData("NO_CLIP", true);
   FindMakeNewDataProc(&TA_taDataAnal, "data_anal")->SetUserData("NO_CLIP", true);
   FindMakeNewDataProc(&TA_taDataGen, "data_gen")->SetUserData("NO_CLIP", true);
-  FindMakeNewDataProc(&TA_taImageProc, "image_proc")->SetUserData("NO_CLIP", true);
+  // FindMakeNewDataProc(&TA_taImageProc, "image_proc")->SetUserData("NO_CLIP", true);
   // not actually useful to have these guys visible..  no user-accessible matrix objs
   // if in datatable, it should be accessible in above
 //   FindMakeNewDataProc(&TA_taMath_float, "math_float")->SetUserData("NO_CLIP", true);

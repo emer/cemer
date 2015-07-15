@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataView>
+#include "network_def.h"
 
 // member includes:
 
@@ -30,7 +31,7 @@ class VEStatic; //
 
 taTypeDef_Of(VEStaticView);
 
-class TA_API VEStaticView: public T3DataView {
+class E_API VEStaticView: public T3DataView {
   // view of one static environment element
 INHERITED(T3DataView)
 friend class VEWorldView;

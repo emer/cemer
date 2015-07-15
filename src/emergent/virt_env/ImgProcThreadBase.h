@@ -19,6 +19,7 @@
 // parent includes:
 #include <taNBase>
 #include <taThreadMgr>
+#include "network_def.h"
 
 // member includes:
 #include <taVector2i>
@@ -41,7 +42,7 @@ typedef void (ImgProcThreadBase::*ThreadImgProcMethod)(int);
 
 taTypeDef_Of(ImgProcCallTask);
 
-class TA_API ImgProcCallTask : public taTask {
+class E_API ImgProcCallTask : public taTask {
 INHERITED(taTask)
 public:
   ThreadImgProcCall    meth_call;	// #IGNORE method to call on the object
@@ -59,7 +60,7 @@ private:
 
 taTypeDef_Of(ImgProcCallThreadMgr);
 
-class TA_API ImgProcCallThreadMgr : public taThreadMgr {
+class E_API ImgProcCallThreadMgr : public taThreadMgr {
   // #INLINE thread manager for ImgProcCall tasks -- manages threads and tasks, and coordinates threads running the tasks
 INHERITED(taThreadMgr)
 public:
@@ -79,7 +80,7 @@ private:
 
 taTypeDef_Of(ImgProcThreadBase);
 
-class TA_API ImgProcThreadBase : public taNBase {
+class E_API ImgProcThreadBase : public taNBase {
   // #VIRT_BASE ##CAT_Image base class for image-processing code that uses threading -- defines a basic interface for thread calls to deploy filtering or other intensive computations
   INHERITED(taNBase)
 public:

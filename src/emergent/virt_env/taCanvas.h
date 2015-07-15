@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taImage>
+#include "network_def.h"
 
 // member includes:
 #ifndef __MAKETA__
@@ -33,7 +34,7 @@ class QPainterPath; // #IGNORE
 
 taTypeDef_Of(taCanvas);
 
-class TA_API taCanvas : public taImage {
+class E_API taCanvas : public taImage {
   // ##CAT_Data provides a mechanism for drawing onto an image buffer
 INHERITED(taImage)
 public:

@@ -27,7 +27,7 @@
 
 taTypeDef_Of(VETexture_List);
 
-class TA_API VETexture_List : public taList<VETexture> {
+class E_API VETexture_List : public taList<VETexture> {
   // ##CAT_VirtEnv a list of virtual environment textures
 INHERITED(taList<VETexture>)
 public:

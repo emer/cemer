@@ -27,7 +27,7 @@ class VEObjCarousel; //
 
 taTypeDef_Of(VEObjCarouselView);
 
-class TA_API VEObjCarouselView: public VEBodyView {
+class E_API VEObjCarouselView: public VEBodyView {
   // view of VEObjCarousel
 INHERITED(VEBodyView)
 friend class VEWorldView;

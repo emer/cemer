@@ -26,7 +26,7 @@
 
 taTypeDef_Of(GaborFitter);
 
-class TA_API GaborFitter : public GaborFilter {
+class E_API GaborFitter : public GaborFilter {
   // ##CAT_Image fits a gabor filter from image data
 INHERITED(GaborFilter)
 public:

@@ -27,7 +27,7 @@ class VEArm; //
 
 taTypeDef_Of(VEHillMuscle);
 
-class TA_API VEHillMuscle : public VEMuscle {
+class E_API VEHillMuscle : public VEMuscle {
 // muscle model from Gribble et al. 1998
   INHERITED(VEMuscle)
 public:
@@ -69,6 +69,6 @@ private:
   void Destroy();
 };
 
-SMARTREF_OF(TA_API, VEHillMuscle); // VEHillMuscleRef
+SMARTREF_OF(E_API, VEHillMuscle); // VEHillMuscleRef
 
 #endif // VEHillMuscle_h

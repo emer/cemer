@@ -13,7 +13,10 @@ set(ta_gui_HEADS_MAKETA_NOMOC
   iSize.h
   iRect.h
   iFont.h
+  iColor.h
 
+  taImage.h
+  
   taColor.h
   taColor_List.h
   RGBA.h
@@ -184,6 +187,19 @@ set(ta_gui_HEADS_MAKETA_NOMOC
 
   KeyBindings.h
   KeyBindings_List.h
+)
+
+# multiple inheritence -- in correspondence with deps below
+set(ta_gui_HEADS_MAKETA_MI
+  taDataView.h
+  taFontSpec.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(ta_gui_HEADS_MAKETA_MI_DEPS
+  "../ta_core/taBase.h;../ta_core/taNBase.h"
+  "../ta_core/taBase.h;../ta_core/taOBase.h"
 )
 
 # need both maketa and moc -- relatively rare
@@ -497,26 +513,16 @@ set(ta_gui_HEADS
   ${ta_gui_HEADS_NOMAKETA_MOC}
 )
 
-# multiple inheritence -- in correspondence with deps below
-set(ta_gui_HEADS_MAKETA_MI
-  taDataView.h
-  taFontSpec.h
-)
-
-# note: there must be exactly same number of dependencies for each item
-# you can just add redundant ones to make it all work out
-set(ta_gui_HEADS_MAKETA_MI_DEPS
-  "taBase.h;taNBase.h"
-  "taBase.h;taOBase.h"
-)
-
 # NOTE: do NOT include .moc files -- auto generated
 set(ta_gui_SRCS_MAKETA
   iSize.cpp
   iRect.cpp
   iFont.cpp
+  iColor.cpp
   taFontSpec.cpp
 
+  taImage.cpp
+  
   taColor.cpp
   taColor_List.cpp
   RGBA.cpp

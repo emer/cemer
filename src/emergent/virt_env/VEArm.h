@@ -31,7 +31,7 @@
 
 taTypeDef_Of(VEArmLengths);
 
-class TA_API VEArmLengths : public taOBase {
+class E_API VEArmLengths : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
@@ -72,7 +72,7 @@ private:
 
 taTypeDef_Of(VEArmAngles);
 
-class TA_API VEArmAngles : public taOBase {
+class E_API VEArmAngles : public taOBase {
   // #INLINE #INLINE_DUMP lengths of arm parameters
 INHERITED(taOBase)
 public:
@@ -103,7 +103,7 @@ private:
 
 taTypeDef_Of(VEArmDelays);
 
-class TA_API VEArmDelays : public taOBase {
+class E_API VEArmDelays : public taOBase {
   // #INLINE #INLINE_DUMP delay parameters -- used to delay inputs/outputs to VEArm -- the arm starts receiving the relevant inputs/outputs at the time step specified (so a delay value of 1 = no delay)
 INHERITED(taOBase)
 public:
@@ -128,7 +128,7 @@ private:
 
 taTypeDef_Of(VEArmGains);
 
-class TA_API VEArmGains : public taOBase {
+class E_API VEArmGains : public taOBase {
   // #INLINE #INLINE_DUMP gain parameters -- used to scale forces applied to muscle insertion points in VEArm
 INHERITED(taOBase)
 public:
@@ -146,7 +146,7 @@ private:
 
 taTypeDef_Of(VEArmPID);
 
-class TA_API VEArmPID : public taOBase {
+class E_API VEArmPID : public taOBase {
   // #INLINE #INLINE_DUMP PID control parameters for proportional, integral, derivative control signal that is typically used for online control of the arm
 INHERITED(taOBase)
 public:
@@ -164,7 +164,7 @@ private:
 
 taTypeDef_Of(VEArmIOErr);
 
-class TA_API VEArmIOErr : public taOBase {
+class E_API VEArmIOErr : public taOBase {
   // #INLINE #INLINE_DUMP error parameters -- used to determine when a movement error occurs, and signal corrective action from the cerebellum
 INHERITED(taOBase)
 public:
@@ -180,7 +180,7 @@ private:
 
 taTypeDef_Of(VEArmDamping);
 
-class TA_API VEArmDamping : public taOBase {
+class E_API VEArmDamping : public taOBase {
   // #INLINE #INLINE_DUMP damping parameters -- used to reduce oscillations in arm movements
 INHERITED(taOBase)
 public:
@@ -195,7 +195,7 @@ private:
 
 taTypeDef_Of(VEArm);
 
-class TA_API VEArm : public VEObject {
+class E_API VEArm : public VEObject {
   // #STEM_BASE a virtual environment arm object, consisting of 3 bodies: humerus, ulna, hand, and 3 joints: shoulder (a ball joint), elbow (a 2Hinge joint), and wrist (a FIXED joint for now)-- all constructed via ConfigArm -- bodies and joints are accessed by index so the order must not be changed
 INHERITED(VEObject)
 public:

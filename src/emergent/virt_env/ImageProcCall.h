@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <StaticMethodCall>
+#include "network_def.h"
 
 // member includes:
 
@@ -27,7 +28,7 @@ class ProgEl; //
 
 taTypeDef_Of(ImageProcCall);
 
-class TA_API ImageProcCall : public StaticMethodCall { 
+class E_API ImageProcCall : public StaticMethodCall { 
   // call a taImageProc function
 INHERITED(StaticMethodCall)
 public:

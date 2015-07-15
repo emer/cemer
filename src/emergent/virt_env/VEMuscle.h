@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // member includes:
 #include <taVector3f>
@@ -28,7 +29,7 @@ class VEArm; //
 
 taTypeDef_Of(VEMuscle);
 
-class TA_API VEMuscle : public taNBase {
+class E_API VEMuscle : public taNBase {
   // the basic stuff for all muscles
   INHERITED(taNBase)
 public:
@@ -56,6 +57,6 @@ private:
   void Destroy();
 };
 
-SMARTREF_OF(TA_API, VEMuscle); // VEMuscleRef
+SMARTREF_OF(E_API, VEMuscle); // VEMuscleRef
 
 #endif // VEMuscle_h

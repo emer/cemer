@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // member includes:
 
@@ -30,7 +31,7 @@ class taVector2i; //
 
 taTypeDef_Of(taImageProc);
 
-class TA_API taImageProc : public taNBase {
+class E_API taImageProc : public taNBase {
   // #STEM_BASE ##CAT_Image basic image processing operations; images are either rgb = 3 dimensional matrix with 3rd dim = 3 or greyscale (2 dim matrix)
   INHERITED(taNBase)
 public:

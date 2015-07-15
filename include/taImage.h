@@ -1,1 +1,1 @@
-#include "../src/emergent/virt_env/taImage.h"
+#include "../src/temt/ta_gui/taImage.h"

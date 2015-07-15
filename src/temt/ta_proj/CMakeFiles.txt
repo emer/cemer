@@ -68,6 +68,17 @@ set(ta_proj_HEADS_MAKETA_NOMOC
   taRootBase.h
 )
 
+# multiple inheritence -- in correspondence with deps below
+set(ta_proj_HEADS_MAKETA_MI
+  ControlPanel.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(ta_proj_HEADS_MAKETA_MI_DEPS
+  "../ta_core/taBase.h;../ta_core/taNBase.h"
+  )
+
 set(ta_proj_HEADS_NOMAKETA_MOC
   taRootBase_QObj.h
   TemtClient_QObj.h
@@ -99,19 +110,8 @@ set(ta_proj_HEADS
   ${ta_proj_HEADS_NOMAKETA_MOC}
 )
 
-# multiple inheritence -- in correspondence with deps below
-set(ta_proj_HEADS_MAKETA_MI
-  ControlPanel.h
-)
-
-# note: there must be exactly same number of dependencies for each item
-# you can just add redundant ones to make it all work out
-set(ta_proj_HEADS_MAKETA_MI_DEPS
-  "taBase.h;taNBase.h"
-)
-
 # NOTE: do NOT include .moc files -- auto generated
-set(ta_proj_SRCS_MAKETA
+set(ta_proj_SRCS
   taWikiURL.cpp
 
   ControlPanelItem.cpp

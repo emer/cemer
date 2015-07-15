@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataViewMain>
+#include "network_def.h"
 
 // member includes:
 #ifndef __MAKETA__
@@ -34,7 +35,7 @@ class SoOffscreenRendererQt; // #IGNORE
 
 taTypeDef_Of(VEWorldView);
 
-class TA_API VEWorldView : public T3DataViewMain {
+class E_API VEWorldView : public T3DataViewMain {
   // a virtual environment world viewer
 INHERITED(T3DataViewMain)
 friend class iViewPanelOfVEWorld;

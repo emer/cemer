@@ -84,7 +84,7 @@ taTypeDef_Of(MiscCall);
 taTypeDef_Of(DataProcCall);
 taTypeDef_Of(DataAnalCall);
 taTypeDef_Of(DataGenCall);
-taTypeDef_Of(ImageProcCall);
+// taTypeDef_Of(ImageProcCall);
 
 taTypeDef_Of(DataLoop);
 taTypeDef_Of(ResetDataRows);
@@ -228,7 +228,7 @@ void ProgramToolBoxProc(iToolBoxDockViewer* tb) {
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataProcCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataAnalCall);
   iProgramToolBar::ptbp_add_widget(tb, sec, &TA_DataGenCall);
-  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ImageProcCall);
+  //  iProgramToolBar::ptbp_add_widget(tb, sec, &TA_ImageProcCall);
 
   ////////////////////////////////////////////////////////////////////////////
   //            Data processing

@@ -15,5 +15,5 @@
 
 #include "ta_vector_ops.h"
 
-TA_BASEFUNS_CTORS_DEFN(ta_vector_ops);
+
 

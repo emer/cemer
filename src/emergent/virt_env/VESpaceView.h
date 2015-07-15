@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataViewPar>
+#include "network_def.h"
 
 // member includes:
 
@@ -30,7 +31,7 @@ class VESpace; //
 
 taTypeDef_Of(VESpaceView);
 
-class TA_API VESpaceView: public T3DataViewPar {
+class E_API VESpaceView: public T3DataViewPar {
   // view of one space
 INHERITED(T3DataViewPar)
 friend class VEWorldView;

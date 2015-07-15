@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataView>
+#include "network_def.h"
 
 // member includes:
 
@@ -30,7 +31,7 @@ class VEJoint; //
 
 taTypeDef_Of(VEJointView);
 
-class TA_API VEJointView: public T3DataView {
+class E_API VEJointView: public T3DataView {
   // view of one joint
 INHERITED(T3DataView)
 friend class VEWorldView;

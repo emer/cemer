@@ -32,7 +32,7 @@ class V1RetinaProc; //
 
 taTypeDef_Of(V1GaborSpec);
 
-class TA_API V1GaborSpec : public taOBase {
+class E_API V1GaborSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 simple cells as gabor filters: 2d Gaussian envelope times a sinusoidal plane wave -- by default produces 2 phase asymmetric edge detector filters
 INHERITED(taOBase)
 public:
@@ -62,7 +62,7 @@ private:
 
 taTypeDef_Of(V1sNeighInhib);
 
-class TA_API V1sNeighInhib : public taOBase {
+class E_API V1sNeighInhib : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image neighborhood inhibition for V1 simple layer -- inhibition spreads along orthogonal orientations to line tuning, to eliminate redundant reps of the same underlying edge
 INHERITED(taOBase)
 public:
@@ -82,7 +82,7 @@ private:
 
 taTypeDef_Of(V1MotionSpec);
 
-class TA_API V1MotionSpec : public taOBase {
+class E_API V1MotionSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 motion coding by simple cells
 INHERITED(taOBase)
 public:
@@ -105,7 +105,7 @@ private:
 
 taTypeDef_Of(V1ComplexSpec);
 
-class TA_API V1ComplexSpec : public taOBase {
+class E_API V1ComplexSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image params for v1 complex cells, which integrate over v1 simple polarity invariant inputs to compute length sum and end stopping detectors
 INHERITED(taOBase)
 public:
@@ -131,7 +131,7 @@ private:
 
 taTypeDef_Of(VisSpatIntegSpec);
 
-class TA_API VisSpatIntegSpec : public taOBase {
+class E_API VisSpatIntegSpec : public taOBase {
   // #STEM_BASE #INLINE #INLINE_DUMP ##CAT_Image spatial integration parameters for visual signals -- happens as last step after all other feature detection operations -- performs a MAX or AVG over rfields
 INHERITED(taOBase)
 public:
@@ -153,7 +153,7 @@ private:
 
 taTypeDef_Of(V1RegionSpec);
 
-class TA_API V1RegionSpec : public VisRegionSpecBase {
+class E_API V1RegionSpec : public VisRegionSpecBase {
   // #STEM_BASE ##CAT_Image specifies a region of V1 simple and complex filters -- used as part of overall V1Proc processing object -- produces Gabor and more complex filter activation outputs directly from image bitmap input -- each region is a separate matrix column in a data table (and network layer), and has a specified spatial resolution
 INHERITED(VisRegionSpecBase)
 public:

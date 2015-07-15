@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taOBase>
+#include "network_def.h"
 
 // member includes:
 
@@ -26,7 +27,7 @@
 
 taTypeDef_Of(VESurface);
 
-class TA_API VESurface : public taOBase {
+class E_API VESurface : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv surface properties for collisions
 INHERITED(taOBase)
 public:

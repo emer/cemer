@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -33,7 +34,7 @@ class SoTexture2Transform; // #IGNORE
 
 taTypeDef_Of(VETexture);
 
-class TA_API VETexture : public taNBase {
+class E_API VETexture : public taNBase {
   // #STEM_BASE #NO_UPDATE_AFTER ##CAT_VirtEnv texture mapping of an image onto a 3d object -- defined as a shared resource in the VEWorld that individual objects can point to
 INHERITED(taNBase)
 public:
@@ -91,6 +92,6 @@ public:
 //   void       UpdateAfterEdit_impl();
 };
 
-SMARTREF_OF(TA_API, VETexture); // VETextureRef
+SMARTREF_OF(E_API, VETexture); // VETextureRef
 
 #endif // VETexture_h

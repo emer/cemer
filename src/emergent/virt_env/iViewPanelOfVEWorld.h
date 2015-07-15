@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <iViewPanel>
+#include "network_def.h"
 
 // member includes:
 
@@ -32,9 +33,9 @@ class QLabel; //
 
 taTypeDef_Of(iViewPanelOfVEWorld);
 
-class TA_API iViewPanelOfVEWorld: public iViewPanel {
+class E_API iViewPanelOfVEWorld: public iViewPanel {
   // frame for gui interface to a VEWorldView -- usually posted by the worldview
-INHERITED(iViewPanel)
+  INHERITED(iViewPanel)
   Q_OBJECT
 public:
 

@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taOBase>
+#include "network_def.h"
 
 // member includes:
 
@@ -26,7 +27,7 @@
 
 taTypeDef_Of(ODEIntParams);
 
-class TA_API ODEIntParams : public taOBase {
+class E_API ODEIntParams : public taOBase {
   // ##INLINE ##NO_TOKENS #NO_UPDATE_AFTER ##CAT_VirtEnv ODE integration parameters
 INHERITED(taOBase)
 public:

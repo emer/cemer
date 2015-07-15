@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // member includes:
 #include <float_Matrix>
@@ -28,7 +29,7 @@ class DataTable; //
 
 taTypeDef_Of(GaborFilter);
 
-class TA_API GaborFilter : public taNBase {
+class E_API GaborFilter : public taNBase {
   // #STEM_BASE ##CAT_Image defines a gabor filter (gaussian times a plane sine wave) that highlights lines/edges in an image
 INHERITED(taNBase)
 public:

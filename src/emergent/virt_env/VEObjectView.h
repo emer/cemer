@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <T3DataViewPar>
+#include "network_def.h"
 
 // member includes:
 
@@ -30,7 +31,7 @@ class VEObject; //
 
 taTypeDef_Of(VEObjectView);
 
-class TA_API VEObjectView: public T3DataViewPar {
+class E_API VEObjectView: public T3DataViewPar {
   // view of one object: a group of bodies
 INHERITED(T3DataViewPar)
 friend class VEWorldView;

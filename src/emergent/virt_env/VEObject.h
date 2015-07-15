@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -34,7 +35,7 @@ class VEBody; //
 
 taTypeDef_Of(VEObject);
 
-class TA_API VEObject : public taNBase {
+class E_API VEObject : public taNBase {
   // #STEM_BASE ##CAT_VirtEnv ##EXT_veobj a virtual environment object, which contains interconnected bodies and their joints, and represents a sub-space of objects
 INHERITED(taNBase)
 public:
@@ -106,6 +107,6 @@ private:
   void  Destroy();
 };
 
-SMARTREF_OF(TA_API, VEObject); // VEObjectRef
+SMARTREF_OF(E_API, VEObject); // VEObjectRef
 
 #endif // VEObject_h

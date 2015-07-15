@@ -12,7 +12,6 @@
 set(virt_env_HEADS_MAKETA_NOMOC_base
   taAudioProc.h
 
-  taImage.h
   taCanvas.h
 
   ImgProcThreadBase.h
@@ -60,6 +59,14 @@ set(virt_env_HEADS_MAKETA_NOMOC_base
 
   VEObjCarousel.h
   VEHeightField.h
+
+  VEBodyView.h
+  VEJointView.h
+  VEObjectView.h
+  VEObjCarouselView.h
+  VEStaticView.h
+  VESpaceView.h
+  VEWorldView.h
 )
 
 # need both maketa and moc -- relatively rare
@@ -121,7 +128,6 @@ set(virt_env_HEADS
 set(virt_env_SRCS
   taAudioProc.cpp
 
-  taImage.cpp
   taCanvas.cpp
 
   ImgProcThreadBase.cpp
@@ -169,6 +175,14 @@ set(virt_env_SRCS
 
   VEObjCarousel.cpp
   VEHeightField.cpp
+
+  VEBodyView.cpp
+  VEJointView.cpp
+  VEObjectView.cpp
+  VEObjCarouselView.cpp
+  VEStaticView.cpp
+  VESpaceView.cpp
+  VEWorldView.cpp
 
   iViewPanelOfVEWorld.cpp
 

@@ -27,7 +27,7 @@ class SoSwitch; // #IGNORE
 
 taTypeDef_Of(VEObjCarousel);
 
-class TA_API VEObjCarousel : public VEBody {
+class E_API VEObjCarousel : public VEBody {
   // virtual environment object carousel -- contains a number of different objects that are pre-loaded and then selectable by name or number (info is contained in a DataTable)
 INHERITED(VEBody)
 public:

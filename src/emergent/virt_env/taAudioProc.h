@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // member includes:
 
@@ -26,7 +27,7 @@
 
 taTypeDef_Of(taAudioProc);
 
-class TA_API taAudioProc : public taNBase {
+class E_API taAudioProc : public taNBase {
   // #STEM_BASE ##CAT_Audio basic audio processing operations
 INHERITED(taNBase)
 public:	

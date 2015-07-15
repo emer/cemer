@@ -48,6 +48,17 @@ set(ta_3d_HEADS_MAKETA_NOMOC_base
   GraphTableView.h
 )
 
+# multiple inheritence -- in correspondence with deps below
+set(ta_3d_HEADS_MAKETA_MI
+  T3DataView.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(ta_3d_HEADS_MAKETA_MI_DEPS
+  "../ta_gui/taDataView.h;../ta_core/taBase.h"
+)
+
 # need both maketa and moc -- relatively rare
 # set(ta_3d_HEADS_MAKETA_MOC
 # )
@@ -63,6 +74,7 @@ set(ta_3d_HEADS_NOMAKETA_MOC_base
 
 set(ta_3d_HEADS_NOMAKETA_NOMOC_base
   T3Misc.h
+  NewViewHelper.h
 )
 
 # 3D headers -- do diff things depending on QT3D vs COIN
@@ -158,17 +170,6 @@ set(ta_3d_HEADS
   ${ta_3d_HEADS_NOMAKETA_MOC}
 )
 
-# multiple inheritence -- in correspondence with deps below
-set(ta_3d_HEADS_MAKETA_MI
-  T3DataView.h
-)
-
-# note: there must be exactly same number of dependencies for each item
-# you can just add redundant ones to make it all work out
-set(ta_3d_HEADS_MAKETA_MI_DEPS
-  "taDataView.h;taBase.h"
-)
-
 # NOTE: do NOT include .moc files -- auto generated
 # these should correspond directly to the files in the ta_3d_HEADS_MAKETA files
 set(ta_3d_SRCS_MAKETA
@@ -221,6 +222,7 @@ set(ta_3d_SRCS_NOMAKETA
   iT3ViewspaceWidget.cpp
 
   T3Misc.cpp
+  NewViewHelper.cpp
 )
 
 # 3d Nodes

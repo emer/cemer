@@ -18,6 +18,7 @@
 
 // parent includes:
 #include <taNBase>
+#include "network_def.h"
 
 // smartptr, ref includes
 #include <taSmartRefT>
@@ -36,7 +37,7 @@ class DataTable; //
 
 taTypeDef_Of(RetinaProc);
 
-class TA_API RetinaProc : public taNBase {
+class E_API RetinaProc : public taNBase {
   // #STEM_BASE ##CAT_Image ##DEF_CHILD_regions ##DEF_CHILDNAME_Regions full specification of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(taNBase)
 public:
@@ -150,12 +151,12 @@ protected:
 
 };
 
-SMARTREF_OF(TA_API, RetinaProc); // RetinaProcRef
+SMARTREF_OF(E_API, RetinaProc); // RetinaProcRef
 
 taTypeDef_Of(DoGRegionSpec);
 taTypeDef_Of(DoGRetinaProc);
 
-class TA_API DoGRetinaProc : public RetinaProc {
+class E_API DoGRetinaProc : public RetinaProc {
   // Difference-of-Gaussians version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
 public:
@@ -170,7 +171,7 @@ public:
 taTypeDef_Of(V1RegionSpec);
 taTypeDef_Of(V1RetinaProc);
 
-class TA_API V1RetinaProc : public RetinaProc {
+class E_API V1RetinaProc : public RetinaProc {
   // V1 version of retinal filtering -- takes raw input images, applies various transforms, and then runs through filtering -- first region is used for retina size and other basic params
 INHERITED(RetinaProc)
 public:
