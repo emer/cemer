@@ -24,9 +24,16 @@
 #include <taAxisAngle>
 
 // declare all other types mentioned but not required to include:
-class SoCamera; // #IGNORE
 class iAction; //
 class QToolButton; // #IGNORE
+
+#ifdef TA_QT3D
+#ifndef __MAKETA__
+#include <Qt3DCore/QCamera>
+#endif
+#else // TA_QT3D
+class SoCamera; // #IGNORE
+#endif // TA_QT3D
 
 
 taTypeDef_Of(T3SavedView);
@@ -40,10 +47,19 @@ public:
   taAxisAngle   orient;         // #READ_ONLY #EXPERT orientation of camera in view
   float         focal_dist;     // #READ_ONLY #EXPERT focal distance
 
+#ifdef TA_QT3D
+#ifndef __MAKETA__
+  void          getCameraParams(Qt3D::QCamera* cam);
+  // #IGNORE get the camera parameters into our saved values
+  bool          setCameraParams(Qt3D::QCamera* cam);
+  // #IGNORE set the camera parmeters from our saved values (returns false if no view saved)
+#endif
+#else // TA_QT3D
   void          getCameraParams(SoCamera* cam);
   // #IGNORE get the camera parameters into our saved values
   bool          setCameraParams(SoCamera* cam);
   // #IGNORE set the camera parmeters from our saved values (returns false if no view saved)
+#endif // TA_QT3D
 
   void          SetCameraPos(float x, float y, float z) { pos.SetXYZ(x,y,z); }
   // #CAT_Display set camera position

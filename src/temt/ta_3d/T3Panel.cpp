@@ -86,6 +86,9 @@ void T3Panel::CopyFromViewPanel(T3Panel* cp) {
 
 void T3Panel::AddView(T3DataView* view) {
   root_view.children.Add(view);
+#ifdef TA_QT3D
+  // view->node_so()->setParent(&root_view);
+#endif // TA_QT3D
   if (dvwidget())
     view->OnWindowBind(widget());
 }
@@ -217,9 +220,7 @@ void T3Panel::Render_impl() {
 void T3Panel::Render_post() {
   inherited::Render_post();
   root_view.Render_post();
-#ifndef TA_QT3D
   widget()->setSceneTop(root_view.node_so());
-#endif
   widget()->Render_post();
   // on first opening, do a viewall to center all geometry in viewer
   if(saved_views[0]->pos == 0.0f && saved_views[0]->focal_dist == 0.0f) {
@@ -501,4 +502,14 @@ void T3Panel::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_v
   }
   UpdateAfterEdit();
 }
+
+#ifdef TA_QT3D
+
+void T3Panel::DebugViewNodes() {
+  if(!widget()) return;
+  T3ExaminerViewer* viewer = widget()->t3viewer();
+  T3DataView::DebugNodeTree_impl(*(viewer->root_entity), 0);
+}
+
+#endif // TA_QT3D
 

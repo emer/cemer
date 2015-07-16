@@ -23,6 +23,8 @@
 
 #ifdef TA_QT3D
 
+#include <T3TwoDText>
+
 T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz, int axn)
   : inherited(parent, dataView_)
   , axis(ax)

@@ -139,7 +139,7 @@ void iT3ViewspaceWidget::setT3viewer(T3ExaminerViewer* value) {
   }
   else {
 #ifdef TA_QT3D
-    // m_t3viewer->setSceneGraph(m_root_so);
+    m_t3viewer->setSceneGraph(m_root_so);
 #else
     sel_so = new SoSelection();
     switch (m_selMode) {

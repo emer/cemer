@@ -185,10 +185,13 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   root_entity = new Qt3D::QEntity();
   camera = new Qt3D::QCamera(root_entity);
 
-  camera->lens()->setPerspectiveProjection(45.0f, 16.0f/9.0f, 0.1f, 1000.0f);
-  camera->setPosition(QVector3D(0, 0, -40.0f));
-  camera->setUpVector(QVector3D(0, 1, 0));
-  camera->setViewCenter(QVector3D(0, 0, 0));
+  QSize sz = container->size();
+  float aspect_ratio = (float)sz.width() / (float)sz.height();
+  
+  camera->lens()->setPerspectiveProjection(45.0f, aspect_ratio, 0.1f, 1000.0f);
+  camera->setPosition(QVector3D(0.0f, 0.0f, -10.0f));
+  camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
+  camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
 
   framegraph = new Qt3D::QFrameGraph();
@@ -196,38 +199,6 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   forward_renderer->setClearColor(bg_color);
   forward_renderer->setCamera(camera);
   framegraph->setActiveFrameGraph(forward_renderer);
-
-  // todo: following is temporary test code
-
-  // Material
-  Qt3D::QMaterial *material = new Qt3D::QPhongMaterial(root_entity);
-
-  // Torus
-  Qt3D::QEntity *torusEntity = new Qt3D::QEntity();
-  Qt3D::QTorusMesh *torusMesh = new Qt3D::QTorusMesh;
-  torusMesh->setRadius(5);
-  torusMesh->setMinorRadius(1);
-  torusMesh->setRings(100);
-  torusMesh->setSlices(20);
-
-  Qt3D::QTransform *torusTransform = new Qt3D::QTransform;
-  Qt3D::QScaleTransform *torusScaleTransform = new Qt3D::QScaleTransform;
-  torusScaleTransform->setScale3D(QVector3D(1.5, 1, 0.5));
-
-  Qt3D::QRotateTransform *torusRotateTransform = new Qt3D::QRotateTransform;
-  torusRotateTransform->setAxis(QVector3D(1, 0, 0));
-  torusRotateTransform->setAngleDeg(45);
-
-  torusTransform->addTransform(torusScaleTransform);
-  torusTransform->addTransform(torusRotateTransform);
-
-  torusEntity->addComponent(torusMesh);
-  torusEntity->addComponent(torusTransform);
-  torusEntity->addComponent(material);
-
-  setSceneGraph(torusEntity);
-  
-  // end test code
   
   root_entity->addComponent(framegraph);
   engine->setRootEntity(root_entity);
@@ -1000,7 +971,8 @@ void T3ExaminerViewer::viewAll() {
 
 void T3ExaminerViewer::zoomView(const float diffvalue) {
 #ifdef TA_QT3D
-  float multiplicator = float(exp(diffvalue));
+  //  float multiplicator = float(exp(diffvalue));
+  float multiplicator = diffvalue;
 
   if (camera->projectionType() == Qt3D::QCameraLens::OrthogonalProjection) {
     // Since there's no perspective, "zooming" in the original sense
@@ -1011,8 +983,21 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
     camera->setAspectRatio(view_size * multiplicator);
   }
   else if (camera->projectionType() == Qt3D::QCameraLens::PerspectiveProjection) {
-    float zoom = camera->fieldOfView();
-    camera->setFieldOfView(zoom * multiplicator);
+    Qt3D::QTransform* trns = camera->transform();
+    QVector3D direction = trns->matrix().mapVector(QVector3D(0.0f, 0.0f, -1.0f));
+    
+    const QVector3D oldpos = camera->position();
+    const QVector3D newpos = oldpos + multiplicator * direction;
+    
+    const float distorigo = newpos.length();
+    // sqrt(FLT_MAX) == ~ 1e+19, which should be both safe for further
+    // calculations and ok for the end-user and app-programmer.
+    if (distorigo < 1.0e+19) {
+      camera->setPosition(newpos);
+      // camera->focalDistance = newfocaldist;
+    }
+    // float zoom = camera->fieldOfView();
+    // camera->setFieldOfView(zoom * multiplicator);
   }
 #else
   SoCamera* cam = getViewerCamera();
@@ -1121,7 +1106,7 @@ void T3ExaminerViewer::vertPanView(const float pan_value) {
 
 void T3ExaminerViewer::RotateView(const QVector3D& axis, const float ang) {
   QQuaternion rotation(ang, axis);
-  camera->rotate(rotation);
+  camera->rotateAboutViewCenter(rotation);
   syncViewerMode();             // keep it sync'd -- this tends to throw it off
 }
 
@@ -1238,10 +1223,14 @@ void T3ExaminerViewer::setInteractionModeOn(bool onoff, bool re_render) {
 
 void T3ExaminerViewer::saveView(int view_no) {
   if(view_no < 0 || view_no >= n_views) return;
-#ifndef TA_QT3D
+  T3SavedView* sv = saved_views[view_no];
+#ifdef TA_QT3D
+  sv->getCameraParams(camera);
+  if(sv->view_action)
+    sv->view_action->setChecked(true);
+#else // TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
-  T3SavedView* sv = saved_views[view_no];
   sv->getCameraParams(cam);
   if(sv->view_action)
     sv->view_action->setChecked(true);
@@ -1251,10 +1240,13 @@ void T3ExaminerViewer::saveView(int view_no) {
 
 void T3ExaminerViewer::gotoView(int view_no) {
   if(view_no < 0 || view_no >= n_views) return;
-#ifndef TA_QT3D
+  T3SavedView* sv = saved_views[view_no];
+#ifdef TA_QT3D
+  sv->setCameraParams(camera);
+#else // TA_QT3D
   SoCamera* cam = getViewerCamera();
   if(!cam) return;
-  saved_views[view_no]->setCameraParams(cam);
+  sv->setCameraParams(cam);
 #endif
   cur_view_no = view_no;
   syncViewerMode();
@@ -1381,3 +1373,13 @@ do_inherited:
   return inherited::eventFilter(obj, ev_);
 #endif
 }
+
+void T3ExaminerViewer::resizeEvent(QResizeEvent* ev) {
+  inherited::resizeEvent(ev);
+#ifdef TA_QT3D
+  QSize sz = view3d->size();
+  float aspect_ratio = (float)sz.width() / (float)sz.height();
+  camera->lens()->setAspectRatio(aspect_ratio);
+#endif // TA_QT3D
+}
+

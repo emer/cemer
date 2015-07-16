@@ -187,24 +187,6 @@ public:
   int_Array             main_y_plots;           // #IGNORE indicies of active guys using main y axis
   int_Array             alt_y_plots;            // #IGNORE indicies of active guys using alt y axis
 
-  GraphPlotView         plot_1;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_2;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_3;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_4;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_5;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_6;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_7;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         plot_8;         // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-
-  GraphPlotView         err_1;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_2;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_3;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_4;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_5;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_6;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_7;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-  GraphPlotView         err_8;          // #HIDDEN #NO_SAVE #OBSOLETE obsolete plot info -- not used for version 6.3.5 and above
-
 protected:
   int                   first_mat;              // which is the matrix guy to plot
 
@@ -267,8 +249,6 @@ protected:
   virtual void          PlotData_String(GraphPlotView& plv_str, GraphPlotView& plv_y,
                                         T3GraphLine* t3gl);
   // plot string data from given plot view column using Y values from given Y column
-
-  void          LoadObsoletePlotData(); // #IGNORE
 
   void          OnWindowBind_impl(iT3Panel* vw) override;
   void          Clear_impl() override;

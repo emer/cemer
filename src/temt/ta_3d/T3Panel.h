@@ -138,6 +138,11 @@ public:
                                    float vert_space = 0.2, bool save_views=false);
   // #CAT_Display #BUTTON layout the elements within this view in a grid, starting with the first item in the lower left corner, moving horizontally and up through the items, with given number of items along the horizontal axis, and given spacing between items (can be negative to pack closer together)  -- if save_views then the saved views 1-n will be aligned with each of the elements in turn
 
+#ifdef TA_QT3D
+  virtual void          DebugViewNodes();
+  // #BUTTON display view node tree
+#endif // TA_QT3D
+  
   virtual bool          SaveImageEPS(const String& fname = "");
   // #CAT_Display save image in EPS format
   virtual bool          SaveImageIV(const String& fname = "");

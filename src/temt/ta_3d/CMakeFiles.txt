@@ -70,6 +70,10 @@ set(ta_3d_HEADS_NOMAKETA_MOC_base
   T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
+
+  T3Entity.h
+  T3TwoDText.h
+  T3Frame.h
 )
 
 set(ta_3d_HEADS_NOMAKETA_NOMOC_base
@@ -223,6 +227,10 @@ set(ta_3d_SRCS_NOMAKETA
 
   T3Misc.cpp
   NewViewHelper.cpp
+
+  T3Entity.cpp
+  T3TwoDText.cpp
+  T3Frame.cpp
 )
 
 # 3d Nodes

@@ -16,9 +16,6 @@
 #ifndef T3Node_h
 #define T3Node_h 1
 
-// todo: once Qt3D switch-over is complete, then remove all T3Node-based files from
-// maketa -- don't need it!
-
 // parent includes:
 #include "ta_def.h"
 
@@ -29,99 +26,12 @@ class iVec3f; //
 
 #ifdef __MAKETA__
 
-class T3Entity; // #IGNORE
-class T3TwoDText; // #IGNORE
 class T3Node; // #IGNORE
-class Qt3DNode; // #IGNORE
 
 #else
 
-#include <Qt3DCore>
-#include <Qt3DRenderer>
-#include <Qt3DCore/QTransform>
-#include <Qt3DCore/QScaleTransform>
-#include <Qt3DCore/QTranslateTransform>
-#include <Qt3DCore/QRotateTransform>
-
-// for maketa:
-typedef Qt3D::QNode Qt3DNode; 
-
-#include <QLabel>
-#include <QImage>
-
-// todo: move these guys to their own separate files at some point
-
-class TA_API T3Entity : public Qt3D::QEntity {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS Qt3D entity that retains pointers to the standard components for rendering, for convenience, and automatically adds the standard transforms (scale, translate, rotation) in the constructor
-  Q_OBJECT
-  INHERITED(Qt3D::QEntity)
-public:
-  Qt3D::QTransform          transform; // overall transform applied to this node -- contains each of the following items:
-  Qt3D::QScaleTransform     scale;     // overall scale transform applied to this node
-  Qt3D::QTranslateTransform translate; // overall translation transform applied to this node
-  Qt3D::QRotateTransform    rotate;    // overall rotation transform applied to this node
-
-  Qt3D::QAbstractMesh*  mesh;      // mesh component for this node
-  Qt3D::QMaterial*      material;  // material for this node
-
-  void  addMesh(Qt3D::QAbstractMesh* msh)
-  { mesh = msh; addComponent(mesh); }
-  // adds mesh component, records the last one added
-
-  void  addMaterial(Qt3D::QMaterial* mat)
-  { material = mat; addComponent(material); }
-  // adds material component, records the last one added
-
-  T3Entity(Qt3DNode* parent = 0);
-  ~T3Entity();
-};
-
-class TA_API T3TwoDTexture : public Qt3D::QAbstractTextureImage {
-  // ##NO_INSTANCE ##NO_TOKENS ##NO_CSS ##NO_MEMBERS texture provider that returns a texture of a QLabel text object
-  Q_OBJECT
-  INHERITED(Qt3D::QAbstractTextureImage)
-public:
-  QImage*       image;          // image that the label is rendered into, used for the image data
-
-  virtual void  renderLabel(QLabel& label);
-  // render the label to the image
-  
-  Qt3D::QTextureDataFunctorPtr dataFunctor() const override;
-
-  explicit T3TwoDTexture(Qt3DNode* parent = 0);
-  ~T3TwoDTexture();
-
-protected:
-  void copy(const Qt3DNode *ref) override;
-private:
-  QT3D_CLONEABLE(T3TwoDTexture)
-};
-
-enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
-  T3_ALIGN_LEFT  =  Qt::AlignLeft,
-  T3_ALIGN_RIGHT = Qt::AlignRight,
-  T3_ALIGN_CENTER = Qt::AlignHCenter,
-  T3_ALIGN_JUSTIFY = Qt::AlignJustify,
-};
-
-class TA_API T3TwoDText : public T3Entity {
-  // flat two-d text element that projects a QLabel onto a plane and shows that..
-  Q_OBJECT
-  INHERITED(T3Entity)
-public:
-  QLabel        label;          // label containing full info for what text to render and how
-  T3TwoDTexture texture;        // texture for rendering
-
-  virtual void  setText(const QString& txt);
-  // set the text and update the rendered display (just setting in label does not update render) -- call updateRender() explictly if other properties of the label are changed -- set font etc in advance of calling setText for greatest efficiency
-
-  T3TwoDText(Qt3DNode* parent = 0);
-  ~T3TwoDText();
-
-public slots:
-  virtual void  updateRender(); // update the rendered version of the text
-  
-};
+#include <T3Entity>
+class T3TwoDText;
 
 class TA_API T3Node : public T3Entity {
   // a base class for Qt3D nodes that are paired with corresponding T3DataView object that provides persistence and generally controls behavior of this node -- T3Node can be relatively passive render stuff for time being
@@ -139,9 +49,11 @@ public:
   // create the caption node
   virtual void		setDefaultCaptionTransform();
   // set the default caption transform; this is called after creating caption first time
-  void			resizeCaption(float sz) {};
+  virtual void	        resizeCaption(float sz);
+  // resize caption to given fractional height relative to a 1.0 viewport height
   
-  virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
+  virtual void		clear() { } // optional method, for clearing out the content; called from ReInit
+  virtual void		updateNode() { } // update all the geom, children etc of node
 
   T3Node(Qt3DNode* parent = 0, T3DataView* dataView_ = NULL);
   ~T3Node();

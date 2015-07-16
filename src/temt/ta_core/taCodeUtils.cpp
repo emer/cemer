@@ -213,7 +213,13 @@ bool taCodeUtils::ReplaceInDir(const String& search_nm, const String& repl_nm,
 bool taCodeUtils::ReplaceInAllFiles(const String& search_nm, const String& repl_nm,
                                     const String& top_path) {
 
-  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_core");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_math");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_program");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_data");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_proj");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_gui");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/ta_3d");
   ReplaceInDir(search_nm, repl_nm, top_path, "src/temt/css");
   ReplaceInDir(search_nm, repl_nm, top_path, "include");
   ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/network");
@@ -221,6 +227,8 @@ bool taCodeUtils::ReplaceInAllFiles(const String& search_nm, const String& repl_
   ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/bp");
   ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/cs");
   ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/so");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/actr");
+  ReplaceInDir(search_nm, repl_nm, top_path, "src/emergent/virt_env");
   return true;
 }
 
@@ -273,13 +281,21 @@ bool taCodeUtils::FixIncludes(const String& top_path) {
     String fnm = files[i];
     if(fnm.endsWith(".h")) continue; // only not-h guys
     int rpl = 0;
-    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_core/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_math/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_program/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_data/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_proj/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_gui/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/ta_3d/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/temt/css/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/network/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/bp/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/cs/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/so/", "./");
     rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/leabra/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/actr/", "./");
+    rpl += taMisc::ReplaceStringInFile(inc_path + fnm, "../src/emergent/virt_env/", "./");
     if(rpl > 0) {
       taMisc::Info("replaced in:",fnm,"count:",String(rpl));
     }

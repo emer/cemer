@@ -1649,6 +1649,7 @@ void taMisc::Init_Types() {
   }
 
   // initialize all classes that have an initClass method (ex. Inventor subtypes)
+  // todo: remove this after TA_QT3D is only thing used
   if(taMisc::use_gui) {
     for (int i = TypeDefInitRegistrar::types_list_last_size; i < types.size; ++i) {
       TypeDef* typ = types.FastEl(i);

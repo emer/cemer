@@ -15,12 +15,17 @@
 
 #include "T3SavedView.h"
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
 #include <Inventor/nodes/SoOrthographicCamera.h>
 
-TA_BASEFUNS_CTORS_DEFN(T3SavedView);
+#endif // TA_QT3D
 
+TA_BASEFUNS_CTORS_DEFN(T3SavedView);
 
 void T3SavedView::Initialize() {
   view_saved = false;
@@ -29,6 +34,29 @@ void T3SavedView::Initialize() {
   focal_dist = 0.0f;
   pos = 0.0f;
 }
+
+#ifdef TA_QT3D
+
+void T3SavedView::getCameraParams(Qt3D::QCamera* cam) {
+  pos = cam->position();
+  Qt3D::QTransform* trns = cam->transform();
+  // QVector3DSbVec3f sb_axis;
+  // cam->orientation.getValue(sb_axis, orient.rot);
+  // focal_dist = cam->focalDistance.getValue();
+  // orient.x = sb_axis[0]; orient.y = sb_axis[1]; orient.z = sb_axis[2];
+
+  view_saved = true;
+}
+
+bool T3SavedView::setCameraParams(Qt3D::QCamera* cam) {
+  if(!view_saved) return false;
+  cam->setPosition(pos);
+  // cam->orientation.setValue(SbVec3f(orient.x, orient.y, orient.z), orient.rot);
+  // cam->focalDistance.setValue(focal_dist);
+  return true;
+}
+
+#else // TA_QT3D
 
 void T3SavedView::getCameraParams(SoCamera* cam) {
   SbVec3f sb_pos = cam->position.getValue();
@@ -49,3 +77,5 @@ bool T3SavedView::setCameraParams(SoCamera* cam) {
   cam->focalDistance.setValue(focal_dist);
   return true;
 }
+
+#endif // TA_QT3D

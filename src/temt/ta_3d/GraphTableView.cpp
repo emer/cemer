@@ -28,7 +28,6 @@
 #include <iT3Panel>
 #include <T3Axis>
 #include <T3Color>
-#include <SoLineBox3d>
 #include <taVector2i>
 #include <taSvg>
 #include <float_Matrix>
@@ -37,6 +36,11 @@
 #include <QGuiApplication>
 #endif
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
+#include <SoLineBox3d>
 #include <SoScrollBar>
 #include <SoImageEx>
 
@@ -62,6 +66,8 @@
 #include <Inventor/actions/SoRayPickAction.h>
 #include <Inventor/SoPickedPoint.h>
 #include <Inventor/SoEventManager.h>
+
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(GraphTableView);
 
@@ -231,24 +237,6 @@ void GraphTableView::InitLinks() {
   
   taBase::Own(main_y_plots, this);
   taBase::Own(alt_y_plots, this);
-  
-  // below are obsolete:
-  taBase::Own(plot_1, this);
-  taBase::Own(plot_2, this);
-  taBase::Own(plot_3, this);
-  taBase::Own(plot_4, this);
-  taBase::Own(plot_5, this);
-  taBase::Own(plot_6, this);
-  taBase::Own(plot_7, this);
-  taBase::Own(plot_8, this);
-  taBase::Own(err_1, this);
-  taBase::Own(err_2, this);
-  taBase::Own(err_3, this);
-  taBase::Own(err_4, this);
-  taBase::Own(err_5, this);
-  taBase::Own(err_6, this);
-  taBase::Own(err_7, this);
-  taBase::Own(err_8, this);
 }
 
 void GraphTableView::CutLinks() {
@@ -260,24 +248,6 @@ void GraphTableView::CutLinks() {
   
   plots.CutLinks();
   errbars.CutLinks();
-  
-  // below are obsolete:
-  plot_1.CutLinks();
-  plot_2.CutLinks();
-  plot_3.CutLinks();
-  plot_4.CutLinks();
-  plot_5.CutLinks();
-  plot_6.CutLinks();
-  plot_7.CutLinks();
-  plot_8.CutLinks();
-  err_1.CutLinks();
-  err_2.CutLinks();
-  err_3.CutLinks();
-  err_4.CutLinks();
-  err_5.CutLinks();
-  err_6.CutLinks();
-  err_7.CutLinks();
-  err_8.CutLinks();
   
   inherited::CutLinks();
 }
@@ -351,10 +321,6 @@ void GraphTableView::UpdateAfterEdit_impl(){
     point_size = 0.01f;
   
   if(taMisc::is_loading) {
-    taVersion v635(6, 3, 5);
-    if(taMisc::loading_version < v635) {
-      LoadObsoletePlotData();
-    }
     return;                     // end of loading stuff
   }
   
@@ -551,32 +517,6 @@ GraphPlotView* GraphTableView::AltY() {
   if(alt_y_plots.size > 0)
     return plots.SafeEl(alt_y_plots[0]);
   return NULL;
-}
-
-void GraphTableView::LoadObsoletePlotData() {
-  if(tot_plots < 8) {
-    tot_plots = 8;
-    plots.SetSize(tot_plots);
-    errbars.SetSize(tot_plots);
-  }
-  
-  plots[0]->CopyFromView(&plot_1);
-  plots[1]->CopyFromView(&plot_2);
-  plots[2]->CopyFromView(&plot_3);
-  plots[3]->CopyFromView(&plot_4);
-  plots[4]->CopyFromView(&plot_5);
-  plots[5]->CopyFromView(&plot_6);
-  plots[6]->CopyFromView(&plot_7);
-  plots[7]->CopyFromView(&plot_8);
-  
-  errbars[0]->CopyFromView(&err_1);
-  errbars[1]->CopyFromView(&err_2);
-  errbars[2]->CopyFromView(&err_3);
-  errbars[3]->CopyFromView(&err_4);
-  errbars[4]->CopyFromView(&err_5);
-  errbars[5]->CopyFromView(&err_6);
-  errbars[6]->CopyFromView(&err_7);
-  errbars[7]->CopyFromView(&err_8);
 }
 
 void GraphTableView::DefaultPlotStyles(int start_y, int end_y) {

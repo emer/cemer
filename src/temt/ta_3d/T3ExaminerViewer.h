@@ -313,6 +313,7 @@ protected:
   bool event(QEvent* ev_) override;
   void keyPressEvent(QKeyEvent* e) override;
   bool eventFilter(QObject *obj, QEvent *event) override;
+  void resizeEvent(QResizeEvent* ev) override;
 };
 
 #endif // T3ExaminerViewer_h

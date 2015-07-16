@@ -104,7 +104,6 @@ protected:
 
   void         showEvent(QShowEvent* ev) override;
   void         hideEvent(QHideEvent* ev) override;
-
   void         resizeEvent(QResizeEvent* ev) override;
 
 private:

@@ -108,6 +108,10 @@ public:
   T3Node*               node_so() const; // #IGNORE
   void                  AddRemoveChildNode(T3Node* node, bool adding);
   // #IGNORE can be used for manually using non-default T3Node items in a child; add in Pre_impl, remove in Clear_impl
+  virtual void          DebugNodeTree();
+  // #BUTTON dump a listing of all the nodes under this one's node_so
+  static void           DebugNodeTree_impl(const QObject& nd, int indent);
+  // #IGNORE dump a listing of all the nodes under this one's node_so
 #else
   T3Node*               node_so() const {return m_node_so.ptr();} // #IGNORE
   static T3DataView*    GetViewFromPath(const SoPath* path); // #IGNORE search path backwards to find the innermost T3DataView

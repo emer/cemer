@@ -42,7 +42,41 @@ void T3DataView::AddRemoveChildNode(T3Node* node, bool adding) {
 }
 
 void T3DataView::AddRemoveChildNode_impl(T3Node* node, bool adding) {
-  // node_so()->addRemoveChildNode(node, adding);
+  if(adding) {
+    node->setParent(node_so());
+  }
+  else {
+    node->setParent(NULL);
+  }
+}
+
+void T3DataView::DebugNodeTree() {
+  T3Node* nd = node_so();
+  if(!nd) {
+    taMisc::Info(name, "node is null");
+    return;
+  }
+  DebugNodeTree_impl(*nd, 0);
+}
+
+void T3DataView::DebugNodeTree_impl(const QObject& nd, int indent) {
+  const QObjectList& chlds = nd.children();
+  const int sz = chlds.size();
+  String ndclass = nd.metaObject()->className();
+  String istr;
+  taMisc::IndentString(istr, indent);
+  taMisc::Info(istr, ndclass, "node has", String(sz), "children");
+  for(int i=0; i<sz; i++) {
+    const QObject* chld = chlds.at(i);
+    if(chld) {
+      DebugNodeTree_impl(*chld, indent+1);
+    }
+    else {
+      String nistr;
+      taMisc::IndentString(nistr, indent+1);
+      taMisc::Info(nistr, "child node:", String(i), "is null");
+    }
+  }
 }
 
 #else // TA_QT3D

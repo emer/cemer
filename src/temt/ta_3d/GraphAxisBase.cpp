@@ -28,7 +28,7 @@
 
 #ifdef TA_QT3D
 
-#include <Qt3DCore/QRotateTransform>
+#include <T3TwoDText>
 
 #else // TA_QT3D
 

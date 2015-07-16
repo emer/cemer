@@ -24,6 +24,12 @@
 #include <iVec3f>
 #endif
 
+#ifdef __MAKETA__
+class QVector3D; //
+#else
+#include <QVector3D>
+#endif
+
 // declare all other types mentioned but not required to include:
 class taMatrix; // 
 class taVector3i; //
@@ -55,8 +61,10 @@ public:
   taVector3f(int xx)                          { SetXYZ(xx, xx, xx); }
   taVector3f(int xx, int yy, int zz)          { SetXYZ(xx, yy, zz); }
   taVector3f(const taVector3i& cp);      // conversion constructor
+  taVector3f(const QVector3D& cp)             { SetXYZ(cp.x(), cp.y(), cp.z()); }
 
   taVector3f& operator=(const taVector3i& cp);
+  taVector3f& operator=(const QVector3D& cp)  { SetXYZ(cp.x(), cp.y(), cp.z()); return *this; }
   inline taVector3f& operator=(float cp)              { x = cp; y = cp; z = cp; return *this;}
   inline taVector3f& operator=(double cp)             { x = (float)cp; y = (float)cp; z = (float)cp; return *this;}
 
@@ -147,6 +155,8 @@ public:
 #ifdef TA_GUI
   operator iVec3f() const {return iVec3f(x, y, z);}
 #endif
+  operator QVector3D() const { return QVector3D(x, y, z); }
+
 private:
   inline void   Initialize()                    { z = 0.0; }
   inline void   Destroy()                       { };
