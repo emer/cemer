@@ -26,8 +26,8 @@ int T3ColorBar::blocks() {
 
 #ifdef TA_QT3D
 
-T3ColorBar::T3ColorBar(Qt3DNode* parent, ColorScale* c, T3DataView* dataView_)
-  : T3NodeLeaf(parent)
+T3ColorBar::T3ColorBar(Qt3DNode* parent, T3DataView* dataView_, ColorScale* c)
+  : inherited(parent, dataView_)
 {
 }
 

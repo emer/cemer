@@ -141,7 +141,7 @@ String T3GraphLine::markerAtSvg(const iVec3f& pt, MarkerStyle style) {
 #ifdef TA_QT3D
 
 T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz)
-  : T3NodeLeaf(parent)
+  : inherited(parent, dataView_)
   , font_size(fnt_sz)
 {
 }

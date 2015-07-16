@@ -114,6 +114,9 @@ void LayerView::DoHighlightColor(bool apply) {
   if (!nd) return;
   NetView* nv = getNetView();
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -131,6 +134,7 @@ void LayerView::DoHighlightColor(bool apply) {
       mat->diffuseColor.setValue(0.8f, 0.2f, 0.2f); // red for output / target
     mat->transparency.setValue(nv->view_params.lay_trans);
   }
+#endif // TA_QT3D
 }
 
 void LayerView::Render_pre() {
@@ -142,8 +146,14 @@ void LayerView::Render_pre() {
   NetView* nv = getNetView();
   if(!nv->lay_mv) show_drag = false;
 
+#ifdef TA_QT3D
+  T3LayerNode* node_so = new T3LayerNode(NULL, this, show_drag,
+					 nv->lay_layout == NetView::TWO_D);
+#else // TA_QT3D
   T3LayerNode* node_so = new T3LayerNode(this, show_drag,
 					 nv->lay_layout == NetView::TWO_D);
+#endif // TA_QT3D
+
   setNode(node_so);
   DoHighlightColor(false);
 
@@ -244,8 +254,11 @@ void LayerView::Render_impl() {
   node_so->resizeCaption(eff_lay_font_size);
 
   if(nv->lay_layout == NetView::THREE_D) {
+#ifdef TA_QT3D
+#else // TA_QT3D
     SbVec3f tran(0.0f, -eff_lay_font_size, lay_wd);
     node_so->transformCaption(tran);
+#endif // TA_QT3D
 
     if(nv->render_svg) {
       nv->svg_str << taSvg::Text(data()->GetName(),
@@ -254,9 +267,12 @@ void LayerView::Render_impl() {
     }
   }
   else {
+#ifdef TA_QT3D
+#else // TA_QT3D
     SbVec3f tran(0.0f, 0.5f * lay_wd, 1.1f * eff_lay_font_size);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
     node_so->transformCaption(rot, tran);
+#endif // TA_QT3D
 
     if(nv->render_svg) {
       nv->svg_str << taSvg::Text(data()->GetName(),
@@ -271,6 +287,7 @@ void LayerView::Render_impl() {
   }
 }
 
+#ifndef TA_QT3D
 // callback for layer xy dragger
 void T3LayerNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
@@ -347,6 +364,8 @@ void T3LayerNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
 
   nv->UpdateDisplay();
 }
+
+#endif // TA_QT3D
 
 void LayerView::DispUnits() {
   disp_mode = DISP_UNITS;

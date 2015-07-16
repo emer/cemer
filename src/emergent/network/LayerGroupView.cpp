@@ -137,6 +137,9 @@ void LayerGroupView::DoHighlightColor(bool apply) {
   if (!nd) return;
 //  NetView* nv = getNetView();
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -145,6 +148,7 @@ void LayerGroupView::DoHighlightColor(bool apply) {
     mat->diffuseColor.setValue(0.8f, 0.5f, 0.8f); // violet
     mat->transparency.setValue(0.3f);
   }
+#endif // TA_QT3D
 }
 
 void LayerGroupView::Render_pre() {
@@ -162,8 +166,14 @@ void LayerGroupView::Render_pre() {
   bool hide_lines = !nv->view_params.show_laygp;
   if(root_laygp) hide_lines = true; // always true
 
+#ifdef TA_QT3D
+  setNode(new T3LayerGroupNode(NULL, this, show_drag, hide_lines,
+			       nv->lay_layout == NetView::TWO_D));
+
+#else // TA_QT3D
   setNode(new T3LayerGroupNode(this, show_drag, hide_lines,
 			       nv->lay_layout == NetView::TWO_D));
+#endif // TA_QT3D
   DoHighlightColor(false);
 
   inherited::Render_pre();
@@ -220,8 +230,12 @@ void LayerGroupView::Render_impl() {
 		     nv->eff_max_size.x, nv->eff_max_size.y, 5.0f);
   }
 
+#ifdef TA_QT3D
+  if(!node_so->hide_lines) {
+#else // TA_QT3D
   if(!node_so->hideLines()) {
     node_so->drawStyle()->lineWidth = nv->view_params.laygp_width;
+#endif // TA_QT3D
 
     node_so->setCaption(data()->GetName().chars());
     float lay_wd_y = T3LayerNode::width / nv->eff_max_size.y;
@@ -238,13 +252,21 @@ void LayerGroupView::Render_impl() {
     node_so->resizeCaption(eff_lay_font_size);
 
     if(nv->lay_layout == NetView::THREE_D) {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
       SbVec3f tran(0.0f, -eff_lay_font_size - 2.0f * lay_ht_z, lay_wd_y);
       node_so->transformCaption(tran);
+#endif // TA_QT3D
     }
     else {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
       SbVec3f tran(0.0f, 0.5f * lay_wd_y, 1.5f * eff_lay_font_size);
       SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
       node_so->transformCaption(rot, tran);
+#endif // TA_QT3D
     }
   }
 
@@ -255,6 +277,7 @@ void LayerGroupView::Render_impl() {
   }
 }
 
+#ifndef TA_QT3D
 // callback for layer xy dragger
 void T3LayerGroupNode_XYDragFinishCB(void* userData, SoDragger* dragr) {
   SoTranslate2Dragger* dragger = (SoTranslate2Dragger*)dragr;
@@ -343,3 +366,4 @@ void T3LayerGroupNode_ZDragFinishCB(void* userData, SoDragger* dragr) {
   nv->UpdateDisplay();
 }
 
+#endif // TA_QT3D

@@ -63,6 +63,25 @@ void UnitView::Render_pre()
   Layer* lay = unit->own_lay();
   float disp_scale = lay->disp_scale;
 
+#ifdef TA_QT3D
+
+  switch (nv->unit_disp_mode) {
+  case NetView::UDM_CIRCLE:
+    setNode(new T3UnitNode_Circle(NULL, this, max_x, max_y, max_z, un_spc, disp_scale));
+    break;
+  case NetView::UDM_RECT:
+    setNode(new T3UnitNode_Rect(NULL, this, max_x, max_y, max_z, un_spc, disp_scale));
+    break;
+  case NetView::UDM_BLOCK:
+    setNode(new T3UnitNode_Block(NULL, this, max_x, max_y, max_z, un_spc, disp_scale));
+    break;
+  case NetView::UDM_CYLINDER:
+    setNode(new T3UnitNode_Cylinder(NULL, this, max_x, max_y, max_z, un_spc, disp_scale));
+    break;
+  }
+
+#else // TA_QT3D
+
   switch (nv->unit_disp_mode) {
   case NetView::UDM_CIRCLE:
     setNode(new T3UnitNode_Circle(this, max_x, max_y, max_z, un_spc, disp_scale));
@@ -82,6 +101,8 @@ void UnitView::Render_pre()
   node_so()->transform()->translation.setValue
     (disp_scale * ((float)(upos.x + 0.5f) / max_x), 0.0f,
      -disp_scale * (((float)(upos.y + 0.5f) / max_y)));
+#endif // TA_QT3D
+  
   inherited::Render_pre();
 }
 

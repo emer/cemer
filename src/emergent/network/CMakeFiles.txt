@@ -5,7 +5,7 @@
 # other targets are in CMakeLists.txt in this directory
 
 # local headers that need maketa run on them
-set(network_HEADS_MAKETA
+set(network_HEADS_MAKETA_base
   EmergentMisc.h
 
   SpecMemberBase.h
@@ -86,6 +86,7 @@ set(network_HEADS_MAKETA
   NetMonItem_List.h
   NetMonitor.h
   ActBasedRF.h
+  WtBasedRF.h
 
   NetBaseProgEl.h
   NetDataLoop.h
@@ -120,19 +121,17 @@ set(network_HEADS_MAKETA
   BrainView.h
   BrainVolumeView.h
   iViewPanelOfBrain.h
+)
 
-  T3UnitNode.h
-  T3UnitNode_Cylinder.h
-  T3UnitNode_Block.h
-  T3UnitNode_Circle.h
-  T3UnitNode_Rect.h
-  T3UnitGroupNode.h
-  T3LayerNode.h
-  T3PrjnNode.h
-  T3LayerGroupNode.h
-  T3NetNode.h
-  T3BrainNode.h
-  WtBasedRF.h
+# multiple inheritence -- in correspondence with deps below
+set(network_HEADS_MAKETA_MI
+  ScriptPrjnSpec.h
+)
+
+# note: there must be exactly same number of dependencies for each item
+# you can just add redundant ones to make it all work out
+set(network_HEADS_MAKETA_MI_DEPS
+  "../../temt/ta_core/taBase.h;../../temt/ta_program/ScriptBase.h;ProjectionSpec.h"
 )
 
 set(network_HEADS_NOMAKETA
@@ -161,29 +160,53 @@ set(network_HEADS_NOMAKETA
   NiftiReader.h
 )
 
-# multiple inheritence -- in correspondence with deps below
-set(network_HEADS_MAKETA_MI
-  ScriptPrjnSpec.h
-)
-
-# note: there must be exactly same number of dependencies for each item
-# you can just add redundant ones to make it all work out
-set(network_HEADS_MAKETA_MI_DEPS
-  "../../temt/ta_core/taBase.h;../../temt/ta_program/ScriptBase.h;ProjectionSpec.h"
-)
-
-# all heads -- both kinds
-set(network_HEADS
-    ${network_HEADS_MAKETA}
-    ${network_HEADS_MAKETA_MI}
-    ${network_HEADS_NOMAKETA}
-)
-
 # headers that need Qt moc run -- this includes items from above -- not a mutex list
-set(network_HEADS_MOC
+set(network_HEADS_MOC_base
   iViewPanelOfNetwork.h
   iBrainViewEditDialog.h
   iViewPanelOfBrain.h
+)
+
+set(network_HEADS_T3
+  T3UnitNode.h
+  T3UnitNode_Cylinder.h
+  T3UnitNode_Block.h
+  T3UnitNode_Circle.h
+  T3UnitNode_Rect.h
+  T3UnitGroupNode.h
+  T3LayerNode.h
+  T3PrjnNode.h
+  T3LayerGroupNode.h
+  T3NetNode.h
+  T3BrainNode.h
+)
+
+if(QT_USE_3D)
+  set(network_HEADS_MAKETA
+    ${network_HEADS_MAKETA_base}
+  )
+  
+  set(network_HEADS_MOC
+    ${network_HEADS_MOC_base}
+    ${network_HEADS_T3}
+  )
+
+else(QT_USE_3D)
+  set(network_HEADS_MAKETA
+    ${network_HEADS_MAKETA_base}
+    ${network_HEADS_T3}
+  )
+  
+  set(network_HEADS_MOC
+    ${network_HEADS_MOC_base}
+  )
+endif(QT_USE_3D)
+
+# all heads -- both kinds
+set(network_HEADS
+  ${network_HEADS_MAKETA}
+  ${network_HEADS_MAKETA_MI}
+  ${network_HEADS_NOMAKETA}
 )
 
 # gui-related source files: NOTE: do NOT include TA or .moc files -- auto generated
@@ -267,6 +290,8 @@ set(network_SRCS
   NetMonItem_List.cpp
   NetMonitor.cpp
   ActBasedRF.cpp
+  WtBasedRF.cpp
+
   NetBaseProgEl.cpp
   NetDataLoop.cpp
   NetGroupedDataLoop.cpp
@@ -330,7 +355,6 @@ set(network_SRCS
   nifti1_io.c
   NetworkVoxelMapper.cpp
   NiftiReader.cpp
-  WtBasedRF.cpp
 )
 
 set(network_FILES ${network_HEADS} ${network_SRCS})

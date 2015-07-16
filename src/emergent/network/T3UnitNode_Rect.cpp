@@ -16,6 +16,21 @@
 #include "T3UnitNode_Rect.h"
 #include <T3Color>
 
+#ifdef TA_QT3D
+
+T3UnitNode_Rect::T3UnitNode_Rect(Qt3DNode* parent, T3DataView* dataView_,
+                                 float max_x, float max_y, float max_z,
+				 float un_spc, float disp_sc)
+  : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+{
+}
+
+T3UnitNode_Rect::~T3UnitNode_Rect() {
+}
+
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoCube.h>
 
 SO_NODE_SOURCE(T3UnitNode_Rect);
@@ -46,3 +61,5 @@ T3UnitNode_Rect::~T3UnitNode_Rect()
 {
   shape_ = NULL;
 }
+
+#endif // TA_QT3D

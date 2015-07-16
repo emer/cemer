@@ -24,7 +24,7 @@
 #ifdef TA_QT3D
 
 T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz, int axn)
-  : T3NodeLeaf(parent)
+  : inherited(parent, dataView_)
   , axis(ax)
   , font_size(fnt_sz)
   , axis_n(axn)

@@ -17,6 +17,32 @@
 #include <T3LayerNode>
 #include <taString>
 
+#ifdef TA_QT3D
+
+T3LayerGroupNode::T3LayerGroupNode(Qt3DNode* parent, T3DataView* dataView_,
+                                   bool show_drg, bool hideln, bool md2d)
+  : inherited(parent, dataView_)
+  , show_drag(show_drg)
+  , hide_lines(hideln)
+  , mode_2d(md2d)
+{
+}
+
+T3LayerGroupNode::~T3LayerGroupNode() {
+}
+
+void T3LayerGroupNode::setGeom(int px, int py, int pz,
+			       float lg_max_x, float lg_max_y, float lg_max_z,
+			       float max_x, float max_y, float max_z) {
+  pos.setValue(px, py, pz);
+  max_size.setValue(max_x, max_y, max_z);
+  lgp_max_size.setValue((int)lg_max_x, (int)lg_max_y, (int)lg_max_z);
+  // render();
+}
+
+#else // TA_QT3D
+
+
 #include <SoLineBox3d>
 #include <T3Translate1Translator>
 #include <T3Translate2Translator>
@@ -201,3 +227,4 @@ void T3LayerGroupNode::setGeom(int px, int py, int pz,
   render();
 }
 
+#endif // TA_QT3D

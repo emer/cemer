@@ -19,7 +19,7 @@
 #ifdef TA_QT3D
 
 T3GraphBar::T3GraphBar(Qt3DNode* parent, T3DataView* dataView_)
-  : T3NodeLeaf(parent)
+  : inherited(parent, dataView_)
 {
 }
 

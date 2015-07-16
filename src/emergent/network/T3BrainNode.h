@@ -23,6 +23,27 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class E_API T3BrainNode: public T3NodeLeaf {
+  Q_OBJECT
+  INHERITED(T3NodeLeaf)
+public:
+  // SoSeparator*          brain_group; //#IGNORE
+  // SoMaterial**          brain_tex_mat_array; //#IGNORE
+  // SoVertexProperty**    atlas_vrtx_prop_array; //#IGNORE
+  // SoVertexProperty**    voxel_vrtx_prop_array; //#IGNORE
+  // SoIndexedFaceSet**    atlas_face_set_array; //#IGNORE
+  // SoIndexedFaceSet**    voxel_face_set_array; //#IGNORE
+  // SoTransform*          spacing_xform; //#IGNORE
+
+  T3BrainNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL);
+  ~T3BrainNode();
+};
+
+#else // TA_QT3D
+
 class SoSeparator;      // #IGNORE
 class SoIndexedFaceSet; // #IGNORE
 class SoVertexProperty; // #IGNORE
@@ -51,5 +72,7 @@ protected:
   ~T3BrainNode();
 
 };
+
+#endif // TA_QT3D
 
 #endif // T3BrainNode_h

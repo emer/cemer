@@ -15,17 +15,81 @@
 
 #include "T3UnitNode.h"
 #include <T3Color>
-#include <iVec3f>
 
+#define T3_UNIT_BASE_H	0.1f
+#define T3_UNIT_MAX_H	0.8f
+
+#ifdef TA_QT3D
+
+float T3UnitNode::base_height = 0.08f;
+float T3UnitNode::max_height = 0.46f;
+
+T3UnitNode::T3UnitNode(Qt3DNode* parent, T3DataView* dataView_,
+                       float max_x, float max_y, float max_z,
+                       float un_spc, float disp_sc)
+  : inherited(parent, dataView_)
+  , spacing(un_spc)
+  , disp_scale(disp_sc)
+{
+}
+
+T3UnitNode::~T3UnitNode() {
+}
+
+void T3UnitNode::setAppearance(float act, const T3Color& color, float max_z, float trans) {
+  bool act_invalid = false;
+  if (isnan(act) || isinf(act)) {
+    act_invalid = true;
+    act = 0.0f;
+  }
+  else if (act < -1.0f) act = -1.0f;
+  else if (act > 1.0f) act = 1.0f;
+  setAppearance_impl(act, color, max_z, trans, act_invalid);
+}
+
+void T3UnitNode::setAppearance_impl(float act, const T3Color& color,
+  float max_z, float trans, bool act_invalid) 
+{
+  // material()->diffuseColor = (SbColor)color;
+  // //  material()->specularColor = (SbColor)color;
+  // //  material()->emissiveColor = (SbColor)color;
+  // //  material()->ambientColor = (SbColor)color;
+  // material()->transparency = (1.0f - fabsf(act)) * trans;
+}
+
+
+
+void T3UnitNode::setDefaultCaptionTransform() {
+  // //note: this is the one for 3d objects -- 2d replace this
+  // captionNode_->justification = SoAsciiText::CENTER;
+  // //  transformCaption(SbVec3f(0.0f, 0.1f, 0.45f));
+  // transformCaption(SbVec3f(0.0f, 0.0f, 0.0f));
+}
+
+void T3UnitNode::setPicked(bool value) {
+  // SoSeparator* ss = shapeSeparator(); //cache
+  // SoDrawStyle* ds = (SoDrawStyle*)getNodeByName(ss, "drawStyle");
+  // if (value) { // picking
+  //   if (ds) return; // already there
+  //   ds = new SoDrawStyle();
+  //   ds->setName("drawStyle");
+  //   ds->style.setValue(SoDrawStyle::LINES);
+  //   insertChildAfter(ss, ds, material());
+  // }
+  // else { // unpicking
+  //   if (ds)
+  //     ss->removeChild(ds);
+  // }
+}
+
+
+#else // TA_QT3D
+
+#include <iVec3f>
 #include <Inventor/nodes/SoBaseColor.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoAsciiText.h>
 #include <Inventor/nodes/SoMaterial.h>
-
-
-
-#define T3_UNIT_BASE_H	0.1f
-#define T3_UNIT_MAX_H	0.8f
 
 SO_NODE_ABSTRACT_SOURCE(T3UnitNode);
 
@@ -96,3 +160,4 @@ void T3UnitNode::setPicked(bool value) {
   }
 }
 
+#endif // TA_QT3D

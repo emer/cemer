@@ -19,7 +19,7 @@
 
 T3AnnotationNode::T3AnnotationNode(Qt3DNode* parent, T3DataView* dataView_,
                                    bool show_drg)
-  : T3NodeLeaf(parent)
+  : inherited(parent, dataView_)
   , show_drag(show_drg)
 {
 }

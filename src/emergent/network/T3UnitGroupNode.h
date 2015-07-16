@@ -26,6 +26,53 @@
 
 // declare all other types mentioned but not required to include:
 
+#ifdef TA_QT3D
+
+class E_API T3UnitGroupNode: public T3NodeParent {
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+  static float		height; // nominal amount of height, so doesn't vanish
+  static float		inset; // amount inset from the layer
+
+  static void		drawGrid(T3UnitGroupNode* node);
+
+  iVec2i		geom; //note, not a field
+  float			disp_scale;
+  iVec2i		scaled_geom; // layer disp_scale * geom
+  iVec3f		max_size; // maximum size of network x,y,z
+  // SoFont*		unitCaptionFont_;
+  bool			no_units; // summary mode: no unit objects exist
+
+  // SoFont*		unitCaptionFont(bool auto_create = false); // #IGNORE
+
+  void 			setGeom(int px, int py, float max_x, float max_y, float max_z,
+				float disp_scale);
+
+  // sets (actual) geom of group; creates/positions units; setes max_size
+  // void			removeUnitText();	      // remove unit text separator
+
+  // SoSeparator*		snapBordSep() {return snap_bord_;} // #IGNORE
+  // SoDrawStyle*		snapBordDraw() {return snap_bord_draw_;} // #IGNORE
+  // SoIndexedLineSet*	snapBordSet() {return snap_bord_set_;} // #IGNORE
+  // SoVertexProperty* 	snapBordVtxProp() {return snap_bord_vtx_prop_;} // #IGNORE
+
+  T3UnitGroupNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+                  bool no_unts = false);
+  ~T3UnitGroupNode();
+
+  // SoSeparator* 		snap_bord_; // weight lines
+  // SoDrawStyle*		snap_bord_draw_;
+  // SoIndexedLineSet*	snap_bord_set_;
+  // SoVertexProperty*	snap_bord_vtx_prop_;
+
+  // SoIndexedTriangleStripSet*	shape_;
+  // SoVertexProperty*	vtx_prop_;
+  // SoSeparator* 		unit_text_; // unit text variables
+};
+
+#else // TA_QT3D
+
 class E_API T3UnitGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
 typedef T3NodeParent inherited;
@@ -83,5 +130,7 @@ protected:
   SoVertexProperty*	vtx_prop_;
   SoSeparator* 		unit_text_; // unit text variables
 };
+
+#endif // TA_QT3D
 
 #endif // T3UnitGroupNode_h

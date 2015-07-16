@@ -41,7 +41,7 @@ public:
 
   virtual void		SetColorScale(ColorScale* c);
   void			SetDimensions(float wd, float ht);
-  T3ColorBar(Qt3DNode* par = NULL, ColorScale* c = NULL, T3DataView* dataView_ = NULL);
+  T3ColorBar(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, ColorScale* c = NULL);
   ~T3ColorBar();
 
   // SoTriangleStripSet*	bars_; // one rectangle per subbar

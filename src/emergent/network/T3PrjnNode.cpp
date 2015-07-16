@@ -15,6 +15,20 @@
 
 #include "T3PrjnNode.h"
 
+#ifdef TA_QT3D
+
+T3PrjnNode::T3PrjnNode(Qt3DNode* parent, T3DataView* dataView_, bool prjcted, float rad)
+  : inherited(parent, dataView_)
+  , projected(prjcted)
+  , radius(rad)
+{
+}
+
+T3PrjnNode::~T3PrjnNode() {
+}
+
+
+#else // TA_QT3D
 
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -102,3 +116,4 @@ void T3PrjnNode::setArrowColor(const SbColor& clr, float transp) {
   arr_mat->transparency.setValue(transp);
 }
 
+#endif // TA_QT3D

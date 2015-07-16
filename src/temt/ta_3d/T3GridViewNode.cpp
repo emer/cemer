@@ -26,7 +26,7 @@ float T3GridViewNode::frame_width = .02f;
 
 T3GridViewNode::T3GridViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd,
                                bool show_drg)
-  : T3NodeParent(parent)
+  : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
 {

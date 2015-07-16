@@ -16,6 +16,31 @@
 #include "T3UnitNode_Cylinder.h"
 #include <T3Color>
 
+#ifdef TA_QT3D
+
+T3UnitNode_Cylinder::T3UnitNode_Cylinder(Qt3DNode* parent, T3DataView* dataView_,
+                                 float max_x, float max_y, float max_z,
+				 float un_spc, float disp_sc)
+  : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+{
+}
+
+T3UnitNode_Cylinder::~T3UnitNode_Cylinder() {
+}
+
+void T3UnitNode_Cylinder::setAppearance_impl(float act, const T3Color& color, float max_z,
+  float trans, bool act_invalid) 
+{
+  // shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
+  // float dz; float x; float y;
+  // transform()->translation.getValue().getValue(x, dz, y);
+  // dz = (((max_height - base_height) * act) * 0.5f) / max_z;
+  // transform()->translation.setValue(x, dz, y);
+  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
+}
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoCylinder.h>
 #include <Inventor/nodes/SoTransform.h>
 
@@ -59,3 +84,4 @@ void T3UnitNode_Cylinder::setAppearance_impl(float act, const T3Color& color, fl
   inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
+#endif // TA_QT3D

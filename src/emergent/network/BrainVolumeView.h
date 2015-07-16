@@ -92,7 +92,12 @@ private:
   void           Destroy();
   bool           ColorBrain();           // #IGNORE
   void           RenderBrain();          // #IGNORE
-  void           CreateReferenceWidget( SoSeparator* widg, BrainView::AnatomicalPlane p, float max_dim, float scale=0.0f ); // #IGNORE
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  void           CreateReferenceWidget( SoSeparator* widg, BrainView::AnatomicalPlane p,
+                                        float max_dim, float scale=0.0f ); // #IGNORE
+#endif // TA_QT3D
   void           SliceAsTexture( BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data );       // #IGNORE
   void           SliceAsColorTexture( BrainView::AnatomicalPlane p, int index, unsigned char* data, NiftiReader* brain_data, NiftiReader* atlas_data ); // #IGNORE
   void           CreateFaceSets();        // #IGNORE

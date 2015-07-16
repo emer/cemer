@@ -15,6 +15,18 @@
 
 #include "T3BrainNode.h"
 
+#ifdef TA_QT3D
+
+T3BrainNode::T3BrainNode(Qt3DNode* parent, T3DataView* dataView_)
+  : inherited(parent, dataView_)
+{
+}
+
+T3BrainNode::~T3BrainNode() {
+}
+
+#else // TA_QT3D
+
 SO_NODE_SOURCE(T3BrainNode);
 
 void T3BrainNode::initClass() 
@@ -31,3 +43,5 @@ T3BrainNode::T3BrainNode(T3DataView* dataView_)
 T3BrainNode::~T3BrainNode()
 {
 }
+
+#endif // TA_QT3D

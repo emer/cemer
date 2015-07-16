@@ -22,8 +22,24 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class SoCube; //
 
+#ifdef TA_QT3D
+
+class E_API T3UnitNode_Rect: public T3UnitNode {
+  Q_OBJECT
+  INHERITED(T3UnitNode)
+public:
+  T3UnitNode_Rect(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+                  float max_x = 1.0f, float max_y = 1.0f,
+		  float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
+  ~T3UnitNode_Rect();
+// private:
+//   SoCube*		shape_; //#IGNORE
+};
+
+#else // TA_QT3D
+
+class SoCube; //
 
 class E_API T3UnitNode_Rect: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
@@ -44,5 +60,6 @@ private:
   SoCube*		shape_; //#IGNORE
 };
 
+#endif // TA_QT3D
 
 #endif // T3UnitNode_Rect_h

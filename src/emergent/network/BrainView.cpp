@@ -543,10 +543,14 @@ void BrainView::Render_pre() {
   }
   if(!lay_mv) show_drag = false;
 
+#ifdef TA_QT3D
+  setNode(new T3NetNode(NULL, this, show_drag, net_text, show_drag));
+#else // TA_QT3D
   setNode(new T3NetNode(this, show_drag, net_text, show_drag));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
+#endif // TA_QT3D
 
   if(vw && vw->interactionModeOn()) {
 #ifndef TA_QT3D
@@ -595,8 +599,12 @@ void BrainView::Render_impl() {
   if(unit_disp_md)
     cap_txt += unit_disp_md->name;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(node_so->shapeDraw())
     node_so->shapeDraw()->lineWidth = view_params.laygp_width;
+#endif // TA_QT3D
 
   node_so->setCaption(cap_txt.chars());
 
@@ -608,8 +616,12 @@ void BrainView::Render_impl() {
   }
 
   if(net_text) {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
     SoTransform* tx = node_so->netTextXform();
     net_text_xform.CopyTo(tx);
+#endif // TA_QT3D
 
     Render_net_text();
   }
@@ -619,6 +631,10 @@ void BrainView::Render_impl() {
 
 void BrainView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* net_txt = node_so->netText();
   if(!net_txt) return;          // screwup
 
@@ -732,6 +748,7 @@ void BrainView::Render_net_text() {
     txt->string.setValue(el.chars());
     chld_idx++;
   }
+#endif // TA_QT3D
 }
 
 void BrainView::Reset_impl() {

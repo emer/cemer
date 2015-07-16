@@ -23,6 +23,38 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class E_API T3PrjnNode: public T3NodeParent {
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+  bool			projected;
+  float			radius;
+
+  // void		setEndPoint(const SbVec3f& value) { };
+  // #IGNORE sets endpoint, relative to its origin
+  // void		setArrowColor(const SbColor& clr, float transp);
+  // #IGNORE set arrow color
+
+  T3PrjnNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+             bool projted = true, float rad = .01f);
+  ~T3PrjnNode();
+
+protected:
+  // SoComplexity*		complexity;
+  // SoTransform*		trln_prjn; // #IGNORE
+  // SoTransform*		rot_prjn; // #IGNORE
+  // SoTransform*		trln_arr; // #IGNORE
+  // SoCone*		arr_prjn;  // #IGNORE arrow head
+  // SoCylinder*		line_prjn;  // #IGNORE line
+  // SoMaterial*		arr_mat;  // #IGNORE arrow material (color)
+};
+
+
+#else // TA_QT3D
+
 class SoTransform; // #IGNORE
 class SoComplexity; // #IGNORE
 class SoCone; // #IGNORE
@@ -59,5 +91,7 @@ protected:
 private:
   void			init();
 };
+
+#endif // TA_QT3D
 
 #endif // T3PrjnNode_h

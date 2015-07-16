@@ -240,7 +240,11 @@ void BrainVolumeView::Render_pre()
   m_brain_data = new NiftiReader(getBrainView()->DataName());
 
   if (m_brain_data->IsValid()) {
+#ifdef TA_QT3D
+    setNode(new T3BrainNode(NULL, this));
+#else // TA_QT3D
     setNode(new T3BrainNode(this));
+#endif // TA_QT3D
     if (ColorBrain()) {
       // Get the atlas colors and change those which DO NOT MATCH
       // the regexp areas to white (effectively not coloring those areas)
@@ -290,6 +294,9 @@ void BrainVolumeView::RenderBrain()
   taVector3i dims(m_brain_data->XyzDimensions());
   float max_dim = taMath_float::max(dims.z, taMath_float::max(dims.x, dims.y));
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* ss = node.shapeSeparator();
   node.brain_group = new SoSeparator();
 
@@ -423,6 +430,7 @@ void BrainVolumeView::RenderBrain()
   // delete [] tex;
 
   ss->addChild(node.brain_group);
+#endif // TA_QT3D
 
   // done with atlas data
   delete m_atlas_data;
@@ -577,6 +585,9 @@ void BrainVolumeView::SliceAsColorTexture(BrainView::AnatomicalPlane p, int inde
   ci = 0;
 }
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 void BrainVolumeView::CreateReferenceWidget(SoSeparator* widg, BrainView::AnatomicalPlane p, float max_dim, float scale)
 {
   // This creates a three (3) line, 3d widget which serves as an reference for
@@ -726,6 +737,8 @@ void BrainVolumeView::CreateReferenceWidget(SoSeparator* widg, BrainView::Anatom
   widg->addChild(si_sep);
   widg->addChild(ap_sep);
 }
+#endif // TA_QT3D
+
 
 void BrainVolumeView::Render_impl()
 {
@@ -833,6 +846,9 @@ void BrainVolumeView::CreateFaceSets()
   }
 
   // iterate over all slices, and for each voxel at that slice depth, create face in face set
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   taVector3f voxel_coord;
   for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
@@ -968,6 +984,7 @@ void BrainVolumeView::CreateFaceSets()
     norms.finishEditing();
     mats.finishEditing();
   }
+#endif // TA_QT3D
 }
 
 void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
@@ -1035,6 +1052,9 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
 
   // iterate over all slices
   // for each voxel at a slice depth, create face in the face set
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   for (int s = 0; s < maxslice; s++) {
     QList<taVector3f> voxels = m_atlas_depth_map.values(s);
 
@@ -1170,9 +1190,11 @@ void BrainVolumeView::CreateAtlasFaceSets(String brain_area, T3Color area_color)
     norms.finishEditing();
     mats.finishEditing();
   }
+#endif // TA_QT3D
 }
-void BrainVolumeView::UpdateSlices()
-{
+
+
+void BrainVolumeView::UpdateSlices() {
   BrainView* bv = this->getBrainView(); //cache
   if (!bv) return;
 
@@ -1186,18 +1208,21 @@ void BrainVolumeView::UpdateSlices()
     QList<Voxel*> voxels = m_units_depth_map.values(i);
     if (0 == voxels.size()) continue;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
     if (((bv->SliceStart() - 1) <= i) && (i <= (bv->SliceEnd() - 1))) {
       node.brain_tex_mat_array[i]->transparency = transparency;
     }
     else {
       node.brain_tex_mat_array[i]->transparency = 1.0f;
     }
+#endif // TA_QT3D
   }
   UpdateUnitValues_blocks();
 }
 
-void BrainVolumeView::UpdateUnitValues_blocks()
-{
+void BrainVolumeView::UpdateUnitValues_blocks() {
   BrainView* bv = this->getBrainView(); //cache
   Network* net = this->net(); //cache
   if (NULL == net) return;
@@ -1208,6 +1233,9 @@ void BrainVolumeView::UpdateUnitValues_blocks()
 
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   taVector3f voxel_coord;
   for (int s = 0; s < bv->MaxSlices(); s++) {
     QList<Voxel*> voxels = m_units_depth_map.values(s);
@@ -1255,6 +1283,7 @@ void BrainVolumeView::UpdateUnitValues_blocks()
 
     color.finishEditing();
   }
+#endif // TA_QT3D
 }
 
 void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
@@ -1271,6 +1300,9 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
 
   BrainView::AnatomicalPlane view_plane = bv->ViewPlane();
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   // iterate over all slices, and for each voxel at that slice depth,
   // determine the face color/transparency from unit value
   for (int s = 0; s < bv->MaxSlices(); s++) {
@@ -1311,6 +1343,7 @@ void BrainVolumeView::UpdateAtlasFaceValues(float alpha)
 
     color.finishEditing();
   }
+#endif // TA_QT3D
 }
 
 void BrainVolumeView::UpdateUnitValues()

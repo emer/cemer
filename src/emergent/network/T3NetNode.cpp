@@ -14,11 +14,28 @@
 //   GNU General Public License for more details.
 
 #include "T3NetNode.h"
+#include <taString>
+
+#ifdef TA_QT3D
+
+T3NetNode::T3NetNode(Qt3DNode* parent, T3DataView* dataView_, bool show_dr,
+                       bool net_txt, bool show_n_drg, bool md2d)
+  : inherited(parent, dataView_)
+  , show_drag(show_dr)
+  , show_net_text_drag(show_n_drg)
+  , mode_2d(md2d)
+{
+}
+
+T3NetNode::~T3NetNode() {
+}
+
+
+#else // TA_QT3D
+
 #include <T3TransformBoxDragger>
 #include <iVec3f>
 #include <SoLineBox3d>
-#include <taString>
-
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoTransform.h>
@@ -143,3 +160,4 @@ void T3NetNode::setDefaultCaptionTransform() {
   transformCaption(tran);
 }
 
+#endif // TA_QT3D

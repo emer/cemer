@@ -1020,6 +1020,8 @@ const iColor NetView::bgColor(bool& ok) const {
 }
 
 
+#ifndef TA_QT3D
+
 // callback for netview transformer dragger
 void T3NetNode_DragFinishCB(void* userData, SoDragger* dragr) {
   SoTransformBoxDragger* dragger = (SoTransformBoxDragger*)dragr;
@@ -1110,6 +1112,8 @@ void T3NetText_DragFinishCB(void* userData, SoDragger* dragr) {
   nv->UpdateDisplay();
 }
 
+#endif // TA_QT3D
+
 void NetView::Render_pre() {
   if(!no_init_on_rerender)
     InitDisplay();
@@ -1123,11 +1127,16 @@ void NetView::Render_pre() {
   }
   if(!lay_mv) show_drag = false;
 
+#ifdef TA_QT3D
+  setNode(new T3NetNode(NULL, this, show_drag, net_text, show_drag && lay_mv,
+			lay_layout == TWO_D));
+#else // TA_QT3D
   setNode(new T3NetNode(this, show_drag, net_text, show_drag && lay_mv,
 			lay_layout == TWO_D));
   SoMaterial* mat = node_so()->material(); //cache
   mat->diffuseColor.setValue(0.0f, 0.5f, 0.5f); // blue/green
   mat->transparency.setValue(0.5f);
+#endif // TA_QT3D
 
   scale.SetColorSpec(scale.spec);  // Call set to force the saved color to be restored
 
@@ -1182,15 +1191,23 @@ void NetView::Render_impl() {
     }
   }
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(node_so->shapeDraw())
     node_so->shapeDraw()->lineWidth = view_params.laygp_width;
+#endif // TA_QT3D
 
   node_so->setCaption(cap_txt.chars());
 
   if(lay_layout == NetView::TWO_D) {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
     SbVec3f tran(0.0f, 0.0f, 0.05f);
     SbRotation rot(SbVec3f(1.0f, 0.0f, 0.0f), -1.5707963f);
     node_so->transformCaption(rot, tran);
+#endif // TA_QT3D
   }
 
   if (scale.auto_scale) {
@@ -1201,8 +1218,12 @@ void NetView::Render_impl() {
   }
 
   if(net_text) {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
     SoTransform* tx = node_so->netTextXform();
     net_text_xform.CopyTo(tx);
+#endif // TA_QT3D
 
     Render_net_text();
   }
@@ -1222,6 +1243,9 @@ void NetView::Render_impl() {
 
 void NetView::Render_net_text() {
   T3NetNode* node_so = this->node_so(); //cache
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* net_txt = node_so->netText();
   if(!net_txt) return;          // screwup
 
@@ -1343,6 +1367,7 @@ void NetView::Render_net_text() {
     txt->string.setValue(el.chars());
     chld_idx++;
   }
+#endif // TA_QT3D
 }
 
 void NetView::Render_wt_lines() {
@@ -1353,6 +1378,11 @@ void NetView::Render_wt_lines() {
   if(unit_src)
     src_lay =GET_OWNER(unit_src, Layer);
   if(!src_lay || src_lay->Iconified()) do_lines = false;
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+
   SoIndexedLineSet* ils = node_so->wtLinesSet();
   SoDrawStyle* drw = node_so->wtLinesDraw();
   SoVertexProperty* vtx_prop = node_so->wtLinesVtxProp();
@@ -1535,6 +1565,8 @@ void NetView::Render_wt_lines() {
   color.finishEditing();
   coords.finishEditing();
   mats.finishEditing();
+#endif // TA_QT3D
+  
 }
 
 void NetView::SaveImageSVG(const String& svg_fname) {

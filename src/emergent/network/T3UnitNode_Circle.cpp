@@ -16,6 +16,20 @@
 #include "T3UnitNode_Circle.h"
 #include <T3Color>
 
+#ifdef TA_QT3D
+
+T3UnitNode_Circle::T3UnitNode_Circle(Qt3DNode* parent, T3DataView* dataView_,
+                                 float max_x, float max_y, float max_z,
+				 float un_spc, float disp_sc)
+  : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+{
+}
+
+T3UnitNode_Circle::~T3UnitNode_Circle() {
+}
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoCylinder.h>
 
 SO_NODE_SOURCE(T3UnitNode_Circle);
@@ -54,3 +68,4 @@ T3UnitNode_Circle::~T3UnitNode_Circle()
   transformCaption(SbRotation(SbVec3f(1, 0, 0), (.5 * PI)));
 } */
 
+#endif // TA_QT3D

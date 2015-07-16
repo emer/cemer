@@ -22,7 +22,7 @@
 
 T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float wd,
                                  bool show_drg)
-  : T3NodeParent(parent)
+  : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
 {

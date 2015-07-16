@@ -25,11 +25,53 @@
 #include <iVec3f>
 
 // declare all other types mentioned but not required to include:
+
+#ifdef TA_QT3D
+
+class E_API T3LayerGroupNode: public T3NodeParent {
+  Q_OBJECT
+  INHERITED(T3NodeParent)
+public:
+  iVec3i		pos; 	// starting position
+  iVec3i		lgp_max_size; 	// layer group max_size
+  iVec3f		max_size; // maximum size of network x,y,z
+  bool			show_drag;
+  bool			hide_lines;
+  bool			mode_2d;
+
+
+  void 			setGeom(int px, int py, int pz, 
+				float lg_max_x, float lg_max_y, float lg_max_z,
+				float max_x, float max_y, float max_z);
+
+  T3LayerGroupNode(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+                   bool show_draggers = true,
+		   bool hide_lines = false, bool mode_2d = false);
+  ~T3LayerGroupNode();
+
+  // void			render(); // called after pos/geom changes
+
+// private:
+//   SoLineBox3d*		shape_;
+//   SoDrawStyle*		drw_styl_;
+
+//   SoSeparator*		xy_drag_sep_;
+//   SoTransform*		xy_drag_xf_;
+//   SoTranslate2Dragger*	xy_dragger_;
+//   SoCalculator*		xy_drag_calc_;
+
+//   SoSeparator*		z_drag_sep_;
+//   SoTransform*		z_drag_xf_;
+//   SoTranslate1Dragger*	z_dragger_;
+//   SoCalculator*		z_drag_calc_;
+};
+
+#else // TA_QT3D
+
 class SoLineBox3d;
 class SoDrawStyle;
 class SoTranslate1Dragger;
 class SoTranslate2Dragger;
-
 
 class E_API T3LayerGroupNode: public T3NodeParent {
 #ifndef __MAKETA__
@@ -76,5 +118,7 @@ private:
   SoTranslate1Dragger*	z_dragger_;
   SoCalculator*		z_drag_calc_;
 };
+
+#endif // TA_QT3D
 
 #endif // T3LayerGroupNode_h

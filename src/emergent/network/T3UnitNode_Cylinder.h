@@ -22,8 +22,27 @@
 // member includes:
 
 // declare all other types mentioned but not required to include:
-class SoCylinder; //
 
+#ifdef TA_QT3D
+
+class E_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
+  Q_OBJECT
+  INHERITED(T3UnitNode)
+public:
+  T3UnitNode_Cylinder(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL,
+                      float max_x = 1.0f, float max_y = 1.0f,
+		      float max_z = 1.0f, float un_spc = .01f, float disp_sc = 1.0f);
+  ~T3UnitNode_Cylinder();
+
+  void	 setAppearance_impl(float act, const T3Color& color,
+    float max_z, float trans, bool act_invalid) override;
+// private:
+//   SoCylinder*		shape_; //#IGNORE
+};
+
+#else // TA_QT3D
+
+class SoCylinder; //
 
 class E_API T3UnitNode_Cylinder: public T3UnitNode { // 2d color
 #ifndef __MAKETA__
@@ -44,5 +63,7 @@ protected:
 private:
   SoCylinder*		shape_; //#IGNORE
 };
+
+#endif // TA_QT3D
 
 #endif // T3UnitNode_Cylinder_h

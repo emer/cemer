@@ -15,6 +15,57 @@
 
 #include "T3UnitGroupNode.h"
 
+#ifdef TA_QT3D
+
+float T3UnitGroupNode::height = 0.0f;
+float T3UnitGroupNode::inset = 0.05f;
+
+T3UnitGroupNode::T3UnitGroupNode(Qt3DNode* parent, T3DataView* dataView_, bool noun)
+  : inherited(parent, dataView_)
+  , no_units(noun)
+{
+}
+
+T3UnitGroupNode::~T3UnitGroupNode() {
+}
+
+void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
+  float sw = 0.02f; // strip width
+  float disp_scale = node->disp_scale;
+  float x_end = disp_scale * ((float)node->geom.x / node->max_size.x);
+  float y_end = disp_scale * ((float)(-node->geom.y) / node->max_size.y);
+  GLbitfield attribs = (GLbitfield)(GL_LIGHTING_BIT | GL_TRANSFORM_BIT);
+  glPushMatrix();
+  glPushAttrib(attribs); //note: doesn't seem to push matrix properly
+  glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+  glDisable(GL_LIGHTING);
+  glColor3f(0.4f, 0.4f, 0.4f);
+  // vert lines
+  for (int x = 1; x < node->geom.x; ++x) {
+    glRectf((disp_scale * (float)(x - sw)) / node->max_size.x, 0.0f,
+	    (disp_scale * (float)(x + sw)) / node->max_size.x, y_end);
+  }
+  // hor lines
+  for (int y = 1; y < node->geom.y; ++y) {
+    glRectf(0.0f, (disp_scale * (float)-(y - sw)) / node->max_size.y,
+	    x_end, (disp_scale * (float)-(y + sw)) / node->max_size.y);
+  }
+  glPopAttrib();
+  glPopMatrix();
+}
+
+void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
+			      float disp_sc) {
+  //  if (geom.isEqual(x, y)) return; // nothing to do, not changed
+  geom.setValue(x, y);
+  max_size.setValue(max_x, max_y, max_z);
+  disp_scale = disp_sc;
+  scaled_geom.setValue((int)ceil(disp_scale * (float)x), (int)ceil(disp_scale * (float)y));
+}
+
+
+#else // TA_QT3D
+
 #include <Inventor/system/gl.h>
 #include <Inventor/nodes/SoDrawStyle.h>
 #include <Inventor/nodes/SoIndexedTriangleStripSet.h>
@@ -144,3 +195,4 @@ void T3UnitGroupNode::removeUnitText() {
   unit_text_ = NULL;
 }
 
+#endif // TA_QT3D

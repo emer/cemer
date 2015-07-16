@@ -14,11 +14,40 @@
 //   GNU General Public License for more details.
 
 #include "T3LayerNode.h"
+#include <taString>
+
+#ifdef TA_QT3D
+
+const float T3LayerNode::height = 0.05f;
+const float T3LayerNode::width = 0.5f;
+const float T3LayerNode::max_width = 0.05f;
+
+T3LayerNode::T3LayerNode(Qt3DNode* parent, T3DataView* dataView_, bool shw_drg,
+                         bool md2d)
+  : inherited(parent, dataView_)
+  , show_drag(shw_drg)
+  , mode_2d(md2d)
+{
+}
+
+T3LayerNode::~T3LayerNode() {
+}
+
+void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
+			  float disp_sc) {
+//   if (geom.isEqual(x, y)) return; // nothing to do, not changed
+  geom.setValue(x, y);
+  max_size.setValue(max_x, max_y, max_z);
+  disp_scale = disp_sc;
+  scaled_geom.setValue((int)ceil(disp_scale * (float)x), (int)ceil(disp_scale * (float)y));
+  // render();
+}
+
+#else // TA_QT3D
+
 #include <T3Translate1Translator>
 #include <T3Translate2Translator>
 #include <SoFrame>
-#include <taString>
-
 #include <Inventor/engines/SoCalculator.h>
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
@@ -172,3 +201,4 @@ void T3LayerNode::setGeom(int x, int y, float max_x, float max_y, float max_z,
   render();
 }
 
+#endif // TA_QT3D

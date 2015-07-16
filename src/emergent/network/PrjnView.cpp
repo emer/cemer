@@ -43,6 +43,8 @@ void PrjnView::DoHighlightColor(bool apply) {
   if(!prjn->projected)
     prjn_trans = .8f;
 
+#ifdef TA_QT3D
+#else // TA_QT3D
   SoMaterial* mat = node_so()->material(); //cache
   if (apply) {
     mat->diffuseColor.setValue(m_hcolor);
@@ -55,12 +57,19 @@ void PrjnView::DoHighlightColor(bool apply) {
     mat->transparency.setValue(prjn_trans);
   }
   nd->setArrowColor(SbColor(prjn->prjn_clr.r, prjn->prjn_clr.g, prjn->prjn_clr.b), prjn_trans);
+
+#endif // TA_QT3D
+
 }
 
 void PrjnView::Render_pre() {
   NetView* nv = getNetView();
   Projection* prjn = this->prjn(); // cache
+#ifdef TA_QT3D
+  setNode(new T3PrjnNode(NULL, this, prjn->projected, nv->view_params.prjn_width));
+#else // TA_QT3D
   setNode(new T3PrjnNode(this, prjn->projected, nv->view_params.prjn_width));
+#endif // TA_QT3D
   DoHighlightColor(false);
   inherited::Render_pre();
 }
@@ -171,13 +180,19 @@ void PrjnView::Render_impl() {
   }
 
   transform(true)->translate.SetXYZ(src.x, src.y, src.z);
+#ifdef TA_QT3D
+#else // TA_QT3D
   node_so->setEndPoint(SbVec3f(dst.x - src.x, dst.y - src.y, dst.z - src.z));
+#endif // TA_QT3D
 
   // caption location is half way
   if(nv->view_params.prjn_name) {
     taVector3f cap((dst.x - src.x) / 2.0f - .05f, (dst.y - src.y) / 2.0f, (dst.z - src.z) / 2.0f);
     node_so->setCaption(prjn->name.chars());
+#ifdef TA_QT3D
+#else // TA_QT3D
     node_so->transformCaption(cap);
+#endif // TA_QT3D
     node_so->resizeCaption(nv->font_sizes.prjn);
   }
 

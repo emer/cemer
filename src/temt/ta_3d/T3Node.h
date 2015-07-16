@@ -139,6 +139,7 @@ public:
   // create the caption node
   virtual void		setDefaultCaptionTransform();
   // set the default caption transform; this is called after creating caption first time
+  void			resizeCaption(float sz) {};
   
   virtual void		clear() {} // optional method, for clearing out the content; called from ReInit
 

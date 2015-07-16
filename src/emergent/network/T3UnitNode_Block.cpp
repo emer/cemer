@@ -16,6 +16,32 @@
 #include "T3UnitNode_Block.h"
 #include <T3Color>
 
+#ifdef TA_QT3D
+
+T3UnitNode_Block::T3UnitNode_Block(Qt3DNode* parent, T3DataView* dataView_,
+                                 float max_x, float max_y, float max_z,
+				 float un_spc, float disp_sc)
+  : inherited(parent, dataView_, max_x, max_y, max_z, un_spc, disp_sc )
+{
+}
+
+T3UnitNode_Block::~T3UnitNode_Block() {
+}
+
+void T3UnitNode_Block::setAppearance_impl(float act, const T3Color& color, float max_z,
+  float trans, bool act_invalid) 
+{
+  // shape_->height = (base_height + ((max_height - base_height) * fabs(act))) / max_z;
+  // float dz; float x; float y;
+  // transform()->translation.getValue().getValue(x, dz, y);
+  // dz = (((max_height - base_height) * act) * 0.5f) / max_z;
+  // transform()->translation.setValue(x, dz, y);
+  inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
+}
+
+
+#else // TA_QT3D
+
 #include <Inventor/nodes/SoTransform.h>
 #include <Inventor/nodes/SoCube.h>
 
@@ -60,3 +86,4 @@ void T3UnitNode_Block::setAppearance_impl(float act, const T3Color& color, float
   inherited::setAppearance_impl(act, color, max_z, trans, act_invalid);
 }
 
+#endif // TA_QT3D

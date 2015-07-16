@@ -329,13 +329,21 @@ void UnitGroupView::Render_pre() {
   if(nv->unit_disp_mode != NetView::UDM_BLOCK)
     no_units = false;
 
+#ifdef TA_QT3D
+  setNode(new T3UnitGroupNode(NULL, this, no_units));
+
+#else // TA_QT3D
   setNode(new T3UnitGroupNode(this, no_units));
+
+#endif // TA_QT3D
+
   //NOTE: we create/adjust the units in the Render_impl routine
   T3UnitGroupNode* ugrp_so = node_so(); // cache
 
   ugrp_so->setGeom(lay->disp_geom.x, lay->disp_geom.y, nv->eff_max_size.x,
 		   nv->eff_max_size.y, nv->eff_max_size.z, lay->disp_scale);
 
+  
   inherited::Render_pre();
 }
 
@@ -406,6 +414,11 @@ void UnitGroupView::Render_impl_children() {
   T3Color col;
   String val_str;
   // if displaying unit text, set up the viewing props in the unitgroup
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   if (nv->unit_text_disp != NetView::UTD_NONE) {
     SoFont* font = node_so->unitCaptionFont(true);
     font->size.setValue(nv->font_sizes.unit);
@@ -471,6 +484,9 @@ void UnitGroupView::Render_impl_children() {
       }
     }
   }
+
+#endif // TA_QT3D
+
 }
 
 // Set up vertices, normals, and coordinate indices for a collection of
@@ -482,6 +498,11 @@ void UnitGroupView::Render_impl_blocks() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   SoIndexedTriangleStripSet* sits = node_so->shape();
   SoVertexProperty* vtx_prop = node_so->vtxProp();
   if(!sits || !vtx_prop) return; // something wrong..
@@ -854,6 +875,8 @@ void UnitGroupView::Render_impl_blocks() {
   norms.finishEditing();
   mats.finishEditing();
 
+#endif // TA_QT3D
+  
   UpdateUnitValues_blocks(); // hand off to next guy to adjust block heights
 
   if(nv->render_svg) {
@@ -870,6 +893,11 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   SoIndexedTriangleStripSet* sits = node_so->shape();
   SoVertexProperty* vtx_prop = node_so->vtxProp();
   if(!sits || !vtx_prop) return; // something wrong..
@@ -943,6 +971,9 @@ void UnitGroupView::UpdateUnitValues_blocks() {
   }
   vertex.finishEditing();
   color.finishEditing();
+
+#endif // TA_QT3D
+
 }
 
 void UnitGroupView::UpdateUnitValues() {
@@ -1006,6 +1037,9 @@ void UnitGroupView::Render_impl_outnm() {
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* un_txt = node_so->unitText();
   if(!un_txt) {
     un_txt = node_so->getUnitText();
@@ -1049,6 +1083,7 @@ void UnitGroupView::Render_impl_outnm() {
 
   SoFont* fnt = (SoFont*)un_txt->getChild(2);
   fnt->size.setValue(ufontsz);
+#endif // TA_QT3D
 
   UpdateUnitValues_outnm();             // hand off to next guy..
 }
@@ -1060,6 +1095,9 @@ void UnitGroupView::UpdateUnitValues_outnm() {
   T3UnitGroupNode* node_so = this->node_so(); // cache
   if(!node_so) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSeparator* un_txt = node_so->unitText();
 
   SoAsciiText* txt = (SoAsciiText*)un_txt->getChild(4);
@@ -1072,6 +1110,7 @@ void UnitGroupView::UpdateUnitValues_outnm() {
     mfs->setValue(" "); // need a non-empty string for SoAsciiText on some Coin versions
   else
     mfs->setValue(lay->output_name.chars());
+#endif // TA_QT3D
 }
 
 void UnitGroupView::Render_impl_snap_bord() {
@@ -1082,6 +1121,9 @@ void UnitGroupView::Render_impl_snap_bord() {
   Layer* lay = this->layer(); //cache
   if(!lay) return;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   bool do_lines = nv->snap_bord_disp;
   SoIndexedLineSet* ils = node_so->snapBordSet();
   SoDrawStyle* drw = node_so->snapBordDraw();
@@ -1157,6 +1199,7 @@ void UnitGroupView::Render_impl_snap_bord() {
   coords.finishEditing();
   mats.finishEditing();
 
+#endif // TA_QT3D
   UpdateUnitValues_snap_bord();         // hand off to next guy..
 }
 
@@ -1168,6 +1211,10 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   if(!lay) return;
   T3UnitGroupNode* node_so = this->node_so(); // cache
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+  
   SoVertexProperty* vtx_prop = node_so->snapBordVtxProp();
   SoMFUInt32& color = vtx_prop->orderedRGBA;
 
@@ -1206,4 +1253,6 @@ void UnitGroupView::UpdateUnitValues_snap_bord() {
   nv->unit_disp_idx = cur_disp_idx; // restore!
 
   color.finishEditing();
+#endif // TA_QT3D
+  
 }
