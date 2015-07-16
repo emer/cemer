@@ -70,10 +70,6 @@ set(ta_3d_HEADS_NOMAKETA_MOC_base
   T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
-
-  T3Entity.h
-  T3TwoDText.h
-  T3Frame.h
 )
 
 set(ta_3d_HEADS_NOMAKETA_NOMOC_base
@@ -96,6 +92,13 @@ set(ta_3d_HEADS_T3
   T3GraphLine.h
   T3GraphBar.h
   T3GraphViewNode.h
+)
+
+# QT3D only headers
+set(ta_3d_HEADS_QT3D_MOC
+  T3Entity.h
+  T3TwoDText.h
+  T3Frame.h
 )
 
 # COIN only headers
@@ -130,6 +133,7 @@ if(QT_USE_3D)
   
   set(ta_3d_HEADS_NOMAKETA_MOC
     ${ta_3d_HEADS_NOMAKETA_MOC_base}
+    ${ta_3d_HEADS_QT3D_MOC}
     ${ta_3d_HEADS_T3}
   )
 
@@ -227,10 +231,6 @@ set(ta_3d_SRCS_NOMAKETA
 
   T3Misc.cpp
   NewViewHelper.cpp
-
-  T3Entity.cpp
-  T3TwoDText.cpp
-  T3Frame.cpp
 )
 
 # 3d Nodes
@@ -249,6 +249,13 @@ set(ta_3d_SRCS_T3
   T3GraphLine.cpp
   T3GraphBar.cpp
   T3GraphViewNode.cpp
+)
+
+# Qt3D specific files
+set(ta_3d_SRCS_QT3D
+  T3Entity.cpp
+  T3TwoDText.cpp
+  T3Frame.cpp
 )
 
 # COIN specific files
@@ -273,6 +280,8 @@ set(ta_3d_SRCS_COIN
   SoOffscreenRendererQt.cpp
 )
 
+# 
+
 set(ta_3d_SRCS
   ${ta_3d_SRCS_MAKETA}
   ${ta_3d_SRCS_NOMAKETA}
@@ -280,7 +289,10 @@ set(ta_3d_SRCS
 )
 
 if(QT_USE_3D)
-
+  set(ta_3d_SRCS
+    ${ta_3d_SRCS}
+    ${ta_3d_SRCS_QT3D}
+  )
 else(QT_USE_3D)
   set(ta_3d_SRCS
     ${ta_3d_SRCS}
