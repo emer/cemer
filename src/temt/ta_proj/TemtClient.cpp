@@ -1339,8 +1339,8 @@ void TemtClient::SendErrorNATIVE(const String& err_msg, TemtClient::ServerError 
 
 void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError err) {
   QJsonObject root_object = QJsonObject();
-  root_object.insert("status", "ERROR");
-  root_object.insert("message", err_msg.chars());
+  root_object.insert("status", QString("ERROR"));
+  root_object.insert("message", QString(err_msg.chars()));
   root_object.insert("error", err);
 
   QJsonDocument json_doc(root_object);
@@ -1366,8 +1366,8 @@ void TemtClient::SendOkNATIVE(const String& msg) {
 
 void TemtClient::SendOkJSON(const String& msg) {
   QJsonObject root_object = QJsonObject();
-  root_object.insert("status", "OK");
-  root_object.insert("result", msg.chars());
+  root_object.insert("status", QString("OK"));
+  root_object.insert("result", QString(msg.chars()));
   
   QJsonDocument json_doc(root_object);
   QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
