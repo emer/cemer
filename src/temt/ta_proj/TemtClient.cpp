@@ -33,9 +33,9 @@
 
 #include <sstream>
 
-#include <libjson>
-#include <JSONNode>
-#include "../json/JSONDefs.h"
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
 
 TA_BASEFUNS_CTORS_DEFN(TemtClient);
 
@@ -1098,67 +1098,69 @@ void TemtClient::ParseCommandNATIVE(const String& cmd_string) {
 }
 
 void TemtClient::ParseCommandJSON(const String& cmd_string) {
-  json_string json_cmd_line = json_string(cmd_string.chars());
-  
-  if (!libjson::is_valid(json_cmd_line)) {
+  QJsonParseError json_error;
+  QString q_string = QString(cmd_string.chars());
+  QJsonDocument json_doc = QJsonDocument::fromJson(q_string.toUtf8(), &json_error);  // converts to QByteArray
+
+  if (json_error.error != QJsonParseError::NoError) {
     SendErrorJSON("JSON format error", TemtClient::INVALID_FORMAT);
     return;
   }
   else
   {
-    JSONNode n = libjson::parse(json_cmd_line);
-    JSONNode::const_iterator i = n.begin();
-    while (i != n.end()) {
-      String node_name(i->name().c_str());
-      
+    QJsonObject json_obj = json_doc.object();
+    QJsonObject::const_iterator obj_iter = json_obj.constBegin();
+
+    while (obj_iter != json_obj.constEnd()) {
+      QString node_name = obj_iter.key();
       if (node_name == "command") {
-        name_params.SetVal("command", i->as_string().c_str());
+        name_params.SetVal("command", obj_iter.value().toString());
       }
       else if (node_name == "program") {
-        name_params.SetVal("program", i->as_string().c_str()); // program name
+        name_params.SetVal("program", obj_iter.value().toString()); // program name
       }
       else if (node_name == "var_name") {
-        name_params.SetVal("var_name", i->as_string().c_str()); // variable name
+        name_params.SetVal("var_name", obj_iter.value().toString()); // variable name
       }
       else if (node_name == "var_value") {
-        name_params.SetVal("var_value", i->as_string().c_str()); // variable name
+        name_params.SetVal("var_value", obj_iter.value().toString()); // variable name
       }
       else if (node_name == "table") {
-        name_params.SetVal("table", i->as_string().c_str());  // table name
+        name_params.SetVal("table", obj_iter.value().toString());  // table name
       }
       else if (node_name == "data") {
-        tableData = i->as_node();  // json string of data table data
+        tableData = obj_iter.value().toObject();  // json string of data table data
       }
       else if (node_name == "column") {
-        name_params.SetVal("column", i->as_string().c_str());  // a single column name - for get only - set controlled through "data"
+        name_params.SetVal("column", obj_iter.value().toString());  // a single column name - for get only - set controlled through "data"
       }
       else if (node_name == "row_from") {
-        name_params.SetVal("row_from", i->as_int());  // first row to get/set
+        name_params.SetVal("row_from", obj_iter.value().toInt());  // first row to get/set
       }
       else if (node_name == "row_to") {
-        name_params.SetVal("row_to", i->as_int());  // last row to get/set
+        name_params.SetVal("row_to",obj_iter.value().toInt());  // last row to get/set
       }
       else if (node_name == "rows") {
-        name_params.SetVal("rows", i->as_int());  // count of rows to operate on (get, remove) - for set count is number of values sent
+        name_params.SetVal("rows", obj_iter.value().toInt());  // count of rows to operate on (get, remove) - for set count is number of values sent
       }
       else if (node_name == "cell") {
-        name_params.SetVal("cell", i->as_int());  // first cell to get/set - based on flat indexing
+        name_params.SetVal("cell", obj_iter.value().toInt());  // first cell to get/set - based on flat indexing
       }
       else if (node_name == "create") {
-        name_params.SetVal("create", i->as_bool());  // ok to create new columns - default is no
+        name_params.SetVal("create", obj_iter.value().toBool());  // ok to create new columns - default is no
       }
       else if (node_name == "image_data") {
-        name_params.SetVal("image_data", i->as_string().c_str());  // ok to create new columns - default is no
+        name_params.SetVal("image_data", obj_iter.value().toString());  // ok to create new columns - default is no
       }
       else if (node_name == "enable") {
-        name_params.SetVal("enable", i->as_bool());  // enable or disable
+        name_params.SetVal("enable", obj_iter.value().toBool());  // enable or disable
       }
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
         return;  // abort - force client to fix before we get into trouble
       }
-      ++i;
+      ++obj_iter;
     }
     
     String cmd = name_params.GetVal("command").toString();
@@ -1336,12 +1338,14 @@ void TemtClient::SendErrorNATIVE(const String& err_msg, TemtClient::ServerError 
 }
 
 void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError err) {
-  JSONNode root(JSON_NODE);
-  root.push_back(JSONNode("status", json_string("ERROR")));
-  root.push_back(JSONNode("message", json_string(err_msg.chars())));
-  root.push_back(JSONNode("error", err));
-  
-  String reply = root.write_formatted().c_str();
+  QJsonObject root_object = QJsonObject();
+  root_object.insert("status", "ERROR");
+  root_object.insert("message", err_msg.chars());
+  root_object.insert("error", err);
+
+  QJsonDocument json_doc(root_object);
+  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
+  QString reply(theString);
   WriteLine(reply);
 }
 
@@ -1361,13 +1365,13 @@ void TemtClient::SendOkNATIVE(const String& msg) {
 }
 
 void TemtClient::SendOkJSON(const String& msg) {
-  JSONNode root(JSON_NODE);
-  root.push_back(JSONNode("status", json_string("OK")));
-  if (!msg.empty()) {
-    root.push_back(JSONNode("result", json_string(msg.chars())));
-  }
+  QJsonObject root_object = QJsonObject();
+  root_object.insert("status", "OK");
+  root_object.insert("result", msg.chars());
   
-  String reply = root.write_formatted().c_str();
+  QJsonDocument json_doc(root_object);
+  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
+  QString reply(theString);
   WriteLine(reply);
 }
 
@@ -1460,18 +1464,18 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
   return true;
 }
 
-bool TemtClient::ValidateJSON_HasMember(const JSONNode& n, const String& member_name) {
+bool TemtClient::ValidateJSON_HasMember(const QJsonObject& n, const String& member_name) {
   bool rval = true;
   bool has_member = false;
-  JSONNode::const_iterator i = n.begin();
-  while (i != n.end()){
+  QJsonObject::const_iterator i = n.constBegin();
+  while (i != n.constEnd()){
     // recursively call ourselves to dig deeper into the tree
-    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      if (i->name() == member_name.chars()) {
+    if (i.value().isArray() || i.value().isObject()) {
+      if (i.key() == member_name) {
         has_member = true;
         break;
       }
-      rval = ValidateJSON_HasMember(*i, member_name);
+      rval = ValidateJSON_HasMember(i.value().toObject(), member_name);
       if (rval == false) {
         return false;
       }
@@ -1484,18 +1488,18 @@ bool TemtClient::ValidateJSON_HasMember(const JSONNode& n, const String& member_
   return rval;
 }
 
-bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n) { // check for unknown column names
+bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n) { // check for unknown column names
   bool rval = true;
   bool has_column_node = false;
-  JSONNode::const_iterator i = n.begin();
-  while (i != n.end()){
+  QJsonObject::const_iterator i = n.constBegin();
+  while (i != n.constEnd()){
     // recursively call ourselves to dig deeper into the tree
-    if (i->type() == JSON_ARRAY || i->type() == JSON_NODE) {
-      if (i->name() == "columns") {
+    if (i.value().isArray() || i.value().isObject()) {
+      if (i.key() == "columns") {
         has_column_node = true;
         break;
       }
-      rval = ValidateJSON_ColumnNames(dt, *i);
+      rval = ValidateJSON_ColumnNames(dt, i.value().toObject());
       if (rval == false) {
         return rval;
       }
@@ -1504,9 +1508,9 @@ bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n) { //
   }
   
   if (has_column_node) {
-    JSONNode::const_iterator columns = i->begin();
-    while (columns != i->end() && rval == true) {
-      const JSONNode aCol = *columns;
+    QJsonObject::const_iterator columns = i.value().toObject().constBegin();
+    while (columns != i.value().toObject().constEnd() && rval == true) {
+      const QJsonObject aCol = columns.value().toObject();
       rval = ValidateJSON_ColumnName(dt, aCol);
       if (!rval)
         break;
@@ -1516,14 +1520,14 @@ bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n) { //
   return rval;
 }
 
-bool TemtClient::ValidateJSON_ColumnName(DataTable* dt, const JSONNode& aCol) {
+bool TemtClient::ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& aCol) {
   String columnName("");
 
-  JSONNode::const_iterator columnData = aCol.begin();
-  while (columnData != aCol.end()) {
-    std::string node_name = columnData->name();
+  QJsonObject::const_iterator columnData = aCol.constBegin();
+  while (columnData != aCol.constEnd()) {
+    String node_name = columnData.key();
     if (node_name == "name") {
-      columnName = columnData->as_string().c_str();
+      columnName = columnData.value().toString();
       break;
     }
     columnData++;

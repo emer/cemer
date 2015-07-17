@@ -56,8 +56,9 @@ class String_Array; //
 class Variant_Array; //
 class double_Array; //
 class float_Array; //
+class QJsonObject; //
+class QJsonArray; //
 
-class JSONNode; //
 /*
   DataTable Notifications
 
@@ -251,19 +252,19 @@ public:
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO,
       int max_rows = -1,  bool reset_first=true);
   // #CAT_File #EXT_dat,tsv,csv,txt,log load any kind of data -- either the Emergent native file format (which has a special header to define columns) or delimited import formats -- auto detect works in most cases for delimiters and string quoting, reset_first = reset any existing data before loading (else append) -- headers option MUST be set correctly for non-Emergent files (no auto detect on that), and it is ignored for Emergent native files (which always have headers)
-  virtual bool          SetDataFromJSON(const JSONNode& n, int start_row = 0, int start_cell = 0);
+  virtual bool          SetDataFromJSON(const QJsonObject& n, int start_row = 0, int start_cell = 0);
   // #IGNORE #CAT_FILE Parse json for write to data table, row = -1 means append, >=0 means overwrite
-  virtual bool          SetColumnFromJSON(const JSONNode& aCol, int start_row = 0, int start_cell = 0);
-   // #IGNORE #CAT_FILE parse column data and write to data table, row = -1 means append, >=0 means overwrite
-  virtual void          ParseJSONMatrixIntToFlat(const JSONNode& aMatrix, int_Array& values);
+  virtual bool          SetColumnFromJSON(const QJsonObject& aCol, int start_row = 0, int start_cell = 0);
+  // #IGNORE #CAT_FILE parse column data and write to data table, row = -1 means append, >=0 means overwrite
+  virtual void          ParseJSONMatrixIntToFlat(const QJsonArray& aMatrix, int_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
-  virtual void          ParseJSONMatrixFloatToFlat(const JSONNode& aMatrix, float_Array& values);
+  virtual void          ParseJSONMatrixFloatToFlat(const QJsonArray& aMatrix, float_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
-  virtual void          ParseJSONMatrixDoubleToFlat(const JSONNode& aMatrix, double_Array& values);
+  virtual void          ParseJSONMatrixDoubleToFlat(const QJsonArray& aMatrix, double_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
-  virtual void          ParseJSONMatrixStringToFlat(const JSONNode& aMatrix, String_Array& values);
+  virtual void          ParseJSONMatrixStringToFlat(const QJsonArray& aMatrix, String_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
-  virtual void          ParseJSONMatrixVariantToFlat(const JSONNode& aMatrix, Variant_Array& values);
+  virtual void          ParseJSONMatrixVariantToFlat(const QJsonArray& aMatrix, Variant_Array& values);
   // #IGNORE #CAT_FILE parse matrix into flat array and then store pulling from this array
 
 

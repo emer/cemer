@@ -23,7 +23,7 @@
 #ifndef __MAKETA__
 #include <QPointer>
 #include <QAbstractSocket>
-#include <JSONNode>
+#include <QJsonObject>
 #endif
 
 #include <NameVar_PArray>
@@ -36,7 +36,7 @@ class TemtServer; //
 class DataTable; //
 class Program; //
 class QTcpSocket; //
-class JSONNode; //
+class QJsonObject;
 
 taTypeDef_Of(TemtClient);
 
@@ -179,7 +179,7 @@ protected:
   String_PArray		pos_params; // positional (no "=") parameters, if any; str quoting/escaping already done (used by ascii parser)
   NameVar_PArray	name_params; // name params; str quoting/escaping already done
   taProjectRef		cur_proj; // set by OpenProject cmd, or to proj0
-  JSONNode        tableData;  // #IGNORE this is the json data table data
+  QJsonObject     tableData;  // #IGNORE this is the json data table data
   
   taProject*		GetCurrentProject(); // gets, and maybe asserts
   DataTable* 		GetAssertTable(const String& nm); // gets, and sends errs if not found; supports <GlobalTableName> or <ProgName>.<LocalTableName> formats
@@ -192,9 +192,9 @@ protected:
   void          ParseCommandNATIVE(const String& cl);
   void          ParseCommandJSON(const String& cl);
   
-  bool          ValidateJSON_HasMember(const JSONNode& n, const String& member_name); // check for member name in json string
-  bool          ValidateJSON_ColumnName(DataTable* dt, const JSONNode& n);  // validate name of a particular column
-  bool          ValidateJSON_ColumnNames(DataTable* dt, const JSONNode& n); // validate all column names
+  bool          ValidateJSON_HasMember(const QJsonObject& n, const String& member_name); // check for member name in json string
+  bool          ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& n);  // validate name of a particular column
+  bool          ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n); // validate all column names
   
 private:
   void	Copy_(const TemtClient& cp);
