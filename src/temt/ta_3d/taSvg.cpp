@@ -34,13 +34,20 @@ const float taSvg::res = 1000.0f;
 taSvgPtr taSvg::cur_inst;
 
 void taSvg::Initialize() {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   view_vol = NULL;
   main_xform = NULL;
+#endif // TA_QT3D
   coord_mult = 1.0f;
   coord_off = 0.0f;
 }
 
 void taSvg::Destroy() {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(view_vol) {
     delete view_vol;
     view_vol = NULL;
@@ -49,22 +56,24 @@ void taSvg::Destroy() {
     delete main_xform;
     main_xform = NULL;
   }
+#endif // TA_QT3D
 }
 
 String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
                      float pix_width, float pix_height) {
 
   cur_inst = new taSvg;
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   cur_inst->view_vol = new SbViewVolume();
   cur_inst->main_xform = new SbMatrix;
-#ifndef TA_QT3D
   SbViewportRegion rvp;
   if(!vw || !vw->getViewerCamera()) {
     taMisc::Error("taSvg::Header -- viewer or viewer camera not valid -- required to render");
     return _nilString;
   }
   *(cur_inst->view_vol) = vw->getViewerCamera()->getViewVolume();
-#endif
   SoTransform* tr = new SoTransform;
   tr->ref();
   mn->main_xform.CopyTo(tr);
@@ -78,6 +87,7 @@ String taSvg::Header(T3ExaminerViewer* vw, T3DataViewMain* mn,
   *(cur_inst->main_xform) = matrix * cur_inst->view_vol->getMatrix();
   
   tr->unref();
+#endif
 
   // these turn out not to bue useful:
   // float width = cur_inst->view_vol->getWidth();
@@ -102,10 +112,14 @@ bool taSvg::CheckInst() {
     taMisc::Error("taSvg does not have a current inst -- this is a programmer error in the svg rendering code -- please submit bug report");
     return false;
   }
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(!cur_inst->view_vol) {
     taMisc::Error("taSvg does not have a current view volume -- this is a programmer error in the svg rendering code -- please submit bug report");
     return false;
   }
+#endif // TA_QT3D
   return true;
 }
 
@@ -124,7 +138,11 @@ String taSvg::Coords(float x, float y, float z) {
   SbVec3f dst;
   //  cur_inst->view_vol->projectToScreen(src, dst);
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   cur_inst->main_xform->multVecMatrix(src, dst);
+#endif // TA_QT3D
   // coordinates are in range [-1, 1], normalize to [0,1]
   dst *= 0.5f;
   dst += SbVec3f(0.5f, 0.5f, 0.5f);
@@ -142,7 +160,11 @@ String taSvg::CoordsXY(float x, float y, float z) {
   SbVec3f dst;
   //  cur_inst->view_vol->projectToScreen(src, dst);
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   cur_inst->main_xform->multVecMatrix(src, dst);
+#endif // TA_QT3D
   // coordinates are in range [-1, 1], normalize to [0,1]
   dst *= 0.5f;
   dst += SbVec3f(0.5f, 0.5f, 0.5f);
@@ -211,7 +233,11 @@ String taSvg::GroupEnd() {
 String taSvg::GroupTranslate(float x, float y) {
   if(!CheckInst()) return _nilString;
 
+#ifdef TA_QT3D
+  float sz = 1.0f;
+#else // TA_QT3D
   float sz = MAX(cur_inst->view_vol->getWidth(), cur_inst->view_vol->getHeight());
+#endif // TA_QT3D
   x /= sz;
   y /= sz;
 
@@ -239,7 +265,11 @@ String taSvg::Text(const String& str, float x, float y, float z, const iColor& c
     break;
   }
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   font_size /= MAX(cur_inst->view_vol->getWidth(), cur_inst->view_vol->getHeight());
+#endif // TA_QT3D
 
   rval << "\n<text " << CoordsXY(x,y,z)
        << " font-family=\"" << font

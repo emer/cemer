@@ -15,8 +15,6 @@
 
 #include "SoPtr.h"
 
-#ifdef TA_USE_INVENTOR
-
 #include <Inventor/misc/SoBase.h>
 #include <Inventor/nodekits/SoSeparatorKit.h>
 #include <Inventor/nodes/SoGroup.h>
@@ -40,5 +38,3 @@ void SoPtr_impl::set(SoBase* src) {
   m_ptr = src;
   if (m_ptr) m_ptr->ref();
 }
-
-#endif

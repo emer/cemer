@@ -39,7 +39,8 @@
 #include <taiMisc>
 
 #ifdef TA_QT3D
-#include <Qt3DCore/QEntity>
+#include <T3Entity>
+
 #include <Qt3DCore/QCamera>
 #include <Qt3DCore/QCameraLens>
 #include <Qt3DCore/QTransform>
@@ -926,7 +927,7 @@ void T3ExaminerViewer::keyPressEvent(QKeyEvent* key_event) {
 
 void T3ExaminerViewer::setSceneGraph(Qt3D::QEntity* root) {
   if(scene) {
-    scene->setParent(NULL);
+    scene->setParent((Qt3DNode*)NULL);
   }
   scene = root;
   scene->setParent(root_entity);

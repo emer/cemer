@@ -30,7 +30,9 @@
 # endif
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SbBox3f;          // #IGNORE
 #endif
 
@@ -94,9 +96,11 @@ public:
   iBox3f&       operator=(float val) {min = val; max = val; return *this;}
   iBox3f&       operator=(const iBox3f& val) {min = val.min;   max = val.max; return *this;}
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   operator SbBox3f() const; // we can convert to a SbBox3f, but can't always do the converse
-#endif
+#endif // TA_QT3D
 };
 
 #endif // iBox3f_h

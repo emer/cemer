@@ -20,9 +20,11 @@
 # include <qbrush.h>
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 # include <Inventor/fields/SoMFColor.h>
-#endif
+#endif // TA_QT3D
 
 #include <string.h>
 
@@ -432,9 +434,11 @@ iColor::operator QColor() const {
 
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 void iColor::copyTo(SoMFColor& col) const {
   col.setValue(redf(), greenf(), bluef());
 }
 
-#endif
+#endif // TA_QT3D

@@ -46,7 +46,7 @@ void T3DataView::AddRemoveChildNode_impl(T3Node* node, bool adding) {
     node->setParent(node_so());
   }
   else {
-    node->setParent(NULL);
+    node->setParent((Qt3DNode*)NULL);
   }
 }
 

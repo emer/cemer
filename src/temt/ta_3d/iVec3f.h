@@ -25,9 +25,11 @@
    3. DO NOT add any virtual methods to these value-semantic classes
 */
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SbVec3f;          // #IGNORE
-#endif
+#endif // TA_QT3D
 
 taTypeDef_Of(iVec3f);
 

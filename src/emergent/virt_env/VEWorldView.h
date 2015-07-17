@@ -31,7 +31,12 @@ class T3Panel; //
 class QImage; //  #IGNORE
 class iT3Panel; // #IGNORE
 class iViewPanelOfVEWorld; //
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SoOffscreenRendererQt; // #IGNORE
+#endif // TA_QT3D
 
 taTypeDef_Of(VEWorldView);
 
@@ -93,7 +98,11 @@ public:
 protected:
 #ifndef __MAKETA__
   QPointer<iViewPanelOfVEWorld> m_wvp;
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoOffscreenRendererQt*	cam_renderer;
+#endif // TA_QT3D
 #endif
   bool			nowin_rebuild_done; // #NO_SAVE flag for manual rebuild of scene for nowin mode -- only do this once
 

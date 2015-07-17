@@ -15,11 +15,13 @@
 
 #include "taTransform.h"
 
-#ifdef TA_USE_INVENTOR
+TA_BASEFUNS_CTORS_LITE_DEFN(taTransform);
+
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/SbLinear.h>
 #include <Inventor/nodes/SoTransform.h>
-
-TA_BASEFUNS_CTORS_LITE_DEFN(taTransform);
 
 void taTransform::CopyTo(SoTransform* txfm) {
   if (!txfm) return;
@@ -28,4 +30,4 @@ void taTransform::CopyTo(SoTransform* txfm) {
   txfm->scaleFactor.setValue(SbVec3f(scale.x, scale.y, scale.z));
 }
 
-#endif
+#endif // TA_QT3D

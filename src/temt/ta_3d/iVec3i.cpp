@@ -16,7 +16,9 @@
 #include "iVec3i.h"
 
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   #include <Inventor/SbLinear.h>
 
 iVec3i::iVec3i(const SbVec3s& src) {
@@ -36,5 +38,6 @@ iVec3i::operator SbVec3s() const {
   return SbVec3s((short)x, (short)y, (short)z);
 }
 
-#endif
+#endif // TA_QT3D
+
 

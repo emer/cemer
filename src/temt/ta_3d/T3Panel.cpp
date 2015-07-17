@@ -31,8 +31,12 @@
 #include <SigLinkSignal>
 #include <taMisc>
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/annex/HardCopy/SoVectorizePSAction.h>
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(T3Panel);
 
@@ -342,6 +346,9 @@ bool T3Panel::SaveImageEPS(const String& fname) {
   }
   flr->Close();
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoVectorizePSAction * ps = new SoVectorizePSAction;
   SoVectorOutput * out = ps->getOutput();
 
@@ -394,6 +401,8 @@ bool T3Panel::SaveImageEPS(const String& fname) {
   out->closeFile();
 
   delete ps;
+#endif // TA_QT3D
+
   taRefN::unRefDone(flr);
   return true;
 }

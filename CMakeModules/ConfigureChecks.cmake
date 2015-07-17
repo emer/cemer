@@ -13,8 +13,6 @@
 set(TA_GUI TRUE)
 # and always using Qt
 set(TA_USE_QT TRUE)
-# and always inventor too
-set(TA_USE_INVENTOR TRUE)
 
 # for now, obligatory V3 compatibility mode
 #set(V3_COMPAT TRUE)

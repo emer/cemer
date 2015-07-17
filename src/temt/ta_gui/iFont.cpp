@@ -22,9 +22,12 @@
 #include <QFont>
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/nodes/SoFont.h>
-#endif
+#endif // TA_QT3D
+
 
 String iFont::defName = "Helvetica";
 
@@ -149,7 +152,9 @@ iFont::operator QFont() const {
 #endif
 
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 void iFont::copyTo(SoFont* dst, float pts_per_unit) const {
   if (!dst) return;
   if (pts_per_unit == 0.0f) pts_per_unit = 36.0f; // bug in caller
@@ -166,4 +171,4 @@ void iFont::copyTo(SoFont* dst, float pts_per_unit) const {
   dst->name.setValue(nm.chars());
   dst->size = pointSize / pts_per_unit;
 }
-#endif
+#endif // TA_QT3D

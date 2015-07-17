@@ -23,8 +23,6 @@
 
 // declare all other types mentioned but not required to include:
 
-#ifdef TA_USE_INVENTOR
-
 // externals
 class SoBase;			//
 class SoNode;			//
@@ -95,7 +93,5 @@ public: \
 #define SOCACHEGROUP_IMPL(T) \
   T* T::T ## _inst = NULL; \
   T* T::GetInstance() {if (T ## _inst) return T ## _inst; else return T ## _inst = new T();}
-
-#endif
 
 #endif // SoPtr_h

@@ -23,9 +23,11 @@
 class QFont; // 
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SoFont; // #IGNORE
-#endif
+#endif // TA_QT3D
 
 taTypeDef_Of(iFont);
 
@@ -73,9 +75,11 @@ public:
   operator QFont() const;
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   void		copyTo(SoFont* dst, float pts_per_unit = 36.0f) const; //#IGNORE
-#endif
+#endif // TA_QT3D
 protected:
   static String defName; // #IGNORE
   void		init(); // #IGNORE

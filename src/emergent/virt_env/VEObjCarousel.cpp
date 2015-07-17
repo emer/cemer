@@ -20,16 +20,25 @@
 
 #include <QFileInfo>
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/nodes/SoSeparator.h>
 #include <Inventor/nodes/SoSwitch.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
+#endif // TA_QT3D
+
 
 TA_BASEFUNS_CTORS_DEFN(VEObjCarousel);
 
 void VEObjCarousel::Initialize() {
   cur_obj_no = -1;
   SetBodyFlag(FM_FILE);
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   obj_switch = NULL;
+#endif // TA_QT3D
 }
 
 // Destroy, LoadObjs are in in ta_virtenv_qtso
@@ -61,23 +70,34 @@ bool VEObjCarousel::ViewObjName(const String& obj_nm) {
 
 
 void VEObjCarousel::Destroy() {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(obj_switch) {
     obj_switch->unref();
     obj_switch = NULL;
   }
+#endif // TA_QT3D
 }
 
 void VEObjCarousel::MakeSwitch() {
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(!obj_switch) {
     obj_switch = new SoSwitch;
     obj_switch->ref();  // ref it so it hangs around
   }
+#endif // TA_QT3D
 }
 
 bool VEObjCarousel::LoadObjs(bool force) {
   if(TestError(!(bool)obj_table, "LoadObjs", "obj_table is not set -- cannot load objs!"))
     return false;
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   // this delay is deadly for viewing!
   SoVRMLImageTexture::setDelayFetchURL(false);
 
@@ -118,6 +138,7 @@ bool VEObjCarousel::LoadObjs(bool force) {
     }
     taMisc::Warning("object file:", fpath, "at row:", String(i), "not found");
   }
+#endif // TA_QT3D
   return true;
 }
 

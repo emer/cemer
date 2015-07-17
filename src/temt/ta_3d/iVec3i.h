@@ -27,9 +27,11 @@
    3. DO NOT add any virtual methods to these value-semantic classes
 */
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SbVec3s;          // #IGNORE
-#endif
+#endif // TA_QT3D
 
 taTypeDef_Of(iVec3i);
 
@@ -49,11 +51,13 @@ public:
   iVec3i& operator =(const iVec3i& cp) {x = cp.x; y = cp.y; z = cp.z; return *this;}
   iVec3i& operator =(int v) {x = v; y = v; z = v; return *this;}
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   iVec3i(const SbVec3s& src);
   iVec3i& operator=(const SbVec3s& src);
   operator SbVec3s() const; // note: will always be in range in context of gui
-#endif
+#endif // TA_QT3D
 };
 
 

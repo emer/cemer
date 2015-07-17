@@ -21,14 +21,16 @@
   #include "qrect.h"
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   #include <Inventor/SbBox.h>
 
 iBox3f::operator SbBox3f() const {
   return SbBox3f(min.x, min.y, min.z, max.x, max.y, max.z);
 }
 
-#endif
+#endif // TA_QT3D
 
 #ifndef MAX
 #define	MAX(a,b) (((a) > (b)) ? (a) : (b))

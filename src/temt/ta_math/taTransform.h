@@ -24,7 +24,11 @@
 #include <taAxisAngle>
 
 // declare all other types mentioned but not required to include:
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SoTransform; // #IGNORE
+#endif // TA_QT3D
 
 taTypeDef_Of(taTransform);
 
@@ -37,9 +41,11 @@ public:
   taVector3f          translate; // translate, in x, y, and z
 
   TA_BASEFUNS_LITE(taTransform);
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   void                  CopyTo(SoTransform* txfm); // #IGNORE txfers values to an inventor txfm -- note, does a transfer, not an accumulate
-#endif
+#endif // TA_QT3D
 private:
   void                  Copy_(const taTransform& cp)
     {scale.Copy(cp.scale); rotate.Copy(cp.rotate); translate.Copy(cp.translate);}

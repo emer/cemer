@@ -28,10 +28,15 @@
 
 // declare all other types mentioned but not required to include:
 class iColor; // 
-class SbViewVolume; //
-class SbMatrix; //
 class T3ExaminerViewer; //
 class T3DataViewMain; //
+
+#ifdef TA_QT3D
+// todo: need Qt3D equivalents
+#else // TA_QT3D
+class SbViewVolume; //
+class SbMatrix; //
+#endif // TA_QT3D
 
 taTypeDef_Of(taSvg);
 
@@ -52,8 +57,12 @@ public:
   static const float  res;      // resolution for generating output ( = 1000.0f)
 
   static taSvgPtr cur_inst;       // current instance of svg for rendering
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SbViewVolume*   view_vol;       // #IGNORE captures camera view projection data
   SbMatrix*       main_xform;     // #IGNORE the main transform 
+#endif // TA_QT3D
   taVector3f      coord_mult;     // #IGNORE extra global multipliers to apply to coords before projecting -- deals with global diffs in various viewers -- applied before offs
   taVector3f      coord_off;      // #IGNORE extra global offsets to add to coords before projecting -- deals with global offset diffs in various viewers
 

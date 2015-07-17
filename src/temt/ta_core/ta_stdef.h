@@ -69,9 +69,6 @@
 #  ifndef TA_NO_GUI
 #    define TA_NO_GUI
 #  endif
-#  ifdef TA_USE_INVENTOR
-#    undef TA_USE_INVENTOR
-#  endif
 #  ifdef TA_PROFILE
 #    undef TA_PROFILE
 #  endif

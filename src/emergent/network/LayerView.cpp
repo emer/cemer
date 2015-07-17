@@ -27,12 +27,16 @@
 #include <T3Panel>
 #include <taSvg>
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/nodes/SoMaterial.h>
 #include <Inventor/SbLinear.h>
 #include <Inventor/draggers/SoTranslate1Dragger.h>
 #include <Inventor/draggers/SoTranslate2Dragger.h>
 #include <Inventor/draggers/SoTransformBoxDragger.h>
 #include <Inventor/nodes/SoTransform.h>
+#endif // TA_QT3D
 
 TA_BASEFUNS_CTORS_DEFN(LayerView);
 
@@ -392,6 +396,9 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
 
   viewer->main_xform = nv->main_xform; // first get the network
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SbRotation cur_rot;
   cur_rot.setValue(SbVec3f(nv->main_xform.rotate.x, nv->main_xform.rotate.y,
                            nv->main_xform.rotate.z), nv->main_xform.rotate.rot);
@@ -432,6 +439,7 @@ void LayerView::UseViewer(T3DataViewMain* viewer) {
   float angle;
   nw_rot.getValue(axis, angle);
   viewer->main_xform.rotate.SetXYZR(axis[0], axis[1], axis[2], angle);
+#endif // TA_QT3D
 
   T3Panel* fr = GetFrame();
   if(fr) fr->Render();

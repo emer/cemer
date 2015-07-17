@@ -30,6 +30,7 @@
 #include <QGLWidget>
 
 #ifdef TA_QT3D
+#include <T3Entity>
 #else
 #include <Inventor/nodes/SoSelection.h>
 #include <Inventor/actions/SoBoxHighlightRenderAction.h>
@@ -170,7 +171,7 @@ void iT3ViewspaceWidget::setSceneGraph(Qt3D::QEntity* sg) {
   if (!m_t3viewer) return; //not supposed to happen
   if (m_scene == sg) return;
   if (m_scene) { //had to have already been initialized before
-    m_scene->setParent(NULL);
+    m_scene->setParent((Qt3DNode*)NULL);
     delete m_scene;             // todo: might not be right!?
   }
   m_scene = sg;

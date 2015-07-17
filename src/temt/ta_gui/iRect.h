@@ -25,11 +25,6 @@
    3. DO NOT add any virtual methods to these value-semantic classes
 */
 
-#ifdef TA_USE_INVENTOR
-class SbVec2s;          // #IGNORE
-class SbVec3s;          // #IGNORE
-#endif
-
 class QRect; //
 
 #include <iVec2i>

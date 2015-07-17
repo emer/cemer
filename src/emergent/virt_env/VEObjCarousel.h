@@ -23,7 +23,11 @@
 #include <DataTableRef>
 
 // declare all other types mentioned but not required to include:
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SoSwitch; // #IGNORE
+#endif // TA_QT3D
 
 taTypeDef_Of(VEObjCarousel);
 
@@ -36,7 +40,11 @@ public:
 #endif
   DataTableRef  obj_table;      // the data table containing FileName, FilePath columns (other columns can be present but are ignored) -- objects are loaded from FilePath and can be selected by FileName or row number
   int           cur_obj_no;     // #READ_ONLY #SHOW current object number to view -- select using ViewObjNo button/function, which drives the view update as well
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   SoSwitch*     obj_switch;     // #IGNORE saved switch, to minimize reloading
+#endif // TA_QT3D
 
   virtual bool  ViewObjNo(int obj_no);
   // #BUTTON select object to view by number, corresponding to the rows of the obj_table data table

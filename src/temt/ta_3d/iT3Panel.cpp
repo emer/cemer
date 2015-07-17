@@ -29,9 +29,13 @@
 #include <QVBoxLayout>
 #include <QFileDialog>
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 #include <Inventor/SoOutput.h>
 #include <Inventor/actions/SoWriteAction.h>
 #include <Inventor/nodes/SoSelection.h>
+#endif // TA_QT3D
 
 
 iT3Panel::iT3Panel(T3Panel* viewer_, QWidget* parent)
@@ -72,10 +76,9 @@ void iT3Panel::viewSaved(int view_no) {
 void iT3Panel::fileExportInventor() {
   static QFileDialog* fd = NULL;
 #ifdef TA_QT3D
-  SoNode* scene = NULL;
-#else
+
+#else // TA_QT3D
   SoNode* scene = m_t3viewer->quarter->getSceneGraph();
-#endif
   if (!scene) {
     iDialogChoice::ErrorDialog(this, "No scene exists yet.", "No scene", false);
     return;
@@ -114,6 +117,7 @@ void iT3Panel::fileExportInventor() {
   wa.apply(scene);
 
   out.closeFile();
+#endif // TA_QT3D
 }
 
 void iT3Panel::NodeDeleting(T3Node* node) {

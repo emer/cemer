@@ -23,9 +23,11 @@
 class QColor; // #IGNORE
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
 class SoMFColor; // #IGNORE
-#endif
+#endif // TA_QT3D
 
 taTypeDef_Of(rgb_t);
 
@@ -128,9 +130,11 @@ struct {
   		operator QColor() const;       // #IGNORE
 #endif
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   void		copyTo(SoMFColor& col) const; // #IGNORE
-#endif
+#endif // TA_QT3D
 
 };
 

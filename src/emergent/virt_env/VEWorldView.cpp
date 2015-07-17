@@ -29,11 +29,14 @@
 
 #include <VEObjectView>
 #include <VEObject>
-#include <SoOffscreenRendererQt>
 
 #include <taMisc>
 
 
+#ifdef TA_QT3D
+
+#else // TA_QT3D
+#include <SoOffscreenRendererQt>
 #include <Inventor/nodes/SoTexture2.h>
 #include <Inventor/nodes/SoTexture2Transform.h>
 #include <Inventor/nodes/SoPerspectiveCamera.h>
@@ -48,6 +51,8 @@
 #include <Inventor/SbViewportRegion.h>
 #include <Inventor/VRMLnodes/SoVRMLImageTexture.h>
 #include <Inventor/elements/SoGLCacheContextElement.h>
+#endif // TA_QT3D
+
 
 TA_BASEFUNS_CTORS_DEFN(VEWorldView);
 
@@ -64,7 +69,11 @@ void VEWorldView::Initialize() {
   show_joints = true;
   data_base = &TA_VEWorld;
 //   children.SetBaseType(&TA_VEObjectView);
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   cam_renderer = NULL;
+#endif // TA_QT3D
   nowin_rebuild_done = false;
 }
 
@@ -75,8 +84,12 @@ void VEWorldView::InitLinks() {
 
 void VEWorldView::CutLinks() {
   inherited::CutLinks();
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   if(cam_renderer) delete cam_renderer;
   cam_renderer = NULL;
+#endif // TA_QT3D
 }
 
 void VEWorldView::Copy_(const VEWorldView& cp) {
@@ -194,12 +207,12 @@ void VEWorldView::Render_pre() {
   if(vw) {
     vw->syncViewerMode();
   }
-  // this delay is deadly for viewing!
-  SoVRMLImageTexture::setDelayFetchURL(false);
 
 #ifdef TA_QT3D
   setNode(new T3VEWorld(NULL, this));
 #else // TA_QT3D
+  // this delay is deadly for viewing!
+  SoVRMLImageTexture::setDelayFetchURL(false);
   setNode(new T3VEWorld(this));
 #endif // TA_QT3D
 

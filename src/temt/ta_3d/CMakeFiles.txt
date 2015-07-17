@@ -67,7 +67,6 @@ set(ta_3d_HEADS_NOMAKETA_MOC_base
   iT3PanelViewer.h
   iT3Panel.h
 
-  T3QuarterWidget.h
   T3ExaminerViewer.h
   iT3ViewspaceWidget.h
 )
@@ -149,6 +148,7 @@ else(QT_USE_3D)
   
   set(ta_3d_HEADS_NOMAKETA_MOC
     ${ta_3d_HEADS_NOMAKETA_MOC_base}
+    T3QuarterWidget.h
   )
     
   set(ta_3d_HEADS_NOMAKETA_NOMOC
@@ -225,7 +225,6 @@ set(ta_3d_SRCS_NOMAKETA
   iT3PanelViewer.cpp
   iT3Panel.cpp
 
-  T3QuarterWidget.cpp
   T3ExaminerViewer.cpp
   iT3ViewspaceWidget.cpp
 
@@ -260,6 +259,7 @@ set(ta_3d_SRCS_QT3D
 
 # COIN specific files
 set(ta_3d_SRCS_COIN
+  T3QuarterWidget.cpp
   SoCapsule.cpp
   SoFrame.cpp
   SoRect.cpp

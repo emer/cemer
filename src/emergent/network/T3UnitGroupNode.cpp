@@ -34,24 +34,25 @@ void T3UnitGroupNode::drawGrid(T3UnitGroupNode* node) {
   float disp_scale = node->disp_scale;
   float x_end = disp_scale * ((float)node->geom.x / node->max_size.x);
   float y_end = disp_scale * ((float)(-node->geom.y) / node->max_size.y);
-  GLbitfield attribs = (GLbitfield)(GL_LIGHTING_BIT | GL_TRANSFORM_BIT);
-  glPushMatrix();
-  glPushAttrib(attribs); //note: doesn't seem to push matrix properly
-  glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
-  glDisable(GL_LIGHTING);
-  glColor3f(0.4f, 0.4f, 0.4f);
-  // vert lines
-  for (int x = 1; x < node->geom.x; ++x) {
-    glRectf((disp_scale * (float)(x - sw)) / node->max_size.x, 0.0f,
-	    (disp_scale * (float)(x + sw)) / node->max_size.x, y_end);
-  }
-  // hor lines
-  for (int y = 1; y < node->geom.y; ++y) {
-    glRectf(0.0f, (disp_scale * (float)-(y - sw)) / node->max_size.y,
-	    x_end, (disp_scale * (float)-(y + sw)) / node->max_size.y);
-  }
-  glPopAttrib();
-  glPopMatrix();
+
+  // GLbitfield attribs = (GLbitfield)(GL_LIGHTING_BIT | GL_TRANSFORM_BIT);
+  // glPushMatrix();
+  // glPushAttrib(attribs); //note: doesn't seem to push matrix properly
+  // glRotatef(90.0f, 1.0f, 0.0f, 0.0f);
+  // glDisable(GL_LIGHTING);
+  // glColor3f(0.4f, 0.4f, 0.4f);
+  // // vert lines
+  // for (int x = 1; x < node->geom.x; ++x) {
+  //   glRectf((disp_scale * (float)(x - sw)) / node->max_size.x, 0.0f,
+  //           (disp_scale * (float)(x + sw)) / node->max_size.x, y_end);
+  // }
+  // // hor lines
+  // for (int y = 1; y < node->geom.y; ++y) {
+  //   glRectf(0.0f, (disp_scale * (float)-(y - sw)) / node->max_size.y,
+  //           x_end, (disp_scale * (float)-(y + sw)) / node->max_size.y);
+  // }
+  // glPopAttrib();
+  // glPopMatrix();
 }
 
 void T3UnitGroupNode::setGeom(int x, int y, float max_x, float max_y, float max_z,

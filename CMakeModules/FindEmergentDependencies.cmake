@@ -48,15 +48,14 @@ if (QT_USE_5)
     set(QT_LIBRARIES ${QT_LIBRARIES} ${Qt53DCore_LIBRARIES} ${Qt53DRenderer_LIBRARIES}
        ${Qt53DInput_LIBRARIES})
   else (QT_USE_3D)
-    # todo: when actually working, uncomment these and comment out below
-    # find_package(Coin REQUIRED)
-    # find_package(Quarter REQUIRED)
-    # find_package(OpenGL REQUIRED)
+    find_package(Coin REQUIRED)
+    find_package(Quarter REQUIRED)
+    find_package(OpenGL REQUIRED)
   endif (QT_USE_3D)
 
-  find_package(Coin REQUIRED)
-  find_package(Quarter REQUIRED)
-  find_package(OpenGL REQUIRED)
+  # find_package(Coin REQUIRED)
+  # find_package(Quarter REQUIRED)
+  # find_package(OpenGL REQUIRED)
 
   # from http://cebmtpchat.googlecode.com/svn/trunk/CMakeModules/QtSupport.cmake
   SET(QT_BINARY_DIR "${_qt5Core_install_prefix}/bin")

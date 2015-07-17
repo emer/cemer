@@ -63,13 +63,15 @@ taTypeDef_Of(StartupWizard);
 #include <css_machine.h>
 #include <css_qtconsole.h>
 
-#ifdef TA_USE_INVENTOR
+#ifdef TA_QT3D
+
+#else // TA_QT3D
   #include <Quarter/Quarter.h>
   #include <SoImageEx.h>
   #include <Inventor/SbImage.h>
   #include <Inventor/nodes/SoTexture2.h>
   #include <Inventor/SbLinear.h>
-#endif
+#endif // TA_QT3D
 #include <ode/ode.h>
 
 #ifdef GPROF                    // turn on for profiling
@@ -922,14 +924,13 @@ bool taRootBase::Startup_InitApp(int& argc, const char* argv[]) {
 
 #ifdef TA_GUI
   if(taMisc::use_gui) {
-# ifdef TA_USE_INVENTOR
     new taApplication(argc, (char**)argv); // accessed as qApp
+#ifdef TA_QT3D
+    milestone |= SM_QAPP_OBJ;
+#else // TA_QT3D
     SIM::Coin3D::Quarter::Quarter::init();
     milestone |= (SM_QAPP_OBJ | SM_SOQT_INIT);
-# else
-    new taApplication(argc, (char**)argv); // accessed as qApp
-    milestone |= SM_QAPP_OBJ;
-# endif // TA_USE_INVENTOR
+#endif // TA_QT3D
     // test for various GL compatibilities now, before we get bitten later!
     if(!QGLFormat::hasOpenGL()) {
       cerr << "This display does NOT have OpenGL support, which is required for 3d displays!\n"
