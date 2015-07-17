@@ -18,6 +18,8 @@
 #include <Qt3DRenderer/QDiffuseMapMaterial>
 #include <Qt3DRenderer/QPlaneMesh>
 
+#include <taMisc>
+
 T3TwoDText::T3TwoDText(Qt3DNode* parent)
   : T3Entity(parent)
 {
@@ -92,8 +94,9 @@ public:
   {
     Qt3D::TexImageDataPtr dataPtr;
     dataPtr.reset(new Qt3D::TexImageData());
-    if(image)
+    if(image) {
       dataPtr->setImage(*image);
+    }
     return dataPtr;
   }
 

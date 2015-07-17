@@ -96,7 +96,7 @@ public:
 };
 
 Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
-  const int nVerts = 9;
+  const int nVerts = 8;
 
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos; // not: vec2 texCoord, vec3 normal, vec4 tangent
@@ -106,19 +106,28 @@ Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
   bufferBytes.resize(stride * nVerts);
   float* fptr = reinterpret_cast<float*>(bufferBytes.data());
 
-  const float xs = size.x() * .5f;
-  const float ys = size.y() * .5f;
-  const float zs = size.z() * .5f;
+  const float xs = size.x();
+  const float ys = size.y();
+  const float zs = size.z();
+  const float x0 = xs * .5f;
+  const float y0 = ys * .5f;
+  const float z0 = zs * .5f;
 
   for(int z=0; z<2; z++) {
     for(int y=0; y<2; y++) {
       for(int x=0; x<2; x++) {
-        *fptr++ = (float)x * xs - xs;
-        *fptr++ = (float)y * ys - ys;
-        *fptr++ = (float)z * zs - zs;
+        *fptr++ = (float)x * xs - x0;
+        *fptr++ = (float)y * ys - y0;
+        *fptr++ = (float)z * zs - z0;
       }
     }
   }
+
+  // vertex positions
+  //    6   7
+  //  2   3
+  //    4   5
+  //  0   1 
 
   // Wrap the raw bytes in a buffer
   Qt3D::BufferPtr buf(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
@@ -132,38 +141,34 @@ Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
      Qt3D::AttributePtr(new Qt3D::Attribute(buf, GL_FLOAT_VEC3, nVerts, offset, stride)));
 
   // Create the index data. 
-  // const int indicies = 12 * 3;  // 12 lines with end at each one
-  // const int indices = 3 * faces;
-  // Q_ASSERT(indices < std::numeric_limits<quint16>::max());
-  // QByteArray indexBytes;
-  // indexBytes.resize(indices * sizeof(quint16));
-  // quint16* indexPtr = reinterpret_cast<quint16*>(indexBytes.data());
+  const int indicies = 24;
+  Q_ASSERT(indicies < std::numeric_limits<quint16>::max());
+  QByteArray indexBytes;
+  indexBytes.resize(indicies * sizeof(quint16));
+  quint16* idxPtr = reinterpret_cast<quint16*>(indexBytes.data());
 
-  // // Iterate over z
-  // for (int j = 0; j < resolution.height() - 1; ++j) {
-  //   const int rowStartIndex = j * resolution.width();
-  //   const int nextRowStartIndex = (j + 1) * resolution.width();
+  // depends on having set 0xFFFF as glPrimitiveResetIndex in opengl context
+  // faces = 6 * 2 = 12
+  // front face
+  *idxPtr++ = 0; *idxPtr++ = 1; *idxPtr++ = 3;  *idxPtr++ = 2;  *idxPtr++ = 0;
+  *idxPtr++ = 0xFFFF; 
+  // back face
+  *idxPtr++ = 4; *idxPtr++ = 5; *idxPtr++ = 7;  *idxPtr++ = 6;  *idxPtr++ = 4;
+  *idxPtr++ = 0xFFFF;
+  // front-back connectors -- 4 x 3 = 12
+  for(int i=0; i<4; i++) {      
+     *idxPtr++ = i; *idxPtr++ = 4 + i; *idxPtr++ = 0xFFFF;
+  }
+  
+  // Wrap the index bytes in a buffer
+  Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
+  indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
+  indexBuffer->setData(indexBytes);
 
-  //   // Iterate over x
-  //   for (int i = 0; i < resolution.width() - 1; ++i) {
-  //     // Split quad into two triangles
-  //     *indexPtr++ = rowStartIndex + i;
-  //     *indexPtr++ = nextRowStartIndex + i;
-  //     *indexPtr++ = rowStartIndex + i + 1;
-
-  //     *indexPtr++ = nextRowStartIndex + i;
-  //     *indexPtr++ = nextRowStartIndex + i + 1;
-  //     *indexPtr++ = rowStartIndex + i + 1;
-  //   }
-  // }
-
-  // // Wrap the index bytes in a buffer
-  // Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
-  // indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
-  // indexBuffer->setData(indexBytes);
-
-  // // Specify index data on the mesh
-  // mesh->setIndexAttribute(AttributePtr(new Attribute(indexBuffer, GL_UNSIGNED_SHORT, indices, 0, 0)));
+  // Specify index data on the mesh
+  mesh->setIndexAttribute(Qt3D::AttributePtr(new Qt3D::Attribute
+                                             (indexBuffer, GL_UNSIGNED_SHORT,
+                                              indicies, 0, 0)));
 
   mesh->computeBoundsFromAttribute(Qt3D::QMeshData::defaultPositionAttributeName());
 

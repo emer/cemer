@@ -197,7 +197,7 @@ void T3Panel::Render_pre() {
   if(viewer) {
     if(viewer->cur_view_no < 0) {
       SetAllSavedViews();               // init from us
-      viewer->gotoView(0);              // goto first saved view as default
+      // viewer->gotoView(0);              // goto first saved view as default
     }
   }
 }

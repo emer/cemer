@@ -45,9 +45,9 @@ void T3GraphViewNode::updateNode() {
   inherited::updateNode();
   float frmg2 = 2.0f * frame_margin;
 
-  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, 1.0f);  
+  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, .1f);  
   frame->setSize(fr_sz);
-  frame->translate.setTranslation(-fr_sz * 0.5f);
+  // frame->translate.setTranslation(-fr_sz * 0.5f);
 }
 
 #else // TA_QT3D

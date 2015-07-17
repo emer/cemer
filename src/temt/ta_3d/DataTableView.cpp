@@ -23,7 +23,12 @@
 #include <SigLinkSignal>
 #include <taMisc>
 
+#ifdef TA_QT3D
+#include <T3TwoDText>
+#else // TA_QT3D
 #include <Inventor/nodes/SoFont.h>
+#endif // TA_QT3D
+
 
 TA_BASEFUNS_CTORS_DEFN(DataTableView);
 
@@ -314,12 +319,17 @@ void DataTableView::Render_impl() {
 
   T3Node* node_so = this->node_so(); // cache
   if(!node_so) return;
-#ifndef TA_QT3D
+#ifdef TA_QT3D
+  QFont fnt("Arial", 12);
+  node_so->setCaption(caption().chars());
+  node_so->caption->label.setFont(fnt);
+  node_so->caption->updateRender();
+#else // TA_QT3D
   SoFont* font = node_so->captionFont(true);
   float font_size = 0.3f;
   font->size.setValue(font_size); // is in same units as geometry units of network
-#endif // TA_QT3D
   node_so->setCaption(caption().chars());
+#endif // TA_QT3D
   //NOTE: will need to move caption appropriately in subclass
 }
 

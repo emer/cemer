@@ -189,8 +189,8 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   QSize sz = container->size();
   float aspect_ratio = (float)sz.width() / (float)sz.height();
   
-  camera->lens()->setPerspectiveProjection(45.0f, aspect_ratio, 0.1f, 1000.0f);
-  camera->setPosition(QVector3D(0.0f, 0.0f, -10.0f));
+  camera->lens()->setPerspectiveProjection(20.0f, aspect_ratio, 0.1f, 1000.0f);
+  camera->setPosition(QVector3D(0.0f, 0.0f, -5.0f));
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
@@ -342,9 +342,9 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
 
 T3ExaminerViewer::~T3ExaminerViewer() {
 #ifdef TA_QT3D
-  engine->shutdown();
-  delete view3d;
-  delete engine;
+  // engine->shutdown();  // this causes crash at exit!
+  // delete engine;
+  // delete view3d;
 #else
   quarter->setInteractionModeOn(false); // turn off interaction mode. before we die..
   // otherwise we can crash..
@@ -588,7 +588,11 @@ bool T3ExaminerViewer::removeDynButtonName(const String& label) {
 ///////////////////////////////////////////////////////////////
 //              Main Button Actions
 
+#ifdef TA_QT3D
+#define ROT_DELTA_MULT  0.02f
+#else
 #define ROT_DELTA_MULT  0.002f
+#endif
 #define PAN_DELTA_MULT  0.002f
 #define ZOOM_DELTA_MULT 0.002f
 
@@ -955,7 +959,9 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
 
 void T3ExaminerViewer::viewAll() {
 #ifdef TA_QT3D
-  camera->setUpVector(QVector3D(0, 1, 0));  
+  camera->setUpVector(QVector3D(0, 1.0f, 0));
+  camera->setPosition(QVector3D(0.0f, 0.0f, -5.0f));
+  camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 #else
   SoCamera* cam = getViewerCamera();
   if(!cam) return; // can happen for empty scenegraph
@@ -973,7 +979,7 @@ void T3ExaminerViewer::viewAll() {
 void T3ExaminerViewer::zoomView(const float diffvalue) {
 #ifdef TA_QT3D
   //  float multiplicator = float(exp(diffvalue));
-  float multiplicator = diffvalue;
+  float multiplicator = -diffvalue;
 
   if (camera->projectionType() == Qt3D::QCameraLens::OrthogonalProjection) {
     // Since there's no perspective, "zooming" in the original sense
@@ -984,19 +990,26 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
     camera->setAspectRatio(view_size * multiplicator);
   }
   else if (camera->projectionType() == Qt3D::QCameraLens::PerspectiveProjection) {
-    Qt3D::QTransform* trns = camera->transform();
-    QVector3D direction = trns->matrix().mapVector(QVector3D(0.0f, 0.0f, -1.0f));
-    
+    QVector3D direction(0.0f, 0.0f, -1.0f); // just move back in z for now
     const QVector3D oldpos = camera->position();
     const QVector3D newpos = oldpos + multiplicator * direction;
+    camera->setPosition(newpos);
+
+    // this kinda works but then doesn't after a while..
     
-    const float distorigo = newpos.length();
-    // sqrt(FLT_MAX) == ~ 1e+19, which should be both safe for further
-    // calculations and ok for the end-user and app-programmer.
-    if (distorigo < 1.0e+19) {
-      camera->setPosition(newpos);
-      // camera->focalDistance = newfocaldist;
-    }
+    // Qt3D::QTransform* trns = camera->transform();
+    // QVector3D direction = trns->matrix().mapVector(QVector3D(0.0f, 0.0f, -1.0f));
+    
+    // const QVector3D oldpos = camera->position();
+    // const QVector3D newpos = oldpos + multiplicator * direction;
+    
+    // const float distorigo = newpos.length();
+    // // sqrt(FLT_MAX) == ~ 1e+19, which should be both safe for further
+    // // calculations and ok for the end-user and app-programmer.
+    // if (distorigo < 1.0e+19) {
+    //   camera->setPosition(newpos);
+    //   // camera->focalDistance = newfocaldist;
+    // }
     // float zoom = camera->fieldOfView();
     // camera->setFieldOfView(zoom * multiplicator);
   }
@@ -1073,7 +1086,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
 
 void T3ExaminerViewer::horizRotateView(const float rot_value) {
 #ifdef TA_QT3D
-  RotateView(QVector3D(0.0f, -1.0f, 0.0f), rot_value);
+  camera->panAboutViewCenter(rot_value);
 #else
   RotateView(SbVec3f(0.0f, -1.0f, 0.0f), rot_value);
 #endif
@@ -1081,7 +1094,7 @@ void T3ExaminerViewer::horizRotateView(const float rot_value) {
 
 void T3ExaminerViewer::vertRotateView(const float rot_value) {
 #ifdef TA_QT3D
-  RotateView(QVector3D(-1.0f, 0.0f, 0.0f), rot_value);
+  camera->tiltAboutViewCenter(rot_value);
 #else
   RotateView(SbVec3f(-1.0f, 0.0f, 0.0f), rot_value);
 #endif
@@ -1089,7 +1102,7 @@ void T3ExaminerViewer::vertRotateView(const float rot_value) {
 
 void T3ExaminerViewer::horizPanView(const float pan_value) {
 #ifdef TA_QT3D
-  PanView(QVector3D(-1.0f, 0.0f, 0.0f), pan_value);
+  camera->pan(-pan_value);
 #else
   PanView(SbVec3f(-1.0f, 0.0f, 0.0f), pan_value);
 #endif
@@ -1097,7 +1110,7 @@ void T3ExaminerViewer::horizPanView(const float pan_value) {
 
 void T3ExaminerViewer::vertPanView(const float pan_value) {
 #ifdef TA_QT3D
-  PanView(QVector3D(0.0f, 1.0f, 0.0f), pan_value);
+  camera->tilt(pan_value);
 #else
   PanView(SbVec3f(0.0f, 1.0f, 0.0f), pan_value);
 #endif

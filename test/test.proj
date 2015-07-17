@@ -3751,12 +3751,12 @@ LeabraProject .projects["test"] {
     auto_load_file=;
     keygen 4 0=0;
     row_indexes {
-     name=;
+     name="row_indexes";
     [24] 0;1;2;3;4;5;6;7;8;9;
 10;11;12;13;14;15;16;17;18;19;
 20;21;22;23;    };
     last_sort_spec {
-     name="DataSortSpec_47";
+     name="last_sort_spec";
      ops {
       name="ops";
       el_typ=DataSortEl;
@@ -3791,7 +3791,7 @@ LeabraProject .projects["test"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.03978779911994934;
+     value 6 0=0.002120890887454152;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -3801,7 +3801,7 @@ LeabraProject .projects["test"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9984084963798523;
+     value 6 0=0.9978790879249573;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
@@ -3823,7 +3823,7 @@ LeabraProject .projects["test"] {
    name="Browser2";
    m_data=.projects["test"]$$;
    visible=1;
-   win_name=".projects[\"LeabraBlank\"] - test.proj";
+   win_name=".projects[\"test\"] - test.proj";
    m_is_root=0;
    m_is_viewer_xor_browser=0;
    m_is_proj_viewer=1;
@@ -3901,9 +3901,9 @@ LeabraProject .projects["test"] {
 	 GraphTableView @["EpochOutputData_Graph"] {
 	  name="EpochOutputData_Graph";
 	  m_data=.projects["test"].data.gp["OutputData"]["EpochOutputData"]$$;
-taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  children {
-	   name="T3DataView_List_1";
+	   name="children";
 	   el_typ=GraphColView;
 	   el_def=0;
 	   GraphColView @["batch"] {
@@ -4227,14 +4227,14 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	    data_range {min=0: max=0: };
 	   };
 	  };
-	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=1: y=0: z=0: }: };
+	  main_xform {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: rot=0: }: translate={x=0: y=0: z=0: }: };
 	  annotations {
-	   name="T3Annotation_List_11";
+	   name="annotations";
 	   el_typ=T3Annotation;
 	   el_def=0;
 	  };
 	  annote_children {
-	   name="T3DataView_List_1";
+	   name="annote_children";
 	   el_typ=T3DataView;
 	   el_def=0;
 	  };
@@ -4258,7 +4258,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  axis_font_size=0.05;
 	  label_font_size=0.04;
 	  x_axis {
-	   name="GraphAxisView_11";
+	   name="x_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -4277,7 +4277,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  z_axis {
-	   name="GraphAxisView_12";
+	   name="z_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=1;
@@ -4297,7 +4297,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  };
 	  tot_plots=6;
 	  plots {
-	   name="GraphPlotView_List_1";
+	   name="plots";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_plot_1"] {
@@ -4428,7 +4428,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   };
 	  };
 	  errbars {
-	   name="GraphPlotView_List_1";
+	   name="errbars";
 	   el_typ=GraphPlotView;
 	   el_def=0;
 	   GraphPlotView @["EpochOutputData_Graph_err_1"] {
@@ -4562,7 +4562,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	  err_bar_width=0.02;
 	  color_mode=BY_VALUE;
 	  color_axis {
-	   name="GraphAxisView_13";
+	   name="color_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -4581,7 +4581,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   row_num=0;
 	  };
 	  colorscale {
-	   name="ColorScale_1";
+	   name="colorscale";
 	   chunks=133;
 	   min=-1;
 	   max=1;
@@ -4593,7 +4593,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	   auto_scale=0;
 	  };
 	  raster_axis {
-	   name="GraphAxisView_15";
+	   name="raster_axis";
 	   m_data=NULL;
 	   m_transform=NULL;
 	   on=0;
@@ -4632,7 +4632,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	T3SavedView @["Vw_0"] {
 	 name="Vw_0";
 	 view_saved=1;
-	 pos {x=0: y=0: z=-0.4765596: };
+	 pos {x=0: y=0: z=-5: };
 	 orient {x=0: y=0: z=1: rot=0: };
 	 focal_dist=3.52344;
 	};
@@ -4725,7 +4725,7 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04031830281019211;
+       value 6 0=0.04029692336916924;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
