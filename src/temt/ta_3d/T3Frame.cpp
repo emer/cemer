@@ -23,6 +23,7 @@
 T3Frame::T3Frame(Qt3DNode* parent)
   : inherited(parent)
 {
+  size.setX(1.0f); size.setY(1.0f); size.setZ(1.0f);
   addMesh(new T3FrameMesh(NULL, &size));
 
   Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();

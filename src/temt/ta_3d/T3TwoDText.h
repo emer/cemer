@@ -60,7 +60,7 @@ enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
 
 
 class TA_API T3TwoDText : public T3Entity {
-  // flat two-d text element that projects a QLabel onto a plane and shows that -- by default it is upright in the XY plane 
+  // flat two-d text element that projects a QLabel onto a plane and shows that -- by default it is upright in the XY plane, size.y = 1.0, size.x = required width, size.z = tiny
   Q_OBJECT
   INHERITED(T3Entity)
 public:
