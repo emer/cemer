@@ -39,6 +39,7 @@ void T3Node::setCaption(const QString& txt) {
     createCaption();
   }
   caption->setText(txt);
+  setDefaultCaptionTransform();
 }
 
 void T3Node::createCaption() {
@@ -49,14 +50,12 @@ void T3Node::createCaption() {
 
 void T3Node::setDefaultCaptionTransform() {
   if(!caption) return;
-  caption->scale.setScale(0.02f);
-  caption->translate.setTranslation(QVector3D(0.0f, -0.02f, 0.02f));
-  caption->rotate.setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
-  caption->rotate.setAngleDeg(-90);
+  caption->scale->setScale(0.05f);
 }
 
 void T3Node::resizeCaption(float sz) {
-  
+  if(!caption) return;
+  caption->scale->setScale(sz);
 }
 
 #else

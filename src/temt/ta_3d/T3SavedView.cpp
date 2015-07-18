@@ -31,28 +31,30 @@ void T3SavedView::Initialize() {
   view_saved = false;
   view_button = NULL;
   view_action = NULL;
-  focal_dist = 0.0f;
   pos = 0.0f;
+#ifdef TA_QT3D
+  pos.z = -5.0f;
+  up = 0.0f; up.y = 1.0f;
+  look_at = 0.0f;
+#else // TA_QT3D
+  focal_dist = 0.0f;
+#endif // TA_QT3D
 }
 
 #ifdef TA_QT3D
 
 void T3SavedView::getCameraParams(Qt3D::QCamera* cam) {
   pos = cam->position();
-  Qt3D::QTransform* trns = cam->transform();
-  // QVector3DSbVec3f sb_axis;
-  // cam->orientation.getValue(sb_axis, orient.rot);
-  // focal_dist = cam->focalDistance.getValue();
-  // orient.x = sb_axis[0]; orient.y = sb_axis[1]; orient.z = sb_axis[2];
-
+  look_at = cam->viewCenter();
+  up = cam->upVector();
   view_saved = true;
 }
 
 bool T3SavedView::setCameraParams(Qt3D::QCamera* cam) {
   if(!view_saved) return false;
   cam->setPosition(pos);
-  // cam->orientation.setValue(SbVec3f(orient.x, orient.y, orient.z), orient.rot);
-  // cam->focalDistance.setValue(focal_dist);
+  cam->setViewCenter(look_at);
+  cam->setUpVector(up);
   return true;
 }
 

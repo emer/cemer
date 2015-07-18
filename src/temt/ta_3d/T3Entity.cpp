@@ -17,16 +17,56 @@
 
 T3Entity::T3Entity(Qt3DNode* parent)
   : Qt3D::QEntity(parent)
+  , transform(new Qt3D::QTransform())
+  , translate(new Qt3D::QTranslateTransform())
+  , scale(new Qt3D::QScaleTransform())
+  , rotate(new Qt3D::QRotateTransform())
 {
   mesh = NULL;
   material = NULL;
-  transform.addTransform(&translate);
-  transform.addTransform(&scale);
-  transform.addTransform(&rotate);
-  addComponent(&transform);
+  // order MATTERS in setting these -- used in *reverse* order
+  transform->addTransform(rotate);
+  transform->addTransform(scale);
+  transform->addTransform(translate);
+  addComponent(transform);
 }
 
 T3Entity::~T3Entity() {
 }
 
 
+void T3Entity::TranslateXLeftTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setX(pos.x() + 0.5f * size.x() * scale->scale3D().x());
+  translate->setTranslation(ps);
+}
+
+void T3Entity::TranslateXRightTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setX(pos.x() - 0.5f * size.x() * scale->scale3D().x());
+  translate->setTranslation(ps);
+}
+
+void T3Entity::TranslateYBotTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setY(pos.y() + 0.5f * size.y() * scale->scale3D().y());
+  translate->setTranslation(ps);
+}
+
+void T3Entity::TranslateYTopTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setY(pos.y() - 0.5f * size.y() * scale->scale3D().y());
+  translate->setTranslation(ps);
+}
+
+void T3Entity::TranslateZFrontTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setZ(pos.z() + 0.5f * size.z() * scale->scale3D().z());
+  translate->setTranslation(ps);
+}
+
+void T3Entity::TranslateZBackTo(const QVector3D& pos) {
+  QVector3D ps = pos;
+  ps.setZ(pos.z() - 0.5f * size.z() * scale->scale3D().z());
+  translate->setTranslation(ps);
+}

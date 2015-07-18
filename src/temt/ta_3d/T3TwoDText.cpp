@@ -17,18 +17,30 @@
 
 #include <Qt3DRenderer/QDiffuseMapMaterial>
 #include <Qt3DRenderer/QPlaneMesh>
+#include <QPalette>
 
 #include <taMisc>
 
 T3TwoDText::T3TwoDText(Qt3DNode* parent)
   : T3Entity(parent)
 {
-  addMesh(new Qt3D::QPlaneMesh());
+  bg_color = Qt::white;
+  QFont fnt("Arial", 24);       // 24 gives decent resolution for rendering
+  label.setFont(fnt);
+  texture = new T3TwoDTexture();
+  plane = new T3Entity(this);
+  plane->addMesh(new Qt3D::QPlaneMesh());
   Qt3D::QDiffuseMapMaterial* mat = new Qt3D::QDiffuseMapMaterial();
   mat->setSpecular(QColor::fromRgbF(0.2f, 0.2f, 0.2f, 1.0f));
   mat->setShininess(2.0f);
-  mat->diffuse()->addTextureImage(&texture);
-  addMaterial(mat);
+  mat->diffuse()->addTextureImage(texture);
+  plane->addMaterial(mat);
+  plane->rotate->setAxis(QVector3D(0.0f, 1.0f, 0.0f)); // flip over
+  plane->rotate->setAngleDeg(180);
+  Qt3D::QRotateTransform* flip = new Qt3D::QRotateTransform();
+  flip->setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
+  flip->setAngleDeg(-90);
+  plane->transform->addTransform(flip);
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -39,17 +51,35 @@ void T3TwoDText::setText(const QString& txt) {
   updateRender();
 }
 
-void T3TwoDText::updateRender() {
-  texture.renderLabel(label);
-  QSize sz = label.size();
-  Qt3D::QPlaneMesh* pmesh = dynamic_cast<Qt3D::QPlaneMesh*>(mesh);
-  if(pmesh->width() != sz.width())
-    pmesh->setWidth(sz.width());
-  if(pmesh->height() != sz.height())
-    pmesh->setHeight(sz.height());
-  // todo: trigger screen update??
+void T3TwoDText::setTextColor(const QColor& fg_color) {
+  QPalette pal;
+  pal.setColor(QPalette::Active, QPalette::WindowText, fg_color);
+  label.setPalette(pal);
+  updateRender();
 }
 
+void T3TwoDText::setFont(const QString& family, int pointSize, int weight,
+                         bool italic) {
+  QFont fnt(family, pointSize, weight, italic);
+  label.setFont(fnt);
+  updateRender();
+}
+
+
+void T3TwoDText::updateRender() {
+  QSize sz = label.sizeHint();
+  if(sz.width() < 1) sz.setWidth(1);
+  if(sz.height() < 1) sz.setHeight(1);
+  Qt3D::QPlaneMesh* pmesh = dynamic_cast<Qt3D::QPlaneMesh*>(plane->mesh);
+  float wd = (float)sz.width() / (float)sz.height();
+  // width in height units -- norm ht to 1
+  size.setX(wd); size.setY(1.0f); size.setZ(1.0e-06f);
+  if(pmesh->height() != 1.0f)
+    pmesh->setHeight(1.0f);
+  if(pmesh->width() != wd)
+    pmesh->setWidth(wd);
+  texture->renderLabel(*this);
+}
 
 ///////////////////////
 
@@ -61,23 +91,27 @@ T3TwoDTexture::T3TwoDTexture(Qt3DNode* parent)
 }
 
 T3TwoDTexture::~T3TwoDTexture() {
+  // no!
   // if(image)
   //   delete image;
 }
 
-void T3TwoDTexture::renderLabel(QLabel& label) {
+void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
+  QSize sz = txt.label.sizeHint();
+  if(sz.width() < 1) sz.setWidth(1);
+  if(sz.height() < 1) sz.setHeight(1);
   if(!image) {
-    image = new QImage(label.size(), QImage::Format_ARGB32);
+    image = new QImage(sz, QImage::Format_ARGB32);
   }
   else {
-    if(image->size() != label.size()) {
+    if(image->size() != sz) {
       delete image;
+      image = new QImage(sz, QImage::Format_ARGB32);
     }
-    image = new QImage(label.size(), QImage::Format_ARGB32);
   }
-  image->fill(Qt::transparent);
+  image->fill(txt.bg_color); 
   QPainter painter(image);
-  label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
+  txt.label.render(&painter, QPoint(), QRegion(), QWidget::DrawChildren);
 }
 
 class T3TwoDTextureDataFunctor : public Qt3D::QTextureDataFunctor {

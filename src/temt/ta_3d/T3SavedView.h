@@ -44,8 +44,13 @@ INHERITED(taNBase)
 public:
   bool          view_saved;     // #READ_ONLY #SHOW whether a view is currently saved or not
   taVector3f    pos;            // #READ_ONLY #EXPERT position of camera in view
+#ifdef TA_QT3D
+  taVector3f    look_at;        // #READ_ONLY #EXPERT where camera is looking
+  taVector3f    up;             // #READ_ONLY #EXPERT up vector for camera
+#else // TA_QT3D
   taAxisAngle   orient;         // #READ_ONLY #EXPERT orientation of camera in view
   float         focal_dist;     // #READ_ONLY #EXPERT focal distance
+#endif // TA_QT3D
 
 #ifdef TA_QT3D
 #ifndef __MAKETA__
@@ -63,17 +68,29 @@ public:
 
   void          SetCameraPos(float x, float y, float z) { pos.SetXYZ(x,y,z); }
   // #CAT_Display set camera position
+  void          GetCameraPos(float& x, float& y, float& z) { pos.GetXYZ(x,y,z); }
+  // #CAT_Display set camera position
+
+#ifdef TA_QT3D
+  void          SetCameraLookAt(float x, float y, float z) { look_at.SetXYZ(x,y,z); }
+  // #CAT_Display set where camera is looking
+  void          GetCameraLookAt(float& x, float& y, float& z) { look_at.GetXYZ(x,y,z); }
+  // #CAT_Display set where camera is looking
+  void          SetCameraUp(float x, float y, float z) { up.SetXYZ(x,y,z); }
+  // #CAT_Display set where camera is looking
+  void          GetCameraUp(float& x, float& y, float& z) { up.GetXYZ(x,y,z); }
+  // #CAT_Display set where camera is looking
+#else // TA_QT3D
   void          SetCameraOrient(float x, float y, float z, float r) { orient.SetXYZR(x,y,z,r); }
   // #CAT_Display set camera orientation -- x,y,z axis and r rotation value
   void          SetCameraFocDist(float fd) { focal_dist = fd; }
   // #CAT_Display set camera focal distance
 
-  void          GetCameraPos(float& x, float& y, float& z) { pos.GetXYZ(x,y,z); }
-  // #CAT_Display set camera position
   void          GetCameraOrient(float& x, float& y, float& z, float& r) { orient.GetXYZR(x,y,z,r); }
   // #CAT_Display set camera orientation -- x,y,z axis and r rotation value
   void          GetCameraFocDist(float& fd) { fd = focal_dist; }
   // #CAT_Display set camera focal distance
+#endif // TA_QT3D
 
   QToolButton*  view_button;    // #IGNORE view button for this view
   iAction*    view_action;    // #IGNORE action for the gotoview function

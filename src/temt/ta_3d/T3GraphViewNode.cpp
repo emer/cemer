@@ -20,6 +20,8 @@
 
 #ifdef TA_QT3D
 
+#include <T3TwoDText>
+
 float T3GraphViewNode::frame_margin = .2f;
 float T3GraphViewNode::frame_width = .02f;
 
@@ -45,9 +47,14 @@ void T3GraphViewNode::updateNode() {
   inherited::updateNode();
   float frmg2 = 2.0f * frame_margin;
 
-  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, .1f);  
+  QVector3D fr_sz(width + frmg2, 1.0f + frmg2 * 1.4f, .1f);
   frame->setSize(fr_sz);
-  // frame->translate.setTranslation(-fr_sz * 0.5f);
+}
+
+void T3GraphViewNode::setDefaultCaptionTransform() {
+  if(!caption) return;
+  caption->TranslateYTopTo(QVector3D(0.0f, -0.5f - frame_margin * 1.4f, 0.0f));
+  inherited::setDefaultCaptionTransform();
 }
 
 #else // TA_QT3D

@@ -41,14 +41,14 @@ class TA_API T3Entity : public Qt3D::QEntity {
   Q_OBJECT
   INHERITED(Qt3D::QEntity)
 public:
-  Qt3D::QTransform          transform; // overall transform applied to this node -- contains each of the following items:
-  Qt3D::QScaleTransform     scale;     // overall scale transform applied to this node
-  Qt3D::QTranslateTransform translate; // overall translation transform applied to this node
-  Qt3D::QRotateTransform    rotate;    // overall rotation transform applied to this node
-
-  Qt3D::QAbstractMesh*  mesh;      // mesh component for this node
-  Qt3D::QMaterial*      material;  // material for this node
-
+  Qt3D::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
+  Qt3D::QScaleTransform*     scale;     // overall scale transform applied to this node
+  Qt3D::QTranslateTransform* translate; // overall translation transform applied to this node
+  Qt3D::QRotateTransform*    rotate;    // overall rotation transform applied to this node
+  Qt3D::QAbstractMesh*       mesh;      // mesh component for this node
+  Qt3D::QMaterial*           material;  // material for this node
+  QVector3D                  size;      // overall size of the object (if known) -- 0 if not
+  
   void  addMesh(Qt3D::QAbstractMesh* msh)
   { mesh = msh; addComponent(mesh); }
   // adds mesh component, records the last one added
@@ -57,6 +57,19 @@ public:
   { material = mat; addComponent(material); }
   // adds material component, records the last one added
 
+  virtual void TranslateXLeftTo(const QVector3D& pos);
+  // move the X dim left edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateXRightTo(const QVector3D& pos);
+  // move the X dim right edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateYBotTo(const QVector3D& pos);
+  // move the Y dim bottom edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateYTopTo(const QVector3D& pos);
+  // move the Y dim top edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateZFrontTo(const QVector3D& pos);
+  // move the Z dim front edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  virtual void TranslateZBackTo(const QVector3D& pos);
+  // move the Z dim back edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+  
   T3Entity(Qt3DNode* parent = 0);
   ~T3Entity();
 };

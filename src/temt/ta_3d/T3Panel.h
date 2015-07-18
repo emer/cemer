@@ -108,6 +108,24 @@ public:
   void  SetCameraPos(int view_no, float x, float y, float z)
   { saved_views.SetCameraPos(view_no, x,y,z); }
   // #CAT_Display for given view number, set camera position
+  void  GetCameraPos(int view_no, float& x, float& y, float& z)
+  { saved_views.GetCameraPos(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera position
+
+#ifdef TA_QT3D
+  void  SetCameraLookAt(int view_no, float x, float y, float z)
+  { saved_views.SetCameraLookAt(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera look at
+  void  GetCameraLookAt(int view_no, float& x, float& y, float& z)
+  { saved_views.GetCameraLookAt(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera look at
+  void  SetCameraUp(int view_no, float x, float y, float z)
+  { saved_views.SetCameraUp(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera up vector
+  void  GetCameraUp(int view_no, float& x, float& y, float& z)
+  { saved_views.GetCameraUp(view_no, x,y,z); }
+  // #CAT_Display for given view number, set camera up vector
+#else // TA_QT3D
   void  SetCameraOrient(int view_no, float x, float y, float z, float r)
   { saved_views.SetCameraOrient(view_no, x,y,z,r); }
   // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
@@ -115,15 +133,13 @@ public:
   { saved_views.SetCameraFocDist(view_no, fd); }
   // #CAT_Display for given view number, set camera focal distance
 
-  void  GetCameraPos(int view_no, float& x, float& y, float& z)
-  { saved_views.GetCameraPos(view_no, x,y,z); }
-  // #CAT_Display for given view number, set camera position
   void  GetCameraOrient(int view_no, float& x, float& y, float& z, float& r)
   { saved_views.GetCameraOrient(view_no, x,y,z,r); }
   // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
   void  GetCameraFocDist(int view_no, float& fd)
   { saved_views.GetCameraFocDist(view_no, fd); }
   // #CAT_Display for given view number, set camera focal distance
+#endif // TA_QT3D
 
   virtual void          EditView(T3DataViewMain* view);
   // #CAT_Display #BUTTON #FROM_GROUP_root_views edit given view within this panel -- can provide more detailed view control information than what is present in the middle view control panel

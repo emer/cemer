@@ -23,11 +23,9 @@
 
 // declare all other types mentioned but not required to include:
 
-#ifdef __MAKETA__
-
 class T3TwoDText; // #IGNORE
 
-#else
+#ifndef __MAKETA__
 
 #include <QLabel>
 #include <QImage>
@@ -39,7 +37,7 @@ class TA_API T3TwoDTexture : public Qt3D::QAbstractTextureImage {
 public:
   QImage*       image;          // image that the label is rendered into, used for the image data
 
-  virtual void  renderLabel(QLabel& label);
+  virtual void  renderLabel(T3TwoDText& txt);
   // render the label to the image
   
   Qt3D::QTextureDataFunctorPtr dataFunctor() const override;
@@ -60,17 +58,27 @@ enum T3AlignText {              // for abstracting over Qt3D and SoAsciiText
   T3_ALIGN_JUSTIFY = Qt::AlignJustify,
 };
 
+
 class TA_API T3TwoDText : public T3Entity {
-  // flat two-d text element that projects a QLabel onto a plane and shows that..
+  // flat two-d text element that projects a QLabel onto a plane and shows that -- by default it is upright in the XY plane 
   Q_OBJECT
   INHERITED(T3Entity)
 public:
-  QLabel        label;          // label containing full info for what text to render and how
-  T3TwoDTexture texture;        // texture for rendering
+  QLabel         label;          // label containing full info for what text to render and how
+  QColor         bg_color;       // background color of the text -- defaults to white, but Qt::Transparent is useful if the rendering pass supports it..
+  T3Entity*      plane;          // text plane object
+  T3TwoDTexture* texture;        // texture for rendering
 
   virtual void  setText(const QString& txt);
   // set the text and update the rendered display (just setting in label does not update render) -- call updateRender() explictly if other properties of the label are changed -- set font etc in advance of calling setText for greatest efficiency
 
+  virtual void  setTextColor(const QColor& fg_color);
+  // set the text rendering color (foreground color) -- defaults to black
+
+  virtual void  setFont(const QString& family, int pointSize = -1, int weight = -1,
+                        bool italic = false);
+  // set the font for the label, using these QFont parameters
+  
   T3TwoDText(Qt3DNode* parent = 0);
   ~T3TwoDText();
 

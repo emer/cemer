@@ -33,17 +33,31 @@ public:
 
   void  SetCameraPos(int view_no, float x, float y, float z);
   // #CAT_Display for given view number, set camera position
+  void  GetCameraPos(int view_no, float& x, float& y, float& z);
+  // #CAT_Display for given view number, set camera position
+
+#ifdef TA_QT3D
+  void  SetCameraLookAt(int view_no, float x, float y, float z);
+  // #CAT_Display for given view number, set camera look at point
+  void  GetCameraLookAt(int view_no, float& x, float& y, float& z);
+  // #CAT_Display for given view number, set camera look at point
+  void  SetCameraUp(int view_no, float x, float y, float z);
+  // #CAT_Display for given view number, set camera look at point
+  void  GetCameraUp(int view_no, float& x, float& y, float& z);
+  // #CAT_Display for given view number, set camera look at point
+
+#else // TA_QT3D
   void  SetCameraOrient(int view_no, float x, float y, float z, float r);
   // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
   void  SetCameraFocDist(int view_no, float fd);
   // #CAT_Display for given view number, set camera focal distance
 
-  void  GetCameraPos(int view_no, float& x, float& y, float& z);
-  // #CAT_Display for given view number, set camera position
   void  GetCameraOrient(int view_no, float& x, float& y, float& z, float& r);
   // #CAT_Display for given view number, set camera orientation -- x,y,z axis and r rotation value
   void  GetCameraFocDist(int view_no, float& fd);
   // #CAT_Display for given view number, set camera focal distance
+#endif // TA_QT3D
+
 
   TA_BASEFUNS_NOCOPY(T3SavedView_List);
 private:

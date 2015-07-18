@@ -18,6 +18,7 @@
 #include <Qt3DRenderer/Buffer>
 #include <Qt3DRenderer/QMeshData>
 
+#include <T3Misc>
 
 T3Frame::T3Frame(Qt3DNode* parent)
   : inherited(parent)
@@ -25,8 +26,11 @@ T3Frame::T3Frame(Qt3DNode* parent)
   addMesh(new T3FrameMesh(NULL, &size));
 
   Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
-  mt->setAmbient(QColor(255, 80, 80));
-  mt->setDiffuse(QColor(255, 80, 80));
+  QColor frmc;
+  frmc.setRgbF(T3Misc::frame_clr_r, T3Misc::frame_clr_g, T3Misc::frame_clr_b,
+               1.0f - T3Misc::frame_clr_tr), 
+  mt->setAmbient(frmc);
+  mt->setDiffuse(frmc);
   addMaterial(mt);
 }
 

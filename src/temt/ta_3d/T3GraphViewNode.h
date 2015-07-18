@@ -48,6 +48,7 @@ public:
   
   void		        updateNode() override;
   virtual void		setWidth(float wdth);
+  void		        setDefaultCaptionTransform() override;
 
   // SoScrollBar*		RowScrollBar() const { return row_scroll_bar_; } // #IGNORE 
 

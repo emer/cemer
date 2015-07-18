@@ -1,4 +1,4 @@
-// ta_Dump File v3.0 -- code v7.8.1.0 rev8418
+// ta_Dump File v3.0 -- code v7.8.1.0 rev8433
 LeabraProject .projects["test"] { 
  Doc_Group @.docs = [0] {
  };
@@ -3791,7 +3791,7 @@ LeabraProject .projects["test"] {
     el_def=0;
     UserDataItem @["view_win_lft"] {
      name="view_win_lft";
-     value 6 0=0.002120890887454152;
+     value 6 0=0.002122015925124288;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_top"] {
@@ -3801,12 +3801,12 @@ LeabraProject .projects["test"] {
     };
     UserDataItem @["view_win_wd"] {
      name="view_win_wd";
-     value 6 0=0.9978790879249573;
+     value 6 0=0.9973474740982056;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_ht"] {
      name="view_win_ht";
-     value 6 0=0.799490213394165;
+     value 6 0=0.8181818127632141;
      val_type_fixed=0;
     };
     UserDataItem @["view_win_iconified"] {
@@ -4633,71 +4633,71 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
 	 name="Vw_0";
 	 view_saved=1;
 	 pos {x=0: y=0: z=-5: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=3.52344;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_1"] {
 	 name="Vw_1";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 view_saved=1;
+	 pos {x=-5.598163: y=-3.820134: z=-7.173048: };
+	 look_at {x=0.736413: y=0.4376411: z=-0.03514385: };
+	 up {x=-0.6717682: y=0.7220452: z=0.1654632: };
 	};
 	T3SavedView @["Vw_2"] {
 	 name="Vw_2";
-	 view_saved=0;
-	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 view_saved=1;
+	 pos {x=-0.8392787: y=7.290958: z=-7.765326: };
+	 look_at {x=0.736413: y=0.4376416: z=-0.03514385: };
+	 up {x=0.2404355: y=0.750131: z=0.6160311: };
 	};
 	T3SavedView @["Vw_3"] {
 	 name="Vw_3";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_4"] {
 	 name="Vw_4";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_5"] {
 	 name="Vw_5";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_6"] {
 	 name="Vw_6";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_7"] {
 	 name="Vw_7";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_8"] {
 	 name="Vw_8";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
 	T3SavedView @["Vw_9"] {
 	 name="Vw_9";
 	 view_saved=0;
 	 pos {x=0: y=0: z=0: };
-	 orient {x=0: y=0: z=1: rot=0: };
-	 focal_dist=0;
+	 look_at {x=0: y=0: z=0: };
+	 up {x=0: y=1: z=0: };
 	};
        };
       };
@@ -4725,12 +4725,12 @@ taTransform @*(.m_transform) {scale={x=1: y=1: z=1: }: rotate={x=0: y=0: z=1: ro
       };
       UserDataItem @["view_win_wd"] {
        name="view_win_wd";
-       value 6 0=0.04029692336916924;
+       value 6 0=0.04031830281019211;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_ht"] {
        name="view_win_ht";
-       value 6 0=0.7357689142227173;
+       value 6 0=0.7544605135917664;
        val_type_fixed=0;
       };
       UserDataItem @["view_win_iconified"] {

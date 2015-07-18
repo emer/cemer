@@ -227,7 +227,7 @@ void T3Panel::Render_post() {
   widget()->setSceneTop(root_view.node_so());
   widget()->Render_post();
   // on first opening, do a viewall to center all geometry in viewer
-  if(saved_views[0]->pos == 0.0f && saved_views[0]->focal_dist == 0.0f) {
+  if(!saved_views[0]->view_saved) {
     ViewAll();
     SaveCurView(0);             // save to 0 view
   }
@@ -504,8 +504,17 @@ void T3Panel::GridLayout(int n_horiz, float horiz_sp, float vert_sp, bool save_v
     dv->main_xform.translate.y = yp;
     if (save_views && idx + 1 < saved_views.size) {
       // todo: this is not functional: need to do appropriate projection per quarter viewAll calculation involving bounding boxes etc...
-      SetCameraPos(idx + 1, xp + .5F * (1.0F + horiz_sp), yp + .5F * (1.0F + vert_sp), 1.6F);
-      SetCameraFocDist(idx + 1, 1.6F);
+#ifdef TA_QT3D
+      SetCameraPos(idx + 1, xp + .5f * (1.0f + horiz_sp), yp + .5f * (1.0f + vert_sp),
+                   -5.0f);
+      SetCameraLookAt(idx + 1, xp + .5f * (1.0f + horiz_sp), yp + .5f * (1.0f + vert_sp),
+                   0.0f);
+      SetCameraUp(idx + 1, 0.0f, 1.0f, 0.0f);
+#else // TA_QT3D
+      SetCameraPos(idx + 1, xp + .5f * (1.0f + horiz_sp), yp + .5f * (1.0f + vert_sp),
+                   1.6f);
+      SetCameraFocDist(idx + 1, 1.6f);
+#endif // TA_QT3D
     }
     idx++;
   }

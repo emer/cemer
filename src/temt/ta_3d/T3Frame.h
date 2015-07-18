@@ -54,8 +54,6 @@ class TA_API T3Frame : public T3Entity {
   Q_OBJECT
   INHERITED(T3Entity)
 public:
-  QVector3D     size;           // size of the box
-    
   void  setSize(const QVector3D& sz);
   // set new size and update
   
