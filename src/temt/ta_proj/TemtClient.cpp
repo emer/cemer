@@ -1123,7 +1123,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
         name_params.SetVal("var_name", obj_iter.value().toString()); // variable name
       }
       else if (node_name == "var_value") {
-        name_params.SetVal("var_value", obj_iter.value().toString()); // variable name
+        name_params.SetVal("var_value", obj_iter.value().toVariant()); // variable name
       }
       else if (node_name == "table") {
         name_params.SetVal("table", obj_iter.value().toString());  // table name
