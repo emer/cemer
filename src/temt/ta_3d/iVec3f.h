@@ -26,7 +26,7 @@
 */
 
 #ifdef TA_QT3D
-
+class QVector3D;                // #IGNORE
 #else // TA_QT3D
 class SbVec3f;          // #IGNORE
 #endif // TA_QT3D
@@ -93,7 +93,9 @@ public:
   }
 
 #ifdef TA_QT3D
-
+  iVec3f(const QVector3D& src);
+  iVec3f&       operator=(const QVector3D& src);
+  operator QVector3D() const;
 #else // TA_QT3D
   iVec3f(const SbVec3f& src);
   iVec3f&       operator=(const SbVec3f& src);

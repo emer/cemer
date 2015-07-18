@@ -140,9 +140,14 @@ String T3GraphLine::markerAtSvg(const iVec3f& pt, MarkerStyle style) {
 
 #ifdef TA_QT3D
 
+#include <T3LineStrip>
+
 T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz)
   : inherited(parent, dataView_)
   , font_size(fnt_sz)
+  , lines(new T3LineStrip(this))
+  , errbars(new T3LineStrip(this))
+  , markers(new T3LineStrip(this))
 {
 }
 
@@ -162,17 +167,9 @@ void T3GraphLine::assertText() {
 }
 
 void T3GraphLine::clear() {
-  // lines->numVertices.setNum(0);
-  // SoMFVec3f& lines_point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // lines_point.setNum(0);
-
-  // errbars->numVertices.setNum(0);
-  // SoMFVec3f& errbars_point = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
-  // errbars_point.setNum(0);
-
-  // markers->numVertices.setNum(0);
-  // SoMFVec3f& markers_point = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
-  // markers_point.setNum(0);
+  lines->restart();
+  errbars->restart();
+  markers->restart();
 
   // // easiest for text is just to nuke
   // if (textSep_) {
@@ -225,102 +222,41 @@ void T3GraphLine::initValueColorMode() {
 }
 
 void T3GraphLine::startBatch() {
-  // SoMFInt32& nv = lines->numVertices;
-  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // nv.enableNotify(false);
-  // point.enableNotify(false);
-
-  // SoMFInt32& env = errbars->numVertices;
-  // SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
-  // env.enableNotify(false);
-  // epoint.enableNotify(false);
-
-  // SoMFInt32& mnv = markers->numVertices;
-  // SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
-  // mnv.enableNotify(false);
-  // mpoint.enableNotify(false);
+  // nop
 }
 
 void T3GraphLine::finishBatch() {
-  // SoMFInt32& nv = lines->numVertices;
-  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // nv.enableNotify(true);
-  // point.enableNotify(true);
-
-  // SoMFInt32& env = errbars->numVertices;
-  // SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
-  // env.enableNotify(true);
-  // epoint.enableNotify(true);
-
-  // SoMFInt32& mnv = markers->numVertices;
-  // SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
-  // mnv.enableNotify(true);
-  // mpoint.enableNotify(true);
-
-//   point.touch();
-//   mpoint.touch();
+  // nop
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt) {
-  // SoMFInt32& nv = lines->numVertices; // cache
-  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-
-  // // add the new line vertex
-  // point.set1Value(point.getNum(), pt.x, pt.y, -pt.z);
-  // // now, add a new slot update # pts in list
-  // nv.set1Value(nv.getNum(), 1);
+  lines->moveTo(pt);
 }
 
 void T3GraphLine::lineTo(const iVec3f& to) {
-  // SoMFInt32& nv = lines->numVertices; // cache
-  // int idx = nv.getNum() - 1; // cache
-  // //must have a line going...
-  // if (idx < 0) {
-  //   //TODO: output error msg
-  //   return;
-  // }
-  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // // add the new line vertex
-  // point.set1Value(point.getNum(), to.x, to.y, -to.z);
-  // // now, update # pts in list
-  // nv.set1Value(idx, nv[idx] + 1);
+  lines->lineTo(to);
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
-  // uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  // // always add the new color, then add the point
-  // SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
-  // orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
-  // moveTo(pt);
+  lines->moveTo(pt);
 }
 
 void T3GraphLine::lineTo(const iVec3f& to, const T3Color& c) {
-  // uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  // SoMFUInt32& orderedRGBA = ((SoVertexProperty*)lines->vertexProperty.getValue())->orderedRGBA;
-  // orderedRGBA.set1Value(orderedRGBA.getNum(), new_col);
-  // lineTo(to);
+  lines->lineTo(to);
 }
 
 void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
-  // SoMFInt32& env = errbars->numVertices; // cache
-  // SoMFVec3f& epoint = ((SoVertexProperty*)errbars->vertexProperty.getValue())->vertex;
+  // lower bar
+  errbars->moveTo(QVector3D(pt.x-bwd, pt.y-err, -pt.z));
+  errbars->lineTo(QVector3D(pt.x+bwd, pt.y-err, -pt.z));
 
-  // int lidx = env.getNum();
+  // upper bar
+  errbars->moveTo(QVector3D(pt.x-bwd, pt.y+err, -pt.z));
+  errbars->lineTo(QVector3D(pt.x+bwd, pt.y+err, -pt.z));
 
-  // // lower bar
-  // env.set1Value(lidx, 2);
-  // epoint.set1Value(epoint.getNum(), pt.x-bwd, pt.y-err, -pt.z);
-  // epoint.set1Value(epoint.getNum(), pt.x+bwd, pt.y-err, -pt.z);
-
-  // // upper bar
-  // env.set1Value(lidx+1, 2);
-  // epoint.set1Value(epoint.getNum(), pt.x-bwd, pt.y+err, -pt.z);
-  // epoint.set1Value(epoint.getNum(), pt.x+bwd, pt.y+err, -pt.z);
-
-  // // vertical bar
-  // env.set1Value(lidx+2, 2);
-  // epoint.set1Value(epoint.getNum(), pt.x, pt.y-err, -pt.z);
-  // epoint.set1Value(epoint.getNum(), pt.x, pt.y+err, -pt.z);
+  // vertical bar
+  errbars->moveTo(QVector3D(pt.x, pt.y-err, -pt.z));
+  errbars->lineTo(QVector3D(pt.x, pt.y+err, -pt.z));
 }
 
 void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& c) {
@@ -334,12 +270,12 @@ void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd, const T3Color& 
 
   // int lidx = eorderedRGBA.getNum();
   // eorderedRGBA.setValues(lidx, 6, vals);
-  // errBar(pt, err, bwd);
+  errBar(pt, err, bwd);
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c) {
-  // if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
-  // if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
+  if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
+  if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
 
   // uint32_t new_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
 
@@ -350,28 +286,22 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style, const T3Color& c
   // int lidx = orderedRGBA.getNum();
 
   // orderedRGBA.setValues(lidx, mark_n[style], vals);
-
-  // markerAt(pt, style);
+  
+  markerAt(pt, style);
 }
 
 void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
-  // if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
-  // if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
+  if(style < MarkerStyle_MIN) style = MarkerStyle_MIN;
+  if(style > MarkerStyle_MAX) style = MarkerStyle_MAX;
 
-  // SoMFInt32& mnv = markers->numVertices; // cache
-  // SoMFVec3f& mpoint = ((SoVertexProperty*)markers->vertexProperty.getValue())->vertex;
+  int n = mark_n[style];
+  int st = mark_start[style];
 
-  // int n = mark_n[style];
-  // int st = mark_start[style];
-
-  // int lidx = mnv.getNum();
-  // mnv.set1Value(lidx,n);
-
-  // for(int i = 0; i< n; i++) {
-  //   float mx = mark_pt(st+i,X);
-  //   float my = mark_pt(st+i,Y);
-  //   mpoint.set1Value(mpoint.getNum(), pt.x + mx, pt.y + my, -pt.z);
-  // }
+  for(int i = 0; i< n; i++) {
+    float mx = mark_pt(st+i,X);
+    float my = mark_pt(st+i,Y);
+    markers->lineTo(QVector3D(pt.x + mx, pt.y + my, -pt.z));
+  }
 }
 
 void T3GraphLine::setDefaultCaptionTransform() {

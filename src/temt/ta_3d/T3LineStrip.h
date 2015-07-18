@@ -17,23 +17,82 @@
 #define T3LineStrip_h 1
 
 // parent includes:
-#include <taNBase>
+#include <T3Entity>
+#include <Qt3dRenderer/QAbstractMesh>
+#include <float_Matrix>
+#include <int_Array>
+#include <taVector3f>
 
 // member includes:
 
 // declare all other types mentioned but not required to include:
 
-taTypeDef_Of(T3LineStrip);
-
-class TA_API T3LineStrip : public taNBase {
-  // <describe here in full detail in one extended line comment>
-INHERITED(taNBase)
+class TA_API T3LineStripMesh : public Qt3D::QAbstractMesh {
+  // mesh for an arbitrary line strip with verticies and indexes
+  Q_OBJECT
+  INHERITED(Qt3D::QAbstractMesh)
 public:
+  float_Matrix  points; // 3d points (verticies) for lines -- geom is 3 x n (outer is the "frame" dimension which can be increased dynamically)
+  int_Array     indexes; // lines defined by sequential indexes into points -- use 0xFFFF to stop one line strip and then start another
+    
+  Qt3D::QAbstractMeshFunctorPtr meshFunctor() const override;
 
-  TA_SIMPLE_BASEFUNS(T3LineStrip);
+  void  restart();
+  // set sizes back to 0
+  
+  int  addPoint(const QVector3D& pos);
+  // add given point, return index to that point
+  void  moveTo(const QVector3D& pos);
+  // add given point to points, and index of it to indexes -- starts a new line if indexes.size > 0 by adding a stop
+  void  lineTo(const QVector3D& pos);
+  // add given point to points, and index of it to indexes
+
+  int  addPoint(const taVector3f& pos);
+  // add given point, return index to that point
+  void  moveTo(const taVector3f& pos);
+  // add given point to points, and index of it to indexes -- starts a new line if indexes.size > 0 by adding a stop
+  void  lineTo(const taVector3f& pos);
+  // add given point to points, and index of it to indexes
+  
+  explicit T3LineStripMesh(Qt3DNode* parent = 0);
+  ~T3LineStripMesh(); 
+
+public slots:
+  virtual void  updateLines(); // update the rendered lines
+  
+protected:
+  void copy(const Qt3DNode* ref) override;
 private:
-  void Initialize()  { };
-  void Destroy()     { };
+  QT3D_CLONEABLE(T3LineStripMesh)
+};
+
+
+class TA_API T3LineStrip : public T3Entity {
+  // strip of lines
+  Q_OBJECT
+  INHERITED(T3Entity)
+public:
+  QColor               color;
+  T3LineStripMesh*     lines;
+
+  virtual void  setColor(const QColor& clr);
+  
+  void  restart()                      { lines->restart(); }
+
+  int   addPoint(const QVector3D& pos) { return lines->addPoint(pos); }
+  void  moveTo(const QVector3D& pos)   { lines->moveTo(pos); }
+  void  lineTo(const QVector3D& pos)   { lines->lineTo(pos); }   
+
+  int   addPoint(const taVector3f& pos){ return lines->addPoint(pos); }
+  void  moveTo(const taVector3f& pos)  { lines->moveTo(pos); }  
+  void  lineTo(const taVector3f& pos)  { lines->lineTo(pos); }   
+
+  T3LineStrip(Qt3DNode* parent = 0);
+  ~T3LineStrip();
+
+public slots:
+  virtual void  updateLines(); // update to new lines
+  
 };
 
 #endif // T3LineStrip_h

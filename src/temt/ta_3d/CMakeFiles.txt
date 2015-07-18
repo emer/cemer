@@ -97,7 +97,7 @@ set(ta_3d_HEADS_T3
 set(ta_3d_HEADS_QT3D_MOC
   T3Entity.h
   T3TwoDText.h
-  T3Frame.h
+  T3LineBox.h
   T3LineStrip.h
 )
 
@@ -255,7 +255,7 @@ set(ta_3d_SRCS_T3
 set(ta_3d_SRCS_QT3D
   T3Entity.cpp
   T3TwoDText.cpp
-  T3Frame.cpp
+  T3LineBox.cpp
   T3LineStrip.cpp
 )
 

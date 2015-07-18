@@ -13,18 +13,18 @@
 //   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 //   Lesser General Public License for more details.
 
-#include "T3Frame.h"
+#include "T3LineBox.h"
 
 #include <Qt3DRenderer/Buffer>
 #include <Qt3DRenderer/QMeshData>
 
 #include <T3Misc>
 
-T3Frame::T3Frame(Qt3DNode* parent)
+T3LineBox::T3LineBox(Qt3DNode* parent)
   : inherited(parent)
 {
   size.setX(1.0f); size.setY(1.0f); size.setZ(1.0f);
-  addMesh(new T3FrameMesh(NULL, &size));
+  addMesh(new T3LineBoxMesh(NULL, &size));
 
   Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
   QColor frmc;
@@ -35,22 +35,22 @@ T3Frame::T3Frame(Qt3DNode* parent)
   addMaterial(mt);
 }
 
-T3Frame::~T3Frame() {
+T3LineBox::~T3LineBox() {
   
 }
 
-void T3Frame::setSize(const QVector3D& sz) {
+void T3LineBox::setSize(const QVector3D& sz) {
   size = sz;
   updateSize();
 }
 
-void T3Frame::updateSize() {
-  ((T3FrameMesh*)mesh)->setSize(size);
+void T3LineBox::updateSize() {
+  ((T3LineBoxMesh*)mesh)->setSize(size);
 }
 
 ///////////////////////////
 
-T3FrameMesh::T3FrameMesh(Qt3DNode* parent, const QVector3D* sz)
+T3LineBoxMesh::T3LineBoxMesh(Qt3DNode* parent, const QVector3D* sz)
   : Qt3D::QAbstractMesh(parent)
 {
   if(sz) {
@@ -58,22 +58,22 @@ T3FrameMesh::T3FrameMesh(Qt3DNode* parent, const QVector3D* sz)
   }
 }
 
-T3FrameMesh::~T3FrameMesh() {
+T3LineBoxMesh::~T3LineBoxMesh() {
   
 }
 
-void T3FrameMesh::setSize(const QVector3D& sz) {
+void T3LineBoxMesh::setSize(const QVector3D& sz) {
   size = sz;
   updateSize();
 }
 
-void T3FrameMesh::updateSize() {
+void T3LineBoxMesh::updateSize() {
   // todo??
 }
   
-void T3FrameMesh::copy(const Qt3DNode *ref) {
+void T3LineBoxMesh::copy(const Qt3DNode *ref) {
     Qt3D::QAbstractMesh::copy(ref);
-    const T3FrameMesh* mesh = static_cast<const T3FrameMesh*>(ref);
+    const T3LineBoxMesh* mesh = static_cast<const T3LineBoxMesh*>(ref);
     size = mesh->size;
 }
 
@@ -83,7 +83,7 @@ class FrameMeshFunctor : public Qt3D::QAbstractMeshFunctor {
 public:
   QVector3D size;
   
-  FrameMeshFunctor(const T3FrameMesh& mesh)
+  FrameMeshFunctor(const T3LineBoxMesh& mesh)
     : size(mesh.size)
   {
   }
@@ -180,6 +180,6 @@ Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
   return mesh;
 }
 
-Qt3D::QAbstractMeshFunctorPtr T3FrameMesh::meshFunctor() const {
+Qt3D::QAbstractMeshFunctorPtr T3LineBoxMesh::meshFunctor() const {
   return Qt3D::QAbstractMeshFunctorPtr(new FrameMeshFunctor(*this));
 }

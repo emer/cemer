@@ -25,7 +25,7 @@
 
 #ifdef TA_QT3D
 
-#include <T3Frame>
+#include <T3LineBox>
 
 class TA_API T3GraphViewNode: public T3NodeParent {
   Q_OBJECT
@@ -38,7 +38,7 @@ public:
   float                 width;
   bool	                show_drag;
   // SoMaterial*		chld_mat_; // first item in childNodes -- default material
-  T3Frame*              frame;
+  T3LineBox*              frame;
   T3Entity*		x_axis;
   T3Entity*		z_axis;
   T3Entity*		y_axes;

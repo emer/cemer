@@ -31,7 +31,7 @@ T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float 
   , width(wd)
   , show_drag(show_drg)
 {
-  frame = new T3Frame(this);
+  frame = new T3LineBox(this);
   updateNode();
 }
 

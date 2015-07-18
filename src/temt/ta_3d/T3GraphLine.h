@@ -24,9 +24,11 @@
 #include <taString>
 
 // declare all other types mentioned but not required to include:
-class T3Color; // 
+class T3Color; //
 
 #ifdef TA_QT3D
+
+class T3LineStrip; //
 
 class TA_API T3GraphLine: public T3NodeLeaf {
   // a graph line -- data is GraphColView
@@ -75,6 +77,9 @@ public:
   LineStyle             lineStyle;
   float                 marker_size;
   float	                font_size;
+  T3LineStrip*          lines;
+  T3LineStrip*          errbars;
+  T3LineStrip*          markers;
 
   inline float          mark_pt(int idx, int xy)
   { return marker_size * mark_pts[idx * 2 + xy]; }

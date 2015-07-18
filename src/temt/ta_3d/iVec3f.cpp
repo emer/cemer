@@ -17,6 +17,21 @@
 
 #ifdef TA_QT3D
 
+#include <QVector3D>
+
+iVec3f::iVec3f(const QVector3D& src) {
+  x = src.x(); y = src.y(); z = src.z();
+}
+
+iVec3f& iVec3f::operator=(const QVector3D& src) {
+  x = src.x(); y = src.y(); z = src.z();
+  return *this;
+}
+
+iVec3f::operator QVector3D() const {
+  return QVector3D(x, y, z);
+}
+
 #else // TA_QT3D
 
 #include <Inventor/SbLinear.h>
