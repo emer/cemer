@@ -140,6 +140,8 @@ void TemtClient::Initialize() {
   state = CS_READY; // implicit in fact we were created
   server = NULL;
   SetAdapter(new TemtClient_QObj(this));
+  msg_format = TemtClient::NATIVE;  // set based on format of incoming message
+  json_format = QJsonDocument::Indented;  // can be changed by client
 }
 
 void TemtClient::Destroy() {
@@ -211,7 +213,7 @@ void TemtClient::cmdOpenProject() {
 
 void TemtClient::cmdRunProgram(bool sync) {
   // store position param to name/value params - backwards compatibility
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     name_params.SetVal("program", pnm);
   }
@@ -282,10 +284,10 @@ void TemtClient::cmdRunProgram(bool sync) {
 }
 
 void TemtClient::cmdSetData() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     SendError("SetData only implemented for JSON");
   }
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     String tnm = name_params.GetVal("table").toString();
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
@@ -314,7 +316,7 @@ void TemtClient::cmdSetData() {
       SendError("Columns member not found in data", TemtClient::RUNTIME);
       return;
     }
-
+    
     if (create == false) {  // check that columns exist
       if (!ValidateJSON_ColumnNames(tab, tableData)) {
         return;
@@ -521,7 +523,7 @@ bool TemtClient::TableParams::ValidateParams(TemtClient::TableParams::Cmd cmd, b
 }
 
 void TemtClient::cmdAppendData() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -532,7 +534,7 @@ void TemtClient::cmdAppendData() {
     return;
   
   // note: ok if running
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     bool result = false;
     if (!ValidateJSON_HasMember(tableData, "columns")) {  // first check columns existence
       SendError("Columns member not found in data", TemtClient::RUNTIME);
@@ -541,7 +543,7 @@ void TemtClient::cmdAppendData() {
     if (!ValidateJSON_ColumnNames(tab, tableData)) {  // next check column names
       return;  // send error done by validator
     }
-  
+    
     result = tab->SetDataFromJSON(tableData, -1);  // true for append
     if (result) {
       SendOk();
@@ -621,7 +623,7 @@ void TemtClient::cmdAppendData() {
 }
 
 void TemtClient::cmdGetData() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -631,7 +633,7 @@ void TemtClient::cmdGetData() {
   if (!tab) return;
   // note: ok if running
   
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     ostringstream ostr;
     String data;
     String col_name = "";
@@ -689,7 +691,7 @@ void TemtClient::cmdGetData() {
 }
 
 void TemtClient::cmdGetDataCell() {
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     SendError("For JSON use GetData, specify column and row", TemtClient::UNSPECIFIED);
   }
   
@@ -705,7 +707,7 @@ void TemtClient::cmdGetDataCell() {
 }
 
 void TemtClient::cmdGetDataMatrixCell() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -715,7 +717,7 @@ void TemtClient::cmdGetDataMatrixCell() {
   if (!tab) return;
   // note: ok if running
   
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     ostringstream ostr;
     String data;
     String col_name = name_params.GetVal("column").toString();
@@ -754,7 +756,7 @@ void TemtClient::cmdGetDataCell_impl(TableParams& p) {
 }
 
 void TemtClient::cmdSetDataCell() {  // for json just like cmdSetData with fixed row count of 1
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     String tnm = name_params.GetVal("table").toString();
     DataTable* tab = GetAssertTable(tnm);
     if (!tab) return;
@@ -776,7 +778,7 @@ void TemtClient::cmdSetDataCell() {  // for json just like cmdSetData with fixed
 }
 
 void TemtClient::cmdSetDataMatrixCell() {
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     SendError("For JSON use SetData, specify row and cell and send one value");
     return;
   }
@@ -804,7 +806,7 @@ void TemtClient::cmdSetDataCell_impl(TableParams& p) {
 }
 
 void TemtClient::cmdGetVar() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     name_params.SetVal("program", pnm);
   }
@@ -819,7 +821,7 @@ void TemtClient::cmdGetVar() {
   if (!prog) return;
   // note: ok if running
   
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     // 2nd param must be a var name
     String str = pos_params.SafeEl(1);;
     name_params.SetVal("var_name", str);
@@ -838,7 +840,7 @@ void TemtClient::cmdGetVar() {
     return;
   }
   
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String val;
     // get the value, possibly converting
     if (var->var_type == ProgVar::T_String) {
@@ -851,7 +853,7 @@ void TemtClient::cmdGetVar() {
     SendOk(val);
   }
   // Send the message from here because the result is not in JSON format yet
-  else if (msgFormat == TemtClient::JSON) {
+  else if (msg_format == TemtClient::JSON) {
     String str;
     String  val;
     if (var->var_type == ProgVar::T_String) {
@@ -876,7 +878,7 @@ void TemtClient::cmdGetRunState() {
   }
   else {
     // program version
-    if (msgFormat == TemtClient::NATIVE) {
+    if (msg_format == TemtClient::NATIVE) {
       String pnm = pos_params.SafeEl(0);
       name_params.SetVal("program", pnm);
     }
@@ -889,7 +891,7 @@ void TemtClient::cmdGetRunState() {
 }
 
 void TemtClient::cmdRemoveData() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String tnm = pos_params.SafeEl(0);
     name_params.SetVal("table", tnm);
   }
@@ -900,7 +902,7 @@ void TemtClient::cmdRemoveData() {
     return;
   // note: ok if running
   
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     TableParams p(this, tab);
     bool cmd_ok = p.ValidateParams(TemtClient::TableParams::Remove);
     if (!cmd_ok) return;
@@ -914,7 +916,7 @@ void TemtClient::cmdRemoveData() {
     }
     SendOk();
   }
-  else if (msgFormat == TemtClient::JSON) {
+  else if (msg_format == TemtClient::JSON) {
     int row_from, rows;
     int row_to = 0;
     bool valid = CalcRowParams("remove", tab, row_from, rows, row_to); // get start row and number of rows to get, remove, etc.
@@ -931,7 +933,7 @@ void TemtClient::cmdRemoveData() {
 }
 
 void TemtClient::cmdSetVar() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     String pnm = pos_params.SafeEl(0);
     
     Program* prog = GetAssertProgram(pnm);
@@ -968,7 +970,7 @@ void TemtClient::cmdSetVar() {
     SendOk("vars set");
   }
   
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     String pnm = name_params.GetVal("program").toString();
     Program* prog = GetAssertProgram(pnm);
     if (!prog)
@@ -1016,12 +1018,12 @@ void TemtClient::ParseCommand(const String& cl) {
   cmd_line = trim(cl); // remove leading/trailing ws, including eol's
   
   if (cmd_line[0] == '{') {
-    msgFormat = TemtClient::JSON;
+    msg_format = TemtClient::JSON;
     ParseCommandJSON(cmd_line);
     return;
   }
   else {
-    msgFormat = TemtClient::NATIVE;
+    msg_format = TemtClient::NATIVE;
     ParseCommandNATIVE(cmd_line);
   }
 }
@@ -1101,7 +1103,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
   QJsonParseError json_error;
   QString q_string = QString(cmd_string.chars());
   QJsonDocument json_doc = QJsonDocument::fromJson(q_string.toUtf8(), &json_error);  // converts to QByteArray
-
+  
   if (json_error.error != QJsonParseError::NoError) {
     SendErrorJSON("JSON format error", TemtClient::INVALID_FORMAT);
     return;
@@ -1110,7 +1112,7 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
   {
     QJsonObject json_obj = json_doc.object();
     QJsonObject::const_iterator obj_iter = json_obj.constBegin();
-
+    
     while (obj_iter != json_obj.constEnd()) {
       QString node_name = obj_iter.key();
       if (node_name == "command") {
@@ -1155,6 +1157,10 @@ void TemtClient::ParseCommandJSON(const String& cmd_string) {
       else if (node_name == "enable") {
         name_params.SetVal("enable", obj_iter.value().toBool());  // enable or disable
       }
+      else if (node_name == "json_format") {
+        name_params.SetVal("json_format", obj_iter.value().toString());  // enable or disable
+      }
+      
       else {
         String err_msg = "Unknown parameter: " + node_name;
         SendErrorJSON(err_msg, TemtClient::UNKNOWN_PARAM);
@@ -1223,10 +1229,14 @@ void TemtClient::RunCommand(const String& cmd) {
   else if (cmd == "ClearConsoleOutput") {
     cmdClearConsoleOutput();
   }
+  else if (cmd == "SetJsonFormat") {
+    cmdSetJsonFormat();
+  }
+  
   else
   {
     String err_msg = "Unknown command: " + cmd + "-- remember everything is case sensitive";
-    if (msgFormat == TemtClient::NATIVE) {
+    if (msg_format == TemtClient::NATIVE) {
       SendError(err_msg);
       
     }
@@ -1324,7 +1334,7 @@ void TemtClient::sock_stateChanged(QAbstractSocket::SocketState socketState) {
 }
 
 void TemtClient::SendError(const String& err_msg, TemtClient::ServerError err) {
-  if (msgFormat == TemtClient::JSON)
+  if (msg_format == TemtClient::JSON)
     SendErrorJSON(err_msg, err);
   else
     SendErrorNATIVE(err_msg);
@@ -1342,15 +1352,15 @@ void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError er
   root_object.insert("status", QString("ERROR"));
   root_object.insert("message", QString(err_msg.chars()));
   root_object.insert("error", err);
-
+  
   QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
+  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);  // status always indented format
   QString reply(theString);
   WriteLine(reply);
 }
 
 void TemtClient::SendOk(const String& msg) {
-  if (msgFormat == TemtClient::JSON)
+  if (msg_format == TemtClient::JSON)
     SendOkJSON(msg);
   else
     SendOkNATIVE(msg);
@@ -1370,13 +1380,13 @@ void TemtClient::SendOkJSON(const String& msg) {
   root_object.insert("result", QString(msg.chars()));
   
   QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
+  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);  // status always indented format
   QString reply(theString);
   WriteLine(reply);
 }
 
 void TemtClient::SendReply(const String& r) {
-  if (msgFormat == TemtClient::JSON)
+  if (msg_format == TemtClient::JSON)
     SendErrorJSON(r);
   else
     SendErrorNATIVE(r);
@@ -1420,14 +1430,14 @@ bool TemtClient::CalcRowParams(String operation, DataTable* table, int& row_from
     row_to = name_params.GetVal("row_to").toInt();
     row_to_set = true;
   }
-
+  
   if (!name_params.GetVal("rows").isNull()) {
     rows = name_params.GetVal("rows").toInt();
   }
   else {
     rows = -1;
   }
-
+  
   // this is the only row oriented call and does not go through json api
   // so it requires a bit of upfront checking - The json data table code
   // returns error messages but the old row based data table calls do not
@@ -1522,7 +1532,7 @@ bool TemtClient::ValidateJSON_ColumnNames(DataTable* dt, const QJsonObject& n) {
 
 bool TemtClient::ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& aCol) {
   String columnName("");
-
+  
   QJsonObject::const_iterator columnData = aCol.constBegin();
   while (columnData != aCol.constEnd()) {
     String node_name = columnData.key();
@@ -1539,23 +1549,23 @@ bool TemtClient::ValidateJSON_ColumnName(DataTable* dt, const QJsonObject& aCol)
   }
   
   if (dt) { // should have been checked by now
-      DataCol* dc = dt->data.FindName(columnName);
-      if (dc) {
-        return true;
-      }
-      else {
-        SendError("Column name '" + columnName + "' not found in data table '" + dt->name + "'", TemtClient::RUNTIME);
-        return false;
-      }
+    DataCol* dc = dt->data.FindName(columnName);
+    if (dc) {
+      return true;
+    }
+    else {
+      SendError("Column name '" + columnName + "' not found in data table '" + dt->name + "'", TemtClient::RUNTIME);
+      return false;
+    }
   }
   return true;
 }
 
 void TemtClient::cmdSetImage() {
-  if (msgFormat == TemtClient::NATIVE) {
+  if (msg_format == TemtClient::NATIVE) {
     SendError("SetImage only implemented for JSON");
   }
-  if (msgFormat == TemtClient::JSON) {
+  if (msg_format == TemtClient::JSON) {
     String pnm = name_params.GetVal("program").toString();
     Program* prog = GetAssertProgram(pnm);
     if (!prog)
@@ -1612,4 +1622,25 @@ void TemtClient::cmdCollectConsoleOutput() {
 void TemtClient::cmdClearConsoleOutput() {
   taMisc::ClearConsoleHold();
   SendOk();
+}
+
+
+void TemtClient::cmdSetJsonFormat() {
+  json_format = QJsonDocument::Indented;
+  if (!name_params.GetVal("json_format").isNull()) {
+    if (name_params.GetVal("json_format") == "compact") {
+      json_format = QJsonDocument::Compact;
+      SendOk();
+    }
+    else if (name_params.GetVal("json_format") == "indented") {
+      SendOk(); // already set
+    }
+    else {
+      SendErrorJSON("unexpected value - must be 'compact' or 'indented' ", TemtClient::NOT_FOUND);
+    }
+  }
+  else {
+    SendErrorJSON("json_format param not found", TemtClient::MISSING_PARAM);
+  }
+  
 }

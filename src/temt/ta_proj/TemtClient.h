@@ -24,6 +24,7 @@
 #include <QPointer>
 #include <QAbstractSocket>
 #include <QJsonObject>
+#include <QJsonDocument>
 #endif
 
 #include <NameVar_PArray>
@@ -36,7 +37,6 @@ class TemtServer; //
 class DataTable; //
 class Program; //
 class QTcpSocket; //
-class QJsonObject;
 
 taTypeDef_Of(TemtClient);
 
@@ -67,9 +67,10 @@ public:
     RUNTIME
      };
 
-  ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state 
-  MsgFormat     msgFormat; // #READ_ONLY #NO_SAVE
-  
+  MsgFormat                     msg_format; // #READ_ONLY #NO_SAVE format of the message (command) from the client - native or json
+  QJsonDocument::JsonFormat     json_format; // #READ_ONLY #NO_SAVE return to client document format - compact or indented
+
+  ClientState		state; // #READ_ONLY #SHOW #NO_SAVE comm state
   bool			isConnected() const {return (state != CS_DISCONNECTED);}
   
   TemtClient_QObj* adapter(); // #IGNORE
@@ -114,6 +115,7 @@ public: // commands, all are cmdXXX where XXX is exact command name
   virtual void    cmdCollectConsoleOutput();
   virtual void    cmdGetConsoleOutput();
   virtual void    cmdClearConsoleOutput();
+  virtual void    cmdSetJsonFormat();
   
   
 public: // slot forwardees
