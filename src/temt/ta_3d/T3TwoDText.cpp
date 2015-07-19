@@ -18,8 +18,9 @@
 #include <Qt3DRenderer/QDiffuseMapMaterial>
 #include <Qt3DRenderer/QPlaneMesh>
 #include <QPalette>
+#include <QPainter>
 
-#include <taMisc>
+// #include <taMisc>
 
 T3TwoDText::T3TwoDText(Qt3DNode* parent)
   : T3Entity(parent)
@@ -35,12 +36,8 @@ T3TwoDText::T3TwoDText(Qt3DNode* parent)
   mat->setShininess(2.0f);
   mat->diffuse()->addTextureImage(texture);
   plane->addMaterial(mat);
-  plane->rotate->setAxis(QVector3D(0.0f, 1.0f, 0.0f)); // flip over
-  plane->rotate->setAngleDeg(180);
-  Qt3D::QRotateTransform* flip = new Qt3D::QRotateTransform();
-  flip->setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
-  flip->setAngleDeg(-90);
-  plane->transform->addTransform(flip);
+  plane->rotate->setAxis(QVector3D(1.0f, 0.0f, 0.0f)); // flip up by default
+  plane->rotate->setAngleDeg(90);
 }
 
 T3TwoDText::~T3TwoDText() {
@@ -116,11 +113,11 @@ void T3TwoDTexture::renderLabel(T3TwoDText& txt) {
 
 class T3TwoDTextureDataFunctor : public Qt3D::QTextureDataFunctor {
 public:
-  QImage* image;
+  QImage image;
   
   T3TwoDTextureDataFunctor(QImage* img)
     : Qt3D::QTextureDataFunctor()
-    , image(img)
+    , image(*img)
   {}
 
   // Will be executed from within a QAspectJob
@@ -128,9 +125,7 @@ public:
   {
     Qt3D::TexImageDataPtr dataPtr;
     dataPtr.reset(new Qt3D::TexImageData());
-    if(image) {
-      dataPtr->setImage(*image);
-    }
+    dataPtr->setImage(image);
     return dataPtr;
   }
 

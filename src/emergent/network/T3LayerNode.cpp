@@ -16,6 +16,8 @@
 #include "T3LayerNode.h"
 #include <taString>
 
+#include <math.h>
+
 #ifdef TA_QT3D
 
 const float T3LayerNode::height = 0.05f;

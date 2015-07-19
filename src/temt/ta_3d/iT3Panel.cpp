@@ -152,7 +152,9 @@ void iT3Panel::Render_impl() {
 }
 
 void iT3Panel::Render_post() {
-//  nothing
+#ifdef TA_QT3D
+  // m_t3viewer->render->renderSynchronous(); // crashes
+#endif // TA_QT3D
 }
 
 void iT3Panel::Reset_impl() {
@@ -202,7 +204,11 @@ iT3PanelViewer* iT3Panel::viewerWidget() const {
 }
 
 void iT3Panel::viewRefresh() {
-  if (viewer())
+  if (viewer()) {
     viewer()->Render();
+// #ifdef TA_QT3D
+//     m_t3viewer->render->renderSynchronous(); // crashes
+// #endif // TA_QT3D
+  }
 }
 

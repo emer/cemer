@@ -17,13 +17,26 @@
 
 #include <Qt3DRenderer/Buffer>
 #include <Qt3DRenderer/QMeshData>
+#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/Attribute>
 
 #include <T3Misc>
 
 T3LineBox::T3LineBox(Qt3DNode* parent)
   : inherited(parent)
 {
-  size.setX(1.0f); size.setY(1.0f); size.setZ(1.0f);
+  size = QVector3D(1.0f, 1.0f, 1.0f);
+  init();
+}
+
+T3LineBox::T3LineBox(Qt3DNode* parent, const QVector3D& sz)
+  : inherited(parent)
+{
+  size = sz;
+  init();
+}
+
+void T3LineBox::init() {
   addMesh(new T3LineBoxMesh(NULL, &size));
 
   Qt3D::QPhongMaterial* mt = new Qt3D::QPhongMaterial();
@@ -77,30 +90,30 @@ void T3LineBoxMesh::copy(const Qt3DNode *ref) {
     size = mesh->size;
 }
 
-Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size);
+Qt3D::QMeshDataPtr createLineBox(const QVector3D& size);
 
-class FrameMeshFunctor : public Qt3D::QAbstractMeshFunctor {
+class LineBoxFunctor : public Qt3D::QAbstractMeshFunctor {
 public:
   QVector3D size;
   
-  FrameMeshFunctor(const T3LineBoxMesh& mesh)
+  LineBoxFunctor(const T3LineBoxMesh& mesh)
     : size(mesh.size)
   {
   }
 
   Qt3D::QMeshDataPtr operator ()() override {
-    return createFrameMesh(size);
+    return createLineBox(size);
   }
 
   bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
-    const FrameMeshFunctor *otherFunctor = dynamic_cast<const FrameMeshFunctor *>(&other);
+    const LineBoxFunctor *otherFunctor = dynamic_cast<const LineBoxFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return (otherFunctor->size == size);
     return false;
   }
 };
 
-Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
+Qt3D::QMeshDataPtr createLineBox(const QVector3D& size) {
   const int nVerts = 8;
 
   // Populate a buffer with the interleaved per-vertex data with
@@ -181,5 +194,5 @@ Qt3D::QMeshDataPtr createFrameMesh(const QVector3D& size) {
 }
 
 Qt3D::QAbstractMeshFunctorPtr T3LineBoxMesh::meshFunctor() const {
-  return Qt3D::QAbstractMeshFunctorPtr(new FrameMeshFunctor(*this));
+  return Qt3D::QAbstractMeshFunctorPtr(new LineBoxFunctor(*this));
 }

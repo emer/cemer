@@ -37,13 +37,11 @@ public:
 
   float                 width;
   bool	                show_drag;
-  // SoMaterial*		chld_mat_; // first item in childNodes -- default material
-  T3LineBox*              frame;
+  T3LineBox*            frame;
   T3Entity*		x_axis;
-  T3Entity*		z_axis;
   T3Entity*		y_axes;
+  T3Entity*		z_axis;
   T3Entity*		legend; // can be multiple
-
   T3Entity*		graphs; // graph boxes
   
   void		        updateNode() override;

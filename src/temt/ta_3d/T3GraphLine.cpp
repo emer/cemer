@@ -142,13 +142,20 @@ String T3GraphLine::markerAtSvg(const iVec3f& pt, MarkerStyle style) {
 
 #include <T3LineStrip>
 
-T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz)
+T3GraphLine::T3GraphLine(Qt3DNode* parent, T3DataView* dataView_, float fnt_sz, bool zo)
   : inherited(parent, dataView_)
   , font_size(fnt_sz)
+  , z_on(zo)
   , lines(new T3LineStrip(this))
   , errbars(new T3LineStrip(this))
   , markers(new T3LineStrip(this))
 {
+  if(z_on) {
+    translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.5f));
+  }
+  else {
+    translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.0f));
+  }
 }
 
 T3GraphLine::~T3GraphLine() {
@@ -222,27 +229,31 @@ void T3GraphLine::initValueColorMode() {
 }
 
 void T3GraphLine::startBatch() {
-  // nop
+  lines->setNodeUpdating(true);
+  errbars->setNodeUpdating(true);
+  markers->setNodeUpdating(true);
 }
 
 void T3GraphLine::finishBatch() {
-  // nop
+  lines->setNodeUpdating(false);
+  errbars->setNodeUpdating(false);
+  markers->setNodeUpdating(false);
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt) {
-  lines->moveTo(pt);
+  lines->moveTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
-void T3GraphLine::lineTo(const iVec3f& to) {
-  lines->lineTo(to);
+void T3GraphLine::lineTo(const iVec3f& pt) {
+  lines->lineTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
 void T3GraphLine::moveTo(const iVec3f& pt, const T3Color& c) {
-  lines->moveTo(pt);
+  lines->moveTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
-void T3GraphLine::lineTo(const iVec3f& to, const T3Color& c) {
-  lines->lineTo(to);
+void T3GraphLine::lineTo(const iVec3f& pt, const T3Color& c) {
+  lines->lineTo(QVector3D(pt.x, pt.y, -pt.z));
 }
 
 void T3GraphLine::errBar(const iVec3f& pt, float err, float bwd) {
@@ -300,7 +311,10 @@ void T3GraphLine::markerAt(const iVec3f& pt, MarkerStyle style) {
   for(int i = 0; i< n; i++) {
     float mx = mark_pt(st+i,X);
     float my = mark_pt(st+i,Y);
-    markers->lineTo(QVector3D(pt.x + mx, pt.y + my, -pt.z));
+    if(i == 0)
+      markers->moveTo(QVector3D(pt.x + mx, pt.y + my, -pt.z));
+    else
+      markers->lineTo(QVector3D(pt.x + mx, pt.y + my, -pt.z));
   }
 }
 
@@ -310,14 +324,11 @@ void T3GraphLine::setDefaultCaptionTransform() {
   // transformCaption(SbVec3f(0.0f, 0.1f, 0.45f));
 }
 
-void T3GraphLine::setDefaultColor(const T3Color& c) {
-  // uint32_t tmp_col = T3Color::makePackedRGBA(c.r, c.g, c.b);
-  // if (defColor_ == tmp_col) return;
-  // defColor_ = tmp_col;
-  // initValueColorMode();
-  // if (textColor_) {
-  //   textColor_->orderedRGBA.setValue(defColor_);
-  // }
+void T3GraphLine::setDefaultColor(const QColor& c) {
+  color = c;
+  lines->setColor(color);
+  markers->setColor(color);
+  errbars->setColor(color);
 }
 
 void T3GraphLine::setLineStyle(LineStyle value, float line_width) {

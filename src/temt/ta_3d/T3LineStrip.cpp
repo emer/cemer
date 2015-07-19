@@ -17,6 +17,8 @@
 
 #include <Qt3DRenderer/Buffer>
 #include <Qt3DRenderer/QMeshData>
+#include <Qt3DRenderer/QPhongMaterial>
+#include <Qt3DRenderer/Attribute>
 
 
 T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
@@ -27,6 +29,15 @@ T3LineStripMesh::T3LineStripMesh(Qt3DNode* parent)
 
 T3LineStripMesh::~T3LineStripMesh() {
 
+}
+
+void T3LineStripMesh::setNodeUpdating(bool updating) {
+  bool should_render = false;
+  if(!updating && node_updating) should_render = true;
+  node_updating = updating;
+  blockNotifications(node_updating); // block if updating
+  if(should_render)
+    emit nodeUpdatingChanged();
 }
 
 void T3LineStripMesh::restart() {
@@ -85,7 +96,8 @@ void T3LineStripMesh::lineTo(const taVector3f& pos) {
 }
 
 void T3LineStripMesh::updateLines() {
-  // todo??
+  setNodeUpdating(true);
+  setNodeUpdating(false);
 }
   
 void T3LineStripMesh::copy(const Qt3DNode *ref) {
@@ -95,30 +107,36 @@ void T3LineStripMesh::copy(const Qt3DNode *ref) {
     indexes = mesh->indexes;
 }
 
-Qt3D::QMeshDataPtr createFrameMesh(int n_points, float* points, int n_indexes,
+Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
                                    int* indexes);
 
-class FrameMeshFunctor : public Qt3D::QAbstractMeshFunctor {
+class LineStripFunctor : public Qt3D::QAbstractMeshFunctor {
 public:
   int     n_points;
   float*  points;
   int     n_indexes;
   int*    indexes;
   
-  FrameMeshFunctor(const T3LineStripMesh& mesh)
-    : n_points(mesh.points.Frames())
-    , points(mesh.points.el)
-    , n_indexes(mesh.indexes.size)
+  LineStripFunctor(const T3LineStripMesh& mesh)
+    : points(mesh.points.el)
     , indexes(mesh.indexes.el)
   {
+    // if(mesh.node_updating) {
+    //   n_points = 0;
+    //   n_indexes = 0;
+    // }
+    // else {
+    n_points = mesh.points.Frames();
+    n_indexes = mesh.indexes.size;
+    // }
   }
 
   Qt3D::QMeshDataPtr operator ()() override {
-    return createFrameMesh(n_points, points, n_indexes, indexes);
+    return createLineStrip(n_points, points, n_indexes, indexes);
   }
 
   bool operator ==(const Qt3D::QAbstractMeshFunctor &other) const {
-    const FrameMeshFunctor *otherFunctor = dynamic_cast<const FrameMeshFunctor *>(&other);
+    const LineStripFunctor *otherFunctor = dynamic_cast<const LineStripFunctor *>(&other);
     if (otherFunctor != Q_NULLPTR)
       return ((otherFunctor->n_points == n_points) &&
               (otherFunctor->n_indexes == n_indexes) &&
@@ -128,7 +146,7 @@ public:
   }
 };
 
-Qt3D::QMeshDataPtr createFrameMesh(int n_points, float* points, int n_indexes,
+Qt3D::QMeshDataPtr createLineStrip(int n_points, float* points, int n_indexes,
                                    int* indexes) {
   // Populate a buffer with the interleaved per-vertex data with
   // vec3 pos; // not: vec2 texCoord, vec3 normal, vec4 tangent
@@ -138,7 +156,7 @@ Qt3D::QMeshDataPtr createFrameMesh(int n_points, float* points, int n_indexes,
   // Wrap the raw bytes in a buffer
   Qt3D::BufferPtr buf(new Qt3D::Buffer(QOpenGLBuffer::VertexBuffer));
   buf->setUsage(QOpenGLBuffer::StaticDraw);
-  QByteArray bufferBytes = QByteArray::fromRawData((const char*)points, elementSize * stride * n_points);
+  QByteArray bufferBytes = QByteArray::fromRawData((const char*)points, stride * n_points);
   buf->setData(bufferBytes);
 
   // Create the mesh data, specify the vertex format and data
@@ -150,12 +168,12 @@ Qt3D::QMeshDataPtr createFrameMesh(int n_points, float* points, int n_indexes,
   // Wrap the index bytes in a buffer
   Qt3D::BufferPtr indexBuffer(new Qt3D::Buffer(QOpenGLBuffer::IndexBuffer));
   indexBuffer->setUsage(QOpenGLBuffer::StaticDraw);
-  QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes, n_indexes * sizeof(int));
+  QByteArray indexBytes = QByteArray::fromRawData((const char*)indexes, n_indexes *  sizeof(int));
   indexBuffer->setData(indexBytes);
 
   // Specify index data on the mesh
   mesh->setIndexAttribute(Qt3D::AttributePtr(new Qt3D::Attribute
-                                             (indexBuffer, GL_INT,
+                                             (indexBuffer, GL_UNSIGNED_INT,
                                               n_indexes, 0, 0)));
 
   mesh->computeBoundsFromAttribute(Qt3D::QMeshData::defaultPositionAttributeName());
@@ -164,7 +182,7 @@ Qt3D::QMeshDataPtr createFrameMesh(int n_points, float* points, int n_indexes,
 }
 
 Qt3D::QAbstractMeshFunctorPtr T3LineStripMesh::meshFunctor() const {
-  return Qt3D::QAbstractMeshFunctorPtr(new FrameMeshFunctor(*this));
+  return Qt3D::QAbstractMeshFunctorPtr(new LineStripFunctor(*this));
 }
 
 
@@ -184,6 +202,11 @@ T3LineStrip::T3LineStrip(Qt3DNode* parent)
 
 T3LineStrip::~T3LineStrip() {
   
+}
+
+void T3LineStrip::setNodeUpdating(bool updating) {
+  lines->setNodeUpdating(updating);
+  inherited::setNodeUpdating(updating);
 }
 
 void T3LineStrip::setColor(const QColor& clr) {

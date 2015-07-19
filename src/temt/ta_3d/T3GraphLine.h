@@ -28,6 +28,8 @@ class T3Color; //
 
 #ifdef TA_QT3D
 
+#include <QColor>
+
 class T3LineStrip; //
 
 class TA_API T3GraphLine: public T3NodeLeaf {
@@ -77,6 +79,8 @@ public:
   LineStyle             lineStyle;
   float                 marker_size;
   float	                font_size;
+  bool                  z_on;   // is z axis on or not?
+  QColor                color;  // line color
   T3LineStrip*          lines;
   T3LineStrip*          errbars;
   T3LineStrip*          markers;
@@ -88,6 +92,7 @@ public:
   void 			setLineStyle(LineStyle value, float line_width = 0.0f);
   void			setMarkerSize(float sz);
   void			setValueColorMode(bool value);
+  // not sure if we can support this!
 
   void			clear(); //
 
@@ -101,7 +106,7 @@ public:
   // done with batch update -- turn notification back on and do a touch
 
   // non valueColor drawing api
-  void			setDefaultColor(const T3Color& color); // call after reset to set default color (black if not called)
+  void			setDefaultColor(const QColor& color); // call after reset to set default color (black if not called)
   void			moveTo(const iVec3f& pt); // use to start a new line segment
   void			lineTo(const iVec3f& to); // add arc to current line, in default color
   void			errBar(const iVec3f& pt, float err, float bar_width); // render error bar at given point
@@ -122,16 +127,14 @@ public:
   String                markerAtSvg(const iVec3f& pt, MarkerStyle style);
   // string of SVG commands for drawing marker at given point -- just the move, line guys
 
-  T3GraphLine(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float fnt_sz = .05f);
+  T3GraphLine(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, float fnt_sz = .05f,
+              bool z_on = false);
   ~T3GraphLine();
 
 protected:
   // uint32_t		defColor_; // def is black
   // SoSeparator*		line_sep;
   // SoDrawStyle*		lineDrawStyle_;
-  // SoLineSet*		lines;		// we use the vertexProperty for points etc.
-  // SoLineSet*		errbars;
-  // SoLineSet*		markers;
   // SoSeparator*		textSep_; // optional text separator
   // SoComplexity*		complexity_;
   // SoFont*		labelFont_;

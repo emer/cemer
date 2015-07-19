@@ -16,6 +16,8 @@
 #include "T3UnitNode.h"
 #include <T3Color>
 
+#include <math.h>
+
 #define T3_UNIT_BASE_H	0.1f
 #define T3_UNIT_MAX_H	0.8f
 

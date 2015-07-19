@@ -15,6 +15,8 @@
 
 #include "T3UnitGroupNode.h"
 
+#include <math.h>
+
 #ifdef TA_QT3D
 
 float T3UnitGroupNode::height = 0.0f;

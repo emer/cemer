@@ -58,11 +58,14 @@ public:
   // set new size and update
   
   T3LineBox(Qt3DNode* parent = 0);
+  T3LineBox(Qt3DNode* parent, const QVector3D& sz);
   ~T3LineBox();
 
 public slots:
   virtual void  updateSize(); // update to new size
-  
+
+protected:
+  void init();
 };
 
 #endif // T3LineBox_h

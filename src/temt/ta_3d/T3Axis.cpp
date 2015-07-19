@@ -24,16 +24,25 @@
 #ifdef TA_QT3D
 
 #include <T3TwoDText>
+#include <T3LineStrip>
 
 T3Axis::T3Axis(Qt3DNode* parent, T3DataView* dataView_, Axis ax, float fnt_sz, int axn)
   : inherited(parent, dataView_)
   , axis(ax)
   , font_size(fnt_sz)
   , axis_n(axn)
+  , labels(new T3Entity(this))
+  , lines(new T3LineStrip(this))
 {
+  translate->setTranslation(QVector3D(-0.5f, -0.5f, 0.0f));
 }
 
 T3Axis::~T3Axis() {
+}
+
+void T3Axis::setNodeUpdating(bool updating) {
+  inherited::setNodeUpdating(updating);
+  lines->setNodeUpdating(updating);
 }
 
 void T3Axis::addLabel(const char* text, const iVec3f& at) {
@@ -54,6 +63,12 @@ void T3Axis::addLabel(const char* text, const iVec3f& at) {
 
 void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
   //note: we assume (for simplicity) that each new label is at a different place
+  T3TwoDText* lbl = new T3TwoDText(labels);
+  lbl->label.setAlignment((QFlags<Qt::AlignmentFlag>)just);
+  lbl->setText(text);
+  lbl->scale->setScale(font_size);
+  lbl->translate->setTranslation(QVector3D(at.x, at.y, -at.z));
+  
   // SoTranslation* tr = new SoTranslation();
   // tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
   //       		   -(at.z - last_label_at.z));
@@ -89,31 +104,13 @@ void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
 }
 
 void T3Axis::addLine(const iVec3f& from, const iVec3f to) {
-  // lines->numVertices.startEditing();
-  // SoMFVec3f& point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // point.startEditing();
-
-  // // add the two new line vertices
-  // int pt_idx = point.getNum();
-  // point.set1Value(pt_idx++, from.x, from.y, -from.z);
-  // point.set1Value(pt_idx++, to.x, to.y, -to.z);
-
-  // // add num of vertices (2) of this new line
-  // lines->numVertices.set1Value(lines->numVertices.getNum(), 2);
-
-  // point.finishEditing();
-  // lines->numVertices.finishEditing();
+  lines->moveTo(QVector3D(from.x, from.y, -from.z));
+  lines->lineTo(QVector3D(to.x, to.y, -to.z));
 }
 
 void T3Axis::clear() {
-  // lines->numVertices.setNum(0);
-  // SoMFVec3f& lines_point = ((SoVertexProperty*)lines->vertexProperty.getValue())->vertex;
-  // lines_point.setNum(0);
-
-  // last_label_at = 0.0f;
-  // labels->removeAllChildren();
-  // labels->addChild(complexity_);
-  // labels->addChild(labelFont_);
+  lines->restart();
+  labels->removeAllChildren();
   inherited::clear();
 }
 

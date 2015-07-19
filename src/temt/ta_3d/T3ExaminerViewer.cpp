@@ -172,7 +172,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   QWidget* container = QWidget::createWindowContainer(view3d);
   main_hbox->addWidget(container, 1);
   engine = new Qt3D::QAspectEngine;
-  render = new Qt3D::QRenderAspect;
+  render = new Qt3D::QRenderAspect(); // Qt3D::QRenderAspect::Synchronous); // hangs
   engine->registerAspect(render);
   input = new Qt3D::QInputAspect;
   engine->registerAspect(input);
@@ -190,7 +190,7 @@ T3ExaminerViewer::T3ExaminerViewer(iT3ViewspaceWidget* parent)
   float aspect_ratio = (float)sz.width() / (float)sz.height();
   
   camera->lens()->setPerspectiveProjection(20.0f, aspect_ratio, 0.1f, 1000.0f);
-  camera->setPosition(QVector3D(0.0f, 0.0f, -5.0f));
+  camera->setPosition(QVector3D(0.0f, 0.0f, 5.0f));
   camera->setUpVector(QVector3D(0.0f, 1.0f, 0.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
   input->setCamera(camera);
@@ -960,7 +960,7 @@ const SbViewportRegion& T3ExaminerViewer::getViewportRegion() const {
 void T3ExaminerViewer::viewAll() {
 #ifdef TA_QT3D
   camera->setUpVector(QVector3D(0, 1.0f, 0));
-  camera->setPosition(QVector3D(0.0f, 0.0f, -5.0f));
+  camera->setPosition(QVector3D(0.0f, 0.0f, 5.0f));
   camera->setViewCenter(QVector3D(0.0f, 0.0f, 0.0f));
 #else
   SoCamera* cam = getViewerCamera();
@@ -1086,7 +1086,7 @@ void T3ExaminerViewer::zoomView(const float diffvalue) {
 
 void T3ExaminerViewer::horizRotateView(const float rot_value) {
 #ifdef TA_QT3D
-  camera->panAboutViewCenter(rot_value);
+  camera->panAboutViewCenter(-rot_value);
 #else
   RotateView(SbVec3f(0.0f, -1.0f, 0.0f), rot_value);
 #endif

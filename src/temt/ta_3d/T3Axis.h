@@ -28,6 +28,8 @@ class iVec3f; //
 
 #ifdef TA_QT3D
 
+class T3LineStrip;
+
 class TA_API T3Axis: public T3NodeLeaf {
   // dataview is the GraphAxisView
   Q_OBJECT
@@ -43,6 +45,9 @@ public:
   float                 font_size;
   int			axis_n;	// number of axis (can be multiple Y axes..)
   iVec3f 		last_label_at; // used so we just need to issue delta translates
+
+  T3Entity*             labels;
+  T3LineStrip*          lines;
   
   void			clear();
   void			addLabel(const char* text, const iVec3f& at);
@@ -56,6 +61,8 @@ public:
 
   void			setDefaultCaptionTransform() override; // sets text justif and transform for 3D
 
+  void setNodeUpdating(bool updating) override;
+
   T3Axis(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, Axis axis = X, 
          float fnt_sz=.05f, int n_axis = 0);
   ~T3Axis();
@@ -63,11 +70,8 @@ public:
 protected:
   // SoSeparator* 		line_sep;
   // SoDrawStyle* 		line_style;
-  // SoLineSet*		lines; // we use the vertexProperty for points etc.
   // SoComplexity*		complexity_;
   // SoFont*		labelFont_;
-  // float			font_size_;
-  // SoSeparator*		labels;
 };
 
 

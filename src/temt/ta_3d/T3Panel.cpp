@@ -90,9 +90,6 @@ void T3Panel::CopyFromViewPanel(T3Panel* cp) {
 
 void T3Panel::AddView(T3DataView* view) {
   root_view.children.Add(view);
-#ifdef TA_QT3D
-  // view->node_so()->setParent(&root_view);
-#endif // TA_QT3D
   if (dvwidget())
     view->OnWindowBind(widget());
 }
@@ -197,7 +194,7 @@ void T3Panel::Render_pre() {
   if(viewer) {
     if(viewer->cur_view_no < 0) {
       SetAllSavedViews();               // init from us
-      // viewer->gotoView(0);              // goto first saved view as default
+      viewer->gotoView(0);              // goto first saved view as default
     }
   }
 }

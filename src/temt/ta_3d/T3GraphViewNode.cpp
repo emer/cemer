@@ -30,8 +30,15 @@ T3GraphViewNode::T3GraphViewNode(Qt3DNode* parent, T3DataView* dataView_, float 
   : inherited(parent, dataView_)
   , width(wd)
   , show_drag(show_drg)
+  , frame(NULL)
+  , x_axis(new T3Entity(this))
+  , y_axes(new T3Entity(this))
+  , z_axis(new T3Entity(this))
+  , legend(new T3Entity(this))
+  , graphs(new T3Entity(this))
 {
   frame = new T3LineBox(this);
+  // graphs->translate->setTranslation(QVector3D(-0.5f,-0.5f,0.0f));
   updateNode();
 }
 

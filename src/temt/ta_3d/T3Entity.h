@@ -26,12 +26,22 @@ class Qt3DNode; // #IGNORE
 
 #else
 
-#include <Qt3DCore>
-#include <Qt3DRenderer>
+// Qt3D native 3D coordinates, positive directions shown:
+//     |Y
+//     |   X
+//     -----
+//    /
+//   /Z
+//
+// in general stuff of interest is located at the origin, and the camera is at 0,0,5 or so
+
+#include <Qt3DCore/QEntity>
 #include <Qt3DCore/QTransform>
 #include <Qt3DCore/QScaleTransform>
 #include <Qt3DCore/QTranslateTransform>
 #include <Qt3DCore/QRotateTransform>
+#include <Qt3DRenderer/QAbstractMesh>
+#include <Qt3DRenderer/QMaterial>
 
 // for maketa:
 typedef Qt3D::QNode Qt3DNode; 
@@ -41,6 +51,13 @@ class TA_API T3Entity : public Qt3D::QEntity {
   Q_OBJECT
   INHERITED(Qt3D::QEntity)
 public:
+  Q_PROPERTY(bool node_updating READ nodeUpdating WRITE setNodeUpdating NOTIFY nodeUpdatingChanged)
+  // use this property to control notifcation of updates to a node -- calls blockNotifications(true) if setNodeUpdating(true) is called, and when the corresponding false call is made, then it also calls nodeUpdatingChanged signal, which then triggers an actual node update -- blockNotifications(false) should do this but it doesn't!
+
+  bool  node_updating;          // is the node currently updating its structure, and thus rendering should be blocked, or not?
+  virtual void setNodeUpdating(bool updating);
+  bool  nodeUpdating()  { return node_updating; }
+  
   Qt3D::QTransform*          transform; // overall transform applied to this node -- contains each of the following items:
   Qt3D::QScaleTransform*     scale;     // overall scale transform applied to this node
   Qt3D::QTranslateTransform* translate; // overall translation transform applied to this node
@@ -69,9 +86,18 @@ public:
   // move the Z dim front edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
   virtual void TranslateZBackTo(const QVector3D& pos);
   // move the Z dim back edge of object to given position -- assumes zero point position of entity is at center of object, and requires size to be set
+
+  virtual void  addChild(T3Entity* chld)
+  { chld->setParent(this); }
+  // add a child to this graph
+  virtual void  removeAllChildren();
+  // remove all the children of this node, deleting them
   
   T3Entity(Qt3DNode* parent = 0);
   ~T3Entity();
+
+signals:
+  void  nodeUpdatingChanged();
 };
 
 #endif  // __MAKETA__

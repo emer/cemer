@@ -27,6 +27,8 @@ class T3TwoDText; // #IGNORE
 
 #ifndef __MAKETA__
 
+#include <Qt3DRenderer/QAbstractTextureImage>
+
 #include <QLabel>
 #include <QImage>
 
