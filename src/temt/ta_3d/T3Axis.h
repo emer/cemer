@@ -28,6 +28,8 @@ class iVec3f; //
 
 #ifdef TA_QT3D
 
+#include <QColor>
+
 class T3LineStrip;
 
 class TA_API T3Axis: public T3NodeLeaf {
@@ -45,6 +47,7 @@ public:
   float                 font_size;
   int			axis_n;	// number of axis (can be multiple Y axes..)
   iVec3f 		last_label_at; // used so we just need to issue delta translates
+  QColor                color;
 
   T3Entity*             labels;
   T3LineStrip*          lines;
@@ -55,7 +58,7 @@ public:
   void			addLabel(const char* text, const iVec3f& at, int just);
   // add the label text, with explicit justification (used for axis title, and unit labels)
   void			addLabelRot(const char* text, const iVec3f& at, int just,
-				    Qt3D::QRotateTransform& rot);
+				    const QVector3D& rot_ax, float rot_ang);
   // #IGNORE add the label text, with explicit justification (used for axis title, and unit labels)
   void			addLine(const iVec3f& from, const iVec3f to);
 
@@ -66,12 +69,6 @@ public:
   T3Axis(Qt3DNode* par = NULL, T3DataView* dataView_ = NULL, Axis axis = X, 
          float fnt_sz=.05f, int n_axis = 0);
   ~T3Axis();
-
-protected:
-  // SoSeparator* 		line_sep;
-  // SoDrawStyle* 		line_style;
-  // SoComplexity*		complexity_;
-  // SoFont*		labelFont_;
 };
 
 

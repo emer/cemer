@@ -29,6 +29,7 @@
 #ifdef TA_QT3D
 
 #include <T3TwoDText>
+#include <T3LineStrip>
 
 #else // TA_QT3D
 
@@ -370,6 +371,8 @@ void GraphAxisBase::RenderAxis(T3Axis* t3ax, const iVec3f& off,
   ComputeTicks();               // do this always..
 
 #ifdef TA_QT3D
+  t3ax->lines->setColor(color.color());
+  t3ax->color = color.color();
 #else // TA_QT3D
   SoMaterial* mat = t3ax->material();
   color.color().copyTo(mat->diffuseColor);
@@ -545,9 +548,8 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
     
     if(!col_name.empty()) {
 #ifdef TA_QT3D
-      Qt3D::QRotateTransform rot;
-      rot.setAxis(QVector3D(0.0, 0.0f, 1.0f));
-      rot.setAngleRad(.5f * taMath_float::pi);
+      QVector3D rot_ax(0.0, 0.0f, 1.0f);
+      float rot_ang = .5f * taMath_float::pi;
 #else // TA_QT3D
       SbRotation rot;
       rot.setValue(SbVec3f(0.0, 0.0f, 1.0f), .5f * taMath_float::pi);
@@ -557,7 +559,11 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
       if(n_ax > 0) {  // alt Y axis
         fm.x = off.x + GraphTableView::tick_size + TICK_OFFSET + 1.3f * t3ax->font_size;
         if (show_alt_axis_label) {
+#ifdef TA_QT3D
+          t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot_ax, rot_ang);
+#else // TA_QT3D
           t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot);
+#endif // TA_QT3D
           if(rnd_svg) {
             *rnd_svg << taSvg::Text(label, fm, color.color(),
                                     t3ax->font_size, taSvg::CENTER, true); // vertical
@@ -567,7 +573,11 @@ void GraphAxisBase::RenderAxis_Y(T3Axis* t3ax, const iVec3f& off,
       else {
         fm.x = off.x + -GraphTableView::tick_size - TICK_OFFSET - 1.3f * t3ax->font_size;
         if (show_axis_label) {
+#ifdef TA_QT3D
+          t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot_ax, rot_ang);
+#else // TA_QT3D
           t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot);
+#endif // TA_QT3D
           if(rnd_svg) {
             *rnd_svg << taSvg::Text(label, fm, color.color(),
                                     t3ax->font_size, taSvg::CENTER, true); // vertical
@@ -656,9 +666,8 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
     }
     if(!col_name.empty()) {
 #ifdef TA_QT3D
-      Qt3D::QRotateTransform rot;
-      rot.setAxis(QVector3D(0.0, 1.0f, 0.0f));
-      rot.setAngleRad(.5f * taMath_float::pi);
+      QVector3D rot_ax(0.0, 1.0f, 0.0f);
+      float rot_ang = .5f * taMath_float::pi;
 #else // TA_QT3D
       SbRotation rot;
       rot.setValue(SbVec3f(0.0, 1.0f, 0.0f), .5f * taMath_float::pi);
@@ -678,7 +687,11 @@ void GraphAxisBase::RenderAxis_Z(T3Axis* t3ax, const iVec3f& off,
         }
       }
       if (show_axis_label) {
+#ifdef TA_QT3D
+        t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot_ax, rot_ang);
+#else // TA_QT3D
         t3ax->addLabelRot(label.chars(), fm, T3_ALIGN_CENTER, rot);
+#endif // TA_QT3D
         
         if(rnd_svg) {
           *rnd_svg << taSvg::Text(label, fm, color.color(),

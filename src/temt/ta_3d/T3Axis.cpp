@@ -62,45 +62,40 @@ void T3Axis::addLabel(const char* text, const iVec3f& at) {
 }
 
 void T3Axis::addLabel(const char* text, const iVec3f& at, int just) {
-  //note: we assume (for simplicity) that each new label is at a different place
   T3TwoDText* lbl = new T3TwoDText(labels);
-  lbl->label.setAlignment((QFlags<Qt::AlignmentFlag>)just);
   lbl->setText(text);
+  lbl->setTextColor(color);
   lbl->scale->setScale(font_size);
-  lbl->translate->setTranslation(QVector3D(at.x, at.y, -at.z));
-  
-  // SoTranslation* tr = new SoTranslation();
-  // tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
-  //       		   -(at.z - last_label_at.z));
-  // last_label_at = at;
-  // labels->addChild(tr);
-
-  // // render the actual text
-  // SoAsciiText* txt = new SoAsciiText();
-  // txt->justification.setValue((SoAsciiText::Justification)just);
-  // txt->string.setValue(text);
-  // labels->addChild(txt);
+  QVector3D pos(at.x, at.y + 0.5f * font_size, -at.z);
+  if(just == T3_ALIGN_RIGHT) {
+    lbl->TranslateXRightTo(pos);
+  }
+  else if(just == T3_ALIGN_LEFT) {
+    lbl->TranslateXLeftTo(pos);
+  }
+  else if(just == T3_ALIGN_CENTER) {
+    lbl->translate->setTranslation(pos);
+  }
 }
 
 void T3Axis::addLabelRot(const char* text, const iVec3f& at, int just,
-                         Qt3D::QRotateTransform& rot) {
-  //note: we assume (for simplicity) that each new label is at a different place
-  // SoTranslation* tr = new SoTranslation();
-  // tr->translation.setValue(at.x - last_label_at.x, at.y - last_label_at.y,
-  //       		   -(at.z - last_label_at.z));
-  // last_label_at = at;
-  // labels->addChild(tr);
-
-  // // render the actual text
-  // SoSeparator* sep = new SoSeparator;
-  // SoTransform* tx = new SoTransform;
-  // tx->rotation.setValue(rot);
-  // sep->addChild(tx);
-  // SoAsciiText* txt = new SoAsciiText();
-  // txt->justification.setValue((SoAsciiText::Justification)just);
-  // txt->string.setValue(text);
-  // sep->addChild(txt);
-  // labels->addChild(sep);
+                         const QVector3D& rot_ax, float rot_ang) {
+  T3TwoDText* lbl = new T3TwoDText(labels);
+  lbl->setText(text);
+  lbl->setTextColor(color);
+  lbl->scale->setScale(font_size);
+  QVector3D pos(at.x, at.y + 0.5f * font_size, -at.z);
+  if(just == T3_ALIGN_RIGHT) {
+    lbl->TranslateXRightTo(pos);
+  }
+  else if(just == T3_ALIGN_LEFT) {
+    lbl->TranslateXLeftTo(pos);
+  }
+  else if(just == T3_ALIGN_CENTER) {
+    lbl->translate->setTranslation(pos);
+  }
+  lbl->rotate->setAxis(rot_ax);
+  lbl->rotate->setAngleRad(rot_ang);
 }
 
 void T3Axis::addLine(const iVec3f& from, const iVec3f to) {
