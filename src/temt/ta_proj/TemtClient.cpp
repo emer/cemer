@@ -858,7 +858,7 @@ void TemtClient::cmdGetVar() {
     else {
       val = var->GetVar().toString();
     }
-    json_root_obj.insert("status", "OK");
+    json_root_obj.insert("status", QString("OK"));
     json_root_obj.insert("result", QString(val.chars()));
     QJsonDocument json_doc(json_root_obj);
     QByteArray theString = json_doc.toJson(json_format);
