@@ -225,7 +225,6 @@ void TemtClient::cmdRunProgram(bool sync) {
     return;
   }
   
-  // make sure project
   taProject* proj = GetCurrentProject();
   if (!proj) {
     SendError("RunProgram " + pnm + ": no project open", TemtClient::NOT_FOUND);
@@ -634,8 +633,6 @@ void TemtClient::cmdGetData() {
   // note: ok if running
   
   if (msg_format == TemtClient::JSON) {
-    ostringstream ostr;
-    String data;
     String col_name = "";
     
     if (!name_params.GetVal("column").isNull()) {
@@ -648,12 +645,14 @@ void TemtClient::cmdGetData() {
     if (!valid)
       return;
     
-    bool result = tab->GetDataAsJSON(ostr, col_name, row_from, rows);
+    QJsonObject json_root_obj;
+    bool result = tab->GetDataAsJSON(json_root_obj, col_name, row_from, rows);
     if (result) {
-      data = ostr.str().c_str();
-      // doing the message wrap here because it isn't working in SendOkJSON
-      String str = "{\"status\":\"OK\", \"result\": " + data + "}";
-      Write(str);
+      // actual result object inserted by call on the data table
+      json_root_obj.insert("status", QString("OK"));
+      QJsonDocument json_doc(json_root_obj);
+      QByteArray theString = json_doc.toJson(json_format);
+      Write(theString.data());
     }
     else {
       SendError("GetData: " + tab->error_msg, TemtClient::RUNTIME);
@@ -718,21 +717,18 @@ void TemtClient::cmdGetDataMatrixCell() {
   // note: ok if running
   
   if (msg_format == TemtClient::JSON) {
-    ostringstream ostr;
-    String data;
     String col_name = name_params.GetVal("column").toString();
     int row_from = name_params.GetVal("row_from").toInt();
     int cell = name_params.GetVal("cell").toInt();
-    bool result = tab->GetDataMatrixCellAsJSON(ostr, col_name, row_from, cell);
+    
+    QJsonObject json_root_obj;
+    bool result = tab->GetDataMatrixCellAsJSON(json_root_obj, col_name, row_from, cell);
     if (result) {
-      data = ostr.str().c_str();
-      // munge string before concatenating
-      data.remove ("{", 0);
-      data.remove("}", -1);
-      data.prepend(',');
-      // doing the message wrap here because it isn't working in SendOkJSON
-      String str = "{\"status\":\"OK\"" + data + "}";
-      Write(str);
+      // actual result object inserted by call on the data table
+      json_root_obj.insert("status", QString("OK"));
+      QJsonDocument json_doc(json_root_obj);
+      QByteArray theString = json_doc.toJson(json_format);
+      Write(theString.data());
     }
     else {
       SendError("GetDataMatrixCell: " + tab->error_msg, TemtClient::RUNTIME);
@@ -854,17 +850,19 @@ void TemtClient::cmdGetVar() {
   }
   // Send the message from here because the result is not in JSON format yet
   else if (msg_format == TemtClient::JSON) {
-    String str;
     String  val;
+    QJsonObject json_root_obj;
     if (var->var_type == ProgVar::T_String) {
       val = var->string_val;
-      str = " {\"status\":\"OK\", \"result\": \"" + val + "\"" + " }";
     }
     else {
       val = var->GetVar().toString();
-      str = " {\"status\":\"OK\", \"result\": " + val + "} ";
     }
-    Write(str);
+    json_root_obj.insert("status", "OK");
+    json_root_obj.insert("result", QString(val.chars()));
+    QJsonDocument json_doc(json_root_obj);
+    QByteArray theString = json_doc.toJson(json_format);
+    Write(theString.data());
   }
 }
 
@@ -1354,7 +1352,7 @@ void TemtClient::SendErrorJSON(const String& err_msg, TemtClient::ServerError er
   root_object.insert("error", err);
   
   QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);  // status always indented format
+  QByteArray theString = json_doc.toJson(json_format);  // status always indented format
   QString reply(theString);
   WriteLine(reply);
 }
@@ -1380,7 +1378,7 @@ void TemtClient::SendOkJSON(const String& msg) {
   root_object.insert("result", QString(msg.chars()));
   
   QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);  // status always indented format
+  QByteArray theString = json_doc.toJson(json_format);  // status always indented format
   QString reply(theString);
   WriteLine(reply);
 }
@@ -1626,14 +1624,14 @@ void TemtClient::cmdClearConsoleOutput() {
 
 
 void TemtClient::cmdSetJsonFormat() {
-  json_format = QJsonDocument::Indented;
   if (!name_params.GetVal("json_format").isNull()) {
     if (name_params.GetVal("json_format") == "compact") {
       json_format = QJsonDocument::Compact;
       SendOk();
     }
     else if (name_params.GetVal("json_format") == "indented") {
-      SendOk(); // already set
+      json_format = QJsonDocument::Indented;
+      SendOk();
     }
     else {
       SendErrorJSON("unexpected value - must be 'compact' or 'indented' ", TemtClient::NOT_FOUND);

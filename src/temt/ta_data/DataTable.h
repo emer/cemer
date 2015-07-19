@@ -300,10 +300,10 @@ public:
   // #CAT_File #MENU #MENU_ON_Data #MENU_SEP_BEFORE #EXT_csv,tsv,txt,log #FILE_DIALOG_SAVE exports data with given delimiter and string quoting format options in a format suitable for importing into other applications (spreadsheets, etc) -- does NOT include the emergent native header/data row markers and extended header info, so is not good for loading back into emergent (use SaveData for that)
   void                  ExportDataJSON(const String& fname="");
   // #CAT_File #MENU #MENU_ON_Data #EXT_json #FILE_DIALOG_SAVE exports data in json format
-  bool                  GetDataAsJSON(std::ostream& strm, const String& column_name = "", int start_row = 0, int n_rows = -1);
-  // #EXPERT #CAT_File #EXT_json does the actual parse and save
-  bool                  GetDataMatrixCellAsJSON(std::ostream& strm, const String& column_name, int row, int cell);
-  // #EXPERT #CAT_File #EXT_json does the actual parse and save
+  bool                  GetDataAsJSON(QJsonObject& json_obj, const String& column_name = "", int start_row = 0, int n_rows = -1);
+  // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
+  bool                  GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell);
+  // #IGNORE #EXPERT #CAT_File #EXT_json does the actual parse and save
   virtual void          ImportData(const String& fname="", bool headers = true,
       LoadDelimiters delim = LD_AUTO, LoadQuotes quote_str = LQ_AUTO)
   { LoadAnyData(fname, headers, LD_AUTO, LQ_AUTO, -1, true); }

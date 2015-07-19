@@ -80,11 +80,6 @@ ADD_PATH_TO_FILES(temt_css_SRCS ${mypath}/css "${css_SRCS}")
 ADD_PATH_TO_FILES(temt_css_HEADS_MOC ${mypath}/css "${css_HEADS_MOC}")
 ADD_PATH_TO_FILES(temt_css_HEADS ${mypath}/css "${css_HEADS}")
 
-# json
-include(${PROJECT_SOURCE_DIR}/src/temt/json/CMakeFiles.txt)
-ADD_PATH_TO_FILES(temt_json_SRCS ${mypath}/json "${json_SRCS}")
-ADD_PATH_TO_FILES(temt_json_HEADS ${mypath}/json "${json_HEADS}")
-
 # next: use the wrap code to get maketa and moc to run:
 
 MAKETA_WRAP_H(temt_ta_core_SRCS_MAKETA ${temt_ta_core_HEADS_MAKETA} OPTIONS ta_core)
@@ -134,7 +129,6 @@ set(temtlib_SRCS
   ${temt_ta_gui_SRCS_UIC}
   ${temt_css_SRCS}
   ${temt_css_SRCS_MOC}
-  ${temt_json_SRCS}
 
   ${temt_ta_core_HEADS}
   ${temt_ta_math_HEADS}
@@ -144,7 +138,6 @@ set(temtlib_SRCS
   ${temt_ta_gui_HEADS}
   ${temt_ta_3d_HEADS}
   ${temt_css_HEADS}
-  ${temt_json_HEADS}
 )
 
 EMERGENT_ADD_LIBRARY(temt SHARED ${temtlib_SRCS} ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h)

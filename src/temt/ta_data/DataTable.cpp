@@ -2132,9 +2132,12 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
     need_delim = true;
   }
   // validate and adjust col range
-  if (col_fr < 0) col_fr = data.size + col_fr;
-  if (col_fr < 0) col_fr = 0;
-  if (col_to < 0) col_to = data.size + col_to;
+  if (col_fr < 0)
+    col_fr = data.size + col_fr;
+  if (col_fr < 0)
+    col_fr = 0;
+  if (col_to < 0)
+    col_to = data.size + col_to;
   if ((col_to < 0) || (col_to >= data.size))
     col_to = data.size - 1;
   for(int i = col_fr; i <= col_to;i++) {
@@ -2171,14 +2174,21 @@ void DataTable::SaveDataRow_strm(ostream& strm, int row, Delimiters delim,
 void DataTable::ExportDataJSON(const String& fname) {  // write the entire table to file
   // note: don't get file name when exporting
   taFiler* flr = GetSaveFiler(fname, ".json", false);
-  if (flr->ostrm) {
-    GetDataAsJSON(*flr->ostrm );
+  if (!flr->ostrm) {
+    return;
   }
+  
+  QJsonObject json_obj;
+  GetDataAsJSON(json_obj);
+  QJsonDocument json_doc(json_obj);
+  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
+  *flr->ostrm << String(theString.data());
+  *flr->ostrm << endl;
   flr->Close();
   taRefN::unRefDone(flr);
 }
 
-bool DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name, int row, int cell) {
+bool DataTable::GetDataMatrixCellAsJSON(QJsonObject& json_obj, const String& column_name, int row, int cell) {
   if (row < 0) {
     row = rows + row;  // so for -1 you get the last row
   }
@@ -2229,18 +2239,11 @@ bool DataTable::GetDataMatrixCellAsJSON(ostream& strm, const String& column_name
     default:
       result = QJsonValue(QString(dc->GetValAsStringM(row, cell).chars()));
   }
-  QJsonObject root_object;
-  root_object.insert("result", result);
-  QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
-  QString json_string(theString);
-  strm << String(json_string);
-  strm << endl;
-
+  json_obj.insert("result", result);  // this will overwrite the "result" key with true result
   return true;
 }
 
-bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int start_row, int n_rows) {
+bool DataTable::GetDataAsJSON(QJsonObject& json_obj, const String& column_name, int start_row, int n_rows) {
   QJsonArray columns;
   
   int stop_row;
@@ -2443,15 +2446,9 @@ bool DataTable::GetDataAsJSON(ostream& strm, const String& column_name, int star
     }
     columns.append(aColumn);
   }
-
-  QJsonObject root_object;
-  root_object.insert("columns", columns);
-  QJsonDocument json_doc(root_object);
-  QByteArray theString = json_doc.toJson(QJsonDocument::Indented);
-  QString json_string(theString);
-  strm << String(json_string);
-  strm << endl;
-  
+  QJsonObject result;
+  result.insert("columns", columns);
+  json_obj.insert("result", result);
   return true;
 }
 
